@@ -184,6 +184,8 @@ void QGeoTiledMapRectangleObjectInfo::update()
     if (bounds2.isValid()) {
         if (!rectangleItem2)
             rectangleItem2 = new QGraphicsRectItem(rectangleItem1);
+            rectangleItem2->setPen(rectangle->pen());
+            rectangleItem2->setBrush(rectangle->brush());
     } else {
         if (rectangleItem2) {
             delete rectangleItem2;

@@ -62,10 +62,6 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
    \inmodule QtSystemInfo
 
    \brief The QSystemNetworkInfo class provides access to network information.
-
-    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-
-        Constructs a QSystemNetworkInfo object with the given \a parent.
 */
 
 
@@ -270,6 +266,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
 /*!
  \property QSystemNetworkInfo::currentMode
+ \brief The current network mode.
 
     Returns the current active mode. If more than one mode is active, returns the
      default or preferred mode. If no modes are active, returns UnknownMode.
@@ -299,33 +296,33 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             currentMobileCountryCodeChanged(QString))))) {
         connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
-                this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             currentMobileNetworkCodeChanged(QString))))) {
         connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
-                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
         connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
         connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
         connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
         connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
     }
 }
 

@@ -73,7 +73,7 @@ private:
     void addPriorityData(QString managerName, QString itemType);
     
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
     
 };
 
@@ -82,10 +82,10 @@ void TestItemPriority::init()
     QFETCH(QString, managerName);
     
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestItemPriority::cleanup()
@@ -99,7 +99,7 @@ void TestItemPriority::cleanup()
 void TestItemPriority::addPriorityDetail_data()
 {
     // Get the list of all available item managers
-    QStringList availableManagers = QOrganizerItemManager::availableManagers();
+    QStringList availableManagers = QOrganizerManager::availableManagers();
     
     // Remove these since test would fail
     availableManagers.removeAll("invalid");
@@ -202,7 +202,7 @@ void TestItemPriority::addPriorityDetail()
     item.setType(itemType);
     
     // Set the start time, without which Symbian does not save entries
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     item.saveDetail(&timeRange);
     
@@ -213,7 +213,7 @@ void TestItemPriority::addPriorityDetail()
     QVERIFY(m_om->saveItem(&item));
     
     // Fetch the item again
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Check if the priority has been set properly
     QOrganizerItemPriority itemPriority;

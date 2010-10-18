@@ -72,7 +72,7 @@ public:
 
     virtual PluginPriority pluginPriority();
 
-    virtual QList<QFeedbackActuator> actuators();
+    virtual QList<QFeedbackActuator*> actuators();
 
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
@@ -97,6 +97,7 @@ private:
 
     QMutex mutex;
     QVector<VibeInt32> actuatorHandles;
+    QList<QFeedbackActuator*> actuatorList;
     QHash<const QFeedbackEffect*, VibeInt32> effectHandles;
 
     struct FileContent {

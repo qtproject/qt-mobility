@@ -51,12 +51,12 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactdisplaylabel.h"
-
+#include <QDebug>
 class QDeclarativeContactDisplayLabel : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString label READ label NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "label")
 public:
     enum FieldType {
@@ -66,6 +66,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactDisplayLabel());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
@@ -73,7 +74,21 @@ public:
         return QDeclarativeContactDetail::DisplayLabel;
     }
 
-    QString label() const {return detail().value(QContactDisplayLabel::FieldLabel);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Label:
+            return QContactDisplayLabel::FieldLabel;
+        default:
+            break;
+        }
+        //qWarning()
+        return QString();
+    }
+
+    QString label() const {
+        return detail().value(QContactDisplayLabel::FieldLabel);
+    }
 signals:
     void fieldsChanged();
 };

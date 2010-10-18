@@ -222,11 +222,15 @@ void tst_QVersitDocument::testHash()
     QVersitDocument document6 = document1;
     document6.setComponentType(QLatin1String("VEVENT"));
 
+    QVersitDocument document7 = document1;
+    document7.addProperty(QVersitProperty());
+
     QVERIFY(qHash(document1) == qHash(document2));
     QVERIFY(qHash(document1) != qHash(document3));
     QVERIFY(qHash(document1) != qHash(document4));
     QVERIFY(qHash(document1) != qHash(document5));
     QVERIFY(qHash(document1) != qHash(document6));
+    QVERIFY(qHash(document1) != qHash(document7));
 }
 
 QTEST_MAIN(tst_QVersitDocument)

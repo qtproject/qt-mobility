@@ -134,14 +134,14 @@ public:
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
     virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId& id,
-                                QLandmarkManager::Error *error, QString *errorString);
-    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
-                                 QLandmarkManager::Error *error, QString *errorString) const;
+                                QLandmarkManager::Error *error, QString *errorString) = 0;
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option,
+                                 QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     virtual QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual bool isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const = 0;
@@ -165,7 +165,7 @@ Q_SIGNALS:
     void categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds);
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
-protected:
+public:
     static void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
     static void updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);

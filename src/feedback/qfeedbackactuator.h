@@ -56,9 +56,14 @@ QTM_BEGIN_NAMESPACE
 
 class QFeedbackEffect;
 
-class Q_FEEDBACK_EXPORT QFeedbackActuator
+class Q_FEEDBACK_EXPORT QFeedbackActuator : public QObject
 {
-    Q_GADGET
+    Q_OBJECT
+    Q_PROPERTY(int id READ id)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QFeedbackActuator::State state READ state)
+    Q_PROPERTY(bool valid READ isValid)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
     Q_ENUMS(Capability)
     Q_ENUMS(State)
 public:
@@ -73,7 +78,7 @@ public:
         Unknown
     };
 
-    QFeedbackActuator();
+    QFeedbackActuator(QObject *parent = 0);
 
     int id() const;
     bool isValid() const;
@@ -81,17 +86,19 @@ public:
     QString name() const;
     State state() const;
 
-    bool isCapabilitySupported(Capability) const;
+    Q_INVOKABLE bool isCapabilitySupported(Capability) const;
 
     bool isEnabled() const;
     void setEnabled(bool);
 
-    static QList<QFeedbackActuator> actuators();
-
+    static QList<QFeedbackActuator*> actuators();
     bool operator==(const QFeedbackActuator&) const;
 
+signals:
+    void enabledChanged();
+
 private:
-    QFeedbackActuator(int id);
+    QFeedbackActuator(QObject *parent, int id);
     friend class QFeedbackHapticsInterface;
     int m_id;
 };

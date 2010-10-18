@@ -66,7 +66,7 @@ Q_DECLARE_METATYPE(QVersitProperty)
 #ifdef QT_BUILD_INTERNAL
 void tst_QVCard30Writer::init()
 {
-    mWriter = new QVCard30Writer;
+    mWriter = new QVCard30Writer(QVersitDocument::VCard30Type);
     mWriter->setCodec(QTextCodec::codecForName("UTF-8"));
 }
 

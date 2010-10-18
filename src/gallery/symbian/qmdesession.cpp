@@ -88,20 +88,25 @@ CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 #else
     CMdENamespaceDef *nameSpaceDef = NULL;
         nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
-    if (!nameSpaceDef)
+    if (!nameSpaceDef) 
         User::Leave(KErrBadHandle);
+   
     return *nameSpaceDef;    
 #endif //MDS_25_COMPILATION_ENABLED
 }
 
 CMdEObject* QMdeSession::GetFullObjectL(const unsigned int id)
 {
-    return m_cmdeSession->GetFullObjectL(id);
+    if (m_cmdeSession)
+        return m_cmdeSession->GetFullObjectL(id);
+    else
+        return NULL;
 }
 
 void QMdeSession::CommitObjectL( CMdEObject& object )
 {
-    m_cmdeSession->CommitObjectL( object );
+    if (m_cmdeSession)
+        m_cmdeSession->CommitObjectL( object );
 }
 
 CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
@@ -110,7 +115,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
 {
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
     CMdEObjectQuery* query = NULL;
-    
+
 #ifdef MDS_25_COMPILATION_ENABLED
     if (request->rootType() == QDocumentGallery::File.name()) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
@@ -146,7 +151,7 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
     CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType());
     query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
 #endif //MDS_25_COMPILATION_ENABLED
-    
+
     q_check_ptr(query); // check if we have a valid pointer as the next function is not leaving
     error = QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
@@ -175,27 +180,30 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
     return ret;
 }
 
-void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogicCondition *condition )
+void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogicCondition &aCondition )
 {
-#ifdef MDS_25_COMPILATION_ENABLED    
+#ifdef MDS_25_COMPILATION_ENABLED
+    TLogicConditionOperator logicOperator = aCondition.Operator();
+    CMdELogicCondition *condition = CMdELogicCondition::NewL( logicOperator );
+    // ownership is passed to the observer.
     m_cmdeSession->AddObjectObserverL( observer, condition, ENotifyAdd );
-#else
-    // TODO: check whether default namespace is ok (NULL -> default used)
-    m_cmdeSession->AddObjectObserverL(observer, condition, NULL);
 #endif //MDS_25_COMPILATION_ENABLED
+    // adding an itemaddedobserver is not needed for mds 2.0 as mds 2.0 doesn't separate observers
+    // by condition operator
 }
 
 void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<TItemId> &idArray )
 {
-    CMdELogicCondition* condition = CMdELogicCondition::NewLC( ELogicConditionOperatorOr );
+    CMdELogicCondition *condition = CMdELogicCondition::NewL( ELogicConditionOperatorOr );
+    CleanupStack::PushL(condition);
     condition->AddObjectConditionL( idArray );
+    CleanupStack::Pop(condition); // condition
 #ifdef MDS_25_COMPILATION_ENABLED
     m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
 #else
     // TODO: check whether default namespace is ok (NULL -> default used)
     m_cmdeSession->AddObjectObserverL( observer, condition, NULL );
 #endif //MDS_25_COMPILATION_ENABLED
-    CleanupStack::Pop(); // condition
 }
 
 void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )

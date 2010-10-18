@@ -92,8 +92,9 @@ protected:
     void timerEvent(QTimerEvent *);
 
 private:
-    QFeedbackActuator currentActuator() const;
+    QFeedbackActuator* currentActuator();
     Ui_HapticsPlayer ui;
+    QFeedbackActuator* actuator;
     QFeedbackHapticsEffect effect;
     QFeedbackFileEffect fileEffect;
 };

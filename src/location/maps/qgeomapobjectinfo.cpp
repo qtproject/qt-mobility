@@ -107,7 +107,8 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
 void QGeoMapObjectInfo::init() {}
 
 /*!
-    This function is called when the window size of the map changes.
+    This function is called when the window size of the map changes to 
+    \a windowSize.
 
     The default implementation does nothing.
 */
@@ -117,7 +118,8 @@ void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
 }
 
 /*!
-    This function is called when the zoom level of the map changes.
+    This function is called when the zoom level of the map changes to 
+    \a zoomLevel.
 
     The default implementation does nothing.
 */
@@ -127,7 +129,8 @@ void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
 }
 
 /*!
-    This function is called when the center of the map changes.
+    This function is called when the center of the map changes to 
+    \a coordinate.
 
     The default implementation does nothing.
 */
@@ -137,7 +140,7 @@ void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    This function is run when the z value of the object changes.
+    This function is run when the z value of the object changes to \a zValue.
 
     The default implementation does nothing.
 */
@@ -147,7 +150,8 @@ void QGeoMapObjectInfo::zValueChanged(int zValue)
 }
 
 /*!
-    This function is run when the visible state of the object changes.
+    This function is run when the visible state of the object changes to 
+    \a visible.
 
     The default implementation does nothing.
 */
@@ -157,7 +161,8 @@ void QGeoMapObjectInfo::visibleChanged(bool visible)
 }
 
 /*!
-    This function is run when the selected state of the object changes.
+    This function is run when the selected state of the object changes to 
+    \a selected.
 
     The default implementation does nothing.
 */

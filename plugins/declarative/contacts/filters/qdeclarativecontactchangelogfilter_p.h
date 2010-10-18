@@ -57,7 +57,7 @@ class QDeclarativeContactChangeLogFilter: public QDeclarativeContactFilter
     Q_PROPERTY(QDateTime since READ since WRITE setSince NOTIFY valueChanged)
     Q_PROPERTY(EventType eventType READ eventType WRITE setEventType NOTIFY valueChanged)
 
-    Q_ENUMS(EventType);
+    Q_ENUMS(EventType)
 public:
     enum EventType {
         EventAdded,

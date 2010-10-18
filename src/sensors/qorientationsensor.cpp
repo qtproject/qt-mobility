@@ -60,6 +60,10 @@ IMPLEMENT_READING(QOrientationReading)
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
 
+    It should be noted that the orientation sensor reports the orientation of the device
+    and not the UI. The orientation of the device will not change just because the UI is
+    rotated.
+
     \section2 QOrientationReading Units
     The orientation sensor returns the orientation of the device using
     the pre-defined values found in the QOrientationReading::Orientation
@@ -86,13 +90,18 @@ IMPLEMENT_READING(QOrientationReading)
     \value RightUp          The Right edge of the device is pointing up.
     \value FaceUp           The Face of the device is pointing up.
     \value FaceDown         The Face of the device is pointing down.
+
+    It should be noted that the orientation sensor reports the orientation of the device
+    and not the UI. The orientation of the device will not change just because the UI is
+    rotated.
 */
 
 /*!
     \property QOrientationReading::orientation
     \brief the orientation of the device.
 
-    The unit is an enumeration describing the orientation of the screen.
+    The unit is an enumeration describing the orientation of the device.
+
     \sa {QOrientationReading Units}
 */
 

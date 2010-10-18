@@ -94,7 +94,7 @@ public:
     void setValid(bool valid);
     bool valid() const;
 
-    void updateItem();
+    void updateItem(const QRectF &target = QRectF());
 
     QRectF bounds;
 

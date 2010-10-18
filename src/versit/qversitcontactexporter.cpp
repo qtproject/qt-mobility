@@ -227,7 +227,22 @@ QVersitContactExporter::QVersitContactExporter()
  * The profile determines which plugins will be loaded to supplement the exporter.
  */
 QVersitContactExporter::QVersitContactExporter(const QString& profile)
-    : d(new QVersitContactExporterPrivate(profile))
+{
+    if (profile.isEmpty())
+       d = new QVersitContactExporterPrivate(QStringList());
+    else
+       d = new QVersitContactExporterPrivate(QStringList() << profile);
+}
+
+/*!
+ * Constructs a new exporter for the given \a profiles.  The profile strings should be one of those
+ * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugin}{Versit plugin}.
+ *
+ * The profiles determine which plugins will be loaded to supplement the exporter.
+ */
+QVersitContactExporter::QVersitContactExporter(const QStringList& profiles)
+    : d(new QVersitContactExporterPrivate(profiles))
 {
 }
 
@@ -242,9 +257,12 @@ QVersitContactExporter::~QVersitContactExporter()
 /*!
  * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
  * \a versitType.
+ *
  * Returns true on success.  If any of the contacts could not be exported, false is returned and
- * errors() will return a list describing the errors that occurred.  The successfully exported
+ * errorMap() will return a list describing the errors that occurred.  The successfully exported
  * documents will still be available via documents().
+ *
+ * \sa documents(), errorMap()
  */
 bool QVersitContactExporter::exportContacts(
     const QList<QContact>& contacts,
@@ -282,13 +300,23 @@ QList<QVersitDocument> QVersitContactExporter::documents() const
 }
 
 /*!
+ * \obsolete
+ *
+ * Use \l errorMap() instead.
+ */
+QMap<int, QVersitContactExporter::Error> QVersitContactExporter::errors() const
+{
+    return d->mErrors;
+}
+
+/*!
  * Returns the map of errors encountered in the most recent call to exportContacts().  The key is
  * the index into the input list of contacts and the value is the error that occurred on that
  * contact.
  *
  * \sa exportContacts()
  */
-QMap<int, QVersitContactExporter::Error> QVersitContactExporter::errors() const
+QMap<int, QVersitContactExporter::Error> QVersitContactExporter::errorMap() const
 {
     return d->mErrors;
 }

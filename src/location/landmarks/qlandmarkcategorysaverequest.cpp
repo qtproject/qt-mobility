@@ -58,10 +58,11 @@ QTM_BEGIN_NAMESPACE
 
     For a QLandmarkCategorySaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
-    by calling errorMap()), an  overall operation error occurs(which may be
-    retrieved by calling error()), or when individual items have been
-    saved (which may be retrieved by calling categories()).
+    by calling errorMap()), or an overall operation error occurs(which may be
+    retrieved by calling error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -84,9 +85,10 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
 }
 
 /*!
-    Returns the list of categories which will be saved if called prior to
-    callling \l QLandmarkAbstractRequest::start(), otherwise returns the list of categories as they
-    were saved into the landmark manager.
+    Returns the list of categories to be saved.  If called after the save operation has
+    finished, any new categories saved will have had their QLandmarkCategoryId set.
+    (Categories which were updated or failed to save will remain unchanged, use the
+    errorMap() function to determine which particular categories failed to save.)
 */
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 {
@@ -107,7 +109,8 @@ void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> 
 }
 
 /*!
-    Convenience function to set a single \a category to be saved.
+    Convenience function to set a single \a category to be saved.  This function
+    is the equivalent of calling setCategories() with a single \a category.
 
     \sa setCategories()
 */

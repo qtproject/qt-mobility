@@ -154,11 +154,10 @@ bool QGeoTiledMapObjectInfo::valid() const
     return isValid;
 }
 
-void QGeoTiledMapObjectInfo::updateItem()
+void QGeoTiledMapObjectInfo::updateItem(const QRectF& target)
 {
-    // TODO use bounding rectangle of graphics items
     if (graphicsItem)
-        tiledMapData->geoMap()->update();
+        tiledMapData->triggerUpdateMapDisplay(target);
 }
 
 QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,

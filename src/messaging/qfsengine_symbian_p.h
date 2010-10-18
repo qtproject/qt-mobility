@@ -99,12 +99,14 @@ struct FSMessageQueryInfo
     int currentFilterListIndex;
     QMessageIdList ids;
     int count;
+    bool canceled;    
 };
 
 struct FSSearchOperation
 {
     MEmailMailbox* m_mailbox;
     MEmailMessageSearchAsync* m_search;
+    TEmailSortCriteria m_emailSortCriteria;
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
@@ -157,6 +159,8 @@ public:
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
     
+    void cancel(QMessageServicePrivate& privateService);
+    
 public: // from MMailboxSyncObserver
     void MailboxSynchronisedL(TInt aResult);
     
@@ -181,6 +185,7 @@ private:
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
+    void doNextQueryL() const;
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccountsL() const;
@@ -237,6 +242,7 @@ private:
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
+    mutable bool m_messageQueryActive;
     QMessageAccountIdList m_mtmAccountList;
     TMailboxId m_mailboxId;
     QMessageStorePrivate* ipMessageStorePrivate;
@@ -265,19 +271,20 @@ public:
     CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId); 
     ~CFSMessagesFindOperation();
 
-    void filterAndOrderMessages(const QMessageFilter& filter,
-                                const QMessageSortOrder& sortOrder,
-                                const QString body = QString(),
-                                QMessageDataComparator::MatchFlags matchFlags = 0);
-    void filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                const QMessageSortOrder& sortOrder,
-                                const QString body = QString(),
-                                QMessageDataComparator::MatchFlags matchFlags = 0);
+    int filterAndOrderMessages(const QMessageFilter& filter,
+                               const QMessageSortOrder& sortOrder,
+                               const QString body = QString(),
+                               QMessageDataComparator::MatchFlags matchFlags = 0);
+    int filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
+                               const QMessageSortOrder& sortOrder,
+                               const QString body = QString(),
+                               QMessageDataComparator::MatchFlags matchFlags = 0);
 
     enum Field {None = 0, Sender, Recipients, Subject, Body};
 
     
 public slots:
+    void continueSearch();
     void SearchCompleted();
 
 private:

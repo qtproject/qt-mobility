@@ -50,6 +50,7 @@
 #include <QtTest/QtTest>
 
 #include "../../../plugins/declarative/multimedia/qdeclarativeaudio_p.h"
+#include "../../../plugins/declarative/multimedia/qdeclarativemediametadata_p.h"
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -302,6 +303,7 @@ void tst_QDeclarativeAudio::nullPlayerControl()
     QtTestMediaServiceProvider provider(0, &metaDataControl);
 
     QDeclarativeAudio audio;
+    audio.classBegin();
 
     QCOMPARE(audio.source(), QUrl());
     audio.setSource(QUrl("http://example.com"));
@@ -351,10 +353,10 @@ void tst_QDeclarativeAudio::nullMetaDataControl()
     QtTestMediaServiceProvider provider(&playerControl, 0);
 
     QDeclarativeAudio audio;
+    audio.classBegin();
+    audio.componentComplete();
 
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("title"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("genre"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("description"), -1);
+    QVERIFY(audio.metaData());
 }
 
 void tst_QDeclarativeAudio::nullService()
@@ -362,6 +364,7 @@ void tst_QDeclarativeAudio::nullService()
     QtTestMediaServiceProvider provider(0);
 
     QDeclarativeAudio audio;
+    audio.classBegin();
 
     QCOMPARE(audio.source(), QUrl());
     audio.setSource(QUrl("http://example.com"));
@@ -404,9 +407,7 @@ void tst_QDeclarativeAudio::nullService()
 
     QCOMPARE(audio.error(), QDeclarativeAudio::ServiceMissing);
 
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("title"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("genre"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("description"), -1);
+    QVERIFY(audio.metaData());
 }
 
 void tst_QDeclarativeAudio::source()
@@ -417,6 +418,7 @@ void tst_QDeclarativeAudio::source()
 
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(sourceChanged()));
@@ -441,6 +443,7 @@ void tst_QDeclarativeAudio::autoLoad()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(autoLoadChanged()));
@@ -468,6 +471,7 @@ void tst_QDeclarativeAudio::playing()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
 
     QSignalSpy playingChangedSpy(&audio, SIGNAL(playingChanged()));
     QSignalSpy startedSpy(&audio, SIGNAL(started()));
@@ -557,6 +561,7 @@ void tst_QDeclarativeAudio::paused()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
 
     QSignalSpy playingChangedSpy(&audio, SIGNAL(playingChanged()));
     QSignalSpy pausedChangedSpy(&audio, SIGNAL(pausedChanged()));
@@ -846,7 +851,7 @@ void tst_QDeclarativeAudio::duration()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(durationChanged()));
@@ -875,6 +880,7 @@ void tst_QDeclarativeAudio::position()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(positionChanged()));
@@ -919,6 +925,7 @@ void tst_QDeclarativeAudio::volume()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(volumeChanged()));
@@ -944,6 +951,7 @@ void tst_QDeclarativeAudio::muted()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(mutedChanged()));
@@ -969,7 +977,7 @@ void tst_QDeclarativeAudio::bufferProgress()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(bufferProgressChanged()));
@@ -1004,7 +1012,7 @@ void tst_QDeclarativeAudio::seekable()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(seekableChanged()));
@@ -1028,7 +1036,7 @@ void tst_QDeclarativeAudio::playbackRate()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy spy(&audio, SIGNAL(playbackRateChanged()));
@@ -1054,15 +1062,10 @@ void tst_QDeclarativeAudio::status()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy statusChangedSpy(&audio, SIGNAL(statusChanged()));
-    QSignalSpy loadedSpy(&audio, SIGNAL(loaded()));
-    QSignalSpy bufferingSpy(&audio, SIGNAL(buffering()));
-    QSignalSpy stalledSpy(&audio, SIGNAL(stalled()));
-    QSignalSpy bufferedSpy(&audio, SIGNAL(buffered()));
-    QSignalSpy endOfMediaSpy(&audio, SIGNAL(endOfMedia()));
 
     QCOMPARE(audio.status(), QDeclarativeAudio::NoMedia);
 
@@ -1070,93 +1073,48 @@ void tst_QDeclarativeAudio::status()
     provider.playerControl()->updateMediaStatus(QMediaPlayer::LoadingMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Loading);
     QCOMPARE(statusChangedSpy.count(), 1);
-    QCOMPARE(loadedSpy.count(), 0);
-    QCOMPARE(bufferingSpy.count(), 0);
-    QCOMPARE(stalledSpy.count(), 0);
-    QCOMPARE(bufferedSpy.count(), 0);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Finish loading.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::LoadedMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Loaded);
     QCOMPARE(statusChangedSpy.count(), 2);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 0);
-    QCOMPARE(stalledSpy.count(), 0);
-    QCOMPARE(bufferedSpy.count(), 0);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Play, start buffering.
     provider.playerControl()->updateMediaStatus(
             QMediaPlayer::StalledMedia, QMediaPlayer::PlayingState);
     QCOMPARE(audio.status(), QDeclarativeAudio::Stalled);
     QCOMPARE(statusChangedSpy.count(), 3);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 0);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 0);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Enough data buffered to proceed.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::BufferingMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Buffering);
     QCOMPARE(statusChangedSpy.count(), 4);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 1);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 0);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Errant second buffering status changed.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::BufferingMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Buffering);
     QCOMPARE(statusChangedSpy.count(), 4);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 1);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 0);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Buffer full.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::BufferedMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Buffered);
     QCOMPARE(statusChangedSpy.count(), 5);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 1);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 1);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Buffer getting low.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::BufferingMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Buffering);
     QCOMPARE(statusChangedSpy.count(), 6);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 2);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 1);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Buffer full.
     provider.playerControl()->updateMediaStatus(QMediaPlayer::BufferedMedia);
     QCOMPARE(audio.status(), QDeclarativeAudio::Buffered);
     QCOMPARE(statusChangedSpy.count(), 7);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 2);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 2);
-    QCOMPARE(endOfMediaSpy.count(), 0);
 
     // Finished.
     provider.playerControl()->updateMediaStatus(
             QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
     QCOMPARE(audio.status(), QDeclarativeAudio::EndOfMedia);
     QCOMPARE(statusChangedSpy.count(), 8);
-    QCOMPARE(loadedSpy.count(), 1);
-    QCOMPARE(bufferingSpy.count(), 2);
-    QCOMPARE(stalledSpy.count(), 1);
-    QCOMPARE(bufferedSpy.count(), 2);
-    QCOMPARE(endOfMediaSpy.count(), 1);
 }
 
 void tst_QDeclarativeAudio::metaData_data()
@@ -1189,10 +1147,10 @@ void tst_QDeclarativeAudio::metaData()
 
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
-    QSignalSpy spy(audio.metaData(), SIGNAL(__metaDataChanged()));
+    QSignalSpy spy(audio.metaData(), SIGNAL(metaDataChanged()));
 
     const int index = audio.metaData()->metaObject()->indexOfProperty(propertyName.constData());
     QVERIFY(index != -1);
@@ -1216,7 +1174,7 @@ void tst_QDeclarativeAudio::error()
 
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
-
+    audio.classBegin();
     audio.componentComplete();
 
     QSignalSpy errorSpy(&audio, SIGNAL(error(QDeclarativeAudio::Error,QString)));

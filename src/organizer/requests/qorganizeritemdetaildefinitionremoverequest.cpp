@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new detail definition remove request whose parent is the specified \a parent */
 QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemDetailDefinitionRemoveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
@@ -124,7 +124,7 @@ QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
 }
 
 /*! Returns the map of input name list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
     return d->m_errors;

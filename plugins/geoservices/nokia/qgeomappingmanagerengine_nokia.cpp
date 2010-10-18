@@ -83,7 +83,9 @@
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_host("maptile.maps.svc.ovi.com")
+        m_host("maptile.maps.svc.ovi.com"),
+        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
@@ -102,21 +104,31 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     modes << QGraphicsGeoMap::OnlineMode;
     setSupportedConnectivityModes(modes);
 
-    m_nam = new QNetworkAccessManager(this);
+    m_networkManager = new QNetworkAccessManager(this);
 
-    QList<QString> keys = parameters.keys();
-
-    if (keys.contains("mapping.proxy")) {
+    if (parameters.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy").toString();
         if (!proxy.isEmpty())
-            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if (keys.contains("mapping.host")) {
+    if (parameters.contains("mapping.host")) {
         QString host = parameters.value("mapping.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
+
+    if (parameters.contains("mapping.referer")) {
+        m_referer = parameters.value("mapping.referer").toString();
+    }
+
+    if (parameters.contains("mapping.token")) {
+        m_token = parameters.value("mapping.token").toString();
+    }
+    else if (parameters.contains("token")) {
+        m_token = parameters.value("token").toString();
+    }
+
 
 #ifdef DISK_CACHE_ENABLED
     m_cache = new QNetworkDiskCache(this);
@@ -127,13 +139,13 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     m_cache->setCacheDirectory(dir.path());
 
-    if (keys.contains("mapping.cache.directory")) {
+    if (parameters.contains("mapping.cache.directory")) {
         QString cacheDir = parameters.value("mapping.cache.directory").toString();
         if (!cacheDir.isEmpty())
             m_cache->setCacheDirectory(cacheDir);
     }
 
-    if (keys.contains("mapping.cache.size")) {
+    if (parameters.contains("mapping.cache.size")) {
         bool ok = false;
         qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
         if (ok)
@@ -143,15 +155,15 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
         m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
 
-    m_nam->setCache(m_cache);
+    m_networkManager->setCache(m_cache);
 #endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
-QGeoMapData* QGeoMappingManagerEngineNokia::createMapData(QGraphicsGeoMap *geoMap)
+QGeoMapData* QGeoMappingManagerEngineNokia::createMapData()
 {
-    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData(geoMap);
+    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData();
     if (!data)
         return 0;
 
@@ -172,7 +184,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 #endif
 
-    QNetworkReply* netReply = m_nam->get(netRequest);
+    QNetworkReply* netReply = m_networkManager->get(netRequest);
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request);
 
@@ -217,13 +229,13 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
         requestString += "?token=";
         requestString += m_token;
 
-        if (!m_referrer.isEmpty()) {
-            requestString += "&referrer=";
-            requestString += m_referrer;
+        if (!m_referer.isEmpty()) {
+            requestString += "&referer=";
+            requestString += m_referer;
         }
-    } else if (!m_referrer.isEmpty()) {
-        requestString += "?referrer=";
-        requestString += m_referrer;
+    } else if (!m_referer.isEmpty()) {
+        requestString += "?referer=";
+        requestString += m_referer;
     }
 
     return requestString;

@@ -104,7 +104,7 @@ QMediaPlayer::State QXAMediaPlayerControl::state() const
 QMediaPlayer::MediaStatus QXAMediaPlayerControl::mediaStatus() const
 {
     QT_TRACE_FUNCTION_ENTRY;
-    QMediaPlayer::MediaStatus retVal = QMediaPlayer::UnknownMediaStatus;
+    QMediaPlayer::MediaStatus retVal = QMediaPlayer::NoMedia;
     RET_s_IF_p_IS_NULL(mSession, retVal);
     retVal = mSession->mediaStatus();
     QT_TRACE_FUNCTION_EXIT;

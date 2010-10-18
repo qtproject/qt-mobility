@@ -50,7 +50,7 @@
 
 #include "qmobilityglobal.h"
 #include "ipcendpoint_p.h"
-#include "qremoteserviceclassregister.h"
+#include "qremoteserviceregister.h"
 #include "qservice.h"
 #include <QPointer>
 #include <QHash>
@@ -73,11 +73,13 @@ public:
     ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
     ~ObjectEndPoint();
 
-    QObject* constructProxy(const QRemoteServiceIdentifier& ident);
+    QObject* constructProxy(const QRemoteServiceRegister::Entry& entry);
     
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
     void propertyCall(const QServicePackage& p);
+
+    QString getInstanceId() const;
 
     QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
     QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
@@ -87,7 +89,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void newPackageReady();
-    void disconnected();
+    void disconnected(const QString& clientId, const QString & instanceId);
 
 private:
     void waitForResponse(const QUuid& requestId);

@@ -82,11 +82,11 @@ private slots:
    void saveItems_negative();
    
 public slots:
-   void requestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void requestStateChanged(QOrganizerAbstractRequest::State currentState);
    void requestResultsAvailable();
    
 public slots:
-   void requestStateChanged_Negative(QOrganizerItemAbstractRequest::State 
+   void requestStateChanged_Negative(QOrganizerAbstractRequest::State 
        currentState);
    void requestResultsAvailable_Negative();
    
@@ -94,19 +94,19 @@ private:
    QList<QOrganizerItem> createItems(int noOfItems);
    QList<QOrganizerItem> createItems_Negative(int noOfItems);
 private:
-    QOrganizerItemManager*              m_om;
-    QOrganizerItemAbstractRequest*      m_itemRequest;
-    QList<QOrganizerItemLocalId>        m_itemIds;
+    QOrganizerManager*              m_om;
+    QOrganizerAbstractRequest*      m_itemRequest;
+    QList<QOrganizerItemId>        m_itemIds;
     QStringList                         m_definitionNames;
 };
 
 void TestNoteItems::initTestCase()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerNameSymbian);
+    m_om = new QOrganizerManager(managerNameSymbian);
         
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     
     // initialize the m_itemRequest to zero
     m_itemRequest = 0;
@@ -134,9 +134,9 @@ void TestNoteItems::saveItem()
     
     // Connect for the state change signal 
     connect(m_itemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
             this, 
-            SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(requestResultsAvailable()));
 
@@ -186,9 +186,9 @@ void TestNoteItems::fetchItem()
 
     // Connect for the state change signal 
     connect(m_itemRequest, 
-        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+        SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
         this, 
-        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+        SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
         this, SLOT(requestResultsAvailable()));
 
@@ -196,9 +196,9 @@ void TestNoteItems::fetchItem()
     QOrganizerItemFetchRequest * itemFetchRequest(
         (QOrganizerItemFetchRequest*)m_itemRequest);
 
-    QOrganizerItemLocalIdFilter localIdFilter;
-    localIdFilter.setIds(m_itemIds);
-    //itemFetchRequest->setFilter(localIdFilter);
+    QOrganizerItemIdFilter idFilter;
+    idFilter.setIds(m_itemIds);
+    //itemFetchRequest->setFilter(idFilter);
         
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
@@ -243,9 +243,9 @@ void TestNoteItems::removeItem()
 
     // Connect for the state change signal 
     connect(m_itemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
             this, 
-            SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(requestResultsAvailable()));
@@ -277,9 +277,9 @@ void TestNoteItems::saveDetails()
 
     // Connect for the state change signal 
     connect(m_itemRequest, 
-        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+        SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
         this, 
-        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+        SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
         this, SLOT(requestResultsAvailable()));
 
@@ -318,9 +318,9 @@ void TestNoteItems::removeDetails()
 
     // Connect for the state change signal 
     connect(m_itemRequest, 
-        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+        SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
         this, 
-        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+        SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
         this, SLOT(requestResultsAvailable()));
 
@@ -355,9 +355,9 @@ void TestNoteItems::fetchDetails()
 
     // Connect for the state change signal 
     connect(m_itemRequest, 
-        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+        SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
         this, 
-        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+        SLOT(requestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_itemRequest, SIGNAL(resultsAvailable()), 
         this, SLOT(requestResultsAvailable()));
 
@@ -373,7 +373,7 @@ void TestNoteItems::fetchDetails()
     // Comment - Not supported
     m_definitionNames.append(QOrganizerItemComment::DefinitionName);
     m_definitionNames.append(QOrganizerItemRecurrence::DefinitionName);
-    m_definitionNames.append(QOrganizerEventTimeRange::DefinitionName);
+    m_definitionNames.append(QOrganizerEventTime::DefinitionName);
     m_definitionNames.append(QOrganizerItemPriority::DefinitionName);
     m_definitionNames.append(QOrganizerItemLocation::DefinitionName);
 
@@ -384,13 +384,13 @@ void TestNoteItems::fetchDetails()
     m_definitionNames.append(QOrganizerItemAudibleReminder::DefinitionName);
 
     // Instance origin - Not supported
-    m_definitionNames.append(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definitionNames.append(QOrganizerItemParent::DefinitionName);
     // To-do progress - Not supported
     m_definitionNames.append(QOrganizerTodoProgress::DefinitionName);
     // To-do time range - Not supported
-    m_definitionNames.append(QOrganizerTodoTimeRange::DefinitionName);
+    m_definitionNames.append(QOrganizerTodoTime::DefinitionName);
     // Journal time range - Not supported
-    m_definitionNames.append(QOrganizerJournalTimeRange::DefinitionName);
+    m_definitionNames.append(QOrganizerJournalTime::DefinitionName);
  
     itemDetailDefFetchRequest->setDefinitionNames(m_definitionNames);
     itemDetailDefFetchRequest->setItemType(QOrganizerItemType::TypeNote);
@@ -401,38 +401,38 @@ void TestNoteItems::fetchDetails()
     QVERIFY(itemDetailDefFetchRequest->isFinished());
 }
 
-void TestNoteItems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestNoteItems::requestStateChanged(QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-    case QOrganizerItemAbstractRequest::InactiveState: {
+    case QOrganizerAbstractRequest::InactiveState: {
         // Verify if the request is in inactive state
         QVERIFY(m_itemRequest->isInactive());
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::InactiveState);
+            QOrganizerAbstractRequest::InactiveState);
         // Operation not yet started start the operation
         m_itemRequest->start();
     }
     break;
-    case QOrganizerItemAbstractRequest::ActiveState: {
+    case QOrganizerAbstractRequest::ActiveState: {
         // Verify if the request is in active state
         QVERIFY(m_itemRequest->isActive());
         // Operation started, not yet finished operation already started
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::ActiveState);
+            QOrganizerAbstractRequest::ActiveState);
     }
     break;
-    case QOrganizerItemAbstractRequest::CanceledState: {
+    case QOrganizerAbstractRequest::CanceledState: {
         // Verify if the request is in canceled state
         QVERIFY(m_itemRequest->isCanceled());
         // Operation is finished due to cancellation test not completed, 
         // failed Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::CanceledState);
+            QOrganizerAbstractRequest::CanceledState);
     }
     break;
-    case QOrganizerItemAbstractRequest::FinishedState: {
+    case QOrganizerAbstractRequest::FinishedState: {
         // Verify if the request is in finished state
         QVERIFY(m_itemRequest->isFinished());
         // Operation either completed successfully or failed.  
@@ -440,7 +440,7 @@ void TestNoteItems::requestStateChanged(QOrganizerItemAbstractRequest::State cur
         // test completed, compare the results
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::FinishedState);
+            QOrganizerAbstractRequest::FinishedState);
     }
     break;
     default: {
@@ -452,9 +452,9 @@ void TestNoteItems::requestStateChanged(QOrganizerItemAbstractRequest::State cur
 
 void TestNoteItems::requestResultsAvailable()
 {
-    QOrganizerItemAbstractRequest::RequestType reqType(m_itemRequest->type());
+    QOrganizerAbstractRequest::RequestType reqType(m_itemRequest->type());
     switch (reqType) {
-    case QOrganizerItemAbstractRequest::ItemSaveRequest : {
+    case QOrganizerAbstractRequest::ItemSaveRequest : {
         QList<QOrganizerItem> items = ((QOrganizerItemSaveRequest*)
             m_itemRequest)->items();
         int count(items.count());
@@ -465,13 +465,13 @@ void TestNoteItems::requestResultsAvailable()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }
     }
     break;
-    case QOrganizerItemAbstractRequest::ItemFetchRequest : {
+    case QOrganizerAbstractRequest::ItemFetchRequest : {
         QList<QOrganizerItem> items = ((QOrganizerItemFetchRequest*)
             (m_itemRequest))->items();
         int count(items.count());
@@ -482,16 +482,16 @@ void TestNoteItems::requestResultsAvailable()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }
 
     }
     break;
-    case QOrganizerItemAbstractRequest::ItemRemoveRequest : {
+    case QOrganizerAbstractRequest::ItemRemoveRequest : {
         // Check error map
-        QMap<int, QOrganizerItemManager::Error> erroMap;
+        QMap<int, QOrganizerManager::Error> erroMap;
         erroMap = ((QOrganizerItemRemoveRequest*)
             m_itemRequest)->errorMap();
         // Error map should contain zero errors to indicate successful deletion
@@ -499,7 +499,7 @@ void TestNoteItems::requestResultsAvailable()
         QCOMPARE(0, erroMap.count());
     }
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest : {
+    case QOrganizerAbstractRequest::DetailDefinitionSaveRequest : {
         // No definitions should be saved, so definitions() should return an 
         // empty list
         QList<QOrganizerItemDetailDefinition> savedDefinitions(
@@ -510,46 +510,46 @@ void TestNoteItems::requestResultsAvailable()
         // Check the error map, error map should contain the number of errors
         // equal to number of definitions to be saved. Also all the erros 
         // returned should be NotSupported
-        QMap<int, QOrganizerItemManager::Error> errorMap(
+        QMap<int, QOrganizerManager::Error> errorMap(
             ((QOrganizerItemDetailDefinitionSaveRequest*)
             (m_itemRequest))->errorMap());
         count = errorMap.count();
         QCOMPARE(KNumberOfItems, count);
         // Compare the errors returned
         for (int index(0); index < count; index++){
-            QCOMPARE(QOrganizerItemManager::NotSupportedError, errorMap[index]);
+            QCOMPARE(QOrganizerManager::NotSupportedError, errorMap[index]);
         }
     }
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest : {
+    case QOrganizerAbstractRequest::DetailDefinitionRemoveRequest : {
         // Check the error map, error map should contain the number of errors
         // equal to number of definitions to be saved. Also all the errors 
         // returned should be NotSupported
-        QMap<int, QOrganizerItemManager::Error> errorMap(
+        QMap<int, QOrganizerManager::Error> errorMap(
             ((QOrganizerItemDetailDefinitionRemoveRequest*)
             (m_itemRequest))->errorMap());
         int count = errorMap.count();
         QCOMPARE(KNumberOfItems, count);
         // Compare the errors returned, as remove detail defs is not supported
         for (int index(0); index < count; index++){
-            QCOMPARE(QOrganizerItemManager::NotSupportedError, errorMap[index]);
+            QCOMPARE(QOrganizerManager::NotSupportedError, errorMap[index]);
         }
     }
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest : {
+    case QOrganizerAbstractRequest::DetailDefinitionFetchRequest : {
 
         // Get the error map
-        QMap<int, QOrganizerItemManager::Error> errorMap(
+        QMap<int, QOrganizerManager::Error> errorMap(
             ((QOrganizerItemDetailDefinitionFetchRequest*)
             (m_itemRequest))->errorMap());
         // Get the iterator to the error map
-        QMapIterator<int, QOrganizerItemManager::Error> iter(errorMap);
+        QMapIterator<int, QOrganizerManager::Error> iter(errorMap);
         // Compare the errors returned
         while (iter.hasNext()){
             // Advance the iterator to point to next item in the error map
             iter.next();
             // Compare the error value
-            QCOMPARE(QOrganizerItemManager::DoesNotExistError, iter.value());
+            QCOMPARE(QOrganizerManager::DoesNotExistError, iter.value());
             // Get the index for the error returned
             int keyIndex(iter.key());
             
@@ -585,9 +585,9 @@ void TestNoteItems::saveItems_negative()
     
     // Connect for the state change signal 
     connect(m_itemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
             this, 
-            SLOT(requestStateChanged_Negative(QOrganizerItemAbstractRequest::State)));
+            SLOT(requestStateChanged_Negative(QOrganizerAbstractRequest::State)));
         connect(m_itemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(requestResultsAvailable_Negative()));
 
@@ -630,13 +630,12 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         //Set Luid
         // TODO: Disabled because of API change. REFACTOR!
         //QOrganizerItemId id;
-        //QOrganizerItemLocalId localId(1234);
-        //id.setLocalId(localId);
-        //id.setManagerUri("qtorganizer:symbian:");
+        //QOrganizerItemId id(1234);
+        //id.setId(id);
         //organizerItem.setId(id);
 
         // Set current time
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         QDateTime startTime;
         timeRange.setStartDateTime(startTime.currentDateTime());
 
@@ -650,12 +649,12 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         
         // Add recurrence rules to the item
         // Cretae a rule
-        QOrganizerItemRecurrenceRule rrule;
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-        rrule.setCount(2);
+        QOrganizerRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+        rrule.setLimit(2);
         // Set rule
-        QList<QOrganizerItemRecurrenceRule> rrules;
-        rrules.append(rrule);
+        QSet<QOrganizerRecurrenceRule> rrules;
+        rrules.insert(rrule);
         QOrganizerItemRecurrence recurrence;
         recurrence.setRecurrenceRules(rrules);
         QVERIFY(organizerItem.saveDetail(&recurrence));
@@ -665,38 +664,38 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
     return itemsList;
 }
 
-void TestNoteItems::requestStateChanged_Negative(QOrganizerItemAbstractRequest::State currentState)
+void TestNoteItems::requestStateChanged_Negative(QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-    case QOrganizerItemAbstractRequest::InactiveState: {
+    case QOrganizerAbstractRequest::InactiveState: {
         // Verify if the request is in inactive state
         QVERIFY(m_itemRequest->isInactive());
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::InactiveState);
+            QOrganizerAbstractRequest::InactiveState);
         // Operation not yet started start the operation
         m_itemRequest->start();
     }
     break;
-    case QOrganizerItemAbstractRequest::ActiveState: {
+    case QOrganizerAbstractRequest::ActiveState: {
         // Verify if the request is in active state
         QVERIFY(m_itemRequest->isActive());
         // Operation started, not yet finished operation already started
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::ActiveState);
+            QOrganizerAbstractRequest::ActiveState);
     }
     break;
-    case QOrganizerItemAbstractRequest::CanceledState: {
+    case QOrganizerAbstractRequest::CanceledState: {
         // Verify if the request is in canceled state
         QVERIFY(m_itemRequest->isCanceled());
         // Operation is finished due to cancellation test not completed, 
         // failed Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::CanceledState);
+            QOrganizerAbstractRequest::CanceledState);
     }
     break;
-    case QOrganizerItemAbstractRequest::FinishedState: {
+    case QOrganizerAbstractRequest::FinishedState: {
         // Verify if the request is in finished state
         QVERIFY(m_itemRequest->isFinished());
         // Operation either completed successfully or failed.  
@@ -704,7 +703,7 @@ void TestNoteItems::requestStateChanged_Negative(QOrganizerItemAbstractRequest::
         // test completed, compare the results
         // Compare the request state is set rightly
         QCOMPARE(m_itemRequest->state(), 
-            QOrganizerItemAbstractRequest::FinishedState);
+            QOrganizerAbstractRequest::FinishedState);
     }
     break;
     default: {
@@ -716,20 +715,20 @@ void TestNoteItems::requestStateChanged_Negative(QOrganizerItemAbstractRequest::
 
 void TestNoteItems::requestResultsAvailable_Negative()
 {
-    QOrganizerItemAbstractRequest::RequestType reqType(m_itemRequest->type());
+    QOrganizerAbstractRequest::RequestType reqType(m_itemRequest->type());
     switch (reqType) {
-    case QOrganizerItemAbstractRequest::ItemSaveRequest : {
+    case QOrganizerAbstractRequest::ItemSaveRequest : {
         QList<QOrganizerItem> items = ((QOrganizerItemSaveRequest*)
             m_itemRequest)->items();
         int count(items.count());
         QCOMPARE(0, count);
 
         // Get the error map
-        QMap<int, QOrganizerItemManager::Error> errorMap(
+        QMap<int, QOrganizerManager::Error> errorMap(
             ((QOrganizerItemSaveRequest*)
                 (m_itemRequest))->errorMap());
         // Get the iterator to the error map
-        QMapIterator<int, QOrganizerItemManager::Error> iter(errorMap);
+        QMapIterator<int, QOrganizerManager::Error> iter(errorMap);
         // Compare the errors returned
         while (iter.hasNext()){
             // Advance the iterator to point to next item in the error map
@@ -743,21 +742,21 @@ void TestNoteItems::requestResultsAvailable_Negative()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }
     }
     break;
-    case QOrganizerItemAbstractRequest::ItemFetchRequest : {}
+    case QOrganizerAbstractRequest::ItemFetchRequest : {}
     break;
-    case QOrganizerItemAbstractRequest::ItemRemoveRequest : {}
+    case QOrganizerAbstractRequest::ItemRemoveRequest : {}
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest : {}
+    case QOrganizerAbstractRequest::DetailDefinitionSaveRequest : {}
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest : {}
+    case QOrganizerAbstractRequest::DetailDefinitionRemoveRequest : {}
     break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest : {}
+    case QOrganizerAbstractRequest::DetailDefinitionFetchRequest : {}
     break;
     }
 }

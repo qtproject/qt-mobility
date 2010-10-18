@@ -55,14 +55,14 @@
 #include "qorganizeritemdetaildefinitionremoverequest.h"
 #include "qorganizeritemdetaildefinitionsaverequest.h"
 
-#include "qorganizeriteminstancefetchrequest.h"
+#include "qorganizeritemoccurrencefetchrequest.h"
 #include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
+#include "qorganizeritemfetchforexportrequest.h"
+#include "qorganizeritemidfetchrequest.h"
 #include "qorganizeritemremoverequest.h"
 #include "qorganizeritemsaverequest.h"
 
 #include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionlocalidfetchrequest.h"
 #include "qorganizercollectionremoverequest.h"
 #include "qorganizercollectionsaverequest.h"
 

@@ -47,29 +47,36 @@
 
 #include <qmobilityglobal.h>
 #include "instancemanager_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(InstanceManager, typeRegister);
 
+/*!
+    \internal
+
+    Returns the instance manager for the service process
+*/
 InstanceManager* InstanceManager::instance()
 {
     return typeRegister();
 }
 
-InstanceManager::InstanceManager()
+InstanceManager::InstanceManager(QObject *parent)
+    : QObject(parent)
 {
 }
 
 InstanceManager::~InstanceManager()
 {
-    QList<QRemoteServiceIdentifier> allIdents = metaMap.keys();
-    while (!allIdents.isEmpty()) {
-        ServiceIdentDescriptor descr = metaMap.take(allIdents.takeFirst());
-        if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-            if (descr.sharedInstance)
-               descr.sharedInstance->deleteLater();
-            descr.sharedInstance = 0;
+    QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
+    while (!allEntries.isEmpty()) {
+        ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
+        if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
+            if (descr.globalInstance)
+               descr.globalInstance->deleteLater();
+            descr.globalInstance = 0;
         } else {
             QList<QUuid> allUuids = descr.individualInstances.keys();
             while (!allUuids.isEmpty()) {
@@ -80,76 +87,86 @@ InstanceManager::~InstanceManager()
 
 }
 
-bool InstanceManager::addType(const QMetaObject* meta,
-        QRemoteServiceClassRegister::CreateServiceFunc func, 
-        QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
-        QRemoteServiceClassRegister::InstanceType type)
+/*!
+    \internal
+    
+    Adds an entry to the map of service identifiers
+*/
+bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
 {
-    QRemoteServiceIdentifier ident = (*typeFunc)();
-
     QMutexLocker ml(&lock);
 
-    if (metaMap.contains(ident)) {
-        qWarning() << "Service" << ident.name << "(" << ident.iface << ", " << ident.version << ")"
-            << "already registered";
+    if (metaMap.contains(e)) {
+        qWarning() << "Service" << e.serviceName() << "(" << e.interfaceName()
+            << ", " << e.version() << ")" << "already registered";
     } else {
         ServiceIdentDescriptor d;
-        d.meta = meta;
-        d.create = func;
-        d.instanceType = type;
-        metaMap.insert(ident, d);
+        d.entryData = e.d;
+        metaMap.insert(e, d);
         return true;
     }
     return false;
 }
 
-const QMetaObject* InstanceManager::metaObject(const QRemoteServiceIdentifier& ident) const
+/*!
+    \internal
+
+    Returns the metaobject of a registered service object identified by its \a entry
+*/
+const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Entry& entry) const
 {
     QMutexLocker ml(&lock);
-    if (metaMap.contains(ident)) {
-        return metaMap[ident].meta;
+    if (metaMap.contains(entry)) {
+        return metaMap[entry].entryData->meta;
     } else {
         return 0;
     }
 }
 
-QList<QRemoteServiceIdentifier> InstanceManager::allIdents() const
+/*!
+   \internal
+
+   Returns a list of all the registered entries
+*/
+QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
 {
     QMutexLocker ml(&lock);
     return metaMap.keys();
 }
 
 /*!
+    \internal
+
     Instance manager takes ownership of service instance. Returns a null pointer
-    if \a ident cannot be mapped to a known meta object. \a instanceId will
-    contain the id for the new service instance.
+    if \a entry cannot be mapped to a known meta object. The \a instanceId will
+    contain the unique ID for the new service instance.
 */
-QObject* InstanceManager::createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId)
+QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId)
 {
     instanceId = QUuid();
     QMutexLocker ml(&lock);
-    if (!metaMap.contains(ident))
+    if (!metaMap.contains(entry))
         return 0;
 
     QObject* service = 0;
-    ServiceIdentDescriptor& descr = metaMap[ident];
+    ServiceIdentDescriptor& descr = metaMap[entry];
 
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-        if (descr.sharedInstance) {
-            service = descr.sharedInstance;
-            instanceId = descr.sharedId;
-            descr.sharedRefCount++;
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
+        if (descr.globalInstance) {
+            service = descr.globalInstance;
+            instanceId = descr.globalId;
+            descr.globalRefCount++;
         } else {
-            service = (*descr.create)();
+            service = (*descr.entryData->cptr)();
             if (!service)
                 return 0;
 
-            descr.sharedInstance = service;
-            descr.sharedId = instanceId = QUuid::createUuid();
-            descr.sharedRefCount = 1;
+            descr.globalInstance = service;
+            descr.globalId = instanceId = QUuid::createUuid();
+            descr.globalRefCount = 1;
         }
     } else {
-        service = (*descr.create)();
+        service = (*descr.entryData->cptr)();
         if (!service)
             return 0;
         instanceId = QUuid::createUuid();
@@ -160,25 +177,33 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceIdentifier& i
 }
 
 /*!
-    The associated service object will be deleted in the process.
+    \internal
+
+    The associated service object instance will be deleted in the service process.
+    Removes an instance with \a instanceId from a map of remote service descriptors
+    using the \a entry as the key.
+
+    Emits instanceClosed() and allInstancesClosed() if no more instances are open
 */
-void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId)
+void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId)
 {
     QMutexLocker ml(&lock);
-    if (!metaMap.contains(ident))
+    if (!metaMap.contains(entry))
         return;
-    ServiceIdentDescriptor& descr = metaMap[ident];
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-        if (descr.sharedRefCount < 1)
+
+    ServiceIdentDescriptor& descr = metaMap[entry];
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {        
+        if (descr.globalRefCount < 1)
             return;
-        if (descr.sharedRefCount == 1) {
-            if (descr.sharedInstance)
-                descr.sharedInstance->deleteLater();
-            descr.sharedInstance = 0;
-            descr.sharedId = QUuid();
-            descr.sharedRefCount = 0;
+
+        if (descr.globalRefCount == 1) {            
+            if (descr.globalInstance)
+                descr.globalInstance->deleteLater();
+            descr.globalInstance = 0;
+            descr.globalId = QUuid();
+            descr.globalRefCount = 0;
         } else {
-            descr.sharedRefCount--;
+            descr.globalRefCount--;
         }
     } else {
         QObject* service = descr.individualInstances.take(instanceId);
@@ -186,7 +211,33 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident
             service->deleteLater();
         }
     }
+    
+    emit instanceClosed(entry);
+
+    // Check that no instances are open
+    if (totalInstances() < 1)
+        emit allInstancesClosed();
 }
 
+/*!
+    \internal
+
+    Provides a count of how many global and private instances are currently open
+*/
+int InstanceManager::totalInstances() const
+{
+    int total = 0;
+
+    QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
+    foreach (const QRemoteServiceRegister::Entry& entry, allEntries) {
+        ServiceIdentDescriptor descr = metaMap[entry];
+        total += descr.globalRefCount;
+        total += descr.individualInstances.size();
+    }
+   
+    return total;
+}
+
+#include "moc_instancemanager_p.cpp"
 
 QTM_END_NAMESPACE

@@ -51,6 +51,10 @@
 
 int main(int argc, char *argv[])
 {
+#if defined (Q_OS_SYMBIAN)
+    QApplication::setGraphicsSystem("raster");
+#endif
+
     QApplication app(argc, argv);
 
     Camera camera;

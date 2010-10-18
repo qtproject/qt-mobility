@@ -44,9 +44,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "databasemanagerserver.h"
+#include "databasemanagerserver_p.h"
 #include "clientservercommon.h"
-#include "databasemanagersession.h"
+#include "databasemanagersession_p.h"
 #include "servicedatabase_p.h"
 
 #include <QFileSystemWatcher>
@@ -231,5 +231,5 @@ void DatabaseManagerServerSignalHandler::importChanged(const QString& path)
 QTM_END_NAMESPACE
 
 
-#include "moc_databasemanagerserver.cpp"
+#include "moc_databasemanagerserver_p.cpp"
 // End of File

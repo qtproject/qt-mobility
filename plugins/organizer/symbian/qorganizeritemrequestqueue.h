@@ -58,7 +58,7 @@
 #include "organizeritemrequestserviceprovider.h"
 
 // Forward declarations
-//class QOrganizerItemAbstractRequest;
+//class QOrganizerAbstractRequest;
 class QOrganizerItemSymbianEngine;
 
 class QOrganizerItemRequestQueue : public QObject
@@ -71,13 +71,13 @@ public:
     // Destructor
     ~QOrganizerItemRequestQueue();
     // To start req request
-    bool startRequest(QOrganizerItemAbstractRequest* req);
+    bool startRequest(QOrganizerAbstractRequest* req);
     // To cancel req request
-    bool cancelRequest(QOrganizerItemAbstractRequest* req);
+    bool cancelRequest(QOrganizerAbstractRequest* req);
     // Wait for request to complete 
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs);
     // Request is no more a valid request, removes req from the queue
-    void requestDestroyed(QOrganizerItemAbstractRequest* req);
+    void requestDestroyed(QOrganizerAbstractRequest* req);
 
 private:
     QOrganizerItemRequestQueue(
@@ -85,7 +85,7 @@ private:
 
 private:
     QOrganizerItemSymbianEngine&                m_organizerItemManagerEngine;
-    QMap<QOrganizerItemAbstractRequest*, COrganizerItemRequestsServiceProvider*>m_abstractRequestMap;
+    QMap<QOrganizerAbstractRequest*, COrganizerItemRequestsServiceProvider*>m_abstractRequestMap;
 };
 
 #endif /* QORGANIZERITEMREQUESTQUEUE_H_ */

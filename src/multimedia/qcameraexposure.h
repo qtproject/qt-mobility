@@ -58,9 +58,9 @@ class QCameraExposurePrivate;
 class Q_MULTIMEDIA_EXPORT QCameraExposure : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
-    Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
-    Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
+    Q_PROPERTY(qreal aperture READ aperture NOTIFY apertureChanged)
+    Q_PROPERTY(qreal shutterSpeed READ shutterSpeed NOTIFY shutterSpeedChanged)
+    Q_PROPERTY(int isoSensitivity READ isoSensitivity NOTIFY isoSensitivityChanged)
     Q_PROPERTY(qreal exposureCompensation READ exposureCompensation WRITE setExposureCompensation NOTIFY exposureCompensationChanged)
     Q_PROPERTY(bool flashReady READ isFlashReady NOTIFY flashReady)
     Q_PROPERTY(QCameraExposure::FlashModes flashMode READ flashMode WRITE setFlashMode)

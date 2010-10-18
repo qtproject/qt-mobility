@@ -50,15 +50,15 @@
 #include "qorganizeritemid.h"
 #include "qorganizercollectionid.h"
 
-QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
+QOrganizerItemFilter QDeclarativeOrganizerItemIdFilter::filter() const
 {
-    QOrganizerItemLocalIdFilter f;
-    QList<QOrganizerItemLocalId> ids;
+    QOrganizerItemIdFilter f;
+    QList<QOrganizerItemId> ids;
 
     foreach(const QVariant& id, m_ids) {
         QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(id.value<uint>());
-        if (!itemId.localId().isNull())
-            ids << itemId.localId();
+        if (!itemId.isNull())
+            ids << itemId;
     }
 
     f.setIds(ids);
@@ -67,12 +67,12 @@ QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
 QOrganizerItemFilter QDeclarativeOrganizerItemCollectionFilter::filter() const
 {
     QOrganizerItemCollectionFilter f;
-    QSet<QOrganizerCollectionLocalId> ids;
+    QSet<QOrganizerCollectionId> ids;
 
     foreach(const QVariant& id, m_ids) {
         QOrganizerCollectionId cId = QDeclarativeOrganizerModel::collectionIdFromHash(id.value<uint>());
-        if (!cId.localId().isNull())
-            ids << cId.localId();
+        if (!cId.isNull())
+            ids << cId;
     }
 
     f.setCollectionIds(ids);

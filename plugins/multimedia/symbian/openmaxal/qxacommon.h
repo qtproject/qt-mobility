@@ -174,24 +174,35 @@
         }
 
 /* This macro checks p pointer for null. If it is, emits an error signal
- * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
+ * error(QMediaPlayer::ResourceError, tr("Resource Error"));
  * and returns value 's' from function immediately.
  */
 #define RET_s_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p, s) \
     if (p == NULL) { \
-        emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
-        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ServiceMissingError, tr(\"Service has not been started\"))"); \
+        emit error(QMediaPlayer::ResourceError, tr("Resource Error")); \
+        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ResourceError, tr(\"Resource Error\"))"); \
         return s; \
         }
 
 /* This macro checks p pointer for null. If it is, emits an error signal
- * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
+ * error(QMediaPlayer::ResourceError, tr("Resource Error"));
  * and returns from function immediately.
  */
 #define RET_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p) \
     if (p == NULL) { \
-        emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
-        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ServiceMissingError, tr(\"Service has not been started\"))"); \
+        emit error(QMediaPlayer::ResourceError, tr("Resource Error")); \
+        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ResourceError, tr(\"Resource Error\"))"); \
+        return; \
+        }
+
+/* This macro checks p pointer for null. If it is, emits an error signal
+ * error(QMediaPlayer::ResourceError, tr("Resource Error"));
+ * and returns from function immediately.
+ */
+#define RET_IF_ERROR(p) \
+    if (p != KErrNone) { \
+        emit error(QMediaPlayer::ResourceError, tr("Resource Error")); \
+        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ResourceError, tr(\"Resource Error\"))"); \
         return; \
         }
 

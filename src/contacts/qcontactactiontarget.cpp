@@ -207,4 +207,40 @@ uint qHash(const QContactActionTarget& key)
     return ret;
 }
 
+#ifndef QT_NO_DATASTREAM
+/*! Streams the given \a target to the datastream \a out */
+QDataStream& operator<<(QDataStream& out, const QContactActionTarget& target)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactActionTarget
+    out << formatVersion;
+    out << target.d->m_contact;
+    out << target.d->m_details;
+    return out;
+}
+
+/*! Streams \a target in from the datastream \a in */
+QDataStream& operator>>(QDataStream& in, QContactActionTarget& target)
+{
+    QContactActionTarget retn;
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        in >> retn.d->m_contact;
+        in >> retn.d->m_details;
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    target = retn;
+    return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug& operator<<(QDebug dbg, const QContactActionTarget& target)
+{
+    dbg.nospace() << "QContactActionTarget(" << target.contact() << target.details() << ')';
+    return dbg.maybeSpace();
+}
+#endif
+
 QTM_END_NAMESPACE

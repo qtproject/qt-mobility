@@ -73,11 +73,11 @@ namespace OrganizerSymbianUtils
     QDateTime toQDateTimeL(const TCalTime &calTime);
     TTime toTTime(const QDateTime &dateTime, Qt::TimeSpec timeSpec);
     QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec);
-    QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId);
-    QOrganizerItemLocalId toItemLocalId(quint64 collectionId, quint32 itemId);
-    TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId);
-    quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId);
-    QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId);
+    QOrganizerCollectionId toCollectionId(quint64 collectionId);
+    QOrganizerItemId toItemId(quint64 collectionId, quint32 itemId);
+    TCalLocalUid toTCalLocalUid(const QOrganizerItemId& itemId);
+    quint64 toTCalCollectionId(const QOrganizerItemId& itemId);
+    QOrganizerCollectionId getCollectionId(const QOrganizerItemId& itemId);
 #ifdef SYMBIAN_CALENDAR_V2
     
     template<typename T>

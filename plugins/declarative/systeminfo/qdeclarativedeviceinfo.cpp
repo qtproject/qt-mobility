@@ -49,6 +49,7 @@
 #include "qdeclarativedeviceinfo_p.h"
 #include "qsystemdeviceinfo.h"
 #include <QMetaType>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -126,7 +127,7 @@ QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
 void QDeclarativeDeviceInfo::startBatteryLevelChanged()
 {
     connect(deviceInfo(),SIGNAL(batteryLevelChanged(int)),
-            this,SLOT(declarativeBatteryLevelChanged(int)));
+            this,SLOT(declarativeBatteryLevelChanged(int)),Qt::UniqueConnection);
 }
 
 /*!
@@ -138,7 +139,7 @@ void QDeclarativeDeviceInfo::startBatteryLevelChanged()
 void QDeclarativeDeviceInfo::startBatteryStatusChanged()
 {
     connect(deviceInfo(),SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SLOT(declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+            this,SLOT(declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),Qt::UniqueConnection);
 }
 
 /*!
@@ -149,8 +150,10 @@ void QDeclarativeDeviceInfo::startBatteryStatusChanged()
 */
 void QDeclarativeDeviceInfo::startPowerStateChanged()
 {
+    qDebug() << Q_FUNC_INFO;
+
     connect(deviceInfo(),SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SLOT(declarativePowerStateChanged(QSystemDeviceInfo::PowerState)));
+            this,SLOT(declarativePowerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
 }
 
 /*!
@@ -162,7 +165,7 @@ void QDeclarativeDeviceInfo::startPowerStateChanged()
 void QDeclarativeDeviceInfo::startCurrentProfileChanged()
 {
     connect(deviceInfo(),SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this,SLOT(declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile)));
+            this,SLOT(declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile)),Qt::UniqueConnection);
 }
 
 /*!
@@ -174,7 +177,7 @@ void QDeclarativeDeviceInfo::startCurrentProfileChanged()
 void QDeclarativeDeviceInfo::startBluetoothStateChanged()
 {
     connect(deviceInfo(),SIGNAL(bluetoothStateChanged(bool)),
-            this,SLOT(declarativeBluetoothStateChanged(bool)));
+            this,SLOT(declarativeBluetoothStateChanged(bool)),Qt::UniqueConnection);
 }
 
 /*!

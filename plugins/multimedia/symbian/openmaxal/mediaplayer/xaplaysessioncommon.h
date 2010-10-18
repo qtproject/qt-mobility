@@ -56,7 +56,7 @@ public:
     virtual void cbDurationChanged(TInt64 new_dur) = 0;
     virtual void cbPositionChanged(TInt64 new_pos) = 0;
     virtual void cbSeekableChanged(TBool seekable) = 0;
-    virtual void cbPlaybackStopped_EOS() = 0;
+    virtual void cbPlaybackStopped(TInt error) = 0;
     virtual void cbPrefetchStatusChanged() = 0;
     virtual void cbStreamInformation(TBool bFirstTime) = 0;
   };

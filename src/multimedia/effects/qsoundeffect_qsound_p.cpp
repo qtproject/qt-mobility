@@ -60,6 +60,7 @@
 
 #include <QtCore/qcoreapplication.h>
 #include <QtGui/qsound.h>
+#include <QtCore/qstringlist.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -71,10 +72,19 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_volume(100),
     m_sound(0)
 {
+    if (!QSound::isAvailable())
+        qWarning("SoundEffect(qsound) : not available");
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
 {
+}
+
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    QStringList supportedTypes;
+    supportedTypes << QLatin1String("audio/x-wav") << QLatin1String("audio/vnd.wave") ;
+    return supportedTypes;
 }
 
 QUrl QSoundEffectPrivate::source() const
@@ -129,9 +139,19 @@ void QSoundEffectPrivate::setMuted(bool muted)
     m_muted = muted;
 }
 
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return true;
+}
+
 void QSoundEffectPrivate::play()
 {
     m_sound->play();
+}
+
+void QSoundEffectPrivate::stop()
+{
+    m_sound->stop();
 }
 
 QT_END_NAMESPACE

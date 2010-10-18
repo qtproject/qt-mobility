@@ -48,6 +48,7 @@
 #ifndef QORGANIZERITEMID_H
 #define QORGANIZERITEMID_H
 
+#include <QMap>
 #include <QString>
 #include <QSharedDataPointer>
 
@@ -58,60 +59,24 @@ class QDataStream;
 QTM_BEGIN_NAMESPACE
 
 // MSVC needs the function declared before the friend declaration
-class QOrganizerItemLocalId;
 class QOrganizerItemId;
-Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemLocalId& key);
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemId& key);
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& itemId);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& itemId);
+#endif
 #ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
 #endif
-#ifndef QT_NO_DATASTREAM
-Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
-Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id);
-Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
-#endif
 
-class QOrganizerItemManagerEngine;
-class QOrganizerItemEngineLocalId;
+class QOrganizerManagerEngine;
+class QOrganizerItemEngineId;
 
-class QOrganizerItemId;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalId
-{
-public:
-    QOrganizerItemLocalId();
-    explicit QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineId);
-
-    ~QOrganizerItemLocalId();
-
-    QOrganizerItemLocalId(const QOrganizerItemLocalId& other);
-    QOrganizerItemLocalId& operator=(const QOrganizerItemLocalId& other);
-
-    bool operator==(const QOrganizerItemLocalId& other) const;
-    bool operator!=(const QOrganizerItemLocalId& other) const;
-    bool operator<(const QOrganizerItemLocalId& other) const;
-
-    bool isNull() const;
-
-private:
-    QOrganizerItemEngineLocalId* d;
-
-#ifndef QT_NO_DEBUG_STREAM
-    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
-#endif
-#ifndef QT_NO_DATASTREAM
-    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
-    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
-#endif
-    Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemLocalId& key);
-    friend class QOrganizerItemManagerEngine;
-};
-
-class QOrganizerItemIdPrivate;
 class Q_ORGANIZER_EXPORT QOrganizerItemId
 {
 public:
     QOrganizerItemId();
+    explicit QOrganizerItemId(QOrganizerItemEngineId* engineId);
     ~QOrganizerItemId();
 
     QOrganizerItemId(const QOrganizerItemId& other);
@@ -124,22 +89,24 @@ public:
     bool isNull() const;
 
     QString managerUri() const;
-    QOrganizerItemLocalId localId() const;
 
-    void setManagerUri(const QString& uri);
-    void setLocalId(const QOrganizerItemLocalId& id);
+    QString toString() const;
+    static QOrganizerItemId fromString(const QString& idString);
 
 private:
-    QSharedDataPointer<QOrganizerItemIdPrivate> d;
+    QSharedDataPointer<QOrganizerItemEngineId> d;
+
+#ifndef QT_NO_DEBUG_STREAM
+    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
+#endif
+    Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemId& key);
+    friend class QOrganizerManagerEngine;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId), Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemId), Q_MOVABLE_TYPE);
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId));
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemId));
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemId))
 
 
 #endif

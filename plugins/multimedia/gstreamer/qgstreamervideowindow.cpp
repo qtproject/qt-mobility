@@ -71,6 +71,7 @@ QGstreamerVideoWindow::QGstreamerVideoWindow(QObject *parent, const char *elemen
     , m_windowId(0)
     , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_fullScreen(false)
+    , m_colorKey(QColor::Invalid)
 {
     if (elementName)
         m_videoSink = gst_element_factory_make(elementName, NULL);
@@ -179,6 +180,15 @@ void QGstreamerVideoWindow::repaint()
 
 QColor QGstreamerVideoWindow::colorKey() const
 {
+    if (!m_colorKey.isValid()) {
+        gint colorkey = 0;
+        if (m_videoSink && g_object_class_find_property(G_OBJECT_GET_CLASS(m_videoSink), "colorkey"))
+            g_object_get(G_OBJECT(m_videoSink), "colorkey", &colorkey, NULL);
+
+        if (colorkey > 0)
+            m_colorKey.setRgb(colorkey);
+    }
+
     return m_colorKey;
 }
 
@@ -187,7 +197,7 @@ void QGstreamerVideoWindow::setColorKey(const QColor &color)
     m_colorKey = color;
 
     if (m_videoSink && g_object_class_find_property(G_OBJECT_GET_CLASS(m_videoSink), "colorkey"))
-        g_object_set(G_OBJECT(m_videoSink), "colorkey", m_colorKey.rgb(), NULL);
+        g_object_set(G_OBJECT(m_videoSink), "colorkey", color.rgba(), NULL);
 }
 
 bool QGstreamerVideoWindow::autopaintColorKey() const

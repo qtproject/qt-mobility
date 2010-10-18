@@ -47,7 +47,15 @@
 
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetail_p.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
+#include "qorganizeritemrecurrence.h" //customized operator==() for recurrence detail
+
+// reminders need to be included for isEmpty() check.
+#include "qorganizeritemreminder.h"
+#include "qorganizeritemaudiblereminder.h"
+#include "qorganizeritememailreminder.h"
+#include "qorganizeritemvisualreminder.h"
+
 #include <QDebug>
 #include <QDataStream>
 
@@ -72,7 +80,7 @@ static int qClearAllocatedStringHash()
     QOrganizerItemStringHolder::s_qstrings.clear();
     return 1;
 }
-Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
+Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 
 /*!
   \class QOrganizerItemDetail
@@ -95,19 +103,19 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   as 8-bit strings encoded in Latin 1 for memory conservation.  Note, however, that the values stored
   in each field are not constrained in this way, and full unicode QStrings or QVariant data can be stored.
 
-  When a QOrganizerItemDetail has been retrieved in a QOrganizerItem from a QOrganizerItemManager, it may have certain
+  When a QOrganizerItemDetail has been retrieved in a QOrganizerItem from a QOrganizerManager, it may have certain
   access constraints provided with it, like \l ReadOnly or \l Irremovable.  This might mean that the
   supplied detail is calculated or otherwise not modifiable by the user.
   Also, some details may be marked \l Irremovable.  These are typically things that
   an organizer item has to have - like a QOrganizerItemType.
 
   It is possible to inherit from QOrganizerItemDetail to provide convenience or
-  standardized access to values.  For example, \l QOrganizerEventTimeRange provides
+  standardized access to values.  For example, \l QOrganizerEventTime provides
   a convenient API for manipulating a QOrganizerItemDetail to describe the start and end time
   of an event, according to the schema.
 
-  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerEventTimeRange) provide
-  constants for the names of fields (like \l QOrganizerEventTimeRange::FieldStartDateTime).
+  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerEventTime) provide
+  constants for the names of fields (like \l QOrganizerEventTime::FieldStartDateTime).
   Typically the constants for field names start with \c Field, and the constants for predefined values
     of a field start with the name of that field
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
@@ -115,7 +123,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   If you wish to create your own, customized organizer item detail, you should use
   the \l Q_DECLARE_CUSTOM_ORGANIZER_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
-  See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
+  See the predefined detail subclasses (like \l QOrganizerEventTime,
   \l QOrganizerItemType) for more information.
 
   QOrganizerItemDetail objects act like type checked values.  In general, you can assign them
@@ -303,7 +311,7 @@ QOrganizerItemDetail::~QOrganizerItemDetail()
 
 /*!
     Returns the (unique) name of the definition which defines the semantics and structure of this detail.
-    The actual QOrganizerItemDetailDefinition should be retrieved from the relevant QOrganizerItemManager using this name.
+    The actual QOrganizerItemDetailDefinition should be retrieved from the relevant QOrganizerManager using this name.
  */
 QString QOrganizerItemDetail::definitionName() const
 {
@@ -322,6 +330,11 @@ bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
 
     if (d.constData()->m_access != other.d.constData()->m_access)
         return false;
+
+    // QVariant doesn't support == on QOrganizerItemRecurrence - do it manually
+    if (d.constData()->m_definitionName == QOrganizerItemRecurrence::DefinitionName) {
+        return static_cast<QOrganizerItemRecurrence>(*this) == static_cast<QOrganizerItemRecurrence>(other);
+    }
 
     if (d.constData()->m_values != other.d.constData()->m_values)
         return false;
@@ -422,9 +435,20 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail)
  */
 bool QOrganizerItemDetail::isEmpty() const
 {
-    if (!d.constData()->m_values.isEmpty())
-        return false;
-    return true;
+    if (d.constData()->m_values.isEmpty())
+        return true;
+
+    // reminders always have a single field value (the type)
+    if (d.constData()->m_definitionName == QOrganizerItemReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemAudibleReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemEmailReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemVisualReminder::DefinitionName) {
+        if (d.constData()->m_values.count() == 1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*! Returns the key of this detail. */

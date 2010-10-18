@@ -244,6 +244,42 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
     }
 }
 
+/*!
+\fn void QGeoMapRectangleObject::topLeftChanged(const QGeoCoordinate &topLeft)
+
+    This signal is emitted when the top left coordinate of this rectangle 
+    object has changed.
+
+    The new value is \a topLeft.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::bottomRightChanged(const QGeoCoordinate &bottomRight)
+
+    This signal is emitted when the bottom right coordinate of this rectangle 
+    object has changed.
+
+    The new value is \a bottomRight.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the perimeter of this 
+    rectangle object has changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::brushChanged(const QBrush &brush)
+
+    This signal is emitted when the brush used to fill in the interior of 
+    this rectangle object has changed.
+
+    The new value is \a brush.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 

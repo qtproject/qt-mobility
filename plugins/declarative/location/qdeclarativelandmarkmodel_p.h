@@ -87,7 +87,7 @@ public:
         NoOrder = Qt::DescendingOrder + 1
     };
     enum SortKey {
-        NoSort = QLandmarkSortOrder::DefaultSort,
+        NoSort = QLandmarkSortOrder::NoSort,
         NameSort = QLandmarkSortOrder::NameSort
     };
 

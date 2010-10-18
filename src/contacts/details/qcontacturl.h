@@ -65,12 +65,14 @@ public:
     static const QLatin1Constant FieldUrl;
     static const QLatin1Constant FieldSubType;
     static const QLatin1Constant SubTypeHomePage;
+    static const QLatin1Constant SubTypeBlog;
     static const QLatin1Constant SubTypeFavourite;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
     Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");
     Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeHomePage, "HomePage");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeBlog, "Blog");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeFavourite, "Favourite");
 #endif
 

@@ -45,6 +45,9 @@
 **
 ****************************************************************************/
 
+#ifndef AUDIOOUTPUT_H
+#define AUDIOOUTPUT_H
+
 #include <math.h>
 
 #include <QObject>
@@ -121,4 +124,6 @@ private slots:
     void stateChanged(QAudio::State state);
     void deviceChanged(int index);
 };
+
+#endif
 

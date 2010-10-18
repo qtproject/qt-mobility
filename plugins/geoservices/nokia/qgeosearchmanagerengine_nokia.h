@@ -55,6 +55,8 @@
 #ifndef QGEOSEARCHMANAGER_NOKIA_H
 #define QGEOSEARCHMANAGER_NOKIA_H
 
+#include "qgeoserviceproviderplugin_nokia.h"
+
 #include <qgeoserviceprovider.h>
 #include <qgeosearchmanagerengine.h>
 
@@ -95,8 +97,8 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
-    QString m_referer;
     QString m_token;
+    QString m_referer;
 };
 
 #endif

@@ -75,6 +75,7 @@ public:
     TInt updateNativeDisplay(RWindow* window, RWsSession* wssession);
     TInt removeNativeDisplay(RWindow* window, RWsSession* wssession);
     TInt load(const TDesC& aURI);
+    void unload();
     TInt play();
     TInt pause();
     TInt stop();
@@ -203,6 +204,8 @@ private:
     //internal
     TInt64  mCurPosition; // in milliseconds
     TInt64  mDuration; // in milliseconds
+    
+    TBool   mbMediaPlayerUnrealized;
 #ifdef USE_VIDEOPLAYERUTILITY
     CVideoPlayerUtility2* mVideoPlayUtil;
     CActiveSchedulerWait* mActiveSchedulerWait;

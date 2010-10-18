@@ -314,20 +314,25 @@ void CameraBinSession::setupCaptureResolution()
         //it's also necessary to setup video resolution,
         //which is used for viewfinder
 
-        QSize viewfinderResolution(640, 480);
-        int viewfinderRate = 2993;
-        if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
-            viewfinderResolution = QSize(800, 450);
-            viewfinderRate = 2988;
-        }
+        if (m_inputDevice != QLatin1String("/dev/video1")) {
+            //this is necessary to set only for the mail camera,
+            //not for face one.
 
-        g_signal_emit_by_name(G_OBJECT(m_pipeline),
-                              SET_VIDEO_RESOLUTION_FPS,
-                              viewfinderResolution.width(),
-                              viewfinderResolution.height(),
-                              viewfinderRate,
-                              100, // framerate denom
-                              NULL);
+            QSize viewfinderResolution(640, 480);
+            int viewfinderRate = 2993;
+            if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
+                viewfinderResolution = QSize(800, 450);
+                viewfinderRate = 2988;
+            }
+
+            g_signal_emit_by_name(G_OBJECT(m_pipeline),
+                                  SET_VIDEO_RESOLUTION_FPS,
+                                  viewfinderResolution.width(),
+                                  viewfinderResolution.height(),
+                                  viewfinderRate,
+                                  100, // framerate denom
+                                  NULL);
+        }
 #endif
     }
 
@@ -775,19 +780,38 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
             GError *err;
             gchar *debug;
             gst_message_parse_error (gm, &err, &debug);
-            emit error(int(QMediaRecorder::ResourceError), QString::fromUtf8(err->message));
-            qWarning() << "CameraBin error:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+
+            QString message;
+
+            if (err && err->message) {
+                message = QString::fromUtf8(err->message);
+                qWarning() << "CameraBin error:" << message;
+            }
+
+            if (message.isEmpty())
+                message = tr("Camera error");
+
+            emit error(int(QMediaRecorder::ResourceError), message);
+
+            if (err)
+                g_error_free (err);
+
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
             GError *err;
             gchar *debug;
             gst_message_parse_warning (gm, &err, &debug);
-            qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+
+            if (err && err->message)
+                qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
+
+            if (err)
+                g_error_free (err);
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {

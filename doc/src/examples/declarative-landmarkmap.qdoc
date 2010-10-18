@@ -49,11 +49,13 @@
     \example declarative-location/landmarkmap
     \title Landmark Map Example
 
+    \image landmarkmap1.png
+
     This example demonstrates the basic use of Landmark QML elements.
     
-    The example incorporates usage of Map -element, but the main focus is on illustrating
-    basic use-cases of Landmarks and Categories (for a proper Map example, please see
-    \l {declarative-location/mapviewer} ).
+    The example incorporates usage of the Map element, but the main focus
+    is on illustrating basic use-cases of Landmarks and Categories (for a
+    proper Map example, please see \l {declarative-location/mapviewer} ).
     
     Draggable 'My location' item shows the current location, number of landmarks
     in the current map area, as well as number of categories . 

@@ -129,7 +129,7 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
 */
 
 /*!
-    Returns a new QGeoMapData instance for \a geoMap, which will be managed by
+    Returns a new QGeoMapData instance which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about
@@ -145,9 +145,9 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     free to override this function to return subclasses of QGeoTiledMapData in
     order to customize the map.
 */
-QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
+QGeoMapData* QGeoTiledMappingManagerEngine::createMapData()
 {
-    return new QGeoTiledMapData(this, geoMap);
+    return new QGeoTiledMapData(this);
 }
 
 /*!

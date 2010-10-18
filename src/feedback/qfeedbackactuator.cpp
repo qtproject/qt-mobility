@@ -112,11 +112,13 @@ QTM_BEGIN_NAMESPACE
 
     \sa isValid()
 */
-QFeedbackActuator::QFeedbackActuator() : m_id(-1)
+QFeedbackActuator::QFeedbackActuator(QObject *parent) : QObject(parent), m_id(-1)
 {
-    QList<QFeedbackActuator> list = actuators();
-    if  (!list.isEmpty())
-        *this = list.first();
+    QList<QFeedbackActuator*> list = actuators();
+    if  (!list.isEmpty()) {
+        QFeedbackActuator* defaultActuator = list.first();
+        m_id = defaultActuator->id();
+    }
 }
 
 /*!
@@ -126,7 +128,7 @@ QFeedbackActuator::QFeedbackActuator() : m_id(-1)
 
     \sa isValid()
 */
-QFeedbackActuator::QFeedbackActuator(int id) : m_id(id)
+QFeedbackActuator::QFeedbackActuator(QObject *parent, int id) : QObject(parent), m_id(id)
 {
 }
 
@@ -174,7 +176,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 /*!
     \fn QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
-    returns if the actuator supports the capability capability.
+    returns if the actuator supports the supplied \a capability.
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
@@ -198,7 +200,10 @@ bool QFeedbackActuator::isEnabled() const
 */
 void QFeedbackActuator::setEnabled(bool enabled)
 {
-    QFeedbackHapticsInterface::instance()->setActuatorProperty(*this, QFeedbackHapticsInterface::Enabled, enabled);
+    if (isEnabled() != enabled) {
+        QFeedbackHapticsInterface::instance()->setActuatorProperty(*this, QFeedbackHapticsInterface::Enabled, enabled);
+        emit enabledChanged();
+    }
 }
 
 /*!
@@ -206,7 +211,7 @@ void QFeedbackActuator::setEnabled(bool enabled)
 
     returns the list of actuators available on the system.
 */
-QList<QFeedbackActuator> QFeedbackActuator::actuators()
+QList<QFeedbackActuator*> QFeedbackActuator::actuators()
 {
     return QFeedbackHapticsInterface::instance()->actuators();
 }
@@ -214,7 +219,7 @@ QList<QFeedbackActuator> QFeedbackActuator::actuators()
 /*!
     \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 
-    returns true if the actuators are the same
+    Returns true if this actuator is equal to \a other.
 */
 bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 {

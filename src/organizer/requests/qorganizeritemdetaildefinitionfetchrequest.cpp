@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new detail definition fetch request whose parent is the specified \a parent */
 QOrganizerItemDetailDefinitionFetchRequest::QOrganizerItemDetailDefinitionFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemDetailDefinitionFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionFetchRequestPrivate, parent)
 {
 }
 
@@ -121,7 +121,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetc
 }
 
 /*! Returns the map of input name list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionFetchRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionFetchRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
     return d->m_errors;

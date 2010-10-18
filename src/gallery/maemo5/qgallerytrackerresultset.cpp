@@ -72,7 +72,7 @@ void QGalleryTrackerResultSetPrivate::update()
         (*it)->commit();
     edits.clear();
 
-    if (!(flags & (Active | Cancelled))) {
+    if (!(flags & (Active | Canceled))) {
         query();
 
         flags &= ~Refresh;
@@ -134,7 +134,7 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
         flags &= ~Active;
 
         q_func()->finish(QDocumentGallery::ConnectionError);
-    } else if (flags & Cancelled) {
+    } else if (flags & Canceled) {
         iCache.count = 0;
 
         flags &= ~Active;
@@ -540,7 +540,7 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
             emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
         q_func()->finish(flags & Live);
-    } else if (flags & Cancelled) {
+    } else if (flags & Canceled) {
         iCache.count = 0;
 
         flags &= ~Active;
@@ -756,7 +756,7 @@ bool QGalleryTrackerResultSet::setMetaData(int, const QVariant &)
 
 void QGalleryTrackerResultSet::cancel()
 {
-    d_func()->flags |= QGalleryTrackerResultSetPrivate::Cancelled;
+    d_func()->flags |= QGalleryTrackerResultSetPrivate::Canceled;
     d_func()->flags &= ~QGalleryTrackerResultSetPrivate::Live;
 
     if (!(d_func()->flags &QGalleryTrackerResultSetPrivate::Active))

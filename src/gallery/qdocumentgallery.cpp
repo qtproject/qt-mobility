@@ -60,7 +60,83 @@ QTM_BEGIN_NAMESPACE
 
     \inmodule QtGallery
 
-    \brief The QDocumentGallery class provides a gallery of documents.
+    \brief The QDocumentGallery class provides access to a gallery of documents
+    and media present on a device.
+
+    \section2 Requests
+
+    Requests are the interface through which queries and actions are executed
+    against a QDocumentGallery.
+
+    \list
+
+    \o QGalleryQueryRequest can be used with QDocumentGallery to find and
+    navigate items present on a device.
+
+    \o QGalleryItemRequest provides an API to query information about a single
+    item in a QDocumentGallery.
+
+    \o QGalleryTypeRequest provides a query for information about an item type
+    supported by QDocumentGallery.
+
+    \endlist
+
+    \section2 Item types
+
+    The items present in a QDocumentGallery can be of both file type such as
+    documents and media, or categorical type such as genres or albums.
+
+    \section3 File types
+
+    \list
+    \o \l File
+    \o \l Folder
+    \o \l Document
+    \o \l Text
+    \o \l Audio
+    \o \l Image
+    \o \l Video
+    \o \l Playlist
+    \endlist
+
+    \section3 Categorical types
+
+    \list
+    \o \l Artist
+    \o \l AlbumArtist
+    \o \l Album
+    \o \l AudioGenre
+    \o \l PhotoAlbum
+    \endlist
+
+    \section2 Properties
+
+    The item meta-data stored in a QDocumentGallery is addressed through
+    properties.
+
+    The set of properties addressable differs between item type but some
+    properties are shared by most types.
+
+    \section3 Common item properties
+
+    \list
+    \o \l author
+    \o \l comments
+    \o \l copyright
+    \o \l description
+    \o \l keywords
+    \o \l language
+    \o \l rating
+    \o \l subject
+    \o \l title
+    \o \l url
+    \endlist
+
+    \section3 Common type properties
+
+    \list
+    \o \l count
+    \endlist
 */
 
 /*!
@@ -80,105 +156,250 @@ QTM_BEGIN_NAMESPACE
     \variable QDocumentGallery::File
 
     This type matches all files in the document gallery.
+
+    Properties typically available from files include:
+
+    \list
+    \o \l fileExtension
+    \o \l fileName
+    \o \l filePath
+    \o \l fileSize
+    \o \l lastModified
+    \o \l lastAccessed
+    \o \l mimeType
+    \o \l path
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::File("File");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, File)
 
 /*!
     \variable QDocumentGallery::Folder
 
     This type matches all file-system folders in the document gallery.
+
+    In addition to the properties derived from the \l File type folders may
+    also provide:
+
 */
 
-const QGalleryType QDocumentGallery::Folder("Folder");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Folder)
 
 /*!
     \variable QDocumentGallery::Document
 
     This type matches all document files in the document gallery.
+
+    In addition to the properties derived from the \l File type documents may
+    also provide:
+
+    \list
+    \o \l created
+    \o \l pageCount
+    \o \l wordCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Document("Document");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Document)
 
 /*!
     \variable QDocumentGallery::Text
 
     This type matches all text files in the document gallery.
+
+    In addition to the properties derived from the \l File type text files may
+    also provide:
+
+    \list
+    \o \l wordCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Text("Text");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Text)
 
 /*!
     \variable QDocumentGallery::Audio
 
     This type matches all audio files in the document gallery.
+
+    In addition to the properties derived from the \l File type audio files may
+    also provide:
+
+    \list
+    \o \l albumArtist
+    \o \l albumTitle
+    \o \l artist
+    \o \l audioBitRate
+    \o \l audioCodec
+    \o \l channelCount
+    \o \l composer
+    \o \l discNumber
+    \o \l genre
+    \o \l duration
+    \o \l lastPlayed
+    \o \l lyrics
+    \o \l performer
+    \o \l playCount
+    \o \l producer
+    \o \l sampleRate
+    \o \l trackNumber
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Audio("Audio");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Audio)
 
 /*!
     \variable QDocumentGallery::Image
 
     This type matches all image files in the document gallery.
+
+    In addition to the properties derived from the \l File type video files may
+    also provide:
+
+    \list
+    \o \l cameraManufacturer
+    \o \l cameraModel
+    \o \l dateTaken
+    \o \l exposureProgram
+    \o \l exposureTime
+    \o \l flashEnabled
+    \o \l fNumber
+    \o \l focalLength
+    \o \l height
+    \o \l meteringMode
+    \o \l orientation
+    \o \l width
+    \o \l whiteBalance
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Image("Image");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Image)
 
 /*!
     \variable QDocumentGallery::Video
 
     This type matches all video files in the document gallery.
+
+    In addition to the properties derived from the \l File type video files may
+    also provide:
+
+    \list
+    \o \l audioBitRate
+    \o \l audioCodec
+    \o \l channelCount
+    \o \l director
+    \o \l duration
+    \o \l frameRate
+    \o \l height
+    \o \l lastPlayed
+    \o \l performer
+    \o \l playCount
+    \o \l producer
+    \o \l resumePosition
+    \o \l sampleRate
+    \o \l videoBitRate
+    \o \l videoCodec
+    \o \l width
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Video("Video");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Video)
 
 /*!
     \variable QDocumentGallery::Playlist
 
     This type matches all playlist files in the document gallery.
+
+    In addition to the properties derived from the \l File type playlist files
+    may also provide:
+
+    \list
+    \o \l duration
+    \o \l trackCount
+    \endlist
+
 */
 
-const QGalleryType QDocumentGallery::Playlist("Playlist");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Playlist)
 
 /*!
     \variable QDocumentGallery::Artist
 
     This type matches all artists in the document gallery.
+
+    Properties typically available from artists include:
+
+    \list
+    \o \l artist
+    \o \l duration
+    \o \l trackCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Artist("Artist");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Artist)
 
 /*!
     \variable QDocumentGallery::AlbumArtist
 
     This type matches all album artists in the document gallery.
+
+    Properties typically available from album artists include:
+
+    \list
+    \o \l albumArtist
+    \o \l artist
+    \o \l duration
+    \o \l trackCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::AlbumArtist("AlbumArtist");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AlbumArtist)
 
 /*!
     \variable QDocumentGallery::Album
 
     This type matches all albums in the document gallery.
+
+    Properties typically available from albums include:
+
+    \list
+    \o \l albumArtist
+    \o \l albumTitle
+    \o \l artist
+    \o \l duration
+    \o \l trackCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::Album("Album");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, Album)
 
 /*!
     \variable QDocumentGallery::AudioGenre
 
     This type matches all audio genres in the document gallery.
+
+    Properties typically available from genres include:
+
+    \list
+    \o \l duration
+    \o \l genre
+    \o \l trackCount
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::AudioGenre("AudioGenre");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AudioGenre)
 
 /*!
     \variable QDocumentGallery::PhotoAlbum
 
     This type matches all photo albums in the document gallery.
+
+    \list
+    \o \l count
+    \endlist
 */
 
-const QGalleryType QDocumentGallery::PhotoAlbum("PhotoAlbum");
+Q_DEFINE_GALLERY_TYPE(QDocumentGallery, PhotoAlbum)
 
 // Common
 
@@ -188,23 +409,25 @@ const QGalleryType QDocumentGallery::PhotoAlbum("PhotoAlbum");
     This property contains canonical url of an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::url("url");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, url)
 
 /*!
     \variable QDocumentGallery::author
 
-    This property contains the name of the author of an item in the document gallery.
+    This property contains the name of the author of an item in the document
+    gallery.
 */
 
-const QGalleryProperty QDocumentGallery::author("author");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, author)
 
 /*!
     \variable QDocumentGallery::copyright
 
-    This property contains a copyright statement for an item in the document gallery.
+    This property contains a copyright statement for an item in the document
+    gallery.
 */
 
-const QGalleryProperty QDocumentGallery::copyright("copyright");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, copyright)
 
 /*!
     \variable QDocumentGallery::description
@@ -212,7 +435,7 @@ const QGalleryProperty QDocumentGallery::copyright("copyright");
     This property contains a description of an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::description("description");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, description)
 
 /*!
     \variable QDocumentGallery::comments
@@ -220,7 +443,7 @@ const QGalleryProperty QDocumentGallery::description("description");
     This property contains a user comment about an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::comments("comments");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, comments)
 
 /*!
     \variable QDocumentGallery::rating
@@ -228,7 +451,7 @@ const QGalleryProperty QDocumentGallery::comments("comments");
     This property contains a rating for an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::rating("rating");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, rating)
 
 /*!
     \variable QDocumentGallery::title
@@ -236,7 +459,7 @@ const QGalleryProperty QDocumentGallery::rating("rating");
     This property contains the title of an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::title("title");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, title)
 
 /*!
     \variable QDocumentGallery::subject
@@ -244,7 +467,7 @@ const QGalleryProperty QDocumentGallery::title("title");
     This property contains the subject of item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::subject("subject");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, subject)
 
 /*!
     \variable QDocumentGallery::keywords
@@ -252,15 +475,16 @@ const QGalleryProperty QDocumentGallery::subject("subject");
     This property contains keywords relevant to an item in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::keywords("keywords");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, keywords)
 
 /*!
     \variable QDocumentGallery::language
 
-    This property contains the language of the content of an item in the document gallery.
+    This property contains the language of the content of an item in the
+    document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::language("language");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, language)
 
 // File
 
@@ -270,15 +494,16 @@ const QGalleryProperty QDocumentGallery::language("language");
     This property contains the path of a file in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::path("path");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, path)
 
 /*!
     \variable QDocumentGallery::filePath
 
-    This property contains the path including the file name of a file in the document gallery.
+    This property contains the path including the file name of a file in the
+    document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::filePath("filePath");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, filePath)
 
 /*!
     \variable QDocumentGallery::fileName
@@ -286,7 +511,7 @@ const QGalleryProperty QDocumentGallery::filePath("filePath");
     This property contains the file name of a file in the document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::fileName("fileName");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileName)
 
 /*!
     \variable QDocumentGallery::fileExtension
@@ -294,7 +519,7 @@ const QGalleryProperty QDocumentGallery::fileName("fileName");
     This property contains the file extension of a file.
 */
 
-const QGalleryProperty QDocumentGallery::fileExtension("fileExtension");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileExtension)
 
 /*!
     \variable QDocumentGallery::fileSize
@@ -302,7 +527,7 @@ const QGalleryProperty QDocumentGallery::fileExtension("fileExtension");
     This property contains the size in bytes of a file.
 */
 
-const QGalleryProperty QDocumentGallery::fileSize("fileSize");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileSize)
 
 /*!
     \variable QDocumentGallery::mimeType
@@ -310,7 +535,7 @@ const QGalleryProperty QDocumentGallery::fileSize("fileSize");
     This property contains the MIME type of a file.
 */
 
-const QGalleryProperty QDocumentGallery::mimeType("mimeType");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, mimeType)
 
 /*!
     \variable QDocumentGallery::lastModified
@@ -318,7 +543,7 @@ const QGalleryProperty QDocumentGallery::mimeType("mimeType");
     This property contains the date and time a file was last modified.
 */
 
-const QGalleryProperty QDocumentGallery::lastModified("lastModified");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastModified)
 
 /*!
     \variable QDocumentGallery::lastAccessed
@@ -326,7 +551,7 @@ const QGalleryProperty QDocumentGallery::lastModified("lastModified");
     This property contains the date and time a file was last accessed.
 */
 
-const QGalleryProperty QDocumentGallery::lastAccessed("lastAccessed");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastAccessed)
 
 // Document
 
@@ -336,7 +561,7 @@ const QGalleryProperty QDocumentGallery::lastAccessed("lastAccessed");
     This property contains the number of pages in a document.
 */
 
-const QGalleryProperty QDocumentGallery::pageCount("pageCount");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, pageCount)
 
 /*!
     \variable QDocumentGallery::wordCount
@@ -344,7 +569,7 @@ const QGalleryProperty QDocumentGallery::pageCount("pageCount");
     This property contains the number of words in document.
 */
 
-const QGalleryProperty QDocumentGallery::wordCount("wordCount");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, wordCount)
 
 /*!
     \variable QDocumentGallery::created
@@ -352,7 +577,7 @@ const QGalleryProperty QDocumentGallery::wordCount("wordCount");
     This property contains the date and time a document was created.
 */
 
-const QGalleryProperty QDocumentGallery::created("created");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, created)
 
 // Media
 
@@ -362,7 +587,7 @@ const QGalleryProperty QDocumentGallery::created("created");
     This property contains the duration of an audio or video file.
 */
 
-const QGalleryProperty QDocumentGallery::duration("duration");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, duration)
 
 /*!
     \variable QDocumentGallery::producer
@@ -370,23 +595,25 @@ const QGalleryProperty QDocumentGallery::duration("duration");
     This property contains the name of the producer of a media file.
 */
 
-const QGalleryProperty QDocumentGallery::producer("producer");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, producer)
 
 /*!
     \variable QDocumentGallery::lastPlayed
 
-    This property contains the date and time an audio or video file was last played.
+    This property contains the date and time an audio or video file was last
+    played.
 */
 
-const QGalleryProperty QDocumentGallery::lastPlayed("lastPlayed");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lastPlayed)
 
 /*!
     \variable QDocumentGallery::playCount
 
-    This property contains the number of times an audio or video file has been played.
+    This property contains the number of times an audio or video file has been
+    played.
 */
 
-const QGalleryProperty QDocumentGallery::playCount("playCount");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, playCount)
 
 /*!
     \variable QDocumentGallery::performer
@@ -394,17 +621,18 @@ const QGalleryProperty QDocumentGallery::playCount("playCount");
     This property contains the names of performers in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::performer("performer");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, performer)
 
 // Audio
 
 /*!
     \variable QDocumentGallery::audioCodec
 
-    This property contains the name of the codec used to encode audio in a media file.
+    This property contains the name of the codec used to encode audio in a media
+    file.
 */
 
-const QGalleryProperty QDocumentGallery::audioCodec("audioCodec");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioCodec)
 
 /*!
     \variable QDocumentGallery::audioBitRate
@@ -412,7 +640,7 @@ const QGalleryProperty QDocumentGallery::audioCodec("audioCodec");
     This property contains the bit rate of the audio in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::audioBitRate("audioBitRate");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, audioBitRate)
 
 /*!
     \variable QDocumentGallery::sampleRate
@@ -420,15 +648,14 @@ const QGalleryProperty QDocumentGallery::audioBitRate("audioBitRate");
     This property contains the sample rate of the audio in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::sampleRate("sampleRate");
-
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, sampleRate)
 /*!
     \variable QDocumentGallery::channelCount
 
     This property contains the number of audio channels in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::channelCount("channelCount");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, channelCount)
 
 // Music
 
@@ -438,7 +665,7 @@ const QGalleryProperty QDocumentGallery::channelCount("channelCount");
     This property contains the names of artists contributing to a music track.
 */
 
-const QGalleryProperty QDocumentGallery::artist("artist");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, artist)
 
 /*!
     \variable QDocumentGallery::albumArtist
@@ -446,7 +673,7 @@ const QGalleryProperty QDocumentGallery::artist("artist");
     This property contains the name of the title artist of a music album.
 */
 
-const QGalleryProperty QDocumentGallery::albumArtist("albumArtist");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, albumArtist)
 
 /*!
     \variable QDocumentGallery::albumTitle
@@ -454,7 +681,7 @@ const QGalleryProperty QDocumentGallery::albumArtist("albumArtist");
     This property contains the title of the album a music track belongs to.
 */
 
-const QGalleryProperty QDocumentGallery::albumTitle("albumTitle");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, albumTitle)
 
 /*!
     \variable QDocumentGallery::composer
@@ -462,7 +689,7 @@ const QGalleryProperty QDocumentGallery::albumTitle("albumTitle");
     This property contains the name of the composer of a music track.
 */
 
-const QGalleryProperty QDocumentGallery::composer("composer");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, composer)
 
 /*!
     \variable QDocumentGallery::genre
@@ -470,7 +697,7 @@ const QGalleryProperty QDocumentGallery::composer("composer");
     This property contains the genre of a media file.
 */
 
-const QGalleryProperty QDocumentGallery::genre("genre");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, genre)
 
 /*!
     \variable QDocumentGallery::lyrics
@@ -478,7 +705,7 @@ const QGalleryProperty QDocumentGallery::genre("genre");
     This property contains the lyrics to a music track.
 */
 
-const QGalleryProperty QDocumentGallery::lyrics("lyrics");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, lyrics)
 
 /*!
     \variable QDocumentGallery::trackCount
@@ -486,7 +713,7 @@ const QGalleryProperty QDocumentGallery::lyrics("lyrics");
     This property contains the number of music tracks in an album.
 */
 
-const QGalleryProperty QDocumentGallery::trackCount("trackCount");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, trackCount)
 
 /*!
     \variable QDocumentGallery::trackNumber
@@ -494,7 +721,7 @@ const QGalleryProperty QDocumentGallery::trackCount("trackCount");
     This property contains the track number of a music track in an album.
 */
 
-const QGalleryProperty QDocumentGallery::trackNumber("trackNumber");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, trackNumber)
 
 /*!
     \variable QDocumentGallery::discNumber
@@ -502,7 +729,7 @@ const QGalleryProperty QDocumentGallery::trackNumber("trackNumber");
     This property contains the disc number of an album in a set.
 */
 
-const QGalleryProperty QDocumentGallery::discNumber("discNumber");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, discNumber)
 
 // Image, Video common.
 
@@ -512,7 +739,7 @@ const QGalleryProperty QDocumentGallery::discNumber("discNumber");
     This property contains the width in pixels of an image or video file.
 */
 
-const QGalleryProperty QDocumentGallery::width("width");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, width)
 
 /*!
     \variable QDocumentGallery::height
@@ -520,7 +747,7 @@ const QGalleryProperty QDocumentGallery::width("width");
     This property contains the height in pixels of an image or video file.
 */
 
-const QGalleryProperty QDocumentGallery::height("height");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, height)
 
 // Image
 /*!
@@ -529,7 +756,7 @@ const QGalleryProperty QDocumentGallery::height("height");
     This property contains the orientation of an image.
 */
 
-const QGalleryProperty QDocumentGallery::orientation("orientation");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, orientation)
 
 // Photo
 
@@ -539,15 +766,16 @@ const QGalleryProperty QDocumentGallery::orientation("orientation");
     This property contains the date and time a photo was taken.
 */
 
-const QGalleryProperty QDocumentGallery::dateTaken("dateTaken");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, dateTaken)
 
 /*!
     \variable QDocumentGallery::cameraManufacturer
 
-    This property contains the manufacturer name of the camera used to take a photo.
+    This property contains the manufacturer name of the camera used to take a
+    photo.
 */
 
-const QGalleryProperty QDocumentGallery::cameraManufacturer("cameraManufacturer");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, cameraManufacturer)
 
 /*!
     \variable QDocumentGallery::cameraModel
@@ -555,15 +783,16 @@ const QGalleryProperty QDocumentGallery::cameraManufacturer("cameraManufacturer"
     This property contains the model name of the camera used to take a photo.
 */
 
-const QGalleryProperty QDocumentGallery::cameraModel("cameraModel");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, cameraModel)
 
 /*!
     \variable QDocumentGallery::exposureProgram
 
-    This property contains the name of the exposure program used when taking a photo.
+    This property contains the name of the exposure program used when taking a
+    photo.
 */
 
-const QGalleryProperty QDocumentGallery::exposureProgram("exposureProgram");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, exposureProgram)
 
 /*!
     \variable QDocumentGallery::exposureTime
@@ -571,7 +800,7 @@ const QGalleryProperty QDocumentGallery::exposureProgram("exposureProgram");
     This property contains the exposure time of a photo in seconds.
 */
 
-const QGalleryProperty QDocumentGallery::exposureTime("exposureTime");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, exposureTime)
 
 /*!
     \variable QDocumentGallery::fNumber
@@ -579,7 +808,7 @@ const QGalleryProperty QDocumentGallery::exposureTime("exposureTime");
     This property contains the F-number of a photo.
 */
 
-const QGalleryProperty QDocumentGallery::fNumber("fNumber");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fNumber)
 
 /*!
     \variable QDocumentGallery::flashEnabled
@@ -587,7 +816,7 @@ const QGalleryProperty QDocumentGallery::fNumber("fNumber");
     This property contains whether a flash was used when taking a photo.
 */
 
-const QGalleryProperty QDocumentGallery::flashEnabled("flashEnabled");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, flashEnabled)
 
 /*!
     \variable QDocumentGallery::focalLength
@@ -595,7 +824,7 @@ const QGalleryProperty QDocumentGallery::flashEnabled("flashEnabled");
     This property contains the focal length used when taking a photo.
 */
 
-const QGalleryProperty QDocumentGallery::focalLength("focalLength");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, focalLength)
 
 /*!
     \variable QDocumentGallery::meteringMode
@@ -603,7 +832,7 @@ const QGalleryProperty QDocumentGallery::focalLength("focalLength");
     This property contains the metering mode used when taking a photo.
 */
 
-const QGalleryProperty QDocumentGallery::meteringMode("meteringMode");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, meteringMode)
 
 /*!
     \variable QDocumentGallery::whiteBalance
@@ -611,7 +840,7 @@ const QGalleryProperty QDocumentGallery::meteringMode("meteringMode");
     This property contains the white balance setting used when taking a photo.
 */
 
-const QGalleryProperty QDocumentGallery::whiteBalance("whiteBalance");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, whiteBalance)
 
 // Video
 
@@ -621,7 +850,7 @@ const QGalleryProperty QDocumentGallery::whiteBalance("whiteBalance");
     This property contains the frame rate of a video.
 */
 
-const QGalleryProperty QDocumentGallery::frameRate("frameRate");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, frameRate)
 
 /*!
     \variable QDocumentGallery::videoCodec
@@ -629,7 +858,7 @@ const QGalleryProperty QDocumentGallery::frameRate("frameRate");
     This property contains the codec used to encode the video in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::videoCodec("videoCodec");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, videoCodec)
 
 /*!
     \variable QDocumentGallery::videoBitRate
@@ -637,15 +866,16 @@ const QGalleryProperty QDocumentGallery::videoCodec("videoCodec");
     This property contains the bit rate of the video in a media file.
 */
 
-const QGalleryProperty QDocumentGallery::videoBitRate("videoBitRate");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, videoBitRate)
 
 /*!
     \variable QDocumentGallery::resumePosition
 
-    This property contains the position in a video where playback was interrupted.
+    This property contains the position in a video where playback was
+    interrupted.
 */
 
-const QGalleryProperty QDocumentGallery::resumePosition("resumePosition");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, resumePosition)
 
 /*!
     \variable QDocumentGallery::director
@@ -653,7 +883,18 @@ const QGalleryProperty QDocumentGallery::resumePosition("resumePosition");
     This property contains the name of the director of a video.
 */
 
-const QGalleryProperty QDocumentGallery::director("director");
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, director)
+
+// Type
+
+/*!
+    \variable QDocumentGallery::count
+
+    This property contains the number of items within the scope of a parent
+    item or an item type.
+*/
+
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, count)
 
 /*!
     \fn QDocumentGallery::QDocumentGallery(QObject *parent)
@@ -684,7 +925,8 @@ const QGalleryProperty QDocumentGallery::director("director");
 /*!
     \fn QDocumentGallery::propertyAttributes(const QString &propertyName, const QString &itemType) const
 
-    Returns the attributes of a property of \a itemType identified by \a propertyName
+    Returns the attributes of a property of \a itemType identified by
+    \a propertyName
 */
 
 /*!
@@ -692,6 +934,7 @@ const QGalleryProperty QDocumentGallery::director("director");
 
     \reimp
 */
+
 
 #ifdef QT_DOCUMENT_GALLERY_NULL
 

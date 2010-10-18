@@ -25,6 +25,8 @@ New features
  - Qt Feedback module
     * Classes for feedback (haptic/tactile feedback, general multimedia
       feedback)
+ - Qt Gallery module
+    * Classes for searching for documents, and viewing document meta-data.
 
 Optimizations
 ------
@@ -60,47 +62,6 @@ QtContacts
     * Saving partial contacts
     * Fetching a list of contacts by a list of ids
  - Improved support for Symbian^3/^4
-
-QtGallery
-------
-
- - Added a QGalleryTypeRequest class.
- - Replaced the QGalleryItemList class with QGalleryResultSet.
- - Replaced the QGalleryItemListModel class with QGalleryQueryModel
- - Removed the QGalleryCountRequest and QGalleryRemoveRequest classes.
- - QGalleryAbstractRequest
-    * Replaced the result property with error and errorString properties.
-    * Added Cancelled, Finished, and Error to the Status enum.
-    * Moved the Scope enum to QGalleryQueryRequest.
- - QDocumentGallery
-    * Removed the iconImage, iconPixmap, thumbnailImage, thumbnailPixmap,
-      previewImage, previewPixmap, and photoAlbum property definitions.
-    * Added Error enum.
- - QGalleryQueryRequest
-    * Added meta-data accessor functions.
-    * Renamed the live property to autoUpdate.
- - QGalleryItemRequest
-    * Added meta-data accessor functions.
-    * Renamed the live property to autoUpdate.
- - QGalleryMetaDataFilter
-    * Removed the caseSensitivity property.
-    * Renamed the isInverted property to isNegated.
- - QGalleryProperty
-    * Added contains(), startsWith(), endsWith(), wildcard(), and regExp()
-      functions for constructing meta-data filters.
- - QML Elements
-    * Renamed GalleryQueryModel element to DocumentGalleryModel.
-    * Renamed GalleryItem to DocumentGalleryItem.
-    * Added a DocumentGalleryType element.
-    * Removed the gallery property from elements.
-    * Removed the DocumentGallery element.
-    * Removed the GalleryQueryCount element.
-    * Added Cancelled, Finished, and Error status values to
-      DocumentGalleryModel and DocumentGalleryItem.
-    * Spilt the GalleryFilter element into separate elements for each
-      filter comparator.
-    * Renamed the inverted filter property to negated.
-    * Removed the caseSensitivity filter property.
 
 QtLandmarks
 ------
@@ -169,13 +130,17 @@ QtMessaging
  - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
  - Symbian, fix MMS message size limit not documented, MOBILITY-1224
  - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian, fix hardcoded paths to moc files, MOBILITY-1510
  - Symbian, MTM, send status signaling improved, MOBILITY-1148
  - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
  - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
+ - Symbian^3, queryMessage crashes fixed, MOBILITY-1479, QTMOBILITY-535
 
 QtMultimediaKit
 ------
 
+ - Added QCamera API
+    * Includes Linux, maemo and symbian backends.
  - QAudioOutput
     * Fix crash on Windows when initialized with an invalid format
       [QTMOBILITY-438]

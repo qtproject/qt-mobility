@@ -92,6 +92,9 @@ QGeoMapPixmapObject::~QGeoMapPixmapObject()
     delete d_ptr;
 }
 
+/*!
+    \reimp
+*/
 QGeoMapObject::Type QGeoMapPixmapObject::type() const
 {
     return QGeoMapObject::PixmapType;
@@ -174,7 +177,32 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
     }
 }
 
+/*!
+\fn void QGeoMapPixmapObject::coordinateChanged(const QGeoCoordinate &coordinate)
 
+    This signal is emitted when the coordinate at which the pixmap 
+    should be drawn has changed.
+
+    The new value will be \a coordinate.
+*/
+
+/*!
+\fn void QGeoMapPixmapObject::pixmapChanged(const QPixmap &pixmap)
+    
+    This signal is emitted when the pixmap associated with this 
+    pixmap object has changed.
+
+    The new value will be \a pixmap.
+*/
+
+/*!
+\fn void QGeoMapPixmapObject::offsetChanged(const QPoint &offset)
+    
+    This signal is emitted when the on-screen offset from the coordinate 
+    at which this pixmap object should be drawn has changed.
+
+    The new value will be \a offset.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

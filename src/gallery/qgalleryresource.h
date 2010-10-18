@@ -46,7 +46,7 @@
 ****************************************************************************/
 
 #ifndef QGALLERYRESOURCE_H
-#define QGALLERTRESOURCE_H
+#define QGALLERYRESOURCE_H
 
 #include <qmobilityglobal.h>
 

@@ -76,7 +76,7 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
+    QGeoMapData* createMapData();
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
     QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;

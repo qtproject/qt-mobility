@@ -47,22 +47,34 @@
 
 #include <QString>
 #include "qxamediaserviceproviderplugin.h"
+#include "qxaplaymediaservice.h"
 #include "qxarecordmediaservice.h"
+#include "qxaradiomediaservice.h"
 #include "qxacommon.h"
 
 QStringList QXAMediaServiceProviderPlugin::keys() const
 {
     return QStringList()
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
+            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
+            << QLatin1String(Q_MEDIASERVICE_RADIO);
 }
 
 QMediaService* QXAMediaServiceProviderPlugin::create(QString const& key)
 {
     QT_TRACE_FUNCTION_ENTRY;
     QMediaService* service = NULL;
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)) {
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER) ) {
+        service = new QXAPlayMediaService;
+        QT_TRACE1("Created QXAPlayMediaService");
+    }
+    else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)) {
         service = new QXARecodMediaService;
         QT_TRACE1("Created QXARecodMediaService");
+    }
+    else if (key == QLatin1String(Q_MEDIASERVICE_RADIO) ) {
+        service = new QXARadioMediaService;
+        QT_TRACE1("Created QXARadioMediaService");
     }
     else {
         QT_TRACE2("unsupported key:", key);
@@ -79,4 +91,3 @@ void QXAMediaServiceProviderPlugin::release(QMediaService *service)
 }
 
 Q_EXPORT_PLUGIN2(qtmultimediakit_openmaxalengine, QXAMediaServiceProviderPlugin);
-

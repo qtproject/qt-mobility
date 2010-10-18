@@ -1160,7 +1160,6 @@ void tst_QContactAsync::contactPartialSave()
 
     QContactLocalId aId = contacts[0].localId();
     QContactLocalId bId = contacts[1].localId();
-    QContactLocalId cId = contacts[2].localId();
 
     // Test 1: saving a contact with a changed detail masked out does nothing
     QContactPhoneNumber phn(contacts[0].detail<QContactPhoneNumber>());

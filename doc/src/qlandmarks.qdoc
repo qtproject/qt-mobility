@@ -53,9 +53,6 @@
 \brief Landmarks allows management of landmark data, these examples show
 how it is done.
 
-\note This API and documentation is a \bold {Technology Preview} and is still
-subject to change.
-
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 The following page demonstrates how to perform these operations.

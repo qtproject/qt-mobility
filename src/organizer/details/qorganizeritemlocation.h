@@ -64,22 +64,22 @@ class Q_ORGANIZER_EXPORT QOrganizerItemLocation : public QOrganizerItemDetail
 public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldGeoLocation;
-    static const QLatin1Constant FieldAddress;
-    static const QLatin1Constant FieldLocationName;
+    static const QLatin1Constant FieldLatitude;
+    static const QLatin1Constant FieldLongitude;
+    static const QLatin1Constant FieldLabel;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemLocation, "Location")
-    Q_DECLARE_LATIN1_CONSTANT(FieldGeoLocation, "GeoLocation");
-    Q_DECLARE_LATIN1_CONSTANT(FieldAddress, "Address");
-    Q_DECLARE_LATIN1_CONSTANT(FieldLocationName, "LocationName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLatitude, "Latitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLongitude, "Longitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
 #endif
 
-    void setGeoLocation(const QString& stringCoords) {setValue(FieldGeoLocation, stringCoords);}
-    QString geoLocation() const {return value(FieldGeoLocation);}
-    void setAddress(const QString& address) {setValue(FieldAddress, address);}
-    QString address() const {return value(FieldAddress);}
-    void setLocationName(const QString& locationName) {setValue(FieldLocationName, locationName);}
-    QString locationName() const {return value(FieldLocationName);}
+    void setLatitude(double latitude) {setValue(FieldLatitude, latitude);}
+    double latitude() const {return value<double>(FieldLatitude);}
+    void setLongitude(double longitude) {setValue(FieldLongitude, longitude);}
+    double longitude() const {return value<double>(FieldLongitude);}
+    void setLabel(const QString& label) {setValue(FieldLabel, label);}
+    QString label() const {return value(FieldLabel);}
 
     // Convenience filter
     static QOrganizerItemFilter match(const QString& substring);

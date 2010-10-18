@@ -57,12 +57,12 @@
 
 #include "qdeclarativeorganizermodel_p.h"
 #include "qdeclarativeorganizeritemsortorder_p.h"
-#include "qdeclarativeorganizeritemrecurrencerule_p.h" 
+#include "qdeclarativeorganizerrecurrencerule_p.h" 
 #include "qdeclarativeorganizeritem_p.h" 
 #include "qdeclarativeorganizeritemfilter_p.h" 
 #include "qdeclarativeorganizeritemdetail_p.h" 
 #include "qdeclarativeorganizeritemfetchhint_p.h" 
-#include "qdeclarativeorganizeritemcollection_p.h" 
+#include "qdeclarativeorganizercollection_p.h" 
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -202,7 +202,7 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
     QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
                << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
-                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isTimeSpecified:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
+                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isAllDay:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
                   "recurrence.recurrenceRules:[OrganizerItemRecurrenceRule {}]\n"
                   "recurrence.recurrenceDates:[]\n recurrence.exceptionDates:[]"
                   "}"

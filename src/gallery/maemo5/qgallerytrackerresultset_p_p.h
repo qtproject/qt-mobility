@@ -246,7 +246,7 @@ public:
 
     enum Flag
     {
-        Cancelled       = 0x01,
+        Canceled        = 0x01,
         Live            = 0x02,
         Refresh         = 0x04,
         Reset           = 0x08,

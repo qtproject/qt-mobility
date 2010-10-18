@@ -54,24 +54,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_GALLERY_EXPORT QGalleryType
+struct Q_GALLERY_EXPORT QGalleryType
 {
-public:
-#ifndef Q_QDOC
-    template <int N>
-    explicit QGalleryType(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
-#else
-    explicit QGalleryType(const char *name);
-#endif
+    QString name() const { return QString::fromLatin1(m_name, m_length); }
 
-    QString name() const;
+    inline operator QString() const { return QString::fromLatin1(m_name, m_length); }
 
-    inline operator QString() const { return name(); }
-
-private:
     const char * const m_name;
     const int m_length;
 };
+
+#define Q_DEFINE_GALLERY_TYPE(scope, name) const QGalleryType scope::name = {#name, sizeof(#name) - 1};
 
 QTM_END_NAMESPACE
 

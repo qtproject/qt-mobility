@@ -94,22 +94,24 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        Q_UNUSED(formatVersion);
-        qWarning() << "Can't stream a local ID filter to a QDataStream";
+        if (formatVersion == 1) {
+            stream << m_ids;
+        }
         return stream;
     }
 
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        Q_UNUSED(formatVersion);
-        qWarning() << "Can't stream a local ID filter to a QDataStream";
+        if (formatVersion == 1) {
+            stream >> m_ids;
+        }
         return stream;
     }
 
 
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemCollectionFilter, QOrganizerItemFilter::CollectionFilter)
 
-    QSet<QOrganizerCollectionLocalId> m_ids;
+    QSet<QOrganizerCollectionId> m_ids;
 };
 
 QTM_END_NAMESPACE

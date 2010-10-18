@@ -141,6 +141,24 @@ QPen QGeoMapPolylineObject::pen() const
     return d_ptr->pen;
 }
 
+/*!
+\fn void QGeoMapPolylineObject::pathChanged(const QList<QGeoCoordinate> &path)
+
+    This signal is emitted when the ordered list of coordinates that define 
+    the polyline to be drawn by this polyline object has changed.
+
+    The new value is \a path.
+*/
+
+/*!
+\fn void QGeoMapPolylineObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the edge of this 
+    polyline object has changed.
+
+    The new value is \a pen.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 

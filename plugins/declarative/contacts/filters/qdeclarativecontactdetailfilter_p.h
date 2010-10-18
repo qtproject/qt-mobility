@@ -50,38 +50,41 @@
 
 #include "qdeclarativecontactfilter_p.h"
 #include "qcontactdetailfilter.h"
+#include "qdeclarativecontactdetail_p.h"
 
 class QDeclarativeContactDetailFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QString detail READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
-    Q_PROPERTY(QString field READ detailFieldName WRITE setDetailFieldName NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY valueChanged)
+    Q_PROPERTY(int field READ field WRITE setField NOTIFY valueChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
 public:
 
     QDeclarativeContactDetailFilter(QObject* parent = 0)
-        :QDeclarativeContactFilter(parent)
+        :QDeclarativeContactFilter(parent),
+          m_detailType(QDeclarativeContactDetail::Customized),
+          m_fieldType(-1)
     {
     }
-    void setDetailDefinitionName(const QString& definition)
+    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType)
     {
-        d.setDetailDefinitionName(definition, d.detailFieldName());
-    }
-
-    QString detailDefinitionName() const
-    {
-        return d.detailDefinitionName();
+        m_detailType = detailType;
     }
 
-    void setDetailFieldName(QString& field)
+    QDeclarativeContactDetail::ContactDetailType detail() const
     {
-        d.setDetailDefinitionName(d.detailDefinitionName(), field);
+        return m_detailType;
     }
 
-    QString detailFieldName() const
+    void setField(int fieldType)
     {
-        return d.detailFieldName();
+        m_fieldType = fieldType;
+    }
+
+    int field() const
+    {
+        return m_fieldType;
     }
 
     QDeclarativeContactFilter::MatchFlags matchFlags() const
@@ -110,13 +113,19 @@ public:
 
     QContactFilter filter() const
     {
-        return d;
+        QString detailName = QDeclarativeContactDetail::definitionName(m_detailType);
+        QString fieldName = QDeclarativeContactDetail::fieldName(m_detailType, m_fieldType);
+        QContactDetailFilter filter(d);
+        filter.setDetailDefinitionName(detailName, fieldName);
+        return filter;
     }
 signals:
     void valueChanged();
 
 
 private:
+    QDeclarativeContactDetail::ContactDetailType m_detailType;
+    int m_fieldType;
     QContactDetailFilter d;
 };
 

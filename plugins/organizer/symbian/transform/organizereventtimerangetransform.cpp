@@ -45,9 +45,9 @@
 **
 ****************************************************************************/
 #include "organizereventtimerangetransform.h"
-#include "qorganizereventtimerange.h"
+#include "qorganizereventtime.h"
 
-void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
+void OrganizerEventTimeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     // pre-condition: type has already been converted
     if (item->type() == QOrganizerItemType::TypeEvent
@@ -56,7 +56,7 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
         TCalTime startTime = entry.StartTimeL();
         TCalTime endTime = entry.EndTimeL();
 
-        QOrganizerEventTimeRange range;
+        QOrganizerEventTime range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTimeL(startTime));
 
@@ -73,14 +73,14 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
     }
 }
 
-void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerEventTimeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
-    if (itemInstance->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
+    if (itemOccurrence->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
     {
         TCalTime startTime = instance.StartTimeL();
         TCalTime endTime = instance.EndTimeL();
 
-        QOrganizerEventTimeRange range;
+        QOrganizerEventTime range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTimeL(startTime));
 
@@ -93,15 +93,15 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& in
             range.setEndDateTime(toQDateTimeL(endTime));
 
         if (!range.isEmpty())
-            itemInstance->saveDetail(&range);
+            itemOccurrence->saveDetail(&range);
     }
 }
 
-void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+void OrganizerEventTimeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence)
     {
-        QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
+        QOrganizerEventTime range = item.detail<QOrganizerEventTime>();
         
         // Symbian calendar server makes the client process panic in case there
         // is no start time for an event. As a work-around let's check the
@@ -123,7 +123,7 @@ void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& i
     }
 }
 
-QString OrganizerEventTimeRangeTransform::detailDefinitionName()
+QString OrganizerEventTimeTransform::detailDefinitionName()
 {
-    return QOrganizerEventTimeRange::DefinitionName;
+    return QOrganizerEventTime::DefinitionName;
 }

@@ -56,7 +56,7 @@
 int main(int argc, char *argv[])
 {
 
-#if defined (Q_WS_X11) || defined (Q_WS_MAC)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC) || defined (Q_OS_SYMBIAN)
     //### default to using raster graphics backend for now
     bool gsSpecified = false;
     for (int i = 0; i < argc; ++i) {
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
     QDeclarativeView view;
-#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(Q_WS_S60)
     view.setViewport(new QGLWidget);
 #endif
     view.setSource(QUrl(mainQmlApp));

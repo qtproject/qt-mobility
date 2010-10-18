@@ -69,11 +69,10 @@ class QDeclarativeContactFetchHint : public QObject
     Q_FLAGS(OptimizationHints);
 public:
     enum OptimizationHint {
-        AllRequired = 0x0,
-        NoRelationships = 0x1,
-        NoActionPreferences = 0x2,
-        NoBinaryBlobs = 0x4
-        // any other optimization hints?
+        AllRequired = QContactFetchHint::AllRequired,
+        NoRelationships = QContactFetchHint::NoRelationships,
+        NoActionPreferences = QContactFetchHint::NoActionPreferences,
+        NoBinaryBlobs = QContactFetchHint::NoBinaryBlobs
     };
     Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
 

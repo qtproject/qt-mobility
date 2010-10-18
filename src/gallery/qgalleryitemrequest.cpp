@@ -118,7 +118,23 @@ public:
     \brief The QGalleryItemRequest class provides a request for the properties
     of a single item from a gallery.
 
+    QGalleryItemRequest executes a query which returns information about the
+    gallery item specified in \l itemId.  The query will return an \l itemUrl,
+    an \l itemType, \l resources and \l {metaData()}{meta-data} values for the
+    properties listed in \l propertyNames.
+
+    When the request has finished and if the item could be found the \l valid
+    property will be true, if not it will be false.
+
+    If the \l autoUpdate property is true when the request is executed it will
+    enter an \l Idle state on finishing and will refresh the queried
+    information if the item changes.  If the gallery can't provide updates
+    it will instead go immediately to the \l Finished state.  Automatic updates
+    can be canceled by calling cancel() on a idle request.
+
+    \sa QDocumentGallery
 */
+
 /*!
     Constructs a new gallery item request.
 
@@ -148,12 +164,12 @@ QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *par
 QGalleryItemRequest::~QGalleryItemRequest()
 {
 }
+
 /*!
     \property QGalleryItemRequest::propertyNames
 
     \brief A list of names of meta-data properties a request should return values for.
 */
-
 
 QStringList QGalleryItemRequest::propertyNames() const
 {
@@ -162,8 +178,18 @@ QStringList QGalleryItemRequest::propertyNames() const
 
 void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryItemRequest::propertyNamesChanged()
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryItemRequest::autoUpdate
@@ -175,7 +201,6 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
     finished rather than returning to Inactive.
 */
 
-
 bool QGalleryItemRequest::autoUpdate() const
 {
     return d_func()->autoUpdate;
@@ -183,8 +208,18 @@ bool QGalleryItemRequest::autoUpdate() const
 
 void QGalleryItemRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryItemRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryItemRequest::itemId
@@ -199,9 +234,11 @@ QVariant QGalleryItemRequest::itemId() const
 
 void QGalleryItemRequest::setItemId(const QVariant &itemId)
 {
-    d_func()->itemId = itemId;
+    if (d_func()->itemId != itemId) {
+        d_func()->itemId = itemId;
 
-    emit itemIdChanged();
+        emit itemIdChanged();
+    }
 }
 
 /*!

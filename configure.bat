@@ -424,6 +424,7 @@ call %QT_PATH%qmake -query QT_VERSION
 
 goto checkMake
 
+REM Detect make tool
 :makeTest
 setlocal
     set CURRENT_PWD=%CD%

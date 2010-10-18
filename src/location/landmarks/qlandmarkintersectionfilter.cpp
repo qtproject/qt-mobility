@@ -56,18 +56,19 @@ QTM_BEGIN_NAMESPACE
             of its constituent filters.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.
     If the intersection filter contains a proximity filter at the top level (i.e. which is not nested
     inside another filter) then the landmarks will be sorted by distance according to that filter.
+    Note that a using sort order other than QLandmarkSortOrder (i.e. no sort) will override the
+    sorting by distance).
 
     Whether an intersection filter can be comprised of
     compound filters  (i.e. union or intersection filters) is backend specific.
     Even if this is supported the performance of such a filter is likely to be poor.
-
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIntersectionFilter);

@@ -56,7 +56,7 @@ class QDeclarativeContactTimestamp : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QDateTime lastModified READ lastModified WRITE setLastModified NOTIFY fieldsChanged)
     Q_PROPERTY(QDateTime created READ created WRITE setCreated NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "lastModified")
 public:
     enum FieldType {
@@ -69,14 +69,40 @@ public:
         return QDeclarativeContactDetail::Timestamp;
     }
 
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case LastModified:
+            return QContactTimestamp::FieldModificationTimestamp;
+        case Created:
+            return QContactTimestamp::FieldCreationTimestamp;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
     QDeclarativeContactTimestamp(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactTimestamp());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
-    void setLastModified(const QDateTime& timestamp) {detail().setValue(QContactTimestamp::FieldModificationTimestamp, timestamp);}
+    void setLastModified(const QDateTime& v)
+    {
+        if (!readOnly() && v != lastModified()) {
+            detail().setValue(QContactTimestamp::FieldModificationTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
     QDateTime lastModified() const {return detail().value<QDateTime>(QContactTimestamp::FieldModificationTimestamp);}
-    void setCreated(const QDateTime& timestamp) {detail().setValue(QContactTimestamp::FieldCreationTimestamp, timestamp);}
+    void setCreated(const QDateTime& v)
+    {
+        if (!readOnly() && v != created()) {
+            detail().setValue(QContactTimestamp::FieldCreationTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
     QDateTime created() const {return detail().value<QDateTime>(QContactTimestamp::FieldCreationTimestamp);}
 signals:
     void fieldsChanged();

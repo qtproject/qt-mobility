@@ -53,14 +53,47 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapPolygon
+
+    \brief The MapPolygon element displays a polygon on a map.
+    \inherits QGeoMapPolygonObject
+
+    \ingroup qml-location-maps
+
+    The polygon is specified in terms of an ordered list of 
+    coordinates.  Any invalid coordinates in the list will be ignored.
+
+    If the list contains less than 3 valid coordinates the polygon 
+    will not be displayed.
+
+    The MapPolygon element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject()
 {
+    connect(&m_border,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&m_border,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapPolygonObject::~QDeclarativeGeoMapPolygonObject()
 {
     qDeleteAll(m_path);
 }
+
+/*!
+    \qmlproperty list<Coordinate> MapPolygon::path
+    \default
+
+    This property holds the ordered list of coordinates which 
+    define the polygon.
+*/
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoMapPolygonObject::declarativePath()
 {
@@ -100,6 +133,14 @@ void QDeclarativeGeoMapPolygonObject::path_clear(QDeclarativeListProperty<QDecla
     poly->setPath(QList<QGeoCoordinate>());
 }
 
+/*!
+    \qmlproperty color MapPolygon::color
+
+    This property holds the color used to fill the circle.
+
+    The default value corresponds to a transparent color.
+*/
+
 void QDeclarativeGeoMapPolygonObject::setColor(const QColor &color)
 {
     if (m_color == color)
@@ -115,6 +156,65 @@ QColor QDeclarativeGeoMapPolygonObject::color() const
 {
     return m_color;
 }
+
+/*!
+    \qmlproperty int MapPolygon::border.width
+    \qmlproperty color MapPolygon::border.color
+
+    These properties hold the width and color used to draw the border of the circle.
+
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolygonObject::border()
+{
+    return &m_border;
+}
+
+void QDeclarativeGeoMapPolygonObject::borderColorChanged(const QColor &color)
+{
+    QPen p = pen();
+    p.setColor(color);
+    setPen(p);
+}
+
+void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
+{
+    QPen p = pen();
+    p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
+    setPen(p);
+}
+
+/*!
+    \qmlproperty int MapPolygon::zValue
+
+    This property holds the z-value of the polygon.
+
+    Map objects are drawn in z-value order, and objects with the 
+    same z-value will be drawn in insertion order.
+*/
+
+/*!
+    \qmlproperty bool MapPolygon::visible
+
+    This property holds a boolean corresponding to whether or not the 
+    polygon is visible.
+*/
+
+/*!
+    \qmlproperty bool MapPolygon::selected
+
+    This property holds a boolean corresponding to whether or not the 
+    polygon is selected.
+*/
 
 #include "moc_qdeclarativegeomappolygonobject_p.cpp"
 

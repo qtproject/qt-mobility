@@ -114,6 +114,7 @@ struct MessageQueryInfo
     int currentFilterListIndex;
     QMessageIdList ids;
     int count;
+    bool canceled;
 };
 
 class CMTMEngine : public QObject, public CActive, public MMsvSessionObserver
@@ -177,6 +178,8 @@ public:
     void notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId);
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
+    
+    void cancel(QMessageServicePrivate& privateService);
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
 

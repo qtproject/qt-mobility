@@ -84,7 +84,7 @@ public:
 
     virtual PluginPriority pluginPriority();
 
-    virtual QList<QFeedbackActuator> actuators();
+    virtual QList<QFeedbackActuator*> actuators();
 
     //for device handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
@@ -102,7 +102,7 @@ public:
 private:
     CHWRMVibra *vibra();
 
-
+    QList<QFeedbackActuator*> m_actuators;
     CCoeControl *defaultWidget();
 
     CHWRMVibra *m_vibra;

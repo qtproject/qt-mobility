@@ -90,9 +90,9 @@ public:
     }
 
     bool m_dataChanged;
-    QSet<QOrganizerItemLocalId> m_addedItems;
-    QSet<QOrganizerItemLocalId> m_changedItems;
-    QSet<QOrganizerItemLocalId> m_removedItems;
+    QSet<QOrganizerItemId> m_addedItems;
+    QSet<QOrganizerItemId> m_changedItems;
+    QSet<QOrganizerItemId> m_removedItems;
 };
 
 QTM_END_NAMESPACE

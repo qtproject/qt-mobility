@@ -469,7 +469,7 @@ void deleteLandmarkAndCategory(QLandmarkManager *lm)
     {
     QLandmarkManager *landmarkManager;
     //! [Remove landmark synchronously simple]
-    landmarkManager->removeLandmark(landmark.landmarkId());
+    landmarkManager->removeLandmark(landmark);
     //! [Remove landmark synchronously simple]
     }
 }

@@ -63,7 +63,6 @@
 #include <QtCore/qbasictimer.h>
 #include <QtDeclarative/qdeclarativeitem.h>
 #include <QtCore/QTime>
-#include "qmetadatacontrolmetaobject_p.h"
 
 #include <qcamera.h>
 #include <qcameraimageprocessing.h>

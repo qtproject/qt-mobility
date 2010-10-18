@@ -20,10 +20,84 @@
     </message>
 </context>
 <context>
+    <name>CameraBinAudioEncoder</name>
+    <message>
+        <source>Raw PCM audio</source>
+        <translation>Сире аудіо PCM</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinImageEncoder</name>
+    <message>
+        <source>JPEG image</source>
+        <translation>Зображення JPEG</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinRecorder</name>
+    <message>
+        <source>Service has not been started</source>
+        <translation>Сервіс не було запущено</translation>
+    </message>
+    <message>
+        <source>Not compatible codecs and container format.</source>
+        <translation>Несумісні кодеки та формат контейнера.</translation>
+    </message>
+</context>
+<context>
+    <name>QCamera</name>
+    <message>
+        <source>The camera service is missing</source>
+        <translation>Відсутній сервіс камери</translation>
+    </message>
+</context>
+<context>
+    <name>QCameraImageCapture</name>
+    <message>
+        <source>Device does not support images capture.</source>
+        <translation>Пристрій не підтримує захоплення зображень.</translation>
+    </message>
+</context>
+<context>
+    <name>QCameraPrivate</name>
+    <message>
+        <source>The camera service is missing</source>
+        <translation>Відсутній сервіс камери</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeDocumentGallery</name>
+    <message>
+        <source>DocumentGallery is a namespace class</source>
+        <translation>DocumentGallery є класом простору імен</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeLandmarkFilterBase</name>
+    <message>
+        <source>LandmarkFilterBase is an abstract class</source>
+        <translation>LandmarkFilterBase - абстрактний клас</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeMessageFilterBase</name>
+    <message>
+        <source>MessageFilterBase is an abstract class</source>
+        <translation>MessageFilterBase - абстрактний клас</translation>
+    </message>
+</context>
+<context>
     <name>QGstreamerAudioEncode</name>
     <message>
         <source>Raw PCM audio</source>
         <translation>Сире аудіо PCM</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerCameraControl</name>
+    <message>
+        <source>State not supported.</source>
+        <translation>Стан не підтримується.</translation>
     </message>
 </context>
 <context>
@@ -35,6 +109,13 @@
     <message>
         <source>Failed to build media capture pipeline.</source>
         <translation>Збій побудови конвеєру захоплення медіа.</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerImageEncode</name>
+    <message>
+        <source>JPEG image encoder</source>
+        <translation>Кодувальник зображень JPEG</translation>
     </message>
 </context>
 <context>
@@ -53,17 +134,6 @@
     <message>
         <source>Not compatible codecs and container format.</source>
         <translation>Несумісні кодеки та формат контейнера.</translation>
-    </message>
-</context>
-<context>
-    <name>QMLContactModel</name>
-    <message>
-        <source>Phone</source>
-        <translation>Телефон</translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation>Ел. пошта</translation>
     </message>
 </context>
 <context>
@@ -162,6 +232,10 @@
         <translation>Сесія була перервана користувачем або системою</translation>
     </message>
     <message>
+        <source>The specified configuration cannot be used.</source>
+        <translation>Вказана конфігурація не може бути використана.</translation>
+    </message>
+    <message>
         <source>Unidentified Error</source>
         <translation>Неідентифікована помилка</translation>
     </message>
@@ -255,6 +329,17 @@
     </message>
 </context>
 <context>
+    <name>QXAPlaySession</name>
+    <message>
+        <source>Service has not been started</source>
+        <translation>Сервіс не було запущено</translation>
+    </message>
+    <message>
+        <source>Unable to load media</source>
+        <translation>Неможливо завантажити медіа</translation>
+    </message>
+</context>
+<context>
     <name>QXARecordSession</name>
     <message>
         <source>Service has not been started</source>
@@ -293,20 +378,8 @@
         <translation>Неправильний контейнер</translation>
     </message>
     <message>
-        <source>Invalid bitrate</source>
-        <translation>Неправильна бітова швидкість</translation>
-    </message>
-    <message>
-        <source>Invalid channel count</source>
-        <translation>Неправильна кількість каналів</translation>
-    </message>
-    <message>
         <source>Invalid codec</source>
         <translation>Неправильний кодек</translation>
-    </message>
-    <message>
-        <source>Invalid encoding quality setting</source>
-        <translation>Неправильні налаштування якості кодування</translation>
     </message>
     <message>
         <source>Invalid encoding mode setting</source>
@@ -316,9 +389,16 @@
         <source>Internal error</source>
         <translation>Внутрішня помилка</translation>
     </message>
+</context>
+<context>
+    <name>S60CameraImageCaptureControl</name>
     <message>
-        <source>Invalid sample rate</source>
-        <translation>Неправильний розмір семплу</translation>
+        <source>DriveMode not supported.</source>
+        <translation>Режим драйвера не підтримується.</translation>
+    </message>
+    <message>
+        <source>Incorrect CaptureMode.</source>
+        <translation>Неправильний режим захоплення.</translation>
     </message>
 </context>
 <context>
@@ -326,6 +406,137 @@
     <message>
         <source>Media couldn&apos;t be resolved</source>
         <translation>Не вдалось розв&apos;язати медіа</translation>
+    </message>
+</context>
+<context>
+    <name>S60MediaRecorderControl</name>
+    <message>
+        <source>Video capture mode is not selected.</source>
+        <translation>Не обрано режим захоплення відео.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryItem</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>The value of item is not a valid item ID</source>
+        <translation>Значення елемента не є правильним ідентифікатором елемента</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryQueryModel</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.InvalidType is not a supported item type</source>
+        <translation>DocumentGallery.InvalidType не є підтримуваним типом елемента</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.%1 is not a supported item type</source>
+        <translation>DocumentGallery.%1 не є підтримуваним типом елемента</translation>
+    </message>
+    <message>
+        <source>The value of rootItem is not a valid item ID</source>
+        <translation>Значення rootItem не є правильним ідентифікатором елемента</translation>
+    </message>
+    <message>
+        <source>The value of filter is unsupported</source>
+        <translation>Значення фільтра не підтримується</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryType</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.%1 is not a supported item type</source>
+        <translation>DocumentGallery.%1 не є підтримуваним типом елемента</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeLandmarkAbstractModel</name>
+    <message>
+        <source>LandmarkAbstractModel is an abstract class</source>
+        <translation>LandmarkAbstractModel - абстрактний клас</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeContactModel</name>
+    <message>
+        <source>Phone</source>
+        <translation>Телефон</translation>
+    </message>
+    <message>
+        <source>Email</source>
+        <translation>Ел. пошта</translation>
+    </message>
+</context>
+<context>
+    <name>S60CameraViewfinderEngine</name>
+    <message>
+        <source>General viewfinder error.</source>
+        <translation>Загальна помилка видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder output not supported.</source>
+        <translation>Виведення видошукача не підтримується.</translation>
+    </message>
+    <message>
+        <source>Requested viewfinder size is not supported.</source>
+        <translation>Розмір видошукача, що запитується, не підтримується.</translation>
+    </message>
+    <message>
+        <source>Starting viewfinder failed.</source>
+        <translation>Збій запуску видошукача.</translation>
+    </message>
+    <message>
+        <source>Requesting window for viewfinder failed.</source>
+        <translation>Збій запиту вікна для видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder format not supported.</source>
+        <translation>Формат видошукача не підтримується.</translation>
+    </message>
+    <message>
+        <source>Camera rotation failed.</source>
+        <translation>Збій повороту камери.</translation>
+    </message>
+    <message>
+        <source>Presenting viewfinder frame failed.</source>
+        <translation>Збій представлення кадру видошукача.</translation>
+    </message>
+    <message>
+        <source>Invalid viewfinder frame was received.</source>
+        <translation>Отримано неправильний кадр видошукача.</translation>
+    </message>
+    <message>
+        <source>Failed to convert viewfinder frame to presentable image.</source>
+        <translation>Збій конвертування кадру видошукача в зображення.</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinSession</name>
+    <message>
+        <source>Camera error</source>
+        <translation>Помилка камери</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerServicePlugin</name>
+    <message>
+        <source>Main Camera</source>
+        <translation>Головна камера</translation>
+    </message>
+    <message>
+        <source>Front Camera</source>
+        <translation>Передня камера</translation>
     </message>
 </context>
 </TS>

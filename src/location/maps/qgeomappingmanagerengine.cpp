@@ -153,9 +153,9 @@ int QGeoMappingManagerEngine::managerVersion() const
 }
 
 /*!
-\fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
+\fn QGeoMapData* QGeoMappingManagerEngine::createMapData()
 
-    Returns a new QGeoMapData instance for \a geoMap, which will be managed by
+    Returns a new QGeoMapData instance which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about
@@ -243,7 +243,7 @@ void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphi
 }
 
 /*!
-    Sets the minimum zoom level supported by this engine.
+    Sets the minimum zoom level supported by this engine to \a minimumZoom.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -258,7 +258,7 @@ void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
 }
 
 /*!
-    Sets the maximum zoom level supported by this engine.
+    Sets the maximum zoom level supported by this engine to \a maximumZoom.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.

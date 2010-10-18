@@ -135,7 +135,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     qDebug() << "city:" << (d->sCity == other.city());
     qDebug() << "district:" << (d->sDistrict == other.district());
     qDebug() << "street:" << (d->sStreet == other.street());
-    qDebug() << "postCode:" << (d->sPostCode == other.postCode());
+    qDebug() << "postcode:" << (d->sPostCode == other.postcode());
 #endif
 
     return d->sCountry == other.country() &&
@@ -145,7 +145,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sCity == other.city() &&
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
-           d->sPostCode == other.postCode();
+           d->sPostCode == other.postcode();
 }
 
 /*!
@@ -254,9 +254,9 @@ void QGeoAddress::setDistrict(const QString &district)
 /*!
     Returns the street-level component of the address.
 
-    This typically includes a street number and street name 
-    but may also contain things like a unit number, a building 
-    name, or anything else that might be used to 
+    This typically includes a street number and street name
+    but may also contain things like a unit number, a building
+    name, or anything else that might be used to
     distinguish one address from another.
 */
 QString QGeoAddress::street() const
@@ -267,9 +267,9 @@ QString QGeoAddress::street() const
 /*!
     Sets the street-level component of the address to \a street.
 
-    This typically includes a street number and street name 
-    but may also contain things like a unit number, a building 
-    name, or anything else that might be used to 
+    This typically includes a street number and street name
+    but may also contain things like a unit number, a building
+    name, or anything else that might be used to
     distinguish one address from another.
 */
 void QGeoAddress::setStreet(const QString &street)
@@ -280,17 +280,17 @@ void QGeoAddress::setStreet(const QString &street)
 /*!
     Returns the post code.
 */
-QString QGeoAddress::postCode() const
+QString QGeoAddress::postcode() const
 {
     return d->sPostCode;
 }
 
 /*!
-    Sets the \a postCode.
+    Sets the \a postcode.
 */
-void QGeoAddress::setPostCode(const QString &postCode)
+void QGeoAddress::setPostcode(const QString &postcode)
 {
-    d->sPostCode = postCode;
+    d->sPostCode = postcode;
 }
 
 /*!

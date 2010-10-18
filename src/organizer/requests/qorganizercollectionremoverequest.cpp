@@ -65,12 +65,12 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
 QOrganizerCollectionRemoveRequest::QOrganizerCollectionRemoveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionRemoveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerCollectionRemoveRequestPrivate, parent)
 {
 }
 
 /*! Sets the list of ids of collections which will be removed by this request to a list containing the single element \a collectionId */
-void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
+void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionId& collectionId)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
     d->m_collectionIds.clear();
@@ -78,21 +78,21 @@ void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollecti
 }
 
 /*! Sets the list of ids of collections which will be removed by this request to \a collectionIds */
-void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds)
+void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
     d->m_collectionIds = collectionIds;
 }
 
 /*! Returns the list of ids of collections which will be removed by this request if possible */
-QList<QOrganizerCollectionLocalId> QOrganizerCollectionRemoveRequest::collectionIds() const
+QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
     return d->m_collectionIds;
 }
 
 /*! Returns any errors which occurred during the request */
-QMap<int, QOrganizerItemManager::Error> QOrganizerCollectionRemoveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerCollectionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
     return d->m_errors;

@@ -82,7 +82,7 @@ class QGeoTiledMapReply;
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
 public:
-    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine);
     ~QGeoTiledMapDataPrivate();
 
     void updateMapImage();

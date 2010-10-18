@@ -97,11 +97,13 @@ public:
     void setError(QVersitWriter::Error);
     QVersitWriter::Error error() const;
     void setCanceling(bool cancelling);
-    bool isCanceling();
+    bool isCanceling() const;
+    void setDocumentType(QVersitDocument::VersitType type);
+    QVersitDocument::VersitType documentType() const;
 
     void run();
 
-    static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
+    static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type, const QVersitDocument& document);
 
     QIODevice* mIoDevice;
     QScopedPointer<QBuffer> mOutputBytes; // Holds the data set by setData()
@@ -111,6 +113,7 @@ public:
     bool mIsCanceling;
     mutable QMutex mMutex;
     QTextCodec* mDefaultCodec;
+    QVersitDocument::VersitType mType;
 };
 
 QTM_END_NAMESPACE

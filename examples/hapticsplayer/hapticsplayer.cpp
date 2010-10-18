@@ -55,7 +55,7 @@
 static const char ENUM_THEME_EFFECT[] = "ThemeEffect";
 static const char ENUM_ANIMATION_STATE[] = "State";
 
-HapticsPlayer::HapticsPlayer()
+HapticsPlayer::HapticsPlayer() : actuator(0)
 {
     ui.setupUi(this);
 
@@ -129,20 +129,26 @@ HapticsPlayer::HapticsPlayer()
     startTimer(50);
 }
 
-QFeedbackActuator HapticsPlayer::currentActuator() const
+QFeedbackActuator* HapticsPlayer::currentActuator()
 {
-    QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
+    QList<QFeedbackActuator*> devs = QFeedbackActuator::actuators();
     int index = ui.actuators->currentIndex();
-    if (index == -1 || devs.count() == 0 || index > devs.count())
-        return QFeedbackActuator();
+    if (index == -1 || devs.count() == 0 || index > devs.count()) {
+        if (!actuator) {
+            actuator = new QFeedbackActuator(this);
+        }
+        return actuator;
+    }
     return devs.at(index);
 }
 
 void HapticsPlayer::actuatorChanged()
 {
-    QFeedbackActuator dev = currentActuator();
-    enabledChanged(dev.isEnabled());
-    effect.setActuator(dev);
+    QFeedbackActuator* dev = currentActuator();
+    if (dev) {
+        enabledChanged(dev->isEnabled());
+        effect.setActuator(dev);
+    }
 }
 
 #ifdef Q_OS_SYMBIAN
@@ -166,25 +172,26 @@ void HapticsPlayer::enabledChanged(bool on)
 {
     if (!on)
         effect.stop();
-    QFeedbackActuator dev = currentActuator();
-    dev.setEnabled(on);
-    ui.enabled->setChecked(dev.isEnabled());
+    QFeedbackActuator* dev = currentActuator();
+    if (dev) {
+        dev->setEnabled(on);
+        ui.enabled->setChecked(dev->isEnabled());
 
-    if (dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Envelope))) {
-        ui.envelope->setEnabled(true);
-        ui.envelope->show();
-    } else {
-        ui.envelope->setEnabled(true);
-        ui.envelope->hide();
+        if (dev->isEnabled() && (dev->isCapabilitySupported(QFeedbackActuator::Envelope))) {
+            ui.envelope->setEnabled(true);
+            ui.envelope->show();
+        } else {
+            ui.envelope->setEnabled(true);
+            ui.envelope->hide();
+        }
+        if (dev->isEnabled() && (dev->isCapabilitySupported(QFeedbackActuator::Period))) {
+            ui.grpPeriod->setEnabled(true);
+            ui.grpPeriod->show();
+        } else {
+            ui.grpPeriod->setEnabled(false);
+            ui.grpPeriod->hide();
+        }
     }
-    if (dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Period))) {
-        ui.grpPeriod->setEnabled(true);
-        ui.grpPeriod->show();
-    } else {
-        ui.grpPeriod->setEnabled(false);
-        ui.grpPeriod->hide();
-    }
-
 #ifdef Q_OS_SYMBIAN
     ui.playPause->setFocus();
 #endif
@@ -290,7 +297,8 @@ void HapticsPlayer::browseClicked()
     QString filename = QFileDialog::getOpenFileName(this, tr("Feedback file"));
     if (!filename.isEmpty()) {
         ui.filename->setText(QDir::toNativeSeparators(filename));
-        fileEffect.setFileName(filename);
+        fileEffect.setSource(QUrl::fromLocalFile(filename));
+        fileEffect.load();
     }
 }
 

@@ -90,9 +90,9 @@ public:
     }
 
     bool m_dataChanged;
-    QSet<QOrganizerCollectionLocalId> m_addedCollections;
-    QSet<QOrganizerCollectionLocalId> m_changedCollections;
-    QSet<QOrganizerCollectionLocalId> m_removedCollections;
+    QSet<QOrganizerCollectionId> m_addedCollections;
+    QSet<QOrganizerCollectionId> m_changedCollections;
+    QSet<QOrganizerCollectionId> m_removedCollections;
 };
 
 QTM_END_NAMESPACE

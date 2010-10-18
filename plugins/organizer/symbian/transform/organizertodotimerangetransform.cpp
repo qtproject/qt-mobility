@@ -45,16 +45,16 @@
 **
 ****************************************************************************/
 #include "organizertodotimerangetransform.h"
-#include "qorganizertodotimerange.h"
+#include "qorganizertodotime.h"
 
-void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
+void OrganizerTodoTimeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     if(item->type() == QOrganizerItemType::TypeTodo)
     {
         TCalTime startTime = entry.StartTimeL();
         TCalTime endTime = entry.EndTimeL();
 
-        QOrganizerTodoTimeRange range;
+        QOrganizerTodoTime range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTimeL(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
@@ -65,29 +65,29 @@ void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalEntry& entry,
     }
 }
 
-void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerTodoTimeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
-    if(itemInstance->type() == QOrganizerItemType::TypeTodoOccurrence)
+    if(itemOccurrence->type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         TCalTime startTime = instance.StartTimeL();
         TCalTime endTime = instance.EndTimeL();
 
-        QOrganizerTodoTimeRange range;
+        QOrganizerTodoTime range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTimeL(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTimeL(endTime));
         
         if (!range.isEmpty())
-            itemInstance->saveDetail(&range);
+            itemOccurrence->saveDetail(&range);
     }
 }
 
-void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+void OrganizerTodoTimeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     if(item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence)
     {
-        QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
+        QOrganizerTodoTime range = item.detail<QOrganizerTodoTime>();
         
         // Nothing to do?
         if (range.isEmpty())
@@ -104,7 +104,7 @@ void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& it
     }
 }
 
-QString OrganizerTodoTimeRangeTransform::detailDefinitionName()
+QString OrganizerTodoTimeTransform::detailDefinitionName()
 {
-    return QOrganizerTodoTimeRange::DefinitionName;    
+    return QOrganizerTodoTime::DefinitionName;    
 }

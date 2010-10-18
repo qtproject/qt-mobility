@@ -93,7 +93,7 @@ public:
     /* Helper functions for C++ protection rules */
     static const QSharedDataPointer<QLandmarkSortOrderPrivate>& extract_d(const QLandmarkSortOrder& other) {return other.d_ptr;}
 
-    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkSortOrder, QLandmarkSortOrder::DefaultSort)
+    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkSortOrder, QLandmarkSortOrder::NoSort)
 
     QLandmarkSortOrder::SortType type;
     Qt::SortOrder order;

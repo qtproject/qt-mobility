@@ -153,7 +153,7 @@ public:
     bool importLandmarks(QIODevice *device, const QString& format,
         QLandmarkManager::TransferOption option, const QLandmarkCategoryId& id,
         QLandmarkManager::Error *error, QString *errorString);
-    bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds,
+    bool exportLandmarks(QIODevice *device, const QString& format, const QList<QLandmarkId> &landmarkIds,
         QLandmarkManager::TransferOption option, QLandmarkManager::Error *error,
         QString *errorString) const;
     QStringList supportedFormats(QLandmarkManager::TransferOperation operation,
@@ -162,10 +162,10 @@ public:
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter,
         QLandmarkManager::Error *error, QString *errorString) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(
-        const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error,
+        const QLandmarkSortOrder &sortOrder, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature,
+    bool isFeatureSupported(QLandmarkManager::ManagerFeature feature,
         QLandmarkManager::Error *error, QString *errorString) const;
 
     bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const;

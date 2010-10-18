@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
 QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
 {
 }
 
@@ -98,6 +98,20 @@ void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fet
     d->m_fetchHint = fetchHint;
 }
 
+/*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_startDate = date;
+}
+
+/*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_endDate = date;
+}
+
 /*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
@@ -124,6 +138,18 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchRequest);
     return d->m_fetchHint;
+}
+
+QDateTime QOrganizerItemFetchRequest::startDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_startDate;
+}
+
+QDateTime QOrganizerItemFetchRequest::endDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_endDate;
 }
 
 /*! Returns the list of organizer items retrieved by this request */

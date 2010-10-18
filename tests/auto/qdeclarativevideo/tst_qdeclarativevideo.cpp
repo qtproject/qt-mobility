@@ -290,6 +290,7 @@ void tst_QDeclarativeVideo::nullPlayerControl()
     QtTestMediaServiceProvider provider(0, 0);
 
     QDeclarativeVideo video;
+    video.classBegin();
 
     QCOMPARE(video.source(), QUrl());
     video.setSource(QUrl("http://example.com"));
@@ -341,6 +342,7 @@ void tst_QDeclarativeVideo::nullService()
     QtTestMediaServiceProvider provider(0);
 
     QDeclarativeVideo video;
+    video.classBegin();
 
     QCOMPARE(video.source(), QUrl());
     video.setSource(QUrl("http://example.com"));
@@ -395,6 +397,7 @@ void tst_QDeclarativeVideo::playing()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QSignalSpy playingChangedSpy(&video, SIGNAL(playingChanged()));
@@ -483,6 +486,7 @@ void tst_QDeclarativeVideo::paused()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QSignalSpy playingChangedSpy(&video, SIGNAL(playingChanged()));
@@ -773,6 +777,7 @@ void tst_QDeclarativeVideo::error()
 
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QSignalSpy errorSpy(&video, SIGNAL(error(QDeclarativeVideo::Error,QString)));
@@ -808,6 +813,7 @@ void tst_QDeclarativeVideo::hasAudio()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QSignalSpy spy(&video, SIGNAL(hasAudioChanged()));
@@ -831,7 +837,7 @@ void tst_QDeclarativeVideo::hasVideo()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
-
+    video.classBegin();
     video.componentComplete();
 
     QSignalSpy spy(&video, SIGNAL(hasVideoChanged()));
@@ -855,6 +861,7 @@ void tst_QDeclarativeVideo::fillMode()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QList<QGraphicsItem *> children = video.childItems();
@@ -881,6 +888,7 @@ void tst_QDeclarativeVideo::geometry()
 {
     QtTestMediaServiceProvider provider;
     QDeclarativeVideo video;
+    video.classBegin();
     video.componentComplete();
 
     QList<QGraphicsItem *> children = video.childItems();
@@ -901,6 +909,7 @@ void tst_QDeclarativeVideo::geometry()
     QVideoSurfaceFormat format(QSize(640, 480), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface->start(format));
+    QCoreApplication::processEvents();
 
     QCOMPARE(video.implicitWidth(), qreal(640));
     QCOMPARE(video.implicitHeight(), qreal(480));

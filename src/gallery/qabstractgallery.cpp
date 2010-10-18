@@ -60,6 +60,26 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QAbstractGallery class provides a base class for gallery
     implementations.
+
+    Classes implementing the QAbstractGallery interface allow
+    QGalleryAbstractRequest implementations to connect to a gallery and
+    execute a query or perform an action.
+
+    The types of request that can be executed by a gallery are defined in
+    QGalleryAbstractRequest::RequestType.  If a gallery supports a request the
+    isRequestSupportedFunction() will return true when given the type of the
+    request, and false if it is not supported.
+
+    When a QGalleryAbstractRequest is executed it will call createResponse() on
+    its gallery and pass a pointer to itself.  The gallery will then use the
+    \l {QGalleryAbstractRequest::type()}{type} property of the request to
+    determine its type and cast to the correct class.  Using the properties of
+    the request a gallery can then create a QGalleryAbstractResponse which
+    executes the requested task and returns any results.  Some requests will
+    require the response to implement additional interfaces such as
+    QGalleryResultSet to access the data produced in the response.
+
+    \sa QGalleryAbstractRequest
 */
 
 /*!

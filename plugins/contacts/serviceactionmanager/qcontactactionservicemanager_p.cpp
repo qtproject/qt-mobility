@@ -101,6 +101,9 @@ void QContactActionServiceManager::init()
         QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(); // all services, all interfaces.
         foreach (const QServiceInterfaceDescriptor& sid, sids) {
             if (sid.interfaceName() == QContactActionFactory::InterfaceName) {
+                if (static_cast<QService::Type>(sid.attribute(QServiceInterfaceDescriptor::ServiceType).toInt()) != QService::Plugin) {
+                    continue; // we don't allow IPC contact action factories.
+                }
                 QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
                 if (actionFactory) {
                     // if we cannot get the action factory from the service manager, then we don't add it to our hash.
@@ -138,7 +141,10 @@ void QContactActionServiceManager::serviceAdded(const QString& serviceName)
     QMutexLocker locker(&m_instanceMutex);
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
-        if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
+        if (sid.interfaceName() == QContactActionFactory::InterfaceName) {
+            if (static_cast<QService::Type>(sid.attribute(QServiceInterfaceDescriptor::ServiceType).toInt()) != QService::Plugin) {
+                continue; // we don't allow IPC contact action factories.
+            }
             QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
             if (actionFactory) {
                 // if we cannot get the action factory from the service manager, then we don't add it to our hash.
@@ -157,7 +163,10 @@ void QContactActionServiceManager::serviceRemoved(const QString& serviceName)
     QMutexLocker locker(&m_instanceMutex);
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
-        if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
+        if (sid.interfaceName() == QContactActionFactory::InterfaceName) {
+            if (static_cast<QService::Type>(sid.attribute(QServiceInterfaceDescriptor::ServiceType).toInt()) != QService::Plugin) {
+                continue; // we don't allow IPC contact action factories.
+            }
             QList<QContactActionDescriptor> cads = m_actionFactoryHash.keys();
             foreach (const QContactActionDescriptor& cad, cads) {
                 if (cad.serviceName() != serviceName)

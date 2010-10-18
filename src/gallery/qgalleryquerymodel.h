@@ -62,18 +62,18 @@ class QGalleryQueryModelPrivate;
 class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_PROPERTY(QAbstractGallery *gallery READ gallery WRITE setGallery)
-    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
-    Q_PROPERTY(int offset READ offset WRITE setOffset)
-    Q_PROPERTY(int limit READ limit WRITE setLimit)
-    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
-    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
-    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
+    Q_PROPERTY(QAbstractGallery *gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
+    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
+    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(int error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
-    Q_PROPERTY(QGalleryAbstractRequest::Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
 public:
     QGalleryQueryModel(QObject *parent = 0);
     QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent = 0);
@@ -122,7 +122,7 @@ public:
     int error() const;
     QString errorString() const;
 
-    QGalleryAbstractRequest::Status status() const;
+    QGalleryAbstractRequest::State state() const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -147,11 +147,20 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 Q_SIGNALS:
+    void galleryChanged();
+    void sortPropertyNamesChanged();
+    void autoUpdateChanged();
+    void offsetChanged();
+    void limitChanged();
+    void rootTypeChanged();
+    void rootItemChanged();
+    void scopeChanged();
+    void filterChanged();
     void finished();
-    void cancelled();
+    void canceled();
     void error(int error, const QString &errorString);
     void errorChanged();
-    void statusChanged(QGalleryAbstractRequest::Status status);
+    void stateChanged(QGalleryAbstractRequest::State state);
 
 private:
     QScopedPointer<QGalleryQueryModelPrivate> d_ptr;

@@ -79,7 +79,7 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     m_city = new QLineEdit(address.city());
     m_city->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QLabel *ziplbl = new QLabel(tr("Zip:"));
-    m_zip = new QLineEdit(address.postCode());
+    m_zip = new QLineEdit(address.postcode());
     m_zip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QLabel *streetlbl = new QLabel(tr("Street:"));
     m_street = new QLineEdit(address.street());
@@ -145,7 +145,7 @@ void GeoCodingInputDialog::accept()
     m_address.setCountry(m_country->text());
     m_address.setState(m_state->text());
     m_address.setCity(m_city->text());
-    m_address.setPostCode(m_zip->text());
+    m_address.setPostcode(m_zip->text());
     m_address.setStreet(m_street->text());
 
     QDialog::accept();

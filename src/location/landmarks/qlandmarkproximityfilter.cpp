@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkProximityFilter
     \brief The QLandmarkProximityFilter class is used to search for landmarks based on the radius
-    around a given coordinate.
+    around a given coordinate and perform sorting by distance.
 
     \inmodule QtLocation
 
@@ -63,7 +63,9 @@ QTM_BEGIN_NAMESPACE
     In order to be a valid filter, the region covered by the proximity filter must not cover one of the poles.
     The landmarks are returned in ascending order of distance.  A proximity filter may
     be used inside an intersection filter to sort landmarks by distance in combination with other
-    criteria such as categories.
+    criteria such as categories.  (Note that a using sort order other than QLandmarkSortOrder (i.e. no sort)
+    will override the sorting by distance).
+
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
@@ -117,7 +119,7 @@ void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 }
 
 /*!
-    Returns the radius of the filter.  the unit of the radius is meters.
+    Returns the radius of the filter.  The unit of the radius is meters.
 */
 qreal QLandmarkProximityFilter::radius() const
 {

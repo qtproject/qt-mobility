@@ -86,7 +86,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& profile) :
+QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QStringList& profiles) :
     mPropertyHandler(NULL),
     mPropertyHandler2(NULL),
     mPropertyHandlerVersion(0),
@@ -123,7 +123,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& prof
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
 
-    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
+    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profiles);
 }
 
 /*!
@@ -144,7 +144,8 @@ bool QVersitContactImporterPrivate::importContact(
         const QVersitDocument& document, int contactIndex, QContact* contact,
         QVersitContactImporter::Error* error)
 {
-    if (document.type() != QVersitDocument::VCard21Type
+    if (document.componentType() != QLatin1String("VCARD")
+        && document.type() != QVersitDocument::VCard21Type
         && document.type() != QVersitDocument::VCard30Type) {
         *error = QVersitContactImporter::InvalidDocumentError;
         return false;

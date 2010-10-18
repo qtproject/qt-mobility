@@ -64,22 +64,22 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryAbstractRequest)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(int error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
-    Q_ENUMS(Status)
+    Q_ENUMS(State)
     Q_ENUMS(RequestType)
 public:
-    enum Status
+    enum State
     {
         Inactive,
         Active,
-        Cancelling,
-        Cancelled,
+        Canceling,
+        Canceled,
         Idle,
         Finished,
         Error
@@ -111,7 +111,7 @@ public:
     bool isSupported() const;
 
     RequestType type() const;
-    Status status() const;
+    State state() const;
 
     int error() const;
     QString errorString() const;
@@ -127,11 +127,12 @@ public Q_SLOTS:
     void clear();
 
 Q_SIGNALS:
+    void galleryChanged();
     void supportedChanged();
     void finished();
-    void cancelled();
+    void canceled();
     void error(int error, const QString &errorString);
-    void statusChanged(QGalleryAbstractRequest::Status status);
+    void stateChanged(QGalleryAbstractRequest::State state);
     void errorChanged();
     void progressChanged(int current, int maximum);
 
@@ -144,7 +145,7 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())
-    Q_PRIVATE_SLOT(d_ptr, void _q_cancelled())
+    Q_PRIVATE_SLOT(d_ptr, void _q_canceled())
     Q_PRIVATE_SLOT(d_ptr, void _q_resumed())
     Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };

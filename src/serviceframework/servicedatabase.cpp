@@ -143,8 +143,14 @@ bool ServiceDatabase::open()
 
     path = m_databasePath;
     QFileInfo dbFileInfo(path);
-    if (!dbFileInfo.dir().exists()) {
-       if(!QDir::root().mkpath(dbFileInfo.path())) {
+    if (!dbFileInfo.dir().exists()) {        
+      // Create the path with QFile, avoids problems with S60 3.2/3.1
+      // Avoid security violation with PlatSec
+#ifndef Q_OS_SYMBIAN
+       QDir::root().mkpath(dbFileInfo.path());
+#endif
+       QFile file(path);
+       if(!file.open(QIODevice::ReadWrite)) {
            QString errorText("Could not create database directory: %1");
            m_lastError.setError(DBError::CannotCreateDbDir, errorText.arg(dbFileInfo.path()));
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -154,6 +160,7 @@ bool ServiceDatabase::open()
            close();
            return false;
         }
+        file.close();
     }
 
     m_connectionName = dbFileInfo.completeBaseName();
@@ -1036,6 +1043,12 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
         m_lastError.setError(DBError::NotFound, errorText.arg(interfaceID));
         return interface;
     }
+
+    interface.d = new QServiceInterfaceDescriptorPrivate;
+    interface.d->interfaceName =query.value(EBindIndex).toString();
+    interface.d->serviceName = query.value(EBindIndex1).toString();
+    interface.d->major = query.value(EBindIndex2).toInt();
+    interface.d->minor = query.value(EBindIndex3).toInt();
 
     QString location = query.value(EBindIndex4).toString();
     if (location.startsWith(SERVICE_IPC_PREFIX)) {

@@ -61,6 +61,8 @@
 #include <QtOpenGL/qgl.h>
 #endif
 
+Q_DECLARE_METATYPE(QVideoSurfaceFormat)
+
 QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate
@@ -218,9 +220,11 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     d_ptr->q_ptr = this;
     d_ptr->surface = new QPainterVideoSurface;
 
+    qRegisterMetaType<QVideoSurfaceFormat>();
+
     connect(d_ptr->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
     connect(d_ptr->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-            this, SLOT(_q_updateNativeSize()));
+            this, SLOT(_q_updateNativeSize()), Qt::QueuedConnection);
 }
 
 /*!

@@ -87,7 +87,7 @@ class QFeedbackHapticsEffectPrivate
 {
 public:
     QFeedbackHapticsEffectPrivate() :
-                    duration(250), attackTime(0), fadeTime(0), period(-1),
+                    duration(250), attackTime(0), fadeTime(0), period(-1), actuator(0),
                     intensity(1), attackIntensity(0), fadeIntensity(0)
     {
 
@@ -98,7 +98,7 @@ public:
     int attackTime;
     int fadeTime;
     int period;
-    QFeedbackActuator actuator;
+    QFeedbackActuator *actuator;
     qreal intensity;
     qreal attackIntensity;
     qreal fadeIntensity;
@@ -118,7 +118,7 @@ public:
 
     QFeedbackFileEffect *effect;
 
-    QString fileName;
+    QUrl url;
     bool loaded;
 
     //used for loading the file

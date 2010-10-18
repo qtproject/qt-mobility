@@ -70,14 +70,21 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     QObject(parent),
     m_loopCount(1),
     m_runningCount(0),
+    m_loaded(false),
     m_player(0)
 {
     m_player = new QMediaPlayer(this, QMediaPlayer::LowLatency);
     connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(stateChanged(QMediaPlayer::State)));
+    connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
 {
+}
+
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    return QMediaPlayer::supportedMimeTypes();
 }
 
 QUrl QSoundEffectPrivate::source() const
@@ -87,6 +94,7 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
+    m_loaded = false;
     m_player->setMedia(url);
 }
 
@@ -120,17 +128,46 @@ void QSoundEffectPrivate::setMuted(bool muted)
     m_player->setMuted(muted);
 }
 
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return m_loaded;
+}
+
 void QSoundEffectPrivate::play()
 {
-    m_runningCount += m_loopCount;
+    if (m_loopCount < 0)
+        m_runningCount = -1;
+    else {
+        if (m_runningCount < 0)
+            m_runningCount = 0;
+        m_runningCount += m_loopCount;
+    }
     m_player->play();
+}
+
+void QSoundEffectPrivate::stop()
+{
+    m_runningCount = 0;
+    m_player->stop();
 }
 
 void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        if (--m_runningCount > 0)
+        if (m_runningCount < 0)
             m_player->play();
+        else if (m_runningCount == 0)
+            return;
+        else if (--m_runningCount > 0)
+            m_player->play();
+    }
+}
+
+void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+{
+    if (status == QMediaPlayer::LoadedMedia) {
+        m_loaded = true;
+        emit loadedChanged();
     }
 }
 

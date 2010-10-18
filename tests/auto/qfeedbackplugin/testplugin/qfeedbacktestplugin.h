@@ -70,7 +70,7 @@ public:
 
     virtual PluginPriority pluginPriority();
 
-    virtual QList<QFeedbackActuator> actuators();
+    virtual QList<QFeedbackActuator*> actuators();
 
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
@@ -87,6 +87,8 @@ public:
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect *);
     virtual QStringList supportedMimeTypes();
+private:
+    QList<QFeedbackActuator*> actuators_;
 };
 
 

@@ -55,8 +55,10 @@ QTM_BEGIN_NAMESPACE
     \brief The QLandmarkNameSort class is used to sort landmarks by name.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-sort
+
+    Note that some manager's may not support case sensitive sorting.
 */
 
 Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(QLandmarkNameSort)

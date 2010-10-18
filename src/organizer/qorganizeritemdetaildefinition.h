@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 class QOrganizerItemDetailDefinitionData;
 class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinition
 {
-    friend class QOrganizerItemManager;
+    friend class QOrganizerManager;
 
 public:
     // default constructor: produces an invalid QOrganizerItemFieldDefinition.

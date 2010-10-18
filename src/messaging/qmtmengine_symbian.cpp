@@ -83,7 +83,6 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <CMessageData.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
@@ -105,6 +104,7 @@
 
 #include <email_services_api.h>
 #else
+#include <CMessageData.h> //CMessageData
 #include <SendUiConsts.h>
 #include <sendui.h>    // SendUi API
 #endif
@@ -1460,6 +1460,7 @@ void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1499,6 +1500,7 @@ void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1543,6 +1545,7 @@ void CMTMEngine::countMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     queryInfo.count = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1564,6 +1567,12 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
         if (iMessageQueries[index].operationId == operationId) {
             break;
         }
+    }
+    
+    if (iMessageQueries[index].canceled) {
+        delete iMessageQueries[index].findOperation;
+        iMessageQueries.removeAt(index);
+        return;
     }
 
     if (success) {
@@ -1659,6 +1668,14 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
     iMessageQueries.removeAt(index);
 }
 
+void CMTMEngine::cancel(QMessageServicePrivate& privateService)
+{
+    for (int i=0; i < iMessageQueries.count(); i++) {
+        if (iMessageQueries[i].privateService == &privateService) {
+            iMessageQueries[i].canceled = true;
+        }
+    }
+}
 
 void CMTMEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
 {
@@ -5337,6 +5354,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                     getAccountSpecificMessagesL(messageAccount, iOrdering, privateFilter);
                 }
             } else { // NotEqual
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & type)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
@@ -5347,12 +5365,14 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
             QMessage::TypeFlags typeFlags = static_cast<QMessage::TypeFlags>(pf->_value.toInt());
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
             if (cmp == QMessageDataComparator::Includes) {
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (value.messageTypes() | typeFlags) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
                     }
                 }
             } else { // Excludes
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & typeFlags)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);

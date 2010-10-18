@@ -46,12 +46,12 @@
 ****************************************************************************/
 #include <QCoreApplication>
 #include <QTimer>
-#include <qremoteserviceclassregister.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include "qservicemanager.h"
 #include <QDebug>
 
 #include "qservicefilter.h" //only used to test custom metatype
+#include "qremoteserviceregister.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QServiceFilter);
@@ -61,7 +61,6 @@ Q_DECLARE_METATYPE(QList<QString>);
 class SharedTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 
 public:
@@ -196,7 +195,6 @@ private:
 class UniqueTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(UniqueTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5")
     Q_CLASSINFO("UniqueTestService", "First test");
     Q_CLASSINFO("Key", "Value");
 
@@ -369,6 +367,7 @@ public slots:
     }
 
     void testIpcFailure() {
+      qDebug() << "Application exiting on request";
       qApp->exit(0); // exit to show failure
     }
     
@@ -389,7 +388,7 @@ void registerExampleService()
 {
     unregisterExampleService();
     QServiceManager m;
-    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";    
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";
     bool r = m.addService(path);
     if (!r)
         qWarning() << "Cannot register IPCExampleService" << path;
@@ -412,14 +411,24 @@ int main(int argc, char** argv)
    
     registerExampleService();
 
-    QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
-    QRemoteServiceClassRegister::registerType<UniqueTestService>(QRemoteServiceClassRegister::UniqueInstance);
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
 
-    //this only works
-    QRemoteServiceControl* control = new QRemoteServiceControl();
-    control->publishServices("qt_sfw_example_ipc_unittest");
+    //register the unique service
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<UniqueTestService>(
+                "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+    uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+
+    //register the shared srevice
+    QRemoteServiceRegister::Entry sharedEntry =
+        serviceRegister->createEntry<SharedTestService>(
+                "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
+    sharedEntry.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
+
+    //publish the registered services
+    serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
-    delete control;
+    delete serviceRegister;
 
     // Do not unregister when done, otherwise autostart can't start the service
     unregisterExampleService();

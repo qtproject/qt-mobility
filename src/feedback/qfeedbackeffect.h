@@ -51,7 +51,7 @@
 #include <qmobilityglobal.h>
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
-
+#include <QtCore/QUrl>
 
 QT_BEGIN_HEADER
     
@@ -65,27 +65,31 @@ class Q_FEEDBACK_EXPORT QFeedbackEffect : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ThemeEffect)
-    Q_ENUMS(ErrorType)
+    Q_ENUMS(Duration)
     Q_ENUMS(State)
+    Q_ENUMS(ErrorType)
 
     Q_PROPERTY(int duration READ duration)
-    Q_PROPERTY(State state READ state)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+
 public:
+
+    // Make sure these are kept up to date with the declarative version
     enum ThemeEffect {
         ThemeBasic, ThemeSensitive, ThemeBasicButton, ThemeSensitiveButton,
         ThemeBasicKeypad, ThemeSensitiveKeypad, ThemeBasicSlider, ThemeSensitiveSlider,
         ThemeBasicItem, ThemeSensitiveItem, ThemeItemScroll, ThemeItemPick, ThemeItemDrop,
         ThemeItemMoveOver, ThemeBounceEffect, ThemeCheckBox, ThemeMultipleCheckBox, ThemeEditor,
         ThemeTextSelection, ThemeBlankSelection, ThemeLineSelection, ThemeEmptyLineSelection,
-        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick, // XXX PopUp -> Popup
-        ThemeMultitouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
+        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick,
+        ThemeMultiPointTouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
         ThemeNeutralTacticon, ThemeNegativeTacticon,
         NumberOfThemeEffects,
         ThemeUser = 65535
     };
 
     enum Duration {
-        INFINITE = -1
+        Infinite = -1
     };
 
     enum State {
@@ -119,7 +123,7 @@ protected:
 
 Q_SIGNALS:
     void error(QFeedbackEffect::ErrorType) const; //when an error occurs
-
+    void stateChanged();
 private:
     friend class QFeedbackInterface;
 };
@@ -135,7 +139,7 @@ public:
     Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
     Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
     Q_PROPERTY(int period READ period WRITE setPeriod)
-    Q_PROPERTY(QFeedbackActuator actuator READ actuator WRITE setActuator)
+    Q_PROPERTY(QFeedbackActuator* actuator READ actuator WRITE setActuator)
 
     explicit QFeedbackHapticsEffect(QObject *parent = 0);
     ~QFeedbackHapticsEffect();
@@ -162,8 +166,8 @@ public:
     void setPeriod(int msecs);
     int period() const;
 
-    void setActuator(const QFeedbackActuator &actuator);
-    QFeedbackActuator actuator() const;
+    void setActuator(QFeedbackActuator *actuator);
+    QFeedbackActuator* actuator() const;
 
     //reimplementations from QFeedbackEffect
     virtual State state() const;
@@ -181,7 +185,7 @@ class Q_FEEDBACK_EXPORT QFeedbackFileEffect : public QFeedbackEffect
 {
     Q_OBJECT
     Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded)
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
+    Q_PROPERTY(QUrl source READ source WRITE setSource)
 
 public:
     explicit QFeedbackFileEffect(QObject *parent = 0);
@@ -195,8 +199,8 @@ public:
     void unload();
     void setLoaded(bool);
 
-    QString fileName() const;
-    void setFileName(const QString &);
+    QUrl source() const;
+    void setSource(const QUrl &);
 
     static QStringList supportedMimeTypes();
 

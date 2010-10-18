@@ -252,6 +252,15 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     RET_ERR_IF_ERR(retVal);
     uriPtr.Set(mURIName->Des());
     
+    // This has to be done here since we can not destroy the Player
+    // in the Resource Lost callback.
+    if (mbMediaPlayerUnrealized) {
+        if (mMOPlayer) {
+            (*mMOPlayer)->Destroy(mMOPlayer);
+            mMOPlayer = NULL;
+        }
+    }
+    
     //py uri name into local variable 
     //TODO fix copy issue from 16 bit to 8 bit
     uriPtr.Copy(aURI);
@@ -367,7 +376,9 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
         retVal = mapError(xaRes, ETrue);
         RET_ERR_IF_ERR(retVal);
 
-        xaRes = (*mMOPlayer)->RegisterCallback(mMOPlayer, MediaPlayerCallback, NULL);
+        mbMediaPlayerUnrealized = FALSE;
+        
+        xaRes = (*mMOPlayer)->RegisterCallback(mMOPlayer, MediaPlayerCallback, (void*)this);
         retVal = mapError(xaRes, ETrue);
         RET_ERR_IF_ERR(retVal);
 
@@ -459,6 +470,54 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     mParent.cbDurationChanged(mDuration);
 
     return retVal;
+}
+
+void XAPlaySessionImpl::unload()
+{
+    mPlayItf = NULL;
+    mSeekItf = NULL;
+
+    //Metadata
+    mbMetadataAvailable = FALSE;
+    mMetadataExtItf = NULL;
+    alKeyMap.clear();
+    keyMap.clear();
+    extendedKeyMap.clear();
+    //Volume
+    mNokiaLinearVolumeItf = NULL;
+    mbVolEnabled = FALSE;
+    mNokiaVolumeExtItf = NULL;
+    mbMuteEnabled = NULL;
+
+    //buffer status
+    mPrefetchStatusItf = NULL;
+    mbPrefetchStatusChange = FALSE;
+
+    //stream information
+    mStreamInformationItf = NULL;
+    mbStreamInfoAvailable = FALSE;
+    mbAudioStream = FALSE;
+    mbVideoStream = FALSE;
+    mNumStreams = 0;
+
+    //Playbackrate
+    mPlaybackRateItf = NULL;
+    mbPlaybackRateItfAvailable = FALSE;
+
+    mVideoPostProcessingItf = NULL;
+    mbScalable = FALSE;
+    mCurrAspectRatioMode = Qt::KeepAspectRatio;
+    
+    //internal
+    mCurPosition = 0; // in milliseconds
+    mDuration = 0; // in milliseconds
+
+    
+    mbMediaPlayerUnrealized = TRUE;
+     
+    delete mURIName;
+    mURIName = NULL;
+
 }
 
 TInt XAPlaySessionImpl::play()
@@ -616,21 +675,30 @@ TInt XAPlaySessionImpl::seek(TInt64 pos)
 void XAPlaySessionImpl::cbMediaPlayer(XAObjectItf /*caller*/,
                                          const void */*pContext*/,
                                          XAuint32 event,
-                                         XAresult /*result*/,
+                                         XAresult result,
                                          XAuint32 /*param*/,
                                          void */*pInterface*/) 
 
 {
     switch (event) {
-    case XA_PLAYSTATE_STOPPED:
+    case XA_OBJECT_EVENT_RESOURCES_LOST:
+        unload();
+        mParent.cbPlaybackStopped(result);
         break;
-    case XA_PLAYSTATE_PAUSED:
-        break;
-    case XA_PLAYSTATE_PLAYING:
-        break;
+    case XA_OBJECT_EVENT_RUNTIME_ERROR:
+    {
+        switch (result) {
+        case XA_RESULT_RESOURCE_LOST:
+            unload();
+            mParent.cbPlaybackStopped(result);
+            break;
+        default:
+            break;
+        }; /* of switch (result) */
+    }
     default:
         break;
-    }
+    } /* of switch (event) */
 }
 
 void XAPlaySessionImpl::cbPlayItf(XAPlayItf /*caller*/,
@@ -639,7 +707,7 @@ void XAPlaySessionImpl::cbPlayItf(XAPlayItf /*caller*/,
 {
     switch(event) {
     case XA_PLAYEVENT_HEADATEND:
-        mParent.cbPlaybackStopped_EOS();
+        mParent.cbPlaybackStopped(KErrNone);
         break;
     case XA_PLAYEVENT_HEADATMARKER:
         break;

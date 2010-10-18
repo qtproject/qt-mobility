@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial Usage
@@ -107,37 +107,32 @@ void tst_QFeedbackActuator::cleanup()
 
 void tst_QFeedbackActuator::enumeration()
 {
-    QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
+    QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
 #ifdef HAVE_ACTUATORS
     QVERIFY(!actuators.isEmpty());
 #endif
-    foreach(QFeedbackActuator actuator, actuators) {
-        // we ignore the actuator which we know will fail.
-        if (actuator.name() == QString("test plugin"))
+    foreach(QFeedbackActuator* actuator, actuators) {
+        if (actuator->name() == QString("test plugin"))
             continue;
 
-        // actuators from other plugins need to be verified.
-        QVERIFY(actuator.isValid());
-        QVERIFY(actuator.id() >= 0);
-        QCOMPARE(actuator.isCapabilitySupported(QFeedbackActuator::Envelope), CAPABILITY);
-        QCOMPARE(actuator.isCapabilitySupported(QFeedbackActuator::Period), CAPABILITY);
-        QVERIFY(!actuator.name().isEmpty());
+        QVERIFY(actuator->isValid());
+        QVERIFY(actuator->id() >= 0);
+        QCOMPARE(actuator->isCapabilitySupported(QFeedbackActuator::Envelope), CAPABILITY);
+        QCOMPARE(actuator->isCapabilitySupported(QFeedbackActuator::Period), CAPABILITY);
+        QVERIFY(!actuator->name().isEmpty());
     }
 }
 
 void tst_QFeedbackActuator::setEnabled()
 {
-    foreach(QFeedbackActuator actuator, QFeedbackActuator::actuators()) {
-        // we ignore the actuator which we know will fail.
-        if (actuator.name() == QString("test plugin"))
+   foreach(QFeedbackActuator* actuator, QFeedbackActuator::actuators()) {
+        if (actuator->name() == QString("test plugin"))
             continue;
-
-        // actuators from other plugins need to be verified.
         //this test might not always be true because you ight not be allowed to change the enabled property
-        actuator.setEnabled(false);
-        QVERIFY(!actuator.isEnabled()); 
-        actuator.setEnabled(true);
-        QVERIFY(actuator.isEnabled()); 
+        actuator->setEnabled(false);
+        QVERIFY(!actuator->isEnabled());
+        actuator->setEnabled(true);
+        QVERIFY(actuator->isEnabled());
     }
 }
 

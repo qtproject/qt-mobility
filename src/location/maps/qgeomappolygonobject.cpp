@@ -166,6 +166,33 @@ QBrush QGeoMapPolygonObject::brush() const
     return d_ptr->brush;
 }
 
+/*!
+\fn void QGeoMapPolygonObject::pathChanged(const QList<QGeoCoordinate> &path)
+
+    This signal is emitted when the ordered list of coordinates that define 
+    the polygon to be drawn by this polygon object has changed.
+
+    The new value is \a path.
+*/
+
+/*!
+\fn void QGeoMapPolygonObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the edge of this 
+    polygon object has changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapPolygonObject::brushChanged(const QBrush &brush)
+
+    This signal is emitted when the brush used to fill in the interior of 
+    this polygon object has changed.
+    
+    The new value is \a brush.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 

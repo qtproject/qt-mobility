@@ -50,12 +50,13 @@
 
 #include "qdeclarativecontactfilter_p.h"
 #include "qcontactdetailrangefilter.h"
+#include "qdeclarativecontactdetail_p.h"
 
 class QDeclarativeContactDetailRangeFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QString detail READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
-    Q_PROPERTY(QString field READ fieldName WRITE setFieldName NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY valueChanged)
+    Q_PROPERTY(int field READ field WRITE setField NOTIFY valueChanged)
     Q_PROPERTY(QVariant min READ minValue WRITE setMinValue NOTIFY valueChanged)
     Q_PROPERTY(QVariant max READ maxValue WRITE setMaxValue NOTIFY valueChanged)
     Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
@@ -71,27 +72,30 @@ public:
     Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
 
     QDeclarativeContactDetailRangeFilter(QObject* parent = 0)
-        :QDeclarativeContactFilter(parent)
+        :QDeclarativeContactFilter(parent),
+          m_detailType(QDeclarativeContactDetail::Customized),
+          m_fieldType(-1)
     {
     }
 
-
-    QString detailDefinitionName() const
+    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType)
     {
-        return d.detailDefinitionName();
-    }
-    void setDetailDefinitionName(const QString& definition)
-    {
-        d.setDetailDefinitionName(definition, d.detailFieldName());
+        m_detailType = detailType;
     }
 
-    QString fieldName() const
+    QDeclarativeContactDetail::ContactDetailType detail() const
     {
-        return d.detailFieldName();
+        return m_detailType;
     }
-    void setFieldName(const QString& field)
+
+    void setField(int fieldType)
     {
-        d.setDetailDefinitionName(d.detailDefinitionName(), field);
+        m_fieldType = fieldType;
+    }
+
+    int field() const
+    {
+        return m_fieldType;
     }
 
     QDeclarativeContactFilter::MatchFlags matchFlags() const
@@ -144,13 +148,19 @@ public:
 
     QContactFilter filter() const
     {
-        return d;
+        QString detailName = QDeclarativeContactDetail::definitionName(m_detailType);
+        QString fieldName = QDeclarativeContactDetail::fieldName(m_detailType, m_fieldType);
+        QContactDetailRangeFilter filter(d);
+        filter.setDetailDefinitionName(detailName, fieldName);
+        return filter;
     }
 signals:
     void valueChanged();
 
 
 private:
+    QDeclarativeContactDetail::ContactDetailType m_detailType;
+    int m_fieldType;
     QContactDetailRangeFilter d;
 };
 

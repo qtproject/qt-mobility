@@ -153,7 +153,10 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             if (lmUrl.Length() > 0) {
                 lmBuf.Copy(lmUrl);
                 QString LandmarkUrl((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                qtLandmark->setUrl(LandmarkUrl);
+                //qDebug() << "landmark url " << LandmarkUrl;
+                //TODO: tmp fix, need to know exact reason.
+                if(LandmarkUrl != "0") 
+                    qtLandmark->setUrl(LandmarkUrl);
             }
         }
 
@@ -234,7 +237,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             if (posField.Length() > 0) {
                 lmBuf.Copy(posField);
                 QString lmPosField((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                address.setPostCode(lmPosField);
+                address.setPostcode(lmPosField);
             }
         }
 
@@ -415,7 +418,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     }
 
     // set postcode
-    QString lmPostalCode = qtLandmark->address().postCode();
+    QString lmPostalCode = qtLandmark->address().postcode();
     if (lmPostalCode.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmPostalCode.constData()),
             lmPostalCode.length());
@@ -447,7 +450,6 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     if (catIds.Count() > 0) {
         for (int i = 0; i < catIds.Count(); ++i) {
             symbianLandmark.RemoveCategory(catIds[i]);
-            ExecuteAndDeleteLD(catMgr->RemoveCategoryFromLandmarksL(catIds[i], lmIds));
         }
     }
 
@@ -585,7 +587,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     // set postcode
-    QString lmPostalCode = qtLandmark->address().postCode();
+    QString lmPostalCode = qtLandmark->address().postcode();
     if (lmPostalCode.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmPostalCode.constData()),
             lmPostalCode.length());
@@ -658,8 +660,9 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
     for (int i = 0; i < qtLandmarkIds.size(); ++i) {
         TPosLmItemId lmId = convertToSymbianLandmarkId(qtLandmarkIds.at(i));
         if (lmId == KPosLmNullItemId) {
-            symbianLandmarkIds.Reset();
-            return symbianLandmarkIds;
+            //if one of the ids is invalid we ignore it
+            //and not return it in the list
+            //this is to let the id filter find a subset of matches
         }
         else
             symbianLandmarkIds.Append(lmId);
@@ -1014,7 +1017,7 @@ QStringList LandmarkUtility::landmarkAttributeKeys()
     commonKeys << "city";
     commonKeys << "district";
     commonKeys << "street";
-    commonKeys << "postCode";
+    commonKeys << "postcode";
     return commonKeys;
 }
 
@@ -1048,7 +1051,7 @@ QStringList LandmarkUtility::searchableLandmarkAttributeKeys()
     commonKeys << "city";
     commonKeys << "district";
     commonKeys << "street";
-    commonKeys << "postCode";
+    commonKeys << "postcode";
     return commonKeys;
 }
 
@@ -1075,7 +1078,7 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
         fieldId = EPositionFieldCountry;
     else if (keyValue == "countryCode")
         fieldId = EPositionFieldCountryCode;
-    else if (keyValue == "postCode")
+    else if (keyValue == "postcode")
         fieldId = EPositionFieldPostalCode;
 
     return fieldId;

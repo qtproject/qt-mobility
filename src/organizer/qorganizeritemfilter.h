@@ -87,12 +87,11 @@ public:
         InvalidFilter,
         OrganizerItemDetailFilter,
         OrganizerItemDetailRangeFilter,
-        OrganizerItemDateTimePeriodFilter,
         ChangeLogFilter,
         ActionFilter,
         IntersectionFilter,
         UnionFilter,
-        LocalIdFilter,
+        IdFilter,
         CollectionFilter,
         DefaultFilter
     };

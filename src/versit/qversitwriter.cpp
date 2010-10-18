@@ -201,13 +201,28 @@ QVersitWriter::Error QVersitWriter::error() const
 }
 
 /*!
- * Starts writing \a input to device() asynchronously.
- * Returns false if the output device has not been set or opened or
- * if there is another asynchronous write operation already pending.
- * Signal \l stateChanged() is emitted with parameter FinishedState
- * when the writing has finished.
+ * Starts writing \a input to device() asynchronously.  The serialization format is determined based
+ * on the contents of the input documents.
+ *
+ * Returns false if the output device has not been set or opened or if there is another asynchronous
+ * write operation already pending.  Signal \l stateChanged() is emitted with parameter
+ * FinishedState when the writing has finished.
  */
 bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
+{
+    return startWriting(input, QVersitDocument::InvalidType);
+}
+
+/*!
+ * Starts writing \a input to device() asynchronously using the serialization format specified by \a
+ * type.  If \a type is QVersitDocument::InvalidType, the format will be determined based on the
+ * contents of the input documents.
+ *
+ * Returns false if the output device has not been set or opened or if there is another asynchronous
+ * write operation already pending.  Signal \l stateChanged() is emitted with parameter
+ * FinishedState when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QList<QVersitDocument>& input, QVersitDocument::VersitType type)
 {
     d->mInput = input;
     if (d->state() == ActiveState || d->isRunning()) {
@@ -219,9 +234,37 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
     } else {
         d->setState(ActiveState);
         d->setError(NoError);
+        d->setDocumentType(type);
         d->start();
         return true;
     }
+}
+
+/*!
+ * Starts writing \a input to device() asynchronously.  The serialization format is determined based
+ * on the contents of the input documents.
+ *
+ * Returns false if the output device has not been set or opened or if there is another asynchronous
+ * write operation already pending.  Signal \l stateChanged() is emitted with parameter
+ * FinishedState when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QVersitDocument& input)
+{
+    return startWriting(QList<QVersitDocument>() << input, QVersitDocument::InvalidType);
+}
+
+/*!
+ * Starts writing \a input to device() asynchronously using the serialization format specified by \a
+ * type.  If \a type is QVersitDocument::InvalidType, the format will be determined based on the
+ * contents of the input documents.
+ *
+ * Returns false if the output device has not been set or opened or if there is another asynchronous
+ * write operation already pending.  Signal \l stateChanged() is emitted with parameter
+ * FinishedState when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QVersitDocument& input, QVersitDocument::VersitType type)
+{
+    return startWriting(QList<QVersitDocument>() << input, type);
 }
 
 /*!
@@ -243,13 +286,11 @@ void QVersitWriter::cancel()
 bool QVersitWriter::waitForFinished(int msec)
 {
     State state = d->state();
-    if (state == ActiveState) {
+    if (state != InactiveState) {
         if (msec <= 0)
             return d->wait(ULONG_MAX);
         else
             return d->wait(msec);
-    } else if (state == FinishedState) {
-        return true;
     } else {
         return false;
     }

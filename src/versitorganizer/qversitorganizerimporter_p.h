@@ -113,7 +113,8 @@ class QM_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 public:
     QVersitOrganizerImporterPrivate(const QString& profile = QString());
     ~QVersitOrganizerImporterPrivate();
-    bool importDocument(const QVersitDocument& versitDocument,
+    bool importDocument(const QVersitDocument& topLevel,
+                        const QVersitDocument& subDocument,
                         QOrganizerItem* item,
                         QVersitOrganizerImporter::Error* error);
     void importProperty(const QVersitDocument& document,
@@ -183,17 +184,17 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const;
+    bool parseRecurRule(const QString& str, QOrganizerRecurrenceRule* rule) const;
     void parseRecurFragment(const QString& key, const QString& value,
-                            QOrganizerItemRecurrenceRule* rule) const;
-    QList<int> parseIntList(const QString& str, int min, int max) const;
+                            QOrganizerRecurrenceRule* rule) const;
+    QSet<int> parseInts(const QString& str, int min, int max) const;
     int parseDayOfWeek(const QString& str) const;
 
     bool createRecurrenceDates(
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseDateList(const QString& str, QList<QDate>* dates) const;
+    bool parseDates(const QString& str, QSet<QDate>* dates) const;
     QDate parseDate(QString str) const;
 
     bool createStatus(

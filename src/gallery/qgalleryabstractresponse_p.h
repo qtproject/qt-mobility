@@ -69,7 +69,7 @@ public:
     QGalleryAbstractResponsePrivate()
         : q_ptr(0)
         , error(QGalleryAbstractRequest::NoError)
-        , status(QGalleryAbstractRequest::Active)
+        , state(QGalleryAbstractRequest::Active)
     {
     }
 
@@ -77,7 +77,7 @@ public:
 
     QGalleryAbstractResponse *q_ptr;
     int error;
-    QGalleryAbstractRequest::Status status;
+    QGalleryAbstractRequest::State state;
     QString errorString;
 };
 

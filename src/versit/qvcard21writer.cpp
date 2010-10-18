@@ -54,7 +54,7 @@
 QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
-QVCard21Writer::QVCard21Writer() : QVersitDocumentWriter()
+QVCard21Writer::QVCard21Writer(QVersitDocument::VersitType type) : QVersitDocumentWriter(type)
 {
 }
 
@@ -73,6 +73,7 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     QVariant variant(property.variantValue());
 
     QString renderedValue;
+    QByteArray renderedBytes;
     bool useUtf8 = false;
 
     /* Structured values need to have their components backslash-escaped (in vCard 2.1, semicolons
@@ -108,7 +109,10 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         useUtf8 = encodeVersitValue(parameters, renderedValue);
     } else if (variant.type() == QVariant::ByteArray) {
         parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
-        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
+        if (mCodecIsAsciiCompatible) // optimize by not converting to unicode
+            renderedBytes = variant.toByteArray().toBase64();
+        else
+            renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
 
     // Encode parameters
@@ -127,7 +131,10 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         // one extra line break after the value are needed in vCard 2.1
         writeCrlf();
         writeString(QLatin1String(" "));
-        writeString(renderedValue, useUtf8);
+        if (renderedBytes.isEmpty())
+            writeString(renderedValue, useUtf8);
+        else
+            writeBytes(renderedBytes);
         writeCrlf();
     }
     writeCrlf();

@@ -179,8 +179,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
     m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
 
-    QSignalMapper * mapper = new QSignalMapper(this);
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
 
     QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
 
@@ -190,9 +188,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         mapTypeMenu->addAction(action);
         m_mapControlActions.append(action);
-
-        connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-        mapper->setMapping(action, m_mapControlTypes[i]);
     }
 
     QGridLayout *layout = new QGridLayout();
@@ -297,6 +292,9 @@ void MainWindow::setupUi()
     // setup map type control
     connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
 
+    QSignalMapper * mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
+
     QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
     for (int controlIndex = 0; controlIndex < m_mapControlTypes.size(); ++controlIndex) {
         QAction *action = m_mapControlActions.at(controlIndex);
@@ -305,6 +303,9 @@ void MainWindow::setupUi()
         if (supportedTypeIndex == -1) {
             action->setEnabled(false);
         } else {
+            connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            mapper->setMapping(action, m_mapControlTypes[controlIndex]);
+
             action->setEnabled(true);
             action->setChecked(m_mapControlTypes[controlIndex] == m_mapWidget->mapType());
         }

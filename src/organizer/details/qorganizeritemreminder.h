@@ -67,15 +67,13 @@ public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
     static const QLatin1Constant FieldReminderType;
-    static const QLatin1Constant FieldDateTime;
-    static const QLatin1Constant FieldTimeDelta;
+    static const QLatin1Constant FieldSecondsBeforeStart;
     static const QLatin1Constant FieldRepetitionCount;
     static const QLatin1Constant FieldRepetitionDelay;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemReminder, "Reminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldReminderType, "ReminderType");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDateTime, "DateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldTimeDelta, "TimeDelta");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSecondsBeforeStart, "SecondsBeforeStart");
     Q_DECLARE_LATIN1_CONSTANT(FieldRepetitionCount, "RepetitionCount");
     Q_DECLARE_LATIN1_CONSTANT(FieldRepetitionDelay, "RepetitionDelay");
 #endif
@@ -93,11 +91,8 @@ public:
 
     ReminderType reminderType() const {return static_cast<ReminderType>(value<int>(FieldReminderType));}
 
-    // XXX TODO: convert date time to timezone date time
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
-    void setTimeDelta(int secondsBefore) {setValue(FieldTimeDelta, secondsBefore);}
-    int timeDelta() const {return value<int>(FieldTimeDelta);}
+    void setSecondsBeforeStart(int seconds) {setValue(FieldSecondsBeforeStart, seconds);}
+    int secondsBeforeStart() const {return value<int>(FieldSecondsBeforeStart);}
 
     // duration/repetition
     void setRepetition(int count, int delaySeconds) {setValue(FieldRepetitionCount, count); setValue(FieldRepetitionDelay, delaySeconds);}

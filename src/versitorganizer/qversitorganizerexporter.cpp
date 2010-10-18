@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
   \inmodule QtVersit
 
   This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
-  in a QOrganizerItemManager) into a QVersitDocument (which may be written to an I/O device using
+  in a QOrganizerManager) into a QVersitDocument (which may be written to an I/O device using
   QVersitReader.  While multiple items are provided as input, a single QVersitDocument is produced
   as output.  Unless there is an error, there is a one-to-one mapping between organizer items
   and sub-documents of the result.
@@ -75,8 +75,6 @@ QTM_USE_NAMESPACE
   implement custom export behaviour for certain organizer item details.
   \ingroup versit-extension
   \inmodule QtVersit
-
-  This interface supercedes QVersitOrganizerImporterPropertyHandler.
 
   \sa QVersitOrganizerExporter
  */
@@ -122,13 +120,25 @@ QTM_USE_NAMESPACE
   QVersitOrganizerExporter.
 */
 
-/*! Constructs a new importer */
+/*! Constructs a new exporter */
 QVersitOrganizerExporter::QVersitOrganizerExporter()
     : d(new QVersitOrganizerExporterPrivate)
 {
 }
 
-/*! Frees the memory used by the importer */
+/*!
+ * Constructs a new exporter for the given \a profile.  The profile strings should be one of those
+ * defined by QVersitOrganizerHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugins}{Versit plugin}.
+ *
+ * The profile determines which plugins will be loaded to supplement the exporter.
+ */
+QVersitOrganizerExporter::QVersitOrganizerExporter(const QString& profile)
+    : d(new QVersitOrganizerExporterPrivate(profile))
+{
+}
+
+/*! Frees the memory used by the exporter */
 QVersitOrganizerExporter::~QVersitOrganizerExporter()
 {
     delete d;
@@ -137,8 +147,10 @@ QVersitOrganizerExporter::~QVersitOrganizerExporter()
 /*!
  * Converts \a items into a QVersitDocument, using the format given by \a versitType.
  * Returns true on success.  If any of the items could not be exported, false is returned and
- * errors() will return a list describing the errors that occurred.  The successfully exported
+ * errorMap() will return a list describing the errors that occurred.  The successfully exported
  * components will still be available via document().
+ *
+ * \sa document(), errorMap()
  */
 bool QVersitOrganizerExporter::exportItems(
     const QList<QOrganizerItem>& items,
@@ -185,7 +197,7 @@ QVersitDocument QVersitOrganizerExporter::document() const
  *
  * \sa exportItems()
  */
-QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errors() const
+QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errorMap() const
 {
     return d->mErrors;
 }

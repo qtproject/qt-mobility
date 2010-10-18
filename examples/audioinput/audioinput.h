@@ -45,6 +45,9 @@
 **
 ****************************************************************************/
 
+#ifndef AUDIOINPUT_H
+#define AUDIOINPUT_H
+
 #include <QPixmap>
 #include <QWidget>
 #include <QObject>
@@ -138,4 +141,6 @@ private:
     static const QString SuspendLabel;
     static const QString ResumeLabel;
 };
+
+#endif
 

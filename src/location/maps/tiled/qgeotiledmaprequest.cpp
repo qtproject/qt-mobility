@@ -81,8 +81,11 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
     of tiles.
 
     This tiled map request represents a request for the tile at row \a row and
-    column \a column at zoom level mapData->zoomLevel() and type
-    mapData->mapType().
+    column \a column at zoom level \a zoomLevel and type
+    \a mapType. 
+    
+    The request will use connectivity mode \a connectivityMode when 
+    accessing the map data.
 
     The rectangle that the tile occupies on the map at the maximum zoom level
     is also given as \a tileRect.

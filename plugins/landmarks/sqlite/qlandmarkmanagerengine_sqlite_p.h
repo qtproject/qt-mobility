@@ -150,15 +150,15 @@ public:
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
-                         QList<QLandmarkId> landmarkIds,
+                         const QList<QLandmarkId> &landmarkIds,
                          QLandmarkManager::TransferOption option,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
     QStringList supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
-    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const;
-    bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
+    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder, QLandmarkManager::Error *error, QString *errorString) const;
+    bool isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
 
     QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
     QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;

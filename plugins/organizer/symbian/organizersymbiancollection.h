@@ -54,7 +54,7 @@
 QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManagerEngine;
+class QOrganizerManagerEngine;
 QTM_END_NAMESPACE
 class CCalSession;
 class CCalEntryView;
@@ -74,7 +74,7 @@ public:
     TBool NotifyProgress();
     void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
     
-    QOrganizerItemManagerEngine *m_engine;
+    QOrganizerManagerEngine *m_engine;
     CCalSession *m_calSession;
     CCalEntryView *m_calEntryView;
     CCalInstanceView *m_calInstanceView;
@@ -89,7 +89,7 @@ class OrganizerSymbianCollection
 {
 public:
     OrganizerSymbianCollection();
-    OrganizerSymbianCollection(QOrganizerItemManagerEngine *engine);
+    OrganizerSymbianCollection(QOrganizerManagerEngine *engine);
     OrganizerSymbianCollection(const OrganizerSymbianCollection &other);
     
 #ifdef SYMBIAN_CALENDAR_V2
@@ -99,7 +99,6 @@ public:
 #endif
     void createViewsL();
     QOrganizerCollectionId id() const;
-    QOrganizerCollectionLocalId localId() const;
     quint64 calCollectionId() const;
     CCalSession *calSession() const; 
     CCalEntryView *calEntryView() const;
@@ -108,6 +107,20 @@ public:
     bool isValid() const;
     bool isMarkedForDeletionL() const;
     QOrganizerCollection toQOrganizerCollectionL() const;
+    
+	// Custom metadata keys for a collection
+    Q_DECLARE_LATIN1_CONSTANT(KeyIsValid, "IsValid");
+    Q_DECLARE_LATIN1_CONSTANT(KeyFileName, "FileName");
+    Q_DECLARE_LATIN1_CONSTANT(KeyEnabled, "Enabled");
+    Q_DECLARE_LATIN1_CONSTANT(KeyFolderLUID, "FolderLUID");
+    Q_DECLARE_LATIN1_CONSTANT(KeyCreationTime, "CreationTime");
+    Q_DECLARE_LATIN1_CONSTANT(KeyModificationTime, "ModificationTime");
+    Q_DECLARE_LATIN1_CONSTANT(KeySyncStatus, "SyncStatus");
+    Q_DECLARE_LATIN1_CONSTANT(KeyIsSharedFolder, "IsSharedFolder");
+    Q_DECLARE_LATIN1_CONSTANT(KeyGlobalUUID, "GlobalUUID");
+    Q_DECLARE_LATIN1_CONSTANT(KeyDeviceSyncServiceOwner, "DeviceSyncServiceOwner");
+    Q_DECLARE_LATIN1_CONSTANT(KeyOwnerName, "OwnerName");
+    Q_DECLARE_LATIN1_CONSTANT(KeyMarkAsDelete, "MarkAsDelete");
     
 private:
     QExplicitlySharedDataPointer<OrganizerSymbianCollectionPrivate> d;

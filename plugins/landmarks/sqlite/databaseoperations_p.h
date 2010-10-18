@@ -194,7 +194,7 @@ class DatabaseOperations {
 
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
-                         QList<QLandmarkId> landmarkIds,
+                         const QList<QLandmarkId> &landmarkIds,
                          QLandmarkManager::TransferOption,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
@@ -216,18 +216,18 @@ class DatabaseOperations {
                             QList<QLandmarkId> *landmarkIds = 0);
 
     bool exportLandmarksLmx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
+                            const QList<QLandmarkId> &landmarkIds,
                             QLandmarkManager::TransferOption option,
                             QLandmarkManager::Error *error,
                             QString *errorString) const ;
 
     bool exportLandmarksGpx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
+                            const QList<QLandmarkId> &landmarkIds,
                             QLandmarkManager::Error *error,
                             QString *errorString) const;
 
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
-    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const;
+    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrders) const;
 
     static const QStringList coreAttributes;
     static const QStringList coreGenericAttributes;

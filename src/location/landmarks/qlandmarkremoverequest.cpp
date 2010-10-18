@@ -61,6 +61,8 @@ QTM_BEGIN_NAMESPACE
     by calling errorMap()), or when an overall operation error occurs(which may be
     retrieved by calling error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -106,6 +108,8 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
 
 /*!
     Convenience function to set the \a landmarkId of a single landmark to be removed.
+    It is the equivalent of calling setLandmarkIds() with a single \a landmarkId
+    in the ID list.
 
     \sa setLandmarkIds()
 */
@@ -118,7 +122,9 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 }
 
 /*!
-    Sets the list of \a landmarks which will be removed.
+    Convenience function to set the list of \a landmarks which will be removed.
+    This function is the equivalent of calling setLandmarkIds() with the IDs of
+    the \a landmarks.
 
     \sa setLandmarkIds()
 */
@@ -132,7 +138,9 @@ void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 }
 
 /*!
-    Sets a single \a landmark to be removed.
+    Convenience function that sets a single \a landmark to be removed.
+    This function is the equivalent of calling setLandmarkIds()
+    with the ID of \a landmark.
 */
 void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 {
@@ -143,7 +151,7 @@ void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 }
 
 /*!
-    Returns the mapping of input landmark id list indices
+    Returns the mapping of input landmark ID list indices
     to the errors which occurred.
 */
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const

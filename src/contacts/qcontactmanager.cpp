@@ -411,10 +411,30 @@ Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterValueOnlyOtherProcesses, "Onl
   \value UnspecifiedError The most recent operation failed for an undocumented reason
  */
 
-/*! Return the error code of the most recent operation */
+/*!
+  Return the error code of the most recent operation.
+  For batch operations, if the error code is not equal to
+  \c QContactManager::NoError, detailed per-input errors
+  may be retrieved by calling \l errorMap().
+  \sa errorMap()
+ */
 QContactManager::Error QContactManager::error() const
 {
     return d->m_error;
+}
+
+/*!
+  Returns per-input error codes for the most recent operation.
+  This function only returns meaningful information if the most
+  recent operation was a batch operation.
+  Each key in the map is the index of the element in the input list
+  for which the error (whose error code is stored in the value for
+  that key in the map) occurred during the batch operation.
+  \sa error(), contacts(), saveContacts(), removeContacts(), saveRelationships(), removeRelationships()
+ */
+QMap<int, QContactManager::Error> QContactManager::errorMap() const
+{
+    return d->m_errorMap;
 }
 
 /*!
@@ -423,6 +443,7 @@ QContactManager::Error QContactManager::error() const
 QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->contactIds(QContactFilter(), sortOrders, &d->m_error);
 }
 
@@ -433,6 +454,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder
 QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->contactIds(filter, sortOrders, &d->m_error);
 }
 
@@ -451,6 +473,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
@@ -472,6 +495,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->contacts(filter, sortOrders, fetchHint, &d->m_error);
 }
 
@@ -493,6 +517,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 QContact QContactManager::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->contact(contactId, fetchHint, &d->m_error);
 }
 
@@ -503,7 +528,8 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
   correspondence between the returned contacts and the supplied \a localIds.
   
   If there is an invalid id in \a localIds, then an empty QContact will take its place in the
-  returned list and an entry will be inserted into \a errorMap.
+  returned list.  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
@@ -517,9 +543,14 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
+
+    QList<QContact> retn = d->m_engine->contacts(localIds, fetchHint, &d->m_errorMap, &d->m_error);
+
     if (errorMap)
-        errorMap->clear();
-    return d->m_engine->contacts(localIds, fetchHint, errorMap, &d->m_error);
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -560,6 +591,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds
  */
 bool QContactManager::saveContact(QContact* contact)
 {
+    d->m_errorMap.clear();
     if (contact) {
         d->m_error = QContactManager::NoError;
         return d->m_engine->saveContact(contact, &d->m_error);
@@ -578,6 +610,7 @@ bool QContactManager::saveContact(QContact* contact)
 bool QContactManager::removeContact(const QContactLocalId& contactId)
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->removeContact(contactId, &d->m_error);
 }
 
@@ -585,9 +618,8 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
-  The manager might populate \a errorMap (the map of indices of the \a contacts list to
-  the error which occurred when saving the contact at that index) for
-  every index for which the contact could not be saved, if it is able.
+  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QContactManager::error() function will only return \c QContactManager::NoError
   if all contacts were saved successfully.
 
@@ -599,15 +631,20 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  */
 bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
 {
-    if (errorMap)
-        errorMap->clear();
-    if (!contacts) {
+    bool retn = false;
+    d->m_errorMap.clear();
+
+    if (contacts) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveContacts(contacts, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    return d->m_engine->saveContacts(contacts, errorMap, &d->m_error);
+    if (errorMap)
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -618,9 +655,8 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   the contacts should be updated.  Details with definition names not included in
   the definitionMask will not be updated or added.
 
-  The manager might populate \a errorMap (the map of indices of the \a contacts list to
-  the error which occurred when saving the contact at that index) for
-  every index for which the contact could not be saved, if it is able.
+  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QContactManager::error() function will only return \c QContactManager::NoError
   if all contacts were saved successfully.
 
@@ -632,15 +668,20 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
  */
 bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap)
 {
-    if (errorMap)
-        errorMap->clear();
-    if (!contacts) {
+    bool retn = false;
+    d->m_errorMap.clear();
+
+    if (contacts) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveContacts(contacts, definitionMask, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    return d->m_engine->saveContacts(contacts, definitionMask, errorMap, &d->m_error);
+    if (errorMap)
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -651,9 +692,8 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList&
   Any contact that was removed successfully will have the relationships
   in which it was involved removed also.
 
-  The manager might populate \a errorMap (the map of indices of the \a contactIds list to
-  the error which occurred when saving the contact at that index) for every
-  index for which the contact could not be removed, if it is able.
+  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
@@ -670,15 +710,20 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList&
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
-    if (errorMap)
-        errorMap->clear();
-    if (contactIds.isEmpty()) {
+    bool retn = false;
+    d->m_errorMap.clear();
+
+    if (!contactIds.isEmpty()) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->removeContacts(contactIds, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error = QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    return d->m_engine->removeContacts(contactIds, errorMap, &d->m_error);
+    if (errorMap)
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -690,6 +735,7 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
 QContact QContactManager::compatibleContact(const QContact& original)
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->compatibleContact(original, &d->m_error);
 }
 
@@ -705,6 +751,7 @@ QContact QContactManager::compatibleContact(const QContact& original)
 QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
 }
 
@@ -728,6 +775,7 @@ QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact)
  */
 void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
 {
+    d->m_errorMap.clear();
     if (contact) {
         d->m_error = QContactManager::NoError;
         QContactManagerEngine::setContactDisplayLabel(contact, d->m_engine->synthesizedDisplayLabel(*contact, &d->m_error));
@@ -750,6 +798,7 @@ void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
 bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->setSelfContactId(contactId, &d->m_error);
 }
 
@@ -763,6 +812,7 @@ bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
 QContactLocalId QContactManager::selfContactId() const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->selfContactId(&d->m_error);
 }
 
@@ -773,6 +823,7 @@ QContactLocalId QContactManager::selfContactId() const
 QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationship::Role role) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->relationships(QString(), participantId, role, &d->m_error);
 }
 
@@ -784,6 +835,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
 QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role) const
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->relationships(relationshipType, participantId, role, &d->m_error);
 }
 
@@ -802,6 +854,7 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
  */
 bool QContactManager::saveRelationship(QContactRelationship* relationship)
 {
+    d->m_errorMap.clear();
     if (relationship) {
         d->m_error = QContactManager::NoError;
         return d->m_engine->saveRelationship(relationship, &d->m_error);
@@ -813,21 +866,25 @@ bool QContactManager::saveRelationship(QContactRelationship* relationship)
 
 /*!
   Saves the given \a relationships in the database and returns true if the operation was successful.
-  For any relationship which was unable to be saved, an entry into the \a errorMap will be created,
-  with the key being the index into the input relationships list, and the value being the error which
-  occurred for that index.
+  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
  */
 bool QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap)
 {
-    if (errorMap)
-        errorMap->clear();
-    if (!relationships) {
+    bool retn = false;
+    d->m_errorMap.clear();
+
+    if (relationships) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveRelationships(relationships, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    return d->m_engine->saveRelationships(relationships, errorMap, &d->m_error);
+    if (errorMap)
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -839,22 +896,26 @@ bool QContactManager::saveRelationships(QList<QContactRelationship>* relationshi
 bool QContactManager::removeRelationship(const QContactRelationship& relationship)
 {
     d->m_error = QContactManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->removeRelationship(relationship, &d->m_error);
 }
 
 
 /*!
   Removes the given \a relationships from the database and returns true if the operation was successful.
-  For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
-  with the key being the index into the input relationships list, and the value being the error which
-  occurred for that index.
+  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
+  In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
  */
 bool QContactManager::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap)
 {
-    if (errorMap)
-        errorMap->clear();
     d->m_error = QContactManager::NoError;
-    return d->m_engine->removeRelationships(relationships, errorMap, &d->m_error);
+    d->m_errorMap.clear();
+    bool retn = d->m_engine->removeRelationships(relationships, &d->m_errorMap, &d->m_error);
+
+    if (errorMap)
+        *errorMap = d->m_errorMap;
+
+    return retn;
 }
 
 /*!
@@ -863,6 +924,7 @@ bool QContactManager::removeRelationships(const QList<QContactRelationship>& rel
  */
 QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
+    d->m_errorMap.clear();
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error =QContactManager::InvalidContactTypeError;
         return QMap<QString, QContactDetailDefinition>();
@@ -875,6 +937,7 @@ QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const
 /*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
 QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName, const QString& contactType) const
 {
+    d->m_errorMap.clear();
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error =QContactManager::InvalidContactTypeError;
         return QContactDetailDefinition();
@@ -887,6 +950,7 @@ QContactDetailDefinition QContactManager::detailDefinition(const QString& defini
 /*! Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType)
 {
+    d->m_errorMap.clear();
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error =QContactManager::InvalidContactTypeError;
         return false;
@@ -899,6 +963,7 @@ bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, 
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QContactManager::removeDetailDefinition(const QString& definitionName, const QString& contactType)
 {
+    d->m_errorMap.clear();
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error =QContactManager::InvalidContactTypeError;
         return false;

@@ -57,10 +57,13 @@ QTM_BEGIN_NAMESPACE
     request a list of landmarks by id from a landmark manager.
 
     For a QLandmarkFetchByIdRequest, the resultsAvailable() signal will be emitted when the resultant
-    landmarks (which may be retrieved by calling landmarks()), are updated,
+    landmarks (which may be retrieved by calling landmarks()) are updated,
     whenever indiviual items error out(individual errors may be retrieved by
     calling errorMap()), or when an overall operation error occurs(which may be
     retrieved by calling error()).
+
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -83,7 +86,7 @@ QLandmarkFetchByIdRequest::~QLandmarkFetchByIdRequest()
 }
 
 /*!
-    Returns a list of identifiers of landmarks which are to be retrieed by this request.
+    Returns a list of identifiers of landmarks which are to be retrieved by this request.
 */
 QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 {
@@ -93,7 +96,7 @@ QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 }
 
 /*!
-    Sets the \a landmarkIds to be retrived by this request.
+    Sets the \a landmarkIds to be retrieved by this request.
 */
 void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
@@ -103,7 +106,9 @@ void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmar
 }
 
 /*!
-    Sets a single \a landmarkId to be retrived by this request.
+    Convenience fuction that sets  a single landmark, specified by \a landmarkId,
+    to be retrieved by this request.
+
 */
 void QLandmarkFetchByIdRequest::setLandmarkId(const QLandmarkId &landmarkId)
 {
@@ -125,7 +130,7 @@ QList<QLandmark> QLandmarkFetchByIdRequest::landmarks() const
 }
 
 /*!
-    Returns the mapping of input landmark id list indices
+    Returns the mapping of input landmark ID list indices
     to the errors which occurred.
 */
 QMap<int, QLandmarkManager::Error> QLandmarkFetchByIdRequest::errorMap() const

@@ -102,7 +102,7 @@ static QString convertToMeegoTouch(QFeedbackEffect::ThemeEffect effect)
     case QFeedbackEffect::ThemePopupClose:
     case QFeedbackEffect::ThemeFlick:
     case QFeedbackEffect::ThemeStopFlick:
-    case QFeedbackEffect::ThemeMultitouchActivate:
+    case QFeedbackEffect::ThemeMultiPointTouchActivate:
     case QFeedbackEffect::ThemeRotateStep:
     case QFeedbackEffect::ThemeLongPress:
     case QFeedbackEffect::ThemePositiveTacticon:

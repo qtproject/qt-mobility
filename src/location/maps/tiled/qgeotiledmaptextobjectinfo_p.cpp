@@ -58,8 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject),
-      textItem(0)
-
+    textItem2(0)
 {
     text = static_cast<QGeoMapTextObject*>(mapObject);
 
@@ -92,18 +91,14 @@ QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData
             this,
             SLOT(alignmentChanged(Qt::Alignment)));
 
-    textItem = new QGraphicsSimpleTextItem();
-    graphicsItem = textItem;
+    textItem1 = new QGraphicsSimpleTextItem();
+    graphicsItem = textItem1;
 
     penChanged(text->pen());
     brushChanged(text->brush());
     coordinateChanged(text->coordinate());
     fontChanged(text->font());
     textChanged(text->text());
-
-    updateValidity();
-    if (valid())
-        update();
 }
 
 QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
@@ -116,54 +111,63 @@ void QGeoTiledMapTextObjectInfo::updateValidity()
 void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
 {
     updateValidity();
-    if (text->coordinate().isValid())
-        textItem->setPos(tiledMapData->coordinateToWorldReferencePosition(text->coordinate()));
     if (valid())
-        updateItem();
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::textChanged(const QString &text)
 {
     updateValidity();
     if (!this->text->text().isEmpty()) {
-        textItem->setText(this->text->text());
-        update();
+        textItem1->setText(this->text->text());
+        if (textItem2)
+            textItem2->setText(this->text->text());
     }
     if (valid())
-        updateItem();
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &font)
 {
-    textItem->setFont(text->font());
-    update();
+    textItem1->setFont(text->font());
+    if (textItem2)
+        textItem2->setFont(text->font());
+    if (valid())
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::offsetChanged(const QPoint &offset)
 {
-    update();
+    if (valid())
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::alignmentChanged(Qt::Alignment alignment)
 {
-    update();
+    if (valid())
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::penChanged(const QPen &pen)
 {
-    textItem->setPen(text->pen());
+    textItem1->setPen(text->pen());
+    if (textItem2)
+        textItem2->setPen(text->pen());
     updateItem();
 }
 
 void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &brush)
 {
-    textItem->setBrush(text->brush());
+    textItem1->setBrush(text->brush());
+    if (textItem2)
+        textItem2->setBrush(text->brush());
     updateItem();
 }
 
 void QGeoTiledMapTextObjectInfo::zoomLevelChanged(qreal zoomLevel)
 {
-    update();
+    if (valid())
+        update();
 }
 
 void QGeoTiledMapTextObjectInfo::update()
@@ -189,13 +193,49 @@ void QGeoTiledMapTextObjectInfo::update()
     }
 
     int zoomFactor = tiledMapData->zoomFactor();
-    textItem->resetTransform();
-    textItem->setScale(zoomFactor);
+    
+    QPointF pos = tiledMapData->coordinateToWorldReferencePosition(text->coordinate());
+
     QPointF offset = text->offset();
     offset += alignmentOffset;
-    textItem->setTransform(QTransform::fromTranslate(
-                               offset.x() * zoomFactor,
-                               offset.y() * zoomFactor));
+    offset *= zoomFactor;
+    pos += offset;
+
+    int width = tiledMapData->worldReferenceSize().width();
+    int x = pos.x();
+
+    if (x > width)
+        x -= width;
+    if (x < 0)
+        x += width;
+
+    pos.setX(x);
+
+
+    int rightBound = pos.x() + bounds.width() * zoomFactor;
+
+    QPointF pos2 = QPointF(-1.0 * width / static_cast<qreal>(zoomFactor), 0);
+
+    if (rightBound > width ) {
+        if (!textItem2) {
+            textItem2 = new QGraphicsSimpleTextItem(textItem1);
+            textItem2->setText(text->text());
+            textItem2->setFont(text->font());
+            textItem2->setPen(text->pen());
+            textItem2->setBrush(text->brush());
+        }
+    } else {
+        if (textItem2) {
+            delete textItem2;
+            textItem2 = 0;
+        }
+    }
+
+    textItem1->setScale(zoomFactor);
+
+    textItem1->setPos(pos);
+    if (textItem2)
+        textItem2->setPos(pos2);
 
     updateItem();
 }

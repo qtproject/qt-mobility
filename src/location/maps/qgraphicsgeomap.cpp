@@ -90,8 +90,6 @@ QTM_BEGIN_NAMESPACE
     QGraphicsWidget.
 */
 
-// DESIGN TODO do we need a signal for when the user pans the map?
-
 /*!
 \enum QGraphicsGeoMap::MapType
 
@@ -132,30 +130,6 @@ The map data will come from an online source.
 The map data will come from a combination of offline and online sources.
 */
 
-// Temporary constructor, for use by QML bindings until we come up
-// with the right QML / service provider mapping
-QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
-      d_ptr(new QGraphicsGeoMapPrivate())
-{
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-
-    d_ptr->serviceProvider = new QGeoServiceProvider("nokia");
-    d_ptr->manager = d_ptr->serviceProvider->mappingManager();
-
-    setMappingManager(d_ptr->manager);
-
-//    d_ptr->mapData = d_ptr->manager->createMapData(this);
-//    setMapType(QGraphicsGeoMap::StreetMap);
-
-    setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocus();
-
-    setMinimumSize(QSizeF(0, 0));
-    setPreferredSize(QSizeF(500, 500));
-//    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
-}
-
 /*!
     Creates a new mapping widget, with the mapping operations managed by
     \a manager, and the specified \a parent.
@@ -170,47 +144,21 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
 */
 QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
-      d_ptr(new QGraphicsGeoMapPrivate(manager))
+      d_ptr(new QGraphicsGeoMapPrivate())
 {
-    //d_ptr->mapData = d_ptr->manager->createMapData(this);
-    //setMapType(QGraphicsGeoMap::StreetMap);
-    setMappingManager(d_ptr->manager);
-
-    setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocus();
-
-    setMinimumSize(QSizeF(0, 0));
-    setPreferredSize(QSizeF(500, 500));
-    //d_ptr->mapData->setWindowSize(QSizeF(300, 300));
-}
-
-/*!
-    Destroys this map widget.
-*/
-QGraphicsGeoMap::~QGraphicsGeoMap()
-{
-    delete d_ptr;
-}
-
-/*!
-    \internal
-*/
-void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
-{
-    MapType type = QGraphicsGeoMap::StreetMap;
-
+    Q_ASSERT(manager != 0);
     d_ptr->manager = manager;
 
-    if (d_ptr->mapData) {
-        type = d_ptr->mapData->mapType();
-        delete d_ptr->mapData;
-    }
+    d_ptr->mapData = d_ptr->manager->createMapData();
+    d_ptr->mapData->init();
 
-    d_ptr->mapData = d_ptr->manager->createMapData(this);
-    d_ptr->mapData->setup();
+    connect(d_ptr->mapData,
+            SIGNAL(updateMapDisplay(QRectF)),
+            this,
+            SLOT(updateMapDisplay(QRectF)));
 
-    setMapType(type);
-    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
+    setMapType(QGraphicsGeoMap::StreetMap);
+    d_ptr->mapData->setWindowSize(size());
 
     connect(d_ptr->mapData,
             SIGNAL(zoomLevelChanged(qreal)),
@@ -228,6 +176,20 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
             SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)),
             this,
             SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)));
+
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocus();
+
+    setMinimumSize(QSizeF(0, 0));
+    setPreferredSize(QSizeF(500, 500));
+}
+
+/*!
+    Destroys this map widget.
+*/
+QGraphicsGeoMap::~QGraphicsGeoMap()
+{
+    delete d_ptr;
 }
 
 /*!
@@ -257,6 +219,11 @@ void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
     if (d_ptr->mapData)
         d_ptr->mapData->paint(painter, option);
+}
+
+void QGraphicsGeoMap::updateMapDisplay(const QRectF &target)
+{
+    update(target);
 }
 
 /*!
@@ -650,29 +617,41 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
 /*!
 \fn void QGraphicsGeoMap::zoomLevelChanged(qreal zoomLevel)
 
-Indicates that the zoom level has changed to \a zoomLevel.
+    This signal is emitted when the zoom level of the map changes.
+
+    The new value is \a zoomLevel.
 */
 
 /*!
 \fn void QGraphicsGeoMap::centerChanged(const QGeoCoordinate &coordinate)
 
-Indicates that the map has been centered on \a coordinate.
+    This signal is emitted when the center of the map changes.
 
-This signal will not be emitted when the user pans the map.
+    The new value is \a coordinate.
 */
 
 /*!
-\fn void QGraphicsGeoMap::mapTypeChanged(MapType mapType)
+\fn void QGraphicsGeoMap::mapTypeChanged(QGraphicsGeoMap::MapType mapType)
 
-Indicates that the type of the map has been changed.
+    This signal is emitted when the map type changes.
+
+    The new value is \a mapType.
+*/
+
+/*!
+\fn void QGraphicsGeoMap::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+
+    This signal is emitted when the connectivity mode used to fetch the 
+    map data changes.
+
+    The new value is \a connectivityMode.
 */
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
-    : serviceProvider(0),
-      manager(manager),
+QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate()
+      : manager(0),
       mapData(0),
       panActive(false) {}
 
@@ -680,8 +659,6 @@ QGraphicsGeoMapPrivate::~QGraphicsGeoMapPrivate()
 {
     if (mapData)
         delete mapData;
-    if (serviceProvider)
-        delete serviceProvider;
 }
 
 #include "moc_qgraphicsgeomap.cpp"

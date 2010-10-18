@@ -57,10 +57,12 @@ QTM_BEGIN_NAMESPACE
     request a list of categories from a landmark manager.
 
     For a QLandmarkCategoryFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant categories are found (these are retrievable via the callings categories()),
+    as resultant categories are found (these are retrievable by calling categories()),
      as well as if an overall operation error occurred(which may be retrieved by calling
      QLandmarkAbstractRequest::error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -97,10 +99,6 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
     Returns the sorting of the categories.
     By default the sorting is case insensitive and in ascending order
     according to the category name.
-
-    The sorting only takes effect when all categories are to be retrieved. (i.e. no category ids
-    are assigned to the fetch request).  If a particular set of categories are to be retrieved
-    then the sorting is ignored.
 */
 QLandmarkNameSort QLandmarkCategoryFetchRequest::sorting() const
 {
@@ -120,8 +118,8 @@ void QLandmarkCategoryFetchRequest::setSorting(const QLandmarkNameSort &nameSort
 }
 
 /*!
-    Returns the maximum number of categories to be returned.  If category ids
-    have been assigned to this fetch request, the limit has no effect.
+    Returns the maximum number of categories to be returned.  By default the limit
+    is -1 indicating that all categories should be retrieved.
 */
 int QLandmarkCategoryFetchRequest::limit() const
 {
@@ -132,6 +130,9 @@ int QLandmarkCategoryFetchRequest::limit() const
 
 /*!
     Sets the maximum number of categories to be returned to \a limit.
+    A limit of -1 will retrieve all categories.
+
+    (A limit of 0 will retrieve no categories.)
  */
 void QLandmarkCategoryFetchRequest::setLimit(int limit)
 {
@@ -141,8 +142,7 @@ void QLandmarkCategoryFetchRequest::setLimit(int limit)
 }
 
 /*!
-    Returns the index offset for the request.  If category ids have
-    been assigned to this fetch request then offset has no effect.
+    Returns the index offset for the request.  By default the offset is 0.
 */
 int QLandmarkCategoryFetchRequest::offset() const
 {

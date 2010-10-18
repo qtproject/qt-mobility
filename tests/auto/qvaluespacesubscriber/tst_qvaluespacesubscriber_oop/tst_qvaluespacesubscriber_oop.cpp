@@ -75,7 +75,7 @@ private slots:
 
 };
 
-class tst_QValueSpaceSubscriberOop : public tst_QValueSpaceSubscriber
+class tst_QValueSpaceSubscriber_Oop : public tst_QValueSpaceSubscriber
 {
     Q_OBJECT
 };
@@ -86,11 +86,11 @@ int main(int argc, char** argv)
     QStringList args = app.arguments();
 
 #if defined(QT_NO_PROCESS)
-    tst_QValueSpaceSubscriberOop test;
+    tst_QValueSpaceSubscriber_Oop test;
     return QTest::qExec(&test, argc-1, argv);
 #else
     if (args.contains("-vsClientMode")) {
-        tst_QValueSpaceSubscriberOop test;
+        tst_QValueSpaceSubscriber_Oop test;
         return QTest::qExec(&test, argc-1, argv);
     } else {
 #ifdef Q_OS_UNIX

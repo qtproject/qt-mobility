@@ -45,32 +45,32 @@
 **
 ****************************************************************************/
 #include "organizerjournaltimerangetransform.h"
-#include "qorganizerjournaltimerange.h"
+#include "qorganizerjournaltime.h"
 
-void OrganizerJournalTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
+void OrganizerJournalTimeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     if (item->type() == QOrganizerItemType::TypeJournal)
     {
         TCalTime dtstamp = entry.DTStampL(); // TODO: is DTStamp correct?
         if (dtstamp.TimeUtcL() != Time::NullTTime()) {
-            QOrganizerJournalTimeRange range;
+            QOrganizerJournalTime range;
             range.setEntryDateTime(toQDateTimeL(entry.DTStampL()));
             item->saveDetail(&range);
         }
     }
 }
 
-void OrganizerJournalTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+void OrganizerJournalTimeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     if (item.type() == QOrganizerItemType::TypeJournal)
     {
-        QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
+        QOrganizerJournalTime range = item.detail<QOrganizerJournalTime>();
         if (!range.isEmpty())
             entry->SetDTStampL(toTCalTimeL(range.entryDateTime())); // TODO: is DTStamp correct?
     }
 }
 
-QString OrganizerJournalTimeRangeTransform::detailDefinitionName()
+QString OrganizerJournalTimeTransform::detailDefinitionName()
 {
-    return QOrganizerJournalTimeRange::DefinitionName;    
+    return QOrganizerJournalTime::DefinitionName;    
 }

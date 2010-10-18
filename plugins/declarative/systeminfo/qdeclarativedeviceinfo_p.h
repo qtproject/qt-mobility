@@ -48,14 +48,10 @@
 
 #ifndef QDECLARATIVEDEVICEINFO_P_H
 #define QDECLARATIVEDEVICEINFO_P_H
-/*
-
- Many more issues can be raised;
-is it really "WallPower" not "MainsPowered"? shouldn't "BatteryNormal" be "BatteryGood"?
-*/
 
 #include <QObject>
 #include "qsystemdeviceinfo.h"
+
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 

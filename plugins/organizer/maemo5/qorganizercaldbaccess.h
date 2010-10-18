@@ -79,8 +79,8 @@ public:
     bool open(QString databasePathName);
     void close();
 
-    int calIdOf(QOrganizerItemLocalId id);
-    int typeOf(QOrganizerItemLocalId id);
+    int calIdOf(QOrganizerItemId id);
+    int typeOf(QOrganizerItemId id);
     std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
     std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
     std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);

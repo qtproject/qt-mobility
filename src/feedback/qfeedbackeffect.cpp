@@ -98,18 +98,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
+    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType error) const
 
-    This signal is emitted by subclasses if an error occurred during
-    playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
-    describes the errors that can be reported.
-
-*/
-
-/*!
-    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
-
-    This signal is emitted by subclasses if an error occurred during
+    This signal is emitted by subclasses if an \a error occurred during
     playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
     describes the errors that can be reported.
 
@@ -182,8 +173,8 @@ QTM_BEGIN_NAMESPACE
     \value ThemePopupOpen
     \value ThemePopupClose
     \value ThemeFlick
-    \value ThemeStopFlick  PopUp -> Popup
-    \value ThemeMultitouchActivate
+    \value ThemeStopFlick
+    \value ThemeMultiPointTouchActivate
     \value ThemeRotateStep
     \value ThemeLongPress
     \value ThemePositiveTacticon
@@ -197,7 +188,7 @@ QTM_BEGIN_NAMESPACE
     \enum QFeedbackEffect::Duration
     This enum describes the possible effect duration types.
 
-    \value INFINITE Infinite effect duration
+    \value QFeedbackEffect::Duration::INFINITE Infinite effect duration
   */
 
 /*!
@@ -238,7 +229,7 @@ void QFeedbackEffect::start()
     Stops a playing effect. If an error occurs there the
     error signal will be emitted.
 
-    \sa play(), pause(), setState()
+    \sa start(), pause(), setState()
 */
 void QFeedbackEffect::stop()
 {
@@ -354,9 +345,9 @@ bool QFeedbackEffect::supportsThemeEffect()
 */
 
 /*!
-    \fn virtual void QFeedbackEffect::setState(State) = 0
+    \fn virtual void QFeedbackEffect::setState(State state) = 0
 
-    Requests the effect's State to change to the specified state.
+    Requests the effect's State to change to the specified \a state.
 
     Subclasses reimplement this function to handle state changes
     for the effect.
@@ -368,6 +359,12 @@ bool QFeedbackEffect::supportsThemeEffect()
 */
 QFeedbackHapticsEffect::QFeedbackHapticsEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackHapticsEffectPrivate)
 {
+    QList<QFeedbackActuator*> list = QFeedbackActuator::actuators();
+    if  (!list.isEmpty()) {
+        priv->actuator = list.first();
+    } else {
+        priv->actuator = new QFeedbackActuator(this);
+    }
 }
 
 
@@ -496,11 +493,11 @@ void QFeedbackHapticsEffect::setFadeIntensity(qreal intensity)
 
     This property defines the actuator on which the effect operates.
 */
-QFeedbackActuator QFeedbackHapticsEffect::actuator() const
+QFeedbackActuator* QFeedbackHapticsEffect::actuator() const
 {
     return priv->actuator;
 }
-void QFeedbackHapticsEffect::setActuator(const QFeedbackActuator &actuator)
+void QFeedbackHapticsEffect::setActuator(QFeedbackActuator *actuator)
 {
     if (state() != Stopped) {
         qWarning("QFeedbackHapticsEffect::setActuator: The effect is not stopped");
@@ -536,7 +533,11 @@ void QFeedbackHapticsEffect::setPeriod(int msecs)
 */
 void QFeedbackHapticsEffect::setState(State state)
 {
-    QFeedbackHapticsInterface::instance()->setEffectState(this, state);
+    State oldState = this->state();
+    if (oldState != state) {
+        QFeedbackHapticsInterface::instance()->setEffectState(this, state);
+        emit stateChanged();
+    }
 }
 
 /*!
@@ -567,7 +568,7 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 
     \code
         QFeedbackFileEffect hapticTune;
-        hapticTune.setFileName("mySavedRumble.ifr");
+        hapticTune.setSource(QUrl::fromLocalFile("mySavedRumble.ifr"));
         hapticTune.load();
         hapticTune.start();
     \endcode
@@ -577,10 +578,6 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
     \l{QFeedbackEffect::}{Running}, \l{QFeedbackEffect::}{Paused}, or
     \l{QFeedbackEffect::}{Stopped}. You request state changes with
     start(), pause(), and stop().
-
-    A QFileFeedbackEffect's actuator (the device that performs the
-    effect) is always the systems default actuator, which is usually a
-    vibrator on mobile devices.
 
     You can load() and unload() the file at will to free resources or
     be as fast as possible. You must load the file before it can be
@@ -629,24 +626,27 @@ int QFeedbackFileEffect::duration() const
 }
 
 /*!
-    \property QFeedbackFileEffect::fileName
-    \brief the name of the file that is loaded.
+    \property QFeedbackFileEffect::source
+    \brief the url of the file that is loaded.
 
     Setting that property will automatically unload the previous file and load the new one.
+    Some backends may not support all URL schemes.
 */
-QString QFeedbackFileEffect::fileName() const
+QUrl QFeedbackFileEffect::source() const
 {
-    return priv->fileName;
+    return priv->url;
 }
-void QFeedbackFileEffect::setFileName(const QString &fileName)
+void QFeedbackFileEffect::setSource(const QUrl &source)
 {
     if (state() != QFeedbackEffect::Stopped) {
-        qWarning("QFeedbackFileEffect::setFileName: can't set the file while the feedback is running");
+        qWarning("QFeedbackFileEffect::setSource: can't set the file while the feedback is running");
         return;
     }
-    setLoaded(false);
-    priv->fileName = fileName;
-    setLoaded(true);
+    if (source != priv->url) {
+        setLoaded(false);
+        priv->url = source;
+        setLoaded(true);
+    }
 }
 
 /*!
@@ -675,7 +675,7 @@ void QFeedbackFileEffect::setLoaded(bool load)
     \fn void QFeedbackFileEffect::load()
 
     Makes sure that the file associated with the feedback object is loaded.
-    It will be automatically loaded when setFileName or start functions
+    It will be automatically loaded when setSource or start functions
     are called.
 */
 void QFeedbackFileEffect::load()
@@ -687,7 +687,7 @@ void QFeedbackFileEffect::load()
     \fn void QFeedbackFileEffect::unload()
 
     makes sure that the file associated with the feedback object is unloaded.
-    It will be automatically loaded when the setFileName function is called with
+    It will be automatically loaded when the setSource function is called with
     another file or the object is destructed.
 */
 void QFeedbackFileEffect::unload()
@@ -712,9 +712,13 @@ QStringList QFeedbackFileEffect::supportedMimeTypes()
 */
 void QFeedbackFileEffect::setState(State newState)
 {
-    if (newState != Stopped && state() == Stopped)
-        load(); // makes sure the file is loaded
-    QFeedbackFileInterface::instance()->setEffectState(this, newState);
+    State oldState = state();
+    if (oldState != newState) {
+        if (newState != Stopped && state() == Stopped)
+            load(); // makes sure the file is loaded
+        QFeedbackFileInterface::instance()->setEffectState(this, newState);
+        emit stateChanged();
+    }
 }
 
 /*!

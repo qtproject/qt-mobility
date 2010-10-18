@@ -63,9 +63,11 @@ QTM_BEGIN_NAMESPACE
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
-    by calling errorMap()), an  overall operation error occurs(which may be
-    retrieved by calling error()), or when individual items have been
-    saved (which may be retrieved by calling landmarks()).
+    by calling errorMap()), or when an  overall operation error occurs(which may be
+    retrieved by calling error()).
+
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 */
 
 /*!
@@ -84,9 +86,10 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
 }
 
 /*!
-    Returns the list of landmarks which will be saved if called prior to
-    callling \l QLandmarkAbstractRequest::start(), otherwise returns the list of landmarks as they
-    were saved into the landmark manager.
+    Returns the list of landmarks to be saved.  If called after the save operation has
+    finished, any new landmarks will have had their QLandmarkId set.
+    (Landmarks which were updated or failed to save will remain unchanged, use the
+     errorMap() function to determine which particular landmarks failed to save.)
 */
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
@@ -108,7 +111,9 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 }
 
 /*!
-    Convenience function to set a single \a landmark to be saved.
+    Convenience function to set a single \a landmark to be saved.  This
+    function is the equivalent of calling setLandmarks() with a single
+    \a landmark.
 
     \sa setLandmarks()
 */

@@ -109,7 +109,7 @@ protected:
     using QContactMemoryEngine::removeRelationship;
     virtual bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
 
-    static QContactSimulatorEngine* engine;
+    static QContactMemoryEngineData* engineData;
 
     friend class Simulator::ContactConnection;
 };

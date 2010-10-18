@@ -139,17 +139,17 @@ void CTapSensorSym::RecvData(CSensrvChannel &aChannel)
         default:
             {
 				// Indicates a tap on X axis
-            if(iData.iDirection==KSensrvAccelerometerDirectionXplus|KSensrvAccelerometerDirectionXminus)
+            if(iData.iDirection==(KSensrvAccelerometerDirectionXplus|KSensrvAccelerometerDirectionXminus))
                 {
                 iReading.setTapDirection(QTapReading::X);
                 }
 				// Indicates a tap on Y axis
-            else if(iData.iDirection==KSensrvAccelerometerDirectionYplus|KSensrvAccelerometerDirectionYminus)
+            else if(iData.iDirection==(KSensrvAccelerometerDirectionYplus|KSensrvAccelerometerDirectionYminus))
                 {
                 iReading.setTapDirection(QTapReading::Y);
                 }
 				// Indicates a tap on Z axis
-            else if(iData.iDirection==KSensrvAccelerometerDirectionZplus|KSensrvAccelerometerDirectionZminus)
+            else if(iData.iDirection==(KSensrvAccelerometerDirectionZplus|KSensrvAccelerometerDirectionZminus))
                 {
                 iReading.setTapDirection(QTapReading::Z);
                 }

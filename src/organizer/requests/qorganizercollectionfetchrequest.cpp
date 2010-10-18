@@ -65,23 +65,8 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
 QOrganizerCollectionFetchRequest::QOrganizerCollectionFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerCollectionFetchRequestPrivate, parent)
 {
-}
-
-/*! Sets the list of ids of collections which will be retrieved for this request to \a collectionIds.
-    If the given list of collection ids is empty, this request will return no collections after \l start() is called. */
-void QOrganizerCollectionFetchRequest::setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds)
-{
-    Q_D(QOrganizerCollectionFetchRequest);
-    d->m_collectionIds = collectionIds;
-}
-
-/*! Returns the list of ids of collections which will be retrieved by this request if possible */
-QList<QOrganizerCollectionLocalId> QOrganizerCollectionFetchRequest::collectionIds() const
-{
-    Q_D(const QOrganizerCollectionFetchRequest);
-    return d->m_collectionIds;
 }
 
 /*! Returns the collections retrieved by this request */
@@ -89,13 +74,6 @@ QList<QOrganizerCollection> QOrganizerCollectionFetchRequest::collections() cons
 {
     Q_D(const QOrganizerCollectionFetchRequest);
     return d->m_collections;
-}
-
-/*! Returns any errors which occurred during the request */
-QMap<int, QOrganizerItemManager::Error> QOrganizerCollectionFetchRequest::errorMap() const
-{
-    Q_D(const QOrganizerCollectionFetchRequest);
-    return d->m_errors;
 }
 
 #include "moc_qorganizercollectionfetchrequest.cpp"

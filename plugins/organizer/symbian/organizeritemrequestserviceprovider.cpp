@@ -87,7 +87,7 @@ COrganizerItemRequestsServiceProvider::~COrganizerItemRequestsServiceProvider()
 
 // Start processing aReq request to be processed asynchronously
 bool COrganizerItemRequestsServiceProvider::StartRequest(
-        QOrganizerItemAbstractRequest* aReq)
+        QOrganizerAbstractRequest* aReq)
 {
     if (!IsActive()) {
         // Store the request to be processed
@@ -96,68 +96,67 @@ bool COrganizerItemRequestsServiceProvider::StartRequest(
         Reset();
 
         switch (iReq->type()) {
-        case QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest:
+        case QOrganizerAbstractRequest::DetailDefinitionRemoveRequest:
             {
                 // Special case, removing detail definitions not supported
-                QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(
+                QOrganizerManagerEngine::updateDefinitionRemoveRequest(
                     static_cast<QOrganizerItemDetailDefinitionRemoveRequest *>(iReq),
-                    QOrganizerItemManager::NotSupportedError,
-                    QMap<int, QOrganizerItemManager::Error>(),
-                    QOrganizerItemAbstractRequest::FinishedState);
+                    QOrganizerManager::NotSupportedError,
+                    QMap<int, QOrganizerManager::Error>(),
+                    QOrganizerAbstractRequest::FinishedState);
             }
             return false;
-        case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest:
+        case QOrganizerAbstractRequest::DetailDefinitionSaveRequest:
             {
                 // Special case, saving detail definitions not supported
-                QOrganizerItemManagerEngine::updateDefinitionSaveRequest(
+                QOrganizerManagerEngine::updateDefinitionSaveRequest(
                     static_cast<QOrganizerItemDetailDefinitionSaveRequest *>(iReq),
                     QList<QOrganizerItemDetailDefinition>(),
-                    QOrganizerItemManager::NotSupportedError,
-                    QMap<int, QOrganizerItemManager::Error>(),
-                    QOrganizerItemAbstractRequest::FinishedState);
+                    QOrganizerManager::NotSupportedError,
+                    QMap<int, QOrganizerManager::Error>(),
+                    QOrganizerAbstractRequest::FinishedState);
             }
             return false;
 #ifndef SYMBIAN_CALENDAR_V2
-        case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
+        case QOrganizerAbstractRequest::CollectionRemoveRequest :
             {
                 // Special case, removing a collection not supported
-                QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
+                QOrganizerManagerEngine::updateCollectionRemoveRequest(
                     static_cast<QOrganizerCollectionRemoveRequest *>(iReq),
-                    QOrganizerItemManager::NotSupportedError,
-                    QMap<int, QOrganizerItemManager::Error>(),
-                    QOrganizerItemAbstractRequest::FinishedState);
+                    QOrganizerManager::NotSupportedError,
+                    QMap<int, QOrganizerManager::Error>(),
+                    QOrganizerAbstractRequest::FinishedState);
             }
             return false;                
-        case QOrganizerItemAbstractRequest::CollectionSaveRequest :
+        case QOrganizerAbstractRequest::CollectionSaveRequest :
             {
                 // Special case, saving a collection not supported
-                QOrganizerItemManagerEngine::updateCollectionSaveRequest(
+                QOrganizerManagerEngine::updateCollectionSaveRequest(
                     static_cast<QOrganizerCollectionSaveRequest *>(iReq),
                     QList<QOrganizerCollection>(),
-                    QOrganizerItemManager::NotSupportedError,
-                    QMap<int, QOrganizerItemManager::Error>(),
-                    QOrganizerItemAbstractRequest::FinishedState);
+                    QOrganizerManager::NotSupportedError,
+                    QMap<int, QOrganizerManager::Error>(),
+                    QOrganizerAbstractRequest::FinishedState);
             }
             return false;
 #else
-        case QOrganizerItemAbstractRequest::CollectionRemoveRequest:       // Fallthrough
-        case QOrganizerItemAbstractRequest::CollectionSaveRequest:         // .
+        case QOrganizerAbstractRequest::CollectionRemoveRequest:       // Fallthrough
+        case QOrganizerAbstractRequest::CollectionSaveRequest:         // .
 #endif
-        case QOrganizerItemAbstractRequest::ItemFetchRequest:              // .
-        case QOrganizerItemAbstractRequest::ItemRemoveRequest:             // .
-        case QOrganizerItemAbstractRequest::ItemSaveRequest:               // .
-        case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:      // .
-        case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:       // .
-        case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest:  // .
-        case QOrganizerItemAbstractRequest::CollectionFetchRequest:        // .
-        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
+        case QOrganizerAbstractRequest::ItemFetchForExportRequest:     // .
+        case QOrganizerAbstractRequest::ItemRemoveRequest:             // .
+        case QOrganizerAbstractRequest::ItemSaveRequest:               // .
+        case QOrganizerAbstractRequest::ItemFetchRequest:              // .
+        case QOrganizerAbstractRequest::ItemIdFetchRequest:       // .
+        case QOrganizerAbstractRequest::DetailDefinitionFetchRequest:  // .
+        case QOrganizerAbstractRequest::CollectionFetchRequest:
             {
                 // QWeakPointer is aware if the request object (which is derived from QObject) is deleted.
-                QWeakPointer<QOrganizerItemAbstractRequest> req = aReq;
+                QWeakPointer<QOrganizerAbstractRequest> req = aReq;
 
                 // Change the state of the request and emit signal
-                QOrganizerItemManagerEngine::updateRequestState(aReq,
-                        QOrganizerItemAbstractRequest::ActiveState);
+                QOrganizerManagerEngine::updateRequestState(aReq,
+                        QOrganizerAbstractRequest::ActiveState);
 
                 // Client may delete the request object when state is updated. And because by default
                 // signals are synchronous we might not have a valid request anymore.
@@ -189,62 +188,57 @@ bool COrganizerItemRequestsServiceProvider::CancelRequest()
 void COrganizerItemRequestsServiceProvider::RunL()
 {
     switch (iReq->type()) {
-    case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest: 
-        {
-        FetchInstance();
-        }
-        break;
-    case QOrganizerItemAbstractRequest::ItemFetchRequest: 
+    case QOrganizerAbstractRequest::ItemFetchRequest: 
         {
         FetchItems();
         }
         break;
-    case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest: 
+    case QOrganizerAbstractRequest::ItemFetchForExportRequest: 
+        {
+        FetchItemsForExport();
+        }
+        break;
+    case QOrganizerAbstractRequest::ItemIdFetchRequest: 
         {
         FetchItemIds();
         }
         break;
-    case QOrganizerItemAbstractRequest::ItemRemoveRequest: 
+    case QOrganizerAbstractRequest::ItemRemoveRequest: 
         {
         RemoveItem();
         }
         break;
-    case QOrganizerItemAbstractRequest::ItemSaveRequest: 
+    case QOrganizerAbstractRequest::ItemSaveRequest: 
         {
         SaveItem();
         }
         break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest: 
+    case QOrganizerAbstractRequest::DetailDefinitionFetchRequest: 
         {
         FetchDetailDefinition();
         }
         break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest: 
+    case QOrganizerAbstractRequest::DetailDefinitionRemoveRequest: 
         {
         // Not supported. Already handled at StartRequest()
         }
         break;
-    case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest: 
+    case QOrganizerAbstractRequest::DetailDefinitionSaveRequest: 
         {
         // Not supported. Already handled at StartRequest()
         }
         break;
-    case QOrganizerItemAbstractRequest::CollectionFetchRequest : 
+    case QOrganizerAbstractRequest::CollectionFetchRequest : 
         {
         FetchCollections();
         }
         break;
-    case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
-        {
-        CollectionIds();
-        }
-        break;
-    case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
+    case QOrganizerAbstractRequest::CollectionRemoveRequest :
         {
         RemoveCollections();
         }
         break;
-    case QOrganizerItemAbstractRequest::CollectionSaveRequest :
+    case QOrganizerAbstractRequest::CollectionSaveRequest :
         {
         SaveCollections();
         }
@@ -258,31 +252,31 @@ void COrganizerItemRequestsServiceProvider::RunL()
 }
 
 //Fetch item instances
-void COrganizerItemRequestsServiceProvider::FetchInstance()
+void COrganizerItemRequestsServiceProvider::FetchItems()
 {
-    QOrganizerItemInstanceFetchRequest *req = static_cast<QOrganizerItemInstanceFetchRequest *>(iReq);
-    // Fetch ItemInstancesList
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerItem> itemList = iOrganizerItemManagerEngine.itemInstances(
-        req->filter(), req->sorting(), req->fetchHint(), &error);
+    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
+    // Fetch ItemOccurrencesList
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    QList<QOrganizerItem> itemList = iOrganizerItemManagerEngine.items(
+        req->startDate(), req->endDate(), req->filter(), req->sorting(), req->fetchHint(), &error);
 
     // Update the request status
-    QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(
-        req, itemList, error, QOrganizerItemAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateItemFetchRequest(
+        req, itemList, error, QOrganizerAbstractRequest::FinishedState);
 }
 
 // Delete item
 void COrganizerItemRequestsServiceProvider::RemoveItem()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemRemoveRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemRemoveRequest);
     QOrganizerItemRemoveRequest *req = static_cast<QOrganizerItemRemoveRequest *>(iReq);
-    QList<QOrganizerItemLocalId> itemIds = req->itemIds();
+    QList<QOrganizerItemId> itemIds = req->itemIds();
     Q_ASSERT(iIndex < itemIds.count());
 
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     // Delete an item (emits "itemsRemoved")
     iOrganizerItemManagerEngine.removeItem(itemIds.at(iIndex), &error);
-    if (error != QOrganizerItemManager::NoError)
+    if (error != QOrganizerManager::NoError)
         iErrorMap.insert(iIndex, error);
 
     iIndex++;
@@ -295,28 +289,28 @@ void COrganizerItemRequestsServiceProvider::RemoveItem()
             error = iErrorMap.values().at(0);
 
         // Emit state change
-        QOrganizerItemManagerEngine::updateItemRemoveRequest(
-            req, error, iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerManagerEngine::updateItemRemoveRequest(
+            req, error, iErrorMap, QOrganizerAbstractRequest::FinishedState);
     }
 }
 
 // Save item
 void COrganizerItemRequestsServiceProvider::SaveItem()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemSaveRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemSaveRequest);
     QOrganizerItemSaveRequest *req = static_cast<QOrganizerItemSaveRequest *>(iReq);
     QList<QOrganizerItem> items = req->items();
     Q_ASSERT(iIndex < items.count());
 
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     // Validate item before saving
     if (iOrganizerItemManagerEngine.validateItem(items[iIndex], &error))
         {
         // Save item (emits "itemsAdded")
-        iOrganizerItemManagerEngine.saveItem(&(items[iIndex]), req->collectionId(), &error);
+        iOrganizerItemManagerEngine.saveItem(&(items[iIndex]), &error);
         }
 
-    if (error == QOrganizerItemManager::NoError) {
+    if (error == QOrganizerManager::NoError) {
         // Update item in the list (does not emit resultsAvailable)
         req->setItems(items);
     } else {
@@ -339,27 +333,27 @@ void COrganizerItemRequestsServiceProvider::SaveItem()
         }
 
         // Notify results (emits resultsAvailable and stateChanged)
-        QOrganizerItemManagerEngine::updateItemSaveRequest(
-            req, result, error, iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerManagerEngine::updateItemSaveRequest(
+            req, result, error, iErrorMap, QOrganizerAbstractRequest::FinishedState);
     }    
 }
 
-void COrganizerItemRequestsServiceProvider::FetchItems()
+void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 {
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
-    if (req->filter().type() == QOrganizerItemFilter::LocalIdFilter) {
-        FetchItemsByLocalIds();
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
+    if (req->filter().type() == QOrganizerItemFilter::IdFilter) {
+        FetchItemsByIds();
     } else {
         if (!iItemIds.count()) {
             // Fetch all item ids
             QOrganizerItemFilter filter;
             QList<QOrganizerItemSortOrder> sortOrder;
-            QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-            iItemIds = iOrganizerItemManagerEngine.itemIds(filter, sortOrder, &error);
-            if (error != QOrganizerItemManager::NoError || !iItemIds.count()) {
+            QOrganizerManager::Error error(QOrganizerManager::NoError);
+            iItemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), filter, sortOrder, &error);
+            if (error != QOrganizerManager::NoError || !iItemIds.count()) {
                 // Complete with empty list
-                QOrganizerItemManagerEngine::updateItemFetchRequest(
-                    req, QList<QOrganizerItem>(), error, QOrganizerItemAbstractRequest::FinishedState);
+                QOrganizerManagerEngine::updateItemFetchForExportRequest(
+                    req, QList<QOrganizerItem>(), error, QOrganizerAbstractRequest::FinishedState);
             } else {
                 FetchItemsandFilter();
             }
@@ -372,26 +366,26 @@ void COrganizerItemRequestsServiceProvider::FetchItems()
 // Fetch item local ids
 void COrganizerItemRequestsServiceProvider::FetchItemIds()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest);
-    QOrganizerItemLocalIdFetchRequest *req = static_cast<QOrganizerItemLocalIdFetchRequest *>(iReq);
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerItemLocalId> itemIds = iOrganizerItemManagerEngine.itemIds(req->filter(), req->sorting(), &error);
-    QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
-        req, itemIds, error, QOrganizerItemAbstractRequest::FinishedState);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemIdFetchRequest);
+    QOrganizerItemIdFetchRequest *req = static_cast<QOrganizerItemIdFetchRequest *>(iReq);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    QList<QOrganizerItemId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);
+    QOrganizerManagerEngine::updateItemIdFetchRequest(
+        req, itemIds, error, QOrganizerAbstractRequest::FinishedState);
 }
 
 // Fetch Entries by local Ids
-void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
+void COrganizerItemRequestsServiceProvider::FetchItemsByIds()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
-    Q_ASSERT(req->filter().type() == QOrganizerItemFilter::LocalIdFilter);
-    QOrganizerItemLocalIdFilter localIdFilter = req->filter();
-    QList<QOrganizerItemLocalId> itemIds = localIdFilter.ids();
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemFetchForExportRequest);
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
+    Q_ASSERT(req->filter().type() == QOrganizerItemFilter::IdFilter);
+    QOrganizerItemIdFilter localIdFilter = req->filter();
+    QList<QOrganizerItemId> itemIds = localIdFilter.ids();
     Q_ASSERT(iIndex < itemIds.count());
 
     QOrganizerItemFetchHint fetchHint;
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     // Fetch the item
     QOrganizerItem item =
         iOrganizerItemManagerEngine.item(localIdFilter.ids().at(iIndex), fetchHint, &error);
@@ -400,39 +394,39 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
     // TODO: we may need to batch signaling to improve performance,
     // for example "resultsAvailable" for every tenth iteration
     QList<QOrganizerItem> items = req->items();
-    if (error == QOrganizerItemManager::NoError) {
+    if (error == QOrganizerManager::NoError) {
         items << item;
     }
 
     // The first error will be reported
-    if (req->error() != QOrganizerItemManager::NoError)
+    if (req->error() != QOrganizerManager::NoError)
         error = req->error();
 
     iIndex++;
     if (iIndex < itemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         SelfComplete();
-        QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
+        QOrganizerManagerEngine::updateItemFetchForExportRequest(req, items, error, req->state());
     } else {
         // Done, emit state change
-        QOrganizerItemManagerEngine::updateItemFetchRequest(
-            req, items, error, QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerManagerEngine::updateItemFetchForExportRequest(
+            req, items, error, QOrganizerAbstractRequest::FinishedState);
     }
 }
 
 // Fetch items/entries by details
 void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemFetchForExportRequest);
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     Q_ASSERT(iIndex < iItemIds.count());
 
     // Fetch the item
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     QOrganizerItem item = iOrganizerItemManagerEngine.item(iItemIds.at(iIndex), req->fetchHint(), &error);
 
     QList<QOrganizerItem> items;
-    if (error == QOrganizerItemManager::NoError) {
+    if (error == QOrganizerManager::NoError) {
         // Append the fetched item to the result if it passes the filter
         items.append(item);
         items = iOrganizerItemManagerEngine.slowFilter(items, req->filter(), req->sorting());
@@ -440,18 +434,18 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
     items.append(req->items());
 
     // The first error will be reported
-    if (req->error() != QOrganizerItemManager::NoError)
+    if (req->error() != QOrganizerManager::NoError)
         error = req->error();
 
     iIndex++;
     if (iIndex < iItemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         SelfComplete();
-        QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
+        QOrganizerManagerEngine::updateItemFetchForExportRequest(req, items, error, req->state());
     } else {
         // Done, emit state change
-        QOrganizerItemManagerEngine::updateItemFetchRequest(
-            req, items, error, QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerManagerEngine::updateItemFetchForExportRequest(
+            req, items, error, QOrganizerAbstractRequest::FinishedState);
     }
 }
 
@@ -461,8 +455,8 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinition()
     QOrganizerItemDetailDefinitionFetchRequest *req = static_cast<QOrganizerItemDetailDefinitionFetchRequest *>(iReq);
 
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitionMap;
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QMap<int, QOrganizerManager::Error> errorMap;
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     int count = req->definitionNames().count();
     
     // As there are no costly IPCs involved in this operation so
@@ -478,7 +472,7 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinition()
                 (iOrganizerItemManagerEngine.detailDefinition(
                     stringItem, req->itemType(), &error)));
 
-            if (QOrganizerItemManager::NoError == error) {
+            if (QOrganizerManager::NoError == error) {
                 detailDefinitionMap.insert(stringItem, detailDefinition);
             } else {
                 errorMap.insert(index, error);
@@ -487,99 +481,83 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinition()
     }
     
     // Notify results
-    QOrganizerItemManagerEngine::updateDefinitionFetchRequest(
-        req, detailDefinitionMap, error, errorMap, QOrganizerItemAbstractRequest::FinishedState);
-}
-
-void COrganizerItemRequestsServiceProvider::CollectionIds()
-{
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest);
-    QOrganizerCollectionLocalIdFetchRequest *fetchReq = static_cast<QOrganizerCollectionLocalIdFetchRequest *>(iReq);
-
-    // Notify results
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(
-        fetchReq,
-        iOrganizerItemManagerEngine.collectionIds(&error),
-        error,
-        QOrganizerItemAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateDefinitionFetchRequest(
+        req, detailDefinitionMap, error, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void COrganizerItemRequestsServiceProvider::FetchCollections()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionFetchRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::CollectionFetchRequest);
     QOrganizerCollectionFetchRequest *fetchReq = static_cast<QOrganizerCollectionFetchRequest *>(iReq);
 
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> result = iOrganizerItemManagerEngine.collections(fetchReq->collectionIds(), &errorMap, &error);
-    QOrganizerItemManagerEngine::updateCollectionFetchRequest(
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    QList<QOrganizerCollection> result = iOrganizerItemManagerEngine.collections(&error);
+    QOrganizerManagerEngine::updateCollectionFetchRequest(
         fetchReq,
         result,
         error,
-        errorMap,
-        QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerAbstractRequest::FinishedState);
 }
 
 void COrganizerItemRequestsServiceProvider::SaveCollections()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionSaveRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::CollectionSaveRequest);
 
     QOrganizerCollectionSaveRequest *saveReq = static_cast<QOrganizerCollectionSaveRequest *>(iReq);
     QList<QOrganizerCollection> collections = saveReq->collections();
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    QMap<int, QOrganizerManager::Error> errorMap;
 
     // Save all collections
     for (int i(0); i < collections.count(); i++) {
         // The following also emits the necessary signals
         iOrganizerItemManagerEngine.saveCollection(&(collections[i]), &error);
-        if (error != QOrganizerItemManager::NoError) {
+        if (error != QOrganizerManager::NoError) {
             errorMap.insert(i, error);
         }
     }
 
     // Notify completion
-    QOrganizerItemManagerEngine::updateCollectionSaveRequest(
+    QOrganizerManagerEngine::updateCollectionSaveRequest(
         saveReq,
         collections,
         error,
         errorMap,
-        QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerAbstractRequest::FinishedState);
 }
 
 void COrganizerItemRequestsServiceProvider::RemoveCollections()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionRemoveRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::CollectionRemoveRequest);
 
     QOrganizerCollectionRemoveRequest *removeReq = static_cast<QOrganizerCollectionRemoveRequest *>(iReq);
-    QList<QOrganizerCollectionLocalId> collectionIds = removeReq->collectionIds();
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QList<QOrganizerCollectionId> collectionIds = removeReq->collectionIds();
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    QMap<int, QOrganizerManager::Error> errorMap;
 
     // Remove all collections
     for (int i(0); i < collectionIds.count(); i++) {
         // The following also emits the necessary signals
         iOrganizerItemManagerEngine.removeCollection(collectionIds.at(i), &error);
-        if (error != QOrganizerItemManager::NoError) {
+        if (error != QOrganizerManager::NoError) {
             errorMap.insert(i, error);
         }
     }
 
     // Notify completion
-    QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
+    QOrganizerManagerEngine::updateCollectionRemoveRequest(
         removeReq,
         error,
         errorMap,
-        QOrganizerItemAbstractRequest::FinishedState);
+        QOrganizerAbstractRequest::FinishedState);
 }
 
 // Called by Cancel()
 void COrganizerItemRequestsServiceProvider::DoCancel()
 {
     // Update the request status
-    QOrganizerItemManagerEngine::updateRequestState(iReq, 
-            QOrganizerItemAbstractRequest::CanceledState);
+    QOrganizerManagerEngine::updateRequestState(iReq, 
+            QOrganizerAbstractRequest::CanceledState);
 }
 
 // Call if RunL leaves
@@ -587,7 +565,7 @@ TInt COrganizerItemRequestsServiceProvider::RunError(TInt aError)
 {
     // Operation not successfull
     // Generate error map
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
     iOrganizerItemManagerEngine.transformError(aError, &error);
     // Insert error map
     iErrorMap.insert(iIndex, error);

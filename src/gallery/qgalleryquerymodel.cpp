@@ -75,12 +75,21 @@ public:
 
         QObject::connect(&query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
                 q_ptr, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
-        QObject::connect(&query, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-                q_ptr, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
+        QObject::connect(&query, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+                q_ptr, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
         QObject::connect(&query, SIGNAL(finished()), q_ptr, SIGNAL(finished()));
-        QObject::connect(&query, SIGNAL(cancelled()), q_ptr, SIGNAL(cancelled()));
+        QObject::connect(&query, SIGNAL(canceled()), q_ptr, SIGNAL(canceled()));
         QObject::connect(&query, SIGNAL(errorChanged()), q_ptr, SIGNAL(errorChanged()));
         QObject::connect(&query, SIGNAL(error(int,QString)), q_ptr, SIGNAL(error(int,QString)));
+        QObject::connect(&query, SIGNAL(galleryChanged()), q_ptr, SIGNAL(galleryChanged()));
+        QObject::connect(&query, SIGNAL(sortPropertyNamesChanged()), q_ptr, SIGNAL(sortPropertyNamesChanged()));
+        QObject::connect(&query, SIGNAL(autoUpdateChanged()), q_ptr, SIGNAL(autoUpdateChanged()));
+        QObject::connect(&query, SIGNAL(offsetChanged()), q_ptr, SIGNAL(offsetChanged()));
+        QObject::connect(&query, SIGNAL(limitChanged()), q_ptr, SIGNAL(limitChanged()));
+        QObject::connect(&query, SIGNAL(rootTypeChanged()), q_ptr, SIGNAL(rootTypeChanged()));
+        QObject::connect(&query, SIGNAL(rootItemChanged()), q_ptr, SIGNAL(rootItemChanged()));
+        QObject::connect(&query, SIGNAL(scopeChanged()), q_ptr, SIGNAL(scopeChanged()));
+        QObject::connect(&query, SIGNAL(filterChanged()), q_ptr, SIGNAL(filterChanged()));
     }
 
     void updateRoles(int column);
@@ -281,6 +290,41 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
 
     \brief The QGalleryQueryModel class provides a model for the results of a
     gallery query.
+
+    The meta-data that should be queried by a QGalleryQueryModel is specified
+    by adding columns to the model, each column has a set of \l roleProperties()
+    which map item data roles to gallery properties.  After the model query
+    has been executed the values of the properties requested for each column can
+    be addressed using the roles they were mapped to.
+
+    The \l rootType property identifies the type of gallery item the request
+    should return, if the root type has derivative types (i.e. an audio file is
+    just a special case of a regular file) these will also be included in the
+    result set.
+
+    The \l rootItem property takes the ID of an item the query should only
+    return the children of.  Depending on the \l scope of the query this may
+    be {AllDescendents}{all descendents} or just the {DirectDescendents}
+    {direct descendents} of the root item.
+
+    The results of a query can be further limited by setting a \l filter on the
+    model.  The model will evaluate the QGalleryFilter and only include
+    items with meta-data matching the expression.
+
+    The order the results are returned in can be specified in the
+    sortPropertyNames property which takes an ordered list of property names.
+    By default properties are sorted in ascending order, but this can be
+    specified explicitly be prefixing the property name with a '+' character
+    for ascending order and a '-' character for descending order.
+
+    If the \l autoUpdate property is true when the query is executed it will
+    enter an \l {QGalleryAbstractRequest::Idle}{Idle} state on finishing and
+    will refresh the queried information if the items matching the query change.
+    If the gallery can't provide updates it will instead go immediately to the
+    \l {QGalleryAbstractRequest::Finished}{Finished} state. Automatic updates
+    can be canceled by calling cancel() on a idle model.
+
+    \sa QGalleryQueryRequest, QDocumentGallery
 */
 
 /*!
@@ -331,6 +375,12 @@ void QGalleryQueryModel::setGallery(QAbstractGallery *gallery)
 {
     d_ptr->query.setGallery(gallery);
 }
+
+/*!
+    \fn QGalleryQueryModel::galleryChanged()
+
+    Signals that the value of \l gallery has changed.
+*/
 
 /*!
     Returns the meta-data properties which a \a column maps to roles.
@@ -492,6 +542,12 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
 }
 
 /*!
+    \fn QGalleryQueryModel::sortPropertyNamesChanged()
+
+    Signals that the value of \l sortPropertyNames has changed.
+*/
+
+/*!
     \property QGalleryQueryModel::autoUpdate
 
     \brief Whether a query should continue to update its result set after the
@@ -507,6 +563,12 @@ void QGalleryQueryModel::setAutoUpdate(bool enabled)
 {
     d_ptr->query.setAutoUpdate(enabled);
 }
+
+/*!
+    \fn QGalleryQueryModel::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryQueryModel::offset
@@ -525,6 +587,12 @@ void QGalleryQueryModel::setOffset(int offset)
 }
 
 /*!
+    \fn QGalleryQueryModel::offsetChanged()
+
+    Signals that the value of \l offset has changed.
+*/
+
+/*!
     \property QGalleryQueryModel::limit
 
     \brief The maximum number of items a query should return.
@@ -539,6 +607,12 @@ void QGalleryQueryModel::setLimit(int limit)
 {
     d_ptr->query.setLimit(limit);
 }
+
+/*!
+    \fn QGalleryQueryModel::limitChanged()
+
+    Signals that the value of \l limit has changed.
+*/
 
 /*!
     \property QGalleryQueryModel::rootType
@@ -557,6 +631,12 @@ void QGalleryQueryModel::setRootType(const QString &itemType)
 }
 
 /*!
+    \fn QGalleryQueryModel::rootTypeChanged()
+
+    Signals that the value of \l rootType has changed.
+*/
+
+/*!
     \property QGalleryQueryModel::rootItem
 
     \brief The ID of the item a query should return the descendents of.
@@ -573,6 +653,12 @@ void QGalleryQueryModel::setRootItem(const QVariant &itemId)
 {
     d_ptr->query.setRootItem(itemId);
 }
+
+/*!
+    \fn QGalleryQueryModel::rootItemChanged()
+
+    Signals that the value of \l rootItem has changed.
+*/
 
 /*!
     \property QGalleryQueryModel::scope
@@ -594,6 +680,12 @@ void QGalleryQueryModel::setScope(QGalleryQueryRequest::Scope scope)
 }
 
 /*!
+    \fn QGalleryQueryModel::scopeChanged()
+
+    Signals that the value of \l scope has changed.
+*/
+
+/*!
     \property QGalleryQueryModel::filter
 
     \brief A filter restricting the results of a query.
@@ -608,6 +700,12 @@ void QGalleryQueryModel::setFilter(const QGalleryFilter &filter)
 {
     d_ptr->query.setFilter(filter);
 }
+
+/*!
+    \fn QGalleryQueryModel::filterChanged()
+
+    Signals that the value of \l filter has changed.
+*/
 
 /*!
     Executes a query.
@@ -682,9 +780,9 @@ QString QGalleryQueryModel::errorString() const
 */
 
 /*!
-    \fn QGalleryQueryModel::cancelled()
+    \fn QGalleryQueryModel::canceled()
 
-    Signals that the query was cancelled.
+    Signals that the query was canceled.
 */
 
 /*!
@@ -694,20 +792,20 @@ QString QGalleryQueryModel::errorString() const
 */
 
 /*!
-    \property QGalleryQueryModel::status
+    \property QGalleryQueryModel::state
 
-    \brief The status of a query.
+    \brief The state of a query.
 */
 
-QGalleryAbstractRequest::Status QGalleryQueryModel::status() const
+QGalleryAbstractRequest::State QGalleryQueryModel::state() const
 {
-    return d_ptr->query.status();
+    return d_ptr->query.state();
 }
 
 /*!
-    \fn QGalleryQueryModel::statusChanged(QGalleryAbstractRequest::Status status)
+    \fn QGalleryQueryModel::stateChanged(QGalleryAbstractRequest::State state)
 
-    Signals that the \a status of the query has changed.
+    Signals that the \a state of the query has changed.
 */
 
 

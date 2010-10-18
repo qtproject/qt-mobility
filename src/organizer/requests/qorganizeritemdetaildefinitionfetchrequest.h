@@ -49,7 +49,7 @@
 #define QORGANIZERITEMDETAILDEFINITIONFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizercollectionid.h"
 
@@ -59,7 +59,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailDefinitionFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionFetchRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionFetchRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -75,11 +75,11 @@ public:
 
     /* Results */
     QMap<QString, QOrganizerItemDetailDefinition> definitions() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerItemDetailDefinitionFetchRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionFetchRequest)
 };
 

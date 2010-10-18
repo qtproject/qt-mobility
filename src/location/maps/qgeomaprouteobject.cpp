@@ -179,6 +179,33 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     }
 }
 
+/*!
+\fn void QGeoMapRouteObject::routeChanged(const QGeoRoute &route)
+
+    This signal is emitted when the route drawn by this route object 
+    has changed.
+
+    The new value is \a route.
+*/
+
+/*!
+\fn void QGeoMapRouteObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw this route object has 
+    changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapRouteObject::detailLevelChanged(quint32 detailLevel)
+
+    This signal is emitted when the level of detail used to draw this 
+    route object has changed.
+
+    The new value is \a detailLevel.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 
