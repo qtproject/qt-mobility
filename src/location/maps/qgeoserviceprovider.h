@@ -46,8 +46,8 @@
 
 #include <QMap>
 #include <QVariant>
+#include <QString>
 
-class QString;
 class QStringList;
 
 QT_BEGIN_HEADER
