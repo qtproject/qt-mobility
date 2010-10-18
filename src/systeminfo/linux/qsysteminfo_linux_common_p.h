@@ -65,6 +65,7 @@
 #include "qsystemnetworkinfo.h"
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -373,6 +374,52 @@ public:
 //    bool setScreenSaverInhibit() {return false;}
 //    bool isScreenLockEnabled() {return false;}
 //    bool isScreenSaverActive() {return false;}
+};
+
+
+class QSystemBatteryInfoLinuxCommonPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    explicit QSystemBatteryInfoLinuxCommonPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoLinuxCommonPrivate();
+
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacitymAh() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int cumulativeCurrentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+
+Q_SIGNALS:
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacitymAhChanged(int);
+    void batteryCurrentFlowChanged(int);
+    void voltageChanged(int);
+
+    void currentFlowChanged(int);
+    void cumulativeCurrentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 QTM_END_NAMESPACE

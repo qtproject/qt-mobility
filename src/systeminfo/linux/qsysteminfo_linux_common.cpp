@@ -862,8 +862,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
+                qDebug() <<__FUNCTION__ << dir;
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/address");
                 if(fi.exists()) {
@@ -984,7 +985,7 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/carrier");
@@ -2897,7 +2898,8 @@ QSystemDeviceInfo::LockType QSystemDeviceInfoLinuxCommonPrivate::typeOfLock()
 }
 
 
-QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
 
 }
@@ -2906,6 +2908,85 @@ QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()
 {
 }
 
+
+QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObject *parent)
+: QObject(parent)
+{
+
+}
+
+QSystemBatteryInfoLinuxCommonPrivate::~QSystemBatteryInfoLinuxCommonPrivate()
+{
+
+}
+
+
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoLinuxCommonPrivate::chargerType() const
+{
+    return QSystemBatteryInfo::Unknown;
+}
+
+QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::chargingState() const
+{
+    return QSystemBatteryInfo::NotCharging;
+}
+
+
+int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacitymAh() const
+{
+    return 0;
+}
+
+
+int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::cumulativeCurrentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
+{
+    return 0;
+}
+
+void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
+{
+
+}
+
+void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+
+}
 
 #include "moc_qsysteminfo_linux_common_p.cpp"
 

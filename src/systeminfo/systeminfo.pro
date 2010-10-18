@@ -12,14 +12,16 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h 
+    qsystemstorageinfo.h  \
+    qsystembatteryinfo.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
     qsystemdisplayinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
-    qsystemstorageinfo.cpp
+    qsystemstorageinfo.cpp \
+    qsystembatteryinfo.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
@@ -241,5 +243,4 @@ simulator {
 HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
-
 

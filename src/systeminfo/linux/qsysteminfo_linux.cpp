@@ -979,6 +979,17 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     return false;
 }
 
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
+
 #include "moc_qsysteminfo_linux_p.cpp"
 
 QTM_END_NAMESPACE
