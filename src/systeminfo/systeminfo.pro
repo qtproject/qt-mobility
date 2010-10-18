@@ -19,7 +19,8 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemdisplayinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
-    qsystemstorageinfo.cpp
+    qsystemstorageinfo.cpp \
+    qsystemalignedtimer.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
