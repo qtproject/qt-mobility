@@ -145,6 +145,10 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
         qRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
         return;
     } else {
+        connect(InstanceManager::instance(), 
+                SIGNAL(instanceClosed(QRemoteServiceRegister::Entry,QUuid)),
+                this, SLOT(unregisterObjectDBus(QRemoteServiceRegister::Entry,QUuid)));
+        
         if (dispatch->packageAvailable())
             QTimer::singleShot(0, this, SLOT(newPackageReady()));
     }
@@ -155,33 +159,39 @@ ObjectEndPoint::~ObjectEndPoint()
     delete d;
 }
 
+/*!
+    Removes all instances of the client from the instance manager
+*/
 void ObjectEndPoint::disconnected(const QString& clientId, const QString& instanceId)
 {
     // Service Side
-    if (d->endPointType == Service) {
-        for (int i=d->clientList.size()-1; i>=0; i--) {
-            // Find right client process
-            if (d->clientList[i].clientId == clientId) {
-                //QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
-                //QUuid instance = d->clientList[i].second.second;
-                QRemoteServiceRegister::Entry entry = d->clientList[i].entry;
-                QUuid instance = d->clientList[i].instanceId;
+    Q_ASSERT(d->endPointType != ObjectEndPoint::Client);
 
-                if (instance.toString() == instanceId) {
-                    // Remove an instance from the InstanceManager and local list
-                    InstanceManager::instance()->removeObjectInstance(entry, instance);
-                    d->clientList.removeAt(i);
+    for (int i=d->clientList.size()-1; i>=0; i--) {
+        // Find right client process
+        if (d->clientList[i].clientId == clientId) {
+            QRemoteServiceRegister::Entry entry = d->clientList[i].entry;
+            QUuid instance = d->clientList[i].instanceId;
 
-                    // Unregister object from D-Bus
-                    uint hash = qHash(instance.toString());
-                    QString objPath = "/" + entry.interfaceName() + "/" + entry.version() +
-                                      "/" + QString::number(hash);
-                    objPath.replace(QString("."), QString("/"));
-                    connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
-                }
+            if (instance.toString() == instanceId) {
+                // Remove an instance from the InstanceManager and local list
+                InstanceManager::instance()->removeObjectInstance(entry, instance);
+                d->clientList.removeAt(i);
             }
         }
     }
+}
+
+/*!
+    Unregisters the DBus object
+*/
+void ObjectEndPoint::unregisterObjectDBus(const QRemoteServiceRegister::Entry& entry, const QUuid& id)
+{
+    uint hash = qHash(id.toString());
+    QString objPath = "/" + entry.interfaceName() + "/" + entry.version() +
+        "/" + QString::number(hash);
+    objPath.replace(QString("."), QString("/"));
+    connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
 }
 
 /*!
@@ -334,7 +344,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
     } else {
         // Service side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
-
 
         QServicePackage response = p.createResponse();
         InstanceManager* iManager = InstanceManager::instance();

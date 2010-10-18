@@ -90,6 +90,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void newPackageReady();
     void disconnected(const QString& clientId, const QString & instanceId);
+    void unregisterObjectDBus(const QRemoteServiceRegister::Entry& entry, const QUuid& id);
 
 private:
     void waitForResponse(const QUuid& requestId);
