@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed CONSTANT)
+    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed)
 
 public:
     explicit QDeclarativeScreenSaver(QObject *parent = 0);
