@@ -383,6 +383,7 @@ QMessageAccountIdList CMTMEngine::accountsByType(QMessage::Type type) const
 
 void CMTMEngine::updateEmailAccountsL() const
 {
+#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)    
     QStringList keys = iAccounts.keys();
     keys.removeOne(iSMSAccountidAsString);
     keys.removeOne(iMMSAccountidAsString);
@@ -475,6 +476,7 @@ void CMTMEngine::updateEmailAccountsL() const
     }
     
     CleanupStack::PopAndDestroy(pEmailAccounts);
+#endif    
 }
 
 TUid CMTMEngine::mtmUidByType(MTMType aMTMType)
