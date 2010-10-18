@@ -141,10 +141,6 @@ bool QVersitContactExporterPrivate::exportContact(
     QVersitContactExporter::Error* error)
 {
     QList<QContactDetail> allDetails = contact.details();
-    if (allDetails.isEmpty()) {
-        *error = QVersitContactExporter::EmptyContactError;
-        return false;
-    }
     foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler

@@ -251,6 +251,26 @@ void tst_QVersitContactExporter::testConvertContact()
     QCOMPARE(documents.first().properties().count(), 3);
 }
 
+void tst_QVersitContactExporter::testEmptyContact()
+{
+    QContact contact1; // empty
+    QList<QContact> contacts;
+    contacts << contact1;
+
+    QVERIFY(mExporter->exportContacts(contacts)); // do not fail on empty contact1
+    QMap<int, QVersitContactExporter::Error> errorMap = mExporter->errorMap();
+    QVERIFY(errorMap.isEmpty());
+    QList<QVersitDocument> documents = mExporter->documents();
+    QCOMPARE(documents.size(), 1); // only contact2 was exported
+    QVersitDocument document1 = documents.first();
+    QVersitProperty property = findPropertyByName(document1, "N");
+    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
+    QCOMPARE(property.value<QStringList>(),
+            QStringList() << QString() << QString() << QString() << QString() << QString());
+    property = findPropertyByName(document1, "FN");
+    QCOMPARE(property.value(), QString());
+}
+
 void tst_QVersitContactExporter::testContactDetailHandler()
 {
     MyQVersitContactExporterDetailHandler detailHandler;;
