@@ -101,7 +101,8 @@ symbian:LIBS += -lfbscli \
         -lfbscli \
         -lefsrv \
         -lcone \
-        -lws32
+        -lws32 \
+        -limageconversion
 
 # Source:
 HEADERS += $$PWD/s60cameraconstants.h \
