@@ -54,38 +54,48 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QNearFieldManagerPrivate;
 class Q_CONNECTIVITY_EXPORT QNearFieldManager : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QNearFieldManager)
 
 public:
     explicit QNearFieldManager(QObject *parent = 0);
+#ifdef QT_BUILD_INTERNAL
+    explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
+#endif
     ~QNearFieldManager();
 
     template<typename T>
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QObject *object, const char *slot);
+                                      QObject *object, const char *method);
+    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                      QObject *object, const char *method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       QNdefRecord::TypeNameFormat typeNameFormat,
                                       const QByteArray &type,
-                                      const QObject *object, const char *slot);
+                                      QObject *object, const char *method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       quint8 typeNameFormat, const QByteArray &type,
-                                      const QObject *object, const char *slot);
+                                      QObject *object, const char *method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       const QNdefFilter &filter,
-                                      const QObject *object, const char *slot);
+                                      QObject *object, const char *method);
 
     bool unregisterTargetDetectedHandler(int handlerId);
 
 signals:
-    void targetDetected(const QNearFieldTarget &target);
+    void targetDetected(QNearFieldTarget *target);
     void transactionDetected(const QByteArray &applicationIdentifier);
+
+private:
+    QNearFieldManagerPrivate *d_ptr;
 };
 
 template<typename T>
 int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                        const QObject *object, const char *slot)
+                                                     QObject *object, const char *slot)
 {
     T record;
 

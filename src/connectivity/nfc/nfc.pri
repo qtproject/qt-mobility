@@ -3,15 +3,16 @@ HEADERS += \
     nfc/qnearfieldmanager.h \
     nfc/qnearfieldtarget.h \
     nfc/qndefrecord.h \
-    nfc/qndefrecord_p.h \
     nfc/qndefnfctextrecord.h \
     nfc/qndefmessage.h \
     nfc/qllcpsocket.h \
     nfc/qndeffilter.h \
     nfc/qndefnfcurirecord.h \
-    nfc/qnearfieldtarget_p.h
 
-PRIVATE_HEADERS +=
+PRIVATE_HEADERS += \
+    nfc/qndefrecord_p.h \
+    nfc/qnearfieldtarget_p.h \
+    nfc/qnearfieldmanager_p.h
 
 SOURCES += \
     nfc/qnearfieldmanager.cpp \

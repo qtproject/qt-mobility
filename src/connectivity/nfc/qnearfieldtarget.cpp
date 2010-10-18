@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qnearfieldtarget.h"
-#include "qnearfieldtarget_p.h"
 #include "qndefmessage.h"
 
 #include <QtCore/QString>
@@ -113,51 +112,42 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new near field target.
 */
-QNearFieldTarget::QNearFieldTarget()
-:   d(new QNearFieldTargetPrivate)
+QNearFieldTarget::QNearFieldTarget(QObject *parent)
+:   QObject(parent)
 {
 }
 
 /*!
+    \fn QByteArray QNearFieldTarget::uid() const = 0
+
     Returns the UID of the near field target.
 */
-QByteArray QNearFieldTarget::uid() const
-{
-    return d->uid;
-}
 
 /*!
     Returns the URL of the near field target.
 */
 QUrl QNearFieldTarget::url() const
 {
-    if (!(d->accessMethods & QNearFieldTarget::NdefAccess))
-        return QUrl();
-
-    return d->url;
+    return QUrl();
 }
 
 /*!
+    \fn QNearFieldTarget::Type QNearFieldTarget::type() const = 0
+
     Returns the type of tag type of this near field target.
 */
-QNearFieldTarget::Type QNearFieldTarget::type() const
-{
-    return d->tagType;
-}
 
 /*!
+    \fn QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const = 0
+
     Returns the access methods support by this near field target.
 */
-QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const
-{
-    return d->accessMethods;
-}
 
 /*!
     Returns true if at least one NDEF message is stored on the near field target; otherwise returns
     false.
 */
-bool QNearFieldTarget::hasNdefMessage() const
+bool QNearFieldTarget::hasNdefMessage()
 {
     return false;
 }
@@ -165,7 +155,7 @@ bool QNearFieldTarget::hasNdefMessage() const
 /*!
     Returns a list of all NDEF messages stored on the near field target.
 */
-QList<QNdefMessage> QNearFieldTarget::ndefMessages() const
+QList<QNdefMessage> QNearFieldTarget::ndefMessages()
 {
     return QList<QNdefMessage>();
 }
@@ -217,5 +207,35 @@ QList<QByteArray> QNearFieldTarget::sendCommands(const QList<QByteArray> &comman
 
     return QList<QByteArray>();
 }
+
+// Copied from qbytearray.cpp
+// Modified to initialise the crc with 0x6363 instead of 0xffff and to not invert the final result.
+static const quint16 crc_tbl[16] = {
+    0x0000, 0x1081, 0x2102, 0x3183,
+    0x4204, 0x5285, 0x6306, 0x7387,
+    0x8408, 0x9489, 0xa50a, 0xb58b,
+    0xc60c, 0xd68d, 0xe70e, 0xf78f
+};
+
+/*!
+    \relates QNearFieldTarget
+
+    Returns the NFC checksum of the first \a len bytes of \a data.
+*/
+quint16 qNfcChecksum(const char *data, uint len)
+{
+    register quint16 crc = 0x6363;
+    uchar c;
+    const uchar *p = reinterpret_cast<const uchar *>(data);
+    while (len--) {
+        c = *p++;
+        crc = ((crc >> 4) & 0x0fff) ^ crc_tbl[((crc ^ c) & 15)];
+        c >>= 4;
+        crc = ((crc >> 4) & 0x0fff) ^ crc_tbl[((crc ^ c) & 15)];
+    }
+    return crc;
+}
+
+#include "moc_qnearfieldtarget.cpp"
 
 QTM_END_NAMESPACE

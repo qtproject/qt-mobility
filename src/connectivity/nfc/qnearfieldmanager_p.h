@@ -39,75 +39,71 @@
 **
 ****************************************************************************/
 
+#ifndef QNEARFIELDMANAGER_P_H
+#define QNEARFIELDMANAGER_P_H
 
-#ifndef QNEARFIELDTARGET_H
-#define QNEARFIELDTARGET_H
+#include "qnearfieldtarget.h"
+#include "qndefrecord.h"
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 #include <QtCore/QObject>
-#include <QtCore/QList>
-
-class QString;
-class QUrl;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNdefMessage;
+class QNdefFilter;
 
-class Q_CONNECTIVITY_EXPORT QNearFieldTarget : public QObject
+class QM_AUTOTEST_EXPORT QNearFieldManagerPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    enum Type {
-        AnyTarget,
-        ProprietaryTag,
-        NfcTagType1,
-        NfcTagType2,
-        NfcTagType3,
-        NfcTagType4,
-        MifareTag
-    };
+    explicit QNearFieldManagerPrivate(QObject *parent = 0)
+    :   QObject(parent)
+    {
+    }
 
-    enum AccessMethod {
-        NdefAccess,
-        ApduAccess,
-        TagTypeSpecificAccess,
-        LlcpAccess
-    };
-    Q_DECLARE_FLAGS(AccessMethods, AccessMethod)
+    ~QNearFieldManagerPrivate()
+    {
+    }
 
-    explicit QNearFieldTarget(QObject *parent = 0);
+    virtual int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                              QObject *object, const QMetaMethod &method)
+    {
+        Q_UNUSED(targetType);
+        Q_UNUSED(object);
+        Q_UNUSED(method);
 
-    virtual QByteArray uid() const = 0;
-    virtual QUrl url() const;
+        return -1;
+    }
 
-    virtual Type type() const = 0;
-    virtual AccessMethods accessMethods() const = 0;
+    virtual int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                              const QNdefFilter &filter,
+                                              QObject *object, const QMetaMethod &method)
+    {
+        Q_UNUSED(targetType);
+        Q_UNUSED(filter);
+        Q_UNUSED(object);
+        Q_UNUSED(method);
 
-    // NdefAccess
-    virtual bool hasNdefMessage();
-    virtual QList<QNdefMessage> ndefMessages();
-    virtual void setNdefMessages(const QList<QNdefMessage> &messages);
+        return -1;
+    }
 
-    // ApduAccess
-    virtual QByteArray sendApduCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
+    virtual bool unregisterTargetDetectedHandler(int handlerId)
+    {
+        Q_UNUSED(handlerId);
 
-    // TagTypeSpecificAccess
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+        return false;
+    }
+
+signals:
+    void targetDetected(QNearFieldTarget *target);
 };
-
-Q_CONNECTIVITY_EXPORT quint16 qNfcChecksum(const char * data, uint len);
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QNearFieldTarget::AccessMethods)
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNEARFIELDTARGET_H
+#endif // QNEARFIELDMANAGER_P_H
