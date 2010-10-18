@@ -27,9 +27,14 @@
 // SELECT statement.
 #define USE_DEMORGAN
 
+//If this macro is defined. All the SQL request are derived to "Korean Engine"
+#define SEARCH_KOREAN_NAMES
+
 class CPcsKeyMap; 
 class CQwertyKeyMap; 
 class C12keyKeyMap;
+class CntSqlFactory;
+class CntSqlSearchInterface;
 
 class CntSqlSearch// : public QObject
 {
@@ -131,6 +136,8 @@ private:
     
     const C12keyKeyMap* mkeyKeyMap;
     const CQwertyKeyMap* mQertyKeyMap; 
+    CntSqlFactory* mCntSqlFactory; 
+    CntSqlSearchInterface* mSqlSearchInterface;
     
     friend class UT_CntSqlSearch;
 };

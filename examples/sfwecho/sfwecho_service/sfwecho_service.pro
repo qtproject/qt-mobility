@@ -5,7 +5,7 @@ DEPENDPATH += ../../../src/serviceframework
 include(../../examples.pri)
 
 QT = core
-TEMPLATE=app
+TEMPLATE = app
 
 CONFIG += mobility no_icon
 MOBILITY = serviceframework

@@ -206,6 +206,8 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     CleanupStack::PopAndDestroy(info);
 #else
     d->m_fileName = toQString(fileName);
+    if (d->m_fileName.isEmpty())
+        d->m_fileName = toQString(d->m_calSession->DefaultFileNameL());
 #endif
     
     // Get collection id

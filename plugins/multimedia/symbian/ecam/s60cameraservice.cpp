@@ -40,10 +40,8 @@
 ****************************************************************************/
 
 #include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 #include <QtCore/qlist.h>
-#include "qvideowidget.h"
 
 #include "S60cameraservice.h"
 #include "S60cameracontrol.h"
@@ -71,23 +69,30 @@ S60CameraService::S60CameraService(QObject *parent) :
     m_imagesession = new S60ImageCaptureSession(this);
     m_videosession = new S60VideoCaptureSession(this);
 
-    // Different control classes implementing the Camera API
-    m_control = new S60CameraControl(m_videosession, m_imagesession, this);
-    m_videoDeviceControl = new S60VideoDeviceControl(m_control, this);
-    m_focusControl = new S60CameraFocusControl(m_imagesession, this);
-    m_exposureControl = new S60CameraExposureControl(m_imagesession, this);
-    m_flashControl = new S60CameraFlashControl(m_imagesession, this);
-    m_imageProcessingControl = new S60CameraImageProcessingControl(m_imagesession, this);
-    m_imageCaptureControl = new S60CameraImageCaptureControl(m_imagesession, this);
-    m_media = new S60MediaRecorderControl(m_videosession, this);
-    m_mediaFormat = new S60MediaContainerControl(m_videosession, this);
-    m_videoEncoder = new S60VideoEncoderControl(m_videosession, this);
-    m_audioEncoder = new S60AudioEncoderControl(m_videosession, this);
-    m_viewFinderWidget = new S60VideoWidgetControl(this);
-    m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
-    m_locksControl = new S60CameraLocksControl(m_imagesession, this);
-    m_rendererControl = new S60VideoRendererControl(this);
+    if (m_imagesession && m_videosession) {
+        // Different control classes implementing the Camera API
+        m_control = new S60CameraControl(m_videosession, m_imagesession, this);
+        m_videoDeviceControl = new S60VideoDeviceControl(m_control, this);
+        m_focusControl = new S60CameraFocusControl(m_imagesession, this);
+        m_exposureControl = new S60CameraExposureControl(m_imagesession, this);
+        m_flashControl = new S60CameraFlashControl(m_imagesession, this);
+        m_imageProcessingControl = new S60CameraImageProcessingControl(m_imagesession, this);
+        m_imageCaptureControl = new S60CameraImageCaptureControl(m_imagesession, this);
+        m_media = new S60MediaRecorderControl(m_videosession, this);
+        m_mediaFormat = new S60MediaContainerControl(m_videosession, this);
+        m_videoEncoder = new S60VideoEncoderControl(m_videosession, this);
+        m_audioEncoder = new S60AudioEncoderControl(m_videosession, this);
+        m_viewFinderWidget = new S60VideoWidgetControl(this);
+        m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
+        m_locksControl = new S60CameraLocksControl(m_imagesession, this);
+        m_rendererControl = new S60VideoRendererControl(this);
 
+        // TODO: To be implemented later
+        // QVideoWindowControl (for QVideoWindow)
+        // QMetaDataWriterControl
+        // QMetaDataReaderControl
+
+    }
 }
 
 S60CameraService::~S60CameraService()
@@ -117,22 +122,29 @@ S60CameraService::~S60CameraService()
         delete m_imageEncoderControl;
     if (m_locksControl)
         delete m_locksControl;
-    if (m_rendererControl)
-        delete m_rendererControl;
 
     // Delete sessions
-    if (m_imagesession)
-        delete m_imagesession;
     if (m_videosession)
         delete m_videosession;
+    // ImageSession deletes:
+    //    * S60CameraSettings
+    if (m_imagesession)
+        delete m_imagesession;
 
-    // Delete CameraControl for CCamera to be destructed after CCameraAdvancedSettings
+    // Delete CameraControl to get CCamera destructed after
+    // CCameraAdvancedSettings (destroyed by ImageSession)
+    // CameraControl deletes:
+    //    * CCameraEngine
+    //    * S60CameraViewfinderEngine
     if (m_control)
         delete m_control;
 
-    // Delete VideoWidgetControl last that ViewFinder gets stopped before widget (and window) is destroyed
+    // Delete viewfinder controls after CameraControl to be sure that
+    // ViewFinder gets stopped before widget (and window) is destroyed
     if (m_viewFinderWidget)
         delete m_viewFinderWidget;
+    if (m_rendererControl)
+        delete m_rendererControl;
 }
 
 QMediaControl *S60CameraService::requestControl(const char *name)

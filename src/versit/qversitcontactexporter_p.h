@@ -75,7 +75,7 @@ public:
                        QVersitContactExporter::Error* error);
 
 protected:
-    static bool documentContainsName(const QVersitDocument& document);
+    static void ensureDocumentContainsName(const QContact& contact, QVersitDocument* document);
     void encodeName(
             const QContactDetail& detail,
             const QVersitDocument& document,

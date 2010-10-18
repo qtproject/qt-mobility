@@ -75,9 +75,6 @@ public:
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
     QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
-    QSize minimumImageSize() const;
-    QSize maximumImageSize() const;
-
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 

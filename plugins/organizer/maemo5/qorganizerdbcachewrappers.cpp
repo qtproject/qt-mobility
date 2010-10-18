@@ -47,13 +47,19 @@ QTM_USE_NAMESPACE
 OrganizerCacheEvent::OrganizerCacheEvent(const CEvent* event)
 {
     m_event = *event;
-    m_event.setGUid(const_cast<CEvent *>(event)->getGUid());
+    CEvent* castEvent = const_cast<CEvent *>(event);
+    m_event.setGUid(castEvent->getGUid());
+    m_event.setCreatedTime(castEvent->getCreatedTime());
+    m_event.setLastModified(castEvent->getLastModified());
 }
 
 OrganizerCacheEvent::OrganizerCacheEvent(const OrganizerCacheEvent& other)
 {
     m_event = other.m_event;
-    m_event.setGUid(const_cast<OrganizerCacheEvent *>(&other)->m_event.getGUid());
+    OrganizerCacheEvent *castOther = const_cast<OrganizerCacheEvent *>(&other);
+    m_event.setGUid(castOther->m_event.getGUid());
+    m_event.setCreatedTime(castOther->m_event.getCreatedTime());
+    m_event.setLastModified(castOther->m_event.getLastModified());
 }
 
 OrganizerCacheEvent::~OrganizerCacheEvent()
@@ -64,7 +70,10 @@ OrganizerCacheEvent OrganizerCacheEvent::operator=(const OrganizerCacheEvent& ot
 {
     if (&other != this) {
         m_event = other.m_event;
-        m_event.setGUid(const_cast<OrganizerCacheEvent *>(&other)->m_event.getGUid());
+        OrganizerCacheEvent *castOther = const_cast<OrganizerCacheEvent *>(&other);
+        m_event.setGUid(castOther->m_event.getGUid());
+        m_event.setCreatedTime(castOther->m_event.getCreatedTime());
+        m_event.setLastModified(castOther->m_event.getLastModified());
     }
     return *this;
 }
@@ -73,19 +82,27 @@ CEvent* OrganizerCacheEvent::event()
 {
     CEvent *retn = new CEvent(m_event);
     retn->setGUid(m_event.getGUid());
+    retn->setCreatedTime(m_event.getCreatedTime());
+    retn->setLastModified(m_event.getLastModified());
     return retn;
 }
 
 OrganizerCacheTodo::OrganizerCacheTodo(const CTodo* todo)
 {
-    m_todo = *(const_cast<CTodo *>(todo));
-    m_todo.setGUid(const_cast<CTodo *>(todo)->getGUid());
+    CTodo *castTodo = const_cast<CTodo *>(todo);
+    m_todo = *castTodo;
+    m_todo.setGUid(castTodo->getGUid());
+    m_todo.setCreatedTime(castTodo->getCreatedTime());
+    m_todo.setLastModified(castTodo->getLastModified());
 }
 
 OrganizerCacheTodo::OrganizerCacheTodo(const OrganizerCacheTodo& other)
 {
     m_todo = const_cast<OrganizerCacheTodo &>(other).m_todo;
-    m_todo.setGUid(const_cast<OrganizerCacheTodo *>(&other)->m_todo.getGUid());
+    OrganizerCacheTodo *castOther = const_cast<OrganizerCacheTodo *>(&other);
+    m_todo.setGUid(castOther->m_todo.getGUid());
+    m_todo.setCreatedTime(castOther->m_todo.getCreatedTime());
+    m_todo.setLastModified(castOther->m_todo.getLastModified());
 }
 
 OrganizerCacheTodo::~OrganizerCacheTodo()
@@ -96,7 +113,10 @@ OrganizerCacheTodo OrganizerCacheTodo::operator=(const OrganizerCacheTodo& other
 {
     if (&other != this) {
         m_todo = const_cast<OrganizerCacheTodo &>(other).m_todo;
-        m_todo.setGUid(const_cast<OrganizerCacheTodo *>(&other)->m_todo.getGUid());
+        OrganizerCacheTodo *castOther = const_cast<OrganizerCacheTodo *>(&other);
+        m_todo.setGUid(castOther->m_todo.getGUid());
+        m_todo.setCreatedTime(castOther->m_todo.getCreatedTime());
+        m_todo.setLastModified(castOther->m_todo.getLastModified());
     }
     return *this;
 }
@@ -105,19 +125,27 @@ CTodo* OrganizerCacheTodo::todo()
 {
     CTodo *retn = new CTodo(m_todo);
     retn->setGUid(m_todo.getGUid());
+    retn->setCreatedTime(m_todo.getCreatedTime());
+    retn->setLastModified(m_todo.getLastModified());
     return retn;
 }
 
 OrganizerCacheJournal::OrganizerCacheJournal(const CJournal* journal)
 {
-    m_journal = *(const_cast<CJournal *>(journal));
-    m_journal.setGUid(const_cast<CJournal *>(journal)->getGUid());
+    CJournal *castJournal = const_cast<CJournal *>(journal);
+    m_journal = *castJournal;
+    m_journal.setGUid(castJournal->getGUid());
+    m_journal.setCreatedTime(castJournal->getCreatedTime());
+    m_journal.setLastModified(castJournal->getLastModified());
 }
 
 OrganizerCacheJournal::OrganizerCacheJournal(const OrganizerCacheJournal& other)
 {
     m_journal = const_cast<OrganizerCacheJournal &>(other).m_journal;
-    m_journal.setGUid(const_cast<OrganizerCacheJournal *>(&other)->m_journal.getGUid());
+    OrganizerCacheJournal *castOther = const_cast<OrganizerCacheJournal *>(&other);
+    m_journal.setGUid(castOther->m_journal.getGUid());
+    m_journal.setCreatedTime(castOther->m_journal.getCreatedTime());
+    m_journal.setLastModified(castOther->m_journal.getLastModified());
 }
 
 OrganizerCacheJournal::~OrganizerCacheJournal()
@@ -128,7 +156,10 @@ OrganizerCacheJournal OrganizerCacheJournal::operator=(const OrganizerCacheJourn
 {
     if (&other != this) {
         m_journal = const_cast<OrganizerCacheJournal &>(other).m_journal;
-        m_journal.setGUid(const_cast<OrganizerCacheJournal *>(&other)->m_journal.getGUid());
+        OrganizerCacheJournal *castOther = const_cast<OrganizerCacheJournal *>(&other);
+        m_journal.setGUid(castOther->m_journal.getGUid());
+        m_journal.setCreatedTime(castOther->m_journal.getCreatedTime());
+        m_journal.setLastModified(castOther->m_journal.getLastModified());
     }
     return *this;
 }
@@ -137,5 +168,7 @@ CJournal* OrganizerCacheJournal::journal()
 {
     CJournal *retn = new CJournal(m_journal);
     retn->setGUid(m_journal.getGUid());
+    retn->setCreatedTime(m_journal.getCreatedTime());
+    retn->setLastModified(m_journal.getLastModified());
     return retn;
 }

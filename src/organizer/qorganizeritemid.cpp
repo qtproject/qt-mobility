@@ -284,7 +284,9 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id)
     if (id.d) {
         return id.d->debugStreamOut(dbg);
     }
-    return (dbg << QString(QLatin1String("(null)"))); // no local id data.
+
+    dbg << QString(QLatin1String("(null)")); // no local id data.
+    return dbg;
 }
 
 QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
@@ -302,15 +304,39 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
         out << static_cast<quint8>(true);
         return id.d->dataStreamOut(out);
     }
-    return (out << static_cast<quint8>(false));
+
+    out << static_cast<quint8>(false);
+    return out;
 }
 
+/*!
+ * Writes \a id to the stream \a out.
+ * Note that if the manager uri of \a id is empty or invalid, operator>>() would
+ * not be able to reconstruct the id from the data, so the id is not serialized,
+ * to allow operator>>() to reconstruct the rest of the data properly.
+ */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItemId
-    return out << formatVersion << id.managerUri() << id.localId();
+    out << formatVersion
+        << id.managerUri();
+
+    // if the manager uri is null, there'd be no way to deserialize
+    // the local id.  So, we don't serialize out the local id.
+    if (id.managerUri().isEmpty())
+        return out;
+
+    // the manager uri is not null.  we can serialize out the local id.
+    out << id.localId();
+    return out;
 }
 
+/*!
+ * Reads \a id in from the stream \a in.
+ * Note that if the manager uri of \a id is empty or invalid, operator>>() would
+ * not be able to reconstruct the id from the data, and hence it will return
+ * a null id.
+ */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
 {
     quint8 formatVersion;
@@ -318,18 +344,31 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
     if (formatVersion == 1) {
         QString managerUri;
         in >> managerUri;
+        if (managerUri.isEmpty()) {
+            // if no manager uri was set in the id which was serialized, then nothing can be deserialized.
+            // in this case, return the null id.
+            id = QOrganizerItemId();
+            return in;
+        }
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
         QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineItemLocalId(managerUri));
         if (localIdMarker == static_cast<quint8>(true)) {
-            id.setManagerUri(managerUri);
             if (localId.d) {
                 // only try to stream in data if it exists and the engine could create an engine
                 // specific localId based on the managerUri. otherwise, skip it.
                 localId.d->dataStreamIn(in);
-                id.setLocalId(localId);
+            } else {
+                // the local id should be the null local id
+                localId = QOrganizerItemLocalId();
             }
+        } else {
+            // the local id should be the null local id
+            localId = QOrganizerItemLocalId();
         }
+
+        id.setManagerUri(managerUri);
+        id.setLocalId(localId);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }
@@ -338,7 +377,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
 #endif
 
 /*!
-  Returns true if localId is a null or default constructed id; otherwise, returns false.
+  Returns true if the local id part of the id is a null (default constructed) local id; otherwise, returns false.
  */
 bool QOrganizerItemId::isNull() const
 {
@@ -362,10 +401,14 @@ QOrganizerItemLocalId QOrganizerItemId::localId() const
 }
 
 /*!
- * Sets the URI of the manager which contains the organizer item identified by this id to \a uri
+ * Sets the URI of the manager which contains the organizer item identified by this id to \a uri.
+ * If the old manager URI was different to \a uri, the local id will be set to the null local id.
+ * \sa localId()
  */
 void QOrganizerItemId::setManagerUri(const QString& uri)
 {
+    if (!d->m_managerUri.isEmpty() && d->m_managerUri != uri)
+        d->m_localId = QOrganizerItemLocalId();
     d->m_managerUri = uri;
 }
 

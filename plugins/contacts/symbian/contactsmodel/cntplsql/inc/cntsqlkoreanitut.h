@@ -24,6 +24,8 @@
 #include "cntsqlsearchbase.h"
 
 class C12keyKeyMap;
+class KoreanInput;
+class QStringList;
 
 class CntSqlKoreanItuT : public CntSqlSearchBase 
 {
@@ -34,15 +36,18 @@ public:
                         // 1: "0", "5"
                         // Just one digit. Select all contact ids from the table. No need to compare
                         // values.
-                        AllFromOneTable ,
-                        // 2: "123", "01", "10", "00"
-                        // No zeros which have non-zeros in their both sides
-                        // One or zero tokens, when pattern is split using '0'.
-                        ExactMatchFromOneTable
+                        AllFromOneTable,
+                        // 2: 233, 12 or 
+                        //This is basic korean search words. All words should to start with consonant
+                        //otherwise are words are not following language rules.¨
+                        KoreanBasicSearch,
+                        // 3: "333", "369" or 303.
+                        // This is search for contacts which start with vowel (in legal name) or contact which is stored as phone number
+                        ExactMatchFromOneTable,
                         };    
 
 public:
-    CntSqlKoreanItuT( C12keyKeyMap* twelveKeyKeyMap);
+    CntSqlKoreanItuT( const C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlKoreanItuT();
     
@@ -54,8 +59,22 @@ public: //from CCntSqlSearchBase
     
 private:
     
+    QString basicKoreanSearch(const QString &pattern);
+    
+    QString compareColumnsInOrder( QStringList &tokens) const;
+    
+    QString compareColumnsFromMidleInOrder( QStringList &tokens) const;
+    
+    QString getSearchColumns(const QString& token, int position) const;
+    
+    QStringList getSearchPattern(const QString &pattern);
+    
     SqlQueryType getSQLQueryType(const QString &pattern);
     
+   
+private:    
+    KoreanInput* mKoreaninput;
+    QStringList* mTokens;
 
 friend class UT_CntSqlKoreanItuT;    
 };

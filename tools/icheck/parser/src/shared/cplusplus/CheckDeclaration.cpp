@@ -66,7 +66,7 @@
 #include "Names.h"
 #include "CoreTypes.h"
 #include "Symbols.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Literals.h"
 #include <string>
 #include <cassert>

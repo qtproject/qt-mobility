@@ -52,15 +52,17 @@
 QTM_USE_NAMESPACE;
 
 #define Q_DECLARATIVEORGANIZERITEMDETAIL_SET(detailType, propertyName, propertyValue)  \
-    QDeclarativeOrganizerItemDetail* detail = property(detailType::DetailName.latin1()).value<QDeclarativeOrganizerItemDetail*>(); \
+    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
     if (detail) \
-        detail->setProperty(propertyName, propertyValue);
+        detail->setValue(propertyName, propertyValue);
 
 #define Q_DECLARATIVEORGANIZERITEMDETAIL_GET(detailType, propertyName, returnValue) \
     QVariant returnValue; \
-    QDeclarativeOrganizerItemDetail* detail = property(detailType::DetailName.latin1()).value<QDeclarativeOrganizerItemDetail*>(); \
+    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
     if (detail) \
-        returnValue = detail->property(propertyName);
+        returnValue = detail->value(propertyName);
+
+
 
 class QDeclarativeOrganizerItemMetaObject;
 class QDeclarativeOrganizerItemDetail;
@@ -137,7 +139,8 @@ public:
 
 signals:
     void valueChanged();
-private:
+protected:
+    QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name) const;
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
 };
@@ -154,20 +157,12 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
     Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
     Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "event");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "events");
 
-    explicit QDeclarativeOrganizerEvent(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerEvent(QObject *parent = 0);
 
     void setStartDateTime(const QDateTime& startDateTime)
     {
@@ -202,43 +197,9 @@ public:
         return returnValue.value<bool>();
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules()
+     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceRules", returnValue)
-        return returnValue.value< QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> >();
-    }
-
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules()
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionRules", returnValue)
-        return returnValue.value< QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> >();
-    }
-
-    QVariantList recurrenceDates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", returnValue)
-        return returnValue.value<QVariantList>();
-    }
-
-    void setRecurrenceDates(const QVariantList& dates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", dates)
-    }
-
-    void setExceptionDates(const QVariantList& dates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", dates)
-    }
-
-    QVariantList exceptionDates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", returnValue)
-        return returnValue.value<QVariantList>();
-    }
-
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", static_cast<int>(priority))
     }
 
     QDeclarativeOrganizerItemPriority::Priority priority() const
@@ -303,11 +264,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "eventOccurrences");
 
-    explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
     void setParentLocalId(uint parentId)
     {
@@ -365,7 +322,7 @@ public:
 
     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", static_cast<int>(priority))
     }
 
     QDeclarativeOrganizerItemPriority::Priority priority() const
@@ -420,11 +377,7 @@ class QDeclarativeOrganizerJournal : public QDeclarativeOrganizerItem
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "journal");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "journals");
-    explicit QDeclarativeOrganizerJournal(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerJournal(QObject *parent = 0);
     void setDateTime(const QDateTime& dateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", dateTime)
@@ -448,10 +401,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "note");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "notes");
 
-    explicit QDeclarativeOrganizerNote(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerNote(QObject *parent = 0);
 signals:
     void valueChanged();
 };
@@ -464,10 +414,6 @@ class QDeclarativeOrganizerTodo : public QDeclarativeOrganizerItem
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
     Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::Status status READ status WRITE setStatus NOTIFY valueChanged)
@@ -477,10 +423,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todo");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todos");
 
-    explicit QDeclarativeOrganizerTodo(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerTodo(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)
@@ -514,41 +457,7 @@ public:
         return returnValue.value<bool>();
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules()
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceRules", returnValue)
-        return returnValue.value< QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> >();
-    }
-
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules()
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionRules", returnValue)
-        return returnValue.value< QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> >();
-    }
-
-    QVariantList recurrenceDates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", returnValue)
-        return returnValue.value<QVariantList>();
-    }
-
-    void setRecurrenceDates(const QVariantList& dates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", dates)
-    }
-
-    void setExceptionDates(const QVariantList& dates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", dates)
-    }
-
-    QVariantList exceptionDates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", returnValue)
-        return returnValue.value<QVariantList>();
-    }
-
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
+     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
     }
@@ -616,10 +525,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todoOccurrences");
 
-    explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)

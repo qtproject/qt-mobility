@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 
 #include "s60imageencodercontrol.h"
@@ -67,8 +66,6 @@ S60ImageEncoderControl::~S60ImageEncoderControl()
 QList<QSize> S60ImageEncoderControl::supportedResolutions(
         const QImageEncoderSettings &settings, bool *continuous) const
 {
-    QList<QSize> resolutions;
-    if (m_session)
     QList<QSize> resolutions = m_session->supportedCaptureSizesForCodec(settings.codec());
 
     // Discrete resolutions are returned
@@ -89,14 +86,17 @@ QString S60ImageEncoderControl::imageCodecDescription(const QString &codec) cons
 
 QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 {
-    return m_imageEncoderSettings;
+    // Update setting values from session
+    QImageEncoderSettings settings;
+    settings.setCodec(m_session->imageCaptureCodec());
+    settings.setResolution(m_session->captureSize());
+    settings.setQuality(m_session->captureQuality());
+
+    return settings;
 }
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
     if (!settings.isNull()) {
-        // Update setting
-        m_session->updateImageCaptureCodecs();
-
         if (!settings.codec().isEmpty()) {
             if (settings.resolution() != QSize()) { // Codec, Resolution & Quality
                 m_session->setImageCaptureCodec(settings.codec());
@@ -116,7 +116,12 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         }
 
         // Prepare ImageCapture with the settings and set error if needed
-        m_session->setError(m_session->prepareImageCapture());
+        int prepareSuccess = m_session->prepareImageCapture();
+
+        // Preparation fails with KErrNotReady if camera has not been started.
+		// That can be ignored since settings are set internally in that case.
+        if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
+            m_session->setError(prepareSuccess, QString("Failure in preparation of image capture."));
     }
 }
 

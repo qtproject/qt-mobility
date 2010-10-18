@@ -87,6 +87,11 @@ QDeclarativePosition::~QDeclarativePosition()
     This property holds the latitude, longitude, and altitude
     value of the Position.
 
+    Note: due to its inherent changing nature, the coordinateChanged()
+    - signal is emitted also when the values of the coordinate changes,
+    which enables easier data binding to Coordinate element instead of
+    directly connecting to e.g. its latitude and longitude.
+
     \sa longitudeValid latitudeValid altitudeValid
 
 */
@@ -121,6 +126,7 @@ void QDeclarativePosition::setCoordinate(QGeoCoordinate coordinate)
             emit latitudeValidChanged();
         }
     }
+    emit coordinateChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativePosition::coordinate()

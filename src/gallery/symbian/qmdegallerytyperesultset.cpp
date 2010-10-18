@@ -108,7 +108,6 @@ bool QMDEGalleryTypeResultSet::fetch(int index)
         m_isValid = true;
         return true;
     }
-    return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchNext()
@@ -121,7 +120,6 @@ bool QMDEGalleryTypeResultSet::fetchNext()
         m_isValid = true;
         return true;
     }
-    return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchPrevious()
@@ -134,7 +132,6 @@ bool QMDEGalleryTypeResultSet::fetchPrevious()
         m_isValid = true;
         return true;
     }
-    return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchFirst()
@@ -147,7 +144,6 @@ bool QMDEGalleryTypeResultSet::fetchFirst()
         m_isValid = true;
         return true;
     }
-    return false;
 }
 
 bool QMDEGalleryTypeResultSet::fetchLast()
@@ -160,7 +156,6 @@ bool QMDEGalleryTypeResultSet::fetchLast()
         m_isValid = true;
         return true;
     }
-    return false;
 }
 
 #include "moc_qmdegallerytyperesultset_p.cpp"

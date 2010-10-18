@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
-    \l PositioningMethods. As a development convenience, one may also set data file as a source (NMEA format).
+    \l positioningMethod. As a development convenience, one may also set data file as a source (NMEA format).
     Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active
     and \l update.
 
@@ -309,8 +309,8 @@ void QDeclarativePositionSource::stop()
 
     This signal is sent when a position update has been received
     from the location source. Upon receiving this signal, at least
-    \l Position::latitude, \l Position::longitude, and \l Position::timestamp
-    members of the \l position have been update.
+    position::latitude, position::longitude, and position::timestamp
+    members of the \l position have been updated.
 
     \sa updateInterval
 
@@ -353,7 +353,7 @@ bool QDeclarativePositionSource::isActive() const
     (e.g. sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
-    \l position::coordinate::latitude, \l position::coordinate::longitude, and \l position::timestamp can
+    position::coordinate::latitude, position::coordinate::longitude, and position::timestamp can
     be assumed to be valid.
 
     \sa start, stop, update

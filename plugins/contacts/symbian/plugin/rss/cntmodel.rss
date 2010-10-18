@@ -950,7 +950,15 @@ RESOURCE ARRAY r_cntui_new_field_defns
       vCardMapping=KIntContactFieldVCardMapUnknown;
       category=EContactCategoryOther;
       fieldName=STRING_r_cntui_new_field_defns15;
-      } 
+      },
+    FIELD // Favorite 
+      {
+      fieldStorageType=KStorageTypeContactItemId;
+      contactFieldType=KUidContactFieldFavouriteValue;
+      vCardMapping=KIntContactFieldVCardMapFavourite;
+      category=EContactCategoryOther;
+      fieldName=STRING_r_cntui_new_field_defns16;
+      }       
     };
  }
 

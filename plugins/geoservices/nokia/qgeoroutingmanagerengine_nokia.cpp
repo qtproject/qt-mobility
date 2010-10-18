@@ -37,11 +37,11 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -77,13 +77,17 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     setSupportsAlternativeRoutes(true);
     setSupportsExcludeAreas(true);
 
-    QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
-    avoidFeatures |= QGeoRouteRequest::AvoidTolls;
-    avoidFeatures |= QGeoRouteRequest::AvoidHighways;
-    avoidFeatures |= QGeoRouteRequest::AvoidFerries;
-    avoidFeatures |= QGeoRouteRequest::AvoidTunnels;
-    avoidFeatures |= QGeoRouteRequest::AvoidDirtRoads;
-    setSupportedAvoidFeatureTypes(avoidFeatures);
+    QGeoRouteRequest::FeatureTypes featureTypes;
+    featureTypes |= QGeoRouteRequest::TollFeature;
+    featureTypes |= QGeoRouteRequest::HighwayFeature;
+    featureTypes |= QGeoRouteRequest::FerryFeature;
+    featureTypes |= QGeoRouteRequest::TunnelFeature;
+    featureTypes |= QGeoRouteRequest::DirtRoadFeature;
+    setSupportedFeatureTypes(featureTypes);
+
+    QGeoRouteRequest::FeatureWeights featureWeights;
+    featureWeights |= QGeoRouteRequest::AvoidFeatureWeight;
+    setSupportedFeatureWeights(featureWeights);
 
     QGeoRouteRequest::ManeuverDetails maneuverDetails;
     maneuverDetails |= QGeoRouteRequest::BasicManeuvers;
@@ -168,24 +172,43 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
     return reply;
 }
 
-QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
+bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &request,
+        QGeoRouteRequest::TravelModes travelModes) const
 {
-    bool supported = true;
+    QList<QGeoRouteRequest::FeatureType> featureTypeList = request.featureTypes();
+    QGeoRouteRequest::FeatureTypes featureTypeFlag = QGeoRouteRequest::NoFeature;
+    QGeoRouteRequest::FeatureWeights featureWeightFlag = QGeoRouteRequest::NeutralFeatureWeight;
 
-    if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
-        supported = false;
+    for (int i = 0; i < featureTypeList.size(); ++i) {
+        featureTypeFlag |= featureTypeList.at(i);
+        featureWeightFlag |= request.featureWeight(featureTypeList.at(i));
+    }
+
+    if ((featureTypeFlag & supportedFeatureTypes()) != featureTypeFlag)
+        return false;
+
+    if ((featureWeightFlag & supportedFeatureWeights()) != featureWeightFlag)
+        return false;
+
 
     if ((request.maneuverDetail() & supportedManeuverDetails()) != request.maneuverDetail())
-        supported = false;
+        return false;
 
     if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
-        supported = false;
+        return false;
 
     if ((request.routeOptimization() & supportedRouteOptimizations()) != request.routeOptimization())
-        supported = false;
+        return false;
 
-    if ((request.travelModes() & supportedTravelModes()) != request.travelModes())
-        supported = false;
+    if ((travelModes & supportedTravelModes()) != travelModes)
+        return false;
+
+    return true;
+}
+
+QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
+{
+    bool supported = checkEngineSupport(request, request.travelModes());
 
     if ((request.numberAlternativeRoutes() != 0) && !supportsAlternativeRoutes())
         supported = false;
@@ -211,8 +234,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).longitude());
     }
 
-    requestString += modesRequestString(request.routeOptimization(), request.travelModes(),
-                                        request.avoidFeatureTypes());
+    requestString += modesRequestString(request, request.travelModes());
 
     requestString += "&alternatives=";
     requestString += QString::number(request.numberAlternativeRoutes());
@@ -224,26 +246,8 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 
 QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    bool supported = true;
-
-    if ((route.request().avoidFeatureTypes() & supportedAvoidFeatureTypes()) != route.request().avoidFeatureTypes())
-        supported = false;
-
-    if ((route.request().maneuverDetail() & supportedManeuverDetails()) != route.request().maneuverDetail())
-        supported = false;
-
-    if ((route.request().segmentDetail() & supportedSegmentDetails()) != route.request().segmentDetail())
-        supported = false;
-
-    if ((route.request().routeOptimization() & supportedRouteOptimizations()) != route.request().routeOptimization())
-        supported = false;
-
-    if ((route.travelMode() & supportedTravelModes()) != route.travelMode())
-        supported = false;
-
-    if (!supported)
+    if (!checkEngineSupport(route.request(), route.travelMode()))
         return "";
-
 
     QString requestString = "http://";
     requestString += m_host;
@@ -257,19 +261,19 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += ",";
     requestString += QString::number(position.longitude());
 
-    requestString += modesRequestString(route.request().routeOptimization(), route.travelMode(),
-                                        route.request().avoidFeatureTypes());
+    requestString += modesRequestString(route.request(), route.travelMode());
 
     requestString += routeRequestString(route.request());
 
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
-        QGeoRouteRequest::TravelModes travelModes,
-        QGeoRouteRequest::AvoidFeatureTypes avoid)
+QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest &request,
+        QGeoRouteRequest::TravelModes travelModes) const
 {
     QString requestString;
+
+    QGeoRouteRequest::RouteOptimizations optimization = request.routeOptimization();
 
     QStringList types;
     if (optimization.testFlag(QGeoRouteRequest::ShortestRoute))
@@ -289,30 +293,60 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     if (travelModes.testFlag(QGeoRouteRequest::PublicTransitTravel))
         modes.append("publicTransport");
 
-    QStringList avoidTypes;
-    if (!avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
-        if (avoid.testFlag(QGeoRouteRequest::AvoidTolls))
-            avoidTypes.append("tollroad:-2");
-        if (avoid.testFlag(QGeoRouteRequest::AvoidHighways))
-            avoidTypes.append("motorway:-2");
-        if (avoid.testFlag(QGeoRouteRequest::AvoidFerries))
-            avoidTypes.append("boatFerry:-2,railFerry:-2");
-        if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels))
-            avoidTypes.append("tunnel:-2");
-        if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads))
-            avoidTypes.append("dirtRoad:-2");
+    QStringList featureStrings;
+    QList<QGeoRouteRequest::FeatureType> featureTypes = request.featureTypes();
+    for (int i = 0; i < featureTypes.size(); ++i) {
+        QGeoRouteRequest::FeatureWeight weight = request.featureWeight(featureTypes.at(i));
+
+        if (weight == QGeoRouteRequest::NeutralFeatureWeight)
+            continue;
+
+        QString weightString = "";
+        switch (weight) {
+            case QGeoRouteRequest::PreferFeatureWeight:
+                weightString = "1";
+                break;
+            case QGeoRouteRequest::AvoidFeatureWeight:
+                weightString = "-1";
+                break;
+            case QGeoRouteRequest::DisallowFeatureWeight:
+                weightString = "-3";
+                break;
+        }
+
+        if (weightString.isEmpty())
+            continue;
+
+        switch (featureTypes.at(i)) {
+            case QGeoRouteRequest::TollFeature:
+                featureStrings.append("tollroad:" + weightString);
+                break;
+            case QGeoRouteRequest::HighwayFeature:
+                featureStrings.append("motorway:" + weightString);
+                break;
+            case QGeoRouteRequest::FerryFeature:
+                featureStrings.append("boatFerry:" + weightString);
+                featureStrings.append("railFerry:" + weightString);
+                break;
+            case QGeoRouteRequest::TunnelFeature:
+                featureStrings.append("tunnel:" + weightString);
+                break;
+            case QGeoRouteRequest::DirtRoadFeature:
+                featureStrings.append("dirtRoad:" + weightString);
+                break;
+        }
     }
 
     for (int i = 0;i < types.count();++i) {
         requestString += "&mode" + QString::number(i) + "=";
         requestString += types[i] + ";" + modes.join(",");
-        if (avoidTypes.count())
-            requestString += ";" + avoidTypes.join(",");
+        if (featureStrings.count())
+            requestString += ";" + featureStrings.join(",");
     }
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest &request)
+QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest &request) const
 {
     QString requestString;
 

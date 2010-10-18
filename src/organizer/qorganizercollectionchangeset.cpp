@@ -49,16 +49,18 @@ QTM_BEGIN_NAMESPACE
    \class QOrganizerCollectionChangeSet
 
    \brief The QOrganizerCollectionChangeSet class provides a simple API to
-   simplify the emission of state-change signals from
-   QOrganizerItemManagerEngine implementations.
+   simplify the emission of state-change signals from QOrganizerItemManagerEngine
+   implementations.
 
   \inmodule QtOrganizer
 
-   This class can be utilised by backend implementations to ensure
-   correct emission of the \l QOrganizerItemManagerEngine::dataChanged(), \l
-   QOrganizerItemManagerEngine::itemsAdded(), \l
-   QOrganizerItemManagerEngine::itemsChanged() and \l
-   QOrganizerItemManagerEngine::itemsRemoved().
+  
+
+   This class can be utilized by backend implementations to ensure
+   correct emission of the \l QOrganizerItemManagerEngine::dataChanged(),
+   \l QOrganizerItemManagerEngine::itemsAdded(),
+   \l QOrganizerItemManagerEngine::itemsChanged() and
+   \l QOrganizerItemManagerEngine::itemsRemoved().
 
    \sa QOrganizerItemManagerEngine
  */
@@ -126,14 +128,14 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::addedCollection
   Inserts the given collection id \a addedOrganizerCollectionId into the set of ids of collections
   which have been added to the database.
  */
-void QOrganizerCollectionChangeSet::insertAddedCollection(QOrganizerCollectionLocalId addedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertAddedCollection(const QOrganizerCollectionLocalId& addedOrganizerCollectionId)
 {
     d->m_addedCollections.insert(addedOrganizerCollectionId);
 }
 
 /*!
-  Inserts each of the given collection ids \a addedOrganizerCollectionIds into the set of ids of collections
-  which have been added to the database.
+  Inserts each of the given collection ids \a addedOrganizerCollectionIds into
+  the set of ids of collections which have been added to the database.
  */
 void QOrganizerCollectionChangeSet::insertAddedCollections(const QList<QOrganizerCollectionLocalId>& addedOrganizerCollectionIds)
 {
@@ -162,7 +164,7 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::changedCollecti
   Inserts the given collection id \a changedOrganizerCollectionId into the set of ids of collections
   which have been changed to the database.
  */
-void QOrganizerCollectionChangeSet::insertChangedCollection(QOrganizerCollectionLocalId changedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertChangedCollection(const QOrganizerCollectionLocalId& changedOrganizerCollectionId)
 {
     d->m_changedCollections.insert(changedOrganizerCollectionId);
 }
@@ -198,7 +200,7 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::removedCollecti
   Inserts the given collection id \a removedOrganizerCollectionId into the set of ids of collections
   which have been removed to the database.
  */
-void QOrganizerCollectionChangeSet::insertRemovedCollection(QOrganizerCollectionLocalId removedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertRemovedCollection(const QOrganizerCollectionLocalId& removedOrganizerCollectionId)
 {
     d->m_removedCollections.insert(removedOrganizerCollectionId);
 }

@@ -53,7 +53,13 @@ service framework command line tool to add the corresponding service XML file:
 \list
     \o ./servicefw add voipdialerservice.xml
     \o ./servicefw add landlinedialerservice.xml
+    \o ./servicefw add remotedialerservice.xml
+    \o ./servicefw dbusservice removedialerservice.xml dialer_service
 \endlist
+
+These deployment commands will register the two plugin-based services as well as the remote
+IPC-based service. The last line features the ability to create an autostarting file for
+D-Bus if the platform supports the QtDBus module, typically avaiable on Linux systems.
 
 There are 2 ways to run the example:
 \list

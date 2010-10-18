@@ -85,6 +85,8 @@ public:
 
     void getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string>& result);
 
+    void fixAlarmCookie(QPair<qint32, qint32> change);
+
     static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
 
 private:

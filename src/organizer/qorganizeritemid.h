@@ -98,7 +98,7 @@ private:
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
     Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemLocalId& key);
-    Q_ORGANIZER_EXPORT friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerItemManagerEngine;
 };
 
 class QOrganizerItemIdPrivate;

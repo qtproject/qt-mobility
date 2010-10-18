@@ -139,22 +139,7 @@ class QOrganizerItemManagerEngine;
 class QOrganizerItemMemoryEngineData : public QSharedData
 {
 public:
-    QOrganizerItemMemoryEngineData()
-        : QSharedData(),
-        m_refCount(QAtomicInt(1)),
-        m_nextOrganizerItemId(1),
-        m_anonymous(false)
-    {
-    }
-
-    QOrganizerItemMemoryEngineData(const QOrganizerItemMemoryEngineData& other)
-        : QSharedData(other),
-        m_refCount(QAtomicInt(1)),
-        m_nextOrganizerItemId(other.m_nextOrganizerItemId),
-        m_anonymous(other.m_anonymous)
-    {
-    }
-
+    QOrganizerItemMemoryEngineData();
     ~QOrganizerItemMemoryEngineData()
     {
     }
@@ -162,11 +147,15 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QList<QOrganizerItem> m_organizeritems;                    // list of organizer items
-    QList<QOrganizerItemLocalId> m_organizeritemIds;           // list of organizer item Id's
+    QList<QOrganizerItem> m_organizeritems;                      // list of organizer items
+    QList<QOrganizerItemLocalId> m_organizeritemIds;             // list of organizer item Id's
+    QList<QOrganizerCollection> m_organizerCollections;          // list of collections
+    QList<QOrganizerCollectionLocalId> m_organizerCollectionIds; // list of collection ids
+    QMultiMap<QOrganizerCollectionLocalId, QOrganizerItemLocalId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
     quint32 m_nextOrganizerItemId; // the m_localItemId portion of a QOrganizerItemMemoryEngineLocalId.
+    quint32 m_nextOrganizerCollectionId; // the m_localCollectionId portion of a QOrganizerCollectionMemoryEngineLocalId.
     bool m_anonymous;                              // Is this backend ever shared?
 
     void emitSharedSignals(QOrganizerItemChangeSet* cs)
@@ -203,16 +192,31 @@ public:
     virtual bool saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
+    virtual QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
+    virtual bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+
     /*! \reimp */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
     {
         return QOrganizerItemManagerEngine::compatibleItem(original, error);
     }
+    /*! \reimp */
+    virtual QOrganizerCollection compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const;
 
     /*! \reimp */
     virtual bool validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
     {
         return QOrganizerItemManagerEngine::validateItem(organizeritem, error);
+    }
+    /*! \reimp */
+    virtual bool validateCollection(const QOrganizerCollection& collection, QOrganizerItemManager::Error* error) const
+    {
+        Q_UNUSED(collection)
+        *error = QOrganizerItemManager::NoError;
+        return true; // all collections are valid in the memory engine.
     }
     /*! \reimp */
     virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const

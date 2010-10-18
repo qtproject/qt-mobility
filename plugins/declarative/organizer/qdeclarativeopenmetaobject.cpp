@@ -82,16 +82,17 @@ public:
 
     void init(const QMetaObject *metaObj)
     {
-        if (!mem) {
-            mob.setSuperClass(metaObj);
-            mob.setClassName(metaObj->className());
-            mob.setFlags(QMetaObjectBuilder::DynamicMetaObject);
+        if (mem)
+            qFree(mem);
 
-            mem = mob.toMetaObject();
+        mob.setSuperClass(metaObj);
+        mob.setClassName(metaObj->className());
+        mob.setFlags(QMetaObjectBuilder::DynamicMetaObject);
 
-            m_propertyOffset = mem->propertyOffset();
-            m_signalOffset = mem->methodOffset();
-        }
+        mem = mob.toMetaObject();
+
+        m_propertyOffset = mem->propertyOffset();
+        m_signalOffset = mem->methodOffset();
     }
 
     QDeclarativeOpenMetaObject *q;
@@ -111,16 +112,21 @@ public:
     inline QObjectData *data() { return d_ptr.data(); }
 };
 
-QDeclarativeOpenMetaObject::QDeclarativeOpenMetaObject(QObject *obj)
-: d(new QDeclarativeOpenMetaObjectPrivate(this))
+void QDeclarativeOpenMetaObject::setMetaObject(const QMetaObject& metaObject)
 {
-    d->init(obj->metaObject());
-    d->object = obj;
+    d->init(&metaObject);
 
     static_cast<QMetaObject *>(this)->d = d->mem->d;
 
     //tricky code to replace the object's metaObject
     static_cast<QDeclarativeMetaDataHelperObject *>(d->object)->data()->metaObject = this;
+}
+
+QDeclarativeOpenMetaObject::QDeclarativeOpenMetaObject(QObject *obj)
+: d(new QDeclarativeOpenMetaObjectPrivate(this))
+{
+    d->object = obj;
+    setMetaObject(*(obj->metaObject()));
 }
 
 QDeclarativeOpenMetaObject::~QDeclarativeOpenMetaObject()

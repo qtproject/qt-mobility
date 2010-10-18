@@ -263,7 +263,7 @@
 
     \section2 Versit (Organizer)
 
-    This is an continuation of the Versit API to interface the Organizer API
+    This is a continuation of the Versit API to interface the Organizer API
     with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera

@@ -45,14 +45,16 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObjectInfo
-    \brief The QGeoMapObjectInfo class is the base class for QGeoMapData
-    subclass specific implementations of QGeoMapObject subclass behaviours.
+    \brief The QGeoMapObjectInfo class is the base class used to define the
+    parts of QGeoMapObject and its subclasses that are specific to a
+    particular QGeoMapData subclass.
 
     \inmodule QtLocation
 
@@ -80,8 +82,8 @@ QTM_BEGIN_NAMESPACE
     \a mapObject which are specific to \a mapData.
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QObject(mapObject),
-          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+    : QObject(mapObject),
+      d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.
@@ -91,25 +93,12 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     delete d_ptr;
 }
 
-/*
-    Returns the QGeoMapObjectInfo instance associated with the parent of
-    this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
-    instance asssoicated with the parent object.
-*/
-//QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
-//{
-//    if (!d_ptr->mapData)
-//        return 0;
-
-//    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
-//}
-
 /*!
     This function is run after the constructor.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::setup() {}
+void QGeoMapObjectInfo::init() {}
 
 /*!
     This function is called when the window size of the map changes.
@@ -213,8 +202,8 @@ QGeoMapObject* QGeoMapObjectInfo::mapObject()
 *******************************************************************************/
 
 QGeoMapObjectInfoPrivate::QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : mapData(mapData),
-        mapObject(mapObject) {}
+    : mapData(mapData),
+      mapObject(mapObject) {}
 
 QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 

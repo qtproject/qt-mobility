@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qdebug.h>  // For qWarning()
-
 #include "s60videoencodercontrol.h"
 #include "s60videocapturesession.h"
 
@@ -52,7 +50,11 @@ S60VideoEncoderControl::S60VideoEncoderControl(QObject *parent) :
 S60VideoEncoderControl::S60VideoEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QVideoEncoderControl(parent)
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
 }
 
 S60VideoEncoderControl::~S60VideoEncoderControl()
@@ -69,176 +71,26 @@ QString S60VideoEncoderControl::videoCodecDescription(const QString &codecName) 
     return m_session->videoCaptureCodecDescription(codecName);
 }
 
-/*
-QString S60VideoEncoderControl::videoCodec() const
-{
-    QC_TRACE1("S60VideoEncoderControl::videoCodec: Codec =", m_session->videoCaptureCodec())
-    return m_session->videoCaptureCodec();
-}
-*/
-/*
-void S60VideoEncoderControl::setVideoCodec(const QString &codecName)
-{
-    QC_TRACE1("S60VideoEncoderControl::setVideoCodec: New Codec =", codecName)
-    m_session->setVideoCaptureCodec(codecName);
-}
-*/
-/*
-int S60VideoEncoderControl::bitRate() const
-{
-    QC_TRACE1("S60VideoEncoderControl::bitRate: BitRate =", m_session->bitrate())
-    return m_session->bitrate();
-}
-*/
-/*
-void S60VideoEncoderControl::setBitRate(int bitRate)
-{
-    QC_TRACE1("S60VideoEncoderControl::setBitRate: New BitRate =", bitRate)
-    m_session->setBitrate(bitRate);
-}
-*/
-/*
-QtMultimediaKit::EncodingQuality S60VideoEncoderControl::quality() const
-{
-    QC_TRACE1("S60VideoEncoderControl::quality: Quality =", m_session->videoCaptureQuality())
-    return m_session->videoCaptureQuality();
-}
-*/
-/*
-void S60VideoEncoderControl::setQuality(QtMultimediaKit::EncodingQuality quality)
-{
-    QC_TRACE1("S60VideoEncoderControl::setQuality: New Quality =", quality)
-    m_session->setVideoCaptureQuality(quality);
-}
-*/
 QList<qreal> S60VideoEncoderControl::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const
 {
-    if (continuous) {
-        if (!settings.isNull())
-            return m_session->supportedVideoFrameRates(settings, *continuous);
-        return m_session->supportedVideoFrameRates(*continuous);
-    } else {
-        bool contTemp = false;
-        if (!settings.isNull())
-            return m_session->supportedVideoFrameRates(settings, contTemp);
-        return m_session->supportedVideoFrameRates(contTemp);
-    }
+    if (!settings.isNull())
+        return m_session->supportedVideoFrameRates(settings, continuous);
+    return m_session->supportedVideoFrameRates(continuous);
 }
 
-/*
-qreal S60VideoEncoderControl::minimumFrameRate() const
-{
-    QList<qreal> rates = m_session->supportedVideoFrameRates();
-    qreal minRate = 1000.0; // Safe start value for min FrameRate
-
-    foreach (qreal rate, rates)
-        minRate = qMin(minRate, rate);
-
-    if (minRate == 1000.0)
-        minRate = 0.0;
-
-    QC_TRACE1("S60VideoEncoderControl::minimumFrameRate: Min FrameRate =", minRate)
-    return minRate;
-}
-
-qreal S60VideoEncoderControl::maximumFrameRate() const
-{
-    QList<qreal> rates = m_session->supportedVideoFrameRates();
-    qreal maxRate = 0.0; // Safe start value for max FrameRate
-
-    foreach (qreal rate, rates)
-        maxRate = qMax(maxRate, rate);
-
-    QC_TRACE1("S60VideoEncoderControl::maximumFrameRate: Max FrameRate =", maxRate)
-    return maxRate;
-}
-*/
-
-/*
-qreal S60VideoEncoderControl::frameRate() const
-{
-    QC_TRACE1("S60VideoEncoderControl::frameRate: FrameRate =", m_session->framerate())
-    return m_session->framerate();
-}
-*/
-/*
-void S60VideoEncoderControl::setFrameRate(qreal frameRate)
-{
-    QC_TRACE1("S60VideoEncoderControl::setFrameRate: New FrameRate =", frameRate)
-    m_session->setFrameRate(frameRate);
-}
-*/
 QList<QSize> S60VideoEncoderControl::supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous) const
 {
-    if (continuous) {
-        if (!settings.isNull())
-            return m_session->supportedVideoResolutions(settings, *continuous);
-        return m_session->supportedVideoResolutions(*continuous);
-    } else {
-        bool contTemp = false;
-        if (!settings.isNull())
-            return m_session->supportedVideoResolutions(settings, contTemp);
-        return m_session->supportedVideoResolutions(contTemp);
-    }
+    if (!settings.isNull())
+        return m_session->supportedVideoResolutions(settings, continuous);
+    return m_session->supportedVideoResolutions(continuous);
 }
 
-/*
-QSize S60VideoEncoderControl::minimumResolution() const
-{
-    QSize minSize;
-    bool continuous = false;
-    QList<QSize> sizes = m_session->supportedVideoResolutions(continuous);
-
-    minSize = sizes.first();
-
-    for (int i = 0; i < sizes.size(); i++) {
-        if ((sizes.at(i).width() * sizes.at(i).height()) < (minSize.width() * minSize.height()))
-            minSize = sizes.at(i);
-    }
-
-    QC_TRACE1("S60VideoEncoderControl::minimumResolution: Min Resolution =", minSize)
-    return minSize;
-}
-
-QSize S60VideoEncoderControl::maximumResolution() const
-{
-    QC_TRACEIN("S60VideoEncoderControl::maximumResolution")
-
-    QSize maxSize;
-    bool continuous = false;
-    QList<QSize> sizes = m_session->supportedVideoResolutions(continuous);
-
-    maxSize = sizes.first();
-
-    for (int i = 0; i < sizes.size(); i++) {
-        if ((sizes.at(i).width() * sizes.at(i).height()) > (maxSize.width() * maxSize.height()))
-            maxSize = sizes.at(i);
-    }
-
-    QC_TRACE1("S60VideoEncoderControl::maximumResolution: Max Resolution =", maxSize)
-    return maxSize;
-}
-*/
-/*
-QSize S60VideoEncoderControl::videoResolution() const
-{
-    QC_TRACE1("S60VideoEncoderControl::videoResolution: Resolution =", m_session->videoResolution())
-    return m_session->videoResolution();
-}
-*/
-/*
-void S60VideoEncoderControl::setResolution(const QSize resolution)
-{
-    QC_TRACE1("S60VideoEncoderControl::setResolution: New Resolution =", resolution)
-    m_session->setVideoResolution(resolution);
-}
-*/
 QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
-    // Possible settings: encodingMode, codec, resolution, framerate, bitRate, quality
-    // Possible (codec specific) options: pixelAspectRatio, gain, maxClipSizeInBytes
+    // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
+    // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
 
-    // Following options valid for all codecs
+    // Following options are valid for all codecs
     Q_UNUSED(codec);
 
     QStringList options;
@@ -251,6 +103,9 @@ QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &code
 
 QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
+    // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
+    // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
+
     QVariant returnValue;
 
     if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
@@ -282,7 +137,7 @@ void S60VideoEncoderControl::setEncodingOption(
         m_session->setMaxClipSizeInBytes(value.toInt());
     }
     else {
-        qWarning() << "Option:" << name << "is an unknown option!";
+        m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
     }
 }
 
@@ -298,17 +153,17 @@ void S60VideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &setti
 {
     if (settings.codec().isEmpty()) {
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyVideoQuality);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Resolution
+    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Resolution
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoResolution(settings.resolution());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndResolution);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Framerate
+    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Framerate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setFrameRate(settings.frameRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndFrameRate);
-    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // BitRate
+    } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only BitRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setBitrate(settings.bitRate());
@@ -331,7 +186,7 @@ void S60VideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &setti
         m_session->setFrameRate(settings.frameRate());
         m_session->setBitrate(settings.bitRate());
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EVideoQualityAndFrameRateAndBitRate);
-    } else { // Resolution, BitRate and FrameRate
+    } else { // All: Resolution, BitRate and FrameRate
         m_session->setVideoCaptureCodec(settings.codec());
         m_session->setVideoEncodingMode(settings.encodingMode());
         m_session->setVideoResolution(settings.resolution());

@@ -67,17 +67,17 @@ public:
     bool dataChanged();
 
     QSet<QOrganizerItemLocalId> addedItems() const;
-    void insertAddedItem(QOrganizerItemLocalId addedItemId);
+    void insertAddedItem(const QOrganizerItemLocalId& addedItemId);
     void insertAddedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
     void clearAddedItems();
 
     QSet<QOrganizerItemLocalId> changedItems() const;
-    void insertChangedItem(QOrganizerItemLocalId addedItemId);
+    void insertChangedItem(const QOrganizerItemLocalId& addedItemId);
     void insertChangedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
     void clearChangedItems();
 
     QSet<QOrganizerItemLocalId> removedItems() const;
-    void insertRemovedItem(QOrganizerItemLocalId addedItemId);
+    void insertRemovedItem(const QOrganizerItemLocalId& addedItemId);
     void insertRemovedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
     void clearRemovedItems();
 

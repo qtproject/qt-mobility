@@ -335,6 +335,14 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
         return "Bluetooth";
     case QSystemNetworkInfo::WimaxMode:
         return "Wimax";
+    case QSystemNetworkInfo::GprsMode:
+        return "Gprs";
+    case QSystemNetworkInfo::EdgeMode:
+        return "Edge";
+    case QSystemNetworkInfo::HspaMode:
+        return "Hspa";
+    case QSystemNetworkInfo::LteMode:
+        return "Lte";
     };
     return QString();
 }

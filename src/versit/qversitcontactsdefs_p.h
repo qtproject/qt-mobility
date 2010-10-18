@@ -61,6 +61,8 @@ QTM_BEGIN_NAMESPACE
 
 //! [Property name mappings]
 // Mappings from versit property names to Qt contact details
+// For the case that there are multiple property names corresponding to the same detail, put the
+// primary one first and it will be the one used when exporting.
 const VersitDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.latin1(),
                       ""},
@@ -102,6 +104,8 @@ const VersitDetailMapping versitContactDetailMappings[] = {
                       QContactGuid::FieldGuid.latin1()},
     {"URL",           QContactUrl::DefinitionName.latin1(),
                       QContactUrl::FieldUrl.latin1()},
+    {"X-ABUID",       QContactGuid::DefinitionName.latin1(),
+                      QContactGuid::FieldGuid.latin1()},
     {"X-ANNIVERSARY", QContactAnniversary::DefinitionName.latin1(),
                       ""},
     {"X-ASSISTANT",   QContactOrganization::DefinitionName.latin1(),
@@ -112,12 +116,22 @@ const VersitDetailMapping versitContactDetailMappings[] = {
                       QContactFamily::FieldChildren.latin1()},
     {"X-EPOCSECONDNAME",QContactNickname::DefinitionName.latin1(),
                       QContactNickname::FieldNickname.latin1()},
+    {"X-EVOLUTION-SPOUSE", QContactFamily::DefinitionName.latin1(),
+                      QContactFamily::FieldSpouse.latin1()},
+    {"X-EVOLUTION-ANNIVERSARY", QContactAnniversary::DefinitionName.latin1(),
+                      ""},
     {"X-GENDER",      QContactGender::DefinitionName.latin1(),
                       QContactGender::FieldGender.latin1()},
     {"X-IMPP",        QContactOnlineAccount::DefinitionName.latin1(),
                       QContactOnlineAccount::SubTypeImpp.latin1()},
     {"X-JABBER",      QContactOnlineAccount::DefinitionName.latin1(),
                       QContactOnlineAccount::SubTypeImpp.latin1()},
+    {"X-KADDRESSBOOK-X-SPOUSENAME", QContactFamily::DefinitionName.latin1(),
+                      QContactFamily::FieldSpouse.latin1()},
+    {"X-KADDRESSBOOK-X-ANNIVERSARY", QContactAnniversary::DefinitionName.latin1(),
+                      ""},
+    {"X-MS-CARDPICTURE", QContactThumbnail::DefinitionName.latin1(),
+                      ""},
     {"X-NICKNAME",    QContactNickname::DefinitionName.latin1(),
                       QContactNickname::FieldNickname.latin1()},
     {"X-SIP",         QContactOnlineAccount::DefinitionName.latin1(),

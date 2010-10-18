@@ -77,17 +77,14 @@ void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 {
-    if (m_cmdeSession) {
 #ifdef MDS_25_COMPILATION_ENABLED
-        return m_cmdeSession->GetDefaultNamespaceDefL();
-    }
+    return m_cmdeSession->GetDefaultNamespaceDefL();
 #else
     CMdENamespaceDef *nameSpaceDef = NULL;
         nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
     if (!nameSpaceDef)
         User::Leave(KErrBadHandle);
     return *nameSpaceDef;    
-    }
 #endif //MDS_25_COMPILATION_ENABLED
 }
 

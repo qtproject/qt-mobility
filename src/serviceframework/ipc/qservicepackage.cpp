@@ -97,7 +97,7 @@ QDataStream &operator<<(QDataStream &out, const QServicePackage& package)
         out << (qint8) package.d->responseType;
         out << package.d->messageId;
         out << package.d->instanceId;
-        out << package.d->typeId;
+        out << package.d->entry;
         out << package.d->payload;
     }
     
@@ -133,7 +133,7 @@ QDataStream &operator>>(QDataStream &in, QServicePackage& package)
         package.d->responseType = (QServicePackage::ResponseType) data;
         in >> package.d->messageId;
         in >> package.d->instanceId;
-        in >> package.d->typeId;
+        in >> package.d->entry;
         in >> package.d->payload;
     } else {
         if (package.d)
@@ -166,7 +166,7 @@ QDebug operator<<(QDebug dbg, const QServicePackage& p)
         dbg.nospace() << "QServicePackage ";
         dbg.nospace() << type << " " << p.d->responseType ; dbg.space();
         dbg.nospace() << p.d->messageId; dbg.space();
-        dbg.nospace() << p.d->typeId;dbg.space();
+        dbg.nospace() << p.d->entry;dbg.space();
     } else {
         dbg.nospace() << "QServicePackage(invalid)";
     }

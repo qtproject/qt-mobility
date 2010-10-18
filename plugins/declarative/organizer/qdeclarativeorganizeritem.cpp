@@ -46,6 +46,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(QObject *parent)
     :QObject(parent),
     d(new QDeclarativeOrganizerItemMetaObject(this, QOrganizerItem()))
 {
+    d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
 }
 
 
@@ -53,6 +54,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(const QOrganizerItem& item,
     :QObject(parent),
     d(new QDeclarativeOrganizerItemMetaObject(this, item))
 {
+    d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
     setDetailDefinitions(defs);
 }
 
@@ -88,7 +90,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
 
 uint QDeclarativeOrganizerItem::itemId() const
 {
-    return d->localId();
+    return d->itemId();
 }
 
 
@@ -120,3 +122,58 @@ void QDeclarativeOrganizerItem::clearDetails()
     d->m_item.clearDetails();
     emit valueChanged();
 }
+
+QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItem::detailByDefinitionName(const QString& name) const
+{
+    return d->detailByDefinitionName(name);
+}
+
+
+QDeclarativeOrganizerEvent::QDeclarativeOrganizerEvent(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerEvent::staticMetaObject);
+}
+
+QDeclarativeOrganizerEventOccurrence::QDeclarativeOrganizerEventOccurrence(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerEventOccurrence::staticMetaObject);
+}
+
+QDeclarativeOrganizerJournal::QDeclarativeOrganizerJournal(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerJournal::staticMetaObject);
+}
+
+QDeclarativeOrganizerNote::QDeclarativeOrganizerNote(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerNote::staticMetaObject);
+}
+QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerTodo::staticMetaObject);
+}
+QDeclarativeOrganizerTodoOccurrence::QDeclarativeOrganizerTodoOccurrence(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerTodoOccurrence::staticMetaObject);
+}
+
+
+
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemName, "eventOccurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemGroupName, "eventOccurrences");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemName, "journal");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemGroupName, "journals");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemName, "note");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemGroupName, "notes");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemName, "todo");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemGroupName, "todos");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemName, "todoOccurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemGroupName, "todoOccurrences");

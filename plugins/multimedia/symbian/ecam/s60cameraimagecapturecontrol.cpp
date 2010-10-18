@@ -47,33 +47,44 @@
 #include "s60cameracontrol.h"
 
 S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *parent) :
-    QCameraImageCaptureControl(parent),
-    m_driveMode(QCameraImageCapture::SingleImageCapture)
+    QCameraImageCaptureControl(parent)
 {
 }
 
 S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraImageCaptureControl(parent),
-    m_driveMode(QCameraImageCapture::SingleImageCapture)
+    m_driveMode(QCameraImageCapture::SingleImageCapture) // Default DriveMode
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
+
     if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
         m_service = qobject_cast<S60CameraService*>(parent);
+    } else {
+        Q_ASSERT(true);
     }
 
     if (m_service)
             m_cameraControl =
                 qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
+    if (!m_cameraControl)
+        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
+
     // Chain these signals from session class
     connect(m_session, SIGNAL(imageCaptured(const int, QImage)),
         this, SIGNAL(imageCaptured(const int, QImage)));
     connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
             this, SIGNAL(readyForCaptureChanged(bool)));
-    connect(m_session, SIGNAL(imageSaved(const int, const QString &)),
-            this, SIGNAL(imageSaved(const int, const QString &)));
-    connect(m_session, SIGNAL(error(int, const QString &)),
-            this, SLOT(handleError(int, const QString &)));
+    connect(m_session, SIGNAL(imageSaved(const int, const QString&)),
+            this, SIGNAL(imageSaved(const int, const QString&)));
+    connect(m_session, SIGNAL(imageExposed(int)),
+            this, SIGNAL(imageExposed(int)));
+    connect(m_session, SIGNAL(captureError(int, int, const QString&)),
+            this, SIGNAL(error(int, int, const QString&)));
 }
 
 S60CameraImageCaptureControl::~S60CameraImageCaptureControl()
@@ -86,11 +97,7 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
         return false;
     }
 
-    if (m_session) {
-        return m_session->isDeviceReady();
-    }
-
-    return false;
+    return m_session->isDeviceReady();
 }
 
 QCameraImageCapture::DriveMode S60CameraImageCaptureControl::driveMode() const
@@ -101,7 +108,7 @@ QCameraImageCapture::DriveMode S60CameraImageCaptureControl::driveMode() const
 void S60CameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode mode)
 {
     if (mode != QCameraImageCapture::SingleImageCapture) {
-        emit error(m_session->currentImageId(), QCamera::NotSupportedFeatureError, tr("DriveMode not supported."));
+        emit error((m_session->currentImageId() + 1), QCamera::NotSupportedFeatureError, tr("DriveMode not supported."));
         return;
     }
 
@@ -111,25 +118,18 @@ void S60CameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode m
 int S60CameraImageCaptureControl::capture(const QString &fileName)
 {
     if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureStillImage) {
-        emit error(m_session->currentImageId(), QCamera::CameraError, tr("Incorrect CaptureMode."));
+        emit error((m_session->currentImageId() + 1), QCameraImageCapture::NotReadyError, tr("Incorrect CaptureMode."));
         return 0;
     }
 
-    int reqId = m_session->capture(fileName);
+    int imageId = m_session->capture(fileName);
 
-    return reqId;
+    return imageId;
 }
 
 void S60CameraImageCaptureControl::cancelCapture()
 {
-    if (m_session)
-        m_session->cancelCapture();
-}
-
-void S60CameraImageCaptureControl::handleError(int error, const QString &errorString)
-{
-    // Emit forward
-    emit this->error(m_session->currentImageId(), error, errorString);
+    m_session->cancelCapture();
 }
 
 // End of file

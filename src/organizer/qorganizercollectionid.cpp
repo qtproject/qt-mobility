@@ -170,7 +170,7 @@ bool QOrganizerCollectionLocalId::isNull() const
 }
 
 /*!
- * Constructs a new organizeritem id
+ * Constructs a new, null collection id
  */
 QOrganizerCollectionId::QOrganizerCollectionId()
         : d(new QOrganizerCollectionIdPrivate)
@@ -178,26 +178,26 @@ QOrganizerCollectionId::QOrganizerCollectionId()
 }
 
 /*!
- * Cleans up the memory in use by the organizeritem id
+ * Cleans up the memory in use by the collection id
  */
 QOrganizerCollectionId::~QOrganizerCollectionId()
 {
 }
 
-/*! Constructs a new organizeritem id as a copy of \a other */
+/*! Constructs a new collection id as a copy of \a other */
 QOrganizerCollectionId::QOrganizerCollectionId(const QOrganizerCollectionId& other)
         : d(other.d)
 {
 }
 
-/*! Assigns the organizeritem id to be equal to \a other */
+/*! Assigns the collection id to be equal to \a other */
 QOrganizerCollectionId& QOrganizerCollectionId::operator=(const QOrganizerCollectionId& other)
 {
     d = other.d;
     return *this;
 }
 
-/*! Returns true if the organizeritem id has the same manager URI and local id as \a other */
+/*! Returns true if the collection id has the same manager URI and local id as \a other */
 bool QOrganizerCollectionId::operator==(const QOrganizerCollectionId& other) const
 {
     if (d->m_managerUri != other.d->m_managerUri)
@@ -207,7 +207,7 @@ bool QOrganizerCollectionId::operator==(const QOrganizerCollectionId& other) con
     return true;
 }
 
-/*! Returns true if either the manager URI or local id of the organizeritem id is different to that of \a other */
+/*! Returns true if either the manager URI or local id of the collection id is different to that of \a other */
 bool QOrganizerCollectionId::operator!=(const QOrganizerCollectionId& other) const
 {
     return !(*this == other);
@@ -234,6 +234,14 @@ bool QOrganizerCollectionId::operator<(const QOrganizerCollectionId& other) cons
         return comp < 0;
 
     return this->localId() < other.localId();
+}
+
+/*!
+  Returns true if the local id part of this id is a null (default constructed) local id; otherwise, returns false.
+ */
+bool QOrganizerCollectionId::isNull() const
+{
+    return d->m_localId.isNull();
 }
 
 /*!
@@ -267,22 +275,35 @@ QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id)
     if (id.d) {
         return id.d->debugStreamOut(dbg);
     }
-    return (dbg << QString(QLatin1String("(null)")));
+    dbg << QString(QLatin1String("(null)"));
+    return dbg;
 }
 #endif
 
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a collectionId to the stream \a out.
+ * Note that if the manager uri of \a collectionId is empty or invalid, operator>>() will
+ * not be able to reconstruct the id from the data.
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollectionId
-    return out << formatVersion
-               << collectionId.managerUri()
-               << collectionId.localId();
-}
+    out << formatVersion
+        << collectionId.managerUri();
 
+    // if the manager uri is null, there'd be no way to deserialize
+    // the local id.  So, we don't serialize out the local id.
+    if (collectionId.managerUri().isEmpty())
+        return out;
+
+    // the manager uri is not null.  we can serialize out the local id.
+    out << collectionId.localId();
+    return out;
+}
+/*!
+ * Writes the manager-local collection id \a id to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id)
 {
     if (id.d) {
@@ -290,11 +311,14 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id)
         out << static_cast<quint8>(true);
         return id.d->dataStreamOut(out);
     }
-    return (out << static_cast<quint8>(false));
+    out << static_cast<quint8>(false);
+    return out;
 }
 
 /*!
  * Reads an organizer collection id from stream \a in into \a collectionId.
+ * Note that if the manager uri of the id which was streamed out was empty,
+ * this function will produce a null \a collectionId.
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 {
@@ -303,17 +327,31 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
     if (formatVersion == 1) {
         QString managerUri;
         in >> managerUri;
+        if (managerUri.isEmpty()) {
+            // if no manager uri was set in the id which was serialized, then nothing can be deserialized.
+            // in this case, return the null id.
+            collectionId = QOrganizerCollectionId();
+            return in;
+        }
+
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
         QOrganizerCollectionLocalId localId(QOrganizerItemManagerData::createEngineCollectionLocalId(managerUri));
-        collectionId = QOrganizerCollectionId();
-        if (localId.d) {
-            collectionId.setManagerUri(managerUri);
-            if (localIdMarker) {
+        if (localIdMarker == static_cast<quint8>(true)) {
+            if (localId.d) {
                 // only stream in the local id data if it exists.
                 localId.d->dataStreamIn(in);
+            } else {
+                // the local id should be the null local id.
+                localId = QOrganizerCollectionLocalId();
             }
+        } else {
+            // the local id should be the null local id.
+            localId = QOrganizerCollectionLocalId();
         }
+
+        collectionId.setManagerUri(managerUri);
+        collectionId.setLocalId(localId);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }
@@ -324,7 +362,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 
 
 /*!
- * Returns the URI of the manager which contains the organizeritem identified by this id
+ * Returns the URI of the manager which contains the collection identified by this id
  */
 QString QOrganizerCollectionId::managerUri() const
 {
@@ -332,7 +370,7 @@ QString QOrganizerCollectionId::managerUri() const
 }
 
 /*!
- * Returns the manager-local id of the organizeritem identified by this organizeritem id
+ * Returns the manager-local id of the collection identified by this collection id
  */
 QOrganizerCollectionLocalId QOrganizerCollectionId::localId() const
 {
@@ -340,15 +378,19 @@ QOrganizerCollectionLocalId QOrganizerCollectionId::localId() const
 }
 
 /*!
- * Sets the URI of the manager which contains the organizeritem identified by this id to \a uri
+ * Sets the URI of the manager which contains the collection item identified by this id to \a uri.
+ * If the old manager URI was different to \a uri, the local id will be set to the null local id.
+ * \sa localId()
  */
 void QOrganizerCollectionId::setManagerUri(const QString& uri)
 {
+    if (!d->m_managerUri.isEmpty() && d->m_managerUri != uri)
+        d->m_localId = QOrganizerCollectionLocalId();
     d->m_managerUri = uri;
 }
 
 /*!
- * Sets the manager-local id of the organizeritem identified by this organizeritem id to \a id
+ * Sets the manager-local id of the collection identified by this collection id to \a id
  */
 void QOrganizerCollectionId::setLocalId(const QOrganizerCollectionLocalId& id)
 {

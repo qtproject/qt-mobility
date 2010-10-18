@@ -206,6 +206,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldTimeSpecified, "TimeSpec
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerEventTimeRange::setTimeSpecified(bool isTimeSpecified)
+    Sets the event should be specified through \a isTimeSpecified.
+ */
+
+/*!
+    \fn QOrganizerEventTimeRange::isTimeSpecified()
+    return true if the time is specified.
+ */
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
@@ -283,7 +292,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(const QOrganizerItemLocalId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
@@ -665,6 +674,18 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \value EmailReminder This reminder has a email element
 */
 
+/*! 
+   \fn QOrganizerItemReminder::QOrganizerItemReminder(const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a definitionName. 
+*/
+
+/*! 
+    \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName. 
+*/
+
 /*!
    \variable QOrganizerItemReminder::DefinitionName
    The constant string which identifies the definition of details which contain reminder information of an organizer item.
@@ -715,6 +736,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
    \fn ReminderTypes QOrganizerItemReminder::reminderType() const
 
    Returns the reminder type of this reminder for an organizer item.
+ */
+
+/*!
+   \fn void QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
+
+   Sets the repetition by using \a count and, \a delaySeconds.
  */
 
 /*!
@@ -825,6 +852,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    Sets the url of the audible data which should be played to \a dataUrl.
 */
 
+/*!
+   \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
+
+   Returns the url of the audible data which should be played.
+*/
+
+
 /* ==================== QOrganizerItemEmailReminder ======================= */
 
 /*!
@@ -887,6 +921,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \fn QString QOrganizerItemEmailReminder::body() const
 
    Returns the body of the email.
+*/
+
+/*!
+   \fn QOrganizerItemEmailReminder::attachments()
+
+   Returns a list of attachments.
 */
 
 /*!
@@ -1147,6 +1187,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpeci
 /*!
     \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
     Sets the todo timerange's due date and time to \a dueDateTime.
+ */
+
+
+/*!
+    \fn QOrganizerTodoTimeRange::setTimeSpecified(bool isTimeSpecified)
+    Sets the time in specification mode through \a isTimeSpecified.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::isTimeSpecified()
+    Returns true if the time is specified.
  */
 
 /* ==================== QOrganizerItemType ======================= */

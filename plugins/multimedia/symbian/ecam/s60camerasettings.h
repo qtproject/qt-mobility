@@ -42,7 +42,6 @@
 #ifndef S60CAMERASETTINGS_H
 #define S60CAMERASETTINGS_H
 
-#include <QtCore/qobject.h>
 #include "qcamera.h"
 
 #include "s60cameraengine.h"
@@ -50,13 +49,16 @@
 
 QT_USE_NAMESPACE
 
+/*
+ * Class handling CCamera AdvancedSettings and ImageProcessing operations.
+ */
 class S60CameraSettings : public QObject, public MAdvancedSettingsObserver
 {
     Q_OBJECT
  
 public: // Contructor & Destructor
     
-    S60CameraSettings(QObject *parent = 0, CCameraEngine *engine = 0);
+    static S60CameraSettings* NewL(QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
     
 public: // Methods
@@ -66,7 +68,14 @@ public: // Methods
     void setFocusMode(QCameraFocus::FocusMode mode);
     QCameraFocus::FocusModes supportedFocusModes();
     void cancelFocusing();
-    
+
+    // Zoom
+    qreal opticalZoomFactorL() const;
+    void setOpticalZoomFactorL(const qreal zoomFactor);
+    QList<qreal> *supportedDigitalZoomFactors();
+    qreal digitalZoomFactorL() const;
+    void setDigitalZoomFactorL(const qreal zoomFactor);
+
     // Flash
     bool isFlashReady();
     
@@ -107,7 +116,7 @@ public: // Methods
     bool isSharpeningSupported() const;
     
     // Saturation
-    int saturation() const;
+    int saturation();
     void setSaturation(int value);
     
 Q_SIGNALS: // Notifications
@@ -123,23 +132,40 @@ Q_SIGNALS: // Notifications
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     
-    void error(QCamera::Error);
-    
+    // Errors
+    void error(int, const QString&);
+
+protected: // Protected constructors
+
+    S60CameraSettings(QObject *parent, CCameraEngine *engine);
+    void ConstructL();
+
 protected: // MAdvancedSettingsObserver
-    
+
     void HandleAdvancedEvent(const TECAMEvent& aEvent);
 
-private:
-    
+private: // Internal
+
     bool queryAdvancedSettingsInfo();
 
+private: // Enums
+
+    enum EcamErrors {
+        KErrECamCameraDisabled =        -12100, // The camera has been disabled, hence calls do not succeed
+        KErrECamSettingDisabled =       -12101, // This parameter or operation is supported, but presently is disabled.
+        KErrECamParameterNotInRange =   -12102, // This value is out of range.
+        KErrECamSettingNotSupported =   -12103, // This parameter or operation is not supported.
+        KErrECamNotOptimalFocus =       -12104  // The optimum focus is lost
+    };
+
 private: // Data
-    
+
 #ifndef S60_CAM_AUTOFOCUS_SUPPORT // Post S60 3.1 Platforms
     CCamera::CCameraAdvancedSettings    *m_advancedSettings;
     CCamera::CCameraImageProcessing     *m_imageProcessingSettings;
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
     CCameraEngine                       *m_cameraEngine;
+    QList<qreal>                        m_supportedDigitalZoomFactors;
 };
 
 #endif // S60CAMERASETTINGS_H

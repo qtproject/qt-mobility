@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/organizer
 
 #include <QtTest/QtTest>
+#include <QUuid>
 
 #include "qtorganizer.h"
 #include "qorganizeritemchangeset.h"
@@ -168,6 +169,7 @@ private slots:
     void detailDefinitions();
     void detailOrders();
     void itemType();
+    void collections();
     void dataSerialization();
 
     /* Tests that take no data */
@@ -196,6 +198,7 @@ private slots:
     void detailDefinitions_data() {addManagers();}
     void detailOrders_data() {addManagers();}
     void itemType_data() {addManagers();}
+    void collections_data() {addManagers();}
     void dataSerialization_data() {addManagers();}
 };
 
@@ -2535,10 +2538,124 @@ void tst_QOrganizerItemManager::detailOrders()
 }
 
 
-
 void tst_QOrganizerItemManager::itemType()
 {
     // XXX TODO!
+}
+
+
+void tst_QOrganizerItemManager::collections()
+{
+    // XXX TODO: break test into smaller sub-tests (per operation).
+
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> oim(QOrganizerItemManager::fromUri(uri));
+
+    //if (!oim->hasFeature(QOrganizerItemManager::MutableCollections)) {
+    //    QSKIP("This manager does not support mutable collections!", SkipSingle);
+    //}
+
+    QOrganizerCollection c1, c2, c3;
+    c1.setMetaData(QOrganizerCollection::KeyName, "Test One");
+    c1.setMetaData(QOrganizerCollection::KeyDescription, "This collection is for testing purposes.");
+    c2.setMetaData(QOrganizerCollection::KeyName, "Test Two");
+    c2.setMetaData(QOrganizerCollection::KeyColor, Qt::blue);
+    // c3 doesn't have any meta-data, just an id.
+
+    QOrganizerEvent i1, i2, i3, i4, i5;
+    i1.setDisplayLabel("one");
+    i1.addComment("item one");
+    i2.setDisplayLabel("two");
+    i2.setDescription("this is the second item");
+    i3.setDisplayLabel("three");
+    i4.setDisplayLabel("four");
+    i4.setGuid(QUuid::createUuid().toString());
+    i5.setDisplayLabel("five");
+    i5.setLocationAddress("test location address");
+
+    // first test
+    {
+        if (oim->compatibleCollection(c1) != c1 || oim->compatibleItem(i1) != i1) {
+            qDebug("Skipping first collection test; collection or item not compatible with manager!");
+        } else {
+            // save a collection
+            QVERIFY(c1.id().isNull()); // should have a null id to start with.
+            QVERIFY(oim->saveCollection(&c1));
+            QVERIFY(!c1.id().isNull()); // should have been set by the save operation
+            QVERIFY(oim->collectionIds().contains(c1.localId()));
+
+            // save an item in that collection
+            QOrganizerItemCollectionFilter fil;
+            fil.setCollectionId(c1.localId());
+            QVERIFY(oim->saveItem(&i1, c1.localId()));
+            QVERIFY(i1.collectionId() == c1.id());
+            QVERIFY(oim->items(fil).contains(i1)); // it should be in c1
+            fil.setCollectionId(oim->defaultCollectionId());
+            QVERIFY(!oim->items(fil).contains(i1)); // it should not be in the default collection.
+        }
+    }
+
+    // second test
+    {
+        if (oim->compatibleCollection(c2) != c2
+                || oim->compatibleCollection(c3) != c3
+                || oim->compatibleItem(i2) != i2
+                || oim->compatibleItem(i3) != i3
+                || oim->compatibleItem(i4) != i4
+                || oim->compatibleItem(i5) != i5) {
+            qDebug("Skipping second collection test; collection or items not compatible with manager!");
+        } else {
+            // save multiple collections. // XXX TODO: batch save for collections?
+            int originalColCount = oim->collectionIds().count();
+            QVERIFY(oim->saveCollection(&c2));
+            QVERIFY(oim->saveCollection(&c3));
+            QVERIFY(oim->collectionIds().count() == (originalColCount + 2));
+
+            // save i5 in c3 as a canary value.
+            QVERIFY(oim->saveItem(&i5, c3.localId()));
+            QVERIFY(oim->items().contains(i5));
+
+            // save multiple items in a collection
+            QList<QOrganizerItem> saveList;
+            saveList << i2 << i3 << i4;
+            int originalItemCount = oim->items().count();
+            QVERIFY(oim->saveItems(&saveList, c2.localId()));
+            i2 = saveList.at(0); // update from save list because manager might have added details / set ids etc.
+            i3 = saveList.at(1);
+            i4 = saveList.at(2);
+            QList<QOrganizerItem> fetchedItems = oim->items();
+            QVERIFY(fetchedItems.count() == (originalItemCount + 3));
+            QVERIFY(fetchedItems.contains(i2)); // these three should have been added
+            QVERIFY(fetchedItems.contains(i3));
+            QVERIFY(fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+
+            // update a collection shouldn't remove its items.
+            c2.setMetaData(QOrganizerCollection::KeyName, "Test Two Updated");
+            QVERIFY(oim->saveCollection(&c2));
+            fetchedItems = oim->items();
+            QVERIFY(fetchedItems.contains(i2)); // no items should have been removed
+            QVERIFY(fetchedItems.contains(i3)); // nor should they have changed collection.
+            QVERIFY(fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5));
+
+            // remove a collection, removes its items.
+            QVERIFY(oim->removeCollection(c2.localId()));
+            fetchedItems = oim->items();
+            QVERIFY(fetchedItems.count() == originalItemCount);
+            QVERIFY(!fetchedItems.contains(i2)); // these three should have been removed
+            QVERIFY(!fetchedItems.contains(i3));
+            QVERIFY(!fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+
+            // attempt to save an item in a non-existent collection should fail.
+            i2.setId(QOrganizerItemId()); // reset Id so save can succeed...
+            QVERIFY(!oim->saveItem(&i2, c2.localId()));
+            fetchedItems = oim->items();
+            QVERIFY(!fetchedItems.contains(i2)); // shouldn't have been added.
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+        }
+    }
 }
 
 QTEST_MAIN(tst_QOrganizerItemManager)

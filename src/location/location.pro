@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql svg
+QT = core gui network sql
 
 include(../../common.pri)
 

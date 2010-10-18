@@ -261,19 +261,18 @@ public:
         QOrganizerItemManager::Error *error);
     
     /* Collections - every item belongs to exactly one collection */
-#ifdef SYMBIAN_CALENDAR_V2
     QOrganizerCollectionLocalId defaultCollectionId(
         QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(
         QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollection> collections(
         const QList<QOrganizerCollectionLocalId>& collectionIds, 
+        QMap<int, QOrganizerItemManager::Error>* errorMap,
         QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, 
         QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, 
         QOrganizerItemManager::Error* error);
-#endif
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(
@@ -334,16 +333,12 @@ public:
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
-    QOrganizerItemRequestQueue* requestQueue();
 
 private:
-#ifdef SYMBIAN_CALENDAR_V2
-    void collectionsL(
-        const QList<QOrganizerCollectionLocalId> &collectionIds,
-        QList<QOrganizerCollection> &collections) const;
+    QList<QOrganizerCollection> collectionsL(
+        const QList<QOrganizerCollectionLocalId> &collectionIds) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
-#endif
     CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
     CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(const QOrganizerItem &item, 

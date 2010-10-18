@@ -51,9 +51,9 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.1.0 >> $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.2.0 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
-    system(echo MOBILITY_MINOR_VERSION = 1 >> $$PRF_CONFIG)
+    system(echo MOBILITY_MINOR_VERSION = 2 >> $$PRF_CONFIG)
     system(echo MOBILITY_PATCH_VERSION = 0 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
@@ -233,7 +233,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):
@@ -251,7 +251,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):

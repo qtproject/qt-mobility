@@ -42,9 +42,6 @@
 #ifndef S60CAMERAIMAGEPROCESSINGCONTROL_H
 #define S60CAMERAIMAGEPROCESSINGCONTROL_H
 
-
-#include <QtCore/qobject.h>
-
 #include <qcameraimageprocessing.h>
 #include <qcameraimageprocessingcontrol.h>
 
@@ -55,6 +52,9 @@ QT_USE_NAMESPACE
 class S60CameraService;
 class S60ImageCaptureSession;
 
+/*
+ * Control for image processing related camera operations (inc. white balance).
+ */
 class S60CameraImageProcessingControl : public QCameraImageProcessingControl
 {
     Q_OBJECT
@@ -77,7 +77,7 @@ public: // QCameraImageProcessingControl
     QVariant processingParameter(QCameraImageProcessingControl::ProcessingParameter parameter) const;
     void setProcessingParameter(QCameraImageProcessingControl::ProcessingParameter parameter, QVariant value);
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void resetAdvancedSetting();
 
@@ -90,6 +90,10 @@ private: // Internal operations - Implementing ProcessingParameter
     // Contrast
     int contrast() const;
     void setContrast(int value);
+
+    // Brightness
+    int brightness() const;
+    void setBrightness(int value);
 
     // Saturation
     int saturation() const;
@@ -108,7 +112,6 @@ private: // Internal operations - Implementing ProcessingParameter
 private: // Data
 
     S60ImageCaptureSession  *m_session;
-    S60CameraService        *m_service;
     S60CameraSettings       *m_advancedSettings;
 };
 

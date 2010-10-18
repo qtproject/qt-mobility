@@ -71,7 +71,8 @@ public:
     bool supportsAlternativeRoutes() const;
     bool supportsExcludeAreas() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
-    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
+    QGeoRouteRequest::FeatureTypes supportedFeatureTypes() const;
+    QGeoRouteRequest::FeatureWeights supportedFeatureWeights() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
     QGeoRouteRequest::ManeuverDetails supportedManeuverDetails() const;
@@ -88,7 +89,8 @@ protected:
     void setSupportsAlternativeRoutes(bool supported);
     void setSupportsExcludeAreas(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
-    void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
+    void setSupportedFeatureTypes(QGeoRouteRequest::FeatureTypes featureTypes);
+    void setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights);
     void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
     void setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails);
     void setSupportedManeuverDetails(QGeoRouteRequest::ManeuverDetails maneuverDetails);

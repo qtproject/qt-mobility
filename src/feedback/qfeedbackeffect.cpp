@@ -49,35 +49,89 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 /*!
     \class QFeedbackEffect
-    \brief The QFeedbackEffect class is the abstract base class for the feedback framework.
+    \brief The QFeedbackEffect class is the abstract base class for feedback effects.
     \ingroup feedback
     \inmodule QtFeedback
 
-    It has the concepts of duration and state. 
+    It represents a tactile feedback effect (i.e., an effect that
+    affect human senses). The technology available today usually only
+    provides haptic effects, which deal with the sense of touch. The
+    QFeedbackHapticsEffect and QFeedbackFileEffect are implementations
+    of haptic effects and can be used to control a mobile device's
+    vibrator.
+
+    Feedback effects have a duration, which is measured in
+    milliseconds. Subclasses reimplement duration() to inform how long
+    the effect lasts.
+
+    \omit There is no way to get informed of state changes? \endomit
+    At any given time, a feedback effect is in one of four states:
+    Loading, Stopped, Running, or Paused. See the
+    \l{QFeedbackEffect::}{State} enum documentation for further
+    details. Subclasses must reimplement state() to report which
+    state an effect is in, and setState() to receive state change
+    requests. The start(), pause(), and stop() slots calls
+    setState() with the corresponding new \l{QFeedbackEffect::}{State}.
+
+    A system often has a set of standard feedback effects for user
+    interface interaction (e.g., button clicks). The
+    \l{QFeedbackEffect::}{ThemeEffect} describes the standard effects
+    that QFeedbackEffect supports. It is named so because the effects
+    often depend on the theme of the user interface. You can play
+    these effects using the playThemeEffect() function.
+
+    \code
+        QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
+    \endcode
+
+    The playThemeEffect() function returns true if the effect was
+    played successfully. An effect may not be played if the system does
+    not support it or if an error occurred.
+*/
+
+/*!
+    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
+
+    This signal is emitted by subclasses if an error occurred during
+    playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
+    describes the errors that can be reported.
+
+*/
+
+/*!
+    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
+
+    This signal is emitted by subclasses if an error occurred during
+    playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
+    describes the errors that can be reported.
+
 */
 
 /*!
     \enum QFeedbackEffect::State
 
-    This enum describes the state of the effect.
+    This enum describes the state of the effect. An effect will be in
+    one of these states.
 
-    \value Stopped The feedback is not running. This is the initial state.
-    The state changes to either Loading when loading a feedback or
-    to Running when the feedback is started by calling start().
+    \value Stopped The effect is not running. This is the initial
+    state. The state changes to either Loading when loading an effect
+    or to Running when the effect is started by calling start().  When
+    an effect has finished playing, it will enter the Stopped state
+    again.
 
-    \value Paused The feedback is paused. Calling start() will resume it.
+    \value Paused The effect is paused. Calling start() will resume it.
 
-    \value Running The feedback is running. You can control the current state
+    \value Running The effect is running. You can control the current state
     by calling the state() function.
 
-    \value Loading The feedback is loading. That can happen when loading
+    \value Loading The effect is loading. That can happen when loading
     is done asynchronously.
 
     \sa state()
 */
+
 
 /*!
     \enum QFeedbackEffect::ErrorType
@@ -161,7 +215,7 @@ QFeedbackEffect::QFeedbackEffect(QObject *parent) : QObject(parent)
 {
 }
 
-/*
+/*!
     \fn void QFeedbackEffect::start()
 
     Starts playing the effect. If an error occurs there the
@@ -172,7 +226,7 @@ void QFeedbackEffect::start()
     setState(Running);
 }
 
-/*
+/*!
     \fn void QFeedbackEffect::stop()
 
     Stops a playing effect. If an error occurs there the
@@ -185,7 +239,7 @@ void QFeedbackEffect::stop()
     setState(Stopped);
 }
 
-/*
+/*!
     \fn void QFeedbackEffect::pause()
 
     Pauses a playing effect. If an error occurs there the
@@ -198,9 +252,9 @@ void QFeedbackEffect::pause()
 
 /*!
     \fn QFeedbackEffect::playThemeEffect(ThemeEffect effect)
-    plays instant feedback and return true if the effect could be played.
 
-    That feedback is defined by the theme of the system.
+    This function plays \a effect instantly and returns true if the
+    effect could be played; otherwise, returns false.
 */
 bool QFeedbackEffect::playThemeEffect(ThemeEffect effect)
 {
@@ -220,25 +274,86 @@ bool QFeedbackEffect::supportsThemeEffect()
     return QFeedbackThemeInterface::instance() != 0;
 }
 
-
 /*!
     \class QFeedbackHapticsEffect
     \ingroup feedback
     \inmodule QtFeedback
-    \brief The QFeedbackHapticsEffect class allows to play a haptics feedback on an actuator.
+    \brief The QFeedbackHapticsEffect class allows you to play a haptics effect.
 
-    It is possible to set the duration, intensity, envelope and period of the effect.
-    It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
-    inherit its properties: duration and state.
-    It can also be started, stopped or paused.
+    A haptics effect is an effect that takes advantage of the sense of
+    touch. Most mobile devices today supports one such effect,
+    vibration, which will then be the default when you create a
+    QFeedbackHatpicsEffect.
 
-    You can set the duration to INFINITE. It is then up to the program to stop the effect.
+    A haptics effect has a few parameters that must be set up before
+    it can be played:
 
-    A feedback effect always works on a feedback actuator.
+    \list
+        \o duration(): The duration of the effect in milliseconds.
+        \o intensity(): The intensity, e.g., how hard the device will vibrate.
+    \endlist
 
-    it can report errors through the error signal.
+    An effect can, for example, be set up as follows:
+
+    \omit I'm right that this is all that is required to be set? \endomit
+    \code
+        QFeedbackHapticsEffect rumble;
+        rumble.setIntensity(1.0);
+        rumble.setDuration(100);
+    \endcode
+
+    You can now start() the effect.
+
+    \code
+        rumble.start();
+    \endcode
+
+    At any given time, the effect is in one of four states:
+    \l{QFeedbackEffect::}{Stopped}, \l{QFeedbackEffect::}{Paused},
+    \l{QFeedbackEffect::}{Running}, or \l{QFeedbackEffect::}{Loading}.
+    You can request a state change by calling start(), pause(), or
+    stop(). The state is queried with state().
+
+    The haptics effect also supports a fade-in of the effect. For
+    vibration, this means that the vibration will grow (or sink) in
+    intensity from when the effect starts until intensity() is
+    reached. You can set that up as follows:
+
+    \code
+        rumble.setAttackIntensity(0.0);
+        rumble.setAttackTime(250);
+    \endcode
+
+    Attack intensity is the start intensity and attack time is the
+    duration of the fade-in. We have a similar fade-out:
+
+    \code
+        rumble.setFadeTime(250);
+        rumble.setFadeIntensity(0.0);
+    \endcode
+
+    When using fade-in and fade-out the total duration of the haptics
+    effect will be: attackTime() + duration() + fadeTime().
+
+    A QFeedbackHatpicsEffect is played on an
+    \l{QFeedbackHapticsEffect::}{actuator()}, which is the device that
+    performs the effect. You can query if other actuators are
+    available, see the QFeedbackActuator::actuators() function
+    documentation for details.
+
+    Errors occurring during playback is notified through the
+    error() signal.
 
     \sa QFeedbackActuator
+*/
+
+/*!
+    \fn virtual void QFeedbackEffect::setState(State) = 0
+
+    Requests the effect's State to change to the specified state.
+
+    Subclasses reimplement this function to handle state changes
+    for the effect.
 */
 
 /*!
@@ -410,16 +525,16 @@ void QFeedbackHapticsEffect::setPeriod(int msecs)
     priv->period = msecs;
 }
 
-/*
-\reimp
+/*!
+    \internal
 */
 void QFeedbackHapticsEffect::setState(State state)
 {
     QFeedbackHapticsInterface::instance()->setEffectState(this, state);
 }
 
-/*
-\reimp
+/*!
+    \internal
 */
 QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 {
@@ -430,14 +545,45 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
     \class QFeedbackFileEffect
     \ingroup feedback
     \inmodule QtFeedback
-    \brief The QFeedbackFileEffect class allows to play a haptics feedback from a file.
+    \brief The QFeedbackFileEffect class allows to play haptics feedback from a file.
 
-    You can load and unload the file at will to free resources or be as fast as possible.
-    It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
-    inherit its properties: duration and state.
-    It can also be started, stopped or paused.
+    The files containing haptics data are usually suffixed \c .ifr.
+    The feedback is usually varying in
+    \l{QFeedbackHapticsEffect::}{intensity()}, and is for that reason
+    often referred to as a "haptic tune". They are created, for
+    instance, from music files where the feedback is based on a
+    specific feature in the audio data. For example, you could have a
+    phone vibrating along with the bass of a rock song.
 
-    it can report errors through the error signal.
+    Although Qt Mobility does not let you record \c .ifr files, it lets
+    you play them back using the QFeedbackFileEffect class. Setting
+    up a QFeedbackFileEffect and starting it is done as follows:
+
+    \code
+        QFeedbackFileEffect hapticTune;
+        hapticTune.setFileName("mySavedRumble.ifr");
+        hapticTune.load();
+        hapticTune.start();
+    \endcode
+
+    As with other \l{QFeedbackEffect}s, QFeedbackFileEffect is at any
+    given time in one of four states: \l{QFeedbackEffect::}{Loading},
+    \l{QFeedbackEffect::}{Running}, \l{QFeedbackEffect::}{Paused}, or
+    \l{QFeedbackEffect::}{Stopped}. You request state changes with
+    start(), pause(), and stop().
+
+    A QFileFeedbackEffect's actuator (the device that performs the
+    effect) is always the systems default actuator, which is usually a
+    vibrator on mobile devices.
+
+    You can load() and unload() the file at will to free resources or
+    be as fast as possible. You must load the file before it can be
+    started, and it cannot be unloaded while playing. After the file is
+    loaded, you can query its duration().
+
+    QFeedbackFileEffect reports errors through the error() signal.
+
+    \sa QFeedbackHapticsEffect
 */
 
 
@@ -468,7 +614,7 @@ QFeedbackFileEffect::~QFeedbackFileEffect()
     setLoaded(false); //ensures we unload the file and frees resources
 }
 
-/*
+/*!
     \reimp
 */
 int QFeedbackFileEffect::duration() const
@@ -522,7 +668,7 @@ void QFeedbackFileEffect::setLoaded(bool load)
 /*!
     \fn void QFeedbackFileEffect::load()
 
-    makes sure that the file associated with the feedback object is loaded.
+    Makes sure that the file associated with the feedback object is loaded.
     It will be automatically loaded when setFileName or start functions
     are called.
 */
@@ -555,17 +701,17 @@ QStringList QFeedbackFileEffect::supportedMimeTypes()
 }
 
 
-/*
+/*!
 \reimp
 */
 void QFeedbackFileEffect::setState(State newState)
 {
-    if (newState != Stopped && state() == Stopped)
+    if (newState != Stopped && state() == Stopped && !isLoaded())
         load(); // makes sure the file is loaded
     QFeedbackFileInterface::instance()->setEffectState(this, newState);
 }
 
-/*
+/*!
 \reimp
 */
 QFeedbackEffect::State QFeedbackFileEffect::state() const

@@ -44,7 +44,7 @@
 /*!
   \class QOrganizerItemEngineLocalId
   \relates QOrganizerItemLocalId
-  \brief A QOrganizerItemEngineLocalId uniquely identifies an item within a
+  \brief The QOrganizerItemEngineLocalId class uniquely identifies an item within a
   particular engine plugin.
 
   Clients of the Organizer API should never use this class.

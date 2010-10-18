@@ -44,6 +44,11 @@
 
 #include <qvideorenderercontrol.h>
 
+/*
+ * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
+ * which is drawn to the display by the Qt Graphics Vide Framework.
+ * VideoRendererControl uses only Bitmap Viewfinder.
+ */
 class S60VideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT

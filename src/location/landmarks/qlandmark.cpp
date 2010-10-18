@@ -65,36 +65,18 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkPrivate -----
 
-QStringList QLandmarkPrivate::commonKeys = QStringList() << "name"
-                                                         << "description"
-                                                         << "iconUrl"
-                                                         << "radius"
-                                                         << "phoneNumber"
-                                                         << "url"
-                                                         << "latitude"
-                                                         << "longitude"
-                                                         << "altitude"
-                                                         << "country"
-                                                         << "countryCode"
-                                                         << "state"
-                                                         << "county"
-                                                         << "city"
-                                                         << "district"
-                                                         << "street"
-                                                         << "postCode";
-
 QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
         : QGeoPlacePrivate(other)
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
@@ -225,6 +207,11 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     storage until the appropriate synchronization method is called
     on the QLandmarkManager(e.g. \l {QLandmarkManager::saveLandmark()} {saveLandmark()},
     \l {QLandmarkManager::removeLandmark()} {removeLandmark()}).
+
+
+    The following are restrictions of landmark details for the symbian platform:
+
+
 */
 
 /*!
@@ -451,132 +438,10 @@ qreal QLandmark::radius() const
 void QLandmark::setRadius(qreal radius)
 {
     Q_D(QLandmark);
-    d->radius = radius;
-}
-
-/*!
-    Returns the value of the attribute corresponding to \a key.
-    If the key doest exist, an invalid QVariant is returned.
-*/
-QVariant QLandmark::attribute(const QString &key) const
-{
-    Q_D(const QLandmark);
-
-    if (key.compare("name",Qt::CaseSensitive) == 0) {
-        return name();
-    } else if (key.compare("description", Qt::CaseSensitive) == 0) {
-        return description();
-    } else if (key.compare("iconUrl",Qt::CaseSensitive) ==0) {
-        return iconUrl();
-    } else if (key.compare("radius", Qt::CaseSensitive) == 0) {
-        return radius();
-    } else if (key.compare("phoneNumber", Qt::CaseSensitive) == 0) {
-        return phoneNumber();
-    } else if (key.compare("url", Qt::CaseSensitive) ==0 ) {
-        return url();
-    } else if (key.compare("latitude", Qt::CaseSensitive)== 0) {
-        return d->coordinate.latitude();
-    } else if (key.compare("longitude", Qt::CaseSensitive) ==0) {
-        return d->coordinate.longitude();
-    } else if (key.compare("altitude", Qt::CaseSensitive) ==0) {
-        return d->coordinate.altitude();
-    } else if (key.compare("country", Qt::CaseSensitive) ==0 ){
-        return d->address.country();
-    }  else if (key.compare("countryCode", Qt::CaseSensitive) ==0 ){
-        return d->address.countryCode();
-    } else if (key.compare("state", Qt::CaseSensitive) ==0 ){
-        return d->address.state();
-    } else if (key.compare("county", Qt::CaseSensitive) ==0 ){
-        return d->address.county();
-    } else if (key.compare("city", Qt::CaseSensitive) ==0 ){
-        return d->address.city();
-    } else if (key.compare("district", Qt::CaseSensitive) ==0 ){
-        return d->address.district();
-    } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
-        return d->address.street();
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
-        return d->address.postCode();
-    }
-
-    return QVariant();
-}
-
-/*!
-    Sets the \a value of the attribute corresponding to \a key.
-    If the \a key does not already exist this function has no effect.
-*/
-void QLandmark::setAttribute(const QString &key, const QVariant &value)
-{
-    Q_D(QLandmark);
-
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
-        setName(value.toString());
-        return;
-    } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
-        setDescription(value.toString());
-        return;
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
-        setIconUrl(QUrl(value.toUrl()));
-        return;
-    } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
-        bool ok;
-        qreal radiusValue = value.toReal(&ok);
-        if (ok)
-            setRadius(radiusValue);
-        else
-            setRadius(qQNaN());
-        return;
-    } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
-        setPhoneNumber(value.toString());
-        return;
-    } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
-        setUrl(QUrl(value.toUrl()));
-        return;
-    } else if (key.compare("latitude", Qt::CaseSensitive)== 0) {
-        d->coordinate.setLatitude(value.toDouble());
-        return;
-    } else if (key.compare("longitude", Qt::CaseSensitive) ==0) {
-        d->coordinate.setLongitude(value.toDouble());
-        return;
-    } else if (key.compare("altitude", Qt::CaseSensitive) ==0) {
-        d->coordinate.setAltitude(value.toDouble());
-        return;
-    } else if (key.compare("country", Qt::CaseSensitive) ==0 ){
-        d->address.setCountry(value.toString());
-        return;
-    }  else if (key.compare("countryCode", Qt::CaseSensitive) ==0 ){
-        d->address.setCountryCode(value.toString());
-        return;
-    } else if (key.compare("state", Qt::CaseSensitive) ==0 ){
-        d->address.setState(value.toString());
-        return;
-    } else if (key.compare("county", Qt::CaseSensitive) ==0 ){
-        d->address.setCounty(value.toString());
-        return;
-    } else if (key.compare("city", Qt::CaseSensitive) == 0 ){
-        d->address.setCity(value.toString());
-        return;
-    } else if (key.compare("district", Qt::CaseSensitive) ==0 ){
-        d->address.setDistrict(value.toString());
-        return;
-    } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
-        d->address.setStreet(value.toString());
-        return;
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
-        d->address.setPostCode(value.toString());
-        return;
-    }
-}
-
-/*!
-    Returns a list of attribute keys.
-
-    \sa attribute(), setAttribute()
-*/
-QStringList QLandmark::attributeKeys() const
-{
-    Q_D(const QLandmark);
-    return d->commonKeys;
+    if (!qIsNaN(radius) && radius >= 0.0)
+        d->radius = radius;
+    else
+        d->radius = 0.0;
 }
 
 /*!
@@ -648,7 +513,7 @@ void QLandmark::clear()
     d->categoryIds.clear();
     d->description.clear();
     d->iconUrl.clear();
-    d->radius = qQNaN();
+    d->radius = 0.0;
     d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();

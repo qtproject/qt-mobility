@@ -13,7 +13,7 @@ symbian {
         HEADERS += tst_qmediarecorder_mmf.h
         SOURCES += tst_qmediarecorder_mmf.cpp
     }
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData AllFiles
 }
 HEADERS += tst_qmediarecorder.h
 SOURCES += main.cpp tst_qmediarecorder.cpp

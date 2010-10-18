@@ -74,12 +74,6 @@ QTM_USE_NAMESPACE
 static const char* CALENDAR =  "/.calendar";
 static const char* CALENDARDB = "/calendardb";
 
-
-
-
-
-
-
 QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId()
     : QOrganizerItemEngineLocalId(), m_localItemId(0)
 {
@@ -232,14 +226,6 @@ uint QOrganizerCollectionMaemo5EngineLocalId::hash() const
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
 }
 
-
-
-
-
-
-
-
-
 QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString> &parameters, QOrganizerItemManager::Error *error)
 {
     Q_UNUSED(parameters);
@@ -373,10 +359,10 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::collectionIds(QOr
     return internalCollectionIds(error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     QMutexLocker locker(&m_operationMutex);
-    return internalCollections(collectionIds, error);
+    return internalCollections(collectionIds, errorMap, error);
 }
 
 bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
@@ -393,6 +379,7 @@ bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLoca
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(fetchHint); // there are never large binary blobs etc. attached to maemo5 calendar items
     QList<QOrganizerItem> retn;
 
     // Create a filter that reads all the items from all the calendars that are
@@ -567,7 +554,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
     else if (generator.type() == QOrganizerItemType::TypeTodo)
     {
         CTodo* ctodo = d->m_dbAccess->getTodo(cal, nativeId, calError);
-        //CTodo* ctodo = cal->getTodo(nativeId, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (ctodo && *error == QOrganizerItemManager::NoError)
         {
@@ -865,31 +851,27 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::internalCollectio
     return retn;
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
     QList<QOrganizerCollection> retn;
 
-    // Fetch the available collection ids
-    QList<QOrganizerCollectionLocalId> fetchCollIds = this->internalCollectionIds(error);
+    // Fetch all the available collection ids
+    QList<QOrganizerCollectionLocalId> fetchCollIds = internalCollectionIds(error);
 
-    // Check that all the requested collections exist
-    foreach (QOrganizerCollectionLocalId collectionId, collectionIds)
-        if (!fetchCollIds.contains(collectionId))
-            *error = QOrganizerItemManager::DoesNotExistError;
-
-    if (*error != QOrganizerItemManager::NoError)
-        return retn;
-
-    foreach (QOrganizerCollectionLocalId collectionId, fetchCollIds) {
-        if (collectionIds.isEmpty() || collectionIds.contains(collectionId)) {
-            // Fetch calendar
+    int collectionIdsCount = collectionIds.count();
+    for (int i = 0; i < collectionIdsCount; ++i) {
+        QOrganizerCollectionLocalId collectionId = collectionIds.at(i);
+        if (fetchCollIds.contains(collectionId)) {
+           // Fetch calendar
             int calendarId = static_cast<int>(readCollectionLocalId(collectionId));
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             CCalendar *cal = d->m_mcInstance->getCalendarById(calendarId, calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 *error = d->m_itemTransformer.calErrorToManagerError(calError);
-                break;
+                if (errorMap)
+                    errorMap->insert(i, *error);
+                continue;
             }
 
             // Build collection id
@@ -907,11 +889,11 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(cons
             currCollection.setMetaData("Available colors", QVariant(availableColors));
 
             // Calendar color
-            currCollection.setMetaData("Color", QVariant(
+            currCollection.setMetaData(QOrganizerCollection::KeyColor, QVariant(
                     d->m_itemTransformer.fromCalendarColour(cal->getCalendarColor())));
 
             // Calendar name
-            currCollection.setMetaData("Name", QVariant(QString::fromStdString(cal->getCalendarName())));
+            currCollection.setMetaData(QOrganizerCollection::KeyName, QVariant(QString::fromStdString(cal->getCalendarName())));
 
             // Calendar version
             currCollection.setMetaData("Version", QVariant(QString::fromStdString(cal->getCalendarVersion())));
@@ -940,6 +922,11 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(cons
             // Append to result
             retn << currCollection;
         }
+        else {
+            if (errorMap)
+                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            *error = QOrganizerItemManager::DoesNotExistError;
+        }
     }
 
     return retn;
@@ -966,12 +953,12 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
         return false;
 
     QString calName = ""; // default value
-    QVariant tmpData = collection->metaData("Name");
+    QVariant tmpData = collection->metaData(QOrganizerCollection::KeyName);
     if (tmpData.isValid())
         calName = tmpData.toString();
 
     CalendarColour calColor = COLOUR_NEXT_FREE; // default value
-    tmpData = collection->metaData("Color");
+    tmpData = collection->metaData(QOrganizerCollection::KeyColor);
     if (tmpData.isValid())
         calColor = d->m_itemTransformer.toCalendarColour(tmpData.toString());
 
@@ -1309,9 +1296,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1340,9 +1328,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1412,9 +1401,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1443,9 +1433,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1474,9 +1465,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1505,9 +1497,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)

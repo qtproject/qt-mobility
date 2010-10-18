@@ -71,13 +71,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a new circle object.
 */
 QGeoMapCircleObject::QGeoMapCircleObject()
-        : d_ptr(new QGeoMapCircleObjectPrivate()) {}
+    : d_ptr(new QGeoMapCircleObjectPrivate()) {}
 
 /*!
     Constructs a new circle object based on the circle \a circle.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
-        : d_ptr(new QGeoMapCircleObjectPrivate())
+    : d_ptr(new QGeoMapCircleObjectPrivate())
 {
     d_ptr->circle = circle;
 }
@@ -87,7 +87,7 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
     and a radius in meters of \a radius.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius)
-        : d_ptr(new QGeoMapCircleObjectPrivate())
+    : d_ptr(new QGeoMapCircleObjectPrivate())
 {
     d_ptr->circle = QGeoBoundingCircle(center, radius);
 }

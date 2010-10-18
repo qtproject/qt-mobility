@@ -54,10 +54,10 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem(0),
-        isValid(true),
-        isVisible(true)
+    : QGeoMapObjectInfo(mapData, mapObject),
+      graphicsItem(0),
+      isValid(true),
+      isVisible(true)
 {
     tiledMapData = mapData;
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
@@ -72,7 +72,7 @@ QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
     }
 }
 
-void QGeoTiledMapObjectInfo::setup()
+void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
         if (!graphicsItem->scene())
@@ -116,8 +116,8 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
         return QGeoBoundingBox();
 
     QRectF rect1 = graphicsItem->boundingRect();
-    QGeoCoordinate topLeft1 = tiledMapData->worldPixelToCoordinate(rect1.topLeft().toPoint());
-    QGeoCoordinate bottomRight1 = tiledMapData->worldPixelToCoordinate(rect1.bottomRight().toPoint());
+    QGeoCoordinate topLeft1 = tiledMapData->worldReferencePositionToCoordinate(rect1.topLeft().toPoint());
+    QGeoCoordinate bottomRight1 = tiledMapData->worldReferencePositionToCoordinate(rect1.bottomRight().toPoint());
 
     QGeoBoundingBox box1 = QGeoBoundingBox(topLeft1, bottomRight1);
 
@@ -126,7 +126,7 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
 
 bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
-    QPoint point = tiledMapData->coordinateToWorldPixel(coord);
+    QPoint point = tiledMapData->coordinateToWorldReferencePosition(coord);
 
     if (!graphicsItem)
         return false;
@@ -163,9 +163,9 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
     QPolygonF points;
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
-    QPointF lastPoint = tiledMapData->coordinateToWorldPixel(lastCoord);
+    QPointF lastPoint = tiledMapData->coordinateToWorldReferencePosition(lastCoord);
 
-    int width = tiledMapData->maxZoomSize().width();
+    int width = tiledMapData->worldReferenceSize().width();
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -180,7 +180,7 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
         const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
 
         // calculate base point
-        QPointF point = tiledMapData->coordinateToWorldPixel(coord);
+        QPointF point = tiledMapData->coordinateToWorldReferencePosition(coord);
 
         // if the dateline is crossed, draw "around" the map over the chosen pole
         if (crossesDateline) {

@@ -67,17 +67,17 @@ public:
     bool dataChanged();
 
     QSet<QOrganizerCollectionLocalId> addedCollections() const;
-    void insertAddedCollection(QOrganizerCollectionLocalId addedCollectionId);
+    void insertAddedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
     void insertAddedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
     void clearAddedCollections();
 
     QSet<QOrganizerCollectionLocalId> changedCollections() const;
-    void insertChangedCollection(QOrganizerCollectionLocalId addedCollectionId);
+    void insertChangedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
     void insertChangedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
     void clearChangedCollections();
 
     QSet<QOrganizerCollectionLocalId> removedCollections() const;
-    void insertRemovedCollection(QOrganizerCollectionLocalId addedCollectionId);
+    void insertRemovedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
     void insertRemovedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
     void clearRemovedCollections();
 

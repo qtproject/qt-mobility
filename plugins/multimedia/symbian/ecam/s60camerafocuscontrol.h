@@ -42,7 +42,6 @@
 #ifndef S60CAMERAFOCUSCONTROL_H
 #define S60CAMERAFOCUSCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <qcamerafocuscontrol.h>
 
 #include "s60camerasettings.h"
@@ -52,6 +51,9 @@ QT_USE_NAMESPACE
 class S60CameraService;
 class S60ImageCaptureSession;
 
+/*
+ * Control for focusing related operations (inc. zooming)
+ */
 class S60CameraFocusControl : public QCameraFocusControl
 {
     Q_OBJECT
@@ -93,7 +95,7 @@ Q_SIGNALS: // QCameraFocusControl
     void focusZonesChanged();
 */
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void resetAdvancedSetting();
 
@@ -101,12 +103,10 @@ private: // Data
     S60ImageCaptureSession  *m_session;
     S60CameraService        *m_service;
     S60CameraSettings       *m_advancedSettings;
-    bool                    m_focusLocked;
+    bool                    m_isFocusLocked;
     qreal                   m_opticalZoomValue;
     qreal                   m_digitalZoomValue;
     QCameraFocus::FocusMode m_focusMode;
-    qreal                   m_maxZoom;
-    qreal                   m_maxDigitalZoom;
 };
 
 #endif // S60CAMERAFOCUSCONTROL_H

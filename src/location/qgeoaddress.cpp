@@ -246,7 +246,12 @@ void QGeoAddress::setDistrict(const QString &district)
 }
 
 /*!
-    Returns the street.
+    Returns the street-level component of the address.
+
+    This typically includes a street number and street name 
+    but may also contain things like a unit number, a building 
+    name, or anything else that might be used to 
+    distinguish one address from another.
 */
 QString QGeoAddress::street() const
 {
@@ -254,7 +259,12 @@ QString QGeoAddress::street() const
 }
 
 /*!
-    Sets the \a street
+    Sets the street-level component of the address to \a street.
+
+    This typically includes a street number and street name 
+    but may also contain things like a unit number, a building 
+    name, or anything else that might be used to 
+    distinguish one address from another.
 */
 void QGeoAddress::setStreet(const QString &street)
 {

@@ -81,6 +81,7 @@ public:
 
 public Q_SLOTS:
     void play();
+    void stop();
 
 Q_SIGNALS:
     void volumeChanged();

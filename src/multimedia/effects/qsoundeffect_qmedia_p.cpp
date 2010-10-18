@@ -116,14 +116,30 @@ void QSoundEffectPrivate::setMuted(bool muted)
 
 void QSoundEffectPrivate::play()
 {
-    m_runningCount += m_loopCount;
+    if (m_loopCount < 0)
+        m_runningCount = -1;
+    else {
+        if (m_runningCount < 0)
+            m_runningCount = 0;
+        m_runningCount += m_loopCount;
+    }
     m_player->play();
+}
+
+void QSoundEffectPrivate::stop()
+{
+    m_runningCount = 0;
+    m_player->stop();
 }
 
 void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        if (--m_runningCount > 0)
+        if (m_runningCount < 0)
+            m_player->play();
+        else if (m_runningCount == 0)
+            return;
+        else if (--m_runningCount > 0)
             m_player->play();
     }
 }

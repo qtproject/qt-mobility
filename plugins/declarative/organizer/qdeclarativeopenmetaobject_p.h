@@ -72,7 +72,7 @@ public:
     virtual int createProperty(const char *,  const char *);
 
     QObject *object() const;
-
+    void setMetaObject(const QMetaObject& metaObject);
 
 protected:
     virtual int metaCall(QMetaObject::Call _c, int _id, void **_a);

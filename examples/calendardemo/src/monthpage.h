@@ -101,6 +101,7 @@ private:
     QCalendarWidget *m_calendarWidget;
     QLabel *m_dateLabel;
     QListWidget *m_itemList;
+    bool m_ignoreShowDayPageOnceFlag;
 };
 
 #endif // MONTHPAGE_H_

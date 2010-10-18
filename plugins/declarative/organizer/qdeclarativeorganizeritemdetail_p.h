@@ -298,7 +298,7 @@ public:
         HighestPriority = QOrganizerItemPriority::HighestPriority,
         ExtremelyHighPriority = QOrganizerItemPriority::ExtremelyHighPriority,
         VeryHighPriority = QOrganizerItemPriority::VeryHighPriority,
-        HighPriority = QOrganizerItemPriority::HighestPriority,
+        HighPriority = QOrganizerItemPriority::HighPriority,
         MediumPriority = QOrganizerItemPriority::MediumPriority,
         LowPriority = QOrganizerItemPriority::LowPriority,
         VeryLowPriority = QOrganizerItemPriority::VeryLowPriority,

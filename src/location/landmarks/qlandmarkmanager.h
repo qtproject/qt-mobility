@@ -128,11 +128,16 @@ public:
 
     bool saveLandmark(QLandmark *landmark);
     bool saveLandmarks(QList<QLandmark> *landmarks, QMap<int, QLandmarkManager::Error> *errorMap = 0);
+
     bool removeLandmark(const QLandmarkId &landmarkId);
+    bool removeLandmark(const QLandmark &landmark);
+
     bool removeLandmarks(const QList<QLandmarkId> &landmarksIds, QMap<int, QLandmarkManager::Error> *errorMap = 0);
+    bool removeLandmarks(const QList<QLandmark> &landmarks, QMap<int, QLandmarkManager::Error> *errorMap =0);
 
     bool saveCategory(QLandmarkCategory *category);
     bool removeCategory(const QLandmarkCategoryId &categoryId);
+    bool removeCategory(const QLandmarkCategory &category);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds, QMap<int, QLandmarkManager::Error> *errorMap=0) const;
@@ -174,9 +179,6 @@ public:
     bool isReadOnly(const QLandmarkId &id) const;
     bool isReadOnly(const QLandmarkCategoryId &id) const;
 
-    QStringList landmarkAttributeKeys() const;
-    QStringList categoryAttributeKeys() const;
-    
     QStringList searchableLandmarkAttributeKeys() const;
 
     QString managerName() const;

@@ -129,66 +129,22 @@ private:
     QBasicTimer m_timer;
 };
 
-void QDeclarativeMediaBase::_q_stateChanged(QMediaPlayer::State state)
+void QDeclarativeMediaBase::_q_statusChanged()
 {
-    if (m_state == state)
-        return;
+    const QMediaPlayer::State state = m_state;
+    const QMediaPlayer::MediaStatus status = m_status;
+    const bool isPlaying = m_playing;
+    const bool isPaused = m_paused;
 
-    switch (state) {
-    case QMediaPlayer::StoppedState: {
-            emit stopped();
+    m_state = m_playerControl->state();
+    m_status = m_playerControl->mediaStatus();
 
-            if (m_playing) {
-                m_playing = false;
-                emit playingChanged();
-            }
-        }
-        break;
-    case QMediaPlayer::PausedState: {
-            emit paused();
+    m_playing = m_state != QMediaPlayer::StoppedState;
+    if (m_state == QMediaPlayer::PausedState)
+        m_paused = true;
 
-            if (!m_paused) {
-                m_paused = true;
-                emit pausedChanged();
-            }
-
-            if (m_state == QMediaPlayer::StoppedState)
-                emit started();
-        }
-        break;
-    case QMediaPlayer::PlayingState: {
-            if (m_state == QMediaPlayer::PausedState)
-                emit resumed();
-            else
-                emit started();
-
-           if (m_paused) {
-               m_paused = false;
-               emit pausedChanged();
-           }
-        }
-        break;
-    }
-
-    // Check
-    if (state == QMediaPlayer::PlayingState
-            || m_status == QMediaPlayer::BufferingMedia
-            || m_status == QMediaPlayer::StalledMedia) {
-        m_animation->start();
-    }
-    else {
-        m_animation->stop();
-    }
-
-    m_state = state;
-}
-
-void QDeclarativeMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
-{
-    if (status != m_status) {
-        m_status = status;
-
-        switch (status) {
+    if (m_status != status) {
+        switch (m_status) {
         case QMediaPlayer::LoadedMedia:
             emit loaded();
             break;
@@ -202,21 +158,61 @@ void QDeclarativeMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus stat
             emit stalled();
             break;
         case QMediaPlayer::EndOfMedia:
+            if (m_runningCount < 0 || m_runningCount > 1)
+            {
+                //m_playing = false;
+                setPlaying(true);
+            }
             emit endOfMedia();
             break;
         default:
             break;
         }
-
         emit statusChanged();
+    }
 
-        if (m_state == QMediaPlayer::PlayingState
-                || m_status == QMediaPlayer::BufferingMedia
-                || m_status == QMediaPlayer::StalledMedia) {
-            m_animation->start();
-        } else {
-            m_animation->stop();
+    if (m_state != state) {
+        switch (m_state) {
+        case QMediaPlayer::StoppedState:
+            emit stopped();
+
+            if (isPlaying && !m_playing)
+                emit playingChanged();
+
+            break;
+        case QMediaPlayer::PausedState:
+            if (state == QMediaPlayer::StoppedState)
+                emit started();
+            if (m_state = QMediaPlayer::PausedState)
+                emit paused();
+            
+            if (!isPaused && m_paused)
+                emit pausedChanged();
+            
+            break;
+            
+        case QMediaPlayer::PlayingState:
+            if (state == QMediaPlayer::PausedState)
+                emit resumed();
+            else
+                emit started();
+            break;
+
+            if (isPaused && !m_paused)
+                emit pausedChanged();
+            if (!isPlaying && m_playing)
+                emit playingChanged();
         }
+    }
+
+    // Check
+    if (m_state == QMediaPlayer::PlayingState
+            || m_status == QMediaPlayer::BufferingMedia
+            || m_status == QMediaPlayer::StalledMedia) {
+        m_animation->start();
+    }
+    else {
+        m_animation->stop();
     }
 }
 
@@ -227,10 +223,13 @@ void QDeclarativeMediaBase::_q_metaDataChanged()
 
 QDeclarativeMediaBase::QDeclarativeMediaBase()
     : m_paused(false)
+    , m_loopCount(1)
+    , m_runningCount(0)
     , m_playing(false)
     , m_autoLoad(true)
     , m_loaded(false)
     , m_muted(false)
+    , m_complete(false)
     , m_position(0)
     , m_vol(1.0)
     , m_playbackRate(1.0)
@@ -241,6 +240,7 @@ QDeclarativeMediaBase::QDeclarativeMediaBase()
     , m_metaDataControl(0)
     , m_metaObject(0)
     , m_animation(0)
+    , m_metaData(new QObject)
     , m_state(QMediaPlayer::StoppedState)
     , m_status(QMediaPlayer::NoMedia)
     , m_error(QMediaPlayer::ServiceMissingError)
@@ -277,9 +277,9 @@ void QDeclarativeMediaBase::setObject(QObject *object)
 
     if (m_playerControl) {
         QObject::connect(m_playerControl, SIGNAL(stateChanged(QMediaPlayer::State)),
-                object, SLOT(_q_stateChanged(QMediaPlayer::State)));
+                object, SLOT(_q_statusChanged()));
         QObject::connect(m_playerControl, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                object, SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
+                object, SLOT(_q_statusChanged()));
         QObject::connect(m_playerControl, SIGNAL(mediaChanged(QMediaContent)),
                 object, SIGNAL(sourceChanged()));
         QObject::connect(m_playerControl, SIGNAL(durationChanged(qint64)),
@@ -306,13 +306,17 @@ void QDeclarativeMediaBase::setObject(QObject *object)
     }
 
     if (m_metaDataControl) {
-        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, object);
+        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, m_metaData.data());
 
         QObject::connect(m_metaDataControl, SIGNAL(metaDataChanged()),
                 object, SLOT(_q_metaDataChanged()));
     }
+}
 
-    // Init
+void QDeclarativeMediaBase::componentComplete()
+{
+    m_complete = true;
+
     m_playerControl->setVolume(m_vol * 100);
     m_playerControl->setMuted(m_muted);
     m_playerControl->setPlaybackRate(m_playbackRate);
@@ -329,7 +333,6 @@ void QDeclarativeMediaBase::setObject(QObject *object)
         m_playerControl->setPosition(m_position);
 }
 
-
 // Properties
 
 QUrl QDeclarativeMediaBase::source() const
@@ -344,7 +347,7 @@ void QDeclarativeMediaBase::setSource(const QUrl &url)
 
     m_source = url;
     m_loaded = false;
-    if (m_playerControl != 0 && m_autoLoad) {
+    if (m_complete && m_autoLoad) {
         if (m_error != QMediaPlayer::ServiceMissingError && m_error != QMediaPlayer::NoError) {
             m_error = QMediaPlayer::NoError;
             m_errorString = QString();
@@ -373,6 +376,23 @@ void QDeclarativeMediaBase::setAutoLoad(bool autoLoad)
     emit autoLoadChanged();
 }
 
+int QDeclarativeMediaBase::loops() const
+{
+    return m_loopCount;
+}
+
+void QDeclarativeMediaBase::setLoops(int loopCount)
+{
+    if (loopCount == 0) {
+        loopCount = 1;
+    }
+    if (m_loopCount == loopCount) {
+        return;
+    }
+    m_loopCount = loopCount;
+    emit loopsChanged();
+}
+
 bool QDeclarativeMediaBase::isPlaying() const
 {
     return m_playing;
@@ -383,8 +403,18 @@ void QDeclarativeMediaBase::setPlaying(bool playing)
     if (playing == m_playing)
         return;
 
+    if (playing) {
+        if (m_runningCount == 0 || m_runningCount == 1) {
+            m_runningCount = m_loopCount;
+        }
+        else if (m_runningCount > 0)
+            m_runningCount--;
+    }
+    else
+        m_runningCount = 0;
+
     m_playing = playing;
-    if (m_playerControl != 0) {
+    if (m_complete) {
         if (m_playing) {
             if (!m_autoLoad && !m_loaded) {
                 m_playerControl->setMedia(m_source, 0);
@@ -415,7 +445,7 @@ void QDeclarativeMediaBase::setPaused(bool paused)
         return;
 
     m_paused = paused;
-    if (m_playerControl != 0) {
+    if (m_complete) {
         if (!m_autoLoad && !m_loaded) {
             m_playerControl->setMedia(m_source, 0);
             m_playerControl->setPosition(m_position);
@@ -435,12 +465,12 @@ void QDeclarativeMediaBase::setPaused(bool paused)
 
 int QDeclarativeMediaBase::duration() const
 {
-    return m_playerControl == 0 ? 0 : m_playerControl->duration();
+    return !m_complete ? 0 : m_playerControl->duration();
 }
 
 int QDeclarativeMediaBase::position() const
 {
-    return m_playerControl == 0 ? m_position : m_playerControl->position();
+    return !m_complete ? m_position : m_playerControl->position();
 }
 
 void QDeclarativeMediaBase::setPosition(int position)
@@ -449,7 +479,7 @@ void QDeclarativeMediaBase::setPosition(int position)
         return;
 
     m_position = position;
-    if (m_playerControl != 0)
+    if (m_complete)
         m_playerControl->setPosition(m_position);
     else
         emit positionChanged();
@@ -457,7 +487,7 @@ void QDeclarativeMediaBase::setPosition(int position)
 
 qreal QDeclarativeMediaBase::volume() const
 {
-    return m_playerControl == 0 ? m_vol : qreal(m_playerControl->volume()) / 100;
+    return !m_complete ? m_vol : qreal(m_playerControl->volume()) / 100;
 }
 
 void QDeclarativeMediaBase::setVolume(qreal volume)
@@ -467,7 +497,7 @@ void QDeclarativeMediaBase::setVolume(qreal volume)
 
     m_vol = volume;
 
-    if (m_playerControl != 0)
+    if (m_complete)
         m_playerControl->setVolume(qRound(volume * 100));
     else
         emit volumeChanged();
@@ -475,7 +505,7 @@ void QDeclarativeMediaBase::setVolume(qreal volume)
 
 bool QDeclarativeMediaBase::isMuted() const
 {
-    return m_playerControl == 0 ? m_muted : m_playerControl->isMuted();
+    return !m_complete ? m_muted : m_playerControl->isMuted();
 }
 
 void QDeclarativeMediaBase::setMuted(bool muted)
@@ -485,7 +515,7 @@ void QDeclarativeMediaBase::setMuted(bool muted)
 
     m_muted = muted;
 
-    if (m_playerControl != 0)
+    if (m_complete)
         m_playerControl->setMuted(muted);
     else
         emit mutedChanged();
@@ -493,12 +523,12 @@ void QDeclarativeMediaBase::setMuted(bool muted)
 
 qreal QDeclarativeMediaBase::bufferProgress() const
 {
-    return m_playerControl == 0 ? 0 : qreal(m_playerControl->bufferStatus()) / 100;
+    return !m_complete ? 0 : qreal(m_playerControl->bufferStatus()) / 100;
 }
 
 bool QDeclarativeMediaBase::isSeekable() const
 {
-    return m_playerControl == 0 ? false : m_playerControl->isSeekable();
+    return !m_complete ? false : m_playerControl->isSeekable();
 }
 
 qreal QDeclarativeMediaBase::playbackRate() const
@@ -513,7 +543,7 @@ void QDeclarativeMediaBase::setPlaybackRate(qreal rate)
 
     m_playbackRate = rate;
 
-    if (m_playerControl != 0)
+    if (m_complete)
         m_playerControl->setPlaybackRate(m_playbackRate);
     else
         emit playbackRateChanged();
@@ -522,6 +552,11 @@ void QDeclarativeMediaBase::setPlaybackRate(qreal rate)
 QString QDeclarativeMediaBase::errorString() const
 {
     return m_errorString;
+}
+
+QObject *QDeclarativeMediaBase::metaData() const
+{
+    return m_metaData.data();
 }
 
 QT_END_NAMESPACE

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsoundeffect.h"
+#include "qsoundeffect_p.h"
 
 #if defined(QT_MULTIMEDIA_PULSEAUDIO)
 #include "qsoundeffect_pulse_p.h"
@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass SoundEffect QSoundEffect
     \brief The SoundEffect element provides a way to play sound effects in QML.
 
-    This element is part of the \bold{Qt.multimedia 1.0} module.
+    This element is part of the \bold{QtMultimediaKit 1.1} module.
 
     The following example plays a wav file on mouse click.
 
@@ -168,6 +168,8 @@ int QSoundEffect::loops() const
 
 void QSoundEffect::setLoops(int loopCount)
 {
+    if (loopCount == 0)
+        loopCount = 1;
     if (d->loopCount() == loopCount)
         return;
 
@@ -208,6 +210,19 @@ void QSoundEffect::play()
     d->play();
 }
 
+/*!
+  \qmlmethod SoundEffect::stop()
+
+  Stop current playback.
+  Note that if the backend is PulseAudio, due to the limitation of the underlying API,
+  tis stop will only prevent next looping but will not be able to stop current playback immediately.
+
+ */
+void QSoundEffect::stop()
+{
+    d->stop();
+}
+
 QT_END_NAMESPACE
 
-#include "moc_qsoundeffect.cpp"
+#include "moc_qsoundeffect_p.cpp"

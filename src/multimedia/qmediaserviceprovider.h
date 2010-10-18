@@ -112,7 +112,7 @@ public:
 
     static QMediaServiceProvider* defaultServiceProvider();
 
-#ifdef QT_BUILD_INTERNAL
+#ifdef QTM_BUILD_UNITTESTS
     static void setDefaultServiceProvider(QMediaServiceProvider *provider);
 #endif
 };

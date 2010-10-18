@@ -70,6 +70,10 @@ class QDeclarativeMediaBaseAnimation;
 class QDeclarativeMediaBase
 {
 public:
+    enum Loop {
+        INFINITE = -1
+    };
+
     QDeclarativeMediaBase();
     virtual ~QDeclarativeMediaBase();
 
@@ -78,6 +82,9 @@ public:
 
     bool isAutoLoad() const;
     void setAutoLoad(bool autoLoad);
+
+    int loops() const;
+    void setLoops(int loopCount);
 
     bool isPlaying() const;
     void setPlaying(bool playing);
@@ -105,8 +112,9 @@ public:
 
     QString errorString() const;
 
-    void _q_stateChanged(QMediaPlayer::State state);
-    void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    QObject *metaData() const;
+
+    void _q_statusChanged();
 
     void _q_metaDataChanged();
 
@@ -121,6 +129,7 @@ protected:
     virtual void autoLoadChanged() = 0;
     virtual void playingChanged() = 0;
     virtual void pausedChanged() = 0;
+    virtual void loopsChanged() = 0;
 
     virtual void started() = 0;
     virtual void resumed() = 0;
@@ -149,10 +158,13 @@ protected:
     virtual void errorChanged() = 0;
 
     bool m_paused;
+    int m_loopCount;
+    int m_runningCount;
     bool m_playing;
     bool m_autoLoad;
     bool m_loaded;
     bool m_muted;
+    bool m_complete;
     int m_position;
     qreal m_vol;
     qreal m_playbackRate;
@@ -164,6 +176,7 @@ protected:
     QMetaDataReaderControl *m_metaDataControl;
     QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
+    QScopedPointer<QObject> m_metaData;
 
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;

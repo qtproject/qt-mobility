@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qlandmarkmanager.h>
 #include <qlandmarkmanagerengine.h>
 #include "databasefilewatcher_p.h"
 
@@ -68,7 +69,7 @@ class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
     Q_OBJECT
 public:
-    QLandmarkManagerEngineSqlite(const QString &filename = QString());
+    QLandmarkManagerEngineSqlite(const QString &filename, QLandmarkManager::Error *error, QString *errorString);
     ~QLandmarkManagerEngineSqlite();
 
     /* URI reporting */

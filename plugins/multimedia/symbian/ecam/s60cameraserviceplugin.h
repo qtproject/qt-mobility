@@ -48,23 +48,31 @@
 
 QT_USE_NAMESPACE
 
+/*
+ * Plugin implementation for the Camera Service
+ */
 class S60CameraServicePlugin : public QMediaServiceProviderPlugin, 
                                public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 
-public:
+public: // QMediaServiceProviderPlugin
 
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
 
+public: // QMediaServiceSupportedDevicesInterface
+
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
 
-private:
+private: // Internal
+
     void updateDevices() const;
+
+private: // Data
 
     mutable QList<QByteArray>   m_cameraDevices;
     mutable QStringList         m_cameraDescriptions;

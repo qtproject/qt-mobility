@@ -104,12 +104,6 @@ symbian {
     ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
     ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += ORGANIZER_DEPLOYMENT
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    # export headers into EPOCROOT
-    for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 
 CONFIG += app

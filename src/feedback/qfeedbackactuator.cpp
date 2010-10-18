@@ -51,13 +51,36 @@ QTM_BEGIN_NAMESPACE
     \brief The QFeedbackActuator class is describing actuators for tactile feedback.
     \inmodule QtFeedback
 
-    The class gives access to a specified actuator for tactile feedback.
-    It allows the program to know its state and can be used
-    in combination with QFeedbackHapticsEffect.
+    An actuator knows how to play a \l{QFeedbackEffect}{tactile
+    effect}.The class gives access to a specified actuator. 
 
-    You can query the actuators available on your system.
+    An actuator can be used to play \l{QFeedbackHapticsEffect}s using
+    \l{QFeedbackHapticsEffect::}{setActuator()}. Usually, you will not
+    have to set an actuator directly on a QFeedbackHapticsEffect.
+    QFeedbackHapticsEffect and QFeedbackFileEffect uses an appropriate
+    actuator by default. However, you can query which actuators
+    are available with actuators().
 
-    \sa QFeedbackHapticsEffect
+    \code
+     QFeedbackActuator actuator; // default system actuator
+     QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
+     foreach (const QFeedbackActuator& temp, actuators) {
+         if (temp.name() == "ExampleActuatorName") {
+             actuator = temp;
+         }
+     }
+    \endcode
+
+    The QFeedbackActuator class gives access to information about the
+    actuator it represents. You can query if the actuator isEnabled()
+    and if it isValid(). Whether an actuator is ready to play an
+    effect can be queried by checking the actuator's state(). The
+    \l{QFeedbackActuator::}{State} enum describes the states and
+    actuator can be in, which is either Ready, Busy, or Unknown. You
+    can also get a human readable name for the actuator with the
+    name() function.
+
+    \sa QFeedbackHapticsEffect QFeedbackFileEffect QFeedbackEffect
 */
 
 /*!
@@ -72,7 +95,7 @@ QTM_BEGIN_NAMESPACE
 
     \value Busy    The actuator is busy.
     \value Ready   The actuator is ready to play an effect.
-    \value Unknown The actuator is in an anknown state.
+    \value Unknown The actuator is in an known state.
 */
 
 

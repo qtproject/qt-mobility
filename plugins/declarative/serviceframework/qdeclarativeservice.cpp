@@ -44,7 +44,7 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Service
+    \qmlclass Service QDeclarativeService
     
     \brief The Service element holds an instance of a service object.
     \inherits QObject
@@ -184,7 +184,7 @@ QObject* QDeclarativeService::serviceObject()
 }
 
 /*!
-    \qmlclass ServiceList
+    \qmlclass ServiceList QDeclarativeServiceList
     
     \brief The ServiceList element holds a list of \l Service elements.
     \inherits QObject

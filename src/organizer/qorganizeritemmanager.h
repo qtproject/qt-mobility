@@ -137,12 +137,13 @@ public:
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollectionLocalId defaultCollectionId() const;
     QList<QOrganizerCollectionLocalId> collectionIds() const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0) const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original);
+    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const;

@@ -799,7 +799,7 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
         if (!writeCoordinates(landmark))
             return false;
 
-    if (!qIsNaN(landmark.radius()))
+    if (landmark.radius() > 0)
         m_writer->writeTextElement(m_ns, "coverageRadius", QString::number(landmark.radius()));
 
     if (!writeAddressInfo(landmark))

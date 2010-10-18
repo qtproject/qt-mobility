@@ -53,17 +53,27 @@ class QStyleOptionGraphicsItem;
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapData;
+class QGeoMapOverlayPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapOverlay
 {
 public:
-    QGeoMapOverlay(QGeoMapData *mapData);
+    QGeoMapOverlay();
     virtual ~QGeoMapOverlay();
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
 
+protected:
+    QGeoMapData const * mapData() const;
+
 private:
+    void setMapData(QGeoMapData * mapData);
+
+    QGeoMapOverlayPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapOverlay)
     Q_DISABLE_COPY(QGeoMapOverlay)
+
+    friend class QGeoMapData;
 };
 
 QTM_END_NAMESPACE

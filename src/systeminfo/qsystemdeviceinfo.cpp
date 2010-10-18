@@ -147,13 +147,54 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value MultiTouch         Device has muti touch screen.
             \value Mouse              Device has a mouse.
         */
+
+        /*!
+            \enum QSystemDeviceInfo::KeyboardType
+            This enum describes the type of keyboard.
+
+            \value UnknownKeyboard             Error or unknown keyboard type..
+            \value SoftwareKeyboard            Software Keyboard.
+            \value ITUKeypad                   Standard phone keyboard.
+            \value HalfQwertyKeyboard          Half qwerty keboard like on Nokia E55.
+            \value FullQwertyKeyboard          Standard qwerty type keyboard.
+            \value WirelessKeyboard            Bluetooth or other wireless keyboard.
+        */
+        /*!
+          \enum QSystemDeviceInfo::LockType
+          This enum describes the type of lock.
+
+          \value UnknownLock                    Lock type is unknown, or error.
+          \value DeviceLocked                   Device lock.
+          \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
+
+          */
+
+
         /*!
           \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
 
           This signal is emitted whenever bluetooth state changes, specified by \a on.
         */
 
-QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+/*!
+  \fn void QSystemDeviceInfo::wirelessKeyboardConnected(bool connected)
+
+  This signal is emitted whenever a wireless keyboard is connected, specified by \a connected
+*/
+/*!
+  \fn void QSystemDeviceInfo::keyboardFlip(bool open)
+
+  This signal is emitted whenever a phone flips open, specified by \a open.
+*/
+
+/*!
+    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool on)
+
+     This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
+*/
+
+
+          QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
@@ -161,8 +202,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
-
-
+    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
     }
 
 /*!
@@ -244,6 +284,13 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
         disconnect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
     }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            wirelessKeyboardConnected(bool))))) {
+        disconnect(d,SIGNAL(wirelessKeyboardConnected(bool)),
+                this,SIGNAL(wirelessKeyboardConnected(bool)));
+    }
+
+
 }
 
 
@@ -309,7 +356,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()
@@ -399,6 +446,79 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 bool QSystemDeviceInfo::currentBluetoothPowerState()
 {
     return deviceInfoPrivate()->currentBluetoothPowerState();
+}
+
+/*!
+  \brief The Keyboard Type
+
+  Returns the type of keyboards found.
+  */
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardType()
+{
+    return deviceInfoPrivate()->keyboardType();
+}
+
+/*!
+  \brief wireless keyboard connected
+
+  Returns true if a wireless keyboard is connected, otherwise false;
+  */
+bool QSystemDeviceInfo::isWirelessKeyboardConnected()
+{
+    return deviceInfoPrivate()->isWirelessKeyboardConnected();
+}
+
+/*!
+  \brief Flip keyboard open.
+
+  Returns true if the flip keyboard is open, otherwise false;
+  */
+bool QSystemDeviceInfo::isKeyboardFlipOpen()
+{
+    return deviceInfoPrivate()->isKeyboardFlipOpen();
+}
+
+/*!
+  \brief Keypad light on.
+
+  Returns true if the key pad, or keyboard lights are on, otherwise false;
+  */
+bool QSystemDeviceInfo::keypadLightOn()
+{
+    return deviceInfoPrivate()->keypadLightOn();
+}
+
+/*!
+  \brief backlight on.
+
+  Returns true if the display backlight is on, otherwise false;
+  */
+bool QSystemDeviceInfo::backLightOn()
+{
+    return deviceInfoPrivate()->backLightOn();
+}
+
+/*!
+  \brief unique host id.
+
+  Returns a unique identifier for the machine.
+
+  Depending on security enforcement on platform, this may return a non unique number, or 0.
+
+  */
+QUuid QSystemDeviceInfo::hostId()
+{
+    return deviceInfoPrivate()->hostId();
+}
+
+/*!
+ \brief Type of lock.
+
+ Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
+ */
+QSystemDeviceInfo::LockType QSystemDeviceInfo::typeOfLock()
+{
+    return deviceInfoPrivate()->typeOfLock();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"

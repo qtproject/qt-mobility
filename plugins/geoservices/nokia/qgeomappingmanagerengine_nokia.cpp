@@ -37,11 +37,11 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -64,15 +64,15 @@
 
 // TODO: Tweak the max size or create something better
 #if defined(Q_OS_SYMBIAN)
-    #define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
+#define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
 #else
-    #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+#define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
 #endif
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    #undef DISK_CACHE_ENABLED
+#undef DISK_CACHE_ENABLED
 #else
-    #define DISK_CACHE_ENABLED 1
+#define DISK_CACHE_ENABLED 1
 #endif
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
@@ -180,7 +180,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapRequest &request) const
 {
     const int maxDomains = 11; // TODO: hmmm....
-    const char subdomain = 'a' + (request.row()+request.column()) % maxDomains; // a...k
+    const char subdomain = 'a' + (request.row() + request.column()) % maxDomains; // a...k
     static const QString http("http://");
     static const QString path("/maptiler/maptile/newest/");
     static const QChar dot('.');

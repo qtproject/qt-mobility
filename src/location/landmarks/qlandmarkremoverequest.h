@@ -58,6 +58,9 @@ public:
     void setLandmarkIds(const QList<QLandmarkId> &landmarkIds);
     void setLandmarkId(const QLandmarkId &landmarkId);
 
+    void setLandmarks(const QList<QLandmark> &landmark);
+    void setLandmark(const QLandmark &landmark);
+
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
     Q_DISABLE_COPY(QLandmarkRemoveRequest)

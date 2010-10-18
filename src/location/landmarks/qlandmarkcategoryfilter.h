@@ -44,6 +44,7 @@
 
 #include "qlandmarkfilter.h"
 #include "qlandmarkcategoryid.h"
+#include "qlandmarkcategory.h"
 
 QT_BEGIN_HEADER
 
@@ -61,6 +62,7 @@ public:
 
     QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &categoryId);
+    void setCategory(const QLandmarkCategory &category);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkCategoryFilter)

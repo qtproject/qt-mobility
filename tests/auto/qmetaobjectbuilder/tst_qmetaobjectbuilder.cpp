@@ -82,6 +82,10 @@ private:
         (const QMetaObject *meta1, const QMetaObject *meta2);
 };
 
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject *meta;
+#endif
+
 // Dummy class that has something of every type of thing moc can generate.
 class SomethingOfEverything : public QObject
 {
@@ -914,17 +918,32 @@ void tst_QMetaObjectBuilder::classInfo()
     QVERIFY(checkForSideEffects(builder, QMetaObjectBuilder::ClassInfos));
 }
 
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject& staticMetaObjectGlobal() 
+{
+  return QObject::staticMetaObject;
+}
+
+const QMetaObject& staticMetaObjectLocal() 
+{
+  return *meta;
+}
+#endif
+
+
 void tst_QMetaObjectBuilder::relatedMetaObject()
 {
-    // XXX addRelatedmetaObject is broken on symbian
-    // and doesn't compile with rvct 4.0.  Need to be fixed
-    // test commented out temporarily
-    return;
     QMetaObjectBuilder builder;
-
+    
     // Add two related meta objects and check their attributes.
-    //QCOMPARE(builder.addRelatedMetaObject(&QObject::staticMetaObject), 0);
-    //QCOMPARE(builder.addRelatedMetaObject(&staticMetaObject), 1);
+#ifdef Q_NO_DATA_RELOCATION
+    meta = &staticMetaObject;
+    QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectGlobal), 0);    
+    QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectLocal), 1);
+#else
+    QCOMPARE(builder.addRelatedMetaObject(&QObject::staticMetaObject), 0);
+    QCOMPARE(builder.addRelatedMetaObject(&staticMetaObject), 1);
+#endif
     QVERIFY(builder.relatedMetaObject(0) == &QObject::staticMetaObject);
     QVERIFY(builder.relatedMetaObject(1) == &staticMetaObject);
     QCOMPARE(builder.relatedMetaObjectCount(), 2);

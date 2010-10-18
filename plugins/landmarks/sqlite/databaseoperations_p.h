@@ -164,6 +164,10 @@ class DatabaseOperations {
                         QMap<int, QLandmarkManager::Error> *errorMap,
                         QLandmarkManager::Error *error, QString *errorString);
 
+    bool removeCategoryHelper(const QLandmarkCategoryId &categoryId,
+                        QLandmarkManager::Error *error,
+                        QString *errorString);
+
     bool removeCategory(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString);

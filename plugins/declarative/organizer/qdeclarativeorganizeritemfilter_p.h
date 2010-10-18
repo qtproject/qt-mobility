@@ -162,29 +162,21 @@ public:
 
     QVariantList ids() const
     {
-        return QVariantList(); //TODO
+        return m_ids;
     }
 
     void setIds(const QVariantList& ids)
     {
-        //TODO
+        m_ids = ids;
     }
 
-    QOrganizerItemFilter filter() const
-    {
-
-        QSet<QOrganizerCollectionLocalId> ids;
-        //TODO: ids <= m_ids
-        QOrganizerItemCollectionFilter f;
-        f.setCollectionIds(ids);
-        return f;
-    }
+    QOrganizerItemFilter filter() const;
 
 signals:
     void valueChanged();
 
 private:
-    QList<uint> m_ids;
+    QVariantList m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemCollectionFilter)
 
@@ -379,29 +371,23 @@ public:
     {
     }
 
-    QOrganizerItemFilter filter() const
-    {
-        QOrganizerItemLocalIdFilter f;
-        f.setIds(m_ids);
-        return f;
-    }
+    QOrganizerItemFilter filter() const;
 
     QVariantList ids() const
     {
-        //TODO
-        return QVariantList();
+        return m_ids;
     }
 
     void setIds(const QVariantList& ids)
     {
-        //TODO
+        m_ids = ids;
     }
 
 signals:
     void valueChanged();
 
 private:
-    QList<QOrganizerItemLocalId> m_ids;
+    QVariantList m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocalIdFilter)
 

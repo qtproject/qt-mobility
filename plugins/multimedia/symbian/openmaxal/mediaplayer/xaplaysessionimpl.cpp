@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include <e32debug.h>
-
 #include <QString>
 #include <QVariant>
 #include <QList>
@@ -49,6 +47,7 @@
 
 #include "xaplaysessionimpl.h"
 #include "xaplaysessioncommon.h"
+#include "xacommon.h"
 
 #ifdef USE_VIDEOPLAYERUTILITY
 #include <COECNTRL.H>
@@ -172,13 +171,12 @@ TInt XAPlaySessionImpl::postConstruct()
       ptr.PtrZ(); // append zero terminator to end of URI
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TRAPD( err, mVideoPlayUtil = 
+    TRAP(retVal, mVideoPlayUtil = 
            CVideoPlayerUtility2::NewL( *this,
                                        EMdaPriorityNormal,
                                        EMdaPriorityPreferenceTimeAndQuality)
          );
     mActiveSchedulerWait = new CActiveSchedulerWait;
-    return 0;
 #endif
 
     return retVal;
@@ -224,14 +222,14 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     TPtr8 mimeTypePtr(0,0,0);
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TRAP(mVPError, mVideoPlayUtil->OpenFileL(_L("C:\\data\\test.3gp")));
-    if (mVPError)
+    TRAP(m_VPError, mVideoPlayUtil->OpenFileL(_L("C:\\data\\test.3gp")));
+    if (m_VPError)
         return 0;
 
     if(!mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->Start();
 
-    if (mVPError)
+    if (m_VPError)
         return 0;
     
     mVideoPlayUtil->Prepare();
@@ -247,6 +245,15 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     TRAP(retVal, mURIName = HBufC8::NewL(aURI.Length()+1));
     RET_ERR_IF_ERR(retVal);
     uriPtr.Set(mURIName->Des());
+    
+    // This has to be done here since we can not destroy the Player
+    // in the Resource Lost callback.
+    if (mbMediaPlayerUnrealized) {
+        if (mMOPlayer) {
+            (*mMOPlayer)->Destroy(mMOPlayer);
+            mMOPlayer = NULL;
+        }
+    }
     
     //py uri name into local variable 
     //TODO fix copy issue from 16 bit to 8 bit
@@ -363,7 +370,9 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
         retVal = mapError(xaRes, ETrue);
         RET_ERR_IF_ERR(retVal);
 
-        xaRes = (*mMOPlayer)->RegisterCallback(mMOPlayer, MediaPlayerCallback, NULL);
+        mbMediaPlayerUnrealized = FALSE;
+        
+        xaRes = (*mMOPlayer)->RegisterCallback(mMOPlayer, MediaPlayerCallback, (void*)this);
         retVal = mapError(xaRes, ETrue);
         RET_ERR_IF_ERR(retVal);
 
@@ -457,6 +466,54 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     return retVal;
 }
 
+void XAPlaySessionImpl::unload()
+{
+    mPlayItf = NULL;
+    mSeekItf = NULL;
+
+    //Metadata
+    mbMetadataAvailable = FALSE;
+    mMetadataExtItf = NULL;
+    alKeyMap.clear();
+    keyMap.clear();
+    extendedKeyMap.clear();
+    //Volume
+    mNokiaLinearVolumeItf = NULL;
+    mbVolEnabled = FALSE;
+    mNokiaVolumeExtItf = NULL;
+    mbMuteEnabled = NULL;
+
+    //buffer status
+    mPrefetchStatusItf = NULL;
+    mbPrefetchStatusChange = FALSE;
+
+    //stream information
+    mStreamInformationItf = NULL;
+    mbStreamInfoAvailable = FALSE;
+    mbAudioStream = FALSE;
+    mbVideoStream = FALSE;
+    mNumStreams = 0;
+
+    //Playbackrate
+    mPlaybackRateItf = NULL;
+    mbPlaybackRateItfAvailable = FALSE;
+
+    mVideoPostProcessingItf = NULL;
+    mbScalable = FALSE;
+    mCurrAspectRatioMode = Qt::KeepAspectRatio;
+    
+    //internal
+    mCurPosition = 0; // in milliseconds
+    mDuration = 0; // in milliseconds
+
+    
+    mbMediaPlayerUnrealized = TRUE;
+     
+    delete mURIName;
+    mURIName = NULL;
+
+}
+
 TInt XAPlaySessionImpl::play()
 {
     TInt retVal(KErrGeneral);
@@ -547,7 +604,7 @@ TInt XAPlaySessionImpl::duration(TInt64& aDur)
     TInt retVal(KErrGeneral);
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TTimeIntervalMicroSeconds dur;
+    TTimeIntervalMicroSeconds dur(0);
     TRAPD(err, mVideoPlayUtil->DurationL());
     if (!err)
         aDur = dur.Int64() / 1000;
@@ -563,7 +620,7 @@ TInt XAPlaySessionImpl::position(TInt64& aPos)
 {
     TInt retVal(KErrGeneral);
 #ifdef USE_VIDEOPLAYERUTILITY
-    TTimeIntervalMicroSeconds dur;
+    TTimeIntervalMicroSeconds dur(0);
     TRAPD(err, mVideoPlayUtil->PositionL());
     if (!err)
         aPos = dur.Int64() / 1000;
@@ -612,21 +669,30 @@ TInt XAPlaySessionImpl::seek(TInt64 pos)
 void XAPlaySessionImpl::cbMediaPlayer(XAObjectItf /*caller*/,
                                          const void */*pContext*/,
                                          XAuint32 event,
-                                         XAresult /*result*/,
+                                         XAresult result,
                                          XAuint32 /*param*/,
                                          void */*pInterface*/) 
 
 {
     switch (event) {
-    case XA_PLAYSTATE_STOPPED:
+    case XA_OBJECT_EVENT_RESOURCES_LOST:
+        unload();
+        mParent.cbPlaybackStopped(result);
         break;
-    case XA_PLAYSTATE_PAUSED:
-        break;
-    case XA_PLAYSTATE_PLAYING:
-        break;
+    case XA_OBJECT_EVENT_RUNTIME_ERROR:
+    {
+        switch (result) {
+        case XA_RESULT_RESOURCE_LOST:
+            unload();
+            mParent.cbPlaybackStopped(result);
+            break;
+        default:
+            break;
+        }; /* of switch (result) */
+    }
     default:
         break;
-    }
+    } /* of switch (event) */
 }
 
 void XAPlaySessionImpl::cbPlayItf(XAPlayItf /*caller*/,
@@ -635,7 +701,7 @@ void XAPlaySessionImpl::cbPlayItf(XAPlayItf /*caller*/,
 {
     switch(event) {
     case XA_PLAYEVENT_HEADATEND:
-        mParent.cbPlaybackStopped_EOS();
+        mParent.cbPlaybackStopped(KErrNone);
         break;
     case XA_PLAYEVENT_HEADATMARKER:
         break;
@@ -708,16 +774,17 @@ Qt::AspectRatioMode XAPlaySessionImpl::getAspectRatioMode()
 #ifdef USE_VIDEOPLAYERUTILITY
 void XAPlaySessionImpl::MvpuoOpenComplete(TInt aError)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
-    mVPError = aError;
+    TRACE_FUNCTION_ENTRY;
+    m_VPError = aError;
     if (mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->AsyncStop();
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoPrepareComplete(TInt aError)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
-    mVPError = aError;
+    TRACE_FUNCTION_ENTRY;
+    m_VPError = aError;
     if (mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->AsyncStop();
 
@@ -730,22 +797,24 @@ void XAPlaySessionImpl::MvpuoPrepareComplete(TInt aError)
         TRAP_IGNORE(mVideoPlayUtil->AddDisplayWindowL(*wssession, *(CCoeEnv::Static()->ScreenDevice()), *window, videoExtent, clipRect));
         TRAP_IGNORE(mVideoPlayUtil->SetAutoScaleL(*window, EAutoScaleBestFit));
     }
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoFrameReady(CFbsBitmap& /*aFrame*/,TInt /*aError*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoPlayComplete(TInt /*aError*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY;
     mParent.cbPlaybackStopped_EOS();
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoEvent(const TMMFEvent& /*aEvent*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY_EXIT;
 }
 
 #endif

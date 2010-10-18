@@ -49,14 +49,6 @@
 
 QT_USE_NAMESPACE
 
-#include <e32debug.h>
-#define SF_TRACE_FN_ENT_PRINT RDebug::Printf(">%s", __PRETTY_FUNCTION__)
-#define SF_TRACE_FN_EXT_PRINT RDebug::Printf("<%s", __PRETTY_FUNCTION__)
-#define SF_PRINT1_LOG(s) RDebug::Print(s)
-#define SF_PRINT2_LOG(s,a1) RDebug::Print(s,a1)
-#define SF_PRINT3_LOG(s,a1,a2) RDebug::Print(s,a1,a2)
-#define SF_PRINT4_LOG(s,a1,a2,a3) RDebug::Print(s,a1,a2,a3)
-
 class XARadioSessionImpl;
 
 class QXARadioSession : public QObject, public XARadioSessionImplObserver

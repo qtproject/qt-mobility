@@ -1309,7 +1309,7 @@ QMessageAccount convert(const QMailAccount &account)
     p->_id = convert(account.id());
     p->_name = account.name();
     p->_address = QMessageAddress(QMessageAddress::Email, address);
-    p->_types = QMessage::Email;
+    p->_types = convert(account.messageType());
 
     return result;
 }

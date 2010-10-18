@@ -9,8 +9,7 @@ HEADERS += \
     $$PWD/qxamediacontainercontrol.h \
     $$PWD/qxamediarecordercontrol.h \
     $$PWD/xarecordsessionimpl.h \
-    $$PWD/xarecordsessioncommon.h \
-    $$PWD/qxacommon.h
+    $$PWD/xarecordsessioncommon.h
 
 SOURCES += \
     $$PWD/qxarecordmediaservice.cpp \

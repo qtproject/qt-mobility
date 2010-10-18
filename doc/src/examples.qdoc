@@ -75,6 +75,9 @@
     \o \l{landmarkbrowser}{Landmark Browser}
     \o \l{mapviewer}{Map Viewer}
     \o \l{geoservicedemo}{Geo Service Demo}
+    \o \l{declarative-location/landmarkmap}{Landmark Map}
+    \o \l{declarative-location/flickr}{Declarative Location Flickr}
+    \o \l{declarative-location/mapviewer}{Declarative Map Viewer}
     \endlist
 
     \section2 Messaging
@@ -97,7 +100,8 @@
 
     \list
     \o \l{calendardemo}{Calendar Demo}
-    \o \l{timescape}{QML Time Scape Demo}
+    \o \l{qmlorganizer}{QML Organizer}
+    \o \l{todo}{ToDo Example}
     \endlist
 
     \section2 Publish and Subscribe

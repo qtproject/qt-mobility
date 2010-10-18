@@ -112,6 +112,31 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 }
 
 /*!
+    Sets the list of \a landmarks which will be removed.
+
+    \sa setLandmarkIds()
+*/
+void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
+{
+    Q_D(QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->landmarkIds.clear();
+    for (int i=0; i < landmarks.count(); ++i)
+        d->landmarkIds.append(landmarks.at(i).landmarkId());
+}
+
+/*!
+    Sets a single \a landmark to be removed.
+*/
+void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
+{
+    Q_D(QLandmarkRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->landmarkIds.clear();
+    d->landmarkIds.append(landmark.landmarkId());
+}
+
+/*!
     Returns the mapping of input landmark id list indices
     to the errors which occurred.
 */

@@ -51,7 +51,7 @@ Rectangle {
     property int landmarks
     property int categories
 
-    width: 120; height: 105
+    width: 180; height: 145
     opacity: 0.7
     border.color: "black"
     border.width: 1

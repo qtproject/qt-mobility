@@ -74,10 +74,12 @@ public:
     QVariant details(const QString& name);
     void setItem(const QOrganizerItem& item);
     QOrganizerItem item();
-    int localId() const;
+    uint localId() const;
+    uint itemId() const;
 
 
 private:
+    QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name);
     static void detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
     static QDeclarativeOrganizerItemDetail * detail_at(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, int idx);

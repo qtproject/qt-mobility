@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polygon object.
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject()
-        : d_ptr(new QGeoMapPolygonObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolygonObjectPrivate()) {}
 
 /*!
     Destroys this polygon object.

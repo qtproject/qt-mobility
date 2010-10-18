@@ -616,7 +616,7 @@ void tst_QContactAsync::contactFetch()
     QContactFetchRequest *cfr2 = new QContactFetchRequest();
     QPointer<QObject> obj(cfr2);
     cfr2->setManager(cm.data());
-    connect(cfr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    connect(cfr2, SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(cfr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..

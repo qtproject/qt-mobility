@@ -59,8 +59,7 @@ void RoutePresenter::show()
 
     QTreeWidgetItem* modesItem = new QTreeWidgetItem(requestTop);
     modesItem->setText(0, "modes");
-    showModes(modesItem, m_routeReply->request().routeOptimization(), m_routeReply->request().travelModes(),
-        m_routeReply->request().avoidFeatureTypes());
+    showModes(modesItem, m_routeReply->request(), m_routeReply->request().travelModes());
 
     QTreeWidgetItem* waypointsItem = new QTreeWidgetItem(requestTop);
     waypointsItem->setText(0, "waypoints");
@@ -109,7 +108,7 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 
     QTreeWidgetItem* modeItem = new QTreeWidgetItem(routeItem);
     modeItem->setText(0, "mode");
-    showModes(modeItem, route.request().routeOptimization(), route.travelMode(), route.request().avoidFeatureTypes());
+    showModes(modeItem, route.request(), route.travelMode());
 
     QTreeWidgetItem* distanceItem = new QTreeWidgetItem(routeItem);
     distanceItem->setText(0, "distance");
@@ -124,7 +123,13 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     wayPointsItem->setText(0, overviewLabel);
     showPoints(wayPointsItem, route.path());
 
-    QList<QGeoRouteSegment> segments = route.routeSegments();
+    QList<QGeoRouteSegment> segments;
+    QGeoRouteSegment segment = route.firstRouteSegment();
+    while (segment.isValid()) {
+        segments << segment;
+        segment = segment.nextRouteSegment();
+    }
+
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
     QString segmentsLabel = "segments";
     if (segments.length() > 100)
@@ -248,12 +253,14 @@ QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)
            QString().setNum(coord.longitude());
 }
 
-void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
-                               QGeoRouteRequest::TravelModes travelModes,
-                               QGeoRouteRequest::AvoidFeatureTypes avoid)
+void RoutePresenter::showModes(QTreeWidgetItem* top,
+                               const QGeoRouteRequest &request,
+                               QGeoRouteRequest::TravelModes travelModes)
 {
     QTreeWidgetItem* optimizationItem = new QTreeWidgetItem(top);
     optimizationItem->setText(0, "optimization");
+
+    QGeoRouteRequest::RouteOptimizations optimization = request.routeOptimization();
 
     if (optimization.testFlag(QGeoRouteRequest::ShortestRoute)) {
         QTreeWidgetItem* shortestRouteItem = new QTreeWidgetItem(optimizationItem);
@@ -296,44 +303,72 @@ void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOpti
         truckTravelItem->setText(1, "TruckTravel");
     }
 
-    QTreeWidgetItem* avoidItem = new QTreeWidgetItem(top);
-    avoidItem->setText(0, "avoid");
+    QTreeWidgetItem* featuresItem = new QTreeWidgetItem(top);
+    featuresItem->setText(0, "features");
 
-    if (avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
-        QTreeWidgetItem* nothingAvoidItem = new QTreeWidgetItem(avoidItem);
-        nothingAvoidItem->setText(1, "AvoidNothing");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidTolls)) {
-        QTreeWidgetItem* tollsAvoidItem = new QTreeWidgetItem(avoidItem);
-        tollsAvoidItem->setText(1, "AvoidTolls");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidHighways)) {
-        QTreeWidgetItem* highwaysAvoidItem = new QTreeWidgetItem(avoidItem);
-        highwaysAvoidItem->setText(1, "AvoidHighways");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidFerries)) {
-        QTreeWidgetItem* ferriesAvoidItem = new QTreeWidgetItem(avoidItem);
-        ferriesAvoidItem->setText(1, "AvoidFerries");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels)) {
-        QTreeWidgetItem* tunnelsAvoidItem = new QTreeWidgetItem(avoidItem);
-        tunnelsAvoidItem->setText(1, "AvoidTunnels");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads)) {
-        QTreeWidgetItem* dirtRoadsAvoidItem = new QTreeWidgetItem(avoidItem);
-        dirtRoadsAvoidItem->setText(1, "AvoidDirtRoads");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidPublicTransit)) {
-        QTreeWidgetItem* publicTransitAvoidItem = new QTreeWidgetItem(avoidItem);
-        publicTransitAvoidItem->setText(1, "AvoidPublicTransit");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
-        QTreeWidgetItem* parkAvoidItem = new QTreeWidgetItem(avoidItem);
-        parkAvoidItem->setText(1, "AvoidPark");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
-        QTreeWidgetItem* motorPoolLanesAvoidItem = new QTreeWidgetItem(avoidItem);
-        motorPoolLanesAvoidItem->setText(1, "AvoidMotorPoolLanes");
+    QList<QGeoRouteRequest::FeatureType> featureTypeList
+    = request.featureTypes();
+
+    for (int i = 0; i < featureTypeList.size(); ++i) {
+        QGeoRouteRequest::FeatureWeight weight
+        = request.featureWeight(featureTypeList.at(i));
+
+        if (weight == QGeoRouteRequest::NeutralFeatureWeight)
+            continue;
+
+        QString labelString = "";
+        switch (weight) {
+            case QGeoRouteRequest::PreferFeatureWeight:
+                labelString = "Prefer";
+                break;
+            case QGeoRouteRequest::AvoidFeatureWeight:
+                labelString = "Avoid";
+                break;
+            case QGeoRouteRequest::DisallowFeatureWeight:
+                labelString = "Disallow";
+                break;
+        }
+
+        if (labelString.isEmpty())
+            continue;
+
+        labelString += " ";
+
+        switch (featureTypeList.at(i)) {
+            case QGeoRouteRequest::TollFeature:
+                labelString += "tolls";
+                break;
+            case QGeoRouteRequest::HighwayFeature:
+                labelString += "highways";
+                break;
+            case QGeoRouteRequest::PublicTransitFeature:
+                labelString += "public transit";
+                break;
+            case QGeoRouteRequest::FerryFeature:
+                labelString += "ferries";
+                break;
+            case QGeoRouteRequest::TunnelFeature:
+                labelString += "tunnels";
+                break;
+            case QGeoRouteRequest::DirtRoadFeature:
+                labelString += "dirt roads";
+                break;
+            case QGeoRouteRequest::ParksFeature:
+                labelString += "parks";
+                break;
+            case QGeoRouteRequest::MotorPoolLaneFeature:
+                labelString += "motor pool lanes";
+                break;
+            default:
+                labelString = "";
+                break;
+        }
+
+        if (labelString.isEmpty())
+            continue;
+
+        QTreeWidgetItem* item = new QTreeWidgetItem(featuresItem);
+        item->setText(1, labelString);
     }
 }
 

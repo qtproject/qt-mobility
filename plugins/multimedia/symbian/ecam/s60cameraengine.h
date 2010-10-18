@@ -50,9 +50,13 @@
 
 // FORWARD DECLARATIONS
 class MCameraEngineObserver;
+class MCameraEngineImageCaptureObserver;
 class MAdvancedSettingsObserver;
 class MCameraViewfinderObserver;
 
+/*
+ * CameraEngine handling ECam operations needed.
+ */
 NONSHARABLE_CLASS( CCameraEngine ) : public CBase,
                                      public MCameraObserver,
                                      public MCameraObserver2
@@ -65,12 +69,11 @@ public: // Enums
 
     enum TCameraEngineState
     {
-        EEngineNotReady,        // No resources reserved
-        EEngineInitializing,    // Reserving and Powering On
-        EEngineIdle,            // Reseved and Powered On
-        EEngineViewFinding,     // ViewFinder Active
-        EEngineCapturing,       // Capturing Still Image
-        EEngineFocusing         // Focusing
+        EEngineNotReady = 0,    // 0 - No resources reserved
+        EEngineInitializing,    // 1 - Reserving and Powering On
+        EEngineIdle,            // 2 - Reseved and Powered On
+        EEngineCapturing,       // 3 - Capturing Still Image
+        EEngineFocusing         // 4 - Focusing
     };
 
 public: // Constructor & Destructor
@@ -85,17 +88,17 @@ public:
     /**
      * External Advanced Settings callback observer.
      */
-    void SetAdvancedObserver(MAdvancedSettingsObserver* aAdvancedSettingsObserver);
+    void SetAdvancedObserver(MAdvancedSettingsObserver *aAdvancedSettingsObserver);
 
     /**
      * External Image Capture callback observer.
      */
-    void SetImageCaptureObserver(MCameraEngineObserver* aImageCaptureObserver);
+    void SetImageCaptureObserver(MCameraEngineImageCaptureObserver *aImageCaptureObserver);
 
     /**
      * External Viewfinder callback observer.
      */
-    void SetViewfinderObserver(MCameraViewfinderObserver* aViewfinderObserver);
+    void SetViewfinderObserver(MCameraViewfinderObserver *aViewfinderObserver);
 
     /**
      * Static function that returns the number of cameras on the device.
@@ -103,13 +106,15 @@ public:
     static TInt CamerasAvailable();
 
     /**
+     * Returns the index of the currently active camera device
+     */
+    TInt currentCameraIndex() const { return iCameraHandle; }
+
+    /**
      * Returns the current state (TCameraEngineState)
      * of the camera engine.
      */
-    TCameraEngineState State() const
-        {
-        return iEngineState;
-        }
+    TCameraEngineState State() const { return iEngineState; }
 
     /**
      * Returns true if the camera has been reserved and
@@ -282,8 +287,7 @@ protected: // MCameraObserver
      * From MCameraObserver.
      * Video capture not implemented.
      */
-    virtual void FrameBufferReady( MFrameBuffer* /*aFrameBuffer*/,
-        TInt /*aError*/ ) {}
+    virtual void FrameBufferReady( MFrameBuffer* /*aFrameBuffer*/, TInt /*aError*/ ) {}
 
 protected: // MCameraObserver2
 
@@ -335,31 +339,30 @@ private:  // Internal functions
      * Internal function to handle ImageReady callbacks from
      * both observer (V1 & V2) interfaces
      */
-    void HandleImageReady( CFbsBitmap* aBitmap,
-        TDesC8* aData,
-        TInt aError );
+    void HandleImageReady(const TInt aError, const bool isBitmap);
 
 private:  // Data
 
-    CCamera                         *iCamera;
-    MCameraEngineObserver           *iObserver;
-    MCameraEngineObserver           *iImageCaptureObserver;
-    MAdvancedSettingsObserver       *iAdvancedSettingsObserver;
-    MCameraViewfinderObserver       *iViewfinderObserver;
-    MCameraBuffer                   *iViewFinderBuffer;
-    MCameraBuffer                   *iImageBuffer;
-    HBufC8                          *iImageData;
-    CFbsBitmap                      *iImageBitmap;
-    TInt                            iCameraHandle;
-    TInt                            iPriority;
-    TCameraEngineState              iEngineState;
-    TCameraInfo                     iCameraInfo;
+    CCamera                             *iCamera;
+    MCameraEngineObserver               *iObserver;
+    MCameraEngineImageCaptureObserver   *iImageCaptureObserver;
+    MAdvancedSettingsObserver           *iAdvancedSettingsObserver;
+    MCameraViewfinderObserver           *iViewfinderObserver;
+    MCameraBuffer                       *iViewFinderBuffer;
+    MCameraBuffer                       *iImageBuffer;
+    HBufC8                              *iImageData; // MCameraObserver
+    TDesC8                              *iImageData2; // MCameraObserver2
+    CFbsBitmap                          *iImageBitmap;
+    TInt                                iCameraHandle;
+    TInt                                iPriority;
+    TCameraEngineState                  iEngineState;
+    TCameraInfo                         iCameraInfo;
+    CCamera::TFormat                    iImageCaptureFormat;
+    bool                                iNew2LImplementation;
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
-    CCamAutoFocus*                  iAutoFocus;
-    CCamAutoFocus::TAutoFocusRange  iAFRange;
-#endif
-
-
+    CCamAutoFocus*                      iAutoFocus;
+    CCamAutoFocus::TAutoFocusRange      iAFRange;
+#endif // S60_CAM_AUTOFOCUS_SUPPORT
 };
 
 #endif // S60CCAMERAENGINE_H

@@ -48,6 +48,9 @@
 #include "qdeclarativelandmarkcategorymodel_p.h"
 
 #include "qgeomapobject.h"
+#include "qdeclarativegeoboundingbox_p.h"
+#include "qdeclarativegeoaddress_p.h"
+#include "qdeclarativegeoplace_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapobject_p.h"
@@ -87,6 +90,9 @@ public:
         qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 1, 1, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
         qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 1, 1, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
         qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
+        qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 1, 1, "BoundingBox");
+        qmlRegisterType<QDeclarativeGeoPlace>(uri, 1, 1, "Place");
+        qmlRegisterType<QDeclarativeGeoAddress>(uri, 1, 1, "Address");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");

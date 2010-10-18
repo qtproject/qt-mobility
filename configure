@@ -151,6 +151,7 @@ usage()
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
+    echo "-meego  ........... Build Qt Mobility for MeeGo."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
@@ -230,6 +231,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -maemo6)
             LINUX_TARGET=maemo6
+            ;;
+        -meego)
+            LINUX_TARGET=meego
             ;;
         -sdk)
             MAC_SDK="$2"
@@ -341,6 +345,8 @@ if [ -n "$LINUX_TARGET" ]; then
         echo "CONFIG+=maemo5" >> "$CONFIG_IN"
     elif [ "$LINUX_TARGET" = "maemo6" ]; then
         echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "meego" ]; then
+        echo "CONFIG+=meego" >> "$CONFIG_IN"
     fi
 fi
 
@@ -548,10 +554,15 @@ compileTest "Maemo5 contacts dependencies" maemo5-contacts
 compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
+compileTest "Blkid" blkid
+compileTest "Pulse Audio" pulseaudio
+compileTest "udev" udev
+
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
+    compileTest connman connman
 fi
 
 # It's a lot easier to make qmake do the dependency checking...

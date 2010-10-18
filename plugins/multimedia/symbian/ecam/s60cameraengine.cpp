@@ -51,13 +51,15 @@ CCameraEngine::CCameraEngine()
 CCameraEngine::CCameraEngine(TInt aCameraHandle, 
                              TInt aPriority, 
                              MCameraEngineObserver* aObserver) :
+    // CBase initializes member variables to NULL
     iObserver(aObserver),
-    iImageCaptureObserver(aObserver),
+    iImageCaptureObserver(NULL),
     iAdvancedSettingsObserver(NULL),
     iViewfinderObserver(NULL),
     iCameraHandle(aCameraHandle),
     iPriority(aPriority),
-    iEngineState(EEngineNotReady)
+    iEngineState(EEngineNotReady),
+    iNew2LImplementation(false)
 {
 }
 
@@ -66,14 +68,21 @@ CCameraEngine::~CCameraEngine()
     StopViewFinder();
     ReleaseViewFinderBuffer();  // Releases iViewFinderBuffer
     ReleaseImageBuffer();       // Releases iImageBuffer + iImageBitmap, deletes iImageData
-    delete iImageBitmap;
+
+    if (iImageBitmap) {
+        if (!iNew2LImplementation) {
+            delete iImageBitmap;
+            iImageBitmap = NULL;
+        }
+    }
+
     iAdvancedSettingsObserver = NULL;
     iImageCaptureObserver = NULL;
     iViewfinderObserver = NULL;
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT   
     delete iAutoFocus;
-#endif
+#endif // S60_CAM_AUTOFOCUS_SUPPORT
 
     if (iCamera) {
         iCamera->Release();
@@ -111,8 +120,10 @@ void CCameraEngine::ConstructL()
 
 #ifdef S60_31_PLATFORM
     // Construct CCamera object for S60 3.1 (NewL)
+    iNew2LImplementation = false;
     TRAP(err, iCamera = CCamera::NewL(*this, iCameraHandle));
 #else // For S60 3.2 onwards - use this constructor (New2L)
+    iNew2LImplementation = true;
     TRAP(err, iCamera = CCamera::New2L(*this, iCameraHandle, iPriority));
 #endif // S60_31_PLATFORM
 
@@ -123,7 +134,10 @@ void CCameraEngine::ConstructL()
     if (iCamera == NULL)
         User::Leave(KErrNoMemory);
 
-    iImageBitmap = new (ELeave) CFbsBitmap;
+    // Create BitMap for Captured Image bitmaps (NewL version)
+    if (!iNew2LImplementation)
+        iImageBitmap = new (ELeave) CFbsBitmap;
+
     iCamera->CameraInfo(iCameraInfo);
 }
 
@@ -132,7 +146,7 @@ void CCameraEngine::SetAdvancedObserver(MAdvancedSettingsObserver* aAdvancedSett
     iAdvancedSettingsObserver = aAdvancedSettingsObserver;
 }
 
-void CCameraEngine::SetImageCaptureObserver(MCameraEngineObserver* aImageCaptureObserver)
+void CCameraEngine::SetImageCaptureObserver(MCameraEngineImageCaptureObserver* aImageCaptureObserver)
 {
     iImageCaptureObserver = aImageCaptureObserver;
 }
@@ -164,7 +178,7 @@ void CCameraEngine::ReleaseAndPowerOff()
 
 void CCameraEngine::StartViewFinderL(TSize& aSize)
 {
-    if (iEngineState != EEngineIdle) {
+    if (iEngineState < EEngineIdle) {
         User::Leave(KErrNotReady);
     }
 
@@ -175,14 +189,12 @@ void CCameraEngine::StartViewFinderL(TSize& aSize)
     if (!iCamera->ViewFinderActive()) {
         iCamera->StartViewFinderBitmapsL(aSize);
     }
-    iEngineState = EEngineViewFinding;
 }
 
 void CCameraEngine::StopViewFinder()
 {
     if (iCamera && iCamera->ViewFinderActive()) {
         iCamera->StopViewFinder();
-        iEngineState = EEngineIdle;
     }
 }
 
@@ -191,7 +203,7 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             RWindowBase& aWindow,
                             TRect& aSize)
 {
-    if (iEngineState != EEngineIdle) {
+    if (iEngineState < EEngineIdle) {
         User::Leave(KErrNotReady);
     }
 
@@ -202,11 +214,12 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
     if (!iCamera->ViewFinderActive()) {
         iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
     }
-    iEngineState = EEngineViewFinding;
 }
 
 void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
 {
+    iImageCaptureFormat = aFormat;
+
     TInt closestVar = KMaxTInt, selected = 0;
     TSize size;
 
@@ -226,6 +239,7 @@ void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
             selected = index;
         }
     }
+
     iCamera->EnumerateCaptureSizes(aCaptureSize, selected, aFormat);
     iCamera->PrepareImageCaptureL(aFormat, selected);
 }
@@ -242,6 +256,7 @@ void CCameraEngine::CaptureL()
 void CCameraEngine::cancelCapture()
 {
     iCamera->CancelCaptureImage();
+    iEngineState = EEngineIdle;
 }
 
 void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
@@ -261,7 +276,7 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
     if (iAdvancedSettingsObserver)
         iAdvancedSettingsObserver->HandleAdvancedEvent(aEvent);
 
-    iObserver->MceoHandleOtherEvent(aEvent);
+    iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
 #endif // !Q_CC_NOKIAX86
 
 }
@@ -309,8 +324,9 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
     iViewFinderBuffer = &aCameraBuffer;
 
     if (aError == KErrNone) {
-        // Let's trust this does not leave as aError == KErrNone
-        iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0));
+        TRAPD(err, iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0)));
+        if (err)
+            iObserver->MceoHandleError(EErrViewFinderReady, err);
     }
     else {
         iObserver->MceoHandleError(EErrViewFinderReady, aError);
@@ -330,84 +346,153 @@ void CCameraEngine::ReleaseViewFinderBuffer()
 {
     if (iViewFinderBuffer) {
         iViewFinderBuffer->Release();
-        iViewFinderBuffer = 0;
+        iViewFinderBuffer = NULL;
     }
 }
 
 void CCameraEngine::ReleaseImageBuffer()
 {
+    // Reset ImageBuffer
     if (iImageBuffer) {
         iImageBuffer->Release();
-        iImageBuffer = 0;
+        iImageBuffer = NULL;
     }
 
+    // Reset Bitmap
     if (iImageBitmap) {
-        iImageBitmap->Reset();
+        if (iImageBitmap->Handle() != 0) {
+            iImageBitmap->Reset(); // Delete Handle to Bitmap
+        }
     }
 
-    delete iImageData;
-    iImageData = 0;
+    // Reset Data pointers
+    iImageData = NULL;
+    iImageData2 = NULL;
 }
 
 /*
  * MCameraObserver2
- * Captured image is ready
+ * Captured image is ready (New2L version)
  */
 void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
 {
-    CFbsBitmap* bitmap = 0;
-    TDesC8* data = 0;
 
     iImageBuffer = &aCameraBuffer;
+    bool isBitmap = true;
+    TInt err = KErrNone;
 
-    // Ignore leaves here, trust that aError is set correctly
-    // TODO Can we trust?
-    TRAP_IGNORE( bitmap = &aCameraBuffer.BitmapL(0) );
-    TRAP_IGNORE( data = aCameraBuffer.DataL(0) );
+    switch (iImageCaptureFormat) {
+        case CCamera::EFormatFbsBitmapColor4K:
+        case CCamera::EFormatFbsBitmapColor64K:
+        case CCamera::EFormatFbsBitmapColor16M:
+        case CCamera::EFormatFbsBitmapColor16MU:
+            TRAP(err, iImageBitmap = &iImageBuffer->BitmapL(0));
+            if (err) {
+                if (iImageCaptureObserver)
+                    iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+            }
+            isBitmap = true;
+            break;
+        case CCamera::EFormatExif:
+            TRAP(err, iImageData2 = iImageBuffer->DataL(0));
+            if (err) {
+                if (iImageCaptureObserver)
+                    iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+            }
+            isBitmap = false;
+            break;
 
-    HandleImageReady(bitmap, data, aError);
+        default:
+            if (iImageCaptureObserver)
+                iImageCaptureObserver->MceoHandleError(EErrImageReady, KErrNotSupported);
+            return;
+    }
+
+
+    // Handle captured image
+    HandleImageReady(aError, isBitmap);
 }
 
 /*
  * MCameraObserver
- * Captured image is ready
+ * Captured image is ready (NewL version)
  */
 void CCameraEngine::ImageReady(CFbsBitmap* aBitmap, HBufC8* aData, TInt aError)
 {
-    if (aBitmap) {
-        iImageBitmap->Duplicate(aBitmap->Handle());
-        delete aBitmap; // Delete original
-    }
-    else
-        iImageData = aData;
+    bool isBitmap = true;
 
-    HandleImageReady(iImageBitmap, aData, aError);
+    switch (iImageCaptureFormat) {
+        case CCamera::EFormatFbsBitmapColor4K:
+        case CCamera::EFormatFbsBitmapColor64K:
+        case CCamera::EFormatFbsBitmapColor16M:
+        case CCamera::EFormatFbsBitmapColor16MU:
+            // Duplicate Bitmap (set Handle to the Captured Image)
+            if (iImageBitmap) {
+                iImageBitmap->Duplicate(aBitmap->Handle());
+                delete aBitmap; // Delete original
+            } else {
+                if (iImageCaptureObserver)
+                    iImageCaptureObserver->MceoHandleError(EErrImageReady, KErrGeneral);
+            }
+            isBitmap = true;
+            break;
+        case CCamera::EFormatExif:
+            iImageData = aData;
+            isBitmap = false;
+            break;
+
+        default:
+            if (iImageCaptureObserver)
+                iImageCaptureObserver->MceoHandleError(EErrImageReady, KErrNotSupported);
+            return;
+    }
+
+    // Handle captured image
+    HandleImageReady(aError, isBitmap);
 }
 
-void CCameraEngine::HandleImageReady(CFbsBitmap* aBitmap, TDesC8* aData, TInt aError)
+void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
 {
     iEngineState = EEngineIdle;
 
     if (aError == KErrNone) {
-        if (aData) {
-            iImageCaptureObserver->MceoCapturedDataReady(aData);
-        }
-        else if (aBitmap) {
-            iImageCaptureObserver->MceoCapturedBitmapReady(aBitmap);
+        if (isBitmap)
+            if (iImageCaptureObserver) {
+                iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap);
+            }
+            else
+                ReleaseImageBuffer();
+        else {
+            if (iNew2LImplementation) {
+                if (iImageCaptureObserver) {
+                    iImageCaptureObserver->MceoCapturedDataReady(iImageData2);
+                }
+                else
+                    ReleaseImageBuffer();
+            } else {
+                if (iImageCaptureObserver) {
+                    iImageCaptureObserver->MceoCapturedDataReady(iImageData);
+                }
+                else
+                    ReleaseImageBuffer();
+            }
         }
     } else {
-        iImageCaptureObserver->MceoHandleError(EErrImageReady, aError);
+        if (iImageCaptureObserver)
+            iImageCaptureObserver->MceoHandleError(EErrImageReady, aError);
     }
 }
 
 //=============================================================================
 // S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)
 //=============================================================================
+// TODO: Set 1 common ifdef for all 3.1 autofocus functions?
 
 void CCameraEngine::InitComplete(TInt aError)
 {
     if (aError) {
-        iImageCaptureObserver->MceoHandleError(EErrAutoFocusInit, aError);
+        if (iImageCaptureObserver)
+            iImageCaptureObserver->MceoHandleError(EErrAutoFocusInit, aError);
     }
 }
 
@@ -416,16 +501,18 @@ void CCameraEngine::OptimisedFocusComplete(TInt aError)
     iEngineState = EEngineIdle;
 
     if (aError == KErrNone)
-        iImageCaptureObserver->MceoFocusComplete();
+        if (iImageCaptureObserver)
+            iImageCaptureObserver->MceoFocusComplete();
     else {
-        iImageCaptureObserver->MceoHandleError(EErrOptimisedFocusComplete, aError);
+        if (iImageCaptureObserver)
+            iImageCaptureObserver->MceoHandleError(EErrOptimisedFocusComplete, aError);
     }
 }
 
 TBool CCameraEngine::IsCameraReady() const
 {
     // If reserved and powered on, but not focusing or capturing
-    if (iEngineState == EEngineIdle || iEngineState == EEngineViewFinding)
+    if (iEngineState == EEngineIdle)
         return ETrue;
 
     return EFalse;
@@ -465,7 +552,7 @@ TBool CCameraEngine::IsAutoFocusSupported() const
  */
 void CCameraEngine::StartFocusL()
 {
-    if (iEngineState != EEngineIdle && iEngineState != EEngineViewFinding) {
+    if (iEngineState != EEngineIdle) {
         return;
     }
 
@@ -534,7 +621,8 @@ void CCameraEngine::SetFocusRange(TInt aFocusRange)
 
 #else // Q_CC_NOKIAX86 // Emulator
     Q_UNUSED(aFocusRange);
-    iImageCaptureObserver->MceoHandleError(EErrAutoFocusRange, KErrNotSupported);
+    if (iImageCaptureObserver)
+        iImageCaptureObserver->MceoHandleError(EErrAutoFocusRange, KErrNotSupported);
 #endif // !Q_CC_NOKIAX86
 }
 
