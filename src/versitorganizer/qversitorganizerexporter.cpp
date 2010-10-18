@@ -120,6 +120,15 @@ QTM_USE_NAMESPACE
   QVersitOrganizerExporter.
 */
 
+/*!
+  \enum QVersitOrganizerExporter::Error
+  This enum specifies an error that occurred during the most recent call to exportItems()
+  \value NoError The most recent operation was successful
+  \value EmptyOrganizerError One of the organizer items was empty
+  \value UnknownComponentTypeError One of the components in the iCalendar file is not supported
+  \value UnderspecifiedOccurrenceError An event or todo exception was found which did not specify both its parent and a specifier for which instance to override
+  */
+
 /*! Constructs a new exporter */
 QVersitOrganizerExporter::QVersitOrganizerExporter()
     : d(new QVersitOrganizerExporterPrivate)
@@ -203,16 +212,13 @@ QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errorMap() 
 }
 
 /*!
- * \preliminary
  * Sets \a handler to be the handler for processing QOrganizerItemDetails, or 0 to have no handler.
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
  * the lifetime of the exporter.
  *
- * Only one detail handler can be set.  If another detail handler (of any version) was
- * previously set, it will no longer be associated with the exporter.
- *
- * NOTE: Detail handlers for organizer items have not been implemented yet.
+ * Only one detail handler can be set.  If another detail handler was previously set, it will no
+ * longer be associated with the exporter.
  */
 void QVersitOrganizerExporter::setDetailHandler(QVersitOrganizerExporterDetailHandler* handler)
 {

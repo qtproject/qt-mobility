@@ -72,6 +72,7 @@ QVersitOrganizerPluginLoader* QVersitOrganizerPluginLoader::mInstance = NULL;
 
 /*!
  * \class QVersitOrganizerPluginLoader
+ * \internal
  * This is a singleton class that loads Versit plugins for organizer item processing
  */
 

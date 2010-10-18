@@ -109,6 +109,14 @@ QTM_USE_NAMESPACE
   QVersitOrganizerImporter.
 */
 
+/*!
+  \enum QVersitOrganizerImporter::Error
+  This enum specifies an error that occurred during the most recent call to importDocuments()
+  \value NoError The most recent operation was successful
+  \value InvalidDocumentError One of the documents is not an iCalendar file
+  \value EmptyDocumentError One of the documents is empty
+  */
+
 /*! Constructs a new importer */
 QVersitOrganizerImporter::QVersitOrganizerImporter()
     : d(new QVersitOrganizerImporterPrivate)
@@ -207,6 +215,9 @@ QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errorMap() 
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
  * the lifetime of the importer.
+ *
+ * Only one property handler can be set.  If another property handler was previously set, it will no
+ * longer be associated with the importer.
  */
 void QVersitOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler)
 {
