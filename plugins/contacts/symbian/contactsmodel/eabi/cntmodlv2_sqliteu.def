@@ -704,4 +704,4 @@ EXPORTS
 	_ZN16CContactDatabase9CreateV2LENS_13TThreadAccessE @ 703 NONAME
 	_ZN16CContactDatabase19AddContactsToGroupLER6RArrayIlEl @ 704 NONAME
 	_ZN16CContactDatabase24RemoveContactsFromGroupLER6RArrayIlEl @ 705 NONAME
-
+	_ZN16CContactDatabase17DeleteContactsV2LERK15CContactIdArray @ 706 NONAME
