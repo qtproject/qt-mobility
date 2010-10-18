@@ -97,6 +97,10 @@
     Various map objects can be added to the map.  These map objects are 
     specified in terms of coordinates and metres.
 
+    \note At the time of the Qt Mobility 1.1 release the QML support for 
+    the Maps and Navigation API is incomplete and likely to be refined and 
+    improved in the next patch release.
+
     \section2 Map Elements
     
     \annotatedlist qml-location-maps
