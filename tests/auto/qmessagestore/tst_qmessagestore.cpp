@@ -586,13 +586,24 @@ void tst_QMessageStore::testMessage()
 
     int originalCount = manager->countMessages();
 
+#if defined(FREESTYLENMAILUSED)
+    QEventLoop eventLoop;
+    connect(manager, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), &eventLoop, SLOT(quit()));
+#endif    
+    
     // Test message addition
     QMessageId messageId(Support::addMessage(p));
+#if defined(FREESTYLENMAILUSED)
+    // Wait until messageAdded signal quits eventLoop or until
+    // 5 seconds timout is reached.
+    QTimer::singleShot(5000, &eventLoop, SLOT(quit())); // 5 seconds timeout
+    eventLoop.exec();
+#endif    
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
     QCOMPARE(manager->countMessages(), originalCount + 1);
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(FREESTYLENMAILUSED)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     // Wait 1 second to make sure that there is
     // enough time to get add signal
     {
