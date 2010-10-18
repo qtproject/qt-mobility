@@ -59,11 +59,12 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackTestPlugin : public QObject, public QFeedbackHapticsInterface, public QFeedbackFileInterface
+class QFeedbackTestPlugin : public QObject, public QFeedbackHapticsInterface, public QFeedbackFileInterface, public QFeedbackThemeInterface
 {
     Q_OBJECT
     Q_INTERFACES(QTM_NAMESPACE::QFeedbackHapticsInterface)
     Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackThemeInterface)
 public:
     QFeedbackTestPlugin();
     virtual ~QFeedbackTestPlugin();
@@ -87,8 +88,16 @@ public:
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect *);
     virtual QStringList supportedMimeTypes();
+
+    // For themes
+    virtual bool play(QFeedbackEffect::ThemeEffect);
+
 private:
     QList<QFeedbackActuator*> actuators_;
+
+    // Our hacky state
+    QFeedbackEffect::State mHapticState;
+    QFeedbackEffect::State mFileState;
 };
 
 
