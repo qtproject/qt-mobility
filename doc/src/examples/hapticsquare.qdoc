@@ -47,7 +47,7 @@
 
 /*!
     \example hapticsquare
-    \title Hapticsquare Example
+    \title Haptic Square Example
 
     \section1 Overview
 
@@ -158,9 +158,9 @@
 
     \snippet examples/hapticsquare/dialog.cpp 3
 
-    With the \c m_rumble, we only have to call \l{QFeedbackEffect::}{play()}. It
+    With the \c m_rumble, we only have to call \l{QFeedbackEffect::}{start()}. It
     will stop when the effect has finished, and can be played again by calling
-    \l{QFeedbackEffect::}{play()} again.
+    \l{QFeedbackEffect::}{start()} again.
 
     The periodic \c m_ocean effect is started the same way as the \c m_rumble
     effect, but must be stopped with the \l{QFeedbackEffect::}{stop()} function.
