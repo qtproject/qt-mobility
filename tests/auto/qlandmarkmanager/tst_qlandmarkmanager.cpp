@@ -97,34 +97,34 @@
 #endif
 
 //defines to turn on and off tests for symbian
-//#define INVALID_MANAGER
-//#define RETRIEVE_CATEGORY
-//#define RETRIEVE_LANDMARK
-//#define SAVE_CATEGORY
-//#define SIMPLE_SAVE_LANDMARK
-//#define SAVE_LANDMARK
-//#define SAVE_MULTIPLE_LANDMARKS
-//#define REMOVE_CATEGORY
-//#define REMOVE_LANDMARK
-//#define GET_ALL_CATEGORIES
-//#define FILTER_DEFAULT
-//#define FILTER_NAME
-//#define FILTER_ID
-//#define FILTER_PROXIMITY
-//#define FILTER_CATEGORY
-//#define FILTER_BOX
-//#define FILTER_INTERSECTION
-//#define FILTER_MULTIBOX
-//#define FILTER_UNION
-//#define FILTER_ATTRIBUTE
-//#define SORT_LANDMARKS
-//#define LANDMARK_FETCH_CANCEL
-//#define IMPORT_GPX
-//#define IMPORT_LMX
-//#define IMPORT_FILE
-//#define EXPORT_LMX
-//#define WAIT_FOR_FINISHED
-//#define MISC
+#define INVALID_MANAGER
+#define RETRIEVE_CATEGORY
+#define RETRIEVE_LANDMARK
+#define SAVE_CATEGORY
+#define SIMPLE_SAVE_LANDMARK
+#define SAVE_LANDMARK
+#define SAVE_MULTIPLE_LANDMARKS
+#define REMOVE_CATEGORY
+#define REMOVE_LANDMARK
+#define GET_ALL_CATEGORIES
+#define FILTER_DEFAULT
+#define FILTER_NAME
+#define FILTER_ID
+#define FILTER_PROXIMITY
+#define FILTER_CATEGORY
+#define FILTER_BOX
+#define FILTER_INTERSECTION
+#define FILTER_MULTIBOX
+#define FILTER_UNION
+#define FILTER_ATTRIBUTE
+#define SORT_LANDMARKS
+#define LANDMARK_FETCH_CANCEL
+#define IMPORT_GPX
+#define IMPORT_LMX
+#define IMPORT_FILE
+#define EXPORT_LMX
+#define WAIT_FOR_FINISHED
+#define MISC
 #define TEST_SIGNALS
 
 //#define WORKAROUND
@@ -157,6 +157,7 @@ public slots:
     void categoriesAdded(const QList<QLandmarkCategoryId>){}
     void categoriesChanged(const QList<QLandmarkCategoryId>){}
     void categoriesRemoved(const QList<QLandmarkCategoryId>){}
+    void dataChanged(){}
 };
 
 class tst_QLandmarkManager : public QObject
@@ -799,6 +800,7 @@ private:
                 m_listener,SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
         connect(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
                 m_listener, SLOT(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        connect(m_manager, SIGNAL(dataChanged()),m_listener, SLOT(dataChanged()));
      }
 
       void disconnectNotifications() {
@@ -816,6 +818,8 @@ private:
                 m_listener,SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
         disconnect(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
                 m_listener, SLOT(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        disconnect(m_manager, SIGNAL(dataChanged()),
+                m_listener, SLOT(dataChanged()));
      }
 
     void createDb() {
@@ -5955,19 +5959,13 @@ void tst_QLandmarkManager::importGpx() {
         landmarks.last().setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
-    QTest::qWait(10);
+    QTest::qWait(100);
 
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
 
     QList<QLandmarkId> ids;
-
-
     QCOMPARE(spyAdd.count(), 0);
-
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1749: We should be getting a data changed signal for the import operation", Continue);
-#endif
     QCOMPARE(dataChanged.count(),1);
 
     spyAdd.clear();
@@ -5990,6 +5988,9 @@ void tst_QLandmarkManager::importGpx() {
         retrievedFirst.setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "MOBILITY-1772: on symbian import of gpx files does not assign radii 0.0 to landmarks",Continue);
+#endif
     QCOMPARE(lmFirst, retrievedFirst);
 
     QLandmark lmLast;
@@ -6008,6 +6009,7 @@ void tst_QLandmarkManager::importGpx() {
     }
 
     QCOMPARE(lmLast, retrievedLast);
+    QCOMPARE(lmLast.coordinate(), retrievedLast.coordinate());
 
     if (type == "sync") {
         QVERIFY(m_manager->importLandmarks(prefix + "data/test.gpx", QLandmarkManager::Gpx));
@@ -6050,7 +6052,8 @@ void tst_QLandmarkManager::importGpx() {
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(spyAdd.count(), 0);
 
-    QEXPECT_FAIL("", "MOBILITY-1749: We should be getting a data changed signal for the import operation", Continue);
+    if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") //WORKAROUND
+        QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
     QCOMPARE(dataChanged.count(),1);
 #else
     QCOMPARE(spyAdd.count(), 1);
@@ -6266,8 +6269,6 @@ void tst_QLandmarkManager::importLmx() {
 
     QTest::qWait(10);
 #ifdef Q_OS_SYMBIAN
-#ifdef WORKAROUND
-#else
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 0);
@@ -6279,13 +6280,10 @@ void tst_QLandmarkManager::importLmx() {
             QCOMPARE(spyCatAdd.count(), 1);
         }
 
-#ifdef Q_OS_SYMBIAN
-        if (type != "sync" && type != "async")
-            QEXPECT_FAIL("", "MOBILITY-1749: We should be getting a data changed signal for the import operation", Continue);
-#endif
+        if (type == "asyncAttachSingleCategory") //WORKAROUND
+            QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
         QCOMPARE(spyDataChanged.count(), 1);
         spyDataChanged.clear();
-#endif
 #else
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
@@ -6435,7 +6433,6 @@ void tst_QLandmarkManager::importLmx_data() {
 #endif
 
 #ifdef IMPORT_FILE
-//CURRENTLY FAILS ON SYMBIAN
 void tst_QLandmarkManager::importFile()
 {
     QString prefix;
@@ -6476,7 +6473,11 @@ void tst_QLandmarkManager::importFile()
     QCOMPARE(m_manager->categories().count(), originalCategoryCount);
 
     //try an invalid file
+#ifdef Q_OS_SYMBIAN
+    doImport(type, prefix + "data/garbage.xml", QLandmarkManager::NotSupportedError);
+#else
     doImport(type, prefix + "data/garbage.xml", QLandmarkManager::ParsingError);
+#endif
     QCOMPARE(m_manager->landmarks().count(), 0);
     QCOMPARE(m_manager->categories().count(), originalCategoryCount);
 }
@@ -6833,7 +6834,9 @@ void tst_QLandmarkManager::exportLmx() {
 
         lm2New.setLandmarkId(QLandmarkId());
         lm2.setLandmarkId(QLandmarkId());
-
+#ifdef Q_OS_SYMBIAN
+        QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
+#endif
         QCOMPARE(lm2New, lm2);
     }
 
@@ -6847,8 +6850,14 @@ void tst_QLandmarkManager::exportLmx() {
     lm1.setCategoryIds(QList<QLandmarkCategoryId>());
     lm3New.setCategoryIds(QList<QLandmarkCategoryId>());
     lm3.setCategoryIds(QList<QLandmarkCategoryId>());
-
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
+#endif
     QCOMPARE(lm1New, lm1);
+
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
+#endif
     QCOMPARE(lm3New, lm3);
 
 #ifndef Q_OS_SYMBIAN
@@ -7774,6 +7783,9 @@ void tst_QLandmarkManager::testSignals()
     //symbian should give a datachanged signal for this small file
     //sqlite backend won't, todo:equivalent test for sqlite backend.
     QLandmarkManager manager2;
+    ManagerListener listener2;
+    QObject::connect(&manager2, SIGNAL(dataChanged()), &listener2,SLOT(dataChanged()));
+
     QSignalSpy spyAdd2(&manager2, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
     QSignalSpy spyChange2(&manager2, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
     QSignalSpy spyRemove2(&manager2, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
@@ -7791,7 +7803,6 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatAdd2.count(), 0);
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
-    QEXPECT_FAIL("", "MOBILITY-1746, Not getting dataChanged signal from another manager instance importing landmarks", Continue);
     QCOMPARE(spyDataChanged2.count(), 1);
     spyDataChanged2.clear();
 
@@ -7806,22 +7817,21 @@ void tst_QLandmarkManager::testSignals()
     m_manager->saveLandmarks(&lms);
     QTest::qWait(10);
 
-    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
-    QCOMPARE(spyAdd2.count(), 1);
+    QCOMPARE(spyAdd2.count(), 2); //we receive two signals separate signals because
+                                  //they're from another client(we'd receive 1 signal 2 ids for the same client)
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
     QCOMPARE(spyCatAdd2.count(), 0);
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
+    spyAdd2.clear();
 
     QLandmark lmGamma;
     lmGamma.setName("lmGamma");
     QVERIFY(m_manager->saveLandmark(&lmGamma));
     QTest::qWait(10);
 
-    //try saving a sinlge landmark in another instance
-    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are modified", Continue);
     QCOMPARE(spyAdd2.count(),1);
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
@@ -7829,8 +7839,6 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
-
-
 #endif
 }
 #endif
