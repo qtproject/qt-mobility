@@ -70,8 +70,6 @@ public:
     bool isAllDay() const;
 
     void setRecurrenceDate(const QDate& rdate);
-    QDate recurrenceDate() const;
-
     void setRecurrenceDates(const QSet<QDate>& rdates);
     QSet<QDate> recurrenceDates() const;
 
