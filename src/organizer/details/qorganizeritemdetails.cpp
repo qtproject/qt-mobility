@@ -212,6 +212,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerEventTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the event to \a isAllDay.
+    If the event is an all-day event, no time is considered to be
+    specified for the event, even if a start or end date time set
+    for the event has a time component.
+ */
+
+/*!
+    \fn QOrganizerEventTime::isAllDay() const
+    Returns true if a specific time was specified for the event.
+    Returns false if the event is an all-day event.
+ */
+
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
@@ -616,7 +630,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 /*!
-   Returns a list of recurrence dates.
+   Returns the set of recurrence dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 {
@@ -624,7 +638,7 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 }
 
 /*!
-   Sets a list of recurrence dates to \a rdates.
+   Sets the set of recurrence dates to \a rdates.
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 {
@@ -632,21 +646,21 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*!
-   Returns a list of exception rules.
+   Returns the set of exception rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
     return variantValue(FieldExceptionRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 /*!
-   Sets a list of exception rules to \a xrules.
+   Sets the set of exception rules to \a xrules.
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
 /*!
-   Returns a list of recurrence rules.
+   Returns the set of recurrence rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
@@ -655,14 +669,14 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 
 
 /*!
-   Sets a list of recurrence rules to \a rrules.
+   Sets the set of recurrence rules to \a rrules.
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
 /*!
-   Returns a list of exception dates.
+   Returns the set of exception dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 {
@@ -670,7 +684,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   Sets a list of exception dates to \a exdates.
+   Sets the set of exception dates to \a xdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -1235,7 +1249,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isAllDay() const
+    \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the todo to \a isAllDay.
+    If the event is an all-day todo, no time is considered to be
+    specified for the todo, even if the start date time set
+    for the todo has a time component.
+ */
+
+/*!
+    \fn QOrganizerTodoTime::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

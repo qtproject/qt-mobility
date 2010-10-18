@@ -107,11 +107,8 @@ todo, or note which is stored in a platform-specific manner.  Information
 pertaining to a single item may be located across several different datastores.
 
 Each item stored in a manager is identified by an \l{QOrganizerItemId}{id}
-which consists of a manager identifier (URI) and the
-\l{QOrganizerItemLocalId}{manager-local id} which is used to identify the item
-within that manager.  Note that an item stored in one manager may have the
-same local id as a different item stored in another manager; please see the
-QOrganizerItemId documentation for more information.
+which consists of a manager identifier (URI) and the manager-specific data
+which is used to identify the item within that manager.
 
 \section3 \bold{Detail}
 
@@ -228,9 +225,10 @@ applications that the asynchronous API be used where possible.
 
 The asynchronous API is offered through various classes derived from the
 QOrganizerAbstractRequest class, including
-QOrganizerItemLocalIdFetchRequest, QOrganizerItemFetchRequest,
+QOrganizerItemIdFetchRequest, QOrganizerItemFetchRequest,
+QOrganizerItemFetchForExportRequest,
 QOrganizerItemSaveRequest, QOrganizerItemRemoveRequest,
-QOrganizerCollectionLocalIdFetchRequest, QOrganizerCollectionFetchRequest,
+QOrganizerCollectionIdFetchRequest, QOrganizerCollectionFetchRequest,
 QOrganizerCollectionRemoveRequest, QOrganizerCollectionSaveRequest,
 QOrganizerItemDetailDefinitionFetchRequest,
 QOrganizerItemDetailDefinitionSaveRequest, and

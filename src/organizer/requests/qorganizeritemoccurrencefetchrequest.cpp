@@ -99,6 +99,9 @@ void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
     d->m_maxOccurrences = maxCount;
 }
 
+/*! Sets the fetch hint which the manager can use to optimize occurrence retrieval to \a hint.
+    The fetch hint may be ignored by the manager, in which case each occurrence will include
+    all available information. */
 void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
