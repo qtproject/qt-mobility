@@ -63,6 +63,7 @@ private slots:
     void details();
     void displayLabel();
     void description();
+    void comments();
     void type();
     void emptiness();
     void idLessThan();
@@ -412,6 +413,11 @@ void tst_QOrganizerItem::displayLabel()
     QVERIFY(oi.isEmpty() == false);
     QVERIFY(oi.details().count() == 2); // it should not be removed!
 
+    QOrganizerItemDisplayLabel displayLabel;
+    displayLabel.setLabel("test label");
+    oi.setDisplayLabel(displayLabel);
+    QVERIFY(oi.displayLabel() == displayLabel.label());
+
     /* Test self assign */
     oi.operator =(oi);
     QVERIFY(oi.details().count() == 2);
@@ -434,6 +440,50 @@ void tst_QOrganizerItem::description()
     QVERIFY(!oi.removeDetail(&old)); // should fail.
     QVERIFY(oi.isEmpty() == false);
     QVERIFY(oi.details().count() == 2); // it should not be removed!
+
+    QOrganizerItemDescription descr;
+    descr.setDescription("test description");
+    oi.setDescription(descr);
+    QVERIFY(oi.description() == descr.description());
+
+    /* Test self assign */
+    oi.operator =(oi);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.isEmpty() == false);
+}
+
+void tst_QOrganizerItem::comments()
+{
+    QOrganizerItem oi;
+
+    QStringList comments = oi.comments();
+    QVERIFY(comments.isEmpty());
+    oi.addComment("test comment");
+    QCOMPARE(oi.comments().size(), 1);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.comments().at(0) == QString("test comment"));
+    oi.addComment("another test comment");
+    QCOMPARE(oi.comments().size(), 2);
+    QVERIFY(oi.details().count() == 3);
+    QVERIFY(oi.comments().contains(QString("test comment")));
+    QVERIFY(oi.comments().contains(QString("another test comment")));
+
+    oi.clearComments();
+    QVERIFY(oi.comments().size() == 0);
+    QVERIFY(oi.details().count() == 1); // should have a type detail left.
+
+    QOrganizerItemComment comment;
+    comment.setComment("yet another test comment");
+    oi.saveDetail(&comment);
+    QCOMPARE(oi.comments().size(), 1);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.comments().at(0) == QString("yet another test comment"));
+
+    oi.removeDetail(&comment);
+    QVERIFY(oi.comments().size() == 0);
+    QVERIFY(oi.details().count() == 1); // should have a type detail left.
+
+    oi.addComment("and yet another test comment");
 
     /* Test self assign */
     oi.operator =(oi);
