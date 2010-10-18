@@ -567,6 +567,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
+/*!
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+
+  Since the data types stored in this detail are custom data types, the base class
+  operator==() doesn't know how to perform the comparison without calling this function.
+  However, it means that if (in the future) a backend were to extend the detail with
+  more fields, this operator== would no longer work; it'd have to be updated to compare
+  the other fields also.
+ */
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
     return accessConstraints() == other.accessConstraints()
@@ -575,6 +585,13 @@ bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other)
         && recurrenceDates() == other.recurrenceDates()
         && exceptionDates() == other.exceptionDates();
 }
+
+/*!
+  \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+  Implemented in terms of operator==() for QOrganizerItemRecurrence detail.
+ */
 
 /*!
    \variable QOrganizerItemRecurrence::FieldRecurrenceRules
