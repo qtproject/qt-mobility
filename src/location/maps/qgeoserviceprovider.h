@@ -74,7 +74,7 @@ public:
 
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName,
-                        const QMap<QString,QVariant> &parameters = QMap<QString,QVariant>());
+                        const QMap<QString,QVariant> &parameters = (QMap<QString,QVariant>()));
 
     ~QGeoServiceProvider();
 
