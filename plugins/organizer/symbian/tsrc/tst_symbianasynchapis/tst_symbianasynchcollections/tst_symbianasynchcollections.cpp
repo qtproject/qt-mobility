@@ -347,7 +347,7 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         // Error map should contain zero errors to indicate successful deletion
         // of all the items
         int count(collections.count());
-        QCOMPARE(count, 1);
+        QCOMPARE(count, 2);
     }
     break;
     case QOrganizerAbstractRequest::CollectionSaveRequest : {
