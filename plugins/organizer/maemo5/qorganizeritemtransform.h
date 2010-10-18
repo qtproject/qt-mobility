@@ -55,6 +55,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizerrecurrencetransform.h"
+#include "qorganizeritemdetaildefinition.h"
 
 QTM_USE_NAMESPACE
 
@@ -77,7 +78,7 @@ public: // transform functions
 
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent);
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate);
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemLocalId parentLocalId);
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemId parentId);
 
     QOrganizerTodo convertCTodoToQTodo(CTodo *ctodo);
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo *ctodo);
@@ -106,7 +107,15 @@ public: // transform functions
     CalendarType toCalendarType(QString calendarType);
     QMap<CalendarType, QString> calendarTypeMap() const;
 
+    // schema definitions
+    void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
+
     bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
+
+    void addEventPostSaveDetails(QOrganizerItem *item, CEvent *cevent);
+    void addTodoPostSaveDetails(QOrganizerItem *item, CTodo *ctodo);
+    void addJournalPostSaveDetails(QOrganizerItem *item, CJournal *cjournal);
+    void sortDetails(QOrganizerItem *item) const;
 
 private:
     // random GUID generation
@@ -119,5 +128,8 @@ private:
     // recurrence rule converter instance
     OrganizerRecurrenceTransform m_recTransformer;
 };
+
+// detail sort function
+bool detailLessThan(const QOrganizerItemDetail &d1, const QOrganizerItemDetail &d2);
 
 #endif // QORGANIZERITEMTRANSFORM_H

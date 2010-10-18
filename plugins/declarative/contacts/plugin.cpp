@@ -78,24 +78,25 @@ public:
         qmlRegisterType<QDeclarativeContactBirthday>(uri, 1, 1, "Birthday");
         qmlRegisterType<QDeclarativeContactDisplayLabel>(uri, 1, 1, "DisplayLabel");
         qmlRegisterType<QDeclarativeContactEmailAddress>(uri, 1, 1, "EmailAddress");
-        qmlRegisterType<QDeclarativeContactFamily>(uri, 1, 1, "ContactFamily");
+        qmlRegisterType<QDeclarativeContactFamily>(uri, 1, 1, "Family");
         qmlRegisterType<QDeclarativeContactFavorite>(uri, 1, 1, "Favorite");
         qmlRegisterType<QDeclarativeContactGender>(uri, 1, 1, "Gender");
         qmlRegisterType<QDeclarativeContactGeoLocation>(uri, 1, 1, "Location");
         qmlRegisterType<QDeclarativeContactGlobalPresence>(uri, 1, 1, "GlobalPresence");
-        qmlRegisterType<QDeclarativeContactGuid>(uri, 1, 1, "ContactGuid");
-        qmlRegisterType<QDeclarativeContactName>(uri, 1, 1, "ContactName");
+        qmlRegisterType<QDeclarativeContactGuid>(uri, 1, 1, "Guid");
+        qmlRegisterType<QDeclarativeContactName>(uri, 1, 1, "Name");
         qmlRegisterType<QDeclarativeContactNickname>(uri, 1, 1, "Nickname");
-        qmlRegisterType<QDeclarativeContactNote>(uri, 1, 1, "ContactNote");
+        qmlRegisterType<QDeclarativeContactNote>(uri, 1, 1, "Note");
         qmlRegisterType<QDeclarativeContactOnlineAccount>(uri, 1, 1, "OnlineAccount");
         qmlRegisterType<QDeclarativeContactOrganization>(uri, 1, 1, "Organization");
         qmlRegisterType<QDeclarativeContactPhoneNumber>(uri, 1, 1, "PhoneNumber");
         qmlRegisterType<QDeclarativeContactPresence>(uri, 1, 1, "Presence");
         qmlRegisterType<QDeclarativeContactRingtone>(uri, 1, 1, "Ringtone");
         qmlRegisterType<QDeclarativeContactSyncTarget>(uri, 1, 1, "SyncTarget");
-        qmlRegisterType<QDeclarativeContactTag>(uri, 1, 1, "ContactTag");
+        qmlRegisterType<QDeclarativeContactTag>(uri, 1, 1, "Tag");
         qmlRegisterType<QDeclarativeContactTimestamp>(uri, 1, 1, "Timestamp");
-        qmlRegisterType<QDeclarativeContactUrl>(uri, 1, 1, "ContactUrl");
+        qmlRegisterType<QDeclarativeContactUrl>(uri, 1, 1, "Url");
+        qmlRegisterType<QDeclarativeContactHobby>(uri, 1, 1, "Hobby");
 
         //filters
         qmlRegisterType<QDeclarativeContactFilter>(uri, 1, 1, "Filter");

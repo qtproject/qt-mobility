@@ -8,59 +8,62 @@
 
 QTM_USE_NAMESPACE
 static ContactDetailNameMap qt_contactDetailNameMap[] = {
-    {QDeclarativeContactDetail::ContactAddress,        "address",        QContactAddress::DefinitionName.latin1(),  false},
-    {QDeclarativeContactDetail::ContactAddress,        "addresses",      QContactAddress::DefinitionName.latin1(),  true},
-    {QDeclarativeContactDetail::ContactAnniversary,    "anniversary",    QContactAnniversary::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactAnniversary,    "anniversaries",  QContactAnniversary::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactAvatar,         "avatar",         QContactAvatar::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactAvatar,         "avatars",        QContactAvatar::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactBirthday,       "birthday",       QContactBirthday::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactBirthday,       "birthdays",      QContactBirthday::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactDisplayLabel,   "displayLabel",   QContactDisplayLabel::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactDisplayLabel,   "displayLabels",  QContactDisplayLabel::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactEmail,          "email",          QContactEmailAddress::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactEmail,          "emails",         QContactEmailAddress::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactFamily,         "family",         QContactFamily::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactFamily,         "families",       QContactFamily::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactFavorite,       "favorite",       QContactFavorite::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactFavorite,       "favorites",      QContactFavorite::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactGender,         "gender",         QContactGender::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactGender,         "genders",        QContactGender::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactGeolocation,    "location",       QContactGeoLocation::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactGeolocation,    "locations",      QContactGeoLocation::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactGlobalPresence, "globalPresence", QContactGlobalPresence::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactGlobalPresence, "globalPresences",QContactGlobalPresence::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactGuid,           "guid",           QContactGuid::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactGuid,           "guids",          QContactGuid::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactName,           "name",           QContactName::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactName,           "names",          QContactName::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactNickName,       "nickname",       QContactNickname::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactNickName,       "nicknames",      QContactNickname::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactNote,           "note",           QContactNote::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactNote,           "notes",          QContactNote::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactOnlineAccount,  "onlineAccount",  QContactOnlineAccount::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactOnlineAccount,  "onlineAccounts", QContactOnlineAccount::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactOrganization,   "organization",   QContactOrganization::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactOrganization,   "organizations",  QContactOrganization::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactPhoneNumber,    "phoneNumber",    QContactPhoneNumber::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactPhoneNumber,    "phoneNumbers",   QContactPhoneNumber::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactPresence,       "presence",       QContactPresence::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactPresence,       "presences",      QContactPresence::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactRingtone,       "ringtone",       QContactRingtone::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactRingtone,       "ringtones",      QContactRingtone::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactSyncTarget,     "syncTarget",     QContactSyncTarget::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactSyncTarget,     "syncTargets",    QContactSyncTarget::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactTag,            "tag",            QContactTag::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactTag,            "tags",           QContactTag::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactTimestamp,      "timestamp",      QContactTimestamp::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactTimestamp,      "timestamps",     QContactTimestamp::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactUrl,            "url",            QContactUrl::DefinitionName.latin1(), false},
-    {QDeclarativeContactDetail::ContactUrl,            "urls",           QContactUrl::DefinitionName.latin1(), true},
-    {QDeclarativeContactDetail::ContactCustomizedDetail,     "",               "",                false}
+    {QDeclarativeContactDetail::Address,        "address",        QContactAddress::DefinitionName.latin1(),  false},
+    {QDeclarativeContactDetail::Address,        "addresses",      QContactAddress::DefinitionName.latin1(),  true},
+    {QDeclarativeContactDetail::Anniversary,    "anniversary",    QContactAnniversary::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Anniversary,    "anniversaries",  QContactAnniversary::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Avatar,         "avatar",         QContactAvatar::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Avatar,         "avatars",        QContactAvatar::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Birthday,       "birthday",       QContactBirthday::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Birthday,       "birthdays",      QContactBirthday::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::DisplayLabel,   "displayLabel",   QContactDisplayLabel::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::DisplayLabel,   "displayLabels",  QContactDisplayLabel::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Email,          "email",          QContactEmailAddress::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Email,          "emails",         QContactEmailAddress::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Family,         "family",         QContactFamily::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Family,         "families",       QContactFamily::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Favorite,       "favorite",       QContactFavorite::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Favorite,       "favorites",      QContactFavorite::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Gender,         "gender",         QContactGender::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Gender,         "genders",        QContactGender::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Geolocation,    "location",       QContactGeoLocation::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Geolocation,    "locations",      QContactGeoLocation::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::GlobalPresence, "globalPresence", QContactGlobalPresence::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::GlobalPresence, "globalPresences",QContactGlobalPresence::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Guid,           "guid",           QContactGuid::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Guid,           "guids",          QContactGuid::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Name,           "name",           QContactName::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Name,           "names",          QContactName::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::NickName,       "nickname",       QContactNickname::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::NickName,       "nicknames",      QContactNickname::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Note,           "note",           QContactNote::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Note,           "notes",          QContactNote::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::OnlineAccount,  "onlineAccount",  QContactOnlineAccount::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::OnlineAccount,  "onlineAccounts", QContactOnlineAccount::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Organization,   "organization",   QContactOrganization::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Organization,   "organizations",  QContactOrganization::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::PhoneNumber,    "phoneNumber",    QContactPhoneNumber::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::PhoneNumber,    "phoneNumbers",   QContactPhoneNumber::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Presence,       "presence",       QContactPresence::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Presence,       "presences",      QContactPresence::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Ringtone,       "ringtone",       QContactRingtone::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Ringtone,       "ringtones",      QContactRingtone::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::SyncTarget,     "syncTarget",     QContactSyncTarget::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::SyncTarget,     "syncTargets",    QContactSyncTarget::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Tag,            "tag",            QContactTag::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Tag,            "tags",           QContactTag::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Timestamp,      "timestamp",      QContactTimestamp::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Timestamp,      "timestamps",     QContactTimestamp::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Url,            "url",            QContactUrl::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Url,            "urls",           QContactUrl::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Hobby,          "hobby",          QContactHobby::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::Hobby,          "hobbies",        QContactHobby::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::Customized,     "",               "",                false}
 };
 
 QDeclarativeContactMetaObject::QDeclarativeContactMetaObject(QObject* obj, const QContact& contact)
-    :QDeclarativeOpenMetaObject(obj)
+    :QDeclarativeOpenMetaObject(obj),
+      m_modified(false)
 {
     setContact(contact);
 }
@@ -227,11 +230,9 @@ void QDeclarativeContactMetaObject::setContact(const QContact& contact)
 
 QContact QDeclarativeContactMetaObject::contact()
 {
-    //m_contact.clearDetails();
     foreach (const QDeclarativeContactDetail* cd, m_details) {
        QContactDetail detail = cd->detail();
-       if (!m_contact.saveDetail(&detail))
-           qDebug() << "save detail error:" << detail.definitionName();
+       m_contact.saveDetail(&detail);
     }
 
     return m_contact;
@@ -310,55 +311,55 @@ void  QDeclarativeContactMetaObject::detail_clear(QDeclarativeListProperty<QDecl
 QDeclarativeContactDetail* QDeclarativeContactMetaObject::createContactDetail(QDeclarativeContactDetail::ContactDetailType type, QObject* parent)
 {
     switch (type) {
-    case QDeclarativeContactDetail::ContactAddress:
+    case QDeclarativeContactDetail::Address:
         return new QDeclarativeContactAddress(parent);
-    case QDeclarativeContactDetail::ContactAnniversary:
+    case QDeclarativeContactDetail::Anniversary:
         return new QDeclarativeContactAnniversary(parent);
-    case QDeclarativeContactDetail::ContactAvatar:
+    case QDeclarativeContactDetail::Avatar:
         return new QDeclarativeContactAvatar(parent);
-    case QDeclarativeContactDetail::ContactBirthday:
+    case QDeclarativeContactDetail::Birthday:
         return new QDeclarativeContactBirthday(parent);
-    case QDeclarativeContactDetail::ContactDisplayLabel:
+    case QDeclarativeContactDetail::DisplayLabel:
         return new QDeclarativeContactDisplayLabel(parent);
-    case QDeclarativeContactDetail::ContactEmail:
+    case QDeclarativeContactDetail::Email:
         return new QDeclarativeContactEmailAddress(parent);
-    case QDeclarativeContactDetail::ContactFamily:
+    case QDeclarativeContactDetail::Family:
         return new QDeclarativeContactFamily(parent);
-    case QDeclarativeContactDetail::ContactFavorite:
+    case QDeclarativeContactDetail::Favorite:
         return new QDeclarativeContactFavorite(parent);
-    case QDeclarativeContactDetail::ContactGender:
+    case QDeclarativeContactDetail::Gender:
         return new QDeclarativeContactGender(parent);
-    case QDeclarativeContactDetail::ContactGeolocation:
+    case QDeclarativeContactDetail::Geolocation:
         return new QDeclarativeContactGeoLocation(parent);
-    case QDeclarativeContactDetail::ContactGlobalPresence:
+    case QDeclarativeContactDetail::GlobalPresence:
         return new QDeclarativeContactGlobalPresence(parent);
-    case QDeclarativeContactDetail::ContactGuid:
+    case QDeclarativeContactDetail::Guid:
         return new QDeclarativeContactGuid(parent);
-    case QDeclarativeContactDetail::ContactName:
+    case QDeclarativeContactDetail::Name:
         return new QDeclarativeContactName(parent);
-    case QDeclarativeContactDetail::ContactNickName:
+    case QDeclarativeContactDetail::NickName:
         return new QDeclarativeContactNickname(parent);
-    case QDeclarativeContactDetail::ContactNote:
+    case QDeclarativeContactDetail::Note:
         return new QDeclarativeContactNote(parent);
-    case QDeclarativeContactDetail::ContactOnlineAccount:
+    case QDeclarativeContactDetail::OnlineAccount:
         return new QDeclarativeContactOnlineAccount(parent);
-    case QDeclarativeContactDetail::ContactOrganization:
+    case QDeclarativeContactDetail::Organization:
         return new QDeclarativeContactOrganization(parent);
-    case QDeclarativeContactDetail::ContactPhoneNumber:
+    case QDeclarativeContactDetail::PhoneNumber:
         return new QDeclarativeContactPhoneNumber(parent);
-    case QDeclarativeContactDetail::ContactPresence:
+    case QDeclarativeContactDetail::Presence:
         return new QDeclarativeContactPresence(parent);
-    case QDeclarativeContactDetail::ContactRingtone:
+    case QDeclarativeContactDetail::Ringtone:
         return new QDeclarativeContactRingtone(parent);
-    case QDeclarativeContactDetail::ContactSyncTarget:
+    case QDeclarativeContactDetail::SyncTarget:
         return new QDeclarativeContactSyncTarget(parent);
-    case QDeclarativeContactDetail::ContactTag:
+    case QDeclarativeContactDetail::Tag:
         return new QDeclarativeContactTag(parent);
-    case QDeclarativeContactDetail::ContactTimestamp:
+    case QDeclarativeContactDetail::Timestamp:
         return new QDeclarativeContactTimestamp(parent);
-    case QDeclarativeContactDetail::ContactUrl:
+    case QDeclarativeContactDetail::Url:
         return new QDeclarativeContactUrl(parent);
-    case QDeclarativeContactDetail::ContactCustomizedDetail:
+    case QDeclarativeContactDetail::Customized:
     default:
         break;
     }

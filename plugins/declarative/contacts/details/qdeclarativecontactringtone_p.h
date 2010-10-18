@@ -58,42 +58,61 @@ class QDeclarativeContactRingtone : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "audioRingtoneUrl")
 public:
     enum FieldType {
-        FieldAudioRingtoneUrl = 0,
-        FieldVideoRingtoneUrl,
-        FieldVibrationRingtoneUrl
+        AudioRingtoneUrl = 0,
+        VideoRingtoneUrl,
+        VibrationRingtoneUrl
     };
 
     QDeclarativeContactRingtone(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactRingtone());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactRingtone;
+        return QDeclarativeContactDetail::Ringtone;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldAudioRingtoneUrl:
+        case AudioRingtoneUrl:
             return QContactRingtone::FieldAudioRingtoneUrl;
-        case FieldVideoRingtoneUrl:
+        case VideoRingtoneUrl:
             return QContactRingtone::FieldVideoRingtoneUrl;
-        case FieldVibrationRingtoneUrl:
+        case VibrationRingtoneUrl:
             return QContactRingtone::FieldVibrationRingtoneUrl;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setAudioRingtoneUrl(const QUrl& audioRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldAudioRingtoneUrl, audioRingtoneUrl);}
+    void setAudioRingtoneUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != audioRingtoneUrl()) {
+            detail().setValue(QContactRingtone::FieldAudioRingtoneUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl audioRingtoneUrl() const {return detail().value(QContactRingtone::FieldAudioRingtoneUrl);}
 
-    void setVideoRingtoneUrl(const QUrl& videoRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldVideoRingtoneUrl, videoRingtoneUrl);}
+    void setVideoRingtoneUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != videoRingtoneUrl()) {
+            detail().setValue(QContactRingtone::FieldVideoRingtoneUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl videoRingtoneUrl() const {return detail().value(QContactRingtone::FieldVideoRingtoneUrl);}
 
-    void setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldVibrationRingtoneUrl, vibrationRingtoneUrl);}
+    void setVibrationRingtoneUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != vibrationRingtoneUrl()) {
+            detail().setValue(QContactRingtone::FieldVibrationRingtoneUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl vibrationRingtoneUrl() const {return detail().value(QContactRingtone::FieldVibrationRingtoneUrl);}
 signals:
     void fieldsChanged();

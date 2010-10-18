@@ -63,31 +63,32 @@ public:
 
 
     enum ContactDetailType {
-        ContactAddress = 0,
-        ContactAnniversary,
-        ContactAvatar,
-        ContactBirthday,
-        ContactDisplayLabel,
-        ContactEmail,
-        ContactFamily,
-        ContactFavorite,
-        ContactGender,
-        ContactGeolocation,
-        ContactGlobalPresence,
-        ContactGuid,
-        ContactName,
-        ContactNickName,
-        ContactNote,
-        ContactOnlineAccount,
-        ContactOrganization,
-        ContactPhoneNumber,
-        ContactPresence,
-        ContactRingtone,
-        ContactSyncTarget,
-        ContactTag,
-        ContactTimestamp,
-        ContactUrl,
-        ContactCustomizedDetail = 100
+        Address = 0,
+        Anniversary,
+        Avatar,
+        Birthday,
+        DisplayLabel,
+        Email,
+        Family,
+        Favorite,
+        Gender,
+        Geolocation,
+        GlobalPresence,
+        Guid,
+        Name,
+        NickName,
+        Note,
+        OnlineAccount,
+        Organization,
+        PhoneNumber,
+        Presence,
+        Ringtone,
+        SyncTarget,
+        Tag,
+        Timestamp,
+        Url,
+        Hobby,
+        Customized = 100
     };
 
     QContactDetail& detail();
@@ -109,7 +110,7 @@ public:
     void setLinkedDetailUris(const QStringList& linkedDetailUris);
     virtual ContactDetailType detailType() const;
 
-    Q_INVOKABLE QStringList fieldNames() const;
+    QStringList fieldNames() const;
     Q_INVOKABLE QVariant value(const QString& key) const;
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
 

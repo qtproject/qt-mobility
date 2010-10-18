@@ -1038,6 +1038,12 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
         return interface;
     }
 
+    interface.d = new QServiceInterfaceDescriptorPrivate;
+    interface.d->interfaceName =query.value(EBindIndex).toString();
+    interface.d->serviceName = query.value(EBindIndex1).toString();
+    interface.d->major = query.value(EBindIndex2).toInt();
+    interface.d->minor = query.value(EBindIndex3).toInt();
+
     QString location = query.value(EBindIndex4).toString();
     if (location.startsWith(SERVICE_IPC_PREFIX)) {
         interface.d->attributes[QServiceInterfaceDescriptor::ServiceType] = QService::InterProcess;

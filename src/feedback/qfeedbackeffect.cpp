@@ -167,8 +167,8 @@ QTM_BEGIN_NAMESPACE
     \value ThemePopupOpen
     \value ThemePopupClose
     \value ThemeFlick
-    \value ThemeStopFlick  PopUp -> Popup
-    \value ThemeMultitouchActivate
+    \value ThemeStopFlick
+    \value ThemeMultiPointTouchActivate
     \value ThemeRotateStep
     \value ThemeLongPress
     \value ThemePositiveTacticon
@@ -182,7 +182,7 @@ QTM_BEGIN_NAMESPACE
     \enum QFeedbackEffect::Duration
     This enum describes the possible effect duration types.
 
-    \value INFINITE Infinite effect duration
+    \value QFeedbackEffect::Duration::INFINITE Infinite effect duration
   */
 
 /*!
@@ -562,7 +562,7 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 
     \code
         QFeedbackFileEffect hapticTune;
-        hapticTune.setFileName("mySavedRumble.ifr");
+        hapticTune.setSource(QUrl::fromLocalFile("mySavedRumble.ifr"));
         hapticTune.load();
         hapticTune.start();
     \endcode
@@ -572,10 +572,6 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
     \l{QFeedbackEffect::}{Running}, \l{QFeedbackEffect::}{Paused}, or
     \l{QFeedbackEffect::}{Stopped}. You request state changes with
     start(), pause(), and stop().
-
-    A QFileFeedbackEffect's actuator (the device that performs the
-    effect) is always the systems default actuator, which is usually a
-    vibrator on mobile devices.
 
     You can load() and unload() the file at will to free resources or
     be as fast as possible. You must load the file before it can be
@@ -624,24 +620,27 @@ int QFeedbackFileEffect::duration() const
 }
 
 /*!
-    \property QFeedbackFileEffect::fileName
-    \brief the name of the file that is loaded.
+    \property QFeedbackFileEffect::source
+    \brief the url of the file that is loaded.
 
     Setting that property will automatically unload the previous file and load the new one.
+    Some backends may not support all URL schemes.
 */
-QString QFeedbackFileEffect::fileName() const
+QUrl QFeedbackFileEffect::source() const
 {
-    return priv->fileName;
+    return priv->url;
 }
-void QFeedbackFileEffect::setFileName(const QString &fileName)
+void QFeedbackFileEffect::setSource(const QUrl &source)
 {
     if (state() != QFeedbackEffect::Stopped) {
-        qWarning("QFeedbackFileEffect::setFileName: can't set the file while the feedback is running");
+        qWarning("QFeedbackFileEffect::setSource: can't set the file while the feedback is running");
         return;
     }
-    setLoaded(false);
-    priv->fileName = fileName;
-    setLoaded(true);
+    if (source != priv->url) {
+        setLoaded(false);
+        priv->url = source;
+        setLoaded(true);
+    }
 }
 
 /*!
@@ -670,7 +669,7 @@ void QFeedbackFileEffect::setLoaded(bool load)
     \fn void QFeedbackFileEffect::load()
 
     Makes sure that the file associated with the feedback object is loaded.
-    It will be automatically loaded when setFileName or start functions
+    It will be automatically loaded when setSource or start functions
     are called.
 */
 void QFeedbackFileEffect::load()
@@ -682,7 +681,7 @@ void QFeedbackFileEffect::load()
     \fn void QFeedbackFileEffect::unload()
 
     makes sure that the file associated with the feedback object is unloaded.
-    It will be automatically loaded when the setFileName function is called with
+    It will be automatically loaded when the setSource function is called with
     another file or the object is destructed.
 */
 void QFeedbackFileEffect::unload()

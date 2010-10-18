@@ -127,28 +127,30 @@ EXPORTS
 	?profiles@QVersitContactHandlerFactory@QtMobility@@UBE?AV?$QSet@VQString@@@@XZ @ 126 NONAME ; class QSet<class QString> QtMobility::QVersitContactHandlerFactory::profiles(void) const
 	??0QVersitContactImporter@QtMobility@@QAE@ABVQString@@@Z @ 127 NONAME ; QtMobility::QVersitContactImporter::QVersitContactImporter(class QString const &)
 	?startWriting@QVersitWriter@QtMobility@@QAE_NABVQVersitDocument@2@W4VersitType@32@@Z @ 128 NONAME ; bool QtMobility::QVersitWriter::startWriting(class QtMobility::QVersitDocument const &, enum QtMobility::QVersitDocument::VersitType)
-	??_EQVersitContactExporterDetailHandlerV2@QtMobility@@UAE@I@Z @ 129 NONAME ; QtMobility::QVersitContactExporterDetailHandlerV2::~QVersitContactExporterDetailHandlerV2(unsigned int)
-	??1QVersitContactHandler@QtMobility@@UAE@XZ @ 130 NONAME ; QtMobility::QVersitContactHandler::~QVersitContactHandler(void)
-	?errorMap@QVersitContactExporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitContactExporter@QtMobility@@@@XZ @ 131 NONAME ; class QMap<int, enum QtMobility::QVersitContactExporter::Error> QtMobility::QVersitContactExporter::errorMap(void) const
-	??0QVersitContactExporter@QtMobility@@QAE@ABVQString@@@Z @ 132 NONAME ; QtMobility::QVersitContactExporter::QVersitContactExporter(class QString const &)
-	?startWriting@QVersitWriter@QtMobility@@QAE_NABVQVersitDocument@2@@Z @ 133 NONAME ; bool QtMobility::QVersitWriter::startWriting(class QtMobility::QVersitDocument const &)
-	?setPropertyHandler@QVersitContactImporter@QtMobility@@QAEXPAVQVersitContactImporterPropertyHandlerV2@2@@Z @ 134 NONAME ; void QtMobility::QVersitContactImporter::setPropertyHandler(class QtMobility::QVersitContactImporterPropertyHandlerV2 *)
-	?addSubDocument@QVersitDocument@QtMobility@@QAEXABV12@@Z @ 135 NONAME ; void QtMobility::QVersitDocument::addSubDocument(class QtMobility::QVersitDocument const &)
-	?errorMap@QVersitContactImporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitContactImporter@QtMobility@@@@XZ @ 136 NONAME ; class QMap<int, enum QtMobility::QVersitContactImporter::Error> QtMobility::QVersitContactImporter::errorMap(void) const
-	?startWriting@QVersitWriter@QtMobility@@QAE_NABV?$QList@VQVersitDocument@QtMobility@@@@W4VersitType@QVersitDocument@2@@Z @ 137 NONAME ; bool QtMobility::QVersitWriter::startWriting(class QList<class QtMobility::QVersitDocument> const &, enum QtMobility::QVersitDocument::VersitType)
-	??1QVersitContactImporterPropertyHandlerV2@QtMobility@@UAE@XZ @ 138 NONAME ; QtMobility::QVersitContactImporterPropertyHandlerV2::~QVersitContactImporterPropertyHandlerV2(void)
-	?index@QVersitContactHandlerFactory@QtMobility@@UBEHXZ @ 139 NONAME ; int QtMobility::QVersitContactHandlerFactory::index(void) const
-	??1QVersitContactHandlerFactory@QtMobility@@UAE@XZ @ 140 NONAME ; QtMobility::QVersitContactHandlerFactory::~QVersitContactHandlerFactory(void)
-	??_EQVersitContactImporterPropertyHandlerV2@QtMobility@@UAE@I@Z @ 141 NONAME ; QtMobility::QVersitContactImporterPropertyHandlerV2::~QVersitContactImporterPropertyHandlerV2(unsigned int)
-	?setSubDocuments@QVersitDocument@QtMobility@@QAEXABV?$QList@VQVersitDocument@QtMobility@@@@@Z @ 142 NONAME ; void QtMobility::QVersitDocument::setSubDocuments(class QList<class QtMobility::QVersitDocument> const &)
-	?setProperties@QVersitDocument@QtMobility@@QAEXABV?$QList@VQVersitProperty@QtMobility@@@@@Z @ 143 NONAME ; void QtMobility::QVersitDocument::setProperties(class QList<class QtMobility::QVersitProperty> const &)
-	??1QVersitContactExporterDetailHandlerV2@QtMobility@@UAE@XZ @ 144 NONAME ; QtMobility::QVersitContactExporterDetailHandlerV2::~QVersitContactExporterDetailHandlerV2(void)
-	??0QVersitResourceHandler@QtMobility@@QAE@XZ @ 145 NONAME ; QtMobility::QVersitResourceHandler::QVersitResourceHandler(void)
-	??_EQVersitContactHandler@QtMobility@@UAE@I@Z @ 146 NONAME ; QtMobility::QVersitContactHandler::~QVersitContactHandler(unsigned int)
-	??_EQVersitContactHandlerFactory@QtMobility@@UAE@I@Z @ 147 NONAME ; QtMobility::QVersitContactHandlerFactory::~QVersitContactHandlerFactory(unsigned int)
-	??_EQVersitProperty@QtMobility@@QAE@I@Z @ 148 NONAME ; QtMobility::QVersitProperty::~QVersitProperty(unsigned int)
-	?componentType@QVersitDocument@QtMobility@@QBE?AVQString@@XZ @ 149 NONAME ; class QString QtMobility::QVersitDocument::componentType(void) const
-	??_EQVersitDocument@QtMobility@@QAE@I@Z @ 150 NONAME ; QtMobility::QVersitDocument::~QVersitDocument(unsigned int)
-	?setComponentType@QVersitDocument@QtMobility@@QAEXVQString@@@Z @ 151 NONAME ; void QtMobility::QVersitDocument::setComponentType(class QString)
-	?setDetailHandler@QVersitContactExporter@QtMobility@@QAEXPAVQVersitContactExporterDetailHandlerV2@2@@Z @ 152 NONAME ; void QtMobility::QVersitContactExporter::setDetailHandler(class QtMobility::QVersitContactExporterDetailHandlerV2 *)
+	??0QVersitContactImporter@QtMobility@@QAE@ABVQStringList@@@Z @ 129 NONAME ; QtMobility::QVersitContactImporter::QVersitContactImporter(class QStringList const &)
+	??_EQVersitContactExporterDetailHandlerV2@QtMobility@@UAE@I@Z @ 130 NONAME ; QtMobility::QVersitContactExporterDetailHandlerV2::~QVersitContactExporterDetailHandlerV2(unsigned int)
+	??1QVersitContactHandler@QtMobility@@UAE@XZ @ 131 NONAME ; QtMobility::QVersitContactHandler::~QVersitContactHandler(void)
+	?errorMap@QVersitContactExporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitContactExporter@QtMobility@@@@XZ @ 132 NONAME ; class QMap<int, enum QtMobility::QVersitContactExporter::Error> QtMobility::QVersitContactExporter::errorMap(void) const
+	??0QVersitContactExporter@QtMobility@@QAE@ABVQString@@@Z @ 133 NONAME ; QtMobility::QVersitContactExporter::QVersitContactExporter(class QString const &)
+	?startWriting@QVersitWriter@QtMobility@@QAE_NABVQVersitDocument@2@@Z @ 134 NONAME ; bool QtMobility::QVersitWriter::startWriting(class QtMobility::QVersitDocument const &)
+	?setPropertyHandler@QVersitContactImporter@QtMobility@@QAEXPAVQVersitContactImporterPropertyHandlerV2@2@@Z @ 135 NONAME ; void QtMobility::QVersitContactImporter::setPropertyHandler(class QtMobility::QVersitContactImporterPropertyHandlerV2 *)
+	?addSubDocument@QVersitDocument@QtMobility@@QAEXABV12@@Z @ 136 NONAME ; void QtMobility::QVersitDocument::addSubDocument(class QtMobility::QVersitDocument const &)
+	?errorMap@QVersitContactImporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitContactImporter@QtMobility@@@@XZ @ 137 NONAME ; class QMap<int, enum QtMobility::QVersitContactImporter::Error> QtMobility::QVersitContactImporter::errorMap(void) const
+	?startWriting@QVersitWriter@QtMobility@@QAE_NABV?$QList@VQVersitDocument@QtMobility@@@@W4VersitType@QVersitDocument@2@@Z @ 138 NONAME ; bool QtMobility::QVersitWriter::startWriting(class QList<class QtMobility::QVersitDocument> const &, enum QtMobility::QVersitDocument::VersitType)
+	??1QVersitContactImporterPropertyHandlerV2@QtMobility@@UAE@XZ @ 139 NONAME ; QtMobility::QVersitContactImporterPropertyHandlerV2::~QVersitContactImporterPropertyHandlerV2(void)
+	?index@QVersitContactHandlerFactory@QtMobility@@UBEHXZ @ 140 NONAME ; int QtMobility::QVersitContactHandlerFactory::index(void) const
+	??1QVersitContactHandlerFactory@QtMobility@@UAE@XZ @ 141 NONAME ; QtMobility::QVersitContactHandlerFactory::~QVersitContactHandlerFactory(void)
+	??_EQVersitContactImporterPropertyHandlerV2@QtMobility@@UAE@I@Z @ 142 NONAME ; QtMobility::QVersitContactImporterPropertyHandlerV2::~QVersitContactImporterPropertyHandlerV2(unsigned int)
+	?setSubDocuments@QVersitDocument@QtMobility@@QAEXABV?$QList@VQVersitDocument@QtMobility@@@@@Z @ 143 NONAME ; void QtMobility::QVersitDocument::setSubDocuments(class QList<class QtMobility::QVersitDocument> const &)
+	?setProperties@QVersitDocument@QtMobility@@QAEXABV?$QList@VQVersitProperty@QtMobility@@@@@Z @ 144 NONAME ; void QtMobility::QVersitDocument::setProperties(class QList<class QtMobility::QVersitProperty> const &)
+	??0QVersitContactExporter@QtMobility@@QAE@ABVQStringList@@@Z @ 145 NONAME ; QtMobility::QVersitContactExporter::QVersitContactExporter(class QStringList const &)
+	??1QVersitContactExporterDetailHandlerV2@QtMobility@@UAE@XZ @ 146 NONAME ; QtMobility::QVersitContactExporterDetailHandlerV2::~QVersitContactExporterDetailHandlerV2(void)
+	??0QVersitResourceHandler@QtMobility@@QAE@XZ @ 147 NONAME ; QtMobility::QVersitResourceHandler::QVersitResourceHandler(void)
+	??_EQVersitContactHandler@QtMobility@@UAE@I@Z @ 148 NONAME ; QtMobility::QVersitContactHandler::~QVersitContactHandler(unsigned int)
+	??_EQVersitContactHandlerFactory@QtMobility@@UAE@I@Z @ 149 NONAME ; QtMobility::QVersitContactHandlerFactory::~QVersitContactHandlerFactory(unsigned int)
+	??_EQVersitProperty@QtMobility@@QAE@I@Z @ 150 NONAME ; QtMobility::QVersitProperty::~QVersitProperty(unsigned int)
+	?componentType@QVersitDocument@QtMobility@@QBE?AVQString@@XZ @ 151 NONAME ; class QString QtMobility::QVersitDocument::componentType(void) const
+	??_EQVersitDocument@QtMobility@@QAE@I@Z @ 152 NONAME ; QtMobility::QVersitDocument::~QVersitDocument(unsigned int)
+	?setComponentType@QVersitDocument@QtMobility@@QAEXVQString@@@Z @ 153 NONAME ; void QtMobility::QVersitDocument::setComponentType(class QString)
+	?setDetailHandler@QVersitContactExporter@QtMobility@@QAEXPAVQVersitContactExporterDetailHandlerV2@2@@Z @ 154 NONAME ; void QtMobility::QVersitContactExporter::setDetailHandler(class QtMobility::QVersitContactExporterDetailHandlerV2 *)
 

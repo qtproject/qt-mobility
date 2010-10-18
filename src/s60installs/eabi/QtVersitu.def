@@ -143,15 +143,19 @@ EXPORTS
 	_ZN10QtMobility15QVersitDocument16setComponentTypeE7QString @ 142 NONAME
 	_ZN10QtMobility15QVersitDocument17removeSubDocumentERKS0_ @ 143 NONAME
 	_ZN10QtMobility22QVersitContactExporter16setDetailHandlerEPNS_37QVersitContactExporterDetailHandlerV2E @ 144 NONAME
-	_ZN10QtMobility22QVersitContactExporterC1ERK7QString @ 145 NONAME
-	_ZN10QtMobility22QVersitContactExporterC2ERK7QString @ 146 NONAME
-	_ZN10QtMobility22QVersitContactImporter18setPropertyHandlerEPNS_39QVersitContactImporterPropertyHandlerV2E @ 147 NONAME
-	_ZN10QtMobility22QVersitContactImporterC1ERK7QString @ 148 NONAME
-	_ZN10QtMobility22QVersitContactImporterC2ERK7QString @ 149 NONAME
-	_ZN10QtMobility28QVersitContactHandlerFactory11ProfileSyncE @ 150 NONAME DATA 5
-	_ZN10QtMobility28QVersitContactHandlerFactory13ProfileBackupE @ 151 NONAME DATA 7
-	_ZNK10QtMobility15QVersitDocument12subDocumentsEv @ 152 NONAME
-	_ZNK10QtMobility15QVersitDocument13componentTypeEv @ 153 NONAME
-	_ZNK10QtMobility22QVersitContactExporter8errorMapEv @ 154 NONAME
-	_ZNK10QtMobility22QVersitContactImporter8errorMapEv @ 155 NONAME
+	_ZN10QtMobility22QVersitContactExporterC1ERK11QStringList @ 145 NONAME
+	_ZN10QtMobility22QVersitContactExporterC1ERK7QString @ 146 NONAME
+	_ZN10QtMobility22QVersitContactExporterC2ERK11QStringList @ 147 NONAME
+	_ZN10QtMobility22QVersitContactExporterC2ERK7QString @ 148 NONAME
+	_ZN10QtMobility22QVersitContactImporter18setPropertyHandlerEPNS_39QVersitContactImporterPropertyHandlerV2E @ 149 NONAME
+	_ZN10QtMobility22QVersitContactImporterC1ERK11QStringList @ 150 NONAME
+	_ZN10QtMobility22QVersitContactImporterC1ERK7QString @ 151 NONAME
+	_ZN10QtMobility22QVersitContactImporterC2ERK11QStringList @ 152 NONAME
+	_ZN10QtMobility22QVersitContactImporterC2ERK7QString @ 153 NONAME
+	_ZN10QtMobility28QVersitContactHandlerFactory11ProfileSyncE @ 154 NONAME DATA 5
+	_ZN10QtMobility28QVersitContactHandlerFactory13ProfileBackupE @ 155 NONAME DATA 7
+	_ZNK10QtMobility15QVersitDocument12subDocumentsEv @ 156 NONAME
+	_ZNK10QtMobility15QVersitDocument13componentTypeEv @ 157 NONAME
+	_ZNK10QtMobility22QVersitContactExporter8errorMapEv @ 158 NONAME
+	_ZNK10QtMobility22QVersitContactImporter8errorMapEv @ 159 NONAME
 

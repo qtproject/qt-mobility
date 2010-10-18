@@ -54,36 +54,49 @@ class QDeclarativeContactTimestamp : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "lastModified")
 public:
     enum FieldType {
-        FieldLastModified = 0,
-        FieldCreated
+        LastModified = 0,
+        Created
     };
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactTimestamp;
+        return QDeclarativeContactDetail::Timestamp;
     }
 
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldLastModified:
+        case LastModified:
             return QContactTimestamp::FieldModificationTimestamp;
-        case FieldCreated:
+        case Created:
             return QContactTimestamp::FieldCreationTimestamp;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
     QDeclarativeContactTimestamp(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactTimestamp());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
-    void setLastModified(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactTimestamp::FieldModificationTimestamp, timestamp);}
+    void setLastModified(const QDateTime& v)
+    {
+        if (!readOnly() && v != lastModified()) {
+            detail().setValue(QContactTimestamp::FieldModificationTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
     QDateTime lastModified() const {return detail().value<QDateTime>(QContactTimestamp::FieldModificationTimestamp);}
-    void setCreated(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactTimestamp::FieldCreationTimestamp, timestamp);}
+    void setCreated(const QDateTime& v)
+    {
+        if (!readOnly() && v != created()) {
+            detail().setValue(QContactTimestamp::FieldCreationTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
     QDateTime created() const {return detail().value<QDateTime>(QContactTimestamp::FieldCreationTimestamp);}
 signals:
     void fieldsChanged();

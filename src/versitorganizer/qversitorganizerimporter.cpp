@@ -177,7 +177,7 @@ bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
 /*!
  * Returns the organizer items imported in the most recent call to importDocuments().
  *
- * \sa importDocuments()
+ * \sa importDocument()
  */
 QList<QOrganizerItem> QVersitOrganizerImporter::items() const
 {
@@ -189,7 +189,7 @@ QList<QOrganizerItem> QVersitOrganizerImporter::items() const
  * the index into the input list of documents and the value is the error that occurred on that
  * document.
  *
- * \sa importDocuments()
+ * \sa importDocument()
  */
 QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errorMap() const
 {

@@ -52,31 +52,38 @@ class QDeclarativeContactNote : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "note")
 public:
     enum FieldType {
-        FieldNote = 0
+        Note = 0
     };
 
     QDeclarativeContactNote(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNote());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactNote;
+        return QDeclarativeContactDetail::Note;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldNote:
+        case Note:
             return QContactNote::FieldNote;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setNote(const QString& note) {if (!readOnly()) detail().setValue(QContactNote::FieldNote, note);}
+    void setNote(const QString& v)
+    {
+        if (!readOnly() && v != note()) {
+            detail().setValue(QContactNote::FieldNote, v);
+            emit fieldsChanged();
+        }
+    }
     QString note() const {return detail().value(QContactNote::FieldNote);}
 signals:
     void fieldsChanged();

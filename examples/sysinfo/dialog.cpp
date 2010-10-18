@@ -720,17 +720,19 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
 
 void Dialog::updateProfile()
 {
+
     if(di) {
         QString profilestring;
+        qDebug() << di->currentProfile();
         switch(di->currentProfile()) {
-            case QSystemDeviceInfo::UnknownProfile:
-            {
-                profilestring = "Unknown";
-            }
-            break;
             case QSystemDeviceInfo::SilentProfile:
             {
                 profilestring = "Silent";
+            }
+            break;
+            case QSystemDeviceInfo::BeepProfile:
+            {
+                profilestring = "Beep";
             }
             break;
             case QSystemDeviceInfo::NormalProfile:
@@ -759,10 +761,14 @@ void Dialog::updateProfile()
             }
             break;
             case QSystemDeviceInfo::CustomProfile:
-                {
-                    profilestring = "custom";
-                }
-                break;
+            {
+                profilestring = "custom";
+            }
+            break;
+            default:
+            {
+                profilestring = "Unknown";
+            }
         };
         profileLabel->setText(profilestring);
     }

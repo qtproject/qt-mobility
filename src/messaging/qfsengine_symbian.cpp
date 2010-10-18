@@ -81,6 +81,7 @@ Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
 Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
 CFSEngine::CFSEngine()
+ : m_messageQueryActive(false)
 {
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupFSBackend()));
 
@@ -1175,13 +1176,14 @@ bool CFSEngine::queryMessages(QMessageServicePrivate& privateService, const QMes
 
 void CFSEngine::queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    
     FSMessageQueryInfo queryInfo;
     queryInfo.operationId = ++m_operationIds;
     if (queryInfo.operationId == 100000) {
         queryInfo.operationId = 1;
     }
     queryInfo.isQuery = true;
+    queryInfo.body = QString();
+    queryInfo.matchFlags = 0;
     queryInfo.filter = filter;
     queryInfo.sortOrder = sortOrder;
     queryInfo.offset = offset;
@@ -1189,17 +1191,12 @@ void CFSEngine::queryMessagesL(QMessageServicePrivate& privateService, const QMe
     queryInfo.findOperation = new CFSMessagesFindOperation((CFSEngine&)*this, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     m_messageQueries.append(queryInfo);
 
     handleNestedFiltersFromMessageFilter(m_messageQueries[m_messageQueries.count()-1].filter);
     
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(m_messageQueries[m_messageQueries.count()-1].filter);
-    if (pf->_filterList.count() == 0) {
-        queryInfo.findOperation->filterAndOrderMessages(m_messageQueries[m_messageQueries.count()-1].filter,
-            m_messageQueries[m_messageQueries.count()-1].sortOrder);
-    } else {
-        queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0], m_messageQueries[m_messageQueries.count()-1].sortOrder);
-    }
+    doNextQueryL();
 }
 
 bool CFSEngine::queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -1228,22 +1225,12 @@ void CFSEngine::queryMessagesL(QMessageServicePrivate& privateService, const QMe
     queryInfo.findOperation = new CFSMessagesFindOperation((CFSEngine&)*this, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     m_messageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(m_messageQueries[m_messageQueries.count()-1].filter);
     
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(m_messageQueries[m_messageQueries.count()-1].filter);
-    if (pf->_filterList.count() == 0) {
-        queryInfo.findOperation->filterAndOrderMessages(m_messageQueries[m_messageQueries.count()-1].filter,
-                                                        m_messageQueries[m_messageQueries.count()-1].sortOrder,
-                                                        body,
-                                                        matchFlags);
-    } else {
-        queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0],
-                                                        m_messageQueries[m_messageQueries.count()-1].sortOrder,
-                                                        body,
-                                                        matchFlags);
-    }
+    doNextQueryL();
 }
 
 bool CFSEngine::countMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter)
@@ -1263,6 +1250,7 @@ void CFSEngine::countMessagesL(QMessageServicePrivate& privateService, const QMe
         queryInfo.operationId = 1;
     }
     queryInfo.isQuery = false;
+    queryInfo.body = QString();
     queryInfo.matchFlags = 0;
     queryInfo.filter = filter;
     queryInfo.sortOrder = QMessageSortOrder();
@@ -1272,21 +1260,48 @@ void CFSEngine::countMessagesL(QMessageServicePrivate& privateService, const QMe
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     queryInfo.count = 0;
+    queryInfo.canceled = false;
     m_messageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(m_messageQueries[m_messageQueries.count()-1].filter);
     
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(m_messageQueries[m_messageQueries.count()-1].filter);
-    if (pf->_filterList.count() == 0) {
-        queryInfo.findOperation->filterAndOrderMessages(m_messageQueries[m_messageQueries.count()-1].filter,
-            m_messageQueries[m_messageQueries.count()-1].sortOrder);
-    } else {
-        queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0], m_messageQueries[m_messageQueries.count()-1].sortOrder);
+    doNextQueryL();
+}
+
+void CFSEngine::doNextQueryL() const
+{
+    int retVal = KErrNone;
+    while (m_messageQueries.count() && !m_messageQueryActive) {
+        if (m_messageQueries[0].canceled) {
+            delete m_messageQueries[0].findOperation;
+            m_messageQueries.removeAt(0);
+        } else {
+            m_messageQueryActive = true;
+            QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(m_messageQueries[0].filter); 
+            if (pf->_filterList.count() == 0) {
+                retVal = m_messageQueries[0].findOperation->filterAndOrderMessages(m_messageQueries[0].filter,
+                                                                                   m_messageQueries[0].sortOrder,
+                                                                                   m_messageQueries[0].body,
+                                                                                   m_messageQueries[0].matchFlags);
+            } else {
+                retVal = m_messageQueries[0].findOperation->filterAndOrderMessages(pf->_filterList[0],
+                                                                                   m_messageQueries[0].sortOrder,
+                                                                                   m_messageQueries[0].body,
+                                                                                   m_messageQueries[0].matchFlags);
+            }
+            if (retVal != KErrNone) {
+                m_messageQueries[0].privateService->setFinished(false);
+                
+                m_messageQueryActive = false;
+                delete m_messageQueries[0].findOperation;
+                m_messageQueries.removeAt(0);
+            }
+        }
     }
 }
 
 void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
-                                             bool resultSetOrdered)
+                                            bool resultSetOrdered)
 {
     int index=0;
     for (; index < m_messageQueries.count(); index++) {
@@ -1294,6 +1309,15 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
             break;
         }
     }
+    
+    if (m_messageQueries[index].canceled) {
+        m_messageQueryActive = false;
+        delete m_messageQueries[index].findOperation;
+        m_messageQueries.removeAt(index);
+        
+        doNextQueryL();
+        return;
+    }    
     
     if (success) {
         // If there are unhandled filters, loop through all filters and do filtering for ids using unhandled filters.
@@ -1347,8 +1371,6 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                                                 m_messageQueries[index].offset,
                                                 m_messageQueries[index].limit);
                     m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids, true, true);
-
-                    //emit m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids);
                 } else {
                     m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
                 }
@@ -1373,21 +1395,30 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                 }
                 // Handle offest & limit
                 applyOffsetAndLimitToMsgIds(ids, m_messageQueries[index].offset, m_messageQueries[index].limit);
-                //emit m_messageQueries[index].privateService->messagesFound(ids);
                 m_messageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
                 m_messageQueries[index].privateService->messagesCounted(ids.count());
             }
         }
     } else {
-        m_messageQueries[index].privateService->_active = false;
-        if (m_messageQueries[index].privateService->_error == QMessageManager::NoError) {
-            m_messageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
-        }
+        m_messageQueries[index].privateService->setFinished(false);
     }
 
+    m_messageQueryActive = false;
     delete m_messageQueries[index].findOperation;
     m_messageQueries.removeAt(index);
+    
+    doNextQueryL();
+}
+
+
+void CFSEngine::cancel(QMessageServicePrivate& privateService)
+{
+    for (int i=0; i < m_messageQueries.count(); i++) {
+        if (m_messageQueries[i].privateService == &privateService) {
+            m_messageQueries[i].canceled = true;
+        }
+    }
 }
 
 void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
@@ -2101,10 +2132,13 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     attachments.Close();
     
     //from
-    TPtrC from = aMessage->SenderAddressL()->Address();
-    if (from.Length() > 0) {
-        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
-        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    MEmailAddress* pSenderAddress = aMessage->SenderAddressL();
+    if (pSenderAddress) {
+        TPtrC from = pSenderAddress->Address();
+        if (from.Length() > 0) {
+            message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
+            QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+        }
     }
     
     //to
@@ -2287,15 +2321,15 @@ CFSMessagesFindOperation::~CFSMessagesFindOperation()
 
 }
 
-void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
+int CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
                                                     QString body, QMessageDataComparator::MatchFlags matchFlags)
 {
     m_filterList.clear();
     m_filterList.append(filter);
-    filterAndOrderMessages(m_filterList, sortOrder, body, matchFlags);
+    return filterAndOrderMessages(m_filterList, sortOrder, body, matchFlags);
 }
 
-void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
+int CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
                                                     const QMessageSortOrder& sortOrder,
                                                     QString body,
                                                     QMessageDataComparator::MatchFlags matchFlags)
@@ -2306,6 +2340,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
         m_idList = QMessageIdList();
         QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
     }
+    return err;
 }
 
 void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
@@ -2775,11 +2810,14 @@ void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& mess
     TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
     FSSearchOperation operation;
     operation.m_mailbox = m_clientApi->MailboxL(mailboxId);
-    operation.m_search = operation.m_mailbox->MessageSearchL();
-    operation.m_search->AddSearchKeyL(_L("*"));
-    operation.m_search->SetSortCriteriaL( sortCriteria );
-    operation.m_search->StartSearchL( *this ); // this implements MEmailSearchObserver
-    m_activeSearchCount++;
+    operation.m_emailSortCriteria = sortCriteria;
+    if (m_searchOperations.isEmpty()) {
+        operation.m_search = operation.m_mailbox->MessageSearchL();
+        operation.m_search->AddSearchKeyL(_L("*"));
+        operation.m_search->SetSortCriteriaL(operation.m_emailSortCriteria);
+        operation.m_search->StartSearchL(*this); // this implements MEmailSearchObserver
+        m_activeSearchCount++;
+    }
     m_searchOperations.append(operation);
 }
 
@@ -2830,15 +2868,39 @@ void CFSMessagesFindOperation::SearchCompletedL()
     if (m_receiveNewMessages) {
         m_receiveNewMessages = false;
     } else {
-        m_activeSearchCount--;
-        if (m_activeSearchCount <= 0) {
+        if (m_searchOperations.count() > 1) {
+            // At least two searchOperations in the list
+            // => Search continues
+            QMetaObject::invokeMethod(this, "continueSearch", Qt::QueuedConnection);
+        } else {
+            // Only one handled searchOperation in the list
+            // => Search completed
+            m_activeSearchCount--;
             QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
         }
     }
 }
+
+void CFSMessagesFindOperation::continueSearch()
+{
+    // Remove previous search
+    m_searchOperations.first().m_search->Release();
+    m_searchOperations.first().m_mailbox->Release();
+    m_searchOperations.removeFirst();
+    // Start next search
+    m_searchOperations.first().m_search = m_searchOperations.first().m_mailbox->MessageSearchL();
+    m_searchOperations.first().m_search->AddSearchKeyL(_L("*"));
+    m_searchOperations.first().m_search->SetSortCriteriaL(m_searchOperations.first().m_emailSortCriteria);
+    m_searchOperations.first().m_search->StartSearchL(*this); // this implements MEmailSearchObserver
+}
     
 void CFSMessagesFindOperation::SearchCompleted()
 {
+    if (m_searchOperations.count() > 0) {
+        m_searchOperations.first().m_search->Release();
+        m_searchOperations.first().m_mailbox->Release();
+        m_searchOperations.removeFirst();
+    }
     if (m_searchField != None) { 
         QMessageIdList idList;
         foreach (QMessageId messageId, m_idList) {

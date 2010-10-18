@@ -112,7 +112,7 @@ void Window::deleteTodo()
         QVariant variant = items.at(0)->data(Qt::UserRole);
         if (variant.canConvert<QOrganizerTodo>()) {
             QOrganizerTodo theTodo = variant.value<QOrganizerTodo>();
-            manager->removeItem(theTodo.localId());
+            manager->removeItem(theTodo.id());
             refreshList();
         }
     }

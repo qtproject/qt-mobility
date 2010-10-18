@@ -136,6 +136,10 @@ bool tst_QServiceManager_IPC::requiresLackey()
     return false;
 #endif
 
+#ifdef Q_OS_WIN
+    return false;
+#endif
+
     return true;
 
 }
@@ -170,7 +174,6 @@ void tst_QServiceManager_IPC::initTestCase()
     if (requiresLackey()) {
         lackey = new QProcess(this);
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.insert("PATH", env.value("Path"));
         lackey->setProcessEnvironment(env);
         if (verbose)
             lackey->setProcessChannelMode(QProcess::ForwardedChannels);

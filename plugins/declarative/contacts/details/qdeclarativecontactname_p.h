@@ -60,43 +60,44 @@ class QDeclarativeContactName : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "firstName")
 public:
     enum FieldType {
-        FieldPrefix = 0,
-        FieldFirstName,
-        FieldMiddleName,
-        FieldLastName,
-        FieldSuffix,
-        FieldCustomLabel
+        Prefix = 0,
+        FirstName,
+        MiddleName,
+        LastName,
+        Suffix,
+        CustomLabel
     };
 
     QDeclarativeContactName(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactName());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactName;
+        return QDeclarativeContactDetail::Name;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldPrefix:
+        case Prefix:
             return QContactName::FieldPrefix;
-        case FieldFirstName:
+        case FirstName:
             return QContactName::FieldFirstName;
-        case FieldMiddleName:
+        case MiddleName:
             return QContactName::FieldMiddleName;
-        case FieldLastName:
+        case LastName:
             return QContactName::FieldLastName;
-        case FieldSuffix:
+        case Suffix:
             return QContactName::FieldSuffix;
-        case FieldCustomLabel:
+        case CustomLabel:
             return QContactName::FieldCustomLabel;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
     QString prefix() const {return detail().value(QContactName::FieldPrefix);}
     QString firstName() const {return detail().value(QContactName::FieldFirstName);}
@@ -105,12 +106,49 @@ public:
     QString suffix() const {return detail().value(QContactName::FieldSuffix);}
     QString customLabel() const{return detail().value(QContactName::FieldCustomLabel);}
 
-    void setPrefix(const QString& prefix) {if (!readOnly()) detail().setValue(QContactName::FieldPrefix, prefix);}
-    void setFirstName(const QString& firstName) {if (!readOnly()) detail().setValue(QContactName::FieldFirstName, firstName);}
-    void setMiddleName(const QString& middleName) {if (!readOnly()) detail().setValue(QContactName::FieldMiddleName, middleName);}
-    void setLastName(const QString& lastName) {if (!readOnly()) detail().setValue(QContactName::FieldLastName, lastName);}
-    void setSuffix(const QString& suffix) {if (!readOnly()) detail().setValue(QContactName::FieldSuffix, suffix);}
-    void setCustomLabel(const QString& customLabel) {if (!readOnly()) detail().setValue(QContactName::FieldCustomLabel, customLabel);}
+    void setPrefix(const QString& v)
+    {
+        if (!readOnly() && v != prefix()) {
+            detail().setValue(QContactName::FieldPrefix, v);
+            emit fieldsChanged();
+        }
+    }
+
+    void setFirstName(const QString& v)
+    {
+        if (!readOnly() && v != firstName()) {
+            detail().setValue(QContactName::FieldFirstName, v);
+            emit fieldsChanged();
+        }
+    }
+    void setMiddleName(const QString& v)
+    {
+        if (!readOnly() && v != middleName()) {
+            detail().setValue(QContactName::FieldMiddleName, v);
+            emit fieldsChanged();
+        }
+    }
+    void setLastName(const QString& v)
+    {
+        if (!readOnly() && v != lastName()) {
+            detail().setValue(QContactName::FieldLastName, v);
+            emit fieldsChanged();
+        }
+    }
+    void setSuffix(const QString& v)
+    {
+        if (!readOnly() && v != suffix()) {
+            detail().setValue(QContactName::FieldSuffix, v);
+            emit fieldsChanged();
+        }
+    }
+    void setCustomLabel(const QString& v)
+    {
+        if (!readOnly() && v != customLabel()) {
+            detail().setValue(QContactName::FieldCustomLabel, v);
+            emit fieldsChanged();
+        }
+    }
 
 signals:
     void fieldsChanged();

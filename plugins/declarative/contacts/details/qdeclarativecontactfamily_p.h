@@ -45,7 +45,7 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactfamily.h"
-
+#include <QSet>
 class QDeclarativeContactFamily : public QDeclarativeContactDetail
 {
     Q_OBJECT
@@ -54,34 +54,47 @@ class QDeclarativeContactFamily : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        FieldSpouse = 0,
-        FieldChildren
+        Spouse = 0,
+        Children
     };
     QDeclarativeContactFamily(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFamily());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactFamily;
+        return QDeclarativeContactDetail::Family;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldSpouse:
+        case Spouse:
             return QContactFamily::FieldSpouse;
-        case FieldChildren:
+        case Children:
             return QContactFamily::FieldChildren;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setSpouse(const QString& spouseName) {if (!readOnly()) detail().setValue(QContactFamily::FieldSpouse, spouseName);}
+    void setSpouse(const QString& v)
+    {
+        if (!readOnly() && v != spouse()) {
+            detail().setValue(QContactFamily::FieldSpouse, v);
+            emit fieldsChanged();
+        }
+    }
     QString spouse() const {return detail().value(QContactFamily::FieldSpouse);}
-    void setChildren(const QStringList& childrenNames) {if (!readOnly()) detail().setValue(QContactFamily::FieldChildren, childrenNames);}
+    void setChildren(const QStringList& v)
+    {
+        if (!readOnly() && v.toSet() != children().toSet()) {
+            detail().setValue(QContactFamily::FieldChildren, v);
+            emit fieldsChanged();
+        }
+    }
     QStringList children() const {return detail().value<QStringList>(QContactFamily::FieldChildren);}
 signals:
     void fieldsChanged();
