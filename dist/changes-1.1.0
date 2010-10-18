@@ -27,6 +27,10 @@ New features
       feedback)
  - Qt Gallery module
     * Classes for searching for documents, and viewing document meta-data.
+ - Qt Maps and Navigation API
+    * Part of the Location module
+    * Class for routing, geocoding and reverse geocoding, and for 
+      displaying and interacting with maps.
 
 Optimizations
 ------
@@ -99,22 +103,11 @@ QtLandmarks
 QtLocation
 ------
 
- - Maemo 5 backend now respects preferred positioning methods
-
-QtMapsAndNavigation
-------
-
- - Added circle and text objects
- - Made objects work across the dateline and in other edge cases
- - Preliminary support for map overlays
- - Various performance improvements for the map
- - POI searching improved
-    * added optional limit and offset parameters for paging
-    * added code to combine results from plugin and landmark managers
- - Added basic QML support for mapping functionality
- - Improved the examples
-    * Cleaned up the UI
-    * Fixed some bugs which resulted in crashes
+ - Symbian, correct timespec now used in position times
+ - Symbian, position sources now selected correctly
+ - Symbian, more types of error detected and dealt with properly
+ - Maemo 5, backend now respects preferred positioning methods set by user
+ - Maemo 6, time to first fix sped up significantly
 
 QtMessaging
 ------
