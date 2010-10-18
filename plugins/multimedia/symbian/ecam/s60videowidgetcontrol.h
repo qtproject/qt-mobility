@@ -92,14 +92,14 @@ private: // Data
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
-	
+
 public: // Constructor & Destructor
-    
+
     S60VideoWidgetControl(QObject *parent = 0);
     virtual ~S60VideoWidgetControl();
 
 public: // QVideoWidgetControl
-    
+
     QWidget *videoWidget();
 
     // Aspect Ratio
@@ -127,12 +127,12 @@ public: // QVideoWidgetControl
     void setSaturation(int saturation);
 
 public: // Internal
-    
+
     bool eventFilter(QObject *object, QEvent *event);
     void reconfigureWidget(const bool directVF);
     WId windowId();
-    
-/*    
+
+/*
 Q_SIGNALS: // QVideoWidgetControl
 
     void fullScreenChanged(bool fullScreen);
