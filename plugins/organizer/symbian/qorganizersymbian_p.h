@@ -284,6 +284,10 @@ public:
     bool removeCollection(const QOrganizerCollectionId& collectionId, 
         QOrganizerManager::Error* error);
 
+    /* Return a pruned or modified item which is valid and can be saved in the backend */
+    QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const;
+    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original, QOrganizerManager::Error* error) const;
+
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(
         const QString& itemType, QOrganizerManager::Error* error) const;
@@ -350,6 +354,7 @@ private:
     QList<QOrganizerCollection> collectionsL() const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionId& collectionId);
+    bool isCollectionNameAvailable(QString name) const;
     CCalEntryView* entryViewL(const QOrganizerCollectionId& collectionId) const;
     CCalInstanceView* instanceViewL(const QOrganizerCollectionId& collectionId) const;
     QOrganizerCollectionId collectionIdL(const QOrganizerItem &item, 
@@ -365,7 +370,7 @@ private:
         const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(const QOrganizerCollectionId &collectionId,
         const QOrganizerItem &item, const TDesC8& globalUid) const;
-	
+
 private:
     QOrganizerItemSymbianEngineData *d;
     

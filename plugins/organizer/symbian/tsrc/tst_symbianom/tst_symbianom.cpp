@@ -410,11 +410,8 @@ void tst_SymbianOm::uniqueIds()
     todo.setId(QOrganizerItemId());
     QVERIFY(m_om->saveItem(&todo));
     QVERIFY(todo.id() == id); // local id should remain the same
-    
-    // Change manager uri and save again. Should fail.
-    todo.setId(QOrganizerItemId());
-    QVERIFY(!m_om->saveItem(&todo));
 
+    // TODO: try to save with invalid manager uri
     // TODO: create a read invalid id, and try to save with that also
 }
 
