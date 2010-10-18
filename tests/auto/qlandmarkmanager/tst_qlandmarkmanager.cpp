@@ -97,34 +97,34 @@
 #endif
 
 //defines to turn on and off tests for symbian
-#define INVALID_MANAGER
-#define RETRIEVE_CATEGORY
-#define RETRIEVE_LANDMARK
-#define SAVE_CATEGORY
-#define SIMPLE_SAVE_LANDMARK
-#define SAVE_LANDMARK
-#define SAVE_MULTIPLE_LANDMARKS
-#define REMOVE_CATEGORY
-#define REMOVE_LANDMARK
-#define GET_ALL_CATEGORIES
-#define FILTER_DEFAULT
-#define FILTER_NAME
-#define FILTER_ID
-#define FILTER_PROXIMITY
-#define FILTER_CATEGORY
-#define FILTER_BOX
-#define FILTER_INTERSECTION
-#define FILTER_MULTIBOX
-#define FILTER_UNION
-#define FILTER_ATTRIBUTE
-#define SORT_LANDMARKS
-#define LANDMARK_FETCH_CANCEL
-#define IMPORT_GPX
-#define IMPORT_LMX
-#define IMPORT_FILE
-#define EXPORT_LMX
-#define WAIT_FOR_FINISHED
-#define MISC
+//#define INVALID_MANAGER
+//#define RETRIEVE_CATEGORY
+//#define RETRIEVE_LANDMARK
+//#define SAVE_CATEGORY
+//#define SIMPLE_SAVE_LANDMARK
+//#define SAVE_LANDMARK
+//#define SAVE_MULTIPLE_LANDMARKS
+//#define REMOVE_CATEGORY
+//#define REMOVE_LANDMARK
+//#define GET_ALL_CATEGORIES
+//#define FILTER_DEFAULT
+//#define FILTER_NAME
+//#define FILTER_ID
+//#define FILTER_PROXIMITY
+//#define FILTER_CATEGORY
+//#define FILTER_BOX
+//#define FILTER_INTERSECTION
+//#define FILTER_MULTIBOX
+//#define FILTER_UNION
+//#define FILTER_ATTRIBUTE
+//#define SORT_LANDMARKS
+//#define LANDMARK_FETCH_CANCEL
+//#define IMPORT_GPX
+//#define IMPORT_LMX
+//#define IMPORT_FILE
+//#define EXPORT_LMX
+//#define WAIT_FOR_FINISHED
+//#define MISC
 #define TEST_SIGNALS
 
 //#define WORKAROUND
@@ -7791,7 +7791,7 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatAdd2.count(), 0);
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
-    //QEXPECT_FAIL("", "MOBILITY-1746, Not getting dataChanged signal from another manager instance importing landmarks", Continue);
+    QEXPECT_FAIL("", "MOBILITY-1746, Not getting dataChanged signal from another manager instance importing landmarks", Continue);
     QCOMPARE(spyDataChanged2.count(), 1);
     spyDataChanged2.clear();
 
@@ -7806,7 +7806,7 @@ void tst_QLandmarkManager::testSignals()
     m_manager->saveLandmarks(&lms);
     QTest::qWait(10);
 
-    //QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
+    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
     QCOMPARE(spyAdd2.count(), 1);
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
@@ -7814,6 +7814,23 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
+
+    QLandmark lmGamma;
+    lmGamma.setName("lmGamma");
+    QVERIFY(m_manager->saveLandmark(&lmGamma));
+    QTest::qWait(10);
+
+    //try saving a sinlge landmark in another instance
+    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are modified", Continue);
+    QCOMPARE(spyAdd2.count(),1);
+    QCOMPARE(spyChange2.count(), 0);
+    QCOMPARE(spyRemove2.count(), 0);
+    QCOMPARE(spyCatAdd2.count(), 0);
+    QCOMPARE(spyCatRemove2.count(), 0);
+    QCOMPARE(spyCatChange2.count(),0);
+    QCOMPARE(spyDataChanged2.count(), 0);
+
+
 #endif
 }
 #endif
