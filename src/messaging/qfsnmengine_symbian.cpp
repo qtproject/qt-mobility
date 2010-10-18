@@ -201,20 +201,47 @@ void CFSEngine::messageDeletedEvent(quint64 mailboxId, QList<quint64> envelopeId
 }
 
 void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 folderId, 
-                                    QMessageStorePrivate::NotificationType aNotificationType)
+                             QMessageStorePrivate::NotificationType aNotificationType)
 {
-    Q_UNUSED(folderId);
+    QMessageId realMessageId = QMessageId(buildQMessageId(
+        mailboxId, 
+        folderId, 
+        envelopeId,
+        SymbianHelpers::EngineTypeFreestyle));
+
+    // Make sure that there will not be many Added or Removed notifications
+    // in a row for the same message.
+    // Make also sure that there will not be updated notification for a
+    // message that has already been notified to be removed.
+    QString searchId;
+    if (aNotificationType == QMessageStorePrivate::Added) {
+        searchId = "A"+realMessageId.toString();
+    } else {
+        // Check previous Removed notifications for new Updated or Removed notifications 
+        searchId = "R"+realMessageId.toString();
+    }
+    if (!m_latestAddOrRemoveNotifications.contains(searchId)) {
+        if ((aNotificationType == QMessageStorePrivate::Added) || (aNotificationType == QMessageStorePrivate::Removed)) {
+            // Only Added & Removed notification will be checked
+            if (m_latestAddOrRemoveNotifications.count() > 20) {
+                // Remove the oldest notification from the beginning of the list
+                m_latestAddOrRemoveNotifications.removeFirst();
+            }
+            // Append new notification
+            m_latestAddOrRemoveNotifications.append(searchId);
+        }
+    } else {
+        // Added or Removed notification for the message was already handled!
+        // => Skip unwanted notification
+        return;
+    }
+
     QMessageManager::NotificationFilterIdSet matchingFilters;
     // Copy the filter map to protect against modification during traversal
     QMap<int, QMessageFilter> filters(m_filters);
     QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
     QMessage message;
 
-    QMessageId realMessageId = QMessageId(buildQMessageId(
-        mailboxId, 
-        folderId, 
-        envelopeId,
-        SymbianHelpers::EngineTypeFreestyle));
     bool messageRetrieved = false;    
     // TODO: convert mailboxId
     QString idAsString = QString::number(mailboxId);

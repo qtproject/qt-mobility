@@ -245,7 +245,7 @@ private:
     mutable QMessageFolderSortOrder m_currentFolderOrdering;
     mutable QMessageSortOrder m_currentMessageOrdering;
 
-
+    mutable QStringList m_latestAddOrRemoveNotifications;
 };
 
 class CFSMessagesFindOperation : public QObject
