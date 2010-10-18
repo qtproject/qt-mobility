@@ -556,6 +556,10 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
 {
+    if (strength < 0) {
+        strength = 0;
+    }
+
     if(mode == QSystemNetworkInfo::WlanMode) {
         if(netStatusComboBox->currentText() == "Wlan") {
             signalLevelProgressBar->setValue(strength);
