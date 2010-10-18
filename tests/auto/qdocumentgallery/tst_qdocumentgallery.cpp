@@ -293,7 +293,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QGalleryProperty::Attributes(QGalleryProperty::CanRead);
 #else
-#ifndef Q_OS_SYMBIAN
+#ifdef Q_OS_SYMBIAN
             << QGalleryProperty::Attributes();
 #else
             << (QGalleryProperty::CanRead
