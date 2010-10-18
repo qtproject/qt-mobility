@@ -1651,12 +1651,14 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     message.setReceivedDate(envelope.time());
     
     quint64 mailboxId = envelope.mailboxId();
-    const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId));
+    QString fsIdAsString = addIdPrefix(QString::number(mailboxId), SymbianHelpers::EngineTypeFreestyle);
+    const QMessageAccountId accountId = QMessageAccountId(fsIdAsString);
     message.setParentAccountId(accountId);
     
     quint64 parentFolderId = envelope.parentFolder();
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_parentFolderId = QMessageFolderId(QString::number(parentFolderId));
+    fsIdAsString = addIdPrefix(QString::number(parentFolderId), SymbianHelpers::EngineTypeFreestyle);
+    privateMessage->_parentFolderId = QMessageFolderId(fsIdAsString);
     
     NmApiFolder folder;
     m_emailService->getFolder(envelope.mailboxId(), envelope.parentFolder(), folder);
