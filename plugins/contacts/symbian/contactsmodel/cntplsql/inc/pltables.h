@@ -124,6 +124,7 @@ public:
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
 	CContactItem* DeleteLC(TContactItemId  aItemId, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 
 	void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
@@ -238,6 +239,7 @@ public:
 	void CreateInDbL(CContactItem& aItem);
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 
 	CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
@@ -298,6 +300,7 @@ public:
 	void ReadL(CContactItem& aItem);
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 	~CPplGroupsTable();
 
