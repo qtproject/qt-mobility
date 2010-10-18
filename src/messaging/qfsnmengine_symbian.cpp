@@ -494,7 +494,7 @@ bool CFSEngine::addMessage(QMessage *message)
                 SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
     m_operationList.append(addOperation); 
     connect(this, SIGNAL(operationCompleted()), eventloop, SLOT(quit()));
-    addOperation->addMessage(*message);
+    addOperation->addMessage(message);
     eventloop->exec();
     
     delete eventloop;
@@ -543,18 +543,21 @@ NmApiMessage CFSEngine::message(const quint64 mailboxId, const quint64 folderId,
 QMessage CFSEngine::message(const QMessageId &id) const
 {
     QMessage message = QMessage();
+    
     NmApiMessage fsMessage;
     quint64 mailboxId = 0;
     quint64 folderId = 0;
     quint64 messageId = 0;
     splitQMessageId(id, mailboxId, folderId, messageId);
     if (m_emailServiceInitialized) {
-        m_emailService->getMessage(mailboxId, 0, messageId, fsMessage);       
-        message = CreateQMessage(&fsMessage);            
-        QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-        privateMessage->_id = id; 
-        privateMessage->_modified = false;
+        if (m_emailService->getMessage(mailboxId, 0, messageId, fsMessage)) {       
+            message = CreateQMessage(&fsMessage);            
+            QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+            privateMessage->_id = id; 
+            privateMessage->_modified = false;
+        }
     }
+    
     return message;
 }
 

@@ -141,7 +141,7 @@ public:
     CFSAsynchronousAddOperation(); 
     ~CFSAsynchronousAddOperation();
 
-    void addMessage(QMessage &message);
+    void addMessage(QMessage *message);
     
 public slots:
     void createDraftMessageCompleted(int success, QVariant message);
@@ -152,7 +152,7 @@ private:
     
 private:
     NmApiMessage m_fsMessage;
-    QMessage m_qMessage;
+    QMessage *m_qMessage;
 
 };
 

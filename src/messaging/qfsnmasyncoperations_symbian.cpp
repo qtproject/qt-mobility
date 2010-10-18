@@ -312,10 +312,10 @@ CFSAsynchronousAddOperation::~CFSAsynchronousAddOperation()
     m_manager = NULL;
 }
 
-void CFSAsynchronousAddOperation::addMessage(QMessage &message)
+void CFSAsynchronousAddOperation::addMessage(QMessage *message)
 {
     m_qMessage = message;
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
+    quint64 mailboxId = stripIdPrefix(m_qMessage->parentAccountId().toString()).toULongLong();
     m_manager = new NmApiMessageManager(this, mailboxId);
     createDraftMessage();
 }
@@ -325,7 +325,7 @@ void CFSAsynchronousAddOperation::createDraftMessageCompleted(int success, QVari
     if (success == 0) {
         if (message.canConvert<NmApiMessage>()) {
             m_fsMessage = qvariant_cast<NmApiMessage>(message);
-            createFSMessage(m_qMessage, m_fsMessage);
+            createFSMessage(*m_qMessage, m_fsMessage);
             saveMessage();
         }
     }
