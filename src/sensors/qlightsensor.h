@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,53 +39,47 @@
 **
 ****************************************************************************/
 
-#include "n900lightsensor.h"
-#include <QFile>
-#include <QDebug>
-#include <time.h>
+#ifndef QLIGHTSENSOR_H
+#define QLIGHTSENSOR_H
 
-char const * const n900lightsensor::id("n900.light");
-char const * const n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
+#include "qsensor.h"
 
-n900lightsensor::n900lightsensor(QSensor *sensor)
-    : n900filebasedsensor(sensor)
+QTM_BEGIN_NAMESPACE
+
+class QLightReadingPrivate;
+
+class Q_SENSORS_EXPORT QLightReading : public QSensorReading
 {
-    setReading<QLightReading>(&m_reading);
-    // Sensor takes 12-400ms to complete one reading and is triggered by
-    // a read of the /sys file (no interrupt/timing loop/etc. is used).
-    // Since no continuous operation is possible, don't set a data rate.
-    addDataRate(2, 2); // Close enough to 2 Hz
-    setDescription(QLatin1String("tsl2563"));
+    Q_OBJECT
+    Q_PROPERTY(qreal lux READ lux)
+    DECLARE_READING(QLightReading)
+public:
+    qreal lux() const;
+    void setLux(qreal lux);
+};
 
-    sensor->setProperty("fieldOfView", 1); // very narrow field of view.
-}
-
-void n900lightsensor::start()
+class Q_SENSORS_EXPORT QLightFilter : public QSensorFilter
 {
-    if (!QFile::exists(QLatin1String(filename)))
-        goto error;
+public:
+    virtual bool filter(QLightReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QLightReading*>(reading)); }
+};
 
-    n900filebasedsensor::start();
-    return;
-
-error:
-    sensorStopped();
-}
-
-void n900lightsensor::poll()
+class Q_SENSORS_EXPORT QLightSensor : public QSensor
 {
-    FILE *fd = fopen(filename, "r");
-    if (!fd) return;
-    int lux;
-    int rs = fscanf(fd, "%i", &lux);
-    fclose(fd);
-    if (rs != 1) return;
+    Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(qreal fieldOfView)
+#endif
+public:
+    explicit QLightSensor(QObject *parent = 0) : QSensor(QLightSensor::type, parent) {}
+    virtual ~QLightSensor() {}
+    QLightReading *reading() const { return static_cast<QLightReading*>(QSensor::reading()); }
+    static char const * const type;
+};
 
-    if (m_reading.lux() != lux) {
-        m_reading.setTimestamp(clock());
-        m_reading.setLux(lux);
+QTM_END_NAMESPACE
 
-        newReadingAvailable();
-    }
-}
+#endif
 

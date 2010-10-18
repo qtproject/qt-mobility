@@ -39,53 +39,52 @@
 **
 ****************************************************************************/
 
-#include "n900lightsensor.h"
-#include <QFile>
-#include <QDebug>
-#include <time.h>
+#ifndef QGYROSCOPE_H
+#define QGYROSCOPE_H
 
-char const * const n900lightsensor::id("n900.light");
-char const * const n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
+#include "qsensor.h"
 
-n900lightsensor::n900lightsensor(QSensor *sensor)
-    : n900filebasedsensor(sensor)
+QTM_BEGIN_NAMESPACE
+
+class QGyroscopeReadingPrivate;
+
+class Q_SENSORS_EXPORT QGyroscopeReading : public QSensorReading
 {
-    setReading<QLightReading>(&m_reading);
-    // Sensor takes 12-400ms to complete one reading and is triggered by
-    // a read of the /sys file (no interrupt/timing loop/etc. is used).
-    // Since no continuous operation is possible, don't set a data rate.
-    addDataRate(2, 2); // Close enough to 2 Hz
-    setDescription(QLatin1String("tsl2563"));
+    Q_OBJECT
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
+    DECLARE_READING(QGyroscopeReading)
+public:
+    qreal x() const;
+    void setX(qreal x);
 
-    sensor->setProperty("fieldOfView", 1); // very narrow field of view.
-}
+    qreal y() const;
+    void setY(qreal y);
 
-void n900lightsensor::start()
+    qreal z() const;
+    void setZ(qreal z);
+};
+
+class Q_SENSORS_EXPORT QGyroscopeFilter : public QSensorFilter
 {
-    if (!QFile::exists(QLatin1String(filename)))
-        goto error;
+public:
+    virtual bool filter(QGyroscopeReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QGyroscopeReading*>(reading)); }
+};
 
-    n900filebasedsensor::start();
-    return;
-
-error:
-    sensorStopped();
-}
-
-void n900lightsensor::poll()
+class Q_SENSORS_EXPORT QGyroscope : public QSensor
 {
-    FILE *fd = fopen(filename, "r");
-    if (!fd) return;
-    int lux;
-    int rs = fscanf(fd, "%i", &lux);
-    fclose(fd);
-    if (rs != 1) return;
+    Q_OBJECT
+public:
+    explicit QGyroscope(QObject *parent = 0) : QSensor(QGyroscope::type, parent) {}
+    virtual ~QGyroscope() {}
+    QGyroscopeReading *reading() const { return static_cast<QGyroscopeReading*>(QSensor::reading()); }
+    static char const * const type;
+};
 
-    if (m_reading.lux() != lux) {
-        m_reading.setTimestamp(clock());
-        m_reading.setLux(lux);
+QTM_END_NAMESPACE
 
-        newReadingAvailable();
-    }
-}
+#endif
 
