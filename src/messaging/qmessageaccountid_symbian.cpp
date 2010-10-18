@@ -98,16 +98,27 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 
 bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 {
+#if defined(FREESTYLENMAILUSED)
+    quint64 left = 0;
+    quint64 right = 0;
+
+    if (d_ptr) {
+        left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toULongLong();
+    }
+    if (other.d_ptr) {
+        right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toULongLong();
+    }
+#else    
     long left = 0;
     long right = 0;
+
     if (d_ptr) {
         left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
-        //left = d_ptr->_id.toLong();
     }
     if (other.d_ptr) {
         right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
-        //right = other.d_ptr->_id.toLong();
     }
+#endif    
 
     return (left < right);
 }
