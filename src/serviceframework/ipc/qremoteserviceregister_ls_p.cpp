@@ -136,13 +136,11 @@ private:
 struct PROXY
 {
 public:
-    LocalSocketEndPoint* pLocalSocketEndPoint;
     ObjectEndPoint*      pObjectEndPoint;
     QLocalSocket*        pSocket;
     QString servicename;
 
     void init(){
-        pLocalSocketEndPoint = 0;
         pObjectEndPoint = 0;
         pSocket = 0;
         servicename = "";
@@ -150,10 +148,8 @@ public:
 
     bool operator==(const PROXY& other)
     {
-        if(pLocalSocketEndPoint == other.pLocalSocketEndPoint
-            && pObjectEndPoint == other.pObjectEndPoint
-            && servicename == other.servicename
-            && pSocket == other.pSocket)
+        if(pObjectEndPoint == other.pObjectEndPoint
+            && servicename == other.servicename)
             return true; 
         return false;
     }
@@ -308,9 +304,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
                              proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
             PROXY pr;
             pr.init();
-            pr.pLocalSocketEndPoint = ipcEndPoint;
             pr.pObjectEndPoint = endPoint;
-            pr.servicename = entry.serviceName();
             pr.pSocket = socket;
             proxylist.append(pr);
         }
@@ -329,6 +323,8 @@ void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& service
     }
     for(int i = 0; i < todelete.count(); i++){
         int delidx = proxylist.indexOf(todelete[i]);
+        if(todelete[i].pSocket)
+            todelete[i].pSocket->close();
         if(todelete[i].pObjectEndPoint)
             todelete[i].pObjectEndPoint->disconnect();
         delete todelete[i].pObjectEndPoint;
