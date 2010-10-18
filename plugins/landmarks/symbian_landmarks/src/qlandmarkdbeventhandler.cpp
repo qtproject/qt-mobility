@@ -46,6 +46,7 @@
  ****************************************************************************/
 
 #include "qlandmarkdbeventhandler.h"
+#include <qdebug.h>
 
 //Constants
 //const TInt KInitialSemaphoreCount = 0;
@@ -108,6 +109,7 @@ CLandmarkDbEventHandler::~CLandmarkDbEventHandler()
  */
 void CLandmarkDbEventHandler::RunL()
 {
+    //qDebug() << "CLandmarkDbEventHandler::RunL() start";
     // If the event completed successfully
     if (iStatus.Int() == KErrNone) {
         // Acquire the lock, this is required as the observers cannot modified
@@ -116,13 +118,17 @@ void CLandmarkDbEventHandler::RunL()
         // Iterate through all the registered observers and call handleDatabaseEvent
         for (TInt i = 0; i < iObserverList.Count(); i++) {
             // Call the observer and indicate the event occurred
+
+            //qDebug() << "Notifying " << i+1 << " observer";
             iObserverList[i]->handleDatabaseEvent(iEvent);
+
         }
         // Request for database notification again
         StartListening();
         // release the lock
         iObserverLock.Signal();
     }
+    //qDebug() << "CLandmarkDbEventHandler::RunL() end";
 }
 
 void CLandmarkDbEventHandler::DoCancel()
@@ -139,6 +145,8 @@ void CLandmarkDbEventHandler::DoCancel()
  */
 TInt CLandmarkDbEventHandler::AddObsever(MLandmarkDbEventObserver* aObserverHandle)
 {
+    //qDebug() << "Adding Observer";
+
     if (!iIsInitialized) {
         TRAPD(err,InitializeL());
         if (err) {
@@ -162,6 +170,8 @@ TInt CLandmarkDbEventHandler::AddObsever(MLandmarkDbEventObserver* aObserverHand
  */
 TInt CLandmarkDbEventHandler::RemoveObsever(MLandmarkDbEventObserver* aObserverHandle)
 {
+    //qDebug() << "Removing Observer";
+
     if (!iIsInitialized) {
         TRAPD(err,InitializeL());
         if (err) {
