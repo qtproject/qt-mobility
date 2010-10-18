@@ -2296,16 +2296,18 @@ void CFSMessagesFindOperation::getFolderSpecificMessages(QMessageFolder& message
     quint64 mailboxId = stripIdPrefix(messageFolder.parentAccountId().toString()).toULongLong();    
     operation.m_MessageTask = new NmApiEnvelopeListing(0, folderId, mailboxId);
     operation.m_Type = FSSearchOperation::SearchFolder;
-    m_searchOperations.append(operation);
     connect(operation.m_MessageTask, SIGNAL(envelopesListed(qint32)), this, SLOT(searchOperationCompleted()));
-    if (m_searchOperations.count() == 1) {
+    if (m_searchOperations.count() == 0) {
         operation.m_Status = FSSearchOperation::SearchActive;
         if (!operation.m_MessageTask->start()) {
             delete operation.m_MessageTask;
             QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+        } else {
+            m_searchOperations.append(operation);            
         }
-    } else if (m_searchOperations.count() > 1) {
+    } else if (m_searchOperations.count() > 0) {
         operation.m_Status = FSSearchOperation::SearchQueued;
+        m_searchOperations.append(operation);        
     } else {
         delete operation.m_MessageTask;
         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
@@ -2314,7 +2316,22 @@ void CFSMessagesFindOperation::getFolderSpecificMessages(QMessageFolder& message
 
 void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messageAccount, NmApiMailSortCriteria& sortCriteria)
 {
+    // Get account specific messages from local folders like Outbox, Drafts, Sent...
     quint64 mailboxId(stripIdPrefix(messageAccount.id().toString()).toULongLong());
+    QList<NmApiFolder> folders = m_owner.getFolderListByAccountId(mailboxId);
+    for (int i=0; i < folders.count(); i++) {
+        if ((folders[i].folderType() != Inbox) && (folders[i].folderType() != EOther)) {
+            QMessageFolderId id = addIdPrefix(QString::number(folders[i].id()), SymbianHelpers::EngineTypeFreestyle);
+            QMessageFolder messageFolder = QMessageFolderPrivate::from(id,
+                                                                       messageAccount.id(),
+                                                                       QMessageFolderId(),
+                                                                       folders[i].name(),
+                                                                       folders[i].name());
+            getFolderSpecificMessages(messageFolder);
+        }
+    }
+    
+    // Get account specific messages from remote folders. 
     FSSearchOperation operation;
     NmApiMessageSearch *searchOperation = new NmApiMessageSearch(0, mailboxId);
     operation.m_Type = FSSearchOperation::SearchAccount;
@@ -2326,24 +2343,27 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
     }
     searchOperation->initialise(searchKeys, sortCriteria);
     operation.m_MessageTask = searchOperation;
-    m_searchOperations.append(operation);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(searchOperation, SIGNAL(messageFound(EmailClientApi::NmApiMessage&)), this, SLOT(messageFound(EmailClientApi::NmApiMessage&)));
+    connect(searchOperation, SIGNAL(messageFound(NmApiMessage&)), this, SLOT(messageFound(NmApiMessage&)));
     connect(searchOperation, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
-    if (m_searchOperations.count() == 1) {
+    if (m_searchOperations.count() == 0) {
+        operation.m_Status = FSSearchOperation::SearchActive;
         if (!operation.m_MessageTask->start()) {
             delete searchOperation;
             QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+        } else {
+            m_searchOperations.append(operation);
         }
-    } else if (m_searchOperations.count() > 1) {
+    } else if (m_searchOperations.count() > 0) {
         operation.m_Status = FSSearchOperation::SearchQueued;
+        m_searchOperations.append(operation);
     } else {
         delete searchOperation;
         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
     }
 }
 
-void CFSMessagesFindOperation::messageFound(EmailClientApi::NmApiMessage &message)
+void CFSMessagesFindOperation::messageFound(NmApiMessage &message)
 {
     QMessageId messageId = buildQMessageId(
         message.envelope().mailboxId(),
@@ -2393,14 +2413,18 @@ void CFSMessagesFindOperation::searchOperationCompleted()
     }
 
     if (m_searchOperations.count() > 0) {
-        FSSearchOperation &operation = m_searchOperations[0]; 
-        operation.m_Status = FSSearchOperation::SearchActive;
-        operation.m_MessageTask->start();
+        QMetaObject::invokeMethod(this, "continueSearch", Qt::QueuedConnection);
     } else {
         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
     }
 }
 
+void CFSMessagesFindOperation::continueSearch()
+{
+    FSSearchOperation &operation = m_searchOperations[0]; 
+    operation.m_Status = FSSearchOperation::SearchActive;
+    operation.m_MessageTask->start();
+}
 
 void CFSMessagesFindOperation::searchCompleted()
 {
