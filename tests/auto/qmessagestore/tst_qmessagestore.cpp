@@ -592,7 +592,7 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(manager->countMessages(), originalCount + 1);
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(FREESTYLENMAILUSED)
     // Wait 1 second to make sure that there is
     // enough time to get add signal
     {
@@ -609,12 +609,10 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
-#endif    
 
     // Test message retrieval
     QMessage message(messageId);
@@ -671,6 +669,8 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.parentFolderId(), testFolderId);
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) // Created Messages are not stored in Standard Folders in Symbian & Maemo
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
+#elif defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)       
+    //QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
 #endif    
   
 #ifndef FREESTYLENMAILUSED
