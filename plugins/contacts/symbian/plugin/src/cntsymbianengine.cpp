@@ -671,7 +671,7 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
         foreach (QContactLocalId contactId, contactIds) {
             idList->AddL(TContactItemId(contactId));
         }
-        m_dataBase->contactDatabase()->DeleteContactsL(*idList);
+        m_dataBase->contactDatabase()->DeleteContactsV2L(*idList);
         CleanupStack::PopAndDestroy(idList);
     );
 

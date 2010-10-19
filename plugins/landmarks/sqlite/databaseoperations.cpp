@@ -1145,12 +1145,12 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
 
         if (categoryId.managerUri() != managerUri) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the managers do not match";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         } else if (categoryId.localId().isEmpty()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
         bindValues.clear();
@@ -1160,9 +1160,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
 
         if (!query.next()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = QString("Category with local id %1, does not exist in database")
-                            .arg(categoryId.localId());
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
 
@@ -1284,7 +1283,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             if (filters.size() == 0) {
                 //do nothing
             } else if (filters.size() == 1) {
-                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1304,7 +1303,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
 
                 QSet<QLandmarkId> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(filters.at(0),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 ids = firstResult.toSet();
 
                 for (int i = 1; i < filters.size(); ++i) {
@@ -1316,7 +1315,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
 
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
                         result.clear();
@@ -1357,7 +1356,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 //do nothing
             } else if (filters.size() == 1) {
                 result =  landmarkIds(filters.at(0),
-                                        QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                        QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1372,7 +1371,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
                                                                QList<QLandmarkSortOrder>(),
-                                                               limit, offset,
+                                                               -1, 0,
                                                                error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -3085,7 +3084,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const Q
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
 
     switch(sortOrder.type()) {
-    case (QLandmarkSortOrder::DefaultSort):
+    case (QLandmarkSortOrder::NoSort):
         break;
     case (QLandmarkSortOrder::NameSort): {
         QLandmarkNameSort  nameSort = sortOrder;

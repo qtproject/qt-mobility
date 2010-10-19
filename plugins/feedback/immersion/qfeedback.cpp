@@ -347,8 +347,9 @@ void QFeedbackImmersion::setEffectState(QFeedbackFileEffect *effect, QFeedbackEf
             status = ImmVibeResumePausedEffect(dev, effectHandle);
         } else {
             //we need to start the effect and create the handle
-            Q_ASSERT(fileData.contains(effect->fileName()));
-            status = ImmVibePlayIVTEffect(dev, fileData[effect->fileName()].constData(), 0, &effectHandle);
+            QString fileName = effect->source().toLocalFile();
+            Q_ASSERT(fileData.contains(fileName));
+            status = ImmVibePlayIVTEffect(dev, fileData[fileName].constData(), 0, &effectHandle);
             if (VIBE_SUCCEEDED(status))
                 effectHandles.insert(effect, effectHandle);
         }
@@ -386,8 +387,9 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackFileEffect
 int QFeedbackImmersion::effectDuration(const QFeedbackFileEffect *effect)
 {
     VibeInt32 ret = 0;
-    if (fileData.contains(effect->fileName()))
-        ImmVibeGetIVTEffectDuration(fileData[effect->fileName()].constData(), 0, &ret);
+    QString fileName = effect->source().toLocalFile();
+    if (fileData.contains(fileName))
+        ImmVibeGetIVTEffectDuration(fileData[fileName].constData(), 0, &ret);
 
     return ret;
 }

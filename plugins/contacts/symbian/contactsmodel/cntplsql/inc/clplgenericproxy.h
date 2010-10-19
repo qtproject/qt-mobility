@@ -61,6 +61,8 @@ public:
 	virtual void UpdateL(CContactItem& aItem, TUint aSessionId);
 	/** Delete a Contact. */
 	virtual CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType);
+    /** Delete multiple contacts. */
+    virtual void DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType) = 0;    
 	/** Change the type of an existing contact. */
 	virtual void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
 	/** Set connection ID for the notification mechanism. */

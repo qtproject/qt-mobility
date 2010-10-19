@@ -91,7 +91,7 @@ that a particular detail may not be removed by clients.  In general, most detail
 also be irremovable, and vice versa.  One exception to this is the \l{QOrganizerItemType} detail, which is
 irremovable but may be updated by clients as desired in the default schema.
 Details with no constraint may be added, updated and removed as desired by the client.  Changes to such details
-in an item will be persisted in the manager when the client calls \l{QOrganizerItemManager::saveItem()}.
+in an item will be persisted in the manager when the client calls \l{QOrganizerManager::saveItem()}.
 
 Please see the documentation of \l{QOrganizerItemDetail} for more information on access constraints.
 

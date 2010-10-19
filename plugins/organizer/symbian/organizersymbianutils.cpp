@@ -122,33 +122,33 @@ QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
     return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
 }
 
-QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId)
+QOrganizerCollectionId toCollectionId(quint64 collectionId)
 {
-    return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+    return QOrganizerCollectionId(new QOrganizerCollectionSymbianEngineId(collectionId));
 }
 
-QOrganizerItemLocalId toItemLocalId(quint64 collectionId, quint32 itemId)
+QOrganizerItemId toItemId(quint64 collectionId, quint32 itemId)
 {
-    return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+    return QOrganizerItemId(new QOrganizerItemSymbianEngineId(collectionId, itemId));
 }
 
-TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
+TCalLocalUid toTCalLocalUid(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
+    return static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calLocalUid();
 }
 
-quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
+quint64 toTCalCollectionId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    return static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
 }
 
-QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+QOrganizerCollectionId getCollectionId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    quint64 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
-    return toCollectionLocalId(calCollectionId);
+    quint64 calCollectionId  = static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
+    return toCollectionId(calCollectionId);
 }
 
 #ifdef SYMBIAN_CALENDAR_V2

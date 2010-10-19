@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,55 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEORGANIZERCOLLECTION_H
-#define QDECLARATIVEORGANIZERCOLLECTION_H
+/*!
+    \example declarative-camera
+    \title Camera QML Example
 
-#include "qdeclarative.h"
-#include "qorganizercollection.h"
+    \image qml-camera.png
 
-QTM_USE_NAMESPACE
+    This example demonstrates the basic use of Camera QML elements.
 
-
-class QDeclarativeOrganizerCollection : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
-public:
-    QDeclarativeOrganizerCollection(QObject* parent = 0)
-        :QObject(parent)
-    {
-    }
-
-
-    uint id() const
-    {
-        return qHash(d.id());
-    }
-
-    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
-    {
-        d.setMetaData(key, value);
-    }
-
-    Q_INVOKABLE  QVariant metaData(const QString& key)
-    {
-        return d.metaData(key);
-    }
-
-    QOrganizerCollection collection() const
-    {
-        return d;
-    }
-
-    void setCollection(const QOrganizerCollection& collection)
-    {
-        d = collection;
-    }
-signals:
-    void valueChanged();
-private:
-    QOrganizerCollection d;
-};
-QML_DECLARE_TYPE(QDeclarativeOrganizerCollection)
-#endif
-
+*/

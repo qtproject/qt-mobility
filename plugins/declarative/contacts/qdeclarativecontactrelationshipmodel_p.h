@@ -52,9 +52,11 @@ class QDeclarativeContactRelationshipModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QContactLocalId participantId READ participantId WRITE setParticipantId NOTIFY participantIdChanged)
     Q_PROPERTY(QVariant relationshipType READ relationshipType WRITE setRelationshipType NOTIFY relationshipTypeChanged)
     Q_PROPERTY(QDeclarativeContactRelationship::RelationshipRole role READ role WRITE setRole NOTIFY roleChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactRelationship> relationships READ relationships NOTIFY relationshipsChanged)
     Q_PROPERTY(QString error READ error)
 
 public:
@@ -67,6 +69,8 @@ public:
 
     QString manager() const;
     void setManager(const QString& manager);
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
     QString error() const;
     QContactLocalId participantId() const;
     void setParticipantId(const QContactLocalId& id);
@@ -77,7 +81,7 @@ public:
     QDeclarativeContactRelationship::RelationshipRole role() const;
     void setRole(QDeclarativeContactRelationship::RelationshipRole role);
 
-
+    QDeclarativeListProperty<QDeclarativeContactRelationship> relationships();
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
@@ -89,7 +93,7 @@ signals:
     void relationshipTypeChanged();
     void roleChanged();
     void relationshipsChanged();
-
+    void autoUpdateChanged();
 private slots:
     void fetchAgain();
     void requestUpdated();

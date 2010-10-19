@@ -58,7 +58,7 @@
 
     The Location API gives users of the Qt Mobility Project the capability to write applications that understand a geographical location and movement of the position coordinates. Backend services can be called by the API to detect landmarks and display appropriate information. The QML Location Plugin delivers these capabilities in an easy to use form.
 
-    \section1 Elements
+    \section1 Positioning
 
     \section2 Coordinate
 
@@ -77,12 +77,27 @@
 
     \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
 
-    
+    \section2 Positioning Elements
 
-
-    \section1 Elements
     
     \annotatedlist qml-location
+
+    \section1 Maps
+
+    The Map element can be used be used to display a map of the world.  The 
+    bulk of the functionality is provided by a mapping plugin described 
+    by the Plugin element associated with the Map.
+
+    Various map objects can be added to the map.  These map objects are 
+    specified in terms of coordinates and metres.
+
+    \note At the time of the Qt Mobility 1.1 release the QML support for 
+    the Maps and Navigation API is incomplete and likely to be refined and 
+    improved in the next patch release.
+
+    \section2 Map Elements
+    
+    \annotatedlist qml-location-maps
 
 */
 

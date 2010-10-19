@@ -39,50 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMID_P_H
-#define QORGANIZERITEMID_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QORGANIZERITEMTAG_H
+#define QORGANIZERITEMTAG_H
 
 #include <QString>
-#include <QSharedData>
 
-#include "qorganizeritemid.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemIdPrivate : public QSharedData
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemTag : public QOrganizerItemDetail
 {
 public:
-    QOrganizerItemIdPrivate()
-            : QSharedData()
-    {
-    }
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTag;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTag, "Tag")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
+#endif
 
-    QOrganizerItemIdPrivate(const QOrganizerItemIdPrivate& other)
-            : QSharedData(other),
-            m_managerUri(other.m_managerUri),
-            m_localId(other.m_localId)
-    {
-    }
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
 
-    ~QOrganizerItemIdPrivate()
-    {
-    }
-
-    QString m_managerUri;
-    QOrganizerItemLocalId m_localId;
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
 };
 
 QTM_END_NAMESPACE
 
 #endif
+

@@ -54,12 +54,30 @@ Item {
                         }
         size.width: parent.width
         size.height: parent.height
-        zoomLevel: 10
+        zoomLevel: 7
         center: Coordinate {
                     latitude: -27
-                    longitude: 153
+                    longitude: 179
                 }
 
+        MapCircle{
+            center : Coordinate {
+                                latitude : -27
+                                longitude : 179
+                                }
+            radius : 1000.0
+        }
+        MapCircle{
+            radius : 1000.0
+            color : "green"
+        }
+        MapCircle{
+            center : Coordinate {
+                                latitude : -27.2
+                                longitude : 179
+                                }
+            color : "red"
+        }
     }
 
     MouseArea {

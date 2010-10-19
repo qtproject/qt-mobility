@@ -61,8 +61,8 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    void setAllDay(bool isAllDay);
+    bool isAllDay() const;
 
     void setRecurrenceDates(const QSet<QDate>& rdates);
     QSet<QDate> recurrenceDates() const;

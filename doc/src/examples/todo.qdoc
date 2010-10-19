@@ -64,7 +64,7 @@
     \endlist
 
     A todo item is represented in Qt with the QOrganizerTodo class.
-    Instances are managed by a QOrganizerItemManager, which can save
+    Instances are managed by a QOrganizerManager, which can save
     todos created by a program and return the todo items it manages.
     QOrganizerTodo contains the information mentioned in the list
     above. In Qt, we call this item details. They are represented by
@@ -74,9 +74,9 @@
 
     The item details available for a QOrganizerTodo follows a
     standardized schema, i.e, a todo item has a standard set of item
-    details. Most \l{QOrganizerItemManager} backends will follow this
+    details. Most \l{QOrganizerManager} backends will follow this
     schema. A backend is the implementation of the
-    \l{QOrganizerItemManager}'s functionality for a specific platform.
+    \l{QOrganizerManager}'s functionality for a specific platform.
     Some backends may not support all details, and possibly include
     others.
 
@@ -117,7 +117,7 @@
 
     \section1 Window Class Implementation
 
-    The constructor creates the QOrganizerItemManager instance:
+    The constructor creates the QOrganizerManager instance:
 
     \snippet examples/todo/window.cpp 0 
 
@@ -157,8 +157,8 @@
 
     \snippet examples/todo/window.cpp 3
 
-    Saving a QOrganizerTodo in the QOrganizerItemManager is easy using
-    the \l{QOrganizerItemManager::}{saveItem()} function. We call the
+    Saving a QOrganizerTodo in the QOrganizerManager is easy using
+    the \l{QOrganizerManager::}{saveItem()} function. We call the
     \c refreshList() slot to update the \gui { Todo Item List } so
     that new and edited todos is displayed correctly.
 
@@ -170,27 +170,27 @@
 
     Here we fetch the selected list widget item from the list. To
     delete the item in the manager, we send the items
-    \l{QOrganizerItem::localId()}{local id} to the manager's
-    \l{QOrganizerItemManager::}{deleteItem()} function. An item's
-    local id uniquely identifies it in its manager.
+    \l{QOrganizerItem::id()}{id} to the manager's
+    \l{QOrganizerManager::}{removeItem()} function. An item's
+    id uniquely identifies it in its manager.
 
     We now move on to the \c refreshList() function, which set's up
     the \gui { Todo List } with the todo items currently stored in the
     manager.
 
     \snippet examples/todo/window.cpp 5
-    
+
     First we remove all items from the list widget, i.e., we set
     up the list from scratch each time \c refreshList() is called.
 
-    The \l{QOrganizerItemManager::}{items()} functions retrieves
+    The \l{QOrganizerManager::}{items()} functions retrieves
     \l{QOrganizerItem}s from the manager. By giving the manager a
     QOrganizerItemSortOrder, the manager will sort the items for us.
     The sort order takes the item detail it should sort after.  You
     also need to specify which field of the detail should be used for
     sorting. Note that all details have a DefinitionName constant
     declared. They also keep constants for all of their fields. The
-    \l{QOrganizerItemManager::}{items()} takes a list of sort orders
+    \l{QOrganizerManager::}{items()} takes a list of sort orders
     in case one wants to sort by more than one field.
 
     It is also possible to let the manager filter items. You can
@@ -263,12 +263,12 @@
     Many backends support notifying the user when a todo item is due.
     We can request this by adding a QOrganizerItemRemainder detail to
     the QOrganizerTodo. We first check whether a remainder detail is
-    present on the todo item. If it is we update the \l{ Alarm Combo
-    Box }. The \l{QDateTime::}{secsTo()} function returns the
+    present on the todo item. If it is we update the \l{Alarm Combo Box}.
+    The \l{QDateTime::}{secsTo()} function returns the
     difference between two \l{QDateTime}s in seconds.
 
     The next two slots update the subject and description of the
-    todo item. 
+    todo item.
 
     \snippet examples/todo/todoeditor.cpp 3
 

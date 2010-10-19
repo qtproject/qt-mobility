@@ -337,6 +337,16 @@ void QMessageServicePrivate::setFinished(bool successful)
     emit q_ptr->stateChanged(_state);
 }
 
+void QMessageServicePrivate::cancel()
+{
+    if (_active) {
+#ifdef FREESTYLEMAILUSED
+        CFSEngine::instance()->cancel((QMessageServicePrivate&)*this);
+#endif        
+        CMTMEngine::instance()->cancel((QMessageServicePrivate&)*this);
+    }
+}
+
 QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServicePrivate(this))
@@ -349,6 +359,7 @@ QMessageService::QMessageService(QObject *parent)
 
 QMessageService::~QMessageService()
 {
+    d_ptr->cancel();
 }
 
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
@@ -477,22 +488,27 @@ bool QMessageService::send(QMessage &message)
     }
     
     if (retVal) {
+        QMessage outgoing(message);
+
         // Set default account if unset
-        if (!message.parentAccountId().isValid()) {
-            message.setParentAccountId(accountId);
+        if (!outgoing.parentAccountId().isValid()) {
+            outgoing.setParentAccountId(accountId);
         }
-        
-        if (message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-            message.setType(msgType);
+
+        if (outgoing.type() == QMessage::AnyType || outgoing.type() == QMessage::NoType) {
+            outgoing.setType(msgType);
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = d_ptr->sendSMS(message);
+            retVal = d_ptr->sendSMS(outgoing);
         } else if (account.messageTypes() & QMessage::Mms) {
-            retVal = d_ptr->sendMMS(message);
+            retVal = d_ptr->sendMMS(outgoing);
         } else if (account.messageTypes() & QMessage::Email) {
-            retVal = d_ptr->sendEmail(message);
+            retVal = d_ptr->sendEmail(outgoing);
         }
+
+        QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+        privateMessage->_id = outgoing.id();
     }
     
     if (retVal == false) {
@@ -655,6 +671,12 @@ QMessageService::State QMessageService::state() const
 
 void QMessageService::cancel()
 {
+    if (d_ptr->_active) {
+        d_ptr->cancel();
+        d_ptr->_active = false;
+        d_ptr->_state = QMessageService::CanceledState;
+        emit stateChanged(d_ptr->_state);
+    }
 }
 
 QMessageManager::Error QMessageService::error() const

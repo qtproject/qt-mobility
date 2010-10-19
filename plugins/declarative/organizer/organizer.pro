@@ -37,8 +37,8 @@ HEADERS += qdeclarativeorganizermodel_p.h \
            qdeclarativeopenmetaobject_p.h \
            qdeclarativeorganizeritemfilter_p.h \
            qdeclarativeorganizeritemmetaobject_p.h \
-           qdeclarativeorganizeritemrecurrencerule_p.h \
-           qdeclarativeorganizeritemcollection_p.h \
+           qdeclarativeorganizerrecurrencerule_p.h \
+           qdeclarativeorganizercollection_p.h \
            qdeclarativeorganizeritemsortorder_p.h \
            qdeclarativeorganizeritemfetchhint_p.h
 

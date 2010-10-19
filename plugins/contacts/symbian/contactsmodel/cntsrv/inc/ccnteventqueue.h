@@ -74,13 +74,15 @@ private:
 
 private:
 	void Flush();
-	void SendEvent(const TContactDbObserverEventV2 &aEvent);
+	void SendEvent(const TContactDbObserverEventV2 &aEvent, const CContactIdArray* aAdditionalContactIds);
 	void SetFlag(TFlag aFlag);
 	void ClearFlag(TFlag aFlag);
 	TBool Flag(TFlag aFlag);
+	TInt Append(const TContactDbObserverEventV2 &aEvent);
 
 private:
 	RArray<TContactDbObserverEventV2> iEvents;
+	RPointerArray<CContactIdArray> iIds;
 	RMessage2 iEventMsg;
 	TInt iFlags;
 	TInt iEventsInQueue;

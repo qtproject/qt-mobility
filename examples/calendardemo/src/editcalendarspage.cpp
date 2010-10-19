@@ -124,7 +124,7 @@ void EditCalendarsPage::deleteClicked()
 
     if (ret == QMessageBox::Yes) {
         m_collection = m_calendarList->currentItem()->data(ORGANIZER_CALENDAR_ROLE).value<QOrganizerCollection>();
-        if(!m_manager->removeCollection(m_collection.id().localId()))
+        if(!m_manager->removeCollection(m_collection.id()))
             QMessageBox::information(this, "Failed!", QString("Failed to remove calendar!\n(error code %1)").arg(m_manager->error()));
         showPage(m_manager);
     }

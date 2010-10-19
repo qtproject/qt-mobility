@@ -88,12 +88,10 @@ public:
     /* Unique ID */
     QOrganizerItemId id() const;
     void setId(const QOrganizerItemId& id);
-    QOrganizerItemLocalId localId() const;
 
     /* The collection to which an item belongs - read only */
     QOrganizerCollectionId collectionId() const;
     void setCollectionId(const QOrganizerCollectionId& collectionId);
-    QOrganizerCollectionLocalId collectionLocalId() const;
 
     /* Is this an empty organizer item? */
     bool isEmpty() const;

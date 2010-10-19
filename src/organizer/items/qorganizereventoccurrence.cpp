@@ -99,22 +99,22 @@ QDateTime QOrganizerEventOccurrence::endDateTime() const
 
 /*!
   Sets the event occurrence's parent to be the event identified by the
-  given \a parentLocalId
+  given \a parentId
  */
-void QOrganizerEventOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
+void QOrganizerEventOccurrence::setParentId(const QOrganizerItemId& parentId)
 {
     QOrganizerItemParent origin = detail<QOrganizerItemParent>();
-    origin.setParentLocalId(parentLocalId);
+    origin.setParentId(parentId);
     saveDetail(&origin);
 }
 
 /*!
-  Returns the local id of the event which is this occurrence's parent
+  Returns the id of the event which is this occurrence's parent
  */
-QOrganizerItemLocalId QOrganizerEventOccurrence::parentLocalId() const
+QOrganizerItemId QOrganizerEventOccurrence::parentId() const
 {
     QOrganizerItemParent origin = detail<QOrganizerItemParent>();
-    return origin.parentLocalId();
+    return origin.parentId();
 }
 
 /*!
