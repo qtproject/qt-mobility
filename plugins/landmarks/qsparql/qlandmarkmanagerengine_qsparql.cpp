@@ -346,7 +346,7 @@ bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
 
 bool QLandmarkManagerEngineQsparql::exportLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QList<QLandmarkId> landmarkIds,
+                                                   const QList<QLandmarkId> &landmarkIds,
                                                    QLandmarkManager::TransferOption option,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
@@ -378,7 +378,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineQsparql::filterSupportLevel
     return m_databaseOperations.filterSupportLevel(filter);
 }
 
-QLandmarkManager::SupportLevel QLandmarkManagerEngineQsparql::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+QLandmarkManager::SupportLevel QLandmarkManagerEngineQsparql::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -386,10 +386,10 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineQsparql::sortOrderSupportLe
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return m_databaseOperations.sortOrderSupportLevel(sortOrders);
+    return m_databaseOperations.sortOrderSupportLevel(sortOrder);
 }
 
-bool QLandmarkManagerEngineQsparql::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
+bool QLandmarkManagerEngineQsparql::isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
