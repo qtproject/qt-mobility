@@ -296,17 +296,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     }
 
     //fetchRequired will prevent multiple fetches from database
-    bool sortRequired = false;
-
-    // check emulated sorting is required or not
-    if (sortOrders.size() > 1) {
-        for (int i = 0; i < sortOrders.size(); ++i) {
-            if (sortOrders.at(i).type() != QLandmarkSortOrder::NameSort) {
-                sortRequired = true;
-                break;
-            }
-        }
-    }
+    bool sortRequired = true; //TODO: optimize
 
     switch (filter.type()) {
     case QLandmarkFilter::DefaultFilter:
@@ -324,6 +314,10 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         }
 
         int maxMatches;
+
+        if (offset < 0)
+            offset =0;
+
         if (limit < 0)
             maxMatches = -1;
         else
@@ -348,7 +342,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             //do nothing
         }
         else if (filters.size() == 1) {
-            result = landmarkIds(filters.at(0), limit, offset, QList<QLandmarkSortOrder> (), error,
+            result = landmarkIds(filters.at(0), KAllLandmarks, KDefaultIndex, QList<QLandmarkSortOrder> (), error,
                 errorString);
             if (*error != QLandmarkManager::NoError) {
                 result.clear();
@@ -431,7 +425,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             //do nothing
         }
         else if (filters.size() == 1) {
-            result = landmarkIds(filters.at(0), limit, offset, QList<QLandmarkSortOrder> (), error,
+            result = landmarkIds(filters.at(0), KAllLandmarks, KDefaultIndex, QList<QLandmarkSortOrder> (), error,
                 errorString);
             if (*error != QLandmarkManager::NoError) {
                 result.clear();
@@ -440,7 +434,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         }
         else {
             for (int i = 0; i < filters.size(); ++i) {
-                QList<QLandmarkId> subResult = landmarkIds(filters.at(i), limit, offset, QList<
+                QList<QLandmarkId> subResult = landmarkIds(filters.at(i), KAllLandmarks, KDefaultIndex, QList<
                     QLandmarkSortOrder> (), error, errorString);
 
                 if (*error != QLandmarkManager::NoError) {
@@ -1915,21 +1909,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         }
 
         if (filter.type() == QLandmarkFilter::LandmarkIdFilter || multiplefetch) {
-
-            bool sortRequired = false;
-
-            // check emulated sorting is required or not
-            if (!sortOrders.isEmpty() && !multiplefetch) {
-                for (int i = 0; i < sortOrders.size(); ++i) {
-                    if (sortOrders.at(i).type() != QLandmarkSortOrder::NameSort) {
-                        sortRequired = true;
-                        break;
-                    }
-                }
-            }
-
-            if (sortRequired || multiplefetch) {
-
                 // create request AO and start async request
                 CLandmarkRequestAO* requestAO = CLandmarkRequestAO::NewL(this);
                 CleanupStack::PushL(requestAO);
@@ -1942,7 +1921,6 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
                 requestAO->StartRequest(NULL);
                 CleanupStack::Pop(requestAO);
                 break;
-            }
         }
 
         CPosLmSearchCriteria* searchCriteria = getSearchCriteriaL(filter);
@@ -4633,17 +4611,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
     }
 
     //fetchRequired will prevent multiple fetches from database
-    bool sortRequired = false;
-
-    // check emulated sorting is required or not
-    if (!sortOrders.isEmpty()) {
-        for (int i = 0; i < sortOrders.size(); ++i) {
-            if (sortOrders.at(i).type() != QLandmarkSortOrder::NameSort) {
-                sortRequired = true;
-                break;
-            }
-        }
-    }
+    bool sortRequired = true; //TODO: optimize
 
     // do sorting if required
     if (sortRequired) {
@@ -4668,17 +4636,13 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
     int resultcount = landmarkIds.size();
 
-    if (offset < resultcount) {
-        // do fetch based on offset and max items
-        if (limit > 0) {
-            if (offset < 0)
-                offset = 0;
-            landmarkIds = landmarkIds.mid(offset, limit);
-        }
-        else if (offset > 0) {
-            landmarkIds = landmarkIds.mid(offset, resultcount);
-        }
-    }
+    if (offset >= resultcount)
+        landmarkIds.clear();
+
+    if (offset <=0)
+        offset =0;
+
+    landmarkIds = landmarkIds.mid(offset, limit);
 
     if ((filterType == QLandmarkFilter::IntersectionFilter || filterType
         == QLandmarkFilter::UnionFilter) && sortOrders.size() > 0) {
