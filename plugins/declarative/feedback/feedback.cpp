@@ -60,7 +60,7 @@ public:
     virtual void registerTypes(const char *uri)
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
-        qmlRegisterUncreatableType<QDeclarativeFeedbackEffect>("QtMobility.feedback", 1, 1, "Feedback", "FeedbackEffect is an abstract class"); // It's not really
+        qmlRegisterUncreatableType<QDeclarativeFeedback>("QtMobility.feedback", 1, 1, "Feedback", "Feedback is a namespace"); // It's not really
         qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
         qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
         qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
