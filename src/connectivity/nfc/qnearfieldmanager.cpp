@@ -42,7 +42,9 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldmanager_p.h"
 
-#ifdef Q_OS_SYMBIAN
+#if defined(QT_SIMULATOR)
+#include "qnearfieldmanager_simulator_p.h"
+#elif defined(Q_OS_SYMBIAN)
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif
@@ -119,6 +121,8 @@ QTM_BEGIN_NAMESPACE
 QNearFieldManager::QNearFieldManager(QObject *parent)
 :   QObject(parent), d_ptr(new QNearFieldManagerPrivateImpl)
 {
+    connect(d_ptr, SIGNAL(targetDetected(QNearFieldTarget*)),
+            this, SIGNAL(targetDetected(QNearFieldTarget*)));
 }
 
 #ifdef QT_BUILD_INTERNAL

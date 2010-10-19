@@ -27,4 +27,10 @@ SOURCES += \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp
 
+simulator:HEADERS += \
+    nfc/qnearfieldmanager_simulator_p.h
+
+simulator:SOURCES += \
+    nfc/qnearfieldmanager_simulator.cpp
+
 INCLUDEPATH += $$PWD
