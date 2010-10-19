@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,31 +39,25 @@
 **
 ****************************************************************************/
 
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
-#ifndef QORGANIZERITEMAUDIBLEREMINDER_H
-#define QORGANIZERITEMAUDIBLEREMINDER_H
+#include <QObject>
+#include "qversitcontacthandler.h"
+#include "qversitproperty.h"
 
-#include "qorganizeritemreminder.h"
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-/* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemAudibleReminder : public QOrganizerItemReminder
+class Plugin4 : public QObject, public QVersitContactHandlerFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
+
 public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldDataUrl;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemAudibleReminder, "AudibleReminder")
-    Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
-#endif
-
-    // audio data to be played if audible notification.
-    void setDataUrl(const QUrl& dataUrl) {setValue(FieldDataUrl, dataUrl);}
-    QUrl dataUrl() const {return value<QUrl>(FieldDataUrl);}
+    QString name() const;
+    int index() const;
+    QVersitContactHandler* createHandler() const;
+    QSet<QString> profiles() const;
 };
-
-QTM_END_NAMESPACE
 
 #endif
