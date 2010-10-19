@@ -152,7 +152,6 @@ QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackHapticsEf
 
 void QFeedbackTestPlugin::timerExpired()
 {
-    qDebug() << "Timer expired";
     mHapticState = QFeedbackEffect::Stopped;
 }
 
