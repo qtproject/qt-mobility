@@ -80,7 +80,7 @@ class QDeclarativeContact : public QObject
     Q_PROPERTY (ContactType  type READ type  WRITE setType NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactUrl*  url READ url NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactHobby*  hobby READ hobby NOTIFY detailsChanged)
-    Q_PROPERTY (bool modified READ modified NOTIFY dirtyFlagChanged)
+    Q_PROPERTY (bool modified READ modified)
     Q_CLASSINFO("DefaultProperty", "details")
     Q_ENUMS(ContactType)
 public:
@@ -146,7 +146,6 @@ signals:
     void contactIdChanged();
     void managerChanged();
     void detailsChanged();
-    void dirtyFlagChanged();
 private:
     QDeclarativeContactMetaObject* d;
     friend class QDeclarativeContactMetaObject;
