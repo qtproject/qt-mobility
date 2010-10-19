@@ -485,16 +485,16 @@ public:
 
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "priority");
     enum PriorityType {
-        UnknownPriority = QOrganizerItemPriority::UnknownPriority,
-        HighestPriority = QOrganizerItemPriority::HighestPriority,
-        ExtremelyHighPriority = QOrganizerItemPriority::ExtremelyHighPriority,
-        VeryHighPriority = QOrganizerItemPriority::VeryHighPriority,
-        HighPriority = QOrganizerItemPriority::HighPriority,
-        MediumPriority = QOrganizerItemPriority::MediumPriority,
-        LowPriority = QOrganizerItemPriority::LowPriority,
-        VeryLowPriority = QOrganizerItemPriority::VeryLowPriority,
-        ExtremelyLowPriority = QOrganizerItemPriority::ExtremelyLowPriority,
-        LowestPriority = QOrganizerItemPriority::LowestPriority
+        Unknown = QOrganizerItemPriority::UnknownPriority,
+        Highest = QOrganizerItemPriority::HighestPriority,
+        ExtremelyHigh = QOrganizerItemPriority::ExtremelyHighPriority,
+        VeryHigh = QOrganizerItemPriority::VeryHighPriority,
+        High = QOrganizerItemPriority::HighPriority,
+        Medium = QOrganizerItemPriority::MediumPriority,
+        Low = QOrganizerItemPriority::LowPriority,
+        VeryLow = QOrganizerItemPriority::VeryLowPriority,
+        ExtremelyLow = QOrganizerItemPriority::ExtremelyLowPriority,
+        Lowest = QOrganizerItemPriority::LowestPriority
     };
 
     QDeclarativeOrganizerItemPriority(QObject* parent = 0)
