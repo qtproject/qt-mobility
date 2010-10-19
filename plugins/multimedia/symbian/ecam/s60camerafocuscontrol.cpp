@@ -67,7 +67,7 @@ S60CameraFocusControl::S60CameraFocusControl(S60ImageCaptureSession *session, QO
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
 
-    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
+    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 
     TRAPD(err, m_session->doSetZoomFactorL(m_opticalZoomValue, m_digitalZoomValue));
@@ -101,6 +101,10 @@ bool S60CameraFocusControl::isFocusModeSupported(QCameraFocus::FocusMode mode) c
 {
     if (m_advancedSettings) {
         return m_advancedSettings->supportedFocusModes() & mode;
+    } else {
+        if (mode == QCameraFocus::AutoFocus) {
+            return m_session->isFocusSupported();
+        }
     }
 
     return false;

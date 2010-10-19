@@ -57,6 +57,32 @@
 
 #include "qcontactrequests.h"
 
+/*!
+    \qmlclass ContactModel QDeclarativeContactModel
+    \brief The ContactModel element provides access to contacts from the contacts store.
+    \ingroup qml-contacts
+
+    This element is part of the \bold{QtMobility.contacts 1.1} module.
+
+    ContactModel provides a model of contacts from the contacts store.
+    The contents of the model can be specified with \l filter, \l sortOrders and \l fetchHint properties.
+    Whether the model is automatically updated when the store or \l contacts changes, can be
+    controlled with \l ContactModel::autoUpdate property.
+
+    There are two ways of accessing the contact data: via model by using views and delegates,
+    or alternatively via \l contacts list property. Of the two, the model access is preferred.
+    Direct list access (i.e. non-model) is not guaranteed to be in order set by \l sortOrder.
+
+    At the moment the model roles provided by ContactModel are display, decoration and \c contact.
+    Through the \c contact role can access any data provided by the Contact element.
+
+    \sa RelationshipModel, Contact, {QContactManager}
+*/
+
+
+
+
+
 class QDeclarativeContactModelPrivate
 {
 public:
@@ -110,13 +136,31 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
 
+/*!
+  \qmlproperty string ContactModel::manager
+
+  This property holds the manager uri of the contact backend engine.
+  */
 QString QDeclarativeContactModel::manager() const
 {
     if (d->m_manager)
     	return d->m_manager->managerName();
     return QString();
 }
+void QDeclarativeContactModel::setManager(const QString& managerName)
+{
+    if (d->m_manager)
+        delete d->m_manager;
 
+
+    d->m_manager = new QContactManager(managerName);
+
+    connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
+    connect(d->m_manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(fetchAgain()));
+    connect(d->m_manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SLOT(contactsRemoved(QList<QContactLocalId>)));
+    connect(d->m_manager, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SLOT(contactsChanged(QList<QContactLocalId>)));
+    emit managerChanged();
+}
 void QDeclarativeContactModel::componentComplete()
 {
     d->m_componentCompleted = true;
@@ -129,7 +173,11 @@ void QDeclarativeContactModel::componentComplete()
         //scheduleUpdate();
     }
 }
+/*!
+  \qmlproperty bool ContactModel::autoUpdate
 
+  This property indicates whether or not the contact model should be updated automatically, default value is true.
+  */
 void QDeclarativeContactModel::setAutoUpdate(bool autoUpdate)
 {
     if (autoUpdate == d->m_autoUpdate)
@@ -148,43 +196,57 @@ void QDeclarativeContactModel::update()
     //TODO
 }
 
+/*!
+  \qmlproperty string ContactModel::error
+
+  This property holds the latest error code returned by the contact manager.
+
+  This property is read only.
+  */
 QString QDeclarativeContactModel::error() const
 {
     switch (d->m_manager->error()) {
     case QContactManager::DoesNotExistError:
-        return QLatin1String("Not exist");
+        return QLatin1String("DoesNotExist");
     case QContactManager::AlreadyExistsError:
-        return QLatin1String("Already exist");
+        return QLatin1String("AlreadyExists");
     case QContactManager::InvalidDetailError:
-        return QLatin1String("Invalid detail");
+        return QLatin1String("InvalidDetail");
     case QContactManager::InvalidRelationshipError:
-        return QLatin1String("Invalid relationship");
+        return QLatin1String("InvalidRelationship");
     case QContactManager::LockedError:
-        return QLatin1String("Locked error");
+        return QLatin1String("LockedError");
     case QContactManager::DetailAccessError:
-        return QLatin1String("Detail access error");
+        return QLatin1String("DetailAccessError");
     case QContactManager::PermissionsError:
-        return QLatin1String("Permissions error");
+        return QLatin1String("PermissionsError");
     case QContactManager::OutOfMemoryError:
-        return QLatin1String("Out of memory");
+        return QLatin1String("OutOfMemory");
     case QContactManager::NotSupportedError:
-        return QLatin1String("Not supported");
+        return QLatin1String("NotSupported");
     case QContactManager::BadArgumentError:
-        return QLatin1String("Bad argument");
+        return QLatin1String("BadArgument");
     case QContactManager::UnspecifiedError:
-        return QLatin1String("Unspecified error");
+        return QLatin1String("UnspecifiedError");
     case QContactManager::VersionMismatchError:
-        return QLatin1String("Version mismatch");
+        return QLatin1String("VersionMismatch");
     case QContactManager::LimitReachedError:
-        return QLatin1String("Limit reached");
+        return QLatin1String("LimitReached");
     case QContactManager::InvalidContactTypeError:
-        return QLatin1String("Invalid contact type");
+        return QLatin1String("InvalidContactType");
     default:
         break;
     }
     return QLatin1String("Status ok");
 }
 
+
+/*!
+  \qmlproperty list<string> ContactModel::availableManagers
+
+  This property holds the list of available manager names.
+  This property is read only.
+  */
 QStringList QDeclarativeContactModel::availableManagers() const
 {
     return QContactManager::availableManagers();
@@ -200,6 +262,10 @@ static QString urlToLocalFileName(const QUrl& url)
    }
 
 }
+
+/*!
+  \qmlmethod importContacts(url url, list<string> profiles)
+  */
 void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
    //qWarning() << "importing contacts from:" << url;
@@ -214,6 +280,9 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
    }
 }
 
+/*!
+  \qmlmethod exportContacts(url url, list<string> profiles)
+  */
 void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
    //qWarning() << "exporting contacts into:" << url;
@@ -251,22 +320,13 @@ int QDeclarativeContactModel::rowCount(const QModelIndex &parent) const
     return d->m_contacts.count();
 }
 
-void QDeclarativeContactModel::setManager(const QString& managerName)
-{
-    if (d->m_manager)
-        delete d->m_manager;
 
 
-    d->m_manager = new QContactManager(managerName);
+/*!
+  \qmlproperty Filter ContactModel::filter
 
-    qWarning() << "Changed backend to: " << managerName;
-    connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
-    connect(d->m_manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(fetchAgain()));
-    connect(d->m_manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SLOT(contactsRemoved(QList<QContactLocalId>)));
-    connect(d->m_manager, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SLOT(contactsChanged(QList<QContactLocalId>)));
-    emit managerChanged();
-}
-
+  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  */
 QDeclarativeContactFilter* QDeclarativeContactModel::filter() const
 {
     return d->m_filter;
@@ -281,6 +341,11 @@ void QDeclarativeContactModel::setFilter(QDeclarativeContactFilter* filter)
     }
 }
 
+/*!
+  \qmlproperty FetchHint ContactModel::fetchHint
+
+  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  */
 QDeclarativeContactFetchHint* QDeclarativeContactModel::fetchHint() const
 {
     return d->m_fetchHint;
@@ -295,12 +360,25 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
     }
 }
 
+/*!
+  \qmlproperty QDeclarativeListProperty ContactModel::contacts
 
+  This property holds a list of contacts.
+
+  \sa Contact
+  */
 QDeclarativeListProperty<QDeclarativeContact> QDeclarativeContactModel::contacts()
 {
     return QDeclarativeListProperty<QDeclarativeContact>(this, d->m_contacts);
 }
 
+/*!
+  \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
+
+  This property holds a list of sort orders.
+
+  \sa SortOrder
+  */
 QDeclarativeListProperty<QDeclarativeContactSortOrder> QDeclarativeContactModel::sortOrders()
 {
     return QDeclarativeListProperty<QDeclarativeContactSortOrder>(this, d->m_sortOrders);

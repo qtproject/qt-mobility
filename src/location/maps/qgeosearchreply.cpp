@@ -278,7 +278,7 @@ void QGeoSearchReply::setLimit(int limit)
     d_ptr->limit = limit;
 }
 
-/*
+/*!
     Sets the offset in the entire result set at which to start 
     fetching result to \a offset.
 */

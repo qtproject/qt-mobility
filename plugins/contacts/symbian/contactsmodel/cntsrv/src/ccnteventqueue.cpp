@@ -26,6 +26,7 @@
 #include "ccnteventqueue.h"
 #include "ccntserver.h"
 #include "ccntlogger.h"
+#include "ccntpackager.h"
 
 
 extern void DebugLogNotification(const TDesC& aMethod, const TContactDbObserverEventV2 &aEvent);
@@ -40,6 +41,7 @@ CEventQueue::CEventQueue()
 CEventQueue::~CEventQueue()
 	{
 	iEvents.Close();
+	iIds.ResetAndDestroy();
 	}
 
 
@@ -63,7 +65,7 @@ void CEventQueue::QueueEvent(const TContactDbObserverEventV2 &aEvent)
 	// Can we send the event right away, i.e. do we have an outstanding request
 	if (Flag(EValidEventMsg))
 		{
-		SendEvent(aEvent);	
+		SendEvent(aEvent, aEvent.iAdditionalContactIds);	
 		}// Is the queue full? If so set flag EQueueError and return
 	else if (iEvents.Count() > KMaxNumberOfEventsInEventQueue)
 		{
@@ -73,7 +75,7 @@ void CEventQueue::QueueEvent(const TContactDbObserverEventV2 &aEvent)
 		Flush();
 		SetFlag(EQueueError);
 		}// Otherwise can we add the request to the queue
-	else if (iEvents.Append(aEvent)!=KErrNone)
+	else if (Append(aEvent)!=KErrNone)
 		{
 		SetFlag(EQueueError);
 		}
@@ -89,7 +91,8 @@ void CEventQueue::QueueEvent(const TContactDbObserverEventV2 &aEvent)
 
 void CEventQueue::Flush()
 	{
-	iEvents.Reset();	
+	iEvents.Reset();
+	iIds.ResetAndDestroy();
 	}
 
 
@@ -108,14 +111,16 @@ void CEventQueue::RequestEvent(const RMessage2& aMessage)
 			errorEvent.iContactId = KNullContactId;
 			errorEvent.iConnectionId = KCntNullConnectionId;
 			errorEvent.iTypeV2 = EContactDbObserverEventV2Null;
-			errorEvent.iAdditionalContactId = KNullContactId;
+			errorEvent.iAdditionalContactIds = NULL;
 			ClearFlag(EQueueError);
-			SendEvent(errorEvent);
+			SendEvent(errorEvent, NULL);
 			}
 		else if (iEvents.Count()>0)
 			{
-			SendEvent(iEvents[0]);
+			SendEvent(iEvents[0], iIds[0]);
 			iEvents.Remove(0);
+			delete iIds[0];
+			iIds.Remove(0);
 			}
 		else
 			{
@@ -130,8 +135,8 @@ void CEventQueue::RequestEvent(const RMessage2& aMessage)
 				nullEvent.iType = EContactDbObserverEventNull;
 				nullEvent.iConnectionId = 0;
 				nullEvent.iTypeV2 = EContactDbObserverEventV2Null;
-				nullEvent.iAdditionalContactId = KNullContactId;
-				SendEvent(nullEvent);				
+				nullEvent.iAdditionalContactIds = NULL;
+				SendEvent(nullEvent, NULL);				
 				}
 			}
 		}
@@ -148,12 +153,22 @@ void CEventQueue::CancelEventRequest()
 	}
 
 
-void CEventQueue::SendEvent(const TContactDbObserverEventV2 &aEvent)
+void CEventQueue::SendEvent(const TContactDbObserverEventV2 &aEvent, const CContactIdArray* aAdditionalContactIds)
 	{
      DEBUG_PRINTDN2(__VERBOSE_DEBUG__,_L("[CNTMODEL] Q->"), aEvent);
 
 	TPckgC<TContactDbObserverEventV2> event(aEvent);
 	TInt err = iEventMsg.Write(0, event);
+	if (err == KErrNone && aAdditionalContactIds != NULL && aAdditionalContactIds->Count() > 0)
+	    {
+	    TRAP(err, 
+	        CCntPackager* packager = CCntPackager::NewL();
+            CleanupStack::PushL(packager);
+            TPtr8 ptr = packager->PackL(*aAdditionalContactIds);
+            User::LeaveIfError(iEventMsg.Write(1, ptr));
+            CleanupStack::PopAndDestroy(packager);
+            );
+	    }
 	if (err != KErrNone)
 		{
 		// If there is an error caused, for example, by the client dying, just log the error code.
@@ -183,3 +198,34 @@ void CEventQueue::ClearFlag(TFlag aFlag)
 	{
 	iFlags&=(~aFlag);
 	}
+
+TInt CEventQueue::Append(const TContactDbObserverEventV2 &aEvent)
+    {
+    TInt error = KErrNone;
+    error = iEvents.Append(aEvent);
+    if (error == KErrNone)
+        {
+        // Save contact ids array in the class member array
+        // since TContactDbObserverEventV2 doesn't own it.
+        TRAP(error,
+            if (aEvent.iAdditionalContactIds != NULL)
+                {
+                CContactIdArray* copy = CContactIdArray::NewLC(aEvent.iAdditionalContactIds);
+                iIds.AppendL(copy); //ownership taken
+                CleanupStack::Pop(copy);
+                }
+            else
+                {
+                CContactIdArray* copy = CContactIdArray::NewLC();
+                iIds.AppendL(copy); //ownership taken
+                CleanupStack::Pop(copy);
+                }
+            );
+        if (error != KErrNone)
+            {
+            // Remove just added item from iEvents if iIds updating failed. 
+            iEvents.Remove(iEvents.Count() - 1);
+            }
+        }
+    return error;
+    }
