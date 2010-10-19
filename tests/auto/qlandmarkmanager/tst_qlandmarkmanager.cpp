@@ -4968,8 +4968,8 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
     //try using a name sort with offset and limit
     QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,2,2,QLandmarkNameSort()));
     QCOMPARE(lms.count(), 2);
-    QCOMPARE(lms.at(0), lm6);
-    QCOMPARE(lms.at(1), lm9);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
 
     //try an intersection filter categories but proximity doesn't have
     //landmarks in its region
