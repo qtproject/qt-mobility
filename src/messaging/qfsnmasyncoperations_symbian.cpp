@@ -113,7 +113,7 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
     sender.setAddress(message.from().addressee());
     
     envelope.setSender(sender);
-        
+    
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
         QList<EmailClientApi::NmApiEmailAddress> toRecipients;
@@ -217,6 +217,7 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
     }
     
     envelope.setSubject(message.subject());   
+    envelope.setTime(message.date());
     fsMessage.setEnvelope(envelope);
 }
 
