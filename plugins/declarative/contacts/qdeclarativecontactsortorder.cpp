@@ -85,32 +85,22 @@ void QDeclarativeContactSortOrder::setBlankPolicy(QDeclarativeContactSortOrder::
         m_sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
 }
 
-QDeclarativeContactSortOrder::SortOrder QDeclarativeContactSortOrder::direction() const
+Qt::SortOrder QDeclarativeContactSortOrder::direction() const
 {
-    if (m_sortOrder.direction() == Qt::DescendingOrder)
-        return QDeclarativeContactSortOrder::DescendingOrder;
-    return QDeclarativeContactSortOrder::AscendingOrder;
+    return m_sortOrder.direction();
 }
-void QDeclarativeContactSortOrder::setDirection(QDeclarativeContactSortOrder::SortOrder direction)
+void QDeclarativeContactSortOrder::setDirection(Qt::SortOrder direction)
 {
-    if (direction == QDeclarativeContactSortOrder::DescendingOrder)
-        m_sortOrder.setDirection(Qt::DescendingOrder);
-    else
-        m_sortOrder.setDirection(Qt::AscendingOrder);
+    m_sortOrder.setDirection(direction);
 }
 
-QDeclarativeContactSortOrder::CaseSensitivity QDeclarativeContactSortOrder::caseSensitivity() const
+Qt::CaseSensitivity QDeclarativeContactSortOrder::caseSensitivity() const
 {
-    if (m_sortOrder.caseSensitivity() == Qt::CaseInsensitive)
-        return QDeclarativeContactSortOrder::CaseInsensitive;
-    return QDeclarativeContactSortOrder::CaseSensitive;
+    return m_sortOrder.caseSensitivity();
 }
-void QDeclarativeContactSortOrder::setCaseSensitivity(QDeclarativeContactSortOrder::CaseSensitivity sensitivity)
+void QDeclarativeContactSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
 {
-    if (sensitivity == QDeclarativeContactSortOrder::CaseInsensitive)
-        m_sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
-    else
-        m_sortOrder.setCaseSensitivity(Qt::CaseSensitive);
+    m_sortOrder.setCaseSensitivity(sensitivity);
 }
 
 QContactSortOrder QDeclarativeContactSortOrder::sortOrder()
