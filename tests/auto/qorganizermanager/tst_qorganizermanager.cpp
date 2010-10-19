@@ -2959,7 +2959,15 @@ void tst_QOrganizerManager::recurrence()
 void tst_QOrganizerManager::idComparison()
 {
     QFETCH(QString, uri);
+    
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+    
+    // Can we run this test?
+    if (!cm->supportedItemTypes().contains(QOrganizerItemType::TypeJournal)) {
+        QSKIP("Backend not compatible with this test", SkipSingle);
+        // For example symbian backend does not support Journal items and comment details at all..
+        // TODO: The test should be refactored so it could run on all platforms
+    }
 
     // step one: make a few items and collections to save (and harvest their ids)
     QOrganizerEvent e1;
