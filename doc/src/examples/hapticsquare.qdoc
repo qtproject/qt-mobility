@@ -41,9 +41,7 @@
 
 /*!
     \example hapticsquare
-    \title Hapticsquare
-
-    \tableofcontents
+    \title Haptic Square Example
 
     \section1 Overview
 
@@ -67,6 +65,7 @@
     The \l{Feedback}{Qt Mobility Feedback API} allows application developers to
     include tactile feedback into their application via a simple to use and
     extensible API.  Some common uses for tactile feedback are:
+
     \list
     \o maintain consistency with system theme for tactile feedback about interface events (button clicks, scrolling, etc)
     \o notify the user of an application-specific event (invalid operation, status change, etc)
@@ -77,22 +76,102 @@
     This example application provides some short snippets which illustrate how
     the first two of those use cases may be fulfilled.
 
-    \section2 Interface
+    \section1 The Application
+
     The application is designed to work on desktop and mobile platforms with
-    minimal differences in code between the platforms.  The interface consists
+    minimal differences in code between the platforms. The interface consists
     of four buttons arranged into a square, each of which causes a different
     tactile effect to be played by the default tactile effect provider plugin
     on the platform.
 
-    The buttons are labeled "Rumble!", "Ocean", "Click" and "Oops!".
+    \image hapticsquare-example.png
+
     \list
-    \o "Rumble!" plays a non-repeating rumble with symmetric attack and decay
+    \o "Rumble!" plays a non-repeating effect with symmetric attack and decay
     \o "Ocean" is a toggle button which plays a repeating ocean wave-like effect
     \o "Click" plays the system theme effect for a basic button click
     \o "Oops!" plays the system theme effect for a negative or invalid response
     \endlist
 
-    \section2 Known Issues
+    The example implements two classes:
+
+    \list
+        \o \c {HapticButton}: Implementation of a button. It
+            inherits QWidget and sends signals for button clicks. It can
+            also be a toggle button.
+        \o \c {Dialog}: A QDialog subclass that displays the four
+            \c{HapticButton}s mentioned above,
+            connects them to its slots, and implements the functionality to
+            play the haptic effects.
+    \endlist    
+
+    \section2 The Dialog Class
+
+    We will now go through the code for the \c Dialog class. Here is its
+    definition:
+
+    \snippet examples/hapticsquare/dialog.h 0
+
+    The buttons are connected to the slots, which play the effects. We will now
+    go through the implementation of \c Dialog.
+
+    The constructor starts by setting up the non-repeating haptic effect, which
+    is played by clicking the \gui {Rumble! Button}.
+
+    \snippet examples/hapticsquare/dialog.cpp 0
+
+    Custom haptics effects are created by setting up a QFeedbackHapticsEffect.
+
+    A haptics effect provides a fade-in of the effect's
+    \l{QFeedbackHapticsEffect::}{intensity()}. With vibration, you can think of
+    the intensity as how hard the device will vibrate. The effect will start at
+    \l{QFeedbackHapticsEffect::}{attackIntensity()} and interpolate to
+    \l{QFeedbackHapticsEffect::}{intensity()} in
+    \l{QFeedbackHapticsEffect::}{attackTime()} milliseconds. When the effect
+    ends, we have a similar fade-out, where the haptics effect's intensity will
+    interpolate from \l{QFeedbackHapticsEffect::}{intensity()} to
+    \l{QFeedbackHapticsEffect::}{fadeTime()} in
+    \l{QFeedbackHapticsEffect::}{fadeTime()} milliseconds. The effect's
+    intensity will stay at the peak value for
+    \l{QFeedbackHapticsEffect::}{duration()} milliseconds.
+
+    We next set up the effect for the \gui {Ocean Button}.
+
+    \snippet examples/hapticsquare/dialog.cpp 1
+
+    The \c m_ocean is a periodic effect, i.e., it repeats after
+    \l{QFeedbackHapticsEffect::}{period()} milliseconds. To stop a periodic
+    effect, you must call \l{QFeedbackEffect::}{stop()}.
+
+    We then set up the GUI and connects the buttons to slots that will play the
+    effects.
+
+    \snippet examples/hapticsquare/dialog.cpp 2
+
+    Let's look at the slots to see how the effects are played.
+
+    \snippet examples/hapticsquare/dialog.cpp 3
+
+    With the \c m_rumble, we only have to call \l{QFeedbackEffect::}{start()}. It
+    will stop when the effect has finished, and can be played again by calling
+    \l{QFeedbackEffect::}{start()} again.
+
+    The periodic \c m_ocean effect is started the same way as the \c m_rumble
+    effect, but must be stopped with the \l{QFeedbackEffect::}{stop()} function.
+    It will start playing from the beginning again when
+    \l{QFeedbackEffect::}{start()} is called. We could also have paused the
+    effect with \l{QFeedbackEffect::}{pause()}.
+
+    \snippet examples/hapticsquare/dialog.cpp 4
+
+    System theme effects are played with the static
+    QFeedbackEffect::playThemeEffect() function. Theme effects cannot be stopped
+    or paused. There is no guarantee that the backend can play the effect;
+    \l{QFeedbackEffect::}{playThemeEffect()} will return false if the effect
+    could not be played.
+
+    \section1 Known Issues
+
     The example is not intended to exercise the entire API.  Instead, it is a
     simple example which illustrates some simple uses of the API.
     Also, the example will not work correctly on platforms which do not have a
@@ -102,3 +181,4 @@
     In particular, the Maemo5 platform currently has no haptic effect provider
     plugin; it is a work in progress.
 */
+

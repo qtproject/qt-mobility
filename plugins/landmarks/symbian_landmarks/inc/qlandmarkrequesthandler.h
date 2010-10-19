@@ -181,6 +181,7 @@ private:
     TBool iCancelRequest;
     TReal32 iProgress;
     TBool iIsComplete;
+    TBool iIsRequestRunning;
 };
 
 /**

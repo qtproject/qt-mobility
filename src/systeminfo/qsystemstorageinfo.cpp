@@ -56,9 +56,6 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
    \ingroup systeminfo
    \inmodule QtSystemInfo
         \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
-
-   \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
-  Constructs a QSystemStorageInfo object with the given \a parent.
 */
 
         /*!
@@ -73,18 +70,22 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
         */
 
         /*!
-           \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol);
+           \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &volumeName);
 
-           This signal gets emitted when new storage has been added or removed from the system.
+           This signal gets emitted when new storage has been added or removed from the system,
+           specified by \a added, with the name \a volumeName.
         */
 
 
+/*!
+    Constructs a QSystemStorageInfo with the given \a parent.
+*/
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
     connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
-           this,SIGNAL(logicalDriveChanged(bool,const QString &)));
+           this,SIGNAL(logicalDriveChanged(bool,const QString &)),Qt::UniqueConnection);
 }
 
 /*!
@@ -116,7 +117,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
  \property QSystemStorageInfo::logicalDrives
  \brief The logical drives.
 
-   Returns a QStringList of volumes or partitions.
+   Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {

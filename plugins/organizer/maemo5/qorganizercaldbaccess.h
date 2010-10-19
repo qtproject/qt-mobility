@@ -73,8 +73,8 @@ public:
     bool open(QString databasePathName);
     void close();
 
-    int calIdOf(QOrganizerItemLocalId id);
-    int typeOf(QOrganizerItemLocalId id);
+    int calIdOf(QOrganizerItemId id);
+    int typeOf(QOrganizerItemId id);
     std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
     std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
     std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
@@ -84,6 +84,8 @@ public:
     CJournal* getJournal(CCalendar* cal, const std::string& id, int& calError);
 
     void getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string>& result);
+
+    void fixAlarmCookie(QPair<qint32, qint32> change);
 
     static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
 

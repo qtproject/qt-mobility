@@ -86,6 +86,24 @@ will link Mobility's bearer library (even if the project links against QtNetwork
     MOBILITY+=bearer   #choose Mobility bearer
 \endcode
 
+Note that Harmattan based devices do not have Mobility Bearer anymore. Qt Bearer is the only
+option to write Bearer enabled applications. The following Qt project file magic may be used to
+implement applications which utilize Qt 4.7 Bearer and only fall back to Mobility Bearer if the Qt
+version is not available:
+
+\code
+equals(QT_MAJOR_VERSION), 4): greaterThan(QT_MINOR_VERSION, 6) {
+    QT+=network
+    #DEFINES += USE_BEARER_IN_QT_NETWORK
+} else {
+    CONFIG+=mobility
+    MOBILITY+=bearer
+}
+\endcode
+
+Depending on how the namespace related code is written the above DEFINE may make it easier to distingiush the
+two code lines.
+
 
 \section1 The API in Detail
 

@@ -41,7 +41,7 @@ symbian|wince*|maemo*|win32|mac {
     QMF_LIBDIR = $$(QMF_LIBDIR)
 
     # QMF headers must be located at $QMF_INCLUDEDIR
-    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR)
+    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
     # QMF libraries must be located at $QMF_LIBDIR
     macx {

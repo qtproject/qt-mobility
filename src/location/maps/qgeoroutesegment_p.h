@@ -72,10 +72,14 @@ public:
 
     bool operator ==(const QGeoRouteSegmentPrivate &other) const;
 
+    bool valid;
+
     int travelTime;
     qreal distance;
     QList<QGeoCoordinate> path;
     QGeoManeuver maneuver;
+
+    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> nextSegment;
 };
 
 QTM_END_NAMESPACE

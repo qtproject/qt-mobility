@@ -54,9 +54,6 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
 
-QStringList QLandmarkCategoryPrivate::commonKeys = QStringList() << "name"
-                                                                 << "iconUrl";
-
 QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
     : QSharedData(),
       name(QString()),
@@ -109,23 +106,17 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,
-    e.g. restaurants, accommodation etc.  A QLandmarkCategory object
-    represents one of these and allows access to category properties
-    such as description and icon url.
+    e.g. restaurants, accommodation etc,  a QLandmarkCategory object
+    represents one of these.
 
     More than one category can be assigned to a landmark.  Assignment
-    of a category to a landmark is achieved by using the QLandmark class
-    in conjunction with the QLandmarkCategoryId class.
+    of a category to a landmark is achieved by using the QLandmark::setCategoryIds()
+    or QLandmark::addCategoryId() functions.
 
-    Some categories may be designated as read-only.  Typically these are
-    intended to be "global" categories that are the same across landmark stores.
-    In practicality, not all landmark stores may necessarily have the same set of
-    global categories.  Localization is only possible for categories that
-    are read-only.  If the landmark store supports localization, the locale may
-    be set through a QLandmarkManager's parameters and whenever categories are
-    retrieved, the translated names are used.
-    The \c {QLandmarkManager::isReadOnly(const QLandmarkCategoryId &)}
-    function may be used to determine if a category is read-only.
+    Some categories may be considered read-only by a manager and cannot
+    be saved.  To see if a category is read only, the id of the cateory must be passed
+    into the QLandmarkManager::isReadOnly() function. Localization is only possible for categories that
+    are read-only.
 
     A QLandmarkCategory instance is an in memory representation and may
     not reflect the state of the category found in persistent storage,
@@ -199,6 +190,8 @@ QString QLandmarkCategory::name() const
 
 /*!
     Sets the \a name of the category.
+
+    Using the default manager on the Symbian platform, the catgory name is retricted to a length of 124 characters.
 */
 void QLandmarkCategory::setName(const QString &name)
 {
@@ -239,47 +232,6 @@ QLandmarkCategoryId QLandmarkCategory::categoryId() const
 void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 {
     d->id = id;
-}
-
-/*!
-    Returns the value of the attribute corresponding to \a key.
-    If the key doest exist, an invalid QVariant is returned.
-*/
-QVariant QLandmarkCategory::attribute(const QString &key) const
-{
-
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
-        return name();
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
-        return iconUrl();
-    }
-    return QVariant();
-}
-
-/*!
-    Sets the \a value of the attribute corresponding to \a key.
-    If the \a key does not already exist this function has no effect.
-*/
-void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
-{
-
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
-        setName(value.toString());
-        return;
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
-        setIconUrl(QUrl(value.toUrl()));
-        return;
-    }
-}
-
-/*!
-    Returns a list of attribute keys.
-
-    \sa attribute(), setAttribute()
-*/
-QStringList QLandmarkCategory::attributeKeys() const
-{
-    return d->commonKeys;
 }
 
 /*!

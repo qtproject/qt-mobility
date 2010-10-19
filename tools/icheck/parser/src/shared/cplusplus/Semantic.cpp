@@ -60,7 +60,7 @@
 
 #include "Semantic.h"
 #include "TranslationUnit.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Scope.h"
 #include "Symbols.h"
 #include "Token.h"

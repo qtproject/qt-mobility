@@ -51,7 +51,7 @@ QOrganizerItemRequestQueue* QOrganizerItemRequestQueue::instance(
 QOrganizerItemRequestQueue::~QOrganizerItemRequestQueue()
 {
     // Cleanup, delete all the pointers from the hash map
-    QMapIterator<QOrganizerItemAbstractRequest*, 
+    QMapIterator<QOrganizerAbstractRequest*, 
     COrganizerItemRequestsServiceProvider*> iter(m_abstractRequestMap);
     // Delete all the asynch requests one by one
     while (iter.hasNext()) {
@@ -65,7 +65,7 @@ QOrganizerItemRequestQueue::~QOrganizerItemRequestQueue()
 }
 
 bool QOrganizerItemRequestQueue::startRequest(
-        QOrganizerItemAbstractRequest* req)
+        QOrganizerAbstractRequest* req)
 {
     // Find m_abstractRequestMap if an asynchronous service provider for request
     // req already exists
@@ -88,7 +88,7 @@ bool QOrganizerItemRequestQueue::startRequest(
 
 // To cancel aReq request
 bool QOrganizerItemRequestQueue::cancelRequest(
-        QOrganizerItemAbstractRequest* req)
+        QOrganizerAbstractRequest* req)
 {
     COrganizerItemRequestsServiceProvider* requestServiceProvider(
             m_abstractRequestMap[req]);
@@ -103,12 +103,12 @@ bool QOrganizerItemRequestQueue::cancelRequest(
 
 // Wait for request to complete 
 bool QOrganizerItemRequestQueue::waitForRequestFinished(
-        QOrganizerItemAbstractRequest* req, int msecs)
+        QOrganizerAbstractRequest* req, int msecs)
 {
     if (!m_abstractRequestMap.keys().contains(req)) 
         return false;
     
-    if (req->state() != QOrganizerItemAbstractRequest::ActiveState)
+    if (req->state() != QOrganizerAbstractRequest::ActiveState)
         return false;
     
     QEventLoop *loop = new QEventLoop(this);
@@ -122,12 +122,12 @@ bool QOrganizerItemRequestQueue::waitForRequestFinished(
     loop->disconnect();
     loop->deleteLater();
 
-    return (req->state() == QOrganizerItemAbstractRequest::FinishedState);
+    return (req->state() == QOrganizerAbstractRequest::FinishedState);
 }
 
 // Request is not more a valid request
 void QOrganizerItemRequestQueue::requestDestroyed(
-        QOrganizerItemAbstractRequest* req)
+        QOrganizerAbstractRequest* req)
 {
     // Get the pointer to the Asynchronous service provider for req request
     COrganizerItemRequestsServiceProvider* requestServiceProvider(

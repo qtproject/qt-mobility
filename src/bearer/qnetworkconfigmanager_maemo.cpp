@@ -301,10 +301,10 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 }
 
 
-uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
-                                                              const QString& iap_id,
-                                                              const QString& iap_type,
-                                                              QString security_method)
+quint32 QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
+                                                             const QString& iap_id,
+                                                             const QString& iap_type,
+                                                             QString security_method)
 {
     guint network_attr = 0;
     dbus_uint32_t cap = 0;
@@ -342,7 +342,7 @@ uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
     if (is_iap_id)
 	network_attr |= ICD_NW_ATTR_IAPNAME;
 
-    return (uint32_t)network_attr;
+    return (quint32)network_attr;
 }
 
 

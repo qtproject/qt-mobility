@@ -58,15 +58,21 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
     m_exposureMode(QCameraExposure::ExposureAuto),
     m_meteringMode(QCameraExposure::MeteringMatrix)
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
 
-    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
+    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 
-    connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
-    connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
-    connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
-    connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    if (m_advancedSettings) {
+        connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
+        connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
+        connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
+        connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    }
 }
 
 S60CameraExposureControl::~S60CameraExposureControl()
@@ -115,7 +121,10 @@ void S60CameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mod
     if (isExposureModeSupported(mode)) {
         m_exposureMode = mode;
         m_session->setExposureMode(m_exposureMode);
+        return;
     }
+
+    m_session->setError(KErrNotSupported, QString("Requested exposure mode is not supported."));
 }
 
 bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -142,8 +151,11 @@ void S60CameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mod
         if (isMeteringModeSupported(mode)) {
             m_meteringMode = mode;
             m_advancedSettings->setMeteringMode(mode);
+            return;
         }
     }
+
+    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
 }
 
 bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
@@ -157,19 +169,24 @@ bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::Metering
 
 bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter) const
 {
-    switch (parameter) {
-        case QCameraExposureControl::ISO:
-        case QCameraExposureControl::Aperture:
-        case QCameraExposureControl::ShutterSpeed:
-        case QCameraExposureControl::ExposureCompensation:
-            return true;
-        case QCameraExposureControl::FlashPower:
-        case QCameraExposureControl::FlashCompensation:
-            return false;
+    // Settings supported only if advanced settings available
+    if (m_advancedSettings) {
+        switch (parameter) {
+            case QCameraExposureControl::ISO:
+            case QCameraExposureControl::Aperture:
+            case QCameraExposureControl::ShutterSpeed:
+            case QCameraExposureControl::ExposureCompensation:
+                return true;
+            case QCameraExposureControl::FlashPower:
+            case QCameraExposureControl::FlashCompensation:
+                return false;
 
-        default:
-            return false;
+            default:
+                return false;
+        }
     }
+
+    return false;
 }
 
 QVariant S60CameraExposureControl::exposureParameter(ExposureParameter parameter) const
@@ -448,10 +465,10 @@ bool S60CameraExposureControl::setManualAperture(qreal aperture)
                 aperture = maxAperture;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedApertureValues.count(); ++i) {
-                    if((abs(aperture - supportedApertureValues[i])) < smallestDiff) {
-                        smallestDiff = abs(aperture - supportedApertureValues[i]);
+                    if((abs((aperture*100) - (supportedApertureValues[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((aperture*100) - (supportedApertureValues[i]*100));
                         indexOfClosest = i;
                     }
                 }
@@ -466,6 +483,7 @@ bool S60CameraExposureControl::setManualAperture(qreal aperture)
 
 void S60CameraExposureControl::setAutoAperture()
 {
+    // Not supported in Symbian
 }
 
 qreal S60CameraExposureControl::shutterSpeed() const
@@ -507,10 +525,10 @@ bool S60CameraExposureControl::setManualShutterSpeed(qreal seconds)
                 seconds = maxShutterSpeed;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedShutterSpeeds.count(); ++i) {
-                    if((abs(seconds - supportedShutterSpeeds[i])) < smallestDiff) {
-                        smallestDiff = abs(seconds - supportedShutterSpeeds[i]);
+                    if((abs((seconds*100) - (supportedShutterSpeeds[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((seconds*100) - (supportedShutterSpeeds[i]*100));
                         indexOfClosest = i;
                     }
                 }
@@ -525,6 +543,7 @@ bool S60CameraExposureControl::setManualShutterSpeed(qreal seconds)
 
 void S60CameraExposureControl::setAutoShutterSpeed()
 {
+    // Not supported in Symbian
 }
 
 qreal S60CameraExposureControl::exposureCompensation() const
@@ -566,10 +585,10 @@ bool S60CameraExposureControl::setManualExposureCompensation(qreal ev)
                 ev = maxEV;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedEVs.count(); ++i) {
-                    if((abs(ev - supportedEVs[i])) < smallestDiff) {
-                        smallestDiff = abs(ev - supportedEVs[i]);
+                    if((abs((ev*100) - (supportedEVs[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((ev*100) - (supportedEVs[i]*100));
                         indexOfClosest = i;
                     }
                 }
@@ -584,6 +603,7 @@ bool S60CameraExposureControl::setManualExposureCompensation(qreal ev)
 
 void S60CameraExposureControl::setAutoExposureCompensation()
 {
+    // Not supported in Symbian
 }
 
 // End of file

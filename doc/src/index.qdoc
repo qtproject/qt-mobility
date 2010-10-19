@@ -44,10 +44,6 @@
 
     \tableofcontents
 
-    The advantage of sharing this work with you is that you now have the
-    opportunity to review and provide your feedback to us. With your feedback we
-    will together build high quality robust new APIs for Qt.
-
     Although we anticipate that the new APIs will be of most advantage to those
     developers embarked on mobile application development, in many cases they may
     be equally relevant for other development usage including, in some cases,
@@ -59,7 +55,7 @@
     \section2 Introducing the Qt Mobility Project APIs
 
     The Qt Mobility project covers a diverse range of features and technologies.
-    It is not a single API but a collection of APIs or frameworks.
+    It is not a single API but a collection of APIs and frameworks.
 
     This release contains the following APIs:
 
@@ -111,8 +107,7 @@
     \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
 
     \section2 Known Issues
-    For a list of known issues and additional details on supported features see
-    \l {Release Notes of the QtMobility Project release}.
+    See \l {Release Notes of the QtMobility Project release}{Release Notes}.
 
     For an overview of Platform Compatibility see \l {Platform Compatibility}.
     
@@ -263,7 +258,7 @@
 
     \section2 Versit (Organizer)
 
-    This is an continuation of the Versit API to interface the Organizer API
+    This is a continuation of the Versit API to interface the Organizer API
     with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera
@@ -311,7 +306,7 @@
 
     \raw HTML
 
-    <table cellpadding="2" cellspacing="1" border="0">
+    <table cellpadding="2" cellspacing="1" border="1" width="90%">
     <tbody>
     <tr>
     <td>Color</td>
@@ -342,10 +337,10 @@
     <br>
 
     <b>Tier 1 Platforms</b><br>
-    Primary platforms are the main focus of Mobility API. There platforms are frequently tested by our unit test suite and other internal testing tools. However, the timeline of availability for each backend is subject to change.
+    QtMobility API development focuses on Nokia platforms. These platforms are part of our ongoing QA, which includes unit test coverage per API and rigorous testing via test utilities and other system test processes.
     <br>
     <b>Tier 2 Platforms</b><br>
-    Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
+    These platforms are not currently under active development or QA. Contributions to these platforms are welcome.
     <br>
     <br>
     <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
@@ -353,8 +348,8 @@
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+    <td colspan="6" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="3" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
     <td><b>S60 3rd Edition, Feature Pack 1</b></td>
@@ -362,7 +357,7 @@
     <td><b>S60 5th Edition</b></td>
     <td><b>Symbian^3</b></td>
     <td nowrap="nowrap"><b>Maemo 5</b></td>
-    <td><b>Windows CE/Mobile<b></b></b></td>
+    <td><b>Harmattan</b></td>
     <td><b>Windows XP/Vista</b></td>
     <td><b>Linux</b></td>
     <td nowrap="nowrap"><b>Mac OS X</b></td>
@@ -388,7 +383,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -414,7 +409,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -427,7 +422,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -453,7 +448,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -479,7 +474,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -499,25 +494,25 @@
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
-    <td>BETA</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>FINAL</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Camera</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -525,25 +520,25 @@
     </tr>
     <tr>
     <td nowrap="nowrap">Service Framework(OOP)</td>
-    <td>BETA</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
+    <td>FINAL</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Organizer</td>
-    <td>BETA</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>FINAL</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -551,25 +546,25 @@
     </tr>
     <tr>
     <td>Landmarks</td>
-    <td>BETA</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>FINAL</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Document Gallery</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -577,25 +572,25 @@
     </tr>
     <tr>
     <td>Maps/Navigation</td>
-    <td>BETA</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>FINAL</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Feedback</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -606,6 +601,12 @@
     </tbody>
     </table>
     <br>
+
+    \endraw
+
+    \raw HTML
+
+    
 
     \endraw
 

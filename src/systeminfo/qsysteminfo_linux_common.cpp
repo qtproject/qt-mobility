@@ -263,7 +263,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QHalInterface iface;
              if (iface.isValid()) {
                  QHalInterface halIface;
-                 const QStringList halDevices = halIface.getAllDevices();
+                 const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
                  foreach(const QString device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
@@ -358,7 +358,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
  {
      QHalInterface halIface;
-     const QStringList halDevices = halIface.getAllDevices();
+     const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
      foreach(const QString device, halDevices) {
          QHalDeviceInterface ifaceDevice(device);
          if (ifaceDevice.isValid()) {
@@ -452,7 +452,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         {
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo wiFi(devFile + "/phy80211");
@@ -517,7 +517,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             QString wlanInterface;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
@@ -567,7 +567,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             }
         }
             if(netname.isEmpty()) {
-             netname = "Wired";
+                netname = "Wired";
             }
     }
     break;
@@ -592,17 +592,28 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
+                    bool powered=false;
+                    QFile linkmode(devFile+"/link_mode"); //check for dev power
+                    if(linkmode.exists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&linkmode);
+                        in >> result;
+                        if(result.contains("1"))
+                            powered = true;
+                        linkmode.close();
+                    }
+
                     QFile rx(devFile + "/address");
                     if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream in(&rx);
                         in >> result;
                         rx.close();
-                        return result;
+                        if(powered)
+                            return result;
                     }
                 }
             }
@@ -613,7 +624,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/address");
@@ -704,7 +715,7 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/carrier");
@@ -812,7 +823,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
     QString result;
     const QString baseSysDir = "/sys/class/net/";
     const QDir eDir(baseSysDir);
-    const QStringList dirs = eDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+    const QStringList dirs = eDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
     foreach(const QString dir, dirs) {
         const QString devFile = baseSysDir + dir;
         const QFileInfo devfi(devFile + "/device");
@@ -922,12 +933,10 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)
-#ifdef Q_WS_X11
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
 #else
-#endif
 #endif
     return QPixmap::defaultDepth();
 }

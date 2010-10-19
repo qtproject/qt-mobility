@@ -54,10 +54,10 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     , m_resultSet(0)
     , m_status(Null)
     , m_rowCount(0)
-    , m_complete(false)
+    , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+            this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
@@ -70,7 +70,7 @@ QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 
 void QDeclarativeGalleryQueryModel::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (m_filter) {
         connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
@@ -89,7 +89,7 @@ qreal QDeclarativeGalleryQueryModel::progress() const
 
 void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -112,7 +112,10 @@ void QDeclarativeGalleryQueryModel::setAutoUpdate(bool enabled)
     if (m_request.autoUpdate() != enabled) {
         m_request.setAutoUpdate(enabled);
 
-        deferredExecute();
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
 
         emit autoUpdateChanged();
     }
@@ -179,7 +182,8 @@ void QDeclarativeGalleryQueryModel::setLimit(int limit)
 
 void QDeclarativeGalleryQueryModel::reload()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
 
     m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
 
@@ -188,14 +192,16 @@ void QDeclarativeGalleryQueryModel::reload()
 
 void QDeclarativeGalleryQueryModel::cancel()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
 
     m_request.cancel();
 }
 
 void QDeclarativeGalleryQueryModel::clear()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
 
     m_request.clear();
 }
@@ -341,23 +347,35 @@ void QDeclarativeGalleryQueryModel::setProperty(
 
 void QDeclarativeGalleryQueryModel::deferredExecute()
 {
-    if (m_complete && !m_executeTimer.isActive())
-        m_executeTimer.start(0, this);
-}
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
 
-void QDeclarativeGalleryQueryModel::timerEvent(QTimerEvent *event) {
-    if (event->timerId() == m_executeTimer.timerId()) {
-        reload();
-
-        event->accept();
-    } else {
-        QAbstractListModel::timerEvent(event);
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CanceledUpdate) {
+        m_updateStatus = PendingUpdate;
     }
 }
 
-void QDeclarativeGalleryQueryModel::_q_statusChanged()
+bool QDeclarativeGalleryQueryModel::event(QEvent *event)
 {
-    m_status = Status(m_request.status());
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate) {
+            m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+            m_request.execute();
+        }
+
+        return true;
+    } else {
+        return QAbstractListModel::event(event);
+    }
+}
+
+void QDeclarativeGalleryQueryModel::_q_stateChanged()
+{
+    m_status = Status(m_request.state());
 
     if (m_status == Error) {
         const QString message = m_request.errorString();
@@ -384,9 +402,12 @@ void QDeclarativeGalleryQueryModel::_q_statusChanged()
                 break;
             }
         }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
     }
-
-    emit statusChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
@@ -476,7 +497,7 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 
     \inmodule QtGallery
 
-    \brief The GalleryQueryRequest element is used to specify a model
+    \brief The DocumentGalleryModel element is used to specify a model
     containing items from the document gallery.
 
     \ingroup qml-gallery
@@ -553,9 +574,9 @@ void QDeclarativeDocumentGalleryModel::classBegin()
     \o Finished The query has finished
     \o Idle The query is finished and will be automatically updated as new
     items become available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
+    \o Canceling The query was canceled but hasn't yet reached the
+    canceled status.
+    \o Canceled The query was canceled.
     \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */
@@ -632,7 +653,7 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType
 
 void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setRootType(QDeclarativeDocumentGallery::toString(itemType));
 
         emit rootTypeChanged();
@@ -684,9 +705,9 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 */
 
 /*!
-    \qmlsignal DocumentGalleryModel::onCancelled()
+    \qmlsignal DocumentGalleryModel::onCanceled()
 
-    Signals that a query was cancelled.
+    Signals that a query was canceled.
 */
 
 /*!

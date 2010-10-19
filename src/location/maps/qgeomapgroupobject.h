@@ -54,7 +54,7 @@ class Q_LOCATION_EXPORT QGeoMapGroupObject : public QGeoMapObject
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObject(QGeoMapData *data = 0);
+    QGeoMapGroupObject();
     ~QGeoMapGroupObject();
 
     QGeoMapObject::Type type() const;
@@ -68,6 +68,10 @@ public:
     void clearChildObjects();
 
     void setMapData(QGeoMapData *mapData);
+
+Q_SIGNALS:
+    void childAdded(QGeoMapObject *childObject);
+    void childRemoved(QGeoMapObject *childObject);
 
 private:
     QGeoMapGroupObjectPrivate *d_ptr;

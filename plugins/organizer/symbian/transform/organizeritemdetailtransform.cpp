@@ -56,10 +56,10 @@ void OrganizerItemDetailTransform::modifyBaseSchemaDefinitions(QMap<QString, QMa
     // empty default implementation 
 }
 
-void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerItemDetailTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
     // In most cases we can use the other transformToDetailL function without modification
-    transformToDetailL(instance.Entry(), itemInstance);
+    transformToDetailL(instance.Entry(), itemOccurrence);
 }
 
 void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)

@@ -68,9 +68,10 @@ public:
     bool operator ==(const QGeoRouteSegment &other) const;
     bool operator !=(const QGeoRouteSegment &other) const;
 
-//    bool isValid() const;
-//    void setNextRouteSegment(const QGeoRouteSegment &routeSegment);
-//    QGeoRouteSegment nextRouteSegment() const;
+    bool isValid() const;
+
+    void setNextRouteSegment(const QGeoRouteSegment &routeSegment);
+    QGeoRouteSegment nextRouteSegment() const;
 
     void setTravelTime(int secs);
     int travelTime() const;
@@ -83,6 +84,9 @@ public:
 
     void setManeuver(const QGeoManeuver &maneuver);
     QGeoManeuver maneuver() const;
+
+protected:
+    QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr);
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;

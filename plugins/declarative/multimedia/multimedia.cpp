@@ -43,10 +43,11 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect.h"
+#include "qsoundeffect_p.h"
 
 #include "qdeclarativevideo_p.h"
 #include "qdeclarativeaudio_p.h"
+#include "qdeclarativemediametadata_p.h"
 #include "qdeclarativecamera_p.h"
 #include "qdeclarativecamerapreviewprovider_p.h"
 
@@ -60,12 +61,17 @@ class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("Qt.multimedia"));
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
 
         qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
+#ifndef Q_OS_SYMBIAN
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
+#else
+        qmlRegisterUncreatableType<QDeclarativeVideo>(uri, 1, 1, "Video", "Type not supported in symbian");
+#endif
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
+        qmlRegisterType<QDeclarativeMediaMetaData>();
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri)

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsoundeffect.h"
+#include "qsoundeffect_p.h"
 
 #if defined(QT_MULTIMEDIA_PULSEAUDIO)
 #include "qsoundeffect_pulse_p.h"
@@ -55,13 +55,13 @@ QT_BEGIN_NAMESPACE
     \qmlclass SoundEffect QSoundEffect
     \brief The SoundEffect element provides a way to play sound effects in QML.
 
-    This element is part of the \bold{Qt.multimedia 1.0} module.
+    This element is part of the \bold{QtMultimediaKit 1.1} module.
 
     The following example plays a wav file on mouse click.
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Text {
         text: "Click Me!";
@@ -96,7 +96,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty int SoundEffect::volume
 
-    This property provides a way to control the volume for playback.
+    This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
 */
 
 /*!
@@ -129,6 +129,14 @@ QT_BEGIN_NAMESPACE
     This handler is called when the mute state has changed.
 */
 
+
+/*!
+    \qmlsignal SoundEffect::loadedChanged()
+
+    This handler is called when the audio source is loaded and ready for play.
+*/
+
+
 /*!
     \internal
 */
@@ -139,11 +147,17 @@ QSoundEffect::QSoundEffect(QObject *parent) :
     d = new QSoundEffectPrivate(this);
     connect(d, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
     connect(d, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
+    connect(d, SIGNAL(loadedChanged()), SIGNAL(loadedChanged()));
 }
 
 QSoundEffect::~QSoundEffect()
 {
     d->deleteLater();
+}
+
+QStringList QSoundEffect::supportedMimeTypes()
+{
+    return QSoundEffectPrivate::supportedMimeTypes();
 }
 
 QUrl QSoundEffect::source() const
@@ -161,31 +175,34 @@ void QSoundEffect::setSource(const QUrl &url)
     emit sourceChanged();
 }
 
-int QSoundEffect::loops() const
+int QSoundEffect::loopCount() const
 {
     return d->loopCount();
 }
 
-void QSoundEffect::setLoops(int loopCount)
+void QSoundEffect::setLoopCount(int loopCount)
 {
+    if (loopCount == 0)
+        loopCount = 1;
     if (d->loopCount() == loopCount)
         return;
 
     d->setLoopCount(loopCount);
-    emit loopsChanged();
+    emit loopCountChanged();
 }
 
-int QSoundEffect::volume() const
+qreal QSoundEffect::volume() const
 {
-    return d->volume();
+    return qreal(d->volume()) / 100;
 }
 
-void QSoundEffect::setVolume(int volume)
+void QSoundEffect::setVolume(qreal volume)
 {
-    if (d->volume() == volume)
+    int iVolume = qRound(volume * 100);
+    if (d->volume() == iVolume)
         return;
 
-    d->setVolume(volume);
+    d->setVolume(iVolume);
     emit volumeChanged();
 }
 
@@ -203,11 +220,29 @@ void QSoundEffect::setMuted(bool muted)
     emit mutedChanged();
 }
 
+bool QSoundEffect::isLoaded() const
+{
+    return d->isLoaded();
+}
+
 void QSoundEffect::play()
 {
     d->play();
 }
 
+/*!
+  \qmlmethod SoundEffect::stop()
+
+  Stop current playback.
+  Note that if the backend is PulseAudio, due to the limitation of the underlying API,
+  tis stop will only prevent next looping but will not be able to stop current playback immediately.
+
+ */
+void QSoundEffect::stop()
+{
+    d->stop();
+}
+
 QT_END_NAMESPACE
 
-#include "moc_qsoundeffect.cpp"
+#include "moc_qsoundeffect_p.cpp"

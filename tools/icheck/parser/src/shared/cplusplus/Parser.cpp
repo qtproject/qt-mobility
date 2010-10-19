@@ -61,7 +61,7 @@
 #include "Parser.h"
 #include "Token.h"
 #include "Lexer.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "AST.h"
 #include "Literals.h"
 #include "ObjectiveCTypeQualifiers.h"

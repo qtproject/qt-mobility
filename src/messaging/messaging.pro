@@ -270,6 +270,8 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         contains(CONFIG, QTHIGHWAY) {
             LIBS += -lxqservice \
                     -lxqserviceutil \
+        } else {
+            LIBS += -lsendui
         }
         LIBS += -lsendas2 \
             -lmsgs \
@@ -280,7 +282,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             -limcm \
             -lbafl \
             -lmtur \
-            -lsendui \
             -lsmcm \
             -limcm \
             -leikcore \
@@ -370,7 +371,7 @@ simulator|contains(qmf_enabled, yes):!maemo6 {
     QMF_LIBDIR = $$(QMF_LIBDIR)
 
     # QMF headers must be located at $QMF_INCLUDEDIR
-    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR)
+    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
     # QMF libraries must be located at $QMF_LIBDIR
     macx {

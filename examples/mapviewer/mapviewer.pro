@@ -1,4 +1,4 @@
-QT += xml network
+QT += xml network svg
 TARGET = MapViewer
 TEMPLATE = app 
 INCLUDEPATH += ../../src/global \
@@ -25,5 +25,7 @@ symbian: {
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \
-                        WriteUserData
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData
 }

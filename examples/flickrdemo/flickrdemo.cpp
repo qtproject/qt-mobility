@@ -179,11 +179,19 @@ void FlickrDemo::delayedInit()
                                  tr("No GPS support detected, using GPS data from a sample log file instead."));
     }
 
+#ifdef BEARER_IN_QTNETWORK
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+#else
     QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager) manager;
     const bool canStartIAP = (manager.capabilities()
                               & QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
     QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
+#endif
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
         return;
     }

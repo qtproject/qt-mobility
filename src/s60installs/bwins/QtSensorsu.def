@@ -353,6 +353,7 @@ EXPORTS
 	?type@QAmbientLightSensor@QtMobility@@2QBDB @ 352 NONAME ; char const * const QtMobility::QAmbientLightSensor::type
 	?type@QProximitySensor@QtMobility@@2QBDB @ 353 NONAME ; char const * const QtMobility::QProximitySensor::type
 	?type@QOrientationSensor@QtMobility@@2QBDB @ 354 NONAME ; char const * const QtMobility::QOrientationSensor::type
-	?activeChanged@QSensor@QtMobility@@IAEXXZ @ 355 NONAME ; void QtMobility::QSensor::activeChanged(void)
-	?setActive@QSensor@QtMobility@@QAEX_N@Z @ 356 NONAME ; void QtMobility::QSensor::setActive(bool)
+	?sensors_unit_test_hook@QtMobility@@YAXH@Z @ 355 NONAME ; void QtMobility::sensors_unit_test_hook(int)
+	?activeChanged@QSensor@QtMobility@@IAEXXZ @ 356 NONAME ; void QtMobility::QSensor::activeChanged(void)
+	?setActive@QSensor@QtMobility@@QAEX_N@Z @ 357 NONAME ; void QtMobility::QSensor::setActive(bool)
 

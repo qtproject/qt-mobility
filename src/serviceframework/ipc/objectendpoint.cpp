@@ -48,6 +48,10 @@
 #include <QEventLoop>
 #include <QEvent>
 #include <QVarLengthArray>
+#ifdef Q_OS_WIN
+#  include <QCoreApplication>
+#  include <QTime>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -156,17 +160,9 @@ public:
     ObjectEndPoint* parent;
 
     //used on service side
-    QRemoteServiceIdentifier typeIdent;
+    QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 };
-
-//TODO list:
-/*
-    - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
-
-*/
 
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
@@ -194,10 +190,10 @@ ObjectEndPoint::~ObjectEndPoint()
 
 void ObjectEndPoint::disconnected()
 {
-  if (d->endPointType == Service) {
-      InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
-  }
-  deleteLater();
+    if (d->endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
+    }
+    deleteLater();
 }
 
 /*
@@ -205,7 +201,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry & entry)
 {
     //client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
@@ -216,7 +212,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->messageId = QUuid::createUuid();
-    p.d->typeId = ident;
+    p.d->entry = entry;
 
     Response* response = new Response();
     openRequests()->insert(p.d->messageId, response);
@@ -231,6 +227,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
             service = reinterpret_cast<QServiceProxy* >(response->result);
     } else {
         qDebug() << "response passed but not finished";
+        return 0;
     }
 
     openRequests()->take(p.d->messageId);
@@ -313,8 +310,6 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
     } else {
         //client side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
-
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {
@@ -361,9 +356,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         InstanceManager* m = InstanceManager::instance();
 
         //get meta object from type register
-        const QMetaObject* meta = m->metaObject(p.d->typeId);
+        const QMetaObject* meta = m->metaObject(p.d->entry);
         if (!meta) {
-            qDebug() << "Unknown type" << p.d->typeId;
+            qDebug() << "Unknown type" << p.d->entry;
             dispatch->writePackage(response);
             return;
         }
@@ -375,7 +370,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         builder.serialize(stream);
 
         //instantiate service object from type register
-        service = m->createObjectInstance(p.d->typeId, d->serviceInstanceId);
+        service = m->createObjectInstance(p.d->entry, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
             dispatch->writePackage(response);
@@ -384,8 +379,8 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         d->setupSignalIntercepters(service);
 
         //send meta object 
-        d->typeIdent = p.d->typeId;
-        response.d->typeId = p.d->typeId;
+        d->entry = p.d->entry;
+        response.d->entry = p.d->entry;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);
@@ -537,10 +532,10 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         //create response and block for answer
         Response* response = new Response();
         openRequests()->insert(p.d->messageId, response);
-        
+
         dispatch->writePackage(p);
         waitForResponse(p.d->messageId);
-   
+
         QVariant result;
         if (response->isFinished) {
             if (response->result == 0) {
@@ -620,17 +615,26 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
+#ifdef Q_OS_WIN
+        QTime timer;
+        timer.start();
+        while(!response->isFinished) {
+            if(QCoreApplication::instance())
+                QCoreApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+            if(timer.elapsed() > 30000)
+                break;
+        }
+#else
         QEventLoop* loop = new QEventLoop( this );
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
 
         while(!response->isFinished) {
             loop->exec();
         }
- 
         delete loop;
+#endif
     }
 }
 

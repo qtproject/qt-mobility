@@ -55,8 +55,8 @@ symbian: {
         inc/transform/cnttransformnote.h \
         inc/transform/cnttransformfamily.h \
         inc/transform/cnttransformempty.h \
+        inc/transform/cnttransformfavorite.h \
         inc/filtering/cntfilterrelationship.h \
-        inc/filtering/cntfilterdetaildisplaylabel.h \
         inc/filtering/cntfilterdetail.h \
         inc/filtering/cntdbinfo.h \
         inc/filtering/cntfilterdefault.h \
@@ -95,8 +95,8 @@ symbian: {
         src/transform/cnttransformnote.cpp \
         src/transform/cnttransformfamily.cpp \
         src/transform/cnttransformempty.cpp \
+        src/transform/cnttransformfavorite.cpp \
         src/filtering/cntfilterrelationship.cpp \
-        src/filtering/cntfilterdetaildisplaylabel.cpp \
         src/filtering/cntfilterdetail.cpp \
         src/filtering/cntdbinfo.cpp \
         src/filtering/cntfilterdefault.cpp \

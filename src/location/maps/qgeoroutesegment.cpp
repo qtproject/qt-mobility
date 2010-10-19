@@ -56,21 +56,32 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-routing
 
     A QGeoRouteSegment instance has information about the physcial layout
-    of the route segment, the length of the route and the estimated time and
-    navigation instructions required to traverse the route segment.
+    of the route segment, the length of the route and estimated time required
+    to traverse the route segment and an optional QGeoManeuver associated with
+    the end of the route segment.
+
+    QGeoRouteSegment instances can be thought of as edges on a routing
+    graph, with QGeoManeuver instances as optional labels attached to the
+    vertices of the graph.
 */
 
 /*!
-    Constructs a route segment object.
+    Constructs an invalid route segment object.
+
+    The route segment will remain invalid until one of setNextRouteSegment(),
+    setTravelTime(), setDistance(), setPath() or setManeuver() is called.
 */
 QGeoRouteSegment::QGeoRouteSegment()
-        : d_ptr(new QGeoRouteSegmentPrivate()) {}
+    : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*!
     Constructs a route segment object from the contents of \a other.
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
+
+QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
+    : d_ptr(d_ptr) {}
 
 /*!
     Destroys this route segment object.
@@ -90,6 +101,8 @@ QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 
 /*!
     Returns whether this route segment and \a other are equal.
+
+    The value of nextRouteSegment() is not considered in the comparison.
 */
 bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 {
@@ -98,25 +111,49 @@ bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 
 /*!
     Returns whether this route segment and \a other are not equal.
+
+    The value of nextRouteSegment() is not considered in the comparison.
 */
 bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
 {
-    return (d_ptr.constData() != other.d_ptr.constData());
+    return !(operator==(other));
 }
 
-/*
+/*!
+    Returns whether this route segment is valid or not.
+
+    If nextRouteSegment() is called on the last route segment of a route, the
+    returned value will be an invalid route segment.
+*/
 bool QGeoRouteSegment::isValid() const
 {
+    return d_ptr->valid;
 }
 
+/*!
+    Sets the next route segment in the route to \a routeSegment.
+*/
 void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 {
+    d_ptr->valid = true;
+    d_ptr->nextSegment = routeSegment.d_ptr;
 }
 
+/*!
+    Returns the next route segment in the route.
+
+    Will return an invalid route segment if this is the last route
+    segment in the route.
+*/
 QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 {
+    if (d_ptr->valid && d_ptr->nextSegment)
+        return QGeoRouteSegment(d_ptr->nextSegment);
+
+    QGeoRouteSegment segment;
+    segment.d_ptr->valid = false;
+    return segment;
 }
-*/
 
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
@@ -124,6 +161,7 @@ QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 */
 void QGeoRouteSegment::setTravelTime(int secs)
 {
+    d_ptr->valid = true;
     d_ptr->travelTime = secs;
 }
 
@@ -141,6 +179,7 @@ int QGeoRouteSegment::travelTime() const
 */
 void QGeoRouteSegment::setDistance(qreal distance)
 {
+    d_ptr->valid = true;
     d_ptr->distance = distance;
 }
 
@@ -160,6 +199,7 @@ qreal QGeoRouteSegment::distance() const
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
+    d_ptr->valid = true;
     d_ptr->path = path;
 }
 
@@ -174,16 +214,21 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
     return d_ptr->path;
 }
+
 /*!
     Sets the maneuver for this route segement to \a maneuver.
 */
 void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
+    d_ptr->valid = true;
     d_ptr->maneuver = maneuver;
 }
 
 /*!
-    Returns the instruction for this route segment.
+    Returns the manevuer for this route segment.
+
+    Will return an invalid QGeoManeuver if no information has been attached 
+    to the endpoint of this route segment.
 */
 QGeoManeuver QGeoRouteSegment::maneuver() const
 {
@@ -194,25 +239,35 @@ QGeoManeuver QGeoRouteSegment::maneuver() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-        : travelTime(0),
-        distance(0.0) {}
+    : valid(true),
+      travelTime(0),
+      distance(0.0) {}
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
-        : QSharedData(other),
-        travelTime(other.travelTime),
-        distance(other.distance),
-        path(other.path),
-        maneuver(other.maneuver) {}
+    : QSharedData(other),
+      valid(other.valid),
+      travelTime(other.travelTime),
+      distance(other.distance),
+      path(other.path),
+      maneuver(other.maneuver),
+      nextSegment(other.nextSegment) {}
 
-QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
+{
+    nextSegment.reset();
+}
 
 bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) const
 {
-    return ((travelTime == other.travelTime)
+    return ((valid == other.valid)
+            && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (path == other.path)
             && (maneuver == other.maneuver));
 }
+
+/*******************************************************************************
+*******************************************************************************/
 
 QTM_END_NAMESPACE
 

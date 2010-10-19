@@ -78,16 +78,18 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_addCalendarPage = new AddCalendarPage(m_stackedWidget);
     m_editCalendarsPage = new EditCalendarsPage(m_stackedWidget);
 
-    //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
+    //qRegisterMetaType<QOrganizerManager>("QOrganizerManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
+    qRegisterMetaType<QOrganizerItemId>("QOrganizerItemId");
     qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
+    qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
 
     connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewEvent()), this, SLOT(addNewEvent()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
-    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), this, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
-    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), m_dayPage, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerManager*)), this, SLOT(changeManager(QOrganizerManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerManager*)), m_dayPage, SLOT(changeManager(QOrganizerManager*)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(currentDayChanged(QDate)), this, SLOT(updateSelectedDay(QDate)));
     connect(m_dayPage, SIGNAL(showMonthPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_dayPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -98,15 +100,15 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_addCalendarPage, SIGNAL(showPreviousPage()), this, SLOT(activatePreviousPage()), Qt::QueuedConnection);
-    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerItemManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerItemManager*,QOrganizerCollection*)), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerManager*,QOrganizerCollection*)), Qt::QueuedConnection);
     connect(m_editCalendarsPage, SIGNAL(showPreviousPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_editCalendarsPage, SIGNAL(addClicked()), this, SLOT(addCalendar()), Qt::QueuedConnection);
 
     // Connect to the save and remove request status change signals
-    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(saveReqStateChanged(QOrganizerAbstractRequest::State)));
+    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(removeReqStateChanged(QOrganizerAbstractRequest::State)));
 
     m_monthPage->init();
     
@@ -308,6 +310,7 @@ void CalendarDemo::addEvents()
     QList<QOrganizerItem> items;
     
     // Create a large number of events asynchronously
+    QOrganizerCollectionId defaultCollectionId = m_manager->defaultCollection().id();
     for(int index=0 ; index <  100 ; index++) {
         QOrganizerItem item;
         item.setType(QOrganizerItemType::TypeEvent);
@@ -315,10 +318,12 @@ void CalendarDemo::addEvents()
         item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
         
         // Set the start date to index to add events to next 5000 days
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
         timeRange.setEndDateTime(QDateTime::currentDateTime().addDays(index).addSecs(60 * 60));
         item.saveDetail(&timeRange);
+
+        item.setCollectionId(defaultCollectionId);
         
         items.append(item);
     }
@@ -326,7 +331,6 @@ void CalendarDemo::addEvents()
     // Now create a save request and execute it
     m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
-    m_saveReq.setCollectionId(m_manager->defaultCollectionId());
     m_saveReq.start();
 }
 
@@ -353,17 +357,16 @@ void CalendarDemo::importItems()
     QVersitOrganizerImporter importer;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
-            qWarning() << "Import failed, " << importer.errors();
+            qWarning() << "Import failed, " << importer.errorMap();
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
-        QMap<int, QOrganizerItemManager::Error> errorMap;
         QList<QOrganizerItem>::iterator it = items.begin();
         while (it != items.end()) {
             *it = m_manager->compatibleItem(*it);
             it++;
         }
-        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+        m_manager->saveItems(&items);
     }
     m_monthPage->refresh();
     m_dayPage->refresh();
@@ -388,8 +391,8 @@ void CalendarDemo::exportItems()
     }
     QList<QOrganizerItem> items(m_manager->items());
     QVersitOrganizerExporter exporter;
-    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-        qWarning() << "Export failed, " << exporter.errors();
+    if (!exporter.exportItems(items)) {
+        qWarning() << "Export failed, " << exporter.errorMap();
         return;
     }
     QVersitDocument document = exporter.document();
@@ -405,7 +408,7 @@ void CalendarDemo::exportItems()
 void CalendarDemo::deleteAllEntries()
 {
     // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    QList<QOrganizerItemId> ids = m_manager->itemIds();
     
     if(ids.count()) {
         m_remReq.setItemIds(ids);
@@ -417,17 +420,13 @@ void CalendarDemo::deleteAllEntries()
 void CalendarDemo::addCalendar()
 {
     // Get default collection
-    QList<QOrganizerCollection> defaultCollection = m_manager->collections(
-            QList<QOrganizerCollectionLocalId>() << m_manager->defaultCollectionId());
+    QOrganizerCollection defaultCollection = m_manager->defaultCollection();
 
-    QOrganizerCollection newCollection;
-    if (!defaultCollection.isEmpty()) {
-        newCollection = defaultCollection.at(0);
-        newCollection.setId(QOrganizerCollectionId()); // reset collection id
+    QOrganizerCollection newCollection = defaultCollection;
+    newCollection.setId(QOrganizerCollectionId()); // reset collection id
 #if defined(Q_WS_MAEMO_5)
-        newCollection.setMetaData("Name", "New calendar");
+    newCollection.setMetaData("Name", "New calendar");
 #endif
-    }
     m_addCalendarPage->calendarChanged(m_manager, newCollection);
 
     m_previousPage = m_stackedWidget->currentIndex();
@@ -441,22 +440,22 @@ void CalendarDemo::editCalendar()
     m_stackedWidget->setCurrentWidget(m_editCalendarsPage);
 }
 
-void CalendarDemo::editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar)
+void CalendarDemo::editExistingCalendar(QOrganizerManager *manager, QOrganizerCollection* calendar)
 {
     m_addCalendarPage->calendarChanged(manager, *calendar);
     m_previousPage = m_stackedWidget->currentIndex();
     m_stackedWidget->setCurrentWidget(m_addCalendarPage);
 }
 
-void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+void CalendarDemo::saveReqStateChanged(QOrganizerAbstractRequest::State reqState)
 {
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+    if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
         m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+    } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
+               QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
         m_progressDlg->hide();
         m_monthPage->refresh();
@@ -464,15 +463,15 @@ void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqS
     }
 }
 
-void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+void CalendarDemo::removeReqStateChanged(QOrganizerAbstractRequest::State reqState)
 {
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+    if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
         m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+    } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
+               QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
         m_progressDlg->hide();
         m_monthPage->refresh();
@@ -480,7 +479,7 @@ void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State re
     }
 }
 
-void CalendarDemo::changeManager(QOrganizerItemManager *manager)
+void CalendarDemo::changeManager(QOrganizerManager *manager)
 {
     m_manager = manager;
 }

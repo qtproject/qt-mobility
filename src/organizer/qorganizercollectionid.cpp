@@ -40,11 +40,17 @@
 ****************************************************************************/
 
 #include "qorganizercollectionid.h"
-#include "qorganizercollectionid_p.h"
-#include "qorganizercollectionenginelocalid.h"
-#include "qorganizeritemmanager_p.h"
+#include "qorganizercollectionengineid.h"
+#include "qorganizermanager_p.h"
 #include <QHash>
 #include <QDebug>
+
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineId)>::clone()
+{
+    return d ? d->clone() : 0;
+}
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,72 +60,52 @@ QTM_BEGIN_NAMESPACE
   a collection in a particular manager.
 
   It consists of a manager URI which identifies the manager which manages the collection,
-  and the local id of the collection in that manager.
+  and the id of the collection in that manager.
 
-  A "null" QOrganizerCollectionId has an empty manager URI, and an invalid QOrganizerCollectionLocalId (0).
+  A "null" QOrganizerCollectionId has an empty manager URI, and an invalid QOrganizerCollectionId (0).
  */
 
 /*!
-  Constructs a new, null QOrganizerCollectionLocalId.
+ * Constructs a new, null collection id
  */
-QOrganizerCollectionLocalId::QOrganizerCollectionLocalId()
-    : d(0)
+QOrganizerCollectionId::QOrganizerCollectionId()
+        : d(0)
 {
 }
 
 /*!
-  Cleans up any memory in use by this local id.
+ * Cleans up the memory in use by the collection id
  */
-QOrganizerCollectionLocalId::~QOrganizerCollectionLocalId()
+QOrganizerCollectionId::~QOrganizerCollectionId()
 {
-    delete d;
 }
 
 /*!
-  Constructs a manager-unique local id which wraps the given engine-unique item id
-  \a engineItemId.  This local id takes ownership of the engine-unique item id and
-  will delete it when the local id goes out of scope.  Engine implementors must not
+  Constructs a manager-unique id which wraps the given engine-unique item id
+  \a engineItemId.  This id takes ownership of the engine-unique item id and
+  will delete it when the id goes out of scope.  Engine implementors must not
   delete the \a engineItemId or undefined behaviour will occur.
  */
-QOrganizerCollectionLocalId::QOrganizerCollectionLocalId(QOrganizerCollectionEngineLocalId* engineItemId)
+QOrganizerCollectionId::QOrganizerCollectionId(QOrganizerCollectionEngineId* engineItemId)
     : d(engineItemId)
 {
 }
 
-/*!
-  Constructs a new copy of the \a other id.
- */
-QOrganizerCollectionLocalId::QOrganizerCollectionLocalId(const QOrganizerCollectionLocalId& other)
+/*! Constructs a new collection id as a copy of \a other */
+QOrganizerCollectionId::QOrganizerCollectionId(const QOrganizerCollectionId& other)
+        : d(other.d)
 {
-    d = 0;
-    if (other.d)
-        d = other.d->clone();
 }
 
-/*!
-  Assigns the \a other id to this id.
- */
-QOrganizerCollectionLocalId& QOrganizerCollectionLocalId::operator=(const QOrganizerCollectionLocalId& other)
+/*! Assigns the collection id to be equal to \a other */
+QOrganizerCollectionId& QOrganizerCollectionId::operator=(const QOrganizerCollectionId& other)
 {
-    if (d == other.d)
-        return *this;
-
-    // clean up our "old" engine id.
-    if (d)
-        delete d;
-
-    if (other.d)
-        d = other.d->clone();
-    else
-        d = 0;
-
+    d = other.d;
     return *this;
 }
 
-/*!
-  Returns true if this id is equal to the \a other id; otherwise returns false.
- */
-bool QOrganizerCollectionLocalId::operator==(const QOrganizerCollectionLocalId& other) const
+/*! Returns true if the collection id has the same manager URI and id as \a other */
+bool QOrganizerCollectionId::operator==(const QOrganizerCollectionId& other) const
 {
     // if both ids are null then they are equal.
     if (d == 0 && other.d == 0)
@@ -127,87 +113,14 @@ bool QOrganizerCollectionLocalId::operator==(const QOrganizerCollectionLocalId& 
 
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
+        if (d->managerUri() == other.d->managerUri()) {
             return d->isEqualTo(other.d);
         }
     }
     return false;
 }
 
-/*!
-  Returns true if this id is not equal to the \a other id; otherwise, returns false.
- */
-bool QOrganizerCollectionLocalId::operator!=(const QOrganizerCollectionLocalId& other) const
-{
-    return !(*this == other);
-}
-
-/*!
-  Returns true if this id is less than the \a other id; otherwise, returns false.
- */
-bool QOrganizerCollectionLocalId::operator<(const QOrganizerCollectionLocalId& other) const
-{
-    // a null id is always less than a non-null id.
-    if (d == 0 && other.d != 0)
-        return true;
-
-    if (d && other.d) {
-        // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
-            return d->isLessThan(other.d);
-        }
-    }
-
-    return false;
-}
-
-/*!
-  Returns true if this id is a null or default constructed id; otherwise, returns false.
- */
-bool QOrganizerCollectionLocalId::isNull() const
-{
-    return (d == 0);
-}
-
-/*!
- * Constructs a new organizeritem id
- */
-QOrganizerCollectionId::QOrganizerCollectionId()
-        : d(new QOrganizerCollectionIdPrivate)
-{
-}
-
-/*!
- * Cleans up the memory in use by the organizeritem id
- */
-QOrganizerCollectionId::~QOrganizerCollectionId()
-{
-}
-
-/*! Constructs a new organizeritem id as a copy of \a other */
-QOrganizerCollectionId::QOrganizerCollectionId(const QOrganizerCollectionId& other)
-        : d(other.d)
-{
-}
-
-/*! Assigns the organizeritem id to be equal to \a other */
-QOrganizerCollectionId& QOrganizerCollectionId::operator=(const QOrganizerCollectionId& other)
-{
-    d = other.d;
-    return *this;
-}
-
-/*! Returns true if the organizeritem id has the same manager URI and local id as \a other */
-bool QOrganizerCollectionId::operator==(const QOrganizerCollectionId& other) const
-{
-    if (d->m_managerUri != other.d->m_managerUri)
-        return false;
-    if (d->m_localId != other.d->m_localId)
-        return false;
-    return true;
-}
-
-/*! Returns true if either the manager URI or local id of the organizeritem id is different to that of \a other */
+/*! Returns true if either the manager URI or id of the collection id is different to that of \a other */
 bool QOrganizerCollectionId::operator!=(const QOrganizerCollectionId& other) const
 {
     return !(*this == other);
@@ -218,10 +131,10 @@ bool QOrganizerCollectionId::operator!=(const QOrganizerCollectionId& other) con
     manager URI of this id is alphabetically less than the manager
     URI of the \a other id.  If both ids have the same manager URI,
     this id will be considered less than the \a other id if the
-    local id of this id is less than the local id of the \a other id.
+    id of this id is less than the id of the \a other id.
 
     The invalid, empty id consists of an empty manager URI and the
-    invalid, zero local id, and hence will be less than any non-invalid
+    invalid, zero id, and hence will be less than any non-invalid
     id.
 
     This operator is provided primarily to allow use of a QOrganizerCollectionId
@@ -229,21 +142,26 @@ bool QOrganizerCollectionId::operator!=(const QOrganizerCollectionId& other) con
  */
 bool QOrganizerCollectionId::operator<(const QOrganizerCollectionId& other) const
 {
-    const int comp = this->managerUri().compare(other.managerUri());
-    if (comp != 0)
-        return comp < 0;
+    // a null id is always less than a non-null id.
+    if (d == 0 && other.d != 0)
+        return true;
 
-    return this->localId() < other.localId();
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->managerUri() == other.d->managerUri()) {
+            return d->isLessThan(other.d);
+        }
+    }
+
+    return false;
 }
 
 /*!
- * Returns the hash value for \a key.
+  Returns true if the id part of this id is a null (default constructed) id; otherwise, returns false.
  */
-uint qHash(const QOrganizerCollectionLocalId &key)
+bool QOrganizerCollectionId::isNull() const
 {
-    if (key.d)
-        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
-    return 0;
+    return (d == 0);
 }
 
 /*!
@@ -251,108 +169,183 @@ uint qHash(const QOrganizerCollectionLocalId &key)
  */
 uint qHash(const QOrganizerCollectionId &key)
 {
-    return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
-            + qHash(key.localId());
+    if (key.d)
+        return key.d->hash();
+    return 0;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a id to the debug stream \a dbg
+ */
 QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id)
 {
-    dbg.nospace() << "QOrganizerCollectionId(" << id.managerUri() << ", " << id.localId() << ")";
+    dbg.nospace() << "QOrganizerCollectionId(";
+    if (id.isNull())
+        dbg.nospace() << "(null))";
+    else
+        id.d->debugStreamOut(dbg)  << ")";
     return dbg.maybeSpace();
-}
-
-QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id)
-{
-    if (id.d) {
-        return id.d->debugStreamOut(dbg);
-    }
-    return (dbg << QString(QLatin1String("(null)")));
 }
 #endif
 
 #ifndef QT_NO_DATASTREAM
 /*!
- * Writes \a collectionId to the stream \a out.
+  Streams \a collectionId to the data stream \a out
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId)
 {
-    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollectionId
-    return out << formatVersion
-               << collectionId.managerUri()
-               << collectionId.localId();
-}
-
-QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id)
-{
-    if (id.d) {
-        // we include a marker which contains "true" if there is local id data to be streamed.
-        out << static_cast<quint8>(true);
-        return id.d->dataStreamOut(out);
-    }
-    return (out << static_cast<quint8>(false));
+    out << (collectionId.toString());
+    return out;
 }
 
 /*!
- * Reads an organizer collection id from stream \a in into \a collectionId.
+  Streams \a collectionId in from the data stream \a in
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 {
-    quint8 formatVersion;
-    in >> formatVersion;
-    if (formatVersion == 1) {
-        QString managerUri;
-        in >> managerUri;
-        quint8 localIdMarker = static_cast<quint8>(false);
-        in >> localIdMarker;
-        QOrganizerCollectionLocalId localId(QOrganizerItemManagerData::createEngineCollectionLocalId(managerUri));
-        collectionId = QOrganizerCollectionId();
-        if (localId.d) {
-            collectionId.setManagerUri(managerUri);
-            if (localIdMarker) {
-                // only stream in the local id data if it exists.
-                localId.d->dataStreamIn(in);
-            }
-        }
-    } else {
-        in.setStatus(QDataStream::ReadCorruptData);
-    }
+    QString idString;
+    in >> idString;
+    collectionId = QOrganizerCollectionId::fromString(idString);
     return in;
 }
-
 #endif
 
-
 /*!
- * Returns the URI of the manager which contains the organizeritem identified by this id
+ * Returns the URI of the manager which contains the collection identified by this id
  */
 QString QOrganizerCollectionId::managerUri() const
 {
-    return d->m_managerUri;
+    return d ? d->managerUri() : QString();
 }
 
 /*!
- * Returns the manager-local id of the organizeritem identified by this organizeritem id
+  Builds a string from the given \a managerName, \a params and \a engineIdString
  */
-QOrganizerCollectionLocalId QOrganizerCollectionId::localId() const
+inline QString buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineIdString)
 {
-    return d->m_localId;
+    // the constructed id string will be of the form: "qtorganizer:managerName:param1=value1&param2=value2:
+    QString ret(QLatin1String("qtorganizer:%1:%2:%3"));
+
+    // we have to escape each param
+    QStringList escapedParams;
+    QStringList keys = params.keys();
+    for (int i=0; i < keys.size(); i++) {
+        QString key = keys.at(i);
+        QString arg = params.value(key);
+        arg = arg.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        arg = arg.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        arg = arg.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+        key = key.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        key = key.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+        key = key + QLatin1Char('=') + arg;
+        escapedParams.append(key);
+    }
+
+    // and we escape the engine id string.
+    QString escapedEngineId = engineIdString;
+    escapedEngineId.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+    escapedEngineId.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+
+    return ret.arg(managerName, escapedParams.join(QLatin1String("&")), escapedEngineId);
 }
 
 /*!
- * Sets the URI of the manager which contains the organizeritem identified by this id to \a uri
+  Parses the individual components of the given \a idString and fills the \a managerName, \a params and \a engineIdString.
+  Returns true if the parts could be parsed successfully, false otherwise.
  */
-void QOrganizerCollectionId::setManagerUri(const QString& uri)
+inline bool parseIdString(const QString& idString, QString* managerName, QMap<QString, QString>* params, QString* engineIdString)
 {
-    d->m_managerUri = uri;
+    QStringList colonSplit = idString.split(QLatin1Char(':'));
+
+    QString prefix = colonSplit.value(0);
+    if (prefix != QLatin1String("qtorganizer") || colonSplit.size() != 4)
+        return false; // invalid serialized string.  we cannot continue.
+
+    QString mgrName = colonSplit.value(1);
+    QString paramString = colonSplit.value(2);
+    QString engIdString = colonSplit.value(3);
+
+    // Now we have to decode each parameter
+    QMap<QString, QString> outParams;
+    if (!paramString.isEmpty()) {
+        QStringList params = paramString.split(QRegExp(QLatin1String("&(?!(amp;|equ;))")), QString::KeepEmptyParts);
+        // If we have an empty string for paramstring, we get one entry in params,
+        // so skip that case.
+        for(int i = 0; i < params.count(); i++) {
+            /* This should be something like "foo&amp;bar&equ;=grob&amp;" */
+            QStringList paramChunk = params.value(i).split(QLatin1String("="), QString::KeepEmptyParts);
+
+            if (paramChunk.count() != 2)
+                return false;
+
+            QString arg = paramChunk.value(0);
+            QString param = paramChunk.value(1);
+
+            arg.replace(QLatin1String("&#58;"), QLatin1String(":"));
+            arg.replace(QLatin1String("&equ;"), QLatin1String("="));
+            arg.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            param.replace(QLatin1String("&#58;"), QLatin1String(":"));
+            param.replace(QLatin1String("&equ;"), QLatin1String("="));
+            param.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            if (arg.isEmpty())
+                return false;
+            outParams.insert(arg, param);
+        }
+    }
+
+    // and unescape the engine id string.
+    engIdString.replace(QLatin1String("&#58;"), QLatin1String(":"));
+    engIdString.replace(QLatin1String("&amp;"), QLatin1String("&"));
+
+    // now fill the return values.
+    if (managerName)
+        *managerName = mgrName;
+    if (params)
+        *params = outParams;
+    if (engineIdString)
+        *engineIdString = engIdString;
+
+    // and return.
+    return true;
 }
 
 /*!
- * Sets the manager-local id of the organizeritem identified by this organizeritem id to \a id
+  Serializes the id to a string.  The format of the string will be:
+  "qtorganizer:managerName:constructionParams:serializedEngineLocalItemId"
  */
-void QOrganizerCollectionId::setLocalId(const QOrganizerCollectionLocalId& id)
+QString QOrganizerCollectionId::toString() const
 {
-    d->m_localId = id;
+    QString mgrName;
+    QMap<QString, QString> params;
+    QString engineId;
+
+    if (d) {
+        QOrganizerManager::parseUri(d->managerUri(), &mgrName, &params);
+        engineId = d->toString();
+    }
+
+    // having extracted the params the name, we now need to build a new string.
+    return buildIdString(mgrName, params, engineId);
+}
+
+/*!
+  Deserializes the given \a idString.  Returns a default-constructed (null)
+  item id if the given \a idString is not a valid, serialized item id, or
+  if the manager engine from which the id came could not be found.
+ */
+QOrganizerCollectionId QOrganizerCollectionId::fromString(const QString& idString)
+{
+    QString managerName;
+    QMap<QString, QString> params;
+    QString engineIdString;
+
+    if (!parseIdString(idString, &managerName, &params, &engineIdString))
+        return QOrganizerCollectionId(); // invalid idString given.
+
+    QOrganizerCollectionEngineId* engineId = QOrganizerManagerData::createEngineCollectionId(managerName, params, engineIdString);
+    return QOrganizerCollectionId(engineId);
 }
 
 QTM_END_NAMESPACE

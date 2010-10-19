@@ -20,6 +20,9 @@ HEADERS += ../../../plugins/declarative/location/qdeclarativelandmarkfilters_p.h
 HEADERS += ../../../plugins/declarative/location/qdeclarativelandmarkmodel_p.h
 HEADERS += ../../../plugins/declarative/location/qdeclarativelandmark_p.h
 HEADERS += ../../../plugins/declarative/location/qdeclarativecoordinate_p.h
+HEADERS += ../../../plugins/declarative/location/qdeclarativegeoaddress_p.h
+HEADERS += ../../../plugins/declarative/location/qdeclarativegeoplace_p.h
+HEADERS += ../../../plugins/declarative/location/qdeclarativegeoboundingbox_p.h
 
 SOURCES += tst_qdeclarativeposition.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp
@@ -30,6 +33,9 @@ SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkcategorymod
 SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkfilters.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativelandmarkmodel.cpp
 SOURCES += ../../../plugins/declarative/location/qdeclarativecoordinate.cpp
+SOURCES += ../../../plugins/declarative/location/qdeclarativegeoaddress.cpp
+SOURCES += ../../../plugins/declarative/location/qdeclarativegeoplace.cpp
+SOURCES += ../../../plugins/declarative/location/qdeclarativegeoboundingbox.cpp
 
 CONFIG += mobility
 MOBILITY += location

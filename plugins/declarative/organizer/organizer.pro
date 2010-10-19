@@ -23,7 +23,7 @@ QT += script network
 
 
 CONFIG += mobility
-MOBILITY = organizer versit versitorganizer
+MOBILITY = organizer versit
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
@@ -37,8 +37,8 @@ HEADERS += qdeclarativeorganizermodel_p.h \
            qdeclarativeopenmetaobject_p.h \
            qdeclarativeorganizeritemfilter_p.h \
            qdeclarativeorganizeritemmetaobject_p.h \
-           qdeclarativeorganizeritemrecurrencerule_p.h \
-           qdeclarativeorganizeritemcollection_p.h \
+           qdeclarativeorganizerrecurrencerule_p.h \
+           qdeclarativeorganizercollection_p.h \
            qdeclarativeorganizeritemsortorder_p.h \
            qdeclarativeorganizeritemfetchhint_p.h
 
@@ -48,7 +48,8 @@ SOURCES += plugin.cpp \
            qmetaobjectbuilder.cpp \
            qdeclarativeopenmetaobject.cpp \
            qdeclarativeorganizeritemmetaobject.cpp \
-           qdeclarativeorganizermodel.cpp
+           qdeclarativeorganizermodel.cpp \
+           qdeclarativeorganizeritemfilter.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

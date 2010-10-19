@@ -43,7 +43,6 @@
 #include <cntfldst.h>
 
 #include "cntfilterdetail.h"
-#include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
 #include "cntsymbianengine.h"
 #include "cnttransformphonenumber.h"
 
@@ -130,9 +129,19 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
+        else if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
             detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-            //cpecial case - phone number matching 
+            //special case - phone number matching 
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName &&
+            detailFilter.detailFieldName() == QContactType::FieldType) {
+            //filtering by contact type is supported
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactGuid::DefinitionName &&
+            detailFilter.detailFieldName() == QContactGuid::FieldGuid) {
+            //filtering by global Uid is supported
             result = true;
         }
     }
@@ -149,15 +158,10 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
       return;
     }
     QContactDetailFilter detailFilter(filter);
-    //display label
-    if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName) {
-      CntFilterDetailDisplayLabel displayLabelFilter;
-      displayLabelFilter.createSelectQuery(filter, sqlQuery, error);
-    }
     //type
-    else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
+    if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
        if (detailFilter.value().toString() == QContactType::TypeContact)
-           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
+           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)<=1";
        else if (detailFilter.value().toString() == QContactType::TypeGroup)
            sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
     }
@@ -231,7 +235,11 @@ void CntFilterDetail::updateForMatchFlag(const QContactDetailFilter& filter,
             break;
         }
         case QContactFilter::MatchFixedString: {
-            *error = QContactManager::NotSupportedError;
+            // Pattern for MatchFixedString:
+            // " ='xyz' COLLATE NOCASE"
+            fieldToUpdate = " ='"
+                       + filter.value().toString() + '\'' + " COLLATE NOCASE";
+            *error = QContactManager::NoError;
             break;
         }
         case QContactFilter::MatchCaseSensitive: {
@@ -270,6 +278,22 @@ void CntFilterDetail::getTableNameWhereClause(const QContactDetailFilter& detail
     else if (isSubType) {
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
+    }
+    else if (detailfilter.detailDefinitionName() == QContactFavorite::DefinitionName) {
+        bool favoritesSearch = true;
+        if (detailfilter.value().canConvert(QVariant::Bool)) {
+            if (!detailfilter.value().toBool()) {
+                //filter to fetch non-favorite contacts
+                favoritesSearch = false;    
+            }
+        }
+        sqlWhereClause += columnName;
+        if (favoritesSearch) {
+            sqlWhereClause += " NOT NULL ";   
+        }
+        else {
+            sqlWhereClause += " IS NULL ";
+        }
     }
     else {
         sqlWhereClause += ' ' + columnName + ' ';

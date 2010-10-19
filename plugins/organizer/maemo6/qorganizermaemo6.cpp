@@ -45,7 +45,7 @@
 
 //QTM_USE_NAMESPACE
 
-QOrganizerItemManagerEngine* QOrganizerItemMaemo6Factory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+QOrganizerManagerEngine* QOrganizerItemMaemo6Factory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
 
@@ -102,7 +102,7 @@ int QOrganizerItemMaemo6Engine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -125,7 +125,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
     */
 
     QOrganizerItemLocalId generatorId = generator.localId();
-    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(generatorId))->toString();
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerManagerEngine::engineLocalItemId(generatorId))->toString();
     Incidence* generatorIncidence = d->m_calendarBackend.incidence(kId);
     Incidence::List generatorList;
     generatorList.append(generatorIncidence);
@@ -163,15 +163,15 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
     return instances;
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemMaemo6Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemMaemo6Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     QList<QOrganizerItem> ret = items(filter, sortOrders, QOrganizerItemFetchHint(), error);
 
     // TODO: we don't have to sort again since items() has done it for us
-    return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+    return QOrganizerManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemMaemo6Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMaemo6Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
     // TODO: optimise by using our own filters
@@ -192,20 +192,20 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::items(const QOrganizerItemFilt
 
     // Now filter them
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
+        if (QOrganizerManagerEngine::testFilter(filter, item)) {
+            QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
     return ret;
 }
 
-QOrganizerItem QOrganizerItemMaemo6Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QOrganizerItem QOrganizerItemMaemo6Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
     Incidence* theIncidence = incidence(itemId);
     if (!theIncidence) {
-        *error = QOrganizerItemManager::DoesNotExistError;
+        *error = QOrganizerManager::DoesNotExistError;
         return QOrganizerItem();
     }
     IncidenceToItemConverter converter(managerUri());
@@ -213,24 +213,24 @@ QOrganizerItem QOrganizerItemMaemo6Engine::item(const QOrganizerItemLocalId& ite
     if (converter.convertIncidenceToItem(theIncidence, &item)) {
         return item;
     } else {
-        *error = QOrganizerItemManager::DoesNotExistError;
+        *error = QOrganizerManager::DoesNotExistError;
         return QOrganizerItem();
     }
 }
 
-bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     if (!items || collectionId != QOrganizerCollectionLocalId()) {
-        *error = QOrganizerItemManager::BadArgumentError;
+        *error = QOrganizerManager::BadArgumentError;
     }
 
     /*
         TODO
         The item passed in should be validated according to the schema.
     */
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     for (int i = 0; i < items->size(); i++) {
-        QOrganizerItemManager::Error thisError;
+        QOrganizerManager::Error thisError;
         QOrganizerItem item = items->at(i);
         if (saveItem(&item, &thisError)) {
             items->replace(i, item);
@@ -239,10 +239,10 @@ bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, const Q
             errorMap->insert(i, thisError);
         }
     }
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
-bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerManager::Error* error)
 {
     // ensure that the organizeritem's details conform to their definitions
     if (!validateItem(*item, error)) {
@@ -263,66 +263,69 @@ bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemM
     return false;
 }
 
-bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     for (int i = 0; i < itemIds.size(); i++) {
         QOrganizerItemLocalId id = itemIds[i];
         Incidence* theIncidence = incidence(id);
         if (!theIncidence) {
-            *error = QOrganizerItemManager::DoesNotExistError;
-            errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            *error = QOrganizerManager::DoesNotExistError;
+            errorMap->insert(i, QOrganizerManager::DoesNotExistError);
             continue;
         }
         if (!d->m_calendarBackend.deleteIncidence(theIncidence)) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+            *error = QOrganizerManager::UnspecifiedError;
+            errorMap->insert(i, QOrganizerManager::UnspecifiedError);
         }
     }
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     return schemaDefinitions().value(itemType);
 }
 
-QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error) const
 {
     /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::detailDefinition(definitionId, itemType, error);
 }
 
-bool QOrganizerItemMaemo6Engine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
+    return QOrganizerManagerEngine::saveDetailDefinition(def, itemType, error);
 }
 
-bool QOrganizerItemMaemo6Engine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
-QOrganizerCollectionLocalId QOrganizerItemMaemo6Engine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollectionLocalId QOrganizerItemMaemo6Engine::defaultCollectionId(QOrganizerManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     return QOrganizerCollectionLocalId(0);
 }
 
-QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo6Engine::collectionIds(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo6Engine::collectionIds(QOrganizerManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     QList<QOrganizerCollectionLocalId> retn;
     retn << QOrganizerCollectionLocalId(0);
     return retn;
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NoError;
+    Q_UNUSED(errorMap);
+    // XXX TODO: use error map, and fix implementation as per docs.
+
+    *error = QOrganizerManager::NoError;
     QOrganizerCollection defaultCollection;
     defaultCollection.setId(QOrganizerCollectionId());
     QList<QOrganizerCollection> retn;
@@ -333,21 +336,21 @@ QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<
     return retn;
 }
 
-bool QOrganizerItemMaemo6Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error)
 {
     Q_UNUSED(collection)
-    *error = QOrganizerItemManager::NotSupportedError;
+    *error = QOrganizerManager::NotSupportedError;
     return false;
 }
 
-bool QOrganizerItemMaemo6Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMaemo6Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error)
 {
     Q_UNUSED(collectionId)
-    *error = QOrganizerItemManager::NotSupportedError;
+    *error = QOrganizerManager::NotSupportedError;
     return false;
 }
 
-bool QOrganizerItemMaemo6Engine::startRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemMaemo6Engine::startRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -386,20 +389,20 @@ bool QOrganizerItemMaemo6Engine::startRequest(QOrganizerItemAbstractRequest* req
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-    return QOrganizerItemManagerEngine::startRequest(req);
+    return QOrganizerManagerEngine::startRequest(req);
 }
 
-bool QOrganizerItemMaemo6Engine::cancelRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemMaemo6Engine::cancelRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
 
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+    return QOrganizerManagerEngine::cancelRequest(req);
 }
 
-bool QOrganizerItemMaemo6Engine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
+bool QOrganizerItemMaemo6Engine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
     /*
         TODO
@@ -413,10 +416,10 @@ bool QOrganizerItemMaemo6Engine::waitForRequestFinished(QOrganizerItemAbstractRe
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+    return QOrganizerManagerEngine::waitForRequestFinished(req, msecs);
 }
 
-void QOrganizerItemMaemo6Engine::requestDestroyed(QOrganizerItemAbstractRequest* req)
+void QOrganizerItemMaemo6Engine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -437,23 +440,23 @@ void QOrganizerItemMaemo6Engine::requestDestroyed(QOrganizerItemAbstractRequest*
         ordering problems :D
 
     */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+    return QOrganizerManagerEngine::requestDestroyed(req);
 }
 
-bool QOrganizerItemMaemo6Engine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
+bool QOrganizerItemMaemo6Engine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const
 {
     // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
-        case QOrganizerItemManager::MutableDefinitions:
+        case QOrganizerManager::MutableDefinitions:
             // TODO If you support save/remove detail definition, return true
             return false;
 
-        case QOrganizerItemManager::Anonymous:
+        case QOrganizerManager::Anonymous:
             // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
             // (mostly for an in memory engine)
             return false;
-        case QOrganizerItemManager::ChangeLogs:
+        case QOrganizerManager::ChangeLogs:
             // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
             return false;
     }
@@ -499,7 +502,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
     if (d->m_definitions.isEmpty()) {
         // Loop through default schema definitions
         QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schema
-                = QOrganizerItemManagerEngine::schemaDefinitions();
+                = QOrganizerManagerEngine::schemaDefinitions();
         foreach (const QString& itemType, schema.keys()) {
             // Only add the item types that we support
             if (itemType == QOrganizerItemType::TypeEvent ||
@@ -521,7 +524,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
                         it.key() == QOrganizerItemDescription::DefinitionName ||
                         it.key() == QOrganizerItemDisplayLabel::DefinitionName ||
                         it.key() == QOrganizerItemRecurrence::DefinitionName ||
-                        it.key() == QOrganizerEventTimeRange::DefinitionName ||
+                        it.key() == QOrganizerEventTime::DefinitionName ||
                         it.key() == QOrganizerItemGuid::DefinitionName ||
                         it.key() == QOrganizerItemInstanceOrigin::DefinitionName) {
                         supportedDefinitions.insert(it.key(), it.value());
@@ -536,7 +539,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
 
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
 {
-    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId))->toString();
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemId))->toString();
     return d->m_calendarBackend.incidence(kId);
 }
 
@@ -544,7 +547,7 @@ Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& it
  * Saves \a item to the manager, but doesn't persist the change to disk.
  * Sets \a error appropriately if if couldn't be saved.
  */
-Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error)
+Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrganizerManager::Error* error)
 {
     bool itemIsNew = (managerUri() != item->id().managerUri()
             || item->localId().isNull());
@@ -581,14 +584,14 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
         QOrganizerJournal* journal = static_cast<QOrganizerJournal*>(item);
         newIncidence = createKJournal(*journal);
     } else {
-        *error = QOrganizerItemManager::InvalidItemTypeError;
+        *error = QOrganizerManager::InvalidItemTypeError;
         return 0;
     }
     if (itemIsNew) {
         if (itemIsOccurrence) {
             Incidence* parentIncidence = incidence(parentLocalId);
             if (!parentIncidence) {
-                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                *error = QOrganizerManager::InvalidOccurrenceError;
                 return 0;
             }
             Incidence* detachedIncidence = d->m_calendarBackend.dissociateOccurrence(
@@ -604,7 +607,7 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
         } else {
             Incidence* oldIncidence = incidence(item->localId());
             if (!oldIncidence) {
-                *error = QOrganizerItemManager::DoesNotExistError;
+                *error = QOrganizerManager::DoesNotExistError;
                 return 0;
             }
             QString uid = oldIncidence->uid();
@@ -614,7 +617,7 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
         }
     }
     d->m_calendarBackend.addIncidence(newIncidence);
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     return newIncidence;
 }
 
@@ -690,7 +693,7 @@ void QOrganizerItemMaemo6Engine::convertQRecurrenceToKRecurrence(
         kRecurrence->deleteRRule(rrule);
     }
 
-    foreach (const QOrganizerItemRecurrenceRule& rrule, qRecurrence.recurrenceRules()) {
+    foreach (const QOrganizerRecurrenceRule& rrule, qRecurrence.recurrenceRules()) {
         RecurrenceRule* krrule = createKRecurrenceRule(kRecurrence, rrule);
         kRecurrence->addRRule(krrule);
     }
@@ -698,20 +701,20 @@ void QOrganizerItemMaemo6Engine::convertQRecurrenceToKRecurrence(
 
 RecurrenceRule* QOrganizerItemMaemo6Engine::createKRecurrenceRule(
         Recurrence* kRecurrence,
-        const QOrganizerItemRecurrenceRule& qRRule)
+        const QOrganizerRecurrenceRule& qRRule)
 {
     RecurrenceRule* kRRule = kRecurrence->defaultRRule(true);
     switch (qRRule.frequency()) {
-        case QOrganizerItemRecurrenceRule::Daily:
+        case QOrganizerRecurrenceRule::Daily:
             kRRule->setRecurrenceType(RecurrenceRule::rDaily);
             break;
-        case QOrganizerItemRecurrenceRule::Weekly:
+        case QOrganizerRecurrenceRule::Weekly:
             kRRule->setRecurrenceType(RecurrenceRule::rWeekly);
             break;
-        case QOrganizerItemRecurrenceRule::Monthly:
+        case QOrganizerRecurrenceRule::Monthly:
             kRRule->setRecurrenceType(RecurrenceRule::rMonthly);
             break;
-        case QOrganizerItemRecurrenceRule::Yearly:
+        case QOrganizerRecurrenceRule::Yearly:
             kRRule->setRecurrenceType(RecurrenceRule::rYearly);
             break;
     }
@@ -732,7 +735,7 @@ RecurrenceRule* QOrganizerItemMaemo6Engine::createKRecurrenceRule(
     kRRule->setByWeekNumbers(qRRule.weeksOfYear());
 
     QList<int> months;
-    foreach (QOrganizerItemRecurrenceRule::Month month, qRRule.months()) {
+    foreach (QOrganizerRecurrenceRule::Month month, qRRule.months()) {
         months.append((int)month);
     }
     kRRule->setByMonths(months);

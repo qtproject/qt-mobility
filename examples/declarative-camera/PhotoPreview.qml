@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import Qt.multimedia 4.7
+import QtMultimediaKit 1.1
 
 Item {
     property alias source : preview.source

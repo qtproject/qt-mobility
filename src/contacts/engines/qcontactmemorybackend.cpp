@@ -64,6 +64,8 @@ QTM_BEGIN_NAMESPACE
   
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
+
+  \internal
  
   It may be used as a reference implementation, or when persistent storage is not required.
  
@@ -667,8 +669,12 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
     if (!req)
         return false;
+
+    QWeakPointer<QContactAbstractRequest> checkDeletion(req);
     updateRequestState(req, QContactAbstractRequest::ActiveState);
-    performAsynchronousOperation(req);
+    if (!checkDeletion.isNull())
+        performAsynchronousOperation(req);
+
     return true;
 }
 

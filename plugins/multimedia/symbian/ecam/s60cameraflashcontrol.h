@@ -42,8 +42,6 @@
 #ifndef S60CAMERAFLASHCONTROL_H
 #define S60CAMERAFLASHCONTROL_H
 
-#include <QtCore/qobject.h>
-
 #include <qcameraflashcontrol.h>
 
 #include "s60camerasettings.h"
@@ -53,36 +51,39 @@ QT_USE_NAMESPACE
 class S60CameraService;
 class S60ImageCaptureSession;
 
+/*
+ * Control to setup Flash related camera settings.
+ */
 class S60CameraFlashControl : public QCameraFlashControl
 {
     Q_OBJECT
-    
+
 public: // Constructors & Destructor
-    
+
     S60CameraFlashControl(QObject *parent = 0);
     S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent = 0);
     ~S60CameraFlashControl();
 
 public: // QCameraExposureControl
-    
+
     // Flash Mode
     QCameraExposure::FlashModes flashMode() const;
     void setFlashMode(QCameraExposure::FlashModes mode);
     bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
-    
+
     bool isFlashReady() const;
-    
+
 /*
 Q_SIGNALS: // QCameraExposureControl
     void flashReady(bool);
 */
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void resetAdvancedSetting();
 
 private: // Data
-    
+
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
     S60CameraSettings               *m_advancedSettings;

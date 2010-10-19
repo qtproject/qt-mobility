@@ -47,10 +47,10 @@
 #include "qdeclarativeorganizeritem_p.h"
 #include "qdeclarativeorganizeritemdetail_p.h"
 #include "qdeclarativeorganizeritemfilter_p.h"
-#include "qdeclarativeorganizeritemrecurrencerule_p.h"
+#include "qdeclarativeorganizerrecurrencerule_p.h"
 #include "qdeclarativeorganizeritemfetchhint_p.h"
 #include "qdeclarativeorganizeritemsortorder_p.h"
-#include "qdeclarativeorganizeritemcollection_p.h"
+#include "qdeclarativeorganizercollection_p.h"
 
 QT_USE_NAMESPACE
 
@@ -63,52 +63,50 @@ public:
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.organizer"));
         qmlRegisterType<QDeclarativeOrganizerModel>(uri, 1, 1, "OrganizerModel");
-        qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
-        qmlRegisterType<QDeclarativeOrganizerItemRecurrenceRule>(uri, 1, 1, "OrganizerItemRecurrenceRule");
-        qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "fetchHint");
-        qmlRegisterType<QDeclarativeOrganizerItemSortOrder>(uri, 1, 1, "OrganizerItemSortOrder");
-        qmlRegisterType<QDeclarativeOrganizerCollection>(uri, 1, 1, "OrganizerCollection");
+        qmlRegisterType<QDeclarativeOrganizerRecurrenceRule>(uri, 1, 1, "RecurrenceRule");
+        qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "FetchHint");
+        qmlRegisterType<QDeclarativeOrganizerItemSortOrder>(uri, 1, 1, "SortOrder");
+        qmlRegisterType<QDeclarativeOrganizerCollection>(uri, 1, 1, "Collection");
 
         //items
         qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
-        qmlRegisterType<QDeclarativeOrganizerEvent>(uri, 1, 1, "OrganizerEvent");
-        qmlRegisterType<QDeclarativeOrganizerEventOccurrence>(uri, 1, 1, "OrganizerEventOccurrence");
-        qmlRegisterType<QDeclarativeOrganizerJournal>(uri, 1, 1, "OrganizerJournal");
-        qmlRegisterType<QDeclarativeOrganizerNote>(uri, 1, 1, "OrganizerNote");
-        qmlRegisterType<QDeclarativeOrganizerTodo>(uri, 1, 1, "OrganizerTodo");
-        qmlRegisterType<QDeclarativeOrganizerTodoOccurrence>(uri, 1, 1, "OrganizerTodoOccurrence");
+        qmlRegisterType<QDeclarativeOrganizerEvent>(uri, 1, 1, "Event");
+        qmlRegisterType<QDeclarativeOrganizerEventOccurrence>(uri, 1, 1, "EventOccurrence");
+        qmlRegisterType<QDeclarativeOrganizerJournal>(uri, 1, 1, "Journal");
+        qmlRegisterType<QDeclarativeOrganizerNote>(uri, 1, 1, "Note");
+        qmlRegisterType<QDeclarativeOrganizerTodo>(uri, 1, 1, "Todo");
+        qmlRegisterType<QDeclarativeOrganizerTodoOccurrence>(uri, 1, 1, "TodoOccurrence");
 
         //details
-        qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, 1, 1, "OrganizerItemDetail");
-        qmlRegisterType<QDeclarativeOrganizerEventTimeRange>(uri, 1, 1, "OrganizerEventTimeRange");
-        qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "OrganizerDescription");
-        qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "OrganizerDisplayLabel");
-        qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "OrganizerGuid");
-        qmlRegisterType<QDeclarativeOrganizerItemInstanceOrigin>(uri, 1, 1, "OrganizerInstanceOrigin");
-        qmlRegisterType<QDeclarativeOrganizerItemLocation>(uri, 1, 1, "OrganizerLocation");
-        qmlRegisterType<QDeclarativeOrganizerItemPriority>(uri, 1, 1, "OrganizerPriority");
-        qmlRegisterType<QDeclarativeOrganizerItemRecurrence>(uri, 1, 1, "OrganizerRecurrence");
-        qmlRegisterType<QDeclarativeOrganizerItemReminder>(uri, 1, 1, "OrganizerReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemAudibleReminder>(uri, 1, 1, "OrganizerAudibleReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemVisualReminder>(uri, 1, 1, "OrganizerVisualReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemEmailReminder>(uri, 1, 1, "OrganizerEmailReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemTimestamp>(uri, 1, 1, "OrganizerTimestamp");
-        qmlRegisterType<QDeclarativeOrganizerItemType>(uri, 1, 1, "OrganizerItemType");
-        qmlRegisterType<QDeclarativeOrganizerJournalTimeRange>(uri, 1, 1, "OrganizerJournalTimeRange");
-        qmlRegisterType<QDeclarativeOrganizerTodoProgress>(uri, 1, 1, "OrganizerTodoProgress");
-        qmlRegisterType<QDeclarativeOrganizerTodoTimeRange>(uri, 1, 1, "OrganizerTodoTimeRange");
+        qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, 1, 1, "Detail");
+        qmlRegisterType<QDeclarativeOrganizerEventTime>(uri, 1, 1, "EventTime");
+        qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "Description");
+        qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "DisplayLabel");
+        qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "Guid");
+        qmlRegisterType<QDeclarativeOrganizerItemParent>(uri, 1, 1, "ItemParent");
+        qmlRegisterType<QDeclarativeOrganizerItemLocation>(uri, 1, 1, "Location");
+        qmlRegisterType<QDeclarativeOrganizerItemPriority>(uri, 1, 1, "Priority");
+        qmlRegisterType<QDeclarativeOrganizerItemRecurrence>(uri, 1, 1, "Recurrence");
+        qmlRegisterType<QDeclarativeOrganizerItemReminder>(uri, 1, 1, "Reminder");
+        qmlRegisterType<QDeclarativeOrganizerItemAudibleReminder>(uri, 1, 1, "AudibleReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemVisualReminder>(uri, 1, 1, "VisualReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemEmailReminder>(uri, 1, 1, "EmailReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemTimestamp>(uri, 1, 1, "Timestamp");
+        qmlRegisterType<QDeclarativeOrganizerItemType>(uri, 1, 1, "ItemType");
+        qmlRegisterType<QDeclarativeOrganizerJournalTime>(uri, 1, 1, "JournalTime");
+        qmlRegisterType<QDeclarativeOrganizerTodoProgress>(uri, 1, 1, "TodoProgress");
+        qmlRegisterType<QDeclarativeOrganizerTodoTime>(uri, 1, 1, "TodoTime");
 
         //filters
-        qmlRegisterType<QDeclarativeOrganizerItemFilter>(uri, 1, 1, "OrganizerItemFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemChangelogFilter>(uri, 1, 1, "OrganizerItemChangelogFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemCollectionFilter>(uri, 1, 1, "OrganizerItemCollectionFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemDateTimePeriodFilter>(uri, 1, 1, "OrganizerItemDateTimePeriodFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemDetailFilter>(uri, 1, 1, "OrganizerItemDetailFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemDetailRangeFilter>(uri, 1, 1, "OrganizerItemDetailRangeFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemLocalIdFilter>(uri, 1, 1, "OrganizerItemLocalIdFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemIntersectionFilter>(uri, 1, 1, "OrganizerItemIntersectionFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemUnionFilter>(uri, 1, 1, "OrganizerItemUnionFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemInvalidFilter>(uri, 1, 1, "OrganizerItemInvalidFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemFilter>(uri, 1, 1, "Filter");
+        qmlRegisterType<QDeclarativeOrganizerItemChangelogFilter>(uri, 1, 1, "ChangelogFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemCollectionFilter>(uri, 1, 1, "CollectionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemDetailFilter>(uri, 1, 1, "DetailFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemDetailRangeFilter>(uri, 1, 1, "DetailRangeFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemIdFilter>(uri, 1, 1, "IdFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemIntersectionFilter>(uri, 1, 1, "IntersectionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemUnionFilter>(uri, 1, 1, "UnionFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemInvalidFilter>(uri, 1, 1, "InvalidFilter");
     }
 };
 

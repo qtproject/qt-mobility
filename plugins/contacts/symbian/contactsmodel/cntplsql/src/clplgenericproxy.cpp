@@ -73,6 +73,11 @@ CContactItem* CLplGenericProxy::DeleteLC(TContactItemId  aItemId, TUint aSession
 	return iBroker.DeleteLC(aItemId, aSessionId, aEventType);
 	}
 
+/** Delete multiple contacts. */
+void CLplGenericProxy::DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType)   
+    {
+    iBroker.DeleteMultipleContactsL(aIdArray, aSessionId, aEventType);
+    }
 
 /**
 Change the type of an existing Contact.

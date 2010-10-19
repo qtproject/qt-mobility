@@ -51,7 +51,14 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtGallery
 
     \brief The QGalleryResource class provides a resource identifier for a
-    gallery gallery item.
+    gallery item.
+
+    A gallery resource is URL and a set of disambiguating meta-data properties
+    used to identify a single representation of a gallery item that may be
+    accessible using multiple protocols or in multiple formats.  This may be
+    useful when querying something like a media server which can serve the same
+    video in multiple resolutions, instead of listing the same video multiple
+    times it would list it only once but include a resource for each resolution.
 */
 
 /*!

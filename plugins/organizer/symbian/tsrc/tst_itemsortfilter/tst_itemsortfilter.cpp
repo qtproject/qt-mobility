@@ -85,13 +85,13 @@ public:
 
 typedef QList<QTstDetailField> QTstDetailFieldList;
 typedef QList<QTstSortOrder> QTstSortOrderList;
-typedef QList<QOrganizerItemLocalId> QOrganizerItemLocalIdList;
+typedef QList<QOrganizerItemId> QOrganizerItemIdList;
 typedef QList<QOrganizerItemSortOrder> QOrganizerItemSortOrderList;
 Q_DECLARE_METATYPE(QOrganizerItemFilter)
 Q_DECLARE_METATYPE(QOrganizerItemSortOrderList)
 
 /*!
- * For testing symbian backend via QOrganizerItemManager API. The target is
+ * For testing symbian backend via QOrganizerManager API. The target is
  * to implement test cases in a platform independent manner so that this test
  * module could be used also with other backends and potentially used as a
  * QtMobility auto test with as little porting work as possible.
@@ -113,30 +113,29 @@ private: // util functions
     void addEvent_data(int mgrIndex);
     void addTodo_data(int mgrIndex);
     bool parseDetails(QTstDetailFieldList detailsString, QList<QOrganizerItemDetail> &details);
-    QOrganizerItemLocalId addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList);
+    QOrganizerItemId addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList);
     void addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItems);
     void addNewSortRow(int mgrIndex, QTstSortOrderList sortDetailList, QString matchingItemsStr);
-    QString convertIds(int mgrIndex, QOrganizerItemLocalIdList ids);
+    QString convertIds(int mgrIndex, QOrganizerItemIdList ids);
     QOrganizerItemFilter invalidFilter();
     QOrganizerItemFilter defaultFilter();
     QOrganizerItemFilter detailFilter(QString defNam, QString fieldNam, int flags, QVariant filterCriterion);
-    QOrganizerItemFilter dateTimeFilter(QDateTime start, QDateTime end);
     QOrganizerItemFilter detailRangeFilter(QString defNam, QString fieldNam, int flags, QVariant min, QVariant max);
 private:
-    QList<QOrganizerItemManager *> m_managers;
-    QList<QOrganizerItemLocalIdList> m_itemIds;
+    QList<QOrganizerManager *> m_managers;
+    QList<QOrganizerItemIdList> m_itemIds;
 
 };
 
 tst_itemSortFilter::tst_itemSortFilter()
 {
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     int i=0;
 
     foreach (QString manager, managerNames) {
-        m_managers << new QOrganizerItemManager(manager);
+        m_managers << new QOrganizerManager(manager);
         addTodo_data(i++);
 //TODO: addEvent_data();
     }
@@ -144,14 +143,14 @@ tst_itemSortFilter::tst_itemSortFilter()
 
 tst_itemSortFilter::~tst_itemSortFilter()
 {
-    foreach (QOrganizerItemManager* manager, m_managers) {
-        manager->removeItems(manager->itemIds(), 0);
+    foreach (QOrganizerManager* manager, m_managers) {
+        manager->removeItems(manager->itemIds());
         delete manager;
         manager = 0;
     }
 }
 
-QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList)
+QOrganizerItemId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList)
 {
     QOrganizerItem item;
     item.setDisplayLabel(displayLabel);
@@ -164,10 +163,10 @@ QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString 
     }
 
     m_managers.at(mgrIndex)->saveItem(&item);
-    if (m_managers.at(mgrIndex)->error() != QOrganizerItemManager::NoError) {
+    if (m_managers.at(mgrIndex)->error() != QOrganizerManager::NoError) {
         QWARN("[tst_itemSortFilter::addTestDataItem] Test item creation failed");
     }
-    return item.localId();
+    return item.id();
 }
 
 void tst_itemSortFilter::addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItemsStr)
@@ -228,11 +227,6 @@ void tst_itemSortFilter::filterItems_data()
         addNewFilterRow(i, detailFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
             QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusComplete)), "cf");
 
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(3)), "abcdef");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(1)), "abc");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(3)), "def");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(1)), QString());
-
         if (m_managers.at(i)->detailDefinitions(QOrganizerItemType::TypeTodo).value(QOrganizerTodoProgress::DefinitionName)
             .fields().contains(QOrganizerTodoProgress::FieldPercentageComplete)) {
             addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete,
@@ -259,11 +253,11 @@ void tst_itemSortFilter::filterItems()
     QFETCH(QString, matchingItemsStr);
 
     QList<QOrganizerItem>actualItems = m_managers.at(mgrIndex)->items(filter);
-    QList<QOrganizerItemLocalId> actualIds;
+    QList<QOrganizerItemId> actualIds;
     QString actualItemsStr;
 
     foreach(QOrganizerItem item, actualItems) {
-        actualIds << item.localId();
+        actualIds << item.id();
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
 
@@ -287,12 +281,12 @@ void tst_itemSortFilter::sortItems_data()
             << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
                 QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "cbafed");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime,
+            << QTstSortOrder(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime,
                 QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseInsensitive)
             << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
                 QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive), "abcdef");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime,
+            << QTstSortOrder(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime,
                 QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseInsensitive)
             << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
                 QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "fedcba");
@@ -325,12 +319,12 @@ void tst_itemSortFilter::sortItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    QList<QOrganizerItem>actualItems = m_managers.at(mgrIndex)->items(sortOrderList);
-    QList<QOrganizerItemLocalId> actualIds;
+    QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
+    QList<QOrganizerItemId> actualIds;
     QString actualItemsStr;
 
     foreach(QOrganizerItem item, actualItems) {
-        actualIds << item.localId();
+        actualIds << item.id();
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
 
@@ -352,65 +346,65 @@ void tst_itemSortFilter::addEvent_data(int mgrIndex)
 void tst_itemSortFilter::addTodo_data(int mgrIndex)
 {
     QTstDetailField itemTypeTodo(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo);
-    QOrganizerItemLocalIdList itemIdList;
+    QOrganizerItemIdList itemIdList;
     bool fieldPercentageSupported = (m_managers.at(mgrIndex)->detailDefinitions(QOrganizerItemType::TypeTodo)
         .value(QOrganizerTodoProgress::DefinitionName).fields().contains(QOrganizerTodoProgress::FieldPercentageComplete));
 
     itemIdList << addTestDataItem(mgrIndex, "abc", QTstDetailFieldList() << itemTypeTodo
         << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusNotStarted)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+        << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+        << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime()));
 
     if (fieldPercentageSupported) {
         itemIdList << addTestDataItem(mgrIndex,"bcd", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 75));
         itemIdList << addTestDataItem(mgrIndex, "cde", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime())
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
     } else {
         itemIdList << addTestDataItem(mgrIndex,"bcd", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime()));
         itemIdList << addTestDataItem(mgrIndex, "cde", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime()));
     }
 
     itemIdList << addTestDataItem(mgrIndex, "Abc", QTstDetailFieldList() << itemTypeTodo
         << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusNotStarted)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
+        << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+        << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
 
     if (fieldPercentageSupported) {
         itemIdList << addTestDataItem(mgrIndex, "Bcd", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 25));
         itemIdList << addTestDataItem(mgrIndex, "Cde", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2))
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
     } else {
         itemIdList << addTestDataItem(mgrIndex, "Bcd", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
         itemIdList << addTestDataItem(mgrIndex, "Cde", QTstDetailFieldList() << itemTypeTodo
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2)));
     }
 
@@ -450,7 +444,7 @@ bool tst_itemSortFilter::parseDetails(QTstDetailFieldList detailsList, QList<QOr
     return true;
 }
 
-QString tst_itemSortFilter::convertIds(int mgrIndex, QOrganizerItemLocalIdList ids)
+QString tst_itemSortFilter::convertIds(int mgrIndex, QOrganizerItemIdList ids)
 {
    QString ret;
    /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
@@ -479,14 +473,6 @@ QOrganizerItemFilter tst_itemSortFilter::detailFilter(QString defNam, QString fi
     f.setDetailDefinitionName(defNam, fieldNam);
     f.setMatchFlags(QOrganizerItemFilter::MatchFlags(flags));
     f.setValue(filterCriterion);
-    return f;
-}
-
-QOrganizerItemFilter tst_itemSortFilter::dateTimeFilter(QDateTime start, QDateTime end)
-{
-    QOrganizerItemDateTimePeriodFilter f;
-    f.setStartPeriod(start);
-    f.setEndPeriod(end);
     return f;
 }
 

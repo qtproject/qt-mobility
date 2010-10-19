@@ -63,7 +63,7 @@ class QGeoCoordinate;
 class QLandmarkProximityFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkProximityFilterPrivate(const QGeoCoordinate &center = QGeoCoordinate(), qreal radius=-1);
+    QLandmarkProximityFilterPrivate(const QGeoBoundingCircle &circle = QGeoBoundingCircle());
     QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other);
     virtual ~QLandmarkProximityFilterPrivate();
 
@@ -71,14 +71,12 @@ public:
     {
         //it is assumed that the types and superclass member variables already match
         const QLandmarkProximityFilterPrivate *od = static_cast<const QLandmarkProximityFilterPrivate*>(other);
-            return (center == od->center)
-                    && (radius == od->radius);
+            return (circle == od->circle);
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkProximityFilter, QLandmarkFilter::ProximityFilter)
 
-    QGeoCoordinate center;
-    qreal radius;
+    QGeoBoundingCircle circle;
 };
 
 QTM_END_NAMESPACE

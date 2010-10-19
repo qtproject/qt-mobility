@@ -50,7 +50,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     polygon = static_cast<QGeoMapPolygonObject*>(mapObject);
 

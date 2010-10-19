@@ -41,7 +41,7 @@
 #define QDECLARATIVENETWORKINFO_H
 
 #include <QObject>
-#include <qsystemnetworkinfo.h>
+#include "qsystemnetworkinfo.h"
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE

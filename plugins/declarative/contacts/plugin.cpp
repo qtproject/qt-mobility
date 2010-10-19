@@ -43,12 +43,16 @@
 #include <QtDeclarative>
 #include <QDeclarativeExtensionPlugin>
 #include <QDebug>
-#include "qmlcontactmodel.h"
-#include "qmlcontact.h"
-#include "qmlcontactdetail.h"
-#include "qmlcontactdetailfield.h"
-// Qt 4.7.0b2 and rc1 have a source break - turn off for now
-// #include "imageprovider.h"
+#include "qdeclarativecontactmodel_p.h"
+#include "qdeclarativecontact_p.h"
+#include "qdeclarativecontactdetail_p.h"
+#include "qdeclarativecontactdetails_p.h"
+#include "qdeclarativecontactfilter_p.h"
+#include "qdeclarativecontactfilters_p.h"
+#include "qdeclarativecontactimageprovider_p.h"
+#include "qdeclarativecontactsortorder_p.h"
+#include "qdeclarativecontactrelationship_p.h"
+#include "qdeclarativecontactfetchhint_p.h"
 
 QT_USE_NAMESPACE
 
@@ -60,15 +64,55 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 1, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 1, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 1, "QmlContactDetail");
-        qmlRegisterType<QMLContactDetailField>(uri, 1, 1, "QmlContactDetailField");
+        qmlRegisterType<QDeclarativeContactModel>(uri, 1, 1, "ContactModel");
+        qmlRegisterType<QDeclarativeContact>(uri, 1, 1, "Contact");
+        qmlRegisterType<QDeclarativeContactFetchHint>(uri, 1, 1, "FetchHint");
+        qmlRegisterType<QDeclarativeContactRelationship>(uri, 1, 1, "Relationship");
+        qmlRegisterType<QDeclarativeContactSortOrder>(uri, 1, 1, "SortOrder");
+
+        //details
+        qmlRegisterType<QDeclarativeContactDetail>(uri, 1, 1, "ContactDetail");
+        qmlRegisterType<QDeclarativeContactAddress>(uri, 1, 1, "Address");
+        qmlRegisterType<QDeclarativeContactAnniversary>(uri, 1, 1, "Anniversary");
+        qmlRegisterType<QDeclarativeContactAvatar>(uri, 1, 1, "Avatar");
+        qmlRegisterType<QDeclarativeContactBirthday>(uri, 1, 1, "Birthday");
+        qmlRegisterType<QDeclarativeContactDisplayLabel>(uri, 1, 1, "DisplayLabel");
+        qmlRegisterType<QDeclarativeContactEmailAddress>(uri, 1, 1, "EmailAddress");
+        qmlRegisterType<QDeclarativeContactFamily>(uri, 1, 1, "Family");
+        qmlRegisterType<QDeclarativeContactFavorite>(uri, 1, 1, "Favorite");
+        qmlRegisterType<QDeclarativeContactGender>(uri, 1, 1, "Gender");
+        qmlRegisterType<QDeclarativeContactGeoLocation>(uri, 1, 1, "Location");
+        qmlRegisterType<QDeclarativeContactGlobalPresence>(uri, 1, 1, "GlobalPresence");
+        qmlRegisterType<QDeclarativeContactGuid>(uri, 1, 1, "Guid");
+        qmlRegisterType<QDeclarativeContactName>(uri, 1, 1, "Name");
+        qmlRegisterType<QDeclarativeContactNickname>(uri, 1, 1, "Nickname");
+        qmlRegisterType<QDeclarativeContactNote>(uri, 1, 1, "Note");
+        qmlRegisterType<QDeclarativeContactOnlineAccount>(uri, 1, 1, "OnlineAccount");
+        qmlRegisterType<QDeclarativeContactOrganization>(uri, 1, 1, "Organization");
+        qmlRegisterType<QDeclarativeContactPhoneNumber>(uri, 1, 1, "PhoneNumber");
+        qmlRegisterType<QDeclarativeContactPresence>(uri, 1, 1, "Presence");
+        qmlRegisterType<QDeclarativeContactRingtone>(uri, 1, 1, "Ringtone");
+        qmlRegisterType<QDeclarativeContactSyncTarget>(uri, 1, 1, "SyncTarget");
+        qmlRegisterType<QDeclarativeContactTag>(uri, 1, 1, "Tag");
+        qmlRegisterType<QDeclarativeContactTimestamp>(uri, 1, 1, "Timestamp");
+        qmlRegisterType<QDeclarativeContactUrl>(uri, 1, 1, "Url");
+        qmlRegisterType<QDeclarativeContactHobby>(uri, 1, 1, "Hobby");
+
+        //filters
+        qmlRegisterType<QDeclarativeContactFilter>(uri, 1, 1, "Filter");
+        qmlRegisterType<QDeclarativeContactActionFilter>(uri, 1, 1, "ActionFilter");
+        qmlRegisterType<QDeclarativeContactChangeLogFilter>(uri, 1, 1, "ChangeLogFilter");
+        qmlRegisterType<QDeclarativeContactDetailFilter>(uri, 1, 1, "DetailFilter");
+        qmlRegisterType<QDeclarativeContactDetailRangeFilter>(uri, 1, 1, "DetailRangeFilter");
+        qmlRegisterType<QDeclarativeContactLocalIdFilter>(uri, 1, 1, "IdFilter");
+        qmlRegisterType<QDeclarativeContactRelationshipFilter>(uri, 1, 1, "RelationshipFilter");
+        qmlRegisterType<QDeclarativeContactIntersectionFilter>(uri, 1, 1, "IntersectionFilter");
+        qmlRegisterType<QDeclarativeContactUnionFilter>(uri, 1, 1, "UnionFilter");
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
         Q_UNUSED(uri);
-//        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
+        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
     }
 };
 

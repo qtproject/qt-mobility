@@ -12,9 +12,16 @@ include(../../../common.pri)
 QT += declarative
 
 SOURCES += systeminfo.cpp \
-    qdeclarativenetworkinfo.cpp
+    qdeclarativenetworkinfo.cpp \
+    qdeclarativescreensaver.cpp \
+    qdeclarativedeviceinfo.cpp \
+    qdeclarativegeneralinfo.cpp \
+
 HEADERS += \
-    qdeclarativenetworkinfo_p.h
+    qdeclarativenetworkinfo_p.h \
+    qdeclarativescreensaver_p.h \
+    qdeclarativedeviceinfo_p.h \
+    qdeclarativegeneralinfo_p.h
 
 CONFIG += mobility
 MOBILITY += systeminfo

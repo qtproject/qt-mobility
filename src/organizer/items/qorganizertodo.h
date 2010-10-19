@@ -51,7 +51,9 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerTodo : public QOrganizerItem
 {
 public:
+#if !Q_QDOC
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
+#endif
 
     // XXX TODO: some questions about "recurring periods and doneness"...
     void setStartDateTime(const QDateTime& dueDateTime);
@@ -59,17 +61,24 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    void setAllDay(bool isAllDay);
+    bool isAllDay() const;
 
-    void setRecurrenceDates(const QList<QDate>& rdates);
-    QList<QDate> recurrenceDates() const;
-    void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    void setExceptionDates(const QList<QDate>& exdates);
-    QList<QDate> exceptionDates() const;
-    void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules);
-    QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
+    void setRecurrenceDates(const QSet<QDate>& rdates);
+    QSet<QDate> recurrenceDates() const;
+
+    void setRecurrenceRule(const QOrganizerRecurrenceRule& rrule);
+    void setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules);
+    QSet<QOrganizerRecurrenceRule> recurrenceRules() const;
+    QOrganizerRecurrenceRule recurrenceRule() const;
+
+    void setExceptionDates(const QSet<QDate>& exdates);
+    QSet<QDate> exceptionDates() const;
+
+    void setExceptionRule(const QOrganizerRecurrenceRule& exrule);
+    void setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules);
+    QSet<QOrganizerRecurrenceRule> exceptionRules() const;
+    QOrganizerRecurrenceRule exceptionRule() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;

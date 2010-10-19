@@ -616,7 +616,7 @@ void tst_QContactAsync::contactFetch()
     QContactFetchRequest *cfr2 = new QContactFetchRequest();
     QPointer<QObject> obj(cfr2);
     cfr2->setManager(cm.data());
-    connect(cfr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    connect(cfr2, SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(cfr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
@@ -1154,7 +1154,6 @@ void tst_QContactAsync::contactPartialSave()
 
     QContactLocalId aId = contacts[0].localId();
     QContactLocalId bId = contacts[1].localId();
-    QContactLocalId cId = contacts[2].localId();
 
     // Test 1: saving a contact with a changed detail masked out does nothing
     QContactPhoneNumber phn(contacts[0].detail<QContactPhoneNumber>());

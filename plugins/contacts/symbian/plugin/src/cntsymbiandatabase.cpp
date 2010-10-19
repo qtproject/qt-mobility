@@ -360,30 +360,65 @@ void CntSymbianDatabase::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent
     QContactChangeSet changeSet;
     switch (aEvent.iTypeV2)
     {
-    case EContactDbObserverEventV2ContactAddedToGroup:
-        if (m_contactsEmitted.contains(aEvent.iContactId) && 
-            m_contactsEmitted.contains(aEvent.iAdditionalContactId)) {
-            m_contactsEmitted.removeOne(aEvent.iContactId);
-            m_contactsEmitted.removeOne(aEvent.iAdditionalContactId);
+    case EContactDbObserverEventV2ContactsAddedToGroup:
+        if (aEvent.iAdditionalContactIds != NULL) {
+            if (m_contactsEmitted.contains(aEvent.iContactId))
+                {
+                // Group id is in the list of emitted events, so remove 
+                // group id and all affected contacts from this list.
+                m_contactsEmitted.removeOne(aEvent.iContactId);
+                for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
+                    int id = aEvent.iAdditionalContactIds->operator[](i);
+                    m_contactsEmitted.removeOne(id);
+                    }
+                }
+            else {
+                // No signal was sent yet, update changeSet
+                QList<QContactLocalId> affectedContactIds;
+                affectedContactIds.append(aEvent.iContactId);
+                for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
+                    int id = aEvent.iAdditionalContactIds->operator[](i);
+                    affectedContactIds.append(id);
+                }
+                changeSet.insertAddedRelationshipsContacts(affectedContactIds);
             }
-        else {
-            QList<QContactLocalId> affectedContactIds;
-            affectedContactIds.append(aEvent.iContactId);
-            affectedContactIds.append(aEvent.iAdditionalContactId);
-            changeSet.insertAddedRelationshipsContacts(affectedContactIds);
         }
         break;
-    case EContactDbObserverEventV2ContactRemovedFromGroup:
-        if (m_contactsEmitted.contains(aEvent.iContactId) && 
-            m_contactsEmitted.contains(aEvent.iAdditionalContactId)) {
-            m_contactsEmitted.removeOne(aEvent.iContactId);
-            m_contactsEmitted.removeOne(aEvent.iAdditionalContactId);
+    case EContactDbObserverEventV2ContactsRemovedFromGroup:
+        if (aEvent.iAdditionalContactIds != NULL) {
+            if (m_contactsEmitted.contains(aEvent.iContactId))
+                {
+                // Group id is in the list of emitted events, so remove 
+                // group id and all affected contacts from this list.
+                m_contactsEmitted.removeOne(aEvent.iContactId);
+                for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
+                    int id = aEvent.iAdditionalContactIds->operator[](i);
+                    m_contactsEmitted.removeOne(id);
+                    }
+                }
+            else {
+                // No signal was sent yet, update changeSet
+                QList<QContactLocalId> affectedContactIds;
+                affectedContactIds.append(aEvent.iContactId);
+                for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
+                    int id = aEvent.iAdditionalContactIds->operator[](i);
+                    affectedContactIds.append(id);
+                }
+                changeSet.insertRemovedRelationshipsContacts(affectedContactIds);
             }
-        else {
-            QList<QContactLocalId> affectedContactIds;
-            affectedContactIds.append(aEvent.iContactId);
-            affectedContactIds.append(aEvent.iAdditionalContactId);
-            changeSet.insertRemovedRelationshipsContacts(affectedContactIds);
+        }
+        break;
+    case EContactDbObserverEventV2ContactsOrGroupsDeleted:
+        if (aEvent.iAdditionalContactIds != NULL) {
+            for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
+                int id = aEvent.iAdditionalContactIds->operator[](i);
+                if(m_contactsEmitted.contains(id)) {
+                    m_contactsEmitted.removeOne(id);
+                }
+                else {
+                    changeSet.insertRemovedContact(id);
+                }
+            }
         }
         break;
     case EContactDbObserverEventV2GroupChanged:

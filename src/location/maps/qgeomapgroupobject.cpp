@@ -50,21 +50,31 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMapGroupObject
     \brief The QGeoMapGroupObject class is a QGeoMapObject used to
-    aggregate a group of other map objects.
+    manager a group of other map objects.
 
     \inmodule QtLocation
 
     \ingroup maps-mapping-objects
 
+    The QGeoMapGroupObject class can be used to quickly add and remove
+    groups of objects to a map.
 
+    The map objects contained in the group will be ordered relative to
+    one another in the usual manner, such that objects with higher z-values
+    will be drawn over objects with lower z-values and objects with
+    equal z-values will be drawn in insertion order.
+
+    This ordering of the objects will be independent of the other
+    objects that are added to the map, since the z-value and insertion
+    order of the QGeoMapGroupObject is used to determine where the
+    group is placed in the scene.
 */
 
 /*!
     Constructs a new group object.
 */
-QGeoMapGroupObject::QGeoMapGroupObject(QGeoMapData *data)
-        : QGeoMapObject(data),
-          d_ptr(new QGeoMapGroupObjectPrivate()) {}
+QGeoMapGroupObject::QGeoMapGroupObject()
+    : d_ptr(new QGeoMapGroupObjectPrivate()) {}
 
 /*!
     Destroys this group object.
@@ -74,6 +84,9 @@ QGeoMapGroupObject::~QGeoMapGroupObject()
     delete d_ptr;
 }
 
+/*!
+    \reimp
+*/
 QGeoMapObject::Type QGeoMapGroupObject::type() const
 {
     return QGeoMapObject::GroupType;
@@ -115,7 +128,6 @@ bool QGeoMapGroupObject::contains(const QGeoCoordinate &coordinate) const
     return false;
 }
 
-
 /*!
     Adds \a childObject to the list of children of this map object.
 
@@ -135,6 +147,8 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     //binary search
     QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(), d_ptr->children.end(), childObject);
     d_ptr->children.insert(i, childObject);
+
+    emit childAdded(childObject);
 }
 
 /*!
@@ -147,8 +161,10 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
     if (!childObject)
         return;
 
-    if (d_ptr->children.removeAll(childObject) > 0)
+    if (d_ptr->children.removeAll(childObject) > 0) {
+        emit childRemoved(childObject);
         childObject->setMapData(0);
+    }
 }
 
 /*!
@@ -167,6 +183,7 @@ QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
 void QGeoMapGroupObject::clearChildObjects()
 {
     for (int i = 0; i < d_ptr->children.size(); ++i) {
+        emit childRemoved(d_ptr->children[i]);
         d_ptr->children[i]->setMapData(0);
         delete d_ptr->children[i];
     }
@@ -174,12 +191,31 @@ void QGeoMapGroupObject::clearChildObjects()
     d_ptr->children.clear();
 }
 
+/*!
+    \reimp
+*/
 void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 {
     QGeoMapObject::setMapData(mapData);
-    for (int i = 0; i < d_ptr->children.size(); ++i)
+    for (int i = 0; i < d_ptr->children.size(); ++i) {
         d_ptr->children[i]->setMapData(mapData);
+        emit childAdded(d_ptr->children[i]);
+    }
 }
+
+/*!
+\fn void QGeoMapGroupObject::childAdded(QGeoMapObject *childObject)
+
+    This signal will be emitted when the map object \a childObject 
+    is added to the group.
+*/
+
+/*!
+\fn void QGeoMapGroupObject::childRemoved(QGeoMapObject *childObject)
+
+    This signal will be emitted when the map object \a childObject 
+    is removed from the group.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

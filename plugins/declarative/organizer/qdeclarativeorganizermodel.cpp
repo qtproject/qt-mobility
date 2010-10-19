@@ -41,7 +41,7 @@
 #include <qorganizeritemdetails.h>
 
 #include "qdeclarativeorganizermodel_p.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 #include "qversitreader.h"
 #include "qversitwriter.h"
 #include "qversitorganizerimporter.h"
@@ -49,6 +49,10 @@
 #include <QFile>
 
 #include "qorganizeritemrequests.h"
+
+
+static QHash<uint, QOrganizerItemId> qt_organizerItemIdHash;
+static QHash<uint, QOrganizerCollectionId> qt_organizerCollectionIdHash;
 
 
 class QDeclarativeOrganizerModelPrivate
@@ -69,7 +73,7 @@ public:
     }
 
     QList<QDeclarativeOrganizerItem*> m_items;
-    QOrganizerItemManager* m_manager;
+    QOrganizerManager* m_manager;
     QDeclarativeOrganizerItemFetchHint* m_fetchHint;
     QList<QDeclarativeOrganizerItemSortOrder*> m_sortOrders;
     QDeclarativeOrganizerItemFilter* m_filter;
@@ -87,7 +91,6 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(OrganizerItemRole, "item");
-    roleNames.insert(OrganizerItemIdRole, "itemId");
     setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
@@ -108,7 +111,7 @@ QString QDeclarativeOrganizerModel::manager() const
 
 QStringList QDeclarativeOrganizerModel::availableManagers() const
 {
-    return QOrganizerItemManager::availableManagers();
+    return QOrganizerManager::availableManagers();
 }
 
 QDateTime QDeclarativeOrganizerModel::startPeriod() const
@@ -155,7 +158,7 @@ void QDeclarativeOrganizerModel::exportItems(const QString& fileName)
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
-      d->m_writer.startWriting(QList<QVersitDocument>() << document);
+      d->m_writer.startWriting(document);
    }
 }
 
@@ -179,7 +182,7 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
         delete d->m_manager;
 
 
-    d->m_manager = new QOrganizerItemManager(managerName);
+    d->m_manager = new QOrganizerManager(managerName);
 
     qWarning() << "Changed backend to: " << managerName;
     connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
@@ -191,29 +194,29 @@ QDeclarativeOrganizerItemFilter* QDeclarativeOrganizerModel::filter() const
     return d->m_filter;
 }
 
-void QDeclarativeOrganizerModel::setFilter(QDeclarativeOrganizerItemFilter* filter)
-{
-    if (filter && filter != d->m_filter) {
-        if (d->m_filter)
-            delete d->m_filter;
-        d->m_filter = filter;
-        emit filterChanged();
-    }
-}
+//void QDeclarativeOrganizerModel::setFilter(QDeclarativeOrganizerItemFilter* filter)
+//{
+//    if (filter && filter != d->m_filter) {
+//        if (d->m_filter)
+//            delete d->m_filter;
+//        d->m_filter = filter;
+//        emit filterChanged();
+//    }
+//}
 
 QDeclarativeOrganizerItemFetchHint* QDeclarativeOrganizerModel::fetchHint() const
 {
     return d->m_fetchHint;
 }
-void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint)
-{
-    if (fetchHint && fetchHint != d->m_fetchHint) {
-        if (d->m_fetchHint)
-            delete d->m_fetchHint;
-        d->m_fetchHint = fetchHint;
-        emit fetchHintChanged();
-    }
-}
+//void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint)
+//{
+//    if (fetchHint && fetchHint != d->m_fetchHint) {
+//        if (d->m_fetchHint)
+//            delete d->m_fetchHint;
+//        d->m_fetchHint = fetchHint;
+//        emit fetchHintChanged();
+//    }
+//}
 
 QDeclarativeOrganizerModel::Error QDeclarativeOrganizerModel::error() const
 {
@@ -239,7 +242,7 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
             d->m_reader.setDevice(0);
 
             if (d->m_manager) {
-                if (d->m_manager->saveItems(&items, QOrganizerCollectionLocalId()))//TODO..
+                if (d->m_manager->saveItems(&items))
                     qWarning() << "items imported.";
                     fetchAgain();
             }
@@ -250,6 +253,8 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
 void QDeclarativeOrganizerModel::fetchAgain()
 {
     d->m_items.clear();
+    qt_organizerItemIdHash.clear();
+
     reset();
 
     QList<QOrganizerItemSortOrder> sortOrders;
@@ -263,7 +268,7 @@ void QDeclarativeOrganizerModel::fetchAgain()
     req->setFilter(d->m_filter? d->m_filter->filter() : QOrganizerItemFilter());
     req->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QOrganizerItemFetchHint());
 
-    connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemFetched()));
+    connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemFetched()));
 
     req->start();
     emit itemsChanged();
@@ -276,8 +281,10 @@ void QDeclarativeOrganizerModel::itemFetched()
         QList<QOrganizerItem> items = req->items();
 
         QList<QDeclarativeOrganizerItem*> dis;
-        foreach(QOrganizerItem c, items) {
-            dis.append(new QDeclarativeOrganizerItem(c, d->m_manager->detailDefinitions(c.type()), this));
+        foreach(QOrganizerItem item, items) {
+            dis.append(new QDeclarativeOrganizerItem(item, d->m_manager->detailDefinitions(item.type()), this));
+            if (!item.id().isNull())
+              qt_organizerItemIdHash.insert(qHash(item.id()), item.id());
         }
 
         reset();
@@ -298,7 +305,7 @@ void QDeclarativeOrganizerModel::saveItem(QDeclarativeOrganizerItem* di)
         req->setManager(d->m_manager);
         req->setItem(c);
 
-        connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemSaved()));
+        connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemSaved()));
 
         req->start();
     }
@@ -314,6 +321,12 @@ void QDeclarativeOrganizerModel::itemSaved()
 {
     QOrganizerItemSaveRequest* req = qobject_cast<QOrganizerItemSaveRequest*>(QObject::sender());
     if (req->isFinished()) {
+        QList<QOrganizerItem> items = req->items();
+        foreach(const QOrganizerItem& item, items) {
+             if (!item.id().isNull())
+               qt_organizerItemIdHash.insert(qHash(item.id()), item.id());
+        }
+
         req->deleteLater();
     }
 }
@@ -321,18 +334,28 @@ void QDeclarativeOrganizerModel::itemSaved()
 
 void QDeclarativeOrganizerModel::removeItem(uint id)
 {
-    //TODO
-    //removeItems(QList<QOrganizerItemLocalId>() << id);
+    QList<uint> ids;
+    ids << id;
+    removeItems(ids);
 }
 
 void QDeclarativeOrganizerModel::removeItems(const QList<uint>& ids)
 {
     QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
     req->setManager(d->m_manager);
-    //TODO
-    //req->setItemIds(ids);
+    QList<QOrganizerItemId> oids;
 
-    connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemRemoved()));
+    foreach (uint id, ids) {
+        QOrganizerItemId itemId = itemIdFromHash(id);
+        if (!itemId.isNull()) {
+             qt_organizerItemIdHash.remove(id);
+             oids.append(itemId);
+        }
+    }
+
+    req->setItemIds(oids);
+
+    connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemRemoved()));
 
     req->start();
 }
@@ -347,7 +370,7 @@ void QDeclarativeOrganizerModel::itemRemoved()
 {
     QOrganizerItemRemoveRequest* req = qobject_cast<QOrganizerItemRemoveRequest*>(QObject::sender());
     if (req->isFinished()) {
-         if (req->error() == QOrganizerItemManager::NoError)
+         if (req->error() == QOrganizerManager::NoError)
             fetchAgain();
          req->deleteLater();
     }
@@ -360,17 +383,25 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
     QDeclarativeOrganizerItem* di = d->m_items.value(index.row());
     QOrganizerItem item = di->item();
     switch(role) {
+        case Qt::DisplayRole:
+            return item.displayLabel();
+        case Qt::DecorationRole:
+            //return pixmap for this item type
         case OrganizerItemRole:
             return QVariant::fromValue(di);
-        case OrganizerItemIdRole:
-            return qHash(item.localId());
     }
     return QVariant();
 }
 
 
-QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::QDeclarativeOrganizerModel::items()
+QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::items()
 {
+    return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d->m_items);
+}
+
+QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::occurrences()
+{
+    //TODO:XXX
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d->m_items);
 }
 
@@ -467,7 +498,19 @@ void  QDeclarativeOrganizerModel::item_clear(QDeclarativeListProperty<QDeclarati
         foreach(QDeclarativeOrganizerItem* di, model->d->m_items) {
             if (di->item().type() == type) {
                 model->d->m_items.removeAll(di);
+                qt_organizerItemIdHash.remove(di->itemId());
             }
         }
     }
+}
+
+
+QOrganizerItemId QDeclarativeOrganizerModel::itemIdFromHash(uint key)
+{
+    return qt_organizerItemIdHash.value(key, QOrganizerItemId());
+}
+
+QOrganizerCollectionId QDeclarativeOrganizerModel::collectionIdFromHash(uint key)
+{
+    return qt_organizerCollectionIdHash.value(key, QOrganizerCollectionId());
 }

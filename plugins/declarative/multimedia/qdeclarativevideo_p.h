@@ -89,6 +89,7 @@ class QDeclarativeVideo : public QDeclarativeItem, public QDeclarativeMediaBase
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
+    Q_PROPERTY(QDeclarativeMediaMetaData *metaData READ metaData CONSTANT)
     Q_ENUMS(FillMode)
     Q_ENUMS(Status)
     Q_ENUMS(Error)
@@ -137,7 +138,7 @@ public:
 
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 
-    void classBegin() {}
+    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
@@ -157,12 +158,6 @@ Q_SIGNALS:
     void stopped();
 
     void statusChanged();
-
-    void loaded();
-    void buffering();
-    void stalled();
-    void buffered();
-    void endOfMedia();
 
     void durationChanged();
     void positionChanged();
@@ -192,9 +187,7 @@ private:
 
     QGraphicsVideoItem *m_graphicsItem;
 
-    Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
+    Q_PRIVATE_SLOT(mediaBase(), void _q_statusChanged())
 
     inline QDeclarativeMediaBase *mediaBase() { return this; }
 };

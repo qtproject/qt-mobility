@@ -40,11 +40,11 @@
 ****************************************************************************/
 
 #include "clientservercommon.h"
-#include "databasemanagersession.h"
+#include "databasemanagersession_p.h"
 #include "databasemanagerserver.pan"
-#include "databasemanagersignalhandler.h"
+#include "databasemanagersignalhandler_p.h"
 #include "servicedatabase_p.h"
-#include "databasemanagerserver.h"
+#include "databasemanagerserver_p.h"
     
 #include <QFileSystemWatcher>
 

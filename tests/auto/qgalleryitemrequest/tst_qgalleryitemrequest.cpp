@@ -63,7 +63,9 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void properties();
+    void propertyNames();
+    void autoUpdate();
+    void itemId();
     void executeSynchronous();
     void executeAsynchronous();
     void noResponse();
@@ -77,7 +79,7 @@ public:
     QtGalleryTestResponse(
             const QStringList &propertyNames,
             int count,
-            QGalleryAbstractRequest::Status status,
+            QGalleryAbstractRequest::State state,
             int error,
             const QString &errorString)
         : m_count(count)
@@ -88,9 +90,9 @@ public:
 
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
-        else if (status == QGalleryAbstractRequest::Finished)
+        else if (state == QGalleryAbstractRequest::Finished)
             finish();
-        else if (status == QGalleryAbstractRequest::Idle)
+        else if (state == QGalleryAbstractRequest::Idle)
             finish(true);
     }
 
@@ -151,14 +153,14 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery()
         : m_count(0)
-        , m_status(QGalleryAbstractRequest::Active)
+        , m_state(QGalleryAbstractRequest::Active)
         , m_error(QGalleryAbstractRequest::NoError)
     {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return type == QGalleryAbstractRequest::ItemRequest; }
 
-    void setStatus(QGalleryAbstractRequest::Status status) { m_status = status; }
+    void setState(QGalleryAbstractRequest::State state) { m_state = state; }
     void setError(int error, const QString &errorString) {
         m_error = error; m_errorString = errorString; }
 
@@ -171,7 +173,7 @@ protected:
             return new QtGalleryTestResponse(
                     static_cast<QGalleryItemRequest *>(request)->propertyNames(),
                     m_count,
-                    m_status,
+                    m_state,
                     m_error,
                     m_errorString);
         }
@@ -180,7 +182,7 @@ protected:
 
 private:
     int m_count;
-    QGalleryAbstractRequest::Status m_status;
+    QGalleryAbstractRequest::State m_state;
     int m_error;
     QString m_errorString;
 };
@@ -191,42 +193,102 @@ void tst_QGalleryItemRequest::initTestCase()
     qRegisterMetaType<QList<int> >();
 }
 
-void tst_QGalleryItemRequest::properties()
+void tst_QGalleryItemRequest::propertyNames()
 {
-    const QGalleryProperty titleProperty("title");
-    const QGalleryProperty artistProperty("artist");
+    const QGalleryProperty titleProperty = {"title", sizeof("title")};
+    const QGalleryProperty artistProperty = {"artist", sizeof("artist")};
 
-    QGalleryItemRequest request;
-
-    QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.autoUpdate(), false);
-    QCOMPARE(request.itemId(), QVariant());
-
-    request.setPropertyNames(QStringList()
+    const QStringList propertyNames = QStringList()
             << titleProperty
             << artistProperty.name()
             << QLatin1String("album")
-            << QString::fromLatin1("trackNumber"));
-    QCOMPARE(request.propertyNames(), QStringList()
-            << QLatin1String("title")
-            << QLatin1String("artist")
-            << QLatin1String("album")
-            << QLatin1String("trackNumber"));
+            << QLatin1String("trackNumber");
+
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(propertyNamesChanged()));
+
+    QCOMPARE(request.propertyNames(), QStringList());
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 0);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemRequest::autoUpdate()
+{
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(autoUpdateChanged()));
+
+    QCOMPARE(request.autoUpdate(), false);
+
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 0);
 
     request.setAutoUpdate(true);
     QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemId(QVariant(76));
+    request.setAutoUpdate(true);
+    QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
+
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemRequest::itemId()
+{
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(itemIdChanged()));
+
+    QCOMPARE(request.itemId(), QVariant());
+
+    request.setItemId(QVariant());
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(spy.count(), 0);
+
+    request.setItemId(76);
     QCOMPARE(request.itemId(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemId(QVariant(QLatin1String("65")));
+    request.setItemId(76);
+    QCOMPARE(request.itemId(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
+
+    request.setItemId(QLatin1String("65"));
     QCOMPARE(request.itemId(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    request.setItemId(QLatin1String("65"));
+    QCOMPARE(request.itemId(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    request.setItemId(QVariant());
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(spy.count(), 3);
 }
 
 void tst_QGalleryItemRequest::executeSynchronous()
 {
     QtTestGallery gallery;
-    gallery.setStatus(QGalleryAbstractRequest::Finished);
+    gallery.setState(QGalleryAbstractRequest::Finished);
     gallery.setCount(1);
     gallery.setError(80, QString());
 
@@ -245,13 +307,13 @@ void tst_QGalleryItemRequest::executeSynchronous()
     request.execute();
 
     QCOMPARE(request.error(), 80);
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Error);
     QCOMPARE(resultSetSpy.count(), 0);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) == 0);
 
     gallery.setError(QGalleryAbstractRequest::NoError, QString());
     request.execute();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Finished);
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
@@ -288,7 +350,7 @@ void tst_QGalleryItemRequest::executeSynchronous()
             << QGalleryResource(QUrl(QLatin1String("http://example.com"))));
 
     request.clear();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(resultSetSpy.count(), 2);
     QVERIFY(request.resultSet() == 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -299,7 +361,7 @@ void tst_QGalleryItemRequest::executeSynchronous()
 void tst_QGalleryItemRequest::executeAsynchronous()
 {
     QtTestGallery gallery;
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QGalleryItemRequest request(&gallery);
     QVERIFY(request.resultSet() == 0);
@@ -314,7 +376,7 @@ void tst_QGalleryItemRequest::executeAsynchronous()
     QSignalSpy metaDataSpy(&request, SIGNAL(metaDataChanged(QList<int>)));
 
     request.execute();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -371,7 +433,7 @@ void tst_QGalleryItemRequest::executeAsynchronous()
 
     resultSet->finish(false);
 
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Finished);
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
 
@@ -394,7 +456,7 @@ void tst_QGalleryItemRequest::executeAsynchronous()
     QCOMPARE(request.resources(), QList<QGalleryResource>());
 
     request.clear();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(resultSetSpy.count(), 2);
     QVERIFY(request.resultSet() == 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -438,7 +500,7 @@ void tst_QGalleryItemRequest::multipleResults()
     QSignalSpy itemChangedSpy(&request, SIGNAL(itemChanged()));
     QSignalSpy metaDataSpy(&request, SIGNAL(metaDataChanged(QList<int>)));
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
     request.execute();
 
     QCOMPARE(request.isValid(), true);

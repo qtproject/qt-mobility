@@ -7,7 +7,6 @@ LIBS += \
 #DEFINES += USE_VIDEOPLAYERUTILITY
 
 HEADERS += \
-    $$PWD/qxacommon.h \
     $$PWD/qxametadatacontrol.h \
     $$PWD/qxamediastreamscontrol.h \
     $$PWD/qxamediaplayercontrol.h \

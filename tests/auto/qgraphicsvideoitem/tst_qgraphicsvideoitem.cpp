@@ -135,8 +135,12 @@ public:
     {
         Q_ASSERT(control);
 
-        if (control == rendererControl)
+        if (control == rendererControl) {
             rendererRef -= 1;
+
+            if (rendererRef == 0)
+                rendererControl->setSurface(0);
+        }
     }
 
     int rendererRef;
@@ -301,12 +305,21 @@ void tst_QGraphicsVideoItem::setMediaObject()
     object.bind(&item);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
     QCOMPARE(object.testService->rendererRef, 1);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
+
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     object.unbind(&item);
     QCOMPARE(item.mediaObject(), nullObject);
 
     QCOMPARE(object.testService->rendererRef, 0);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
 
     item.setVisible(false);
 
@@ -324,21 +337,14 @@ void tst_QGraphicsVideoItem::show()
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->rendererRef, 1);
-    QVERIFY(object.testService->rendererControl->surface() != 0);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
 
     item->hide();
     QCOMPARE(object.testService->rendererRef, 1);
 
     item->show();
     QCOMPARE(object.testService->rendererRef, 1);
-    QVERIFY(object.testService->rendererControl->surface() != 0);
-
-    QVERIFY(item->boundingRect().isEmpty());
-
-    QVideoSurfaceFormat format(QSize(320,240),QVideoFrame::Format_RGB32);
-    QVERIFY(object.testService->rendererControl->surface()->start(format));
-
-    QVERIFY(!item->boundingRect().isEmpty());
+    QVERIFY(object.testService->rendererControl->surface() == 0);
 
     QGraphicsScene graphicsScene;
     graphicsScene.addItem(item);
@@ -346,6 +352,15 @@ void tst_QGraphicsVideoItem::show()
     graphicsView.show();
 
     QVERIFY(item->paintCount() || item->waitForPaint(1));
+    QVERIFY(object.testService->rendererControl->surface() != 0);
+
+    QVERIFY(item->boundingRect().isEmpty());
+
+    QVideoSurfaceFormat format(QSize(320,240),QVideoFrame::Format_RGB32);
+    QVERIFY(object.testService->rendererControl->surface()->start(format));
+
+    QCoreApplication::processEvents();
+    QVERIFY(!item->boundingRect().isEmpty());
 }
 
 void tst_QGraphicsVideoItem::aspectRatioMode()
@@ -450,14 +465,23 @@ void tst_QGraphicsVideoItem::nativeSize()
     format.setViewport(viewport);
     format.setPixelAspectRatio(pixelAspectRatio);
 
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
+    QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.nativeSize(), nativeSize);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.last().first().toSizeF(), nativeSize);
 
     object.testService->rendererControl->surface()->stop();
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.nativeSize(), QSizeF(0, 0));
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.last().first().toSizeF(), QSizeF(0, 0));
@@ -582,8 +606,16 @@ void tst_QGraphicsVideoItem::boundingRect()
 
     QVideoSurfaceFormat format(frameSize, QVideoFrame::Format_ARGB32);
 
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
+    QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.boundingRect(), expectedRect);
 }
 
@@ -603,9 +635,11 @@ void tst_QGraphicsVideoItem::paint()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
+    QVERIFY(item->waitForPaint(1));
 
     QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
             object.testService->rendererControl->surface());
+    QVERIFY(surface != 0);
 
     QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 

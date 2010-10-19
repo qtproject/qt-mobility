@@ -1,9 +1,9 @@
-Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of API
-improvements and bug fixes since the Qt Mobility 1.0.0-tp2 release. For
+Qt Mobility 1.1.0-beta1 is a beta release. It contains a number of API
+improvements and bug fixes since the Qt Mobility 1.1.0-tp release. For
 more details, please refer to the online documentation included in this
 distribution. The documentation is also available online:
 
-  http://qt.nokia.com/doc/qtmobility-1.0
+  http://qt.nokia.com/doc/qtmobility-1.1
 
 Some of the changes listed in this file include issue tracking numbers
 corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
@@ -20,8 +20,13 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
+ - Qt Organizer module
+    * Classes for calendar entries, todo tasks, journal entries and notes
+ - Qt Feedback module
+    * Classes for feedback (haptic/tactile feedback, general multimedia
+      feedback)
+ - Qt Gallery module
+    * Classes for searching for documents, and viewing document meta-data.
 
 Optimizations
 ------
@@ -50,8 +55,13 @@ QtBearer
 QtContacts
 ------
 
- - foo
-    * bar
+ - Added support for actions on contacts
+    * Provides a Qt Service FrameWork based way of invoking methods (call,
+      text etc) on contacts
+ - Extended the QContactManagerEngine interface to allow new features:
+    * Saving partial contacts
+    * Fetching a list of contacts by a list of ids
+ - Improved support for Symbian^3/^4
 
 QtLandmarks
 ------
@@ -107,14 +117,52 @@ QtMapsAndNavigation
 QtMessaging
 ------
 
- - foo
-    * bar
+ - Harmattan backend implemented
+ - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
+ - Fix failure to compile with Qt 4.7, QTMOBILITY-390
+ - Fix ORing with an empty filter results in empty filter MOBILITY-1241
+    * Includes API documentation revision
+ - Fix writemessage example does not have a focused widget at start, MOBILITY-1229
+ - Fremantle, fix Scandinavian characters not correctly handled in SMS, MOBILITY-1362
+ - Fremantle, fix simultaneous SMS queries not possible, MOBILITY-1363
+ - Fremantle, Message caching, prefilter functionality and related tests implemented
+ - Fremantle, Modified and removed signals added for SMS messages
+ - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
+ - Symbian, fix MMS message size limit not documented, MOBILITY-1224
+ - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian, fix hardcoded paths to moc files, MOBILITY-1510
+ - Symbian, MTM, send status signaling improved, MOBILITY-1148
+ - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
+ - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
+ - Symbian^3, queryMessage crashes fixed, MOBILITY-1479, QTMOBILITY-535
 
 QtMultimediaKit
 ------
 
- - foo
-    * bar
+ - Added QCamera API
+    * Includes Linux, maemo and symbian backends.
+ - QAbstractVideoSurface
+    * Fixed assert when run against a different version of Qt to the one it was
+      compiled with.
+ - QAudioOutput
+    * Fix crash on Windows when initialized with an invalid format
+      [QTMOBILITY-438]
+    * Fixed audio glitches in the audiooutput example [QTBUG-13751]
+ - QMediaImageViewer
+    * Added setVideoOutput functions.
+ - QVideoWidget
+    * Fixed flickering when resizing a video widget on Windows.
+      [QTMOBILITY-407]
+    * Fixed sizeHint() not always being updated with gstreamer.
+      [QTMOBILITY-548]
+ - QML Elements
+    * Finalized Audio, Video and SoundEffect elements.
+
+QtOrganizer
+------
+
+ - API support for multiple collections (e.g. work calendar, home calendar etc)
+ - Other API polish and changes
 
 QtPublishSubscribe
 ------
@@ -130,10 +178,8 @@ QtSensors
  - Document Sensors.conf [QTMOBILITY-441]
  - Document output range meta-data [QTMOBILITY-469]
  - Use prefixed includes from public headers [QTMOBILITY-476]
-
-Note that the above fixes are also in 1.0.3.
-
  - Don't allow setting invalid values for enum types [QTMOBILITY-277]
+ - Clarify the purpose of the orientation sensor [QTMOBILITY-537]
 
 QtServiceFramework
 ------
@@ -147,11 +193,40 @@ QtSystemInfo
  - foo
     * bar
 
+QtVersit
+-----
+
+ - Added iCalendar import and export support.
+   * Added QVersitOrganizerImporter and QVersitOrganizerExporter classes
+ - Extended QVersitDocument to support iCalendar documents
+   * Added componentType(), setComponentType() Added subDocuments(),
+   * addSubDocuments(), setSubDocuments() Added ICalendar20Type (iCalendar
+     2.0) and VCard40Type (vCard 4.0) to VersitType enum
+   * Added PreformattedType to QVersitProperty::ValueType enum to support
+     the iCalendar RRULE property
+ - Added a plugin-based extension mechanism for import and export.
+   * Added QVersitContactExporterDetailHandlerV2, which supercedes
+     QVersitContactExporterDetailHandler
+   * Added QVersitContactImporterPropertyHandlerV2, which supercedes
+     QVersitContactImporterPropertyHandler
+   * Deprecated QVersitContactExporter::detailHandler() and
+     QVersitContactImporter::propertyHandler() getters
+   * Added a "profile" argument to the importer and exporter for plugin
+     selection.
+ - Added a "backup" plugin to try to preserve a contact as perfectly as
+   possible when stored and retrieved from vCard when the "Backup" profile is
+   selected.
+ - Fixed QTMOBILITY-478 QVersitContactExporter fails to export a contact
+   with no name
+ - Fixed QTMOBILITY-489 Multiple of the same Nickname should only be added
+   once
+
 Qt Mobility Plugins
 ------
 
- - foo
-    * bar
+ - QtMultimediaKit Media Services
+    * Disabled building the Windows Media Player plug-in by default.
+      [QTMOBILITY-554]
 
 
 ****************************************************************************

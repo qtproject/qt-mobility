@@ -41,6 +41,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
+#include "qversitcontactimporter_p.h"
 #include "qversitcontactsdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
@@ -77,7 +78,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& profile) :
+QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QStringList& profiles) :
     mDetailHandler(NULL),
     mDetailHandler2(NULL),
     mDetailHandlerVersion(0),
@@ -87,7 +88,8 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
     // Detail mappings
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
-    for (int i=0; i < versitPropertyCount; i++) {
+    // Put them in in reverse order so the entries at the top of the list take precedence
+    for (int i=versitPropertyCount; i >= 0; i--) {
         mPropertyMappings.insert(
                 QLatin1String(versitContactDetailMappings[i].detailDefinitionName),
                 QLatin1String(versitContactDetailMappings[i].versitPropertyName));
@@ -109,7 +111,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
 
-    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
+    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profiles);
 }
 
 /*!
@@ -118,6 +120,9 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginDetailHandlers) {
+        delete pluginHandler;
+    }
 }
 
 
@@ -220,28 +225,44 @@ bool QVersitContactExporterPrivate::exportContact(
         mDetailHandler2->contactProcessed(contact, &document);
     }
 
-    // Search through the document for FN or N properties.  This will find it even if it was added
-    // by a detail handler.
-    if (!documentContainsName(document)) {
-        QVersitProperty nameProperty;
-        nameProperty.setName(QLatin1String("FN"));
-        nameProperty.setValue(QString());
-        document.addProperty(nameProperty);
-    }
+    ensureDocumentContainsName(contact, &document);
     return true;
 }
 
 /*!
  * Returns true if and only if \a document has a "FN" or "N" property.
  */
-bool QVersitContactExporterPrivate::documentContainsName(const QVersitDocument &document)
+void QVersitContactExporterPrivate::ensureDocumentContainsName(const QContact& contact,
+                                                               QVersitDocument* document)
 {
-    foreach (const QVersitProperty& property, document.properties()) {
+    bool containsN = false;
+    bool containsFN = false;
+    QString fnValue;
+    foreach (const QVersitProperty& property, document->properties()) {
         const QString& name = property.name();
-        if (name == QLatin1String("FN") || name == QLatin1String("N"))
-            return true;
+        if (name == QLatin1String("FN")) {
+            containsFN = true;
+            fnValue = property.value();
+        } else if (name == QLatin1String("N")) {
+            containsN = true;
+        }
     }
-    return false;
+    if (!containsFN) {
+        QVersitProperty fnProperty;
+        fnProperty.setName(QLatin1String("FN"));
+        fnValue = QVersitContactImporterPrivate::synthesizedDisplayLabel(contact);
+        fnProperty.setValue(fnValue);
+        document->addProperty(fnProperty);
+    }
+
+    if (!containsN) {
+        QVersitProperty nProperty;
+        nProperty.setValueType(QVersitProperty::CompoundType);
+        nProperty.setName(QLatin1String("N"));
+        nProperty.setValue(QStringList() << QString() << QString()
+                           << QString() << QString() << QString());
+        document->addProperty(nProperty);
+    }
 }
 
 /*!
@@ -254,6 +275,8 @@ void QVersitContactExporterPrivate::encodeName(
     QList<QVersitProperty>* generatedProperties,
     QSet<QString>* processedFields)
 {
+    Q_UNUSED(document);
+    Q_UNUSED(removedProperties);
     QContactName contactName = static_cast<QContactName>(detail);
     if (!contactName.lastName().isEmpty()
         || !contactName.firstName().isEmpty()
@@ -272,27 +295,6 @@ void QVersitContactExporterPrivate::encodeName(
         *generatedProperties << property;
     }
 
-    // Generate an FN field if none is already there
-    // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
-    QVersitProperty fnProperty =
-        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
-    if (fnProperty.value().isEmpty()) {
-        fnProperty.setName(QLatin1String("FN"));
-        if (!contactName.customLabel().isEmpty()) {
-            fnProperty.setValue(contactName.customLabel());
-        } else if (!contactName.firstName().isEmpty()) {
-            if (!contactName.lastName().isEmpty()) {
-                fnProperty.setValue(QString::fromAscii("%1 %2").arg(contactName.firstName(),
-                                                                    contactName.lastName()));
-            } else {
-                fnProperty.setValue(contactName.firstName());
-            }
-        } else if (!contactName.lastName().isEmpty()) {
-            fnProperty.setValue(contactName.lastName());
-        }
-    }
-
-    *generatedProperties << fnProperty;
     *processedFields << QContactName::FieldLastName
                      << QContactName::FieldFirstName
                      << QContactName::FieldMiddleName

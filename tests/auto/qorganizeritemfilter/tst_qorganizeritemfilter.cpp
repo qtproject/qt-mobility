@@ -42,7 +42,7 @@
 #include <QMetaType>
 
 #include "qtorganizer.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 //TESTED_COMPONENT=src/organizer
 //TESTED_CLASS=
@@ -86,34 +86,29 @@ private slots:
     void sortTraits();
 };
 
-class BasicItemLocalId : public QOrganizerItemEngineLocalId
+class BasicItemLocalId : public QOrganizerItemEngineId
 {
 public:
     BasicItemLocalId(uint id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+    bool isEqualTo(const QOrganizerItemEngineId* other) const {
         return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+    bool isLessThan(const QOrganizerItemEngineId* other) const {
         return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    uint engineLocalIdType() const {
-        return 0;
-    }
-    QOrganizerItemEngineLocalId* clone() const {
+    QOrganizerItemEngineId* clone() const {
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
-    QDebug debugStreamOut(QDebug dbg) {
+    QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicItem:"));
+        return uri;
+    }
+    QDebug& debugStreamOut(QDebug& dbg) const {
         return dbg << m_id;
     }
-    QDataStream& dataStreamOut(QDataStream& out) {
-        return out << static_cast<quint32>(m_id);
-    }
-    QDataStream& dataStreamIn(QDataStream& in) {
-        quint32 id;
-        in >> id;
-        m_id = id;
-        return in;
+    QString toString() const {
+        return QString::number(m_id);
     }
     uint hash() const {
         return m_id;
@@ -123,9 +118,9 @@ private:
     uint m_id;
 };
 
-QOrganizerItemLocalId makeId(uint id)
+QOrganizerItemId makeId(uint id)
 {
-    return QOrganizerItemLocalId(new BasicItemLocalId(id));
+    return QOrganizerItemId(new BasicItemLocalId(id));
 }
 
 tst_QOrganizerItemFilter::tst_QOrganizerItemFilter()
@@ -851,19 +846,19 @@ void tst_QOrganizerItemFilter::boringFilters()
 
 void tst_QOrganizerItemFilter::idListFilter()
 {
-    QOrganizerItemLocalIdFilter idf;
+    QOrganizerItemIdFilter idf;
 
-    QVERIFY(idf.type() == QOrganizerItemFilter::LocalIdFilter);
+    QVERIFY(idf.type() == QOrganizerItemFilter::IdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
-    QList<QOrganizerItemLocalId> ids;
+    QList<QOrganizerItemId> ids;
     ids << makeId(5) << makeId(6) << makeId(17);
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
 
-    idf.setIds(QList<QOrganizerItemLocalId>());
+    idf.setIds(QList<QOrganizerItemId>());
     QVERIFY(idf.ids().count() == 0);
 
     /* Test op= */
@@ -871,7 +866,7 @@ void tst_QOrganizerItemFilter::idListFilter()
     QOrganizerItemFilter f = idf;
     QVERIFY(f == idf);
 
-    QOrganizerItemLocalIdFilter idf2 = f;
+    QOrganizerItemIdFilter idf2 = f;
     QVERIFY(idf2 == idf);
     QVERIFY(idf2.ids() == ids);
 
@@ -883,9 +878,9 @@ void tst_QOrganizerItemFilter::idListFilter()
     QVERIFY(idf2 == idf);
 
     QOrganizerItemDetailFilter dfil;
-    QOrganizerItemLocalIdFilter idf3(dfil);
-    QVERIFY(idf3.type() == QOrganizerItemFilter::LocalIdFilter); // should be a blank id list filter
-    QOrganizerItemLocalIdFilter idf4(idf);
+    QOrganizerItemIdFilter idf3(dfil);
+    QVERIFY(idf3.type() == QOrganizerItemFilter::IdFilter); // should be a blank id list filter
+    QOrganizerItemIdFilter idf4(idf);
     QVERIFY(idf4 == idf); // should be a copy of idf.
     idf = dfil; // now assign.
     QVERIFY(idf == idf3); // again, should be a blank id list filter.
@@ -898,7 +893,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter()
     QFETCH(QOrganizerItemFilter, in);
     QFETCH(QOrganizerItemFilter, expected);
 
-    QOrganizerItemFilter out = QOrganizerItemManagerEngine::canonicalizedFilter(in);
+    QOrganizerItemFilter out = QOrganizerManagerEngine::canonicalizedFilter(in);
     QCOMPARE(out, expected);
 }
 
@@ -1013,15 +1008,15 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
     }
 
     {
-        QOrganizerItemLocalIdFilter qclif;
+        QOrganizerItemIdFilter qclif;
         QTest::newRow("Empty local id filter")
                 << static_cast<QOrganizerItemFilter>(qclif)
                 << static_cast<QOrganizerItemFilter>(invalidFilter);
     }
 
     {
-        QOrganizerItemLocalIdFilter qclif;
-        qclif.setIds(QList<QOrganizerItemLocalId>() << makeId(1) << makeId(2));
+        QOrganizerItemIdFilter qclif;
+        qclif.setIds(QList<QOrganizerItemId>() << makeId(1) << makeId(2));
         QTest::newRow("Normal local id filter")
                 << static_cast<QOrganizerItemFilter>(qclif)
                 << static_cast<QOrganizerItemFilter>(qclif);
@@ -1029,9 +1024,9 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         QOrganizerItemDetailFilter expected;
-        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         QTest::newRow("Null valued range filter")
                 << static_cast<QOrganizerItemFilter>(qcdrf)
                 << static_cast<QOrganizerItemFilter>(expected);
@@ -1039,11 +1034,11 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"));
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QOrganizerItemDetailFilter expected;
-        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         expected.setValue(QLatin1String("a"));
         expected.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("Equal valued range filter")
@@ -1053,7 +1048,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"),
                QOrganizerItemDetailRangeFilter::ExcludeLower | QOrganizerItemDetailRangeFilter::ExcludeUpper);
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
@@ -1064,7 +1059,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("b"));
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("Normal range filter")
@@ -1074,11 +1069,11 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QVariant(QVariant::String), QVariant(QVariant::String)); // null bounds
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QOrganizerItemDetailFilter qcdf;
-        qcdf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         qcdf.setValue(QVariant(QVariant::String));
         QTest::newRow("Null valued range filter")
@@ -1088,7 +1083,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QVariant(QVariant::String), QLatin1String("a")); // min is null
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("One sided range filter")
@@ -1117,7 +1112,7 @@ void tst_QOrganizerItemFilter::testFilter()
     QFETCH(QOrganizerItemFilter, filter);
     QFETCH(bool, expected);
 
-    QCOMPARE(QOrganizerItemManagerEngine::testFilter(filter, item), expected);
+    QCOMPARE(QOrganizerManagerEngine::testFilter(filter, item), expected);
 }
 
 void tst_QOrganizerItemFilter::testFilter_data()
@@ -1131,8 +1126,7 @@ void tst_QOrganizerItemFilter::testFilter_data()
     {
         QOrganizerItem item;
         QOrganizerItemLocation name;
-        name.setAddress("test address");
-        name.setLocationName("test location");
+        name.setLabel("test location");
         item.saveDetail(&name);
 
         QTest::newRow("QOrganizerItemLocation::match location")

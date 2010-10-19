@@ -74,21 +74,20 @@ QTM_BEGIN_NAMESPACE
     coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
 
-     The other virtual functions can be overriden.  If the screen position to
-     coordinate tranformations are expensive then overriding these functions
-     may allow optimizations based on caching parts of the geometry information.
+    The other virtual functions can be overriden. If the screen position to
+    coordinate tranformations are expensive then overriding these functions may
+    allow optimizations based on caching parts of the geometry information.
 
-     Subclasses should override createMapObjecInfo() so that QGeoMapObjectInfo
-     instances will be created for each QGeoMapObject type in order to
-     provide the QGeoMapData subclass specific behaviours for the map objects.
+    Subclasses should override createMapObjectInfo() so that QGeoMapObjectInfo
+    instances will be created for each QGeoMapObject type in order to provide
+    the QGeoMapData subclass specific behaviours for the map objects.
  */
 
 /*!
-    Constructs a new map data object, which stores the map data required by
-    \a geoMap and makes use of the functionality provided by \a engine.
+    Constructs a new map data object, which makes use of the functionality provided by \a engine.
 */
-QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine)
+    : d_ptr(new QGeoMapDataPrivate(this, engine))
 {
     if (engine->supportedConnectivityModes().length() > 0)
         setConnectivityMode(engine->supportedConnectivityModes().at(0));
@@ -110,17 +109,17 @@ QGeoMapData::~QGeoMapData()
     delete d;
 }
 
-void QGeoMapData::setup()
-{
-    d_ptr->containerObject = new QGeoMapGroupObject(this);
-}
-
 /*!
-    Returns the QGraphicsGeoMap instance that this map data object is associated with.
+    This function is run after the QGeoMapData instance has been 
+    constructed.
+
+    Any subclasses which override this function should make sure that
+    QGeoMapData::init() is called within the body of the overridding function.
 */
-QGraphicsGeoMap* QGeoMapData::geoMap() const
+void QGeoMapData::init()
 {
-    return d_ptr->geoMap;
+    d_ptr->containerObject = new QGeoMapGroupObject();
+    d_ptr->containerObject->setMapData(this);
 }
 
 /*!
@@ -517,6 +516,7 @@ void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
     if (!overlay)
         return;
 
+    overlay->setMapData(this);
     d_ptr->overlays.append(overlay);
 }
 
@@ -556,21 +556,85 @@ QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
     return 0;
 }
 
+/*!
+    Sets whether changes to properties will trigger their corresponding signals to \a block.
+
+    By default the QGeoMapData implementations of the property functions are used
+    which cause the property notification signals to be emitted immediately.
+
+    Calling this function with \a block set to false will prevent these
+    signals from being called, which will allow a subclass to defer the
+    emission of the signal until a later time.
+
+    If this function needs to be called it should be used as soon as possible,
+    preferably in the constructor of the QGeoMapData subclass.
+*/
 void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 {
     d_ptr->blockPropertyChangeSignals = block;
 }
 
+/*!
+\fn void QGeoMapData::windowSizeChanged(const QSizeF &windowSize)
+
+    This signal is emitted when the size of the window which contains 
+    the map has changed.
+
+    The new value is \a windowSize.
+*/
+
+/*!
+\fn void QGeoMapData::zoomLevelChanged(qreal zoomLevel)
+
+    This signal is emitted when the zoom level of the map has changed.
+
+    The new value is \a zoomLevel.
+*/
+
+/*!
+\fn void QGeoMapData::centerChanged(const QGeoCoordinate &coordinate)
+
+    This signal is emitted when the center of the map has changed.
+
+    The new value is \a coordinate.
+*/
+
+/*!
+\fn void QGeoMapData::mapTypeChanged(QGraphicsGeoMap::MapType mapType)
+
+    This signal is emitted when the type of the map has changes.
+
+    The value is \a mapType.
+*/
+
+/*!
+\fn void QGeoMapData::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+
+    This signal is emitted when the connectivity mode used to fetch the 
+    map data has changed.
+
+    The new value is \a connectivityMode.
+*/
+
+/*!
+\fn void QGeoMapData::updateMapDisplay(const QRectF &target)
+
+    This signal is emitted when the region \a target of the window which 
+    contains the map needs to be updated.
+
+
+    If \a target is empty then the entire map will be updated.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : q_ptr(parent),
-        engine(engine),
-        geoMap(geoMap),
-        containerObject(0),
-        zoomLevel(-1.0),
-        blockPropertyChangeSignals(false) {}
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
+    : q_ptr(parent),
+      engine(engine),
+      containerObject(0),
+      zoomLevel(-1.0),
+      blockPropertyChangeSignals(false) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {

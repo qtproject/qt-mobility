@@ -53,20 +53,28 @@ Rectangle{
     DeviceInfo {
         id: deviceinfo;
         //        onBatteryStatusChanged : doBatteryStatusChange(status);
-        onPowerStateChanged : getPowerState(powerState);
+        onPowerStateChanged : getPowerState(/*powerState*/);
         onBatteryLevelChanged: doBatteryLevelChange(level)
         property int battlevel: batteryLevel;
 
+
+    }
+
+    Component.onCompleted: {
+        deviceinfo.startBatteryLevelChanged();
+        deviceinfo.startBatteryStatusChanged();
+        deviceinfo.startPowerStateChanged();
+        deviceinfo.startCurrentProfileChanged();
+        deviceinfo.startBluetoothStateChanged();
     }
 
     property alias batlevel: deviceinfo.battlevel;
-    property alias curPowerState: deviceinfo.currentPowerState;
+    property alias curPowerState: deviceinfo.powerState;
 
     property string oldstate;
 
     function doBatteryLevelChange(level) {
-        //  console.log("doBatteryLevel: "+level + " " + deviceinfo.batlevel)
-        if(level > 90) {
+         if(level > 90) {
             speed = 1000;
         } else if(level > 70) {
             speed = 1500;
@@ -86,38 +94,25 @@ Rectangle{
         oldstate = img.state;
         img.state = "levelchange"
         img.state = oldstate;
-    }
+        console.debug("batteryChangeLevel: " );
+        getPowerState();
+}
 
-    function getPowerState(powerState) {
-        console.log("get power state: "+powerState)
+    function getPowerState() {
 
-        if(powerState == DeviceInfo.UnknownPower) {
-            console.log("get power state: "+powerState)
-        }
-
-        if(powerState == DeviceInfo.BatteryPower) {
-            console.log("battery power state: "+powerState)
-        }
-
-        if(powerState == DeviceInfo.WallPower) {
-            console.log("wall state: "+powerState)
-        }
-
-        if(powerState == DeviceInfo.WallPowerChargingBattery) {
-            console.log("charging power state: "+powerState)
-        }
-
-        // state = curPowerState;
+        console.debug("curPowerState: " );
         if ( curPowerState == 1) {
-            return "On Battery : " + batlevel +"%"
+            img.state = "Battery"
+            oldstate = img.state;
         }
         if ( curPowerState == 2 ) {
-            return "Wall Power : " + batlevel +"%"
+            img.state = "WallPower"
+            oldstate = img.state;
         }
         if ( curPowerState == 3) {
-            return "Charging : " + batlevel +"%"
+            img.state = "Charging"
+            oldstate = img.state;
         }
-        return ""
     }
 
     property alias manufacturer: deviceinfo.manufacturer
@@ -133,7 +128,7 @@ Rectangle{
 
     Text {
         id: power
-        text: getPowerState();
+        text: img.state + " "+batlevel +"%"
         anchors.top: manu.bottom
         color: "white";
     }

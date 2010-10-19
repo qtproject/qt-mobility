@@ -316,8 +316,13 @@ public:
                                   & QNetworkConfigurationManager::CanStartAndStopInterfaces);
 
         // Is there default access point, use it
+#ifdef BEARER_IN_QTNETWORK
+        QNetworkConfiguration cfg1 = manager.defaultConfiguration();
+        if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QNetworkConfiguration::Active)) {
+#else
         QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
+#endif
             m_networkSetupError = QString(tr("This example requires networking, and no available networks or access points could be found."));
             QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;
@@ -539,6 +544,7 @@ protected:
             QPoint center = dragPos - QPoint(0, radius);
             center = center + QPoint(0, radius / 2);
             QPoint corner = center - QPoint(radius, radius);
+            magnifierPos = center;
 
             QPoint xy = center * 2 - QPoint(radius, radius);
 
@@ -588,8 +594,21 @@ protected:
             return;
         pressed = snapped = true;
         pressPos = dragPos = event->pos();
+
         tapTimer.stop();
         tapTimer.start(HOLD_TIME, this);
+
+        if (zoomed) {
+            QPoint distance = dragPos - magnifierPos;
+
+            int magnifierSize = qMin(MAX_MAGNIFIER, (qMin(width(), height()) * 2) / 3);
+            int radius = magnifierSize / 2;
+
+            if (distance.manhattanLength() > radius) {
+                zoomed = false;
+                tapTimer.stop();
+            }
+        }
     }
 
     void mouseMoveEvent(QMouseEvent *event) {
@@ -681,6 +700,7 @@ private:
     bool snapped;
     QPoint pressPos;
     QPoint dragPos;
+    QPoint magnifierPos;
     QBasicTimer tapTimer;
     bool zoomed;
     QPixmap zoomPixmap;
