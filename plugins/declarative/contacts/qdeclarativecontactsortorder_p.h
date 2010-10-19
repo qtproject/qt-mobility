@@ -61,28 +61,17 @@ class QDeclarativeContactSortOrder :public QObject
     Q_OBJECT
     Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY sortOrderChanged)
     Q_PROPERTY(int field READ field WRITE setField NOTIFY sortOrderChanged)
-    Q_PROPERTY(SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
-    Q_PROPERTY(CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
     Q_ENUMS(BlankPolicy)
-    Q_ENUMS(SortOrder)
-    Q_ENUMS(CaseSensitivity)
 public:
 
     enum BlankPolicy {
-        BlanksFirst,
-        BlanksLast
+        BlanksFirst = QContactSortOrder::BlanksFirst,
+        BlanksLast = QContactSortOrder::BlanksLast
     };
 
-    enum SortOrder {
-        AscendingOrder,
-        DescendingOrder
-    };
-
-    enum CaseSensitivity {
-        CaseInsensitive,
-        CaseSensitive
-    };
 
     QDeclarativeContactSortOrder(QObject* parent = 0);
 
@@ -96,10 +85,10 @@ public:
 
     BlankPolicy blankPolicy() const;
     void setBlankPolicy(BlankPolicy blankPolicy);
-    SortOrder direction() const;
-    void setDirection(SortOrder direction);
-    CaseSensitivity caseSensitivity() const;
-    void setCaseSensitivity(CaseSensitivity sensitivity);
+    Qt::SortOrder direction() const;
+    void setDirection(Qt::SortOrder direction);
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
     QContactSortOrder sortOrder();
     void setSortOrder(const QContactSortOrder& sortOrder);
 
