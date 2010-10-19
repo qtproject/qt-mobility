@@ -60,6 +60,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    void reset();
+
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       QObject *object, const QMetaMethod &method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,

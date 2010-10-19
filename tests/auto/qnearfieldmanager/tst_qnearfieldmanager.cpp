@@ -66,6 +66,8 @@ public:
 private slots:
     void targetDetected();
 
+    void unregisterTargetDetectedHandler();
+
     void registerTargetDetectedHandler1_data();
     void registerTargetDetectedHandler1();
 
@@ -98,6 +100,15 @@ void tst_QNearFieldManager::targetDetected()
     QVERIFY(!target->uid().isEmpty());
 
     QCOMPARE(target->hasNdefMessage(), !target->ndefMessages().isEmpty());
+}
+
+void tst_QNearFieldManager::unregisterTargetDetectedHandler()
+{
+    QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
+    QNearFieldManager manager(emulatorBackend, 0);
+
+    QVERIFY(!manager.unregisterTargetDetectedHandler(-1));
+    QVERIFY(!manager.unregisterTargetDetectedHandler(0));
 }
 
 void tst_QNearFieldManager::registerTargetDetectedHandler1_data()
@@ -140,6 +151,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler1()
 
     if (type != QNearFieldTarget::AnyTarget)
         QCOMPARE(target->type(), type);
+
+    QVERIFY(manager.unregisterTargetDetectedHandler(id));
 }
 
 void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()

@@ -152,6 +152,29 @@ QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
     return ndefMessages;
 }
 
+quint8 QNearFieldTagType1::version()
+{
+    return readByte(9);
+}
+
+int QNearFieldTagType1::memorySize()
+{
+    quint8 tms = readByte(10);
+
+    return 8 * (tms + 1);
+}
+
+QByteArray QNearFieldTagType1::readIdentification()
+{
+    QByteArray command;
+    command.append(char(0x78));     // RID
+    command.append(char(0x00));     // Address (unused)
+    command.append(char(0x00));     // Data (unused)
+    command.append(uid().left(4));  // 4 bytes of UID
+
+    return sendCommand(command);
+}
+
 QByteArray QNearFieldTagType1::readAll()
 {
     QByteArray command;
@@ -160,13 +183,66 @@ QByteArray QNearFieldTagType1::readAll()
     command.append(char(0x00));   // Data (unused)
     command.append(uid().left(4));// 4 bytes of UID
 
-    QByteArray response = sendCommand(command);
+    return sendCommand(command);
+}
 
-    // no targets responded to command
+quint8 QNearFieldTagType1::readByte(quint8 address)
+{
+    if (address & 0x80)
+        return 0;
+
+    QByteArray command;
+    command.append(char(0x01));     // READ
+    command.append(char(address));  // Address
+    command.append(char(0x00));     // Data (unused)
+    command.append(uid().left(4));  // 4 bytes of UID
+
+    const QByteArray response = sendCommand(command);
+
     if (response.isEmpty())
-        return QByteArray();
+        return 0;
 
-    return response;
+    if (response.at(0) != address)
+        qDebug() << Q_FUNC_INFO << "response was for wrong address";
+
+    return response.at(1);
+}
+
+bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
+{
+    if (address & 0x80)
+        return false;
+
+    QByteArray command;
+
+    if (mode == EraseAndWrite)
+        command.append(char(0x53));
+    else if (mode == WriteOnly)
+        command.append(char(0x1a));
+    else
+        return false;
+
+    command.append(char(address));  // Address
+    command.append(char(data));     // Data
+    command.append(uid().left(4));  // 4 bytes of UID
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 writeAddress = response.at(0);
+    quint8 writeData = response.at(1);
+
+    if (writeAddress != address)
+        qDebug() << Q_FUNC_INFO << "response was for wrong address";
+
+    if (mode == EraseAndWrite)
+        return writeData == data;
+    else if (mode == WriteOnly)
+        return (writeData & data) == data;
+    else
+        return false;
 }
 
 #include "moc_qnearfieldtagtype1.cpp"

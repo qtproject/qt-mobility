@@ -183,13 +183,13 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
             else
                 response.append(staticMemory.at(address));
             break;
-        case 0x54: { // WRITE-E8
+        case 0x53: { // WRITE-E
             quint8 block = address >> 3;
             if (block == 0x00 || block == 0x0d || block == 0x0e)    // locked blocks
                 break;
 
             quint16 lock = (readData(0x0e, 0x01) << 8) | readData(0x0e, 0x00);
-            if ((0x01 << block) && lock)    // locked blocks
+            if ((0x01 << block) & lock)    // locked blocks
                 break;
 
             staticMemory[address] = data;
@@ -198,13 +198,13 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
             response.append(data);
             break;
         }
-        case 0x1b: { // WRITE-NE8
+        case 0x1a: { // WRITE-NE
             quint8 block = address >> 3;
             if (block == 0x00 || block == 0x0d)  // locked blocks
                 break;
 
             quint16 lock = (readData(0x0e, 0x01) << 8) | readData(0x0e, 0x00);
-            if ((0x01 << block) && lock)    // locked blocks
+            if ((0x01 << block) & lock)    // locked blocks
                 break;
 
             staticMemory[address] = staticMemory.at(address) | data;
