@@ -110,7 +110,11 @@
 /*!
   \qmlproperty date ChangeLogFilter::since
 
-  This property holds the date and time lower-bound criterion of the filter.
+  This property holds the date and time lower-bound criterion of the filter.The value can be one of:
+  \list
+  \o ChangeLogFilter.EventAdded
+  \o ChangeLogFilter.EventChanged
+  \o ChangeLogFilter.EventRemoved
   */
 
 /*!
@@ -144,31 +148,31 @@
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements.
 
-  \sa Address
-  \sa Anniversary
-  \sa Avatar
-  \sa Birthday
-  \sa DisplayLabel
-  \sa Email
-  \sa Family
-  \sa Favorite
-  \sa Gender
-  \sa Geolocation
-  \sa GlobalPresence
-  \sa Guid
-  \sa Name
-  \sa NickName
-  \sa Note
-  \sa OnlineAccount
-  \sa Organization
-  \sa PhoneNumber
-  \sa Presence
-  \sa Ringtone
-  \sa SyncTarget
-  \sa Tag
-  \sa Timestamp
-  \sa Url
-  \sa Hobby
+  \sa ContactDetail.Address
+  \sa ContactDetail.Anniversary
+  \sa ContactDetail.Avatar
+  \sa ContactDetail.Birthday
+  \sa ContactDetail.DisplayLabel
+  \sa ContactDetail.Email
+  \sa ContactDetail.Family
+  \sa ContactDetail.Favorite
+  \sa ContactDetail.Gender
+  \sa ContactDetail.Geolocation
+  \sa ContactDetail.GlobalPresence
+  \sa ContactDetail.Guid
+  \sa ContactDetail.Name
+  \sa ContactDetail.NickName
+  \sa ContactDetail.Note
+  \sa ContactDetail.OnlineAccount
+  \sa ContactDetail.Organization
+  \sa ContactDetail.PhoneNumber
+  \sa ContactDetail.Presence
+  \sa ContactDetail.Ringtone
+  \sa ContactDetail.SyncTarget
+  \sa ContactDetail.Tag
+  \sa ContactDetail.Timestamp
+  \sa ContactDetail.Url
+  \sa ContactDetail.Hobby
   */
 
 /*!
@@ -180,7 +184,15 @@
 /*!
   \qmlproperty enumeration DetailFilter::matchFlags
 
-  This property holds the semantics of the value matching criterion.
+  This property holds the semantics of the value matching criterion. The valid match flags include:
+  \list
+  \o MatchExactly - Performs QVariant-based matching (default).
+  \o MatchContains - The search term is contained in the item.
+  \o MatchStartsWith - The search term matches the start of the item.
+  \o MatchEndsWith - The search term matches the end of the item.
+  \o MatchFixedString - Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified.
+  \o MatchCaseSensitive - The search is case sensitive.
+  \endlist
   */
 
 /*!
@@ -201,6 +213,7 @@
   This property holds the detail type of which details will be matched to.
 
   \sa ContactDetail::type
+  \sa DetailFilter::detail
   */
 
 /*!
@@ -209,31 +222,7 @@
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements.
 
-  \sa Address
-  \sa Anniversary
-  \sa Avatar
-  \sa Birthday
-  \sa DisplayLabel
-  \sa Email
-  \sa Family
-  \sa Favorite
-  \sa Gender
-  \sa Geolocation
-  \sa GlobalPresence
-  \sa Guid
-  \sa Name
-  \sa NickName
-  \sa Note
-  \sa OnlineAccount
-  \sa Organization
-  \sa PhoneNumber
-  \sa Presence
-  \sa Ringtone
-  \sa SyncTarget
-  \sa Tag
-  \sa Timestamp
-  \sa Url
-  \sa Hobby
+  \sa DetailFilter::field
   */
 /*!
   \qmlproperty variant DetailRangeFilter::min
@@ -250,14 +239,21 @@
   \qmlproperty enumeration DetailRangeFilter::matchFlags
 
   This property holds the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.
+
+  \sa DetailFilter::matchFlags
   */
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::rangeFlags
 
-  This property holds a set of flags which defines the boundary condition semantics of the value range criterion.
+  This property holds a set of flags which defines the boundary condition semantics of the value range criterion.The valid range flags include:
+    \list
+    \o DetailRangeFilter.IncludeLower
+    \o DetailRangeFilter.IncludeUpper
+    \o DetailRangeFilter.ExcludeLower
+    \o DetailRangeFilter.ExcludeUpper
+    \endlist
   */
-
 /*!
    \qmlclass IntersectionFilter QDeclarativeContactIntersectionFilter
    \brief The IntersectionFilter element provides a filter which intersects the results of other filters.
