@@ -160,6 +160,9 @@ bool QOrganizerItemId::operator<(const QOrganizerItemId& other) const
         if (d->managerUri() == other.d->managerUri()) {
             return d->isLessThan(other.d);
         }
+
+        // not the same type?  just compare the manager uri.
+        return d->managerUri() < other.d->managerUri();
     }
 
     return false;
