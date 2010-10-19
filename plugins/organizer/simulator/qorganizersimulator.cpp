@@ -54,7 +54,7 @@ using namespace QtSimulatorPrivate;
 
 QOrganizerItemMemoryEngineData *QOrganizerSimulatorEngine::engineData = 0;
 
-QOrganizerManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
+QOrganizerManagerEngine* QOrganizerSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -78,24 +78,25 @@ QOrganizerManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QStri
 }
 
 
-QOrganizerItemEngineId* QOrganizerItemSimulatorFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
+QOrganizerItemEngineId* QOrganizerSimulatorFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters); // XXX This should be used
     return new QOrganizerItemMemoryEngineId(engineIdString);
 }
 
-QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
+QOrganizerCollectionEngineId* QOrganizerSimulatorFactory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerItemMemoryEngineId(engineIdString);
+    return new QOrganizerCollectionMemoryEngineId(engineIdString);
 }
 
-QString QOrganizerItemSimulatorFactory::managerName() const
+QString QOrganizerSimulatorFactory::managerName() const
 {
     static const QString name(QLatin1String("simulator"));
     return name;
 }
-Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
+
+Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerSimulatorFactory);
 
 
 QString QOrganizerSimulatorEngine::managerName() const
@@ -119,7 +120,7 @@ bool QOrganizerSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrga
 
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
-    con->translateItemIds(&item, con->mManagerUri, con->mLocalToRemote);
+    con->translateItemIds(&item, con->mLocalToRemote);
     bool newItem = item.id().isNull();
 
     // save remotely
@@ -137,23 +138,21 @@ bool QOrganizerSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrga
         return false; // it's already saved remotely - revert?
 
     if (newItem) {
-        con->mRemoteToLocal.items.insert(reply.savedItem.localId(), theOrganizerItem->localId());
-        con->mLocalToRemote.items.insert(theOrganizerItem->localId(), reply.savedItem.localId());
+        con->mRemoteToLocal.items.insert(reply.savedItem.id(), theOrganizerItem->id());
+        con->mLocalToRemote.items.insert(theOrganizerItem->id(), reply.savedItem.id());
     }
 
     return true;
 }
 
-bool QOrganizerSimulatorEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
+bool QOrganizerSimulatorEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     Connection *con = Connection::instance();
 
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error);
 
-    QOrganizerItemId remoteId;
-    remoteId.setManagerUri(con->mManagerUri);
-    remoteId.setLocalId(con->mLocalToRemote.items.value(organizeritemId));
+    QOrganizerItemId remoteId = con->mLocalToRemote.items.value(organizeritemId);
 
     QLocalSocket *sendSocket = con->sendSocket();
     Simulator::OrganizerItemId packedId;
@@ -168,7 +167,7 @@ bool QOrganizerSimulatorEngine::removeItem(const QOrganizerItemLocalId& organize
     if (!QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error))
         return false; // it's already removed remotely - revert?
 
-    con->mRemoteToLocal.items.remove(remoteId.localId());
+    con->mRemoteToLocal.items.remove(remoteId);
     con->mLocalToRemote.items.remove(organizeritemId);
 
     return true;
@@ -183,7 +182,7 @@ bool QOrganizerSimulatorEngine::saveCollection(QOrganizerCollection *collection,
 
     // translate local id -> remote id
     QOrganizerCollection remoteCollection = *collection;
-    con->translateCollectionIds(&remoteCollection, con->mManagerUri, con->mLocalToRemote);
+    con->translateCollectionIds(&remoteCollection, con->mLocalToRemote);
     bool newCollection = remoteCollection.id().isNull();
 
     // save remotely
@@ -202,23 +201,21 @@ bool QOrganizerSimulatorEngine::saveCollection(QOrganizerCollection *collection,
         return false; // it's already saved remotely - revert?
 
     if (newCollection) {
-        con->mRemoteToLocal.collections.insert(reply.savedCollection.localId(), collection->localId());
-        con->mLocalToRemote.collections.insert(collection->localId(), reply.savedCollection.localId());
+        con->mRemoteToLocal.collections.insert(reply.savedCollection.id(), collection->id());
+        con->mLocalToRemote.collections.insert(collection->id(), reply.savedCollection.id());
     }
 
     return true;
 }
 
-bool QOrganizerSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerManager::Error *error)
+bool QOrganizerSimulatorEngine::removeCollection(const QOrganizerCollectionId &collectionId, QOrganizerManager::Error *error)
 {
     Connection *con = Connection::instance();
 
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::removeCollection(collectionId, error);
 
-    QOrganizerCollectionId remoteId;
-    remoteId.setManagerUri(con->mManagerUri);
-    remoteId.setLocalId(con->mLocalToRemote.collections.value(collectionId));
+    QOrganizerCollectionId remoteId = con->mLocalToRemote.collections.value(collectionId);
 
     QLocalSocket *sendSocket = con->sendSocket();
     Simulator::OrganizerCollectionId packedId;
@@ -238,7 +235,7 @@ bool QOrganizerSimulatorEngine::removeCollection(const QOrganizerCollectionLocal
         return false; // it's already removed remotely - revert?
     con->mNotifySimulator = oldNotify;
 
-    con->mRemoteToLocal.collections.remove(remoteId.localId());
+    con->mRemoteToLocal.collections.remove(remoteId);
     con->mLocalToRemote.collections.remove(collectionId);
 
     return true;

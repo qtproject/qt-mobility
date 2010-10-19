@@ -773,6 +773,22 @@ void RCntModel::DeleteContactL(TContactItemId aCntId, TCntSendEventAction aCntEv
 	User::LeaveIfError(SendReceive(ECntItemDelete, args));
 	}
 
+/**
+Delete contacts from the database.
+
+@param aContactIds The contacts to be deleted.
+
+@capability WriteUserData
+*/
+void RCntModel::DeleteContactsL(const CContactIdArray& aContactIds) const
+    {
+    // Pack the contact ids into the first IPC argument.
+    TIpcArgs args;
+    TPtr8 ptr(iPackager->PackL(aContactIds));
+    args.Set(0,&ptr);
+    User::LeaveIfError(SendReceive(ECntItemsDelete, args));
+    }
+
 /** 
 Open the database tables.
 
@@ -1147,9 +1163,9 @@ Request a database event from the server.
 @param aStatus Completed when database event is available.
 @param aEvent When aStatus is completed contains the database event.
 */
-void RCntModel::StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent)
+void RCntModel::StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent, TDes8& aIdArray)
 	{	
-	SendReceive(ECntRequestEvent, TIpcArgs(&aEvent), aStatus);	
+	SendReceive(ECntRequestEvent, TIpcArgs(&aEvent, &aIdArray), aStatus);	
 	}
 
 
