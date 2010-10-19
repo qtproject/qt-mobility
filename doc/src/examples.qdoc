@@ -35,7 +35,7 @@
     \section2 Bearer Management
 
     \list
-    \o \l{bearercloud}{Bearer Cloud}\raisedaster
+    \o \l{bearercloud}{Bearer Cloud}
     \o \l{bearermonitor}{Bearer Monitor}
     \endlist
 
@@ -104,14 +104,14 @@
     \section2 Publish and Subscribe
 
     \list
-    \o \l{publish-subscribe}{Publish and Subscribe}\raisedaster
-    \o \l{battery-charge}{Accessing Publish and Subscribe from QML}\raisedaster
+    \o \l{publish-subscribe}{Publish and Subscribe}
+    \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
     \endlist
 
     \section2 Service Framework
 
     \list
-    \o \l{servicebrowser}{Service Browser}\raisedaster
+    \o \l{servicebrowser}{Service Browser}
     \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
     \o \l{filemanagerplugin}{File Manager Plugin}
     \o \l{notesmanagerplugin}{Notes Manager Plugin}
