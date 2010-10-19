@@ -145,6 +145,7 @@ contains(mobility_modules, feedback) {
 
 # Connectivity
 contains(mobility_modules,connectivity) {
+    SUBDIRS += connectivity
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
