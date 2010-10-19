@@ -42,6 +42,17 @@
 
 #include "qdeclarativecontactsortorder_p.h"
 
+/*!
+   \qmlclass SortOrder QDeclarativeContactSortOrder
+   \brief The SortOrder element defines how a list of contacts should be ordered according to some criteria.
+
+   \ingroup qml-contacts
+
+   This element is part of the \bold{QtMobility.contacts 1.1} module.
+
+   \sa QContactSortOrder
+   \sa ContactModel
+ */
 
 QDeclarativeContactSortOrder::QDeclarativeContactSortOrder(QObject* parent)
     :QObject(parent),
@@ -49,6 +60,13 @@ QDeclarativeContactSortOrder::QDeclarativeContactSortOrder(QObject* parent)
       m_fieldType(-1)
 {
 }
+/*!
+  \qmlproperty enumeration SortOrder::detail
+
+  This property holds the detail type of the details which will be inspected to perform sorting.
+
+  \sa ContactDetail::type
+  */
 void QDeclarativeContactSortOrder::setDetail(QDeclarativeContactDetail::ContactDetailType detailType)
 {
     m_detailType = detailType;
@@ -58,7 +76,12 @@ QDeclarativeContactDetail::ContactDetailType QDeclarativeContactSortOrder::detai
 {
     return m_detailType;
 }
+/*!
+  \qmlproperty int SortOrder::field
 
+  This property holds the detail field type of the details which will be inspected to perform sorting.
+  For each detail elements, there are predefined field types.
+  */
 void QDeclarativeContactSortOrder::setField(int fieldType)
 {
     m_fieldType = fieldType;
@@ -69,7 +92,14 @@ int QDeclarativeContactSortOrder::field() const
     return m_fieldType;
 }
 
-
+/*!
+  \qmlproperty enumeration SortOrder::blankPolicy
+  This property enumerates the ways in which the sort order interprets blanks when sorting contacts.
+  \list
+  \o SortOrder.BlanksFirst - Considers blank values to evaluate to less than all other values in comparisons.
+  \o SortOrder.BlanksLast - Considers blank values to evaluate to greater than all other values in comparisons.
+  \endlist
+ */
 QDeclarativeContactSortOrder::BlankPolicy QDeclarativeContactSortOrder::blankPolicy() const
 {
     if (m_sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst)
@@ -84,33 +114,39 @@ void QDeclarativeContactSortOrder::setBlankPolicy(QDeclarativeContactSortOrder::
     else
         m_sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
 }
+/*!
+  \qmlproperty enumeration SortOrder::direction
 
-QDeclarativeContactSortOrder::SortOrder QDeclarativeContactSortOrder::direction() const
+  This property holds the direction of the sort order, the value can be one of:
+  \list
+  \o Qt.AscendingOrder - (default)
+  \o Qt.DescendingOrder
+  \endlist
+  */
+Qt::SortOrder QDeclarativeContactSortOrder::direction() const
 {
-    if (m_sortOrder.direction() == Qt::DescendingOrder)
-        return QDeclarativeContactSortOrder::DescendingOrder;
-    return QDeclarativeContactSortOrder::AscendingOrder;
+    return m_sortOrder.direction();
 }
-void QDeclarativeContactSortOrder::setDirection(QDeclarativeContactSortOrder::SortOrder direction)
+void QDeclarativeContactSortOrder::setDirection(Qt::SortOrder direction)
 {
-    if (direction == QDeclarativeContactSortOrder::DescendingOrder)
-        m_sortOrder.setDirection(Qt::DescendingOrder);
-    else
-        m_sortOrder.setDirection(Qt::AscendingOrder);
+    m_sortOrder.setDirection(direction);
 }
+/*!
+  \qmlproperty enumeration SortOrder::caseSensitivity
 
-QDeclarativeContactSortOrder::CaseSensitivity QDeclarativeContactSortOrder::caseSensitivity() const
+  This property holds the case sensitivity of the sort order, the value can be one of:
+  \list
+  \o Qt.CaseInsensitive
+  \o Qt.CaseSensitive - (default)
+  \endlist
+  */
+Qt::CaseSensitivity QDeclarativeContactSortOrder::caseSensitivity() const
 {
-    if (m_sortOrder.caseSensitivity() == Qt::CaseInsensitive)
-        return QDeclarativeContactSortOrder::CaseInsensitive;
-    return QDeclarativeContactSortOrder::CaseSensitive;
+    return m_sortOrder.caseSensitivity();
 }
-void QDeclarativeContactSortOrder::setCaseSensitivity(QDeclarativeContactSortOrder::CaseSensitivity sensitivity)
+void QDeclarativeContactSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
 {
-    if (sensitivity == QDeclarativeContactSortOrder::CaseInsensitive)
-        m_sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
-    else
-        m_sortOrder.setCaseSensitivity(Qt::CaseSensitive);
+    m_sortOrder.setCaseSensitivity(sensitivity);
 }
 
 QContactSortOrder QDeclarativeContactSortOrder::sortOrder()
