@@ -637,7 +637,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().addressee(), to);
 
-#ifndef FREESTYLENMAILUSED
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // From address is currently taken automatically from account in Maemo implementation
     QMessageAddress fromAddress;
@@ -646,7 +645,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().addressee(), from);
 #endif
-#endif    
     QList<QMessageAddress> ccAddresses;
     foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
         QMessageAddress addr;
@@ -657,12 +655,12 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(message.cc(), ccAddresses);
 
-#ifndef FREESTYLENMAILUSED
+#ifndef FREESTYLENMAILUSED    
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Dates can not be stored with addMessage in Maemo implementation
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
 #endif
-#endif    
+#endif
     QCOMPARE(message.subject(), subject);
 
 #ifndef FREESTYLENMAILUSED    
