@@ -51,9 +51,11 @@
 
 Q_EXPORT_PLUGIN2(feedback_testplugin, QFeedbackTestPlugin)
 
-QFeedbackTestPlugin::QFeedbackTestPlugin() : QObject(qApp)
+        QFeedbackTestPlugin::QFeedbackTestPlugin() : QObject(qApp), mHapticState(QFeedbackEffect::Stopped), mFileState(QFeedbackEffect::Stopped)
 {
     actuators_ << createFeedbackActuator(this, 7357);
+    mHapticTimer.setSingleShot(true);
+    connect(&mHapticTimer, SIGNAL(timeout()), this, SLOT(timerExpired()));
 }
 
 QFeedbackTestPlugin::~QFeedbackTestPlugin()
@@ -62,7 +64,7 @@ QFeedbackTestPlugin::~QFeedbackTestPlugin()
 
 QFeedbackInterface::PluginPriority QFeedbackTestPlugin::pluginPriority()
 {
-    return PluginLowPriority;
+    return PluginHighPriority; // to make sure we get used
 }
 
 QList<QFeedbackActuator*> QFeedbackTestPlugin::actuators()
@@ -113,47 +115,83 @@ bool QFeedbackTestPlugin::isActuatorCapabilitySupported(const QFeedbackActuator 
 
 void QFeedbackTestPlugin::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty ep)
 {
-    Q_UNUSED(effect)
-    Q_UNUSED(ep)
+    if (ep == QFeedbackHapticsInterface::Duration)
+        mHapticTimer.setInterval(effect->duration());
 }
 
 void QFeedbackTestPlugin::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
 {
     Q_UNUSED(effect)
-    Q_UNUSED(state)
+    if (mHapticState != state) {
+        mHapticState = state;
+        if (mHapticState == QFeedbackEffect::Running) {
+            mHapticTimer.start();
+        } else if (mHapticState == QFeedbackEffect::Stopped) {
+            mHapticTimer.stop();
+        } else if (mHapticState == QFeedbackEffect::Paused) {
+            // In theory should set the duration to the remainder...
+            mHapticTimer.stop();
+        }
+    }
 }
 
 QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackHapticsEffect *effect)
 {
     Q_UNUSED(effect)
-    return QFeedbackEffect::Stopped;
+    return mHapticState;
 }
+
+void QFeedbackTestPlugin::timerExpired()
+{
+    mHapticState = QFeedbackEffect::Stopped;
+}
+
+
 
 void QFeedbackTestPlugin::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
     Q_UNUSED(effect)
-    Q_UNUSED(load)
+    if (effect->source() == QUrl("load")) {
+        // Succeed the load
+        if (load) {
+            mFileState = QFeedbackEffect::Loading;
+            reportLoadFinished(effect, true); // not strictly true
+        } else
+            mFileState = QFeedbackEffect::Stopped;
+    } else {
+        // Fail the load
+        if (load)
+            reportLoadFinished(effect, false);
+    }
 }
 
 void QFeedbackTestPlugin::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
     Q_UNUSED(effect)
-    Q_UNUSED(state)
+    mFileState = state;
 }
 
 QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackFileEffect *effect)
 {
     Q_UNUSED(effect)
-    return QFeedbackEffect::Stopped;
+    return mFileState;
 }
 
 int QFeedbackTestPlugin::effectDuration(const QFeedbackFileEffect *effect)
 {
     Q_UNUSED(effect)
-    return -1;
+    return 5678;
 }
 
 QStringList QFeedbackTestPlugin::supportedMimeTypes()
 {
-    return QStringList();
+    return QStringList() << "x-test/this is a test";
+}
+
+bool QFeedbackTestPlugin::play(QFeedbackEffect::ThemeEffect themeEffect)
+{
+    if (themeEffect == QFeedbackEffect::ThemeBasic)
+        return true;
+    else
+        return false;
 }
