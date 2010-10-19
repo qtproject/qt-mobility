@@ -236,6 +236,34 @@ void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationsh
     }
 }
 
+/*!
+  \qmlproperty bool RelationshipModel::autoUpdate
+
+  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  */
+bool QDeclarativeContactRelationshipModel::autoUpdate() const
+{
+    //TODO
+    return true;
+}
+void QDeclarativeContactRelationshipModel::setAutoUpdate(bool autoUpdate)
+{
+    Q_UNUSED(autoUpdate);
+    //TODO
+}
+
+/*!
+  \qmlproperty QDeclarativeListProperty RelationshipModel::relationships
+
+  This property holds a list of relationships.
+
+  \sa Relationship
+  */
+QDeclarativeListProperty<QDeclarativeContactRelationship> QDeclarativeContactRelationshipModel::relationships()
+{
+    return QDeclarativeListProperty<QDeclarativeContactRelationship>(this, d->m_declarativeRelationships);
+}
+
 int QDeclarativeContactRelationshipModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
