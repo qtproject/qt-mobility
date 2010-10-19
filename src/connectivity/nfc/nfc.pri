@@ -25,5 +25,18 @@ SOURCES += \
     nfc/qndeffilter.cpp \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp
+    
+symbian { 
+	HEADERS += \
+		nfc/qnearfieldmanager_symbian_p.h \
+		nfc/symbian/nearfieldmanager_symbian.h
+	SOURCES += \
+    	nfc/qnearfieldmanager_symbian.cpp \
+    	nfc/symbian/nearfieldmanager_symbian.cpp \	
+	
+    TARGET.CAPABILITY = ALL -TCB
+
+    LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice
+}
 
 INCLUDEPATH += $$PWD
