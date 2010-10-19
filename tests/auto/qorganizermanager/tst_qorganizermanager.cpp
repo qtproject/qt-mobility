@@ -184,6 +184,7 @@ private slots:
     void memoryManager();
     void changeSet();
     void fetchHint();
+    void testFilterFunction();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -2658,6 +2659,121 @@ void tst_QOrganizerManager::fetchHint()
     hint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QOrganizerItemFetchHint::NoBinaryBlobs);
 }
+
+void tst_QOrganizerManager::testFilterFunction()
+{
+    QOrganizerEvent item;
+    item.setId(makeItemId(10));
+    item.setStartDateTime(QDateTime(QDate(2010,10,10), QTime(10,10)));
+    item.setEndDateTime(QDateTime(QDate(2010,10,10), QTime(12,10)));
+    item.setDisplayLabel("test");
+    item.setCollectionId(makeCollectionId(1));
+
+    // Test for QOrganizerItemFilter::InvalidFilter
+    QOrganizerItemInvalidFilter fif;
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fif, item));
+
+    // Test for QOrganizerItemFilter::IdFilter:
+    QOrganizerItemIdFilter fidf;
+    fidf.setIds(QList<QOrganizerItemId>() << makeItemId(10));
+    QVERIFY(QOrganizerManagerEngine::testFilter(fidf, item));
+
+    // test for nonexistent id
+    fidf.setIds(QList<QOrganizerItemId>() << makeItemId(11));
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fidf, item));
+
+    // Test for QOrganizerItemFilter::DefaultFilter:
+    QOrganizerItemFilter fdf;
+    QVERIFY(fdf.type() == QOrganizerItemFilter::DefaultFilter);
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdf, item));
+
+    // Test for QOrganizerItemFilter::OrganizerItemDetailFilter:
+    QOrganizerItemDetailFilter fdef;
+    fdef.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel);
+    fdef.setValue("invalid");
+    // test for nonexistent label
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fdef, item));
+
+    fdef.setValue("test");
+    // test for existent label
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdef, item));
+
+    // Test for QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
+    QOrganizerItemDetailRangeFilter fdrf;
+    fdrf.setDetailDefinitionName(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime);
+    fdrf.setRange(QDateTime(QDate(2010,10,9)), QDateTime(QDate(2010,10,11)));
+    // test for a valid range
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdrf, item));
+
+    fdrf.setRange(QDateTime(QDate(2010,10,11)), QDateTime(QDate(2010,10,12)));
+    // test for item not in the range
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fdrf, item));
+
+    // Test for QOrganizerItemFilter::ChangeLogFilter:
+    QOrganizerItemChangeLogFilter fclf;
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventAdded);
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    // should fail as item does not have timestamp detail
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    // add valid timestamp detail
+    QOrganizerItemTimestamp oit;
+    oit.setCreated(QDateTime(QDate(2010,10,9)));
+    oit.setLastModified(QDateTime(QDate(2010,10,9)));
+    item.saveDetail(&oit);
+
+    // check for created date
+    QVERIFY(QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,10)));
+    // should fail because date is older then item creation date
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventChanged);
+    // check for modified date
+    QVERIFY(QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,10)));
+    // should fail because date is older then item modification date
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventRemoved);
+    // should always fail since can't be checked
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    // Test for QOrganizerItemFilter::IntersectionFilter:
+    QOrganizerItemIntersectionFilter oiif;
+    oiif.setFilters(QList<QOrganizerItemFilter>() << fif << fdf);
+    // check for an invalid filter and default filter intersection
+    QVERIFY(!QOrganizerManagerEngine::testFilter(oiif, item));
+
+    oiif.setFilters(QList<QOrganizerItemFilter>() << fdef << fdf);
+    // check for a detail filter and default filter intersection
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiif, item));
+
+    // Test for QOrganizerItemFilter::UnionFilter:
+    QOrganizerItemUnionFilter oiuf;
+    oiuf.setFilters(QList<QOrganizerItemFilter>() << fif << fdf);
+    // check for an invalid filter and default filter union
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiuf, item));
+
+    oiuf.setFilters(QList<QOrganizerItemFilter>() << fdef << fdf);
+    // check for a detail filter and default filter union
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiuf, item));
+
+    // Test for QOrganizerItemFilter::CollectionFilter:
+    QOrganizerItemCollectionFilter oicf;
+    oicf.setCollectionId(makeCollectionId(1));
+    // check for existing collection id
+    QVERIFY(QOrganizerManagerEngine::testFilter(oicf, item));
+
+    oicf.setCollectionId(makeCollectionId(2));
+    // check for nonexisting collection id
+    QVERIFY(!QOrganizerManagerEngine::testFilter(oicf, item));
+}
+
 
 void tst_QOrganizerManager::dataSerialization()
 {
