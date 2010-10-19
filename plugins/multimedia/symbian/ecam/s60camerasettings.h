@@ -47,22 +47,25 @@
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 
+#include <e32base.h>
+
 QT_USE_NAMESPACE
 
 /*
  * Class handling CCamera AdvancedSettings and ImageProcessing operations.
  */
-class S60CameraSettings : public QObject, public MAdvancedSettingsObserver
+class S60CameraSettings : public QObject,
+                          public MAdvancedSettingsObserver
 {
     Q_OBJECT
- 
-public: // Contructor & Destructor
-    
-    static S60CameraSettings* NewL(QObject *parent = 0, CCameraEngine *engine = 0);
+
+public: // Static Contructor & Destructor
+
+    static S60CameraSettings* New(int &error, QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
-    
+
 public: // Methods
-    
+
     // Focus
     QCameraFocus::FocusMode focusMode();
     void setFocusMode(QCameraFocus::FocusMode mode);
@@ -78,47 +81,47 @@ public: // Methods
 
     // Flash
     bool isFlashReady();
-    
+
     // Exposure
     void setExposureMode(QCameraExposure::ExposureMode mode);
     void lockExposure(bool lock);
-    bool isExposureLocked(); 
-    
+    bool isExposureLocked();
+
     // Metering Mode
     QCameraExposure::MeteringMode meteringMode();
     void setMeteringMode(QCameraExposure::MeteringMode mode);
     bool isMeteringModeSupported(QCameraExposure::MeteringMode mode);
-    
+
     // ISO Sensitivity
     int isoSensitivity();
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
     QList<int> supportedIsoSensitivities();
-    
+
     // Aperture
     qreal aperture();
     void setManualAperture(qreal aperture);
     QList<qreal> supportedApertures();
-    
+
     // Shutter Speed
     TInt shutterSpeed();
     void setManualShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds();
-    
+
     // ExposureCompensation
     qreal exposureCompensation();
     void setExposureCompensation(qreal ev);
     QList<qreal> supportedExposureCompensationValues();
-    
+
     // Sharpening Level
     int sharpeningLevel() const;
     void setSharpeningLevel(int value);
     bool isSharpeningSupported() const;
-    
+
     // Saturation
     int saturation();
     void setSaturation(int value);
-    
+
 Q_SIGNALS: // Notifications
 
     // For QCameraExposureControl
@@ -127,11 +130,11 @@ Q_SIGNALS: // Notifications
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
-    
+
     // For QCameraLocksControl
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
-    
+
     // Errors
     void error(int, const QString&);
 
@@ -160,10 +163,10 @@ private: // Enums
 
 private: // Data
 
-#ifndef S60_CAM_AUTOFOCUS_SUPPORT // Post S60 3.1 Platforms
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platforms
     CCamera::CCameraAdvancedSettings    *m_advancedSettings;
     CCamera::CCameraImageProcessing     *m_imageProcessingSettings;
-#endif // S60_CAM_AUTOFOCUS_SUPPORT
+#endif // S60_31_PLATFORM
     CCameraEngine                       *m_cameraEngine;
     QList<qreal>                        m_supportedDigitalZoomFactors;
 };

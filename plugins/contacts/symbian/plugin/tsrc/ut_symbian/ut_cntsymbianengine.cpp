@@ -811,7 +811,7 @@ void TestSymbianEngine::removeContacts()
         QVERIFY(err == QContactManager::DoesNotExistError);
     }
 
-    // Remove a list with one non existent contact
+    // Remove a list, one contact is a template contact - not allowed
     contacts.clear();
     for(int i=0; i<count; i++) {
         QContact c;
@@ -825,6 +825,20 @@ void TestSymbianEngine::removeContacts()
     QVERIFY(!m_engine->removeContacts(contacts, &errorMap, &err));
     QVERIFY(err == QContactManager::BadArgumentError); //not allowed to delete
                                                     //a contact with id = 0
+    
+    // Remove a list with one non-existent contact
+    contacts.clear();
+    for(int i=0; i<count; i++) {
+        QContact c;
+        c.setType(QContactType::TypeContact);
+        QVERIFY(m_engine->saveContact(&c, &err));
+        QVERIFY(err == QContactManager::NoError);
+        contacts.append(c.localId());
+    }
+    contacts.insert(3, 1000000);
+    // Invalid ids in the list do not prevent from deleting existing contacts 
+    QVERIFY(m_engine->removeContacts(contacts, &errorMap, &err));
+    QVERIFY(err == QContactManager::NoError); 
 }
 
 void TestSymbianEngine::addOwnCard()
