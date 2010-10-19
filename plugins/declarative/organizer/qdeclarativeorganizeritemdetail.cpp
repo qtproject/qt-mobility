@@ -302,8 +302,6 @@ QString QDeclarativeOrganizerItemRecurrence::fieldNameFromFieldType(int type)
 QString QDeclarativeOrganizerItemReminder::fieldNameFromFieldType(int type)
 {
     switch (type) {
-    case QDeclarativeOrganizerItemReminder::Type:
-        return QOrganizerItemReminder::FieldReminderType;
     case QDeclarativeOrganizerItemReminder::SecondsBeforeStart:
         return QOrganizerItemReminder::FieldSecondsBeforeStart;
     case QDeclarativeOrganizerItemReminder::RepetitionCount:

@@ -1009,7 +1009,7 @@ EXPORTS
 	?priority@QOrganizerTodoOccurrence@QtMobility@@QBE?AW4Priority@QOrganizerItemPriority@2@XZ @ 1008 NONAME ; enum QtMobility::QOrganizerItemPriority::Priority QtMobility::QOrganizerTodoOccurrence::priority(void) const
 	?dueDateTime@QOrganizerTodoTime@QtMobility@@QBE?AVQDateTime@@XZ @ 1009 NONAME ; class QDateTime QtMobility::QOrganizerTodoTime::dueDateTime(void) const
 	?updateDefinitionSaveRequest@QOrganizerManagerEngine@QtMobility@@SAXPAVQOrganizerItemDetailDefinitionSaveRequest@2@ABV?$QList@VQOrganizerItemDetailDefinition@QtMobility@@@@W4Error@QOrganizerManager@2@ABV?$QMap@HW4Error@QOrganizerManager@QtMobility@@@@W4State@QOrganizerAbstractRequest@2@@Z @ 1010 NONAME ; void QtMobility::QOrganizerManagerEngine::updateDefinitionSaveRequest(class QtMobility::QOrganizerItemDetailDefinitionSaveRequest *, class QList<class QtMobility::QOrganizerItemDetailDefinition> const &, enum QtMobility::QOrganizerManager::Error, class QMap<int, enum QtMobility::QOrganizerManager::Error> const &, enum QtMobility::QOrganizerAbstractRequest::State)
-	?FieldReminderType@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$0N@@2@B @ 1011 NONAME ; struct QtMobility::QLatin1Constant<13> const QtMobility::QOrganizerItemReminder::FieldReminderType
+	?FieldReminderType@QOrganizerItemReminder@QtMobility@@2U?$QLatin1Constant@$0N@@2@B @ 1011 NONAME ABSENT ; struct QtMobility::QLatin1Constant<13> const QtMobility::QOrganizerItemReminder::FieldReminderType
 	??0QOrganizerItemParent@QtMobility@@QAE@XZ @ 1012 NONAME ; QtMobility::QOrganizerItemParent::QOrganizerItemParent(void)
 	?tr@QOrganizerItemDetailDefinitionFetchRequest@QtMobility@@SA?AVQString@@PBD0H@Z @ 1013 NONAME ; class QString QtMobility::QOrganizerItemDetailDefinitionFetchRequest::tr(char const *, char const *, int)
 	?exceptionDates@QOrganizerTodo@QtMobility@@QBE?AV?$QSet@VQDate@@@@XZ @ 1014 NONAME ; class QSet<class QDate> QtMobility::QOrganizerTodo::exceptionDates(void) const
@@ -1079,4 +1079,16 @@ EXPORTS
 	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQOrganizerItemSortOrder@0@@Z @ 1078 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QOrganizerItemSortOrder &)
 	?variantValues@QOrganizerItemDetail@QtMobility@@QBE?AV?$QMap@VQString@@VQVariant@@@@XZ @ 1079 NONAME ; class QMap<class QString, class QVariant> QtMobility::QOrganizerItemDetail::variantValues(void) const
 	?setDateTime@QOrganizerJournal@QtMobility@@QAEXABVQDateTime@@@Z @ 1080 NONAME ; void QtMobility::QOrganizerJournal::setDateTime(class QDateTime const &)
+	??0QOrganizerItemComment@QtMobility@@QAE@ABV01@@Z @ 1081 NONAME ; QtMobility::QOrganizerItemComment::QOrganizerItemComment(class QtMobility::QOrganizerItemComment const &)
+	??_EQOrganizerItemSortOrder@QtMobility@@QAE@I@Z @ 1082 NONAME ; QtMobility::QOrganizerItemSortOrder::~QOrganizerItemSortOrder(unsigned int)
+	??0QOrganizerItemEngineId@QtMobility@@QAE@XZ @ 1083 NONAME ; QtMobility::QOrganizerItemEngineId::QOrganizerItemEngineId(void)
+	??_EQOrganizerCollection@QtMobility@@QAE@I@Z @ 1084 NONAME ; QtMobility::QOrganizerCollection::~QOrganizerCollection(unsigned int)
+	??_EQOrganizerCollectionId@QtMobility@@QAE@I@Z @ 1085 NONAME ; QtMobility::QOrganizerCollectionId::~QOrganizerCollectionId(unsigned int)
+	??_EQOrganizerItemComment@QtMobility@@QAE@I@Z @ 1086 NONAME ; QtMobility::QOrganizerItemComment::~QOrganizerItemComment(unsigned int)
+	??_EQOrganizerItemFilter@QtMobility@@QAE@I@Z @ 1087 NONAME ; QtMobility::QOrganizerItemFilter::~QOrganizerItemFilter(unsigned int)
+	??_EQOrganizerItem@QtMobility@@QAE@I@Z @ 1088 NONAME ; QtMobility::QOrganizerItem::~QOrganizerItem(unsigned int)
+	??0QOrganizerCollectionEngineId@QtMobility@@QAE@XZ @ 1089 NONAME ; QtMobility::QOrganizerCollectionEngineId::QOrganizerCollectionEngineId(void)
+	??_EQOrganizerItemId@QtMobility@@QAE@I@Z @ 1090 NONAME ; QtMobility::QOrganizerItemId::~QOrganizerItemId(unsigned int)
+	??_EQOrganizerItemDetailDefinition@QtMobility@@QAE@I@Z @ 1091 NONAME ; QtMobility::QOrganizerItemDetailDefinition::~QOrganizerItemDetailDefinition(unsigned int)
+	??_EQOrganizerItemDetail@QtMobility@@QAE@I@Z @ 1092 NONAME ; QtMobility::QOrganizerItemDetail::~QOrganizerItemDetail(unsigned int)
 

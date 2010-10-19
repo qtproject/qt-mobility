@@ -662,7 +662,15 @@ public:
 
     ReminderType reminderType() const
     {
-        return  static_cast<ReminderType>(m_detail.value<int>(QOrganizerItemReminder::FieldReminderType));
+        if (m_detail.definitionName() == QOrganizerItemAudibleReminder::DefinitionName) {
+            return QDeclarativeOrganizerItemReminder::AudibleReminder;
+        } else if (m_detail.definitionName() == QOrganizerItemEmailReminder::DefinitionName) {
+            return QDeclarativeOrganizerItemReminder::EmailReminder;
+        } else if (m_detail.definitionName() == QOrganizerItemVisualReminder::DefinitionName) {
+            return QDeclarativeOrganizerItemReminder::VisualReminder;
+        }
+
+        return QDeclarativeOrganizerItemReminder::NoReminder;
     }
 
     void setSecondsBeforeStart(int seconds)
