@@ -94,6 +94,7 @@ public:
     ~LocalSocketEndPoint() 
     {
         disconnect(this, SLOT(ipcfault()));
+        socket->close();
     }
 
 Q_SIGNALS:
@@ -302,34 +303,12 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
             QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
             QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
                              proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
-            PROXY pr;
-            pr.init();
-            pr.pObjectEndPoint = endPoint;
-            pr.pSocket = socket;
-            proxylist.append(pr);
         }
+        ipcEndPoint->setParent(proxy);
+        endPoint->setParent(proxy);
         return proxy;
     }
     return 0;
-}
-
-void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& serviceName)
-{
-    QList<PROXY> todelete;
-    for(int i = 0; i < proxylist.count(); i++){
-        if(proxylist[i].servicename == serviceName){
-            todelete.append(proxylist[i]);
-        }
-    }
-    for(int i = 0; i < todelete.count(); i++){
-        int delidx = proxylist.indexOf(todelete[i]);
-        if(todelete[i].pSocket)
-            todelete[i].pSocket->close();
-        if(todelete[i].pObjectEndPoint)
-            todelete[i].pObjectEndPoint->disconnect();
-        delete todelete[i].pObjectEndPoint;
-        proxylist.removeAt(delidx);
-    }
 }
 
 #include "moc_qremoteserviceregister_ls_p.cpp"

@@ -657,8 +657,7 @@ bool QServiceManager::removeService(const QString& serviceName)
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {
         d->setError();
         return false;
-    }
-    QRemoteServiceRegisterPrivate::removeProxyForService(serviceName);
+    }    
     return true;
 }
 
