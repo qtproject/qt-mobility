@@ -353,7 +353,10 @@ of those landmarks have NaN latitude or longitude values.
 
 Landmark selection is facilitated by filter and sort order classes.  The filter classes
 define what criteria that landmarks must match and the sort order classes specify how
-the returned landmarks are sorted.  The filter and sort order classes are used with either
+the returned landmarks are sorted.  Please note that sorting by
+distance is facilitated by the QLandmarkProximity class.  Providing a QLandmarkProximity
+filter in an intersection filter will sort results in order of ascending distance
+(on the condition only a default sort order class is used). The filter and sort order classes are used with either
 the QLandmarkManager class (for synchronous landmark selection) or the request classes
 for (asynchronous landmark selection)
 

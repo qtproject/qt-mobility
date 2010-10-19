@@ -112,7 +112,7 @@ public:
 
     QFeedbackFileEffect *effect;
 
-    QString fileName;
+    QUrl url;
     bool loaded;
 
     //used for loading the file

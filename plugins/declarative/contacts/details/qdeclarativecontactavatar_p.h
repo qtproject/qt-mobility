@@ -53,37 +53,50 @@ class  QDeclarativeContactAvatar : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        FieldImageUrl = 0,
-        FieldVideoUrl
+        ImageUrl = 0,
+        VideoUrl
     };
     QDeclarativeContactAvatar(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAvatar());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
-    void setImageUrl(const QUrl& imageUrl) {if (!readOnly()) detail().setValue(QContactAvatar::FieldImageUrl, imageUrl);}
+    void setImageUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != imageUrl()) {
+            detail().setValue(QContactAvatar::FieldImageUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl imageUrl() const {return detail().value<QUrl>(QContactAvatar::FieldImageUrl);}
 
-    void setVideoUrl(const QUrl& videoUrl) {if (!readOnly()) detail().setValue(QContactAvatar::FieldVideoUrl, videoUrl);}
+    void setVideoUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != videoUrl()) {
+            detail().setValue(QContactAvatar::FieldVideoUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl videoUrl() const {return detail().value<QUrl>(QContactAvatar::FieldVideoUrl);}
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactAvatar;
+        return QDeclarativeContactDetail::Avatar;
     }
 
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldImageUrl:
-            return QContactAvatar::FieldVideoUrl;
-        case FieldVideoUrl:
+        case ImageUrl:
+            return QContactAvatar::FieldImageUrl;
+        case VideoUrl:
             return QContactAvatar::FieldVideoUrl;
         default:
             break;
         }
-        return "";
+        //QWarning()
+        return QString();
     }
 signals:
     void fieldsChanged();

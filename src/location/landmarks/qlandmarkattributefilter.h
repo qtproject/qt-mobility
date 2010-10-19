@@ -61,8 +61,8 @@ public:
     enum OperationType{AndOperation, OrOperation};
 
     QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value = QVariant(), QLandmarkFilter::MatchFlags flags =0);
-    void setAttributes(const QStringList &key, const QVariant &value = QVariant(), QLandmarkFilter::MatchFlags flags=0);
+    void setAttribute(const QString &key, const QVariant &value, QLandmarkFilter::MatchFlags flags =0);
+    void setAttributes(const QStringList &key, const QVariant &value, QLandmarkFilter::MatchFlags flags=0);
     void removeAttribute(const QString &key);
     void clearAttributes();
     QStringList attributeKeys() const;

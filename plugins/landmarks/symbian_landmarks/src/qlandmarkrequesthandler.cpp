@@ -82,20 +82,32 @@ void CLandmarkRequestAO::RunL()
             SetActive();
         }
         else if (iStatus == KErrNone && IsMultiOperationRequest()) {
-            TRAP_IGNORE(iObserver->HandleExecutionL(iParent, iStatus);)
-            //qDebug() << "iStatus = " << iStatus.Int();
-            iStatus = KRequestPending;
-            if (iOperation) {
-                iOperation->NextStep(iStatus, iProgress);
-                SetActive();
+            TRAPD(err, iObserver->HandleExecutionL(iParent, iStatus);)
+            if (err == KErrNone) {
+                //qDebug() << "iStatus = " << iStatus.Int();
+                iStatus = KRequestPending;
+                if (iOperation) {
+                    iOperation->NextStep(iStatus, iProgress);
+                    SetActive();
+                }
+                else {
+                    //qDebug() << "starting multi-operation";
+                    SetActive();
+                    // Only for the Landmark save and Category save. These dont have async operations.
+                    // Self completing ative object.
+                    TRequestStatus *Ptr = &iStatus;
+                    User::RequestComplete(Ptr, KErrNone);
+                }
             }
             else {
-                //qDebug() << "starting multi-operation";
-                SetActive();
-                // Only for the Landmark save and Category save. These dont have async operations.
-                // Self completing ative object.
-                TRequestStatus *Ptr = &iStatus;
-                User::RequestComplete(Ptr, KErrNone);
+
+                iIsComplete = ETrue;
+                // All processing is done now. Notify observer.
+                iParent->iErrorId = err;
+                iObserver->HandleCompletionL(iParent);
+                WakeupThreads(iStatus.Int());
+                iIsRequestRunning = EFalse;
+
             }
         }
         // if request is complete or any error occured 

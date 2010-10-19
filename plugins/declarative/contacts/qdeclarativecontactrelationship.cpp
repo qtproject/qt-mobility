@@ -1,5 +1,5 @@
 #include "qdeclarativecontactrelationship_p.h"
-
+#include <QDebug>
 
 QDeclarativeContactRelationship::QDeclarativeContactRelationship(QObject* parent)
     :QObject(parent)
@@ -7,17 +7,17 @@ QDeclarativeContactRelationship::QDeclarativeContactRelationship(QObject* parent
 
 }
 
-int QDeclarativeContactRelationship::first() const
+QContactLocalId QDeclarativeContactRelationship::first() const
 {
     return m_relationship.first().localId();
 }
 
-int  QDeclarativeContactRelationship::second() const
+QContactLocalId  QDeclarativeContactRelationship::second() const
 {
     return m_relationship.second().localId();
 }
 
-QDeclarativeContactRelationship::Type QDeclarativeContactRelationship::relationshipType() const
+QVariant QDeclarativeContactRelationship::relationshipType() const
 {
     QString type = m_relationship.relationshipType();
     if (type == QContactRelationship::HasAssistant)
@@ -32,47 +32,55 @@ QDeclarativeContactRelationship::Type QDeclarativeContactRelationship::relations
         return QDeclarativeContactRelationship::HasSpouse;
     if (type == QContactRelationship::IsSameAs)
         return QDeclarativeContactRelationship::IsSameAs;
-    return QDeclarativeContactRelationship::InvalidType;
+    //customized type
+    return type;
 }
 
-void QDeclarativeContactRelationship::setFirst(int firstId)
+void QDeclarativeContactRelationship::setFirst(QContactLocalId firstId)
 {
     QContactId id;
     id.setLocalId(firstId);
     m_relationship.setFirst(id);
 }
 
-void QDeclarativeContactRelationship::setSecond(int secondId)
+void QDeclarativeContactRelationship::setSecond(QContactLocalId secondId)
 {
     QContactId id;
     id.setLocalId(secondId);
     m_relationship.setSecond(id);
 }
 
-void QDeclarativeContactRelationship::setRelationshipType(QDeclarativeContactRelationship::Type relationshipType)
+void QDeclarativeContactRelationship::setRelationshipType(const QVariant& relationshipType)
 {
-    switch (relationshipType) {
-    case QDeclarativeContactRelationship::HasMember:
-        m_relationship.setRelationshipType(QContactRelationship::HasMember);
-        break;
-    case QDeclarativeContactRelationship::Aggregates:
-        m_relationship.setRelationshipType(QContactRelationship::Aggregates);
-        break;
-    case QDeclarativeContactRelationship::IsSameAs:
-        m_relationship.setRelationshipType(QContactRelationship::IsSameAs);
-        break;
-    case QDeclarativeContactRelationship::HasAssistant:
-        m_relationship.setRelationshipType(QContactRelationship::HasAssistant);
-        break;
-    case QDeclarativeContactRelationship::HasManager:
-        m_relationship.setRelationshipType(QContactRelationship::HasManager);
-        break;
-    case QDeclarativeContactRelationship::HasSpouse:
-        m_relationship.setRelationshipType(QContactRelationship::HasSpouse);
-        break;
-    default:
-        break;
+    if (relationshipType.type() == QVariant::Double) {//numbers in qml are set to double, even it's integer
+        switch (relationshipType.toInt()) {
+        case QDeclarativeContactRelationship::HasMember:
+            m_relationship.setRelationshipType(QContactRelationship::HasMember);
+            break;
+        case QDeclarativeContactRelationship::Aggregates:
+            m_relationship.setRelationshipType(QContactRelationship::Aggregates);
+            break;
+        case QDeclarativeContactRelationship::IsSameAs:
+            m_relationship.setRelationshipType(QContactRelationship::IsSameAs);
+            break;
+        case QDeclarativeContactRelationship::HasAssistant:
+            m_relationship.setRelationshipType(QContactRelationship::HasAssistant);
+            break;
+        case QDeclarativeContactRelationship::HasManager:
+            m_relationship.setRelationshipType(QContactRelationship::HasManager);
+            break;
+        case QDeclarativeContactRelationship::HasSpouse:
+            m_relationship.setRelationshipType(QContactRelationship::HasSpouse);
+            break;
+        default:
+            //unknown type
+            qWarning() << "unknown relationship type:" << relationshipType;
+            break;
+        }
+    } else {
+        m_relationship.setRelationshipType(relationshipType.toString());
     }
+
 }
 
 

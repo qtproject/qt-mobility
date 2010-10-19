@@ -54,30 +54,37 @@ class QDeclarativeContactGuid : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "guid")
 public:
     enum FieldType {
-        FieldGuid = 0
+        Guid = 0
     };
     QDeclarativeContactGuid(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGuid());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactGuid;
+        return QDeclarativeContactDetail::Guid;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldGuid:
+        case Guid:
             return QContactGuid::FieldGuid;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setGuid(const QString& guid) {if (!readOnly()) detail().setValue(QContactGuid::FieldGuid, guid);}
+    void setGuid(const QString& v)
+    {
+        if (!readOnly() && v != guid()) {
+            detail().setValue(QContactGuid::FieldGuid, v);
+            emit fieldsChanged();
+        }
+    }
     QString guid() const {return detail().value(QContactGuid::FieldGuid);}
 signals:
     void fieldsChanged();

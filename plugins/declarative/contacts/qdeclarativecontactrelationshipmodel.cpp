@@ -42,6 +42,8 @@
 #include "qcontactmanager.h"
 #include "qcontactrequests.h"
 
+#include <QDebug>
+#include <QPixmap>
 
 class QDeclarativeContactRelationshipModelPrivate
 {
@@ -59,13 +61,11 @@ public:
     }
 
     QContactManager* m_manager;
-    QString m_relationshipType;
-    int m_participantId;
-    QDeclarativeContactRelationship::Role m_role;
-    QList<QDeclarativeContactRelationship*> m_relationships;
-    QContactRelationshipFetchRequest m_fetchRequest;
-    QContactRelationshipRemoveRequest m_removeRequest;
-    QContactRelationshipSaveRequest m_saveRequest;
+    QDeclarativeContactRelationship m_relationshipTypeHolder;
+    QContactLocalId m_participantId;
+    QDeclarativeContactRelationship::RelationshipRole m_role;
+    QList<QContactRelationship> m_relationships;
+    QList<QDeclarativeContactRelationship*> m_declarativeRelationships;
 };
 
 QDeclarativeContactRelationshipModel::QDeclarativeContactRelationshipModel(QObject *parent)
@@ -83,11 +83,6 @@ QDeclarativeContactRelationshipModel::QDeclarativeContactRelationshipModel(QObje
     connect(this, SIGNAL(relationshipTypeChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(roleChanged()), SLOT(fetchAgain()));
 
-    connect(d->m_manager,SIGNAL(relationshipsAdded(const QList<QContactLocalId>&)), this, SLOT(fetchAgain()));
-    connect(d->m_manager,SIGNAL(relationshipsRemoved(const QList<QContactLocalId>&)), this, SLOT(fetchAgain()));
-    connect(&d->m_removeRequest,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(relationshipRemoved()));
-    connect(&d->m_saveRequest,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(relationshipSaved()));
-    connect(&d->m_fetchRequest,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(relationshipFetched()));
 }
 
 QDeclarativeContactRelationshipModel::~QDeclarativeContactRelationshipModel()
@@ -101,19 +96,57 @@ QString QDeclarativeContactRelationshipModel::manager() const
         return d->m_manager->managerName();
     return QString();
 }
+QString QDeclarativeContactRelationshipModel::error() const
+{
+    switch (d->m_manager->error()) {
+    case QContactManager::DoesNotExistError:
+        return QLatin1String("Not exist");
+    case QContactManager::AlreadyExistsError:
+        return QLatin1String("Already exist");
+    case QContactManager::InvalidDetailError:
+        return QLatin1String("Invalid detail");
+    case QContactManager::InvalidRelationshipError:
+        return QLatin1String("Invalid relationship");
+    case QContactManager::LockedError:
+        return QLatin1String("Locked error");
+    case QContactManager::DetailAccessError:
+        return QLatin1String("Detail access error");
+    case QContactManager::PermissionsError:
+        return QLatin1String("Permissions error");
+    case QContactManager::OutOfMemoryError:
+        return QLatin1String("Out of memory");
+    case QContactManager::NotSupportedError:
+        return QLatin1String("Not supported");
+    case QContactManager::BadArgumentError:
+        return QLatin1String("Bad argument");
+    case QContactManager::UnspecifiedError:
+        return QLatin1String("Unspecified error");
+    case QContactManager::VersionMismatchError:
+        return QLatin1String("Version mismatch");
+    case QContactManager::LimitReachedError:
+        return QLatin1String("Limit reached");
+    case QContactManager::InvalidContactTypeError:
+        return QLatin1String("Invalid contact type");
+    default:
+        break;
+    }
+    return QLatin1String("Status ok");
+}
 void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
 {
     if (d->m_manager == 0 || manager != d->m_manager->managerName() ) {
         d->m_manager = new QContactManager(manager,QMap<QString,QString>(), this);
+        connect(d->m_manager,SIGNAL(relationshipsAdded(const QList<QContactLocalId>&)), this, SLOT(fetchAgain()));
+        connect(d->m_manager,SIGNAL(relationshipsRemoved(const QList<QContactLocalId>&)), this, SLOT(fetchAgain()));
         emit managerChanged();
     }
 }
 
-int QDeclarativeContactRelationshipModel::participantId() const
+QContactLocalId QDeclarativeContactRelationshipModel::participantId() const
 {
     return d->m_participantId;
 }
-void QDeclarativeContactRelationshipModel::setParticipantId(int id)
+void QDeclarativeContactRelationshipModel::setParticipantId(const QContactLocalId& id)
 {
     if (d->m_participantId != id) {
         d->m_participantId = id;
@@ -121,23 +154,23 @@ void QDeclarativeContactRelationshipModel::setParticipantId(int id)
     }
 }
 
-QString QDeclarativeContactRelationshipModel::relationshipType() const
+QVariant QDeclarativeContactRelationshipModel::relationshipType() const
 {
-    return d->m_relationshipType;
+    return d->m_relationshipTypeHolder.relationshipType();
 }
-void QDeclarativeContactRelationshipModel::setRelationshipType(const QString& type)
+void QDeclarativeContactRelationshipModel::setRelationshipType(const QVariant& type)
 {
-    if (d->m_relationshipType != type) {
-        d->m_relationshipType = type;
+    if (type != relationshipType()) {
+        d->m_relationshipTypeHolder.setRelationshipType(type);
         emit relationshipTypeChanged();
     }
 }
 
-QDeclarativeContactRelationship::Role QDeclarativeContactRelationshipModel::role() const
+QDeclarativeContactRelationship::RelationshipRole QDeclarativeContactRelationshipModel::role() const
 {
     return d->m_role;
 }
-void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationship::Role role)
+void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationship::RelationshipRole role)
 {
     if (d->m_role != role) {
         d->m_role = role;
@@ -149,43 +182,52 @@ void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationsh
 int QDeclarativeContactRelationshipModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return d->m_relationships.count();
+    return d->m_declarativeRelationships.count();
 }
 
 QVariant QDeclarativeContactRelationshipModel::data(const QModelIndex &index, int role) const
 {
-    QDeclarativeContactRelationship* dcr = d->m_relationships.value(index.row());
+    QDeclarativeContactRelationship* dcr = d->m_declarativeRelationships.value(index.row());
     if (role == RelationshipRole) {
         return QVariant::fromValue(dcr);
+    } else if (role == Qt::DisplayRole) {
+        return QString("%1 %2 %3").arg(dcr->first()).arg(dcr->relationship().relationshipType()).arg(dcr->second());
     }
     return QVariant();
-}
-
-QDeclarativeListProperty<QDeclarativeContactRelationship> QDeclarativeContactRelationshipModel::relationships()
-{
-    return QDeclarativeListProperty<QDeclarativeContactRelationship>(this, d->m_relationships);
 }
 
 void QDeclarativeContactRelationshipModel::fetchAgain()
 {
     if (d->m_manager) {
-        //make sure the request is not running
-        d->m_fetchRequest.waitForFinished();
-
-        d->m_fetchRequest.setManager(d->m_manager);
+        QContactRelationshipFetchRequest* req = new QContactRelationshipFetchRequest(this);
+        req->setManager(d->m_manager);
 
         QContactId id;
         id.setManagerUri(d->m_manager->managerUri());
         id.setLocalId(d->m_participantId);
         if (d->m_role == QDeclarativeContactRelationship::First || d->m_role == QDeclarativeContactRelationship::Either)
-            d->m_fetchRequest.setFirst(id);
+            req->setFirst(id);
 
         if (d->m_role == QDeclarativeContactRelationship::Second || d->m_role == QDeclarativeContactRelationship::Either)
-            d->m_fetchRequest.setSecond(id);
+            req->setSecond(id);
 
-        d->m_fetchRequest.setRelationshipType(d->m_relationshipType);
 
-        d->m_fetchRequest.start();
+        req->setRelationshipType(d->m_relationshipTypeHolder.relationship().relationshipType());
+        connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(requestUpdated()));
+
+        req->start();
+    }
+}
+
+void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
+{
+    if (dcr) {
+        QContactRelationship cr = dcr->relationship();
+        QContactRelationshipSaveRequest* req = new QContactRelationshipSaveRequest(this);
+        req->setManager(d->m_manager);
+        req->setRelationship(cr);
+        connect(req, SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(relationshipsSaved()));
+        req->start();
     }
 }
 
@@ -193,68 +235,101 @@ void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContac
 {
     if (dcr) {
         QContactRelationship cr = dcr->relationship();
-        d->m_removeRequest.setManager(d->m_manager);
-        d->m_removeRequest.setRelationship(cr);
-
-        //make sure the request is not running
-        d->m_removeRequest.waitForFinished();
-
-        d->m_removeRequest.start();
+        QContactRelationshipRemoveRequest* req = new QContactRelationshipRemoveRequest(this);
+        req->setManager(d->m_manager);
+        req->setRelationship(cr);
+        connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(relationshipsRemoved()));
+        req->start();
     }
 }
 
-void QDeclarativeContactRelationshipModel::relationshipFetched()
+void QDeclarativeContactRelationshipModel::requestUpdated()
 {
-    if (d->m_fetchRequest.isFinished() && d->m_fetchRequest.error() == QContactManager::NoError) {
+    QContactRelationshipFetchRequest* req = qobject_cast<QContactRelationshipFetchRequest*>(sender());
 
-        foreach(QDeclarativeContactRelationship* dcr, d->m_relationships) {
+    if (req->isFinished() && req->error() == QContactManager::NoError) {
+
+        QList<QContactRelationship> relationships = req->relationships();
+
+        reset();
+        beginInsertRows(QModelIndex(), 0, relationships.count());
+
+        foreach(QDeclarativeContactRelationship* dcr, d->m_declarativeRelationships) {
             dcr->deleteLater();
         }
+        d->m_declarativeRelationships.clear();
         d->m_relationships.clear();
 
-        foreach (const QContactRelationship& cr, d->m_fetchRequest.relationships()) {
+
+        foreach (const QContactRelationship& cr, relationships) {
             QDeclarativeContactRelationship* dcr = new QDeclarativeContactRelationship(this);
             dcr->setRelationship(cr);
-            connect(dcr, SIGNAL(valueChanged()), this, SLOT(saveRelationship()));
-            d->m_relationships.append(dcr);;
+            d->m_declarativeRelationships.append(dcr);
+            d->m_relationships.append(cr);
         }
+        endInsertRows();
 
+        req->deleteLater();
         emit relationshipsChanged();
     }
 }
 
-void QDeclarativeContactRelationshipModel::saveRelationship()
+void QDeclarativeContactRelationshipModel::relationshipsSaved()
 {
-    QDeclarativeContactRelationship* dcr = qobject_cast<QDeclarativeContactRelationship*>(QObject::sender());
-    if (dcr) {
-        QContactRelationship cr = dcr->relationship();
-        d->m_saveRequest.setManager(d->m_manager);
-        d->m_saveRequest.setRelationship(cr);
+    QContactRelationshipSaveRequest* req = qobject_cast<QContactRelationshipSaveRequest*>(sender());
 
-        //make sure the request is not running
-        d->m_saveRequest.waitForFinished();
+    if (req->isFinished()) {
+        QList<QContactRelationship> rs = req->relationships();
+        QList<int> errorIds = req->errorMap().keys();
 
-        d->m_saveRequest.start();
+        for( int i = 0; i < rs.count(); i++) {
+            if (!errorIds.contains(i)) {
+                //saved
+                QContactRelationship r = rs.at(i);
+
+                if (!d->m_relationships.contains(r)) {
+                    //new relationship saved
+                    QDeclarativeContactRelationship* dcr = new QDeclarativeContactRelationship(this);
+                    dcr->setRelationship(r);
+                    beginInsertRows(QModelIndex(), d->m_declarativeRelationships.count(), d->m_declarativeRelationships.count());
+                    d->m_declarativeRelationships.append(dcr);
+                    d->m_relationships.append(r);
+                    endInsertRows();
+                }
+            }
+        }
+        req->deleteLater();
     }
 }
 
-void QDeclarativeContactRelationshipModel::removeRelationship()
+void QDeclarativeContactRelationshipModel::relationshipsRemoved()
 {
-    QDeclarativeContactRelationship* dcr = qobject_cast<QDeclarativeContactRelationship*>(QObject::sender());
-    removeRelationship(dcr);
-}
+    QContactRelationshipRemoveRequest* req = qobject_cast<QContactRelationshipRemoveRequest*>(sender());
+
+    if (req->isFinished()) {
+        QList<QContactRelationship> rs = req->relationships();
+        QList<int> errorIds = req->errorMap().keys();
 
 
-void QDeclarativeContactRelationshipModel::relationshipSaved()
-{
-    if (d->m_saveRequest.isFinished() && d->m_saveRequest.error() != QContactManager::NoError) {
-        fetchAgain();
-    }
-}
-
-void QDeclarativeContactRelationshipModel::relationshipRemoved()
-{
-    if (d->m_removeRequest.isFinished() && d->m_removeRequest.error() == QContactManager::NoError) {
-        fetchAgain();
+        for( int i = 0; i < rs.count(); i++) {
+            if (!errorIds.contains(i)) {
+                int row = 0;
+                QContactRelationship r = rs.at(i);
+                for (; row < d->m_relationships.count(); row++) {
+                    if (d->m_relationships.at(row) == r)
+                        break;
+                }
+                if (row < d->m_relationships.count()) {
+                    beginRemoveRows(QModelIndex(), row, row);
+                    d->m_declarativeRelationships.removeAt(row);
+                    d->m_relationships.removeAt(row);
+                    endRemoveRows();
+                } else {
+                    //impossible?
+                    qWarning() << "this relationship '" << row << "' was already removed!";
+                }
+            }
+        }
+        req->deleteLater();
     }
 }

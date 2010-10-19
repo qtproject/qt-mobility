@@ -285,7 +285,13 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackHapticsEff
 
 void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
-    const QString fileName = effect->fileName();
+    const QUrl url = effect->source();
+
+    // This doesn't handle qrc urls..
+    const QString fileName = url.toLocalFile();
+    if (fileName.isEmpty())
+        return;
+
     if (!load && !fileData.contains(fileName))
         return;
 

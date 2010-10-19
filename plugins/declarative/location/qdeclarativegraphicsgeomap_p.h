@@ -113,7 +113,7 @@ public:
     qreal zoomLevel() const;
 
     void setCenter(const QDeclarativeCoordinate *center);
-    QDeclarativeCoordinate* center() const;
+    QDeclarativeCoordinate* center();
 
     void setMapType(MapType mapType);
     MapType mapType() const;
@@ -146,6 +146,9 @@ private Q_SLOTS:
     void internalCenterChanged(const QGeoCoordinate &coordinate);
     void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+    void centerLatitudeChanged(double latitude);
+    void centerLongitudeChanged(double longitude);
+    void centerAltitudeChanged(double altitude);
 
 private:
     static void object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);

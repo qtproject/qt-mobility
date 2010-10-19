@@ -49,9 +49,9 @@
 class QDeclarativeContactRelationshipFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeContactRelationship::Type relationshipType READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_PROPERTY(int relatedContactId READ relatedContactId WRITE setRelatedContactId NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeContactRelationship::Role relatedContactRole READ relatedContactRole WRITE setRelatedContactRole NOTIFY valueChanged)
+    Q_PROPERTY(QVariant relationshipType READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
+    Q_PROPERTY(QContactLocalId relatedContactId READ relatedContactId WRITE setRelatedContactId NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeContactRelationship::RelationshipRole relatedContactRole READ relatedContactRole WRITE setRelatedContactRole NOTIFY valueChanged)
 
 public:
 
@@ -60,95 +60,73 @@ public:
     {
     }
 
-    QDeclarativeContactRelationship::Type relationshipType() const
+    QVariant relationshipType() const
     {
-        QString type = d.relationshipType();
-        if (type == QContactRelationship::HasAssistant)
-            return QDeclarativeContactRelationship::HasAssistant;
-        if (type == QContactRelationship::Aggregates)
-            return QDeclarativeContactRelationship::Aggregates;
-        if (type == QContactRelationship::HasManager)
-            return QDeclarativeContactRelationship::HasManager;
-        if (type == QContactRelationship::HasMember)
-            return QDeclarativeContactRelationship::HasMember;
-        if (type == QContactRelationship::HasSpouse)
-            return QDeclarativeContactRelationship::HasSpouse;
-        if (type == QContactRelationship::IsSameAs)
-            return QDeclarativeContactRelationship::IsSameAs;
-        return QDeclarativeContactRelationship::InvalidType;
+       return r.relationshipType();
     }
-    void setRelationshipType(QDeclarativeContactRelationship::Type relationshipType)
+    void setRelationshipType(const QVariant& v)
     {
-        switch (relationshipType) {
-        case QDeclarativeContactRelationship::HasMember:
-            d.setRelationshipType(QContactRelationship::HasMember);
-            break;
-        case QDeclarativeContactRelationship::Aggregates:
-            d.setRelationshipType(QContactRelationship::Aggregates);
-            break;
-        case QDeclarativeContactRelationship::IsSameAs:
-            d.setRelationshipType(QContactRelationship::IsSameAs);
-            break;
-        case QDeclarativeContactRelationship::HasAssistant:
-            d.setRelationshipType(QContactRelationship::HasAssistant);
-            break;
-        case QDeclarativeContactRelationship::HasManager:
-            d.setRelationshipType(QContactRelationship::HasManager);
-            break;
-        case QDeclarativeContactRelationship::HasSpouse:
-            d.setRelationshipType(QContactRelationship::HasSpouse);
-            break;
-        default:
-            break;
+        if (v != relationshipType()) {
+            r.setRelationshipType(v);
+            emit valueChanged();
         }
     }
 
-    int relatedContactId() const
+    QContactLocalId relatedContactId() const
     {
         return d.relatedContactId().localId();
     }
 
-    void setRelatedContactId(const int& relatedContactId)
+    void setRelatedContactId(const QContactLocalId& v)
     {
-        QContactId contactId;
-        contactId.setLocalId(relatedContactId);
-        d.setRelatedContactId(contactId);
+        if (v != relatedContactId()) {
+            QContactId contactId;
+            contactId.setLocalId(v);
+            d.setRelatedContactId(contactId);
+            emit valueChanged();
+        }
     }
 
-    QDeclarativeContactRelationship::Role relatedContactRole() const
+    QDeclarativeContactRelationship::RelationshipRole relatedContactRole() const
     {
         switch (d.relatedContactRole()) {
         case QContactRelationship::First:
             return QDeclarativeContactRelationship::First;
         case QContactRelationship::Second:
             return QDeclarativeContactRelationship::Second;
-        case QContactRelationship::Either:
+        default:
             break;
         }
         return QDeclarativeContactRelationship::Either;
     }
 
-    void setRelatedContactRole(QDeclarativeContactRelationship::Role relatedContactRole)
+    void setRelatedContactRole(QDeclarativeContactRelationship::RelationshipRole v)
     {
-        switch (relatedContactRole) {
-        case QDeclarativeContactRelationship::First:
-            d.setRelatedContactRole(QContactRelationship::First);
-        case QDeclarativeContactRelationship::Second:
-            d.setRelatedContactRole(QContactRelationship::Second);
-        case QDeclarativeContactRelationship::Either:
-            break;
+        if (v != relatedContactRole()) {
+            switch (v) {
+            case QDeclarativeContactRelationship::First:
+                d.setRelatedContactRole(QContactRelationship::First);
+            case QDeclarativeContactRelationship::Second:
+                d.setRelatedContactRole(QContactRelationship::Second);
+            case QDeclarativeContactRelationship::Either:
+                break;
+            }
+            d.setRelatedContactRole(QContactRelationship::Either);
+            emit valueChanged();
         }
-        d.setRelatedContactRole(QContactRelationship::Either);
     }
     QContactFilter filter() const
     {
-        return d;
+        QContactRelationshipFilter filter(d);
+        filter.setRelationshipType(r.relationship().relationshipType());
+        return filter;
     }
 signals:
     void valueChanged();
 
 
 private:
+    QDeclarativeContactRelationship r;
     QContactRelationshipFilter d;
 };
 

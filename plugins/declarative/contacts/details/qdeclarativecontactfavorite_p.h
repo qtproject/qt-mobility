@@ -55,34 +55,47 @@ class QDeclarativeContactFavorite : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "index")
 public:
     enum FieldType {
-        FieldFavorite = 0,
-        FieldIndex
+        Favorite = 0,
+        Index
     };
     QDeclarativeContactFavorite(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFavorite());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactFavorite;
+        return QDeclarativeContactDetail::Favorite;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldFavorite:
+        case Favorite:
             return QContactFavorite::FieldFavorite;
-        case FieldIndex:
+        case Index:
             return QContactFavorite::FieldIndex;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setFavorite(bool isFavorite) {if (!readOnly()) detail().setValue(QContactFavorite::FieldFavorite, isFavorite);}
+    void setFavorite(bool v)
+    {
+        if (!readOnly() && v != isFavorite()) {
+            detail().setValue(QContactFavorite::FieldFavorite, v);
+            emit fieldsChanged();
+        }
+    }
     bool isFavorite() const {return detail().variantValue(QContactFavorite::FieldFavorite).toBool();}
-    void setIndex(int index) {if (!readOnly()) detail().setValue(QContactFavorite::FieldIndex, index);}
+    void setIndex(int v)
+    {
+        if (!readOnly() && v != index()) {
+            detail().setValue(QContactFavorite::FieldIndex, v);
+            emit fieldsChanged();
+        }
+    }
     int index() const {return detail().variantValue(QContactFavorite::FieldIndex).toInt();}
 signals:
     void fieldsChanged();

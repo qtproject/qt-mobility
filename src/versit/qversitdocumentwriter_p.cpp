@@ -215,12 +215,13 @@ void QVersitDocumentWriter::writeString(const QString &value, bool useUtf8)
     QTextEncoder* encoder = useUtf8 ? mUtf8Encoder : mEncoder;
     int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
     int charsWritten = 0;
+    QString crlfSpace(QLatin1String("\r\n "));
     while (spaceRemaining < value.length() - charsWritten) {
         // Write the first "spaceRemaining" characters
         QStringRef line(&value, charsWritten, spaceRemaining);
         charsWritten += spaceRemaining;
         if (mDevice->write(encoder->fromUnicode(line.constData(), line.length())) < 0
-               || mDevice->write(encoder->fromUnicode("\r\n ")) < 0)
+               || mDevice->write(encoder->fromUnicode(crlfSpace)) < 0)
             mSuccessful = false;
         spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
         mCurrentLineLength = 1;

@@ -47,6 +47,23 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapPolyline
+
+    \brief The MapPolyline element displays a polyline on a map.
+    \inherits QGeoMapPolylineObject
+
+    \ingroup qml-location-maps
+
+    The polyline is specified in terms of an ordered list of 
+    coordinates.  Any invalid coordinates in the list will be ignored.
+
+    If the list contains less than 2 valid coordinates the polyline
+    will not be displayed.
+
+    The MapPolyline element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject()
 {
     connect(&m_border,
@@ -63,6 +80,14 @@ QDeclarativeGeoMapPolylineObject::~QDeclarativeGeoMapPolylineObject()
 {
     qDeleteAll(m_path);
 }
+
+/*!
+    \qmlproperty list<Coordinate> MapPolyline::path
+    \default
+
+    This property holds the ordered list of coordinates which 
+    define the polyline.
+*/
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoMapPolylineObject::declarativePath()
 {
@@ -102,6 +127,19 @@ void QDeclarativeGeoMapPolylineObject::path_clear(QDeclarativeListProperty<QDecl
     poly->setPath(QList<QGeoCoordinate>());
 }
 
+/*!
+    \qmlproperty int MapPolyline::border.width
+    \qmlproperty color MapPolyline::border.color
+
+    These properties hold the width and color used to draw the border of the circle.
+
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
+
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolylineObject::border()
 {
     return &m_border;
@@ -118,8 +156,35 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 {
     QPen p = pen();
     p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
     setPen(p);
 }
+
+/*!
+    \qmlproperty int MapPolyline::zValue
+
+    This property holds the z-value of the polyline.
+
+    Map objects are drawn in z-value order, and objects with the 
+    same z-value will be drawn in insertion order.
+*/
+
+/*!
+    \qmlproperty bool MapPolyline::visible
+
+    This property holds a boolean corresponding to whether or not the 
+    polyline is visible.
+*/
+
+/*!
+    \qmlproperty bool MapPolyline::selected
+
+    This property holds a boolean corresponding to whether or not the 
+    polyline is selected.
+*/
 
 #include "moc_qdeclarativegeomappolylineobject_p.cpp"
 

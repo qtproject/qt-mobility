@@ -39,11 +39,15 @@
 ****************************************************************************/
 
 #include "qdeclarativecontactdetails_p.h"
+#include "qdeclarativecontact_p.h"
 #include "qcontactdetails.h"
 #include <QDebug>
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
     :QObject(parent)
 {
+    QDeclarativeContact* c = qobject_cast<QDeclarativeContact*>(parent);
+    if (c)
+        connect(this, SIGNAL(valueChanged()), c, SIGNAL(detailsChanged()));
 }
 
 QContactDetail& QDeclarativeContactDetail::detail()
@@ -104,7 +108,7 @@ void QDeclarativeContactDetail::setLinkedDetailUris(const QStringList& linkedDet
 
 QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailType() const
 {
-    return QDeclarativeContactDetail::ContactCustomizedDetail;
+    return QDeclarativeContactDetail::Customized;
 }
 
 QStringList QDeclarativeContactDetail::fieldNames() const
@@ -133,55 +137,55 @@ bool QDeclarativeContactDetail::setValue(const QString& key, const QVariant& v)
 QString QDeclarativeContactDetail::definitionName(QDeclarativeContactDetail::ContactDetailType type)
 {
     switch (type) {
-    case QDeclarativeContactDetail::ContactAddress:
+    case QDeclarativeContactDetail::Address:
         return QContactAddress::DefinitionName;
-    case QDeclarativeContactDetail::ContactAnniversary:
+    case QDeclarativeContactDetail::Anniversary:
         return QContactAnniversary::DefinitionName;
-    case QDeclarativeContactDetail::ContactAvatar:
+    case QDeclarativeContactDetail::Avatar:
         return QContactAvatar::DefinitionName;
-    case QDeclarativeContactDetail::ContactBirthday:
+    case QDeclarativeContactDetail::Birthday:
         return QContactBirthday::DefinitionName;
-    case QDeclarativeContactDetail::ContactDisplayLabel:
+    case QDeclarativeContactDetail::DisplayLabel:
         return QContactDisplayLabel::DefinitionName;
-    case QDeclarativeContactDetail::ContactEmail:
+    case QDeclarativeContactDetail::Email:
         return QContactEmailAddress::DefinitionName;
-    case QDeclarativeContactDetail::ContactFamily:
+    case QDeclarativeContactDetail::Family:
         return QContactFamily::DefinitionName;
-    case QDeclarativeContactDetail::ContactFavorite:
+    case QDeclarativeContactDetail::Favorite:
         return QContactFavorite::DefinitionName;
-    case QDeclarativeContactDetail::ContactGender:
+    case QDeclarativeContactDetail::Gender:
         return QContactGender::DefinitionName;
-    case QDeclarativeContactDetail::ContactGeolocation:
+    case QDeclarativeContactDetail::Geolocation:
         return QContactGeoLocation::DefinitionName;
-    case QDeclarativeContactDetail::ContactGlobalPresence:
+    case QDeclarativeContactDetail::GlobalPresence:
         return QContactGlobalPresence::DefinitionName;
-    case QDeclarativeContactDetail::ContactGuid:
+    case QDeclarativeContactDetail::Guid:
         return QContactGuid::DefinitionName;
-    case QDeclarativeContactDetail::ContactName:
+    case QDeclarativeContactDetail::Name:
         return QContactName::DefinitionName;
-    case QDeclarativeContactDetail::ContactNickName:
+    case QDeclarativeContactDetail::NickName:
         return QContactNickname::DefinitionName;
-    case QDeclarativeContactDetail::ContactNote:
+    case QDeclarativeContactDetail::Note:
         return QContactNote::DefinitionName;
-    case QDeclarativeContactDetail::ContactOnlineAccount:
+    case QDeclarativeContactDetail::OnlineAccount:
         return QContactOnlineAccount::DefinitionName;
-    case QDeclarativeContactDetail::ContactOrganization:
+    case QDeclarativeContactDetail::Organization:
         return QContactOrganization::DefinitionName;
-    case QDeclarativeContactDetail::ContactPhoneNumber:
+    case QDeclarativeContactDetail::PhoneNumber:
         return QContactPhoneNumber::DefinitionName;
-    case QDeclarativeContactDetail::ContactPresence:
+    case QDeclarativeContactDetail::Presence:
         return QContactPresence::DefinitionName;
-    case QDeclarativeContactDetail::ContactRingtone:
+    case QDeclarativeContactDetail::Ringtone:
         return QContactRingtone::DefinitionName;
-    case QDeclarativeContactDetail::ContactSyncTarget:
+    case QDeclarativeContactDetail::SyncTarget:
         return QContactSyncTarget::DefinitionName;
-    case QDeclarativeContactDetail::ContactTag:
+    case QDeclarativeContactDetail::Tag:
         return QContactTag::DefinitionName;
-    case QDeclarativeContactDetail::ContactTimestamp:
+    case QDeclarativeContactDetail::Timestamp:
         return QContactTimestamp::DefinitionName;
-    case QDeclarativeContactDetail::ContactUrl:
+    case QDeclarativeContactDetail::Url:
         return QContactUrl::DefinitionName;
-    case QDeclarativeContactDetail::ContactCustomizedDetail:
+    case QDeclarativeContactDetail::Customized:
     default:
         break;
     }
@@ -191,109 +195,109 @@ QString QDeclarativeContactDetail::definitionName(QDeclarativeContactDetail::Con
 QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailType(const QString& definitionName)
 {
     if (definitionName == QContactAddress::DefinitionName)
-        return QDeclarativeContactDetail::ContactAddress;
+        return QDeclarativeContactDetail::Address;
     if (definitionName == QContactAnniversary::DefinitionName)
-        return QDeclarativeContactDetail::ContactAnniversary;
+        return QDeclarativeContactDetail::Anniversary;
     if (definitionName == QContactAvatar::DefinitionName)
-        return QDeclarativeContactDetail::ContactAvatar;
+        return QDeclarativeContactDetail::Avatar;
     if (definitionName == QContactBirthday::DefinitionName)
-        return QDeclarativeContactDetail::ContactBirthday;
+        return QDeclarativeContactDetail::Birthday;
     if (definitionName == QContactDisplayLabel::DefinitionName)
-        return QDeclarativeContactDetail::ContactDisplayLabel;
+        return QDeclarativeContactDetail::DisplayLabel;
     if (definitionName == QContactEmailAddress::DefinitionName)
-        return QDeclarativeContactDetail::ContactEmail;
+        return QDeclarativeContactDetail::Email;
     if (definitionName == QContactFamily::DefinitionName)
-        return QDeclarativeContactDetail::ContactFamily;
+        return QDeclarativeContactDetail::Family;
     if (definitionName == QContactFavorite::DefinitionName)
-        return QDeclarativeContactDetail::ContactFavorite;
+        return QDeclarativeContactDetail::Favorite;
     if (definitionName == QContactGender::DefinitionName)
-        return QDeclarativeContactDetail::ContactGender;
+        return QDeclarativeContactDetail::Gender;
     if (definitionName == QContactGeoLocation::DefinitionName)
-        return QDeclarativeContactDetail::ContactGeolocation;
+        return QDeclarativeContactDetail::Geolocation;
     if (definitionName == QContactGlobalPresence::DefinitionName)
-        return QDeclarativeContactDetail::ContactGlobalPresence;
+        return QDeclarativeContactDetail::GlobalPresence;
     if (definitionName == QContactGuid::DefinitionName)
-        return QDeclarativeContactDetail::ContactGuid;
+        return QDeclarativeContactDetail::Guid;
     if (definitionName == QContactName::DefinitionName)
-        return QDeclarativeContactDetail::ContactName;
+        return QDeclarativeContactDetail::Name;
     if (definitionName == QContactNickname::DefinitionName)
-        return QDeclarativeContactDetail::ContactNickName;
+        return QDeclarativeContactDetail::NickName;
     if (definitionName == QContactNote::DefinitionName)
-        return QDeclarativeContactDetail::ContactNote;
+        return QDeclarativeContactDetail::Note;
     if (definitionName == QContactOnlineAccount::DefinitionName)
-        return QDeclarativeContactDetail::ContactOnlineAccount;
+        return QDeclarativeContactDetail::OnlineAccount;
     if (definitionName == QContactOrganization::DefinitionName)
-        return QDeclarativeContactDetail::ContactOrganization;
+        return QDeclarativeContactDetail::Organization;
     if (definitionName == QContactPhoneNumber::DefinitionName)
-        return QDeclarativeContactDetail::ContactPhoneNumber;
+        return QDeclarativeContactDetail::PhoneNumber;
     if (definitionName == QContactPresence::DefinitionName)
-        return QDeclarativeContactDetail::ContactPresence;
+        return QDeclarativeContactDetail::Presence;
     if (definitionName == QContactRingtone::DefinitionName)
-        return QDeclarativeContactDetail::ContactRingtone;
+        return QDeclarativeContactDetail::Ringtone;
     if (definitionName == QContactSyncTarget::DefinitionName)
-        return QDeclarativeContactDetail::ContactSyncTarget;
+        return QDeclarativeContactDetail::SyncTarget;
     if (definitionName == QContactTag::DefinitionName)
-        return QDeclarativeContactDetail::ContactTag;
+        return QDeclarativeContactDetail::Tag;
     if (definitionName == QContactTimestamp::DefinitionName)
-        return QDeclarativeContactDetail::ContactTimestamp;
+        return QDeclarativeContactDetail::Timestamp;
     if (definitionName == QContactUrl::DefinitionName)
-        return QDeclarativeContactDetail::ContactUrl;
+        return QDeclarativeContactDetail::Url;
 
-    return QDeclarativeContactDetail::ContactCustomizedDetail;
+    return QDeclarativeContactDetail::Customized;
 }
 
 QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int fieldType)
 {
     switch (detailType) {
-    case QDeclarativeContactDetail::ContactAddress:
+    case QDeclarativeContactDetail::Address:
         return QDeclarativeContactAddress::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactAnniversary:
+    case QDeclarativeContactDetail::Anniversary:
         return QDeclarativeContactAnniversary::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactAvatar:
+    case QDeclarativeContactDetail::Avatar:
         return QDeclarativeContactAvatar::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactBirthday:
+    case QDeclarativeContactDetail::Birthday:
         return QDeclarativeContactBirthday::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactDisplayLabel:
+    case QDeclarativeContactDetail::DisplayLabel:
         return QDeclarativeContactDisplayLabel::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactEmail:
+    case QDeclarativeContactDetail::Email:
         return QDeclarativeContactEmailAddress::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactFamily:
+    case QDeclarativeContactDetail::Family:
         return QDeclarativeContactFamily::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactFavorite:
+    case QDeclarativeContactDetail::Favorite:
         return QDeclarativeContactFavorite::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactGender:
+    case QDeclarativeContactDetail::Gender:
         return QDeclarativeContactGender::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactGeolocation:
+    case QDeclarativeContactDetail::Geolocation:
         return QDeclarativeContactGeoLocation::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactGlobalPresence:
+    case QDeclarativeContactDetail::GlobalPresence:
         return QDeclarativeContactGlobalPresence::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactGuid:
+    case QDeclarativeContactDetail::Guid:
         return QDeclarativeContactGuid::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactName:
+    case QDeclarativeContactDetail::Name:
         return QDeclarativeContactName::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactNickName:
+    case QDeclarativeContactDetail::NickName:
         return QDeclarativeContactNickname::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactNote:
+    case QDeclarativeContactDetail::Note:
         return QDeclarativeContactNote::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactOnlineAccount:
+    case QDeclarativeContactDetail::OnlineAccount:
         return QDeclarativeContactOnlineAccount::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactOrganization:
+    case QDeclarativeContactDetail::Organization:
         return QDeclarativeContactOrganization::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactPhoneNumber:
+    case QDeclarativeContactDetail::PhoneNumber:
         return QDeclarativeContactPhoneNumber::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactPresence:
+    case QDeclarativeContactDetail::Presence:
         return QDeclarativeContactPresence::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactRingtone:
+    case QDeclarativeContactDetail::Ringtone:
         return QDeclarativeContactRingtone::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactSyncTarget:
+    case QDeclarativeContactDetail::SyncTarget:
         return QDeclarativeContactSyncTarget::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactTag:
+    case QDeclarativeContactDetail::Tag:
         return QDeclarativeContactTag::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactTimestamp:
+    case QDeclarativeContactDetail::Timestamp:
         return QDeclarativeContactTimestamp::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactUrl:
+    case QDeclarativeContactDetail::Url:
         return QDeclarativeContactUrl::fieldNameFromFieldType(fieldType);
-    case QDeclarativeContactDetail::ContactCustomizedDetail:
+    case QDeclarativeContactDetail::Customized:
     default:
         break;
     }

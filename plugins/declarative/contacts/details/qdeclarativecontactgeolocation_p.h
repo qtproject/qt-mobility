@@ -63,70 +63,125 @@ class QDeclarativeContactGeoLocation : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        FieldLabel = 0,
-        FieldLatitude,
-        FieldLongitude,
-        FieldAccuracy,
-        FieldAltitude,
-        FieldAltitudeAccuracy,
-        FieldHeading,
-        FieldSpeed,
-        FieldTimestamp
+        Label = 0,
+        Latitude,
+        Longitude,
+        Accuracy,
+        Altitude,
+        AltitudeAccuracy,
+        Heading,
+        Speed,
+        Timestamp
     };
 
     QDeclarativeContactGeoLocation(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGeoLocation());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactGeolocation;
+        return QDeclarativeContactDetail::Geolocation;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldLabel:
+        case Label:
             return QContactGeoLocation::FieldLabel;
-        case FieldLatitude:
+        case Latitude:
             return QContactGeoLocation::FieldLatitude;
-        case FieldLongitude:
+        case Longitude:
             return QContactGeoLocation::FieldLongitude;
-        case FieldAccuracy:
+        case Accuracy:
             return QContactGeoLocation::FieldAccuracy;
-        case FieldAltitude:
+        case Altitude:
             return QContactGeoLocation::FieldAltitude;
-        case FieldAltitudeAccuracy:
+        case AltitudeAccuracy:
             return QContactGeoLocation::FieldAltitudeAccuracy;
-        case FieldHeading:
+        case Heading:
             return QContactGeoLocation::FieldHeading;
-        case FieldSpeed:
+        case Speed:
             return QContactGeoLocation::FieldSpeed;
-        case FieldTimestamp:
+        case Timestamp:
             return QContactGeoLocation::FieldTimestamp;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setLabel(const QString& label) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLabel, label);}
+    void setLabel(const QString& v)
+    {
+        if (!readOnly() && v != label()) {
+            detail().setValue(QContactGeoLocation::FieldLabel, v);
+            emit fieldsChanged();
+        }
+    }
     QString label() const {return detail().value(QContactGeoLocation::FieldLabel);}
-    void setLatitude(double latitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLatitude, latitude);}
+    void setLatitude(double v)
+    {
+        if (!readOnly() && !qFuzzyCompare(v, latitude())) {
+            detail().setValue(QContactGeoLocation::FieldLatitude, v);
+            emit fieldsChanged();
+        }
+    }
     double latitude() const {return detail().variantValue(QContactGeoLocation::FieldLatitude).toDouble();}
-    void setLongitude(double longitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLongitude, longitude);}
+    void setLongitude(double v)
+    {
+        if (!readOnly() && !qFuzzyCompare(v, longitude())) {
+            detail().setValue(QContactGeoLocation::FieldLongitude, v);
+            emit fieldsChanged();
+        }
+    }
     double longitude() const {return detail().variantValue(QContactGeoLocation::FieldLongitude).toDouble();}
-    void setAccuracy(double accuracy) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAccuracy, accuracy);}
+    void setAccuracy(double v)
+    {
+        if (!readOnly() && !qFuzzyCompare(v, accuracy())) {
+            detail().setValue(QContactGeoLocation::FieldAccuracy, v);
+            emit fieldsChanged();
+        }
+    }
     double accuracy() const {return detail().variantValue(QContactGeoLocation::FieldAccuracy).toDouble();}
-    void setAltitude(double altitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAltitude, altitude);}
+    void setAltitude(double v)
+    {
+        if (!readOnly() && !qFuzzyCompare(v, altitude())) {
+            detail().setValue(QContactGeoLocation::FieldAltitude, v);
+            emit fieldsChanged();
+        }
+    }
     double altitude() const {return detail().variantValue(QContactGeoLocation::FieldAltitude).toDouble();}
-    void setAltitudeAccuracy(double altitudeAccuracy) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAltitudeAccuracy, altitudeAccuracy);}
+    void setAltitudeAccuracy(double v)
+    {
+        if (!readOnly() && !qFuzzyCompare(v, altitudeAccuracy())) {
+            detail().setValue(QContactGeoLocation::FieldAltitudeAccuracy, v);
+            emit fieldsChanged();
+        }
+    }
     double altitudeAccuracy() const {return detail().variantValue(QContactGeoLocation::FieldAltitudeAccuracy).toDouble();}
-    void setHeading(double heading) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldHeading, heading);}
+    void setHeading(double v)
+    {
+        if (!readOnly() && v != heading()) {
+            detail().setValue(QContactGeoLocation::FieldHeading, v);
+            emit fieldsChanged();
+        }
+    }
     double heading() const {return detail().variantValue(QContactGeoLocation::FieldHeading).toDouble();}
-    void setSpeed(double speed) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldSpeed, speed);}
+    void setSpeed(double v)
+    {
+        if (!readOnly() && qFuzzyCompare(v, speed())) {
+            detail().setValue(QContactGeoLocation::FieldSpeed, v);
+            emit fieldsChanged();
+        }
+    }
     double speed() const {return detail().variantValue(QContactGeoLocation::FieldSpeed).toDouble();}
-    void setTimestamp(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldTimestamp, timestamp);}
+    void setTimestamp(const QDateTime& v)
+    {
+        if (!readOnly() && v != timestamp()) {
+            detail().setValue(QContactGeoLocation::FieldTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
     QDateTime timestamp() const {return detail().variantValue(QContactGeoLocation::FieldTimestamp).toDateTime();}
 signals:
     void fieldsChanged();

@@ -1,6 +1,6 @@
 load(qttest_p4)
 include (../../../common.pri)
-QT += declarative
+QT += declarative network script
 CONFIG += mobility
 MOBILITY += feedback
 
@@ -17,3 +17,11 @@ symbian: {
 }
 
 CONFIG += testcase
+
+OTHER_FILES += \
+    data/hapticseffect.qml \
+    data/fileeffect.qml \
+    data/actuator.qml \
+    data/themeeffect.qml \
+    data/themeeffect2.qml \
+    data/themeeffect3.qml

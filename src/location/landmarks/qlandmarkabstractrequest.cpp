@@ -67,19 +67,19 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality of a
-    particular QContactManager. Instances of the class will emit signals when
+    particular QLandmarkManager. Instances of the class will emit signals when
     the state of the request changes, or when more results become available.
 
     Clients should not attempt to create instances of this class directly, but
     should instead use the use-case-specific classes derived from this class.
 
     All such request classes have a similar interface: clients set the
-    parameters of the asynchronous call, including which manager the request
-    will be made of, and then call the start() slot of the request. The manager
+    parameters of the asynchronous call, then call the start() slot of the request. The manager
     will then enqueue or begin to process the request, at which point the
-    request's state will transition from \c InactiveState to \c ActiveState.
+    request's state will transition from the \c InactiveState to \c ActiveState.
     After any state transition, the request will emit the stateChanged()
-    signal. The manager may periodically update the request with results, at
+    signal. The manager may (if it supports it)
+    periodically update the request with results, at
     which point the request will emit the resultsAvailable() signal. These
     results are not guaranteed to have a stable ordering. Error information is
     considered a result, so some requests will emit the resultsAvailable()
@@ -340,7 +340,7 @@ bool QLandmarkAbstractRequest::start()
     could not be made or the request is not in the
     QLandmarkManager::Active state.
 
-    \sa start().
+    \sa start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
@@ -367,7 +367,7 @@ bool QLandmarkAbstractRequest::cancel()
 
     Returns true if the request was canceled or completed
     within the given period, otherwise returns false.  Some backends may be unable
-    to support this  operation saafely and will return false immediately.
+    to support this  operation safely and will return false immediately.
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when

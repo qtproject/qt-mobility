@@ -54,30 +54,37 @@ class  QDeclarativeContactSyncTarget : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "syncTarget")
 public:
     enum FieldType {
-        FieldSyncTarget = 0
+        SyncTarget = 0
     };
 
     QDeclarativeContactSyncTarget(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactSyncTarget());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactSyncTarget;
+        return QDeclarativeContactDetail::SyncTarget;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldSyncTarget:
+        case SyncTarget:
             return QContactSyncTarget::FieldSyncTarget;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setSyncTarget(const QString& syncTarget) {if (!readOnly()) detail().setValue(QContactSyncTarget::FieldSyncTarget, syncTarget);}
+    void setSyncTarget(const QString& v)
+    {
+        if (!readOnly() && v != syncTarget()) {
+            detail().setValue(QContactSyncTarget::FieldSyncTarget, v);
+            emit fieldsChanged();
+        }
+    }
     QString syncTarget() const {return detail().value(QContactSyncTarget::FieldSyncTarget);}
 signals:
     void fieldsChanged();
