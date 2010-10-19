@@ -1615,6 +1615,11 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
+bool QSystemDisplayInfoPrivate::backLightOn()
+{
+    return false;
+}
+
 
 DAApprovalSessionRef session = NULL;
 

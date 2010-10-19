@@ -1775,6 +1775,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
+bool QSystemDisplayInfoLinuxCommonPrivate::backLightOn()
+{
+    return false;
+}
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
