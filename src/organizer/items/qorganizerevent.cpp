@@ -87,7 +87,7 @@ QDateTime QOrganizerEvent::endDateTime() const
 }
 
 /*! Sets whether the time-of-day component of the event's start date/time or end date/time is
- * insignificant (eg. this is generally set to true for a birthday). */
+ * insignificant (eg. \a isAllDay is generally true for a birthday). */
 void QOrganizerEvent::setAllDay(bool isAllDay)
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();

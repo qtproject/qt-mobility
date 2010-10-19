@@ -268,6 +268,12 @@ bool QSensor::isBusy() const
 */
 
 /*!
+    \fn QSensor::activeChanged()
+
+    This signal is emitted when the active property changes.
+*/
+
+/*!
     \property QSensor::active
     \brief a value to indicate if the sensor is active.
 

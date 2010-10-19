@@ -206,6 +206,18 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerEventTime::setAllDay(bool isAllDay)
+
+    Sets the FieldAllDay field to \a isAllDay.
+*/
+
+/*!
+    \fn QOrganizerEventTime::isAllDay() const
+
+    Returns the FieldAllDay value.
+*/
+
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
@@ -664,7 +676,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   Sets a list of exception dates to \a exdates.
+   Sets a list of exception dates to \a xdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -1228,6 +1240,18 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
     Sets the todo timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
+
+    Sets the IsAllDay field to \a isAllDay.
+*/
+
+/*!
+    \fn QOrganizerTodoTime::isAllDay() const
+
+    Returns the value of the IsAllDay field.
+*/
+
 /* ==================== QOrganizerItemType ======================= */
 /*!
    \class QOrganizerItemType
@@ -1303,10 +1327,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
  */
 
 
+/*!
+    \fn QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 
+    Returns true if this QOrganizerItemRecurrence equals \a other. 
+*/
 
+/*!
+    \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
 
-
+    Returns true if this QOrganizerItemRecurrence does not equal \a other.
+*/
 
 
 

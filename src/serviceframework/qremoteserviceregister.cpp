@@ -257,7 +257,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     This signal is emitted whenever a created instance has been closed. This indicates
     that a connected client has either shutdown or released the loaded service object.
     
-    The QRemoteServiceRegister::Entry is supplied to identify which registered service 
+    \a entry is supplied to identify which registered service 
     entry the closed instance belonged to.
 
     \sa allInstancesClosed()

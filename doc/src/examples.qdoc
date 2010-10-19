@@ -97,7 +97,7 @@
 
     \list
     \o \l{calendardemo}{Calendar Demo}
-    \o \l{qmlorganizer}{QML Organizer}
+    \omit \o \l{qmlorganizer}{QML Organizer} \endomit
     \o \l{todo}{ToDo Example}
     \endlist
 
@@ -131,7 +131,7 @@
 
     \list
     \o \l{sensors/grueplugin}{Grue Plugin}
-    \o \l{sensors/grueapp}{Grue Application}
+    \omit \o \l{sensors/grueapp}{Grue Application} \endomit
     \endlist
 */
 

@@ -134,6 +134,9 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
     return d->m_fetchHint;
 }
 
+/*!
+    Returns the start date of the fetch request.
+*/
 QDateTime QOrganizerItemFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);

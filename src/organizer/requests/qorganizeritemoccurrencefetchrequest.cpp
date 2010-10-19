@@ -93,6 +93,9 @@ void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
     d->m_maxOccurrences = maxCount;
 }
 
+/*!
+    Sets the fetch \a hint associated with the request.
+*/
 void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
