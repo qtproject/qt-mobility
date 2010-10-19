@@ -27,6 +27,13 @@ New features
       feedback)
  - Qt Gallery module
     * Classes for searching for documents, and viewing document meta-data.
+ - Qt Maps and Navigation API
+    * Part of the Location module
+    * Class for routing, geocoding and reverse geocoding, and for 
+      displaying and interacting with maps.
+ - Qt Landmarks module
+    * Part of the Location module
+    * Classes for saving, retrieving and deleting landmarks
 
 Optimizations
 ------
@@ -63,56 +70,14 @@ QtContacts
     * Fetching a list of contacts by a list of ids
  - Improved support for Symbian^3/^4
 
-QtLandmarks
-------
- - Import and export landmarks atomically for sqlite backend
- - Add format constants for importing and exporting
- - Add options to control how categories are treated
-   for importing and exporting operations
- - Change QGeoAddress::thoroughfareName to street
- - Add ability to report support levels for sort orders
- - Landmark name filter now uses match flags
- - Expand the API to now include the concept
-   of extended and custom attributes.  Modify
-   the QLandmarkAttributeFilter accordingly,
-   and also use match flags in the attribute filter.
- - Common core filed such as name, street etc
-   are now available through the QLandmark::attributes() 
-   function
- - Replace the QLandmarkFetchHint with limit and offset
- - Remove QLandmarkDistanceSort
- - QLandmark::phone renamed to QLandmark::phoneNumber
- - QGeoAddress::postOfficeBox removed
- - Add QLandmarkFetchById and QLandmarkCategoryFetchById
-   classes
- - Refactoring of sqlite backend, in particular the
-   database schema to be more extensible
- - Add symbian backend plugin
- - Add in mutexes to improve thread safety
-   for the asynchronous request classes
- - Implement signal notificiations in sqlite backend
- - Implement auto detection of file formats in sqlite backend.
- - Started adding in basic QML support for landmarks
-
 QtLocation
 ------
 
- - Maemo 5 backend now respects preferred positioning methods
-
-QtMapsAndNavigation
-------
-
- - Added circle and text objects
- - Made objects work across the dateline and in other edge cases
- - Preliminary support for map overlays
- - Various performance improvements for the map
- - POI searching improved
-    * added optional limit and offset parameters for paging
-    * added code to combine results from plugin and landmark managers
- - Added basic QML support for mapping functionality
- - Improved the examples
-    * Cleaned up the UI
-    * Fixed some bugs which resulted in crashes
+ - Symbian, correct timespec now used in position times
+ - Symbian, position sources now selected correctly
+ - Symbian, more types of error detected and dealt with properly
+ - Maemo 5, backend now respects preferred positioning methods set by user
+ - Maemo 6, time to first fix sped up significantly
 
 QtMessaging
 ------
@@ -178,10 +143,8 @@ QtSensors
  - Document Sensors.conf [QTMOBILITY-441]
  - Document output range meta-data [QTMOBILITY-469]
  - Use prefixed includes from public headers [QTMOBILITY-476]
-
-Note that the above fixes are also in 1.0.3.
-
  - Don't allow setting invalid values for enum types [QTMOBILITY-277]
+ - Clarify the purpose of the orientation sensor [QTMOBILITY-537]
 
 QtServiceFramework
 ------
