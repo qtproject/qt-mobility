@@ -2375,7 +2375,7 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
     }
     searchOperation->initialise(searchKeys, sortCriteria);
     operation.m_MessageTask = searchOperation;
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
+    qRegisterMetaType<NmApiMessage>("NmApiMessage");
     connect(searchOperation, SIGNAL(messageFound(NmApiMessage&)), this, SLOT(messageFound(NmApiMessage&)));
     connect(searchOperation, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
     if (m_searchOperations.count() == 0) {
