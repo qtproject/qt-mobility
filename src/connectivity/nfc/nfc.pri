@@ -8,12 +8,13 @@ HEADERS += \
     nfc/qllcpsocket.h \
     nfc/qndeffilter.h \
     nfc/qndefnfcurirecord.h \
-    nfc/qnearfieldtagtype1.h \
+    nfc/qnearfieldtagtype1.h
 
 PRIVATE_HEADERS += \
     nfc/qndefrecord_p.h \
     nfc/qnearfieldtarget_p.h \
-    nfc/qnearfieldmanager_p.h
+    nfc/qnearfieldmanager_p.h \
+    nfc/qnearfieldmanagerimpl_p.h
 
 SOURCES += \
     nfc/qnearfieldmanager.cpp \

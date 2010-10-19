@@ -42,16 +42,15 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldmanager_p.h"
 
+#ifdef Q_OS_SYMBIAN
+#else
+#include "qnearfieldmanagerimpl_p.h"
+#endif
+
 #include <QtCore/QMetaType>
 #include <QtCore/QMetaMethod>
 
 QTM_BEGIN_NAMESPACE
-
-#ifndef QNearFieldManagerPrivateImpl
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
-{
-};
-#endif
 
 /*!
     \class QNearFieldManager
