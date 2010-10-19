@@ -279,6 +279,9 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     // This will hold the landmark Ids that will be returned to calling function
     QList<QLandmarkId> result;
 
+    if(limit == 0)
+        return result;
+    
     if (sortOrders.count() > 0) {
         for (int i=0; i < sortOrders.count(); ++i) {
             if (sortOrders.at(i).type() == QLandmarkSortOrder::NameSort) {
@@ -321,11 +324,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         }
 
         int maxMatches;
-        if (limit == 0) {
-            result.clear();
-            return result;
-        }
-        else if (limit < 0)
+        if (limit < 0)
             maxMatches = -1;
         else
             maxMatches = limit + offset;
@@ -370,7 +369,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             }
 
             QSet<QLandmarkId> ids;
-            QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), limit, offset, QList<
+            QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), KAllLandmarks, KDefaultIndex, QList<
                 QLandmarkSortOrder> (), error, errorString);
 
             if (*error != QLandmarkManager::NoError) {
@@ -381,7 +380,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             ids = firstResult.toSet();
 
             for (int i = 1; i < filters.size(); ++i) {
-                QList<QLandmarkId> subResult = landmarkIds(filters.at(i), limit, offset, QList<
+                QList<QLandmarkId> subResult = landmarkIds(filters.at(i), KAllLandmarks, KDefaultIndex, QList<
                     QLandmarkSortOrder> (), error, errorString);
 
                 if (*error != QLandmarkManager::NoError) {
