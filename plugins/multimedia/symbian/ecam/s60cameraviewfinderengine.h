@@ -56,6 +56,7 @@ class QAbstractVideoSurface;
 class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
+class QDesktopWidget;
 
 /*
  * Class implementing video output selection for the viewfinder and the handler of
@@ -81,9 +82,16 @@ public: // Methods
     void startViewfinder(const bool internalStart = false);
     void stopViewfinder(const bool internalStop = false);
 
+    // Start using new CameraEngine
+    void setNewCameraEngine(CCameraEngine *engine);
+
 protected: // MCameraViewfinderObserver (Bitmap ViewFinder)
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
+
+private: // Internal operation
+
+    void checkAndRotateCamera();
 
 Q_SIGNALS:
 
@@ -96,6 +104,7 @@ private Q_SLOTS:
     void resetViewfinderDisplay();
     void viewFinderBitmapReady(const QPixmap &pixmap);
     void handleVisibilityChange(const bool isVisible);
+    void handleDesktopResize(int screen);
 
 private: // Enums
 
@@ -142,6 +151,7 @@ private: // Data
     RWsSession              &m_wsSession;
     CWsScreenDevice         &m_screenDevice;
     RWindowBase             *m_window;
+    QDesktopWidget          *m_desktopWidget;
     ViewFinderState         m_vfState;
     QSize                   m_viewfinderSize;
     // Actual viewfinder size, which may differ from requested
@@ -152,6 +162,7 @@ private: // Data
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
     bool                    m_uiLandscape; // For detecting UI rotation
+    int                     m_vfErrorsSignalled;
 };
 
 #endif // S60CAMERAVIEWFINDERENGINE_H

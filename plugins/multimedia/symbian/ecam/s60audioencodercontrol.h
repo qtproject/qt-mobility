@@ -57,15 +57,15 @@ class S60VideoCaptureSession;
 class S60AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
-    
+
 public: // Constructor & Destructor
-    
+
     S60AudioEncoderControl(QObject *parent = 0);
     S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent = 0);
     virtual ~S60AudioEncoderControl();
 
 public: // QAudioEncoderControl
-    
+
     // Audio Codec
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName) const;
