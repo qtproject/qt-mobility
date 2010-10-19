@@ -53,6 +53,232 @@
 #include "qdeclarativethemeeffect.h"
 #include "qdeclarativefeedback.h"
 
+
+/*!
+    \qmlclass Feedback
+    \brief The Feedback object defines a number of constants
+    \ingroup qml-feedback-api
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    There are several predefined enumerations and constants provided in this object.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml Base Effect
+
+    \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
+*/
+
+/*!
+    \qmlclass FeedbackEffect QFeedbackEffect
+    \brief The FeedbackEffect element is the base class for all feedback effects.
+    \ingroup qml-feedback-api
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    You can't create one of these elements directly, but several other elements
+    inherit the methods and properties of these elements.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml Base Effect
+
+    \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
+*/
+
+/*!
+  \qmlproperty int FeedbackEffect::duration
+
+  The duration of the effect, in milliseconds.  This is 0 for effects of unknown
+  duration, or Feedback.Infinite for effects that don't stop.
+  */
+
+/*!
+  \qmlproperty url FeedbackEffect::state
+
+  This is the current state of the effect.  It is one of:
+  \list
+  \o \l Feedback.Stopped
+  \o \l Feedback.Loading
+  \o \l Feedback.Running
+  \o \l Feedback.Paused
+  \endlist
+  */
+
+/*!
+  \qmlmethod FeedbackEffect::start()
+
+  Start playback of this effect.
+  */
+
+/*!
+  \qmlmethod FeedbackEffect::stop()
+
+  Stops playback of this effect.
+  */
+
+/*!
+  \qmlmethod FeedbackEffect::pause()
+
+  Pause playback of this effect.  Not all devices or effects can pause feedback playback.
+  */
+
+/*!
+  \qmlsignal FeedbackEffect::error(Feedback::ErrorType)
+
+  This signal is emitted when an error occurs during playback of an effect.
+  */
+
+/*!
+    \qmlclass FileEffect
+    \brief The FileEffect element represents feedback data stored in a file.
+    \ingroup qml-feedback-api
+    \inherits FeedbackEffect
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml File Effect
+
+    \sa HapticsEffect, {QFeedbackActuator}
+*/
+
+
+/*!
+  \qmlproperty bool FileEffect::running
+
+  This property is true if this feedback effect is running.
+  */
+
+/*!
+  \qmlproperty bool FileEffect::paused
+
+  This property is true if this feedback effect is paused.
+  */
+
+/*!
+  \qmlproperty bool FileEffect::loaded
+
+  This property is true if this feedback effect is loaded.
+  */
+
+/*!
+  \qmlproperty url FileEffect::source
+
+  This property stores the url for the feedback data.
+  */
+
+/*!
+    \qmlclass HapticsEffect
+    \brief The HapticsEffect element represents a custom haptic feedback effect.
+    \ingroup qml-feedback-api
+    \inherits FeedbackEffect
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    This class closely corresponds to the C++ \l QFeedbackHapticsEffect class.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml Haptics Effect
+
+    \sa Actuator, {QFeedbackHapticsEffect}
+*/
+
+/*!
+    \qmlproperty int HapticsEffect::duration
+
+    The duration of the main part of the haptics effect, in milliseconds.
+*/
+
+/*!
+    \qmlproperty double HapticsEffect::intensity
+
+    The intensity of the main part of the haptics effect, from 0.0 to 1.0.
+*/
+
+/*!
+    \qmlproperty int HapticsEffect::attackTime
+
+    The duration of the attack (fade-in) part of the haptics effect.
+*/
+
+/*!
+    \qmlproperty double HapticsEffect::attackIntensity
+
+    The intensity of the attack (fade-in) part of the haptics effect, from 0.0 to 1.0.
+*/
+
+
+/*!
+    \qmlproperty int HapticsEffect::fadeTime
+
+    The duration of the fade-out part of the haptics effect.
+*/
+
+/*!
+    \qmlproperty double HapticsEffect::fadeIntensity
+
+    The intensity of the fade-out part of the haptics effect, from 0.0 to 1.0.
+*/
+
+
+/*!
+    \qmlproperty int HapticsEffect::period
+
+    The period of the haptics effect.  If the period is zero, the effect will
+    not repeat.  If it is non-zero, the effect will repeat every period milliseconds.
+*/
+
+
+/*!
+    \qmlproperty Actuator HapticsEffect::actuator
+
+    The actuator that is used for playing this effect.
+    \sa Actuator
+*/
+
+/*!
+    \qmlclass Actuator QFeedbackActuator
+    \brief The Actuator element represents a feedback actuator.
+    \ingroup qml-feedback-api
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    The Actuator class maps directly to the QFeedbackActuator C++ class, and
+    can be used with HapticsEffect elements.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml Actuator
+
+    \sa HapticsEffect, {QFeedbackActuator}
+*/
+
+/*!
+    \qmlclass ThemeEffect
+    \brief The ThemeEffect element represents a themed feedback effect.
+    \ingroup qml-feedback-api
+
+    This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    This element is used for playing feedback effects that follow the
+    system theme.  The actual feedback might be haptic, audio or some other
+    method.
+
+    \snippet doc/src/snippets/declarative/declarative-feedback.qml Theme
+*/
+
+/*!
+    \qmlproperty bool ThemeEffect::supported
+
+    This property is true if the system supports themed feedback effects.
+*/
+
+/*!
+    \qmlproperty ThemeEffect ThemeEffect::effect
+
+    This property holds the specific themed effect type to play.
+*/
+
+/*!
+    \qmlmethod ThemeEffect::play()
+
+    Call this to play the themed effect.
+*/
+
 class QFeedbackDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
