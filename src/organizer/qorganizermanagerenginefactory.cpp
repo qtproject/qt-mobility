@@ -85,18 +85,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
  */
 
 /*!
-  \fn QOrganizerManagerEngineFactory::createCollectionEngineId() const
-
-  This function is used internally when deserializing an id.  It allows the
-  deserialization functions to correctly allocate an empty engine-specific
-  id for an item, which it then fills with the serialized data.
-
-  Engine implementers must implement this function, but should not need
-  to call it.
- */
-
-/*!
-  \fn QOrganizerManagerEngineFactory::createItemEngineId() const
+  \fn QOrganizerManagerEngineFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const = 0
 
   This function is used internally when deserializing an id.  It allows the
   deserialization functions to correctly allocate an empty engine-specific

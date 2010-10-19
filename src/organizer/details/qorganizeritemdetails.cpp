@@ -1228,12 +1228,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
     Sets the todo timerange's due date and time to \a dueDateTime.
  */
 
-/*!
-    \fn QOrganizerTodoTimeRange::isAllDay() const
-    Returns true if a specific time was specified for the todo.
-    Returns false if the todo is an all-day todo.
- */
-
 /* ==================== QOrganizerItemType ======================= */
 /*!
    \class QOrganizerItemType

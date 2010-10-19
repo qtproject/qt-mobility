@@ -256,8 +256,6 @@ QOrganizerItem::~QOrganizerItem()
     in a manager.  The QOrganizerItemId is only valid with a specific
     manager.  See \l QOrganizerManager::saveItem() for more
     information.
-
-    \sa id()
  */
 QOrganizerItemId QOrganizerItem::id() const
 {
