@@ -633,6 +633,11 @@ void tst_QOrganizerItemDetails::reminder()
     QVERIFY(r.repetitionCount() == 0);
     QVERIFY(r.repetitionDelay() == 0);
 
+    r.setSecondsBeforeStart(45);
+    QVERIFY(!r.isEmpty());
+    r.removeValue(QOrganizerItemReminder::FieldSecondsBeforeStart);
+    QVERIFY(r.isEmpty());
+
     r.setRepetition(3, 100);
     QVERIFY(r.repetitionCount() == 3);
     QVERIFY(r.repetitionDelay() == 100);
@@ -670,6 +675,20 @@ void tst_QOrganizerItemDetails::audibleReminder()
     QVERIFY(r.secondsBeforeStart() == 0);
     QVERIFY(r.repetitionCount() == 0);
     QVERIFY(r.repetitionDelay() == 0);
+
+    r.setSecondsBeforeStart(45);
+    QVERIFY(!r.isEmpty());
+    r.removeValue(QOrganizerItemReminder::FieldSecondsBeforeStart);
+    QVERIFY(r.isEmpty());
+
+    QOrganizerItemReminder baseR;
+    baseR = r;
+    QVERIFY(baseR.isEmpty());
+    baseR.setSecondsBeforeStart(50);
+    QVERIFY(baseR.secondsBeforeStart() == 50);
+    QVERIFY(r.secondsBeforeStart() == 0);
+    QVERIFY(!baseR.isEmpty());
+    QVERIFY(r.isEmpty());
 
     r.setRepetition(3, 100);
     QVERIFY(r.repetitionCount() == 3);
