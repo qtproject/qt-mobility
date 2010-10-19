@@ -80,6 +80,7 @@ public:
 	// Contact Item CRUD methods.
 	TContactItemId CreateContactL(CContactItem& aContact) const;
 	void DeleteContactL(const TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount = EFalse) const;	
+	void DeleteContactsL(const CContactIdArray& aContactIds) const;
 	void CommitContactL(const CContactItem& aContact, TBool aSendChangedEvent = ETrue) const;
 	CContactItem* ReadContactL(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const;
 	CContactItem* OpenContactLX(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const;
@@ -168,7 +169,7 @@ public:
 	void SetAsyncActivityL(TBool aAsyncActivity);
 	
 	// Used to request a database event.  See CCntDbNotifyMonitor::Start().
-	void StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent);
+	void StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent, TDes8& aIdArray);
 	void EndNotificationTransfer();
 
 	// See CCntDbNotifyMonitor::RunL().

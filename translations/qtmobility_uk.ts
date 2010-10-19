@@ -338,6 +338,10 @@
         <source>Unable to load media</source>
         <translation>Неможливо завантажити медіа</translation>
     </message>
+    <message>
+        <source>Resources Unavailable</source>
+        <translation>Ресурси недоступні</translation>
+    </message>
 </context>
 <context>
     <name>QXARecordSession</name>
@@ -465,17 +469,6 @@
     <message>
         <source>LandmarkAbstractModel is an abstract class</source>
         <translation>LandmarkAbstractModel - абстрактний клас</translation>
-    </message>
-</context>
-<context>
-    <name>QDeclarativeContactModel</name>
-    <message>
-        <source>Phone</source>
-        <translation>Телефон</translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation>Ел. пошта</translation>
     </message>
 </context>
 <context>

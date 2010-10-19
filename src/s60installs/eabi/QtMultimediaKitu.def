@@ -175,7 +175,7 @@ EXPORTS
 	_ZN12QSoundEffect8setLoopsEi @ 174 NONAME ABSENT
 	_ZN12QSoundEffect8setMutedEb @ 175 NONAME
 	_ZN12QSoundEffect9setSourceERK4QUrl @ 176 NONAME
-	_ZN12QSoundEffect9setVolumeEi @ 177 NONAME
+	_ZN12QSoundEffect9setVolumeEf @ 177 NONAME
 	_ZN12QSoundEffectC1EP7QObject @ 178 NONAME
 	_ZN12QSoundEffectC2EP7QObject @ 179 NONAME
 	_ZN12QSoundEffectD0Ev @ 180 NONAME
