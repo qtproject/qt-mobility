@@ -1044,6 +1044,9 @@ private slots:
 #ifdef FILTER_INTERSECTION
     void filterLandmarksIntersection();
     void filterLandmarksIntersection_data();
+
+    void filterLandmarksIntersection2();
+    void filterLandmarksIntersection2_data();
 #endif
 
 #ifdef FILTER_MULTIBOX
@@ -1054,6 +1057,9 @@ private slots:
 #ifdef FILTER_UNION
     void filterLandmarksUnion();
     void filterLandmarksUnion_data();
+
+    void filterLandmarksUnion2();
+    void filterLandmarksUnion2_data();
 #endif
 
 #ifdef FILTER_ATTRIBUTE
@@ -4845,6 +4851,7 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
     m_manager->saveLandmark(&lm12);
 
     QLandmarkProximityFilter proximityFilter;
+
     proximityFilter.setCenter(QGeoCoordinate(50,50));
     proximityFilter.setRadius(-1);
     QVERIFY(doFetch(type,proximityFilter, &lms));
@@ -4985,6 +4992,47 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
     QCOMPARE(lms.at(3), lm6);
     QCOMPARE(lms.at(4), lm3);
 
+    //try using a limit with the two category and proximity filter
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,3,0));
+    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm10);
+    QCOMPARE(lms.at(2), lm9);
+
+    //try using a limit and offset the two category and proximity filter
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,2,2));
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm9);
+    QCOMPARE(lms.at(1), lm6);
+
+    //try an offset greater than the number of results
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,10,10));
+    QCOMPARE(lms.count(), 0);
+
+    //try a negative offset
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,1,-1));
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm5);
+
+    //try a 0 offset
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,0,-1));
+    QCOMPARE(lms.count(), 0);
+
+    //try using namsort
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,-1,-1,QLandmarkNameSort()));
+    QCOMPARE(lms.count(), 5);
+    QCOMPARE(lms.at(0), lm10);
+    QCOMPARE(lms.at(1), lm3);
+    QCOMPARE(lms.at(2), lm5);
+    QCOMPARE(lms.at(3), lm6);
+    QCOMPARE(lms.at(4), lm9);
+
+    //try using a name sort with offset and limit
+    QVERIFY(doFetch(type,intersectionFilter, &lms,QLandmarkManager::NoError,2,2,QLandmarkNameSort()));
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+
     //try an intersection filter categories but proximity doesn't have
     //landmarks in its region
     intersectionFilter.clear();
@@ -5011,6 +5059,52 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
 }
 
 void tst_QLandmarkManager::filterLandmarksIntersection_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+
+void tst_QLandmarkManager::filterLandmarksIntersection2() {
+    QFETCH(QString, type);
+
+    //try an offset in a intersection filter with a single filter.
+    QLandmark lm1;
+    lm1.setName("LM1");
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+
+    QVERIFY(m_manager->saveLandmark(&lm4));
+    QVERIFY(m_manager->saveLandmark(&lm3));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QVERIFY(m_manager->saveLandmark(&lm5));
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+
+    QLandmarkFilter filter;
+    QLandmarkIntersectionFilter intersectionFilter;
+    intersectionFilter << filter;
+    QLandmarkNameSort nameSort;
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,intersectionFilter,&lms,QLandmarkManager::NoError,-1,2,nameSort));
+    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.at(0), lm3);
+    QCOMPARE(lms.at(1), lm4);
+    QCOMPARE(lms.at(2), lm5);
+}
+
+void tst_QLandmarkManager::filterLandmarksIntersection2_data()
+{
     QTest::addColumn<QString>("type");
 
     QTest::newRow("sync") << "sync";
@@ -5383,6 +5477,11 @@ void tst_QLandmarkManager::filterLandmarksUnion() {
     unionFilter.setFilters(filters);
     QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(), 18);
+
+    //try with an non-zero offset
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError, -1, 9));
+    QCOMPARE(lms.count(), 9);
+
 }
 
 void tst_QLandmarkManager::filterLandmarksUnion_data()
@@ -5392,6 +5491,53 @@ void tst_QLandmarkManager::filterLandmarksUnion_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+
+void tst_QLandmarkManager::filterLandmarksUnion2() {
+    QFETCH(QString, type);
+
+    //try an offset in a union filter with a single filter.
+    QLandmark lm1;
+    lm1.setName("LM1");
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+
+    QVERIFY(m_manager->saveLandmark(&lm4));
+    QVERIFY(m_manager->saveLandmark(&lm3));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QVERIFY(m_manager->saveLandmark(&lm5));
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+
+    QLandmarkFilter filter;
+    QLandmarkUnionFilter unionFilter;
+    unionFilter << filter;
+    QLandmarkNameSort nameSort;
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,unionFilter,&lms,QLandmarkManager::NoError,-1,2,nameSort));
+    QCOMPARE(lms.count(), 3);
+    QCOMPARE(lms.at(0), lm3);
+    QCOMPARE(lms.at(1), lm4);
+    QCOMPARE(lms.at(2), lm5);
+}
+
+void tst_QLandmarkManager::filterLandmarksUnion2_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+
 #endif
 
 #ifdef FILTER_ATTRIBUTE
