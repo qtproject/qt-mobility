@@ -195,9 +195,10 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
     QString upper;
     QString num;
     
+    QString keyMapString = mTwelveKeyMap->GetMappedString(token);
     if(position < KColumnLimit )
         {
-        int err = mTwelveKeyMap->GetNumericLimits(token, lower, upper);
+        int err = mTwelveKeyMap->GetNumericLimits(keyMapString, lower, upper);
         if(err)
            {
            return QString("");
