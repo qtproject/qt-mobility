@@ -45,6 +45,27 @@
 #include <QDebug>
 #include <QPixmap>
 
+/*!
+   \qmlclass RelationshipModel QDeclarativeContactRelationshipModel
+   \brief The RelationshipModel provides a model of contact relationships from the contacts store.
+
+   \ingroup qml-contacts
+
+   This element is part of the \bold{QtMobility.contacts 1.1} module.
+
+    The contents of the model can be specified with \l participantId, \l role and \l relationshipType properties.
+    Whether the model is automatically updated when the store or filter changes, can be controlled
+    with \l RelationshipModel::autoUpdate property.
+
+    There are two ways of accessing the relationship data: through model by using views and delegates,
+    or alternatively via \l relationships list property.
+
+    At the moment only data role provided by the model is \c relationship (\l Relationship).
+    Through that one can access any data provided by the Relationship element.
+
+   \sa Relationship {QContactRelationship}
+ */
+
 class QDeclarativeContactRelationshipModelPrivate
 {
 public:
@@ -90,12 +111,26 @@ QDeclarativeContactRelationshipModel::~QDeclarativeContactRelationshipModel()
     delete d;
 }
 
+/*!
+  \qmlproperty string RelationshipModel::manager
+
+  This property holds the manager uri of the contact backend engine.
+  */
 QString QDeclarativeContactRelationshipModel::manager() const
 {
     if (d->m_manager)
         return d->m_manager->managerName();
     return QString();
 }
+
+
+/*!
+  \qmlproperty string RelationshipModel::error
+
+  This property holds the latest error code returned by the contact manager.
+
+  This property is read only.
+  */
 QString QDeclarativeContactRelationshipModel::error() const
 {
     switch (d->m_manager->error()) {
@@ -142,6 +177,15 @@ void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
     }
 }
 
+
+/*!
+  \qmlproperty int RelationshipModel::participantId
+
+  This property holds the participant id which the list of relationships returned by RelationshipModel should contain.
+
+  \sa RelationshipFilter::relatedContactId
+  \sa RelationshipModel::role
+  */
 QContactLocalId QDeclarativeContactRelationshipModel::participantId() const
 {
     return d->m_participantId;
@@ -154,6 +198,13 @@ void QDeclarativeContactRelationshipModel::setParticipantId(const QContactLocalI
     }
 }
 
+/*!
+  \qmlproperty variant RelationshipModel::relationshipType
+
+  This property holds the relationship type which the list of relationships returned by RelationshipModel should contain.
+
+  \sa Relationship::type
+  */
 QVariant QDeclarativeContactRelationshipModel::relationshipType() const
 {
     return d->m_relationshipTypeHolder.relationshipType();
@@ -166,6 +217,13 @@ void QDeclarativeContactRelationshipModel::setRelationshipType(const QVariant& t
     }
 }
 
+/*!
+  \qmlproperty enumeration RelationshipModel::role
+
+  This property holds the relationship role which the list of relationships returned by RelationshipModel should contain.
+
+  \sa RelationshipFilter::relatedContactRole
+  */
 QDeclarativeContactRelationship::RelationshipRole QDeclarativeContactRelationshipModel::role() const
 {
     return d->m_role;
@@ -177,7 +235,6 @@ void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationsh
         emit roleChanged();
     }
 }
-
 
 int QDeclarativeContactRelationshipModel::rowCount(const QModelIndex &parent) const
 {
@@ -219,6 +276,10 @@ void QDeclarativeContactRelationshipModel::fetchAgain()
     }
 }
 
+/*!
+  \qmlmethod addRelationship(relationship)
+  Addes the given \a relationship to the backend store.
+  */
 void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
 {
     if (dcr) {
@@ -231,6 +292,10 @@ void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRe
     }
 }
 
+/*!
+  \qmlmethod removeRelationship(relationship)
+  Removes the given \a relationship from the backend store.
+  */
 void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContactRelationship* dcr)
 {
     if (dcr) {
