@@ -272,6 +272,9 @@ bool QSensor::isBusy() const
     \brief a value to indicate if the sensor is active.
 
     This is true if the sensor is active (returning values). This is false otherwise.
+
+    Note that setting this value to true will not have an immediate effect. Instead,
+    the sensor will be started once the event loop has been reached.
 */
 void QSensor::setActive(bool active)
 {
@@ -488,6 +491,14 @@ void QSensor::removeFilter(QSensorFilter *filter)
     have uninitialized data.
 
     \sa start()
+*/
+
+/*!
+    \fn QSensor::activeChanged()
+
+    This signal is emitted when the QSensor::active property has changed.
+
+    \sa QSensor::active
 */
 
 /*!
