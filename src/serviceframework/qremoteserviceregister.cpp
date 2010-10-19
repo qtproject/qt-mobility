@@ -48,7 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRemoteServiceRegister::Entry
-    \brief This class represents a remote service entry to be published on QRemoteServiceRegister.
+    \ingroup servicefw
+    \inmodule QtServiceFramework
+    \brief The Entry class represents a remote service entry to be published on QRemoteServiceRegister.
 
     This class is created using QRemoteServiceRegister::createEntry to supply remote service
     details matching a valid QServiceInterfaceDescriptor. 
