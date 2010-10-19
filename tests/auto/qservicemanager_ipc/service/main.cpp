@@ -66,27 +66,23 @@ public:
 
     QString value() const
     {
-        qDebug() << "SharedTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "SharedTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "SharedTestService: Resetting property";
         m_value = "FFF";
         emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
     {
-        qDebug() << "SharedTestService::testFunctionWithReturnValue(" << input << ")";
         QString output("%1 + 3 = %2");
         output = output.arg(input).arg(input+3);
         return output;
@@ -94,14 +90,12 @@ public:
     
     Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
-        qDebug() << "SharedTestService::testFunctionWithVariantReturnValue()";
         m_hash = qHash(input.toString());
         return input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
-        qDebug() << "SharedTestService::testFunctionWithCustomReturnValue()";
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.2");
         f.setServiceName("MySharedService");
         return f;
@@ -115,6 +109,22 @@ public:
     Q_INVOKABLE void setConfirmationHash(uint hash)
     {
         m_hash = hash;
+    }
+
+    Q_INVOKABLE bool addTwice()
+    {
+        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+
+        //register the unique service
+        QRemoteServiceRegister::Entry uniqueEntry =
+            serviceRegister->createEntry<SharedTestService>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+
+        QRemoteServiceRegister::Entry uniqueEntry2 =
+            serviceRegister->createEntry<SharedTestService>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+         return (uniqueEntry == uniqueEntry2);
+
     }
 
 Q_SIGNALS:
@@ -135,7 +145,6 @@ public slots:
 
     void triggerSignalWithIntParamExecute()
     {
-        qDebug() << "Emitting SharedTestService::signalWithIntParam()";
         emit signalWithIntParam( 5 );
     }
 
@@ -143,13 +152,11 @@ public slots:
     {
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyService");
-        qDebug() << "Emitting SharedTestService::signalWithVariousParam()";
         emit signalWithVariousParam( QVariant(), QString("string-value"), f );
     }
     void testSlot()
     {
         m_hash = qHash(QString("testSlot()"));
-        qDebug() << "SharedTestService::testSlot() called" << m_hash;
     }
 
     void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
@@ -157,7 +164,6 @@ public slots:
         QString output("%1, %2, %3, %4");
         output = output.arg(d.constData()).arg(a).arg(variant.toString()).arg(variant.isValid());
         m_hash = qHash(output);
-        qDebug() << "SharedTestService::testSlotWithArgs(" << output << ") called" << m_hash;
     }
     
     void testSlotWithCustomArg(const QServiceFilter& f)
@@ -166,18 +172,15 @@ public slots:
         output = output.arg(f.serviceName()).arg(f.interfaceName())
                 .arg(f.majorVersion()).arg(f.minorVersion());
         m_hash = qHash(output);
-        qDebug() << "SharedTestService::testSlotWithCustomArg(" << output << ") called" << m_hash;
     }
     
     void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
     {
-        qDebug() << "SharedTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
         m_hash = 1;
     }
     
     void testIpcFailure()
     {
-        qDebug() << "Application exiting on request";
         qApp->exit(0); // exit to show failure
     }
 
@@ -231,27 +234,23 @@ public:
 
     QString value() const
     {
-        qDebug() << "UniqueTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "UniqueTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
         emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
     {
-        qDebug() << "UniqueTestService::testFunctionWithReturnValue(" << input << ")";
         QString output("%1 x 3 = %2");
         output = output.arg(input).arg(input*3);
         return output;
@@ -259,13 +258,11 @@ public:
 
     Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
-        qDebug() << "UniqueTestService::testFunctionWithVariantReturnValue()";
         return input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
-        qDebug() << "UniqueTestService::testFunctionWithCustomReturnValue()";
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyUniqueService");
         return f;
@@ -273,7 +270,6 @@ public:
     
     Q_INVOKABLE QList<QString> testFunctionWithListReturn()
     {
-        qDebug() << "UniqueTestService::testFunctionWithListReturn()";
         QList<QString> list;
         list << "1" << "2" << "3";
         return list;
@@ -308,7 +304,6 @@ public slots:
 
     void triggerSignalWithIntParamExecute()
     {
-        qDebug() << "Emitting UniqueTestService::signalWithIntParam()";
         emit signalWithIntParam( 5 );
     }
     
@@ -316,13 +311,11 @@ public slots:
     {
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyService");
-        qDebug() << "Emitting UniqueTestService::signalWithVariousParam()";
         emit signalWithVariousParam( QVariant("CAN'T BE NULL"), QString("string-value"), f, QVariant(5) );
     }
 
     void testSlot() {
         m_hash = qHash(QString("testSlot()"));
-        qDebug() << "UniqueTestService::testSlot() called" << m_hash;
     }
     
     void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
@@ -330,7 +323,6 @@ public slots:
         QString output("%1, %2, %3, %4");
         output = output.arg(d.constData()).arg(a).arg(variant.toString()).arg(variant.isValid());
         m_hash = qHash(output);
-        qDebug() << "UniqueTestService::testSlotWithArgs(" << output << ") called" << m_hash;
     }
 
     void testSlotWithCustomArg(const QServiceFilter& f)
@@ -339,12 +331,10 @@ public slots:
         output = output.arg(f.serviceName()).arg(f.interfaceName())
                 .arg(f.majorVersion()).arg(f.minorVersion());
         m_hash = qHash(output);
-        qDebug() << "UniqueTestService::testSlotWithCustomArg(" << output << ") called" << m_hash;
     }
     
     void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
     {
-        qDebug() << "UniqueTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
         m_hash = 1;
     }
     
@@ -357,11 +347,9 @@ public slots:
                 output += ", ";
         }
         m_hash = qHash(output);
-        qDebug() << "UniqueTestService::testSlotWithListArg( QList(" << output << " ) ) called" << m_hash;
     }
 
     void testIpcFailure() {
-      qDebug() << "Application exiting on request";
       qApp->exit(0); // exit to show failure
     }
     
@@ -370,6 +358,12 @@ private:
     Priority m_priority;
     ServiceFlags m_flags;
     uint m_hash;
+};
+
+class FailureTestServiceCreation : public QObject
+{
+    Q_OBJECT
+    Q_CLASSINFO("FailureTestServiceCreation", "Fails to be created");
 };
 
 void unregisterExampleService()
@@ -389,6 +383,14 @@ void registerExampleService()
 }
 
 Q_DECLARE_METATYPE(QMetaType::Type);
+
+QTM_BEGIN_NAMESPACE
+template <>
+QObject* qServiceTypeConstructHelper<FailureTestServiceCreation>()
+{    
+    return 0x0;
+}
+QTM_END_NAMESPACE
 
 int main(int argc, char** argv)
 {
@@ -418,6 +420,18 @@ int main(int argc, char** argv)
         serviceRegister->createEntry<SharedTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
     sharedEntry.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
+
+    // register the class to test creation failure
+    QRemoteServiceRegister::Entry creationEntry =
+            serviceRegister->createEntry<FailureTestServiceCreation>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.6");
+    creationEntry.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
+
+    // register the class to test creation failure
+    QRemoteServiceRegister::Entry creationEntryPriv =
+            serviceRegister->createEntry<FailureTestServiceCreation>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.7");
+    creationEntryPriv.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
 
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");

@@ -105,8 +105,12 @@ private slots:
     void testSignalling();
 
     void verifyServiceClass();
+    void testIpcCreationFailure();
+    void verifyAddTwice();
+
 
     void testIpcFailure();
+
 
 private:
     QObject* serviceUnique;
@@ -172,6 +176,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
     //start lackey that represents the service
     if (requiresLackey()) {
+        qDebug() << "Warning: starting server by hand";
         lackey = new QProcess(this);
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
         lackey->setProcessEnvironment(env);
@@ -186,11 +191,19 @@ void tst_QServiceManager_IPC::initTestCase()
 
     //test that the service is installed
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
-    QVERIFY2(list.count() == 2,"unit test specific IPCExampleService not registered/found" );
-    serviceUnique = manager->loadInterface(list[0]);
-    serviceUniqueOther = manager->loadInterface(list[0]);
-    serviceShared = manager->loadInterface(list[1]);
-    serviceSharedOther = manager->loadInterface(list[1]);
+    QVERIFY2(list.count() == 4,"unit test specific IPCExampleService not registered/found" );
+    QServiceInterfaceDescriptor d;
+    foreach(d, list){
+        if(d.majorVersion() == 3 && d.minorVersion() == 5){
+            serviceUnique = manager->loadInterface(d);
+            serviceUniqueOther = manager->loadInterface(d);
+        }
+        if(d.majorVersion() == 3 && d.minorVersion() == 4){
+            serviceShared = manager->loadInterface(d);
+            serviceSharedOther = manager->loadInterface(d);
+        }
+    }
+
   
     QString errorCode = "Cannot find service. Error: %1";
     errorCode = errorCode.arg(manager->error());
@@ -198,10 +211,8 @@ void tst_QServiceManager_IPC::initTestCase()
     QVERIFY2(serviceUniqueOther,errorCode.toLatin1());
     QVERIFY2(serviceShared,errorCode.toLatin1());
     QVERIFY2(serviceSharedOther,errorCode.toLatin1());
-    
-    connect(serviceUnique, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
-    connect(serviceUniqueOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
-    connect(serviceShared, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+
+    // all objects come from the same service, just need to connect to 1 signal
     connect(serviceSharedOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
 }
 
@@ -342,8 +353,8 @@ void tst_QServiceManager_IPC::verifySharedServiceObject()
     QCOMPARE(mo->className(), "SharedTestService");
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 18);
-    QCOMPARE(mo->methodCount(), 22); //20 meta functions available
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19);
+    QCOMPARE(mo->methodCount(), 23); //20 meta functions available
     //actual function presence will be tested later
     
     //test properties
@@ -1025,12 +1036,36 @@ void tst_QServiceManager_IPC::testIpcFailure()
     
     QVERIFY(ipcfailure);
   
-// TODO restart the connection
-//  service = manager->loadInterface("com.nokia.qt.ipcunittest");
-//  QString errorCode = "Cannot find service. Error: %1";
-//  errorCode = errorCode.arg(manager->error());
-//  QVERIFY2(service,errorCode.toLatin1());
-//  connect(service, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));  
+    // TODO restart the connection
+    //initTestCase();
+}
+
+void tst_QServiceManager_IPC::testIpcCreationFailure()
+{
+    QServiceManager* manager = new QServiceManager(this);
+    QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
+    QServiceInterfaceDescriptor d;
+    foreach(d, list){
+        if(d.majorVersion() == 3 && d.minorVersion() == 6){
+            QObject *o = manager->loadInterface(d);
+            QVERIFY(o == 0);
+        }
+        if(d.majorVersion() == 3 && d.minorVersion() == 7){
+            QObject *o = manager->loadInterface(d);
+            QVERIFY(o == 0);
+        }
+    }
+    delete manager;
+}
+
+void tst_QServiceManager_IPC::verifyAddTwice()
+{
+    bool result;
+    QMetaObject::invokeMethod(serviceShared, "addTwice",
+                              Q_RETURN_ARG(bool, result));
+    QVERIFY2(result, "Added the same service twice, returned different entries");
+
+
 }
 
 QTEST_MAIN(tst_QServiceManager_IPC);
