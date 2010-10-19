@@ -581,6 +581,11 @@ Q_UNUSED(screen)
     return width;
 }
 
+bool QSystemDisplayInfoPrivate::backLightOn()
+{
+    return false;
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
         : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
