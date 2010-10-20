@@ -124,20 +124,20 @@ static void inputStreamSuccessCallback(pa_stream *stream, int success, void *use
 }
 
 QPulseAudioInput::QPulseAudioInput(const QByteArray &device)
-    : m_bytesAvailable(0)
-    , m_timer(new QTimer(this))
-    , m_periodSize(0)
-    , m_bufferSize(0)
-    , m_intervalTime(1000)
+    : m_totalTimeValue(0)
     , m_audioSource(0)
-    , m_totalTimeValue(0)
-    , m_device(device)
-    , m_pullMode(true)
     , m_errorState(QAudio::NoError)
     , m_deviceState(QAudio::StoppedState)
-    , m_stream(0)
+    , m_pullMode(true)
     , m_opened(false)
+    , m_bytesAvailable(0)
+    , m_bufferSize(0)
+    , m_periodSize(0)
+    , m_intervalTime(1000)
+    , m_stream(0)
+    , m_device(device)
 {
+    m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), SLOT(userFeed()));
 }
 

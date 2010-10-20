@@ -113,22 +113,22 @@ private:
     bool open();
     void close();
 
-    QTimer *m_timer;
-    QTime m_timeStamp;
-    QTime m_clockStamp;
-    qint64 m_elapsedTimeOffset;
-    int m_intervalTime;
-    char *audioBuffer;
-    int m_bytesAvailable;
-    QByteArray m_device;
     bool m_pullMode;
+    bool m_opened;
+    int m_bytesAvailable;
     int m_bufferSize;
     int m_periodSize;
+    int m_intervalTime;
     unsigned int m_bufferTime;
     unsigned int m_periodTime;
-    QByteArray m_streamName;
+    QTimer *m_timer;
+    qint64 m_elapsedTimeOffset;
+    char *audioBuffer;
     pa_stream *m_stream;
-    bool m_opened;
+    QTime m_timeStamp;
+    QTime m_clockStamp;
+    QByteArray m_streamName;
+    QByteArray m_device;
 };
 
 class InputPrivate : public QIODevice
