@@ -1,0 +1,124 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "annotatedurl.h"
+
+#include <qnearfieldtarget.h>
+#include <qndefmessage.h>
+#include <qndefrecord.h>
+#include <qndefnfctextrecord.h>
+#include <qndefnfcurirecord.h>
+
+#include <QtCore/QUrl>
+
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+
+#include <QtCore/QDebug>
+
+AnnotatedUrl::AnnotatedUrl(QWidget *parent)
+:   QWidget(parent)
+{
+    QGridLayout *grid = new QGridLayout;
+
+    m_image = new QLabel;
+    grid->addWidget(m_image, 0, 0);
+
+    m_title = new QLabel;
+    grid->addWidget(m_title, 0, 1);
+
+    m_url = new QLabel;
+    grid->addWidget(m_url, 1, 0, 1, 2);
+
+    setLayout(grid);
+}
+
+AnnotatedUrl::~AnnotatedUrl()
+{
+}
+
+void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (!target->hasNdefMessage())
+        return;
+
+    QList<QNdefMessage> messages = target->ndefMessages();
+    if (messages.isEmpty())
+        return;
+
+    enum {
+        MatchedNone,
+        MatchedFirst,
+        MatchedEnglish,
+        MatchedLanguage,
+        MatchedLanguageAndCountry
+    } bestMatch = MatchedNone;
+
+    const QNdefMessage &message = messages.first();
+    foreach (const QNdefRecord &record, message) {
+        if (record.isRecordType<QNdefNfcTextRecord>()) {
+            QNdefNfcTextRecord textRecord(record);
+
+            // already found best match
+            if (bestMatch == MatchedLanguageAndCountry) {
+                // do nothing
+            } else if (bestMatch <= MatchedLanguage && textRecord.locale() == QLocale()) {
+                m_title->setText(textRecord.text());
+                bestMatch = MatchedLanguageAndCountry;
+            } else if (bestMatch <= MatchedEnglish &&
+                       textRecord.locale().language() == QLocale().language()) {
+                m_title->setText(textRecord.text());
+                bestMatch = MatchedLanguage;
+            } else if (bestMatch <= MatchedFirst &&
+                       textRecord.locale().language() == QLocale::English) {
+                m_title->setText(textRecord.text());
+                bestMatch = MatchedEnglish;
+            } else if (bestMatch == MatchedNone) {
+                m_title->setText(textRecord.text());
+                bestMatch = MatchedFirst;
+            }
+        } else if (record.isRecordType<QNdefNfcUriRecord>()) {
+            QNdefNfcUriRecord uriRecord(record);
+
+            m_url->setText(uriRecord.uri().toString());
+        }
+    }
+}

@@ -89,17 +89,27 @@ void tst_QNearFieldManager::targetDetected()
     QNearFieldManager manager(emulatorBackend, 0);
 
     QSignalSpy targetDetectedSpy(&manager, SIGNAL(targetDetected(QNearFieldTarget*)));
+    QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
 
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    QNearFieldTarget *target =
-        targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+
+    QSignalSpy disconnectedSpy(target, SIGNAL(disconnected()));
 
     QVERIFY(target);
 
     QVERIFY(!target->uid().isEmpty());
 
     QCOMPARE(target->hasNdefMessage(), !target->ndefMessages().isEmpty());
+
+    QTRY_VERIFY(!targetLostSpy.isEmpty());
+
+    QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();
+
+    QCOMPARE(target, lostTarget);
+
+    QVERIFY(!disconnectedSpy.isEmpty());
 }
 
 void tst_QNearFieldManager::unregisterTargetDetectedHandler()

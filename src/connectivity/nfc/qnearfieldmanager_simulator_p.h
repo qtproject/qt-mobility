@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_EMULATOR_H
-#define QNEARFIELDMANAGER_EMULATOR_H
+#ifndef QNEARFIELDMANAGER_SIMULATOR_P_H
+#define QNEARFIELDMANAGER_SIMULATOR_P_H
 
 #include "qnearfieldmanager_p.h"
-#include "qnearfieldtarget.h"
-#include "qndeffilter.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
+QT_BEGIN_HEADER
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+namespace Simulator {
+class NfcConnection;
+}
+
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 {
     Q_OBJECT
 
@@ -60,34 +60,15 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    void reset();
-
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
-
-    bool unregisterTargetDetectedHandler(int id);
-
 private slots:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
+    void targetInRange(const QByteArray &uid);
 
 private:
-    struct Callback {
-        QNearFieldTarget::Type targetType;
-        QNdefFilter filter;
-
-        QObject *object;
-        QMetaMethod method;
-    };
-
-    int getFreeId();
-
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
+    Simulator::NfcConnection *nfcConnection;
 };
 
-#endif // QNEARFIELDMANAGER_EMULATOR_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDMANAGER_SIMULATOR_P_H

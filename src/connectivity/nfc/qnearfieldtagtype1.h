@@ -77,10 +77,10 @@ public:
     virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
 
     // dynamic memory functions
-    //virtual QByteArray readSegment(quint8 segmentAddress) = 0;
-    //virtual QByteArray readBlock(quint8 blockAddress) = 0;
-    //virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
-    //                        WriteMode mode = EraseAndWrite) = 0;
+    virtual QByteArray readSegment(quint8 segmentAddress);
+    virtual QByteArray readBlock(quint8 blockAddress);
+    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
+                            WriteMode mode = EraseAndWrite);
 };
 
 QTM_END_NAMESPACE

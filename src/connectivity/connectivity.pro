@@ -13,3 +13,8 @@ include(nfc/nfc.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian:TARGET.CAPABILITY = All -TCB
+
+simulator {
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
+}

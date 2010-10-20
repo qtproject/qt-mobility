@@ -42,16 +42,17 @@
 #include "qnearfieldmanager.h"
 #include "qnearfieldmanager_p.h"
 
+#if defined(QT_SIMULATOR)
+#include "qnearfieldmanager_simulator_p.h"
+#elif defined(Q_OS_SYMBIAN)
+#else
+#include "qnearfieldmanagerimpl_p.h"
+#endif
+
 #include <QtCore/QMetaType>
 #include <QtCore/QMetaMethod>
 
 QTM_BEGIN_NAMESPACE
-
-#ifndef QNearFieldManagerPrivateImpl
-class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
-{
-};
-#endif
 
 /*!
     \class QNearFieldManager
@@ -90,6 +91,13 @@ class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 */
 
 /*!
+    \fn void QNearFieldManager::targetLost(QNearFieldTarget *target)
+
+    This signal is emitted whenever a target move out of proximity. The \a target parameter
+    represents the lost target.
+*/
+
+/*!
     \fn void QNearFieldManager::transactionDetected(const QByteArray &applicationIdentifier)
 
     This signal is emitted when ever a transaction is performed with the application identified by
@@ -102,8 +110,7 @@ class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 
 /*!
     \fn int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                             const QObject *object,
-                                                             const char *method)
+                                                             QObject *object, const char *method)
 
     Registers \a object to receive notifications on \a method when a tag with a tag type of
     \a targetType has been detected and has an NDEF record that matches template argument.  The
@@ -120,6 +127,10 @@ class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 QNearFieldManager::QNearFieldManager(QObject *parent)
 :   QObject(parent), d_ptr(new QNearFieldManagerPrivateImpl)
 {
+    connect(d_ptr, SIGNAL(targetDetected(QNearFieldTarget*)),
+            this, SIGNAL(targetDetected(QNearFieldTarget*)));
+    connect(d_ptr, SIGNAL(targetLost(QNearFieldTarget*)),
+            this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
 
 #ifdef QT_BUILD_INTERNAL
@@ -136,6 +147,8 @@ QNearFieldManager::QNearFieldManager(QNearFieldManagerPrivate *backend, QObject 
 {
     connect(d_ptr, SIGNAL(targetDetected(QNearFieldTarget*)),
             this, SIGNAL(targetDetected(QNearFieldTarget*)));
+    connect(d_ptr, SIGNAL(targetLost(QNearFieldTarget*)),
+            this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
 #endif
 
