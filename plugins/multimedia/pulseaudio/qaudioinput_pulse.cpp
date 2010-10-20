@@ -65,7 +65,7 @@ static void inputStreamStateCallback(pa_stream *stream, void *userdata)
     Q_UNUSED(userdata);
     pa_stream_state_t state = pa_stream_get_state(stream);
 #ifdef DEBUG_PULSE
-    qDebug() << "Stream state: " << PulseHelpers::stateToQString(state);
+    qDebug() << "Stream state: " << QPulseAudioInternal::stateToQString(state);
 #endif
     switch (state) {
         case PA_STREAM_CREATING:
@@ -80,7 +80,7 @@ static void inputStreamStateCallback(pa_stream *stream, void *userdata)
             qDebug() << "*** minreq: " << buffer_attr->minreq;
             qDebug() << "*** tlength: " << buffer_attr->tlength;
 
-            pa_sample_spec spec = PulseHelpers::audioFormatToSampleSpec(audioInput->format());
+            pa_sample_spec spec = QPulseAudioInternal::audioFormatToSampleSpec(audioInput->format());
             qDebug() << "*** bytes_to_usec: " << pa_bytes_to_usec(buffer_attr->fragsize, &spec);
 #endif
             }
@@ -248,7 +248,7 @@ bool QPulseAudioInput::open()
     }
 
 #ifdef DEBUG_PULSE
-        qDebug() << "Format: " << PulseHelpers::sampleFormatToQString(spec.format);
+        qDebug() << "Format: " << QPulseAudioInternal::sampleFormatToQString(spec.format);
         qDebug() << "Rate: " << spec.rate;
         qDebug() << "Channels: " << spec.channels;
         qDebug() << "Frame size: " << pa_frame_size(&spec);
