@@ -400,6 +400,11 @@ QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, c
 /*!
   Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders.
 
+  This function will return both persisted and generated occurrences of items which match the specified \a filter.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
+
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching organizeritems will be returned.  A client should not make changes to an organizer item which has
@@ -423,7 +428,7 @@ QList<QOrganizerItem> QOrganizerManager::items(const QOrganizerItemFilter& filte
   and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
   If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
 
-  This function will return parent items and both persisted and generated occurrences of items which match the specified criteria.
+  This function will return both persisted and generated occurrences of items which match the specified criteria.
 
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
   organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
