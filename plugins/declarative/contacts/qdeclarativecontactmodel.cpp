@@ -237,7 +237,7 @@ QString QDeclarativeContactModel::error() const
     default:
         break;
     }
-    return QLatin1String("Status ok");
+    return QLatin1String("NoError");
 }
 
 
