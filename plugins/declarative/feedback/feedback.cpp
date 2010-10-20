@@ -53,7 +53,6 @@
 #include "qdeclarativethemeeffect.h"
 #include "qdeclarativefeedback.h"
 
-
 /*!
     \qmlclass Feedback
     \brief The Feedback object defines a number of constants
@@ -91,14 +90,14 @@
   */
 
 /*!
-  \qmlproperty url FeedbackEffect::state
+  \qmlproperty FeedbackEffect::State FeedbackEffect::state
 
   This is the current state of the effect.  It is one of:
   \list
-  \o \l Feedback.Stopped
-  \o \l Feedback.Loading
-  \o \l Feedback.Running
-  \o \l Feedback.Paused
+  \o \l Feedback.Stopped - the effect is not playing
+  \o \l Feedback.Loading - the effect is being loaded
+  \o \l Feedback.Running - the effect is playing
+  \o \l Feedback.Paused - the effect was being played, but is now paused.
   \endlist
   */
 
@@ -124,7 +123,29 @@
   \qmlsignal FeedbackEffect::error(Feedback::ErrorType)
 
   This signal is emitted when an error occurs during playback of an effect.
+
+  The error is one of the following values:
+  \list
+  \o \l Feedback.UnknownError - An unknown error occurred
+  \o \l Feedback.DeviceBusy - The device resource is already being used.
+  \endlist
+
+  \sa QFeedbackEffect::ErrorType
   */
+
+
+/*!
+    \qmlproper QFeedbackEffect::ErrorType
+
+    This enum describes the possible errors happening on the effect.
+
+    \value UnknownError An unknown error occurred.
+
+    \value DeviceBusy The feedback could not start because the device is busy.
+
+    \sa error()
+*/
+
 
 /*!
     \qmlclass FileEffect
@@ -270,7 +291,45 @@
 /*!
     \qmlproperty ThemeEffect ThemeEffect::effect
 
-    This property holds the specific themed effect type to play.
+    This property holds the specific themed effect type to play.  It is one of:
+
+  \list
+    \o \l ThemeEffect.Basic - Generic feedback.
+    \o \l ThemeEffect.Sensitive - Generic sensitive feedback.
+    \o \l ThemeEffect.BasicButton - Feedback for interacting with a button (e.g. pressing).
+    \o \l ThemeEffect.SensitiveButton - Sensitive feedback for interacting with a button (e.g. auto repeat).
+    \o \l ThemeEffect.BasicKeypad - Feedback for interacting with a keypad button.
+    \o \l ThemeEffect.SensitiveKeypad - Sensitive feedback for interacting with a keypad button.
+    \o \l ThemeEffect.BasicSlider - Feedback for moving a slider.
+    \o \l ThemeEffect.SensitiveSlider - Sensitive feedback for moving a slider.
+    \o \l ThemeEffect.BasicItem - Feedback when interacting with a list or grid item.
+    \o \l ThemeEffect.SensitiveItem - Sensitive feedback when interacting with a list or grid item.
+    \o \l ThemeEffect.ItemScroll - Feedback when scrolling a list or grid item view.
+    \o \l ThemeEffect.ItemPick - Feedback when selecting an item to move in a list or grid view.
+    \o \l ThemeEffect.ItemDrop - Feedback when dropping an item in a list or grid view.
+    \o \l ThemeEffect.ItemMoveOver - Feedback when moving an item in a list or grid view.
+    \o \l ThemeEffect.BounceEffect - Feedback for a bounce effect.
+    \o \l ThemeEffect.CheckBox - Feedback for selecting a checkbox.
+    \o \l ThemeEffect.MultipleCheckBox - Feedback for selecting checkboxes of multiple items.
+    \o \l ThemeEffect.Editor - Feedback for interacting with an editor.
+    \o \l ThemeEffect.TextSelection - Feedback for selecting text.
+    \o \l ThemeEffect.BlankSelection - Feedback for a blank selection.
+    \o \l ThemeEffect.LineSelection - Feedback for selecting a line.
+    \o \l ThemeEffect.EmptyLineSelection - Feedback for selecting an empty line.
+    \o \l ThemeEffect.PopUp - Generic feedback for interacting with a popup.
+    \o \l ThemeEffect.PopupOpen - Generic feedback when a popup opens.
+    \o \l ThemeEffect.PopupClose - Generic feedback when a popup closes.
+    \o \l ThemeEffect.Flick - Generic feedback when starting a flick gesture.
+    \o \l ThemeEffect.StopFlick - Generic feedback when stopping a flick.
+    \o \l ThemeEffect.MultiPointTouchActivate - Generic feedback when a touch gesture with more than one point is started.
+    \o \l ThemeEffect.RotateStep - Feedback when rotating using a gesture.
+    \o \l ThemeEffect.LongPress - Feedback for a long press (or tap and hold) gesture.
+    \o \l ThemeEffect.PositiveTacticon - Generic feedback for notification of a successful operation.
+    \o \l ThemeEffect.NeutralTacticon - Generic feedback for notification.
+    \o \l ThemeEffect.NegativeTacticon - Generic feedback for notification of a failed operation.
+  \endlist
+
+  \sa QFeedbackEffect::ThemeEffect
 */
 
 /*!
