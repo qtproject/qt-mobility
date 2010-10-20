@@ -32,7 +32,8 @@ unix:!mac:!symbian {
         SUBDIRS += audiocapture
     }
     SUBDIRS += v4l
-    maemo6 {
+
+    contains(pulseaudio_enabled, yes) {
         SUBDIRS += pulseaudio
         SUBDIRS -= v4l
     }
