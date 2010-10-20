@@ -175,6 +175,7 @@ private slots:
     void spanOverDays();
     void recurrence();
     void idComparison();
+    void emptyItemManipulation();
 
     /* Tests that take no data */
     void itemValidation();
@@ -210,6 +211,7 @@ private slots:
     void spanOverDays_data() {addManagers();}
     void recurrence_data() {addManagers();}
     void idComparison_data() {addManagers();}
+    void emptyItemManipulation_data() {addManagers();}
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -2959,7 +2961,6 @@ void tst_QOrganizerManager::recurrence()
 void tst_QOrganizerManager::idComparison()
 {
     QFETCH(QString, uri);
-    
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     // Can we run this test?
@@ -2982,17 +2983,11 @@ void tst_QOrganizerManager::idComparison()
     e2.setStartDateTime(QDateTime::currentDateTime().addDays(1));
     e2.setEndDateTime(QDateTime::currentDateTime().addDays(1).addSecs(1800));
 
-    QOrganizerJournal j1;
-    j1.setDisplayLabel("journal one");
-    j1.addComment("this is a test journal comment");
-    j1.setDateTime(QDateTime::currentDateTime());
-
     QOrganizerTodo t1;
     QOrganizerRecurrenceRule r1;
     r1.setFrequency(QOrganizerRecurrenceRule::Weekly);
     t1.setDisplayLabel("todo one");
     t1.setDescription("test todo one");
-    t1.addComment("perform unit testing every Friday");
     t1.setDueDateTime(QDateTime::currentDateTime().addDays(5));
     t1.setRecurrenceRule(r1);
 
@@ -3002,12 +2997,10 @@ void tst_QOrganizerManager::idComparison()
     // step two: save and harvest the ids
     cm->saveItem(&e1);
     cm->saveItem(&e2);
-    cm->saveItem(&j1);
     cm->saveItem(&t1);
     cm->saveCollection(&c1);
     QOrganizerItemId e1id = e1.id();
     QOrganizerItemId e2id = e2.id();
-    QOrganizerItemId j1id = j1.id();
     QOrganizerItemId t1id = t1.id();
     QOrganizerCollectionId c1id = c1.id();
 
@@ -3023,13 +3016,11 @@ void tst_QOrganizerManager::idComparison()
     QVERIFY(bcid1 != bcid2);
 
     QVERIFY(e1id != e2id);
-    QVERIFY(e1id != j1id);
     QVERIFY(e1id != t1id);
 
     QList<QOrganizerItemId> idList;
     idList << e1id << t1id << biid1;
     QVERIFY(!idList.contains(biid2));
-    QVERIFY(!idList.contains(j1id));
     QVERIFY(!idList.contains(e2id));
     QVERIFY(idList.contains(e1id));
     QVERIFY(idList.contains(t1id));
@@ -3063,7 +3054,6 @@ void tst_QOrganizerManager::idComparison()
 
     QMap<QOrganizerItemId, int> testMap;
     testMap.insert(e1id, 1);
-    testMap.insert(j1id, 5);
     testMap.insert(biid1, 12);
     testMap.insert(biid2, 11);
     testMap.insert(t1id, 6);
@@ -3072,15 +3062,57 @@ void tst_QOrganizerManager::idComparison()
     QCOMPARE(testMap.value(e1id), 1);
     QCOMPARE(testMap.value(n2), 12); // again, n1 == n2.
     QCOMPARE(testMap.value(biid1), 12);
-    QCOMPARE(testMap.value(j1id), 5);
     QCOMPARE(testMap.value(biid2), 11);
     QCOMPARE(testMap.value(t1id), 6);
     QCOMPARE(testMap.value(QOrganizerItemId()), 12); // again, n1 == null
 
-    QVERIFY(testMap.size() == 6);
-    testMap.remove(QOrganizerItemId());
     QVERIFY(testMap.size() == 5);
+    testMap.remove(QOrganizerItemId());
+    QVERIFY(testMap.size() == 4);
     QVERIFY(testMap.value(QOrganizerItemId()) != 12); // removed this entry.
+}
+
+void tst_QOrganizerManager::emptyItemManipulation()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    QOrganizerItem i;
+    QOrganizerEvent e;
+    QOrganizerTodo t;
+
+    // attempt to save an empty item
+    if (cm->saveItem(&i)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(i.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(i.id()));
+    }
+
+    // attempt to save an empty event.
+    if (cm->saveItem(&e)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(e.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(e.id()));
+    }
+
+    // attempt to save an empty event.
+    if (cm->saveItem(&t)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(t.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(t.id()));
+    }
+
+    // now attempt to remove some invalid ids.
+    QOrganizerItemId invalidId;
+    QVERIFY(!cm->removeItem(invalidId)); // null id
+    invalidId = makeItemId(50);
+    QVERIFY(!cm->removeItem(invalidId)); // id from different manager
 }
 
 void tst_QOrganizerManager::dateRange()
