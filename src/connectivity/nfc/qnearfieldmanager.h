@@ -95,12 +95,12 @@ private:
 
 template<typename T>
 int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     QObject *object, const char *slot)
+                                                     QObject *object, const char *method)
 {
     T record;
 
     return registerTargetDetectedHandler(targetType, record.userTypeNameFormat(), record.type(),
-                                         object, slot);
+                                         object, method);
 }
 
 QTM_END_NAMESPACE

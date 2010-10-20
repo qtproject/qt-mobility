@@ -110,7 +110,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new near field target.
+    Constructs a new near field target with \a parent.
 */
 QNearFieldTarget::QNearFieldTarget(QObject *parent)
 :   QObject(parent)

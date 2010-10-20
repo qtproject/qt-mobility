@@ -103,8 +103,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                             const QObject *object,
-                                                             const char *method)
+                                                             QObject *object, const char *method)
 
     Registers \a object to receive notifications on \a method when a tag with a tag type of
     \a targetType has been detected and has an NDEF record that matches template argument.  The
