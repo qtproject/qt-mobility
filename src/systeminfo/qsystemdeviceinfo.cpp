@@ -202,7 +202,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
    Constructs a QSystemDeviceInfo with the given \a parent.
    */
 
-          QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
