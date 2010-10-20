@@ -265,6 +265,8 @@ static QString urlToLocalFileName(const QUrl& url)
 
 /*!
   \qmlmethod importContacts(url url, list<string> profiles)
+
+  Import contacts from a vcard by the given \a url and optional \a profiles.
   */
 void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
@@ -282,6 +284,9 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
 
 /*!
   \qmlmethod exportContacts(url url, list<string> profiles)
+
+  Export contacts into a vcard file to the given \a url by optional \a profiles.
+  At the moment only the local file url is supported in export method.
   */
 void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
@@ -325,7 +330,9 @@ int QDeclarativeContactModel::rowCount(const QModelIndex &parent) const
 /*!
   \qmlproperty Filter ContactModel::filter
 
-  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  This property holds the filter instance used by the contact model.
+
+  \sa Filter
   */
 QDeclarativeContactFilter* QDeclarativeContactModel::filter() const
 {
@@ -344,7 +351,9 @@ void QDeclarativeContactModel::setFilter(QDeclarativeContactFilter* filter)
 /*!
   \qmlproperty FetchHint ContactModel::fetchHint
 
-  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  This property holds the fetch hint instance used by the contact model.
+
+  \sa FetchHint
   */
 QDeclarativeContactFetchHint* QDeclarativeContactModel::fetchHint() const
 {
@@ -375,7 +384,7 @@ QDeclarativeListProperty<QDeclarativeContact> QDeclarativeContactModel::contacts
 /*!
   \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
 
-  This property holds a list of sort orders.
+  This property holds a list of sort orders used by the organizer model.
 
   \sa SortOrder
   */
@@ -402,6 +411,10 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
     }
 }
 
+/*!
+  \qmlmethod fetchContacts(list<int> contactIds)
+  Fetch a list of contacts from the contacts store by given \a contactIds.
+  */
 void QDeclarativeContactModel::fetchContacts(const QList<QContactLocalId>& contactIds)
 {
     QList<QContactSortOrder> sortOrders;
@@ -466,7 +479,12 @@ void QDeclarativeContactModel::requestUpdated()
     }
 }
 
+/*!
+  \qmlmethod saveContact(Contact contact)
+  Save the given \a contact into the contacts store. Once saved successfully, the dirty flags of this contact will be reset.
 
+  \sa Contact::modified
+  */
 void QDeclarativeContactModel::saveContact(QDeclarativeContact* dc)
 {
     if (dc) {
@@ -505,11 +523,19 @@ void QDeclarativeContactModel::contactsSaved()
     }
 }
 
-
+/*!
+  \qmlmethod removeContact(int contactId)
+  Remove the contact from the contacts store by given \a contactId.
+  */
 void QDeclarativeContactModel::removeContact(QContactLocalId id)
 {
     removeContacts(QList<QContactLocalId>() << id);
 }
+
+/*!
+  \qmlmethod removeContacts(list<int> contactIds)
+  Remove the list of contacts from the contacts store by given \a contactIds.
+  */
 
 void QDeclarativeContactModel::removeContacts(const QList<QContactLocalId>& ids)
 {
