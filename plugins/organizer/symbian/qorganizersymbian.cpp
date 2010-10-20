@@ -688,7 +688,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
 {
 	Q_UNUSED(fetchHint)
 
-    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+    if (itemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
         User::Leave(KErrNotFound);
 
     // Check collection id
