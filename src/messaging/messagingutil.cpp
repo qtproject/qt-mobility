@@ -60,7 +60,7 @@ namespace SymbianHelpers {
         } else if (id.startsWith(freestylePrefix)) {
             return EngineTypeFreestyle;
         } else {
-            return EngineTypeMTM;
+            return EngineTypeNotDefined;
         }
     }
 
@@ -71,7 +71,7 @@ namespace SymbianHelpers {
         } else if (id.toString().startsWith(freestylePrefix)) {
             return EngineTypeFreestyle;
         } else {
-            return EngineTypeMTM;
+            return EngineTypeNotDefined;
         }
     }
     
@@ -82,7 +82,7 @@ namespace SymbianHelpers {
         } else if (id.toString().startsWith(freestylePrefix)) {
             return EngineTypeFreestyle;
         } else {
-            return EngineTypeMTM;
+            return EngineTypeNotDefined;
         }
     }
     
@@ -93,7 +93,7 @@ namespace SymbianHelpers {
         } else if (id.toString().startsWith(freestylePrefix)) {
             return EngineTypeFreestyle;
         } else {
-            return EngineTypeMTM;
+            return EngineTypeNotDefined;
         }
     }
 
