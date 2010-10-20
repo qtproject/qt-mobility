@@ -200,6 +200,30 @@ static bool uPowerAvailable()
 
     return false;
 }
+
+static QString sysinfodValueForKey(const QString& key)
+{
+    QString value = "";
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.SystemInfo",
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+    QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
+    if (reply.isValid()) {
+        /*
+         * sysinfod automatically terminates after some idle time (no D-Bus traffic).
+         * Therefore, we cannot use isServiceRegistered() to determine if sysinfod is available.
+         *
+         * Thus, make a query to sysinfod and if we got back a valid reply, sysinfod
+         * is available.
+         */
+        value = reply.value();
+    }
+#endif
+    return value;
+}
+
 //#endif
 
 bool halIsAvailable;
@@ -495,12 +519,47 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  #endif
 
 QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
-                                               const QString &parameter)
+                                    const QString &parameter)
 {
-    Q_UNUSED(parameter);
     QString errorStr = QLatin1String("Not Available");
 
+    bool useDate = false;
+    if(parameter == QLatin1String("versionDate")) {
+        useDate = true;
+    }
+
     switch(type) {
+        case QSystemInfo::Firmware :
+        {
+#if !defined(QT_NO_DBUS)
+            QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
+            if (!sysinfodValue.isEmpty()) {
+                return sysinfodValue;
+            }
+            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
+            QString str;
+            if (iface.isValid()) {
+                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
+                if(!str.isEmpty()) {
+                    return str;
+                }
+                if(useDate) {
+                    str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
+                    if(!str.isEmpty()) {
+                        return str;
+                    }
+                } else {
+                    str = iface.getPropertyString(QLatin1String("system.firmware.version"));
+                    if(str.isEmpty()) {
+                        if(!str.isEmpty()) {
+                            return str;
+                        }
+                    }
+                }
+            }
+            break;
+#endif
+        }
         case QSystemInfo::Os :
         {
 #if !defined(QT_NO_DBUS)
@@ -2900,6 +2959,114 @@ QSystemDeviceInfo::LockType QSystemDeviceInfoLinuxCommonPrivate::typeOfLock()
     return QSystemDeviceInfo::UnknownLock;
 }
 
+QString QSystemDeviceInfoLinuxCommonPrivate::model()
+{
+#if !defined(QT_NO_DBUS)
+    QString productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty()) {
+        return productName.split("/").at(0);
+    }
+#endif
+    if(halAvailable()) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString model;
+        if (iface.isValid()) {
+            model = iface.getPropertyString("system.kernel.machine");
+            if(!model.isEmpty())
+                model += " ";
+            model += iface.getPropertyString("system.chassis.type");
+            if(!model.isEmpty())
+                return model;
+        }
+#endif
+    }
+    QFile file("/proc/cpuinfo");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open /proc/cpuinfo";
+    } else {
+        QTextStream cpuinfo(&file);
+        QString line = cpuinfo.readLine();
+        while (!line.isNull()) {
+            line = cpuinfo.readLine();
+            if(line.contains("model name")) {
+                return line.split(": ").at(1).trimmed();
+            }
+        }
+    }
+    return QString();
+}
+
+QString QSystemDeviceInfoLinuxCommonPrivate::productName()
+{
+#if !defined(QT_NO_DBUS)
+    QString productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty()) {
+        return productName;
+    }
+#endif
+    if(halAvailable()) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString productName;
+        if (iface.isValid()) {
+            productName = iface.getPropertyString("info.product");
+            if(productName.isEmpty()) {
+                productName = iface.getPropertyString("system.product");
+                if(!productName.isEmpty())
+                    return productName;
+            } else {
+                return productName;
+            }
+        }
+#endif
+    }
+    const QDir dir("/etc");
+    if(dir.exists()) {
+        QStringList langList;
+        QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
+                                                     QDir::Files | QDir::NoDotAndDotDot,
+                                                     QDir::Name);
+        foreach(const QFileInfo fileInfo, localeList) {
+            const QString filepath = fileInfo.filePath();
+            QFile file(filepath);
+            if (file.open(QIODevice::ReadOnly)) {
+                QTextStream prodinfo(&file);
+                QString line = prodinfo.readLine();
+                while (!line.isNull()) {
+                    if(filepath.contains("lsb.release")) {
+                        if(line.contains("DISTRIB_DESCRIPTION")) {
+                            return line.split("=").at(1).trimmed();
+                        }
+                    } else {
+                        return line;
+                    }
+                    line = prodinfo.readLine();
+                }
+            }
+        } //end foreach
+    }
+
+    QFile file("/etc/issue");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open /proc/cpuinfo";
+    } else {
+        QTextStream prodinfo(&file);
+        QString line = prodinfo.readLine();
+        while (!line.isNull()) {
+            line = prodinfo.readLine();
+            if(!line.isEmpty()) {
+                QStringList lineList = line.split(" ");
+                for(int i = 0; i < lineList.count(); i++) {
+                    if(lineList.at(i).toFloat()) {
+                        return lineList.at(i-1) + " "+ lineList.at(i);
+                    }
+                }
+            }
+        }
+    }
+    return QString();
+}
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {

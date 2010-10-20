@@ -108,7 +108,6 @@ public:
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
     QStringList availableLanguages() const;
-    QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 };
@@ -242,8 +241,6 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
-    QString model();
-    QString productName();
 
 protected:
 #if !defined(QT_NO_DBUS)
