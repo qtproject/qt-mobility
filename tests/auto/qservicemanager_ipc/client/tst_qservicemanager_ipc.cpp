@@ -105,8 +105,7 @@ private slots:
     void testSignalling();
 
     void verifyServiceClass();
-    void testIpcCreationFailure();
-    void verifyAddTwice();
+    void verifyFailures();
 
 
     void testIpcFailure();
@@ -117,6 +116,7 @@ private:
     QObject* serviceUniqueOther;
     QObject* serviceShared;
     QObject* serviceSharedOther;
+    QObject* miscTest;
     QServiceManager* manager;
     bool verbose;
     QProcess* lackey;
@@ -159,6 +159,7 @@ void tst_QServiceManager_IPC::initTestCase()
     serviceSharedOther = 0;
     serviceShared = 0;
     serviceSharedOther = 0;
+    miscTest = 0;
     qRegisterMetaType<QServiceFilter>("QServiceFilter");
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     qRegisterMetaType<QList<QString> >("QList<QString>");
@@ -191,7 +192,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
     //test that the service is installed
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
-    QVERIFY2(list.count() == 4,"unit test specific IPCExampleService not registered/found" );
+    QVERIFY2(list.count() == 5,"unit test specific IPCExampleService not registered/found" );
     QServiceInterfaceDescriptor d;
     foreach(d, list){
         if(d.majorVersion() == 3 && d.minorVersion() == 5){
@@ -202,6 +203,10 @@ void tst_QServiceManager_IPC::initTestCase()
             serviceShared = manager->loadInterface(d);
             serviceSharedOther = manager->loadInterface(d);
         }
+        if(d.majorVersion() == 3 && d.minorVersion() == 8){
+            miscTest = manager->loadInterface(d);
+        }
+
     }
 
   
@@ -353,8 +358,8 @@ void tst_QServiceManager_IPC::verifySharedServiceObject()
     QCOMPARE(mo->className(), "SharedTestService");
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19);
-    QCOMPARE(mo->methodCount(), 23); //20 meta functions available
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 18);
+    QCOMPARE(mo->methodCount(), 22); //20 meta functions available
     //actual function presence will be tested later
     
     //test properties
@@ -1040,33 +1045,37 @@ void tst_QServiceManager_IPC::testIpcFailure()
     //initTestCase();
 }
 
-void tst_QServiceManager_IPC::testIpcCreationFailure()
+void tst_QServiceManager_IPC::verifyFailures()
 {
+    bool result;
+
     QServiceManager* manager = new QServiceManager(this);
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
     QServiceInterfaceDescriptor d;
     foreach(d, list){
         if(d.majorVersion() == 3 && d.minorVersion() == 6){
             QObject *o = manager->loadInterface(d);
-            QVERIFY(o == 0);
+            QVERIFY2(o == 0, "Failure to allocate remote object returns null");
         }
         if(d.majorVersion() == 3 && d.minorVersion() == 7){
             QObject *o = manager->loadInterface(d);
-            QVERIFY(o == 0);
+            QVERIFY2(o == 0, "Failure to allocate remote object returns null");
         }
     }
-    delete manager;
-}
 
-void tst_QServiceManager_IPC::verifyAddTwice()
-{
-    bool result;
-    QMetaObject::invokeMethod(serviceShared, "addTwice",
+    QMetaObject::invokeMethod(miscTest, "addTwice",
                               Q_RETURN_ARG(bool, result));
     QVERIFY2(result, "Added the same service twice, returned different entries");
 
+    QMetaObject::invokeMethod(miscTest, "getInvalidEntry",
+                              Q_RETURN_ARG(bool, result));
+    QVERIFY2(result, "Invalid entry returns invalid meta data");
+
+    delete manager;
 
 }
+
+
 
 QTEST_MAIN(tst_QServiceManager_IPC);
 #include "tst_qservicemanager_ipc.moc"

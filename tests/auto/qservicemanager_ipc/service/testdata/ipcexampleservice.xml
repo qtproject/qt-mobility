@@ -4,6 +4,12 @@
     <name>IPCExampleService</name>
     <ipcaddress>qt_sfw_example_ipc_unittest</ipcaddress>
     <description>Example service demoing IPC based services</description>
+    <interface>
+        <name>com.nokia.qt.ipcunittest</name>
+        <version>3.8</version>
+        <description>Misc test code that tests failures and edge cases</description>
+        <capabilities></capabilities>
+    </interface>
      <interface>
          <name>com.nokia.qt.ipcunittest</name>
          <version>3.7</version>

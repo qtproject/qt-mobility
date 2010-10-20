@@ -46,6 +46,7 @@
 
 #include "qservicefilter.h" //only used to test custom metatype
 #include "qremoteserviceregister.h"
+#include "ipc/instancemanager_p.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QServiceFilter);
@@ -109,22 +110,6 @@ public:
     Q_INVOKABLE void setConfirmationHash(uint hash)
     {
         m_hash = hash;
-    }
-
-    Q_INVOKABLE bool addTwice()
-    {
-        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
-
-        //register the unique service
-        QRemoteServiceRegister::Entry uniqueEntry =
-            serviceRegister->createEntry<SharedTestService>(
-                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
-
-        QRemoteServiceRegister::Entry uniqueEntry2 =
-            serviceRegister->createEntry<SharedTestService>(
-                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
-         return (uniqueEntry == uniqueEntry2);
-
     }
 
 Q_SIGNALS:
@@ -366,6 +351,40 @@ class FailureTestServiceCreation : public QObject
     Q_CLASSINFO("FailureTestServiceCreation", "Fails to be created");
 };
 
+class MiscTestService : public QObject
+{
+    Q_OBJECT
+public:
+    MiscTestService(QObject* parent = 0)
+        : QObject(parent)
+    {
+    }
+
+    Q_INVOKABLE bool addTwice()
+    {
+        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+
+        //register the unique service
+        QRemoteServiceRegister::Entry uniqueEntry =
+            serviceRegister->createEntry<SharedTestService>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+
+        QRemoteServiceRegister::Entry uniqueEntry2 =
+            serviceRegister->createEntry<SharedTestService>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
+         return (uniqueEntry == uniqueEntry2);
+
+    }
+
+    Q_INVOKABLE bool getInvalidEntry()
+    {
+        InstanceManager *i = InstanceManager::instance();
+        QRemoteServiceRegister::Entry e; // entry should be invalid
+        const QMetaObject *o = i->metaObject(e); // should return null
+        return (o == 0);
+    }
+};
+
 void unregisterExampleService()
 {
     QServiceManager m;
@@ -432,6 +451,12 @@ int main(int argc, char** argv)
             serviceRegister->createEntry<FailureTestServiceCreation>(
                     "IPCExampleService", "com.nokia.qt.ipcunittest", "3.7");
     creationEntryPriv.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+
+    // register the class to test creation failure
+    QRemoteServiceRegister::Entry miscEntry =
+            serviceRegister->createEntry<MiscTestService>(
+                    "IPCExampleService", "com.nokia.qt.ipcunittest", "3.8");
+    creationEntryPriv.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
 
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");
