@@ -8,6 +8,7 @@ SUBDIRS += \
     qvcard30writer \
     qversitcontactexporter \
     qversitcontactimporter \
+    qversitcontactplugins \
     qversitdocument \
     qversitproperty \
     qversitreader \

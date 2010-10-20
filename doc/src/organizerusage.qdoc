@@ -173,7 +173,7 @@ will be overwritten as a result of the save request.
 
 \section2 Removing an item from a manager
 
-The client may remove an item from the manager by specifying its local id.
+The client may remove an item from the manager by specifying its id.
 
 \section2 Optimization in item retrieval
 
@@ -208,21 +208,21 @@ recur.  While the item occurs multiple times, the client only has to create it
 once and save it once.  When QOrganizerItemManager::items() is called,
 any recurring items are expanded into multiple QOrganizerEventOccurrence and
 QOrganizerTodoOccurrence items by the manager.  Each generated occurrence item
-has a local id of zero.
+has a null id.
 
 The client is able to make an exception for an occurrence by taking a generated
 item occurrence from the manager, making the necessary modifications, and
 resaving it.  When the manager is then queried with
 QOrganizerItemManager::items(), it will return the list of occurrences
 as before, but with the modifications in place.  The modified item will be given
-a non-zero local id, and replaces the generated one in the list.
+a non-null id, and replaces the generated one in the list.
 
 The client can also query the manager for a list of unexpanded items by calling
 QOrganizerItemManager::itemForExport().  The list of returned items will contain all
 items that have been saved to the manager with a call to saveItem() (of course,
 without any items removed with removeItem()).  That is, recurring events will be
 returned as is, and event occurrences will not appear unless they are exceptions
-(ie. have a non-zero local id).  Fetching the list in this way can be useful for
+(ie. have a non-null id).  Fetching the list in this way can be useful for
 transfering items to other managers or for exporting to iCalendar with QtVersit.
 
 \section1 Multiple organizers

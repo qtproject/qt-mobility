@@ -528,6 +528,10 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     gst_element_set_state(m_videoScale, state);
     gst_element_set_state(m_videoSink, state);    
 
+    // Set state change that was deferred due the video output
+    // change being pending
+    gst_element_set_state(m_playbin, state);
+
     //don't have to wait here, it will unblock eventually
     if (gst_pad_is_blocked(srcPad))
         gst_pad_set_blocked_async(srcPad, false, &block_pad_cb, 0);
@@ -599,6 +603,9 @@ bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
+        if (m_pendingVideoSink != 0)
+            return true;
+
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
             m_pendingState = m_state = QMediaPlayer::StoppedState;
