@@ -41,6 +41,23 @@ which provide certain well-known functionality.  In order to develop a backend e
 can service clients or provide synchronization to other backends, the schema must be
 known.
 
+The schema supported by a plugin is the list of detail definitions which are supported by the plugin.
+An item which contains a detail of a particular definition which is not supported by the plugin
+will fail to validate when the user attempts to save it in that manager.  The schema also includes
+any access constraints which may apply to certain details or detail definitions (for example,
+a particular detail definition might be declared to be unique per-item in a particular manager).
+
+Some plugins support extensible detail types.  This means that third party developers can
+extend the schema of such plugins at run time (for example, to add a new field to a detail).
+Some plugins allow third party developers to define new detail types (that is, to
+add an entirely new detail type to the schema supported by that plugin).
+Plugins which support these types of operations must report to clients that they support the
+QOrganizerManager::MutableDefinitions feature.
+
+Note that the schema supported by a plugin may vary depending on the type of item to which the schema applies.
+For example, a particular plugin might support location, description, priority and recurrence details for
+events, but only description, display label and comments for journal items.
+
 \section1 Schema Definition
 
 Different backends have different capabilities.  Some backends may not be able to implement
@@ -61,7 +78,6 @@ the default schema will work without source modification against their backend.
 
 The leaf details that form the default schema are as follows:
 \annotatedlist organizer-details
-
 
 \section2 Detail Definition Uniqueness
 

@@ -198,7 +198,10 @@ A list of all collections can be retrieved from a manager with one function call
 
     \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Getting a list of collections
 
-To save an item to a collection, set the collection ID on the item object.
+To save an item to a collection, set the collection ID on the item object.  If
+the collection id is the null id, the item will be saved in the collection in
+which it is currently saved (if the item already exists) or into the manager's
+default collection (if it is a new item).
 
     \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Saving an item to a collection
 

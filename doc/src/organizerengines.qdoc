@@ -64,6 +64,12 @@ A manager backend may be implemented by subclassing
 \l{QOrganizerManagerEngine}, and providing a
 \l{QOrganizerManagerEngineFactory} which can instantiate it when required.
 
+\section2 Schemas
+
+The schema supported by a engine is the list of detail definitions which are
+supported by the engine.  For in-depth information about the schema, please
+refer to the main \l{Qt Organizer Schema} page.
+
 \section2 Engine-Specific Ids
 
 Each engine interfaces with a particular datastore, and that datastore may
