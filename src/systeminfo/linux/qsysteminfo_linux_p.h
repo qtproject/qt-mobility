@@ -82,8 +82,6 @@ public:
     virtual ~QSystemInfoPrivate();
     QStringList availableLanguages() const;
 
-    QString version(QSystemInfo::Version,  const QString &parameter = QString());
-
 private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
@@ -186,8 +184,6 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
-    QString model();
-    QString productName();
 
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2
