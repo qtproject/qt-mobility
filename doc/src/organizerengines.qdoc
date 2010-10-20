@@ -42,70 +42,6 @@ which are called by the manager.  An engine is identified by its URI, which is t
 reported to clients through the QOrganizerManager::managerUri() function.  The URI of a manager
 is built by combining its name, version and relevant construction parameters.
 
-\section1 Information For Clients
-
-While clients never interact directly with instances of QOrganizerManagerEngine, they may need to
-be aware of limitations of individual engines, or differences between engines.  The API offered
-through QOrganizerManager allows clients to retrieve this information for the engine which provides
-the functionality exposed through a particular QOrganizerManager.
-
-\section2 Where Is The Data Stored?
-
-A QOrganizerManagerEngine may provide an aggregated view of multiple physical datastores, zero or
-more of which may be remote datastores.  Clients of the API are aware only that the data is managed
-by a QOrganizerManagerEngine with a particular URI.  It is possible that multiple different engines
-will have overlap in the datastores which they aggregate, and in that case the way in which those
-engines were implemented will determine whether operations are thread-safe or not.
-
-Since the data may physically be stored in a remote datastore, any operations may be dominated by
-the return-trip-time of communications with the remote datastore.  As such, it is recommended
-that clients use the asynchronous client API to access organizer information from any QOrganizerManager.
-
-\section2 Schema Differences
-
-Each engine may support a different schema.  All engines should attempt to support the default
-schema, described in the \l{Qt Organizer Schema}{default schema} documentation, however clients
-should never assume that any engine does support the default schema fully.
-
-Clients are able to retrieve the schema supported by a particular engine at run-time by calling
-QOrganizerManager::detailDefinitions().  Some engines support different detail definitions (that is,
-a different schema) for different types of organizer items (events, todos, journals, notes and so
-forth).  Clients can retrieve the organizer item types supported by an engine by calling QOrganizerManager::supportedItemTypes().
-
-\section2 Provided Engines
-
-The Organizer module of the Qt Mobility project includes several backends already, some of which
-are designed to interface with the default calendar on their particular platform.
-
-\section3 \bold{In-Memory Example Engine}
-
-The in-memory engine identifies itself as the "memory" engine.  It is available on all platforms
-which are supported by the Qt Mobility project.
-
-The in-memory engine supports the default schema, and provides almost all functionality available through
-the Qt Mobility Organizer API; however, all data is stored in-memory and is not persisted in any
-way.
-
-\section3 \bold{Symbian Engine}
-
-The Symbian engine identifies itself as the "symbian" engine, and is only available on the
-Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.
-
-The Symbian engine supports a modified version of the default schema.  The schema supported
-by the Symbian engine depends on which version of the platform is being used.
-
-The Symbian engine allows clients to use both the asynchronous and synchronous interfaces,
-and persists all saved data to the system calendar.
-
-\section3 \bold{Maemo 5 (Fremantle) Engine}
-
-The Maemo 5 (Fremantle) engine identifies itself as the "maemo5" engine, but is only available
-on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including
-calendar-backend).
-
-The Maemo 5 (Fremantle) engine supports a modified version of the default schema, and
-persists all saved information to the system calendar.
-
 \section1 Information For Engine Implementors
 
 Some developers may wish to provide implementations of QOrganizerManagerEngine for use by clients.
@@ -148,7 +84,7 @@ The default implementation for most functions will set the error to
 \c QOrganizerManager::NotSupportedError and return the value which indicates that an error has
 occurred.
 
-\section3 \bold{Mandatory Functions}
+\section3 Mandatory Functions
 
 All engines must implement the following functions:
 
@@ -201,7 +137,7 @@ It is recommended that all engine implementations support asynchronous requests,
 use a "dummy" implementation which services the request synchronously during startRequest, and then
 emit the appropriate signals from the request via a zero-millisecond timeout timer.
 
-\section3 \bold{Optional Functionality}
+\section3 Optional Functionality
 
 The rest of the virtual functions are optional, and should be implemented only if the engine
 supports the operations.
@@ -250,7 +186,7 @@ via QOrganizerManagerEngine::hasFeature(), and must also implement:
 \endlist
 
 
-\section3 \bold{Optional Implementation}
+\section3 Optional Implementation
 
 Apart from areas of functionality which may be optionally implemented by the engine or not,
 the default implementation provides several functions which operate in a naive, in-memory
