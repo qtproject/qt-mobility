@@ -98,10 +98,12 @@ static void outputStreamOverflowCallback(pa_stream *stream, void *userdata)
 
 static void outputStreamLatencyCallback(pa_stream *stream, void *userdata)
 {
+    Q_UNUSED(stream)
     Q_UNUSED(userdata)
-    const pa_timing_info *info = pa_stream_get_timing_info(stream);
 
 #ifdef DEBUG_PULSE
+    const pa_timing_info *info = pa_stream_get_timing_info(stream);
+
     qDebug() << "Write index corrupt: " << info->write_index_corrupt;
     qDebug() << "Write index: " << info->write_index;
     qDebug() << "Read index corrupt: " << info->read_index_corrupt;
@@ -113,9 +115,9 @@ static void outputStreamLatencyCallback(pa_stream *stream, void *userdata)
 
 static void outputStreamSuccessCallback(pa_stream *stream, int success, void *userdata)
 {
-    Q_UNUSED(stream)
-    Q_UNUSED(success)
-    Q_UNUSED(userdata)
+    Q_UNUSED(stream);
+    Q_UNUSED(success);
+    Q_UNUSED(userdata);
 
     QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
     pa_threaded_mainloop_signal(pulseEngine->mainloop(), 0);
@@ -124,6 +126,7 @@ static void outputStreamSuccessCallback(pa_stream *stream, int success, void *us
 static void outputStreamDrainComplete(pa_stream *stream, int success, void *userdata)
 {
     Q_UNUSED(stream);
+    Q_UNUSED(success);
     Q_UNUSED(userdata);
 
 #ifdef DEBUG_PULSE
@@ -279,9 +282,9 @@ bool QPulseAudioOutput::open()
     }
     pa_threaded_mainloop_unlock(pulseEngine->mainloop());
 
+#ifdef DEBUG_PULSE
     const pa_buffer_attr *buffer = pa_stream_get_buffer_attr(m_stream);
 
-#ifdef DEBUG_PULSE
     qDebug() << "Buffering info:";
     qDebug() << "\tMax length: " << buffer->maxlength;
     qDebug() << "\tTarget length: " << buffer->tlength;
@@ -361,6 +364,7 @@ bool QPulseAudioOutput::deviceReady()
                 return true;
 
             qint64 bytesWritten = write(buffer, l);
+            Q_UNUSED(bytesWritten);
         }
     }
 

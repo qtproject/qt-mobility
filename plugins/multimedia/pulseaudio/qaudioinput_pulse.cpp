@@ -62,7 +62,7 @@ static void inputStreamReadCallback(pa_stream *stream, size_t length, void *user
 
 static void inputStreamStateCallback(pa_stream *stream, void *userdata)
 {
-    QPulseAudioInput *audioInput = static_cast<QPulseAudioInput*>(userdata);
+    Q_UNUSED(userdata);
     pa_stream_state_t state = pa_stream_get_state(stream);
 #ifdef DEBUG_PULSE
     qDebug() << "Stream state: " << PulseHelpers::stateToQString(state);
@@ -70,9 +70,9 @@ static void inputStreamStateCallback(pa_stream *stream, void *userdata)
     switch (state) {
         case PA_STREAM_CREATING:
         break;
-        case PA_STREAM_READY:
-            {
+        case PA_STREAM_READY: {
 #ifdef DEBUG_PULSE
+            QPulseAudioInput *audioInput = static_cast<QPulseAudioInput*>(userdata);
             const pa_buffer_attr *buffer_attr = pa_stream_get_buffer_attr(stream);
             qDebug() << "*** maxlength: " << buffer_attr->maxlength;
             qDebug() << "*** prebuf: " << buffer_attr->prebuf;
@@ -112,8 +112,9 @@ static void inputStreamOverflowCallback(pa_stream *stream, void *userdata)
 
 static void inputStreamSuccessCallback(pa_stream *stream, int success, void *userdata)
 {
-    Q_UNUSED(stream)
-    Q_UNUSED(userdata)
+    Q_UNUSED(stream);
+    Q_UNUSED(userdata);
+    Q_UNUSED(success);
 
     //if (!success)
     //TODO: Is cork success?  i->operation_success = success;

@@ -51,14 +51,14 @@ QT_BEGIN_NAMESPACE
 
 static void serverInfoCallback(pa_context *context, const pa_server_info *info, void *userdata)
 {
-    char ss[PA_SAMPLE_SPEC_SNPRINT_MAX], cm[PA_CHANNEL_MAP_SNPRINT_MAX];
-
     if (!info) {
         qWarning() << QString("Failed to get server information: %s").arg(pa_strerror(pa_context_errno(context)));
         return;
     }
 
 #ifdef DEBUG_PULSE
+    char ss[PA_SAMPLE_SPEC_SNPRINT_MAX], cm[PA_CHANNEL_MAP_SNPRINT_MAX];
+
     pa_sample_spec_snprint(ss, sizeof(ss), &info->sample_spec);
     pa_channel_map_snprint(cm, sizeof(cm), &info->channel_map);
 
@@ -156,6 +156,7 @@ static void sourceInfoCallback(pa_context *context, const pa_source_info *info, 
 
 static void contextStateCallbackInit(pa_context *context, void *userdata)
 {
+    Q_UNUSED(context);
 #ifdef DEBUG_PULSE
     qDebug() << PulseHelpers::stateToQString(pa_context_get_state(context));
 #endif
@@ -165,7 +166,9 @@ static void contextStateCallbackInit(pa_context *context, void *userdata)
 
 static void contextStateCallback(pa_context *context, void *userdata)
 {
-    Q_UNUSED(userdata)
+    Q_UNUSED(userdata);
+    Q_UNUSED(context);
+
 #ifdef DEBUG_PULSE
     pa_context_state_t state = pa_context_get_state(context);
     qDebug() << PulseHelpers::stateToQString(state);
