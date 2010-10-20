@@ -100,6 +100,9 @@ public:
     // TagTypeSpecificAccess
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+
+signals:
+    void disconnected();
 };
 
 Q_CONNECTIVITY_EXPORT quint16 qNfcChecksum(const char * data, uint len);

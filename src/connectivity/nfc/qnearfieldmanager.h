@@ -87,6 +87,7 @@ public:
 
 signals:
     void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
     void transactionDetected(const QByteArray &applicationIdentifier);
 
 private:

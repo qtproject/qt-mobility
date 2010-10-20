@@ -72,6 +72,7 @@ public:
 
 private slots:
     void tagActivated(TagBase *tag);
+    void tagDeactivated(TagBase *tag);
 
 private:
     struct Callback {

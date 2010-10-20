@@ -91,6 +91,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn void QNearFieldManager::targetLost(QNearFieldTarget *target)
+
+    This signal is emitted whenever a target move out of proximity. The \a target parameter
+    represents the lost target.
+*/
+
+/*!
     \fn void QNearFieldManager::transactionDetected(const QByteArray &applicationIdentifier)
 
     This signal is emitted when ever a transaction is performed with the application identified by
@@ -122,6 +129,8 @@ QNearFieldManager::QNearFieldManager(QObject *parent)
 {
     connect(d_ptr, SIGNAL(targetDetected(QNearFieldTarget*)),
             this, SIGNAL(targetDetected(QNearFieldTarget*)));
+    connect(d_ptr, SIGNAL(targetLost(QNearFieldTarget*)),
+            this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
 
 #ifdef QT_BUILD_INTERNAL
@@ -138,6 +147,8 @@ QNearFieldManager::QNearFieldManager(QNearFieldManagerPrivate *backend, QObject 
 {
     connect(d_ptr, SIGNAL(targetDetected(QNearFieldTarget*)),
             this, SIGNAL(targetDetected(QNearFieldTarget*)));
+    connect(d_ptr, SIGNAL(targetLost(QNearFieldTarget*)),
+            this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
 #endif
 

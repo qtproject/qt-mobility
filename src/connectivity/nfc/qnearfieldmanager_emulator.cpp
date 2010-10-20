@@ -70,6 +70,7 @@ protected:
 
 signals:
     void tagActivated(TagBase *tag);
+    void tagDeactivated(TagBase *tag);
 
 private:
     QMap<TagBase *, bool>::Iterator m_current;
@@ -137,8 +138,13 @@ void TagActivator::timerEvent(QTimerEvent *e)
 
     tagMutex.lock();
 
-    if (m_current != tagMap.end())
+    if (m_current != tagMap.end()) {
         *m_current = false;
+
+        tagMutex.unlock();
+        emit tagDeactivated(m_current.key());
+        tagMutex.lock();
+    }
 
     ++m_current;
     if (m_current == tagMap.end())
@@ -222,6 +228,7 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
     tagActivator.initialize();
 
     connect(&tagActivator, SIGNAL(tagActivated(TagBase*)), this, SLOT(tagActivated(TagBase*)));
+    connect(&tagActivator, SIGNAL(tagDeactivated(TagBase*)), this, SLOT(tagDeactivated(TagBase*)));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
@@ -368,6 +375,16 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
             }
         }
     }
+}
+
+void QNearFieldManagerPrivateImpl::tagDeactivated(TagBase *tag)
+{
+    QNearFieldTarget *target = m_targets.value(tag);
+    if (!target)
+        return;
+
+    emit targetLost(target);
+    QMetaObject::invokeMethod(target, "disconnected");
 }
 
 #include "qnearfieldmanager_emulator.moc"

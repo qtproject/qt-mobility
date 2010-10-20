@@ -110,6 +110,12 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn void QNearFieldTarget::disconnected()
+
+    This signal is emitted when the near field target moves out of proximity.
+*/
+
+/*!
     Constructs a new near field target with \a parent.
 */
 QNearFieldTarget::QNearFieldTarget(QObject *parent)
