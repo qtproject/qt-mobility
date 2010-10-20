@@ -95,6 +95,7 @@ headerdirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -118,6 +119,7 @@ sourcedirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
              ../../plugins/declarative/messaging \
              ../../plugins/declarative/serviceframework \
              ../../src/messaging \
