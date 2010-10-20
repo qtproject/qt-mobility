@@ -100,6 +100,7 @@ public:
 
 signals:
     void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
 };
 
 QTM_END_NAMESPACE

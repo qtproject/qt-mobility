@@ -39,55 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_EMULATOR_H
-#define QNEARFIELDMANAGER_EMULATOR_H
+#ifndef QNEARFIELDTAGTYPE1SYMBIAN_H
+#define QNEARFIELDTAGTYPE1SYMBIAN_H
 
-#include "qnearfieldmanager_p.h"
-#include "qnearfieldtarget.h"
-#include "qndeffilter.h"
+#include <qnearfieldtagtype1.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
+QT_BEGIN_HEADER
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+class QNearFieldTagType1Symbian : public QNearFieldTagType1
 {
     Q_OBJECT
 
 public:
-    QNearFieldManagerPrivateImpl();
-    ~QNearFieldManagerPrivateImpl();
 
-    void reset();
+    explicit QNearFieldTagType1Symbian(QObject *parent = 0);
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
+    virtual QByteArray uid() const;
 
-    bool unregisterTargetDetectedHandler(int id);
+    virtual QNearFieldTarget::AccessMethods accessMethods() const;
 
-private slots:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
+    // DIGPROTO
+    virtual QByteArray readIdentification();
 
-private:
-    struct Callback {
-        QNearFieldTarget::Type targetType;
-        QNdefFilter filter;
+    // static memory functions
+    virtual QByteArray readAll();
+    virtual quint8 readByte(quint8 address);
+    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
 
-        QObject *object;
-        QMetaMethod method;
-    };
+    // dynamic memory functions
+    virtual QByteArray readSegment(quint8 segmentAddress);
+    virtual QByteArray readBlock(quint8 blockAddress);
+    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
+                            WriteMode mode = EraseAndWrite);
 
-    int getFreeId();
-
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
+    virtual QByteArray sendCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 };
 
-#endif // QNEARFIELDMANAGER_EMULATOR_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE1SYMBIAN_H

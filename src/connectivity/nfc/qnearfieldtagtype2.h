@@ -39,55 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDMANAGER_EMULATOR_H
-#define QNEARFIELDMANAGER_EMULATOR_H
+#ifndef QNEARFIELDTAGTYPE2_H
+#define QNEARFIELDTAGTYPE2_H
 
-#include "qnearfieldmanager_p.h"
-#include "qnearfieldtarget.h"
-#include "qndeffilter.h"
+#include <qnearfieldtarget.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
+QT_BEGIN_HEADER
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType2 : public QNearFieldTarget
 {
     Q_OBJECT
 
 public:
-    QNearFieldManagerPrivateImpl();
-    ~QNearFieldManagerPrivateImpl();
+    explicit QNearFieldTagType2(QObject *parent = 0);
 
-    void reset();
+    Type type() const { return NfcTagType2; }
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
+    quint8 version();
+    int memorySize();
 
-    bool unregisterTargetDetectedHandler(int id);
-
-private slots:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
-
-private:
-    struct Callback {
-        QNearFieldTarget::Type targetType;
-        QNdefFilter filter;
-
-        QObject *object;
-        QMetaMethod method;
-    };
-
-    int getFreeId();
-
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
+    virtual QByteArray readBlock(quint8 blockAddress);
+    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
+    virtual bool selectSector(quint8 sector);
 };
 
-#endif // QNEARFIELDMANAGER_EMULATOR_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE2_H

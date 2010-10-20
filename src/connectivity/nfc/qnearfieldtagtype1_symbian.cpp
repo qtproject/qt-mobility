@@ -38,56 +38,60 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <nfctag.h>
+#include "qnearfieldtagtype1_symbian_p.h"
 
-#ifndef QNEARFIELDMANAGER_EMULATOR_H
-#define QNEARFIELDMANAGER_EMULATOR_H
+QTM_BEGIN_NAMESPACE
 
-#include "qnearfieldmanager_p.h"
-#include "qnearfieldtarget.h"
-#include "qndeffilter.h"
-
-#include <QtCore/QObject>
-#include <QtCore/QMetaMethod>
-
-QTM_USE_NAMESPACE
-
-class TagBase;
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(QObject *parent) : QNearFieldTagType1(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    QNearFieldManagerPrivateImpl();
-    ~QNearFieldManagerPrivateImpl();
+QByteArray QNearFieldTagType1Symbian::uid() const
+{
+}
 
-    void reset();
+QNearFieldTarget::AccessMethods QNearFieldTagType1Symbian::accessMethods() const
+{
+}
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
-                                      QObject *object, const QMetaMethod &method);
+QByteArray QNearFieldTagType1Symbian::readIdentification()
+{
+}
 
-    bool unregisterTargetDetectedHandler(int id);
+QByteArray QNearFieldTagType1Symbian::readAll()
+{
+}
 
-private slots:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
+quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
+{
+}
 
-private:
-    struct Callback {
-        QNearFieldTarget::Type targetType;
-        QNdefFilter filter;
+bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
+{
+}
 
-        QObject *object;
-        QMetaMethod method;
-    };
+QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
+{
+}
 
-    int getFreeId();
+QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
+{
+}
 
-    QList<Callback> m_registeredHandlers;
-    QList<int> m_freeIds;
-    QMap<TagBase *, QNearFieldTarget *> m_targets;
-};
+bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
+                        WriteMode mode)
+{
+}
 
-#endif // QNEARFIELDMANAGER_EMULATOR_H
+QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
+{
+}
+
+QList<QByteArray> QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
+{
+}
+
+#include "moc_qnearfieldtagtype1_symbian_p.cpp"
+
+QTM_END_NAMESPACE
