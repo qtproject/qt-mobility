@@ -35,12 +35,6 @@ New features
     * Part of the Location module
     * Classes for saving, retrieving and deleting landmarks
 
-Optimizations
-------
-
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
-
 
 ****************************************************************************
 *                   Important Behavior Changes                             *
@@ -56,8 +50,7 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - No changes
 
 QtContacts
 ------
@@ -124,8 +117,10 @@ QtOrganizer
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Documentation improvements
+ - Fix layer matching based on filters [QTMOBILITY-443]
+ - Fix QValueSpacePublisher::resetValue on Maemo5 [QTMOBILITY-400]
+ - Fix setting of empty key on Maemo5 [MOBILITY-1356]
 
 QtSensors
 ------
@@ -143,8 +138,11 @@ Note that the above fixes are also in 1.0.3.
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - API improvements for Out-of-process component
+     * QRemoteServiceClassRegister replaced by QRemoteServiceRegister
+     * QRemoteServiceRegister::Entry has been introduced
+ - Documentation improvements
+ - Various bug fixes related to received feedback and API maturation
 
 QtSystemInfo
 ------
@@ -223,10 +221,3 @@ Qt Mobility for Windows CE
 
  -
 
-
-****************************************************************************
-*                          Tools                                           *
-****************************************************************************
-
- - tool
-    * foo
