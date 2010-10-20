@@ -383,11 +383,11 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
             length = l;
         }
 
-        pa_threaded_mainloop_unlock(pulseEngine->mainloop());
-
         m_totalTimeValue += length;
         readBytes += length;
         pa_stream_drop(m_stream);
+
+        pa_threaded_mainloop_unlock(pulseEngine->mainloop());
 
         if (!m_pullMode)
             break;
