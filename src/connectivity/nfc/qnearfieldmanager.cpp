@@ -88,13 +88,28 @@ QTM_BEGIN_NAMESPACE
     detected target.
 
     This signal will be emitted for all detected targets.
+
+    QNearFieldManager maintains ownership of \a target, however, it will not be destroyed until
+    the QNearFieldManager destructor is called. Ownership may be transferred by calling
+    setParent().
+
+    Do not delete \a target from the slot connected to this signal, instead call deleteLater().
+
+    \note that if \a target is deleted before it moves out of proximity the targetLost() signal
+    will not be emitted.
+
+    \sa targetLost()
 */
 
 /*!
     \fn void QNearFieldManager::targetLost(QNearFieldTarget *target)
 
-    This signal is emitted whenever a target move out of proximity. The \a target parameter
+    This signal is emitted whenever a target moves out of proximity. The \a target parameter
     represents the lost target.
+
+    Do not delete \a target from the slot connected to this signal, instead use deleteLater().
+
+    \sa QNearFieldTarget::disconnected()
 */
 
 /*!
