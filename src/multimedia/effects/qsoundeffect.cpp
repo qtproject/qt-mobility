@@ -91,6 +91,8 @@ QT_BEGIN_NAMESPACE
     \qmlproperty int SoundEffect::loops
 
     This property provides a way to control the number of times to repeat the sound on each play().
+
+    Set to -1 (infinite) to enable infinite loop.
 */
 
 /*!
@@ -182,6 +184,10 @@ int QSoundEffect::loopCount() const
 
 void QSoundEffect::setLoopCount(int loopCount)
 {
+    if (loopCount < -1) {
+        qWarning("SoundEffect: loops should be -1 (infinite), 0 or positive integer");
+        return;
+    }
     if (loopCount == 0)
         loopCount = 1;
     if (d->loopCount() == loopCount)
@@ -198,6 +204,10 @@ qreal QSoundEffect::volume() const
 
 void QSoundEffect::setVolume(qreal volume)
 {
+    if (volume < 0 || volume > 1) {
+        qWarning("SoundEffect: volume should be between 0.0 and 1.0");
+        return;
+    }
     int iVolume = qRound(volume * 100);
     if (d->volume() == iVolume)
         return;
