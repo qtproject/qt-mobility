@@ -60,8 +60,7 @@ class QNearFieldManagerPrivateImpl;
 
 class CNearFieldManager : public CBase,
 						  public MNfcTagConnectionListener,
-						  public MLlcpLinkListener/*,
-						  public MNdefMessageListener*/
+						  public MLlcpLinkListener
   {
 public:
     
@@ -69,19 +68,7 @@ public:
     static CNearFieldManager* NewLC(QNearFieldManagerPrivateImpl& aCallback);
     virtual ~CNearFieldManager();
     
-    /*
-     * @param aConnection Connection variable that is initialized and opened.
-     * @param aMode Type of connection mode that is to be initialized.
-     */
-    TInt InitConnectionL( MNfcConnection* aConnection, 
-                         TNfcConnectionInfo::TNfcConnectionMode aMode );
-    //for registerTargetDetectedHandler ... api
-    TInt AddNdefSubscription( const CNdefRecord::TNdefRecordTnf aTnf, 
-                                       const TDesC8& aType );
-    void RemoveNdefSubscription( const CNdefRecord::TNdefRecordTnf aTnf, 
-                                              const TDesC8& aType );
-    
-    void AddTagSubscription( TNfcConnectionInfo::TNfcConnectionMode aMode );
+    void StartTagDetectionL();
     
 public: // From MNfcTagConnectionListener
     
@@ -93,10 +80,6 @@ public: // From MLlcpLinkListener
     void LlcpRemoteFound();
     void LlcpRemoteLost();
  
-/*public: // From MNdefMessageListener
-    
-    void MessageDetected( CNdefMessage* aMessage );*/
-    
 private:
     
     CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback);

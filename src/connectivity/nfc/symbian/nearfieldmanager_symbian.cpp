@@ -45,53 +45,28 @@
 void CNearFieldManager::ConstructL()
     {
     User::LeaveIfError(iServer.Open());
-    
     //create Tag discovery api
     iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
-    iNfcTagDiscovery->AddTagConnectionListener( *this );
-    
-    iTagSubscription = CNfcTagSubscription::NewL();   
-    
     //create LLCP provider api
     iLlcpProvider = CLlcpProvider::NewL( iServer );
     
-//    //create NDEF discovery api
-//    iNdefDiscovery = CNdefDiscovery::NewL( iServer );
-//    iNdefDiscovery->AddNdefMessageListener( *this );
+    StartTagDetectionL();
     }
 
-TInt CNearFieldManager::InitConnectionL( MNfcConnection* aConnection,
-    TNfcConnectionInfo::TNfcConnectionMode aMode )
-    {
-    iTagSubscription->AddConnectionModeL( aMode );
-    iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
-    
-    iLlcpProvider->AddLlcpLinkListenerL(*this);
-    
-    return KErrNone; 
-    }
-TInt CNearFieldManager::AddNdefSubscription( const CNdefRecord::TNdefRecordTnf aTnf, 
-                                       const TDesC8& aType )
+void CNearFieldManager::StartTagDetectionL()
 	{
-	return iNdefDiscovery->AddNdefSubscription( aTnf, aType );
+	iTagSubscription = CNfcTagSubscription::NewL();   
+	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+	iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+	
+	iNfcTagDiscovery->AddTagConnectionListener( *this );
+	iLlcpProvider->AddLlcpLinkListenerL(*this);
 	}
-void CNearFieldManager::RemoveNdefSubscription( const CNdefRecord::TNdefRecordTnf aTnf, 
-                                          const TDesC8& aType )
-	{
-	iNdefDiscovery->RemoveNdefSubscription( aTnf, aType );
-	}
-void CNearFieldManager::AddTagSubscription( TNfcConnectionInfo::TNfcConnectionMode aMode )
-	{
-	if (iTagSubscription)
-		{
-		RArray<TNfcConnectionInfo::TNfcConnectionMode> array;
-		iTagSubscription->GetConnectionModes(array);
-		if( array.Find(aMode) != KErrNotFound)
-			{
-			iTagSubscription->AddConnectionModeL(aMode);
-			}
-		}
-	}
+
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     {
 	if (aNfcTag)
@@ -115,17 +90,6 @@ void CNearFieldManager::LlcpRemoteLost()
 	//TODO emit NearFieldTargetLost signal
 	}
 
-/*void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
-    {
-    if ( aMessage )
-        {
-        //
-        //TODO NDEF handling code here...
-        //
-        
-        delete aMessage;  
-        }
-    }*/
 CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
 	: iCallback(aCallback)
     {    
