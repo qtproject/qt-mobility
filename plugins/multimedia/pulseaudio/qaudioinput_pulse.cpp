@@ -39,10 +39,9 @@
 **
 ****************************************************************************/
 
-#ifdef DEBUG_PULSE
-#include <QtCore/qdebug.h>
-#endif
 #include <QtCore/qcoreapplication.h>
+#include <QtCore/qdebug.h>
+
 #include "qaudioinput_pulse.h"
 #include "qaudiodeviceinfo_pulse.h"
 #include "qpulseaudioengine.h"
