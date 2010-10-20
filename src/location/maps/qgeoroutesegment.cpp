@@ -80,6 +80,9 @@ QGeoRouteSegment::QGeoRouteSegment()
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
     : d_ptr(other.d_ptr) {}
 
+/*!
+    \internal
+*/
 QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
     : d_ptr(d_ptr) {}
 

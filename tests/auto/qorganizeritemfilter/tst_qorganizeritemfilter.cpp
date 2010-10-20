@@ -73,6 +73,7 @@ private slots:
     void changeLogFilter();
     void boringFilters();
     void idListFilter();
+    void collectionFilter();
     void canonicalizedFilter();
     void canonicalizedFilter_data();
     void testFilter();
@@ -118,9 +119,46 @@ private:
     uint m_id;
 };
 
+class BasicCollectionLocalId : public QOrganizerCollectionEngineId
+{
+public:
+    BasicCollectionLocalId(uint id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const {
+        return m_id == static_cast<const BasicCollectionLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const {
+        return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
+    }
+    QOrganizerCollectionEngineId* clone() const {
+        BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_id);
+        return cloned;
+    }
+    QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicCollection:"));
+        return uri;
+    }
+    QDebug& debugStreamOut(QDebug& dbg) const {
+        return dbg << m_id;
+    }
+    QString toString() const {
+        return QString::number(m_id);
+    }
+    uint hash() const {
+        return m_id;
+    }
+
+private:
+    uint m_id;
+};
+
 QOrganizerItemId makeId(uint id)
 {
     return QOrganizerItemId(new BasicItemLocalId(id));
+}
+
+QOrganizerCollectionId makeCId(uint id)
+{
+    return QOrganizerCollectionId(new BasicCollectionLocalId(id));
 }
 
 tst_QOrganizerItemFilter::tst_QOrganizerItemFilter()
@@ -293,6 +331,10 @@ void tst_QOrganizerItemFilter::intersectionFilter()
     QVERIFY(bf3.filters().at(1) == df2);
     QVERIFY(bf3.filters().at(2) == df);
     QVERIFY(bf3.filters().at(3) == df3);
+
+    /* Clear */
+    bf3.clear();
+    QVERIFY(bf3.filters().isEmpty());
 }
 
 void tst_QOrganizerItemFilter::unionFilter()
@@ -386,6 +428,10 @@ void tst_QOrganizerItemFilter::unionFilter()
     QVERIFY(bf3.filters().at(1) == df2);
     QVERIFY(bf3.filters().at(2) == df);
     QVERIFY(bf3.filters().at(3) == df3);
+
+    /* Clear */
+    bf3.clear();
+    QVERIFY(bf3.filters().isEmpty());
 }
 
 
@@ -861,6 +907,18 @@ void tst_QOrganizerItemFilter::idListFilter()
     idf.setIds(QList<QOrganizerItemId>());
     QVERIFY(idf.ids().count() == 0);
 
+    QOrganizerItemId singleId = makeId(12);
+    idf.insert(singleId);
+    QVERIFY(idf.ids().contains(singleId));
+    idf.remove(singleId);
+    QVERIFY(!idf.ids().contains(singleId));
+    QList<QOrganizerItemId> allIds = idf.ids();
+    idf.remove(singleId); // remove again
+    QVERIFY(idf.ids() == allIds);
+    idf.clear();
+    QVERIFY(idf.ids().isEmpty());
+    idf.setIds(allIds);
+
     /* Test op= */
     idf.setIds(ids);
     QOrganizerItemFilter f = idf;
@@ -886,6 +944,40 @@ void tst_QOrganizerItemFilter::idListFilter()
     QVERIFY(idf == idf3); // again, should be a blank id list filter.
     idf = idf3;
     idf.setIds(ids); // force a detach
+}
+
+void tst_QOrganizerItemFilter::collectionFilter()
+{
+    QOrganizerItemCollectionFilter icf;
+
+    QVERIFY(icf.collectionIds().isEmpty());
+
+    QOrganizerCollectionId id1 = makeCId(5);
+    QOrganizerCollectionId id2 = makeCId(6);
+    QOrganizerCollectionId id3 = makeCId(7);
+    QOrganizerCollectionId id4 = makeCId(12);
+    QSet<QOrganizerCollectionId> ids;
+    ids << id1 << id2 << id3;
+
+    icf.setCollectionIds(ids);
+    QVERIFY(icf.collectionIds() == ids);
+
+    icf.setCollectionId(id4);
+    ids.clear();
+    ids << id4;
+    QVERIFY(icf.collectionIds() == ids);
+
+    QOrganizerItemCollectionFilter icf2;
+    icf2 = icf;
+    QVERIFY(icf2.collectionIds() == ids);
+
+    QOrganizerItemFilter fil;
+    fil = icf;
+    QVERIFY(fil.type() == QOrganizerItemFilter::CollectionFilter);
+
+    QOrganizerItemCollectionFilter icf3(fil);
+    QVERIFY(fil.type() == QOrganizerItemFilter::CollectionFilter);
+    QVERIFY(icf3.collectionIds() == ids);
 }
 
 void tst_QOrganizerItemFilter::canonicalizedFilter()

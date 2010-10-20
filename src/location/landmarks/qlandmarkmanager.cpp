@@ -96,7 +96,7 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     \ingroup landmarks-main
 
     The QLandmarkManager is the starting class to use when working with landmarks.
-    If effectively represents a landmark datastore and it provides the synchronous operations for the
+    It effectively represents a landmark datastore and it provides the synchronous operations for the
     creation, retrieval, updating and deletion of both landmarks and categories.  For asynchronous operations
     use the \l {Asynchronous Landmark Requests} {request classes} which use the manager as a parameter.
     The manager provides notifications whenever landmarks or categories are added, updated or removed.
@@ -612,7 +612,8 @@ QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, con
     Returns a list of category identifiers.
     The \a limit defines the maximum number of ids to return and the \a offset defines the index offset
     of the first id.  A \a limit of -1 means ids for all categories should be returned.
-    The identifiers are returned in order as designed by \a nameSort.
+    The identifiers are returned in order as designed by \a nameSort.  Note that a limit
+    of 0 will return zero category ids.
 */
 QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort) const
 {
@@ -695,7 +696,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrder.
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
-    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
+    of the first landmark.  A \a limit of -1 means all matching landmarks should be returned and that
+    a limit of 0 will return zero landmarks.
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
                                              const QLandmarkSortOrder &sortOrder) const
@@ -759,7 +761,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     Returns a list of landmark identifiers which match the given \a filter and are sorted according to
     the given \a sortOrders. The \a limit defines the maximum number of landmark ids to return and the
     \a offset defines the index offset of the first landmark id.
-    A \a limit of -1 means that ids of all matching landmarks should be returned.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.  Note that
+    a limit of 0 will return zero landmark ids.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
                                                 int limit, int offset,
@@ -792,7 +795,8 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     Convenience function to returns a list of landmark identifiers which match the given \a filter and are sorted according to
     the given \a sortOrder. The \a limit defines the maximum number of landmark ids to return and the
     \a offset defines the index offset of the first landmark id.
-    A \a limit of -1 means that ids of all matching landmarks should be returned.
+    A \a limit of -1 means that ids of all matching landmarks should be returned.  Note
+    that a limit of 0 will return zero landmark ids.
 
 
 */
@@ -1017,7 +1021,9 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature featu
 }
 
 /*!
-    Returns the support level the manager provides for the given \a filter.
+    Returns the support level the manager provides for the given \a filter.  For the case
+    of intersection and union filters, whether the elements will be individually processed
+    is dependent on the particular manager implementation.
 */
 QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
@@ -1418,8 +1424,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.  Note that removal
-    of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category, nor will modifying
-    list of categories that a landmark is belongs to.
+    of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category.
 
     \sa landmarksAdded(), landmarksRemoved()
 */

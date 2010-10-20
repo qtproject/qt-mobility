@@ -50,6 +50,7 @@ QTM_USE_NAMESPACE;
 class QDeclarativeContactDetail : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(ContactDetailType type READ detailType NOTIFY valueChanged)
     Q_PROPERTY(QString definitionName READ definitionName NOTIFY valueChanged)
     Q_PROPERTY(QStringList contexts READ contexts WRITE setContexts NOTIFY valueChanged)
     Q_PROPERTY(QString detailUri READ detailUri WRITE setDetailUri NOTIFY valueChanged)
@@ -99,7 +100,6 @@ public:
     bool removable() const;
 
     QString definitionName() const;
-
     QStringList contexts() const;
     void setContexts(const QStringList& context);
 
@@ -120,7 +120,7 @@ public:
 signals:
     void valueChanged();
 
-private:
+protected:
     QContactDetail m_detail;
 };
 

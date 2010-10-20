@@ -2479,6 +2479,8 @@ void tst_QOrganizerManager::changeSet()
     QVERIFY(changeSet.changedItems().isEmpty());
     QVERIFY(changeSet.removedItems().isEmpty());
     QVERIFY(changeSet.addedItems().contains(id));
+    changeSet.clearAddedItems();
+    changeSet.insertAddedItems(QList<QOrganizerItemId>() << id);
 
     changeSet.insertChangedItem(id);
     changeSet.insertChangedItems(QList<QOrganizerItemId>() << id);
@@ -2518,6 +2520,60 @@ void tst_QOrganizerManager::changeSet()
     QVERIFY(changeSet.dataChanged() != changeSet2.dataChanged());
     QVERIFY(changeSet.dataChanged() != changeSet3.dataChanged());
     changeSet.emitSignals(0);
+
+    QOrganizerCollectionId colId;
+
+    QOrganizerCollectionChangeSet colChangeSet;
+    QVERIFY(colChangeSet.addedCollections().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+
+    colChangeSet.insertAddedCollection(colId);
+    QVERIFY(!changeSet.addedItems().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+    QVERIFY(colChangeSet.addedCollections().contains(colId));
+    colChangeSet.clearAddedCollections();
+    colChangeSet.insertAddedCollections(QList<QOrganizerCollectionId>() << colId);
+
+    colChangeSet.insertChangedCollection(colId);
+    colChangeSet.insertChangedCollections(QList<QOrganizerCollectionId>() << colId);
+    QVERIFY(colChangeSet.changedCollections().size() == 1); // set, should only be added once.
+    QVERIFY(!colChangeSet.addedCollections().isEmpty());
+    QVERIFY(!colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().contains(colId));
+    colChangeSet.clearChangedCollections();
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+
+    colChangeSet.insertRemovedCollections(QList<QOrganizerCollectionId>() << colId);
+    QVERIFY(colChangeSet.removedCollections().contains(colId));
+    colChangeSet.clearRemovedCollections();
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+
+    QVERIFY(colChangeSet.dataChanged() == false);
+    QOrganizerCollectionChangeSet colChangeSet2;
+    colChangeSet2 = colChangeSet;
+    QVERIFY(colChangeSet.addedCollections() == colChangeSet2.addedCollections());
+    colChangeSet.emitSignals(0);
+
+    colChangeSet2.clearAddedCollections();
+    QVERIFY(colChangeSet2.addedCollections().isEmpty());
+    colChangeSet2.insertAddedCollections(colChangeSet.addedCollections().toList());
+    QVERIFY(colChangeSet.addedCollections() == colChangeSet2.addedCollections());
+
+    colChangeSet2.clearAll();
+    QVERIFY(colChangeSet.addedCollections() != colChangeSet2.addedCollections());
+
+    QOrganizerCollectionChangeSet colChangeSet3(colChangeSet2);
+    QVERIFY(colChangeSet.addedCollections() != colChangeSet3.addedCollections());
+    QVERIFY(colChangeSet2.addedCollections() == colChangeSet3.addedCollections());
+
+    colChangeSet.setDataChanged(true);
+    QVERIFY(colChangeSet.dataChanged() == true);
+    QVERIFY(colChangeSet.dataChanged() != colChangeSet2.dataChanged());
+    QVERIFY(colChangeSet.dataChanged() != colChangeSet3.dataChanged());
+    colChangeSet.emitSignals(0);
 }
 
 void tst_QOrganizerManager::fetchHint()

@@ -134,12 +134,36 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
     return d->m_fetchHint;
 }
 
+/*!
+  Returns the start date of the request.  The start date
+  is the lower bound of the time-period within which an
+  item must occur (that is, either it or one of its occurrences
+  must have a time-period defined by its start-date and end-date
+  which overlaps with the time-period defined in this request)
+  in order to be returned by the request.
+
+  An empty or invalid start date signifies a start date of
+  negative-infinity (that is, all items which occur at any
+  point in time, up until the end date, will be returned).
+ */
 QDateTime QOrganizerItemFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
     return d->m_startDate;
 }
 
+/*!
+  Returns the end date of the request.  The end date
+  is the upper bound of the time-period within which an
+  item must occur (that is, either it or one of its occurrences
+  must have a time-period defined by its start-date and end-date
+  which overlaps with the time-period defined in this request)
+  in order to be returned by the request.
+
+  An empty or invalid end date signifies an end date of
+  positive-infinity (that is, all items which occur at any
+  point in time after the start date, will be returned).
+ */
 QDateTime QOrganizerItemFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
