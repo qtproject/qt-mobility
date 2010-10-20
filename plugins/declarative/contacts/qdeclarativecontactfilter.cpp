@@ -91,7 +91,7 @@
  */
 
 /*!
-  \qmlproperty string actionName ActionFilter::actionName
+  \qmlproperty string ActionFilter::actionName
 
   This property holds the action name criterion of the filter.
   */
@@ -115,6 +115,7 @@
   \o ChangeLogFilter.EventAdded
   \o ChangeLogFilter.EventChanged
   \o ChangeLogFilter.EventRemoved
+  \endlist
   */
 
 /*!
@@ -148,31 +149,31 @@
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements.
 
-  \sa ContactDetail.Address
-  \sa ContactDetail.Anniversary
-  \sa ContactDetail.Avatar
-  \sa ContactDetail.Birthday
-  \sa ContactDetail.DisplayLabel
-  \sa ContactDetail.Email
-  \sa ContactDetail.Family
-  \sa ContactDetail.Favorite
-  \sa ContactDetail.Gender
-  \sa ContactDetail.Geolocation
-  \sa ContactDetail.GlobalPresence
-  \sa ContactDetail.Guid
-  \sa ContactDetail.Name
-  \sa ContactDetail.NickName
-  \sa ContactDetail.Note
-  \sa ContactDetail.OnlineAccount
-  \sa ContactDetail.Organization
-  \sa ContactDetail.PhoneNumber
-  \sa ContactDetail.Presence
-  \sa ContactDetail.Ringtone
-  \sa ContactDetail.SyncTarget
-  \sa ContactDetail.Tag
-  \sa ContactDetail.Timestamp
-  \sa ContactDetail.Url
-  \sa ContactDetail.Hobby
+  \sa Address
+  \sa Anniversary
+  \sa Avatar
+  \sa Birthday
+  \sa DisplayLabel
+  \sa EmailAddress
+  \sa Family
+  \sa Favorite
+  \sa Gender
+  \sa GeoLocation
+  \sa GlobalPresence
+  \sa Guid
+  \sa Name
+  \sa Nickname
+  \sa Note
+  \sa OnlineAccount
+  \sa Organization
+  \sa PhoneNumber
+  \sa Presence
+  \sa Ringtone
+  \sa SyncTarget
+  \sa Tag
+  \sa Timestamp
+  \sa Url
+  \sa Hobby
   */
 
 /*!
