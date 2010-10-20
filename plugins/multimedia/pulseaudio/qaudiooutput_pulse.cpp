@@ -545,7 +545,7 @@ qint64 OutputPrivate::writeData(const char *data, qint64 len)
             ||(m_audioDevice->m_deviceState == QAudio::IdleState)) {
          while(written < len) {
             int chunk = m_audioDevice->write(data+written, (len-written));
-             if (chunk <= 0)
+            if (chunk <= 0)
                 retry++;
             written+=chunk;
             if (retry > 10)
