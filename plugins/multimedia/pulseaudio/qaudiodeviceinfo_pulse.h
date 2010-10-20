@@ -68,7 +68,7 @@ class QPulseAudioDeviceInfo : public QAbstractAudioDeviceInfo
     Q_OBJECT
 
 public:
-    QPulseAudioDeviceInfo(QByteArray device, QAudio::Mode mode);
+    QPulseAudioDeviceInfo(const QByteArray &device, QAudio::Mode mode);
     ~QPulseAudioDeviceInfo() {}
 
     QAudioFormat preferredFormat() const;

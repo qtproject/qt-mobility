@@ -45,7 +45,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QPulseAudioDeviceInfo::QPulseAudioDeviceInfo(QByteArray device, QAudio::Mode mode)
+QPulseAudioDeviceInfo::QPulseAudioDeviceInfo(const QByteArray &device, QAudio::Mode mode)
     : m_device(device)
     , m_mode(mode)
 {
