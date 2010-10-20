@@ -53,7 +53,7 @@ QPulseAudioDeviceInfo::QPulseAudioDeviceInfo(QByteArray device, QAudio::Mode mod
 
 bool QPulseAudioDeviceInfo::isFormatSupported(const QAudioFormat &format) const
 {
-    pa_sample_spec spec = PulseHelpers::audioFormatToSampleSpec(format);
+    pa_sample_spec spec = QPulseAudioInternal::audioFormatToSampleSpec(format);
     if (!pa_sample_spec_valid(&spec))
         return false;
 

@@ -236,7 +236,7 @@ bool QPulseAudioOutput::open()
     if (m_opened)
         return false;
 
-    pa_sample_spec spec = PulseHelpers::audioFormatToSampleSpec(m_format);
+    pa_sample_spec spec = QPulseAudioInternal::audioFormatToSampleSpec(m_format);
 
     if (!pa_sample_spec_valid(&spec)) {
         m_errorState = QAudio::OpenError;
