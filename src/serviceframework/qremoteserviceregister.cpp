@@ -231,15 +231,15 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
         
         serviceRegister->publishEntries("my_service");
 
-        delete serviceRegister;
         return app.exec();
+        delete serviceRegister;
     }
     \endcode
 
     By default all entries are created as \l QRemoteServiceRegister::GlobalInstance 
-    types but this can be set by calling QRemoteServiceRegister::Entry::setInstantiationType()
-    on the entry. Once service entries are published to the instance manager the register 
-    is no longer needed and can be removed.
+    types. This can be changed by calling QRemoteServiceRegister::Entry::setInstantiationType()
+    on the entry. Once the service register has been published the associated service entries
+    can no longer be changed.
 
     \sa QRemoteServiceRegister::Entry
 */
