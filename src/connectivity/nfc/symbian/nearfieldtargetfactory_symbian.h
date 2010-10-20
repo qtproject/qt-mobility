@@ -42,8 +42,11 @@
 #ifndef NEARFIELDTARGETFACTORY_H_
 #define NEARFIELDTARGETFACTORY_H_
 
+#include <qnearfieldtarget.h>
+
 class MNfcTag;
-class QNearFieldTarget;
+
+QTM_USE_NAMESPACE
 
 class TNearFieldTargetFactory
     {

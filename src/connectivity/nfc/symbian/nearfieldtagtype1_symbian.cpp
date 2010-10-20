@@ -39,9 +39,10 @@
  **
  ****************************************************************************/
 #include <nfctype1connection.h>
+#include <nfctag.h>
 #include "nearfieldtagtype1_symbian.h"
 
-CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag)
+CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag), CActive(EPriorityStandard)
     {
     }
 
