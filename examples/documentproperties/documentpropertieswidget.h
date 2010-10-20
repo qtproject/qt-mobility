@@ -59,7 +59,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class DocumentPropertiesWidget : public QWidget
+class DocumentPropertiesWidget : public QDialog
 {
     Q_OBJECT
 public:

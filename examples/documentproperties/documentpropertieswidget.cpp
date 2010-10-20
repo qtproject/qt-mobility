@@ -45,15 +45,21 @@
 #include <qgalleryqueryrequest.h>
 
 #include <QtGui>
+#include <qaction.h>
 
 DocumentPropertiesWidget::DocumentPropertiesWidget(
         const QFileInfo &file, QDocumentGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
+    : QDialog(parent, flags)
     , request(0)
     , resultSet(0)
 {
     setLayout(new QFormLayout);
-
+    // draw softkeys on symbian to be able to close dialog
+    QAction* doneAction = new QAction(tr("Done"), this);
+    doneAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    connect(doneAction, SIGNAL(triggered()), parent, SLOT(close()));
+    addAction(doneAction);
+    
     request = new QGalleryQueryRequest(gallery, this);
     request->setFilter(QDocumentGallery::filePath == file.absoluteFilePath());
 
