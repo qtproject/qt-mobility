@@ -280,6 +280,7 @@ void tst_QMessageService::initTestCase()
 
     existingFolderIds = manager->queryFolders().toSet();
 
+#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
         ("path", "My messages")
@@ -313,6 +314,7 @@ void tst_QMessageService::initTestCase()
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
+#endif
 
     existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
@@ -321,8 +323,12 @@ void tst_QMessageService::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "My messages")
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
+#endif
+        #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
         ("type", "email")
 #else
         ("type", "sms")
@@ -338,7 +344,11 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "Innbox")
+#endif
         ("type", "email")
         ("to", "Important.Person@example.com")
         ("from", "Esteemed.Colleague@example.com")
@@ -352,7 +362,11 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:no")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "Innbox")
+#endif
         ("type", "email")
         ("to", "Important.Person@example.com,Minion@example.com")
         ("from", "Big.Boss@example.com")
@@ -394,7 +408,11 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:yes");
 #else
     << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "X-Announce")
+#endif
         ("type", "email")
         ("to", "announce@example.com,maintenance-log@example.com")
         ("from", "sysadmin@example.com")
@@ -406,7 +424,11 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-spam", "filter:maybe")
         << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "X-Archived")
+#endif
         ("type", "email")
         ("to", "announce@example.com")
         ("from", "Big.Boss@example.com")
@@ -1624,6 +1646,7 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif
 
+#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilter::byParentFolderId(folderIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] )
@@ -1731,7 +1754,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 #endif
-
+#endif
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("ancestorFolderIds inclusion 1")
         << QMessageFilter::byAncestorFolderIds(folderIds[1], QMessageDataComparator::Includes)
