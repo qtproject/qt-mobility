@@ -63,6 +63,8 @@ public slots:
 
 private slots:
     void testPlugin();
+    void testFileEffect();
+    void testThemeEffect();
 
 private:
     QFeedbackHapticsEffect m_testEffect;
@@ -92,6 +94,63 @@ void tst_QFeedbackPlugin::cleanup()
 {
 }
 
+void tst_QFeedbackPlugin::testThemeEffect()
+{
+    QVERIFY(QFeedbackEffect::supportsThemeEffect());
+    QVERIFY(QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasic));
+    QVERIFY(!QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton));
+}
+
+void tst_QFeedbackPlugin::testFileEffect()
+{
+    QFeedbackFileEffect fileEffect;
+    QVERIFY(QFeedbackFileEffect::supportedMimeTypes().contains("x-test/this is a test"));
+
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+
+    fileEffect.setSource(QUrl("load")); // this should call load
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Loading);
+
+    fileEffect.setSource(QUrl("ignored")); // not stopped, should fail
+    QVERIFY(fileEffect.source() == QUrl("load"));
+
+    QVERIFY(fileEffect.isLoaded());
+    fileEffect.setLoaded(true); // should do nothing
+    QVERIFY(fileEffect.isLoaded());
+    QCOMPARE(fileEffect.duration(), 5678); // from the plugin
+
+    fileEffect.unload(); // should fail, since we're not STOPPED (HMM!!)
+    QVERIFY(fileEffect.isLoaded());
+
+    fileEffect.stop();
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    // Now we should be able to change things again
+
+    QVERIFY(fileEffect.isLoaded());
+    fileEffect.unload();
+    QVERIFY(!fileEffect.isLoaded());
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    QCOMPARE(fileEffect.duration(), 0); // unloaded, shouldn't call?
+
+    // Change the url
+    fileEffect.setSource(QUrl("failload"));
+    QVERIFY(!fileEffect.isLoaded());
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    QCOMPARE(fileEffect.duration(), 0); // unknown
+
+    fileEffect.setSource(QUrl("load"));
+    QVERIFY(fileEffect.isLoaded());
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Loading);
+    fileEffect.start();
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Running);
+    fileEffect.start();
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Running);
+    fileEffect.stop();
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    fileEffect.pause();
+    QVERIFY(fileEffect.state() == QFeedbackEffect::Paused); // XXX this is a strange transition
+}
+
 void tst_QFeedbackPlugin::testPlugin()
 {
     // first get the actuators.  we want to use the test plugin actuator.
@@ -117,7 +176,6 @@ void tst_QFeedbackPlugin::testPlugin()
     QCOMPARE(testActuator->state(), QFeedbackActuator::Unknown); // and it always returns state = unknown.
     // XXX TODO: ensure that a "working" plugin returns real values..
 
-#if 0
     // then, ensure that the test effect uses this actuator.
     m_testEffect.setActuator(testActuator);
 
@@ -129,7 +187,14 @@ void tst_QFeedbackPlugin::testPlugin()
     m_testEffect.setFadeTime(250);
     m_testEffect.setFadeIntensity(0.0);
     m_testEffect.start();
-#endif
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
+    m_testEffect.pause();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Paused);
+    m_testEffect.start();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
+    m_testEffect.stop();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Stopped);
+
 }
 
 QTEST_MAIN(tst_QFeedbackPlugin)
