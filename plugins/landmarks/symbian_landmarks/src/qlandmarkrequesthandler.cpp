@@ -450,11 +450,13 @@ CPosLmOperation * CLandmarkRequestAO::GetOperation()
 
 void CLandmarkRequestAO::WakeupThreads(TInt aCompletion)
 {
-    //qDebug() << "In wakeup threads by " << RThread().Id();
+    //qDebug() << "WakeupThreads - start aCompletion = " << aCompletion;
     TWaitThrdData* Ptr = NULL;
     TSglQueIter<TWaitThrdData> Iter(iParent->iWaitThrds);
 
-    iParent->iLock.Wait();
+    if (iIsRequestRunning)
+        iParent->iLock.Wait();
+
     Iter.SetToFirst();
     while ((Ptr = Iter++) != NULL) {
 
@@ -470,6 +472,11 @@ void CLandmarkRequestAO::WakeupThreads(TInt aCompletion)
         iParent->iWaitThrds.Remove(*Ptr);
     }
     iParent->iLock.Signal();
+
+    if (!iIsRequestRunning)
+        iParent->iLock.Close();
+
+    qDebug() << "WakeupThreads - end = ";
 }
 
 TBool CLandmarkRequestAO::IsMultiOperationRequest()

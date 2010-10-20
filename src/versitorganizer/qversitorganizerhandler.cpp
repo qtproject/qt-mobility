@@ -123,8 +123,14 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitOrganizerHandlerFactory::ProfileBackup, "Backup"
  */
 
 /*!
+<<<<<<< HEAD
     \fn QVersitOrganizerHandler::~QVersitOrganizerHandler()
 
     Destroys this QVersitOrganizerHandler.
 */
 
+=======
+  \fn QVersitOrganizerHandler::~QVersitOrganizerHandler()
+  Destroys this QVersitOrganizerHandler.
+ */
+>>>>>>> 13542ca9e04e8b8871ea8df3be063ed7e97db654

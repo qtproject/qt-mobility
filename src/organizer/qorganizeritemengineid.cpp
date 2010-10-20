@@ -47,6 +47,9 @@
   \brief The QOrganizerItemEngineId class uniquely identifies an item within a
   particular engine plugin.
 
+  \inmodule QtOrganizer
+  \ingroup organizer-backends
+
   Clients of the Organizer API should never use this class.
   Every engine implementor must implement a class derived from
   QOrganizerItemEngineId.
@@ -75,6 +78,21 @@
   since the function which calls this function (in QOrganizerItemId) does that check for you.
  */
 
+/*!
+  \fn QOrganizerItemEngineId::managerUri() const
+  Returns the manager URI of the constructed manager which created
+  the id.  If the item which the id identifies has not been deleted,
+  the id should still be valid in the manager identified by the
+  manager URI returned by this function.
+ */
+
+/*!
+  \fn QOrganizerItemEngineId::toString() const
+  Serializes the id to a string.  It contains all of the information
+  required to identify a particular item in the manager which created
+  the id, formatted according to the serialization format of the
+  manager.
+ */
 
 /*!
   \fn QOrganizerItemEngineId::clone() const
@@ -83,7 +101,7 @@
  */
 
 /*!
-  \fn QOrganizerItemEngineId::debugStreamOut(QDebug& dbg) const = 0
+  \fn QOrganizerItemEngineId::debugStreamOut(QDebug& dbg) const
   Streams this id out to the debug stream \a dbg.
  */
 

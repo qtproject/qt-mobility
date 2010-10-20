@@ -197,7 +197,7 @@ EXPORTS
 	_ZN10QtMobility22QOrganizerItemPriority14DefinitionNameE @ 196 NONAME DATA 9
 	_ZN10QtMobility22QOrganizerItemPriority5matchENS0_8PriorityE @ 197 NONAME
 	_ZN10QtMobility22QOrganizerItemReminder14DefinitionNameE @ 198 NONAME DATA 9
-	_ZN10QtMobility22QOrganizerItemReminder17FieldReminderTypeE @ 199 NONAME DATA 13
+	_ZN10QtMobility22QOrganizerItemReminder17FieldReminderTypeE @ 199 NONAME ABSENT
 	_ZN10QtMobility22QOrganizerItemReminder20FieldRepetitionCountE @ 200 NONAME DATA 16
 	_ZN10QtMobility22QOrganizerItemReminder20FieldRepetitionDelayE @ 201 NONAME DATA 16
 	_ZN10QtMobility22QOrganizerItemReminder23FieldSecondsBeforeStartE @ 202 NONAME DATA 19
@@ -889,4 +889,5 @@ EXPORTS
 	_ZTVN10QtMobility41QOrganizerItemDetailDefinitionSaveRequestE @ 888 NONAME
 	_ZTVN10QtMobility42QOrganizerItemDetailDefinitionFetchRequestE @ 889 NONAME
 	_ZTVN10QtMobility43QOrganizerItemDetailDefinitionRemoveRequestE @ 890 NONAME
+	_ZNK10QtMobility22QOrganizerItemReminder12reminderTypeEv @ 891 NONAME
 

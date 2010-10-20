@@ -174,6 +174,7 @@ private slots:
     void itemFetch();
     void spanOverDays();
     void recurrence();
+    void idComparison();
 
     /* Tests that take no data */
     void itemValidation();
@@ -183,6 +184,7 @@ private slots:
     void memoryManager();
     void changeSet();
     void fetchHint();
+    void testFilterFunction();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -207,7 +209,82 @@ private slots:
     void itemFetch_data() {addManagers();}
     void spanOverDays_data() {addManagers();}
     void recurrence_data() {addManagers();}
+    void idComparison_data() {addManagers();}
 };
+
+class BasicItemLocalId : public QOrganizerItemEngineId
+{
+public:
+    BasicItemLocalId(uint id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerItemEngineId* other) const {
+        return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerItemEngineId* other) const {
+        return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    QOrganizerItemEngineId* clone() const {
+        BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
+        return cloned;
+    }
+    QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicItem:"));
+        return uri;
+    }
+    QDebug& debugStreamOut(QDebug& dbg) const {
+        return dbg << m_id;
+    }
+    QString toString() const {
+        return QString::number(m_id);
+    }
+    uint hash() const {
+        return m_id;
+    }
+
+private:
+    uint m_id;
+};
+
+class BasicCollectionLocalId : public QOrganizerCollectionEngineId
+{
+public:
+    BasicCollectionLocalId(uint id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const {
+        return m_id == static_cast<const BasicCollectionLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const {
+        return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
+    }
+    QOrganizerCollectionEngineId* clone() const {
+        BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_id);
+        return cloned;
+    }
+    QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicCollection:"));
+        return uri;
+    }
+    QDebug& debugStreamOut(QDebug& dbg) const {
+        return dbg << m_id;
+    }
+    QString toString() const {
+        return QString::number(m_id);
+    }
+    uint hash() const {
+        return m_id;
+    }
+
+private:
+    uint m_id;
+};
+
+QOrganizerItemId makeItemId(uint id)
+{
+    return QOrganizerItemId(new BasicItemLocalId(id));
+}
+
+QOrganizerCollectionId makeCollectionId(uint id)
+{
+    return QOrganizerCollectionId(new BasicCollectionLocalId(id));
+}
 
 tst_QOrganizerManager::tst_QOrganizerManager()
 {
@@ -2479,6 +2556,8 @@ void tst_QOrganizerManager::changeSet()
     QVERIFY(changeSet.changedItems().isEmpty());
     QVERIFY(changeSet.removedItems().isEmpty());
     QVERIFY(changeSet.addedItems().contains(id));
+    changeSet.clearAddedItems();
+    changeSet.insertAddedItems(QList<QOrganizerItemId>() << id);
 
     changeSet.insertChangedItem(id);
     changeSet.insertChangedItems(QList<QOrganizerItemId>() << id);
@@ -2518,6 +2597,60 @@ void tst_QOrganizerManager::changeSet()
     QVERIFY(changeSet.dataChanged() != changeSet2.dataChanged());
     QVERIFY(changeSet.dataChanged() != changeSet3.dataChanged());
     changeSet.emitSignals(0);
+
+    QOrganizerCollectionId colId;
+
+    QOrganizerCollectionChangeSet colChangeSet;
+    QVERIFY(colChangeSet.addedCollections().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+
+    colChangeSet.insertAddedCollection(colId);
+    QVERIFY(!changeSet.addedItems().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+    QVERIFY(colChangeSet.addedCollections().contains(colId));
+    colChangeSet.clearAddedCollections();
+    colChangeSet.insertAddedCollections(QList<QOrganizerCollectionId>() << colId);
+
+    colChangeSet.insertChangedCollection(colId);
+    colChangeSet.insertChangedCollections(QList<QOrganizerCollectionId>() << colId);
+    QVERIFY(colChangeSet.changedCollections().size() == 1); // set, should only be added once.
+    QVERIFY(!colChangeSet.addedCollections().isEmpty());
+    QVERIFY(!colChangeSet.changedCollections().isEmpty());
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+    QVERIFY(colChangeSet.changedCollections().contains(colId));
+    colChangeSet.clearChangedCollections();
+    QVERIFY(colChangeSet.changedCollections().isEmpty());
+
+    colChangeSet.insertRemovedCollections(QList<QOrganizerCollectionId>() << colId);
+    QVERIFY(colChangeSet.removedCollections().contains(colId));
+    colChangeSet.clearRemovedCollections();
+    QVERIFY(colChangeSet.removedCollections().isEmpty());
+
+    QVERIFY(colChangeSet.dataChanged() == false);
+    QOrganizerCollectionChangeSet colChangeSet2;
+    colChangeSet2 = colChangeSet;
+    QVERIFY(colChangeSet.addedCollections() == colChangeSet2.addedCollections());
+    colChangeSet.emitSignals(0);
+
+    colChangeSet2.clearAddedCollections();
+    QVERIFY(colChangeSet2.addedCollections().isEmpty());
+    colChangeSet2.insertAddedCollections(colChangeSet.addedCollections().toList());
+    QVERIFY(colChangeSet.addedCollections() == colChangeSet2.addedCollections());
+
+    colChangeSet2.clearAll();
+    QVERIFY(colChangeSet.addedCollections() != colChangeSet2.addedCollections());
+
+    QOrganizerCollectionChangeSet colChangeSet3(colChangeSet2);
+    QVERIFY(colChangeSet.addedCollections() != colChangeSet3.addedCollections());
+    QVERIFY(colChangeSet2.addedCollections() == colChangeSet3.addedCollections());
+
+    colChangeSet.setDataChanged(true);
+    QVERIFY(colChangeSet.dataChanged() == true);
+    QVERIFY(colChangeSet.dataChanged() != colChangeSet2.dataChanged());
+    QVERIFY(colChangeSet.dataChanged() != colChangeSet3.dataChanged());
+    colChangeSet.emitSignals(0);
 }
 
 void tst_QOrganizerManager::fetchHint()
@@ -2526,6 +2659,121 @@ void tst_QOrganizerManager::fetchHint()
     hint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QOrganizerItemFetchHint::NoBinaryBlobs);
 }
+
+void tst_QOrganizerManager::testFilterFunction()
+{
+    QOrganizerEvent item;
+    item.setId(makeItemId(10));
+    item.setStartDateTime(QDateTime(QDate(2010,10,10), QTime(10,10)));
+    item.setEndDateTime(QDateTime(QDate(2010,10,10), QTime(12,10)));
+    item.setDisplayLabel("test");
+    item.setCollectionId(makeCollectionId(1));
+
+    // Test for QOrganizerItemFilter::InvalidFilter
+    QOrganizerItemInvalidFilter fif;
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fif, item));
+
+    // Test for QOrganizerItemFilter::IdFilter:
+    QOrganizerItemIdFilter fidf;
+    fidf.setIds(QList<QOrganizerItemId>() << makeItemId(10));
+    QVERIFY(QOrganizerManagerEngine::testFilter(fidf, item));
+
+    // test for nonexistent id
+    fidf.setIds(QList<QOrganizerItemId>() << makeItemId(11));
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fidf, item));
+
+    // Test for QOrganizerItemFilter::DefaultFilter:
+    QOrganizerItemFilter fdf;
+    QVERIFY(fdf.type() == QOrganizerItemFilter::DefaultFilter);
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdf, item));
+
+    // Test for QOrganizerItemFilter::OrganizerItemDetailFilter:
+    QOrganizerItemDetailFilter fdef;
+    fdef.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel);
+    fdef.setValue("invalid");
+    // test for nonexistent label
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fdef, item));
+
+    fdef.setValue("test");
+    // test for existent label
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdef, item));
+
+    // Test for QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
+    QOrganizerItemDetailRangeFilter fdrf;
+    fdrf.setDetailDefinitionName(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime);
+    fdrf.setRange(QDateTime(QDate(2010,10,9)), QDateTime(QDate(2010,10,11)));
+    // test for a valid range
+    QVERIFY(QOrganizerManagerEngine::testFilter(fdrf, item));
+
+    fdrf.setRange(QDateTime(QDate(2010,10,11)), QDateTime(QDate(2010,10,12)));
+    // test for item not in the range
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fdrf, item));
+
+    // Test for QOrganizerItemFilter::ChangeLogFilter:
+    QOrganizerItemChangeLogFilter fclf;
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventAdded);
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    // should fail as item does not have timestamp detail
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    // add valid timestamp detail
+    QOrganizerItemTimestamp oit;
+    oit.setCreated(QDateTime(QDate(2010,10,9)));
+    oit.setLastModified(QDateTime(QDate(2010,10,9)));
+    item.saveDetail(&oit);
+
+    // check for created date
+    QVERIFY(QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,10)));
+    // should fail because date is older then item creation date
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventChanged);
+    // check for modified date
+    QVERIFY(QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,10)));
+    // should fail because date is older then item modification date
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    fclf.setSince(QDateTime(QDate(2010,10,8)));
+    fclf.setEventType(QOrganizerItemChangeLogFilter::EventRemoved);
+    // should always fail since can't be checked
+    QVERIFY(!QOrganizerManagerEngine::testFilter(fclf, item));
+
+    // Test for QOrganizerItemFilter::IntersectionFilter:
+    QOrganizerItemIntersectionFilter oiif;
+    oiif.setFilters(QList<QOrganizerItemFilter>() << fif << fdf);
+    // check for an invalid filter and default filter intersection
+    QVERIFY(!QOrganizerManagerEngine::testFilter(oiif, item));
+
+    oiif.setFilters(QList<QOrganizerItemFilter>() << fdef << fdf);
+    // check for a detail filter and default filter intersection
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiif, item));
+
+    // Test for QOrganizerItemFilter::UnionFilter:
+    QOrganizerItemUnionFilter oiuf;
+    oiuf.setFilters(QList<QOrganizerItemFilter>() << fif << fdf);
+    // check for an invalid filter and default filter union
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiuf, item));
+
+    oiuf.setFilters(QList<QOrganizerItemFilter>() << fdef << fdf);
+    // check for a detail filter and default filter union
+    QVERIFY(QOrganizerManagerEngine::testFilter(oiuf, item));
+
+    // Test for QOrganizerItemFilter::CollectionFilter:
+    QOrganizerItemCollectionFilter oicf;
+    oicf.setCollectionId(makeCollectionId(1));
+    // check for existing collection id
+    QVERIFY(QOrganizerManagerEngine::testFilter(oicf, item));
+
+    oicf.setCollectionId(makeCollectionId(2));
+    // check for nonexisting collection id
+    QVERIFY(!QOrganizerManagerEngine::testFilter(oicf, item));
+}
+
 
 void tst_QOrganizerManager::dataSerialization()
 {
@@ -2706,6 +2954,133 @@ void tst_QOrganizerManager::recurrence()
     // Fetch events on a day where the recurrence is no longer valid
     items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
     QCOMPARE(items.count(), 0);
+}
+
+void tst_QOrganizerManager::idComparison()
+{
+    QFETCH(QString, uri);
+    
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+    
+    // Can we run this test?
+    if (!cm->supportedItemTypes().contains(QOrganizerItemType::TypeJournal)) {
+        QSKIP("Backend not compatible with this test", SkipSingle);
+        // For example symbian backend does not support Journal items and comment details at all..
+        // TODO: The test should be refactored so it could run on all platforms
+    }
+
+    // step one: make a few items and collections to save (and harvest their ids)
+    QOrganizerEvent e1;
+    e1.setDescription("test event one");
+    e1.setDisplayLabel("event one");
+    e1.setStartDateTime(QDateTime::currentDateTime());
+    e1.setEndDateTime(QDateTime::currentDateTime().addSecs(3600));
+
+    QOrganizerEvent e2;
+    e2.setDescription("test event two");
+    e2.setDisplayLabel("event two");
+    e2.setStartDateTime(QDateTime::currentDateTime().addDays(1));
+    e2.setEndDateTime(QDateTime::currentDateTime().addDays(1).addSecs(1800));
+
+    QOrganizerJournal j1;
+    j1.setDisplayLabel("journal one");
+    j1.addComment("this is a test journal comment");
+    j1.setDateTime(QDateTime::currentDateTime());
+
+    QOrganizerTodo t1;
+    QOrganizerRecurrenceRule r1;
+    r1.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    t1.setDisplayLabel("todo one");
+    t1.setDescription("test todo one");
+    t1.addComment("perform unit testing every Friday");
+    t1.setDueDateTime(QDateTime::currentDateTime().addDays(5));
+    t1.setRecurrenceRule(r1);
+
+    QOrganizerCollection c1;
+    c1.setMetaData(QOrganizerCollection::KeyName, "IdComparisonTest");
+
+    // step two: save and harvest the ids
+    cm->saveItem(&e1);
+    cm->saveItem(&e2);
+    cm->saveItem(&j1);
+    cm->saveItem(&t1);
+    cm->saveCollection(&c1);
+    QOrganizerItemId e1id = e1.id();
+    QOrganizerItemId e2id = e2.id();
+    QOrganizerItemId j1id = j1.id();
+    QOrganizerItemId t1id = t1.id();
+    QOrganizerCollectionId c1id = c1.id();
+
+    // step three: make some basic ids as controlled data for our unit test
+    QOrganizerItemId biid1 = makeItemId(5);
+    QOrganizerItemId biid2 = makeItemId(12);
+    QOrganizerCollectionId bcid1 = makeCollectionId(5);
+    QOrganizerCollectionId bcid2 = makeCollectionId(17);
+    QOrganizerCollectionId bcid3 = makeCollectionId(15);
+
+    // finally: do the testing.
+    QVERIFY(biid1 != biid2);
+    QVERIFY(bcid1 != bcid2);
+
+    QVERIFY(e1id != e2id);
+    QVERIFY(e1id != j1id);
+    QVERIFY(e1id != t1id);
+
+    QList<QOrganizerItemId> idList;
+    idList << e1id << t1id << biid1;
+    QVERIFY(!idList.contains(biid2));
+    QVERIFY(!idList.contains(j1id));
+    QVERIFY(!idList.contains(e2id));
+    QVERIFY(idList.contains(e1id));
+    QVERIFY(idList.contains(t1id));
+    QVERIFY(idList.contains(biid1));
+
+    QVERIFY(bcid1 < bcid2);
+    QVERIFY(bcid3 < bcid2);
+    QVERIFY(e1id < e2id); // this test may be unstable, depending on the backend?
+
+    // now we do some tests which might be unstable
+    QVERIFY(bcid1 < c1id); // collectionIds: the first comparison should be manager uri, and bcid manager uri is early in the alphabet.
+    QVERIFY(!(c1id < bcid1)); // collectionIds: ensure that less-than is consistent no matter which is on LHS or RHS.
+    QVERIFY(biid2 < e1id); // itemIds: first comparison should be manager uri, and biid manager uri is early in the alphabet.
+    QVERIFY(!(e1id < biid2)); // itemIds: ensure that less-than is consistent no matter which is on LHS or RHS.
+
+    // null testing
+    QOrganizerItemId n1;
+    QOrganizerItemId n2;
+    QVERIFY(n1 == n2);   // both null means they're equal
+    QVERIFY(!(n1 < n2)); // not less than
+    QVERIFY(!(n2 < n1)); // and not less than with LHS/RHS swapped.
+
+    QVERIFY(n1 < biid1); // null id is always less than any other id
+    QVERIFY(!(biid1 < n1));
+    QVERIFY(n2 < e2id);
+    QVERIFY(!(e2id < n2));
+
+    QVERIFY(!idList.contains(n2));
+    idList << n1;
+    QVERIFY(idList.contains(n2)); // any two null ids are equal, so .contains should work.
+
+    QMap<QOrganizerItemId, int> testMap;
+    testMap.insert(e1id, 1);
+    testMap.insert(j1id, 5);
+    testMap.insert(biid1, 12);
+    testMap.insert(biid2, 11);
+    testMap.insert(t1id, 6);
+    testMap.insert(n1, 12);
+
+    QCOMPARE(testMap.value(e1id), 1);
+    QCOMPARE(testMap.value(n2), 12); // again, n1 == n2.
+    QCOMPARE(testMap.value(biid1), 12);
+    QCOMPARE(testMap.value(j1id), 5);
+    QCOMPARE(testMap.value(biid2), 11);
+    QCOMPARE(testMap.value(t1id), 6);
+    QCOMPARE(testMap.value(QOrganizerItemId()), 12); // again, n1 == null
+
+    QVERIFY(testMap.size() == 6);
+    testMap.remove(QOrganizerItemId());
+    QVERIFY(testMap.size() == 5);
+    QVERIFY(testMap.value(QOrganizerItemId()) != 12); // removed this entry.
 }
 
 void tst_QOrganizerManager::dateRange()

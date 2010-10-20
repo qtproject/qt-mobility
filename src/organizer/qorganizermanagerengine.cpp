@@ -213,6 +213,11 @@ QString QOrganizerManagerEngine::managerUri() const
 
   If the \a parentItem does not exist in the backend, or if there are no instances matching the
   criteria, an empty list should be returned.
+
+  The \a fetchHint parameter is a hint to the manager about which details the client is interested
+  in.  It allows the manager to optimize retrieval of occurrences.  The manager may ignore the
+  \a fetchHint, but if it does so each item occurrence it returns must include all of the details
+  associated with it in the database.
   */
 QList<QOrganizerItem> QOrganizerManagerEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
@@ -679,7 +684,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -692,7 +696,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -707,7 +710,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -727,7 +729,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -922,7 +923,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -935,7 +935,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -950,7 +949,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -970,7 +968,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1073,7 +1070,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1086,7 +1082,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1101,7 +1096,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1121,7 +1115,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1281,7 +1274,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1294,7 +1286,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1309,7 +1300,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -1329,7 +1319,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.clear();
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemReminder::FieldReminderType, f);
     fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
@@ -2332,7 +2321,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
 }
 
 /*!
-  Returns true if the given item (or an occurrence of the item) occurs within the range
+  Returns true if the given \a item (or an occurrence of the item) occurs within the range
   specified by the \a startPeriod and the \a endPeriod.
   A default-constructed \a startPeriod signifies that the lower bound of the range is
   infinitely small (i.e., will match anything up to the \a endPeriod) and a default-constructed
