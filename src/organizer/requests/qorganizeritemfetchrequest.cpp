@@ -135,10 +135,6 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 }
 
 /*!
-<<<<<<< HEAD
-    Returns the start date of the fetch request.
-*/
-=======
   Returns the start date of the request.  The start date
   is the lower bound of the time-period within which an
   item must occur (that is, either it or one of its occurrences
@@ -150,7 +146,6 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
   negative-infinity (that is, all items which occur at any
   point in time, up until the end date, will be returned).
  */
->>>>>>> 13542ca9e04e8b8871ea8df3be063ed7e97db654
 QDateTime QOrganizerItemFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
