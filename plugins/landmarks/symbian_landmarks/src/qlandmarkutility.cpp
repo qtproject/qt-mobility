@@ -121,7 +121,8 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
     symbianLandmark->GetCoverageRadius(covRadius);
     if (Math::IsNaN(covRadius)) {
         qtLandmark->setRadius(0.0);
-    } else if (covRadius >= 0.0) {
+    }
+    else if (covRadius >= 0.0) {
         qtLandmark->setRadius(covRadius);
     }
 
@@ -149,7 +150,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
                 QString LandmarkUrl((QChar*) (lmBuf.Ptr()), lmBuf.Length());
                 //qDebug() << "landmark url " << LandmarkUrl;
                 //TODO: tmp fix, need to know exact reason.
-                if(LandmarkUrl != "0") 
+                if (LandmarkUrl != "0")
                     qtLandmark->setUrl(LandmarkUrl);
             }
         }
@@ -190,7 +191,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
                 address.setCounty(lmPosField);
             }
         }
-        
+
         // set state / province
         if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldState)) {
             TPtrC posField;
@@ -257,16 +258,16 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
  * convert qt landmark to  symbian landmark
  * 
  */
-void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark,
-    CPosLmCategoryManager* catMgr)
+void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark)
 {
     if (!qtLandmark)
         return;
 
     // set landmark name
-    QString lmName = qtLandmark->name();
-    if (lmName.length() > 0) {
-        TPtrC symbianLmName(reinterpret_cast<const TText*> (lmName.constData()), lmName.length());
+    QString qtlmName = qtLandmark->name();
+    if (qtlmName.length() > 0) {
+        TPtrC symbianLmName(reinterpret_cast<const TText*> (qtlmName.constData()),
+            qtlmName.length());
         symbianLandmark.SetLandmarkNameL(symbianLmName);
     }
     else {
@@ -276,10 +277,11 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     // set coordinate
     QGeoCoordinate coord = qtLandmark->coordinate();
     if (isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
-        TLocality local;
-        local.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
-        symbianLandmark.SetPositionL(local);
-    } else if (!isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
+        TLocality local2;
+        local2.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
+        symbianLandmark.SetPositionL(local2);
+    }
+    else if (!isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
         User::Leave(KErrArgument);
     }
     else if (!isValidLong(coord.longitude()) && isValidLat(coord.latitude())) {
@@ -289,7 +291,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         symbianLandmark.RemoveLandmarkAttributes(CPosLandmark::EPosition);
     }
 
-    // set coverage radius
+    // check & set coverage radius
     qreal rad = qtLandmark->radius();
     if (rad < 0) {
         // radius cannot be -ve
@@ -299,7 +301,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         symbianLandmark.SetCoverageRadius(rad);
     }
 
-    // set landmark description
+    // check & set landmark description
     QString lmDesc = qtLandmark->description();
     if (lmDesc.length() > 0) {
         TPtrC symbianLmDesc(reinterpret_cast<const TText*> (lmDesc.constData()), lmDesc.length());
@@ -309,10 +311,10 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         symbianLandmark.SetLandmarkDescriptionL(KNullDesC);
     }
 
+    // check & set icon info
+    QString lmIconInfo = qtLandmark->iconUrl().toString();
     int iconIdx = 0;
     int iconMaskIdx = 0;
-    // set icon info
-    QString lmIconInfo = qtLandmark->iconUrl().toString();
     if (lmIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (lmIconInfo.constData()),
             lmIconInfo.length());
@@ -321,8 +323,8 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     else {
         symbianLandmark.SetIconL(KNullDesC, iconIdx, iconMaskIdx);
     }
-    
-    // set phone
+
+    // check & set phone
     QString lmPhoneNo = qtLandmark->phoneNumber();
     if (lmPhoneNo.length() > 0) {
         TPtrC symbianLmPhone(reinterpret_cast<const TText*> (lmPhoneNo.constData()),
@@ -333,10 +335,10 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         symbianLandmark.SetPositionFieldL(EPositionFieldBuildingTelephone, KNullDesC);
     }
 
-    // set url
-    QString lmUrl = qtLandmark->url().toString();
-    if (lmUrl.length() > 0) {
-        TPtrC symbianLmUrl(reinterpret_cast<const TText*> (lmUrl.constData()), lmUrl.length());
+    // check & set url
+    QString qtlmUrl = qtLandmark->url().toString();
+    if (qtlmUrl.length() > 0) {
+        TPtrC symbianLmUrl(reinterpret_cast<const TText*> (qtlmUrl.constData()), qtlmUrl.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, symbianLmUrl);
     }
     else {
@@ -437,20 +439,16 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
     // remove categories if any
     RArray<TPosLmItemId> catIds;
-    RArray<TPosLmItemId> lmIds;
-    lmIds.Append(symbianLandmark.LandmarkId());
-
     symbianLandmark.GetCategoriesL(catIds);
-    if (catIds.Count() > 0) {
-        for (int i = 0; i < catIds.Count(); ++i) {
-            symbianLandmark.RemoveCategory(catIds[i]);
-        }
+    for (int i = 0; i < catIds.Count(); ++i) {
+        symbianLandmark.RemoveCategory(catIds[i]);
     }
 
     for (int i = 0; i < catList.count(); ++i) {
         TPosLmItemId catId = convertToSymbianLandmarkCategoryId(catList.at(i));
         symbianLandmark.AddCategoryL(catId);
     }
+
 }
 
 CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
@@ -555,7 +553,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
             lmCounty.length());
         symbianLandmark->SetPositionFieldL(EPositionFieldCounty, symbianLmPosField);
     }
-    
+
     // set state
     QString lmState = qtLandmark->address().state();
     if (lmState.length() > 0) {

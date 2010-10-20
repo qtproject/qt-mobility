@@ -97,7 +97,7 @@ void S60ViewFinderWidget::beginNativePaintEvent(const QRect& /*controlRect*/)
 {
     emit beginVideoWindowNativePaint();
 }
-    
+
 void S60ViewFinderWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 {
     CCoeEnv::Static()->WsSession().Flush();
@@ -111,7 +111,7 @@ void S60ViewFinderWidget::paintEvent(QPaintEvent *event)
         QLabel::paintEvent(event);
 }
 
-//#############################################################################
+//=============================================================================
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent):
     QVideoWidgetControl(parent),
@@ -136,7 +136,7 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        
+
         switch (e->type()) {
             case QEvent::ParentChange:
             case QEvent::WinIdChange:
@@ -152,13 +152,14 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             case QEvent::Hide:
                 emit widgetVisible(false);
                 break;
-            
+
             default:
                 // Do nothing
                 break;
         }
     }
-    return false;
+
+    return false; // Forward Event
 }
 
 /*
@@ -167,9 +168,6 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
  */
 void S60VideoWidgetControl::reconfigureWidget(const bool directVF)
 {
-    if (m_isViewFinderDirect == directVF)
-        return;
-
     if (directVF) { // DirectScreen ViewFinder
         m_isViewFinderDirect = true;
 
