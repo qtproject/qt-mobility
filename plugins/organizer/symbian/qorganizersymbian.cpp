@@ -682,6 +682,9 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
 {
 	Q_UNUSED(fetchHint)
 
+    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
+
     // Check collection id
     QOrganizerCollectionId collectionLocalId = getCollectionId(itemId);
     if (!m_collections.contains(collectionLocalId))
@@ -1124,6 +1127,9 @@ void QOrganizerItemSymbianEngine::removeItemL(
     const QOrganizerItemId& organizeritemId)
 {
     // TODO: How to remove item instances?
+
+    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     QOrganizerCollectionId collectionId = getCollectionId(organizeritemId);
     if (!m_collections.contains(collectionId))
