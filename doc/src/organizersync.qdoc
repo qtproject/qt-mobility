@@ -29,7 +29,7 @@
 
 /*!
 
-\page itemssync.html
+\page organizersync.html
 
 \title Organizer Synchronous API
 
@@ -40,10 +40,10 @@
 
 The Organizer Items Synchronous API enables a client to synchronously fetch, update, or remove
 item data from an item manager.  A synchronous API is of most use to clients who wish
-to perform simple requests where performance or user interface responsiveness is not critical.
+to perform simple requests where user interface responsiveness is not critical.
 Synchronous calls to an item manager will block until they are completed, and therefore
-should not be performed in the GUI thread if the manager is a frontend to an online service
-or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
+should not be performed in the GUI thread (especially if the manager is a frontend to an online service
+or long-latency datastore).  The main advantage of the synchronous API is its simplicity and
 convenience.
 
 Most operations which may be performed using the synchronous API may also be
@@ -54,181 +54,89 @@ applications that the asynchronous API be used where possible.
 \section1 Using The API
 
 The synchronous API offered by the Organizer Items module is available through the QOrganizerManager
-class.  It consists of three major sections:
+class.  It consists of three major categories:
 \list
-  \o Error Reporting
-  \o Schema Manipulation
   \o Organizer Item Manipulation
   \o Item Collection Manipulation
+  \o Schema Manipulation
 \endlist
 
-
-\section2 Error Reporting
-
-When a synchronous operation fails, clients need to be able to retrieve error information associated
-with that synchronous operation.  The QOrganizerManager::error() function provides this information to clients.
-
-For some synchronous operations (for example, batch save or remove operations) it is possible that
-multiple errors may occur during the operation.  In those cases, clients can call QOrganizerManager::errorMap()
-to retrieve a map of input index to error, which will be filled by the function as required.
-The QOrganizerManager::error() function will report the overall operation error.
-
-Error reporting is handled slightly differently in the asynchronous API, in that each instance of
-an asynchronous request is able to report any overall operation error as well as the finer-grained
-map of errors, for the operation which it requested; in the synchronous API, the error map reported via
-QOrganizerManager::errorMap() is overwritten by each successfive synchronous operation.
 
 
 \section2 Organizer Item Manipulation
 
-The most common type of operation that clients will perform involves retrieval or modification of items.
-The QOrganizerManager class offers synchronous API to retrieve, create, update and delete items.  The create
-and update operations are provided through the same interface.  Both singular and batch operations are offered
-by the API.
-
-An item is identified by its QOrganizerItemId.  This id consists of two parts: a URI which identifies the item manager
-which stores the item, and the engine-specific id of the item in that manager.  Some operations which take a pointer
-to an item as an argument may modify the item during the operation; updating the item id is a common example.
+The most common type of operation that clients will perform involves retrieval
+or modification of organizer items.  For in-depth information about item
+manipulation, please refer to the main \l{Organizer} API page.
 
 The QOrganizerManager class provides API for accessing the IDs of items which are stored in the manager:
 \list
-  \o itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const
-  \o itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const
+  \o QOrganizerManager::itemIds()
 \endlist
-
-The item id retrieval functionality is also provided via asynchronous API through the QOrganizerItemIdFetchRequest class.
 
 The synchronous, singular item manipulation functions offered by the QOrganizerManager class are:
 \list
-  \o item()
-  \o saveItem()
-  \o removeItem()
+  \o QOrganizerManager::item()
+  \o QOrganizerManager::saveItem()
+  \o QOrganizerManager::removeItem()
 \endlist
-
-The (optional) fetch hint argument to the item accessor function allows clients to tell the plugin
-which types of information they wish to retrieve.  This argument is a hint only, and may be ignored safely by the plugin,
-or used by the plugin to optimize the performance of the retrieve operation.
-
-The save operation entails a validation step, where the item's details are checked against the supported schema.
-If the item is valid, it will be saved.  Note that if the item already exists in the database (determined by
-the id of the item) it will be replaced with the item contained in the argument.  This means that clients should
-not save any item which was retrieved with a non-empty fetchHint defined, or data loss may occur.
-
-Furthermore, the collection in which the item will be saved is determined by the manager by inspecting the collection id
-reported by the item.  If the collection id is the default constructed (null) id, the item will be saved in the collection
-that it is currently saved (if the item already exists) or into the manager's default collection (if it is a new item).
-
-Any error which occurs during such singular item manipulation functions may be accessed by calling QOrganizerManager::error()
-directly after the original synchronous call.
 
 The synchronous, batch item manipulation functions offered by the QOrganizerManager class are:
 \list
-  \o items() which returns persistent and generated items within a given time period
-  \o itemsForExport() which returns only persistent items
-  \o itemOccurrences() which returns the occurrences of a specific recurring item
-  \o saveItems() which may be used to update a recurring item, or save an exceptional occurrence
-  \o removeItems() which may be used to remove a recurring item or exceptional occurrence
+  \o QOrganizerManager::items() which returns persistent and generated items within a given time period
+  \o QOrganizerManager::itemsForExport() which returns only persistent items
+  \o QOrganizerManager::itemOccurrences() which returns the occurrences of a specific recurring item
+  \o QOrganizerManager::saveItems() which may be used to update a recurring item, or save an exceptional occurrence
+  \o QOrganizerManager::removeItems() which may be used to remove a recurring item or exceptional occurrence
 \endlist
-
-The item manipulation functionality is also provided via asynchronous API through the QOrganizerItemFetchRequest,
-QOrganizerItemFetchForExportRequest, QOrganizerItemOccurrenceFetchRequest, QOrganizerItemSaveRequest,
-and QOrganizerItemRemoveRequest classes.
 
 
 \section2 Item Collection Manipulation
 
-Every item stored in a manager belongs to exactly one collection.  Every
-manager has at least one collection, and every manager has exactly one
-default collection.  Some managers provide more than one collection, and
-some managers allow clients to add, modify or remove collections.
+Every item is saved in a collection in a manager.  Each collection has various
+properties which, if the manager supports such operations, may be modified
+by clients.  For in-depth information about collections, please refer to the
+main \l{Organizer} API page.
 
-A collection is a grouping of items, which has its own meta data such as the
-name of the collection, a description, perhaps a "color" or sound effect,
-and so on.  The synchronous API offers the following functions to manipulate
-collections:
+The synchronous API offers the following functions to manipulate collections:
 \list
-  \o defaultCollection() returns the default collection of the manager
-  \o collections() returns all collections in the manager
-  \o saveCollection() updates an existing collection or adds a new collection
-  \o removeCollection() removes an existing collection (and deletes any items it contains)
+  \o QOrganizerManager::defaultCollection() returns the default collection of the manager
+  \o QOrganizerManager::collections() returns all collections in the manager
+  \o QOrganizerManager::saveCollection() updates an existing collection or adds a new collection
+  \o QOrganizerManager::removeCollection() removes an existing collection (and deletes any items it contains)
 \endlist
 
 It also offers a convenience function which returns a collection with a given collection id.
 
 \section2 Schema Manipulation
 
-The schema supported by a plugin is the list of detail definitions which are supported by the plugin.
-An item which contains a detail of a particular definition which is not supported by the plugin
-will fail to validate when the user attempts to save it in that manager.  The schema also includes
-any access constraints which may apply to certain details or detail definitions (for example,
-a particular detail definition might be declared to be unique per-item in a particular manager).
+The schema supported by a engine is the list of detail definitions which are
+supported by the engine.  For in-depth information about the schema, please
+refer to the main \l{Qt Organizer Schema} page.
 
-Every plugin will support a slightly different schema, as the schema which can be supported will depend
-on the semantics and limitations of the underlying storage platform on which the plugin is based.
-The default schema is described in the \l {Qt Organizer Schema}{Qt Mobility Organizer schema documentation},
-and plugins should attempt to implement that schema; however no guarantees are given to clients as to
-the conformance of the schemas supported by various plugins to the default schema.
-
-Some plugins support extensible detail types.  This means that third party developers can
-extend the schema of such plugins at run time (for example, to add a new field to a detail).
-Some plugins allow third party developers to define new detail types (that is, to
-add an entirely new detail type to the schema supported by that plugin).
-Plugins which support these types of operations must report to clients that they support the
-QOrganizerManager::MutableDefinitions feature.
-
-The synchronous API offers several functions to retrieve or modify the schema supported by a plugin:
+The synchronous API offers several functions to retrieve or modify the schema
+supported by an engine.  Engines which support these types of operations must
+report to clients that they support the QOrganizerManager::MutableDefinitions
+feature.
 \list
-  \o detailDefinitions() returns all definitions in the schema for a particular item type
-  \o detailDefinition() returns the definition of a particular name from the schema for a particular item type
-  \o saveDetailDefinition() which updates or adds a definition to the schema for a particular item type
-  \o removeDetailDefinition() which removes a definition from the schema for a particular item type
+  \o QOrganizerManager::detailDefinitions() returns all definitions in the schema for a particular item type
+  \o QOrganizerManager::detailDefinition() returns the definition of a particular name from the schema for a particular item type
+  \o QOrganizerManager::saveDetailDefinition() which updates or adds a definition to the schema for a particular item type
+  \o QOrganizerManager::removeDetailDefinition() which removes a definition from the schema for a particular item type
 \endlist
 
-The schema manipulation functionality is also provided via asynchronous API through the
-QOrganizerItemDetailDefinitionFetchRequest, QOrganizerItemDetailDefinitionSaveRequest and QOrganizerItemDetailDefinitionRemoveRequest
-classes.
 
-Note that the schema supported by a plugin may vary depending on the type of item to which the schema applies.
-For example, a particular plugin might support location, description, priority and recurrence details for
-events, but only description, display label and comments for journal items.
+\section2 Error Reporting
 
+When a synchronous operation fails, clients need to be able to retrieve error
+information associated with that synchronous operation.  You can call the
+QOrganizerManager::error() function directly after a failing synchronous
+operation to determine why it failed.
 
-\section1 Examples Of Usage
-
-The synchronous API provides the simplest way to access or modify the
-item information managed by a particular backend.  It has the
-disadvantage that calls block until completion and is therefore
-most suitable only for applications which interact with local, high-speed
-datastores.
-
-
-\section2 Saving a new item to the default manager
-
-The client creates a new non-recurring item, adds some, and
-saves it to the default store of the default manager.
-
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a non-recurrent entry
-
-We assume the existence of various specialized leaf-classes that allow simple
-access to details of the item, such as priority, description and display label.
-These specialized leaf classes may be written by anyone, and simply wrap the functionality
-provided by QOrganizerItemDetail in order to allow simpler access to fields
-supported by a particular definition.
-
-\section2 Filtering by detail definition and value
-
-The client utilizes a default manager and asks for any items which match
-a particular search criteria:
-
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving any entry (not occurrence) which matches a search criteria
-
-
-\section3 \bold{Modifying an existing item and saving the modifications}
-
-The client retrieves an item, modifies one of its details, adds a new
-detail, and then saves the item back to the manager.
-
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Editing a non-recurrent entry
+For some synchronous operations (for example, batch save or remove operations) it is possible that
+multiple errors may occur during the operation.  In those cases, clients can call QOrganizerManager::errorMap()
+to retrieve a map of input index to error, which will be filled by the function as required.
+The QOrganizerManager::error() function will report the overall operation error.
 
 */
 

@@ -95,6 +95,7 @@ headerdirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
@@ -121,6 +122,7 @@ sourcedirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
