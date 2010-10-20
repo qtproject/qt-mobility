@@ -61,10 +61,10 @@ QT_BEGIN_NAMESPACE
 
 namespace QPulseAudioInternal
 {
-    pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format);
-    QString stateToQString(pa_stream_state_t state);
-    QString stateToQString(pa_context_state_t state);
-    QString sampleFormatToQString(pa_sample_format format);
+pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format);
+QString stateToQString(pa_stream_state_t state);
+QString stateToQString(pa_context_state_t state);
+QString sampleFormatToQString(pa_sample_format format);
 }
 
 QT_END_NAMESPACE

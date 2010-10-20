@@ -45,87 +45,88 @@ QT_BEGIN_NAMESPACE
 
 namespace QPulseAudioInternal
 {
-    pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
-    {
-        pa_sample_spec  spec;
+pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
+{
+    pa_sample_spec  spec;
 
-        spec.rate = format.frequency();
-        spec.channels = format.channels();
+    spec.rate = format.frequency();
+    spec.channels = format.channels();
 
-        if (format.sampleSize() == 8) {
-            spec.format = PA_SAMPLE_U8;
-        } else if (format.sampleSize() == 16) {
-            switch (format.byteOrder()) {
-                case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S16BE; break;
-                case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S16LE; break;
-            }
-        } else if (format.sampleSize() == 24) {
-            switch (format.byteOrder()) {
-                case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S24BE; break;
-                case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S24LE; break;
-            }
-        } else if (format.sampleSize() == 32) {
-            switch (format.byteOrder()) {
-                case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S32BE; break;
-                case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S32LE; break;
-            }
+    if (format.sampleSize() == 8) {
+        spec.format = PA_SAMPLE_U8;
+    } else if (format.sampleSize() == 16) {
+        switch (format.byteOrder()) {
+        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S16BE; break;
+        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S16LE; break;
         }
-
-        return spec;
+    } else if (format.sampleSize() == 24) {
+        switch (format.byteOrder()) {
+        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S24BE; break;
+        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S24LE; break;
+        }
+    } else if (format.sampleSize() == 32) {
+        switch (format.byteOrder()) {
+        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S32BE; break;
+        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S32LE; break;
+        }
     }
 
-    QString stateToQString(pa_stream_state_t state)
-    {
-        switch (state)
-        {
-            case PA_STREAM_UNCONNECTED: return "Unconnected";
-            case PA_STREAM_CREATING:    return "Creating";
-            case PA_STREAM_READY:       return "Ready";
-            case PA_STREAM_FAILED:      return "Failed";
-            case PA_STREAM_TERMINATED:  return "Terminated";
-        }
+    return spec;
+}
 
-        return QString("Unknown state: %0").arg(state);
+QString stateToQString(pa_stream_state_t state)
+{
+    switch (state)
+    {
+    case PA_STREAM_UNCONNECTED: return "Unconnected";
+    case PA_STREAM_CREATING:    return "Creating";
+    case PA_STREAM_READY:       return "Ready";
+    case PA_STREAM_FAILED:      return "Failed";
+    case PA_STREAM_TERMINATED:  return "Terminated";
     }
 
-    QString sampleFormatToQString(pa_sample_format format)
-    {
-        switch (format)
-        {
-            case PA_SAMPLE_U8:          return "Unsigned 8 Bit PCM.";
-            case PA_SAMPLE_ALAW:        return "8 Bit a-Law ";
-            case PA_SAMPLE_ULAW:        return "8 Bit mu-Law";
-            case PA_SAMPLE_S16LE:       return "Signed 16 Bit PCM, little endian (PC).";
-            case PA_SAMPLE_S16BE:       return "Signed 16 Bit PCM, big endian.";
-            case PA_SAMPLE_FLOAT32LE:   return "32 Bit IEEE floating point, little endian (PC), range -1.0 to 1.0";
-            case PA_SAMPLE_FLOAT32BE:   return "32 Bit IEEE floating point, big endian, range -1.0 to 1.0";
-            case PA_SAMPLE_S32LE:       return "Signed 32 Bit PCM, little endian (PC).";
-            case PA_SAMPLE_S32BE:       return "Signed 32 Bit PCM, big endian.";
-            case PA_SAMPLE_S24LE:       return "Signed 24 Bit PCM packed, little endian (PC).";
-            case PA_SAMPLE_S24BE:       return "Signed 24 Bit PCM packed, big endian.";
-            case PA_SAMPLE_S24_32LE:    return "Signed 24 Bit PCM in LSB of 32 Bit words, little endian (PC).";
-            case PA_SAMPLE_S24_32BE:    return "Signed 24 Bit PCM in LSB of 32 Bit words, big endian.";
-            case PA_SAMPLE_MAX:         return "Upper limit of valid sample types.";
-        }
+    return QString("Unknown state: %0").arg(state);
+}
 
-        return QString("Invalid value: %0").arg(format);
+QString sampleFormatToQString(pa_sample_format format)
+{
+    switch (format)
+    {
+    case PA_SAMPLE_U8:          return "Unsigned 8 Bit PCM.";
+    case PA_SAMPLE_ALAW:        return "8 Bit a-Law ";
+    case PA_SAMPLE_ULAW:        return "8 Bit mu-Law";
+    case PA_SAMPLE_S16LE:       return "Signed 16 Bit PCM, little endian (PC).";
+    case PA_SAMPLE_S16BE:       return "Signed 16 Bit PCM, big endian.";
+    case PA_SAMPLE_FLOAT32LE:   return "32 Bit IEEE floating point, little endian (PC), range -1.0 to 1.0";
+    case PA_SAMPLE_FLOAT32BE:   return "32 Bit IEEE floating point, big endian, range -1.0 to 1.0";
+    case PA_SAMPLE_S32LE:       return "Signed 32 Bit PCM, little endian (PC).";
+    case PA_SAMPLE_S32BE:       return "Signed 32 Bit PCM, big endian.";
+    case PA_SAMPLE_S24LE:       return "Signed 24 Bit PCM packed, little endian (PC).";
+    case PA_SAMPLE_S24BE:       return "Signed 24 Bit PCM packed, big endian.";
+    case PA_SAMPLE_S24_32LE:    return "Signed 24 Bit PCM in LSB of 32 Bit words, little endian (PC).";
+    case PA_SAMPLE_S24_32BE:    return "Signed 24 Bit PCM in LSB of 32 Bit words, big endian.";
+    case PA_SAMPLE_MAX:         return "Upper limit of valid sample types.";
+    case PA_SAMPLE_INVALID:     return "Invalid sample format";
     }
 
-    QString stateToQString(pa_context_state_t state)
-    {
-        switch (state)
-        {
-            case PA_CONTEXT_UNCONNECTED:  return "Unconnected";
-            case PA_CONTEXT_CONNECTING:   return "Connecting";
-            case PA_CONTEXT_AUTHORIZING:  return "Authorizing";
-            case PA_CONTEXT_SETTING_NAME: return "Setting Name";
-            case PA_CONTEXT_READY:        return "Ready";
-            case PA_CONTEXT_FAILED:       return "Failed";
-            case PA_CONTEXT_TERMINATED:   return "Terminated";
-        }
+    return QString("Invalid value: %0").arg(format);
+}
 
-        return QString("Unknown state: %0").arg(state);
+QString stateToQString(pa_context_state_t state)
+{
+    switch (state)
+    {
+    case PA_CONTEXT_UNCONNECTED:  return "Unconnected";
+    case PA_CONTEXT_CONNECTING:   return "Connecting";
+    case PA_CONTEXT_AUTHORIZING:  return "Authorizing";
+    case PA_CONTEXT_SETTING_NAME: return "Setting Name";
+    case PA_CONTEXT_READY:        return "Ready";
+    case PA_CONTEXT_FAILED:       return "Failed";
+    case PA_CONTEXT_TERMINATED:   return "Terminated";
     }
+
+    return QString("Unknown state: %0").arg(state);
+}
 
 }
 
