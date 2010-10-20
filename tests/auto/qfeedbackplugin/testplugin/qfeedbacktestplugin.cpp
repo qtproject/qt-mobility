@@ -53,7 +53,7 @@ Q_EXPORT_PLUGIN2(feedback_testplugin, QFeedbackTestPlugin)
 
         QFeedbackTestPlugin::QFeedbackTestPlugin() : QObject(qApp), mHapticState(QFeedbackEffect::Stopped), mFileState(QFeedbackEffect::Stopped)
 {
-    actuators_ << createFeedbackActuator(this, 7357);
+    actuators_ << createFeedbackActuator(this, 0) << createFeedbackActuator(this, 1);
     mHapticTimer.setSingleShot(true);
     connect(&mHapticTimer, SIGNAL(timeout()), this, SLOT(timerExpired()));
 }
@@ -85,7 +85,10 @@ QVariant QFeedbackTestPlugin::actuatorProperty(const QFeedbackActuator &actuator
 
     switch (prop) {
         case Name:
+        if (actuator.id() == 0)
             return QString(QLatin1String("test plugin"));
+        else
+            return QString(QLatin1String("5555"));
 
         case State:
             return static_cast<int>(QFeedbackActuator::Unknown);
