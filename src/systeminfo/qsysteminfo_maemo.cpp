@@ -115,32 +115,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     return languages;
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,
-                                    const QString &parameter)
-{
-    QString errorStr = "Not Available";
-
-    switch(type) {
-        case QSystemInfo::Firmware :
-        {
-            QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                               "/com/nokia/SystemInfo",
-                                               "com.nokia.SystemInfo",
-                                               QDBusConnection::systemBus());
-            QDBusReply< QByteArray > reply =
-                connectionInterface.call("GetConfigValue",
-                                         "/device/sw-release-ver");
-            if(reply.isValid())
-                return reply.value();
-            break;
-        }
-        default:
-            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-            break;
-    };
-    return errorStr;
-}
-
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
@@ -1283,37 +1257,6 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         if (changed)
             emit currentProfileChanged(currentProfile());
     }
-}
-
-QString QSystemDeviceInfoPrivate::model()
-{
-    QString name;
-    if(productName()== "RX-51")
-        return "N900";
-
-    name = "Harmattan"; //fake this for now
-
-    return name;
-
-}
-
-QString QSystemDeviceInfoPrivate::productName()
-{
-#if !defined(QT_NO_DBUS)
-#if defined(Q_WS_MAEMO_6)
-    QString dBusService = "com.nokia.SystemInfo";
-#else
-    /* Maemo 5 */
-    QString dBusService = "com.nokia.SystemInfo";
-#endif
-    QDBusInterface connectionInterface(dBusService,
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
-    return reply.value();
-#endif
 }
 
 #endif
