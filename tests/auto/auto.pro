@@ -231,6 +231,7 @@ contains(mobility_modules,connectivity) {
     SUBDIRS += \
         qndefrecord \
         qndefmessage \
-        qnearfieldmanager
+        qnearfieldmanager \
+        qnearfieldtagtype1
 }
 

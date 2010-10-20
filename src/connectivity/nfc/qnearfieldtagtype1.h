@@ -65,13 +65,16 @@ public:
     bool hasNdefMessage();
     QList<QNdefMessage> ndefMessages();
 
+    quint8 version();
+    int memorySize();
+
     // DIGPROTO
-    //virtual QByteArray readIdentification();
+    virtual QByteArray readIdentification();
 
     // static memory functions
     virtual QByteArray readAll();
-    //virtual quint8 readByte(quint8 address);
-    //virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
+    virtual quint8 readByte(quint8 address);
+    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
 
     // dynamic memory functions
     //virtual QByteArray readSegment(quint8 segmentAddress) = 0;

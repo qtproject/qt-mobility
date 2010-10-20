@@ -63,6 +63,7 @@ public:
     ~TagActivator();
 
     void initialize();
+    void reset();
 
 protected:
     void timerEvent(QTimerEvent *e);
@@ -120,6 +121,14 @@ void TagActivator::initialize()
     m_current = tagMap.end();
 
     startTimer(100);
+}
+
+void TagActivator::reset()
+{
+    QMutexLocker locker(&tagMutex);
+
+    qDeleteAll(tagMap.keys());
+    tagMap.clear();
 }
 
 void TagActivator::timerEvent(QTimerEvent *e)
@@ -195,6 +204,9 @@ QByteArray TagType1::sendCommand(const QByteArray &command)
 
     QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
 
+    if (response.isEmpty())
+        return QByteArray();
+
     // check crc
     int responseLength = response.length();
     crc = (quint8(response.at(responseLength - 1)) << 8) | quint8(response.at(responseLength - 2));
@@ -214,6 +226,11 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
+}
+
+void QNearFieldManagerPrivateImpl::reset()
+{
+    tagActivator.reset();
 }
 
 int QNearFieldManagerPrivateImpl::getFreeId()
