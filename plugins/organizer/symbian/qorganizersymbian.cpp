@@ -51,6 +51,7 @@
 #include <calchangecallback.h>
 #include <calentryview.h>
 #include <calinstanceview.h>
+#include <calrrule.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <QColor>
 #include <calinstanceiterator.h>
@@ -513,14 +514,19 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         if(maxCount > 0 && i >= maxCount)
             break;
 
-        bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
-        // Set id if this is an exceptional item
-        if (isException) {
-            itemOccurrence.setId(QOrganizerItemId(new QOrganizerItemSymbianEngineId(
-                localCollectionIdValue, calInstance->Entry().LocalUidL())));
+        // Set local id if this is either an exceptional item or a non-recurring item
+        CCalEntry &entry = calInstance->Entry();
+        bool isException = entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime();
+        TCalRRule rrule;
+        bool isRecurring = entry.GetRRuleL(rrule);
+        if (isException || !isRecurring) {
+            QOrganizerItemId itemId = QOrganizerItemId(new QOrganizerItemSymbianEngineId(
+                localCollectionIdValue, calInstance->Entry().LocalUidL()));
+            itemOccurrence.setId(itemId);
         }
 
-        // Set parent id
+        // Set instance origin, the detail is set here because transform classes are not aware of
+        // the required APIs
         TCalLocalUid parentLocalUid(0);
         if (isException) {
             HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
@@ -531,9 +537,6 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         } else {
             parentLocalUid = calInstance->Entry().LocalUidL();
         }
-
-        // Set instance origin, the detail is set here because the corresponding transform class
-        // does not know the required values
         QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
         origin.setParentId(toItemId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());

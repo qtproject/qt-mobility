@@ -46,6 +46,7 @@
 ****************************************************************************/
 
 #include "organizeritemtypetransform.h"
+#include <calrrule.h>
 
 void OrganizerItemTypeTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
 {
@@ -62,12 +63,15 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     CCalEntry::TType entryType = entry.EntryTypeL();
     QString itemType;
 
-    if (entryType == CCalEntry::ETodo)
-        itemType = QLatin1String(QOrganizerItemType::TypeTodo);
-    else if (entryType == CCalEntry::EEvent)
-        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
-    else if (entryType == CCalEntry::EAppt) {
-        // Assume this is an event occurrence if the recurrence id is set
+    if (entryType == CCalEntry::ETodo) {
+        // Assume this is an occurrence if the recurrence id is set
+        if (entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime())
+            itemType = QLatin1String(QOrganizerItemType::TypeTodoOccurrence);
+        else
+            itemType = QLatin1String(QOrganizerItemType::TypeTodo);
+    }
+    else if (entryType == CCalEntry::EEvent || entryType == CCalEntry::EAppt) {
+        // Assume this is an occurrence if the recurrence id is set
         if (entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime())
             itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
         else
@@ -88,17 +92,26 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
 
 void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
-    CCalEntry::TType entryType = instance.Entry().EntryTypeL();
     QString itemType;
+    CCalEntry &entry = instance.Entry();
+    TCalRRule rrule;
+    bool isRecurring = entry.GetRRuleL(rrule);
+    bool isExceptional = entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime();
+    CCalEntry::TType entryType = entry.EntryTypeL();
 
-    if (entryType == CCalEntry::ETodo)
-        itemType = QLatin1String(QOrganizerItemType::TypeTodoOccurrence);
-    else if (entryType == CCalEntry::EEvent)
-        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
-    else if (entryType == CCalEntry::EAppt)
-        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
-    else if (entryType == CCalEntry::EAnniv)
-        itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+    if (entryType == CCalEntry::ETodo) {
+        if (isRecurring || isExceptional)
+            itemType = QLatin1String(QOrganizerItemType::TypeTodoOccurrence);
+        else
+            itemType = QLatin1String(QOrganizerItemType::TypeTodo);
+    } else if (entryType == CCalEntry::EEvent
+        || entryType == CCalEntry::EAppt
+        || entryType == CCalEntry::EAnniv) {
+        if (isRecurring || isExceptional)
+            itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
+        else
+            itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    }
     else
         User::Leave(KErrUnknown); // unknown type
 
