@@ -74,6 +74,7 @@ pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
     return spec;
 }
 
+#ifdef DEBUG_PULSE
 QString stateToQString(pa_stream_state_t state)
 {
     switch (state)
@@ -127,6 +128,7 @@ QString stateToQString(pa_context_state_t state)
 
     return QString("Unknown state: %0").arg(state);
 }
+#endif
 
 }
 
