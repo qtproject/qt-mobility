@@ -284,6 +284,41 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
 
     \brief The QGalleryQueryModel class provides a model for the results of a
     gallery query.
+
+    The meta-data that should be queried by a QGalleryQueryModel is specified
+    by adding columns to the model, each column has a set of \l roleProperties()
+    which map item data roles to gallery properties.  After the model query
+    has been executed the values of the properties requested for each column can
+    be addressed using the roles they were mapped to.
+
+    The \l rootType property identifies the type of gallery item the request
+    should return, if the root type has derivative types (i.e. an audio file is
+    just a special case of a regular file) these will also be included in the
+    result set.
+
+    The \l rootItem property takes the ID of an item the query should only
+    return the children of.  Depending on the \l scope of the query this may
+    be {AllDescendents}{all descendents} or just the {DirectDescendents}
+    {direct descendents} of the root item.
+
+    The results of a query can be further limited by setting a \l filter on the
+    model.  The model will evaluate the QGalleryFilter and only include
+    items with meta-data matching the expression.
+
+    The order the results are returned in can be specified in the
+    sortPropertyNames property which takes an ordered list of property names.
+    By default properties are sorted in ascending order, but this can be
+    specified explicitly be prefixing the property name with a '+' character
+    for ascending order and a '-' character for descending order.
+
+    If the \l autoUpdate property is true when the query is executed it will
+    enter an \l {QGalleryAbstractRequest::Idle}{Idle} state on finishing and
+    will refresh the queried information if the items matching the query change.
+    If the gallery can't provide updates it will instead go immediately to the
+    \l {QGalleryAbstractRequest::Finished}{Finished} state. Automatic updates
+    can be canceled by calling cancel() on a idle model.
+
+    \sa QGalleryQueryRequest, QDocumentGallery
 */
 
 /*!

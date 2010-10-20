@@ -497,7 +497,7 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 
     \inmodule QtGallery
 
-    \brief The GalleryQueryRequest element is used to specify a model
+    \brief The DocumentGalleryModel element is used to specify a model
     containing items from the document gallery.
 
     \ingroup qml-gallery

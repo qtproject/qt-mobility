@@ -67,7 +67,7 @@ public:
     int width() const;
     void setWidth(int width);
 
-signals:
+Q_SIGNALS:
     void colorChanged(const QColor &color);
     void widthChanged(int width);
 

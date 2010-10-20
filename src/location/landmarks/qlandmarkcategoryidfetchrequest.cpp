@@ -51,10 +51,12 @@ QTM_BEGIN_NAMESPACE
     request a list of category identifiers from a landmark manager.
 
     For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant category identifiers are found (these are retrievable via the callings ids()),
+    as resultant category identifiers are found (these are retrievable by calling categoryIds()),
      as well as if an overall operation error occurred(which may be retrieved by calling
      QLandmarkAbstractRequest::error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -111,7 +113,8 @@ void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSo
 }
 
 /*!
-    Returns the maximum number of category ids to be returned.
+    Returns the maximum number of category IDs to be returned.  By default the limit is set to -1
+    indicating that IDs of all categories should be retrieved.
 */
 int QLandmarkCategoryIdFetchRequest::limit() const
 {
@@ -121,7 +124,11 @@ int QLandmarkCategoryIdFetchRequest::limit() const
 }
 
 /*!
-    Sets the maximum number of category ids to be returned to \a limit.
+    Sets the maximum number of category IDs to be returned to \a limit.
+
+    A limit of -1 indicates that IDs of all categories are to be retrieved.
+
+    (A limit of 0 will retrieve no categories.)
  */
 void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
 {
@@ -131,7 +138,7 @@ void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
 }
 
 /*!
-    Returns the index offset for the request.
+    Returns the index offset for the request.  By default the offset is set to 0.
 */
 int QLandmarkCategoryIdFetchRequest::offset() const
 {

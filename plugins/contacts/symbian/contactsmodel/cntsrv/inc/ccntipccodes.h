@@ -157,6 +157,7 @@ enum TCntClientIpcCodes
 	ECntItemUpdate,
 	ECntItemCommit,
 	ECntItemDelete,
+	ECntItemsDelete,
 	ECntItemCreate,
 	EBeginDbTransaction,
 	EEndDbTransaction,

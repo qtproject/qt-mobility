@@ -60,6 +60,8 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(S60ImageCapture
     else
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
+
+    m_advancedSettings = m_session->advancedSettings();
 }
 
 S60CameraImageProcessingControl::~S60CameraImageProcessingControl()

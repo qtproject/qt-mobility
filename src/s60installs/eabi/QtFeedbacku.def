@@ -20,7 +20,7 @@ EXPORTS
 	_ZN10QtMobility18QFeedbackInterface11reportErrorEPKNS_15QFeedbackEffectENS1_9ErrorTypeE @ 19 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect11qt_metacallEN11QMetaObject4CallEiPPv @ 20 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect11qt_metacastEPKc @ 21 NONAME
-	_ZN10QtMobility19QFeedbackFileEffect11setFileNameERK7QString @ 22 NONAME
+	_ZN10QtMobility19QFeedbackFileEffect9setSourceERK4QUrl @ 22 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect16staticMetaObjectE @ 23 NONAME DATA 16
 	_ZN10QtMobility19QFeedbackFileEffect18supportedMimeTypesEv @ 24 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect19getStaticMetaObjectEv @ 25 NONAME
@@ -66,7 +66,7 @@ EXPORTS
 	_ZNK10QtMobility19QFeedbackFileEffect10metaObjectEv @ 65 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect5stateEv @ 66 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect8durationEv @ 67 NONAME
-	_ZNK10QtMobility19QFeedbackFileEffect8fileNameEv @ 68 NONAME
+	_ZNK10QtMobility19QFeedbackFileEffect6sourceEv @ 68 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect8isLoadedEv @ 69 NONAME
 	_ZNK10QtMobility22QFeedbackHapticsEffect10attackTimeEv @ 70 NONAME
 	_ZNK10QtMobility22QFeedbackHapticsEffect10metaObjectEv @ 71 NONAME

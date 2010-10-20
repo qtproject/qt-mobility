@@ -99,21 +99,25 @@ QDateTime QOrganizerTodo::dueDateTime() const
     return ttr.dueDateTime();
 }
 
-/*! Passing in \a isTimeSpecified determines whether the time component of
-the start datetime or end datetime are significant.
-*/
-void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
+/*!
+  Sets whether the time-of-day component of the todo's start date-time or end date-time is
+  insignificant (eg. this is generally set to true for a birthday).  If \a isAllDay is true,
+  the time-of-day component is considered insignificant, and the todo will be an all-day
+  item.
+ */
+void QOrganizerTodo::setAllDay(bool isAllDay)
 {
     QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
-    ttr.setTimeSpecified(isTimeSpecified);
+    ttr.setAllDay(isAllDay);
     saveDetail(&ttr);
 }
 
-/*! Returns whether the time component of the start datetime or end datetime are significant. */
-bool QOrganizerTodo::isTimeSpecified() const
+/*! Returns true if and only if the time component of the start date/time or end date/time are
+ * insignificant. */
+bool QOrganizerTodo::isAllDay() const
 {
     QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
-    return ttr.isTimeSpecified();
+    return ttr.isAllDay();
 }
 
 /*!

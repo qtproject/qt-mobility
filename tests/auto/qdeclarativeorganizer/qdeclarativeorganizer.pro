@@ -1,8 +1,8 @@
-TEMPLATE=app
-
-CONFIG += mobility testcase
+load(qttest_p4)
+include (../../../common.pri)
+CONFIG += mobility
 MOBILITY += organizer versit
-QT += testlib declarative
+QT += declarative
 
 INCLUDEPATH += ../../../src/organizer
 INCLUDEPATH += ../../../src/organizer/items
@@ -14,11 +14,31 @@ INCLUDEPATH += ../../../src/versitorganizer
 DEPENDPATH += ../../src/organizer
 DEPENDPATH += ../../src/versit
 
-include (../../../common.pri)
 
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/organizer
 
-SOURCES += tst_qdeclarativeorganizer.cpp
+HEADERS += \
+         ../../../plugins/declarative/organizer/qdeclarativeopenmetaobject_p.h	\
+	 ../../../plugins/declarative/organizer/qdeclarativeorganizeritem_p.h \
+         ../../../plugins/declarative/organizer/qdeclarativeorganizercollection_p.h \
+	 ../../../plugins/declarative/organizer/qdeclarativeorganizeritemsortorder_p.h \
+         ../../../plugins/declarative/organizer/qdeclarativeorganizeritemdetail_p.h \
+	 ../../../plugins/declarative/organizer/qdeclarativeorganizermodel_p.h \
+         ../../../plugins/declarative/organizer/qdeclarativeorganizeritemfetchhint_p.h \
+	 ../../../plugins/declarative/organizer/qdeclarativeorganizerrecurrencerule_p.h \
+         ../../../plugins/declarative/organizer/qdeclarativeorganizeritemfilter_p.h \
+	 ../../../plugins/declarative/organizer/qmetaobjectbuilder_p.h \
+         ../../../plugins/declarative/organizer/qdeclarativeorganizeritemmetaobject_p.h
+
+
+SOURCES += tst_qdeclarativeorganizer.cpp \
+       ../../../plugins/declarative/organizer/qdeclarativeorganizeritemdetail.cpp   \
+       ../../../plugins/declarative/organizer/qdeclarativeorganizermodel.cpp \
+       ../../../plugins/declarative/organizer/qdeclarativeopenmetaobject.cpp  \
+       ../../../plugins/declarative/organizer/qdeclarativeorganizeritemfilter.cpp  \
+       ../../../plugins/declarative/organizer/qmetaobjectbuilder.cpp \
+       ../../../plugins/declarative/organizer/qdeclarativeorganizeritem.cpp \
+       ../../../plugins/declarative/organizer/qdeclarativeorganizeritemmetaobject.cpp
 
 
 symbian: {

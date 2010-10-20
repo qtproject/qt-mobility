@@ -70,11 +70,11 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(spyRemoved.count(), itemsRemovedSignals); \
     QTRY_COMPARE(spyDataChanged.count(), dataChangedSignals); \
     if (spyAdded.count()) \
-        { QCOMPARE(spyAdded.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsAdded); } \
+        { QCOMPARE(spyAdded.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsAdded); } \
     if (spyChanged.count()) \
-        { QCOMPARE(spyChanged.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsChanged); } \
+        { QCOMPARE(spyChanged.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsChanged); } \
     if (spyRemoved.count()) \
-        { QCOMPARE(spyRemoved.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsRemoved); }
+        { QCOMPARE(spyRemoved.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsRemoved); }
 
 #define QTRY_COMPARE_SIGNAL_COUNTS2() \
     QTRY_COMPARE(spyAdded2.count(), itemsAddedSignals); \
@@ -82,11 +82,11 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(spyRemoved2.count(), itemsRemovedSignals); \
     QTRY_COMPARE(spyDataChanged2.count(), dataChangedSignals); \
     if (spyAdded2.count()) \
-        { QCOMPARE(spyAdded2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsAdded); } \
+        { QCOMPARE(spyAdded2.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsAdded); } \
     if (spyChanged2.count()) \
-        { QCOMPARE(spyChanged2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsChanged); } \
+        { QCOMPARE(spyChanged2.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsChanged); } \
     if (spyRemoved2.count()) \
-        { QCOMPARE(spyRemoved2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsRemoved); }
+        { QCOMPARE(spyRemoved2.last().at(0).value<QList<QOrganizerItemId> >().count(), itemsRemoved); }
 
 
 const QString m_managerNameSymbian("symbian");
@@ -111,7 +111,7 @@ public:
 typedef QList<QTstDetailField> QTstDetailFieldList;
 Q_DECLARE_METATYPE(QTstDetailFieldList)
 
-Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
+Q_DECLARE_METATYPE(QList<QOrganizerItemId>)
 
 /*!
  * For testing symbian backend via QOrganizerManager API. The target is
@@ -223,7 +223,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
-    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Save with list parameter
@@ -232,7 +232,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(m_om->saveItems(&items));
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     foreach (QOrganizerItem listitem, items) {
-        QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
+        QVERIFY(listitem.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 
@@ -241,7 +241,7 @@ void tst_SymbianOm::addSimpleItem()
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QVERIFY(m_om->errorMap().count() == 0);
     foreach (QOrganizerItem listitem2, items) {
-        QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
+        QVERIFY(listitem2.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 }
@@ -254,11 +254,11 @@ void tst_SymbianOm::fetchSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Fetch
-    QOrganizerItem fetchedItem = m_om->item(item.localId());
+    QOrganizerItem fetchedItem = m_om->item(item.id());
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(fetchedItem.id(), item.id());
     QVERIFY(fetchedItem.type() == QOrganizerItemType::TypeTodo);
@@ -272,14 +272,14 @@ void tst_SymbianOm::removeSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Remove
-    QVERIFY(m_om->removeItem(item.localId()));
+    QVERIFY(m_om->removeItem(item.id()));
     
     // Remove again. Should fail.
-    QVERIFY(!m_om->removeItem(item.localId()));
+    QVERIFY(!m_om->removeItem(item.id()));
 
     // Remove list
     QOrganizerItem item2;
@@ -288,9 +288,9 @@ void tst_SymbianOm::removeSimpleItem()
     item3.setType(QOrganizerItemType::TypeTodo);
     QVERIFY(m_om->saveItem(&item2));
     QVERIFY(m_om->saveItem(&item3));
-    QList<QOrganizerItemLocalId> itemIds;
-    itemIds.append(item2.localId());
-    itemIds.append(item3.localId());
+    QList<QOrganizerItemId> itemIds;
+    itemIds.append(item2.id());
+    itemIds.append(item3.id());
     QVERIFY(m_om->removeItems(itemIds));
 
     // Remove with itemIds
@@ -325,22 +325,22 @@ void tst_SymbianOm::fetchItems()
 void tst_SymbianOm::fetchItemIds()
 {
     // Add some items
-    QList<QOrganizerItemLocalId> expectedIds;
+    QList<QOrganizerItemId> expectedIds;
     for (int i=0; i<10; i++) {
         QOrganizerItem item;
         item.setType(QOrganizerItemType::TypeTodo);
         QVERIFY(m_om->saveItem(&item));
-        expectedIds << item.localId();
+        expectedIds << item.id();
     }
 
     // Fetch ids
-    QList<QOrganizerItemLocalId> actualIds = m_om->itemIds();
+    QList<QOrganizerItemId> actualIds = m_om->itemIds();
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     
     // Verify
     QVERIFY(actualIds.count() == expectedIds.count());
-    foreach (QOrganizerItemLocalId id, actualIds) {
-        QVERIFY(id != QOrganizerItemLocalId());
+    foreach (QOrganizerItemId id, actualIds) {
+        QVERIFY(id != QOrganizerItemId());
         QVERIFY(expectedIds.contains(id));
     }
 }
@@ -349,7 +349,7 @@ void tst_SymbianOm::uniqueIds()
 {
     const int count = 10;
     QList<QOrganizerItem> items;
-    QList<QOrganizerItemLocalId> lids;
+    QList<QOrganizerItemId> lids;
     QList<QString> guids;
 
     // Test that new items have unique ids
@@ -357,9 +357,9 @@ void tst_SymbianOm::uniqueIds()
         QOrganizerItem item;
         item.setType(QOrganizerItemType::TypeTodo);
         QVERIFY(m_om->saveItem(&item));
-        QVERIFY(!lids.contains(item.localId()));
+        QVERIFY(!lids.contains(item.id()));
         QVERIFY(!guids.contains(item.guid()));
-        lids << item.localId();
+        lids << item.id();
         guids << item.guid();
         items << item;
     }
@@ -369,7 +369,7 @@ void tst_SymbianOm::uniqueIds()
         QOrganizerItem &item = items[i];
         item.setDisplayLabel("foobar");
         QVERIFY(m_om->saveItem(&item));
-        QVERIFY(lids[i] == item.localId());
+        QVERIFY(lids[i] == item.id());
         QVERIFY(guids[i] == item.guid());
     }
     
@@ -377,19 +377,19 @@ void tst_SymbianOm::uniqueIds()
     for (int i=0; i<count; i++) {
         QOrganizerItem item = m_om->item(lids[i]);
         QVERIFY(m_om->error() == QOrganizerManager::NoError);
-        QVERIFY(lids[i] == item.localId());
+        QVERIFY(lids[i] == item.id());
         QVERIFY(guids[i] == item.guid());
     }
     
     // Try saving a removed item without clearing local id. Should fail
     QOrganizerTodo todo(items[0]);
-    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(m_om->removeItem(todo.id()));
     QVERIFY(!m_om->saveItem(&todo));
     
     // Try saving a removed item without clearing local id and with own guid. Should fail.
     todo = QOrganizerTodo(items[1]);
     todo.setGuid("11111");
-    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(m_om->removeItem(todo.id()));
     QVERIFY(!m_om->saveItem(&todo));
     
     // Save a new todo item with own guid. Should pass.
@@ -399,17 +399,14 @@ void tst_SymbianOm::uniqueIds()
     QVERIFY(todo.guid() == "1234567890");
     
     // Save an existing todo item with guid only. Should pass.
-    QOrganizerItemLocalId localId = todo.localId();
+    QOrganizerItemId id = todo.id();
     todo.setDescription("foobar");
     todo.setId(QOrganizerItemId());
     QVERIFY(m_om->saveItem(&todo));
-    QVERIFY(todo.localId() == localId); // local id should remain the same
-    
-    // Change manager uri and save again. Should fail.
-    QOrganizerItemId id = todo.id();
-    id.setManagerUri("foobar");
-    todo.setId(id);
-    QVERIFY(!m_om->saveItem(&todo));    
+    QVERIFY(todo.id() == id); // local id should remain the same
+
+    // TODO: try to save with invalid manager uri
+    // TODO: create a read invalid id, and try to save with that also
 }
 
 void tst_SymbianOm::timeStamp()
@@ -451,7 +448,7 @@ void tst_SymbianOm::timeStamp()
     QVERIFY(timeStamp2.lastModified() > timeStamp1.lastModified());
         
     // Load the same item again
-    QOrganizerTodo item2 = m_om->item(item1.localId());
+    QOrganizerTodo item2 = m_om->item(item1.id());
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QOrganizerItemTimestamp timeStamp3 = item2.detail<QOrganizerItemTimestamp>();
     //qDebug() << "timestamp3" << timeStamp3;
@@ -545,11 +542,11 @@ void tst_SymbianOm::addItem()
         // Save
         QVERIFY(m_om->saveItem(&item));
         QCOMPARE(m_om->error(), expectedErrorCode);
-        QVERIFY(item.id().localId() != QOrganizerItemLocalId());
+        QVERIFY(item.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
         // Fetch item to verify everything was saved successfully
-        QOrganizerItem savedItem = m_om->item(item.localId());
+        QOrganizerItem savedItem = m_om->item(item.id());
         QCOMPARE(m_om->error(), QOrganizerManager::NoError);
         QVERIFY(verifyDetails(savedItem.details(), details));
     } else {
@@ -568,15 +565,15 @@ void tst_SymbianOm::signalEmission()
     QOrganizerManager om2(managerName);
     
     // Connect signal spies
-    qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
-    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
-    QSignalSpy spyAdded(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy spyChanged(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy spyRemoved(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    qRegisterMetaType<QOrganizerItemId>("QOrganizerItemId");
+    qRegisterMetaType<QList<QOrganizerItemId> >("QList<QOrganizerItemId>");
+    QSignalSpy spyAdded(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy spyChanged(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy spyRemoved(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
     QSignalSpy spyDataChanged(m_om, SIGNAL(dataChanged()));
-    QSignalSpy spyAdded2(&om2, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy spyChanged2(&om2, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy spyRemoved2(&om2, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyAdded2(&om2, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy spyChanged2(&om2, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy spyRemoved2(&om2, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
     QSignalSpy spyDataChanged2(&om2, SIGNAL(dataChanged()));
     int itemsAddedSignals = 0;
     int itemsChangedSignals = 0;
@@ -612,7 +609,7 @@ void tst_SymbianOm::signalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS2();    
     
     // Remove
-    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(m_om->removeItem(todo.id()));
     itemsRemovedSignals++;
     itemsRemoved = 1;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -641,9 +638,9 @@ void tst_SymbianOm::signalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS2();
     
     // Remove - batch
-    QList<QOrganizerItemLocalId> itemIds;
-    itemIds << items[0].localId();
-    itemIds << items[1].localId();
+    QList<QOrganizerItemId> itemIds;
+    itemIds << items[0].id();
+    itemIds << items[1].id();
     QVERIFY(m_om->removeItems(itemIds));
     itemsRemovedSignals++;
     itemsRemoved = 2;
@@ -709,7 +706,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(m_om->saveItem(&instance1));
 
     // Verify that the exceptional entry has been created
-    instance1 = m_om->item(instance1.localId());
+    instance1 = m_om->item(instance1.id());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
 
@@ -765,7 +762,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(m_om->saveItem(&instance1));
 
     // Verify that an exception has been created
-    instance1 = m_om->item(instance1.localId());
+    instance1 = m_om->item(instance1.id());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(rptReminder.isEmpty());
 	
@@ -790,7 +787,7 @@ void tst_SymbianOm::timezone()
     QVERIFY(m_om->saveItem(&event));
     
     // Fetch & verify
-    event = m_om->item(event.localId());
+    event = m_om->item(event.id());
     QVERIFY(event.startDateTime() == startDateTime);
     QVERIFY(event.endDateTime() == endDateTime);
        
@@ -798,7 +795,7 @@ void tst_SymbianOm::timezone()
     User::SetUTCOffset(3*60*60);
     
     // Fetch & verify
-    event = m_om->item(event.localId());
+    event = m_om->item(event.id());
     QVERIFY(event.startDateTime() == startDateTime);
     QVERIFY(event.endDateTime() == endDateTime);
 }
@@ -1335,7 +1332,7 @@ bool tst_SymbianOm::compareItemLists(QList<QOrganizerItem> actual, QList<QOrgani
 
 bool tst_SymbianOm::compareItems(QOrganizerItem itemA, QOrganizerItem itemB, QStringList ignoredDetails)
 {
-    if (itemA.localId() != itemB.localId())
+    if (itemA.id() != itemB.id())
         return false;
     
     QList<QOrganizerItemDetail> aDetails = itemA.details();

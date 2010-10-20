@@ -178,12 +178,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldEndDateTime, "EndDateTime");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldStartDateTime, "StartDateTime");
 
 /*!
-   \variable QOrganizerEventTime::FieldTimeSpecified
+   \variable QOrganizerEventTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
 
 
 /*!
@@ -204,6 +204,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldTimeSpecified, "TimeSpecified
 /*!
     \fn QOrganizerEventTime::setEndDateTime(const QDateTime& dueDateTime)
     Sets the event timerange's due date and time to \a dueDateTime.
+ */
+
+/*!
+    \fn QOrganizerEventTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the event to \a isAllDay.
+    If the event is an all-day event, no time is considered to be
+    specified for the event, even if a start or end date time set
+    for the event has a time component.
+ */
+
+/*!
+    \fn QOrganizerEventTime::isAllDay() const
+    Returns true if a specific time was specified for the event.
+    Returns false if the event is an all-day event.
  */
 
 /* ==================== QOrganizerItemGuid ======================= */
@@ -261,12 +275,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::DefinitionName, "Parent");
 
 /*!
-   \variable QOrganizerItemParent::FieldParentLocalId
+   \variable QOrganizerItemParent::FieldParentId
 
-   The constant key for the field in which the local id of the parent recurrent event
+   The constant key for the field in which the id of the parent recurrent event
    is stored in details of the QOrganizerItemParent type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentLocalId, "ParentLocalId");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentId, "ParentId");
 
 
 /*!
@@ -278,12 +292,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentLocalId, "ParentLocalI
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate");
 
 /*!
-   \fn QOrganizerItemParent::parentLocalId() const
-    Returns the local id of the item instance origin's parent item.
+   \fn QOrganizerItemParent::parentId() const
+    Returns the id of the item instance origin's parent item.
  */
 
 /*!
-   \fn QOrganizerItemParent::setParentLocalId(const QOrganizerItemLocalId& parentId)
+   \fn QOrganizerItemParent::setParentId(const QOrganizerItemId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
@@ -553,6 +567,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
+/*!
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+
+  Since the data types stored in this detail are custom data types, the base class
+  operator==() doesn't know how to perform the comparison without calling this function.
+  However, it means that if (in the future) a backend were to extend the detail with
+  more fields, this operator== would no longer work; it'd have to be updated to compare
+  the other fields also.
+ */
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
     return accessConstraints() == other.accessConstraints()
@@ -561,6 +585,13 @@ bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other)
         && recurrenceDates() == other.recurrenceDates()
         && exceptionDates() == other.exceptionDates();
 }
+
+/*!
+  \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+  Implemented in terms of operator==() for QOrganizerItemRecurrence detail.
+ */
 
 /*!
    \variable QOrganizerItemRecurrence::FieldRecurrenceRules
@@ -610,7 +641,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 /*!
-   Returns a list of recurrence dates.
+   Returns the set of recurrence dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 {
@@ -618,7 +649,7 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 }
 
 /*!
-   Sets a list of recurrence dates to \a rdates.
+   Sets the set of recurrence dates to \a rdates.
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 {
@@ -626,21 +657,21 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*!
-   Returns a list of exception rules.
+   Returns the set of exception rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
     return variantValue(FieldExceptionRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 /*!
-   Sets a list of exception rules to \a xrules.
+   Sets the set of exception rules to \a xrules.
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
 /*!
-   Returns a list of recurrence rules.
+   Returns the set of recurrence rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
@@ -649,14 +680,14 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 
 
 /*!
-   Sets a list of recurrence rules to \a rrules.
+   Sets the set of recurrence rules to \a rrules.
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
 /*!
-   Returns a list of exception dates.
+   Returns the set of exception dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 {
@@ -664,7 +695,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   Sets a list of exception dates to \a exdates.
+   Sets the set of exception dates to \a xdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -787,7 +818,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn setRepetition(int count, int delaySeconds)
+   \fn QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
 
    Sets the number of repetitions of the reminderto \a count, and the delay (in seconds)
    between each repetition of the reminder to \a delaySeconds.
@@ -991,6 +1022,54 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
 */
 
 
+/* ==================== QOrganizerItemTag ======================= */
+/*!
+   \class QOrganizerItemTag
+   \brief The QOrganizerItemTag class contains some arbitrary tag which is relevant to the organizer item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+ */
+
+/*!
+    Returns a filter suitable for finding items with a tag containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemTag::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemTag::DefinitionName,
+                              QOrganizerItemTag::FieldTag);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
+/*!
+   \variable QOrganizerItemTag::DefinitionName
+   The constant string which identifies the definition of details which are tags.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::DefinitionName, "Tag");
+
+/*!
+   \variable QOrganizerItemTag::FieldTag
+
+   The constant key for which the tag value is stored in details of
+   the QOrganizerItemTag type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::FieldTag, "Tag");
+
+/*!
+   \fn QOrganizerItemTag::setTag(const QString& tag)
+   Sets a tag associated with an organizer item to \a tag.
+ */
+
+/*!
+   \fn QOrganizerItemTag::tag() const
+   Returns the tag associated with an organizer item which is stored in this detail.
+ */
+
+
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp
@@ -1153,12 +1232,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldStartDateTime, "StartDateTime"
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldDueDateTime, "DueDateTime");
 
 /*!
-   \variable QOrganizerTodoTime::FieldTimeSpecified
+   \variable QOrganizerTodoTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerTodoTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
 
 /*!
     \fn QOrganizerTodoTime::startDateTime() const
@@ -1181,7 +1260,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified"
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isTimeSpecified() const
+    \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the todo to \a isAllDay.
+    If the event is an all-day todo, no time is considered to be
+    specified for the todo, even if the start date time set
+    for the todo has a time component.
+ */
+
+/*!
+    \fn QOrganizerTodoTime::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

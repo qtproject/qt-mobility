@@ -175,7 +175,6 @@ QStringList QContactAction::availableActions(const QString& serviceName)
 {
     // SLOW naive implementation...
     QSet<QString> ret;
-    QContactManagerData::loadFactories();
     QList<QContactActionDescriptor> actionDescriptors = QContactActionManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);

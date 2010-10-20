@@ -211,7 +211,22 @@ QVersitContactImporter::QVersitContactImporter()
  * The profile determines which plugins will be loaded to supplement the importer.
  */
 QVersitContactImporter::QVersitContactImporter(const QString& profile)
-    : d(new QVersitContactImporterPrivate(profile))
+{
+    if (profile.isEmpty())
+        d = new QVersitContactImporterPrivate(QStringList());
+    else
+        d = new QVersitContactImporterPrivate(QStringList(profile));
+}
+
+/*!
+ * Constructs a new importer for the given \a profiles.  The profile strings should be one of those
+ * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugins}{Versit plugin}.
+ *
+ * The profiles determine which plugins will be loaded to supplement the importer.
+ */
+QVersitContactImporter::QVersitContactImporter(const QStringList& profiles)
+    : d(new QVersitContactImporterPrivate(profiles))
 {
 }
 

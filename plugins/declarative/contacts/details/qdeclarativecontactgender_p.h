@@ -54,48 +54,52 @@ class QDeclarativeContactGender : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "gender")
 public:
     enum FieldType {
-        FieldGender = 0
+        Gender = 0
     };
 
     enum GenderType {
-        GenderMale = 0,
-        GenderFemale
+        Male = 0,
+        Female
     };
 
     QDeclarativeContactGender(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGender());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactGender;
+        return QDeclarativeContactDetail::Gender;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldGender:
+        case Gender:
             return QContactGender::FieldGender;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setGender(const GenderType gender)
+    void setGender(const GenderType v)
     {
-        if (gender == GenderMale) {
-            if (!readOnly()) detail().setValue(QContactGender::FieldGender, QContactGender::GenderMale);
-        } else if (gender == GenderFemale) {
-            if (!readOnly()) detail().setValue(QContactGender::FieldGender, QContactGender::GenderFemale);
+        if (!readOnly() && v != gender()) {
+            if (v == Male) {
+                detail().setValue(QContactGender::FieldGender, QContactGender::GenderMale);
+            } else if (v == Female) {
+                detail().setValue(QContactGender::FieldGender, QContactGender::GenderFemale);
+            }
+            emit fieldsChanged();
         }
     }
     GenderType gender() const
     {
         if (detail().value(QContactGender::FieldGender) == QContactGender::GenderMale) {
-            return GenderMale;
+            return Male;
         }
-        return GenderFemale;
+        return Female;
     }
 signals:
     void fieldsChanged();

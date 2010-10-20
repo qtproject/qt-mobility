@@ -93,7 +93,6 @@ public:
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
     static QList<QContactActionManagerPlugin*> m_actionManagers;
-    static bool m_discovered;
     static bool m_discoveredStatic;
     static QStringList m_pluginPaths;
     static void loadFactories();

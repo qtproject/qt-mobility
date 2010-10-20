@@ -75,8 +75,8 @@ const int KNumberOfEntries = 2;
     QTRY_COMPARE(removedSpy1.count(), removedCount); \
     QTRY_COMPARE(removedSpy2.count(), removedCount);
     
-Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
-Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
+Q_DECLARE_METATYPE(QList<QOrganizerItemId>)
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionId>)
 
 class tst_symbianasynchcollections : public QObject
 {
@@ -105,7 +105,7 @@ private:
 private:
     QOrganizerManager*                  m_om;
     QOrganizerAbstractRequest*          m_itemRequest;
-    QList<QOrganizerCollectionLocalId>           m_collectionIds;
+    QList<QOrganizerCollectionId>           m_collectionIds;
 };
 
 
@@ -347,7 +347,7 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         // Error map should contain zero errors to indicate successful deletion
         // of all the items
         int count(collections.count());
-        QCOMPARE(count, 1);
+        QCOMPARE(count, 2);
     }
     break;
     case QOrganizerAbstractRequest::CollectionSaveRequest : {
@@ -356,7 +356,7 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         int count(savedCollections.count());
         m_collectionIds.clear();
         for (int index(0); index < count; index++) {
-            m_collectionIds.append(savedCollections.at(index).id().localId());
+            m_collectionIds.append(savedCollections.at(index).id());
         }
         // Check the number of requests saved. magic number to be changed to a
         // constant
@@ -385,8 +385,8 @@ void tst_symbianasynchcollections::requestResultsAvailable()
 //Signal emission testcases
 void tst_symbianasynchcollections::addCollectionSignals()
 {        
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionId>");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     
     // Create a second manager
@@ -399,8 +399,8 @@ void tst_symbianasynchcollections::addCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(req, SIGNAL(resultsAvailable()));
-    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
   
     // Create a collection
     QOrganizerCollection collection;
@@ -417,7 +417,7 @@ void tst_symbianasynchcollections::addCollectionSignals()
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req->collections().count(), 1);
-    QVERIFY(!req->collections().at(0).localId().isNull());
+    QVERIFY(!req->collections().at(0).id().isNull());
     QVERIFY(!req->collections().at(0).id().managerUri().isEmpty());
     // Verify the count of collectionsAdded signals on both managers
     QTRY_COMPARE(addedSpy1.count(), 1);
@@ -426,17 +426,17 @@ void tst_symbianasynchcollections::addCollectionSignals()
     QCOMPARE(addedSpy1.last().count(), 1);
     QCOMPARE(addedSpy2.last().count(), 1);
     // Verify the arguments contain the id of the new collection
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req->collections().at(0).localId());
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req->collections().at(0).localId());
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), req->collections().at(0).id());
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), req->collections().at(0).id());
     delete req;
 }
 
 void tst_symbianasynchcollections::modifyCollectionSignals()
 {
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionId>");
     qRegisterMetaType<QList<QOrganizerAbstractRequest::State> >("QOrganizerAbstractRequest::State>");
     
     // Create a second manager
@@ -449,8 +449,8 @@ void tst_symbianasynchcollections::modifyCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(req, SIGNAL(resultsAvailable()));
-    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
+    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
 
      
     //Fetch the saved collection
@@ -465,7 +465,7 @@ void tst_symbianasynchcollections::modifyCollectionSignals()
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req->collections().count(), 1);
-    QVERIFY(!req->collections().at(0).localId().isNull());
+    QVERIFY(!req->collections().at(0).id().isNull());
     QVERIFY(!req->collections().at(0).id().managerUri().isEmpty());
     // Verify the count of collectionsChanged signals on both managers
     QTRY_COMPARE(changedSpy1.count(), 1);
@@ -474,10 +474,10 @@ void tst_symbianasynchcollections::modifyCollectionSignals()
     QCOMPARE(changedSpy1.last().count(), 1);
     QCOMPARE(changedSpy2.last().count(), 1);
     // Verify the arguments contain the id of the modified collection
-    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req->collections().at(0).localId());
-    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req->collections().at(0).localId());
+    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), req->collections().at(0).id());
+    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), req->collections().at(0).id());
     //QCOMPARE(req.collections().at(0).metaData().value("Name"),savedCollection.metaData().value("Name"));
     
     delete req;
@@ -488,8 +488,8 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     m_itemRequest =0;
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionId>");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     
     // Create a second manager
@@ -502,15 +502,15 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(deleteReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(deleteReq, SIGNAL(resultsAvailable()));
-    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
+    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
      
      //Fetch the saved collection
-     QOrganizerCollectionLocalId savedCollectionLocalId = m_om->collections().at(1).localId();
+     QOrganizerCollectionId savedCollectionId = m_om->collections().at(1).id();
      int countBeforeDeletion = m_om->collections().count();
      qWarning() << countBeforeDeletion << "calendar/s are present currently for deletion";
     
-    deleteReq->setCollectionId(savedCollectionLocalId);
+    deleteReq->setCollectionId(savedCollectionId);
 
     // Start the request
     QVERIFY(deleteReq->start());
@@ -525,10 +525,10 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     QCOMPARE(removedSpy1.last().count(), 1);
     QCOMPARE(removedSpy2.last().count(), 1);
     // Verify the arguments contain the id of the removed collection
-    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), savedCollectionLocalId);
-    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), savedCollectionLocalId);
+    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), savedCollectionId);
+    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().at(0), savedCollectionId);
     QCOMPARE(m_om->collections().count(), 1);
     delete deleteReq;
 }

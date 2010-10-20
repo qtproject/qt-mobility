@@ -297,32 +297,56 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
+\section3 Managers and plugins.
+Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
+that implements the manager functionality.  The manager name is typically a reverse domain  string such as
+"com.nokia.qt.landmarks.engines.symbian".  Typically a developer does not need to deal with the manager name
+as the default manager will be used when instantiating a QLandmarkManager without construction parameters.
+
+To implment your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
+for the virtual functions, and then create a QLandmarkMangerEngineFactory subclass that will instantiate
+your particular engine implementation.
+
+The following table shows names of the default managers for each platform.
+\table
+\header
+    \o Manager name
+    \o Platform
+\row
+    \o com.nokia.qt.landmarks.engines.symbian
+    \o S60 3.1,3.2,5.0, Symbian^3
+\row
+    \o com.nokia.qt.landmarks.engines.sqlite
+    \o Maemo5, WindowsXp/Vista,Linux
+\endtable
+
+
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
-The following table outline the formats that may be used for each manager.  You may also query the supported formats through the
+The following table outline the formats that may be used for the default manager on each platform.  You may also query the supported formats through the
 QLandmarkManager::supportedFormats() function.
 
 \table
 \header
-    \o Manager
     \o Platform
     \o Import formats
     \o Export formats
 \row
-    \o  com.nokia.qt.landmarks.engines.symbian
-    \o  Symbian 3rd Edition
+    \o  S60 3.1,3.2
     \o  Lmx
     \o  Lmx
 \row
-    \o  com.nokia.qt.landmarks.engines.symbian
-    \o  Symbian 5th Edition
+    \o  S60 5.0
+    \o  Gpx, Lmx
+    \o  Lmx
+\row
+    \o  Symbian ^3
     \o  Gpx, Lmx, Kml, Kmz
     \o  Lmx
 \row
-    \o com.nokia.qt.landmarks.engines.sqlite
     \o Maemo 5, windows, linux
     \o Lmx, Gpx(version 1.1 only)
-    \o Lmx, Gpx(vesion 1.1)
+    \o Lmx, Gpx(vesion 1.1 only)
 \endtable
 
 During an import operation, every landmark from the import source will result in the creation of a new landmark, however any categories
@@ -353,7 +377,10 @@ of those landmarks have NaN latitude or longitude values.
 
 Landmark selection is facilitated by filter and sort order classes.  The filter classes
 define what criteria that landmarks must match and the sort order classes specify how
-the returned landmarks are sorted.  The filter and sort order classes are used with either
+the returned landmarks are sorted.  Please note that sorting by
+distance is facilitated by the QLandmarkProximity class.  Providing a QLandmarkProximity
+filter in an intersection filter will sort results in order of ascending distance
+(on the condition only a default sort order class is used in conjunction). The filter and sort order classes are used with either
 the QLandmarkManager class (for synchronous landmark selection) or the request classes
 for (asynchronous landmark selection)
 
@@ -504,6 +531,12 @@ plugins much simpler.
 If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
 
 \annotatedlist maps-impl-tiled
+
+\section1 QML support
+
+For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
+
+\note At the time of the Qt Mobility 1.1 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
 
 */
 

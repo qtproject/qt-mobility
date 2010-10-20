@@ -52,6 +52,38 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QGalleryAbstractResponse class provides a base class for
     responses to gallery requests.
+
+    QGalleryAbstractResponse is the interface through which a QAbstractGallery
+    returns a response to a QGalleryAbstractRequest.  The interface provides
+    functions to communicate the state of a response to a request, additional
+    classes derived from QGalleryAbstractRequest such as QGalleryResultSet are
+    used to communicate actual results.
+
+    New responses start in an active state indicating they have not yet
+    finished.  When a response has finished; implementers should call the
+    finish function which will put the response into an inactive state and
+    emit the finished signal.  If the idle argument of finish is true then
+    isIdle() will be true on return indicating that the response may return to
+    an active state in order to refresh its results in the future.  The resume
+    function will return the response to an active state and emit the resumed
+    signal.
+
+    If a response cannot finish successfully then implementers should call the
+    error() function and supply an error code and description.  This will finish
+    the request and set values for error() and errorString().
+
+    If a request is cancelled it will call cancel() on its response.  The
+    base implementation wsets isActive() and isIdle() to false and emits
+    the canceled signal, so implementers will need to override the default
+    implementation to actually cancel any ongoing task or suspend updates before
+    calling the base implementation.  If the response can't be canceled
+    synchronously then calling the base implementation should be deferred until
+    the cancelation has completed.  Canceling a response should not discard any
+    intermediate results already made available by the response.
+
+    Unless a response finishes synchronously and calls finish() or error()
+    from its constructor it must implement the waitForFinished() function
+    to allow clients to block while waiting for the response to finish.
 */
 
 /*!

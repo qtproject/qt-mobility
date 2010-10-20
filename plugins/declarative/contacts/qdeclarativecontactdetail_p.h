@@ -50,6 +50,7 @@ QTM_USE_NAMESPACE;
 class QDeclarativeContactDetail : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(ContactDetailType type READ detailType NOTIFY valueChanged)
     Q_PROPERTY(QString definitionName READ definitionName NOTIFY valueChanged)
     Q_PROPERTY(QStringList contexts READ contexts WRITE setContexts NOTIFY valueChanged)
     Q_PROPERTY(QString detailUri READ detailUri WRITE setDetailUri NOTIFY valueChanged)
@@ -63,31 +64,32 @@ public:
 
 
     enum ContactDetailType {
-        ContactAddress = 0,
-        ContactAnniversary,
-        ContactAvatar,
-        ContactBirthday,
-        ContactDisplayLabel,
-        ContactEmail,
-        ContactFamily,
-        ContactFavorite,
-        ContactGender,
-        ContactGeolocation,
-        ContactGlobalPresence,
-        ContactGuid,
-        ContactName,
-        ContactNickName,
-        ContactNote,
-        ContactOnlineAccount,
-        ContactOrganization,
-        ContactPhoneNumber,
-        ContactPresence,
-        ContactRingtone,
-        ContactSyncTarget,
-        ContactTag,
-        ContactTimestamp,
-        ContactUrl,
-        ContactCustomizedDetail = 100
+        Address = 0,
+        Anniversary,
+        Avatar,
+        Birthday,
+        DisplayLabel,
+        Email,
+        Family,
+        Favorite,
+        Gender,
+        Geolocation,
+        GlobalPresence,
+        Guid,
+        Name,
+        NickName,
+        Note,
+        OnlineAccount,
+        Organization,
+        PhoneNumber,
+        Presence,
+        Ringtone,
+        SyncTarget,
+        Tag,
+        Timestamp,
+        Url,
+        Hobby,
+        Customized = 100
     };
 
     QContactDetail& detail();
@@ -98,7 +100,6 @@ public:
     bool removable() const;
 
     QString definitionName() const;
-
     QStringList contexts() const;
     void setContexts(const QStringList& context);
 
@@ -109,7 +110,7 @@ public:
     void setLinkedDetailUris(const QStringList& linkedDetailUris);
     virtual ContactDetailType detailType() const;
 
-    Q_INVOKABLE QStringList fieldNames() const;
+    QStringList fieldNames() const;
     Q_INVOKABLE QVariant value(const QString& key) const;
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
 
@@ -119,7 +120,7 @@ public:
 signals:
     void valueChanged();
 
-private:
+protected:
     QContactDetail m_detail;
 };
 

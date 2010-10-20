@@ -43,7 +43,6 @@
 
 #include <qdeclarative.h>
 #include <QAbstractListModel>
-#include <QDeclarativeListProperty>
 
 #include "qdeclarativecontactrelationship_p.h"
 
@@ -53,10 +52,12 @@ class QDeclarativeContactRelationshipModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
-    Q_PROPERTY(int participantId READ participantId WRITE setParticipantId NOTIFY participantIdChanged)
-    Q_PROPERTY(QString relationshipType READ relationshipType WRITE setRelationshipType NOTIFY relationshipTypeChanged)
-    Q_PROPERTY(QDeclarativeContactRelationship::Role role READ role WRITE setRole NOTIFY roleChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(QContactLocalId participantId READ participantId WRITE setParticipantId NOTIFY participantIdChanged)
+    Q_PROPERTY(QVariant relationshipType READ relationshipType WRITE setRelationshipType NOTIFY relationshipTypeChanged)
+    Q_PROPERTY(QDeclarativeContactRelationship::RelationshipRole role READ role WRITE setRole NOTIFY roleChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactRelationship> relationships READ relationships NOTIFY relationshipsChanged)
+    Q_PROPERTY(QString error READ error)
 
 public:
     QDeclarativeContactRelationshipModel(QObject *parent = 0);
@@ -68,39 +69,38 @@ public:
 
     QString manager() const;
     void setManager(const QString& manager);
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
+    QString error() const;
+    QContactLocalId participantId() const;
+    void setParticipantId(const QContactLocalId& id);
 
-    int participantId() const;
-    void setParticipantId(int id);
+    QVariant relationshipType() const;
+    void setRelationshipType(const QVariant& type);
 
-    QString relationshipType() const;
-    void setRelationshipType(const QString& type);
+    QDeclarativeContactRelationship::RelationshipRole role() const;
+    void setRole(QDeclarativeContactRelationship::RelationshipRole role);
 
-    QDeclarativeContactRelationship::Role role() const;
-    void setRole(QDeclarativeContactRelationship::Role role);
-
-
+    QDeclarativeListProperty<QDeclarativeContactRelationship> relationships();
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
-    QDeclarativeListProperty<QDeclarativeContactRelationship> relationships();
-
     Q_INVOKABLE void removeRelationship(QDeclarativeContactRelationship* dcr);
+    Q_INVOKABLE void addRelationship(QDeclarativeContactRelationship* dcr);
 signals:
     void managerChanged();
     void participantIdChanged();
     void relationshipTypeChanged();
     void roleChanged();
     void relationshipsChanged();
-
+    void autoUpdateChanged();
 private slots:
     void fetchAgain();
-    void relationshipFetched();
+    void requestUpdated();
 
-    void saveRelationship();
-    void relationshipSaved();
+    void relationshipsSaved();
 
-    void removeRelationship();
-    void relationshipRemoved();
+    void relationshipsRemoved();
 
 private:
     QDeclarativeContactRelationshipModelPrivate* d;

@@ -112,7 +112,23 @@ public:
     \brief The QGalleryItemRequest class provides a request for the properties
     of a single item from a gallery.
 
+    QGalleryItemRequest executes a query which returns information about the
+    gallery item specified in \l itemId.  The query will return an \l itemUrl,
+    an \l itemType, \l resources and \l {metaData()}{meta-data} values for the
+    properties listed in \l propertyNames.
+
+    When the request has finished and if the item could be found the \l valid
+    property will be true, if not it will be false.
+
+    If the \l autoUpdate property is true when the request is executed it will
+    enter an \l Idle state on finishing and will refresh the queried
+    information if the item changes.  If the gallery can't provide updates
+    it will instead go immediately to the \l Finished state.  Automatic updates
+    can be canceled by calling cancel() on a idle request.
+
+    \sa QDocumentGallery
 */
+
 /*!
     Constructs a new gallery item request.
 

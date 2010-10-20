@@ -45,7 +45,7 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactonlineaccount.h"
-
+#include <QSet>
 class QDeclarativeContactOnlineAccount : public QDeclarativeContactDetail
 {
     Q_OBJECT
@@ -54,84 +54,109 @@ class QDeclarativeContactOnlineAccount : public QDeclarativeContactDetail
     Q_PROPERTY(QStringList capabilities READ capabilities WRITE  setCapabilities NOTIFY fieldsChanged)
     Q_PROPERTY(QVariantList subTypes READ subTypes WRITE  setSubTypes NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
-    Q_ENUMS(SubType)
+    Q_ENUMS(OnlineAccountSubType)
 
     Q_CLASSINFO("DefaultProperty", "accountUri")
 public:
     enum FieldType {
-        FieldAccountUri = 0,
-        FieldServiceProvider,
-        FieldCapabilities,
-        FieldSubTypes
+        AccountUri = 0,
+        ServiceProvider,
+        Capabilities,
+        SubTypes
     };
 
-    enum SubType {
-        SubTypeSip = 0,
-        SubTypeSipVoip,
-        SubTypeImpp,
-        SubTypeVideoShare
+    enum OnlineAccountSubType {
+        Unknown = 0,
+        Sip,
+        SipVoip,
+        Impp,
+        VideoShare
     };
 
     QDeclarativeContactOnlineAccount(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactOnlineAccount());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactOnlineAccount;
+        return QDeclarativeContactDetail::OnlineAccount;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldAccountUri:
+        case AccountUri:
             return QContactOnlineAccount::FieldAccountUri;
-        case FieldServiceProvider:
+        case ServiceProvider:
             return QContactOnlineAccount::FieldServiceProvider;
-        case FieldCapabilities:
+        case Capabilities:
             return QContactOnlineAccount::FieldCapabilities;
-        case FieldSubTypes:
+        case SubTypes:
             return QContactOnlineAccount::FieldSubTypes;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setAccountUri(const QString& accountUri) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldAccountUri, accountUri);}
+    void setAccountUri(const QString& v)
+    {
+        if (!readOnly() && v != accountUri()) {
+            detail().setValue(QContactOnlineAccount::FieldAccountUri, v);
+            emit fieldsChanged();
+        }
+    }
     QString accountUri() const {return detail().value(QContactOnlineAccount::FieldAccountUri);}
 
-    void setServiceProvider(const QString& serviceProvider) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldServiceProvider, serviceProvider);}
+    void setServiceProvider(const QString& v)
+    {
+        if (!readOnly() && v != serviceProvider()) {
+            detail().setValue(QContactOnlineAccount::FieldServiceProvider, v);
+            emit fieldsChanged();
+        }
+    }
     QString serviceProvider() const {return detail().value(QContactOnlineAccount::FieldServiceProvider);}
 
-    void setCapabilities(const QStringList& capabilities) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldCapabilities, capabilities);}
+    void setCapabilities(const QStringList& v)
+    {
+        if (!readOnly() && v.toSet() != capabilities().toSet()) {
+            detail().setValue(QContactOnlineAccount::FieldCapabilities, v);
+            emit fieldsChanged();
+        }
+    }
     QStringList capabilities() const {return detail().value<QStringList>(QContactOnlineAccount::FieldCapabilities);}
 
-    void setSubTypes(const QVariantList& subTypes)
+    void setSubTypes(const QVariantList& v)
     {
         QStringList savedList;
-        foreach (const QVariant subType, subTypes) {
-            switch (static_cast<SubType>(subType.value<int>()))
+        foreach (const QVariant subType, v) {
+            switch (static_cast<OnlineAccountSubType>(subType.value<int>()))
             {
-            case SubTypeSip:
+            case Sip:
                 savedList << QContactOnlineAccount::SubTypeSip;
                 break;
-            case SubTypeSipVoip:
+            case SipVoip:
                 savedList << QContactOnlineAccount::SubTypeSipVoip;
                 break;
-            case SubTypeImpp:
+            case Impp:
                 savedList << QContactOnlineAccount::SubTypeImpp;
                 break;
-            case SubTypeVideoShare:
+            case VideoShare:
                 savedList << QContactOnlineAccount::SubTypeVideoShare;
                 break;
             default:
+                //qWarning unkown subtype
                 break;
 
             }
         }
-        if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldSubTypes, savedList);
+        QStringList oldList = detail().value<QStringList>(QContactOnlineAccount::FieldSubTypes);
+        if (!readOnly() && oldList.toSet() != savedList.toSet()) {
+            detail().setValue(QContactOnlineAccount::FieldSubTypes, savedList);
+            emit fieldsChanged();
+        }
     }
 
     QVariantList subTypes() const
@@ -140,13 +165,16 @@ public:
         QStringList savedList = detail().value<QStringList>(QContactOnlineAccount::FieldSubTypes);
         foreach (const QString& subType, savedList) {
             if (subType == QContactOnlineAccount::SubTypeSip)
-                returnList << static_cast<int>(SubTypeSip);
+                returnList << static_cast<int>(Sip);
             else if (subType == QContactOnlineAccount::SubTypeSipVoip)
-                returnList << static_cast<int>(SubTypeSipVoip);
+                returnList << static_cast<int>(SipVoip);
             else if (subType == QContactOnlineAccount::SubTypeImpp)
-                returnList << static_cast<int>(SubTypeImpp);
+                returnList << static_cast<int>(Impp);
             else if (subType == QContactOnlineAccount::SubTypeVideoShare)
-                returnList << static_cast<int>(SubTypeVideoShare);
+                returnList << static_cast<int>(VideoShare);
+            else {
+                //qWarning unknown sub type
+            }
         }
         return returnList;
     }
