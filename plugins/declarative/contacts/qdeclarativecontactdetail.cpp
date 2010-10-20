@@ -91,7 +91,7 @@ QString QDeclarativeContactDetail::definitionName() const
 
 /*!
   \qmlproperty list<string> ContactDetail::contexts
-  This property holds store one or more contexts that this detail is associated with.
+  This property holds one or more contexts that this detail is associated with.
   */
 QStringList QDeclarativeContactDetail::contexts() const
 {
@@ -141,7 +141,7 @@ void QDeclarativeContactDetail::setDetailUri(const QString& detailUri)
 /*!
   \qmlproperty list<string> ContactDetail::linkedDetailUris
 
-  This property holds stores a list of detail URIs to which this detail is linked.
+  This property holds a list of detail URIs to which this detail is linked.
   */
 QStringList QDeclarativeContactDetail::linkedDetailUris() const
 {
