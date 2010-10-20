@@ -46,11 +46,41 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QNearFieldTagType1
+    \brief The QNearFieldTagType1 class provides an interface for communicating with an NFC Tag
+           Type 1 tag.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    \enum QNearFieldTagType1::WriteMode
+    \brief This enum describes the write modes that are supported.
+
+    \value EraseAndWrite    The memory is erased before the new value is written.
+    \value WriteOnly        The memory is not erased before the new value is written. The effect of
+                            this mode is that the final value store is the bitwise or of the data
+                            to be written and the original data value.
+*/
+
+/*!
+    \fn Type QNearFieldTagType1::type() const
+    \reimp
+*/
+
+/*!
+    Constructs a new tag type 1 near field target with \a parent.
+*/
 QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
 :   QNearFieldTarget(parent)
 {
 }
 
+/*!
+    \reimp
+*/
 bool QNearFieldTagType1::hasNdefMessage()
 {
     const QByteArray data = readAll();
@@ -73,6 +103,9 @@ bool QNearFieldTagType1::hasNdefMessage()
     return true;
 }
 
+/*!
+    \reimp
+*/
 QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
 {
     QByteArray data = readAll();
@@ -107,56 +140,62 @@ QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
             }
             i += 3;
             break;
-                case 0x03: { // NDEF Message TLV
-                        ++i;
-                        int length = data.at(i);
-                        ++i;
-                        if (length == 0xff) {
-                            length = (data.at(i) << 8) | data.at(i+1);
-                            i += 2;
-                            if (length < 0xff || length == 0xffff) {
-                                qWarning("Invalid 3 byte length");
-                                break;
-                            }
-                        }
-
-                        ndefMessages.append(QNdefMessage::fromByteArray(data.mid(i, length)));
-
-                        i += length;
-                        break;
-                    }
-                case 0xfd: { // Proprietary TLV
-                        ++i;
-                        int length = data.at(i);
-                        ++i;
-                        if (length == 0xff) {
-                            length = (data.at(i) << 8) | data.at(i+1);
-                            i += 2;
-                            if (length < 0xff || length == 0xffff) {
-                                qWarning("Invalid 3 byte length");
-                                break;
-                            }
-                        }
-
-                        QByteArray proprietaryData = data.mid(i, length);
-
-                        i += length;
-                        break;
-                    }
-                case 0xfe:  // Terminator TLV
-                    i = data.length();  // done
+        case 0x03: { // NDEF Message TLV
+            ++i;
+            int length = data.at(i);
+            ++i;
+            if (length == 0xff) {
+                length = (data.at(i) << 8) | data.at(i+1);
+                i += 2;
+                if (length < 0xff || length == 0xffff) {
+                    qWarning("Invalid 3 byte length");
                     break;
                 }
+            }
+
+            ndefMessages.append(QNdefMessage::fromByteArray(data.mid(i, length)));
+
+            i += length;
+            break;
+        }
+        case 0xfd: { // Proprietary TLV
+            ++i;
+            int length = data.at(i);
+            ++i;
+            if (length == 0xff) {
+                length = (data.at(i) << 8) | data.at(i+1);
+                i += 2;
+                if (length < 0xff || length == 0xffff) {
+                    qWarning("Invalid 3 byte length");
+                    break;
+                }
+            }
+
+            QByteArray proprietaryData = data.mid(i, length);
+
+            i += length;
+            break;
+        }
+        case 0xfe:  // Terminator TLV
+            i = data.length();  // done
+            break;
+        }
     }
 
     return ndefMessages;
 }
 
+/*!
+    Returns the NFC Tag Type 1 specification version number that the tag supports.
+*/
 quint8 QNearFieldTagType1::version()
 {
     return readByte(9);
 }
 
+/*!
+    Returns the memory size in bytes of the tag.
+*/
 int QNearFieldTagType1::memorySize()
 {
     quint8 tms = readByte(10);
@@ -164,6 +203,12 @@ int QNearFieldTagType1::memorySize()
     return 8 * (tms + 1);
 }
 
+/*!
+    Returns identification information read from the tag.
+
+    The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
+    is returned if an error occurs.
+*/
 QByteArray QNearFieldTagType1::readIdentification()
 {
     QByteArray command;
@@ -175,6 +220,12 @@ QByteArray QNearFieldTagType1::readIdentification()
     return sendCommand(command);
 }
 
+/*!
+    Reads and returns HR0, HR1 and all data in the static memory area of the tag.
+
+    The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
+    array is returned if an error occurs.
+*/
 QByteArray QNearFieldTagType1::readAll()
 {
     QByteArray command;
@@ -186,6 +237,10 @@ QByteArray QNearFieldTagType1::readAll()
     return sendCommand(command);
 }
 
+/*!
+    Reads and returns a single byte from the static memory area of the tag. The \a address
+    parameter specifices the linear byte address to read.
+*/
 quint8 QNearFieldTagType1::readByte(quint8 address)
 {
     if (address & 0x80)
@@ -208,6 +263,14 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
     return response.at(1);
 }
 
+/*!
+    Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
+    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+*/
 bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
     if (address & 0x80)
@@ -216,9 +279,9 @@ bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
     QByteArray command;
 
     if (mode == EraseAndWrite)
-        command.append(char(0x53));
+        command.append(char(0x53)); // WRITE-E
     else if (mode == WriteOnly)
-        command.append(char(0x1a));
+        command.append(char(0x1a)); // WRITE-NE
     else
         return false;
 
@@ -243,6 +306,108 @@ bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
         return (writeData & data) == data;
     else
         return false;
+}
+
+/*!
+    Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
+    byte array is returned if an error occurs.
+*/
+QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
+{
+    if (segmentAddress & 0xf0)
+        return QByteArray();
+
+    QByteArray command;
+    command.append(char(0x10));                 // RSEG
+    command.append(char(segmentAddress << 4));  // Segment address
+    command.append(QByteArray(8, char(0x00)));  // Data (unused)
+    command.append(uid().left(4));              // 4 bytes of UID
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return QByteArray();
+
+    quint8 readSegmentAddress = response.at(0);
+    if ((readSegmentAddress >> 4) != segmentAddress)
+        qDebug() << Q_FUNC_INFO << "response was for wrong segment address";
+
+    return response.mid(1);
+}
+
+/*!
+    Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
+    array is returned if an error occurs.
+*/
+QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
+{
+    QByteArray command;
+    command.append(char(0x02));                 // READ8
+    command.append(char(blockAddress));         // Block address
+    command.append(QByteArray(8, char(0x00)));  // Data (unused)
+    command.append(uid().left(4));              // 4 bytes of UID
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return QByteArray();
+
+    quint8 readBlockAddress = response.at(0);
+    if (readBlockAddress != blockAddress)
+        qDebug() << Q_FUNC_INFO << "response was for wrong block address";
+
+    return response.mid(1);
+}
+
+/*!
+    Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
+    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+
+*/
+bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data, WriteMode mode)
+{
+    if (data.length() != 8)
+        return false;
+
+    QByteArray command;
+
+    if (mode == EraseAndWrite)
+        command.append(char(0x54));     // WRITE-E8
+    else if (mode == WriteOnly)
+        command.append(char(0x1b));     // WRITE-NE8
+    else
+        return false;
+
+    command.append(char(blockAddress)); // Block address
+    command.append(data);               // Data
+    command.append(uid().left(4));      // 4 bytes of UID
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 writeBlockAddress = response.at(0);
+
+    if (writeBlockAddress != blockAddress)
+        qDebug() << Q_FUNC_INFO << "response was for wrong block address";
+
+    if (mode == EraseAndWrite) {
+        return response.mid(1) == data;
+    } else if (mode == WriteOnly) {
+        const QByteArray writeData = response.mid(1);
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
 
 #include "moc_qnearfieldtagtype1.cpp"
