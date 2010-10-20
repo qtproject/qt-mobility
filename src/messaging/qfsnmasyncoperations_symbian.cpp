@@ -206,7 +206,8 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
                             QVariant attachmentSpec = QVariant(QString(filePath));
                             QEventLoop* eventloop = new QEventLoop();
                             QPointer<NmApiOperation> operation = m_manager->createAttachment(fsMessage, attachmentSpec);
-                            connect(operation, SIGNAL(operationCompleted(int)), eventloop, SLOT(quit()));
+                            connect(operation, SIGNAL(operationComplete(int)), eventloop, SLOT(quit()));
+                            eventloop->exec();
 
                             delete eventloop;
                         }
@@ -218,6 +219,7 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
     
     envelope.setSubject(message.subject());   
     envelope.setTime(message.date());
+    envelope.setTotalSize(message.size());
     fsMessage.setEnvelope(envelope);
 }
 
