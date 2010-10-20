@@ -35,7 +35,6 @@ unix:!mac:!symbian {
 
     contains(pulseaudio_enabled, yes) {
         SUBDIRS += pulseaudio
-        SUBDIRS -= v4l
     }
 }
 
