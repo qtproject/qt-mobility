@@ -305,7 +305,7 @@ void QDeclarativeContactRelationshipModel::fetchAgain()
 }
 
 /*!
-  \qmlmethod addRelationship(relationship)
+  \qmlmethod RelationshipModel::addRelationship(relationship)
   Addes the given \a relationship to the backend store.
   */
 void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
@@ -321,7 +321,7 @@ void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRe
 }
 
 /*!
-  \qmlmethod removeRelationship(relationship)
+  \qmlmethod RelationshipModel::removeRelationship(relationship)
   Removes the given \a relationship from the backend store.
   */
 void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContactRelationship* dcr)

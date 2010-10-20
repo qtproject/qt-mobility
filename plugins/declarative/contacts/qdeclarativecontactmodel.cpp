@@ -264,7 +264,7 @@ static QString urlToLocalFileName(const QUrl& url)
 }
 
 /*!
-  \qmlmethod importContacts(url url, list<string> profiles)
+  \qmlmethod ContactModel::importContacts(url url, list<string> profiles)
 
   Import contacts from a vcard by the given \a url and optional \a profiles.
   */
@@ -283,7 +283,7 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
 }
 
 /*!
-  \qmlmethod exportContacts(url url, list<string> profiles)
+  \qmlmethod ContactModel::exportContacts(url url, list<string> profiles)
 
   Export contacts into a vcard file to the given \a url by optional \a profiles.
   At the moment only the local file url is supported in export method.
@@ -412,7 +412,7 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
 }
 
 /*!
-  \qmlmethod fetchContacts(list<int> contactIds)
+  \qmlmethod ContactModel::fetchContacts(list<int> contactIds)
   Fetch a list of contacts from the contacts store by given \a contactIds.
   */
 void QDeclarativeContactModel::fetchContacts(const QList<QContactLocalId>& contactIds)
@@ -480,7 +480,7 @@ void QDeclarativeContactModel::requestUpdated()
 }
 
 /*!
-  \qmlmethod saveContact(Contact contact)
+  \qmlmethod ContactModel::saveContact(Contact contact)
   Save the given \a contact into the contacts store. Once saved successfully, the dirty flags of this contact will be reset.
 
   \sa Contact::modified
@@ -524,7 +524,7 @@ void QDeclarativeContactModel::contactsSaved()
 }
 
 /*!
-  \qmlmethod removeContact(int contactId)
+  \qmlmethod ContactModel::removeContact(int contactId)
   Remove the contact from the contacts store by given \a contactId.
   */
 void QDeclarativeContactModel::removeContact(QContactLocalId id)
@@ -533,7 +533,7 @@ void QDeclarativeContactModel::removeContact(QContactLocalId id)
 }
 
 /*!
-  \qmlmethod removeContacts(list<int> contactIds)
+  \qmlmethod ContactModel::removeContacts(list<int> contactIds)
   Remove the list of contacts from the contacts store by given \a contactIds.
   */
 

@@ -1091,6 +1091,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
   \o PhoneNumber.MessagingCapable - indicating this phone number supports messaging services.
   \o PhoneNumber.Assistant - indicating this phone number is the number of an assistant.
   \o PhoneNumber.DtmfMenu - indicating this phone number supports DTMF-controlled voice menu navigation.
+  \endlist
   */
 
 /* ==================== QDeclarativeContactPresence ======================= */
