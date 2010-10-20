@@ -560,9 +560,9 @@
     <tr>
     <td>Document Gallery</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow">*</td>
+    <td bgcolor="yellow">*</td>
+    <td bgcolor="yellow">*</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -613,6 +613,9 @@
     \raw HTML
     <p>
     \endraw
+
+    * The document gallery backend for symbian 3.1, 3.2, and 5.0 is not enabled
+    in pre-built packages due to library dependency issues on some devices.
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com
