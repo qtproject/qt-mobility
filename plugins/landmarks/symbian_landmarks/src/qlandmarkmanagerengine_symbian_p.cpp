@@ -5241,7 +5241,7 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::unknownChanges);
         }
 
-        } // switch closure    
+        } // switch closure
     }
 }
 

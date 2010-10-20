@@ -11,7 +11,7 @@ INCLUDEPATH += \
     ../../../../src/contacts/details \
     ../../../../src/contacts/requests \
     ../../../../src/contacts/filters
-               
+
 
 INCLUDEPATH += $$MOC_DIR
 

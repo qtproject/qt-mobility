@@ -29,17 +29,11 @@ New features
     * Classes for searching for documents, and viewing document meta-data.
  - Qt Maps and Navigation API
     * Part of the Location module
-    * Class for routing, geocoding and reverse geocoding, and for 
+    * Class for routing, geocoding and reverse geocoding, and for
       displaying and interacting with maps.
  - Qt Landmarks module
     * Part of the Location module
     * Classes for saving, retrieving and deleting landmarks
-
-Optimizations
-------
-
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
 
 
 ****************************************************************************
@@ -56,8 +50,7 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - No changes
 
 QtContacts
 ------
@@ -132,8 +125,10 @@ QtOrganizer
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Documentation improvements
+ - Fix layer matching based on filters [QTMOBILITY-443]
+ - Fix QValueSpacePublisher::resetValue on Maemo5 [QTMOBILITY-400]
+ - Fix setting of empty key on Maemo5 [MOBILITY-1356]
 
 QtSensors
 ------
@@ -149,8 +144,11 @@ QtSensors
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - API improvements for Out-of-process component
+     * QRemoteServiceClassRegister replaced by QRemoteServiceRegister
+     * QRemoteServiceRegister::Entry has been introduced
+ - Documentation improvements
+ - Various bug fixes related to received feedback and API maturation
 
 QtSystemInfo
 ------
@@ -166,7 +164,7 @@ QtSystemInfo
  - qsysinfo example
     * make the batterystatus messagebox less annoying.
     * new UI easiler to navigate on handsets.
-  
+
 
 QtVersit
 -----
@@ -240,10 +238,3 @@ Qt Mobility for Windows CE
 
  -
 
-
-****************************************************************************
-*                          Tools                                           *
-****************************************************************************
-
- - tool
-    * foo
