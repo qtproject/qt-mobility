@@ -1607,7 +1607,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountId(const QMessageAccountId& ac
 {
     QMessageFolderIdList folderIds;
     
-    if (idType(accountId) != EngineTypeFreestyle)
+    if (idType(accountId) == EngineTypeMTM)
         return QMessageFolderIdList();
     
     QMessageAccount messageAccount = account(accountId);
@@ -1952,7 +1952,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
     switch (pf->_field) {
     
         case QMessageFilterPrivate::ParentFolderId: {
-            if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
+            if (idType(pf->_value.toString()) == EngineTypeMTM) {
                 QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                 return;
             }
@@ -1977,7 +1977,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
             break;
         }
         case QMessageFilterPrivate::Id: {
-            if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
+            if (idType(pf->_value.toString()) == EngineTypeMTM) {
                 QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                 return;
             }
@@ -1986,6 +1986,10 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (!pf->_value.isNull() && pf->_value.toString().length() > QString(SymbianHelpers::freestylePrefix).length()) {
                     if (cmp == QMessageDataComparator::Equal) {
+                        if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
+                            QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                            return;
+                        }
                         QMessage message = m_owner.message(QMessageId(pf->_value.toString()));
                         m_idList.clear();
                         m_idList.append(message.id());
@@ -2001,6 +2005,9 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                 } else {
                     if (cmp == QMessageDataComparator::NotEqual) {
                         getAllMessages(sortCriteria);
+                    } else {
+                        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                        return;
                     }
                 }
             } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
@@ -2026,16 +2033,15 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                     }
                     // QMessageFilter
                     if (cmp == QMessageDataComparator::Includes) {
-                        // TODO:
-                    } else { // Excludes
-                        // TODO:
+                        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                        return;
                     }
                 }
             }
             break;
             }
         case QMessageFilterPrivate::ParentAccountId: {
-            if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
+            if (idType(pf->_value.toString()) == EngineTypeMTM) {
                 QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                 return;
             }
