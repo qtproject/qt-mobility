@@ -174,11 +174,12 @@ void Dialog::setupDevice()
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
-    if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+    currentPowerState = di->currentPowerState();
+    if(currentPowerState == QSystemDeviceInfo::BatteryPower) {
         radioButton_2->setChecked(true);
-    } else  if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPower) {
         radioButton_3->setChecked(true);
-    } else if(di->currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPowerChargingBattery) {
         radioButton_4->setChecked(true);
     } else {
         radioButton->setChecked(true);
@@ -489,7 +490,7 @@ void Dialog::updateBatteryStatus(int level)
 
 void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 {
-
+    currentPowerState = newState;
     switch (newState) {
     case QSystemDeviceInfo::BatteryPower:
         {
@@ -516,13 +517,13 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 {
-    if(currentBatStat == status)
+    if(currentBatStat == status || currentPowerState != QSystemDeviceInfo::BatteryPower)
         return;
     QString msg;
         switch(status) {
         case QSystemDeviceInfo::BatteryCritical:
             {
-                msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+                msg = "Battery is Critical (4% or less), please save your work or plug in the charger.";
                 QMessageBox::critical(this,"QSystemInfo",msg);
             }
             break;
@@ -536,7 +537,6 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             {
                 msg = "Battery is Low (40% or less)";
                 QMessageBox::information(this,"QSystemInfo",msg);
-
             }
             break;
         case QSystemDeviceInfo::BatteryNormal:
@@ -556,6 +556,10 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
 {
+    if (strength < 0) {
+        strength = 0;
+    }
+
     if(mode == QSystemNetworkInfo::WlanMode) {
         if(netStatusComboBox->currentText() == "Wlan") {
             signalLevelProgressBar->setValue(strength);

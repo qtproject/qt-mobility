@@ -58,84 +58,129 @@ The Organizer API provides clients with the ability to access calendar,
 schedule and personal data in a platform-independent and datastore-agnostic
 manner.  This is achieved by defining generic personal information data
 abstractions which can sufficiently describe calendar and scheduling data
-stored on any platform.  Due to the cross-platform nature of the API, and the
-ability for developers to write platform-independent implementations of a
-QOrganizerManager which may unify one or more platform-specific calendar
-or scheduling backends, it is intended that the semantics and quirks of the
-underlying datastores on any platform may be entirely opaque from the
-perspective of Qt-based, cross-platform client applications.
+stored a platform's native calendaring system.  Through the plugin architecture,
+it can be used as a front-end API for any calenaring system (eg. an online
+calendar).
 
-\section1 Overview
+\section1 Basic Usage
 
+The Qt Organizer API provides both a \l{Organizer Synchronous API}{synchronous}
+and an \l{Organizer Asynchronous API}{asynchronous} API.  Note that for clarity,
+the short examples on this page demonstrate the synchronous API.  While these
+code snippets might be useful for non-GUI applications, it is highly recommended
+that the asynchronous API is used for GUI applications.
+
+\section2 The Organizer Manager
 Organizer information is stored in datastores whose functionality is exposed
-via a \l{QOrganizerManager}{manager}.  The Organizer API models organizer
-information as an \l{QOrganizerItem}{item} which consists of a collection of
-distinct details.  Each \l{QOrganizerItemDetail}{detail} conforms to a
-particular \l{QOrganizerItemDetailDefinition}{definition} (or template), which
-may be extensible or otherwise modifiable by clients.  Individual organizer
-items may be recurrent, and occurrences of such items are also items, but are
-linked to the "parent" item.
+via the QOrganizerManager class.
 
-\l{QOrganizerItem}{Item} and
-\l{QOrganizerItemDetailDefinition}{detail definition} information may be
-retrieved, modified or deleted by clients using either
-\l{Organizer Synchronous API}{synchronous} or
-\l{Organizer Asynchronous API}{asynchronous} API.
+Most users of the API will want to use the default manager for the platform,
+which provides access to the system address book.  Instantiating a manager by
+using the default constructor will result in the default manager for that
+platform being instantiated:
 
-\section1 Client-Facing API
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Instantiating the default manager for the platform
 
-The client-facing API allows retrieval, modification and deletion of organizer
-items and detail definitions, and access to manager meta data and capability
-reporting.
+\section2 Creating a New Item
 
-\section2 Container Classes
+You can create a new item simply by instantiating one and saving it a manager.
 
-Organizational data is stored in container (value) classes.  These classes are
-not derived from QObject, and hence can be used in lists, do not have parents,
-do not emit signals, and so on.  They represent data which may be manipulated
-and retrieved from a \l{QOrganizerManager}{manager}.
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a non-recurrent entry
 
-\section3 \bold{Item}
+\section2 Retrieving Items
 
-An \l{QOrganizerItem}{item} is the digital representation of an event, journal,
-todo, or note which is stored in a platform-specific manner.  Information
-pertaining to a single item may be located across several different datastores.
+You can request all items from the manager that occur in a given time range.
 
-Each item stored in a manager is identified by an \l{QOrganizerItemId}{id}
-which consists of a manager identifier (URI) and the manager-specific data
-which is used to identify the item within that manager.
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving entries for a time period
 
-\section3 \bold{Detail}
+It is also possible filter the items on the value of a detail.
 
-A \l{QOrganizerItemDetail}{detail} is a single, cohesive unit of information
-that is stored in an item.  Any detail stored in an item which is saved in a
-manager will conform to a particular detail definition which that manager
-supports.  A detail may have specific meta-data associated with it, such as
-its sub-type and arbitrary, user-defined meta-data, as well as access
-constraints which may apply to the detail (e.g., read-only, irremovable, etc).
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving entries with a filter
 
-There are a number of common details defined in the API which are intended
-for use by clients, as listed \l{"Organizer Item Details" Leaf Classes}{here}.
+The above code will retrieve both items that have been saved to the manager and
+items which are generated based on \l {recurrences}{recurrence rules}.  Given a
+recurring item, it is possible to retrieve a list of items that it generates;
+that is, to get a list of the upcoming occurrences of a single recurring item.
+This can be done using QOrganizerManager::itemOccurrences():
 
-\section3 \bold{Detail Definition}
+You can also retrieve a particular existing item from a manager, by
+directly requesting the item with a particular (previously known) id.
+The synchronous API provides the QOrganizerManager::item() function to retrieve
+a single item by its id.  With the asynchronous API, this can be done using a
+QOrganizerItemFetchRequest and a QOrganizerItemIdFilter.
 
-Each detail stored in an item has defined semantics of usage and storage.
-The Qt Organizer API allows per-datastore organizer item
-\l{QOrganizerItemDetailDefinition}{detail definitions}, allowing a manager to
-provide clients with this information on demand, and allowing third-party
-developers to register detail definitions for use by clients.  A detail
-definition includes the fields (and value-types of those fields) which make up
-the detail, and per-item uniqueness constraints on details of the definition.
+\section2 Updating an Existing Item
 
-Most clients can safely ignore this class entirely, since they will most
-likely want to use the predefined details listed
-\l{"Organizer Item Details" Leaf Classes}{here}.  In some cases, however, a
-manager will not support all of the fields of a particular predefined detail
-leaf class; in that case, it may be necessary for the client to inspect the
-supported detail definition for that leaf class and modify its behavior
-accordingly.
+You can update a previously saved item retrieving the item, modifying it, and
+saving it back to the manager.  The manager uses the id of the item to match up
+the provided item with the one in the database.
 
-\section3 \bold{Item Collection}
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Editing a non-recurrent entry
+
+\section2 Removing an item from a manager
+
+You can remove an item from the manager by using its id.
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Removing an entry
+
+\section1 The Organizer Item Model
+
+\section2 Items
+
+A \l QOrganizerItem represents an event, todo, journal or note.
+
+Each item stored in a manager is identified by a \l QOrganizerItemId.  The id
+is the means by which the manager can:
+\list
+\o Determine whether a \l{QOrganizerManager::saveItem()}{save} operation should
+make a new item or update an existing one.  (If an item has a null id, it
+should be saved as a new item)
+\o Match an item to an existing one for updating.
+\o Link between items (for example, in QOrganizerItemParent).
+\endlist
+
+The QOrganizerItem class provides a generic interface for accessing events,
+todos, journals and notes.  To actually access specific fields of an item,
+convenience subclasses of QOrganizerItem are offered.  These are
+QOrganizerEvent, QOrganizerTodo, QOrganizerJournal and QOrganizerNote.
+Additionally, QOrganizerEventOccurrence and QOrganizerTodoOccurrence can be used
+for manipulating occurrences of event or todos (see the
+\l{recurrences}{Recurring Items} section).  Here is an example of how to
+retrieve details specific to an item:
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Downcasting items
+
+\target recurrences
+\section2 Recurring Items
+
+A recurring item is an item that occurs more than once; for example, a meeting
+that occurs every week for the next 10 weeks.  A recurring item is created by
+creating a QOrganizerEvent or QOrganizerTodo and setting a
+QOrganizerRecurrenceRule on it to specify the rules for when it should
+recur.  When QOrganizerManager::items() is called, recurring items are \i not
+returned.  Rather, they expanded into multiple QOrganizerEventOccurrence and
+QOrganizerTodoOccurrence items.  Each generated occurrence item has a null id.
+
+You can make an exception for an occurrence by taking a generated item
+occurrence from the manager, making the necessary modifications, and resaving
+it.  When the manager is then queried with QOrganizerManager::items(), it will
+return the list of occurrences as before, but with the modifications in place.
+The modified item will be given a non-null id, and replaces the generated one in
+the list.
+
+Here is an example of changing a single occurrence of an item:
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating an exception to a particular recurrent event
+
+You can also query the manager for a list of unexpanded items by calling
+QOrganizerManager::itemsForExport().  The list of returned items will contain all
+items that have been saved to the manager with a call to
+QOrganizerManager::saveItem() That is, recurring events will be returned as is,
+and event occurrences will not appear unless they are exceptions (ie. have a
+non-null id).  Fetching the list in this way can be useful for transfering items
+to other managers or for exporting to iCalendar with QtVersit.
+
+\section2 Collections
 
 Every item stored in a manager belongs to exactly one
 \l{QOrganizerCollection}{collection}.  A collection can have properties such
@@ -149,68 +194,36 @@ Some managers will allow users to create collections (for example, a "football
 fixtures" collection) while others may have built-in collections (for example,
 "work" and "home" collections).
 
-\section2 Manager
+A list of all collections can be retrieved from a manager with one function call:
 
-Access to organizer items is provided by implementations of the Qt Organizer
-\l{QOrganizerManager}{manager} API. A manager provides access to zero or
-more platform-specific datastores.  Each manager must support exactly one
-schema per item type (that is, a schema is per-manager, not per-collection).
-Each manager may support different capabilities (for example, the ability
-to store certain datatypes, the ability to natively filter on different
-details or details of different definitions, the provision of locking
-mechanisms, the provision of changelog information, etc) which are reported by
-the manager on request.  The manager therefore provides access to detail
-definitions and collections of organizer items stored in different datastores,
-in a platform and datastore independent manner.
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Getting a list of collections
 
+To save an item to a collection, set the collection ID on the item object.  If
+the collection id is the null id, the item will be saved in the collection in
+which it is currently saved (if the item already exists) or into the manager's
+default collection (if it is a new item).
 
-\section3 \bold{Meta Data API}
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Saving an item to a collection
 
-The API offered by the QOrganizerManager exposes functionality which is
-implemented by plugins.  These plugins may be platform specific, and may be
-provided by Nokia or by third party developers.  As described above, each
-plugin will have different capabilities and implement the functionality
-exposed by the Qt Organizer API to a different degree.
+To retrieve all items in a collection, a QOrganizerItemCollectionFilter should be
+used.
 
-The QOrganizerManager class provides a static function
-QOrganizerManager::availableManagers() which allows clients of the API to
-determine (at run time) which plugins (managers) are available for use.
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving items in a collection
 
-Clients of the API also need to be able to determine (at run time) what the
-capabilities of a given plugin (organizer item manager) are.  The
-QOrganizerManager class provides API to query the capabilities of a given
-manager with the following synchronous functions:
-\list
-  \o hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const
-  \o isFilterSupported(const QOrganizerItemFilter& filter) const
-  \o supportedItemTypes() const
-\endlist
+\section2 All-day Events
 
-A given manager is identified by its URI.  The URI consists of the manager's
-name, any relevant parameters which were used during instantiation of the
-manager, and the version of the manager.  While the name of the manager
-identifies the plugin which provides the functionality, you cannot guarantee
-that the data available through one manager will be available through another
-with the same name (for example, if one parameter tells the plugin to store
-and retrieve organizer information from a particular online service or local
-file).
+Events and Todos can be specified as all-day or multi-day by setting the
+AllDay field to \tt{true} (using QOrganizerEvent::setAllDay()).  When this field
+is set to true, it means that the time portion of the StartDateTime and
+EndDateTime should be ignored.  An event or todo marked as all-day should be
+considered to start and end roughly on its given start and end dates
+(inclusive), but without specifying exact times.  For example, a birthday could
+be specified as an all-day QOrganizerEvent where the StartDateTime and
+EndDateTime have the same value.
 
-The synchronous API offered to allow run-time querying of a manager's metadata
-includes:
-\list
-  \o managerName() const
-  \o managerParameters() const
-  \o managerUri() const
-  \o managerVersion() const;
-  \o (static) parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params)
-  \o (static) buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1)
-\endlist
+\section1 API Usage
 
-The functionality that the above functions provide is only available through
-synchronous API.
-
-
-\section3 \bold{Asynchronous API}
+\section2 Asynchronous API
 
 The asynchronous API provides a way to access or modify the
 organizer item information managed by a particular backend via non-blocking,
@@ -235,7 +248,7 @@ manager capability or meta data information reporting.
 
 For more detailed documentation on the asynchronous API, see the \l{Organizer Asynchronous API}.
 
-\section3 \bold{Synchronous API}
+\section2 Synchronous API
 
 The synchronous API provides the simplest way to access or modify the
 organizer item information managed by a particular backend.  It has the
@@ -255,40 +268,24 @@ For more detailed documentation on the synchronous API, see the
 \l{Organizer Synchronous API}.
 
 
-\section1 Non-Client-Facing API
+\section1 More information
 
-The non-client-facing API allows third party developers to implement a manager
-engine plugin from which clients may request data.  For more information on this
-topic (for example, if you intend to implement a manager backend) please see
+While the information on this page should be sufficient for the common
+use-cases, please see the discussion on \l{Advanced Organizer API Usage} for
+more details on the intricacies of the API.
+
+It is possible for third party developers to implement a manager engine plugin
+from which clients may request data.  For more information on this topic (for
+example, if you intend to implement a manager backend) please see
 \l{Qt Organizer Manager Engines}.
-
-
-\section1 Calendar Features
-
-\section2 Recurrences
-
-\section2 All-day and Multiple-day Event Support
-Events and Todos can be specified as all-day or multi-day by setting the
-TimeSpecified field to \tt{true}.  When this field is set to true, it means that
-the time portion of the StartDateTime and EndDateTime should be ignored.  An
-event or todo with TimeSpecified set to true should be considered to start and
-end roughly on its given start and end dates (inclusive), but without specifying
-exact times.  For example, a birthday could be specified with a QOrganizerEvent
-where the StartDateTime and EndDateTime have the same value, and TimeSpecified
-is set to true.
-
-\section1 Using the API
-
-Some examples of common usage of the API may be found
-\l{Organizer API Usage}{here}.
 
 \section1 Reference documentation
 
-\section2 Main classes
+\section2 Main Classes
 
 \annotatedlist organizer-main
 
-\section2 "Organizer Item Details" Leaf Classes
+\section2 QOrganizerItemDetail Leaf Classes
 
 Several subclasses of \l{QOrganizerItemDetail} are provided as part of the
 Qt Mobility Organizer API.  They are general in design but are intended
@@ -303,7 +300,7 @@ may have certain constraints, as listed in the \l{Qt Organizer Schema}{schema}.
 
 \section2 Asynchronous Requests
 
-Clients may use either the \l{Organizer Synchronous API}{synchronous}
+You may use either the \l{Organizer Synchronous API}{synchronous}
 or \l{Organizer Asynchronous API}{asynchronous} API to access
 functionality provided by a manager backend. The
 \l{Organizer Asynchronous API}{asynchronous} API is
@@ -313,7 +310,7 @@ offered through subclasses of the \l{QOrganizerAbstractRequest} class:
 
 \section2 Organizer Item Selection And Sorting
 
-Clients may select an organizer item by specifying a unique item id, or by
+You may select an organizer item by specifying a unique item id, or by
 supplying a \l{QOrganizerItemFilter} which matches the item or items they
 wish to select.  The various derivatives of \l{QOrganizerItemFilter} allow for
 fine-grained and flexible selection of organizer data according to various
@@ -343,13 +340,11 @@ serialization of a QOrganizerItem into an iCalendar document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.
 
-\section2 Examples
+\section1 Examples
 
 The following sample applications show examples of API usage:
 \list
     \o \l{CalendarDemo}{Example Calendar Application}
 \endlist
-
-See \l{Organizer API Usage} for more examples of API usage.
 
 */

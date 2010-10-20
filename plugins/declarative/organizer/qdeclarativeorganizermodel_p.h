@@ -59,10 +59,11 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
     Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
-    Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter NOTIFY filterChanged)
-    Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint NOTIFY fetchHintChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences READ occurrences NOTIFY itemsChanged)
@@ -72,36 +73,17 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
-    Q_PROPERTY(Error error READ error)
-    Q_ENUMS(Error)
+    Q_PROPERTY(QString error READ error)
 public:
     enum {
         OrganizerItemRole = Qt::UserRole + 500
     };
 
-    enum Error {
-        NoError = QOrganizerManager::NoError,
-        DoesNotExistError = QOrganizerManager::DoesNotExistError,
-        AlreadyExistsError = QOrganizerManager::AlreadyExistsError,
-        InvalidDetailError = QOrganizerManager::InvalidDetailError,
-        LockedError = QOrganizerManager::LockedError,
-        DetailAccessError = QOrganizerManager::DetailAccessError,
-        PermissionsError = QOrganizerManager::PermissionsError,
-        OutOfMemoryError = QOrganizerManager::OutOfMemoryError,
-        NotSupportedError = QOrganizerManager::NotSupportedError,
-        BadArgumentError = QOrganizerManager::BadArgumentError,
-        UnspecifiedError = QOrganizerManager::UnspecifiedError,
-        VersionMismatchError = QOrganizerManager::VersionMismatchError,
-        LimitReachedError = QOrganizerManager::LimitReachedError,
-        InvalidItemTypeError = QOrganizerManager::InvalidItemTypeError,
-        InvalidCollectionError = QOrganizerManager::InvalidCollectionError,
-        InvalidOccurrenceError = QOrganizerManager::InvalidOccurrenceError
-    };
 
     explicit QDeclarativeOrganizerModel(QObject *parent = 0);
     explicit QDeclarativeOrganizerModel(QOrganizerManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
-    Error error() const;
+    QString error() const;
     QString manager() const;
     void setManager(const QString& managerName);
     QStringList availableManagers() const;
@@ -133,6 +115,11 @@ public:
     Q_INVOKABLE void removeItems(const QList<uint>& ids);
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
 
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
+
+    void setFilter(QDeclarativeOrganizerItemFilter* filter);
+    void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
     static QOrganizerItemId itemIdFromHash(uint key);
     static QOrganizerCollectionId collectionIdFromHash(uint key);
@@ -147,7 +134,10 @@ signals:
     void errorChanged();
     void startPeriodChanged();
     void endPeriodChanged();
+    void autoUpdateChanged();
+
 public slots:
+    void update();
     void exportItems(const QString& file);
     void importItems(const QString& file);
 private slots:
