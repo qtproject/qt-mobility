@@ -485,14 +485,16 @@ Framework architecture and provides access to signals, slots, invokable methods
 and properties. 
 
 \section3 Limitations
-A current known limitation for Qt Service Framework using QtDBus for IPC is that
-enumerators cannot be read due to lack of support on D-Bus.  This will be added 
-in future versions once the QtDBus module enables enumerator support. A current
-known workaround is to manually define and use integers as demonstrated in the
-\l{dialer}{Declarative Serviceframework Dialer} example. Furthermore, due to the
-nature of IPC, pointers to objects cannot be passed between services and clients. 
-Unfortunately, this also means that anything wrapped in a typedef macro cannot be 
-communicated effectively between processes.
+
+A current known limitation for Qt Service Framework using QtDBus for IPC is
+that enumerators cannot be read due to lack of support on D-Bus.  This will be
+added in future versions once the QtDBus module enables enumerator support. A
+current known workaround is to manually define and use integers as demonstrated
+in the \l{Service Framework using QML Example}{Declarative Serviceframework
+Dialer} example. Furthermore, due to the nature of IPC, pointers to objects
+cannot be passed between services and clients.  Unfortunately, this also means
+that anything wrapped in a typedef macro cannot be communicated effectively
+between processes.
 
 \section3 Service Autostart
 D-Bus services inherit automatic start support by providing .service files to the

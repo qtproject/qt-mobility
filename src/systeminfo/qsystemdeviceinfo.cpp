@@ -59,13 +59,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         */
 
         /*!
-        \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-
-        Constructs a QSystemDeviceInfo with the given \a parent.
-        */
-
-
-        /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
 
           This signal is emitted when battery level has changed.
@@ -125,6 +118,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value VibProfile              Vibrate profile.
             \value OfflineProfile          Offline profile.
             \value PowersaveProfile        Powersave profile.
+            \value BeepProfile             Beep profile.
             \value CustomProfile           Custom profile.
 
           */
