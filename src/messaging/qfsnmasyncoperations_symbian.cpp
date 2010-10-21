@@ -138,8 +138,6 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
         envelope.setCcRecipients(ccRecipients);
     }
     
-    envelope.setContentType(message.contentType()+"/"+message.contentSubType());
-
     QList<QMessageAddress> bccList(message.bcc());
     if (bccList.count() > 0) {
         QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
