@@ -448,19 +448,35 @@ void CFSAsynchronousUpdateOperation::updateMessage(QMessage &message)
 {
     quint64 mailboxId = stripIdPrefix(message.parentAccountId().toString()).toULongLong();
     m_manager = new NmApiMessageManager(this, mailboxId);
-    NmApiMessage apiMessage = updateFsMessage(message);
-    QPointer<NmApiOperation> saveOperation = m_manager->saveMessage(apiMessage);
+    m_fsMessage = updateFsMessage(message);
+    QMessageContentContainerId existingBodyId(message.bodyId());
+    if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+        // There is only one body, message itself
+        if (message.contentType()=="text") {
+            if (message.contentSubType()=="html") {
+                NmApiTextContent textContent = m_fsMessage.plainTextContent();
+                textContent.setContent("");
+                m_fsMessage.setPlainTextContent(textContent);
+            } else if (message.contentSubType()=="plain") {
+                NmApiTextContent textContent = m_fsMessage.htmlContent();
+                textContent.setContent("");
+                m_fsMessage.setHtmlContent(textContent);
+            }
+        }
+    }
+    QPointer<NmApiOperation> saveOperation = m_manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
     connect(saveOperation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(operationCompleted(int)));
 }
 
 NmApiMessage CFSAsynchronousUpdateOperation::updateFsMessage(QMessage &message)
 {
-    quint64 messageId = stripIdPrefix(message.id().toString()).toULongLong();
-    quint64 mailboxId = stripIdPrefix(message.parentAccountId().toString()).toLongLong();
-    quint64 folderId = stripIdPrefix(message.parentFolderId().toString()).toLongLong();
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 messageId = 0;
+    splitQMessageId(message.id(), mailboxId, folderId, messageId);    
     NmApiMessage fsMessage;
-    m_emailService->getMessage(mailboxId, folderId, messageId, fsMessage);
+    m_emailService->getMessage(mailboxId, folderId, messageId, fsMessage); // TODO: What if message can not be found!
 
     handleFSMessage(message, fsMessage);
     return fsMessage;
