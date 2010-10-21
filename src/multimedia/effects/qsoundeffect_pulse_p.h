@@ -94,6 +94,8 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
     bool isLoaded() const;
+    bool isPlaying() const;
+    QSoundEffect::Status status() const;
 
 public Q_SLOTS:
     void play();
@@ -103,6 +105,8 @@ Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
     void loadedChanged();
+    void playingChanged();
+    void statusChanged();
 
 private Q_SLOTS:
     void decoderReady();
@@ -121,6 +125,9 @@ private:
     void clearTasks();
     void createPulseStream();
 
+    void setPlaying(bool playing);
+    void setStatus(QSoundEffect::Status status);
+
     static void stream_write_callback(pa_stream *s, size_t length, void *userdata);
     static void stream_state_callback(pa_stream *s, void *userdata);
     static void play_callback(pa_context *c, int success, void *userdata);
@@ -129,6 +136,8 @@ private:
     pa_stream *m_writeCallbackPulseStream;
     int     m_timerID;
 
+    bool    m_playing;
+    QSoundEffect::Status  m_status;
     bool    m_retry;
     bool    m_muted;
     bool    m_playQueued;

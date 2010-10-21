@@ -62,7 +62,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
-
+#include "qsoundeffect_p.h"
 
 QT_BEGIN_HEADER
 
@@ -88,6 +88,8 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
     bool isLoaded() const;
+    bool isPlaying();
+    QSoundEffect::Status status() const;
 
 public Q_SLOTS:
     void play();
@@ -97,11 +99,20 @@ Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
     void loadedChanged();
+    void playingChanged();
+    void statusChanged();
 
 private:
-    bool m_muted;
-    int m_loopCount;
-    int m_volume;
+    void setStatus(QSoundEffect::Status status);
+    void setPlaying(bool playing);
+    void timerEvent(QTimerEvent *event);
+
+    bool           m_playing;
+    int            m_timerID;
+    bool           m_muted;
+    int            m_loopCount;
+    int            m_volume;
+    QSoundEffect::Status m_status;
     QSound *m_sound;
     QUrl m_source;
 };
