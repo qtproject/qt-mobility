@@ -42,6 +42,14 @@
 #include <nfctag.h>
 #include "nearfieldtagtype1_symbian.h"
 
+/*!
+    \class CNearFieldTagType1
+    \brief The CNearFieldTagType1 class provides ways to access tag type1
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
 CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag), CActive(EPriorityStandard)
     {
     }
@@ -104,51 +112,117 @@ TInt CNearFieldTagType1::RunError(TInt aError)
     return aError;
     }
 
+/*!
+    Returns identification information read from the tag.
+
+    The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
+    is returned if an error occurs.
+*/
+
 void CNearFieldTagType1::ReadIdentificationL(TDes8& aData)
     {
     
     }
+
+/*!
+    Reads and returns HR0, HR1 and all data in the static memory area of the tag.
+
+    The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
+    array is returned if an error occurs.
+*/
     
 void CNearFieldTagType1::ReadAllL(TDes8& aData)
     {
     
     }
 
+/*!
+    Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
+    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+*/
 void CNearFieldTagType1::WriteByteEraseL(TUint8 aAddress, const TDesC8& aData)
     {
     
     }
 
+/*!
+    Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
+    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+*/
 void CNearFieldTagType1::WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData)
     {
     
     }
 
+
+/*!
+    Reads and returns a single byte from the static memory area of the tag. The \a address
+    parameter specifices the linear byte address to read.
+*/
 void CNearFieldTagType1::ReadByteL(TUint8 aAddress, TDes8& aData)
     {
     
     }
 
+
+/*!
+    Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
+    byte array is returned if an error occurs.
+*/
 void CNearFieldTagType1::ReadSegmentL(TUint aSegmentAddress, TDes8& aData)
     {
     
     }
 
+/*!
+    Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
+    array is returned if an error occurs.
+*/
 void CNearFieldTagType1::ReadBlockL(TUint aBlockAddress, TDes8& aData)
     {
     
     }
 
+/*!
+    Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
+    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+
+*/
 void CNearFieldTagType1::WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData)
     {
     
     }
 
+
+/*!
+    Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
+    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
+    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
+    and the original value.
+
+    Returns true on success; otherwise returns false.
+
+*/
 void CNearFieldTagType1::WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData)
     {
     
     }
 
+/*!
+    Convert \a aAddress to byte-block address
+*/
 TNfcType1Address CNearFieldTagType1::AddOperand(TUint8 aAddress) const
     {
     const TUint8 staticBlockMask = 0x78;
@@ -161,11 +235,17 @@ TNfcType1Address CNearFieldTagType1::AddOperand(TUint8 aAddress) const
     return address;
     }
 
+/*!
+    Convert \a aSegmentAddress to segmentaddress address
+*/
 TNfcType1Address CNearFieldTagType1::AddsOperand(TUint8 aSegmentAddress) const
     {
     
     }
 
+/*!
+    Convert \a aBlockAddress to block address
+*/
 TNfcType1Address CNearFieldTagType1::Add8Operand(TUint8 aBlockAddress) const
     {
     
