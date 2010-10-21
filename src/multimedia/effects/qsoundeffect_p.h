@@ -68,6 +68,7 @@ class QSoundEffectPrivate;
 class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("DefaultMethod", "play()")
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)

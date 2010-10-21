@@ -389,7 +389,7 @@ void CalendarDemo::exportItems()
         qWarning() << "File is not writable";
         return;
     }
-    QList<QOrganizerItem> items(m_manager->items());
+    QList<QOrganizerItem> items(m_manager->itemsForExport());
     QVersitOrganizerExporter exporter;
     if (!exporter.exportItems(items)) {
         qWarning() << "Export failed, " << exporter.errorMap();

@@ -85,7 +85,7 @@ QServiceProxy::QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endPoin
 QServiceProxy::~QServiceProxy()
 {
     if (d->meta)
-        delete d->meta;
+        qFree(d->meta);
     delete d;
 }
 

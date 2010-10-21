@@ -197,6 +197,7 @@ class QRemoteServiceRegisterSymbianPrivate: public QRemoteServiceRegisterPrivate
 
 public:
     QRemoteServiceRegisterSymbianPrivate(QObject* parent);
+    ~QRemoteServiceRegisterSymbianPrivate();
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,42 +39,25 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <qfeedbackeffect.h>
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
-#include <QDialog>
-class HapticButton;
+#include <QObject>
+#include "qversitcontacthandler.h"
+#include "qversitproperty.h"
 
 QTM_USE_NAMESPACE
 
-#ifndef DIALOG_H_
-#define DIALOG_H_
-
-//! [0]
-class Dialog : public QDialog
+class Plugin2 : public QObject, public QVersitContactHandlerFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
 
 public:
-    Dialog();
-    ~Dialog();
-
-private Q_SLOTS:
-    void playRumble();
-    void playOcean(bool toggleState);
-    void playButtonClick();
-    void playNegativeEffect();
-
-private:
-    HapticButton *m_btnRumble;
-    HapticButton *m_btnOcean;
-    HapticButton *m_btnButtonClick;
-    HapticButton *m_btnNegativeEffect;
-
-    QFeedbackHapticsEffect m_rumble;
-    QFeedbackHapticsEffect m_ocean;
+    QString name() const;
+    int index() const;
+    QVersitContactHandler* createHandler() const;
+    QSet<QString> profiles() const;
 };
-//! [0]
 
 #endif
-

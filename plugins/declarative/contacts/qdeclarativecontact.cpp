@@ -502,7 +502,7 @@ void QDeclarativeContact::setThumbnail(const QUrl& url)
 /*!
     \qmlproperty Url Contact::url
 
-    This property holds url detail of the Contact object.
+    This property holds the url detail of the Contact object.
 */
 QDeclarativeContactUrl*  QDeclarativeContact::url()
 {
@@ -513,7 +513,7 @@ QDeclarativeContactUrl*  QDeclarativeContact::url()
 /*!
     \qmlproperty Hobby Contact::hobby
 
-    This property holds hobby detail of the Contact object.
+    This property holds the hobby detail of the Contact object.
 */
 QDeclarativeContactHobby*  QDeclarativeContact::hobby()
 {
