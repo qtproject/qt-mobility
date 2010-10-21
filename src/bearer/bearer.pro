@@ -15,4 +15,4 @@ PUBLIC_HEADERS += qnetworkconfiguration.h \
 
 HEADERS += $$PUBLIC_HEADERS
 
-include($$PWD/bearer.pri)
+include(bearer.pri)
