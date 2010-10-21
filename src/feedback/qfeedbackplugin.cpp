@@ -164,7 +164,8 @@ public:
         } else {
             //unload        
             if (QFeedbackFileInterface *subBackend = getBackend(effect))
-                return subBackend->setLoaded(effect, load);
+                subBackend->setLoaded(effect, load);
+            QFeedbackFileEffectPrivate::get(effect)->loadFinished(false); // make sure it's marked unloaded [XXX this isn't allowed to fail!]
         }
     }
 

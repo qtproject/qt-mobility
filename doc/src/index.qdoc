@@ -245,8 +245,6 @@
 
     For more details see the \l{Versit}{Versit API overview}.
 
-    \section1 BETA APIs
-
     \section2 Organizer
 
     An API for management of calendar, scheduling and personal data
@@ -508,12 +506,12 @@
     <tr>
     <td>Camera</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -527,9 +525,9 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Organizer</td>
@@ -539,7 +537,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -552,20 +550,20 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Document Gallery</td>
     <td>FINAL</td>
-    <td bgcolor="yellow">*</td>
-    <td bgcolor="yellow">*</td>
-    <td bgcolor="yellow">*</td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">1)</td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -586,12 +584,12 @@
     <tr>
     <td>Feedback</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green">2)</td>
+    <td bgcolor="green">2)</td>
+    <td bgcolor="green">2)</td>
+    <td bgcolor="green">2)</td>
+    <td bgcolor="green">3)</td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -614,8 +612,12 @@
     <p>
     \endraw
 
-    * The document gallery backend for symbian 3.1, 3.2, and 5.0 is not enabled
+    1) The document gallery backend for symbian 3.1, 3.2, and 5.0 is not enabled
     in pre-built packages due to library dependency issues on some devices.
+
+    2.) File-based feedback not yet supported.
+
+    3.) Themed feedback not supported.
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com

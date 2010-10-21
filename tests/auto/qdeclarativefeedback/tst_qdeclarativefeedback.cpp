@@ -92,16 +92,16 @@ void tst_qdeclarativefeedback::hapticsEffect()
     QVERIFY(hapticsEffect->actuator() != 0);
     QCOMPARE(hapticsEffect->state(), QFeedbackEffect::Stopped);
 
-    QCOMPARE(hapticsEffect->property("supportsThemeEffect").toBool(), false);
-
     QCOMPARE(hapticsEffect->property("running").toBool(), false);
     QCOMPARE(hapticsEffect->property("paused").toBool(), false);
     hapticsEffect->setProperty("running", true);
+    QCOMPARE(hapticsEffect->property("running").toBool(), true);
+    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
     hapticsEffect->setProperty("paused", true);
 
-    // dummy backend
+    // XXX make sure we just test dummy backend
     QCOMPARE(hapticsEffect->property("running").toBool(), false);
-    QCOMPARE(hapticsEffect->property("paused").toBool(), false);
+    QCOMPARE(hapticsEffect->property("paused").toBool(), true);
 
     delete hapticsEffect;
 }
@@ -155,6 +155,9 @@ void tst_qdeclarativefeedback::themeEffect()
     // Test the effect property gets assigned
     QMetaProperty p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("effect"));
     QCOMPARE(p.read(dte).value<int>(), (int)QFeedbackEffect::ThemeBasicButton);
+
+    p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("supported"));
+    QCOMPARE(p.read(dte).value<bool>(), QFeedbackEffect::supportsThemeEffect());
 
     delete dte;
 

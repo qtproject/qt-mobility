@@ -42,22 +42,22 @@
 #include <qmobilityglobal.h>
 #include <qfeedbackeffect.h>
 
-#include <QDialog>
+#include <QWidget>
 class HapticButton;
 
 QTM_USE_NAMESPACE
 
-#ifndef DIALOG_H_
-#define DIALOG_H_
+#ifndef HAPTICSQUARE_H_
+#define HAPTICSQUARE_H_
 
 //! [0]
-class Dialog : public QDialog
+class HapticSquare : public QWidget
 {
     Q_OBJECT
 
 public:
-    Dialog();
-    ~Dialog();
+    HapticSquare();
+    ~HapticSquare();
 
 private Q_SLOTS:
     void playRumble();

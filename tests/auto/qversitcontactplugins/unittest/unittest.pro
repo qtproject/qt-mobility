@@ -21,7 +21,7 @@ SOURCES += tst_qversitcontactplugins.cpp
 CONFIG += mobility
 MOBILITY += versit
 
-symbian: { 
+symbian: {
     TARGET.CAPABILITY = ALL \
         -TCB
     LIBS += -lws32 \
