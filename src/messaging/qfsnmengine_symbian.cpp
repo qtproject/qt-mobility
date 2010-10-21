@@ -2412,7 +2412,9 @@ void CFSMessagesFindOperation::messageFound(NmApiMessage &message)
         message.envelope().id(),
         SymbianHelpers::EngineTypeFreestyle);
     if (!m_excludeIdList.contains(messageId)) {
-        m_idList.append(messageId);   
+        if (!m_idList.contains(messageId)) {
+            m_idList.append(messageId);
+        }
     }
 }
 
