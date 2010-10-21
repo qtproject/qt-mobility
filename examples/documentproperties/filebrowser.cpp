@@ -168,7 +168,11 @@ void FileBrowser::activated(const QModelIndex &index)
         widget->setWindowFlags(widget->windowFlags() | Qt::Dialog);
         widget->setAttribute(Qt::WA_DeleteOnClose);
         widget->setWindowModality(Qt::WindowModal);
+# if defined(Q_OS_SYMBIAN)
+        widget->showMaximized();
+# else
         widget->show();
+# endif
 #endif
     }
 }
