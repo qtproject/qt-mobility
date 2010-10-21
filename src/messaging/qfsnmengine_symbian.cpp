@@ -1686,6 +1686,9 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     fsIdAsString = addIdPrefix(QString::number(parentFolderId), SymbianHelpers::EngineTypeFreestyle);
     privateMessage->_parentFolderId = QMessageFolderId(fsIdAsString);
+
+    privateMessage->_id = buildQMessageId(envelope.mailboxId(), envelope.parentFolder(),
+                                          envelope.id(), SymbianHelpers::EngineTypeFreestyle);
     
     NmApiFolder folder;
     m_emailService->getFolder(envelope.mailboxId(), envelope.parentFolder(), folder);
@@ -2420,7 +2423,9 @@ void CFSMessagesFindOperation::messageFound(NmApiMessage &message)
         message.envelope().id(),
         SymbianHelpers::EngineTypeFreestyle);
     if (!m_excludeIdList.contains(messageId)) {
-        m_idList.append(messageId);   
+        if (!m_idList.contains(messageId)) {
+            m_idList.append(messageId);
+        }
     }
 }
 

@@ -174,6 +174,7 @@ private:
     NmApiMessage updateFsMessage(QMessage &message);
 
 private:
+    NmApiMessage m_fsMessage;
     NmApiEmailService *m_emailService;
 
 };
