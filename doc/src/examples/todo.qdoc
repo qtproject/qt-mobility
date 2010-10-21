@@ -269,8 +269,8 @@
     Many backends support notifying the user when a todo item is due.
     We can request this by adding a QOrganizerItemRemainder detail to
     the QOrganizerTodo. We first check whether a remainder detail is
-    present on the todo item. If it is we update the \l{Alarm Combo Box}.
-    The \l{QDateTime::}{secsTo()} function returns the
+    present on the todo item. If it is we update the \gui {Alarm Combo
+    Box}. The \l{QDateTime::}{secsTo()} function returns the
     difference between two \l{QDateTime}s in seconds.
 
     The next two slots update the subject and description of the

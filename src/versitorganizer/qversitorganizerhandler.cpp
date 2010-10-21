@@ -123,7 +123,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitOrganizerHandlerFactory::ProfileBackup, "Backup"
  */
 
 /*!
-  \fn QVersitOrganizerHandler* QVersitOrganizerHandlerFactory::createHandler() const
+  \fn QVersitOrganizerHandlerFactory::createHandler() const
   This function is called by the Versit importer or exporter class to create an instance of the
   handler provided by this factory.
  */
@@ -132,3 +132,4 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitOrganizerHandlerFactory::ProfileBackup, "Backup"
   \fn QVersitOrganizerHandler::~QVersitOrganizerHandler()
   Destroys this QVersitOrganizerHandler.
  */
+
