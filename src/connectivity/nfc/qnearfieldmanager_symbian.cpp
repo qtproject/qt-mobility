@@ -51,17 +51,36 @@
 
 #include "symbian/nearfieldmanager_symbian.h"
 
+/*!
+    \class QNearFieldManagerPrivateImpl
+    \brief The QNearFieldManagerPrivateImpl class provides symbian backend access to NFC service.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+	A Qt-Symbian wrapper implementation class to support symbian NFC backend.
+*/
+
+/*!
+    Constructs a new near field manager private implementation.
+*/
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
 	QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
 }
 
+/*!
+    Destroys the near field manager private implementation.
+*/
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
 	delete m_symbianbackend;
 	
 }
 
+/*!
+    Helper function to get the free handler id.
+*/
 int QNearFieldManagerPrivateImpl::getFreeId()
 {
     if (!m_freeIds.isEmpty())
@@ -71,6 +90,15 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     return m_registeredHandlers.count() - 1;
 }
 
+/*!
+    Registers \a object to receive notifications on \a method when a tag with a tag type of
+    \a targetType has been detected and has an NDEF message is detected. The
+    \a method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
+*/
 int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                                                 QObject *object,
                                                                 const QMetaMethod &method)
@@ -87,6 +115,15 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
     return id;
 }
 
+/*!
+    Registers \a object to receive notifications on \a method when a tag with a tag type of
+    \a targetType has been detected and has an NDEF message that matches \a filter is detected. The
+    \a method on \a object should have the prototype
+    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
+
+    Returns an identifier, which can be used to unregister the handler, on success; otherwise
+    returns -1.
+*/
 int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                                                 const QNdefFilter &filter,
                                                                 QObject *object,
@@ -104,6 +141,11 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
     return id;
 }
 
+/*!
+    Unregisters the target detect handler identified by \a id.
+
+    Returns true on success; otherwise returns false.
+*/
 bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 {
     if (id < 0 || id >= m_registeredHandlers.count())
@@ -125,9 +167,12 @@ struct VerifyRecord
     unsigned int count;
 };
 
+/*!
+    Callback function when symbian NFC backend found the NFC \a target.
+*/
 void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 {
-
+	m_target = target;
     emit targetDetected(target);
 
     if (target->hasNdefMessage()) {
@@ -193,5 +238,17 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
         }
     }
 }
+
+/*!
+    Callback function when symbian NFC backend lost the NFC \a target.
+*/
+void QNearFieldManagerPrivateImpl::targetDisconnected()
+	{
+	if (m_target)
+		{
+		emit targetLost(m_target);
+		QMetaObject::invokeMethod(m_target, "disconnected");
+		}
+	}
 
 //#include "qnearfieldmanager_symbian.moc"

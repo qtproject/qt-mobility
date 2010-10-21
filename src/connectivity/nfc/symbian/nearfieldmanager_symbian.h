@@ -84,13 +84,11 @@ private:
     
     CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback);
     void ConstructL();
-    
+    //own
     CNfcTagDiscovery* iNfcTagDiscovery;    
     CNfcTagSubscription* iTagSubscription;
     RNfcServer iServer;
-    
     CLlcpProvider* iLlcpProvider;
-    
     CNdefDiscovery* iNdefDiscovery;
     //not own
     QNearFieldManagerPrivateImpl& iCallback;

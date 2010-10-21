@@ -56,5 +56,5 @@ symbian {
 
     TARGET.CAPABILITY = ALL -TCB
 
-    LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp
+    LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
     }

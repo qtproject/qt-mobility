@@ -40,8 +40,22 @@
 ****************************************************************************/
 
 #include "nearfieldmanager_symbian.h"
+#include "nearfieldtargetfactory_symbian.h"
 #include "../qnearfieldmanager_symbian_p.h"
 
+/*!
+    \class CNearFieldManager
+    \brief The Symbain class provides symbian backend implementation to access NFC service.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+	A Symbian implementation class to support symbian NFC backend.
+*/
+
+/*!
+    Constructs a CNearFieldManager.
+*/
 void CNearFieldManager::ConstructL()
     {
     User::LeaveIfError(iServer.Open());
@@ -53,6 +67,9 @@ void CNearFieldManager::ConstructL()
     StartTagDetectionL();
     }
 
+/*!
+    Start listening all type tags.
+*/
 void CNearFieldManager::StartTagDetectionL()
 	{
 	iTagSubscription = CNfcTagSubscription::NewL();   
@@ -67,34 +84,62 @@ void CNearFieldManager::StartTagDetectionL()
 	iLlcpProvider->AddLlcpLinkListenerL(*this);
 	}
 
+/*!
+    Callback function when the tag found by NFC symbain services.
+*/
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     {
-	if (aNfcTag)
-		{
-		//TODO emit NearFieldTargetDetected signal
-//		iCallback.targetFound(new QNearFieldTarget());
-		}
+	TRAP_IGNORE(
+		if (aNfcTag)
+			{
+			QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag);
+			QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
+			}
+			);
     }
 
+/*!
+    Callback function when the tag lost event found by NFC symbain services.
+*/
 void CNearFieldManager::TagLost()
     {
-	//TODO emit NearFieldTargetLost signal
+	TRAP_IGNORE(
+			QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
+		);
     }
+
+/*!
+    Callback function when the LLCP peer found by NFC symbain services.
+*/
 void CNearFieldManager::LlcpRemoteFound()
 	{
-    //TODO emit NearFieldTargetDetected signal
-//	iCallback.targetFound(new QNearFieldTarget());
-	}
-void CNearFieldManager::LlcpRemoteLost()
-	{
-	//TODO emit NearFieldTargetLost signal
+	TRAP_IGNORE(
+		QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL);
+		QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
+		);
 	}
 
+/*!
+    Callback function when the LLCP peer lost event found by NFC symbain services.
+*/
+void CNearFieldManager::LlcpRemoteLost()
+	{
+	TRAP_IGNORE(
+			QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
+		);
+	}
+
+/*!
+    New a CNearFieldManager instance.
+*/
 CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
 	: iCallback(aCallback)
     {    
     }
 
+/*!
+    Create a new instance of this class.
+*/
 CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = NewLC(aCallback);
@@ -102,6 +147,9 @@ CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallba
     return self;
     }
 
+/*!
+    Create a new instance of this class and push to cleanup stack.
+*/
 CNearFieldManager* CNearFieldManager::NewLC(QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = new (ELeave) CNearFieldManager(aCallback);
@@ -110,6 +158,9 @@ CNearFieldManager* CNearFieldManager::NewLC(QNearFieldManagerPrivateImpl& aCallb
     return self;
     }
 
+/*!
+    Destructor.
+*/
 CNearFieldManager::~CNearFieldManager()
     {
     if ( iNfcTagDiscovery )
