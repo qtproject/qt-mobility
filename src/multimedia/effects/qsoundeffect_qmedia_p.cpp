@@ -139,8 +139,9 @@ QSoundEffect::Status QSoundEffectPrivate::status() const
 
 void QSoundEffectPrivate::play()
 {
-    if (m_loopCount < 0)
+    if (m_loopCount < 0) {
         m_runningCount = -1;
+    }
     else {
         if (m_runningCount < 0)
             m_runningCount = 0;
@@ -163,22 +164,19 @@ void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
         } else if (m_runningCount == 0) {
             setPlaying(false);
             return;
-        }
-        else if (--m_runningCount > 0) {
+        } else if (--m_runningCount > 0) {
             m_player->play();
-        }
-        else {
+        } else {
             setPlaying(false);
         }
-    }
-    else
+    } else {
         setPlaying(true);
+    }
 }
 
 void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    switch(status)
-    {
+    switch(status) {
     case QMediaPlayer::LoadingMedia:
         setStatus(QSoundEffect::Loading);
         break;
