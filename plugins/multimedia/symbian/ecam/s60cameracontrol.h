@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in 
-** accordance with the Qt Commercial License Agreement provided with
-** the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -58,6 +58,7 @@ class S60VideoCaptureSession;
 class S60CameraSettings;
 class CCameraEngine;
 class S60CameraViewfinderEngine;
+class QTimer;
 
 /*
  * Control for controlling camera base operations (e.g. start/stop and capture
@@ -66,7 +67,7 @@ class S60CameraViewfinderEngine;
 class S60CameraControl : public QCameraControl, public MCameraEngineObserver
 {
     Q_OBJECT
-    
+
 public: // Enums
 
     enum ViewfinderOutputType {
@@ -74,29 +75,29 @@ public: // Enums
         VideoRendererOutput,
         VideoWindowOutput
     };
-    
+
 public: // Constructors & Destructor
-    
+
     S60CameraControl(QObject *parent = 0);
-    S60CameraControl(S60VideoCaptureSession *videosession, 
-                     S60ImageCaptureSession *imagesession, 
+    S60CameraControl(S60VideoCaptureSession *videosession,
+                     S60ImageCaptureSession *imagesession,
                      QObject *parent = 0);
     ~S60CameraControl();
-    
+
 public: // QCameraControl
-    
+
     // State
     QCamera::State state() const;
     void setState(QCamera::State state);
 
     // Status
     QCamera::Status status() const;
-    
+
     // Capture Mode
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode);
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    
+
     // Property Setting
     bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
 
@@ -109,10 +110,10 @@ Q_SIGNALS:
 */
 
 public: // Internal
-    
+
     void setError(const TInt error, const QString &description);
-    CCameraEngine *resetCameraOrientation();
-    
+    void resetCameraOrientation();
+
     // To provide QVideoDeviceControl info
     static int deviceCount();
     static QString name(const int index);
@@ -122,7 +123,7 @@ public: // Internal
     void setSelectedDevice(const int index);
 
     void setVideoOutput(QObject *output, ViewfinderOutputType type);
-    
+
 private Q_SLOTS: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
@@ -135,21 +136,21 @@ private Q_SLOTS: // Internal Slots
      */
     void toStandByStatus();
     void advancedSettingsCreated();
-    
+
 protected: // MCameraEngineObserver
 
     void MceoCameraReady();
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
 private: // Internal
-    
+
     QCamera::Error fromSymbianErrorToQtMultimediaError(int aError);
-    
+
     void loadCamera();
     void unloadCamera();
     void startCamera();
     void stopCamera();
-    
+
     void resetCamera();
     void setCameraHandles();
 
@@ -159,13 +160,14 @@ Q_SIGNALS: // Internal Signals
     void devicesChanged();
 
 private: // Data
-    
+
     CCameraEngine               *m_cameraEngine;
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;
     S60VideoCaptureSession      *m_videoSession;
     S60CameraSettings           *m_advancedSettings;
     QObject                     *m_videoOutput;
+    QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;
     QCamera::CaptureMode        m_requestedCaptureMode;
     QCamera::Status             m_internalState;

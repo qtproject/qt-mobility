@@ -7,11 +7,11 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** Commercial Usage
- ** Licensees holding valid Qt Commercial licenses may use this file in 
- ** accordance with the Qt Commercial License Agreement provided with
- ** the Software or, alternatively, in accordance with the terms
- ** contained in a written agreement between you and Nokia.
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
  ** rights.  These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** GNU General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 3.0 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.GPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU General Public License version 3.0 requirements will be
- ** met: http://www.gnu.org/copyleft/gpl.html.
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
  **
- ** If you are unsure which license is appropriate for your use, please
- ** contact the sales department at qt-sales@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
@@ -48,8 +48,8 @@ CCameraEngine::CCameraEngine()
 {
 }
 
-CCameraEngine::CCameraEngine(TInt aCameraHandle, 
-                             TInt aPriority, 
+CCameraEngine::CCameraEngine(TInt aCameraHandle,
+                             TInt aPriority,
                              MCameraEngineObserver* aObserver) :
     // CBase initializes member variables to NULL
     iObserver(aObserver),
@@ -59,7 +59,8 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
     iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
-    iNew2LImplementation(false)
+    iNew2LImplementation(false),
+    iLatestImageBufferIndex(1) // Thus we start from index 0
 {
 }
 
@@ -67,20 +68,13 @@ CCameraEngine::~CCameraEngine()
 {
     StopViewFinder();
     ReleaseViewFinderBuffer();  // Releases iViewFinderBuffer
-    ReleaseImageBuffer();       // Releases iImageBuffer + iImageBitmap, deletes iImageData
-
-    if (iImageBitmap) {
-        if (!iNew2LImplementation) {
-            delete iImageBitmap;
-            iImageBitmap = NULL;
-        }
-    }
+    ReleaseImageBuffer();       // Releases iImageBuffer + iImageBitmap
 
     iAdvancedSettingsObserver = NULL;
     iImageCaptureObserver = NULL;
     iViewfinderObserver = NULL;
 
-#ifdef S60_CAM_AUTOFOCUS_SUPPORT   
+#ifdef S60_CAM_AUTOFOCUS_SUPPORT
     delete iAutoFocus;
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 
@@ -128,15 +122,12 @@ void CCameraEngine::ConstructL()
 #endif // S60_31_PLATFORM
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
+    // Might not be supported for secondary camera, discard errors
     TRAP(err, iAutoFocus = CCamAutoFocus::NewL(iCamera));
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 
     if (iCamera == NULL)
         User::Leave(KErrNoMemory);
-
-    // Create BitMap for Captured Image bitmaps (NewL version)
-    if (!iNew2LImplementation)
-        iImageBitmap = new (ELeave) CFbsBitmap;
 
     iCamera->CameraInfo(iCameraInfo);
 }
@@ -168,6 +159,7 @@ void CCameraEngine::ReserveAndPowerOn()
 void CCameraEngine::ReleaseAndPowerOff()
 {
     if (iEngineState >= EEngineIdle) {
+        cancelCapture();
         StopViewFinder();
         FocusCancel();
         iCamera->PowerOff();
@@ -261,8 +253,10 @@ void CCameraEngine::CaptureL()
 
 void CCameraEngine::cancelCapture()
 {
-    iCamera->CancelCaptureImage();
-    iEngineState = EEngineIdle;
+    if (iEngineState == EEngineCapturing) {
+        iCamera->CancelCaptureImage();
+        iEngineState = EEngineIdle;
+    }
 }
 
 void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
@@ -277,12 +271,19 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
         return;
     }
 
+    if (aEvent.iEventType == KUidECamEventCameraNoLongerReserved) {
+        // All camera related operations need to be stopped
+        iObserver->MceoHandleError(EErrReserve, KErrHardwareNotAvailable);
+        return;
+    }
+
 #if !defined(Q_CC_NOKIAX86) // Not Emulator
     // Other events; Exposure, Zoom, etc. (See ecamadvancedsettings.h)
     if (iAdvancedSettingsObserver)
         iAdvancedSettingsObserver->HandleAdvancedEvent(aEvent);
 
-    iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
+    if (iImageCaptureObserver)
+        iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
 #endif // !Q_CC_NOKIAX86
 
 }
@@ -291,6 +292,11 @@ void CCameraEngine::ReserveComplete(TInt aError)
 {
     if (aError == KErrNone) {
         iCamera->PowerOn();
+#ifdef S60_31_PLATFORM
+    } else if (aError == KErrAlreadyExists) { // Known Issue on some S60 3.1 devices
+        User::After(500000); // Wait for 0,5 second and try again
+        iCamera->Reserve();
+#endif // S60_31_PLATFORM
     } else {
         iObserver->MceoHandleError(EErrReserve, aError);
     }
@@ -330,9 +336,13 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
     iViewFinderBuffer = &aCameraBuffer;
 
     if (aError == KErrNone) {
-        TRAPD(err, iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0)));
-        if (err)
-            iObserver->MceoHandleError(EErrViewFinderReady, err);
+        if (iViewfinderObserver) {
+            TRAPD(err, iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0)));
+            if (err)
+                iObserver->MceoHandleError(EErrViewFinderReady, err);
+        } else {
+            iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
+        }
     }
     else {
         iObserver->MceoHandleError(EErrViewFinderReady, aError);
@@ -345,35 +355,66 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
  */
 void CCameraEngine::ViewFinderFrameReady(CFbsBitmap& aFrame)
 {
-    iViewfinderObserver->MceoViewFinderFrameReady(aFrame);
+    if (iViewfinderObserver)
+        iViewfinderObserver->MceoViewFinderFrameReady(aFrame);
+    else
+        iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
 }
 
 void CCameraEngine::ReleaseViewFinderBuffer()
 {
-    if (iViewFinderBuffer) {
-        iViewFinderBuffer->Release();
-        iViewFinderBuffer = NULL;
+    if (iNew2LImplementation) { // NewL Implementation does not use MCameraBuffer
+        if (iViewFinderBuffer) {
+            iViewFinderBuffer->Release();
+            iViewFinderBuffer = NULL;
+        }
     }
 }
 
 void CCameraEngine::ReleaseImageBuffer()
 {
-    // Reset ImageBuffer
-    if (iImageBuffer) {
-        iImageBuffer->Release();
-        iImageBuffer = NULL;
-    }
-
     // Reset Bitmap
-    if (iImageBitmap) {
-        if (iImageBitmap->Handle() != 0) {
-            iImageBitmap->Reset(); // Delete Handle to Bitmap
+    if (iLatestImageBufferIndex == 1 || iImageBitmap2 == NULL) {
+        if (iImageBitmap1) {
+            if (!iNew2LImplementation) { // NewL - Ownership transferred
+                iImageBitmap1->Reset(); // Reset/Delete Bitmap
+                delete iImageBitmap1;
+            }
+            iImageBitmap1 = NULL;
+        }
+    } else {
+        if (iImageBitmap2) {
+            if (!iNew2LImplementation) { // NewL - Ownership transferred
+                iImageBitmap2->Reset(); // Reset/Delete Bitmap
+                delete iImageBitmap2;
+            }
+            iImageBitmap2 = NULL;
         }
     }
 
     // Reset Data pointers
-    iImageData = NULL;
-    iImageData2 = NULL;
+    if (iLatestImageBufferIndex == 1 || iImageData2 == NULL) {
+        if (!iNew2LImplementation) // NewL - Ownership transfers with buffer
+            delete iImageData1;
+        iImageData1 = NULL;
+    } else {
+        if (!iNew2LImplementation) // NewL - Ownership transfers with buffer
+            delete iImageData2;
+        iImageData2 = NULL;
+    }
+
+    // Reset ImageBuffer - New2L Implementation only
+    if (iLatestImageBufferIndex == 1 || iImageBuffer2 == NULL) {
+        if (iImageBuffer1) {
+            iImageBuffer1->Release();
+            iImageBuffer1 = NULL;
+        }
+    } else {
+        if (iImageBuffer2) {
+            iImageBuffer2->Release();
+            iImageBuffer2 = NULL;
+        }
+    }
 }
 
 /*
@@ -383,7 +424,15 @@ void CCameraEngine::ReleaseImageBuffer()
 void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
 {
 
-    iImageBuffer = &aCameraBuffer;
+    // Use the buffer that is available
+    if (!iImageBuffer1) {
+        iLatestImageBufferIndex = 0;
+        iImageBuffer1 = &aCameraBuffer;
+    } else {
+        iLatestImageBufferIndex = 1;
+        iImageBuffer2 = &aCameraBuffer;
+    }
+
     bool isBitmap = true;
     TInt err = KErrNone;
 
@@ -392,18 +441,34 @@ void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
         case CCamera::EFormatFbsBitmapColor64K:
         case CCamera::EFormatFbsBitmapColor16M:
         case CCamera::EFormatFbsBitmapColor16MU:
-            TRAP(err, iImageBitmap = &iImageBuffer->BitmapL(0));
-            if (err) {
-                if (iImageCaptureObserver)
-                    iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+            if (iLatestImageBufferIndex == 0) {
+                TRAP(err, iImageBitmap1 = &iImageBuffer1->BitmapL(0));
+                if (err) {
+                    if (iImageCaptureObserver)
+                        iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+                }
+            } else {
+                TRAP(err, iImageBitmap2 = &iImageBuffer2->BitmapL(0));
+                if (err) {
+                    if (iImageCaptureObserver)
+                        iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+                }
             }
             isBitmap = true;
             break;
         case CCamera::EFormatExif:
-            TRAP(err, iImageData2 = iImageBuffer->DataL(0));
-            if (err) {
-                if (iImageCaptureObserver)
-                    iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+            if (iLatestImageBufferIndex == 0) {
+                TRAP(err, iImageData1 = iImageBuffer1->DataL(0));
+                if (err) {
+                    if (iImageCaptureObserver)
+                        iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+                }
+            } else {
+                TRAP(err, iImageData2 = iImageBuffer2->DataL(0));
+                if (err) {
+                    if (iImageCaptureObserver)
+                        iImageCaptureObserver->MceoHandleError(EErrImageReady, err);
+                }
             }
             isBitmap = false;
             break;
@@ -413,7 +478,6 @@ void CCameraEngine::ImageBufferReady(MCameraBuffer &aCameraBuffer, TInt aError)
                 iImageCaptureObserver->MceoHandleError(EErrImageReady, KErrNotSupported);
             return;
     }
-
 
     // Handle captured image
     HandleImageReady(aError, isBitmap);
@@ -427,23 +491,29 @@ void CCameraEngine::ImageReady(CFbsBitmap* aBitmap, HBufC8* aData, TInt aError)
 {
     bool isBitmap = true;
 
+    // Toggle between the 2 buffers
+    if (iLatestImageBufferIndex == 1) {
+        iLatestImageBufferIndex = 0;
+    } else {
+        iLatestImageBufferIndex = 1;
+    }
+
     switch (iImageCaptureFormat) {
         case CCamera::EFormatFbsBitmapColor4K:
         case CCamera::EFormatFbsBitmapColor64K:
         case CCamera::EFormatFbsBitmapColor16M:
         case CCamera::EFormatFbsBitmapColor16MU:
-            // Duplicate Bitmap (set Handle to the Captured Image)
-            if (iImageBitmap) {
-                iImageBitmap->Duplicate(aBitmap->Handle());
-                delete aBitmap; // Delete original
-            } else {
-                if (iImageCaptureObserver)
-                    iImageCaptureObserver->MceoHandleError(EErrImageReady, KErrGeneral);
-            }
+            if (iLatestImageBufferIndex == 0)
+                iImageBitmap1 = aBitmap;
+            else
+                iImageBitmap2 = aBitmap;
             isBitmap = true;
             break;
         case CCamera::EFormatExif:
-            iImageData = aData;
+            if (iLatestImageBufferIndex == 0)
+                iImageData1 = aData;
+            else
+                iImageData2 = aData;
             isBitmap = false;
             break;
 
@@ -464,24 +534,22 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
     if (aError == KErrNone) {
         if (isBitmap)
             if (iImageCaptureObserver) {
-                iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap);
+                if (iLatestImageBufferIndex == 0)
+                    iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap1);
+                else
+                    iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap2);
             }
             else
                 ReleaseImageBuffer();
         else {
-            if (iNew2LImplementation) {
-                if (iImageCaptureObserver) {
+            if (iImageCaptureObserver) {
+                if (iLatestImageBufferIndex == 0)
+                    iImageCaptureObserver->MceoCapturedDataReady(iImageData1);
+                else
                     iImageCaptureObserver->MceoCapturedDataReady(iImageData2);
-                }
-                else
-                    ReleaseImageBuffer();
-            } else {
-                if (iImageCaptureObserver) {
-                    iImageCaptureObserver->MceoCapturedDataReady(iImageData);
-                }
-                else
-                    ReleaseImageBuffer();
             }
+            else
+                ReleaseImageBuffer();
         }
     } else {
         if (iImageCaptureObserver)

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in 
-** accordance with the Qt Commercial License Agreement provided with
-** the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -266,11 +266,13 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_icState(EImageCaptureNotPrepared),
     m_currentCodec(QString()),
     m_captureSize(QSize()),
-    m_symbianImageQuality(QtMultimediaKit::VeryHighQuality * KSymbianImageQualityCoefficient),
+    m_symbianImageQuality(QtMultimediaKit::HighQuality * KSymbianImageQualityCoefficient),
     m_stillCaptureFileName(QString()),
     m_requestedStillCaptureFileName(QString()),
     m_currentImageId(0),
-    m_captureWhenReady(false)
+    m_captureWhenReady(false),
+    m_previewDecodingOngoing(false),
+    m_previewInWaitLoop(false)
 {
     // Define supported image codecs
 	m_supportedImageCodecs << "image/jpg";
@@ -343,6 +345,7 @@ void S60ImageCaptureSession::deleteAdvancedSettings()
     if (m_advancedSettings) {
         delete m_advancedSettings;
         m_advancedSettings = NULL;
+        emit advancedSettingChanged();
     }
 }
 
@@ -376,14 +379,21 @@ void S60ImageCaptureSession::resetSession()
 
     m_error = KErrNone;
     m_currentFormat = defaultImageFormat();
-    TRAPD(err, m_advancedSettings = S60CameraSettings::NewL(this, m_cameraEngine));
+
+    int err = KErrNone;
+    m_advancedSettings = S60CameraSettings::New(err, this, m_cameraEngine);
     if (err == KErrNotSupported) {
+        m_advancedSettings = NULL;
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platform
         // Adv. settings may not be supported for other than the Primary Camera
         if (m_cameraEngine->currentCameraIndex() == 0)
             setError(err, QString("Unexpected camera error."));
+#endif // !S60_31_PLATFORM
     }
-    else
+    else if (err != KErrNone) { // Other errors
+        m_advancedSettings = NULL;
         setError(err, QString("Unexpected camera error."));
+    }
 
     if (m_advancedSettings) {
         if (m_cameraEngine)
@@ -394,8 +404,7 @@ void S60ImageCaptureSession::resetSession()
 
     updateImageCaptureFormats();
 
-    if (m_advancedSettings)
-        emit advancedSettingCreated();
+    emit advancedSettingChanged();
 }
 
 S60CameraSettings* S60ImageCaptureSession::advancedSettings()
@@ -464,7 +473,7 @@ void S60ImageCaptureSession::initializeImageCaptureSettings()
     if (resolutions.size() > 0)
         m_captureSize = resolutions[0]; // First is the maximum
 
-    m_symbianImageQuality = 100; // Best quality
+    m_symbianImageQuality = KDefaultImageQuality;
 }
 
 /*
@@ -513,6 +522,10 @@ int S60ImageCaptureSession::prepareImageCapture()
         if (!symbianError)
             m_icState = EImageCapturePrepared;
 
+        // Check if CaptureSize was modified
+        if (captureSize.iWidth != m_captureSize.width() || captureSize.iHeight != m_captureSize.height()) {
+            m_captureSize = QSize(captureSize.iWidth, captureSize.iHeight);
+        }
         return symbianError;
     }
 
@@ -646,32 +659,22 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 
     m_icState = EImageCaptureWritingImage;
 
-    // Create SnapShot from ImageData
-    QImage snapImage;
-    snapImage.loadFromData((const uchar *)aData->Ptr(), aData->Length(), "JPG");
-
-    if (!snapImage.isNull()) {
-        emit imageCaptured(m_currentImageId, snapImage);
-    } else {
-        setError(KErrNotSupported, QString("Failed to create snapshot from captured data."));
-    }
-
     TFileName path = convertImagePath();
 
     // Try to save image and inform if it was succcesful
     TRAPD(err, saveImageL(aData, path));
     if (err) {
+        if (m_previewDecodingOngoing)
+            m_previewDecodingOngoing = false; // Reset
+
         setError(err, QString("Writing captured image to a file failed."), true);
         m_icState = EImageCapturePrepared;
         return;
-    } else {
-        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
     }
 
     m_icState = EImageCapturePrepared;
 
-    // Release image resources
-    releaseImageBuffer();
+
 }
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -758,7 +761,11 @@ TFileName S60ImageCaptureSession::convertImagePath()
     return path;
 }
 
-void S60ImageCaptureSession::saveImageL(TDesC8* aData, TFileName aPath)
+/*
+ * Creates (asynchronously) Preview Image from Jpeg ImageBuffer and also
+ * writes Jpeg (synchronously) to a file.
+ */
+void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
     if (aData == NULL) {
         setError(KErrGeneral, QString("Captured image data is not available."), true);
@@ -832,7 +839,23 @@ void S60ImageCaptureSession::saveImageL(TDesC8* aData, TFileName aPath)
         }
 
         CleanupStack::PopAndDestroy(&file);
-        CleanupStack::PopAndDestroy(&fs);
+        // Delete when Image is decoded
+        CleanupStack::Pop(previewBitmap);
+        CleanupStack::Pop(imageDecoder);
+        CleanupStack::Pop(fileSystemAccess);
+
+        // Set member variables (Cannot leave any more)
+        m_previewBitmap = previewBitmap;
+        m_imageDecoder = imageDecoder;
+        m_fileSystemAccess = fileSystemAccess;
+
+        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+
+        // Inform that we can continue taking more pictures
+        emit readyForCaptureChanged(true);
+
+        // ImageBuffer gets released in RunL
+
     } else {
         setError(KErrPathNotFound, QString("Invalid path given."), true);
     }
@@ -844,9 +867,6 @@ void S60ImageCaptureSession::releaseImageBuffer()
         m_cameraEngine->ReleaseImageBuffer();
     else
         setError(KErrNotReady, QString("Unexpected camera error."), true);
-
-    // Inform that we can continue taking more pictures
-    emit readyForCaptureChanged(true);
 }
 
 /*
@@ -1027,19 +1047,44 @@ QString S60ImageCaptureSession::imageCaptureCodecDescription(const QString &code
 
 QtMultimediaKit::EncodingQuality S60ImageCaptureSession::captureQuality() const
 {
-    if (m_symbianImageQuality <= 1) {
-        return QtMultimediaKit::VeryLowQuality;
-    }
+    switch (m_symbianImageQuality) {
+        case KJpegQualityVeryLow:
+            return QtMultimediaKit::VeryLowQuality;
+        case KJpegQualityLow:
+            return QtMultimediaKit::LowQuality;
+        case KJpegQualityNormal:
+            return QtMultimediaKit::NormalQuality;
+        case KJpegQualityHigh:
+            return QtMultimediaKit::HighQuality;
+        case KJpegQualityVeryHigh:
+            return QtMultimediaKit::VeryHighQuality;
 
-    return static_cast<QtMultimediaKit::EncodingQuality> (m_symbianImageQuality / KSymbianImageQualityCoefficient);
+        default:
+            // Return normal as default
+            return QtMultimediaKit::NormalQuality;
+    }
 }
 
 void S60ImageCaptureSession::setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality)
 {
+    // Use sensible presets
     switch (quality) {
         case QtMultimediaKit::VeryLowQuality:
-            m_symbianImageQuality = 1;
+            m_symbianImageQuality = KJpegQualityVeryLow;
             break;
+        case QtMultimediaKit::LowQuality:
+            m_symbianImageQuality = KJpegQualityLow;
+            break;
+        case QtMultimediaKit::NormalQuality:
+            m_symbianImageQuality = KJpegQualityNormal;
+            break;
+        case QtMultimediaKit::HighQuality:
+            m_symbianImageQuality = KJpegQualityHigh;
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+            m_symbianImageQuality = KJpegQualityVeryHigh;
+            break;
+
         default:
             m_symbianImageQuality = quality * KSymbianImageQualityCoefficient;
             break;
@@ -1116,7 +1161,10 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
             if (optical != opticalZoomFactor()) {
                 if (optical >= m_cameraInfo->iMinZoomFactor && optical <= m_cameraInfo->iMaxZoomFactor) {
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-                    m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
+                    if (m_advancedSettings)
+                        m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
+                    else
+                        setError(KErrNotReady, QString("Zooming failed."));
 #else // No advanced settigns
                     camera->SetZoomFactorL(opticalSymbian); // Using Zoom Value
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
@@ -1130,33 +1178,51 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
             if (digital != digitalZoomFactor()) {
                 if (digital >= 1 && digital <= m_cameraInfo->iMaxDigitalZoomFactor) {
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-                    qreal currentZoomFactor = m_advancedSettings->digitalZoomFactorL();
+                    if (m_advancedSettings) {
+                        qreal currentZoomFactor = m_advancedSettings->digitalZoomFactorL();
 
-                    QList<qreal> smoothZoomSetValues;
-                    QList<qreal> *factors = m_advancedSettings->supportedDigitalZoomFactors();
-                    if (currentZoomFactor < digital) {
+                        QList<qreal> smoothZoomSetValues;
+                        QList<qreal> *factors = m_advancedSettings->supportedDigitalZoomFactors();
+                        if (currentZoomFactor < digital) {
+                            for (int i = 0; i < factors->count(); ++i) {
+                                if (factors->at(i) > currentZoomFactor && factors->at(i) < digital)
+                                    smoothZoomSetValues << factors->at(i);
+                            }
+
+                            for (int i = 0; i < smoothZoomSetValues.count(); i = i + KSmoothZoomStep) {
+                                m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
+                            }
+
+                        } else {
+                            for (int i = 0; i < factors->count(); ++i) {
+                                if (factors->at(i) < currentZoomFactor && factors->at(i) > digital)
+                                    smoothZoomSetValues << factors->at(i);
+                            }
+
+                            for (int i = (smoothZoomSetValues.count() - 1); i >= 0; i = i - KSmoothZoomStep) {
+                                m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
+                            }
+                        }
+
+                        // Set final value - Find closest supported factor
+                        int closestIndex = -1;
+                        int closestDiff = 1000000; // Sensible maximum
                         for (int i = 0; i < factors->count(); ++i) {
-                            if (factors->at(i) > currentZoomFactor && factors->at(i) < digital)
-                                smoothZoomSetValues << factors->at(i);
+                            int diff = abs((factors->at(i)*100) - (digital*100));
+                            if (diff < closestDiff) {
+                                closestDiff = diff;
+                                closestIndex = i;
+                            }
                         }
-
-                        for (int i = 0; i < smoothZoomSetValues.count(); i = i + KSmoothZoomStep) {
-                            m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
-                        }
-
-                    } else {
-                        for (int i = 0; i < factors->count(); ++i) {
-                            if (factors->at(i) < currentZoomFactor && factors->at(i) > digital)
-                                smoothZoomSetValues << factors->at(i);
-                        }
-
-                        for (int i = (smoothZoomSetValues.count() - 1); i >= 0; i = i - KSmoothZoomStep) {
-                            m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
+                        if (closestIndex != -1)
+                            m_advancedSettings->setDigitalZoomFactorL(factors->at(closestIndex)); // Using Zoom Factor
+                        else {
+                            setError(KErrNotSupported, QString("Requested digital zoom factor is not supported."));
+                            return;
                         }
                     }
-
-                    // Set final value
-                    m_advancedSettings->setDigitalZoomFactorL(digital); // Using Zoom Factor
+                    else
+                        setError(KErrNotReady, QString("Zooming failed."));
 #else // No advanced settigns
                     // Define zoom steps
                     int currentZoomFactor = camera->DigitalZoomFactor();

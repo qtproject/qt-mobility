@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in 
-** accordance with the Qt Commercial License Agreement provided with
-** the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -64,13 +64,15 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
 
-    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
+    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 
-    connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
-    connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
-    connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
-    connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    if (m_advancedSettings) {
+        connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
+        connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
+        connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
+        connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    }
 }
 
 S60CameraExposureControl::~S60CameraExposureControl()
@@ -122,7 +124,7 @@ void S60CameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mod
         return;
     }
 
-    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
+    m_session->setError(KErrNotSupported, QString("Requested exposure mode is not supported."));
 }
 
 bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -463,10 +465,10 @@ bool S60CameraExposureControl::setManualAperture(qreal aperture)
                 aperture = maxAperture;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedApertureValues.count(); ++i) {
-                    if((abs(aperture - supportedApertureValues[i])) < smallestDiff) {
-                        smallestDiff = abs(aperture - supportedApertureValues[i]);
+                    if((abs((aperture*100) - (supportedApertureValues[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((aperture*100) - (supportedApertureValues[i]*100));
                         indexOfClosest = i;
                     }
                 }
@@ -523,10 +525,10 @@ bool S60CameraExposureControl::setManualShutterSpeed(qreal seconds)
                 seconds = maxShutterSpeed;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedShutterSpeeds.count(); ++i) {
-                    if((abs(seconds - supportedShutterSpeeds[i])) < smallestDiff) {
-                        smallestDiff = abs(seconds - supportedShutterSpeeds[i]);
+                    if((abs((seconds*100) - (supportedShutterSpeeds[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((seconds*100) - (supportedShutterSpeeds[i]*100));
                         indexOfClosest = i;
                     }
                 }
@@ -583,10 +585,10 @@ bool S60CameraExposureControl::setManualExposureCompensation(qreal ev)
                 ev = maxEV;
             } else { // Find closest
                 int indexOfClosest = 0;
-                qreal smallestDiff = 10000000; // Sensible max diff
+                int smallestDiff = 100000000; // Sensible max diff
                 for(int i = 0; i < supportedEVs.count(); ++i) {
-                    if((abs(ev - supportedEVs[i])) < smallestDiff) {
-                        smallestDiff = abs(ev - supportedEVs[i]);
+                    if((abs((ev*100) - (supportedEVs[i]*100))) < smallestDiff) {
+                        smallestDiff = abs((ev*100) - (supportedEVs[i]*100));
                         indexOfClosest = i;
                     }
                 }

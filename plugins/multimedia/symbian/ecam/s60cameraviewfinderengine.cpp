@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in 
-** accordance with the Qt Commercial License Agreement provided with
-** the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -164,10 +164,23 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
         }
     }
 
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
+
     S60VideoWidgetControl* viewFinderWidgetControl =
             qobject_cast<S60VideoWidgetControl*>(viewfinderOutput);
 
     if (viewFinderWidgetControl) {
+        // Check whether platform supports DirectScreen ViewFinder
+        if (m_cameraEngine) {
+            if (m_cameraEngine->IsDirectViewFinderSupported())
+                m_viewfinderNativeType = EDirectScreenViewFinder;
+            else
+                m_viewfinderNativeType = EBitmapViewFinder;
+        }
+        else
+            return;
+
         QLabel *widget = qobject_cast<QLabel *>(viewFinderWidgetControl->videoWidget());
 
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
@@ -219,6 +232,9 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
             disconnect(this, SIGNAL(viewFinderFrameReady(const QPixmap &)), widget, SLOT(setPixmap(const QPixmap &)));
         }
     }
+
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
 
     S60VideoRendererControl* viewFinderRenderControl =
         qobject_cast<S60VideoRendererControl*>(viewfinderOutput);
@@ -343,6 +359,9 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
     // Start viewfinder
     if (m_vfState == EVFIsConnectedIsStartedIsVisible) {
 
+        if (!m_cameraEngine)
+            return;
+
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
 
             S60VideoWidgetControl* viewFinderWidgetControl =
@@ -446,7 +465,8 @@ void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
             }
         }
 
-        m_cameraEngine->StopViewFinder();
+        if (m_cameraEngine)
+            m_cameraEngine->StopViewFinder();
     }
 
     // Update state
@@ -475,11 +495,15 @@ void S60CameraViewfinderEngine::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
     QPixmap pixmap = QPixmap::fromSymbianCFbsBitmap(&aFrame);
 
     emit viewFinderFrameReady(pixmap);
-    m_cameraEngine->ReleaseViewFinderBuffer();
+    if (m_cameraEngine)
+        m_cameraEngine->ReleaseViewFinderBuffer();
 }
 
 void S60CameraViewfinderEngine::resetViewfinderSize(QSize size)
 {
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
+
     if (m_viewfinderSize == size) {
         return;
     }
@@ -491,25 +515,6 @@ void S60CameraViewfinderEngine::resetViewfinderSize(QSize size)
     }
 
     stopViewfinder(true);
-
-    bool isUiNowLandscape = false;
-    QDesktopWidget* desktopWidget = QApplication::desktop();
-    QRect screenRect = desktopWidget->screenGeometry();
-    if (screenRect.width() > screenRect.height())
-        isUiNowLandscape = true;
-    else
-        isUiNowLandscape = false;
-    // Rotate camera if possible
-    if (isUiNowLandscape != m_uiLandscape) {
-        if (m_cameraEngine->IsCameraReady()) {
-            m_cameraEngine = m_cameraControl->resetCameraOrientation();
-            if (m_cameraEngine == NULL) {
-                m_cameraControl->setError(KErrGeneral, tr("Camera rotation failed."));
-                return;
-            }
-        }
-    }
-    m_uiLandscape = isUiNowLandscape;
 
     startViewfinder(true);
 }
@@ -614,16 +619,24 @@ void S60CameraViewfinderEngine::viewFinderBitmapReady(const QPixmap &pixmap)
             if (!m_viewfinderSurface->present(newFrame)) {
                 // Presenting may fail even if there are no errors (e.g. busy)
                 if (m_viewfinderSurface->error()) {
-                    emit error(QCamera::CameraError, tr("Presenting viewfinder frame failed."));
+                    if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+                        emit error(QCamera::CameraError, tr("Presenting viewfinder frame failed."));
+                        ++m_vfErrorsSignalled;
+                    }
                 }
-
             }
         } else {
-            emit error(QCamera::CameraError, tr("Invalid viewfinder frame was received."));
+            if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+                emit error(QCamera::CameraError, tr("Invalid viewfinder frame was received."));
+                ++m_vfErrorsSignalled;
+            }
         }
 
     } else {
-        emit error(QCamera::CameraError, tr("Failed to convert viewfinder frame to presentable image."));
+        if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+            emit error(QCamera::CameraError, tr("Failed to convert viewfinder frame to presentable image."));
+            ++m_vfErrorsSignalled;
+        }
     }
 }
 

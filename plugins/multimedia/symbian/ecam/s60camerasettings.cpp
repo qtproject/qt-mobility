@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in 
-** accordance with the Qt Commercial License Agreement provided with
-** the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -57,10 +57,10 @@
 
 S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine) :
     QObject(parent),
-#ifndef S60_CAM_AUTOFOCUS_SUPPORT // Post S60 3.1 Platforms
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platforms
     m_advancedSettings(NULL),
     m_imageProcessingSettings(NULL),
-#endif // S60_CAM_AUTOFOCUS_SUPPORT
+#endif // S60_31_PLATFORM
     m_cameraEngine(engine)
 {
 }
@@ -72,7 +72,7 @@ S60CameraSettings::~S60CameraSettings()
         delete m_advancedSettings;
         m_advancedSettings = NULL;
     }
-    
+
     if (m_imageProcessingSettings) {
         delete m_imageProcessingSettings;
         m_imageProcessingSettings = NULL;
@@ -82,7 +82,13 @@ S60CameraSettings::~S60CameraSettings()
     m_supportedDigitalZoomFactors.clear();
 }
 
-S60CameraSettings* S60CameraSettings::NewL(QObject *parent, CCameraEngine *engine)
+/*
+ * This is Symbian NewL kind of consructor, but unlike Symbian version this
+ * constructor will not leave, but instead it will return possible errors in
+ * the error variable. This is to be able to write the class without deriving
+ * it form CBase. Also CleanupStack is cleaned here if the ConstructL leaves.
+ */
+S60CameraSettings* S60CameraSettings::New(int &error, QObject *parent, CCameraEngine *engine)
 {
     S60CameraSettings* self = new S60CameraSettings(parent, engine);
     if (!self) {
@@ -105,26 +111,55 @@ S60CameraSettings* S60CameraSettings::NewL(QObject *parent, CCameraEngine *engin
 
 void S60CameraSettings::ConstructL()
 {
+#ifdef POST_31_PLATFORM
     if (!m_cameraEngine)
         User::Leave(KErrGeneral);
     // From now on it is safe to assume engine exists
 
-#ifdef POST_31_PLATFORM
+    // If no AdvancedSettings is available, there's no benefit of S60CameraSettings
+    // Leave if creation fails
     m_advancedSettings = CCamera::CCameraAdvancedSettings::NewL(*m_cameraEngine->Camera());
-    m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera());
+    CleanupStack::PushL(m_advancedSettings);
 
-    RArray<TInt> digitalZoomFactors;
-    CleanupClosePushL(digitalZoomFactors);
-    TValueInfo info = ENotActive;
-    if (m_advancedSettings)
-        m_advancedSettings->GetDigitalZoomStepsL(digitalZoomFactors, info);
-
-    for (int i = 0; i < digitalZoomFactors.Count(); ++i) {
-        qreal factor = digitalZoomFactors[i];
-        m_supportedDigitalZoomFactors << ((factor / 100.0));
+    // ImageProcessing module may not be supported, don't Leave
+    TRAPD(err, m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera()));
+    if (err == KErrNone && m_imageProcessingSettings) {
+        CleanupStack::PushL(m_imageProcessingSettings);
+    } else {
+        if (err == KErrNotSupported)
+            m_imageProcessingSettings = NULL;
+        else {
+            // Leave with error
+            if (!m_imageProcessingSettings)
+                User::Leave(KErrNoMemory);
+            else
+                User::Leave(err);
+        }
     }
 
-    CleanupStack::PopAndDestroy(); // RArray<TInt> digitalZoomFactors
+    if (m_advancedSettings) {
+        RArray<TInt> digitalZoomFactors;
+        CleanupClosePushL(digitalZoomFactors);
+
+        TValueInfo info = ENotActive;
+        m_advancedSettings->GetDigitalZoomStepsL(digitalZoomFactors, info);
+
+        for (int i = 0; i < digitalZoomFactors.Count(); ++i) {
+            qreal factor = digitalZoomFactors[i];
+            m_supportedDigitalZoomFactors << ((factor / 100.0));
+        }
+
+        CleanupStack::PopAndDestroy(); // RArray<TInt> digitalZoomFactors
+    }
+
+    // Pop objects from CleanupStack
+    if (m_imageProcessingSettings)
+        CleanupStack::Pop(m_imageProcessingSettings);
+    CleanupStack::Pop(m_advancedSettings);
+
+#else // S60 3.1
+    // AdvancedSettings are not suppoted on S60 3.1 (There's no use for S60CameraSettings)
+    User::Leave(KErrNotSupported);
 #endif // POST_31_PLATFORM
 }
 
@@ -206,7 +241,7 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
                     return QCameraFocus::ContinuousFocus;
                 else
                     return QCameraFocus::AutoFocus;
-                
+
             default:
                 return QCameraFocus::AutoFocus;; // Return automatic focusing
         }
@@ -214,14 +249,13 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
     else
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
 #endif // POST_31_PLATFORM
-    
     return QCameraFocus::AutoFocus; // Return automatic focusing
 }
 
 QCameraFocus::FocusModes S60CameraSettings::supportedFocusModes()
 {
     QCameraFocus::FocusModes modes = 0;
-    
+
 #ifdef POST_31_PLATFORM
     TInt supportedModes = 0;
     TInt autoFocusTypes = 0;
@@ -269,8 +303,9 @@ qreal S60CameraSettings::opticalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0)
-        factor = symbianFactor / KSymbianFineResolutionFactor;
+    if (symbianFactor != 0) {
+        factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
+    }
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -309,8 +344,9 @@ qreal S60CameraSettings::digitalZoomFactorL() const
         else
             User::Leave(KErrNotSupported);
 
-    if (symbianFactor != 0)
-        factor = symbianFactor / KSymbianFineResolutionFactor;
+    if (symbianFactor != 0) {
+        factor = symbianFactor; factor /= KSymbianFineResolutionFactor;
+    }
 #endif // POST_31_PLATFORM
 
     return factor;
@@ -372,6 +408,12 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
             else
                 emit error(QCamera::CameraError, QString("Setting aperture value failed."));
             return;
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensation) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested exposure compensation is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting exposure compensation failed."));
+            return;
         } else if (aEvent.iEventType == KUidECamEventCameraSettingOpticalZoom ||
                    aEvent.iEventType == KUidECamEventCameraSettingDigitalZoom) {
             if (aEvent.iErrorCode == KErrNotSupported)
@@ -380,6 +422,15 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
                 emit error(QCamera::CameraError, QString("Setting zoom factor failed."));
                 return;
             }
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() != 0)
+                    emit error(QCamera::NotSupportedFeatureError, QString("Focusing is not supported with this camera."));
+                else
+                    emit error(QCamera::NotSupportedFeatureError, QString("Requested focus mode is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting focus mode failed."));
+            return;
         } else {
             emit error(QCamera::CameraError, QString("Unexpected camera error."));
             return;
@@ -387,34 +438,40 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     }
 
     if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
-        if (m_advancedSettings->ExposureLockOn())
-            emit exposureStatusChanged(QCamera::Locked, QCamera::LockAcquired);
+        if (m_advancedSettings) {
+            if (m_advancedSettings->ExposureLockOn())
+                emit exposureStatusChanged(QCamera::Locked, QCamera::LockAcquired);
+            else
+                emit exposureStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+        }
         else
             emit exposureStatusChanged(QCamera::Unlocked, QCamera::LockLost);
     }
     else if (aEvent.iEventType == KUidECamEventCameraSettingAperture)
         emit apertureChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingApertureRange)
         emit apertureRangeChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRate)
         emit isoSensitivityChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed)
         emit shutterSpeedChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventFlashReady)
         emit flashReady(true);
-        
+
     else if (aEvent.iEventType == KUidECamEventFlashNotReady)
         emit flashReady(false);
-        
+
     else if (aEvent.iEventType.iUid == KUidECamEventCameraSettingsOptimalFocusUidValue) {
         emit focusStatusChanged(QCamera::Locked, QCamera::LockAcquired);
-        
+
     } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode)
         emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
+#else // S60 3.1 Platform
+    Q_UNUSED(aEvent);
 #endif // POST_31_PLATFORM
 }
 
@@ -448,7 +505,7 @@ QCameraExposure::MeteringMode S60CameraSettings::meteringMode()
                 return QCameraExposure::MeteringMatrix;
             case CCamera::CCameraAdvancedSettings::EMeteringModeSpot:
                 return QCameraExposure::MeteringSpot;
-                
+
             default:
                 return QCameraExposure::MeteringAverage;
         }
@@ -491,7 +548,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
 {
 #ifdef POST_31_PLATFORM
     TInt supportedModes = 0;
-    
+
     if (m_advancedSettings) {
         supportedModes = m_advancedSettings->SupportedMeteringModes();
         if (supportedModes == 0)
@@ -513,7 +570,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
                     return true;
                 else
                     return false;
-                
+
             default:
                 return false;
         }
@@ -523,7 +580,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
 #else // S60 3.1
     Q_UNUSED(mode);
 #endif // POST_31_PLATFORM
-    
+
     return false;
 }
 
@@ -544,10 +601,10 @@ QList<int> S60CameraSettings::supportedIsoSensitivities()
 {
     QList<int> isoSentitivities;
 #ifdef POST_31_PLATFORM
-    
+
     if (m_advancedSettings) {
         RArray<TInt> supportedIsoRates;
-        
+
         TRAPD(err, m_advancedSettings->GetSupportedIsoRatesL(supportedIsoRates));
         if (err != KErrNone)
             if (err != KErrNotSupported)
@@ -617,12 +674,12 @@ qreal S60CameraSettings::aperture()
 QList<qreal> S60CameraSettings::supportedApertures()
 {
     QList<qreal> apertures;
-    
+
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         RArray<TInt> supportedApertures;
         TValueInfo info = ENotActive;
-        
+
         TRAPD(err, m_advancedSettings->GetAperturesL(supportedApertures, info));
         if (err != KErrNone)
             if (err != KErrNotSupported)
@@ -700,12 +757,12 @@ TInt S60CameraSettings::shutterSpeed()
 QList<qreal> S60CameraSettings::supportedShutterSpeeds()
 {
     QList<qreal> speeds;
-    
+
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         RArray<TInt> supportedSpeeds;
         TValueInfo info = ENotActive;
-        
+
         TRAPD(err, m_advancedSettings->GetShutterSpeedsL(supportedSpeeds, info));
         if (err != KErrNone)
             if (err != KErrNotSupported)
