@@ -97,7 +97,6 @@
 
     \list
     \o \l{calendardemo}{Calendar Demo}
-    \o \l{qmlorganizer}{QML Organizer}
     \o \l{todo}{ToDo Example}
     \endlist
 
