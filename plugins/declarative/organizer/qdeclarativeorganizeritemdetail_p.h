@@ -79,6 +79,7 @@ public:
         Recurrence,
         Timestamp,
         Type,
+        Tag,
         Customized = 100
     };
 

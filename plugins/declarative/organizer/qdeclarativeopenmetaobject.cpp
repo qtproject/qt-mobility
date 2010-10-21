@@ -118,6 +118,12 @@ public:
     inline QObjectData *data() { return d_ptr.data(); }
 };
 
+/*!
+    \class QDeclarativeOpenMetaObject
+    \internal
+    \brief open meta object for accessing dynamic properties in qml
+*/
+
 void QDeclarativeOpenMetaObject::setMetaObject(const QMetaObject& metaObject)
 {
     d->init(&metaObject);

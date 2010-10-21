@@ -56,7 +56,7 @@ class QDeclarativeOrganizerItemDetail;
 class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged);
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged)
     Q_PROPERTY (QString manager READ manager)
     Q_PROPERTY (uint itemId READ itemId)
     Q_PROPERTY (QString type READ type)
@@ -64,10 +64,20 @@ class QDeclarativeOrganizerItem : public QObject
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY itemChanged)
     Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY itemChanged)
     Q_PROPERTY (bool modified READ modified)
-
+    Q_ENUMS(OrganizerItemType)
     Q_CLASSINFO("DefaultProperty", "details")
 
 public:
+    enum OrganizerItemType {
+        Event = 0,
+        EventOccurrence,
+        Todo,
+        TodoOccurrence,
+        Journal,
+        Note,
+        Customized = 100
+    };
+
     explicit QDeclarativeOrganizerItem(QObject *parent = 0);
     explicit QDeclarativeOrganizerItem(const QOrganizerItem& item, const QMap<QString, QOrganizerItemDetailDefinition>& defs, QObject *parent = 0);
     ~QDeclarativeOrganizerItem();
@@ -87,7 +97,7 @@ public:
     Q_INVOKABLE QVariant detail(const QString& name);
     Q_INVOKABLE QVariant details(const QString& name);
     Q_INVOKABLE void addComment(const QString& comment);
-    Q_INVOKABLE void clearComments();
+    Q_INVOKABLE bool removeDetail(QDeclarativeOrganizerItemDetail* detail);
 
     QString type() const;
     QString displayLabel() const;
@@ -100,6 +110,7 @@ public:
 public slots:
     void save();
     void clearDetails();
+    void clearComments();
 signals:
     void itemChanged();
 private slots:

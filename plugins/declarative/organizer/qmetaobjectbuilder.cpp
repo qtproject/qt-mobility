@@ -53,14 +53,14 @@
 
 QT_BEGIN_NAMESPACE
 
-/*!
+/*
     \class QMetaObjectBuilder
     \internal
     \brief The QMetaObjectBuilder class supports building QMetaObject objects at runtime.
 
 */
 
-/*!
+/*
     \enum QMetaObjectBuilder::AddMember
     This enum defines which members of QMetaObject should be copied by QMetaObjectBuilder::addMetaObject()
 
@@ -279,7 +279,7 @@ public:
     int flags;
 };
 
-/*!
+/*
     Constructs a new QMetaObjectBuilder.
 */
 QMetaObjectBuilder::QMetaObjectBuilder()
@@ -287,7 +287,7 @@ QMetaObjectBuilder::QMetaObjectBuilder()
     d = new QMetaObjectBuilderPrivate();
 }
 
-/*!
+/*
     Constructs a new QMetaObjectBuilder which is a copy of the
     meta object information in \a prototype.  Note: the super class
     contents for \a prototype are not copied, only the immediate
@@ -305,7 +305,7 @@ QMetaObjectBuilder::QMetaObjectBuilder
     addMetaObject(prototype, members);
 }
 
-/*!
+/*
     Destroys this meta object builder.
 */
 QMetaObjectBuilder::~QMetaObjectBuilder()
@@ -313,7 +313,7 @@ QMetaObjectBuilder::~QMetaObjectBuilder()
     delete d;
 }
 
-/*!
+/*
     Returns the name of the class being constructed by this
     meta object builder.  The default value is an empty QByteArray.
 
@@ -324,7 +324,7 @@ QByteArray QMetaObjectBuilder::className() const
     return d->className;
 }
 
-/*!
+/*
     Sets the \a name of the class being constructed by this
     meta object builder.
 
@@ -335,7 +335,7 @@ void QMetaObjectBuilder::setClassName(const QByteArray& name)
     d->className = name;
 }
 
-/*!
+/*
     Returns the superclass meta object of the class being constructed
     by this meta object builder.  The default value is the meta object
     for QObject.
@@ -347,7 +347,7 @@ const QMetaObject *QMetaObjectBuilder::superClass() const
     return d->superClass;
 }
 
-/*!
+/*
     Sets the superclass meta object of the class being constructed
     by this meta object builder to \a meta.  The \a meta parameter
     must not be null.
@@ -360,7 +360,7 @@ void QMetaObjectBuilder::setSuperClass(const QMetaObject *meta)
     d->superClass = meta;
 }
 
-/*!
+/*
     Returns the flags of the class being constructed by this meta object
     builder.
 
@@ -371,7 +371,7 @@ QMetaObjectBuilder::MetaObjectFlags QMetaObjectBuilder::flags() const
     return (QMetaObjectBuilder::MetaObjectFlags)d->flags;
 }
 
-/*!
+/*
     Sets the \a flags of the class being constructed by this meta object
     builder.
 
@@ -382,7 +382,7 @@ void QMetaObjectBuilder::setFlags(MetaObjectFlags flags)
     d->flags = flags;
 }
 
-/*!
+/*
     Returns the number of methods in this class, excluding the number
     of methods in the base class.  These include signals and slots
     as well as normal member functions.
@@ -394,7 +394,7 @@ int QMetaObjectBuilder::methodCount() const
     return d->methods.size();
 }
 
-/*!
+/*
     Returns the number of constructors in this class.
 
     \sa addConstructor(), constructor(), removeConstructor(), indexOfConstructor()
@@ -404,7 +404,7 @@ int QMetaObjectBuilder::constructorCount() const
     return d->constructors.size();
 }
 
-/*!
+/*
     Returns the number of properties in this class, excluding the number
     of properties in the base class.
 
@@ -415,7 +415,7 @@ int QMetaObjectBuilder::propertyCount() const
     return d->properties.size();
 }
 
-/*!
+/*
     Returns the number of enumerators in this class, excluding the
     number of enumerators in the base class.
 
@@ -427,7 +427,7 @@ int QMetaObjectBuilder::enumeratorCount() const
     return d->enumerators.size();
 }
 
-/*!
+/*
     Returns the number of items of class information in this class,
     exclusing the number of items of class information in the base class.
 
@@ -439,7 +439,7 @@ int QMetaObjectBuilder::classInfoCount() const
     return d->classInfoNames.size();
 }
 
-/*!
+/*
     Returns the number of related meta objects that are associated
     with this class.
 
@@ -455,7 +455,7 @@ int QMetaObjectBuilder::relatedMetaObjectCount() const
     return d->relatedMetaObjects.size();
 }
 
-/*!
+/*
     Adds a new public method to this class with the specified \a signature.
     Returns an object that can be used to adjust the other attributes
     of the method.  The \a signature will be normalized before it is
@@ -470,7 +470,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addMethod(const QByteArray& signature)
     return QMetaMethodBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new public method to this class with the specified
     \a signature and \a returnType.  Returns an object that can be
     used to adjust the other attributes of the method.  The \a signature
@@ -489,7 +489,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addMethod
     return QMetaMethodBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new public method to this class that has the same information as
     \a prototype.  This is used to clone the methods of an existing
     QMetaObject.  Returns an object that can be used to adjust the
@@ -519,7 +519,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addMethod(const QMetaMethod& prototype)
     return method;
 }
 
-/*!
+/*
     Adds a new public slot to this class with the specified \a signature.
     Returns an object that can be used to adjust the other attributes
     of the slot.  The \a signature will be normalized before it is
@@ -534,7 +534,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addSlot(const QByteArray& signature)
     return QMetaMethodBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new signal to this class with the specified \a signature.
     Returns an object that can be used to adjust the other attributes
     of the signal.  The \a signature will be normalized before it is
@@ -550,7 +550,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addSignal(const QByteArray& signature)
     return QMetaMethodBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new constructor to this class with the specified \a signature.
     Returns an object that can be used to adjust the other attributes
     of the constructor.  The \a signature will be normalized before it is
@@ -566,7 +566,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addConstructor(const QByteArray& signatur
     return QMetaMethodBuilder(this, -(index + 1));
 }
 
-/*!
+/*
     Adds a new constructor to this class that has the same information as
     \a prototype.  This is used to clone the constructors of an existing
     QMetaObject.  Returns an object that can be used to adjust the
@@ -589,7 +589,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addConstructor(const QMetaMethod& prototy
     return ctor;
 }
 
-/*!
+/*
     Adds a new readable/writable property to this class with the
     specified \a name and \a type.  Returns an object that can be used
     to adjust the other attributes of the property.  The \a type will
@@ -606,7 +606,7 @@ QMetaPropertyBuilder QMetaObjectBuilder::addProperty
     return QMetaPropertyBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new property to this class that has the same information as
     \a prototype.  This is used to clone the properties of an existing
     QMetaObject.  Returns an object that can be used to adjust the
@@ -639,7 +639,7 @@ QMetaPropertyBuilder QMetaObjectBuilder::addProperty(const QMetaProperty& protot
     return property;
 }
 
-/*!
+/*
     Adds a new enumerator to this class with the specified
     \a name.  Returns an object that can be used to adjust
     the other attributes of the enumerator.
@@ -654,7 +654,7 @@ QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QByteArray& name)
     return QMetaEnumBuilder(this, index);
 }
 
-/*!
+/*
     Adds a new enumerator to this class that has the same information as
     \a prototype.  This is used to clone the enumerators of an existing
     QMetaObject.  Returns an object that can be used to adjust the
@@ -673,7 +673,7 @@ QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QMetaEnum& prototype)
     return en;
 }
 
-/*!
+/*
     Adds \a name and \a value as an item of class information to this class.
     Returns the index of the new item of class information.
 
@@ -688,7 +688,7 @@ int QMetaObjectBuilder::addClassInfo(const QByteArray& name, const QByteArray& v
     return index;
 }
 
-/*!
+/*
     Adds \a meta to this class as a related meta object.  Returns
     the index of the new related meta object entry.
 
@@ -711,7 +711,7 @@ int QMetaObjectBuilder::addRelatedMetaObject(const QMetaObject *meta)
     return index;
 }
 
-/*!
+/*
     Adds the contents of \a prototype to this meta object builder.
     This function is useful for cloning the contents of an existing QMetaObject.
 
@@ -809,7 +809,7 @@ void QMetaObjectBuilder::addMetaObject
     }
 }
 
-/*!
+/*
     Returns the method at \a index in this class.
 
     \sa methodCount(), addMethod(), removeMethod(), indexOfMethod()
@@ -822,7 +822,7 @@ QMetaMethodBuilder QMetaObjectBuilder::method(int index) const
         return QMetaMethodBuilder();
 }
 
-/*!
+/*
     Returns the constructor at \a index in this class.
 
     \sa methodCount(), addMethod(), removeMethod(), indexOfConstructor()
@@ -835,7 +835,7 @@ QMetaMethodBuilder QMetaObjectBuilder::constructor(int index) const
         return QMetaMethodBuilder();
 }
 
-/*!
+/*
     Returns the property at \a index in this class.
 
     \sa methodCount(), addMethod(), removeMethod(), indexOfProperty()
@@ -848,7 +848,7 @@ QMetaPropertyBuilder QMetaObjectBuilder::property(int index) const
         return QMetaPropertyBuilder();
 }
 
-/*!
+/*
     Returns the enumerator at \a index in this class.
 
     \sa enumeratorCount(), addEnumerator(), removeEnumerator()
@@ -862,7 +862,7 @@ QMetaEnumBuilder QMetaObjectBuilder::enumerator(int index) const
         return QMetaEnumBuilder();
 }
 
-/*!
+/*
     Returns the related meta object at \a index in this class.
 
     Related meta objects are used when resolving the enumerated type
@@ -884,7 +884,7 @@ const QMetaObject *QMetaObjectBuilder::relatedMetaObject(int index) const
         return 0;
 }
 
-/*!
+/*
     Returns the name of the item of class information at \a index
     in this class.
 
@@ -899,7 +899,7 @@ QByteArray QMetaObjectBuilder::classInfoName(int index) const
         return QByteArray();
 }
 
-/*!
+/*
     Returns the value of the item of class information at \a index
     in this class.
 
@@ -914,7 +914,7 @@ QByteArray QMetaObjectBuilder::classInfoValue(int index) const
         return QByteArray();
 }
 
-/*!
+/*
     Removes the method at \a index from this class.  The indices of
     all following methods will be adjusted downwards by 1.  If the
     method is registered as a notify signal on a property, then the
@@ -937,7 +937,7 @@ void QMetaObjectBuilder::removeMethod(int index)
     }
 }
 
-/*!
+/*
     Removes the constructor at \a index from this class.  The indices of
     all following constructors will be adjusted downwards by 1.
 
@@ -950,7 +950,7 @@ void QMetaObjectBuilder::removeConstructor(int index)
         d->constructors.removeAt(index);
 }
 
-/*!
+/*
     Removes the property at \a index from this class.  The indices of
     all following properties will be adjusted downwards by 1.
 
@@ -962,7 +962,7 @@ void QMetaObjectBuilder::removeProperty(int index)
         d->properties.removeAt(index);
 }
 
-/*!
+/*
     Removes the enumerator at \a index from this class.  The indices of
     all following enumerators will be adjusted downwards by 1.
 
@@ -975,7 +975,7 @@ void QMetaObjectBuilder::removeEnumerator(int index)
         d->enumerators.removeAt(index);
 }
 
-/*!
+/*
     Removes the item of class information at \a index from this class.
     The indices of all following items will be adjusted downwards by 1.
 
@@ -990,7 +990,7 @@ void QMetaObjectBuilder::removeClassInfo(int index)
     }
 }
 
-/*!
+/*
     Removes the related meta object at \a index from this class.
     The indices of all following related meta objects will be adjusted
     downwards by 1.
@@ -1008,7 +1008,7 @@ void QMetaObjectBuilder::removeRelatedMetaObject(int index)
         d->relatedMetaObjects.removeAt(index);
 }
 
-/*!
+/*
     Finds a method with the specified \a signature and returns its index;
     otherwise returns -1.  The \a signature will be normalized by this method.
 
@@ -1024,7 +1024,7 @@ int QMetaObjectBuilder::indexOfMethod(const QByteArray& signature)
     return -1;
 }
 
-/*!
+/*
     Finds a signal with the specified \a signature and returns its index;
     otherwise returns -1.  The \a signature will be normalized by this method.
 
@@ -1041,7 +1041,7 @@ int QMetaObjectBuilder::indexOfSignal(const QByteArray& signature)
     return -1;
 }
 
-/*!
+/*
     Finds a slot with the specified \a signature and returns its index;
     otherwise returns -1.  The \a signature will be normalized by this method.
 
@@ -1058,7 +1058,7 @@ int QMetaObjectBuilder::indexOfSlot(const QByteArray& signature)
     return -1;
 }
 
-/*!
+/*
     Finds a constructor with the specified \a signature and returns its index;
     otherwise returns -1.  The \a signature will be normalized by this method.
 
@@ -1074,7 +1074,7 @@ int QMetaObjectBuilder::indexOfConstructor(const QByteArray& signature)
     return -1;
 }
 
-/*!
+/*
     Finds a property with the specified \a name and returns its index;
     otherwise returns -1.
 
@@ -1089,7 +1089,7 @@ int QMetaObjectBuilder::indexOfProperty(const QByteArray& name)
     return -1;
 }
 
-/*!
+/*
     Finds an enumerator with the specified \a name and returns its index;
     otherwise returns -1.
 
@@ -1104,7 +1104,7 @@ int QMetaObjectBuilder::indexOfEnumerator(const QByteArray& name)
     return -1;
 }
 
-/*!
+/*
     Finds an item of class information with the specified \a name and
     returns its index; otherwise returns -1.
 
@@ -1443,7 +1443,7 @@ static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
     return size;
 }
 
-/*!
+/*
     Converts this meta object builder into a concrete QMetaObject.
     The return value should be deallocated using qFree() once it
     is no longer needed.
@@ -1516,7 +1516,7 @@ void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output,
     output->d.data = reinterpret_cast<const uint *>(buf + dataOffset);
 }
 
-/*!
+/*
     \typedef QMetaObjectBuilder::StaticMetacallFunction
 
     Typedef for static metacall functions.  The three parameters are
@@ -1524,7 +1524,7 @@ void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output,
     array of parameters.
 */
 
-/*!
+/*
     Returns the static metacall function to use to construct objects
     of this class.  The default value is null.
 
@@ -1535,7 +1535,7 @@ QMetaObjectBuilder::StaticMetacallFunction QMetaObjectBuilder::staticMetacallFun
     return d->staticMetacallFunction;
 }
 
-/*!
+/*
     Sets the static metacall function to use to construct objects
     of this class to \a value.  The default value is null.
 
@@ -1549,7 +1549,7 @@ void QMetaObjectBuilder::setStaticMetacallFunction
 
 #ifndef QT_NO_DATASTREAM
 
-/*!
+/*
     Serializes the contents of the meta object builder onto \a stream.
 
     \sa deserialize()
@@ -1644,7 +1644,7 @@ static const QMetaObject *resolveClassName
         return references.value(name, 0);
 }
 
-/*!
+/*
     Deserializes a meta object builder from \a stream into
     this meta object builder.
 
@@ -1820,7 +1820,7 @@ void QMetaObjectBuilder::deserialize
 
 #endif // !QT_NO_DATASTREAM
 
-/*!
+/*
     \class QMetaMethodBuilder
     \internal
     \brief The QMetaMethodBuilder class enables modifications to a method definition on a meta object builder.
@@ -1837,12 +1837,12 @@ QMetaMethodBuilderPrivate *QMetaMethodBuilder::d_func() const
         return 0;
 }
 
-/*!
+/*
     \fn QMetaMethodBuilder::QMetaMethodBuilder()
     \internal
 */
 
-/*!
+/*
     Returns the index of this method within its QMetaObjectBuilder.
 */
 int QMetaMethodBuilder::index() const
@@ -1853,7 +1853,7 @@ int QMetaMethodBuilder::index() const
         return (-_index) - 1;   // Constructor
 }
 
-/*!
+/*
     Returns the type of this method (signal, slot, method, or constructor).
 */
 QMetaMethod::MethodType QMetaMethodBuilder::methodType() const
@@ -1865,7 +1865,7 @@ QMetaMethod::MethodType QMetaMethodBuilder::methodType() const
         return QMetaMethod::Method;
 }
 
-/*!
+/*
     Returns the signature of this method.
 
     \sa parameterNames(), returnType()
@@ -1879,7 +1879,7 @@ QByteArray QMetaMethodBuilder::signature() const
         return QByteArray();
 }
 
-/*!
+/*
     Returns the return type for this method; empty if the method's
     return type is \c{void}.
 
@@ -1894,7 +1894,7 @@ QByteArray QMetaMethodBuilder::returnType() const
         return QByteArray();
 }
 
-/*!
+/*
     Sets the return type for this method to \a value.  If \a value
     is empty, then the method's return type is \c{void}.  The \a value
     will be normalized before it is added to the method.
@@ -1908,7 +1908,7 @@ void QMetaMethodBuilder::setReturnType(const QByteArray& value)
         d->returnType = QMetaObject::normalizedType(value);
 }
 
-/*!
+/*
     Returns the list of parameter names for this method.
 
     \sa setParameterNames()
@@ -1922,7 +1922,7 @@ QList<QByteArray> QMetaMethodBuilder::parameterNames() const
         return QList<QByteArray>();
 }
 
-/*!
+/*
     Sets the list of parameter names for this method to \a value.
 
     \sa parameterNames()
@@ -1934,7 +1934,7 @@ void QMetaMethodBuilder::setParameterNames(const QList<QByteArray>& value)
         d->parameterNames = value;
 }
 
-/*!
+/*
     Returns the tag associated with this method.
 
     \sa setTag()
@@ -1948,7 +1948,7 @@ QByteArray QMetaMethodBuilder::tag() const
         return QByteArray();
 }
 
-/*!
+/*
     Sets the tag associated with this method to \a value.
 
     \sa setTag()
@@ -1960,7 +1960,7 @@ void QMetaMethodBuilder::setTag(const QByteArray& value)
         d->tag = value;
 }
 
-/*!
+/*
     Returns the access specification of this method (private, protected,
     or public).  The default value is QMetaMethod::Public for methods,
     slots, and constructors.  The default value is QMetaMethod::Protected
@@ -1977,7 +1977,7 @@ QMetaMethod::Access QMetaMethodBuilder::access() const
         return QMetaMethod::Public;
 }
 
-/*!
+/*
     Sets the access specification of this method (private, protected,
     or public) to \a value.  If the method is a signal, this function
     will be ignored.
@@ -1991,7 +1991,7 @@ void QMetaMethodBuilder::setAccess(QMetaMethod::Access value)
         d->setAccess(value);
 }
 
-/*!
+/*
     Returns the additional attributes for this method.
 
     \sa setAttributes()
@@ -2005,7 +2005,7 @@ int QMetaMethodBuilder::attributes() const
         return 0;
 }
 
-/*!
+/*
     Sets the additional attributes for this method to \a value.
 
     \sa attributes()
@@ -2017,7 +2017,7 @@ void QMetaMethodBuilder::setAttributes(int value)
         d->attributes = ((d->attributes & 0x0f) | (value << 4));
 }
 
-/*!
+/*
     \class QMetaPropertyBuilder
     \internal
     \brief The QMetaPropertyBuilder class enables modifications to a property definition on a meta object builder.
@@ -2031,18 +2031,18 @@ QMetaPropertyBuilderPrivate *QMetaPropertyBuilder::d_func() const
         return 0;
 }
 
-/*!
+/*
     \fn QMetaPropertyBuilder::QMetaPropertyBuilder()
     \internal
 */
 
-/*!
+/*
     \fn int QMetaPropertyBuilder::index() const
 
     Returns the index of this property within its QMetaObjectBuilder.
 */
 
-/*!
+/*
     Returns the name associated with this property.
 
     \sa type()
@@ -2056,7 +2056,7 @@ QByteArray QMetaPropertyBuilder::name() const
         return QByteArray();
 }
 
-/*!
+/*
     Returns the type associated with this property.
 
     \sa name()
@@ -2070,7 +2070,7 @@ QByteArray QMetaPropertyBuilder::type() const
         return QByteArray();
 }
 
-/*!
+/*
     Returns true if this property has a notify signal; false otherwise.
 
     \sa notifySignal(), setNotifySignal(), removeNotifySignal()
@@ -2084,7 +2084,7 @@ bool QMetaPropertyBuilder::hasNotifySignal() const
         return false;
 }
 
-/*!
+/*
     Returns the notify signal associated with this property.
 
     \sa hasNotifySignal(), setNotifySignal(), removeNotifySignal()
@@ -2098,7 +2098,7 @@ QMetaMethodBuilder QMetaPropertyBuilder::notifySignal() const
         return QMetaMethodBuilder();
 }
 
-/*!
+/*
     Sets the notify signal associated with this property to \a value.
 
     \sa hasNotifySignal(), notifySignal(), removeNotifySignal()
@@ -2117,7 +2117,7 @@ void QMetaPropertyBuilder::setNotifySignal(const QMetaMethodBuilder& value)
     }
 }
 
-/*!
+/*
     Removes the notify signal from this property.
 
     \sa hasNotifySignal(), notifySignal(), setNotifySignal()
@@ -2131,7 +2131,7 @@ void QMetaPropertyBuilder::removeNotifySignal()
     }
 }
 
-/*!
+/*
     Returns true if this property is readable; otherwise returns false.
     The default value is true.
 
@@ -2146,7 +2146,7 @@ bool QMetaPropertyBuilder::isReadable() const
         return false;
 }
 
-/*!
+/*
     Returns true if this property is writable; otherwise returns false.
     The default value is true.
 
@@ -2161,7 +2161,7 @@ bool QMetaPropertyBuilder::isWritable() const
         return false;
 }
 
-/*!
+/*
     Returns true if this property can be reset to a default value; otherwise
     returns false.  The default value is false.
 
@@ -2176,7 +2176,7 @@ bool QMetaPropertyBuilder::isResettable() const
         return false;
 }
 
-/*!
+/*
     Returns true if this property is designable; otherwise returns false.
     This default value is false.
 
@@ -2191,7 +2191,7 @@ bool QMetaPropertyBuilder::isDesignable() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property is scriptable; otherwise returns false.
     This default value is true.
 
@@ -2206,7 +2206,7 @@ bool QMetaPropertyBuilder::isScriptable() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property is stored; otherwise returns false.
     This default value is false.
 
@@ -2221,7 +2221,7 @@ bool QMetaPropertyBuilder::isStored() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property is editable; otherwise returns false.
     This default value is false.
 
@@ -2236,7 +2236,7 @@ bool QMetaPropertyBuilder::isEditable() const
         return false;
 }
 
-/*!
+/*
     Returns true if this property is designated as the \c USER
     property, i.e., the one that the user can edit or that is
     significant in some other way.  Otherwise it returns
@@ -2253,7 +2253,7 @@ bool QMetaPropertyBuilder::isUser() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property has a C++ setter function that
     follows Qt's standard "name" / "setName" pattern. Designer and uic
     query hasStdCppSet() in order to avoid expensive
@@ -2271,7 +2271,7 @@ bool QMetaPropertyBuilder::hasStdCppSet() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property is an enumerator or flag type;
     otherwise returns false.  This default value is false.
 
@@ -2286,7 +2286,7 @@ bool QMetaPropertyBuilder::isEnumOrFlag() const
         return false;
 }
 
-/*!
+/*
     Returns true if the property has the dynamic flag set;
     otherwise returns false.  The default value is false.
 
@@ -2301,7 +2301,7 @@ bool QMetaPropertyBuilder::isDynamic() const
         return false;
 }
 
-/*!
+/*
     Sets this property to readable if \a value is true.
 
     \sa isReadable(), setWritable()
@@ -2313,7 +2313,7 @@ void QMetaPropertyBuilder::setReadable(bool value)
         d->setFlag(Readable, value);
 }
 
-/*!
+/*
     Sets this property to writable if \a value is true.
 
     \sa isWritable(), setReadable()
@@ -2325,7 +2325,7 @@ void QMetaPropertyBuilder::setWritable(bool value)
         d->setFlag(Writable, value);
 }
 
-/*!
+/*
     Sets this property to resettable if \a value is true.
 
     \sa isResettable()
@@ -2337,7 +2337,7 @@ void QMetaPropertyBuilder::setResettable(bool value)
         d->setFlag(Resettable, value);
 }
 
-/*!
+/*
     Sets this property to designable if \a value is true.
 
     \sa isDesignable(), setScriptable(), setStored()
@@ -2349,7 +2349,7 @@ void QMetaPropertyBuilder::setDesignable(bool value)
         d->setFlag(Designable, value);
 }
 
-/*!
+/*
     Sets this property to scriptable if \a value is true.
 
     \sa isScriptable(), setDesignable(), setStored()
@@ -2361,7 +2361,7 @@ void QMetaPropertyBuilder::setScriptable(bool value)
         d->setFlag(Scriptable, value);
 }
 
-/*!
+/*
     Sets this property to storable if \a value is true.
 
     \sa isStored(), setDesignable(), setScriptable()
@@ -2373,7 +2373,7 @@ void QMetaPropertyBuilder::setStored(bool value)
         d->setFlag(Stored, value);
 }
 
-/*!
+/*
     Sets this property to editable if \a value is true.
 
     \sa isEditable(), setDesignable(), setScriptable(), setStored()
@@ -2385,7 +2385,7 @@ void QMetaPropertyBuilder::setEditable(bool value)
         d->setFlag(Editable, value);
 }
 
-/*!
+/*
     Sets the \c USER flag on this property to \a value.
 
     \sa isUser(), setDesignable(), setScriptable()
@@ -2397,7 +2397,7 @@ void QMetaPropertyBuilder::setUser(bool value)
         d->setFlag(User, value);
 }
 
-/*!
+/*
     Sets the C++ setter flag on this property to \a value, which is
     true if the property has a C++ setter function that follows Qt's
     standard "name" / "setName" pattern.
@@ -2411,7 +2411,7 @@ void QMetaPropertyBuilder::setStdCppSet(bool value)
         d->setFlag(StdCppSet, value);
 }
 
-/*!
+/*
     Sets this property to be of an enumerator or flag type if
     \a value is true.
 
@@ -2424,7 +2424,7 @@ void QMetaPropertyBuilder::setEnumOrFlag(bool value)
         d->setFlag(EnumOrFlag, value);
 }
 
-/*!
+/*
     Sets this property to have the dynamic flag if \a value is
     true.
 
@@ -2437,7 +2437,7 @@ void QMetaPropertyBuilder::setDynamic(bool value)
         d->setFlag(Dynamic, value);
 }
 
-/*!
+/*
     \class QMetaEnumBuilder
     \internal
     \brief The QMetaEnumBuilder class enables modifications to an enumerator definition on a meta object builder.
@@ -2451,18 +2451,18 @@ QMetaEnumBuilderPrivate *QMetaEnumBuilder::d_func() const
         return 0;
 }
 
-/*!
+/*
     \fn QMetaEnumBuilder::QMetaEnumBuilder()
     \internal
 */
 
-/*!
+/*
     \fn int QMetaEnumBuilder::index() const
 
     Returns the index of this enumerator within its QMetaObjectBuilder.
 */
 
-/*!
+/*
     Returns the name of the enumerator (without the scope).
 */
 QByteArray QMetaEnumBuilder::name() const
@@ -2474,7 +2474,7 @@ QByteArray QMetaEnumBuilder::name() const
         return QByteArray();
 }
 
-/*!
+/*
     Returns true if this enumerator is used as a flag; otherwise returns
     false.
 
@@ -2489,7 +2489,7 @@ bool QMetaEnumBuilder::isFlag() const
         return false;
 }
 
-/*!
+/*
     Sets this enumerator to be used as a flag if \a value is true.
 
     \sa isFlag()
@@ -2501,7 +2501,7 @@ void QMetaEnumBuilder::setIsFlag(bool value)
         d->isFlag = value;
 }
 
-/*!
+/*
     Returns the number of keys.
 
     \sa key(), addKey()
@@ -2515,7 +2515,7 @@ int QMetaEnumBuilder::keyCount() const
         return 0;
 }
 
-/*!
+/*
     Returns the key with the given \a index, or an empty QByteArray
     if no such key exists.
 
@@ -2530,7 +2530,7 @@ QByteArray QMetaEnumBuilder::key(int index) const
         return QByteArray();
 }
 
-/*!
+/*
     Returns the value with the given \a index; or returns -1 if there
     is no such value.
 
@@ -2545,7 +2545,7 @@ int QMetaEnumBuilder::value(int index) const
         return -1;
 }
 
-/*!
+/*
     Adds a new key called \a name to this enumerator, associated
     with \a value.  Returns the index of the new key.
 
@@ -2564,7 +2564,7 @@ int QMetaEnumBuilder::addKey(const QByteArray& name, int value)
     }
 }
 
-/*!
+/*
     Removes the key at \a index from this enumerator.
 
     \sa addKey()
