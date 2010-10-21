@@ -206,6 +206,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerEventTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the event to \a isAllDay.
+    If the event is an all-day event, no time is considered to be
+    specified for the event, even if a start or end date time set
+    for the event has a time component.
+ */
+
+/*!
+    \fn QOrganizerEventTime::isAllDay() const
+    Returns true if a specific time was specified for the event.
+    Returns false if the event is an all-day event.
+ */
+
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
@@ -553,6 +567,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
+/*!
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+
+  Since the data types stored in this detail are custom data types, the base class
+  operator==() doesn't know how to perform the comparison without calling this function.
+  However, it means that if (in the future) a backend were to extend the detail with
+  more fields, this operator== would no longer work; it'd have to be updated to compare
+  the other fields also.
+ */
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
     return accessConstraints() == other.accessConstraints()
@@ -561,6 +585,13 @@ bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other)
         && recurrenceDates() == other.recurrenceDates()
         && exceptionDates() == other.exceptionDates();
 }
+
+/*!
+  \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
+  \internal
+  Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
+  Implemented in terms of operator==() for QOrganizerItemRecurrence detail.
+ */
 
 /*!
    \variable QOrganizerItemRecurrence::FieldRecurrenceRules
@@ -610,7 +641,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 /*!
-   Returns a list of recurrence dates.
+   Returns the set of recurrence dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 {
@@ -618,7 +649,7 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 }
 
 /*!
-   Sets a list of recurrence dates to \a rdates.
+   Sets the set of recurrence dates to \a rdates.
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 {
@@ -626,21 +657,21 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*!
-   Returns a list of exception rules.
+   Returns the set of exception rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
     return variantValue(FieldExceptionRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 /*!
-   Sets a list of exception rules to \a xrules.
+   Sets the set of exception rules to \a xrules.
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
 /*!
-   Returns a list of recurrence rules.
+   Returns the set of recurrence rules.
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
@@ -649,14 +680,14 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 
 
 /*!
-   Sets a list of recurrence rules to \a rrules.
+   Sets the set of recurrence rules to \a rrules.
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
 /*!
-   Returns a list of exception dates.
+   Returns the set of exception dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 {
@@ -664,7 +695,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   Sets a list of exception dates to \a exdates.
+   Sets the set of exception dates to \a xdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -699,14 +730,6 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
 
 /*!
-   \variable QOrganizerItemReminder::FieldReminderType
-
-   The constant key for which the reminder type value is stored in details of
-   the QOrganizerItemReminder type (and its subclasses).
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
-
-/*!
    \variable QOrganizerItemReminder::FieldSecondsBeforeStart
 
    The constant key for which time delta (in seconds prior to the item activation time)
@@ -731,10 +754,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
 
 /*!
-   \fn ReminderTypes QOrganizerItemReminder::reminderType() const
-
    Returns the reminder type of this reminder for an organizer item.
  */
+QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() const
+{
+    if (definitionName() == QOrganizerItemAudibleReminder::DefinitionName) {
+        return QOrganizerItemReminder::AudibleReminder;
+    } else if (definitionName() == QOrganizerItemEmailReminder::DefinitionName) {
+        return QOrganizerItemReminder::EmailReminder;
+    } else if (definitionName() == QOrganizerItemVisualReminder::DefinitionName) {
+        return QOrganizerItemReminder::VisualReminder;
+    }
+
+    return QOrganizerItemReminder::NoReminder;
+}
 
 /*!
    \fn QOrganizerItemReminder::setSecondsBeforeStart(int seconds)
@@ -1229,7 +1262,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isAllDay() const
+    \fn QOrganizerTodoTime::setAllDay(bool isAllDay)
+    Sets the all-day status of the todo to \a isAllDay.
+    If the event is an all-day todo, no time is considered to be
+    specified for the todo, even if the start date time set
+    for the todo has a time component.
+ */
+
+/*!
+    \fn QOrganizerTodoTime::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

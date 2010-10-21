@@ -43,13 +43,6 @@
 #include "qorganizeritemdetail_p.h"
 #include "qorganizermanager.h"
 #include "qorganizeritemrecurrence.h" //customized operator==() for recurrence detail
-
-// reminders need to be included for isEmpty() check.
-#include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
-
 #include <QDebug>
 #include <QDataStream>
 
@@ -85,13 +78,14 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 
   All of the information for an organizer item is stored in one or more QOrganizerItemDetail objects.
 
-  A detail is a group of logically related bits of data - for example, a street address is a single
-  detail that has multiple fields (number, region, country etc).  Every QOrganizerItemDetail has the name of an
-  associated QOrganizerItemDetailDefinition that describes the fields, their data type, and any
-  restrictions on their values.  Different organizer item managers might have different detail definitions
-  for the same name, depending on their capabilities.  For example, for the QOrganizerItemGeoLocation definition name,
-  one manager might not support the altitude field, while a different manager may add an extra field for
-  specific extra information not present in the default schema.
+  A detail is a group of logically related bits of data - for example, a QOrganizerItemTimestamp is a single
+  detail that has multiple fields (timestamp of creation, timestamp of last update, etc).
+  Every QOrganizerItemDetail has the name of an associated QOrganizerItemDetailDefinition that describes the
+  fields, their data type, and any restrictions on their values.  Different organizer item managers might have
+  different detail definitions for the same name, depending on their capabilities.
+  For example, some managers might not support the last update timestamp field of the QOrganizerTimestamp detail,
+  while a different manager may add an extra field for storing specific extra information not present in the
+  default schema (e.g., a last accessed timestamp).
 
   Both the names of all the fields, and the name of the associated QOrganizerItemDetailDefinition are stored
   as 8-bit strings encoded in Latin 1 for memory conservation.  Note, however, that the values stored
@@ -431,17 +425,6 @@ bool QOrganizerItemDetail::isEmpty() const
 {
     if (d.constData()->m_values.isEmpty())
         return true;
-
-    // reminders always have a single field value (the type)
-    if (d.constData()->m_definitionName == QOrganizerItemReminder::DefinitionName
-            || d.constData()->m_definitionName == QOrganizerItemAudibleReminder::DefinitionName
-            || d.constData()->m_definitionName == QOrganizerItemEmailReminder::DefinitionName
-            || d.constData()->m_definitionName == QOrganizerItemVisualReminder::DefinitionName) {
-        if (d.constData()->m_values.count() == 1) {
-            return true;
-        }
-    }
-
     return false;
 }
 

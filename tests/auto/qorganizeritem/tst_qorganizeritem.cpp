@@ -63,6 +63,7 @@ private slots:
     void details();
     void displayLabel();
     void description();
+    void comments();
     void type();
     void emptiness();
     void idLessThan();
@@ -412,6 +413,11 @@ void tst_QOrganizerItem::displayLabel()
     QVERIFY(oi.isEmpty() == false);
     QVERIFY(oi.details().count() == 2); // it should not be removed!
 
+    QOrganizerItemDisplayLabel displayLabel;
+    displayLabel.setLabel("test label");
+    oi.setDisplayLabel(displayLabel);
+    QVERIFY(oi.displayLabel() == displayLabel.label());
+
     /* Test self assign */
     oi.operator =(oi);
     QVERIFY(oi.details().count() == 2);
@@ -434,6 +440,50 @@ void tst_QOrganizerItem::description()
     QVERIFY(!oi.removeDetail(&old)); // should fail.
     QVERIFY(oi.isEmpty() == false);
     QVERIFY(oi.details().count() == 2); // it should not be removed!
+
+    QOrganizerItemDescription descr;
+    descr.setDescription("test description");
+    oi.setDescription(descr);
+    QVERIFY(oi.description() == descr.description());
+
+    /* Test self assign */
+    oi.operator =(oi);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.isEmpty() == false);
+}
+
+void tst_QOrganizerItem::comments()
+{
+    QOrganizerItem oi;
+
+    QStringList comments = oi.comments();
+    QVERIFY(comments.isEmpty());
+    oi.addComment("test comment");
+    QCOMPARE(oi.comments().size(), 1);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.comments().at(0) == QString("test comment"));
+    oi.addComment("another test comment");
+    QCOMPARE(oi.comments().size(), 2);
+    QVERIFY(oi.details().count() == 3);
+    QVERIFY(oi.comments().contains(QString("test comment")));
+    QVERIFY(oi.comments().contains(QString("another test comment")));
+
+    oi.clearComments();
+    QVERIFY(oi.comments().size() == 0);
+    QVERIFY(oi.details().count() == 1); // should have a type detail left.
+
+    QOrganizerItemComment comment;
+    comment.setComment("yet another test comment");
+    oi.saveDetail(&comment);
+    QCOMPARE(oi.comments().size(), 1);
+    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.comments().at(0) == QString("yet another test comment"));
+
+    oi.removeDetail(&comment);
+    QVERIFY(oi.comments().size() == 0);
+    QVERIFY(oi.details().count() == 1); // should have a type detail left.
+
+    oi.addComment("and yet another test comment");
 
     /* Test self assign */
     oi.operator =(oi);
@@ -861,11 +911,15 @@ void tst_QOrganizerItem::event()
 
 
     QSet<QDate> rdates;
+    testEvent.setRecurrenceDate(QDate::currentDate());
+    QCOMPARE(testEvent.recurrenceDates(), QSet<QDate>() << QDate::currentDate());
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testEvent.setRecurrenceDates(rdates);
     QCOMPARE(testEvent.recurrenceDates(), rdates);
 
     QSet<QDate> exdates;
+    testEvent.setExceptionDate(QDate::currentDate());
+    QCOMPARE(testEvent.exceptionDates(), QSet<QDate>() << QDate::currentDate());
     exdates << QDate::currentDate().addDays(3);
     testEvent.setExceptionDates(exdates);
     QCOMPARE(testEvent.exceptionDates(), exdates);
@@ -918,13 +972,22 @@ void tst_QOrganizerItem::event()
     rrules << rrule;
     testEvent.setRecurrenceRule(rrule);
     QVERIFY(testEvent.recurrenceRules() == rrules);
+    QVERIFY(testEvent.recurrenceRule() == rrule);
+    testEvent.setRecurrenceRule(rrule);
+    QVERIFY(testEvent.recurrenceRules() == rrules);
+    QVERIFY(testEvent.recurrenceRule() == rrule);
 
     QSet<QOrganizerRecurrenceRule> exrules;
     QOrganizerRecurrenceRule exrule;
     exrule.setLimit(1);
-    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    exrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    exrules << exrule;
     testEvent.setExceptionRules(exrules);
     QVERIFY(testEvent.exceptionRules() == exrules);
+    QVERIFY(testEvent.exceptionRule() == exrule);
+    testEvent.setExceptionRule(exrule);
+    QVERIFY(testEvent.exceptionRules() == exrules);
+    QVERIFY(testEvent.exceptionRule() == exrule);
 }
 
 void tst_QOrganizerItem::todo()
@@ -942,10 +1005,19 @@ void tst_QOrganizerItem::todo()
     testTodo.setStatus(QOrganizerTodoProgress::StatusComplete);
     QCOMPARE(testTodo.progressPercentage(), 50); // XXX TODO: should this update automatically?
 
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    testTodo.setStartDateTime(currentDateTime);
+    QCOMPARE(testTodo.startDateTime(), currentDateTime);
     testTodo.setDueDateTime(QDateTime(QDate::currentDate()));
     QCOMPARE(testTodo.dueDateTime(), QDateTime(QDate::currentDate()));
     testTodo.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
     QCOMPARE(testTodo.finishedDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    QVERIFY(testTodo.isAllDay() == false); // default should not be all day event.
+    testTodo.setAllDay(true);
+    QVERIFY(testTodo.isAllDay() == true);
+    testTodo.setAllDay(false);
+    QVERIFY(testTodo.isAllDay() == false);
 
     testTodo.setPriority(QOrganizerItemPriority::VeryHighPriority);
     QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryHighPriority);
@@ -969,13 +1041,22 @@ void tst_QOrganizerItem::todo()
     rrules << rrule;
     testTodo.setRecurrenceRules(rrules);
     QVERIFY(testTodo.recurrenceRules() == rrules);
+    QVERIFY(testTodo.recurrenceRule() == rrule);
+    testTodo.setRecurrenceRule(rrule);
+    QVERIFY(testTodo.recurrenceRules() == rrules);
+    QVERIFY(testTodo.recurrenceRule() == rrule);
 
     QSet<QOrganizerRecurrenceRule> exrules;
     QOrganizerRecurrenceRule exrule;
     exrule.setLimit(1);
-    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    exrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    exrules << exrule;
     testTodo.setExceptionRules(exrules);
     QVERIFY(testTodo.exceptionRules() == exrules);
+    QVERIFY(testTodo.exceptionRule() == exrule);
+    testTodo.setExceptionRule(exrule);
+    QVERIFY(testTodo.exceptionRules() == exrules);
+    QVERIFY(testTodo.exceptionRule() == exrule);
 }
 
 void tst_QOrganizerItem::journal()
@@ -1012,7 +1093,14 @@ void tst_QOrganizerItem::eventOccurrence()
     testEventOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testEventOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    // the parent id and original date time must be tested in the manager unit test
+    // the parent id and original date time must be tested properly in the manager unit test
+    // but we will test the API mutator/accessor functions here.
+    QOrganizerItemId id;
+    testEventOccurrence.setParentId(id);
+    QCOMPARE(testEventOccurrence.parentId(), id);
+    QDateTime originalDateTime = QDateTime::currentDateTime();
+    testEventOccurrence.setOriginalDate(originalDateTime.date());
+    QCOMPARE(testEventOccurrence.originalDate(), originalDateTime.date());
 }
 
 void tst_QOrganizerItem::todoOccurrence()
@@ -1030,6 +1118,8 @@ void tst_QOrganizerItem::todoOccurrence()
     testTodoOccurrence.setStatus(QOrganizerTodoProgress::StatusComplete);
     QCOMPARE(testTodoOccurrence.progressPercentage(), 50); // XXX TODO: should this update automatically?
 
+    testTodoOccurrence.setStartDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testTodoOccurrence.startDateTime(), QDateTime(QDate::currentDate()));
     testTodoOccurrence.setDueDateTime(QDateTime(QDate::currentDate()));
     QCOMPARE(testTodoOccurrence.dueDateTime(), QDateTime(QDate::currentDate()));
     testTodoOccurrence.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
@@ -1040,7 +1130,14 @@ void tst_QOrganizerItem::todoOccurrence()
     testTodoOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testTodoOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    // the parent id and original date time must be tested in the manager unit test
+    // the parent id and original date time must be tested properly in the manager unit test
+    // but we will test the API mutator/accessor functions here.
+    QOrganizerItemId id;
+    testTodoOccurrence.setParentId(id);
+    QCOMPARE(testTodoOccurrence.parentId(), id);
+    QDateTime originalDateTime = QDateTime::currentDateTime();
+    testTodoOccurrence.setOriginalDate(originalDateTime.date());
+    QCOMPARE(testTodoOccurrence.originalDate(), originalDateTime.date());
 }
 
 QTEST_MAIN(tst_QOrganizerItem)

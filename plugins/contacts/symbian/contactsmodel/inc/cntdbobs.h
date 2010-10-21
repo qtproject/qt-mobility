@@ -109,12 +109,14 @@ enum TContactDbObserverEventTypeV2
     {
     /** Null event type. */
     EContactDbObserverEventV2Null,
-    /** Group has been updated, some contact was added to a group. */
-    EContactDbObserverEventV2ContactAddedToGroup,
-    /** Group has been updated, some contact was removed from a group. */
-    EContactDbObserverEventV2ContactRemovedFromGroup,
+    /** Group has been updated, contacts were added to a group. */
+    EContactDbObserverEventV2ContactsAddedToGroup,
+    /** Group has been updated, contacts were removed from a group. */
+    EContactDbObserverEventV2ContactsRemovedFromGroup,
     /** Group has been updated (other change than added or removed contacts). */
-    EContactDbObserverEventV2GroupChanged
+    EContactDbObserverEventV2GroupChanged,
+    /** Contact items or groups were deleted. */
+    EContactDbObserverEventV2ContactsOrGroupsDeleted
     };
 
 struct TContactDbObserverEvent
@@ -152,8 +154,8 @@ see MContactDbObserverV2::HandleDatabaseEventV2L().
     /** The change event type. */
     TContactDbObserverEventTypeV2 iTypeV2;
     
-    /** The ID of the affected contact. */
-    TContactItemId iAdditionalContactId;
+    /** The IDs of the affected contacts. */
+    const CContactIdArray* iAdditionalContactIds; 
     };
 
 class MContactDbObserver

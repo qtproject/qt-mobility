@@ -48,7 +48,8 @@
 
 #define KDefaultCameraDevice            0
 #define KECamCameraPriority             0
-#define KSymbianFineResolutionFactor    100
+#define KInactivityTimerTimeout         20000   // msec
+#define KSymbianFineResolutionFactor    100.0
 #define KDefaultOpticalZoom             1.0
 #define KDefaultDigitalZoom             1.0
 #define KSmoothZoomStep                 1
@@ -56,6 +57,7 @@
 
 #define KDefaultViewfinderSize          QSize(320,240)
 #define KViewfinderFrameRate            30
+#define KMaxVFErrorsSignalled           3
 
 //=============================================================================
 
@@ -67,6 +69,16 @@
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatFbsBitmapColor64K
 #define KSymbianImageQualityCoefficient 25
+// This must be divisible by 4 and creater or equal to 8
+#define KSnapshotDownScaleFactor        8
+#define KSnapshotMinWidth               640
+#define KSnapshotMinHeight              360
+#define KJpegQualityVeryLow             40
+#define KJpegQualityLow                 50
+#define KJpegQualityNormal              75
+#define KJpegQualityHigh                85
+#define KJpegQualityVeryHigh            95
+#define KDefaultImageQuality            KJpegQualityHigh
 
 //=============================================================================
 

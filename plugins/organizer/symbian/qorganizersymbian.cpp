@@ -126,7 +126,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianEngineId::clone() const
 
 QString QOrganizerItemSymbianEngineId::toString() const
 {
-    return QString::fromAscii("%1:%2").arg(m_localItemId).arg(m_localCollectionId);
+    return QString::fromAscii("%1:%2").arg(m_localCollectionId).arg(m_localItemId);
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -257,7 +257,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const Q
     quint64 collectionid = parts[0].toULongLong(&ok);
     if (!ok)
         return NULL;
-    quint64 itemId = parts[1].toULongLong(&ok);
+    quint32 itemId = parts[1].toUInt(&ok);
     if (!ok)
         return NULL;
     return new QOrganizerItemSymbianEngineId(collectionid, itemId);
@@ -681,6 +681,9 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
     const QOrganizerItemFetchHint& fetchHint) const
 {
 	Q_UNUSED(fetchHint)
+
+    if (itemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     // Check collection id
     QOrganizerCollectionId collectionLocalId = getCollectionId(itemId);
@@ -1125,6 +1128,9 @@ void QOrganizerItemSymbianEngine::removeItemL(
 {
     // TODO: How to remove item instances?
 
+    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
+
     QOrganizerCollectionId collectionId = getCollectionId(organizeritemId);
     if (!m_collections.contains(collectionId))
         User::Leave(KErrNotFound);
@@ -1246,11 +1252,13 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         else
             User::Leave(KErrArgument); // collection id was defined but was not found 
     }
-    
-    // Name key is the only mandatory metadata parameter
-    if (collection->metaData(QOrganizerCollection::KeyName).toString().isEmpty())
-        User::Leave(KErrArgument);
-    
+
+    // Convert into a compatible collection
+    QOrganizerManager::Error error(QOrganizerManager::NoError);
+    *collection = compatibleCollection(*collection, &error);
+    if (error != QOrganizerManager::NoError)
+        User::Leave(KErrArgument); // Could not convert -> collection not valid
+
     // Convert metadata to cal info
     CCalCalendarInfo *calInfo = toCalInfoLC(collection->metaData());
     
@@ -1371,6 +1379,66 @@ void QOrganizerItemSymbianEngine::removeCollectionL(
 #endif // SYMBIAN_CALENDAR_V2
 }
 
+QOrganizerItem QOrganizerItemSymbianEngine::compatibleItem(
+    const QOrganizerItem& original,
+    QOrganizerManager::Error* error) const
+{
+    *error = QOrganizerManager::NoError;
+
+    if (original.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent event = original;
+        if (!event.startDateTime().isValid()) {
+            // Event type requires start time in symbian calendar API
+            event.setStartDateTime(QDateTime::currentDateTime());
+        }
+        return event;
+    }
+
+    return original;
+}
+
+QOrganizerCollection QOrganizerItemSymbianEngine::compatibleCollection(
+    const QOrganizerCollection& original, QOrganizerManager::Error* error) const
+{
+    *error = QOrganizerManager::NoError;
+
+    QOrganizerCollection compatibleCollection = original;
+
+    // Check that the collection has either name or file name. Note: If the
+    // file name is missing but name is available, file name will be generated
+    // from name.
+    if (!original.metaData().contains(OrganizerSymbianCollection::KeyFileName)) {
+        if (original.metaData().contains(QOrganizerCollection::KeyName)) {
+            // Use collection name as file name
+            compatibleCollection.setMetaData(
+                OrganizerSymbianCollection::KeyFileName,
+                original.metaData(QOrganizerCollection::KeyName));
+        } else {
+            // Neither file name nor name available -> synthesize a file name
+            QString unnamed("Unnamed");
+            const int KMaxSynthesizedCount(99);
+            for (int i(0); i < KMaxSynthesizedCount; i++) {
+                QString synthesizedName = unnamed + QString::number(i);
+                if (isCollectionNameAvailable(synthesizedName)) {
+                    compatibleCollection.setMetaData(OrganizerSymbianCollection::KeyFileName, synthesizedName);
+                    break;
+                }
+            }
+        }
+    }
+
+    return compatibleCollection;
+}
+
+bool QOrganizerItemSymbianEngine::isCollectionNameAvailable(QString name) const
+{
+    foreach (OrganizerSymbianCollection collection, m_collections.values()) {
+        if (collection.fileName() == name) {
+            return false;
+        }
+    }
+    return true;
+}
 
 QMap<QString, QOrganizerItemDetailDefinition> 
 QOrganizerItemSymbianEngine::detailDefinitions(

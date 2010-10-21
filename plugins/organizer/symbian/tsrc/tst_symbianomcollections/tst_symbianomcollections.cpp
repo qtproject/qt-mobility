@@ -103,6 +103,9 @@ private slots:  // Test cases
     void removeCollection_data(){ addManagers(); };
     void removeCollection();
     
+    void compatibleCollection_data(){ addManagers(); };
+    void compatibleCollection();
+
     void collectionSignalEmission_data(){ addManagers(); };
     void collectionSignalEmission();
     
@@ -332,13 +335,14 @@ void tst_symbianomcollections::saveCollection()
     // Try saving again without clearing local id. Should fail.
     QVERIFY(!m_om->saveCollection(&c1));
     
-    // Try saving without any parameters. Should fail.
+    // Try saving without any parameters. Should pass.
     c1 = QOrganizerCollection();
-    QVERIFY(!m_om->saveCollection(&c1));
+    QVERIFY(m_om->saveCollection(&c1));
     
-    // Try saving with filename only. Should fail.
+    // Try saving with filename only. Should pass.
+    c1 = QOrganizerCollection();
     c1.setMetaData("FileName", "c:testsave2");
-    QVERIFY(!m_om->saveCollection(&c1));
+    QVERIFY(m_om->saveCollection(&c1));
 }
 
 void tst_symbianomcollections::removeCollection()
@@ -406,6 +410,25 @@ void tst_symbianomcollections::removeCollection()
     foreach (const QOrganizerCollection& coll, colls) {
         QVERIFY(!m_om->removeCollection(coll.id()));
     }
+}
+
+void tst_symbianomcollections::compatibleCollection()
+{
+    if (!m_customCollectionsSupported)
+        QSKIP("Collection signals not supported!", SkipSingle);
+
+    // Try creating a compatible collection from an empty collection
+    QOrganizerCollection collection;
+    QOrganizerCollection compatibleCollection = m_om->compatibleCollection(collection);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QVERIFY(m_om->saveCollection(&compatibleCollection));
+    QVERIFY(!compatibleCollection.id().isNull());
+
+    // Try creating a compatible collection from a legal collection and verify it
+    // is the same as the original
+    collection.setMetaData(QOrganizerCollection::KeyName, "testcompatible");
+    compatibleCollection = m_om->compatibleCollection(collection);
+    QCOMPARE(compatibleCollection, collection);
 }
 
 void tst_symbianomcollections::collectionSignalEmission()

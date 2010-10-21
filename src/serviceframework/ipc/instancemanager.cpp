@@ -196,6 +196,8 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
             descr.globalInstance = 0;
             descr.globalId = QUuid();
             descr.globalRefCount = 0;
+            emit instanceClosed(entry);
+            emit instanceClosed(entry, instanceId);    //internal use
         } else {
             descr.globalRefCount--;
         }
@@ -203,10 +205,10 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         QObject* service = descr.individualInstances.take(instanceId);
         if (service) {
             service->deleteLater();
+            emit instanceClosed(entry);
+            emit instanceClosed(entry, instanceId);    //internal use
         }
     }
-    
-    emit instanceClosed(entry);
 
     // Check that no instances are open
     if (totalInstances() < 1)
