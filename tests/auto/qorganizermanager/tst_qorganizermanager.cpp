@@ -1202,6 +1202,69 @@ void tst_QOrganizerManager::update()
     QOrganizerItem updated = cm->item(item.id());
     QOrganizerItemDescription updatedDescr = updated.detail(QOrganizerItemDescription::DefinitionName);
     QCOMPARE(updatedDescr, descr);
+
+    /* Create a recurring event, update an occurrence and save (should persist as an exceptional occurrence) */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    QOrganizerEvent recEvent;
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    int persistentCount = cm->itemsForExport().size();
+    QCOMPARE(persistentCount, 1); // just the parent
+    QList<QOrganizerItem> items = cm->items();
+    QCOMPARE(items.size(), 3);
+    bool foundException = false;
+    QOrganizerEventOccurrence exception;
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 21), QTime(8, 0, 0))) {
+            exception = curr;
+            foundException = true;
+            break;
+        }
+    }
+    QVERIFY(foundException);
+    exception.setLocation("different location");
+    QVERIFY(cm->saveItem(&exception));
+    persistentCount = cm->itemsForExport().size();
+    QCOMPARE(persistentCount, 2); // parent plus one exception
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 21), QTime(8, 0, 0))) {
+            QVERIFY(!curr.id().isNull());
+        } else {
+            QVERIFY(curr.id().isNull());
+        }
+    }
+
+    /* Save a non-updated occurrence - should still persist as an exceptional occurrence */
+    QOrganizerEventOccurrence secondException;
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 22), QTime(8, 0, 0))) {
+            exception = curr;
+            foundException = true;
+            break;
+        }
+    }
+    QVERIFY(foundException);
+    QEXPECT_FAIL(0, "Even with no changes, saving an occurrence should generate an exception; TODO in 1.1.1.", Continue);
+    QVERIFY(cm->saveItem(&secondException)); // no changes, but should save as an exception anyway.
+    //persistentCount = cm->itemsForExport().size();
+    //QCOMPARE(persistentCount, 3); // parent plus two exceptions
+    //items = cm->items();
+    //QCOMPARE(items.size(), 3);
+    //foreach (const QOrganizerEventOccurrence& curr, items) {
+    //    if (curr.startDateTime() == QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0))) {
+    //        QVERIFY(curr.id().isNull());  // only the first occurrence is not an exception.
+    //    } else {
+    //        QVERIFY(!curr.id().isNull()); // we have two exceptions this time
+    //    }
+    //}
 }
 
 void tst_QOrganizerManager::remove()
@@ -1233,6 +1296,58 @@ void tst_QOrganizerManager::remove()
     QCOMPARE(cm->itemIds().count(), itemCount - 1);
     QVERIFY(cm->item(item.id()).isEmpty());
     QCOMPARE(cm->error(), QOrganizerManager::DoesNotExistError);
+
+    /* Create a recurring event, save an exception, remove the recurring event should remove all children occurrences incl. persisted exceptions. */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    QOrganizerEvent recEvent;
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    QList<QOrganizerItem> items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QOrganizerEventOccurrence exception = items.at(1);
+    exception.setStartDateTime(QDateTime(QDate(2010, 10, 21), QTime(7, 0, 0)));
+    QVERIFY(cm->saveItem(&exception));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QCOMPARE(cm->itemsForExport().size(), 2);
+    QVERIFY(cm->removeItem(recEvent.id()));
+    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
+    QCOMPARE(cm->itemsForExport().size(), 0);
+    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
+    QCOMPARE(cm->items().size(), 0);
+
+    /* Create a recurring event, save an exception, remove the saved exception should remove the persisted exception, but the exdate should remain in the parent */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    recEvent.setId(QOrganizerItemId());
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    exception = items.at(1);
+    exception.setStartDateTime(QDateTime(QDate(2010, 10, 21), QTime(7, 0, 0)));
+    QVERIFY(cm->saveItem(&exception));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QCOMPARE(cm->itemsForExport().size(), 2);
+    QVERIFY(cm->removeItem(exception.id()));
+    QCOMPARE(cm->itemsForExport().size(), 1); // only parent remains as persistent
+    QCOMPARE(cm->items().size(), 2);          // the exception date remains in parent, so only 2 occurrences are generated.
+
+    /* Create a recurring event, remove a generated occurrence should add an exdate in the parent */
+    // XXX TODO.  Need to add this API in Mobility 1.2.0.
+    // At the moment, we can only remove items by id, and generated occurrences do not have ids.
+    // Thus, to remove a normal occurrence, you must modify the parent item (adding an exdate manually) and resave it.
 }
 
 void tst_QOrganizerManager::batch()
