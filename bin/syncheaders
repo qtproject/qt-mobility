@@ -9,9 +9,9 @@
 ##
 ## $QT_BEGIN_LICENSE:LGPL$
 ## Commercial Usage
-## Licensees holding valid Qt Commercial licenses may use this file in
-## accordance with the Qt Solutions Commercial License Agreement provided
-## with the Software or, alternatively, in accordance with the terms
+## Licensees holding valid Qt Commercial licenses may use this file in 
+## accordance with the Qt Commercial License Agreement provided with
+## the Software or, alternatively, in accordance with the terms
 ## contained in a written agreement between you and Nokia.
 ##
 ## GNU Lesser General Public License Usage
@@ -33,12 +33,6 @@
 ## packaging of this file.  Please review the following information to
 ## ensure the GNU General Public License version 3.0 requirements will be
 ## met: http://www.gnu.org/copyleft/gpl.html.
-##
-## Please note Third Party Software included with Qt Solutions may impose
-## additional restrictions and it is the user's responsibility to ensure
-## that they have met the licensing requirements of the GPL, LGPL, or Qt
-## Solutions Commercial license and the relevant license of the Third
-## Party Software they are using.
 ##
 ## If you are unsure which license is appropriate for your use, please
 ## contact the sales department at qt-sales@nokia.com.
