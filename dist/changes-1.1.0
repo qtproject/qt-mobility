@@ -25,6 +25,7 @@ New features
  - Qt Feedback module
     * Classes for feedback (haptic/tactile feedback, general multimedia
       feedback)
+    * Initial release has limited multimedia support
  - Qt Gallery module
     * Classes for searching for documents, and viewing document meta-data.
  - Qt Maps and Navigation API

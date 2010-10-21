@@ -63,8 +63,6 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
     if (!effect)
         return;
 
-    qDebug() << "setLoaded for " << effect->source();
-
     // See if we have seen this effect before
     FeedbackInfo fi = mEffects.value(effect);
 
