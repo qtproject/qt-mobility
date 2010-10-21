@@ -263,7 +263,7 @@
     Many backends support notifying the user when a todo item is due.
     We can request this by adding a QOrganizerItemRemainder detail to
     the QOrganizerTodo. We first check whether a remainder detail is
-    present on the todo item. If it is we update the \l{Alarm Combo Box}.
+    present on the todo item. If it is we update the alarm combo box.
     The \l{QDateTime::}{secsTo()} function returns the
     difference between two \l{QDateTime}s in seconds.
 
