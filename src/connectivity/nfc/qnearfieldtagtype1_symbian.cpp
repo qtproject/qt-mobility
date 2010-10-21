@@ -43,48 +43,95 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QNearFieldTagType1Symbian
+    \brief The QNearFieldTagType1Symbian class provides symbian backend implementation for communicating with an NFC Tag
+           Type 1 tag.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    Constructs a new tag type 1 near field target with \a tag and \a parent.
+*/
 QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent)
                                 : QNearFieldTagType1(parent), mTag(tag)
 {
+}
+
+/*!
+    Destructor
+*/
+QNearFieldTagType1Symbian::~QNearFieldTagType1Symbian()
+{
+    delete mTag;
 }
 
 QByteArray QNearFieldTagType1Symbian::uid() const
 {
 }
 
+/*!
+    \reimp
+*/
 QByteArray QNearFieldTagType1Symbian::readIdentification()
 {
 }
 
+/*!
+    \reimp
+*/
 QByteArray QNearFieldTagType1Symbian::readAll()
 {
 }
 
+/*!
+    \reimp
+*/
 quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
 {
 }
 
+/*!
+    \reimp
+*/
 bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
 }
 
+/*!
+    \reimp
+*/
 QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
 }
 
+/*!
+    \reimp
+*/
 QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
 }
 
+/*!
+    \reimp
+*/
 bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
 }
 
+/*!
+    \reimp
+*/
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
 }
 
+/*!
+    \reimp
+*/
 QList<QByteArray> QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
 {
 }

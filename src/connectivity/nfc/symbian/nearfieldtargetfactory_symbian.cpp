@@ -44,6 +44,19 @@
 #include "nearfieldtagtype1_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 
+/*!
+    \class TNearFieldTargetFactory
+    \brief The TNearFieldTargetFactory class creates detected target instance according
+           to the input tag infomation
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    Create target instance according to the tag infomation in \a aNfcTag and assign 
+    the \a aParent as target's parent. 
+*/
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QObject * aParent)
     {
     QNearFieldTarget * tag = 0;
@@ -54,6 +67,10 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QOb
     return tag;
     }
 
+/*!
+    Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
+    the \a aParent as target's parent. 
+*/
 QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1(MNfcTag * aNfcTag, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
@@ -64,6 +81,9 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1(MNfcTag * aNfcTag, QO
     return tag;
     }
     
+/*!
+    Convert connection mode information in \a aNfcTag to access methods
+*/
 QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
     {
     QNearFieldTarget::AccessMethods accessMethod;

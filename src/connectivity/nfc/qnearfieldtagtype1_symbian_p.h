@@ -56,6 +56,8 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1
 public:
 
     explicit QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent = 0);
+    
+    ~QNearFieldTagType1Symbian();
 
     virtual QByteArray uid() const;
 
