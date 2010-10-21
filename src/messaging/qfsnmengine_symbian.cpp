@@ -1835,7 +1835,8 @@ CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOpera
       m_operationId(aOperationId),
       m_resultCorrectlyOrdered(false),
       m_receiveNewMessages(false),
-      m_searchField(None)
+      m_searchField(None),
+      m_searchKey(QString())
 {
 
 }
@@ -2041,6 +2042,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
             break;
             }
         case QMessageFilterPrivate::ParentAccountId: {
+            qDebug() << pf->_value.toString();
             if (idType(pf->_value.toString()) == EngineTypeMTM) {
                 QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                 return;
@@ -2048,49 +2050,58 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageAccountId
                 m_numberOfHandledFilters++;
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Equal) {
-                    QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
-                    getAccountSpecificMessages(messageAccount, sortCriteria);
-                    m_resultCorrectlyOrdered = true;
-                } else { // NotEqual
-                    QStringList exludedAccounts;
-                    exludedAccounts << pf->_value.toString();
-                    
-                    QMessageFilterPrivate* privateFilter = NULL;
-                    for (int i=m_numberOfHandledFilters; i < filters.count(); i++) {
-                        privateFilter = QMessageFilterPrivate::implementation(filters[i]);
-                        if (privateFilter->_field == QMessageFilterPrivate::ParentAccountId &&
-                            privateFilter->_comparatorType == QMessageFilterPrivate::Equality) {
-                            cmp = static_cast<QMessageDataComparator::EqualityComparator>(privateFilter->_comparatorValue);
-                            if (cmp == QMessageDataComparator::NotEqual) {
-                                exludedAccounts << privateFilter->_value.toString();
-                                m_numberOfHandledFilters++;
+                if (!pf->_value.isNull() && pf->_value.toString().length() > QString(SymbianHelpers::freestylePrefix).length()) {
+                    if (cmp == QMessageDataComparator::Equal) {
+                        QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
+                        getAccountSpecificMessages(messageAccount, sortCriteria);
+                        m_resultCorrectlyOrdered = true;
+                    } else { // NotEqual
+                        QStringList exludedAccounts;
+                        exludedAccounts << pf->_value.toString();
+                        
+                        QMessageFilterPrivate* privateFilter = NULL;
+                        for (int i=m_numberOfHandledFilters; i < filters.count(); i++) {
+                            privateFilter = QMessageFilterPrivate::implementation(filters[i]);
+                            if (privateFilter->_field == QMessageFilterPrivate::ParentAccountId &&
+                                privateFilter->_comparatorType == QMessageFilterPrivate::Equality) {
+                                cmp = static_cast<QMessageDataComparator::EqualityComparator>(privateFilter->_comparatorValue);
+                                if (cmp == QMessageDataComparator::NotEqual) {
+                                    exludedAccounts << privateFilter->_value.toString();
+                                    m_numberOfHandledFilters++;
+                                } else {
+                                    break;
+                                }
                             } else {
                                 break;
                             }
-                        } else {
-                            break;
                         }
-                    }
-
-                    privateFilter = NULL;
-                    if (filters.count() > m_numberOfHandledFilters) {
-                        privateFilter = QMessageFilterPrivate::implementation(filters[m_numberOfHandledFilters]);
-                        if (privateFilter->_field == QMessageFilterPrivate::StandardFolder &&
-                            privateFilter->_comparatorType == QMessageFilterPrivate::Equality) {
-                            cmp = static_cast<QMessageDataComparator::EqualityComparator>(privateFilter->_comparatorValue);
-                            if (cmp == QMessageDataComparator::Equal) {
-                                m_numberOfHandledFilters++;
+    
+                        privateFilter = NULL;
+                        if (filters.count() > m_numberOfHandledFilters) {
+                            privateFilter = QMessageFilterPrivate::implementation(filters[m_numberOfHandledFilters]);
+                            if (privateFilter->_field == QMessageFilterPrivate::StandardFolder &&
+                                privateFilter->_comparatorType == QMessageFilterPrivate::Equality) {
+                                cmp = static_cast<QMessageDataComparator::EqualityComparator>(privateFilter->_comparatorValue);
+                                if (cmp == QMessageDataComparator::Equal) {
+                                    m_numberOfHandledFilters++;
+                                }
+                            } else {
+                                privateFilter = NULL;
                             }
-                        } else {
-                            privateFilter = NULL;
+                        }
+                        
+                        foreach (QMessageAccount value, m_owner.m_accounts) {
+                            if (!exludedAccounts.contains(value.id().toString())) {
+                                getAccountSpecificMessages(value, sortCriteria);
+                            }
                         }
                     }
-                    
-                    foreach (QMessageAccount value, m_owner.m_accounts) {
-                        if (!exludedAccounts.contains(value.id().toString())) {
-                            getAccountSpecificMessages(value, sortCriteria);
-                        }
+                } else { // Empty account id
+                    if (cmp == QMessageDataComparator::NotEqual) {
+                        getAllMessages(sortCriteria);
+                    } else {
+                        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                        return;
                     }
                 }
             }
