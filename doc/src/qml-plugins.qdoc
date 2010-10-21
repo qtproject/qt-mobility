@@ -57,6 +57,11 @@
     \header
         \o Plugin
         \o Description
+ 
+    \row
+        \o \l {Contacts QML Plugin}{Contacts}
+        \o A QML plugin for the Contacts API.
+    \row
     \row
         \o \l {Gallery QML Plugin}{Gallery}
         \o A QML plugin for the Document Gallery API.
