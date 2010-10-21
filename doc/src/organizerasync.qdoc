@@ -154,9 +154,15 @@ of the schema consists of the following functions:
 
 All asynchronous operations are performed in a similar manner:
 a request of the desired type (which is derived from
-QOrganizerItemAbstractRequest) is created, certain criteria are set which
-determine the intent of the request, and the signals of the request
-are connected to slots which deal with the results.  The request can then
-be started.
+QOrganizerAbstractRequest) is created, certain criteria are set which
+determine the intent of the request, QOrganizerAbstractRequest::stateChanged()
+signal of the request is connected to a slot which deals with the results.
+The request can then be started.
+
+Note that if the client is interested in receiving the results of the request
+as they become available, rather than only the final set of results once the
+request changes state (to \c FinishedState, for example), the client should
+instead connect the QOrganizerAbstractRequest::resultsAvailable() signal to the
+slot which deals with the results.
 
 */
