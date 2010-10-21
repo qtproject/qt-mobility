@@ -67,7 +67,7 @@ class QLandmarkManagerEngineQsparql : public QLandmarkManagerEngine
 {
     Q_OBJECT
 public:
-    QLandmarkManagerEngineQsparql(const QString &filename = QString());
+    QLandmarkManagerEngineQsparql(const QString &filename, QLandmarkManager::Error *error, QString *errorString);
     ~QLandmarkManagerEngineQsparql();
 
     /* URI reporting */

@@ -63,19 +63,19 @@ QLandmarkManagerEngine* QLandmarkManagerEngineFactoryQsparql::engine(const QMap<
     QList<QString> keys = parameters.keys();
     for (int i = 0; i < keys.size(); ++i) {
         QString key = keys.at(i);
-        if (key == "filename") {
+        if (key == "filename")
             filename = parameters.value(keys.at(i));
-        } else {
-            *error = QLandmarkManager::NotSupportedError;
-            *errorString = QString("The landmark engine %1 does not support the parameter %2").arg(managerName()).arg(key);
-            return NULL;
-        }
     }
 
-    if (filename.isEmpty()) {
-        return new QLandmarkManagerEngineQsparql();
-    } else {
-        return new QLandmarkManagerEngineQsparql(filename);
+    QLandmarkManagerEngine * enginePtr = new QLandmarkManagerEngineQsparql(filename, error, errorString);
+    if(*error != QLandmarkManager::NoError)
+    {
+        delete enginePtr;
+        enginePtr =0;
+        return NULL;
+    }
+    else {
+        return enginePtr;
     }
 }
 

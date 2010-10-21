@@ -53,10 +53,12 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QSettings>
+/*
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QSqlQuery>
+*/
 #include <QThreadPool>
 #include <QUuid>
 
@@ -98,7 +100,8 @@ Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
-QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &filename)
+QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &filename, QLandmarkManager::Error * error,
+                                                           QString *errorString)
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_latestLandmarkTimestamp(0),
@@ -106,6 +109,9 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
     qRegisterMetaType<QList<QLandmarkId> >();
@@ -127,8 +133,8 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     qRegisterMetaType<QLandmarkExportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
-    m_databaseOperations.connectionName = m_dbConnectionName;
+    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
+    //m_databaseOperations.connectionName = m_dbConnectionName;
 
     if (m_dbFilename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -138,16 +144,17 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         dir.mkpath(dir.path());
         m_dbFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
     }
-
+   /*
     db.setDatabaseName(m_dbFilename);
     if (!db.open()) {
         qWarning() << db.lastError().text();
     }
-
+   */
     if (filename == ":memory:")
         return;
 
     // check for fk support
+    /*
     QSqlQuery checkForeignKeys("PRAGMA foreign_keys;", db);
     bool result = false;
     while (checkForeignKeys.next()) {
@@ -189,6 +196,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
             db.commit();
     }
     file.close();
+    */
     m_databaseOperations.managerUri = managerUri();
 }
 
@@ -197,8 +205,8 @@ QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
     QThreadPool *threadPool = QThreadPool::globalInstance();
     threadPool->waitForDone();
 
-    QSqlDatabase::database(m_dbConnectionName).close();
-    QSqlDatabase::removeDatabase(m_dbConnectionName);
+    //QSqlDatabase::database(m_dbConnectionName).close();
+    //QSqlDatabase::removeDatabase(m_dbConnectionName);
 }
 
 /* URI reporting */
@@ -542,6 +550,7 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 
 void QLandmarkManagerEngineQsparql::databaseChanged()
 {
+   /*
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     QSqlQuery query(db);
@@ -556,6 +565,7 @@ void QLandmarkManagerEngineQsparql::databaseChanged()
 #ifdef QT_LANDMARK_QSPARQL_ENGINE_DEBUG
         qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
+
         return;
     }
 
@@ -646,6 +656,7 @@ void QLandmarkManagerEngineQsparql::databaseChanged()
 
     if (removedCategoryIds.count() > 0)
         emit categoriesRemoved(removedCategoryIds);
+*/
 }
 
 void QLandmarkManagerEngineQsparql::setChangeNotificationsEnabled(bool enabled)

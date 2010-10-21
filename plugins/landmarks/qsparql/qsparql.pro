@@ -10,7 +10,7 @@ CONFIG += mobility link_pkgconfig
 MOBILITY = location
 
 #LIBS += ../../../lib/libQtLocation.so \
-#             -lQtSparql
+LIBS += -lQtSparql
 
 HEADERS += qlandmarkmanagerengine_qsparql_p.h \
            qlandmarkmanagerenginefactory_qsparql_p.h \

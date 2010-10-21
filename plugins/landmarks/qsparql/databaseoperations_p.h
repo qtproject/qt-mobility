@@ -56,6 +56,7 @@
 #include <qlandmarkmanager.h>
 #include <QRunnable>
 #include <QMap>
+#include <QtSparql/QSparqlConnection>
 
 QTM_USE_NAMESPACE
 
@@ -97,10 +98,12 @@ public:
 class DatabaseOperations {
     public:
     QString connectionName;
+    QSparqlConnection* m_conn;
     QString managerUri;
     QueryRun *queryRun;
 
     DatabaseOperations();
+    ~DatabaseOperations();
     QLandmark retrieveLandmark(const QLandmarkId &landmarkId,
                                QLandmarkManager::Error *error, QString *errorString) const;
 
