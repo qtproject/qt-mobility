@@ -90,10 +90,22 @@ S60CameraSettings::~S60CameraSettings()
 
 S60CameraSettings* S60CameraSettings::NewL(QObject *parent, CCameraEngine *engine)
 {
-    S60CameraSettings* self = new (ELeave) S60CameraSettings(parent, engine);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    CleanupStack::Pop(self);
+    S60CameraSettings* self = new S60CameraSettings(parent, engine);
+    if (!self) {
+        error = KErrNoMemory;
+        return NULL;
+    }
+
+    TRAPD(err, self->ConstructL());
+    if (err) {
+        // Clean created object
+        delete self;
+        self = NULL;
+        error = err;
+        return NULL;
+    }
+
+    error = KErrNone;
     return self;
 }
 

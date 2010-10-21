@@ -1096,7 +1096,11 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
 #if !defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) & !defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
     // Convert Zoom Factors to Symbian Zoom Values
     int opticalSymbian = (optical * m_cameraInfo->iMaxZoom) / maximumZoom();
+    if (m_cameraInfo->iMaxZoom != 0 && optical == 1.0)
+        opticalSymbian = 1; // Make sure zooming out to initial value if requested
     int digitalSymbian = (digital * m_cameraInfo->iMaxDigitalZoom) / maxDigitalZoom();
+    if (m_cameraInfo->iMaxDigitalZoom != 0 && digital == 1.0)
+        digitalSymbian = 1; // Make sure zooming out to initial value if requested
 #endif // !USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER & !USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 
     if (m_cameraEngine && !m_cameraEngine->IsCameraReady()) {
@@ -1195,9 +1199,13 @@ qreal S60ImageCaptureSession::opticalZoomFactor()
             return 1.0;
     }
 #else // No advanced settigns
-    if (m_cameraEngine) {
-        if (m_cameraEngine->Camera())
-            factor = m_cameraEngine->Camera()->ZoomFactor();
+    if (m_cameraEngine && m_cameraInfo) {
+        if (m_cameraEngine->Camera()) {
+            if (m_cameraInfo->iMaxZoom != 0)
+                factor = (m_cameraEngine->Camera()->ZoomFactor()* maximumZoom()) / m_cameraInfo->iMaxZoom;
+            else
+                factor = 1.0;
+        }
 	}
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 
@@ -1218,9 +1226,13 @@ qreal S60ImageCaptureSession::digitalZoomFactor()
             return 1.0;
     }
 #else // No advanced settigns
-    if (m_cameraEngine) {
-        if (m_cameraEngine->Camera())
-            factor = m_cameraEngine->Camera()->DigitalZoomFactor();
+    if (m_cameraEngine && m_cameraInfo) {
+        if (m_cameraEngine->Camera()) {
+            if (m_cameraInfo->iMaxDigitalZoom != 0)
+                factor = (m_cameraEngine->Camera()->DigitalZoomFactor()* maxDigitalZoom()) / m_cameraInfo->iMaxDigitalZoom;
+            else
+                factor = 1.0;
+        }
 	}
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 

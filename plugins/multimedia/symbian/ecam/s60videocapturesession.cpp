@@ -58,7 +58,6 @@
 #include <mmf/devvideo/devvideorecord.h>
 #endif
 
-
 S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
@@ -1222,7 +1221,8 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
     }
 
     CleanupStack::PopAndDestroy(); // RArray<TUint> supportedSampleRates
-
+#else // S60 3.1 Platform
+    Q_UNUSED(settings);
 #endif // S60_31_PLATFORM
 
     if (continuous)
@@ -1322,7 +1322,9 @@ void S60VideoCaptureSession::doSetBitrate(const int &bitrate)
     if (bitrate != -1) {
         if (m_videoRecorder) {
             TRAPD(err, m_videoRecorder->SetVideoBitRateL(bitrate));
-            setError(err, QString("Failed to set video bitrate."));
+            if (err) {
+                setError(err, QString("Failed to set video bitrate."));
+            }
         } else {
             setError(KErrNotReady, QString("Unexpected camera error."));
         }
@@ -2003,7 +2005,11 @@ void S60VideoCaptureSession::doPopulateMaxVideoParameters()
                     m_videoParametersForEncoder[0].bitRate = 384000;
                 continue;
             } else if (codec == "video/mp4v-es; profile-level-id=4") {
+#if (defined(S60_31_PLATFORM) | defined(S60_32_PLATFORM))
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(640,480)));
+#else // S60 5.0 and later platforms
                 m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(640,480)));
+#endif
                 m_videoParametersForEncoder[0].mimeTypes.append(codec);
                 if (m_videoParametersForEncoder[0].bitRate < 4000000)
                     m_videoParametersForEncoder[0].bitRate = 4000000;
