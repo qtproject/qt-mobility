@@ -53,6 +53,9 @@
   \brief The QOrganizerItemEngineId class uniquely identifies an item within a
   particular engine plugin.
 
+  \inmodule QtOrganizer
+  \ingroup organizer-backends
+
   Clients of the Organizer API should never use this class.
   Every engine implementor must implement a class derived from
   QOrganizerItemEngineId.

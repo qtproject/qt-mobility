@@ -65,12 +65,7 @@ or scheduling backends, it is intended that the semantics and quirks of the
 underlying datastores on any platform may be entirely opaque from the
 perspective of Qt-based, cross-platform client applications.
 
-\section1 Overview 
-
-The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility APIs into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
-namespace impacts on application development.
+\section1 Overview
 
 Organizer information is stored in datastores whose functionality is exposed
 via a \l{QOrganizerManager}{manager}.  The Organizer API models organizer
@@ -81,7 +76,7 @@ may be extensible or otherwise modifiable by clients.  Individual organizer
 items may be recurrent, and occurrences of such items are also items, but are
 linked to the "parent" item.
 
-\l{QOrganizerItem}{Item} and 
+\l{QOrganizerItem}{Item} and
 \l{QOrganizerItemDetailDefinition}{detail definition} information may be
 retrieved, modified or deleted by clients using either
 \l{Organizer Synchronous API}{synchronous} or
@@ -188,7 +183,6 @@ manager with the following synchronous functions:
 \list
   \o hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const
   \o isFilterSupported(const QOrganizerItemFilter& filter) const
-  \o supportedDataTypes() const
   \o supportedItemTypes() const
 \endlist
 
@@ -228,7 +222,7 @@ QOrganizerAbstractRequest class, including
 QOrganizerItemIdFetchRequest, QOrganizerItemFetchRequest,
 QOrganizerItemFetchForExportRequest,
 QOrganizerItemSaveRequest, QOrganizerItemRemoveRequest,
-QOrganizerCollectionIdFetchRequest, QOrganizerCollectionFetchRequest,
+QOrganizerItemOccurrenceFetchRequest, QOrganizerCollectionFetchRequest,
 QOrganizerCollectionRemoveRequest, QOrganizerCollectionSaveRequest,
 QOrganizerItemDetailDefinitionFetchRequest,
 QOrganizerItemDetailDefinitionSaveRequest, and
@@ -264,24 +258,10 @@ For more detailed documentation on the synchronous API, see the
 \section1 Non-Client-Facing API
 
 The non-client-facing API allows third party developers to implement a manager
-engine plugin from which clients may request data.
+engine plugin from which clients may request data.  For more information on this
+topic (for example, if you intend to implement a manager backend) please see
+\l{Qt Organizer Manager Engines}.
 
-\section2 Manager Engine
-
-The functionality exposed by the QOrganizerManager class may be implemented
-by \l{QOrganizerManagerEngine}{engine} plugins which interface directly to
-a platform-specific backend or provide their own data storage backend.  As
-such, the terms "manager", "plugin" and "backend" are used interchangeably in
-this documentation to refer to any engine plugin which implements the
-functionality exposed by the QOrganizerManager interface.  The plugin
-architecture allows dynamic loading of different manager engines at runtime.
-
-A manager backend may be implemented by subclassing
-\l{QOrganizerManagerEngine}, and providing a
-\l{QOrganizerManagerEngineFactory} which can instantiate it when required.
-
-See \l{Qt Organizer Manager Engines} for more information on available engines
-and how to write your own engine.
 
 \section1 Calendar Features
 
@@ -297,98 +277,10 @@ exact times.  For example, a birthday could be specified with a QOrganizerEvent
 where the StartDateTime and EndDateTime have the same value, and TimeSpecified
 is set to true.
 
-\section1 On-going Development
-
-There are several areas of API which are actively being developed, which are
-not included in the Beta release.  These include:
-\list
-  \o Timezone Support
-  \o Result Pagination Support
-\endlist
-
-There are some areas of API which are included in the Beta release,
-but which are very likely to change as they are currently undergoing review
-and development.
-\list
-  \o Multiple Collection Support
-  \o Item And Collection Id Semantics
-\endlist
-
-Each of these areas is complex and may have important ramifications to related
-areas of the API, and so are discussed separately below.
-
-\section2 Multiple Collection Support
-
-One aspect of the Qt Mobility Organizer API which is still under discussion
-and active development is the ability to support multiple "collections" of
-items.  The API which will eventually be offered for this will rely on the
-outcome of discussion and research into the semantics of item duplication
-and item identification, which are described below.
-
-\section2 Item And Collection Id Semantics
-
-The semantics of items stored in multiple collections is also under discussion.
-Multiple collection support has the potential to introduce possibly confusing
-semantics (for example: sharing of event data versus duplication of event
-data; manager-unique item ids versus collection-unique item ids; etc) and so we
-need to carefully consider how current calendar and scheduling backends work,
-in order to determine what is technically feasible and what is most intuitive
-for the application developer, before mandating some particular set of
-semantics related to multiple calendar support.
-
-\section2 Timezone Support
-
-A critical part of the API which is still under development is support for
-different time zones.  In general, dates are considered to be
-timezone-independent (that is, floating dates), whereas datetimes should
-include timezone information.  The exact manner in which timezone information
-should be offered to clients in the API is still under discussion.
-
-One possible solution would be to offer a QOrganizerTimezone class which
-provides API to allow clients to transform a particular datetime into another
-datetime in a different timezone.  A more complete solution might be to add
-timezone support to QDateTime directly, however this would require extensive
-modifications to Qt and so may not be possible due to technical reasons (e.g.,
-binary compatibility promises, release scheduling, etc).
-
-\section2 Result Pagination
-
-Often, clients will want a single "page" of results from a single filtering
-operation at a time.  The advantage of an API to allow this is that memory use
-decreases, and results may be returned faster (since there are less of them to
-instantiate).
-
-We see two main use cases for pagination:
-\list
-  \o Limiting results to a single offset plus a count
-  \o Limiting results to a single count (implied offset of zero)
-\endlist
-
-The first is more general, and support on some platforms is limited or even
-non-existent.  Emulation of such a feature obviates any potential benefits
-which might be derived from offering the API in the first place (as emulating
-the feature would use more memory and be less performant that simply returning
-all results of the filtering operation).  Paging of results is possible to
-achieve manually using the current API (by retrieving a list of ids, and then
-manually retrieving pages of items manually by id) but may be suboptimal.
-
-The second is supported on most platforms, and is the more common use case.
-It may be implemented by extending QOrganizerItemFetchHint to include a
-maximum count parameter, which may be ignored by backends if the backend does
-not support the feature.
-
-In short, discussion about result pagination is still on-going, as it is a
-complex topic with far-reaching ramifications given that we must maintain
-consistency between the various modules of the Qt Mobility project.
-
 \section1 Using the API
 
 Some examples of common usage of the API may be found
 \l{Organizer API Usage}{here}.
-
-\section1 Building and compiling
-
-To build the library, see the Qt Mobility installation instructions.
 
 \section1 Reference documentation
 
