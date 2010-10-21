@@ -177,6 +177,11 @@ QRemoteServiceRegisterSymbianPrivate::QRemoteServiceRegisterSymbianPrivate(QObje
 {
 }
 
+QRemoteServiceRegisterSymbianPrivate::~QRemoteServiceRegisterSymbianPrivate()
+{
+    delete m_server;
+}
+
 void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
 {
     // Create service side of the Symbian Client-Server architecture.
