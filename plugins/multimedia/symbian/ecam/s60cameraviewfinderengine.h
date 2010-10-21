@@ -62,6 +62,7 @@ class QAbstractVideoSurface;
 class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
+class QDesktopWidget;
 
 /*
  * Class implementing video output selection for the viewfinder and the handler of
@@ -102,6 +103,7 @@ private Q_SLOTS:
     void resetViewfinderDisplay();
     void viewFinderBitmapReady(const QPixmap &pixmap);
     void handleVisibilityChange(const bool isVisible);
+    void handleDesktopResize(int screen);
 
 private: // Enums
 
@@ -148,6 +150,7 @@ private: // Data
     RWsSession              &m_wsSession;
     CWsScreenDevice         &m_screenDevice;
     RWindowBase             *m_window;
+    QDesktopWidget          *m_desktopWidget;
     ViewFinderState         m_vfState;
     QSize                   m_viewfinderSize;
     // Actual viewfinder size, which may differ from requested

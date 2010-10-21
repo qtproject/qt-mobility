@@ -77,6 +77,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     m_deviceIndex(KDefaultCameraDevice),
     m_error(KErrNone),
     m_changeCaptureModeWhenReady(false),
+    m_rotateCameraWhenReady(false),
     m_videoCaptureState(S60VideoCaptureSession::ENotInitialized)
 {
     if (videosession)
@@ -441,6 +442,13 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
     // Save video state
     m_videoCaptureState = state;
 
+    if (m_rotateCameraWhenReady) {
+        if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
+            m_videoCaptureState != S60VideoCaptureSession::EPaused) {
+            resetCameraOrientation();
+        }
+    }
+
     if (state == S60VideoCaptureSession::EInitialized) {
         // Don't downgrade state
         if (m_internalState == QCamera::StartingStatus || m_internalState == QCamera::ActiveStatus) {
@@ -486,6 +494,19 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
 
         emit statusChanged(m_internalState);
     }
+}
+
+void S60CameraControl::imageCaptured(const int imageId, const QImage& preview)
+{
+    Q_UNUSED(imageId);
+    Q_UNUSED(preview);
+
+    // Unsubscribe the readyForCaptureChanged notification
+    disconnect(m_imageSession, SIGNAL(imageCaptured(const int, const QImage&)),
+        this, SLOT(imageCaptured(const int, const QImage&)));
+
+    if (m_rotateCameraWhenReady)
+        resetCameraOrientation();
 }
 
 void S60CameraControl::advancedSettingsCreated()
@@ -738,12 +759,27 @@ void S60CameraControl::resetCamera()
  */
 CCameraEngine *S60CameraControl::resetCameraOrientation()
 {
-    // Check if video is recording
-    if (m_videoCaptureState == S60VideoCaptureSession::ERecording ||
+    // Check Image/VideoCapture allow rotation
+    if (!m_cameraEngine ||
+        (!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
+        m_videoCaptureState == S60VideoCaptureSession::ERecording ||
         m_videoCaptureState == S60VideoCaptureSession::EPaused) {
-        // ViewfinderEngine expects CameraEngine, so return the current one
-        return m_cameraEngine;
+
+        // If image capture is ongoing, request notification about the
+        // completion (imageCaptured() is used because that comes asynchronously
+        // after the image is captured)
+        // Obs! If preview creation is changed to be synchnonously done during
+        // the image capture this implementation needs to be changed)
+        if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
+            m_videoCaptureState != S60VideoCaptureSession::EPaused)
+            connect(m_imageSession, SIGNAL(imageCaptured(const int, const QImage&)),
+                this, SLOT(imageCaptured(const int, const QImage&)));
+
+        m_rotateCameraWhenReady = true;
+        return;
     }
+
+    m_rotateCameraWhenReady = false; // Reset
 
     QCamera::State originalState = m_requestedState;
 

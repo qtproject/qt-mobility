@@ -132,6 +132,14 @@ public: // Internal
 private Q_SLOTS: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
+    // Needed to detect image capture completion when trying to rotate the camera
+    void imageCaptured(const int imageId, const QImage& preview);
+    /*
+     * This method moves the camera to the StandBy status:
+     *    - If camera access was lost
+     *    - If camera has been inactive in LoadedStatus for a long time
+     */
+    void toStandByStatus();
     void advancedSettingsCreated();
     
 protected: // MCameraEngineObserver
@@ -171,6 +179,7 @@ private: // Data
     int                         m_deviceIndex;
     mutable int                 m_error;
     bool                        m_changeCaptureModeWhenReady;
+    bool                        m_rotateCameraWhenReady;
     S60VideoCaptureSession::TVideoCaptureState m_videoCaptureState;
 };
 
