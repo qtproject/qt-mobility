@@ -451,6 +451,11 @@ qreal QDeclarativeMediaBase::volume() const
 
 void QDeclarativeMediaBase::setVolume(qreal volume)
 {
+    if (volume < 0 || volume > 1) {
+        qWarning("Audio: volume should be between 0.0 and 1.0");
+        return;
+    }
+
     if (m_vol == volume)
         return;
 
