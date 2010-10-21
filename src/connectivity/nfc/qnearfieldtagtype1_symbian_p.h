@@ -43,6 +43,7 @@
 #define QNEARFIELDTAGTYPE1SYMBIAN_H
 
 #include <qnearfieldtagtype1.h>
+#include "nearfieldtagtype1_symbian.h"
 
 QT_BEGIN_HEADER
 
@@ -54,7 +55,7 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1
 
 public:
 
-    explicit QNearFieldTagType1Symbian(QObject *parent = 0);
+    explicit QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent = 0);
 
     virtual QByteArray uid() const;
 
@@ -76,6 +77,10 @@ public:
 
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    
+private:
+    // Own
+    CNearFieldTagType1 * mTag;
 };
 
 QTM_END_NAMESPACE

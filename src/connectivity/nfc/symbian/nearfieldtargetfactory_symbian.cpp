@@ -44,14 +44,14 @@
 #include "nearfieldtagtype1_symbian.h"
 #include "..\qnearfieldtagtype1_symbian_p.h"
 
-QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag)
+QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QObject * aParent)
     {
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
         // ownership of aNfcTag transferred.
         CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
-        tag = new(ELeave)QNearFieldTagType1Symbian();
+        tag = new(ELeave)QNearFieldTagType1Symbian(tagType1, aParent);
         CleanupStack::Pop(tagType1);
         }
     return tag;

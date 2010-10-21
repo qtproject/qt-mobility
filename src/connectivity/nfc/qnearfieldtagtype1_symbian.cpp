@@ -43,7 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(QObject *parent) : QNearFieldTagType1(parent)
+QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent)
+                                : QNearFieldTagType1(parent), mTag(tag)
 {
 }
 

@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 class TNearFieldTargetFactory
     {
 public:
-    static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag);
+    static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, QObject * aParent);
     };
 
 #endif /* NEARFIELDTARGETFACTORY_H */
