@@ -1598,4 +1598,8 @@ EXPORTS
 	?setLoopCount@QSoundEffect@@QAEXH@Z @ 1597 NONAME ; void QSoundEffect::setLoopCount(int)
 	?maximumDigitalZoomChanged@QCameraFocusControl@@IAEXM@Z @ 1598 NONAME ; void QCameraFocusControl::maximumDigitalZoomChanged(float)
 	?maximumOpticalZoomChanged@QCameraFocus@@IAEXM@Z @ 1599 NONAME ; void QCameraFocus::maximumOpticalZoomChanged(float)
+	?status@QSoundEffect@@QBE?AW4Status@1@XZ @ 1600 NONAME ; enum QSoundEffect::Status QSoundEffect::status(void) const
+	?playingChanged@QSoundEffect@@IAEXXZ @ 1601 NONAME ; void QSoundEffect::playingChanged(void)
+	?isPlaying@QSoundEffect@@QBE_NXZ @ 1602 NONAME ; bool QSoundEffect::isPlaying(void) const
+	?statusChanged@QSoundEffect@@IAEXXZ @ 1603 NONAME ; void QSoundEffect::statusChanged(void)
 
