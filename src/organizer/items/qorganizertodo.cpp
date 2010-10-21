@@ -107,7 +107,7 @@ QDateTime QOrganizerTodo::dueDateTime() const
 
 /*!
   Sets whether the time-of-day component of the todo's start date-time or end date-time is
-  insignificant (eg. this is generally set to true for a birthday).  If \a isAllDay is true,
+  insignificant (eg. \a isAllDay is generally set to true for a birthday).  If \a isAllDay is true,
   the time-of-day component is considered insignificant, and the todo will be an all-day
   item.
  */

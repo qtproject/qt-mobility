@@ -107,7 +107,7 @@
  */
 
 /*!
-  \fn QOrganizerItemEngineId::debugStreamOut(QDebug& dbg) const
+  \fn QOrganizerItemEngineId::debugStreamOut(QDebug& dbg) const = 0
   Streams this id out to the debug stream \a dbg.
  */
 

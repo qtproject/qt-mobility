@@ -890,6 +890,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemsForExport(const QDateTime
     return internalItems(startDate, endDate, filter, sortOrders, fetchHint, error, true);
 }
 
+/*! \internal */
 QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool forExport) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
