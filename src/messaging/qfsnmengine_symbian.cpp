@@ -2045,7 +2045,6 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
             break;
             }
         case QMessageFilterPrivate::ParentAccountId: {
-            qDebug() << pf->_value.toString();
             if (idType(pf->_value.toString()) == EngineTypeMTM) {
                 QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                 return;
