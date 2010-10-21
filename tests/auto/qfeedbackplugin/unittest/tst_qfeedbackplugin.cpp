@@ -159,16 +159,18 @@ void tst_QFeedbackPlugin::testPlugin()
     // first get the actuators.  we want to use the test plugin actuator.
     QFeedbackActuator* testActuator;
     QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
-    foreach (QFeedbackActuator* temp, actuators) {
-        if (temp->name() == "test plugin") {
-            testActuator = temp;
-            break;
-        }
-    }
+    QCOMPARE(actuators.count(), 2);
+
+    QCOMPARE(actuators.at(0)->name(), QString("test plugin"));
+    QCOMPARE(actuators.at(0)->id(), 0);
+    QCOMPARE(actuators.at(1)->name(), QString("5555"));
+    QCOMPARE(actuators.at(1)->id(), 1);
 
     // make sure we found the test actuator...
+    testActuator = actuators.at(0);
+
     QCOMPARE(testActuator->name(), QString("test plugin"));
-    QCOMPARE(testActuator->id(), 7357); // test
+    QCOMPARE(testActuator->id(), 0); // test
     QVERIFY(testActuator->isCapabilitySupported(QFeedbackActuator::Period));
     testActuator->setEnabled(true);
     QVERIFY(!testActuator->isEnabled()); // the test plugin always returns enabled = false.
@@ -195,6 +197,13 @@ void tst_QFeedbackPlugin::testPlugin()
     m_testEffect.setFadeTime(250);
     m_testEffect.setFadeIntensity(0.0);
     m_testEffect.start();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
+    m_testEffect.pause();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Paused);
+    m_testEffect.start();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Running);
+    m_testEffect.stop();
+    QVERIFY(m_testEffect.state() == QFeedbackHapticsEffect::Stopped);
 }
 
 QTEST_MAIN(tst_QFeedbackPlugin)

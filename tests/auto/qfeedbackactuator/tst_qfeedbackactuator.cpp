@@ -112,7 +112,7 @@ void tst_QFeedbackActuator::enumeration()
     QVERIFY(!actuators.isEmpty());
 #endif
     foreach(QFeedbackActuator* actuator, actuators) {
-        if (actuator->name() == QString("test plugin"))
+        if (actuator->name() == QString("test plugin") || actuator->name() == QString("5555"))
             continue;
 
         QVERIFY(actuator->isValid());
@@ -126,7 +126,7 @@ void tst_QFeedbackActuator::enumeration()
 void tst_QFeedbackActuator::setEnabled()
 {
    foreach(QFeedbackActuator* actuator, QFeedbackActuator::actuators()) {
-        if (actuator->name() == QString("test plugin"))
+       if (actuator->name() == QString("test plugin") || actuator->name() == QString("5555"))
             continue;
         //this test might not always be true because you ight not be allowed to change the enabled property
         actuator->setEnabled(false);
