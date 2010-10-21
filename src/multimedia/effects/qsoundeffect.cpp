@@ -108,12 +108,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool SoundEffect::loaded
-
-    This property indicates if the source has been loaded and ready for play
-*/
-
-/*!
     \qmlproperty bool SoundEffect::playing
 
     This property indicates if the soundeffect is playing or not.
@@ -152,12 +146,6 @@ QT_BEGIN_NAMESPACE
     \qmlsignal SoundEffect::mutedChanged()
 
     This handler is called when the mute state has changed.
-*/
-
-/*!
-    \qmlsignal SoundEffect::loadedChanged()
-
-    This handler is called when the loaded property has changed.
 */
 
 /*!
