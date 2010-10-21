@@ -98,7 +98,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty int SoundEffect::volume
 
-    This property provides a way to control the volume for playback.
+    This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
 */
 
 /*!
@@ -233,12 +233,12 @@ void QSoundEffect::setLoopCount(int loopCount)
     emit loopCountChanged();
 }
 
-int QSoundEffect::volume() const
+qreal QSoundEffect::volume() const
 {
-    return d->volume();
+    return qreal(d->volume()) / 100;
 }
 
-void QSoundEffect::setVolume(int volume)
+void QSoundEffect::setVolume(qreal volume)
 {
     if (volume < 0 || volume > 1) {
         qWarning("SoundEffect: volume should be between 0.0 and 1.0");
@@ -248,7 +248,7 @@ void QSoundEffect::setVolume(int volume)
     if (d->volume() == iVolume)
         return;
 
-    d->setVolume(volume);
+    d->setVolume(iVolume);
     emit volumeChanged();
 }
 
