@@ -229,6 +229,7 @@ public:
     int getDPIHeight(int /*screen*/){return 0;};
     int physicalHeight(int /*screen*/){return 0;};
     int physicalWidth(int /*screen*/){return 0;};
+    bool backLightOn();
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -295,8 +296,8 @@ public:
     QString imei() {return QString();}
     QString imsi() {return QString();}
     QString manufacturer();
-    QString model()  {return QString();}
-    QString productName()  {return QString();}
+    QString model();
+    QString productName();
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
