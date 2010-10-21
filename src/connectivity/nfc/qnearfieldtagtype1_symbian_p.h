@@ -43,6 +43,7 @@
 #define QNEARFIELDTAGTYPE1SYMBIAN_H
 
 #include <qnearfieldtagtype1.h>
+#include "nearfieldtagtype1_symbian.h"
 
 QT_BEGIN_HEADER
 
@@ -54,11 +55,14 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1
 
 public:
 
-    explicit QNearFieldTagType1Symbian(QObject *parent = 0);
+    explicit QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent = 0);
 
     virtual QByteArray uid() const;
 
-    virtual QNearFieldTarget::AccessMethods accessMethods() const;
+    virtual QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return mAccessMethods;
+    }
 
     // DIGPROTO
     virtual QByteArray readIdentification();
@@ -76,6 +80,16 @@ public:
 
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    
+    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+    {
+        mAccessMethods = accessMethods;
+    }
+
+private:
+    // Own
+    CNearFieldTagType1 * mTag;
+    QNearFieldTarget::AccessMethods mAccessMethods;
 };
 
 QTM_END_NAMESPACE
