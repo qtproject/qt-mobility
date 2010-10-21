@@ -123,6 +123,7 @@ void tst_QFeedbackPlugin::testFileEffect()
     QVERIFY(fileEffect.isLoaded());
     fileEffect.setLoaded(true); // should do nothing
     QVERIFY(fileEffect.isLoaded());
+    QCOMPARE(fileEffect.duration(), 5678); // from the plugin
 
     fileEffect.unload(); // should fail, since we're not STOPPED (HMM!!)
     QVERIFY(fileEffect.isLoaded());
@@ -135,11 +136,13 @@ void tst_QFeedbackPlugin::testFileEffect()
     fileEffect.unload();
     QVERIFY(!fileEffect.isLoaded());
     QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    QCOMPARE(fileEffect.duration(), 0); // unloaded, shouldn't call?
 
     // Change the url
     fileEffect.setSource(QUrl("failload"));
     QVERIFY(!fileEffect.isLoaded());
     QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    QCOMPARE(fileEffect.duration(), 0); // unknown
 
     fileEffect.setSource(QUrl("load"));
     QVERIFY(fileEffect.isLoaded());
@@ -180,11 +183,6 @@ void tst_QFeedbackPlugin::testPlugin()
     QVERIFY(!testActuator->isEnabled()); // the test plugin always returns enabled = false.
     QCOMPARE(testActuator->state(), QFeedbackActuator::Unknown); // and it always returns state = unknown.
     // XXX TODO: ensure that a "working" plugin returns real values..
-
-    // Try manipulating some of the conditions around states
-
-
-
 
     // then, ensure that the test effect uses this actuator.
     m_testEffect.setActuator(testActuator);

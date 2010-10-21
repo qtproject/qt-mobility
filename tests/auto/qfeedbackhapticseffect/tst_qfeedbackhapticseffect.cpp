@@ -54,6 +54,51 @@
 
 using namespace QTM_NAMESPACE;
 
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
+#ifndef QTRY_VERIFY
+#define QTRY_VERIFY(__expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+#endif
+
+
+#define QTRY_WAIT(code, __expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            do { code } while(0); \
+            QTest::qWait(__step); \
+        } \
+    } while(0)
+
+
 class tst_QFeedbackHapticsEffect : public QObject
 {
     Q_OBJECT
@@ -116,10 +161,6 @@ void tst_QFeedbackHapticsEffect::initialization()
         QCOMPARE(effect.actuator(), QFeedbackActuator::actuators().first());
     }
 
-    // we ignore the actuator which we know will fail.
-    if (effect.actuator()->name() == QString("test plugin"))
-        QSKIP("The test plugin is the default actuator; skipping.", SkipSingle);
-
     // actuators from other plugins need to be verified.
     //test default values
     QCOMPARE(effect.duration(), 250); //250ms is the default length for effects
@@ -160,10 +201,6 @@ void tst_QFeedbackHapticsEffect::envelope()
     QFETCH(int, period);
 
     QFeedbackHapticsEffect effect;
-
-    // we ignore the actuator which we know will fail.
-    if (effect.actuator()->name() == QString("test plugin"))
-        QSKIP("The test plugin is the default actuator; skipping.", SkipSingle);
 
     // actuators from other plugins need to be verified.
     effect.setDuration(duration);
@@ -206,7 +243,7 @@ void tst_QFeedbackHapticsEffect::startStop_data()
 void tst_QFeedbackHapticsEffect::startStop()
 {
     qRegisterMetaType<QFeedbackEffect::ErrorType>("QFeedbackEffect::ErrorType");
-    if (QFeedbackActuator::actuators().isEmpty() || QFeedbackActuator::actuators().at(0)->name() == QString("test plugin"))
+    if (QFeedbackActuator::actuators().isEmpty())
         QSKIP("this test requires to have actuators", SkipAll);
 
     QFETCH(int, duration);
@@ -218,7 +255,8 @@ void tst_QFeedbackHapticsEffect::startStop()
     QFETCH(int, period);
 
     QFeedbackHapticsEffect effect;
-    QSignalSpy spy(&effect, SIGNAL(error(QFeedbackEffect::ErrorType)));
+    QSignalSpy errorspy(&effect, SIGNAL(error(QFeedbackEffect::ErrorType)));
+    QSignalSpy stateSpy(&effect, SIGNAL(stateChanged()));
 
     effect.setDuration(duration);
     effect.setIntensity(intensity);
@@ -230,22 +268,27 @@ void tst_QFeedbackHapticsEffect::startStop()
 
     QCOMPARE(effect.state(), QFeedbackHapticsEffect::Stopped);
 
+    QVERIFY(stateSpy.isEmpty());
     effect.start();
-    QVERIFY(spy.isEmpty());
+    QVERIFY(errorspy.isEmpty());
 
-    QTest::qWait(duration/2);
-    QVERIFY(spy.isEmpty());
-    QCOMPARE(effect.state(), QFeedbackHapticsEffect::Running);
+    // This seems a little risky
+    QTRY_COMPARE(effect.state(), QFeedbackHapticsEffect::Running);
+    QVERIFY(errorspy.isEmpty());
+    QCOMPARE(stateSpy.count(), 1); // stopped to start
 
     effect.pause();
     QCOMPARE(effect.state(), QFeedbackHapticsEffect::Paused);
+    QCOMPARE(stateSpy.count(), 2);
 
     effect.start();
     QCOMPARE(effect.state(), QFeedbackHapticsEffect::Running);
+    QCOMPARE(stateSpy.count(),  3);
 
-    QTest::qWait(duration/2 + 200);
-    QVERIFY(spy.isEmpty());
-    QCOMPARE(effect.state(), QFeedbackHapticsEffect::Stopped);
+    QTRY_COMPARE(effect.state(), QFeedbackHapticsEffect::Stopped);
+    QVERIFY(errorspy.isEmpty());
+    QEXPECT_FAIL("", "No plugin API to report state changed to stopped :/", Continue);
+    QCOMPARE(stateSpy.count(), 4);
 }
 
 
@@ -255,10 +298,14 @@ void tst_QFeedbackHapticsEffect::themeSupport()
 
     if (!supportsTheme)
         QSKIP("No theme support", SkipAll);
+    int numberOfSupportedThemeEffects = 0;
     for (int i = 0; i < QFeedbackEffect::NumberOfThemeEffects; ++i) {
-        QCOMPARE(QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(i)), true);
+        if (QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(i)))
+            numberOfSupportedThemeEffects++;
         QTest::qWait(250); //let's make sure the device is ready again
     }
+
+    QVERIFY(numberOfSupportedThemeEffects > 0);
 }
 
 

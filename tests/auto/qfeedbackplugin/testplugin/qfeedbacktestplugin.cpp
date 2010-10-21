@@ -124,14 +124,24 @@ bool QFeedbackTestPlugin::isActuatorCapabilitySupported(const QFeedbackActuator 
 
 void QFeedbackTestPlugin::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty ep)
 {
-    Q_UNUSED(effect)
-    Q_UNUSED(ep)
+    if (ep == QFeedbackHapticsInterface::Duration)
+        mHapticTimer.setInterval(effect->duration());
 }
 
 void QFeedbackTestPlugin::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
 {
     Q_UNUSED(effect)
-    mHapticState = state;
+    if (mHapticState != state) {
+        mHapticState = state;
+        if (mHapticState == QFeedbackEffect::Running) {
+            mHapticTimer.start();
+        } else if (mHapticState == QFeedbackEffect::Stopped) {
+            mHapticTimer.stop();
+        } else if (mHapticState == QFeedbackEffect::Paused) {
+            // In theory should set the duration to the remainder...
+            mHapticTimer.stop();
+        }
+    }
 }
 
 QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackHapticsEffect *effect)
@@ -139,6 +149,14 @@ QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackHapticsEf
     Q_UNUSED(effect)
     return mHapticState;
 }
+
+void QFeedbackTestPlugin::timerExpired()
+{
+    qDebug() << "Timer expired";
+    mHapticState = QFeedbackEffect::Stopped;
+}
+
+
 
 void QFeedbackTestPlugin::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
@@ -172,7 +190,7 @@ QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackFileEffec
 int QFeedbackTestPlugin::effectDuration(const QFeedbackFileEffect *effect)
 {
     Q_UNUSED(effect)
-    return -1;
+    return 5678;
 }
 
 QStringList QFeedbackTestPlugin::supportedMimeTypes()

@@ -53,6 +53,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
+#include <QtCore/QTimer>
 
 #include <qfeedbackplugininterfaces.h>
 
@@ -92,12 +93,16 @@ public:
     // For themes
     virtual bool play(QFeedbackEffect::ThemeEffect);
 
+private slots:
+    void timerExpired();
+
 private:
     QList<QFeedbackActuator*> actuators_;
 
     // Our hacky state
     QFeedbackEffect::State mHapticState;
     QFeedbackEffect::State mFileState;
+    QTimer mHapticTimer;
 };
 
 
