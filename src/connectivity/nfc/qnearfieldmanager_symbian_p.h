@@ -49,6 +49,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QMetaMethod>
+#include <QPointer>
 
 QTM_USE_NAMESPACE
 
@@ -71,7 +72,8 @@ public:
     bool unregisterTargetDetectedHandler(int id);
 
 private://call back function by symbian backend implementation
-	void targetFound(QNearFieldTarget *target);
+	void targetFound(QNearFieldTarget* target);
+	void targetDisconnected();
 
 private:
     struct Callback {
@@ -89,6 +91,8 @@ private:
     
     CNearFieldManager* m_symbianbackend;
     friend class CNearFieldManager;
+    
+    QPointer<QNearFieldTarget> m_target;
 };
 
 #endif /* QNEARFIELDMANAGER_SYMBIAN_P_H_ */
