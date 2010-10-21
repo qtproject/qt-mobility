@@ -224,6 +224,7 @@ void tst_QMessageStoreKeys::initTestCase()
 
     existingFolderIds = manager->queryFolders().toSet();
 
+#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
                             ("path", "My messages")
@@ -257,6 +258,7 @@ void tst_QMessageStoreKeys::initTestCase()
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
+#endif
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     // Local folders can be seen through every account
@@ -282,7 +284,11 @@ void tst_QMessageStoreKeys::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+                             ("parentFolderPath", "Drafts")
+#else
                              ("parentFolderPath", "My messages")
+#endif
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN)) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) // SMS messages must be in SMS store on Windows and on Symbian
                              ("type", "email")
 #else
@@ -299,7 +305,11 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+                             ("parentFolderPath", "Drafts")
+#else
                              ("parentFolderPath", "Innbox")
+#endif
                              ("type", "email")
                              ("to", "Important.Person@example.com")
                              ("from", "Esteemed.Colleague@example.com")
@@ -313,7 +323,11 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+                             ("parentFolderPath", "Drafts")
+#else
                              ("parentFolderPath", "Innbox")
+#endif
                              ("type", "email")
                              ("to", "Important.Person@example.com,Minion@example.com")
                              ("from", "Big.Boss@example.com")
@@ -355,7 +369,11 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("custom-spam", "filter:yes");
 #else
                   << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+                             ("parentFolderPath", "Drafts")
+#else
                              ("parentFolderPath", "X-Announce")
+#endif
                              ("type", "email")
                              ("to", "announce@example.com,maintenance-log@example.com")
                              ("from", "sysadmin@example.com")
@@ -367,7 +385,11 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-spam", "filter:maybe")
                   << Params()("parentAccountName", "Work")
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+                             ("parentFolderPath", "Drafts")
+#else
                              ("parentFolderPath", "X-Archived")
+#endif
                              ("type", "email")
                              ("to", "announce@example.com")
                              ("from", "Big.Boss@example.com")
