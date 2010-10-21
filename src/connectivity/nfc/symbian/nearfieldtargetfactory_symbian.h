@@ -52,6 +52,9 @@ class TNearFieldTargetFactory
     {
 public:
     static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, QObject * aParent);
+private:
+    static QNearFieldTarget * CreateTagType1(MNfcTag * aNfcTag, QObject * aParent);
+    static QNearFieldTarget::AccessMethods ConnectionMode2AccessMethods(MNfcTag * aNfcTag);
     };
 
 #endif /* NEARFIELDTARGETFACTORY_H */

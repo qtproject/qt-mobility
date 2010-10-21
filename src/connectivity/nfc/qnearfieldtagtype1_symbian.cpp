@@ -52,10 +52,6 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 {
 }
 
-QNearFieldTarget::AccessMethods QNearFieldTagType1Symbian::accessMethods() const
-{
-}
-
 QByteArray QNearFieldTagType1Symbian::readIdentification()
 {
 }

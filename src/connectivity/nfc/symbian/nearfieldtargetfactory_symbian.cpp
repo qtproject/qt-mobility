@@ -42,18 +42,38 @@
 #include <nfctag.h>
 #include "nearfieldtargetfactory_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
-#include "..\qnearfieldtagtype1_symbian_p.h"
+#include "qnearfieldtagtype1_symbian_p.h"
 
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QObject * aParent)
     {
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
-        // ownership of aNfcTag transferred.
-        CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
-        tag = new(ELeave)QNearFieldTagType1Symbian(tagType1, aParent);
-        CleanupStack::Pop(tagType1);
+        tag = CreateTagType1(aNfcTag, aParent);
         }
     return tag;
+    }
+
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1(MNfcTag * aNfcTag, QObject * aParent)
+    {
+    // ownership of aNfcTag transferred.
+    CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
+    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(tagType1, aParent);
+    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
+    CleanupStack::Pop(tagType1);
+    return tag;
+    }
+    
+QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
+    {
+    QNearFieldTarget::AccessMethods accessMethod;
+    if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
+        {
+        accessMethod |= QNearFieldTarget::NdefAccess;
+        }
+    if (!aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcUnknownConnectionMode))
+        {
+        accessMethod |= QNearFieldTarget::TagTypeSpecificAccess;
+        }
     }
 

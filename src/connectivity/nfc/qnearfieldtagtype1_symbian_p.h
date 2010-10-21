@@ -59,7 +59,10 @@ public:
 
     virtual QByteArray uid() const;
 
-    virtual QNearFieldTarget::AccessMethods accessMethods() const;
+    virtual QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return mAccessMethods;
+    }
 
     // DIGPROTO
     virtual QByteArray readIdentification();
@@ -78,9 +81,15 @@ public:
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
     
+    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+    {
+        mAccessMethods = accessMethods;
+    }
+
 private:
     // Own
     CNearFieldTagType1 * mTag;
+    QNearFieldTarget::AccessMethods mAccessMethods;
 };
 
 QTM_END_NAMESPACE
