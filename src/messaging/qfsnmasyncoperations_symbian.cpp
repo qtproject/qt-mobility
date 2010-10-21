@@ -113,7 +113,7 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
     sender.setAddress(message.from().addressee());
     
     envelope.setSender(sender);
-    
+
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
         QList<EmailClientApi::NmApiEmailAddress> toRecipients;
@@ -137,7 +137,9 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
         }
         envelope.setCcRecipients(ccRecipients);
     }
-        
+    
+    envelope.setContentType(message.contentType()+"/"+message.contentSubType());
+
     QList<QMessageAddress> bccList(message.bcc());
     if (bccList.count() > 0) {
         QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
@@ -158,6 +160,8 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
             QByteArray subType = message.contentSubType();
             NmApiTextContent content;
             content.setContent(message.textContent());
+            content.setContentType(type+"/"+subType);
+            content.setSize(messageBody.size());
             if (type == "text" && subType == "plain")
                 fsMessage.setPlainTextContent(content);
             else if (type == "text" && subType == "html")
@@ -176,6 +180,8 @@ void CFSAsynchronousOperation::handleFSMessage(QMessage &message, NmApiMessage &
                     QByteArray subType = message.contentSubType();
                     NmApiTextContent content;
                     content.setContent(message.textContent());
+                    content.setContentType(type+"/"+subType);
+                    content.setSize(messageBody.size());
                     if (type == "text" && subType == "plain")
                         fsMessage.setPlainTextContent(content);
                     else if (type == "text" && subType == "html")
