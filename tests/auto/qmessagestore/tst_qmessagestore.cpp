@@ -655,7 +655,7 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(message.cc(), ccAddresses);
 
-#ifndef FREESTYLENMAILUSED    
+#ifndef FREESTYLENMAILUSED
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Dates can not be stored with addMessage in Maemo implementation
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
@@ -663,7 +663,6 @@ void tst_QMessageStore::testMessage()
 #endif
     QCOMPARE(message.subject(), subject);
 
-#ifndef FREESTYLENMAILUSED    
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
 
@@ -672,14 +671,13 @@ void tst_QMessageStore::testMessage()
     } else {
         QVERIFY(message.contentIds().isEmpty());
     }
-#endif    
 
     QCOMPARE(message.parentAccountId(), testAccountId);
     QCOMPARE(message.parentFolderId(), testFolderId);
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) // Created Messages are not stored in Standard Folders in Symbian & Maemo
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 #elif defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)       
-    //QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
+    QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
 #endif    
   
 #ifndef FREESTYLENMAILUSED
@@ -690,23 +688,19 @@ void tst_QMessageStore::testMessage()
 #endif    
 
     QMessageContentContainerId bodyId(message.bodyId());
-#ifndef FREESTYLENMAILUSED    
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
     QVERIFY(message.contains(bodyId));
-#endif    
 
     QMessageContentContainer body(message.find(bodyId));
 
-#ifndef FREESTYLENMAILUSED    
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
     QAPPROXIMATECOMPARE(body.size(), bodySize, (bodySize / 2));
-#endif    
 
     QMessageContentContainerIdList attachmentIds(message.attachmentIds());
     QCOMPARE(attachmentIds.count(), attachments.count());
@@ -752,14 +746,12 @@ void tst_QMessageStore::testMessage()
     message.setBody(replacementText, "text/html; charset=" + alternateCharset);
     body = message.find(bodyId);
     
-#ifndef FREESTYLENMAILUSED
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72, 36);
-#endif
     
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Update does not yet work in Maemo
@@ -767,7 +759,6 @@ void tst_QMessageStore::testMessage()
     dt.setTimeSpec(Qt::UTC);
     message.setDate(dt);    
 
-#ifndef FREESTYLENMAILUSED
     manager->updateMessage(&message);
     QCOMPARE(manager->error(), QMessageManager::NoError);
 
@@ -778,12 +769,10 @@ void tst_QMessageStore::testMessage()
         QCoreApplication::processEvents();
 
     // MAPI generates multiple update notifications per message updated
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)    
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
-#endif    
 
     QMessage updated(message.id());
 
@@ -793,7 +782,9 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
     QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
+#if !defined(FREESTYLENMAILUSED)
     QCOMPARE(updated.date(), dt);
+#endif
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
@@ -805,9 +796,11 @@ void tst_QMessageStore::testMessage()
   
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
+#if !defined(FREESTYLENMAILUSED)    
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
+#endif
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
@@ -833,7 +826,6 @@ void tst_QMessageStore::testMessage()
     // Verify that the attachments can be removed
     updated.clearAttachments();
     QVERIFY(updated.attachmentIds().isEmpty());
-#endif    
 #endif
 
     // Test message removal
