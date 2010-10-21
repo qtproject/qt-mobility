@@ -223,7 +223,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
     if (list.size() < 1)
         return false;
 
-    QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
+    connection = new QDBusConnection(QDBusConnection::sessionBus());
     if (!connection->isConnected()) {
         qWarning() << "Cannot connect to DBus";
         return 0;
@@ -233,11 +233,12 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
     for (int i=0; i<list.size(); i++) {
         QString serviceName = "com.nokia.qtmobility.sfw." + list[i].serviceName();
         QDBusReply<bool> reply = connection->interface()->isServiceRegistered(serviceName);
-        if (!reply.value()) {
-            if (!connection->registerService(serviceName)) {
-                qWarning() << "Cannot register service to DBus";
-                return 0;
-            }
+        if (reply.value())
+            return false;
+            
+        if (!connection->registerService(serviceName)) {
+            qWarning() << "Cannot register service to DBus";
+            return false;
         } 
 
         // Create and register our DBusSession server/client
