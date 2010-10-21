@@ -67,7 +67,6 @@ class tst_QServiceManager_IPC: public QObject
 {
     Q_OBJECT
 public:
-    bool requiresLackey();
 
 protected slots:
     void ipcError(QService::UnrecoverableIPCError error);
@@ -119,41 +118,14 @@ private:
     QObject* miscTest;
     QServiceManager* manager;
     bool verbose;
-    QProcess* lackey;
     bool ipcfailure;
 };
-
-/*
-    TODO:
-    -Test service with multiple inheritance hierarchy
-*/
-bool tst_QServiceManager_IPC::requiresLackey()
-{
-    //return false;
-
-// Temporarily commented out for initial development on Symbian
-#ifdef Q_OS_SYMBIAN
-    return false; //service is started when requested
-#endif
-
-#ifdef QT_NO_DBUS
-    return false;
-#endif
-
-#ifdef Q_OS_WIN
-    return false;
-#endif
-
-    return true;
-
-}
 
 void tst_QServiceManager_IPC::initTestCase()
 {
     //verbose = true;
     ipcfailure = false;
     verbose = false;
-    lackey = 0;
     serviceUnique = 0;
     serviceUniqueOther = 0;
     serviceSharedOther = 0;
@@ -175,20 +147,19 @@ void tst_QServiceManager_IPC::initTestCase()
         qWarning() << "Cannot register IPCExampleService" << path;
 #endif
 
-    //start lackey that represents the service
-    if (requiresLackey()) {
-        qDebug() << "Warning: starting server by hand";
-        lackey = new QProcess(this);
-        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        lackey->setProcessEnvironment(env);
-        if (verbose)
-            lackey->setProcessChannelMode(QProcess::ForwardedChannels);
-        lackey->start("./qt_sfw_example_ipc_unittest");
-        qDebug() << lackey->error() << lackey->errorString();
-        QVERIFY(lackey->waitForStarted());
-        //Give the lackey some time to come up;
-        QTest::qWait(700);
+    // D-Bus auto registration
+#ifndef QT_NO_DBUS
+    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" +
+                                             "com.nokia.qt.ipcunittest.service";
+    QFile data(file);
+    if (data.open(QFile::WriteOnly)) {
+        QTextStream out(&data);
+        out << "[D-BUS Service]\n"
+            << "Name=com.nokia.qtmobility.sfw.IPCExampleService" << '\n'
+            << "Exec=" << QFileInfo("./qt_sfw_example_ipc_unittest").absoluteFilePath();
+        data.close();
     }
+#endif
 
     //test that the service is installed
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
@@ -209,7 +180,6 @@ void tst_QServiceManager_IPC::initTestCase()
 
     }
 
-  
     QString errorCode = "Cannot find service. Error: %1";
     errorCode = errorCode.arg(manager->error());
     QVERIFY2(serviceUnique,errorCode.toLatin1());
@@ -228,6 +198,12 @@ void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
 
 void tst_QServiceManager_IPC::cleanupTestCase()
 {
+#ifndef QT_NO_DBUS
+    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" +
+                                             "com.nokia.qt.ipcunittest.service";
+    QFile::remove(file);
+#endif
+
     if (serviceUnique) {
         delete serviceUnique;
     }
@@ -244,22 +220,6 @@ void tst_QServiceManager_IPC::cleanupTestCase()
         delete serviceSharedOther;
     }
 
-    if (requiresLackey() && lackey) {
-        lackey->terminate();
-       
-        // terminate didnt cause process to exit
-        if (!lackey->waitForFinished(10000))
-            lackey->kill();
-
-        switch(lackey->exitCode()) {
-        case 0:
-            qDebug("Lackey returned exit success(0)");
-            break; 
-        default:
-            qDebug("Lackey failed.");
-            break;
-        }
-    }
     // clean up the unit, don't leave it registered
     QServiceManager m;
     m.removeService("IPCExampleService");
