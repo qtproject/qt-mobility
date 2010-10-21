@@ -126,7 +126,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianEngineId::clone() const
 
 QString QOrganizerItemSymbianEngineId::toString() const
 {
-    return QString::fromAscii("%1:%2").arg(m_localItemId).arg(m_localCollectionId);
+    return QString::fromAscii("%1:%2").arg(m_localCollectionId).arg(m_localItemId);
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -257,7 +257,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const Q
     quint64 collectionid = parts[0].toULongLong(&ok);
     if (!ok)
         return NULL;
-    quint64 itemId = parts[1].toULongLong(&ok);
+    quint32 itemId = parts[1].toUInt(&ok);
     if (!ok)
         return NULL;
     return new QOrganizerItemSymbianEngineId(collectionid, itemId);
@@ -681,6 +681,9 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
     const QOrganizerItemFetchHint& fetchHint) const
 {
 	Q_UNUSED(fetchHint)
+
+    if (itemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     // Check collection id
     QOrganizerCollectionId collectionLocalId = getCollectionId(itemId);
@@ -1124,6 +1127,9 @@ void QOrganizerItemSymbianEngine::removeItemL(
     const QOrganizerItemId& organizeritemId)
 {
     // TODO: How to remove item instances?
+
+    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     QOrganizerCollectionId collectionId = getCollectionId(organizeritemId);
     if (!m_collections.contains(collectionId))

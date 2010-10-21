@@ -135,37 +135,37 @@ QString QDeclarativeContactRelationshipModel::error() const
 {
     switch (d->m_manager->error()) {
     case QContactManager::DoesNotExistError:
-        return QLatin1String("Not exist");
+        return QLatin1String("DoesNotExist");
     case QContactManager::AlreadyExistsError:
-        return QLatin1String("Already exist");
+        return QLatin1String("AlreadyExists");
     case QContactManager::InvalidDetailError:
-        return QLatin1String("Invalid detail");
+        return QLatin1String("InvalidDetail");
     case QContactManager::InvalidRelationshipError:
-        return QLatin1String("Invalid relationship");
+        return QLatin1String("InvalidRelationship");
     case QContactManager::LockedError:
-        return QLatin1String("Locked error");
+        return QLatin1String("LockedError");
     case QContactManager::DetailAccessError:
-        return QLatin1String("Detail access error");
+        return QLatin1String("DetailAccessError");
     case QContactManager::PermissionsError:
-        return QLatin1String("Permissions error");
+        return QLatin1String("PermissionsError");
     case QContactManager::OutOfMemoryError:
-        return QLatin1String("Out of memory");
+        return QLatin1String("OutOfMemory");
     case QContactManager::NotSupportedError:
-        return QLatin1String("Not supported");
+        return QLatin1String("NotSupported");
     case QContactManager::BadArgumentError:
-        return QLatin1String("Bad argument");
+        return QLatin1String("BadArgument");
     case QContactManager::UnspecifiedError:
-        return QLatin1String("Unspecified error");
+        return QLatin1String("UnspecifiedError");
     case QContactManager::VersionMismatchError:
-        return QLatin1String("Version mismatch");
+        return QLatin1String("VersionMismatch");
     case QContactManager::LimitReachedError:
-        return QLatin1String("Limit reached");
+        return QLatin1String("LimitReached");
     case QContactManager::InvalidContactTypeError:
-        return QLatin1String("Invalid contact type");
+        return QLatin1String("InvalidContactType");
     default:
         break;
     }
-    return QLatin1String("Status ok");
+    return QLatin1String("NoError");
 }
 void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
 {
@@ -305,7 +305,7 @@ void QDeclarativeContactRelationshipModel::fetchAgain()
 }
 
 /*!
-  \qmlmethod addRelationship(relationship)
+  \qmlmethod RelationshipModel::addRelationship(relationship)
   Addes the given \a relationship to the backend store.
   */
 void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
@@ -321,7 +321,7 @@ void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRe
 }
 
 /*!
-  \qmlmethod removeRelationship(relationship)
+  \qmlmethod RelationshipModel::removeRelationship(relationship)
   Removes the given \a relationship from the backend store.
   */
 void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContactRelationship* dcr)

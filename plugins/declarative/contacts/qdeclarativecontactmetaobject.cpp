@@ -61,6 +61,11 @@ static ContactDetailNameMap qt_contactDetailNameMap[] = {
     {QDeclarativeContactDetail::Customized,     "",               "",                false}
 };
 
+/*!
+    \class QDeclarativeContactMetaObject
+    \internal
+    \brief open contact meta object for accessing dynamic contact detail properties in qml
+*/
 QDeclarativeContactMetaObject::QDeclarativeContactMetaObject(QObject* obj, const QContact& contact)
     :QDeclarativeOpenMetaObject(obj),
       m_modified(false)

@@ -225,6 +225,22 @@ bool QSoundEffect::isLoaded() const
     return d->isLoaded();
 }
 
+/*!
+  \qmlmethod SoundEffect::play()
+
+  Start playback of the sound effect, looping the effect for the number of
+  times as specificed in the loops property.
+
+  This is the default method for SoundEffect.
+
+  \qml
+  MouseArea {
+      anchors.fill: parent
+      onPressed: { SoundEffect { source:"soundeffect.wav" } }
+  }
+  \endqml
+*/
+
 void QSoundEffect::play()
 {
     d->play();

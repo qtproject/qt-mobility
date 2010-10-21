@@ -245,8 +245,6 @@
 
     For more details see the \l{Versit}{Versit API overview}.
 
-    \section1 BETA APIs
-
     \section2 Organizer
 
     An API for management of calendar, scheduling and personal data
@@ -513,7 +511,7 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -527,9 +525,9 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Organizer</td>
@@ -539,7 +537,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -552,10 +550,10 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Document Gallery</td>
@@ -565,7 +563,7 @@
     <td bgcolor="yellow">*</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -590,8 +588,8 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>

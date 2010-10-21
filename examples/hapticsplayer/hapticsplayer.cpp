@@ -89,9 +89,11 @@ HapticsPlayer::HapticsPlayer() : actuator(0)
     connect(ui.filePlayPause, SIGNAL(pressed()), SLOT(filePlayPauseClicked()));
     connect(ui.fileStop, SIGNAL(pressed()), &fileEffect, SLOT(stop()));
 
-    foreach(const QFeedbackActuator &dev, QFeedbackActuator::actuators()) {
-        ui.actuators->addItem(dev.name());
+    foreach(QFeedbackActuator *dev, QFeedbackActuator::actuators()) {
+        ui.actuators->addItem(dev->name());
     }
+    if (QFeedbackActuator::actuators().count() > 0)
+        ui.actuators->setCurrentIndex(0);
 
     //adding the instant effects
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;

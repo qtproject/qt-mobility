@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "dialog.h"
+#include "hapticsquare.h"
 #include "hapticbutton.h"
 
 #include <QGridLayout>
 #include <QDebug>
 
 //! [0]
-Dialog::Dialog()
+HapticSquare::HapticSquare()
 {
     m_rumble.setAttackIntensity(0.0);
     m_rumble.setAttackTime(250);
@@ -85,7 +85,7 @@ Dialog::Dialog()
 }
 //! [2]
 
-Dialog::~Dialog()
+HapticSquare::~HapticSquare()
 {
     delete m_btnRumble;
     delete m_btnOcean;
@@ -94,12 +94,12 @@ Dialog::~Dialog()
 }
 
 //! [3]
-void Dialog::playRumble()
+void HapticSquare::playRumble()
 {
     m_rumble.start();
 }
 
-void Dialog::playOcean(bool toggleState)
+void HapticSquare::playOcean(bool toggleState)
 {
     if (toggleState)
         m_ocean.start();
@@ -109,16 +109,15 @@ void Dialog::playOcean(bool toggleState)
 //! [3]
 
 //! [4]
-void Dialog::playButtonClick()
+void HapticSquare::playButtonClick()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
 }
 
-void Dialog::playNegativeEffect()
+void HapticSquare::playNegativeEffect()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeNegativeTacticon);
 }
 //! [4]
 
-#include "moc_dialog.cpp"
-
+#include "moc_hapticsquare.cpp"
