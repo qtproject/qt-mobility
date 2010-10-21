@@ -58,20 +58,123 @@
 #include <qcameraimagecapture.h>
 #include <qvideoframe.h>
 
-#include <e32base.h>
-
 #include "s60camerasettings.h"
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
+#include "s60cameraconstants.h" // Default Jpeg Quality
+
+#include <icl/imagedata.h> // TFrameInfo
 
 QT_USE_NAMESPACE
 
 class S60CameraService;
+class CImageDecoder;
+class CImageEncoder;
+class CFrameImageData;
+class RFs;
+class S60ImageCaptureSession;
+
+/*
+ * This class implements asynchronous image decoding service for the
+ * S60ImageCaptureSession.
+ */
+class S60ImageCaptureDecoder : public CActive
+{
+
+public: // Static Contructor & Destructor
+
+    static S60ImageCaptureDecoder* FileNewL(S60ImageCaptureSession *imageSession = 0,
+                                        RFs *fileSystemAccess = 0,
+                                        const TDesC16 *fileName = 0);
+    static S60ImageCaptureDecoder* DataNewL(S60ImageCaptureSession *imageSession = 0,
+                                        RFs *fileSystemAccess = 0,
+                                        const TDesC8 *data = 0);
+    ~S60ImageCaptureDecoder();
+
+public: // Operations
+
+    void decode(CFbsBitmap *destBitmap);
+    TFrameInfo *frameInfo();
+
+protected: // CActive
+
+    void RunL();
+    void DoCancel();
+    TInt RunError(TInt aError);
+
+protected: // Protected constructors
+
+    S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
+                           RFs *fileSystemAccess,
+                           const TDesC8 *data,
+                           const TDesC16 *fileName);
+    void ConstructL(const bool fileInput = false);
+
+private: // Data
+
+    S60ImageCaptureSession  *m_imageSession;
+    CImageDecoder           *m_imageDecoder;
+    RFs                     *m_fs;
+    const TDesC8            *m_jpegImageData;
+    const TDesC16           *m_jpegImageFile;
+    bool                    m_fileInput;
+    TFrameInfo              m_frameInfo;
+
+};
+
+//=============================================================================
+
+/*
+ * This class implements asynchronous image encoding service for the
+ * S60ImageCaptureSession.
+ */
+class S60ImageCaptureEncoder : public CActive
+{
+
+public: // Static Contructor & Destructor
+
+    static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,
+                                        RFs *fileSystemAccess = 0,
+                                        const TDesC16 *fileName = 0,
+                                        TInt jpegQuality = KDefaultImageQuality);
+    ~S60ImageCaptureEncoder();
+
+public: // Operations
+
+    void encode(CFbsBitmap *sourceBitmap);
+
+protected: // CActive
+
+    void RunL();
+    void DoCancel();
+    TInt RunError(TInt aError);
+
+protected: // Protected constructors
+
+    S60ImageCaptureEncoder(S60ImageCaptureSession *imageSession,
+                           RFs *fileSystemAccess,
+                           const TDesC16 *fileName,
+                           TInt jpegQuality);
+    void ConstructL();
+
+private: // Data
+
+    S60ImageCaptureSession  *m_imageSession;
+    CImageEncoder           *m_imageEncoder;
+    RFs                     *m_fileSystemAccess;
+    const TDesC16           *m_fileName;
+    CFrameImageData         *m_frameImageData;
+    TInt                    m_jpegQuality;
+
+};
+
+//=============================================================================
 
 /*
  * Session handling all image capture activities.
  */
-class S60ImageCaptureSession : public QObject, public MCameraEngineImageCaptureObserver
+class S60ImageCaptureSession : public QObject,
+                               public MCameraEngineImageCaptureObserver
 {
     Q_OBJECT
 
@@ -161,6 +264,11 @@ public: // Methods
     void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
     bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
 
+public: // Image Decoding & Encoding Notifications
+
+    void handleImageDecoded(int error);
+    void handleImageEncoded(int error);
+
 protected: // MCameraEngineObserver
 
     void MceoFocusComplete();
@@ -215,24 +323,32 @@ private Q_SLOTS: // Internal Slots
 
 private: // Data
 
-    CCameraEngine       *m_cameraEngine;
-    S60CameraSettings   *m_advancedSettings;
-    mutable TCameraInfo *m_cameraInfo;
-    mutable int         m_error; // Symbian ErrorCode
-    TInt                m_activeDeviceIndex;
-    bool                m_cameraStarted;
-    ImageCaptureState   m_icState;
-    QStringList         m_supportedImageCodecs;
-    QString             m_currentCodec;
-    CCamera::TFormat    m_currentFormat;
-    QSize               m_captureSize;
-    int                 m_symbianImageQuality;
-    QString             m_stillCaptureFileName;
-    mutable int         m_currentImageId;
-    QList<uint>         m_formats;
+    CCameraEngine           *m_cameraEngine;
+    S60CameraSettings       *m_advancedSettings;
+    mutable TCameraInfo     *m_cameraInfo;
+    CFbsBitmap              *m_previewBitmap;
+    CActiveScheduler        *m_activeScheduler;
+    RFs                     *m_fileSystemAccess;
+    S60ImageCaptureDecoder  *m_imageDecoder;
+    S60ImageCaptureEncoder  *m_imageEncoder;
+    mutable int             m_error; // Symbian ErrorCode
+    TInt                    m_activeDeviceIndex;
+    bool                    m_cameraStarted;
+    ImageCaptureState       m_icState;
+    QStringList             m_supportedImageCodecs;
+    QString                 m_currentCodec;
+    CCamera::TFormat        m_currentFormat;
+    QSize                   m_captureSize;
+    int                     m_symbianImageQuality;
+    QString                 m_stillCaptureFileName;
+    QString                 m_requestedStillCaptureFileName;
+    mutable int             m_currentImageId;
+    QList<uint>             m_formats;
     // This indicates that image capture should be triggered right after
     // camera and image setting initialization has completed
-    bool                m_captureWhenReady;
+    bool                    m_captureWhenReady;
+    bool                    m_previewDecodingOngoing;
+    bool                    m_previewInWaitLoop;
 };
 
 #endif // S60IMAGECAPTURESESSION_H
