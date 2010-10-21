@@ -2021,8 +2021,8 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
                         return;
                     } else { // Excludes
+                        m_excludeIdList.clear();
                         for (int i=0; i < pf->_ids.count(); i++) {
-                            m_excludeIdList.clear();
                             m_excludeIdList.append(QMessageId(pf->_ids[i].toString()));
                         }
                         getAllMessages(sortCriteria);
