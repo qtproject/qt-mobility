@@ -39,17 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSOCKET_H
-#define QLLCPSOCKET_H
+#ifndef QLLCPSERVER_H
+#define QLLCPSERVER_H
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/QIODevice>
+#include <QtCore/QObject>
 #include <QtNetwork/QAbstractSocket>
 
-class QNearFieldTarget;
+QT_BEGIN_HEADER
 
-class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
+QTM_BEGIN_NAMESPACE
+
+class QLlcpSocket;
+class QLlcpServer : public QObject
 {
     Q_OBJECT
 
@@ -58,44 +61,27 @@ public:
         UnknownSocketError = QAbstractSocket::UnknownSocketError
     };
 
-    enum State {
-        UnconnectedState = QAbstractSocket::UnconnectedState,
-        ConnectingState = QAbstractSocket::ConnectingState,
-        ConnectedState = QAbstractSocket::ConnectedState,
-        ClosingState = QAbstractSocket::ClosingState
-    };
+    explicit QLlcpServer(QObject *parent = 0);
+    virtual ~QLlcpServer();
 
-    explicit QLlcpSocket(QObject *parent = 0);
-    ~QLlcpSocket();
+    bool listen(quint8 port = 0);
+    bool isListening() const;
 
-    void connectToService(const QNearFieldTarget &target, const QString &serviceUri);
-    void disconnectFromService();
+    void close();
 
-    bool bind(quint8 port);
+    quint8 serverPort() const;
 
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
+    virtual bool hasPendingConnections() const;
+    virtual QLlcpSocket *nextPendingConnection();
 
-    qint64 writeDatagram(const char *data, qint64 size);
-    qint64 writeDatagram(const QByteArray &datagram);
-
-    qint64 readDatagram(char *data, qint64 maxSize,
-                        QNearFieldTarget *target = 0, quint8 *port = 0);
-    qint64 writeDatagram(const char *data, qint64 size,
-                         const QNearFieldTarget &target, quint8 port);
-    qint64 writeDatagram(const QByteArray &datagram, const QNearFieldTarget &target, quint8 port);
-
-    Error error() const;
+    Error serverError() const;
 
 signals:
-    void connected();
-    void disconnected();
-    void error(QLlcpSocket::Error socketError);
-    void stateChanged(QLlcpSocket::State socketState);
-
-protected:
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
+    void newConnection();
 };
 
-#endif // QLLCPSOCKET_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QLLCPSERVER_H

@@ -53,6 +53,56 @@
 */
 
 /*!
+    \enum QLlcpSocket::Error
+
+    This enum describes the errors that can occur. The most recent error can be retrieved through a
+    call to error().
+
+    \value UnknownSocketError   An unidentified error has occurred.
+*/
+
+/*!
+    \enum QLlcpSocket::State
+
+    This enum describes the different state in which a socket can be.
+
+    \value UnconnectedState The socket is not connected.
+    \value ConnectingState  The socket has started establishing a connection.
+    \value ConnectedState   A connection is established.
+    \value ClosingState     The socket is about to close.
+*/
+
+/*!
+    \fn QLlcpSocket::connected()
+
+    This signal is emitted after connectToService() has been called and a connection has been
+    successfully established.
+
+    \sa connectToService(), disconnected()
+*/
+
+/*!
+    \fn QLlcpSocket::disconnected()
+
+    This signal is emitted when the socket has been disconnected.
+
+    \sa disconnectFromService(),
+*/
+
+/*!
+    \fn QLlcpSocket::error(QLlcpSocket::Error socketError)
+
+    This signal is emitted when an error occurs. The \a socketError parameter describes the error.
+*/
+
+/*!
+    \fn QLlcpSocket::stateChanged(QLlcpSocket::State socketState)
+
+    This signal is emitted when the state of the socket changes. The \a socketState parameter
+    describes the new state.
+*/
+
+/*!
     Construct a new unconnected LLCP socket with \a parent.
 */
 QLlcpSocket::QLlcpSocket(QObject *parent)
@@ -81,6 +131,16 @@ void QLlcpSocket::connectToService(const QNearFieldTarget &target, const QString
 */
 void QLlcpSocket::disconnectFromService()
 {
+}
+
+/*!
+    Binds the LLCP socket to local \a port. Returns true on success; otherwise returns false.
+*/
+bool QLlcpSocket::bind(quint8 port)
+{
+    Q_UNUSED(port);
+
+    return false;
 }
 
 /*!
@@ -131,7 +191,7 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 
 /*!
     Receives a datagram no larger than \a maxSize bytes and stores it in \a data. The sender's
-    details are stored in \a target and \a serviceUri (unless the pointers are 0).
+    details are stored in \a target and \a port (unless the pointers are 0).
 
     Returns the size of the datagram on success; otherwise returns -1.
 
@@ -142,29 +202,29 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
     \sa writeDatagram(), hasPendingDatagrams(), pendingDatagramSize()
 */
 qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *target,
-                                 QString *serviceUri)
+                                 quint8 *port)
 {
     Q_UNUSED(data);
     Q_UNUSED(maxSize);
     Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    Q_UNUSED(port);
 
     return -1;
 }
 
 /*!
     Sends the datagram at \a data of size \a size to the service identified by the URI
-    \a serviceUri on \a target. Returns the number of bytes sent on success; otherwise returns -1.
+    \a port on \a target. Returns the number of bytes sent on success; otherwise returns -1.
 
     \sa readDatagram()
 */
 qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, const QNearFieldTarget &target,
-                                  const QString &serviceUri)
+                                  quint8 port)
 {
     Q_UNUSED(data);
     Q_UNUSED(size);
     Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    Q_UNUSED(port);
 
     return -1;
 }
@@ -172,16 +232,24 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, const QNearFiel
 /*!
     \overload
 
-    Sends the datagram \a datagram to the service identified by the URI \a serviceUri on \a target.
+    Sends the datagram \a datagram to the service identified by the URI \a port on \a target.
 */
 qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, const QNearFieldTarget &target,
-                                  const QString &serviceUri)
+                                  quint8 port)
 {
     Q_UNUSED(datagram);
     Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    Q_UNUSED(port);
 
     return -1;
+}
+
+/*!
+    Returns the type of error that last occurred.
+*/
+QLlcpSocket::Error QLlcpSocket::error() const
+{
+    return UnknownSocketError;
 }
 
 /*!
