@@ -67,6 +67,9 @@
         \o \l {Multimedia QML Plugin}{Multimedia}
         \o A QML plugin for the Multimedia API: includes audio and video.
     \row
+        \o \l {Organizer QML Plugin}{Organizer}
+        \o A QML plugin for the Organizer API.
+    \row
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for 
            discovering and connecting to services.
