@@ -144,7 +144,7 @@ QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountF
     QMessageAccountIdList idList;
 
     idList << _mtmEngine->queryAccounts(filter, sortOrder, 0, 0);
-
+    
 #if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)    
     CFSEngine::instance()->setMtmAccountIdList(idList);
     idList << CFSEngine::instance()->queryAccounts(filter, sortOrder, 0, 0);
@@ -153,6 +153,13 @@ QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountF
     MessagingHelper::orderAccounts(idList, sortOrder);
 
     MessagingHelper::applyOffsetAndLimitToAccountIdList(idList, limit, offset);
+
+    // TODO: Empty account id's are leaked from MTM engine.
+    foreach (QMessageAccountId value, idList) {                
+        if (value.toString().isEmpty()) {
+            idList.removeOne(value);
+        }
+    }
 
     return idList;
 }
