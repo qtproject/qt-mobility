@@ -84,18 +84,10 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     QContactDetailFilter detailFilter(filter);
     QString sqlQuery;
     //Check for phonenumber. Special handling needed
-    if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
-            (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes)) {
+    if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) ) {
         //Handle phonenumber ...
-		if(detailFilter.detailFieldName().isEmpty()){
-            fetchAllPhoneNumbers(sqlQuery);    
-        }
-        else if(bestMatchingEnabled()) {
-            bestMatchPhoneNumberQuery(filter,sqlQuery,error);
-        }
-        else {
-            createMatchPhoneNumberQuery(filter,sqlQuery,error);
-        }
+        createPhoneNumberQuery(filter,sqlQuery,error);
+		
         if (*error == QContactManager::NoError) {
             //fetch the contacts
             idList =  m_srvConnection.searchContacts(sqlQuery,error);
@@ -129,9 +121,18 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
-        else if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
-            detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+        else if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
             //special case - phone number matching 
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName &&
+            detailFilter.detailFieldName().isEmpty()) {
+            //filtering contacts having email address
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName &&
+            detailFilter.detailFieldName().isEmpty()) {
+            //filtering contacts having online account
             result = true;
         }
         else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName &&
@@ -326,6 +327,39 @@ QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QCon
     return QList<QContactLocalId>();
 }
 
+void CntFilterDetail::createPhoneNumberQuery(
+                                      const QContactFilter& filter,
+                                      QString& sqlQuery,
+                                      QContactManager::Error* error)
+{
+    QContactDetailFilter detailFilter(filter);
+    
+    if (detailFilter.detailDefinitionName() != QContactPhoneNumber::DefinitionName) {
+        *error = QContactManager::NotSupportedError;
+        return;
+    }
+    
+    if (detailFilter.detailFieldName().isEmpty()) {
+        fetchAllPhoneNumbers(sqlQuery);
+    }
+    else if (detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+        // Matches phonenumbers
+        // Phonenumber matching algorithm used
+        if (bestMatchingEnabled()) {
+            bestMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
+        else {
+            createMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
+    }
+    else if (detailFilter.detailFieldName() == QContactPhoneNumber::FieldSubTypes) {
+        // Finds all mobile numbers. other subtypes not supported
+        createSelectQuery(filter,sqlQuery,error);
+    }
+    else {
+        *error = QContactManager::NotSupportedError; 
+    }
+}
 
 /*
  * Creates an sql query to fetch contact item IDs for all the contact items
