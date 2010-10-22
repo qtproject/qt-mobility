@@ -55,6 +55,7 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
+#include "qvcardrestorehandler_p.h"
 
 #include <QList>
 #include <QDateTime>
@@ -119,6 +120,7 @@ public: // Data
     int mPropertyHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
+    QVCardRestoreHandler mRestoreHandler;
 
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
