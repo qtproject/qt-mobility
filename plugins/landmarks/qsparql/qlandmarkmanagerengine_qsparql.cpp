@@ -679,6 +679,7 @@ void QLandmarkManagerEngineQsparql::connectNotify(const char *signal)
         {
             setChangeNotificationsEnabled(true);
         }
+    QObject::connectNotify(signal);
 }
 void QLandmarkManagerEngineQsparql::disconnectNotify(const char *signal)
 {
@@ -697,6 +698,7 @@ void QLandmarkManagerEngineQsparql::disconnectNotify(const char *signal)
             )
             setChangeNotificationsEnabled(false);
     }
+    QObject::disconnectNotify(signal);
 }
 
 void QLandmarkManagerEngineQsparql::updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
