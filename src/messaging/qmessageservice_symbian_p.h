@@ -76,6 +76,8 @@ public:
     
     void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
     void messagesCounted(int count);
+    
+    void cancel();
 
 signals:
 	void stateChanged(QMessageService::State);
