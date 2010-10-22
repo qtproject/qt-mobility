@@ -45,14 +45,16 @@ symbian {
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/symbian/nearfieldmanager_symbian.h \
         nfc/symbian/nearfieldtagtype1_symbian.h \
-        nfc/symbian/nearfieldtargetfactory_symbian.h
+        nfc/symbian/nearfieldtargetfactory_symbian.h \
+        nfc/symbian/llcpsocket_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
         nfc/qnearfieldtagtype1_symbian.cpp \
         nfc/symbian/nearfieldmanager_symbian.cpp \	
         nfc/symbian/nearfieldtagtype1_symbian.cpp \
-        nfc/symbian/nearfieldtargetfactory_symbian.cpp
+        nfc/symbian/nearfieldtargetfactory_symbian.cpp \
+        nfc/symbian/llcpsocket_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
