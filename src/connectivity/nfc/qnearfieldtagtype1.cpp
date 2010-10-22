@@ -41,6 +41,7 @@
 
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
+#include "qtlvreader_p.h"
 
 #include <QtCore/QByteArray>
 
@@ -108,78 +109,26 @@ bool QNearFieldTagType1::hasNdefMessage()
 */
 QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
 {
-    QByteArray data = readAll();
+    const QByteArray id = readIdentification();
 
-    quint8 hr0 = data.at(0);
     // Check if target is a NFC TagType1 tag
+    quint8 hr0 = id.at(0);
     if (!(hr0 & 0x10))
         return QList<QNdefMessage>();
 
-    // Check if NDEF Message Magic number is present
-    quint8 nmn = data.at(10);
-    if (nmn != 0xe1)
+    if (readByte(8) != 0xe1)
         return QList<QNdefMessage>();
+
+    QTlvReader reader(this);
 
     QList<QNdefMessage> ndefMessages;
 
-    int i = 14; // skip hr0, hr1, uid and cc
-    while (i < data.length()) {
-        quint8 tag = data.at(i);
+    while (!reader.atEnd()) {
+        reader.readNext();
 
-        switch (tag) {
-        case 0x00:  // NULL TLV
-            ++i;
-            break;
-        case 0x01:  // Lock Control TLV
-            // fall-through
-        case 0x02:  // Memory Control TLV
-            ++i;
-            if (data.at(i) != 0x03) {
-                qWarning("Invalid Lock/Memory Control TLV");
-                break;
-            }
-            i += 3;
-            break;
-        case 0x03: { // NDEF Message TLV
-            ++i;
-            int length = data.at(i);
-            ++i;
-            if (length == 0xff) {
-                length = (data.at(i) << 8) | data.at(i+1);
-                i += 2;
-                if (length < 0xff || length == 0xffff) {
-                    qWarning("Invalid 3 byte length");
-                    break;
-                }
-            }
-
-            ndefMessages.append(QNdefMessage::fromByteArray(data.mid(i, length)));
-
-            i += length;
-            break;
-        }
-        case 0xfd: { // Proprietary TLV
-            ++i;
-            int length = data.at(i);
-            ++i;
-            if (length == 0xff) {
-                length = (data.at(i) << 8) | data.at(i+1);
-                i += 2;
-                if (length < 0xff || length == 0xffff) {
-                    qWarning("Invalid 3 byte length");
-                    break;
-                }
-            }
-
-            QByteArray proprietaryData = data.mid(i, length);
-
-            i += length;
-            break;
-        }
-        case 0xfe:  // Terminator TLV
-            i = data.length();  // done
-            break;
-        }
+        // NDEF Message TLV
+        if (reader.tag() == 0x03)
+            ndefMessages.append(QNdefMessage::fromByteArray(reader.data()));
     }
 
     return ndefMessages;
