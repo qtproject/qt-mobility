@@ -294,27 +294,27 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QCOMPARE(instanceList.size(), 2);
     
     QOrganizerItem firstItem = instanceList.at(0);
-    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QOrganizerEventOccurrence firstEvent = static_cast<QOrganizerEventOccurrence>(firstItem);
-    QCOMPARE(firstEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
-    QCOMPARE(firstEvent.displayLabel(), instanceList[1].displayLabel());
-    
-    //Search without filtering and sorting.Full instanceList is returned
+    // The type must be either "event" or "event occurrence"
+    QVERIFY(firstItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence)
+        || firstItem.type() == QLatin1String(QOrganizerItemType::TypeEvent));
+    QCOMPARE(firstItem.detail<QOrganizerEventTime>().startDateTime(), QDateTime(QDate(QDate::currentDate().year(), 9, 15)));
+    QCOMPARE(firstItem.displayLabel(), instanceList[1].displayLabel());
+
+    //Search without filtering and sorting. Full instanceList is returned
     instanceList.clear();
     sortList.clear();    
     instanceList = m_om->items(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
-    instanceList.clear();
     sortList.append(sortOrder);
     instanceList = m_om->items(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
-    QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(thirdItem);
-    QCOMPARE(thirdEvent.startDateTime(), startTime);
-    
+    QVERIFY(thirdItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence)
+        || thirdItem.type() == QLatin1String(QOrganizerItemType::TypeEvent));
+    QCOMPARE(thirdItem.detail<QOrganizerEventTime>().startDateTime(), startTime);
+
     // Save another item with same attributes as first item
     QOrganizerItem secondItem;    
     secondItem.setType(itemType);
@@ -323,7 +323,6 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QVERIFY(secondItem.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&secondItem));
     
-    instanceList.clear();
     instanceList = m_om->items(df,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 4);
 }
@@ -557,30 +556,29 @@ void tst_ItemOccurrence::editOccurrence()
     instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
     QCOMPARE(instanceList.size(),3);
     QOrganizerItem changedFirstItem = instanceList.at(0);
-    QCOMPARE(changedFirstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    
+    QVERIFY(changedFirstItem.type() == QLatin1String(QOrganizerItemType::TypeEvent)
+        || changedFirstItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+
     // compare start datetime,description, priority and location
-    QOrganizerEventOccurrence changedFirstInstance = static_cast<QOrganizerEventOccurrence>(changedFirstItem);
-    QCOMPARE(changedFirstInstance.startDateTime(),firstInstance.startDateTime());
-    QCOMPARE(changedFirstInstance.description(),firstInstance.description());
-    QCOMPARE(changedFirstInstance.priority(),firstInstance.priority());
-    QCOMPARE(changedFirstInstance.location(),firstInstance.location());
-    
+    QCOMPARE(changedFirstItem.detail<QOrganizerEventTime>().startDateTime(), firstInstance.startDateTime());
+    QCOMPARE(changedFirstItem.description(), firstInstance.description());
+    QCOMPARE(changedFirstItem.detail<QOrganizerItemPriority>().priority(), firstInstance.priority());
+    QCOMPARE(changedFirstItem.detail<QOrganizerItemLocation>().label(), firstInstance.location());
+
     //Check for the modified third instance and verify
     QOrganizerItem modifiedThirdItem = instanceList.at(0);
-    QCOMPARE(modifiedThirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QOrganizerEventOccurrence modifiedThirdInstance = static_cast<QOrganizerEventOccurrence>(modifiedThirdItem);
-    QCOMPARE(modifiedThirdInstance.description(),thirdInstance.description());
+    QVERIFY(modifiedThirdItem.type() == QLatin1String(QOrganizerItemType::TypeEvent)
+        || modifiedThirdItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(modifiedThirdItem.description(), modifiedThirdItem.description());
     
    //Modify the start date of the first instance and verify
     firstInstance.setStartDateTime(modifiedStartTime);
     QVERIFY(m_om->saveItem(&firstInstance));
     
     instanceList.clear();
-    instanceList = m_om->itemOccurrences(item,modifiedStartTime,modifiedStartTime);
-    QCOMPARE(instanceList.size(),1);
-    QOrganizerEventOccurrence newInstance = static_cast<QOrganizerEventOccurrence>(instanceList[0]);
-    QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());
+    instanceList = m_om->itemOccurrences(item, modifiedStartTime, modifiedStartTime);
+    QCOMPARE(instanceList.size(), 1);
+    QCOMPARE(instanceList[0].detail<QOrganizerEventTime>().startDateTime(), firstInstance.startDateTime());
 }
 
 void tst_ItemOccurrence::editOccurrenceNegative_data() 
