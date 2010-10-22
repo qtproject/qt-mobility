@@ -45,6 +45,7 @@
 #include <qmobilityglobal.h>
 
 #include <QtCore/QIODevice>
+#include <QtNetwork/QAbstractSocket>
 
 class QNearFieldTarget;
 
@@ -53,11 +54,24 @@ class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
     Q_OBJECT
 
 public:
+    enum Error {
+        UnknownSocketError = QAbstractSocket::UnknownSocketError
+    };
+
+    enum State {
+        UnconnectedState = QAbstractSocket::UnconnectedState,
+        ConnectingState = QAbstractSocket::ConnectingState,
+        ConnectedState = QAbstractSocket::ConnectedState,
+        ClosingState = QAbstractSocket::ClosingState
+    };
+
     explicit QLlcpSocket(QObject *parent = 0);
     ~QLlcpSocket();
 
     void connectToService(const QNearFieldTarget &target, const QString &serviceUri);
     void disconnectFromService();
+
+    bool bind(quint8 port);
 
     bool hasPendingDatagrams() const;
     qint64 pendingDatagramSize() const;
@@ -66,11 +80,18 @@ public:
     qint64 writeDatagram(const QByteArray &datagram);
 
     qint64 readDatagram(char *data, qint64 maxSize,
-                        QNearFieldTarget *target = 0, QString *serviceUri = 0);
+                        QNearFieldTarget *target = 0, quint8 *port = 0);
     qint64 writeDatagram(const char *data, qint64 size,
-                         const QNearFieldTarget &target, const QString &serviceUri);
-    qint64 writeDatagram(const QByteArray &datagram,
-                         const QNearFieldTarget &target, const QString &serviceUri);
+                         const QNearFieldTarget &target, quint8 port);
+    qint64 writeDatagram(const QByteArray &datagram, const QNearFieldTarget &target, quint8 port);
+
+    Error error() const;
+
+signals:
+    void connected();
+    void disconnected();
+    void error(QLlcpSocket::Error socketError);
+    void stateChanged(QLlcpSocket::State socketState);
 
 protected:
     qint64 readData(char *data, qint64 maxlen);
