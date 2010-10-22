@@ -388,7 +388,8 @@ void tst_QMessageStore::testMessage_data()
         << customData
         << "byId";
 
-    /*QTest::newRow("2")
+#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
+    QTest::newRow("2")
         << "alice@example.com"
         << "bob@example.com"
         << "charlie@example.com, donald@example.com"
@@ -470,7 +471,9 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<int>() << 512 << 4096 )
         << customData
-        << "byFilter";*/
+        << "byFilter";
+#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
+
 }
 
 void tst_QMessageStore::testMessage()
