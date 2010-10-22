@@ -243,7 +243,6 @@ bool QPulseAudioOutput::open()
     if (!pa_sample_spec_valid(&spec)) {
         m_errorState = QAudio::OpenError;
         m_deviceState = QAudio::StoppedState;
-        emit stateChanged(m_deviceState);
         return false;
     }
 
@@ -455,11 +454,17 @@ void QPulseAudioOutput::resume()
 {
     if (m_deviceState == QAudio::SuspendedState) {
         QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
-        pa_operation *operation;
 
         pa_threaded_mainloop_lock(pulseEngine->mainloop());
 
-        operation = pa_stream_cork(m_stream, 0, outputStreamSuccessCallback, NULL);
+        pa_operation *operation = pa_stream_cork(m_stream, 0, outputStreamSuccessCallback, NULL);
+
+        while (pa_operation_get_state(operation) == PA_OPERATION_RUNNING)
+            pa_threaded_mainloop_wait(pulseEngine->mainloop());
+
+        pa_operation_unref(operation);
+
+        operation = pa_stream_trigger(m_stream, outputStreamSuccessCallback, NULL);
 
         while (pa_operation_get_state(operation) == PA_OPERATION_RUNNING)
             pa_threaded_mainloop_wait(pulseEngine->mainloop());
