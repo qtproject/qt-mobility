@@ -57,6 +57,11 @@
     \header
         \o Plugin
         \o Description
+ 
+    \row
+        \o \l {Contacts QML Plugin}{Contacts}
+        \o A QML plugin for the Contacts API.
+    \row
     \row
         \o \l {Gallery QML Plugin}{Gallery}
         \o A QML plugin for the Document Gallery API.
@@ -66,6 +71,9 @@
     \row
         \o \l {Multimedia QML Plugin}{Multimedia}
         \o A QML plugin for the Multimedia API: includes audio and video.
+    \row
+        \o \l {Organizer QML Plugin}{Organizer}
+        \o A QML plugin for the Organizer API.
     \row
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for 

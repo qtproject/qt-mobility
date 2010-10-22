@@ -53,12 +53,12 @@ QContactLocalId  QDeclarativeContactRelationship::second() const
   This property holds the type of relationship which the source contact has with the destination contacts.
   The value for this property can be one of:
   \list
-  \a Relationship.HasMember
-  \a Relationship.Aggregates
-  \a Relationship.IsSameAs
-  \a Relationship.HasAssistant
-  \a Relationship.HasManager
-  \a Relationship.HasSpouse
+  \o Relationship.HasMember
+  \o Relationship.Aggregates
+  \o Relationship.IsSameAs
+  \o Relationship.HasAssistant
+  \o Relationship.HasManager
+  \o Relationship.HasSpouse
   \endlist
   or any other customized relationship type string.
   */

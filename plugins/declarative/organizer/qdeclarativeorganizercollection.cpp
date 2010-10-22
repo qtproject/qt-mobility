@@ -16,6 +16,7 @@
   \qmlproperty int Collection::collectionId
 
   This property holds the id of the collection.
+  This property is read only.
   */
 
 /*!

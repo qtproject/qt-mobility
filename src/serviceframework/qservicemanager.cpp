@@ -202,6 +202,7 @@ private slots:
 /*!
     \class QServiceManager
     \ingroup servicefw
+    \inmodule QtServiceFramework
     \brief The QServiceManager class enables the loading of service plugins
     and the (de)registration of services.
 

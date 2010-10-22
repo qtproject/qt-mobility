@@ -206,7 +206,16 @@ void DayPage::removeItem()
     if (organizerItem.isEmpty())
         return;
 
-    m_manager->removeItem(organizerItem.id());
+    if (organizerItem.type() == QOrganizerItemType::TypeEventOccurrence
+        || organizerItem.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        // Here we could ask if the user wishes to remove only the occurrence (meaning we would
+        // add an exception date to the parent item), or the parent item. The current
+        // implementation is to remove the parent (including all the occurrences).
+        m_manager->removeItem(organizerItem.detail<QOrganizerItemParent>().parentId());
+    } else {
+        m_manager->removeItem(organizerItem.id());
+    }
+
     if (m_manager->error())
         QMessageBox::information(this, "Failed!", QString("Failed to remove item!\n(error code %1)").arg(m_manager->error()));
     else

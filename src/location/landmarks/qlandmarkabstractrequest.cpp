@@ -92,7 +92,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     the stateChanged() signal, and in the slot to which that signal is
     connected, check whether the state has changed to the \c FinishedState
     (which signifies that the manager has finished handling the request, and
-    that the request will not be updated with any more results).
+    that the request will not be updated with any more results).  If the client
+    is not interested in any results (including error information), they may
+    choose to delete the request after calling \l start(), or simply may not
+    connect the the request's signals to any slots.  (Please see the note
+    below if you are working on Symbian with QtMobility 1.1.0)
 
     If the request is allocated via operator new, the client must delete the
     request when they are no longer using it in order to avoid leaking memory.
@@ -105,9 +109,22 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     connected to a signal emitted by the request, for example \l
     stateChanged()).
 
-    Before a request is deleted it should always be in the
-    QLandmarkAbstractRequest::FinishedState or QLandmarkAbstractRequest::InactiveState.
-    A request should never been deleted whilst it is in the QLandmarkAbstractRequest::ActiveState.
+    An active request may be deleted by the client, but the client will
+    not receive notifications about whether the request succeeded or not,
+    nor the results of the request.
+
+    Because clients retain ownership of any request object, and may delete a
+    request object at any time, the manager engine,  implementers must be
+    careful to ensue that they do not assume that a request has not been
+    deleted at some time point during processing of a request, particularly
+    if the engine has a multithreaded implementation.
+
+    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
+    deletion of a request whilst in the active state that may cause
+    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
+    The request must be in the inactive or finished state before it
+    can be destroyed.  As a workaround to delete an active request,
+    ensure the request is canceled first before deletion.
 */
 
 QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
@@ -177,9 +194,18 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 }
 
 /*!
-    Destroys the asynchronous request.  Ensure that the request is in the
-    QLandmarkAbstractRequest::FinishedState or QLandmarkAbstractRequest::InactiveState
-    before destroying it.
+    Destroys the asynchronous request.  Because the request object is effectiely a handle to a
+    request operation, the operation may continue or it may just be canceled, depending upon
+    the enine implementation, even though the request itself has been destroyed.
+    The sqlite engine continues the operation behind the scenes if the
+    request is destroyed whilst active.  For the symbian engine see the note below.
+
+    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
+    deletion of a request whilst in the active state that may cause
+    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
+    The request must be in the inactive or finished state before it
+    can be destroyed.  As a workaround to delete an active request,
+    ensure the request is canceled first before deletion.
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {

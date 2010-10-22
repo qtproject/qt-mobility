@@ -71,7 +71,14 @@ void QDeclarativeContactFetchHint::setPreferredImageSize(const QSize& size)
   This property holds the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in a contact, including
-  relationships, action preferences, and binary blobs.
+  relationships, action preferences, and binary blobs. The value of the flags can be:
+  \list
+  \o FetchHint.AllRequired - (default).
+  \o FetchHint.NoRelationships
+  \o FetchHint.NoActionPreferences
+  \o FetchHint.NoBinaryBlobs
+  \endlist
+
   */
 QDeclarativeContactFetchHint::OptimizationHints QDeclarativeContactFetchHint::optimizationHints() const
 {
