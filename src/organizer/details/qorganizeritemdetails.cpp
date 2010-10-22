@@ -730,14 +730,6 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
 
 /*!
-   \variable QOrganizerItemReminder::FieldReminderType
-
-   The constant key for which the reminder type value is stored in details of
-   the QOrganizerItemReminder type (and its subclasses).
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
-
-/*!
    \variable QOrganizerItemReminder::FieldSecondsBeforeStart
 
    The constant key for which time delta (in seconds prior to the item activation time)
@@ -762,10 +754,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
 
 /*!
-   \fn ReminderTypes QOrganizerItemReminder::reminderType() const
-
    Returns the reminder type of this reminder for an organizer item.
  */
+QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() const
+{
+    if (definitionName() == QOrganizerItemAudibleReminder::DefinitionName) {
+        return QOrganizerItemReminder::AudibleReminder;
+    } else if (definitionName() == QOrganizerItemEmailReminder::DefinitionName) {
+        return QOrganizerItemReminder::EmailReminder;
+    } else if (definitionName() == QOrganizerItemVisualReminder::DefinitionName) {
+        return QOrganizerItemReminder::VisualReminder;
+    }
+
+    return QOrganizerItemReminder::NoReminder;
+}
 
 /*!
    \fn QOrganizerItemReminder::setSecondsBeforeStart(int seconds)
@@ -1348,10 +1350,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
  */
 
 
+/*!
+    \fn QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 
+    Returns true if this QOrganizerItemRecurrence equals \a other. 
+*/
 
+/*!
+    \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
 
-
+    Returns true if this QOrganizerItemRecurrence does not equal \a other.
+*/
 
 
 

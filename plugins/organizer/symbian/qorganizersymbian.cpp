@@ -45,6 +45,7 @@
 #include <calchangecallback.h>
 #include <calentryview.h>
 #include <calinstanceview.h>
+#include <calrrule.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <QColor>
 #include <calinstanceiterator.h>
@@ -126,7 +127,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianEngineId::clone() const
 
 QString QOrganizerItemSymbianEngineId::toString() const
 {
-    return QString::fromAscii("%1:%2").arg(m_localItemId).arg(m_localCollectionId);
+    return QString::fromAscii("%1:%2").arg(m_localCollectionId).arg(m_localItemId);
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -257,7 +258,7 @@ QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const Q
     quint64 collectionid = parts[0].toULongLong(&ok);
     if (!ok)
         return NULL;
-    quint64 itemId = parts[1].toULongLong(&ok);
+    quint32 itemId = parts[1].toUInt(&ok);
     if (!ok)
         return NULL;
     return new QOrganizerItemSymbianEngineId(collectionid, itemId);
@@ -507,14 +508,19 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         if(maxCount > 0 && i >= maxCount)
             break;
 
-        bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
-        // Set id if this is an exceptional item
-        if (isException) {
-            itemOccurrence.setId(QOrganizerItemId(new QOrganizerItemSymbianEngineId(
-                localCollectionIdValue, calInstance->Entry().LocalUidL())));
+        // Set local id if this is either an exceptional item or a non-recurring item
+        CCalEntry &entry = calInstance->Entry();
+        bool isException = entry.RecurrenceIdL().TimeUtcL() != Time::NullTTime();
+        TCalRRule rrule;
+        bool isRecurring = entry.GetRRuleL(rrule);
+        if (isException || !isRecurring) {
+            QOrganizerItemId itemId = QOrganizerItemId(new QOrganizerItemSymbianEngineId(
+                localCollectionIdValue, calInstance->Entry().LocalUidL()));
+            itemOccurrence.setId(itemId);
         }
 
-        // Set parent id
+        // Set instance origin, the detail is set here because transform classes are not aware of
+        // the required APIs
         TCalLocalUid parentLocalUid(0);
         if (isException) {
             HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
@@ -525,9 +531,6 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         } else {
             parentLocalUid = calInstance->Entry().LocalUidL();
         }
-
-        // Set instance origin, the detail is set here because the corresponding transform class
-        // does not know the required values
         QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
         origin.setParentId(toItemId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
@@ -681,6 +684,9 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
     const QOrganizerItemFetchHint& fetchHint) const
 {
 	Q_UNUSED(fetchHint)
+
+    if (itemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     // Check collection id
     QOrganizerCollectionId collectionLocalId = getCollectionId(itemId);
@@ -1124,6 +1130,9 @@ void QOrganizerItemSymbianEngine::removeItemL(
     const QOrganizerItemId& organizeritemId)
 {
     // TODO: How to remove item instances?
+
+    if (organizeritemId.managerUri() != managerUri()) // XXX TODO: cache managerUri for fast lookup.
+        User::Leave(KErrNotFound);
 
     QOrganizerCollectionId collectionId = getCollectionId(organizeritemId);
     if (!m_collections.contains(collectionId))

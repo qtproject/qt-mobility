@@ -213,7 +213,7 @@ bool tst_recurringItems::verifyRecurrenceRule(
         // Verifying end date is not straightforward;
         // Allow the exceptional case with no end time and no count set (in
         // that case the end date is set to year 2100 by symbian calendar server)
-        if (expectedRRule.limitCount() == 0
+        if (expectedRRule.limitCount() == -1
             && expectedRRule.limitDate().isNull()
             && actualRRule.limitDate() == QDate(2100, 12, 31)) {
             qWarning() << "End date was set to maximum value";

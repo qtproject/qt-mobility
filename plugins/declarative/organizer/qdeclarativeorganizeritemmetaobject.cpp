@@ -39,6 +39,12 @@ static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoTime, TodoTime)
 };
 
+/*!
+    \class QDeclarativeOrganizerItemMetaObject
+    \internal
+    \brief open organizer item meta object for accessing organizer item detail dynamic properties in qml
+*/
+
 QDeclarativeOrganizerItemMetaObject::QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item)
     :QDeclarativeOpenMetaObject(obj),
       m_modified(false)

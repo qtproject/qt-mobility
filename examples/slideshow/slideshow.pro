@@ -14,6 +14,6 @@ SOURCES = \
     slideshow.cpp
 
 symbian {
-    TARGET.CAPABILITY = NetworkServices 
+    TARGET.CAPABILITY = NetworkServices
     TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
 }
