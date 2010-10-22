@@ -1615,4 +1615,8 @@ EXPORTS
 	_ZN19QCameraFocusControl25maximumOpticalZoomChangedEf @ 1614 NONAME
 	_ZNK12QSoundEffect8isLoadedEv @ 1615 NONAME
 	_ZNK12QSoundEffect9loopCountEv @ 1616 NONAME
+	_ZN12QSoundEffect13statusChangedEv @ 1617 NONAME
+	_ZN12QSoundEffect14playingChangedEv @ 1618 NONAME
+	_ZNK12QSoundEffect6statusEv @ 1619 NONAME
+	_ZNK12QSoundEffect9isPlayingEv @ 1620 NONAME
 

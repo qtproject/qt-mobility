@@ -386,4 +386,7 @@ The following sample applications show examples of API usage:
 \endlist
 See also: \l{Contacts API Usage}
 
+\section1 QML support
+
+For details on the QML support provided for the Contacts API see the documentation for the \l {Contacts QML Plugin}.
 */

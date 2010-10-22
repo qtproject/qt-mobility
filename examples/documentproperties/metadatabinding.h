@@ -38,51 +38,40 @@
 **
 ****************************************************************************/
 
-#ifndef DOCUMENTPROPERTIESWIDGET_H
-#define DOCUMENTPROPERTIESWIDGET_H
+#ifndef METADATABINDING_H
+#define METADATABINDING_H
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/QVariant>
-#include <QtGui/QDialog>
-
-QT_BEGIN_NAMESPACE
-class QFileInfo;
-QT_END_NAMESPACE
+#include <QtCore/qobject.h>
+#include <QtCore/qpointer.h>
 
 QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-class QGalleryItemRequest;
-class QGalleryQueryRequest;
 class QGalleryResultSet;
 QTM_END_NAMESPACE
 
-
 QTM_USE_NAMESPACE
 
-class DocumentPropertiesWidget : public QDialog
+class MetaDataBinding : public QObject
 {
     Q_OBJECT
 public:
-    DocumentPropertiesWidget(
-            const QFileInfo &file,
-            QDocumentGallery *gallery,
-            QWidget *parent = 0,
-            Qt::WindowFlags flags = 0);
+    MetaDataBinding(QObject *object, const char *objectProperty, QGalleryResultSet *resultSet, const QString &resultSetProperty, QObject *parent);
+    ~MetaDataBinding();
+
+public slots:
+    void propertyChanged();
 
 private slots:
-    void queryRequestFinished();
+    void itemChanged();
+    void metaDataChanged(int index, int count, const QList<int> &keys);
 
 private:
-    void requestAudioProperties();
-    void requestDocumentProperties();
-    void requestImageProperties();
-    void requestVideoProperties();
-
-
-    QDocumentGallery *documentGallery;
-    QGalleryQueryRequest *queryRequest;
-    QGalleryItemRequest *itemRequest;
+    QPointer<QObject> object;
+    const QByteArray property;
+    QPointer<QGalleryResultSet> resultSet;
+    const int resultSetPropertyKey;
 };
+
 
 #endif
