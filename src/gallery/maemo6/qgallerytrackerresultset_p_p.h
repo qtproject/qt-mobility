@@ -256,7 +256,8 @@ public:
             bool autoUpdate,
             int offset,
             int limit)
-        : idColumn(arguments->idColumn.take())
+        : service( arguments->service )
+        , idColumn(arguments->idColumn.take())
         , urlColumn(arguments->urlColumn.take())
         , typeColumn(arguments->typeColumn.take())
         , updateMask(arguments->updateMask)
@@ -295,6 +296,8 @@ public:
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
     }
+
+    QString service;
 
     Flags flags;
     const QScopedPointer<QGalleryTrackerCompositeColumn> idColumn;

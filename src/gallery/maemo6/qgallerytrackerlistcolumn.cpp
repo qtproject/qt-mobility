@@ -117,17 +117,17 @@ QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterat
 
 QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    return QUrl::fromLocalFile((row + m_column)->toString());
+    return QUrl( (row + m_column )->toString());
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerFileUrlColumn::create(const QVector<int> &)
 {
-    return new QGalleryTrackerFileUrlColumn(0);
+    return new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL);
 }
 
 QVariant QGalleryTrackerFilePathColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    return *row;
+    return QUrl( (row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toString() ).path();
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVector<int> &)

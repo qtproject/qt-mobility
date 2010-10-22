@@ -133,6 +133,7 @@ struct QGalleryTrackerResultSetArguments
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
     QVector<int> resourceKeys;
+    QString service;
 };
 
 class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
