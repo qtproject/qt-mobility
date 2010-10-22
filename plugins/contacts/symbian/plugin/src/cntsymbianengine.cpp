@@ -59,6 +59,7 @@
 #include "cntrelationship.h"
 #include "cntdisplaylabel.h"
 #include "cntsymbiansrvconnection.h"
+#include "cntbackendsdefs.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
@@ -241,6 +242,12 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QCont
             }
             QContactManagerEngine::setContactRelationships(contact, relationships);
         }
+        QContactManager::Error selfErr;
+        QContactLocalId selfCntId = selfContactId(&selfErr); 
+        if (err == QContactManager::NoError && selfCntId == contactId) {
+            QContactDetail detail(MYCARD_DEFINTION);
+            contact->saveDetail(&detail);
+        }
     }
     return *QScopedPointer<QContact>(contact);
 }
@@ -326,6 +333,16 @@ QList<QContactLocalId> CntSymbianEngine::slowSort(
 bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     bool ret = false;
+        
+    // Check if my card before validation
+    bool isMyCard = false;
+    QList<QContactDetail> details = contact->details(MYCARD_DEFINTION);
+    if (details.count()>0) {
+        // Set this contact as MyCard
+        isMyCard = true;
+        contact->removeDetail(&details.first());
+    }
+    
     if(contact && !validateContact(*contact, error))
         return false;
 
@@ -365,8 +382,13 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         ret = addContact(*contact, changeSet, error);
     }
 
-    if (ret)
+    if (ret) {
+        if (isMyCard) {
+            // Set this contact as MyCard
+            ret = setSelfContactId(contact->localId(), error);
+        }
         updateDisplayLabel(*contact);
+    }
 
     return ret;
 }
