@@ -40,271 +40,224 @@
 
 #include "documentpropertieswidget.h"
 
+#include "metadatabinding.h"
+
 #include <qdocumentgallery.h>
-#include <qgalleryresultset.h>
+#include <qgalleryitemrequest.h>
 #include <qgalleryqueryrequest.h>
+#include <qgalleryresultset.h>
 
 #include <QtGui>
+#include <qaction.h>
 
 DocumentPropertiesWidget::DocumentPropertiesWidget(
         const QFileInfo &file, QDocumentGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , request(0)
-    , resultSet(0)
+    : QDialog(parent, flags)
+    , documentGallery(gallery)
+    , queryRequest(0)
+    , itemRequest(0)
 {
-    setLayout(new QFormLayout);
+    // draw softkeys on symbian to be able to close dialog
+    QAction* doneAction = new QAction(tr("Done"), this);
+    doneAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    connect(doneAction, SIGNAL(triggered()), parent, SLOT(close()));
+    addAction(doneAction);
 
-    request = new QGalleryQueryRequest(gallery, this);
-    request->setFilter(QDocumentGallery::filePath == file.absoluteFilePath());
+    QFormLayout *layout = new QFormLayout;
 
-    QStringList propertyNames = QStringList()
+    queryRequest = new QGalleryQueryRequest(documentGallery, this);
+    queryRequest->setRootType(QDocumentGallery::File);
+    queryRequest->setFilter(QDocumentGallery::filePath == file.absoluteFilePath());
+    queryRequest->setPropertyNames(QStringList()
             << QDocumentGallery::fileName
             << QDocumentGallery::mimeType
             << QDocumentGallery::path
             << QDocumentGallery::fileSize
             << QDocumentGallery::lastModified
-            << QDocumentGallery::lastAccessed;
+            << QDocumentGallery::lastAccessed);
+    queryRequest->execute();
 
-    QStringList labels = QStringList()
-             << tr("File Name")
-             << tr("Type")
-             << tr("Path")
-             << tr("Size")
-             << tr("Modified")
-             << tr("Accessed");
+    if (QGalleryResultSet *resultSet = queryRequest->resultSet()) {
+        QLabel *fileName = new QLabel;
+        layout->addRow(tr("File Name"), fileName);
+        new MetaDataBinding(fileName, "text", resultSet, QDocumentGallery::fileName, this);
 
-    requestProperties(QDocumentGallery::File, propertyNames, labels);
-}
+        QLabel *mimeType = new QLabel;
+        layout->addRow(tr("Type"), mimeType);
+        new MetaDataBinding(mimeType, "text", resultSet, QDocumentGallery::mimeType, this);
 
-void DocumentPropertiesWidget::itemsInserted(int index, int count)
-{
-    resultSet->fetch(0);
+        QLabel *path = new QLabel;
+        layout->addRow(tr("Path"), path);
+        new MetaDataBinding(path, "text", resultSet, QDocumentGallery::path, this);
 
-    metaDataChanged(index, count, QList<int>());
+        QLabel *size = new QLabel;
+        layout->addRow(tr("Size"), size);
+        new MetaDataBinding(size, "text", resultSet, QDocumentGallery::fileSize, this);
 
-    if (index == 0 && request->rootType() == QDocumentGallery::File) {
-        QString itemType = resultSet->itemType();
+        QDateTimeEdit *lastModified = new QDateTimeEdit;
+        lastModified->setReadOnly(true);
+        layout->addRow(tr("Modified"), lastModified);
+        new MetaDataBinding(
+                lastModified, "dateTime", resultSet, QDocumentGallery::lastModified, this);
 
-        if (itemType == QDocumentGallery::Audio)
-            QTimer::singleShot(0, this, SLOT(requestAudioProperties()));
-        else if (itemType == QDocumentGallery::Document)
-            QTimer::singleShot(0, this, SLOT(requestDocumentProperties()));
-        else if (itemType == QDocumentGallery::Image)
-            QTimer::singleShot(0, this, SLOT(requestImageProperties()));
-        else if (itemType == QDocumentGallery::Video)
-            QTimer::singleShot(0, this, SLOT(requestVideoProperties()));
+        QDateTimeEdit *lastAccessed = new QDateTimeEdit;
+        lastAccessed->setReadOnly(true);
+        layout->addRow(tr("Accessed"), lastAccessed);
+        new MetaDataBinding(
+                lastAccessed, "dateTime", resultSet, QDocumentGallery::lastAccessed, this);
+
+        if (queryRequest->state() == QGalleryAbstractRequest::Active)
+            connect(queryRequest, SIGNAL(finished()), this, SLOT(queryRequestFinished()));
+        else if (queryRequest->state() == QGalleryAbstractRequest::Finished)
+            queryRequestFinished();
     }
+
+    setLayout(layout);
 }
 
-void DocumentPropertiesWidget::requestProperties(
-        const QString &itemType, const QStringList &propertyNames, const QStringList &labels)
+void DocumentPropertiesWidget::queryRequestFinished()
 {
-    QStringList currentPropertyNames = request->propertyNames();
-
-    request->setRootType(itemType);
-    request->setPropertyNames(propertyNames + currentPropertyNames);
-    request->execute();
-
-    resultSet = request->resultSet();
-
-    if (resultSet) {
-        connect(resultSet, SIGNAL(itemsInserted(int,int)), this, SLOT(itemsInserted(int,int)));
-        connect(resultSet, SIGNAL(itemsRemoved(int,int)), this, SLOT(itemsRemoved(int,int)));
-        connect(resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
-                this, SLOT(metaDataChanged(int,int,QList<int>)));
-
-        for (int i = 0; i < currentPropertyNames.count(); ++i)
-            propertyKeys[i] = resultSet->propertyKey(currentPropertyNames.at(i));
-
-        for (int i = 0; i < propertyNames.count(); ++i)
-            insertRow(i, propertyNames.at(i), labels.at(i));
-
-        if (resultSet->itemCount() > 0)
-            itemsInserted(0, resultSet->itemCount());
+    if (queryRequest->seek(0)) {
+        if (queryRequest->itemType() == QDocumentGallery::Audio)
+            requestAudioProperties();
+        else if (queryRequest->itemType() == QDocumentGallery::Video)
+           requestVideoProperties();
+        else if (queryRequest->itemType() == QDocumentGallery::Image)
+            requestImageProperties();
+        else if (queryRequest->itemType() == QDocumentGallery::Document)
+            requestDocumentProperties();
     }
 }
 
 void DocumentPropertiesWidget::requestAudioProperties()
 {
-    QStringList propertyNames = QStringList()
+    itemRequest = new QGalleryItemRequest(documentGallery, this);
+    itemRequest->setItemId(queryRequest->itemId());
+    itemRequest->setPropertyNames(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::artist
             << QDocumentGallery::albumTitle
             << QDocumentGallery::albumArtist
             << QDocumentGallery::genre
-            << QDocumentGallery::duration;
+            << QDocumentGallery::duration);
+    itemRequest->execute();
 
-    QStringList labels = QStringList()
-            << tr("Title")
-            << tr("Artist")
-            << tr("Album")
-            << tr("Album Artist")
-            << tr("Genre")
-            << tr("Duration");
+    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
+        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
 
-    requestProperties(QDocumentGallery::Audio, propertyNames, labels);
+        QLabel *title = new QLabel;
+        layout->addRow(tr("Title"), title);
+        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
+
+        QLabel *artist = new QLabel;
+        layout->addRow(tr("Artist"), artist);
+        new MetaDataBinding(artist, "text", resultSet, QDocumentGallery::artist, this);
+
+        QLabel *album = new QLabel;
+        layout->addRow(tr("Album"), album);
+        new MetaDataBinding(album, "text", resultSet, QDocumentGallery::albumTitle, this);
+
+        QLabel *albumArtist = new QLabel;
+        layout->addRow(tr("Album Artist"), albumArtist);
+        new MetaDataBinding(albumArtist, "text", resultSet, QDocumentGallery::albumArtist, this);
+
+        QLabel *genre = new QLabel;
+        layout->addRow(tr("Genre"), genre);
+        new MetaDataBinding(genre, "text", resultSet, QDocumentGallery::genre, this);
+
+        QLabel *duration = new QLabel;
+        layout->addRow(tr("Duration"), duration);
+        new MetaDataBinding(duration, "text", resultSet, QDocumentGallery::duration, this);
+    }
 }
 
 void DocumentPropertiesWidget::requestDocumentProperties()
 {
-    QStringList propertyNames = QStringList()
-            << QDocumentGallery::title
-            << QDocumentGallery::author
-            << QDocumentGallery::pageCount;
+    itemRequest = new QGalleryItemRequest(documentGallery, this);
+    itemRequest->setItemId(queryRequest->itemId());
+    itemRequest->setPropertyNames(QStringList()
+                << QDocumentGallery::title
+                << QDocumentGallery::author
+                << QDocumentGallery::pageCount);
+    itemRequest->execute();
 
-    QStringList labels = QStringList()
-            << tr("Title")
-            << tr("Author")
-            << tr("Page Count");
+    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
+        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
 
-    requestProperties(QDocumentGallery::Document, propertyNames, labels);
+        QLabel *title = new QLabel;
+        layout->addRow(tr("Title"), title);
+        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
+
+        QLabel *author = new QLabel;
+        layout->addRow(tr("Author"), author);
+        new MetaDataBinding(author, "text", resultSet, QDocumentGallery::author, this);
+
+        QLabel *pageCount = new QLabel;
+        layout->addRow(tr("Page Count"), pageCount);
+        new MetaDataBinding(pageCount, "text", resultSet, QDocumentGallery::pageCount, this);
+    }
 }
 
 void DocumentPropertiesWidget::requestImageProperties()
 {
-    QStringList propertyNames = QStringList()
+    itemRequest = new QGalleryItemRequest(documentGallery, this);
+    itemRequest->setItemId(queryRequest->itemId());
+    itemRequest->setPropertyNames(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
-            << QDocumentGallery::keywords;
+            << QDocumentGallery::keywords);
+    itemRequest->execute();
 
-    QStringList labels = QStringList()
-            << tr("Title")
-            << tr("Width")
-            << tr("Height")
-            << tr("Keywords");
+    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
+        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
 
-    requestProperties(QDocumentGallery::Image, propertyNames, labels);
+        QLabel *title = new QLabel;
+        layout->addRow(tr("Title"), title);
+        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
+
+        QLabel *width = new QLabel;
+        layout->addRow(tr("Width"), width);
+        new MetaDataBinding(width, "text", resultSet, QDocumentGallery::width, this);
+
+        QLabel *height = new QLabel;
+        layout->addRow(tr("Height"), height);
+        new MetaDataBinding(height, "text", resultSet, QDocumentGallery::height, this);
+
+        QLabel *keywords = new QLabel;
+        layout->addRow(tr("Keywords"), keywords);
+        new MetaDataBinding(keywords, "text", resultSet, QDocumentGallery::keywords, this);
+    }
 }
 
 void DocumentPropertiesWidget::requestVideoProperties()
 {
-    QStringList propertyNames = QStringList()
+    itemRequest = new QGalleryItemRequest(documentGallery, this);
+    itemRequest->setItemId(queryRequest->itemId());
+    itemRequest->setPropertyNames(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
-            << QDocumentGallery::duration;
+            << QDocumentGallery::duration);
+    itemRequest->execute();
 
-    QStringList labels = QStringList()
-            << tr("Title")
-            << tr("Width")
-            << tr("Height")
-            << tr("Duration");
+    if (QGalleryResultSet *resultSet = itemRequest->resultSet()) {
+        QFormLayout *layout = static_cast<QFormLayout *>(QWidget::layout());
 
-    requestProperties(QDocumentGallery::Video, propertyNames, labels);
-}
+        QLabel *title = new QLabel;
+        layout->addRow(tr("Title"), title);
+        new MetaDataBinding(title, "text", resultSet, QDocumentGallery::title, this);
 
-void DocumentPropertiesWidget::itemsRemoved(int index, int count)
-{
-    metaDataChanged(index, count, QList<int>());
-}
+        QLabel *width = new QLabel;
+        layout->addRow(tr("Width"), width);
+        new MetaDataBinding(width, "text", resultSet, QDocumentGallery::width, this);
 
-void DocumentPropertiesWidget::metaDataChanged(int index, int, const QList<int> &keys)
-{
-    if (index == 0) {
-        if (keys.isEmpty()) {
-            for (int i = 0; i < propertyKeys.count(); ++i)
-                updateValue(i, propertyKeys.at(i));
-        } else {
-            foreach (int propertyKey, keys) {
-                int i = propertyKeys.indexOf(propertyKey);
-                if (i >= 0)
-                    updateValue(i, propertyKey);
-            }
-        }
-    }
-}
+        QLabel *height = new QLabel;
+        layout->addRow(tr("Height"), height);
+        new MetaDataBinding(height, "text", resultSet, QDocumentGallery::height, this);
 
-void DocumentPropertiesWidget::insertRow(
-        int index, const QString &propertyName, const QString &label)
-{
-    int propertyKey = resultSet->propertyKey(propertyName);
-
-    QVariant::Type propertyType = resultSet->propertyType(propertyKey);
-    QGalleryProperty::Attributes propertyAttributes = resultSet->propertyAttributes(propertyKey);
-
-    QWidget *widget = 0;
-
-    if (propertyAttributes & QGalleryProperty::CanWrite) {
-        switch (propertyType) {
-        case QVariant::String:
-            widget = new QLineEdit;
-            break;
-        case QVariant::Double:
-            widget = new QDoubleSpinBox;
-            break;
-        case QVariant::Int:
-            widget = new QSpinBox;
-            break;
-        case QVariant::DateTime:
-            widget = new QDateTimeEdit;
-        default:
-            widget = new QLabel;
-        }
-    } else if (propertyAttributes & QGalleryProperty::CanRead) {
-        widget = new QLabel;
-    }
-
-    propertyKeys.insert(index, propertyKey);
-    widgets.insert(index, widget);
-
-    static_cast<QFormLayout *>(layout())->insertRow(index, label, widget);
-}
-
-void DocumentPropertiesWidget::updateValue(int widgetIndex, int propertyKey)
-{
-    QGalleryProperty::Attributes propertyAttributes = resultSet->propertyAttributes(propertyKey);
-
-    QWidget *widget = widgets.at(widgetIndex);
-
-    QVariant value = resultSet->metaData(propertyKey);
-
-    if (propertyAttributes & QGalleryProperty::CanWrite) {
-        switch (value.type()) {
-        case QVariant::String:
-            if (QLineEdit *lineEdit = qobject_cast<QLineEdit *>(widget))
-                lineEdit->setText(value.toString());
-            break;
-        case QVariant::Double:
-            if (QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox *>(widget))
-                spinBox->setValue(value.toDouble());
-            break;
-        case QVariant::Int:
-            if (QSpinBox *spinBox = qobject_cast<QSpinBox *>(widget))
-                spinBox->setValue(value.toInt());
-            break;
-        case QVariant::Date:
-            if (QDateTimeEdit *dateTimeEdit = qobject_cast<QDateTimeEdit *>(widget))
-                dateTimeEdit->setDate(value.toDate());
-            break;
-        case QVariant::Time:
-            if (QDateTimeEdit *dateTimeEdit = qobject_cast<QDateTimeEdit *>(widget))
-                dateTimeEdit->setTime(value.toTime());
-            break;
-        case QVariant::DateTime:
-            if (QDateTimeEdit *dateTimeEdit = qobject_cast<QDateTimeEdit *>(widget))
-                dateTimeEdit->setDateTime(value.toDateTime());
-            break;
-        case QVariant::Image:
-        case QVariant::Pixmap:
-            if (QLabel *label = qobject_cast<QLabel *>(widget))
-                label->setPixmap(value.value<QPixmap>());
-            break;
-        case QVariant::StringList:
-            if (QLabel *label = qobject_cast<QLabel *>(widget))
-                label->setText(value.toStringList().join(QLatin1String("; ")));
-        default:
-            if (QLabel *label = qobject_cast<QLabel *>(widget))
-                label->setText(value.toString());
-        }
-    } else if (propertyAttributes & QGalleryProperty::CanRead) {
-        if (QLabel *label = qobject_cast<QLabel *>(widget)) {
-            switch (value.type()) {
-            case QVariant::StringList:
-                label->setText(value.toStringList().join(QLatin1String("; ")));
-            default:
-                label->setText(value.toString());
-            }
-        }
+        QLabel *duration = new QLabel;
+        layout->addRow(tr("Duration"), duration);
+        new MetaDataBinding(duration, "text", resultSet, QDocumentGallery::duration, this);
     }
 }

@@ -38,51 +38,48 @@
 **
 ****************************************************************************/
 
-#ifndef DOCUMENTPROPERTIESWIDGET_H
-#define DOCUMENTPROPERTIESWIDGET_H
+#include "metadatabinding.h"
 
-#include <qmobilityglobal.h>
+#include <qgalleryresultset.h>
 
-#include <QtCore/QVariant>
-#include <QtGui/QDialog>
-
-QT_BEGIN_NAMESPACE
-class QFileInfo;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-class QGalleryItemRequest;
-class QGalleryQueryRequest;
-class QGalleryResultSet;
-QTM_END_NAMESPACE
-
-
-QTM_USE_NAMESPACE
-
-class DocumentPropertiesWidget : public QDialog
+MetaDataBinding::MetaDataBinding(
+        QObject *object,
+        const char *objectProperty,
+        QGalleryResultSet *resultSet,
+        const QString &resultSetProperty,
+        QObject *parent)
+    : QObject(parent)
+    , object(object)
+    , property(objectProperty)
+    , resultSet(resultSet)
+    , resultSetPropertyKey(resultSet->propertyKey(resultSetProperty))
 {
-    Q_OBJECT
-public:
-    DocumentPropertiesWidget(
-            const QFileInfo &file,
-            QDocumentGallery *gallery,
-            QWidget *parent = 0,
-            Qt::WindowFlags flags = 0);
+    connect(resultSet, SIGNAL(currentItemChanged()), this, SLOT(itemChanged()));
+    connect(resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
+            this, SLOT(metaDataChanged(int,int,QList<int>)));
+}
 
-private slots:
-    void queryRequestFinished();
+MetaDataBinding::~MetaDataBinding()
+{
+}
 
-private:
-    void requestAudioProperties();
-    void requestDocumentProperties();
-    void requestImageProperties();
-    void requestVideoProperties();
+void MetaDataBinding::itemChanged()
+{
+    if (object)
+        object->setProperty(property.constData(), resultSet->metaData(resultSetPropertyKey));
+}
 
+void MetaDataBinding::metaDataChanged(int index, int count, const QList<int> &keys)
+{
+    if (resultSet->currentIndex() >= index
+            && resultSet->currentIndex() < index + count
+            && keys.contains(resultSetPropertyKey)) {
+        object->setProperty(property.constData(), resultSet->metaData(resultSetPropertyKey));
+    }
+}
 
-    QDocumentGallery *documentGallery;
-    QGalleryQueryRequest *queryRequest;
-    QGalleryItemRequest *itemRequest;
-};
-
-#endif
+void MetaDataBinding::propertyChanged()
+{
+    if (resultSet)
+        resultSet->setMetaData(resultSetPropertyKey, object->property(property.constData()));
+}

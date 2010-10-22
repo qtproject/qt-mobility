@@ -73,13 +73,23 @@ class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
     Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
+    Q_PROPERTY(bool playing READ isPlaying NOTIFY playingChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_ENUMS(Loop)
+    Q_ENUMS(Status)
 
 public:
     enum Loop
     {
-        Infinite = -1,
+        Infinite = -2,
+    };
+
+    enum Status
+    {
+        Null,
+        Loading,
+        Ready,
+        Error
     };
 
     explicit QSoundEffect(QObject *parent = 0);
@@ -98,7 +108,10 @@ public:
 
     bool isMuted() const;
     void setMuted(bool muted);
+
     bool isLoaded() const;
+    bool isPlaying() const;
+    Status status() const;
 
 Q_SIGNALS:
     void sourceChanged();
@@ -106,6 +119,8 @@ Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
     void loadedChanged();
+    void playingChanged();
+    void statusChanged();
 
 public Q_SLOTS:
     void play();

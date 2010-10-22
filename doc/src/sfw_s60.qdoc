@@ -42,6 +42,8 @@ Symbian provides 3 different methods to register services.
 \o \l{ROM build registration}
 \endlist
 
+\section2 Automatic registration
+
 Registration phase is a little different compared to other platforms because of the
 authenticity of the provider is done during (un)registering phase based on the verification 
 of VID/SID (vendor ID or secure ID). Durring automatic registration the VID/SID is set to 0.  This method
@@ -62,7 +64,9 @@ Or in a symbian .pkg file by:
 "/epoc32/data/z/private/2002AC7F/import/<service xml file>.xml" - "c:\private\2002AC7F\import\<service xml file>.xml"
 \endcode
 
-For security registration a tiny installer application must be implemented by the service provider.
+\section2 Secure registration
+
+For security registration a tiny installer application can be implemented by the service provider.
 The installer application can then provide a VID/PID and is responsible for the registering (and the unregistering)
 of the service. The example code for the installer is shown below. The whole installer project can be found under 
 \c {examples/serviceinstaller_sfw_symbian}.
@@ -83,6 +87,8 @@ More info about VID and SID can be found from:
     \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
     \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
 \endlist
+
+\section2 ROM build registration
 
 For application built into the ROM the host tool servicedbgen must be used prior to building the ROM image to add the service
 to the database.

@@ -222,6 +222,9 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
 
     openRequests()->take(p.d->messageId);
     delete response;
+
+    if (!service)
+        return 0;
         
     // Connect all DBus interface signals to the proxy slots
     const QMetaObject *mo = service->metaObject();

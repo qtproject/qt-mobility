@@ -1350,10 +1350,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
  */
 
 
+/*!
+    \fn QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 
+    Returns true if this QOrganizerItemRecurrence equals \a other. 
+*/
 
+/*!
+    \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
 
-
+    Returns true if this QOrganizerItemRecurrence does not equal \a other.
+*/
 
 
 
