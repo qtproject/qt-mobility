@@ -170,16 +170,16 @@
 
     Here we fetch the selected list widget item from the list. To
     delete the item in the manager, we send the items
-    \l{QOrganizerItem::localId()}{local id} to the manager's
+    \l{QOrganizerItem::id()}{id} to the manager's
     \l{QOrganizerManager::}{removeItem()} function. An item's
-    local id uniquely identifies it in its manager.
+    id uniquely identifies it in its manager.
 
     We now move on to the \c refreshList() function, which set's up
     the \gui { Todo List } with the todo items currently stored in the
     manager.
 
     \snippet examples/todo/window.cpp 5
-    
+
     First we remove all items from the list widget, i.e., we set
     up the list from scratch each time \c refreshList() is called.
 
@@ -263,12 +263,12 @@
     Many backends support notifying the user when a todo item is due.
     We can request this by adding a QOrganizerItemRemainder detail to
     the QOrganizerTodo. We first check whether a remainder detail is
-    present on the todo item. If it is we update the \l{Alarm Combo Box}.
-    The \l{QDateTime::}{secsTo()} function returns the
+    present on the todo item. If it is we update the \gui {Alarm Combo
+    Box}. The \l{QDateTime::}{secsTo()} function returns the
     difference between two \l{QDateTime}s in seconds.
 
     The next two slots update the subject and description of the
-    todo item. 
+    todo item.
 
     \snippet examples/todo/todoeditor.cpp 3
 

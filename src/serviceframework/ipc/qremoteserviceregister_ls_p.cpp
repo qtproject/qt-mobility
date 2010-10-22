@@ -57,17 +57,14 @@
 #ifndef Q_OS_WIN
 #include <sys/un.h>
 #include <sys/socket.h>
+#else
+// Needed for ::Sleep, while we wait for a better solution
+#include <Windows.h>
+#include <Winbase.h>
 #endif
 
 #ifdef LOCAL_PEERCRED /* from sys/un.h */
 #include <sys/ucred.h>
-#endif
-
-
-// Needed for ::Sleep, while we wait for a better solution
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#include <Winbase.h>
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -169,7 +166,6 @@ void QRemoteServiceRegisterLocalSocketPrivate::publishServices( const QString& i
 
 void QRemoteServiceRegisterLocalSocketPrivate::processIncoming()
 {
-    qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
         QLocalSocket* s = localServer->nextPendingConnection();
         //LocalSocketEndPoint owns socket 
@@ -215,7 +211,6 @@ void QRemoteServiceRegisterLocalSocketPrivate::processIncoming()
                 return;
             }
         }
-        qDebug() << "Passed peercred";
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
         Q_UNUSED(endpoint);
@@ -230,7 +225,6 @@ bool QRemoteServiceRegisterLocalSocketPrivate::createServiceEndPoint(const QStri
     //other IPC mechanisms such as dbus may have to publish the
     //meta object definition for all registered service types        
     QLocalServer::removeServer(ident);
-    qDebug() << "Start listening for incoming connections";
     localServer = new QLocalServer(this);
     if ( !localServer->listen(ident) ) {
         qWarning() << "Cannot create local socket endpoint";
@@ -271,7 +265,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
             if(QProcess::startDetached(path, QStringList(), QString(), &pid)){
                 int i;
                 socket->connectToServer(location);
-                for(i = 0; !socket->isValid() && i < 100; i++){
+                for(i = 0; !socket->isValid() && i < 1000; i++){
                     // Temporary hack till we can improve startup signaling
 #ifdef Q_OS_WIN
                     ::Sleep(10);
@@ -284,7 +278,6 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
                     socket->connectToServer(location);
                     // keep trying for a while
                 }
-                qDebug() << "Number of loops: "  << i;
                 if(!socket->isValid()){
                     qWarning() << "Server failed to start within waiting period";
                     return false;

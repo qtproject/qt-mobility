@@ -37,8 +37,9 @@ To begin, obtain the most recent distribution package from
 
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
-Qt 4.7 or higher, visit \l {http://get.qt.nokia.com} to obtain
-a copy. Furthermore perl must be installed and available in the environment path. 
+Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
+a copy. However Mobility's QML components are not enabled unless Qt 4.7 or higher is used.
+Furthermore perl must be installed and available in the environment path. 
 Windows environments may require the installation of a perl interpreter such as
 \l {http://www.activestate.com/activeperl} {ActivePerl}. On the Maemo 5 (Fremantle) 
 platform PR1.2 firmware release or newer is required, and the Qt 4.7 packages

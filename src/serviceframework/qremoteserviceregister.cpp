@@ -48,7 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRemoteServiceRegister::Entry
-    \brief This class represents a remote service entry to be published on QRemoteServiceRegister.
+    \ingroup servicefw
+    \inmodule QtServiceFramework
+    \brief The Entry class represents a remote service entry to be published on QRemoteServiceRegister.
 
     This class is created using QRemoteServiceRegister::createEntry to supply remote service
     details matching a valid QServiceInterfaceDescriptor. 
@@ -229,15 +231,15 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
         
         serviceRegister->publishEntries("my_service");
 
-        delete serviceRegister;
         return app.exec();
+        delete serviceRegister;
     }
     \endcode
 
     By default all entries are created as \l QRemoteServiceRegister::GlobalInstance 
-    types but this can be set by calling QRemoteServiceRegister::Entry::setInstantiationType()
-    on the entry. Once service entries are published to the instance manager the register 
-    is no longer needed and can be removed.
+    types. This can be changed by calling QRemoteServiceRegister::Entry::setInstantiationType()
+    on the entry. Once the service register has been published the associated service entries
+    can no longer be changed.
 
     \sa QRemoteServiceRegister::Entry
 */
@@ -255,7 +257,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     This signal is emitted whenever a created instance has been closed. This indicates
     that a connected client has either shutdown or released the loaded service object.
     
-    The QRemoteServiceRegister::Entry is supplied to identify which registered service 
+    \a entry is supplied to identify which registered service 
     entry the closed instance belonged to.
 
     \sa allInstancesClosed()

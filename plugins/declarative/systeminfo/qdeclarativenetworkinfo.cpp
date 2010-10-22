@@ -143,7 +143,7 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
-    Default is whatever defaultMode is.
+    If not set, the default is whatever defaultMode is.
 */
 
 void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
@@ -397,3 +397,13 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
     return list;
 }
 
+/*!
+    \qmlmethod NetworkInfo::mode()
+    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
+
+    \sa useMode(useMode(QSystemNetworkInfo::NetworkMode)
+*/
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
+{
+    return m_mode;
+}

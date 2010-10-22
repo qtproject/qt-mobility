@@ -85,18 +85,18 @@ public:
     // should live in the engine?
     bool mNotifySimulator;
 
-    class LocalIdTranslation
+    class IdTranslation
     {
     public:
-        QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> items;
-        QHash<QOrganizerCollectionLocalId, QOrganizerCollectionLocalId> collections;
+        QHash<QOrganizerItemId, QOrganizerItemId> items;
+        QHash<QOrganizerCollectionId, QOrganizerCollectionId> collections;
     };
 
-    void translateItemIds(QOrganizerItem *item, const QString &managerUri, const LocalIdTranslation &idTranslation);
-    void translateCollectionIds(QOrganizerCollection *collection, const QString &managerUri, const LocalIdTranslation &idTranslation);
+    void translateItemIds(QOrganizerItem *item, const IdTranslation &idTranslation);
+    void translateCollectionIds(QOrganizerCollection *collection, const IdTranslation &idTranslation);
 
-    LocalIdTranslation mRemoteToLocal;
-    LocalIdTranslation mLocalToRemote;
+    IdTranslation mRemoteToLocal;
+    IdTranslation mLocalToRemote;
 
     QString mManagerUri;
 
@@ -104,7 +104,7 @@ private slots:
     // called remotely
     void setOrganizerManagerUri(QString uri);
     void initialOrganizerDataSent();
-    void clearOrganizerData();
+    void clearOrganizerData(QtMobility::Simulator::OrganizerCollectionId defaultCollectionId);
 
     void saveOrganizerItem(QtMobility::QOrganizerItem item);
     void removeOrganizerItem(QtMobility::Simulator::OrganizerItemId id);
