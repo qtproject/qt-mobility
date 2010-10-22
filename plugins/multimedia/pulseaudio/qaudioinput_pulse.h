@@ -144,7 +144,7 @@ public:
     void trigger();
 
 private:
-    QPulseAudioInput *audioDevice;
+    QPulseAudioInput *m_audioDevice;
 };
 
 QT_END_NAMESPACE

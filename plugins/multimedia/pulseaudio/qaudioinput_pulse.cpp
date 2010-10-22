@@ -364,9 +364,8 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
         size_t length = 0;
         if (!m_pullMode)
             length = len;
-        else {
+        else
             length = m_periodSize;
-        }
 
         QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
         pa_threaded_mainloop_lock(pulseEngine->mainloop());
@@ -529,12 +528,12 @@ void QPulseAudioInput::reset()
 
 InputPrivate::InputPrivate(QPulseAudioInput *audio)
 {
-    audioDevice = qobject_cast<QPulseAudioInput*>(audio);
+    m_audioDevice = qobject_cast<QPulseAudioInput*>(audio);
 }
 
 qint64 InputPrivate::readData(char *data, qint64 len)
 {
-    return audioDevice->read(data, len);
+    return m_audioDevice->read(data, len);
 }
 
 qint64 InputPrivate::writeData(const char *data, qint64 len)
