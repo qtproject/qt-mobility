@@ -157,6 +157,7 @@ public:
     void reset()
     {
         m_buffer->reset();
+        m_device = 0;
         m_deviceError = false;
     }
 
