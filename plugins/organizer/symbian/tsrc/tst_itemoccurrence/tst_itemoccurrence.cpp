@@ -234,6 +234,9 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort_data()
     }    
 }
 
+/*!
+ * TODO: to be refactored into several smaller test cases.
+ */
 void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
 {
     QFETCH(QString, managerName);
@@ -246,7 +249,6 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QDateTime endTime(QDate(QDate::currentDate().year() , 9, 30));
     QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
@@ -294,25 +296,21 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QCOMPARE(instanceList.size(), 2);
     
     QOrganizerItem firstItem = instanceList.at(0);
-    // The type must be either "event" or "event occurrence"
-    QVERIFY(firstItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence)
-        || firstItem.type() == QLatin1String(QOrganizerItemType::TypeEvent));
+    QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(firstItem.detail<QOrganizerEventTime>().startDateTime(), QDateTime(QDate(QDate::currentDate().year(), 9, 15)));
     QCOMPARE(firstItem.displayLabel(), instanceList[1].displayLabel());
 
     //Search without filtering and sorting. Full instanceList is returned
-    instanceList.clear();
     sortList.clear();    
-    instanceList = m_om->items(f,sortList,fetchHint);
+    instanceList = m_om->items(f, sortList, fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
     sortList.append(sortOrder);
-    instanceList = m_om->items(f,sortList,fetchHint);
+    instanceList = m_om->items(f, sortList, fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
-    QVERIFY(thirdItem.type() == QLatin1String(QOrganizerItemType::TypeEventOccurrence)
-        || thirdItem.type() == QLatin1String(QOrganizerItemType::TypeEvent));
+    QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(thirdItem.detail<QOrganizerEventTime>().startDateTime(), startTime);
 
     // Save another item with same attributes as first item
@@ -322,9 +320,9 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     secondItem.setDisplayLabel(modifiedLabel); 
     QVERIFY(secondItem.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&secondItem));
-    
-    instanceList = m_om->items(df,sortList,fetchHint);
-    QCOMPARE(instanceList.size(), 4);
+
+    instanceList = m_om->items(df, sortList, fetchHint);
+    QCOMPARE(instanceList.size(), 5);
 }
 
 void tst_ItemOccurrence::addOccurrenceWithException_data()
