@@ -22,41 +22,40 @@
 const TInt KInterestingSsap = 35;
 
 /*!
-    CLlcpSocketPrivate::NewL()
+    CLlcpSocketType1::NewL()
 */
-CLlcpSocketPrivate* CLlcpSocketPrivate::NewL()
+CLlcpSocketType1* CLlcpSocketType1::NewL()
     {
-    CLlcpSocketPrivate* self = CLlcpSocketPrivate::NewLC();
+    CLlcpSocketType1* self = CLlcpSocketType1::NewLC();
     CleanupStack::Pop( self );
     return self;
     }
 
 /*!
-    CLlcpSocketPrivate::NewLC()
+    CLlcpSocketType1::NewLC()
 */
-CLlcpSocketPrivate* CLlcpSocketPrivate::NewLC()
+CLlcpSocketType1* CLlcpSocketType1::NewLC()
     {
-    CLlcpSocketPrivate* self = new (ELeave) CLlcpSocketPrivate();
+    CLlcpSocketType1* self = new (ELeave) CLlcpSocketType1();
     CleanupStack::PushL( self );
     self->ConstructL();
     return self;
     }
 
 /*!
-    CLlcpSocketPrivate::CLlcpSocketPrivate()
+    CLlcpSocketType1::CLlcpSocketType1()
 */
-CLlcpSocketPrivate::CLlcpSocketPrivate( )
+CLlcpSocketType1::CLlcpSocketType1( )
     : iLlcp( NULL ),
     iRemoteConnection(NULL),
-    iConnLessStarted(EFalse),
-    iConnOrientedStarted(EFalse),
+    iConnLessStarted(EFalse)
     {
     }
 
 /*!
     CLlcpSocketPrivate::ContructL()
 */
-void CLlcpSocketPrivate::ConstructL()
+void CLlcpSocketType1::ConstructL()
     {  
     iLlcp = CLlcpProvider::NewL( iNfcServer );
 
@@ -69,14 +68,14 @@ void CLlcpSocketPrivate::ConstructL()
         
         iConnLessStarted = EFalse;
         
-        CreateLocalConnection(CLlcpSocketPrivate::ConnectionLess);
+        CreateLocalConnection();
         }
     }
 
 /*!
     Destroys the LLCP socket.
 */
-CLlcpSocketPrivate::~CLlcpSocketPrivate()
+CLlcpSocketType1::~CLlcpSocketType1()
     {
     Cleanup();
     
@@ -89,86 +88,82 @@ CLlcpSocketPrivate::~CLlcpSocketPrivate()
 
 
 /*!
-    Connects to the service identified by the URI \a serviceUri (on \a target).
+    Cancel the Receive/Transfer and destroy the local/remote connection.
 */
-void CLlcpSocketPrivate::ConnectToService( const TDesC8& aServiceName)
-    {
-    if ( iConnLessStarted )
+void CLlcpSocketType1::Cleanup()
+    {    
+    if ( iRemoteConnection )
         {
-        // TODO
-        // will updated to
-        // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-        iLlcp->StopListeningConnLessRequest(KInterestingSsap );
+        iRemoteConnection->ReceiveCancel();
+        iRemoteConnection->TransferCancel();
         
-        iConnLessStarted = EFalse;
-        }
+        delete iRemoteConnection;
+        iRemoteConnection = NULL;
+        }   
     
-    
-    if ( !iConnOrientedStarted )
+    if ( iLocalConnection )
         {
-        // TODO
-        // will updated to
-        // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-        iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap );  
-        iConnOrientedStarted = ETrue;
+        iLocalConnection->ReceiveCancel();
+        iLocalConnection->TransferCancel();
         
-        CreateLocalConnection(CLlcpSocketPrivate::ConnectionOriented);
-
-        }
+        delete iLocalConnection;
+        iLocalConnection = NULL;
+        }        
     }
 
+bool CLlcpSocketType1::Bind(TInt portNum)
+    {
+    TInt error = KErrNone;
+    if ( !iConnLessStarted )
+        {
+        CreateLocalConnection();
+        TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,KInterestingSsap ));
+        iConnLessStarted = ETrue;
+        }   
+    if ( error == KErrNone )
+        {
+        return ETrue;
+        }
+    else
+        {
+        return EFalse;
+        }
+    }
  
 /*!
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
-    Creating MLlcpConnOrientedTransporter object if  connection type connectionOriented,
     Creating Creating wrapper for local peer connection.
 */
-void CLlcpSocketPrivate::CreateLocalConnection(ConnType aType)
+void CLlcpSocketType1::CreateLocalConnection()
     {
     TInt error = KErrNone;
     MLlcpConnLessTransporter* connType1 = NULL;
-    MLlcpConnOrientedTransporter *connType2 = NULL;
     
     if ( iLocalConnection )
         return;
         
-    if (CLlcpSocketPrivate::ConnectionLess == aType)
-        {
-        TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( KInterestingSsap ) );
-        }
-    else
-        {
-        TRAP( error, connType2 = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap ) );
-        }
+   TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( KInterestingSsap ) );
+
     
     if ( error == KErrNone )
         {
-        // Creating wrapper for connection. 
-        if (CLlcpSocketPrivate::ConnectionLess == aType)
-            {
-            TRAP( error, iLocalConnection = 
+        TRAP( error, iLocalConnection = 
                     COwnLlcpConnLess::NewL( connType1 )) ;              
-            }
-        else
-            {
-            TRAP( error, iLocalConnection = 
-                    COwnLlcpConnOriented::NewL( connType2));    
-            }
         
         if ( error != KErrNone )
             {
-            delete conn;
+            delete iLocalConnection;
             }
         }
     return;        
     }
 
-void CLlcpSocketPrivate::CreateRemoteConnection(MLlcpConnLessTransporter* aConnection)
+void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnection)
     {
     TInt error = KErrNone;
      
      // Only accepting one incoming remote connection
-     if ( !iRemoteConnection ||typeid(iRemoteConnection) != typeid(COwnLlcpConnLess*) )
+     if ( !iRemoteConnection )
          {
          if (iRemoteConnection)
              // current remote connection is not ConnOriented, need to switch
@@ -194,50 +189,12 @@ void CLlcpSocketPrivate::CreateRemoteConnection(MLlcpConnLessTransporter* aConne
          }    
     }
 
-/*!
-    Creating Creating wrapper for remote peer connection of which type is connection oriented.
-*/
-void CLlcpSocketPrivate::CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection)
-    {
-      TInt error = KErrNone;      
-          
-      // Only accepting one incoming remote connection
-      if ( !iRemoteConnection || typeid(iRemoteConnection) != typeid(COwnLlcpConnOriented*)  )
-          {
-          aConnection->AcceptConnectRequest();
-          
-          if (iRemoteConnection)
-              // current remote connection is not ConnOriented, need to switch
-              {
-              Cleanup();
-              }
-          
-          // Creating wrapper for connection. 
-          TRAP( error, iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection ) );
-          if ( error == KErrNone )
-              {
-              // Start receiving data
-              iRemoteConnection->Receive();
-              }
-          else
-              {
-              delete aConnection;
-              }
-          }
-      else
-          {
-          // Decline connection request and delete connection object
-          aConnection->DeclineConnectRequest();
-          delete aConnection;
-          }
-    }
-
  
 /*!
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
-TInt CLlcpSocketPrivate::WriteDatagram(const TDesC8& aData)
+TInt CLlcpSocketType1::WriteDatagram(const TDesC8& aData)
     {
     TInt val = -1;
     TInt error = KErrNone;
@@ -250,65 +207,13 @@ TInt CLlcpSocketPrivate::WriteDatagram(const TDesC8& aData)
     return val; 
     }
 
-/*!
-    Disconnects the socket.
-*/
-void CLlcpSocketPrivate::DisconnectFromService()
-    { 
-    if ( iConnOrientedStarted )
-        {
-        // Stopping to listen LLCP link
-        iLlcp->RemoveLlcpLinkListener();
-        
-        // Stopping to listen SSAP 35.
-        iLlcp->StopListeningConnLessRequest( KInterestingSsap );
-        iConnOrientedStarted = EFalse;
-        
-        Cleanup();
-        } 
-    }
-
-
-/*!
-    Cancel the Receive/Transfer and destroy the local/remote connection.
-*/
-void CLlcpSocketPrivate::Cleanup()
-    {    
-    if ( iRemoteConnection )
-        {
-        iRemoteConnection->ReceiveCancel();
-        iRemoteConnection->TransferCancel()();
-        
-        delete iRemoteConnection;
-        iRemoteConnection = NULL;
-        }   
-    
-    if ( iLocalConnection )
-        {
-        iLocalConnection->ReceiveCancel();
-        iLocalConnection->TransferCancel()();
-        
-        delete iLocalConnection;
-        iLocalConnection = NULL;
-        }        
-    }
- 
-
-
-/*!
-    Call back from MLlcpConnOrientedListener
-*/
-void CLlcpSocketPrivate::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
-    {  
-    CreateRemoteConnection(aConnection);
-    }
 
 /*!
     Call back from MLlcpConnLessListener
 */
-void CLlcpSocketPrivate::FrameReceived( MLlcpConnLessTransporter* aConnection )
+void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
-    CreateRemoteConnection(aConnection);
+    
     }
 
    
@@ -551,7 +456,25 @@ COwnLlcpConnOriented::~COwnLlcpConnOriented()
     iTransmitBuf.Close();
     iReceiveBuf.Close();
     }
-   
+
+TInt COwnLlcpConnOriented::Connect(const TDesC8& aServiceName)
+    {
+    TInt error = KErrNone;
+    TRequestStatus aStatus = KRequestPending;
+    TRequestStatus* status = &aStatus; // local   
+    
+    
+    if ( iConnState == ENotConnected )
+        {
+        // Starting connecting if is in idle state
+        iConnection->Connect( iStatus );
+        SetActive();
+        iConnState = EConnecting;
+        
+        iClientStatus = status;
+        }    
+    }
+
 /*!
     Transfer data from local peer to remote peer via connection oriented transport
 */
@@ -790,4 +713,128 @@ void COwnLlcpConnOriented::DoCancel()
         User::RequestComplete( iClientStatus, KErrCancel );
         iClientStatus = NULL;
         }
+    }
+
+
+
+//  ############# CLlcpSocketType2 #######################
+
+/*!
+    Creating MLlcpConnOrientedTransporter object if  connection type connectionOriented,
+    Creating Creating wrapper for local peer connection.
+*/
+void CLlcpSocketType2::CreateLocalConnection()
+    {
+    TInt error = KErrNone;
+    MLlcpConnOrientedTransporter *connType2 = NULL;
+    
+    if ( iLocalConnection )
+        return;
+        
+    TRAP( error, connType2 = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap ) );
+    
+    if ( error == KErrNone )
+        {
+            TRAP( error, iLocalConnection = 
+                    COwnLlcpConnOriented::NewL( connType2));    
+        
+        if ( error != KErrNone )
+            {
+            delete iLocalConnection;
+            }
+        }
+    return;        
+    }
+
+
+/*!
+    Creating Creating wrapper for remote peer connection of which type is connection oriented.
+*/
+void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection)
+    {
+      TInt error = KErrNone;      
+          
+      // Only accepting one incoming remote connection
+      if ( !iRemoteConnection  )
+          {
+          aConnection->AcceptConnectRequest();
+          
+          if (iRemoteConnection)
+              // current remote connection is not ConnOriented, need to switch
+              {
+              Cleanup();
+              }
+          
+          // Creating wrapper for connection. 
+          TRAP( error, iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection ) );
+          if ( error == KErrNone )
+              {
+              // Start receiving data
+              iRemoteConnection->Receive();
+              }
+          else
+              {
+              delete aConnection;
+              }
+          }
+      else
+          {
+          // Decline connection request and delete connection object
+          aConnection->DeclineConnectRequest();
+          delete aConnection;
+          }
+    }
+
+
+/*!
+    Connects to the service identified by the URI \a serviceUri (on \a target).
+*/
+void CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
+    {
+    iLocalConnection->Connect(aServiceName);
+    }
+
+
+
+/*!
+    Disconnects the socket.
+*/
+void CLlcpSocketType2::DisconnectFromService()
+    { 
+    if ( iConnOrientedStarted )
+        {
+        // Stopping to listen LLCP link
+        iLlcp->RemoveLlcpLinkListener();
+        
+        // Stopping to listen SSAP 35.
+        iLlcp->StopListeningConnLessRequest( KInterestingSsap );
+        iConnOrientedStarted = EFalse;
+        
+        Cleanup();
+        } 
+    }
+
+
+/*!
+    Cancel the Receive/Transfer and destroy the local/remote connection.
+*/
+void CLlcpSocketType2::Cleanup()
+    {    
+    if ( iRemoteConnection )
+        {
+        iRemoteConnection->ReceiveCancel();
+        iRemoteConnection->TransferCancel();
+        
+        delete iRemoteConnection;
+        iRemoteConnection = NULL;
+        }   
+    
+    if ( iLocalConnection )
+        {
+        iLocalConnection->ReceiveCancel();
+        iLocalConnection->TransferCancel();
+        
+        delete iLocalConnection;
+        iLocalConnection = NULL;
+        }        
     }
