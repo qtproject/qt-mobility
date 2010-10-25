@@ -203,7 +203,7 @@ void tst_symbianperformance::items()
         QTime endTime = QTime::currentTime();
         qDebug() << "Saving an item with unlimited occurrences took [ms]: " << startTime.msecsTo(endTime);
 
-        // TODO: "itemOccurrences with parentItem" (should be faster than itemOccurrences without parent because of "collection filtering")
+        // fetch
         startTime = QTime::currentTime();
         QList<QOrganizerItem> items = m_om->itemOccurrences(item);
         endTime = QTime::currentTime();
@@ -304,6 +304,27 @@ void tst_symbianperformance::itemsInCollections()
         QTime endTime = QTime::currentTime();
         QCOMPARE(items.count(), itemCount * 3);
         qDebug() << "Fetching 500 item instances with collection filter took [ms]: " << startTime.msecsTo(endTime);
+    }
+
+    {
+        // Add an item with unlimited occurrences (symbian cal server limits occurrences to 31.12.2100)
+        QOrganizerItem item = createItem(
+                QOrganizerItemType::TypeEvent,
+                QString("addItemUnltd"),
+                currentDateTime.addSecs(1800),
+                currentDateTime.addSecs(3600),
+                0);
+
+        QTime startTime = QTime::currentTime();
+        QVERIFY(m_om->saveItem(&item));
+        QTime endTime = QTime::currentTime();
+        qDebug() << "Saving an item with unlimited occurrences took [ms]: " << startTime.msecsTo(endTime);
+
+        // fetch
+        startTime = QTime::currentTime();
+        QList<QOrganizerItem> items = m_om->itemOccurrences(item);
+        endTime = QTime::currentTime();
+        qDebug() << "Fetching item occurrences of a parent [ms]: " << startTime.msecsTo(endTime);
     }
 
     {
