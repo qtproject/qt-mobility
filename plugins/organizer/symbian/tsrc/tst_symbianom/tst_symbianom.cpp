@@ -343,6 +343,34 @@ void tst_SymbianOm::fetchItemIds()
         QVERIFY(id != QOrganizerItemId());
         QVERIFY(expectedIds.contains(id));
     }
+
+    // Try fetching items from a specified time range.
+    
+    // Add a reccurring event before time range
+    QOrganizerEvent event;
+    event.setDisplayLabel("Weekly event");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    event.setStartDateTime(dateTime);
+    event.setEndDateTime(dateTime.addSecs(60*60));
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    event.setRecurrenceRule(rule);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // TODO: Add an exception to reccurring event
+    
+    // Add a todo after the range
+    QOrganizerTodo todo;
+    todo.setDisplayLabel("Todo");
+    todo.setStartDateTime(dateTime.addDays(9));
+    todo.setDueDateTime(dateTime.addDays(10));
+    QVERIFY(m_om->saveItem(&todo));
+    
+    // Get items in the range
+    actualIds = m_om->itemIds(dateTime.addDays(1), dateTime.addDays(8));
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
+    QVERIFY(actualIds.contains(event.id())); // one occurence is in time range 
+    QVERIFY(!actualIds.contains(todo.id())); // should not be found because out of time range
 }
 
 void tst_SymbianOm::uniqueIds()
