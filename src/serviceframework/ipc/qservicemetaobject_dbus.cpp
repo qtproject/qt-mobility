@@ -101,6 +101,7 @@ QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
 {
     if (d->dbusMeta)
         qFree(const_cast<QMetaObject*>(d->dbusMeta));
+    
     delete d;
 }
 
