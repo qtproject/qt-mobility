@@ -38,50 +38,50 @@
 **
 ****************************************************************************/
 
-#include "coverartmodel.h"
+#ifndef THUMBNAILCACHE_H
+#define THUMBNAILCACHE_H
 
-#include "albumdelegate.h"
+#include <QtCore/qcache.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/qqueue.h>
+#include <QtCore/qthread.h>
+#include <QtCore/qwaitcondition.h>
 
-#include <QtCore/qcryptographichash.h>
-#include <QtCore/qdir.h>
-#include <QtCore/qurl.h>
 
-#define QT_GALLERY_MEDIA_ART_ILLEGAL_CHARACTERS \
-    "\\(.*\\)|\\{.*\\}|\\[.*\\]|<.*>|[\\(\\)_\\{\\}\\[\\]\\!@#$\\^&\\*\\+\\=\\|\\\\/\"'\\?~`]"
+QT_BEGIN_NAMESPACE
+class QImage;
+class QPixmap;
+class QUrl;
+QT_END_NAMESPACE
 
-CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
-    : ThumbnailModel(gallery, parent)
-#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
-    , illegalCharacters(QLatin1String(QT_GALLERY_MEDIA_ART_ILLEGAL_CHARACTERS))
-    , whitespace(QCryptographicHash::hash(" ", QCryptographicHash::Md5).toHex())
-#endif
+class Thumbnail;
+
+class ThumbnailCache : public QThread
 {
-}
+    Q_OBJECT
+public:
+    ThumbnailCache(QObject *parent = 0);
+    ~ThumbnailCache();
 
-#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
-QUrl CoverArtModel::imageUrl(const QModelIndex &index) const
-{
-    QString title = index.data(Qt::DisplayRole).toString();
-    QString artist = index.data(AlbumDelegate::Artist).toString();
+    QPixmap thumbnail(const QUrl &url);
 
-    QString fileName = QDir::homePath()
-            + QLatin1String("/.cache/media-art/album-")
-            + hash(artist)
-            + QLatin1Char('-')
-            + hash(title)
-            + QLatin1String(".jpeg");
+    bool event(QEvent *event);
 
-    return QUrl::fromLocalFile(fileName);
-}
+signals:
+    void thumbnailReady();
 
-QString CoverArtModel::hash(const QString &identifier) const
-{
-    if (identifier.isEmpty()) {
-        return whitespace;
-    } else {
-        return QCryptographicHash::hash(
-                identifier.toLower().remove(illegalCharacters).simplified().toUtf8(),
-                QCryptographicHash::Md5).toHex();
-    }
-}
+protected:
+    void run();
+
+private:
+    QImage loadImage(const QUrl &url) const;
+    QString thumbnailPath(const QUrl &url) const;
+
+    QMutex mutex;
+    QWaitCondition waitCondition;
+    QCache<QUrl, Thumbnail> cache;
+    QQueue<QUrl> pendingUrls;
+    bool cancelled;
+};
+
 #endif
