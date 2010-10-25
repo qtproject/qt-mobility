@@ -394,6 +394,8 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
             path.append(QLatin1Char('/'));
 
         sh = symbianSettingsHandle(item(Handle(sh), path));
+        if (!sh)
+        	return false;
         createdHandle = true;
     }
 

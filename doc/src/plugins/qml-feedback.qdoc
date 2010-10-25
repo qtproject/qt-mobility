@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,31 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-// checksum 0x39ee version 0x10008
-#ifndef QMLAPPLICATIONVIEWER_H
-#define QMLAPPLICATIONVIEWER_H
 
-#include <QtDeclarative/QDeclarativeView>
+/*!
+    \group qml-feedback
+    \title QML Feedback Plugin
+    QML Support for the Mobility Project Feedback API.
 
-class QmlApplicationViewer : public QDeclarativeView
-{
-public:
-    enum Orientation {
-        LockPortrait,
-        LockLandscape,
-        Auto
-    };
+*/
 
-    QmlApplicationViewer(QWidget *parent = 0);
-    virtual ~QmlApplicationViewer();
 
-    void setMainQmlFile(const QString &file);
-    void addImportPath(const QString &path);
-    void setOrientation(Orientation orientation);
-    void show();
+/*!
+    \page qml-feedback-api.html
 
-private:
-    class QmlApplicationViewerPrivate *m_d;
-};
+    \title Feedback QML Plugin
 
-#endif // QMLAPPLICATIONVIEWER_H
+    \brief A QML plugin for the Mobility Project Feedback API.
+
+    
+
+    \section1 Overview
+
+     The API provides abstractions for various types of feedback, and allows custom implementations of these types of feedback.
+    The identifying string for this component is \i {"QtMobility.feedback"}.
+
+
+    The Feedback API allows application developers to implement feedback and programmatic vibration in their applications.
+    Use this in the QML \i {import} statement.
+
+    \note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
+          and improved in the next patch release.
+
+
+    \section1 Feedback elements
+
+    \annotatedlist qml-feedback-api
+
+*/
+
+

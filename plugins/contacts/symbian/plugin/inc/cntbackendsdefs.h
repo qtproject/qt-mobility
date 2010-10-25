@@ -76,6 +76,12 @@ const QString SIM_BACKEND_FDN     = "qtcontacts:symbiansim:store=FDN";
  */
 const QString SIM_BACKEND_ON     = "qtcontacts:symbiansim:store=ON";
 
+/*
+ * Definition name for MyCard handling.
+ *
+ */
+const QString MYCARD_DEFINTION = "MyCard";
+
 
 /*!
 * UIDs for preferred (default) fields, used by symbian backend

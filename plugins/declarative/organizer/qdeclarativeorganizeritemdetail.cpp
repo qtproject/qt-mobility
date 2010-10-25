@@ -521,9 +521,9 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
   This property holds the entry date and time value of the journal.
   */
 
-////////////////QDeclarativeOrganizerComment////////////////////////
+////////////////QDeclarativeOrganizerItemComment////////////////////////
 /*!
-   \qmlclass Comment QDeclarativeOrganizerComment
+   \qmlclass Comment QDeclarativeOrganizerItemComment
    \brief The Comment element contains the comment text of an organizer item.
    \ingroup qml-organizer
 
@@ -541,9 +541,9 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
   This property holds the text of the comment.
   */
 
-////////////////QDeclarativeOrganizerDescription////////////////////////
+////////////////QDeclarativeOrganizerItemDescription////////////////////////
 /*!
-   \qmlclass Description QDeclarativeOrganizerDescription
+   \qmlclass Description QDeclarativeOrganizerItemDescription
    \brief The Description element contains the description text of an organizer item.
    \ingroup qml-organizer
 
@@ -556,14 +556,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty string Description::Description
+  \qmlproperty string Description::description
 
   This property holds the text of the description.
   */
 
-////////////////QDeclarativeOrganizerDisplayLabel////////////////////////
+////////////////QDeclarativeOrganizerItemDisplayLabel////////////////////////
 /*!
-   \qmlclass DisplayLabel QDeclarativeOrganizerDisplayLabel
+   \qmlclass DisplayLabel QDeclarativeOrganizerItemDisplayLabel
    \brief The DisplayLabel element contains the display label of an organizer item.
    \ingroup qml-organizer
 
@@ -576,14 +576,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty string DisplayLabel::DisplayLabel
+  \qmlproperty string DisplayLabel::displayLabel
 
   This property holds the display label text.
   */
 
-////////////////QDeclarativeOrganizerGuid////////////////////////
+////////////////QDeclarativeOrganizerItemGuid////////////////////////
 /*!
-   \qmlclass Guid QDeclarativeOrganizerGuid
+   \qmlclass Guid QDeclarativeOrganizerItemGuid
    \brief The Guid element contains the GUID string of an organizer item.
    \ingroup qml-organizer
 
@@ -596,14 +596,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty string Guid::Guid
+  \qmlproperty string Guid::guid
 
   This property holds the GUID string.
   */
 
-////////////////QDeclarativeOrganizerTag////////////////////////
+////////////////QDeclarativeOrganizerItemTag////////////////////////
 /*!
-   \qmlclass Tag QDeclarativeOrganizerTag
+   \qmlclass Tag QDeclarativeOrganizerItemTag
    \brief The Tag element contains the tag string of an organizer item.
    \ingroup qml-organizer
 
@@ -616,14 +616,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty string Tag::Tag
+  \qmlproperty string Tag::tag
 
   This property holds the tag string.
   */
 
-////////////////QDeclarativeOrganizerType////////////////////////
+////////////////QDeclarativeOrganizerItemType////////////////////////
 /*!
-   \qmlclass Type QDeclarativeOrganizerType
+   \qmlclass Type QDeclarativeOrganizerItemType
    \brief The Type element contains the type string of an organizer item.
    \ingroup qml-organizer
 
@@ -636,14 +636,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty string Type::Type
+  \qmlproperty string Type::type
 
   This property holds the type string.
   */
 
-////////////////QDeclarativeOrganizerTimestamp////////////////////////
+////////////////QDeclarativeOrganizerItemTimestamp////////////////////////
 /*!
-   \qmlclass Timestamp QDeclarativeOrganizerTimestamp
+   \qmlclass Timestamp QDeclarativeOrganizerItemTimestamp
    \brief The Timestamp element contains the created and last modified timestamp of an organizer item's creating date and time.
    \ingroup qml-organizer
 
@@ -668,9 +668,9 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
   This property holds the value of the item's creation date and time.
   */
 
-////////////////QDeclarativeOrganizerLocation////////////////////////
+////////////////QDeclarativeOrganizerItemLocation////////////////////////
 /*!
-   \qmlclass Location QDeclarativeOrganizerLocation
+   \qmlclass Location QDeclarativeOrganizerItemLocation
    \brief The Location element contains information about a location which is related to the organizer item in some manner.
    \ingroup qml-organizer
 
@@ -868,7 +868,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
  */
 
 /*!
-  \qmlproperty enumeration Reminder::type
+  \qmlproperty enumeration Reminder::reminderType
 
   This property holds the reminder type of this reminder for an organizer item. The value can be one of:
   \list
