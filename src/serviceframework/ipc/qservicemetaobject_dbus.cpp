@@ -223,10 +223,10 @@ void QServiceMetaObjectDBus::activateMetaSignal(int id, const QVariantList& args
 const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) const
 {
     // Create a meta-object to represent all the contents of our service on DBus
-    QMetaObjectBuilder *builder = new QMetaObjectBuilder();
+    QMetaObjectBuilder builder;
   
-    builder->setClassName(d->serviceMeta->className());
-    builder->setSuperClass(d->serviceMeta->superClass()); // needed?
+    builder.setClassName(d->serviceMeta->className());
+    builder.setSuperClass(d->serviceMeta->superClass()); // needed?
 
     const QMetaObject* mo = d->serviceMeta;
     while (mo && strcmp(mo->className(), "QObject")) {
@@ -261,13 +261,13 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
             QMetaMethodBuilder method;
             switch (mm.methodType()) {
                 case QMetaMethod::Method:
-                    method = builder->addMethod(sig);
+                    method = builder.addMethod(sig);
                     break;
                 case QMetaMethod::Slot:
-                    method = builder->addSlot(sig);
+                    method = builder.addSlot(sig);
                     break;
                 case QMetaMethod::Signal:
-                    method = builder->addSignal(sig);
+                    method = builder.addSignal(sig);
                     break;
                 default:
                     break;
@@ -282,21 +282,21 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
         }
 
         if (signalsObject)
-            return builder->toMetaObject();
+            return builder.toMetaObject();
 
         // Add our property accessor methods
         // NOTE: required because read/reset properties over DBus require adaptors
         //       otherwise a metacall won't be invoked as QMetaObject::ReadProperty
         //       or QMetaObject::ResetProperty
         QMetaMethodBuilder readProp;
-        readProp = builder->addMethod(QByteArray("propertyRead(QString)"));
+        readProp = builder.addMethod(QByteArray("propertyRead(QString)"));
         readProp.setReturnType(QByteArray("QDBusVariant"));
         QList<QByteArray> params;
         params << QByteArray("name");
         readProp.setParameterNames(params);
 
         QMetaMethodBuilder resetProp;
-        resetProp = builder->addMethod(QByteArray("propertyReset(QString)"));
+        resetProp = builder.addMethod(QByteArray("propertyReset(QString)"));
         QList<QByteArray> paramsReset;
         paramsReset << QByteArray("name");
         resetProp.setParameterNames(paramsReset);
@@ -307,7 +307,7 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
         for (int i=0; i<propCount; i++) {
             QMetaProperty mp = d->serviceMeta->property(i);
 
-            QMetaPropertyBuilder property = builder->addProperty(mp.name(), mp.typeName());
+            QMetaPropertyBuilder property = builder.addProperty(mp.name(), mp.typeName());
             property.setReadable(mp.isReadable());
             property.setWritable(mp.isWritable());
             property.setResettable(mp.isResettable());
@@ -326,7 +326,7 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
     }
 
     // return our constructed dbus metaobject
-    return builder->toMetaObject();
+    return builder.toMetaObject();
 }
 
 /*! 
