@@ -110,7 +110,7 @@
     We will now go through the code for the \c Dialog class. Here is its
     definition:
 
-    \snippet examples/hapticsquare/dialog.h 0
+    \snippet examples/hapticsquare/hapticsquare.h 0
 
     The buttons are connected to the slots, which play the effects. We will now
     go through the implementation of \c Dialog.
@@ -118,7 +118,7 @@
     The constructor starts by setting up the non-repeating haptic effect, which
     is played by clicking the \gui {Rumble! Button}.
 
-    \snippet examples/hapticsquare/dialog.cpp 0
+    \snippet examples/hapticsquare/hapticsquare.cpp 0
 
     Custom haptics effects are created by setting up a QFeedbackHapticsEffect.
 
@@ -137,7 +137,7 @@
 
     We next set up the effect for the \gui {Ocean Button}.
 
-    \snippet examples/hapticsquare/dialog.cpp 1
+    \snippet examples/hapticsquare/hapticsquare.cpp 1
 
     The \c m_ocean is a periodic effect, i.e., it repeats after
     \l{QFeedbackHapticsEffect::}{period()} milliseconds. To stop a periodic
@@ -146,11 +146,11 @@
     We then set up the GUI and connects the buttons to slots that will play the
     effects.
 
-    \snippet examples/hapticsquare/dialog.cpp 2
+    \snippet examples/hapticsquare/hapticsquare.cpp 2
 
     Let's look at the slots to see how the effects are played.
 
-    \snippet examples/hapticsquare/dialog.cpp 3
+    \snippet examples/hapticsquare/hapticsquare.cpp 3
 
     With the \c m_rumble, we only have to call \l{QFeedbackEffect::}{start()}. It
     will stop when the effect has finished, and can be played again by calling
@@ -162,7 +162,7 @@
     \l{QFeedbackEffect::}{start()} is called. We could also have paused the
     effect with \l{QFeedbackEffect::}{pause()}.
 
-    \snippet examples/hapticsquare/dialog.cpp 4
+    \snippet examples/hapticsquare/hapticsquare.cpp 4
 
     System theme effects are played with the static
     QFeedbackEffect::playThemeEffect() function. Theme effects cannot be stopped
