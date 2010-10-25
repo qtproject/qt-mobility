@@ -38,7 +38,6 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
-
 #include <nfctype1connection.h>
 #include <nfctag.h>
 #include "nearfieldtagtype1_symbian.h"

@@ -11,7 +11,6 @@
 #include <llcpconnlesslistener.h>           // MLlcpConnLessListener
 #include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
 #include <llcplinklistener.h>               // MLlcpLinkListener
-#include <typeinfo>
 
 /*!
  *   FORWARD DECLARATIONS
@@ -21,56 +20,119 @@ class COwnLlcpConnLess;
 class COwnLlcpConnOriented;
 
 /*!
- *  CLASS DECLARATION for CLlcpSocketPrivate.
+ *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
  */
-class CLlcpSocketPrivate : public CBase,
-                           public MLlcpConnLessListener,
-                           public MLlcpConnOrientedListener
+class CLlcpSocketType1 : public CBase,
+                         public MLlcpConnLessListener
    {
 public:
    /*!
-    * Creates a new CLlcpSocketPrivate object.
+    * Creates a new CLlcpSocketType1 object.
     */
-   static CLlcpSocketPrivate* NewL();
+   static CLlcpSocketType1* NewL();
    
    /*!
-    * Creates a new CLlcpSocketPrivate object.
+    * Creates a new CLlcpSocketType1 object.
     */
-   static CLlcpSocketPrivate* NewLC();
+   static CLlcpSocketType1* NewLC();
    
    /*!
     * Destructor
     */
-   ~CLlcpSocketPrivate();
+   ~CLlcpSocketType1();
+   
+public:    
+   TInt WriteDatagram(const TDesC8& aData);
+   bool Bind(TInt portNum);
+   
+private: // From MLlcpConnLessListener
+    void FrameReceived( MLlcpConnLessTransporter* aConnection );
+    
+private:
+    // Constructor
+    CLlcpSocketType1();
+    
+    // Second phase constructor
+    void ConstructL();  
+    void Cleanup();   
+    
+    void CreateLocalConnection();
+    void CreateRemoteConnection(MLlcpConnLessTransporter* aConnection);
+    
+private:
+   /*!
+    * Handle to NFC-server.
+    * Own.
+    */ 
+   RNfcServer iNfcServer;
+   
+   /*!
+    * Pointer to CLlcpProvider object.
+    * Own.
+    */
+   CLlcpProvider* iLlcp;
+   
+   /*!
+    * Pointer to MLlcpConnLessTransporter object.
+    * Own.
+    *
+    * This is used to send data to local device.
+    */ 
+   COwnLlcpConnLess* iLocalConnection;
+   
+   /*!
+    * Pointer to MLlcpConnLessTransporter object.
+    * Own.
+    *
+    * This is used to send data to local device.
+    */
+   //COwnLlcpConnLess* iRemoteConnless;
+   
+   COwnLlcpConnLess* iRemoteConnection;   
+   
+   bool iConnLessStarted;
+   
+   
+   };
+
+
+
+/*!
+ *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
+ */
+class CLlcpSocketType2 : public CBase
+   {
+public:
+   /*!
+    * Creates a new CLlcpSocketType1 object.
+    */
+   static CLlcpSocketType2* NewL();
+   
+   /*!
+    * Creates a new CLlcpSocketType1 object.
+    */
+   static CLlcpSocketType2* NewLC();
+   
+   /*!
+    * Destructor
+    */
+   ~CLlcpSocketType2();
    
 public:    
    void ConnectToService( const TDesC8& aServiceName);
    void DisconnectFromService();
    TInt WriteDatagram(const TDesC8& aData);
-   
-private: // From MLlcpConnLessListener
-    void FrameReceived( MLlcpConnLessTransporter* aConnection );
-    
-private: // From MLlcpConnOrientedListener   
-    void RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection );    
     
 private:
     // Constructor
-    CLlcpSocketPrivate();
+   CLlcpSocketType2();
     
     // Second phase constructor
     void ConstructL();
     
-    void Cleanup();
+    void Cleanup();   
     
-    
-private:
-    enum ConnType {
-        ConnectionLess = 1,
-        ConnectionOriented = 2    
-    };
-    void CreateLocalConnection(ConnType type);
-    void CreateRemoteConnection(MLlcpConnLessTransporter* aConnection);
+    void CreateLocalConnection();
     void CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
     
 private:
@@ -92,7 +154,7 @@ private:
     *
     * This is used to send data to local device.
     */ 
-   AbstractConnection* iLocalConnection;
+   COwnLlcpConnOriented* iLocalConnection;
    
    /*!
     * Pointer to MLlcpConnLessTransporter object.
@@ -102,53 +164,17 @@ private:
     */
    //COwnLlcpConnLess* iRemoteConnless;
    
-   AbstractConnection* iRemoteConnection;   
+   COwnLlcpConnOriented* iRemoteConnection;   
    
-   /*!
-    * Boolean variables, which tell whether Connenctionless listen started or not.
-    */ 
-   TBool iConnLessStarted;
-      
-   /*!
-    * Boolean variables, which tell whether ConnectionOriented listen started or not.
-    */ 
-   TBool iConnOrientedStarted;   
-   
+   bool iConnOrientedStarted;
    };
-    
-class AbstractConnection
-    {
-
-public:
-    /*!
-     * Transfer given data to remote device.
-     */
-    virtual TInt Transfer( const TDesC8& aData ) = 0;
-     
-    /*!
-     * Starts receive data from ConnLess.
-     */
-    virtual TInt Receive() = 0;    
-    
-    /*!
-     * Cancels Tranfer() request.
-     */ 
-    virtual void TransferCancel() = 0;
-     
-    /*!
-     * Cancels Receive() request.
-     */ 
-    virtual void ReceiveCancel() = 0;          
-    };
-
-
+ 
 
 /*!
  *  CLASS DECLARATION for COwnLlcpConnLess.
  *
  */    
-class COwnLlcpConnLess : public CActive,
-                         public AbstractConnection
+class COwnLlcpConnLess : public CActive
     {
 public:
 
@@ -234,8 +260,7 @@ private:
  *  CLASS DECLARATION for COwnLlcpConnOriented.
  *
  */    
-class COwnLlcpConnOriented : public CActive,
-                             public AbstractConnection
+class COwnLlcpConnOriented : public CActive
     {
 public:
 
@@ -255,6 +280,9 @@ public:
    ~COwnLlcpConnOriented();
 
 public: //  From AbstractConnection
+   
+   TInt Connect(const TDesC8& aServiceName);
+   
    /*!
         Transfer given data to remote device.
     */
