@@ -100,7 +100,7 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service, bool signalsObj
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
 {
     if (d->dbusMeta)
-        delete d->dbusMeta;
+        qFree(const_cast<QMetaObject*>(d->dbusMeta));
     delete d;
 }
 
