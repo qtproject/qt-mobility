@@ -50,6 +50,10 @@
 #include <QtGui/qimagereader.h>
 #include <QtGui/qpixmap.h>
 
+#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+uint qHash(const QUrl &url) { return qHash(url.toString()); }
+#endif
+
 class Thumbnail
 {
 public:
