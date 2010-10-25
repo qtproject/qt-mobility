@@ -1246,7 +1246,7 @@ void tst_QOrganizerManager::update()
     QOrganizerEventOccurrence secondException;
     foreach (const QOrganizerEventOccurrence& curr, items) {
         if (curr.startDateTime() == QDateTime(QDate(2010, 10, 22), QTime(8, 0, 0))) {
-            exception = curr;
+            secondException = curr;
             foundException = true;
             break;
         }
