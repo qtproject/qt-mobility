@@ -23,5 +23,6 @@
         <file>contents/images/titlebar.sci</file>
         <file>contents/images/toolbutton.png</file>
         <file>contents/images/toolbutton.sci</file>
+        <file>contents/month.js</file>
     </qresource>
 </RCC>

@@ -240,7 +240,7 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
       QDeclarativeOrganizerItemDetail* itemDetail = new QDeclarativeOrganizerItemDetail(object());
 
       itemDetail->setDetail(detail);
-      itemDetail->connect(itemDetail, SIGNAL(valueChanged()), object(), SIGNAL(detailsChanged()));
+      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(detailsChanged()));
 
       m_details.append(itemDetail);
     }
