@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVEOPENMETAOBJECT_H
 #define QDECLARATIVEOPENMETAOBJECT_H
 
