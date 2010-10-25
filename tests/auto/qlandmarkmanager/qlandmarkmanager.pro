@@ -30,6 +30,7 @@ symbian {
         addFiles.sources += data/test.gpx
         addFiles.sources += data/convert-collection-in.xml
         addFiles.sources += data/file.omg
+        addFiles.sources += data/garbage.xml
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.lmx
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.gpx
         addFiles.sources += data/AUS-PublicToilet-AustralianCapitalTerritory.gpx

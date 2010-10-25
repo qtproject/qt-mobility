@@ -37,11 +37,12 @@ To begin, obtain the most recent distribution package from
 
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
-Qt 4.7 or higher, visit \l {http://get.qt.nokia.com} to obtain
-a copy. Furthermore perl must be installed and available in the environment path. 
+Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
+a copy. However Mobility's QML components are not enabled unless Qt 4.7 or higher is used.
+Furthermore perl must be installed and available in the environment path. 
 Windows environments may require the installation of a perl interpreter such as
 \l {http://www.activestate.com/activeperl} {ActivePerl}. On the Maemo 5 (Fremantle) 
-platform PR1.2 firmware release or newer is required, and the experimental Qt 4.7 packages
+platform PR1.2 firmware release or newer is required, and the Qt 4.7 packages
 are required.
 
 
@@ -113,7 +114,8 @@ these domains have dependencies and these are outlined below:
 
        To enable all mediaservices on Symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features:
-       AudioRoutingAPI, Tuner Utility,  (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed).
+       AudioRoutingAPI, Tuner Utility,  (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed), SymbianOnboardCameraAdvancedSettings API (for 3rd FP2 and 5th ed),
+       MDF DevVideoRecord API (for 3rd FP2 and 5th ed).
        For camera autofocus support in 3rd edition FP1 one must download the following camera example app at 
        \l http://www.forum.nokia.com/info/sw.nokia.com/id/2f492479-ac8c-4c3e-aa90-cc883e190d83/S60_Platform_Camera_Example_with_AutoFocus_Support_v2_2_en.zip.html
        and extract the autofocus extension plugin that is contained within it, namely  autofocus_extension_library_s60_3rd_ed.zip.

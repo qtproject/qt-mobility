@@ -45,6 +45,27 @@
 #include <QDebug>
 #include <QPixmap>
 
+/*!
+   \qmlclass RelationshipModel QDeclarativeContactRelationshipModel
+   \brief The RelationshipModel provides a model of contact relationships from the contacts store.
+
+   \ingroup qml-contacts
+
+   This element is part of the \bold{QtMobility.contacts 1.1} module.
+
+    The contents of the model can be specified with \l participantId, \l role and \l relationshipType properties.
+    Whether the model is automatically updated when the store or filter changes, can be controlled
+    with \l RelationshipModel::autoUpdate property.
+
+    There are two ways of accessing the relationship data: through model by using views and delegates,
+    or alternatively via \l relationships list property.
+
+    At the moment only data role provided by the model is \c relationship (\l Relationship).
+    Through that one can access any data provided by the Relationship element.
+
+   \sa Relationship {QContactRelationship}
+ */
+
 class QDeclarativeContactRelationshipModelPrivate
 {
 public:
@@ -90,47 +111,61 @@ QDeclarativeContactRelationshipModel::~QDeclarativeContactRelationshipModel()
     delete d;
 }
 
+/*!
+  \qmlproperty string RelationshipModel::manager
+
+  This property holds the manager uri of the contact backend engine.
+  */
 QString QDeclarativeContactRelationshipModel::manager() const
 {
     if (d->m_manager)
         return d->m_manager->managerName();
     return QString();
 }
+
+
+/*!
+  \qmlproperty string RelationshipModel::error
+
+  This property holds the latest error code returned by the contact manager.
+
+  This property is read only.
+  */
 QString QDeclarativeContactRelationshipModel::error() const
 {
     switch (d->m_manager->error()) {
     case QContactManager::DoesNotExistError:
-        return QLatin1String("Not exist");
+        return QLatin1String("DoesNotExist");
     case QContactManager::AlreadyExistsError:
-        return QLatin1String("Already exist");
+        return QLatin1String("AlreadyExists");
     case QContactManager::InvalidDetailError:
-        return QLatin1String("Invalid detail");
+        return QLatin1String("InvalidDetail");
     case QContactManager::InvalidRelationshipError:
-        return QLatin1String("Invalid relationship");
+        return QLatin1String("InvalidRelationship");
     case QContactManager::LockedError:
-        return QLatin1String("Locked error");
+        return QLatin1String("LockedError");
     case QContactManager::DetailAccessError:
-        return QLatin1String("Detail access error");
+        return QLatin1String("DetailAccessError");
     case QContactManager::PermissionsError:
-        return QLatin1String("Permissions error");
+        return QLatin1String("PermissionsError");
     case QContactManager::OutOfMemoryError:
-        return QLatin1String("Out of memory");
+        return QLatin1String("OutOfMemory");
     case QContactManager::NotSupportedError:
-        return QLatin1String("Not supported");
+        return QLatin1String("NotSupported");
     case QContactManager::BadArgumentError:
-        return QLatin1String("Bad argument");
+        return QLatin1String("BadArgument");
     case QContactManager::UnspecifiedError:
-        return QLatin1String("Unspecified error");
+        return QLatin1String("UnspecifiedError");
     case QContactManager::VersionMismatchError:
-        return QLatin1String("Version mismatch");
+        return QLatin1String("VersionMismatch");
     case QContactManager::LimitReachedError:
-        return QLatin1String("Limit reached");
+        return QLatin1String("LimitReached");
     case QContactManager::InvalidContactTypeError:
-        return QLatin1String("Invalid contact type");
+        return QLatin1String("InvalidContactType");
     default:
         break;
     }
-    return QLatin1String("Status ok");
+    return QLatin1String("NoError");
 }
 void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
 {
@@ -142,6 +177,15 @@ void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
     }
 }
 
+
+/*!
+  \qmlproperty int RelationshipModel::participantId
+
+  This property holds the participant id which the list of relationships returned by RelationshipModel should contain.
+
+  \sa RelationshipFilter::relatedContactId
+  \sa RelationshipModel::role
+  */
 QContactLocalId QDeclarativeContactRelationshipModel::participantId() const
 {
     return d->m_participantId;
@@ -154,6 +198,13 @@ void QDeclarativeContactRelationshipModel::setParticipantId(const QContactLocalI
     }
 }
 
+/*!
+  \qmlproperty variant RelationshipModel::relationshipType
+
+  This property holds the relationship type which the list of relationships returned by RelationshipModel should contain.
+
+  \sa Relationship::type
+  */
 QVariant QDeclarativeContactRelationshipModel::relationshipType() const
 {
     return d->m_relationshipTypeHolder.relationshipType();
@@ -166,6 +217,13 @@ void QDeclarativeContactRelationshipModel::setRelationshipType(const QVariant& t
     }
 }
 
+/*!
+  \qmlproperty enumeration RelationshipModel::role
+
+  This property holds the relationship role which the list of relationships returned by RelationshipModel should contain.
+
+  \sa RelationshipFilter::relatedContactRole
+  */
 QDeclarativeContactRelationship::RelationshipRole QDeclarativeContactRelationshipModel::role() const
 {
     return d->m_role;
@@ -178,6 +236,33 @@ void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationsh
     }
 }
 
+/*!
+  \qmlproperty bool RelationshipModel::autoUpdate
+
+  This property indicates whether or not the relationship model should be updated automatically, default value is true.
+  */
+bool QDeclarativeContactRelationshipModel::autoUpdate() const
+{
+    //TODO
+    return true;
+}
+void QDeclarativeContactRelationshipModel::setAutoUpdate(bool autoUpdate)
+{
+    Q_UNUSED(autoUpdate);
+    //TODO
+}
+
+/*!
+  \qmlproperty QDeclarativeListProperty RelationshipModel::relationships
+
+  This property holds a list of relationships.
+
+  \sa Relationship
+  */
+QDeclarativeListProperty<QDeclarativeContactRelationship> QDeclarativeContactRelationshipModel::relationships()
+{
+    return QDeclarativeListProperty<QDeclarativeContactRelationship>(this, d->m_declarativeRelationships);
+}
 
 int QDeclarativeContactRelationshipModel::rowCount(const QModelIndex &parent) const
 {
@@ -192,9 +277,6 @@ QVariant QDeclarativeContactRelationshipModel::data(const QModelIndex &index, in
         return QVariant::fromValue(dcr);
     } else if (role == Qt::DisplayRole) {
         return QString("%1 %2 %3").arg(dcr->first()).arg(dcr->relationship().relationshipType()).arg(dcr->second());
-    } else if (role == Qt::DecorationRole) {
-        //show something?
-        return QPixmap();
     }
     return QVariant();
 }
@@ -222,6 +304,10 @@ void QDeclarativeContactRelationshipModel::fetchAgain()
     }
 }
 
+/*!
+  \qmlmethod RelationshipModel::addRelationship(relationship)
+  Addes the given \a relationship to the backend store.
+  */
 void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
 {
     if (dcr) {
@@ -234,6 +320,10 @@ void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRe
     }
 }
 
+/*!
+  \qmlmethod RelationshipModel::removeRelationship(relationship)
+  Removes the given \a relationship from the backend store.
+  */
 void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContactRelationship* dcr)
 {
     if (dcr) {

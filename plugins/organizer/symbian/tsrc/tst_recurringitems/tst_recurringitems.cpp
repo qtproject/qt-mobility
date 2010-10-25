@@ -171,7 +171,7 @@ void tst_recurringItems::addRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
 
     // Fetch and Verify
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     QOrganizerItemRecurrence resultRecurrence = item.detail(QOrganizerItemRecurrence::DefinitionName);
 
@@ -213,7 +213,7 @@ bool tst_recurringItems::verifyRecurrenceRule(
         // Verifying end date is not straightforward;
         // Allow the exceptional case with no end time and no count set (in
         // that case the end date is set to year 2100 by symbian calendar server)
-        if (expectedRRule.limitCount() == 0
+        if (expectedRRule.limitCount() == -1
             && expectedRRule.limitDate().isNull()
             && actualRRule.limitDate() == QDate(2100, 12, 31)) {
             qWarning() << "End date was set to maximum value";
@@ -374,20 +374,20 @@ void tst_recurringItems::removeRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
 
     // Fetch the saved item & check that recurrence rule was saved
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
 
     // Remove a recurrence rule detail & save & verify it does not exist
     recurrence = item.detail<QOrganizerItemRecurrence>();
     item.removeDetail(&recurrence);
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
     
     // Save the recurrence again & fetch & verify
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
     
     // Set empty recurrence rule detail & save & verify it does not exist
@@ -395,7 +395,7 @@ void tst_recurringItems::removeRecurrenceRule()
     recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>());
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
 }
 

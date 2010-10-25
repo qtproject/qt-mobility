@@ -25,7 +25,6 @@ INCLUDEPATH += . \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += tst_versit.h
 SOURCES += tst_versit.cpp
 CONFIG += mobility
 MOBILITY += contacts versit

@@ -117,7 +117,7 @@ bool QOrganizerItemChangeSet::dataChanged()
    Returns the set of ids of organizer items which have been added to
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
+QSet<QOrganizerItemId> QOrganizerItemChangeSet::addedItems() const
 {
     return d->m_addedItems;
 }
@@ -126,7 +126,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
   Inserts the given organizer item id \a addedOrganizerItemId into the set of ids of organizer items
   which have been added to the database.
  */
-void QOrganizerItemChangeSet::insertAddedItem(const QOrganizerItemLocalId& addedOrganizerItemId)
+void QOrganizerItemChangeSet::insertAddedItem(const QOrganizerItemId& addedOrganizerItemId)
 {
     d->m_addedItems.insert(addedOrganizerItemId);
 }
@@ -135,9 +135,9 @@ void QOrganizerItemChangeSet::insertAddedItem(const QOrganizerItemLocalId& added
   Inserts each of the given organizer item ids \a addedOrganizerItemIds into the set of ids of organizer items
   which have been added to the database.
  */
-void QOrganizerItemChangeSet::insertAddedItems(const QList<QOrganizerItemLocalId>& addedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertAddedItems(const QList<QOrganizerItemId>& addedOrganizerItemIds)
 {
-    foreach (const QOrganizerItemLocalId& id, addedOrganizerItemIds)
+    foreach (const QOrganizerItemId& id, addedOrganizerItemIds)
         d->m_addedItems.insert(id);
 }
 
@@ -153,7 +153,7 @@ void QOrganizerItemChangeSet::clearAddedItems()
    Returns the set of ids of organizer items which have been changed in
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
+QSet<QOrganizerItemId> QOrganizerItemChangeSet::changedItems() const
 {
     return d->m_changedItems;
 }
@@ -162,7 +162,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
   Inserts the given organizer item id \a changedOrganizerItemId into the set of ids of organizer items
   which have been changed to the database.
  */
-void QOrganizerItemChangeSet::insertChangedItem(const QOrganizerItemLocalId& changedOrganizerItemId)
+void QOrganizerItemChangeSet::insertChangedItem(const QOrganizerItemId& changedOrganizerItemId)
 {
     d->m_changedItems.insert(changedOrganizerItemId);
 }
@@ -171,9 +171,9 @@ void QOrganizerItemChangeSet::insertChangedItem(const QOrganizerItemLocalId& cha
   Inserts each of the given organizer item ids \a changedOrganizerItemIds into the set of ids of organizer items
   which have been changed to the database.
  */
-void QOrganizerItemChangeSet::insertChangedItems(const QList<QOrganizerItemLocalId>& changedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertChangedItems(const QList<QOrganizerItemId>& changedOrganizerItemIds)
 {
-    foreach (const QOrganizerItemLocalId& id, changedOrganizerItemIds)
+    foreach (const QOrganizerItemId& id, changedOrganizerItemIds)
         d->m_changedItems.insert(id);
 }
 
@@ -189,7 +189,7 @@ void QOrganizerItemChangeSet::clearChangedItems()
    Returns the set of ids of organizer items which have been removed from
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
+QSet<QOrganizerItemId> QOrganizerItemChangeSet::removedItems() const
 {
     return d->m_removedItems;
 }
@@ -198,7 +198,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
   Inserts the given organizer item id \a removedOrganizerItemId into the set of ids of organizer items
   which have been removed to the database.
  */
-void QOrganizerItemChangeSet::insertRemovedItem(const QOrganizerItemLocalId& removedOrganizerItemId)
+void QOrganizerItemChangeSet::insertRemovedItem(const QOrganizerItemId& removedOrganizerItemId)
 {
     d->m_removedItems.insert(removedOrganizerItemId);
 }
@@ -207,9 +207,9 @@ void QOrganizerItemChangeSet::insertRemovedItem(const QOrganizerItemLocalId& rem
   Inserts each of the given organizer item ids \a removedOrganizerItemIds into the set of ids of organizer items
   which have been removed to the database.
  */
-void QOrganizerItemChangeSet::insertRemovedItems(const QList<QOrganizerItemLocalId>& removedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertRemovedItems(const QList<QOrganizerItemId>& removedOrganizerItemIds)
 {
-    foreach (const QOrganizerItemLocalId& id, removedOrganizerItemIds)
+    foreach (const QOrganizerItemId& id, removedOrganizerItemIds)
         d->m_removedItems.insert(id);
 }
 

@@ -81,19 +81,19 @@ HBufC8 *OrganizerItemGuidTransform::guidLC(const QOrganizerItem &item)
     // Read guid from organizer item
     QString globalUidString = item.guid();
 
-    // Create a buffer for guid
-    HBufC8* globalUidBuf = HBufC8::NewLC(KGuidLength);
-    TPtr8 ptr = globalUidBuf->Des();
-
-    if (item.guid().isEmpty()) {
+    if (globalUidString.isEmpty()) {
         // Generate a new quid
         // TODO: is this long enough for us? We could add imei or second random number to it...
+        HBufC8* globalUidBuf = HBufC8::NewLC(KGuidLength);
+        TPtr8 ptr = globalUidBuf->Des();
         ptr.Num(qrand());
+        return globalUidBuf; // ownership passed
     } else {
-        // Use the old guid
+        // Use the given guid
+        HBufC8* globalUidBuf = HBufC8::NewLC(globalUidString.length());
+        TPtr8 ptr = globalUidBuf->Des();
         QByteArray bytes = globalUidString.toUtf8();
         ptr = toPtrC8(bytes);
+        return globalUidBuf; // ownership passed
     }
-
-    return globalUidBuf; // ownership passed
 }

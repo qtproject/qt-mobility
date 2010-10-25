@@ -52,7 +52,6 @@
 #include <mmf/devvideo/devvideorecord.h>
 #endif
 
-
 S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
@@ -1043,7 +1042,7 @@ void S60VideoCaptureSession::pauseRecording()
     }
 }
 
-void S60VideoCaptureSession::stopRecording()
+void S60VideoCaptureSession::stopRecording(const bool reInitialize)
 {
     if (m_captureState != ERecording && m_captureState != EPaused)
         return; // Ignore
@@ -1055,8 +1054,11 @@ void S60VideoCaptureSession::stopRecording()
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
 
-        if (m_cameraEngine->IsCameraReady()) {
-            initializeVideoRecording();
+        // VideoRecording will be re-initialized unless explicitly requested not to do so
+        if (reInitialize) {
+            if (m_cameraEngine->IsCameraReady()) {
+                initializeVideoRecording();
+            }
         }
     }
     else
@@ -1216,7 +1218,8 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
     }
 
     CleanupStack::PopAndDestroy(); // RArray<TUint> supportedSampleRates
-
+#else // S60 3.1 Platform
+    Q_UNUSED(settings);
 #endif // S60_31_PLATFORM
 
     if (continuous)
@@ -1316,7 +1319,9 @@ void S60VideoCaptureSession::doSetBitrate(const int &bitrate)
     if (bitrate != -1) {
         if (m_videoRecorder) {
             TRAPD(err, m_videoRecorder->SetVideoBitRateL(bitrate));
-            setError(err, QString("Failed to set video bitrate."));
+            if (err) {
+                setError(err, QString("Failed to set video bitrate."));
+            }
         } else {
             setError(KErrNotReady, QString("Unexpected camera error."));
         }
@@ -1677,7 +1682,6 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
 
     if((aError == KErrNone || aError == KErrCompletion)) {
         m_videoRecorder->Stop();
-        m_videoRecorder->Close();
 
         // Reset state
         if (m_captureState != ENotInitialized) {
@@ -1689,8 +1693,12 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
             initializeVideoRecording();
         }
     }
+    m_videoRecorder->Close();
 
-    setError(aError, QString("Unexpected error during video recording."));
+    if (aError == KErrDiskFull)
+        setError(aError, QString("Not enough space for video, recording stopped."));
+    else
+        setError(aError, QString("Recording stopped due to unexpected error."));
 }
 
 void S60VideoCaptureSession::MvruoEvent(const TMMFEvent& aEvent)
@@ -1766,7 +1774,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
         for(int x = 0; x < videoFormats.Count(); ++x) {
             QString codecMimeType = QString::fromUtf8((char *)videoFormats[x]->MimeType().Ptr(),videoFormats[x]->MimeType().Length());
 
-            //m_videoCodeclist.append(codecMimeType); TODO: Done in PopulateVideoCodecs
+            //m_videoCodeclist.append(codecMimeType);
             m_videoParametersForEncoder[newIndex].mimeTypes.append(codecMimeType);
         }
 
@@ -1997,7 +2005,11 @@ void S60VideoCaptureSession::doPopulateMaxVideoParameters()
                     m_videoParametersForEncoder[0].bitRate = 384000;
                 continue;
             } else if (codec == "video/mp4v-es; profile-level-id=4") {
+#if (defined(S60_31_PLATFORM) | defined(S60_32_PLATFORM))
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(640,480)));
+#else // S60 5.0 and later platforms
                 m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(640,480)));
+#endif
                 m_videoParametersForEncoder[0].mimeTypes.append(codec);
                 if (m_videoParametersForEncoder[0].bitRate < 4000000)
                     m_videoParametersForEncoder[0].bitRate = 4000000;

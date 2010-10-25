@@ -51,42 +51,42 @@ class QDeclarativeContactDetail;
 class QDeclarativeContact : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QContactLocalId contactId READ contactId);
-    Q_PROPERTY (QString manager READ manager);
+    Q_PROPERTY (QContactLocalId contactId READ contactId NOTIFY contactIdChanged);
+    Q_PROPERTY (QString manager READ manager NOTIFY managerChanged);
     Q_PROPERTY (QDeclarativeListProperty<QDeclarativeContactDetail> details READ details NOTIFY detailsChanged);
-    Q_PROPERTY (QDeclarativeContactAddress* address READ address)
-    Q_PROPERTY (QDeclarativeContactAnniversary* anniversary READ anniversary)
-    Q_PROPERTY (QDeclarativeContactAvatar* avatar READ avatar)
-    Q_PROPERTY (QDeclarativeContactBirthday*  birthday READ birthday)
-    Q_PROPERTY (QString  displayLabel READ displayLabel)
-    Q_PROPERTY (QDeclarativeContactEmailAddress*  email READ email)
-    Q_PROPERTY (QDeclarativeContactFamily*  family READ family)
-    Q_PROPERTY (QDeclarativeContactFavorite*  favorite READ favorite)
-    Q_PROPERTY (QDeclarativeContactGender*  gender READ gender)
-    Q_PROPERTY (QDeclarativeContactGeoLocation*  geolocation READ geolocation)
-    Q_PROPERTY (QDeclarativeContactGlobalPresence*  globalPresence READ globalPresence)
-    Q_PROPERTY (QDeclarativeContactGuid*  guid READ guid)
-    Q_PROPERTY (QDeclarativeContactName*  name READ name)
-    Q_PROPERTY (QDeclarativeContactNickname*  nickname READ nickname)
-    Q_PROPERTY (QDeclarativeContactNote*  note READ note)
-    Q_PROPERTY (QDeclarativeContactOnlineAccount*  onlineAccount READ onlineAccount)
-    Q_PROPERTY (QDeclarativeContactOrganization*  organization READ organization )
-    Q_PROPERTY (QDeclarativeContactPhoneNumber*  phoneNumber READ phoneNumber)
-    Q_PROPERTY (QDeclarativeContactPresence*  presence READ presence)
-    Q_PROPERTY (QDeclarativeContactRingtone*  ringtone READ ringtone)
-    Q_PROPERTY (QDeclarativeContactSyncTarget*  syncTarget READ syncTarget)
-    Q_PROPERTY (QDeclarativeContactTag*  tag READ tag)
+    Q_PROPERTY (QDeclarativeContactAddress* address READ address NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactAnniversary* anniversary READ anniversary NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactAvatar* avatar READ avatar NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactBirthday*  birthday READ birthday NOTIFY detailsChanged)
+    Q_PROPERTY (QString  displayLabel READ displayLabel NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactEmailAddress*  email READ email NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactFamily*  family READ family NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactFavorite*  favorite READ favorite NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactGender*  gender READ gender NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactGeoLocation*  geolocation READ geolocation NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactGlobalPresence*  globalPresence READ globalPresence NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactGuid*  guid READ guid NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactName*  name READ name NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactNickname*  nickname READ nickname  NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactNote*  note READ note NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactOnlineAccount*  onlineAccount READ onlineAccount NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactOrganization*  organization READ organization  NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactPhoneNumber*  phoneNumber READ phoneNumber NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactPresence*  presence READ presence NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactRingtone*  ringtone READ ringtone NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactSyncTarget*  syncTarget READ syncTarget NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactTag*  tag READ tag NOTIFY detailsChanged)
     Q_PROPERTY (QUrl thumbnail READ thumbnail WRITE setThumbnail NOTIFY detailsChanged)
     Q_PROPERTY (ContactType  type READ type  WRITE setType NOTIFY detailsChanged)
-    Q_PROPERTY (QDeclarativeContactUrl*  url READ url)
+    Q_PROPERTY (QDeclarativeContactUrl*  url READ url NOTIFY detailsChanged)
+    Q_PROPERTY (QDeclarativeContactHobby*  hobby READ hobby NOTIFY detailsChanged)
     Q_PROPERTY (bool modified READ modified)
-    Q_ENUMS(ContactType)
     Q_CLASSINFO("DefaultProperty", "details")
-
+    Q_ENUMS(ContactType)
 public:
     enum ContactType {
-        TypeContact = 0,
-        TypeGroup
+        Contact = 0,
+        Group
     };
     explicit QDeclarativeContact(QObject *parent = 0);
     explicit QDeclarativeContact(const QContact& contact, const QMap<QString, QContactDetailDefinition>& defs, QObject *parent = 0);
@@ -106,11 +106,9 @@ public:
     QString manager() const;
     QDeclarativeListProperty<QDeclarativeContactDetail> details();
 
-    Q_INVOKABLE QVariant detail(const QString& name);
-    Q_INVOKABLE QVariant detail(QDeclarativeContactDetail::ContactDetailType type);
+    Q_INVOKABLE QDeclarativeContactDetail* detail(const QVariant& name);
+    Q_INVOKABLE QDeclarativeListProperty<QDeclarativeContactDetail> details(const QVariant& name);
 
-    Q_INVOKABLE QVariant details(const QString& name);
-    Q_INVOKABLE QVariant details(QDeclarativeContactDetail::ContactDetailType type);
     Q_INVOKABLE bool removeDetail(QDeclarativeContactDetail* detail);
     QDeclarativeContactAddress* address();
     QDeclarativeContactAnniversary* anniversary();
@@ -137,6 +135,7 @@ public:
     QUrl  thumbnail() const;
     void  setThumbnail(const QUrl& url);
     QDeclarativeContactUrl*  url();
+    QDeclarativeContactHobby*  hobby();
 
 public slots:
     void clearDetails();

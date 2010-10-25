@@ -808,4 +808,5 @@ EXPORTS
 	?duration@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 807 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::duration
 	?albumArtist@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 808 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumArtist
 	?fNumber@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 809 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fNumber
+	?count@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 810 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::count
 

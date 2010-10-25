@@ -54,6 +54,7 @@
 #include "qorganizeritemparent.h"
 #include "qorganizeritempriority.h"
 #include "qorganizeritemrecurrence.h"
+#include "qorganizeritemtag.h"
 #include "qorganizeritemtimestamp.h"
 #include "qorganizeritemtype.h"
 #include "qorganizerjournaltime.h"

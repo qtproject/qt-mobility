@@ -60,12 +60,10 @@ public:
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    void setAllDay(bool isAllDay);
+    bool isAllDay() const;
 
     void setRecurrenceDate(const QDate& rdate);
-    QDate recurrenceDate() const;
-
     void setRecurrenceDates(const QSet<QDate>& rdates);
     QSet<QDate> recurrenceDates() const;
 

@@ -49,10 +49,8 @@ class  QDeclarativeContactBirthday : public QDeclarativeContactDetail
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDate date READ date WRITE setDate NOTIFY fieldsChanged);
-    Q_PROPERTY(QDateTime dateTime READ dateTime WRITE setDateTime NOTIFY fieldsChanged);
+    Q_PROPERTY(QDateTime birthday READ birthday WRITE setBirthday NOTIFY fieldsChanged);
     Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "date")
 public:
     enum FieldType {
         Birthday = 0
@@ -66,7 +64,7 @@ public:
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactBirthday;
+        return QDeclarativeContactDetail::Birthday;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
@@ -79,22 +77,14 @@ public:
         //qWarning
         return QString();
     }
-    void setDate(const QDate& v)
+    void setBirthday(const QDateTime& v)
     {
-        if (!readOnly() && v != date()) {
+        if (!readOnly() && v != QDateTime()) {
             detail().setValue(QContactBirthday::FieldBirthday, v);
             emit fieldsChanged();
         }
     }
-    QDate date() const {return detail().value<QDate>(QContactBirthday::FieldBirthday);}
-    void setDateTime(const QDateTime& v)
-    {
-        if (!readOnly() && v != dateTime()) {
-            detail().setValue(QContactBirthday::FieldBirthday, v);
-            emit fieldsChanged();
-        }
-    }
-    QDateTime dateTime() const {return detail().value<QDateTime>(QContactBirthday::FieldBirthday);}
+    QDateTime birthday() const {return detail().value<QDateTime>(QContactBirthday::FieldBirthday);}
 signals:
     void fieldsChanged();
 };

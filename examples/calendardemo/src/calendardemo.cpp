@@ -80,7 +80,9 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 
     //qRegisterMetaType<QOrganizerManager>("QOrganizerManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
+    qRegisterMetaType<QOrganizerItemId>("QOrganizerItemId");
     qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
+    qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
 
     connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -387,7 +389,7 @@ void CalendarDemo::exportItems()
         qWarning() << "File is not writable";
         return;
     }
-    QList<QOrganizerItem> items(m_manager->items());
+    QList<QOrganizerItem> items(m_manager->itemsForExport());
     QVersitOrganizerExporter exporter;
     if (!exporter.exportItems(items)) {
         qWarning() << "Export failed, " << exporter.errorMap();
@@ -406,7 +408,7 @@ void CalendarDemo::exportItems()
 void CalendarDemo::deleteAllEntries()
 {
     // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    QList<QOrganizerItemId> ids = m_manager->itemIds();
     
     if(ids.count()) {
         m_remReq.setItemIds(ids);

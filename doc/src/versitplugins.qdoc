@@ -32,7 +32,7 @@
 
 \section1 Introduction
 
-While the \l{Versit API} provides a convenient way to import and export vCards,
+While the \l {Versit}{Versit API} provides a convenient way to import and export vCards,
 it is common to encounter domain-specific vCard properties that the Versit
 importer and exporter classes don't support.  While it would be convenient if
 the base Versit module could support everything, that is not possible because

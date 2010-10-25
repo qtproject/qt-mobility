@@ -55,11 +55,20 @@ QTM_BEGIN_NAMESPACE
   \ingroup organizer-main
 
   A collection has an id and optionally some metadata, and contains zero or more items.
+  Each different manager will have different requirements before a collection may be saved
+  in it.  Some managers do not allow collections to be saved at all, while others may require
+  a collection to have some minimal amount of meta data defined in it prior to save.
+  For example, most managers require a valid value for the \c QOrganizerCollection::KeyName
+  meta data key to be set prior to save.
+
   Every QOrganizerItem is contained within a collection when stored in a manager.
-  Manipulation of items in collections is done via the manager API; that is, to move
-  an item from one collection to another, the client must first remove the item from
-  the manager, then resave the item in the manager, specifying the new destination
-  collection.
+  To save an item in a collection, the client should call \l QOrganizerItem::setCollectionId()
+  on the item, passing in the id of the destination collection as the argument, and then
+  save the item in the manager.  To move an item from one collection to another, the client
+  must fetch the item from the manager, set the collection id in the item to the id of the
+  collection to which the client wishes the item to be moved, and then resave the item in the
+  manager.  That is, the collection which an item is part of is treated as a property of the
+  item.
  */
 
 /*!
@@ -135,15 +144,7 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 
 
 /*!
-  Returns the manager-local id of the collection
- */
-QOrganizerCollectionLocalId QOrganizerCollection::localId() const
-{
-    return d->m_id.localId();
-}
-
-/*!
-  Returns the complete id of the collection, which includes the manager uri and the manager-local id of the collection
+  Returns the complete id of the collection, which includes the manager uri and the manager id of the collection
  */
 QOrganizerCollectionId QOrganizerCollection::id() const
 {
@@ -240,7 +241,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerCollection& collection
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollection
     return out << formatVersion
-               << collection.id()
+               << collection.id().toString()
                << collection.metaData();
 }
 
@@ -252,12 +253,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollection& collection)
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {
-        QOrganizerCollectionId id;
+        QString idString;
         QVariantMap metadata;
-        in >> id >> metadata;
+        in >> idString >> metadata;
 
         collection = QOrganizerCollection();
-        collection.setId(id);
+        collection.setId(QOrganizerCollectionId::fromString(idString));
 
         QMapIterator<QString, QVariant> it(metadata);
         while (it.hasNext()) {

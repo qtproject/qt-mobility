@@ -85,7 +85,7 @@ public:
 
 typedef QList<QTstDetailField> QTstDetailFieldList;
 typedef QList<QTstSortOrder> QTstSortOrderList;
-typedef QList<QOrganizerItemLocalId> QOrganizerItemLocalIdList;
+typedef QList<QOrganizerItemId> QOrganizerItemIdList;
 typedef QList<QOrganizerItemSortOrder> QOrganizerItemSortOrderList;
 Q_DECLARE_METATYPE(QOrganizerItemFilter)
 Q_DECLARE_METATYPE(QOrganizerItemSortOrderList)
@@ -113,18 +113,17 @@ private: // util functions
     void addEvent_data(int mgrIndex);
     void addTodo_data(int mgrIndex);
     bool parseDetails(QTstDetailFieldList detailsString, QList<QOrganizerItemDetail> &details);
-    QOrganizerItemLocalId addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList);
+    QOrganizerItemId addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList);
     void addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItems);
     void addNewSortRow(int mgrIndex, QTstSortOrderList sortDetailList, QString matchingItemsStr);
-    QString convertIds(int mgrIndex, QOrganizerItemLocalIdList ids);
+    QString convertIds(int mgrIndex, QOrganizerItemIdList ids);
     QOrganizerItemFilter invalidFilter();
     QOrganizerItemFilter defaultFilter();
     QOrganizerItemFilter detailFilter(QString defNam, QString fieldNam, int flags, QVariant filterCriterion);
     QOrganizerItemFilter detailRangeFilter(QString defNam, QString fieldNam, int flags, QVariant min, QVariant max);
 private:
     QList<QOrganizerManager *> m_managers;
-    QList<QOrganizerItemLocalIdList> m_itemIds;
-
+    QMap<int, QOrganizerItemIdList> m_itemIds; // <"manager index", "item ids">
 };
 
 tst_itemSortFilter::tst_itemSortFilter()
@@ -150,7 +149,7 @@ tst_itemSortFilter::~tst_itemSortFilter()
     }
 }
 
-QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList)
+QOrganizerItemId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList)
 {
     QOrganizerItem item;
     item.setDisplayLabel(displayLabel);
@@ -166,7 +165,7 @@ QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString 
     if (m_managers.at(mgrIndex)->error() != QOrganizerManager::NoError) {
         QWARN("[tst_itemSortFilter::addTestDataItem] Test item creation failed");
     }
-    return item.localId();
+    return item.id();
 }
 
 void tst_itemSortFilter::addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItemsStr)
@@ -252,19 +251,21 @@ void tst_itemSortFilter::filterItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    QList<QOrganizerItem>actualItems = m_managers.at(mgrIndex)->items(filter);
-    QList<QOrganizerItemLocalId> actualIds;
+    // Verify item occurences
+    QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(filter);
+    // Cannot use id comparison, since no ids are available for occurrences
+    QCOMPARE(actualItems.count(), matchingItemsStr.count());
+
+    // Verify items for export
+    actualItems = m_managers.at(mgrIndex)->itemsForExport(QDateTime(), QDateTime(), filter);
+    QList<QOrganizerItemId> actualIds;
     QString actualItemsStr;
 
     foreach(QOrganizerItem item, actualItems) {
-        actualIds << item.localId();
+        actualIds << item.id();
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
-
-    QVERIFY(actualItemsStr.length() == matchingItemsStr.length());
-    for(int i=0;i < matchingItemsStr.length();i++) {
-        QVERIFY(actualItemsStr.contains(matchingItemsStr.at(i)));
-    }
+    QCOMPARE(actualItemsStr, matchingItemsStr);
 }
 
 void tst_itemSortFilter::sortItems_data()
@@ -319,12 +320,18 @@ void tst_itemSortFilter::sortItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
+    // Verify item occurences
     QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
-    QList<QOrganizerItemLocalId> actualIds;
+    // Cannot use id comparison, since no ids are available for occurrences
+    QCOMPARE(actualItems.count(), matchingItemsStr.count());
+
+    // Verify items for export
+    actualItems = m_managers.at(mgrIndex)->itemsForExport(QDateTime(), QDateTime(), QOrganizerItemFilter(), sortOrderList);
+    QList<QOrganizerItemId> actualIds;
     QString actualItemsStr;
 
     foreach(QOrganizerItem item, actualItems) {
-        actualIds << item.localId();
+        actualIds << item.id();
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
 
@@ -346,7 +353,7 @@ void tst_itemSortFilter::addEvent_data(int mgrIndex)
 void tst_itemSortFilter::addTodo_data(int mgrIndex)
 {
     QTstDetailField itemTypeTodo(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo);
-    QOrganizerItemLocalIdList itemIdList;
+    QOrganizerItemIdList itemIdList;
     bool fieldPercentageSupported = (m_managers.at(mgrIndex)->detailDefinitions(QOrganizerItemType::TypeTodo)
         .value(QOrganizerTodoProgress::DefinitionName).fields().contains(QOrganizerTodoProgress::FieldPercentageComplete));
 
@@ -408,7 +415,7 @@ void tst_itemSortFilter::addTodo_data(int mgrIndex)
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2)));
     }
 
-     m_itemIds << itemIdList;
+    m_itemIds.insert(mgrIndex, itemIdList);
 }
 
 /*!
@@ -444,15 +451,16 @@ bool tst_itemSortFilter::parseDetails(QTstDetailFieldList detailsList, QList<QOr
     return true;
 }
 
-QString tst_itemSortFilter::convertIds(int mgrIndex, QOrganizerItemLocalIdList ids)
+QString tst_itemSortFilter::convertIds(int mgrIndex, QOrganizerItemIdList ids)
 {
-   QString ret;
-   /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
-   for (int i = 0; i < ids.size(); i++) {
-       if (m_itemIds.at(mgrIndex).indexOf(ids.at(i)) >= 0)
-           ret += ('a' + m_itemIds.at(mgrIndex).indexOf(ids.at(i)));
-   }
-   return ret;
+    QOrganizerItemIdList managerIds = m_itemIds.value(mgrIndex);
+    QString ret;
+    /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
+    for (int i = 0; i < ids.size(); i++) {
+        if (managerIds.indexOf(ids.at(i)) >= 0)
+            ret += ('a' + managerIds.indexOf(ids.at(i)));
+    }
+    return ret;
 }
 
 QOrganizerItemFilter tst_itemSortFilter::invalidFilter()

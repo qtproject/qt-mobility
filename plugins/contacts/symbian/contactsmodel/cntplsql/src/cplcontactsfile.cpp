@@ -207,7 +207,7 @@ void CPplContactsFile::GenerateNotificationEventL(TBool aNotify)
 		event.iContactId = 0;
  		event.iConnectionId = 0;
  		event.iTypeV2 = EContactDbObserverEventV2Null;
- 		event.iAdditionalContactId = 0;
+ 		event.iAdditionalContactIds = NULL;
  		TRAP_IGNORE(iDbObserver->HandleDatabaseEventV2L(event));
  		}
 	}
@@ -246,7 +246,7 @@ void CPplContactsFile::CloseTablesL(TBool aNotify)
   		event.iContactId = 0;
   		event.iConnectionId = 0;
         event.iTypeV2 = EContactDbObserverEventV2Null;
-        event.iAdditionalContactId = 0;
+        event.iAdditionalContactIds = NULL;
   		TRAP_IGNORE(iDbObserver->HandleDatabaseEventV2L(event));	
   		}
   	}

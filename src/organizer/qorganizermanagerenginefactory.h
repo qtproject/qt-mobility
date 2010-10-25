@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 /* Backend plugin API interface, creates engines for us */
 class QOrganizerManagerEngine;
-class QOrganizerCollectionEngineLocalId;
+class QOrganizerCollectionEngineId;
 class Q_ORGANIZER_EXPORT QOrganizerManagerEngineFactory
 {
 public:
@@ -61,8 +61,8 @@ public:
     virtual ~QOrganizerManagerEngineFactory();
     virtual QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error) = 0;
     virtual QString managerName() const = 0;
-    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId()const  = 0;
+    virtual QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const = 0;
+    virtual QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const = 0;
 };
 QTM_END_NAMESPACE
 

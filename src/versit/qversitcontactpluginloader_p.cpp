@@ -103,9 +103,9 @@ void QVersitContactPluginLoader::loadPlugins() {
 }
 
 /*!
- * Creates and returns handlers from the plugin.  If \a profile is the empty string, only handlers
- * with an empty profile list are returned.  If \a profile is nonempty, only handlers with either
- * an empty profile list or a profile list that contains the given \a profile are returned.
+ * Creates and returns handlers from the plugin.  If \a profiles is the empty string, only handlers
+ * with an empty profile list are returned.  If \a profiles is nonempty, only handlers with either
+ * an empty profile list or a profile list that contains the given \a profiles are returned.
  *
  * The caller is responsible for deleting all returned handlers.
  */

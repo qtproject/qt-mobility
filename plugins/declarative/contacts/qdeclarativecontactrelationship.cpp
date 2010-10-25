@@ -1,21 +1,67 @@
 #include "qdeclarativecontactrelationship_p.h"
 #include <QDebug>
 
+/*!
+   \qmlclass Relationship QDeclarativeContactRelationship
+   \brief The Relationship element describes a one-to-one relationship
+  between a locally-stored contact and another (possibly remote) contact.
+
+   \ingroup qml-contacts
+
+   This element is part of the \bold{QtMobility.contacts 1.1} module.
+
+   \sa QContactRelationship
+   \sa RelationshipModel
+ */
+
+
+
+
+
+
 QDeclarativeContactRelationship::QDeclarativeContactRelationship(QObject* parent)
     :QObject(parent)
 {
 
 }
 
+
+/*!
+  \qmlproperty int Relationship::first
+
+  This property holds the id of the locally-stored contact which has a relationship of the given type with the second contact.
+  */
+
 QContactLocalId QDeclarativeContactRelationship::first() const
 {
     return m_relationship.first().localId();
 }
 
+/*!
+  \qmlproperty int Relationship::second
+
+  This property holds the id of the contact with which the first contact has a relationship of the given type.
+  */
 QContactLocalId  QDeclarativeContactRelationship::second() const
 {
     return m_relationship.second().localId();
 }
+
+/*!
+  \qmlproperty int Relationship::type
+
+  This property holds the type of relationship which the source contact has with the destination contacts.
+  The value for this property can be one of:
+  \list
+  \o Relationship.HasMember
+  \o Relationship.Aggregates
+  \o Relationship.IsSameAs
+  \o Relationship.HasAssistant
+  \o Relationship.HasManager
+  \o Relationship.HasSpouse
+  \endlist
+  or any other customized relationship type string.
+  */
 
 QVariant QDeclarativeContactRelationship::relationshipType() const
 {
@@ -52,7 +98,7 @@ void QDeclarativeContactRelationship::setSecond(QContactLocalId secondId)
 
 void QDeclarativeContactRelationship::setRelationshipType(const QVariant& relationshipType)
 {
-    if (relationshipType.type() == QVariant::Int) {
+    if (relationshipType.type() == QVariant::Double) {//numbers in qml are set to double, even it's integer
         switch (relationshipType.toInt()) {
         case QDeclarativeContactRelationship::HasMember:
             m_relationship.setRelationshipType(QContactRelationship::HasMember);

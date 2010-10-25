@@ -77,7 +77,7 @@ public:
         ItemOccurrenceFetchRequest,
         ItemFetchRequest,
         ItemFetchForExportRequest,
-        ItemLocalIdFetchRequest,
+        ItemIdFetchRequest,
         ItemRemoveRequest,
         ItemSaveRequest,
         DetailDefinitionFetchRequest,
