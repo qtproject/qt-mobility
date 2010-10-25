@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,16 +39,40 @@
 **
 ****************************************************************************/
 
-#include <sensormanagerinterface.h>
-#include <datatypes/magneticfield.h>
-#include <abstractsensor.h>
-#include <abstractsensor_i.h>
+/*!
+    \group qml-feedback
+    \title QML Feedback Plugin
+    QML Support for the Mobility Project Feedback API.
 
-int main()
-{
-    SensorManagerInterface* m_remoteSensorManager;
-    m_remoteSensorManager = &SensorManagerInterface::instance();
-    QList<DataRange> (AbstractSensorChannelInterface::*func)() = &AbstractSensorChannelInterface::getAvailableIntervals;
-    return 0;
-}
+*/
+
+
+/*!
+    \page qml-feedback-api.html
+
+    \title Feedback QML Plugin
+
+    \brief A QML plugin for the Mobility Project Feedback API.
+
+    
+
+    \section1 Overview
+
+     The API provides abstractions for various types of feedback, and allows custom implementations of these types of feedback.
+    The identifying string for this component is \i {"QtMobility.feedback"}.
+
+
+    The Feedback API allows application developers to implement feedback and programmatic vibration in their applications.
+    Use this in the QML \i {import} statement.
+
+    \note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
+          and improved in the next patch release.
+
+
+    \section1 Feedback elements
+
+    \annotatedlist qml-feedback-api
+
+*/
+
 
