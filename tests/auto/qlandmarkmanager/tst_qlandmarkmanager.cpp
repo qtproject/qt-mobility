@@ -123,9 +123,10 @@
 #define IMPORT_LMX
 #define IMPORT_FILE
 #define EXPORT_LMX
-#define WAIT_FOR_FINISHED
+//#define WAIT_FOR_FINISHED
 #define MISC
 #define TEST_SIGNALS
+#define TEST_DESTRUCTION
 
 //#define WORKAROUND
 
@@ -1110,6 +1111,10 @@ private slots:
 
 #ifdef TEST_SIGNALS
  void testSignals();
+#endif
+
+#ifdef TEST_DESTRUCTION
+ void testDestruction();
 #endif
 
 #ifndef Q_OS_SYMBIAN
@@ -7987,6 +7992,23 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyDataChanged2.count(), 0);
 #endif
 }
+#endif
+
+#ifdef TEST_DESTRUCTION
+void tst_QLandmarkManager::testDestruction()
+{
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    qDebug() << "testDestruction(): Finished Importing";
+    QLandmarkFetchRequest *fetchRequest = new QLandmarkFetchRequest(m_manager);
+    fetchRequest->start();
+    qDebug() << "testDestruction(): After fetchRequest->start()";
+    delete fetchRequest;
+    qDebug() << "testDestruction(): After Delete";
+}
+
 #endif
 
 QTEST_MAIN(tst_QLandmarkManager)
