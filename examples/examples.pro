@@ -132,15 +132,16 @@ contains(mobility_modules,gallery) {
     }
 }
 
+#disable qmlorganizer, as it is not completed
 # Organizer API examples
-contains(mobility_modules, organizer) {
-    SUBDIRS += calendardemo \
-	       todo
-    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        SUBDIRS += \
-               qmlorganizer
-    }
-}
+#contains(mobility_modules, organizer) {
+#    SUBDIRS += calendardemo \
+#	       todo
+#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+#        SUBDIRS += \
+#               qmlorganizer
+#    }
+#}
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
