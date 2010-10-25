@@ -272,20 +272,20 @@ bool QPulseAudioInput::open()
     pa_stream_set_underflow_callback(m_stream, inputStreamUnderflowCallback, this);
     pa_stream_set_overflow_callback(m_stream, inputStreamOverflowCallback, this);
 
+    m_periodSize = pa_usec_to_bytes(PeriodTimeMs*1000, &spec);
+
     int flags = 0;
     pa_buffer_attr buffer_attr;
     buffer_attr.maxlength = (uint32_t) -1;
     buffer_attr.prebuf = (uint32_t) -1;
+    buffer_attr.tlength = (uint32_t) -1;
+    buffer_attr.minreq = (uint32_t) -1;
+    flags |= PA_STREAM_ADJUST_LATENCY;
 
-    if (m_bufferSize > 0) {
-        buffer_attr.fragsize = buffer_attr.tlength = (uint32_t) m_bufferSize;
-        buffer_attr.minreq = (uint32_t) -1;
-        flags |= PA_STREAM_ADJUST_LATENCY;
-    } else {
-        buffer_attr.tlength = (uint32_t) -1;
-        buffer_attr.minreq = (uint32_t) -1;
-        buffer_attr.fragsize = (uint32_t) -1;
-    }
+    if (m_bufferSize > 0)
+        buffer_attr.fragsize = (uint32_t) m_bufferSize;
+    else
+        buffer_attr.fragsize = (uint32_t) m_periodSize;
 
     if (pa_stream_connect_record(m_stream, m_device.data(), &buffer_attr, (pa_stream_flags_t)flags) < 0) {
         qWarning() << "pa_stream_connect_record() failed!";
@@ -377,16 +377,17 @@ qint64 QPulseAudioInput::read(char *data, qint64 len)
             return 0;
         }
 
-        if (m_pullMode && data) {
-            qint64 l = m_audioSource->write(data, length);
+        qint64 l = 0;
+        if (m_pullMode) {
+            l = m_audioSource->write((const char*)audioBuffer, length);
             length = l;
         }
 
         m_totalTimeValue += length;
         readBytes += length;
-        pa_stream_drop(m_stream);
 
         pa_threaded_mainloop_unlock(pulseEngine->mainloop());
+        pa_stream_drop(m_stream);
 
         if (!m_pullMode)
             break;
