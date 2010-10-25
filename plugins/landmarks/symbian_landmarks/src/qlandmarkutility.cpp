@@ -117,7 +117,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
     }
 
     // set radius
-    TReal32 covRadius;
+    TReal32 covRadius = 0.0;
     symbianLandmark->GetCoverageRadius(covRadius);
     if (Math::IsNaN(covRadius)) {
         qtLandmark->setRadius(0.0);

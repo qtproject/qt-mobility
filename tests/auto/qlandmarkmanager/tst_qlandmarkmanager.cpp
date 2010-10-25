@@ -123,9 +123,11 @@
 #define IMPORT_LMX
 #define IMPORT_FILE
 #define EXPORT_LMX
-#define WAIT_FOR_FINISHED
+//#define WAIT_FOR_FINISHED
 #define MISC
 #define TEST_SIGNALS
+#define TEST_DESTRUCTION
+#define EXPORT_URL
 
 //#define WORKAROUND
 
@@ -1110,6 +1112,14 @@ private slots:
 
 #ifdef TEST_SIGNALS
  void testSignals();
+#endif
+
+#ifdef TEST_DESTRUCTION
+ void testDestruction();
+#endif
+
+#ifdef EXPORT_URL
+ void exportUrl();
 #endif
 
 #ifndef Q_OS_SYMBIAN
@@ -7986,6 +7996,46 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatChange2.count(),0);
     QCOMPARE(spyDataChanged2.count(), 0);
 #endif
+}
+#endif
+
+#ifdef TEST_DESTRUCTION
+void tst_QLandmarkManager::testDestruction()
+{
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    qDebug() << "testDestruction(): Finished Importing";
+    QLandmarkFetchRequest *fetchRequest = new QLandmarkFetchRequest(m_manager);
+    fetchRequest->start();
+    qDebug() << "testDestruction(): After fetchRequest->start()";
+    delete fetchRequest;
+    qDebug() << "testDestruction(): After Delete";
+}
+
+#endif
+
+#ifdef EXPORT_URL
+void tst_QLandmarkManager::exportUrl() {
+    //This test function exists due to MOBILITY-1774
+    QFile exportUrlFile("exporturl.lmx");
+    if (exportUrlFile.exists())
+        exportUrlFile.remove();
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setUrl(QUrl("LM1 url"));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QVERIFY(m_manager->exportLandmarks("exporturl.lmx", QLandmarkManager::Lmx));
+    QVERIFY(m_manager->removeLandmark(lm1));
+    QVERIFY(m_manager->importLandmarks("exporturl.lmx"));
+    QList<QLandmark> lms;
+    lms = m_manager->landmarks();
+    QCOMPARE(lms.count(), 1);
+    qDebug() << "Url of imported landmark is: " << lms.at(0).url().toString();
+    QCOMPARE(lms.at(0).url(), lm1.url());
+    QFileInfo fileInfo("exporturl.lmx");
+    qDebug() << "export url file location=" << fileInfo.canonicalFilePath();
 }
 #endif
 
