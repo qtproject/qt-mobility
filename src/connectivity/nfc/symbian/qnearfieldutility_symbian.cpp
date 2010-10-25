@@ -38,42 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qndefmessage.h"
 #include <ndefmessage.h>
 #include <QtCore/QList>
 #include <e32base.h>
+#include "../qndefmessage.h"
+#include "qnearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
 QNFCNdefUtility::QNFCNdefUtility()
-{
-}
+    {
+    }
+
 QNFCNdefUtility::~QNFCNdefUtility()
-{
-}
+    {
+    }
 
-CNdefMessage* FromQNdefMsgToCNdefMsgL( QNdefMessage& msg )
-{
-    QByteArray payload = msg.toByteArray();
-    CNdefMessage* cmsg = CNdefMessage::NewL();
-    TPtrC8 rawData(reinterpret_cast<const TUint8*>(payload.constData()), payload.size());
-    cmsg->ImportRawDataL(rawData, 0);
-    return cmsg;
-}
+CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( QNdefMessage& msg )
+    {
+        QByteArray payload = msg.toByteArray();
+        CNdefMessage* cmsg = CNdefMessage::NewL();
+        TPtrC8 rawData(reinterpret_cast<const TUint8*>(payload.constData()), payload.size());
+        cmsg->ImportRawDataL(rawData, 0);
+        return cmsg;
+    }
 
 
-QNdefMessage FromCNdefMsgToQndefMsgL( CNdefMessage& msg )
-{
-    QNdefMessage result;
-    RBuf8 buf;
-    buf.CleanupClosePushL();
-    buf.CreateL(msg.Size());
-    msg.ExportRawDataL(buf,0);
-    QByteArray qtArray;
-    qtArray.fromRawData(reinterpret_cast<const char*>(buf,buf.Size()));
-    result.fromByteArray(qtArray);
-    CleanupStack::Pop(buf);
-    return result;
-}
+QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( CNdefMessage& msg )
+    {
+        QNdefMessage result;
+        HBufC8* newBuf = HBufC8::NewL(msg.SizeL());
+        RBuf8 buf;
+        buf.Assign(newBuf);
+        buf.CleanupClosePushL();
+        msg.ExportRawDataL(buf,0);
+        QByteArray qtArray;
+        qtArray.fromRawData(reinterpret_cast<const char*>(newBuf->Ptr()),newBuf->Size());
+        result.fromByteArray(qtArray);
+        CleanupStack::Pop(&buf);
+        return result;
+    }
 
 QTM_END_NAMESPACE
