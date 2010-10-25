@@ -67,6 +67,68 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoProgress::DetailName, "todoPro
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");
 
 
+/* ==================== QDeclarativeOrganizerItemDetail ======================= */
+
+/*!
+   \qmlclass ItemDetail QDeclarativeOrganizerItemDetail
+   \brief The ItemDetail element represents a single, complete detail about a organizer item.
+   \ingroup qml-organizer
+
+   \sa QOrganizerItemDetail
+
+    The ItemDetail element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+
+/*!
+  \qmlproperty string ItemDetail::definitionName
+  This property holds the string constant for the definition name of the detail.
+  This property is read only.
+  */
+
+/*!
+  \qmlproperty enumeration ItemDetail::type
+  This property holds the type of the detail.
+  This property is read only.
+
+    \sa EventTime
+    \sa JournalTime
+    \sa TodoTime
+    \sa TodoProgress
+    \sa AudibleReminder
+    \sa VisualReminder
+    \sa EmailReminder
+    \sa Comment
+    \sa Description
+    \sa DisplayLabel
+    \sa Guid
+    \sa Location
+    \sa Parent
+    \sa Priority
+    \sa Recurrence
+    \sa Timestamp
+    \sa Type
+    \sa Tag
+  */
+
+
+/*!
+  \qmlproperty list<string> ItemDetail::fieldNames
+  This property holds the list of all field names which this detail supports.
+
+  This property is read only.
+  */
+/*!
+  \qmlproperty bool ItemDetail::readOnly
+  This property indicates whether or not this detail is writable.
+  This property is read only.
+  */
+/*!
+  \qmlproperty bool ItemDetail::removable
+  This property indicates whether or not this detail is removale.
+  This property is read only.
+  */
+
 QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerItemDetail::ItemDetailType type)
 {
     switch (type) {
@@ -112,6 +174,7 @@ QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerIte
     qWarning() << QString("Can't find the detail definition name for detail type '%1'").arg(type);
     return QString();
 }
+
 
 QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail::detailType(const QString& definitionName)
 {
@@ -200,6 +263,9 @@ QString QDeclarativeOrganizerItemDetail::fieldName(QDeclarativeOrganizerItemDeta
     qWarning() << QString("Can't find the field name for detail type '%1' and field type '%2'").arg(detailType).arg(fieldType);
     return QString();
 }
+
+
+
 
 
 QString QDeclarativeOrganizerItemComment::fieldNameFromFieldType(int type)
@@ -369,6 +435,558 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
     return QString();
 }
 
+////////////////QDeclarativeOrganizerEventTime////////////////////////
+/*!
+   \qmlclass EventTime QDeclarativeOrganizerEventTime
+   \brief The EventTime element contains the start and end dates and times of a recurring event series, or occurrence of an event.
+   \ingroup qml-organizer
+
+   EventTime element contains the following field types:
+   \list
+   \o EventTime.StartDateTime
+   \o EventTime.EndDateTime
+   \o EventTime.AllDay
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty date EventTime::startDateTime
+
+  This property holds the start date and time value of the event.
+  */
+
+/*!
+  \qmlproperty date EventTime::endDateTime
+
+  This property holds the end date and time value of the event.
+  */
+/*!
+  \qmlproperty date EventTime::allDay
+
+  This property holds whether the time is significant in the start datetime.
+  */
+
+////////////////QDeclarativeOrganizerTodoTime////////////////////////
+/*!
+   \qmlclass TodoTime QDeclarativeOrganizerTodoTime
+   \brief The TodoTime element contains the start and due dates and times of a recurring todo series, or occurrence of an todo item.
+   \ingroup qml-organizer
+
+   TodoTime element contains the following field types:
+   \list
+   \o TodoTime.StartDateTime
+   \o TodoTime.DueDateTime
+   \o TodoTime.AllDay
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty date TodoTime::startDateTime
+
+  This property holds the start date and time value of the todo item.
+  */
+
+/*!
+  \qmlproperty date TodoTime::dueDateTime
+
+  This property holds the end date and time value of the todo item.
+  */
+/*!
+  \qmlproperty date TodoTime::allDay
+
+  This property holds whether the time is significant in the start datetime.
+  */
+
+////////////////QDeclarativeOrganizerJournalTime////////////////////////
+/*!
+   \qmlclass JournalTime QDeclarativeOrganizerJournalTime
+   \brief The JournalTime element contains the entry date and time of a journal item.
+   \ingroup qml-organizer
+
+   JournalTime element contains the following field types:
+   \list
+   \o JournalTime.EntryDateTime
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty date JournalTime::entryDateTime
+
+  This property holds the entry date and time value of the journal.
+  */
+
+////////////////QDeclarativeOrganizerItemComment////////////////////////
+/*!
+   \qmlclass Comment QDeclarativeOrganizerItemComment
+   \brief The Comment element contains the comment text of an organizer item.
+   \ingroup qml-organizer
+
+   Comment element contains the following field types:
+   \list
+   \o Comment.Comment
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Comment::comment
+
+  This property holds the text of the comment.
+  */
+
+////////////////QDeclarativeOrganizerItemDescription////////////////////////
+/*!
+   \qmlclass Description QDeclarativeOrganizerItemDescription
+   \brief The Description element contains the description text of an organizer item.
+   \ingroup qml-organizer
+
+   Description element contains the following field types:
+   \list
+   \o Description.Description
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Description::description
+
+  This property holds the text of the description.
+  */
+
+////////////////QDeclarativeOrganizerItemDisplayLabel////////////////////////
+/*!
+   \qmlclass DisplayLabel QDeclarativeOrganizerItemDisplayLabel
+   \brief The DisplayLabel element contains the display label of an organizer item.
+   \ingroup qml-organizer
+
+   DisplayLabel element contains the following field types:
+   \list
+   \o DisplayLabel.DisplayLabel
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string DisplayLabel::displayLabel
+
+  This property holds the display label text.
+  */
+
+////////////////QDeclarativeOrganizerItemGuid////////////////////////
+/*!
+   \qmlclass Guid QDeclarativeOrganizerItemGuid
+   \brief The Guid element contains the GUID string of an organizer item.
+   \ingroup qml-organizer
+
+   Guid element contains the following field types:
+   \list
+   \o Guid.Guid
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Guid::guid
+
+  This property holds the GUID string.
+  */
+
+////////////////QDeclarativeOrganizerItemTag////////////////////////
+/*!
+   \qmlclass Tag QDeclarativeOrganizerItemTag
+   \brief The Tag element contains the tag string of an organizer item.
+   \ingroup qml-organizer
+
+   Tag element contains the following field types:
+   \list
+   \o Tag.Tag
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Tag::tag
+
+  This property holds the tag string.
+  */
+
+////////////////QDeclarativeOrganizerItemType////////////////////////
+/*!
+   \qmlclass Type QDeclarativeOrganizerItemType
+   \brief The Type element contains the type string of an organizer item.
+   \ingroup qml-organizer
+
+   Type element contains the following field types:
+   \list
+   \o Type.Type
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Type::type
+
+  This property holds the type string.
+  */
+
+////////////////QDeclarativeOrganizerItemTimestamp////////////////////////
+/*!
+   \qmlclass Timestamp QDeclarativeOrganizerItemTimestamp
+   \brief The Timestamp element contains the created and last modified timestamp of an organizer item's creating date and time.
+   \ingroup qml-organizer
+
+   Timestamp element contains the following field types:
+   \list
+   \o Timestamp.LastModified
+   \o Timestamp.Created
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty date Timestamp::lastModified
+
+  This property holds the value of the item's last modified date and time.
+  */
+
+/*!
+  \qmlproperty date Timestamp::created
+
+  This property holds the value of the item's creation date and time.
+  */
+
+////////////////QDeclarativeOrganizerItemLocation////////////////////////
+/*!
+   \qmlclass Location QDeclarativeOrganizerItemLocation
+   \brief The Location element contains information about a location which is related to the organizer item in some manner.
+   \ingroup qml-organizer
+
+   Location element contains the following field types:
+   \list
+   \o Location.Label
+   \o Location.Longitude
+   \o Location.Latitude
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string Location::label
+
+  This property holds the location label value.
+  */
+
+/*!
+  \qmlproperty double Location::longitude
+
+  This property holds the location longitude value .
+  */
+
+/*!
+  \qmlproperty double Location::latitude
+
+  This property holds the location latitude value.
+  */
+
+////////////////QDeclarativeOrganizerTodoProgress////////////////////////
+/*!
+   \qmlclass TodoProgress QDeclarativeOrganizerTodoProgress
+   \brief The TodoProgress element contains information about the progress of a todo item.
+   \ingroup qml-organizer
+
+   TodoProgress element contains the following field types:
+   \list
+   \o TodoProgress.Status
+   \o TodoProgress.Percentage
+   \o TodoProgress.FinishedDateTime
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty enumeration TodoProgress::status
+
+  This property holds the value which describes the current completion status of the
+   todo item. The value can be one of:
+  \list
+  \o TodoProgress.NotStarted
+  \o TodoProgress.InProgress
+  \o TodoProgress.Complete
+  \endlist
+  */
+
+/*!
+  \qmlproperty int TodoProgress::percentage
+
+  This property holds the value which contains the current completion percentage of the
+   todo item.
+  */
+
+/*!
+  \qmlproperty date TodoProgress::finishedDateTime
+
+  This property holds the date time value which contains the date and time at which the
+   todo item was completed.
+  */
+
+
+////////////////QDeclarativeOrganizerItemParent////////////////////////
+/*!
+   \qmlclass Parent QDeclarativeOrganizerItemParent
+   \brief The Parent element contains information about the event or todo that generated this item.
+   \ingroup qml-organizer
+
+   Parent element contains the following field types:
+   \list
+   \o Parent.ParentId
+   \o Parent.OriginalDate
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty int Parent::parentId
+
+  This property holds the id of the parent recurrent event or todo.
+  */
+
+/*!
+  \qmlproperty date Parent::originalDate
+
+  This property holds the original date of this instance origin item.
+  */
+
+////////////////QDeclarativeOrganizerItemRecurrence////////////////////////
+/*!
+   \qmlclass Recurrence QDeclarativeOrganizerItemRecurrence
+   \brief The Recurrence element contains a list of rules and dates on which the recurrent item occurs,
+          and a list of rules and dates on which exceptions occur.
+   \ingroup qml-organizer
+
+   Recurrence element contains the following field types:
+   \list
+   \o Recurrence.RecurrenceRules
+   \o Recurrence.ExceptionRules
+   \o Recurrence.RecurrenceDates
+   \o Recurrence.ExceptionDates
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty QDeclarativeListProperty Recurrence::recurrenceRules
+
+  This property holds the list of recurrence rules.
+
+  \sa RecurrenceRule
+  */
+
+/*!
+  \qmlproperty QDeclarativeListProperty Recurrence::exceptionRules
+
+  This property holds the list of exception rules.
+
+  \sa RecurrenceRule
+  */
+
+/*!
+  \qmlproperty list<date> Recurrence::recurrenceDates
+
+  This property holds the list of recurrence dates.
+  */
+
+/*!
+  \qmlproperty list<date> Recurrence::exceptionDates
+
+  This property holds the list of exception dates.
+  */
+
+////////////////QDeclarativeOrganizerItemPriority////////////////////////
+/*!
+   \qmlclass Priority QDeclarativeOrganizerItemPriority
+   \brief The Priority element contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
+   \ingroup qml-organizer
+
+   Priority element contains the following field types:
+   \list
+   \o Priority.Priority
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty enumeration Priority::priority
+
+  This property holds the priority associated with an organizer item. The value can be one of:
+  \list
+  \o Priority.Unknown
+  \o Priority.Highest
+  \o Priority.ExtremelyHigh
+  \o Priority.VeryHigh
+  \o Priority.High
+  \o Priority.Medium
+  \o Priority.Low
+  \o Priority.VeryLow
+  \o Priority.ExtremelyLow
+  \o Priority.Lowest
+  \endlist
+  */
+
+////////////////QDeclarativeOrganizerItemReminder////////////////////////
+/*!
+   \qmlclass Reminder QDeclarativeOrganizerItemReminder
+   \brief The Reminder element contains information about when and how the user wants to reminded of the item.
+   \ingroup qml-organizer
+
+   Reminder element contains the following field types:
+   \list
+   \o Reminder.Type
+   \o Reminder.SecondsBeforeStart
+   \o Reminder.RepetitionCount
+   \o Reminder.RepetitionDelay
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty enumeration Reminder::reminderType
+
+  This property holds the reminder type of this reminder for an organizer item. The value can be one of:
+  \list
+  \o Reminder.NoReminder
+  \o Reminder.VisualReminder
+  \o Reminder.AudibleReminder
+  \o Reminder.EmailReminder
+  \endlist
+  */
+
+/*!
+  \qmlproperty int Reminder::secondsBeforeStart
+
+  This property holds the number of seconds prior to the activation of the item
+   at which the user wants to be reminded of the item.
+  */
+/*!
+  \qmlproperty int Reminder::repetitionCount
+
+  This property holds the number of times the user should be reminded of the item.
+  */
+/*!
+  \qmlproperty int Reminder::repetitionDelay
+
+  This property holds the delay (in seconds) between each repetition of the reminder.
+  */
+
+////////////////QDeclarativeOrganizerItemAudibleReminder////////////////////////
+/*!
+   \qmlclass AudibleReminder QDeclarativeOrganizerItemAudibleReminder
+   \brief The AudibleReminder element contains information about an audible reminder of an item.
+   \ingroup qml-organizer
+
+   \inherits Reminder
+
+   AudibleReminder element contains the following field types:
+   \list
+   \o AudibleReminder.DataUrl
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty url AudibleReminder::dataUrl
+
+  This property holds the url of the audible data to play.
+  */
+
+////////////////QDeclarativeOrganizerItemVisualReminder////////////////////////
+/*!
+   \qmlclass VisualReminder QDeclarativeOrganizerItemVisualReminder
+   \brief The VisualReminder element contains information about a visual reminder of an item.
+   \ingroup qml-organizer
+
+   \inherits Reminder
+
+   VisualReminder element contains the following field types:
+   \list
+   \o VisualReminder.DataUrl
+   \o VisualReminder.Message
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty url VisualReminder::dataUrl
+
+  This property holds the url of the visual data which the user wishes to be displayed as part of the reminder.
+  */
+/*!
+  \qmlproperty string VisualReminder::message
+
+  This property holds the message which the user wishes to be displayed as part of the reminder.
+  */
+
+////////////////QDeclarativeOrganizerItemEmailReminder////////////////////////
+/*!
+   \qmlclass EmailReminder QDeclarativeOrganizerItemEmailReminder
+   \brief The EmailReminder element contains information about an email reminder of an item.
+   \ingroup qml-organizer
+
+   \inherits Reminder
+
+   EmailReminder element contains the following field types:
+   \list
+   \o EmailReminder.Subject
+   \o EmailReminder.Body
+   \o EmailReminder.Recipients
+   \o EmailReminder.Attachments
+   \endlist
+
+   This element is part of the \bold{QtMobility.organizer 1.1} module.
+ */
+
+/*!
+  \qmlproperty string EmailReminder::subject
+
+  This property holds the subject of the email.
+  */
+/*!
+  \qmlproperty string EmailReminder::body
+
+  This property holds the body of the email.
+  */
+
+/*!
+  \qmlproperty list<string> EmailReminder::recipients
+
+  This property holds the list of recipients that the user wishes to be sent an email as part of the reminder.
+  */
+
+/*!
+  \qmlproperty list<variant> EmailReminder::attachments
+
+  This property holds the attachments of the email.
+  */
 QString QDeclarativeOrganizerEventTime::fieldNameFromFieldType(int type)
 {
     switch (type) {

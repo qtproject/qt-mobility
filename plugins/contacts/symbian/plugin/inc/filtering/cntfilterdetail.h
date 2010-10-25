@@ -86,19 +86,22 @@ public:
     void createSelectQuery(const QContactFilter& filter,
                            QString& sqlQuery,
                            QContactManager::Error* error);
-    void createMatchPhoneNumberQuery(const QContactFilter& filter,
-                                     QString& sqlQuery,
-                                     QContactManager::Error* error);
-	void fetchAllPhoneNumbers(QString& sqlQuery);
-    void bestMatchPhoneNumberQuery(const QContactFilter& filter,
-                                   QString& sqlQuery,
-                                   QContactManager::Error* error);
-    bool bestMatchingEnabled();
+    void createPhoneNumberQuery(const QContactFilter& filter,
+                                QString& sqlQuery,
+                                QContactManager::Error* error);
 #ifdef PBK_UNIT_TEST
     void emulateBestMatching();
 #endif //PBK_UNIT_TEST
     
 private:
+    void createMatchPhoneNumberQuery(const QContactFilter& filter,
+                                         QString& sqlQuery,
+                                         QContactManager::Error* error);
+    void bestMatchPhoneNumberQuery(const QContactFilter& filter,
+                                       QString& sqlQuery,
+                                       QContactManager::Error* error);
+    void fetchAllPhoneNumbers(QString& sqlQuery);
+    
     void updateForMatchFlag( const QContactDetailFilter& filter,
                              QString& fieldToUpdate ,
                              QContactManager::Error* error) const;
@@ -114,6 +117,7 @@ private:
                                                    TInt upperMatchLength,
                                                    QContactManager::Error* error);
     bool getMatchLengthL(TInt& matchLength);
+    bool bestMatchingEnabled();
     
 protected:
     CContactDatabase& m_contactdatabase;

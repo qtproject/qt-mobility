@@ -270,8 +270,6 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
   loss when saving the item back to the manager (as the "new" restricted item will
   replace the previously saved item in the backend).
 
-  All items returned should have a non-zero ID.
-
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const

@@ -175,6 +175,7 @@ private slots:
     void spanOverDays();
     void recurrence();
     void idComparison();
+    void emptyItemManipulation();
 
     /* Tests that take no data */
     void itemValidation();
@@ -210,6 +211,7 @@ private slots:
     void spanOverDays_data() {addManagers();}
     void recurrence_data() {addManagers();}
     void idComparison_data() {addManagers();}
+    void emptyItemManipulation_data() {addManagers();}
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -1200,6 +1202,69 @@ void tst_QOrganizerManager::update()
     QOrganizerItem updated = cm->item(item.id());
     QOrganizerItemDescription updatedDescr = updated.detail(QOrganizerItemDescription::DefinitionName);
     QCOMPARE(updatedDescr, descr);
+
+    /* Create a recurring event, update an occurrence and save (should persist as an exceptional occurrence) */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    QOrganizerEvent recEvent;
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    int persistentCount = cm->itemsForExport().size();
+    QCOMPARE(persistentCount, 1); // just the parent
+    QList<QOrganizerItem> items = cm->items();
+    QCOMPARE(items.size(), 3);
+    bool foundException = false;
+    QOrganizerEventOccurrence exception;
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 21), QTime(8, 0, 0))) {
+            exception = curr;
+            foundException = true;
+            break;
+        }
+    }
+    QVERIFY(foundException);
+    exception.setLocation("different location");
+    QVERIFY(cm->saveItem(&exception));
+    persistentCount = cm->itemsForExport().size();
+    QCOMPARE(persistentCount, 2); // parent plus one exception
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 21), QTime(8, 0, 0))) {
+            QVERIFY(!curr.id().isNull());
+        } else {
+            QVERIFY(curr.id().isNull());
+        }
+    }
+
+    /* Save a non-updated occurrence - should still persist as an exceptional occurrence */
+    QOrganizerEventOccurrence secondException;
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 22), QTime(8, 0, 0))) {
+            exception = curr;
+            foundException = true;
+            break;
+        }
+    }
+    QVERIFY(foundException);
+    QEXPECT_FAIL(0, "Even with no changes, saving an occurrence should generate an exception; TODO in 1.1.1.", Continue);
+    QVERIFY(cm->saveItem(&secondException)); // no changes, but should save as an exception anyway.
+    //persistentCount = cm->itemsForExport().size();
+    //QCOMPARE(persistentCount, 3); // parent plus two exceptions
+    //items = cm->items();
+    //QCOMPARE(items.size(), 3);
+    //foreach (const QOrganizerEventOccurrence& curr, items) {
+    //    if (curr.startDateTime() == QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0))) {
+    //        QVERIFY(curr.id().isNull());  // only the first occurrence is not an exception.
+    //    } else {
+    //        QVERIFY(!curr.id().isNull()); // we have two exceptions this time
+    //    }
+    //}
 }
 
 void tst_QOrganizerManager::remove()
@@ -1231,6 +1296,58 @@ void tst_QOrganizerManager::remove()
     QCOMPARE(cm->itemIds().count(), itemCount - 1);
     QVERIFY(cm->item(item.id()).isEmpty());
     QCOMPARE(cm->error(), QOrganizerManager::DoesNotExistError);
+
+    /* Create a recurring event, save an exception, remove the recurring event should remove all children occurrences incl. persisted exceptions. */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    QOrganizerEvent recEvent;
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    QList<QOrganizerItem> items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QOrganizerEventOccurrence exception = items.at(1);
+    exception.setStartDateTime(QDateTime(QDate(2010, 10, 21), QTime(7, 0, 0)));
+    QVERIFY(cm->saveItem(&exception));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QCOMPARE(cm->itemsForExport().size(), 2);
+    QVERIFY(cm->removeItem(recEvent.id()));
+    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
+    QCOMPARE(cm->itemsForExport().size(), 0);
+    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
+    QCOMPARE(cm->items().size(), 0);
+
+    /* Create a recurring event, save an exception, remove the saved exception should remove the persisted exception, but the exdate should remain in the parent */
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    recEvent.setId(QOrganizerItemId());
+    recEvent.setDescription("a recurring event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 10, 20), QTime(10, 0, 0)));
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    exception = items.at(1);
+    exception.setStartDateTime(QDateTime(QDate(2010, 10, 21), QTime(7, 0, 0)));
+    QVERIFY(cm->saveItem(&exception));
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    QCOMPARE(cm->itemsForExport().size(), 2);
+    QVERIFY(cm->removeItem(exception.id()));
+    QCOMPARE(cm->itemsForExport().size(), 1); // only parent remains as persistent
+    QCOMPARE(cm->items().size(), 2);          // the exception date remains in parent, so only 2 occurrences are generated.
+
+    /* Create a recurring event, remove a generated occurrence should add an exdate in the parent */
+    // XXX TODO.  Need to add this API in Mobility 1.2.0.
+    // At the moment, we can only remove items by id, and generated occurrences do not have ids.
+    // Thus, to remove a normal occurrence, you must modify the parent item (adding an exdate manually) and resave it.
 }
 
 void tst_QOrganizerManager::batch()
@@ -1801,12 +1918,13 @@ void tst_QOrganizerManager::recurrenceWithGenerator_data()
                 // stops at the 15th because the query end date is the 20th
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
-            // change the end date of the query to 2010-02-01
-            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is non-inclusive").arg(mgr).toLatin1().constData())
-                << managerUri << QDate(2010, 1, 1) << rrule
-                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
-                // still stops at the 15th because the recurrence end date is 22nd, non-inclusively
-                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
+//            // change the end date of the query to 2010-02-01
+//            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is non-inclusive").arg(mgr).toLatin1().constData())
+//                << managerUri << QDate(2010, 1, 1) << rrule
+//                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+//                // still stops at the 15th because the recurrence end date is 22nd, non-inclusively
+//                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
 
             // Now let's fiddle with the recurrence end date and see what happens
             rrule.setLimit(QDate(2010, 1, 23));
@@ -1834,11 +1952,13 @@ void tst_QOrganizerManager::recurrenceWithGenerator_data()
             QOrganizerRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
             rrule.setLimit(QDate(2010, 1, 5));
-            QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
-                << managerUri << QDate(2010, 1, 1) << rrule
-                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
-                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2)
-                                   << QDate(2010, 1, 3) << QDate(2010, 1, 4));
+// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
+//            QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
+//                << managerUri << QDate(2010, 1, 1) << rrule
+//                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+//                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2)
+//                                   << QDate(2010, 1, 3) << QDate(2010, 1, 4)
+//                                   << QDate(2010, 1, 5));
 
             rrule.setInterval(3);
             QTest::newRow(QString("mgr=%1, daily, interval").arg(mgr).toLatin1().constData())
@@ -2826,12 +2946,95 @@ void tst_QOrganizerManager::itemFetch()
     //fetch all recurrences
     QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
                                             QDateTime(QDate(2010, 9, 12)));
-    QCOMPARE(items.count(), 3);
+    QEXPECT_FAIL(0, "Currently enforced behaviour is wrong, skipping", Continue);
+    QCOMPARE(items.count(), 4); // should return event + 3 x occurrencesOfRecEvent
 
     //fetch only the originating items
     items = cm->itemsForExport(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
                                QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint());
     QCOMPARE(items.count(), 2);
+
+    // test semantics of items():
+    // first - save event with multiple occurrences; call items() -- should get back just occurrences.
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    rrule.setLimit(QDate(2010, 9, 3));
+    recEvent.setRecurrenceRule(rrule);
+    recEvent.setId(QOrganizerItemId());
+    cm->saveItem(&recEvent);
+    items = cm->items(QDateTime(), QDateTime());
+
+    QEXPECT_FAIL(0, "Currently enforced behaviour is wrong, skipping", Continue);
+    // the current semantics of rrule.setLimit() is exclusive but review suggests inclusive would be better
+    // :. should return 3 but it actually returns 2.
+    QCOMPARE(items.count(), 3);
+    foreach (const QOrganizerItem& item, items) {
+        QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+    }
+
+    // second - the same situation, but giving a time span that only covers the first day - should get back a single occurrence.
+    items = cm->items(QDateTime(QDate(2010, 9, 1), QTime(15, 0, 0)), QDateTime(QDate(2010, 9, 1), QTime(18, 0, 0)));
+    QCOMPARE(items.count(), 1);
+    foreach (const QOrganizerItem& item, items) {
+        QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+    }
+
+    // third - save event with no recurrence; call items() -- should get back that parent, not an occurrence.
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    recEvent.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>()); // clear rrule.
+    recEvent.setId(QOrganizerItemId());
+    cm->saveItem(&recEvent);
+    items = cm->items(QDateTime(), QDateTime());
+    QCOMPARE(items.count(), 1);
+    foreach (const QOrganizerItem& item, items) {
+        QVERIFY(item.type() == QOrganizerItemType::TypeEvent);
+    }
+
+    // fourth - the same situation, but giving a time span.  should still get back the parent.
+    items = cm->items(QDateTime(QDate(2010, 9, 1), QTime(15, 0, 0)), QDateTime(QDate(2010, 9, 1), QTime(18, 0, 0)));
+    QCOMPARE(items.count(), 1);
+    foreach (const QOrganizerItem& item, items) {
+        QVERIFY(item.type() == QOrganizerItemType::TypeEvent);
+    }
+
+    // test semantics of itemsForExport():
+    // first - save event with multiple occurrences; call ife() -- get back that parent
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    recEvent.setRecurrenceRule(rrule);
+    recEvent.setId(QOrganizerItemId());
+    cm->saveItem(&recEvent);
+    items = cm->itemsForExport();
+    QCOMPARE(items.count(), 1);
+    foreach (const QOrganizerItem& item, items) {
+        QVERIFY(item.type() == QOrganizerItemType::TypeEvent);
+    }
+
+    // second - call items, get an occurrence, resave as an exceptionl call ife() -- get back parent + exception
+    items = cm->items();
+    QOrganizerEventOccurrence exception;
+    bool foundOccurrence = false;
+    foreach (const QOrganizerItem& item, items) {
+        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            exception = item;
+            foundOccurrence = true;
+            break;
+        }
+    }
+    QVERIFY(foundOccurrence);
+    exception.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(15, 0, 0))); // starts an hour earlier than parent.
+    QVERIFY(cm->saveItem(&exception));
+    items = cm->itemsForExport();
+    QCOMPARE(items.count(), 2);
+    int eventCount = 0;
+    int eventOccurrenceCount = 0;
+    foreach (const QOrganizerItem& item, items) {
+        if (item.type() == QOrganizerItemType::TypeEvent) {
+            eventCount += 1;
+        } else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            eventOccurrenceCount += 1;
+        }
+    }
+    QCOMPARE(eventCount, 1);
+    QCOMPARE(eventOccurrenceCount, 1);
 }
 
 void tst_QOrganizerManager::spanOverDays()
@@ -2890,76 +3093,148 @@ void tst_QOrganizerManager::recurrence()
     event.setDisplayLabel("recurrent event");
     event.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
+
+    // first, test count limiting.
     QOrganizerRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
     event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
 
-    // Fetch all events with occurrences
-    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
-                                            QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
-    QCOMPARE(items.count(), 3);
+    {
+        // Fetch all events with occurrences
+        QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                                QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+        QCOMPARE(items.count(), 3);
 
-    // Fetch events for the first day
-    items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
-    QCOMPARE(items.count(), 1);
+        // Fetch events for the first day
+        items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
 
-    // Fetch events for the second day
-    items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
-    QCOMPARE(items.count(), 1);
+        // Fetch events for the second day
+        items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
 
-    // Create an exception on the second day
-    QOrganizerEventOccurrence ex = static_cast<QOrganizerEventOccurrence>(items.at(0));
-    ex.setStartDateTime(QDateTime(QDate(2012, 8, 10), QTime(10, 30, 0)));
-    QVERIFY(cm->saveItem(&ex));
+        // Create an exception on the second day
+        QOrganizerEventOccurrence ex = static_cast<QOrganizerEventOccurrence>(items.at(0));
+        ex.setStartDateTime(QDateTime(QDate(2012, 8, 10), QTime(10, 30, 0)));
+        QVERIFY(cm->saveItem(&ex));
 
-    // Fetch again the events for the second day
-    items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
-    QCOMPARE(items.count(), 1);
-    QOrganizerItem item = items.at(0);
-    QVERIFY(!item.id().isNull());
-    QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+        // Fetch again the events for the second day
+        items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
+        QOrganizerItem item = items.at(0);
+        QVERIFY(!item.id().isNull());
+        QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
 
-    // Add a normal event to the first day
-    QOrganizerEvent event2;
-    event2.setDisplayLabel("event");
-    event2.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(15, 0, 0)));
-    event2.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(16, 0, 0)));
-    QVERIFY(cm->saveItem(&event2));
+        // Add a normal event to the first day
+        QOrganizerEvent event2;
+        event2.setDisplayLabel("event");
+        event2.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(15, 0, 0)));
+        event2.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(16, 0, 0)));
+        QVERIFY(cm->saveItem(&event2));
 
-    // Fetch the whole period again
-    items = cm->items(QDateTime(QDate(2012, 8, 9)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
-    QCOMPARE(items.count(), 4);
-    foreach(QOrganizerItem item, items) {
-        // check if the item is the recurrence exception
-        if (item.id() == ex.id()) {
-            QOrganizerEventOccurrence exc = static_cast<QOrganizerEventOccurrence>(item);
-            QCOMPARE(exc.guid(), ex.guid());
-            QCOMPARE(exc.startDateTime(), ex.startDateTime());
-            QCOMPARE(exc.endDateTime(), ex.endDateTime());
-        } else if (item.id() == event2.id()) {
-            // check if the item is the normal event
-            QOrganizerEvent ev = static_cast<QOrganizerEvent>(item);
-            QCOMPARE(ev.guid(), event2.guid());
-            QCOMPARE(ev.startDateTime(), event2.startDateTime());
-            QCOMPARE(ev.endDateTime(), event2.endDateTime());
-        } else {
-            // item must be event occurrence type and has to be a generated one
-            QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
-            QVERIFY(item.id().isNull());
+        // Fetch the whole period again
+        items = cm->items(QDateTime(QDate(2012, 8, 9)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+        QCOMPARE(items.count(), 4);
+        foreach(QOrganizerItem item, items) {
+            // check if the item is the recurrence exception
+            if (item.id() == ex.id()) {
+                QOrganizerEventOccurrence exc = static_cast<QOrganizerEventOccurrence>(item);
+                QCOMPARE(exc.guid(), ex.guid());
+                QCOMPARE(exc.startDateTime(), ex.startDateTime());
+                QCOMPARE(exc.endDateTime(), ex.endDateTime());
+            } else if (item.id() == event2.id()) {
+                // check if the item is the normal event
+                QOrganizerEvent ev = static_cast<QOrganizerEvent>(item);
+                QCOMPARE(ev.guid(), event2.guid());
+                QCOMPARE(ev.startDateTime(), event2.startDateTime());
+                QCOMPARE(ev.endDateTime(), event2.endDateTime());
+            } else {
+                // item must be event occurrence type and has to be a generated one
+                QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+                QVERIFY(item.id().isNull());
+            }
         }
+
+        // Fetch events on a day where the recurrence is no longer valid
+        items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+        QCOMPARE(items.count(), 0);
     }
 
-    // Fetch events on a day where the recurrence is no longer valid
-    items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
-    QCOMPARE(items.count(), 0);
+// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
+/*
+    // second, test date limit.  The results should be the same as the count limit, if the limit date is the 11th.
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+    QOrganizerRecurrenceRule rrule2;
+    rrule2.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule2.setLimit(QDate(2012, 8, 11));
+    event.setRecurrenceRule(rrule2);
+    event.setId(QOrganizerItemId());
+    QVERIFY(cm->saveItem(&event));
+
+    {
+        // Fetch all events with occurrences
+        QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                                QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+        QCOMPARE(items.count(), 3);
+
+        // Fetch events for the first day
+        items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
+
+        // Fetch events for the second day
+        items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
+
+        // Create an exception on the second day
+        QOrganizerEventOccurrence ex = static_cast<QOrganizerEventOccurrence>(items.at(0));
+        ex.setStartDateTime(QDateTime(QDate(2012, 8, 10), QTime(10, 30, 0)));
+        QVERIFY(cm->saveItem(&ex));
+
+        // Fetch again the events for the second day
+        items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+        QCOMPARE(items.count(), 1);
+        QOrganizerItem item = items.at(0);
+        QVERIFY(!item.id().isNull());
+        QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+
+        // Add a normal event to the first day
+        QOrganizerEvent event2;
+        event2.setDisplayLabel("event");
+        event2.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(15, 0, 0)));
+        event2.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(16, 0, 0)));
+        QVERIFY(cm->saveItem(&event2));
+
+        // Fetch the whole period again
+        items = cm->items(QDateTime(QDate(2012, 8, 9)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+        QCOMPARE(items.count(), 4);
+        foreach(QOrganizerItem item, items) {
+            // check if the item is the recurrence exception
+            if (item.id() == ex.id()) {
+                QOrganizerEventOccurrence exc = static_cast<QOrganizerEventOccurrence>(item);
+                QCOMPARE(exc.guid(), ex.guid());
+                QCOMPARE(exc.startDateTime(), ex.startDateTime());
+                QCOMPARE(exc.endDateTime(), ex.endDateTime());
+            } else if (item.id() == event2.id()) {
+                // check if the item is the normal event
+                QOrganizerEvent ev = static_cast<QOrganizerEvent>(item);
+                QCOMPARE(ev.guid(), event2.guid());
+                QCOMPARE(ev.startDateTime(), event2.startDateTime());
+                QCOMPARE(ev.endDateTime(), event2.endDateTime());
+            } else {
+                // item must be event occurrence type and has to be a generated one
+                QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+                QVERIFY(item.id().isNull());
+            }
+        }
+    }
+*/
 }
 
 void tst_QOrganizerManager::idComparison()
 {
     QFETCH(QString, uri);
-    
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     // Can we run this test?
@@ -2982,17 +3257,11 @@ void tst_QOrganizerManager::idComparison()
     e2.setStartDateTime(QDateTime::currentDateTime().addDays(1));
     e2.setEndDateTime(QDateTime::currentDateTime().addDays(1).addSecs(1800));
 
-    QOrganizerJournal j1;
-    j1.setDisplayLabel("journal one");
-    j1.addComment("this is a test journal comment");
-    j1.setDateTime(QDateTime::currentDateTime());
-
     QOrganizerTodo t1;
     QOrganizerRecurrenceRule r1;
     r1.setFrequency(QOrganizerRecurrenceRule::Weekly);
     t1.setDisplayLabel("todo one");
     t1.setDescription("test todo one");
-    t1.addComment("perform unit testing every Friday");
     t1.setDueDateTime(QDateTime::currentDateTime().addDays(5));
     t1.setRecurrenceRule(r1);
 
@@ -3002,12 +3271,10 @@ void tst_QOrganizerManager::idComparison()
     // step two: save and harvest the ids
     cm->saveItem(&e1);
     cm->saveItem(&e2);
-    cm->saveItem(&j1);
     cm->saveItem(&t1);
     cm->saveCollection(&c1);
     QOrganizerItemId e1id = e1.id();
     QOrganizerItemId e2id = e2.id();
-    QOrganizerItemId j1id = j1.id();
     QOrganizerItemId t1id = t1.id();
     QOrganizerCollectionId c1id = c1.id();
 
@@ -3023,13 +3290,11 @@ void tst_QOrganizerManager::idComparison()
     QVERIFY(bcid1 != bcid2);
 
     QVERIFY(e1id != e2id);
-    QVERIFY(e1id != j1id);
     QVERIFY(e1id != t1id);
 
     QList<QOrganizerItemId> idList;
     idList << e1id << t1id << biid1;
     QVERIFY(!idList.contains(biid2));
-    QVERIFY(!idList.contains(j1id));
     QVERIFY(!idList.contains(e2id));
     QVERIFY(idList.contains(e1id));
     QVERIFY(idList.contains(t1id));
@@ -3063,7 +3328,6 @@ void tst_QOrganizerManager::idComparison()
 
     QMap<QOrganizerItemId, int> testMap;
     testMap.insert(e1id, 1);
-    testMap.insert(j1id, 5);
     testMap.insert(biid1, 12);
     testMap.insert(biid2, 11);
     testMap.insert(t1id, 6);
@@ -3072,15 +3336,57 @@ void tst_QOrganizerManager::idComparison()
     QCOMPARE(testMap.value(e1id), 1);
     QCOMPARE(testMap.value(n2), 12); // again, n1 == n2.
     QCOMPARE(testMap.value(biid1), 12);
-    QCOMPARE(testMap.value(j1id), 5);
     QCOMPARE(testMap.value(biid2), 11);
     QCOMPARE(testMap.value(t1id), 6);
     QCOMPARE(testMap.value(QOrganizerItemId()), 12); // again, n1 == null
 
-    QVERIFY(testMap.size() == 6);
-    testMap.remove(QOrganizerItemId());
     QVERIFY(testMap.size() == 5);
+    testMap.remove(QOrganizerItemId());
+    QVERIFY(testMap.size() == 4);
     QVERIFY(testMap.value(QOrganizerItemId()) != 12); // removed this entry.
+}
+
+void tst_QOrganizerManager::emptyItemManipulation()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    QOrganizerItem i;
+    QOrganizerEvent e;
+    QOrganizerTodo t;
+
+    // attempt to save an empty item
+    if (cm->saveItem(&i)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(i.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(i.id()));
+    }
+
+    // attempt to save an empty event.
+    if (cm->saveItem(&e)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(e.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(e.id()));
+    }
+
+    // attempt to save an empty event.
+    if (cm->saveItem(&t)) {
+        // if the backend allowed us to save it, it should definitely allow us to remove it again.
+        QVERIFY(cm->removeItem(t.id()));
+    } else {
+        // if the backend didn't allow us to save it, there should be nothing to remove.
+        QVERIFY(!cm->removeItem(t.id()));
+    }
+
+    // now attempt to remove some invalid ids.
+    QOrganizerItemId invalidId;
+    QVERIFY(!cm->removeItem(invalidId)); // null id
+    invalidId = makeItemId(50);
+    QVERIFY(!cm->removeItem(invalidId)); // id from different manager
 }
 
 void tst_QOrganizerManager::dateRange()
