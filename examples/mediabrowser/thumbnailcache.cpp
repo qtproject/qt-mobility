@@ -82,9 +82,9 @@ public:
 ThumbnailCache::ThumbnailCache(QObject *parent)
     : QThread(parent)
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    , m_cache(25)
+    , cache(25)
 #else
-    , m_cache(150)
+    , cache(150)
 #endif
     , cancelled(false)
 {
