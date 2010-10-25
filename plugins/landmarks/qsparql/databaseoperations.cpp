@@ -1756,6 +1756,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     Q_UNUSED(ok);
 
     QSparqlResult* insertResult = conn.exec(qsparqlInsertQuery);
+    insertResult->waitForFinished();
 
     if (!insertResult->hasError()) {
         QLandmarkId id;
@@ -1764,10 +1765,12 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             id.setLocalId(landmark->landmarkId().localId());
         else
             id.setLocalId(uriValue.value().toString());
-            landmark->setLandmarkId(id);
-        } else {
-
-        }
+        landmark->setLandmarkId(id);
+    } else {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = "Unable to execute insert statement. ";
+            return false;
+    }
 
     QStringList lmCats;
 
@@ -2650,12 +2653,12 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
     }
 
     //TODO: Notifications
-    //if (addedIds.size() != 0)
-    //    emit landmarksAdded(addedIds);
+    if (addedIds.size() != 0)
+        emit categoriesAdded(addedIds);
 
     //TODO: Notifications
-    //if (changedIds.size() != 0)
-    //    emit landmarksChanged(changedIds);
+    if (changedIds.size() != 0)
+        emit categoriesChanged(changedIds);
 
     return noErrors;
 }
@@ -2772,8 +2775,8 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
     }
 
     //TODO: notifications
-    //if (removedIds.size() != 0)
-    //    emit landmarksRemoved(removedIds);
+    if (removedIds.size() != 0)
+        emit categoriesRemoved(removedIds);
 
     return noErrors;
 }

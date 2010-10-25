@@ -199,6 +199,9 @@ public slots:
 
 private slots:
     void databaseChanged();
+    void categoriesAdded(QList<QLandmarkCategoryId> ids);
+    void categoriesChanged(QList<QLandmarkCategoryId> ids);
+    void categoriesRemoved(QList<QLandmarkCategoryId> ids);
 
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
@@ -210,9 +213,8 @@ protected:
     void disconnectNotify(const char *signal);
 
 private:
-
+    bool m_changeNotificationsEnabled;
     void setChangeNotificationsEnabled(bool enabled);
-
     QString m_dbFilename;
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;

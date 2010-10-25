@@ -109,6 +109,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
+    m_changeNotificationsEnabled = false;
     *error = QLandmarkManager::NoError;
     *errorString ="";
 
@@ -198,6 +199,20 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     file.close();
     */
     m_databaseOperations.managerUri = managerUri();
+   /*
+    connect(m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+            this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    connect(m_databaseOperations,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+            this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    connect(m_databaseOperations,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+            this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+    */
+    connect(&m_databaseOperations,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesAdded(QList<QLandmarkCategoryId>)));
+    connect(&m_databaseOperations,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
+    connect(&m_databaseOperations,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+            this, SLOT(categoriesRemoved(QList<QLandmarkCategoryId>)));
 }
 
 QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
@@ -659,13 +674,30 @@ void QLandmarkManagerEngineQsparql::databaseChanged()
 */
 }
 
+ void QLandmarkManagerEngineQsparql::categoriesAdded(QList<QLandmarkCategoryId> ids) {
+    if (m_changeNotificationsEnabled)
+        emit categoriesAdded(ids);
+}
+
+void QLandmarkManagerEngineQsparql::categoriesChanged(QList<QLandmarkCategoryId> ids) {
+     if (m_changeNotificationsEnabled)
+        emit categoriesChanged(ids);
+}
+
+void QLandmarkManagerEngineQsparql::categoriesRemoved(QList<QLandmarkCategoryId> ids) {
+     if  (m_changeNotificationsEnabled)
+         emit categoriesRemoved(ids);
+}
+
 void QLandmarkManagerEngineQsparql::setChangeNotificationsEnabled(bool enabled)
 {
+    /*
     if (enabled) {
         QDateTime dateTime= QDateTime::currentDateTime();
         m_latestLandmarkTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
         m_latestCategoryTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    }
+    }*/
+    m_changeNotificationsEnabled = enabled;
 }
 
 void QLandmarkManagerEngineQsparql::connectNotify(const char *signal)

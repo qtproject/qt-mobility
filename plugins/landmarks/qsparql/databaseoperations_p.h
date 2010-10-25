@@ -95,7 +95,13 @@ public:
     unsigned int runId;
 };
 
-class DatabaseOperations {
+class DatabaseOperations : public QObject  {
+    Q_OBJECT
+    signals:
+    void categoriesAdded(QList<QLandmarkCategoryId> ids);
+    void categoriesChanged(QList<QLandmarkCategoryId> ids);
+    void categoriesRemoved(QList<QLandmarkCategoryId> ids);
+
     public:
     QString connectionName;
     QSparqlConnection* m_conn;
@@ -229,7 +235,7 @@ class DatabaseOperations {
     static const QStringList coreGenericAttributes;
     static const QStringList supportedSearchableAttributes;
     static const QStringList coreCategoryAttributes;
-    static const QStringList coreGenericCategoryAttributes;
+    static const QStringList coreGenericCategoryAttributes; 
 };
 
 #endif
