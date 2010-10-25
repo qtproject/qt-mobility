@@ -1252,19 +1252,18 @@ void tst_QOrganizerManager::update()
         }
     }
     QVERIFY(foundException);
-    QEXPECT_FAIL(0, "Even with no changes, saving an occurrence should generate an exception; TODO in 1.1.1.", Continue);
     QVERIFY(cm->saveItem(&secondException)); // no changes, but should save as an exception anyway.
-    //persistentCount = cm->itemsForExport().size();
-    //QCOMPARE(persistentCount, 3); // parent plus two exceptions
-    //items = cm->items();
-    //QCOMPARE(items.size(), 3);
-    //foreach (const QOrganizerEventOccurrence& curr, items) {
-    //    if (curr.startDateTime() == QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0))) {
-    //        QVERIFY(curr.id().isNull());  // only the first occurrence is not an exception.
-    //    } else {
-    //        QVERIFY(!curr.id().isNull()); // we have two exceptions this time
-    //    }
-    //}
+    persistentCount = cm->itemsForExport().size();
+    QCOMPARE(persistentCount, 3); // parent plus two exceptions
+    items = cm->items();
+    QCOMPARE(items.size(), 3);
+    foreach (const QOrganizerEventOccurrence& curr, items) {
+        if (curr.startDateTime() == QDateTime(QDate(2010, 10, 20), QTime(8, 0, 0))) {
+            QVERIFY(curr.id().isNull());  // only the first occurrence is not an exception.
+        } else {
+            QVERIFY(!curr.id().isNull()); // we have two exceptions this time
+        }
+    }
 }
 
 void tst_QOrganizerManager::remove()
@@ -1317,9 +1316,7 @@ void tst_QOrganizerManager::remove()
     QCOMPARE(items.size(), 3);
     QCOMPARE(cm->itemsForExport().size(), 2);
     QVERIFY(cm->removeItem(recEvent.id()));
-    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
     QCOMPARE(cm->itemsForExport().size(), 0);
-    QEXPECT_FAIL(0, "Wrong behaviour was enforced; FIXME for 1.1.1", Continue);
     QCOMPARE(cm->items().size(), 0);
 
     /* Create a recurring event, save an exception, remove the saved exception should remove the persisted exception, but the exdate should remain in the parent */
@@ -1918,13 +1915,11 @@ void tst_QOrganizerManager::recurrenceWithGenerator_data()
                 // stops at the 15th because the query end date is the 20th
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
-// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
-//            // change the end date of the query to 2010-02-01
-//            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is non-inclusive").arg(mgr).toLatin1().constData())
-//                << managerUri << QDate(2010, 1, 1) << rrule
-//                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
-//                // still stops at the 15th because the recurrence end date is 22nd, non-inclusively
-//                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
+            // change the end date of the query to 2010-02-01
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is inclusive").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
 
             // Now let's fiddle with the recurrence end date and see what happens
             rrule.setLimit(QDate(2010, 1, 23));
@@ -1952,13 +1947,12 @@ void tst_QOrganizerManager::recurrenceWithGenerator_data()
             QOrganizerRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
             rrule.setLimit(QDate(2010, 1, 5));
-// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
-//            QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
-//                << managerUri << QDate(2010, 1, 1) << rrule
-//                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
-//                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2)
-//                                   << QDate(2010, 1, 3) << QDate(2010, 1, 4)
-//                                   << QDate(2010, 1, 5));
+            QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2)
+                                   << QDate(2010, 1, 3) << QDate(2010, 1, 4)
+                                   << QDate(2010, 1, 5));
 
             rrule.setInterval(3);
             QTest::newRow(QString("mgr=%1, daily, interval").arg(mgr).toLatin1().constData())
@@ -2946,7 +2940,6 @@ void tst_QOrganizerManager::itemFetch()
     //fetch all recurrences
     QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
                                             QDateTime(QDate(2010, 9, 12)));
-    QEXPECT_FAIL(0, "Currently enforced behaviour is wrong, skipping", Continue);
     QCOMPARE(items.count(), 4); // should return event + 3 x occurrencesOfRecEvent
 
     //fetch only the originating items
@@ -2962,10 +2955,6 @@ void tst_QOrganizerManager::itemFetch()
     recEvent.setId(QOrganizerItemId());
     cm->saveItem(&recEvent);
     items = cm->items(QDateTime(), QDateTime());
-
-    QEXPECT_FAIL(0, "Currently enforced behaviour is wrong, skipping", Continue);
-    // the current semantics of rrule.setLimit() is exclusive but review suggests inclusive would be better
-    // :. should return 3 but it actually returns 2.
     QCOMPARE(items.count(), 3);
     foreach (const QOrganizerItem& item, items) {
         QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
@@ -3162,8 +3151,6 @@ void tst_QOrganizerManager::recurrence()
         QCOMPARE(items.count(), 0);
     }
 
-// XXX TODO: FIXME: uncomment this test for 1.1.1 to ensure we enforce the correct behaviour.
-/*
     // second, test date limit.  The results should be the same as the count limit, if the limit date is the 11th.
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
     QOrganizerRecurrenceRule rrule2;
@@ -3229,7 +3216,6 @@ void tst_QOrganizerManager::recurrence()
             }
         }
     }
-*/
 }
 
 void tst_QOrganizerManager::idComparison()
@@ -3559,6 +3545,7 @@ void tst_QOrganizerManager::collections()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> oim(QOrganizerManager::fromUri(uri));
 
+    // XXX TODO: add this feature in 1.2.0 (and other features as required)
     //if (!oim->hasFeature(QOrganizerManager::MutableCollections)) {
     //    QSKIP("This manager does not support mutable collections!", SkipSingle);
     //}

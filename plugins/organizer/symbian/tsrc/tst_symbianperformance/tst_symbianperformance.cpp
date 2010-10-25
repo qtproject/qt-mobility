@@ -48,21 +48,6 @@
 
 QTM_USE_NAMESPACE
 
-#ifndef QTRY_COMPARE
-#define QTRY_COMPARE(__expr, __expected) \
-    do { \
-        const int __step = 50; \
-        const int __timeout = 5000; \
-        if ((__expr) != (__expected)) { \
-            QTest::qWait(0); \
-        } \
-        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i=__step) { \
-            QTest::qWait(__step); \
-        } \
-        QCOMPARE(__expr, __expected); \
-    } while(0)
-#endif
-
 /*!
  * For testing symbian backend performance via QOrganizerManager API.
  */
@@ -200,9 +185,29 @@ void tst_symbianperformance::items()
         QList<QOrganizerItem> items = m_om->items(startDateTime, endDateTime);
         QTime timerEnd = QTime::currentTime();
         // Known issue with symbian backend; the returned items may, or may not contain an extra item, depending on the platform
-        qDebug() << "itemCount:" << items.count();
         QVERIFY(items.count() == recurrenceCount * 7 || items.count() == recurrenceCount * 8);
         qDebug() << "Fetching item instances with date filter took [ms]: " << timerStart.msecsTo(timerEnd);
+    }
+
+    {
+        // Add an item with unlimited occurrences (symbian cal server limits occurrences to 31.12.2100)
+        QOrganizerItem item = createItem(
+                QOrganizerItemType::TypeEvent,
+                QString("addItemUnltd"),
+                currentDateTime.addSecs(1800),
+                currentDateTime.addSecs(3600),
+                0);
+
+        QTime startTime = QTime::currentTime();
+        QVERIFY(m_om->saveItem(&item));
+        QTime endTime = QTime::currentTime();
+        qDebug() << "Saving an item with unlimited occurrences took [ms]: " << startTime.msecsTo(endTime);
+
+        // TODO: "itemOccurrences with parentItem" (should be faster than itemOccurrences without parent because of "collection filtering")
+        startTime = QTime::currentTime();
+        QList<QOrganizerItem> items = m_om->itemOccurrences(item);
+        endTime = QTime::currentTime();
+        qDebug() << "Fetching item occurrences of a parent [ms]: " << startTime.msecsTo(endTime);
     }
 
     {
@@ -340,12 +345,13 @@ QOrganizerItem tst_symbianperformance::createItem(
     }
 
     // Set recurrence rule if needed
-    if (recurrenceCount > 1) {
+    if (recurrenceCount >= 0) {
         // Create a weekly recurrence rule
         QOrganizerItemRecurrence recurrence;
         QOrganizerRecurrenceRule rrule;
         rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
-        rrule.setLimit(recurrenceCount);
+        if (recurrenceCount > 0) // 0 = unlimited
+            rrule.setLimit(recurrenceCount);
         QSet<QOrganizerRecurrenceRule> ruleSet;
         ruleSet.insert(rrule);
         recurrence.setRecurrenceRules(ruleSet);
