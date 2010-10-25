@@ -244,7 +244,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
         } 
 
         // Create and register our DBusSession server/client
-        session = new DBusSession();
+        session = new DBusSession(this);
         new DBusSessionAdaptor(session);
         QObject::connect(session, SIGNAL(newConnection(int,int)), 
                 this, SLOT(processIncoming(int,int)));
