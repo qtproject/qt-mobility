@@ -128,6 +128,7 @@ private:
     char *m_audioBuffer;
     QTime m_timeStamp;
     qint64 m_elapsedTimeOffset;
+    bool m_resuming;
 };
 
 class OutputPrivate : public QIODevice

@@ -149,6 +149,7 @@ QPulseAudioOutput::QPulseAudioOutput(const QByteArray &device)
     , m_totalTimeValue(0)
     , m_tickTimer(new QTimer(this))
     , m_audioBuffer(0)
+    , m_resuming(false)
 {
     connect(m_tickTimer, SIGNAL(timeout()), SLOT(userFeed()));
 }
@@ -172,7 +173,7 @@ QAudio::State QPulseAudioOutput::state() const
 
 void QPulseAudioOutput::streamUnderflowCallback()
 {
-    if (m_deviceState != QAudio::IdleState) {
+    if (m_deviceState != QAudio::IdleState && !m_resuming) {
         m_errorState = QAudio::UnderrunError;
         emit errorChanged(m_errorState);
         m_deviceState = QAudio::IdleState;
@@ -347,6 +348,8 @@ void QPulseAudioOutput::close()
 
 bool QPulseAudioOutput::deviceReady()
 {
+    m_resuming = false;
+
     if (m_pullMode) {
         int l = 0;
         int chunks = m_bytesAvailable/m_periodSize;
@@ -453,6 +456,8 @@ qint64 QPulseAudioOutput::processedUSecs() const
 void QPulseAudioOutput::resume()
 {
     if (m_deviceState == QAudio::SuspendedState) {
+        m_resuming = true;
+
         QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
 
         pa_threaded_mainloop_lock(pulseEngine->mainloop());
