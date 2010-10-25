@@ -156,6 +156,8 @@ private slots:  // Test cases
 	void timezone();
     void supportedItemTypes_data() { addManagers(); };
     void supportedItemTypes();
+    void outOfMemory_data() { addManagers(); };
+    void outOfMemory();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -837,6 +839,30 @@ void tst_SymbianOm::supportedItemTypes()
         // TODO: Try saving an item with the given type.
         // This would require some logic though.
     }
+}
+
+void tst_SymbianOm::outOfMemory()
+{
+    // Qt documentation says:
+    // "The range of valid dates is from January 2nd, 4713 BCE, to sometime in the year 11 million CE."
+    QDateTime dateTime(QDate(-4713, 1, 2));
+    
+    // Add a reccurring event
+    QOrganizerEvent event;
+    event.setDisplayLabel("Daily event");
+    event.setStartDateTime(dateTime);
+    event.setEndDateTime(dateTime.addSecs(60*60));
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    event.setRecurrenceRule(rule);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // This will produce ~2500000 occurences. No way it will fit in memory
+    QList<QOrganizerItem> items = m_om->items(dateTime, QDateTime());
+    QVERIFY(m_om->error() == QOrganizerManager::OutOfMemoryError);
+
+    items = m_om->itemOccurrences(event);
+    QVERIFY(m_om->error() == QOrganizerManager::OutOfMemoryError);
 }
 
 /*!
