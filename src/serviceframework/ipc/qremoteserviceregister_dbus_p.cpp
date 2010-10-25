@@ -93,8 +93,7 @@ Q_SIGNALS:
 protected:
     void flushPackage(const QServicePackage& package)
     {
-        QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
-        if (!connection->isConnected()) {
+        if (!QDBusConnection::sessionBus().isConnected()) {
             qWarning() << "Cannot connect to DBus";
         }
         
@@ -226,8 +225,8 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
     if (list.size() < 1)
         return false;
 
-    connection = new QDBusConnection(QDBusConnection::sessionBus());
-    if (!connection->isConnected()) {
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
         qWarning() << "Cannot connect to DBus";
         return 0;
     }
@@ -235,11 +234,11 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
     // Registers the service and session object on DBus if needed
     for (int i=0; i<list.size(); i++) {
         QString serviceName = "com.nokia.qtmobility.sfw." + list[i].serviceName();
-        QDBusReply<bool> reply = connection->interface()->isServiceRegistered(serviceName);
+        QDBusReply<bool> reply = connection.interface()->isServiceRegistered(serviceName);
         if (reply.value())
             continue;
             
-        if (!connection->registerService(serviceName)) {
+        if (!connection.registerService(serviceName)) {
             qWarning() << "Cannot register service to DBus:" << serviceName;
             continue;
         } 
@@ -252,8 +251,8 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ide
 
         QString path = "/" + list[i].interfaceName() + "/" + ident;
         path.replace(QString("."), QString("/"));
-        if (!connection->objectRegisteredAt(path)) {
-            if (!connection->registerObject(path, session)) {
+        if (!connection.objectRegisteredAt(path)) {
+            if (!connection.registerObject(path, session)) {
                 qWarning() << "Cannot register service session to DBus:" << path;
                 continue;
             }
@@ -319,14 +318,14 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     QString path = "/" + entry.interfaceName() + "/" + location;
     path.replace(QString("."), QString("/"));
 
-    QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
-    if (!connection->isConnected()) {
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
         qWarning() << "Cannot connect to DBus";
         return 0;
     }
 
     // Dummy call to autostart the service if not running
-    connection->call(QDBusMessage::createMethodCall(serviceName, path, "", "q_autostart"));
+    connection.call(QDBusMessage::createMethodCall(serviceName, path, "", "q_autostart"));
 
     QDBusInterface *iface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
     if (!iface->isValid()) {
@@ -353,10 +352,6 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
 
     qDebug() << "Insufficient credentials to load a service instance";
     return 0;
-}
-
-void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& serviceName)
-{
 }
 
 #include "moc_qremoteserviceregister_dbus_p.cpp"
