@@ -531,6 +531,7 @@ qint64 QPulseAudioOutput::elapsedUSecs() const
 
 void QPulseAudioOutput::reset()
 {
+    stop();
 }
 
 OutputPrivate::OutputPrivate(QPulseAudioOutput *audio)
