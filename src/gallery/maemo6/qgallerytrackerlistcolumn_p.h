@@ -177,7 +177,7 @@ private:
     const QString m_prefix;
 };
 
-#define QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL 2
+#define QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL 1
 
 class QGalleryTrackerFileUrlColumn : public QGalleryTrackerCompositeColumn
 {

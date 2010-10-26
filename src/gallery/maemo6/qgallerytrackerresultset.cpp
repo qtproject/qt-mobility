@@ -90,6 +90,7 @@ void QGalleryTrackerResultSetPrivate::query()
     qSwap(rCache.values, iCache.values);
 
 //    const int limit = queryLimit < 1 || queryLimit > 1024 ? 1024 : queryLimit;
+qDebug() << "QUERY:" << queryArguments;
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
             queryMethod, QVariantList(queryArguments) /*TODO support offset! << queryOffset << limit*/);
@@ -155,6 +156,8 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
     typedef QVector<QStringList>::const_iterator iterator;
 
     const QVector<QStringList> resultSet = reply.value();
+    
+qDebug() << "ResultSet:" << resultSet;    
 
     QVector<QVariant> &values = iCache.values;
 
@@ -168,15 +171,15 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
     values.reserve(iCache.count * tableWidth);
 
     for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        values.append( it->at(0) ); // urn
-        values.append( QVariant( service ) );
-        for( int i = 1; i < valueOffset - 1; ++i)
-        {
-            values.append( it->at(i) ); // nie:url
-        }
-        for (int i = valueOffset - 1 ; i < it->count(); ++i)
-            values.append(valueColumns.at(i - valueOffset + 1)->toVariant(it->at(i)));
+        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
+            values.append(it->at(i));
 
+        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
+            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
+
+        // The rows should all have a count equal to tableWidth, but check just in case.
+        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
+            values.append(QVariant());
     }
 
     if (resultSet.count() <= limit) {

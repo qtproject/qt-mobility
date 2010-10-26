@@ -335,7 +335,7 @@ namespace
 { \
     QLatin1String(#Type), \
     QLatin1String(#Service), \
-    QGalleryTypePrefix(""), \
+    QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
     QGalleryCompositePropertyList(), \
     Type##Id, \
@@ -618,6 +618,7 @@ static bool qt_writeCondition(
     }
 }
 
+#if 0
 static bool qt_writeFilePathCondition(
         QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
@@ -651,7 +652,9 @@ static bool qt_writeFilePathCondition(
         return true;
     }
 }
+#endif
 
+#if 0
 static bool qt_writeFileUrlCondition(
         QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
@@ -690,6 +693,7 @@ static bool qt_writeFileUrlCondition(
         return true;
     }
 }
+#endif
 
 ///////
 // File
@@ -737,10 +741,11 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 //   QT_GALLERY_ITEM_PROPERTY("rating"     , "User:Rank"     , String    , CanRead | CanWrite | CanSort | CanFilter),
 };
 
-//#define QT_GALLERY_FILE_COMPOSITE_PROPERTIES \
-//    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create, qt_writeFilePathCondition), \
-//    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("url", Url, QGalleryTrackerFileUrlColumn::create, qt_writeFileUrlCondition)
-
+/*
+#define QT_GALLERY_FILE_COMPOSITE_PROPERTIES \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create, qt_writeFilePathCondition), \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("url", Url, QGalleryTrackerFileUrlColumn::create, qt_writeFileUrlCondition)
+*/
 static const QGalleryCompositeProperty qt_galleryFileCompositePropertyList[] =
 {
 //    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
@@ -765,12 +770,15 @@ static void qt_writeFileIdCondition(QDocumentGallery::Error *error, QXmlStreamWr
     }
 }
 
+#if 0
 static void qt_writeFileContainerCondition(
         QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("File:Path"), itemId.toString());
 }
+#endif
 
+#if 0
 static void qt_writeFileScopeCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     xml->writeStartElement(QLatin1String("rdfq:or"));
@@ -789,7 +797,9 @@ static void qt_writeFileScopeCondition(QDocumentGallery::Error *, QXmlStreamWrit
 
     xml->writeEndElement();
 }
+#endif
 
+#if 0
 static QStringList qt_trackerRootPaths()
 {
     QString configFileName;
@@ -840,7 +850,9 @@ static QStringList qt_trackerRootPaths()
 
     return paths;
 }
+#endif
 
+#if 0
 static bool qt_writeFileRootContainerCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml)
 {
     xml->writeStartElement(QLatin1String("rdfq:inSet"));
@@ -856,6 +868,7 @@ static bool qt_writeFileRootContainerCondition(QDocumentGallery::Error *, QXmlSt
 
     return true;
 }
+#endif
 
 ////////
 // Audio
@@ -1008,6 +1021,27 @@ static const QGalleryCompositeProperty qt_galleryDocumentCompositePropertyList[]
 //    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
+
+static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
+{
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter | CanSort)
+};
+
+static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
+{
+    QT_GALLERY_ITEM_PROPERTY("title"      , "nmm:albumTitle"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "nmm:albumTitle"      , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "nmm:albumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "nmm:albumArtist", String, CanRead | CanFilter | CanSort)
+};
+
+static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
+{
+    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", "SUM"  , Int),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
+};
+
 /////////////
 // File Types
 /////////////
@@ -1023,7 +1057,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Playlist  , nmm:Playlist      , playlist  , Playlist),
     QT_GALLERY_ITEM_TYPE(Text      , nfo:TextDocument  , text      , File),
     QT_GALLERY_ITEM_TYPE(Artist    , nmm:Artist        , Artist    , Audio),
-    QT_GALLERY_ITEM_TYPE(Album     , nmm:MusicAlbum    , album     , Audio),
+    QT_GALLERY_ITEM_TYPE(Album     , nmm:MusicAlbum    , album     , Album),
     QT_GALLERY_ITEM_TYPE(PhotoAlbum, nmm:ImageList     , photoAlbum, Image)
 };
 
@@ -1060,13 +1094,13 @@ static void qt_writeArtistIdCondition(QDocumentGallery::Error *, QXmlStreamWrite
 
 static const QGalleryItemProperty qt_galleryAlbumArtistIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort)
+    QT_GALLERY_ITEM_PROPERTY("title", "nmm:albumArtist", String, CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryAlbumArtistPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("artist", "nmm:albumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "nmm:albumArtist", String, CanRead | CanFilter | CanSort),
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumArtistAggregateList[] =
@@ -1084,25 +1118,7 @@ static void qt_writeAlbumArtistIdCondition(QDocumentGallery::Error *, QXmlStream
 // Album
 ////////
 
-static const QGalleryItemProperty qt_galleryAlbumIdentity[] =
-{
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:Album"      , String, CanRead | CanFilter | CanSort)
-};
 
-static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
-{
-    QT_GALLERY_ITEM_PROPERTY("title"      , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("albumTitle" , "Audio:Album"      , String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("artist"     , "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("albumArtist", "Audio:AlbumArtist", String, CanRead | CanFilter | CanSort)
-};
-
-static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
-{
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", "SUM"  , Int),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
-};
 
 #if 0
 static void qt_writeAlbumIdCondition(
@@ -1138,13 +1154,13 @@ static void qt_writeAlbumIdCondition(
 
 static const QGalleryItemProperty qt_galleryAudioGenreIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("genre", "nfo:genre", String, CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title", "nfo:genre", String, CanRead | CanFilter)
 };
 
 static const QGalleryItemProperty qt_galleryAudioGenrePropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("genre", "nfo:genre", String, CanRead | CanFilter)
-//    QT_GALLERY_ITEM_PROPERTY("title", "Audio:Genre", String, CanRead | CanFilter),
+//    QT_GALLERY_ITEM_PROPERTY("genre", "nfo:genre", String, CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("title", "nfo:genre", String, CanRead | CanFilter)
 };
 
 static const QGalleryAggregateProperty qt_galleryAudioGenreAggregateList[] =
@@ -1224,6 +1240,7 @@ QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iter
 
 QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterator row) const
 {
+    Q_ASSERT(0);
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
     const int index = itemTypes.indexOfService((row + 1)->toString());
@@ -1422,11 +1439,13 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
     QDocumentGallery::Error error = QDocumentGallery::NoError;
 
     QString query;
+    
+    QString tmp( ( m_itemIndex >= 0  ? qt_galleryItemTypeList[m_itemIndex].itemType :  qt_galleryAggregateTypeList[m_aggregateIndex].itemType));
+    qDebug() << "QUERY PARAMETERS:" << rootItemId << " " << propertyNames << " type:" <<  tmp;
 
     if (!rootItemId.isEmpty()
             || filter.isValid()
             || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
-        qFatal( "NOT IMPLEMENTED ( %s: %d )", __FILE__, __LINE__);
         error = buildFilterQuery(&query, scope, rootItemId, filter);
     }
 
@@ -1491,6 +1510,26 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
 
     QDocumentGallery::Error result = QDocumentGallery::NoError;
 
+#if 1
+    Q_UNUSED(scope);
+    Q_UNUSED(filter);
+    int index;
+    if ( (index = itemTypes.indexOfItemId(rootItemId) ) != -1) {
+        if( itemTypes[index].prefix == "Artist::" )
+            *query = "{?track nie:isLogicalPartOf ?x} FILTER( nmm:performer(?track) = <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">)";
+        else
+            *query = "{?x nie:isLogicalPartOf <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">}";
+    }
+    else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
+        if( aggregateTypes[index].prefix == "audioGenre::" )
+            *query = "{?track nie:isLogicalPartOf ?x} FILTER(nfo:genre(?track) = '" + aggregateTypes[index].prefix.strip(rootItemId).toString() + "' )";
+    } else {
+        result = QDocumentGallery::ItemIdError;
+    }
+
+    return result;
+
+#else
     QXmlStreamWriter xml(query);
     QXmlStackStreamWriter writer(&xml);
 
@@ -1542,8 +1581,8 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
             result = QDocumentGallery::ItemTypeError;
         }
     }
-
     return result;
+#endif
 }
 
 static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
@@ -1579,12 +1618,15 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     return columns;
 }
 
-static QString qt_preparePropertySelection( const QStringList& fields )
+static QString qt_preparePropertySelection( const QStringList& fields, const QString& variable )
 {
     QString result;
     foreach( const QString& field, fields )
     {
-        result += field + "(?x) ";
+        result += field;
+        result += "(?";
+        result += variable;
+        result += ") ";
     }
 
     return result.trimmed();
@@ -1597,7 +1639,6 @@ void QGalleryTrackerSchema::populateItemArguments(
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
 {
-    const int liveQueryId = 0;
     const QString service = qt_galleryItemTypeList[m_itemIndex].service;
     const QString searchText;
     const QStringList keywords;
@@ -1632,6 +1673,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             int fieldIndex = arguments->fieldNames.indexOf(field);
 
             if (fieldIndex >= 0) {
+                Q_ASSERT( 0 );
                 arguments->aliasColumns.append(fieldIndex + 2);
                 aliasNames.append(*it);
                 aliasAttributes.append(itemProperties[propertyIndex].attributes);
@@ -1651,6 +1693,7 @@ void QGalleryTrackerSchema::populateItemArguments(
 
         int propertyIndex;
         if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
+            Q_ASSERT(0);
             const QGalleryItemPropertyList &dependencies
                     = compositeProperties[propertyIndex].dependencies;
 
@@ -1732,20 +1775,24 @@ void QGalleryTrackerSchema::populateItemArguments(
         }
     }
 
+    Q_UNUSED( sortByService );
     arguments->service = qt_galleryItemTypeList[m_itemIndex].service;
     arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
     arguments->identityWidth = 1;
-    arguments->valueOffset = 3;  // urn + service + nie:url
+    arguments->valueOffset = 2;  // urn + nie:url
     arguments->tableWidth =  arguments->valueOffset + arguments->fieldNames.count();
     arguments->compositeOffset = arguments->valueOffset + valueNames.count();
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
     arguments->queryArguments = QVariantList()
-                                << "SELECT ?x nie:url(?x) " + qt_preparePropertySelection(arguments->fieldNames) + " WHERE { ?x rdf:type " + service + "}";
+                                << "SELECT DISTINCT ?x nie:url(?x) " + qt_preparePropertySelection(arguments->fieldNames, "x")
+                                + " WHERE {{ ?x rdf:type " + service + "}"
+                                + ( !query.isEmpty() ? query : "" )
+                                + "}";
 
-    arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
+    arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0,qt_galleryItemTypeList[m_itemIndex].prefix));
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
-    arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
+    arguments->typeColumn.reset(new QGalleryTrackerStaticColumn(QVariant(qt_galleryItemTypeList[m_itemIndex].itemType)));
     arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
@@ -1904,18 +1951,20 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
         }
     }
+
+    Q_UNUSED( query );
     arguments->service = type.service;
     arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
     arguments->identityWidth = identityColumns.count();
-    arguments->valueOffset = identityColumns.count() + 1 ; // identities + service
-    arguments->tableWidth = arguments->valueOffset + aggregates.count();
+    arguments->valueOffset = 0;
+    arguments->tableWidth = identityColumns.count() + aggregates.count();
     arguments->compositeOffset = arguments->tableWidth;
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
     if( type.service == "nfo:genre")
     {
         arguments->queryArguments = QVariantList()
-                                << "SELECT DISTINCT(?genre) WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?genre }";
+                                << "SELECT DISTINCT " + qt_preparePropertySelection(identityFields, "x") + " WHERE {?x rdf:type nfo:Media}";
     }
     else
     {
