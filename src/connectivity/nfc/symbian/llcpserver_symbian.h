@@ -6,9 +6,7 @@
 #include <e32base.h>
 #include <nfcserver.h>                      // RNfcServer
 #include <llcpprovider.h>                   // CLlcpProvider
-#include <llcpconnlesslistener.h>           // MLlcpConnLessListener
 #include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
-#include <llcplinklistener.h>               // MLlcpLinkListener
 
 class CLlcpSocketType2;
 
@@ -36,10 +34,12 @@ public:
    
 public:    
    void Listen( const TDesC8& aServiceName);
+   bool isListening() const;
+   CLlcpSocketType2 *nextPendingConnection();
+   bool hasPendingConnections() const;
     
 private: // From MLlcpConnOrientedListener   
     void RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection ); 
-    void CreateLocalConnection();
     
 private:
     // Constructor
@@ -50,18 +50,23 @@ private:
     
 private:
    
-    RPointerArray<CLlcpSocketType2>  iPendingConnections;
+    //RPointerArray<CLlcpSocketType2>  iPendingConnections;
+    CLlcpSocketType2 *iLlcpSocket;
+    
    /*!
     * Handle to NFC-server.
     * Own.
     */ 
    RNfcServer iNfcServer;
    
+   
    /*!
     * Pointer to CLlcpProvider object.
     * Own.
     */
    CLlcpProvider* iLlcp;
+   
+   bool iSocketListening;
    
    };
     

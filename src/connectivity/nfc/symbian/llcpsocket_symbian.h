@@ -42,8 +42,9 @@ public:
    ~CLlcpSocketType1();
    
 public:    
-   TInt WriteDatagram(const TDesC8& aData);
-   bool Bind(TInt portNum);
+   TInt WriteDatagram(const TDesC8& aData,TInt8 portNum);
+   TInt ReadDatagram( TDes8& aData );
+   bool Bind(TInt8 portNum);
    
 private: // From MLlcpConnLessListener
     void FrameReceived( MLlcpConnLessTransporter* aConnection );
@@ -56,7 +57,7 @@ private:
     void ConstructL();  
     void Cleanup();   
     
-    void CreateLocalConnection();
+    void CreateLocalConnection(TInt8 portNum);
     void CreateRemoteConnection(MLlcpConnLessTransporter* aConnection);
     
 private:
@@ -122,6 +123,10 @@ public:
    void ConnectToService( const TDesC8& aServiceName);
    void DisconnectFromService();
    TInt WriteDatagram(const TDesC8& aData);
+   
+public:
+   COwnLlcpConnOriented* RemoteConnection() const;
+   void CreateRemoteConnectionL(MLlcpConnOrientedTransporter* aConnection);
     
 private:
     // Constructor
@@ -193,7 +198,7 @@ public:
     */
    ~COwnLlcpConnLess();
 
-public: //  From AbstractConnection
+public: 
    /*!
     * Transfer given data to remote device.
     */
@@ -207,7 +212,7 @@ public: //  From AbstractConnection
    /*!
     * Starts receive data from ConnLess.
     */
-   TInt Receive();
+   TInt Receive(TDes8& aData);
    
    /*!
     * Cancels COwnLlcpConnection::Receive() request.
@@ -215,11 +220,9 @@ public: //  From AbstractConnection
    void ReceiveCancel();
    
 public: // From CActive
-
     void RunL();
-    
     void DoCancel();
-   
+
 private:
 
     // Constructor
