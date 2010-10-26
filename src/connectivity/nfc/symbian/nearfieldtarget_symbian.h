@@ -46,9 +46,13 @@
 #include <e32std.h>		// For RTimer, link against: euser.lib
 
 class CNearFieldTagType1;
+class CNearFieldNdefTarget;
+
+#if 0
 class CNearFieldTagType2;
 class CNearFieldTagType3;
 class CNearFieldTagType4;
+#endif
 
 class CNearFieldTarget : public CActive
     {
@@ -58,14 +62,20 @@ public:
 
 public:
     virtual CNearFieldTagType1 * CastToTagType1();
+#if 0
     virtual CNearFieldTagType2 * CastToTagType2();
     virtual CNearFieldTagType3 * CastToTagType3();
     virtual CNearFieldTagType4 * CastToTagType4();
+#endif
+    
     virtual CNearFieldNdefTarget * CastToNdefTarget();
 
+    virtual TInt OpenConnection() = 0;
+    virtual void CloseConnection() = 0;
+    virtual TBool IsConnectionOpened() = 0;
+    
 protected:
     CNearFieldTarget();
-
     };
 
 #endif // NEARFIELDTARGET_H

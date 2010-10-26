@@ -41,12 +41,14 @@
 
 #include "nearfieldtarget_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
+#if 0
 #include "nearfieldtagtype2_symbian.h"
 #include "nearfieldtagtype3_symbian.h"
 #include "nearfieldtagtype4_symbian.h"
+#endif
 
-CNearFieldTarget::CNearFieldTarget() : CActive( EPriorityStandard ) // Standard priority
-
+CNearFieldTarget::CNearFieldTarget() : CActive(EPriorityStandard)// Standard priority
     {
     }
 
@@ -58,25 +60,27 @@ CNearFieldTarget::~CNearFieldTarget()
 
 CNearFieldTagType1 * CNearFieldTarget::CastToTagType1()
     {
-    return reinterpret_cast<CNearFieldTargetType1 *>(0);
+    return reinterpret_cast<CNearFieldTagType1 *>(0);
     }
-
+#if 0
 CNearFieldTagType2 * CNearFieldTarget::CastToTagType2()
     {
-    return reinterpret_cast<CNearFieldTargetType2 *>(0);
+    return reinterpret_cast<CNearFieldTagType2 *>(0);
     }
 
 CNearFieldTagType3 * CNearFieldTarget::CastToTagType3()
     {
-    return reinterpret_cast<CNearFieldTargetType3 *>(0);
+    return reinterpret_cast<CNearFieldTagType3 *>(0);
     }
 
 CNearFieldTagType4 * CNearFieldTarget::CastToTagType4()
     {
-    return reinterpret_cast<CNearFieldTargetType4 *>(0);
+    return reinterpret_cast<CNearFieldTagType4 *>(0);
     }
+#endif
 
 CNearFieldNdefTarget * CNearFieldTarget::CastToNdefTarget()
     {
-    return reinterpret_cast<CNearFieldNdefTag *>(0);
+    return reinterpret_cast<CNearFieldNdefTarget *>(0);
     }
+

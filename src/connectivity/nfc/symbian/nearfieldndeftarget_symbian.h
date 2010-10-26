@@ -45,12 +45,15 @@
 #include <e32base.h>	// For CActive, link against: euser.lib
 #include <nfcserver.h>
 #include <nfctype1address.h>
+#include <e32cmn.h> 
+
 #include "nearfieldtarget_symbian.h"
 
 class CNearFieldTagType1;
 class CNearFieldTagType2;
 class CNearFieldTagType3;
 class CNearFieldTagType4;
+class CNdefMessage;
 
 class CNdefConnection;
 
@@ -70,16 +73,22 @@ public: // New functions
     void SetRealTarget(CNearFieldNdefTarget * aRealTarget);
 
     // NdefAccess
-    virtual bool hasNdefMessage();
-    virtual QList<QNdefMessage> ndefMessages();
-    virtual void setNdefMessages(const QList<QNdefMessage> &messages);
+    bool hasNdefMessage(){};
+    void ndefMessages(RPointerArray<CNdefMessage>& aMessages){};
+    void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages){};
 
-private:
+public:
     CNearFieldTagType1 * CastToTagType1();
+#if 0
     CNearFieldTagType2 * CastToTagType2();
     CNearFieldTagType3 * CastToTagType3();
     CNearFieldTagType4 * CastToTagType4();
+#endif
     CNearFieldNdefTarget * CastToNdefTarget();
+    
+    TInt OpenConnection();
+    void CloseConnection();
+    TBool IsConnectionOpened();
 
 private:
     // C++ constructor
@@ -101,9 +110,9 @@ private: // From CActive
     
 private:
     // own
-    CNearFieldTarget * iRealTarget;
+    CNearFieldTarget * iTagConnection;
     CActiveSchedulerWait * iWait;
-    CNdefConnection * iNdefTarget;
+    CNdefConnection * iNdefConnection;
     // own by real target if real target is created
     // otherwise, own by this.
     MNfcTag * iNfcTag;

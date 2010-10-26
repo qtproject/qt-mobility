@@ -39,8 +39,10 @@
  **
  ****************************************************************************/
 #include <nfctype1connection.h>
+#include <ndefconnection.h>
 #include <nfctag.h>
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
 
 /*!
     \class CNearFieldNdefTarget
@@ -50,7 +52,7 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag) : iNfcTag(aNfcTag), CActive(EPriorityStandard)
+CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag) : iNfcTag(aNfcTag)
     {
     }
 
@@ -71,30 +73,13 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag)
 
 void CNearFieldNdefTarget::ConstructL()
     {
-    iNfcType1Connection = CNfcType1Connection::NewL(iNfcServer);
-    iWait = new(ELeave)CActiveSchedulerWait();
-    
-    User::LeaveIfError(iNfcTag->OpenConnection(*iNfcType1Connection));
     CActiveScheduler::Add(this); // Add to scheduler
     }
 
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
     Cancel(); // Cancel any request, if outstanding
-    if (iWait->IsStarted())
-        {
-        iWait->AsyncStop();
-        }
     
-    if (iNfcType1Connection->IsActivated())
-        {
-        iNfcTag->CloseConnection(*iNfcType1Connection);
-        }
-    
-    delete iWait;
-    delete iNfcType1Connection;
-    delete iNfcTag;
-    iNfcServer.Close();
     }
 
 void CNearFieldNdefTarget::DoCancel()
@@ -113,27 +98,61 @@ TInt CNearFieldNdefTarget::RunError(TInt aError)
     }
 
 
-CNearFieldNdefTarget * CNearFieldNdefTarget::CastToTagType1()
+CNearFieldTagType1 * CNearFieldNdefTarget::CastToTagType1()
     {
-    return iRealTarget ? iRealTarget->CastToTagType1() : reinterpret_cast<CNearFieldTagType1 *>(0);
+    if (IsConnectionOpened())
+        {
+        CloseConnection();
+        }
+    return iTagConnection ? iTagConnection->CastToTagType1() : reinterpret_cast<CNearFieldTagType1 *>(0);
+    }
+#if 0
+CNearFieldTagType2 * CNearFieldNdefTarget::CastToTagType2()
+    {
+    return iTagConnection ? iTagConnection->CastToTagType2() : reinterpret_cast<CNearFieldTagType2 *>(0);
     }
 
-CNearFieldNdefTarget * CNearFieldNdefTarget::CastToTagType2()
+CNearFieldTagType3 * CNearFieldNdefTarget::CastToTagType3()
     {
-    return iRealTarget ? iRealTarget->CastToTagType2() : reinterpret_cast<CNearFieldTagType2 *>(0);
+    return iTagConnection ? iTagConnection->CastToTagType3() : reinterpret_cast<CNearFieldTagType3 *>(0);
     }
 
-CNearFieldNdefTarget * CNearFieldNdefTarget::CastToTagType3()
+CNearFieldTagType4 * CNearFieldNdefTarget::CastToTagType4()
     {
-    return iRealTarget ? iRealTarget->CastToTagType3() : reinterpret_cast<CNearFieldTagType3 *>(0);
+    return iTagConnection ? iTagConnection->CastToTagType4() : reinterpret_cast<CNearFieldTagType4 *>(0);
     }
-
-CNearFieldNdefTarget * CNearFieldNdefTarget::CastToTagType4()
-    {
-    return iRealTarget ? iRealTarget->CastToTagType4() : reinterpret_cast<CNearFieldTagType4 *>(0);
-    }
+#endif
 
 CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
     {
-    return const_cast<CNearFieldNdefTarget *>(this);
+    TInt error = KErrNone;
+    if (iTagConnection)
+        {
+        if (iTagConnection->IsConnectionOpened())
+            {
+            iTagConnection->CloseConnection();
+            }
+        }
+    
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    return (error == KErrNone) ? const_cast<CNearFieldNdefTarget *>(this)
+                               : reinterpret_cast<CNearFieldNdefTarget *>(0);
+    }
+
+TInt CNearFieldNdefTarget::OpenConnection()
+    {
+    return iNfcTag->OpenConnection(*iNdefConnection);
+    }
+
+void CNearFieldNdefTarget::CloseConnection()
+    {
+    return iNfcTag->CloseConnection(*iNdefConnection);
+    }
+
+TBool CNearFieldNdefTarget::IsConnectionOpened()
+    {
+    return iNdefConnection->IsActivated();
     }

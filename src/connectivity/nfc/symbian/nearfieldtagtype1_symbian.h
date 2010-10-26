@@ -48,6 +48,7 @@
 #include "nearfieldtarget_symbian.h"
 
 class CNfcType1Connection;
+class MNfcTag;
 
 class CNearFieldTagType1 : public CNearFieldTarget
     {
@@ -78,8 +79,12 @@ public: // New functions
     void WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData);
     void WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData);
 
-private:
+public:
     CNearFieldTagType1 * CastToTagType1();
+    
+    TInt OpenConnection();
+    void CloseConnection();
+    TBool IsConnectionOpened();
 
 private:
     // C++ constructor
