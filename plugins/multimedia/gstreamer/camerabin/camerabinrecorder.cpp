@@ -46,12 +46,31 @@
 #include <QtCore/QDebug>
 
 CameraBinRecorder::CameraBinRecorder(CameraBinSession *session)
-    :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
+    :QMediaRecorderControl(session),
+     m_session(session),
+     m_state(QMediaRecorder::StoppedState),
+     m_resourceSet(0),
+     m_audioResource(0),
+     m_resourceState(NoResourceState)
 {
     connect(m_session, SIGNAL(stateChanged(QCamera::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
     connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
     connect(m_session, SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
+
+    // resource policy awareness
+    m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
+    m_resourceSet->setAlwaysReply();
+
+    m_audioResource = new ResourcePolicy::AudioResource("player");
+    m_audioResource->setProcessID(QCoreApplication::applicationPid());
+    m_audioResource->setStreamTag("media.name", "*");
+    m_resourceSet->addResourceObject(m_audioResource);
+
+    connect(m_resourceSet, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)),
+            this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
+    connect(m_resourceSet, SIGNAL(lostResources()), this, SLOT(resourceLostHandler()));
+    connect(m_resourceSet, SIGNAL(resourcesReleased()), this, SLOT(resourceReleasedHandler()));
 }
 
 CameraBinRecorder::~CameraBinRecorder()
@@ -83,12 +102,7 @@ void CameraBinRecorder::updateState()
     }
 }
 
-qint64 CameraBinRecorder::duration() const
-{
-    return m_session->duration();
-}
-
-void CameraBinRecorder::record()
+void CameraBinRecorder::doRecord()
 {
     if (m_session->state() == QCamera::ActiveState) {
         if (m_state == QMediaRecorder::PausedState)
@@ -100,11 +114,53 @@ void CameraBinRecorder::record()
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 }
 
+void CameraBinRecorder::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
+                                                      /*grantedOptionalResList*/)
+{
+    if (m_resourceState == PendingResourceState) {
+        m_resourceState = HasResourceState;
+        doRecord();
+    }
+}
+
+void CameraBinRecorder::resourceReleasedHandler()
+{
+    m_resourceState = NoResourceState;
+}
+
+void CameraBinRecorder::resourceLostHandler()
+{
+    if (m_resourceState == HasResourceState) {
+        m_resourceState = PendingResourceState;
+        pause();
+    }
+}
+
+qint64 CameraBinRecorder::duration() const
+{
+    return m_session->duration();
+}
+
+void CameraBinRecorder::record()
+{
+    if (m_resourceState == NoResourceState) {
+        m_resourceState = PendingResourceState;
+        m_resourceSet->acquire();
+    }
+    else if (m_resourceState == HasResourceState) {
+        doRecord();
+    }
+}
+
 void CameraBinRecorder::pause()
 {
     if (m_session->state() == QCamera::ActiveState) {
         m_session->pauseVideoRecording();
         emit stateChanged(m_state = QMediaRecorder::PausedState);
+
+        // release the resource
+        if (m_resourceState == HasResourceState)
+            m_resourceSet->release();
     } else
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 }
@@ -114,6 +170,10 @@ void CameraBinRecorder::stop()
     if (m_session->state() == QCamera::ActiveState) {
         m_session->stopVideoRecording();
         emit stateChanged(m_state = QMediaRecorder::StoppedState);
+
+        // release the resource
+        if (m_resourceState != NoResourceState)
+            m_resourceSet->release();
     }
 }
 

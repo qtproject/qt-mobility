@@ -44,6 +44,7 @@
 #define CAMERABINRECORDERCONTROL_H
 
 #include <qmediarecordercontrol.h>
+#include <policy/resource-set.h>
 #include "camerabinsession.h"
 QT_USE_NAMESPACE
 
@@ -76,10 +77,27 @@ public slots:
 
 private slots:
     void updateState();
+    void doRecord();
+
+    // resource policy awareness
+    void resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>& /*grantedOptionalResList*/);
+    void resourceReleasedHandler();
+    void resourceLostHandler();
 
 private:
     CameraBinSession *m_session;
     QMediaRecorder::State m_state;
+
+    // resource policy awareness
+    ResourcePolicy::ResourceSet *m_resourceSet;
+    ResourcePolicy::AudioResource *m_audioResource;
+
+    enum ResourceState {
+        NoResourceState = 0,
+        PendingResourceState,
+        HasResourceState
+    };
+    ResourceState m_resourceState;
 };
 
 #endif // CAMERABINCAPTURECORNTROL_H
