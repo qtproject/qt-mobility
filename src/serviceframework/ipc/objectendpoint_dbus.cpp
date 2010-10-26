@@ -250,7 +250,6 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
 
                 int serviceIndex = iface->metaObject()->indexOfSignal(sig);
                 QByteArray signal = QByteArray("2").append(sig);
-                QByteArray method = QByteArray("1").append(sig);
 
                 if (serviceIndex > 0) {
                     if (customType) {
@@ -260,7 +259,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
                             new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
                         intercept->setMetaIndex(i);
                     } else {
-                        QObject::connect(iface, signal.constData(), service, method.constData());
+                        QObject::connect(iface, signal.constData(), service, signal.constData());
                     }
                 }
             }
