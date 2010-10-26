@@ -46,6 +46,7 @@
 #include <nfcserver.h>
 #include <nfctype1address.h>
 #include <e32cmn.h> 
+#include <ndefhandler.h>
 
 #include "nearfieldtarget_symbian.h"
 
@@ -57,7 +58,8 @@ class CNdefMessage;
 
 class CNdefConnection;
 
-class CNearFieldNdefTarget : public CNearFieldTarget
+class CNearFieldNdefTarget : public CNearFieldTarget, 
+                             public MNdefHandler
     {
 public:
     // Cancel and destroy
@@ -70,7 +72,7 @@ public:
     static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag);
 
 public: // New functions
-    void SetRealTarget(CNearFieldNdefTarget * aRealTarget);
+    void SetRealTarget(CNearFieldTarget * aRealTarget);
 
     // NdefAccess
     bool hasNdefMessage(){};
@@ -107,6 +109,12 @@ private: // From CActive
     // Override to handle leaves from RunL(). Default implementation causes
     // the active scheduler to panic.
     TInt RunError( TInt aError );
+    
+private: // From MNdefHandler
+    void ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart );    
+    void ReadComplete( CNdefMessage* aMessage );
+    void WriteComplete();
+    void HandleError( TInt aError );
     
 private:
     // own

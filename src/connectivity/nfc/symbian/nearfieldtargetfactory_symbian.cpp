@@ -42,6 +42,7 @@
 #include <nfctag.h>
 #include "nearfieldtargetfactory_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 
 /*!
@@ -62,7 +63,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QOb
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
-        tag = CreateTagType1(aNfcTag, aParent);
+        tag = CreateTagType1L(aNfcTag, aParent);
         }
     return tag;
     }
@@ -71,16 +72,31 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QOb
     Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1(MNfcTag * aNfcTag, QObject * aParent)
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
     CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
-    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(tagType1, aParent);
+    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(WrapNdefAccessL(aNfcTag, tagType1), aParent);
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
     CleanupStack::Pop(tagType1);
     return tag;
     }
-    
+   
+CNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, CNearFieldTarget * aTarget)
+    {
+    if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
+        {
+        CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag);
+        ndefTarget->SetRealTarget(aTarget);
+        CleanupStack::Pop(ndefTarget);
+        return ndefTarget;
+        }
+    else
+        {
+        return aTarget;
+        }
+    }
+           
 /*!
     Convert connection mode information in \a aNfcTag to access methods
 */

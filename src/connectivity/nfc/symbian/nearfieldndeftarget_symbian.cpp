@@ -76,10 +76,23 @@ void CNearFieldNdefTarget::ConstructL()
     CActiveScheduler::Add(this); // Add to scheduler
     }
 
+void CNearFieldNdefTarget::SetRealTarget(CNearFieldTarget * aRealTarget)
+    {
+    iTagConnection = aRealTarget;
+    }
+
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
     Cancel(); // Cancel any request, if outstanding
     
+    if (iTagConnection)
+        {
+        delete iTagConnection;
+        }
+    else
+        {
+        delete iNfcTag;
+        }
     }
 
 void CNearFieldNdefTarget::DoCancel()
@@ -155,4 +168,20 @@ void CNearFieldNdefTarget::CloseConnection()
 TBool CNearFieldNdefTarget::IsConnectionOpened()
     {
     return iNdefConnection->IsActivated();
+    }
+
+void CNearFieldNdefTarget::ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart )
+    {
+    }
+
+void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
+    {
+    }
+
+void CNearFieldNdefTarget::WriteComplete()
+    {
+    }
+
+void CNearFieldNdefTarget::HandleError( TInt aError )
+    {
     }
