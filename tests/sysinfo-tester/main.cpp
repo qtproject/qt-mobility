@@ -153,10 +153,9 @@ static const symbol_t ChargerType_lut[] =
 {
     SYM(QSystemBatteryInfo::UnknownCharger),
     SYM(QSystemBatteryInfo::NoCharger),
-    SYM(QSystemBatteryInfo::Wall),
-    SYM(QSystemBatteryInfo::USB_500mA),
-    SYM(QSystemBatteryInfo::BatteryOk),
-    SYM(QSystemBatteryInfo::USB_100mA),
+    SYM(QSystemBatteryInfo::WallCharger),
+    SYM(QSystemBatteryInfo::USB_500mACharger),
+    SYM(QSystemBatteryInfo::USB_100mACharger),
 };
 
 /* ------------------------------------------------------------------------- *

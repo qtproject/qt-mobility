@@ -177,13 +177,6 @@ int QSystemDisplayInfo::physicalWidth(int screen)
         return displayInfoPrivate()->physicalWidth(screen);
 }
 
-/*!
-    Returns whether the display backlighting is on or not.
-*/
-bool QSystemDisplayInfo::backLightOn()
-{
-    return displayInfoPrivate()->backLightOn();
-}
 
 
 

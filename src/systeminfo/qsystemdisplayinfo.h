@@ -77,8 +77,6 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
 
-    bool backLightOn(); //1.2
-
 };
 
 
