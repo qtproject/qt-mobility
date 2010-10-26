@@ -99,6 +99,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void stateChanged(QMediaPlayer::State);
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
+    void error(QMediaPlayer::Error);
 
 private:
     void setStatus(QSoundEffect::Status status);
