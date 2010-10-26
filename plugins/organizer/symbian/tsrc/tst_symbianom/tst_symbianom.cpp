@@ -156,6 +156,8 @@ private slots:  // Test cases
 	void timezone();
     void supportedItemTypes_data() { addManagers(); };
     void supportedItemTypes();
+    void outOfMemory_data() { addManagers(); };
+    void outOfMemory();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -343,6 +345,34 @@ void tst_SymbianOm::fetchItemIds()
         QVERIFY(id != QOrganizerItemId());
         QVERIFY(expectedIds.contains(id));
     }
+
+    // Try fetching items from a specified time range.
+    
+    // Add a reccurring event before time range
+    QOrganizerEvent event;
+    event.setDisplayLabel("Weekly event");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    event.setStartDateTime(dateTime);
+    event.setEndDateTime(dateTime.addSecs(60*60));
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+    event.setRecurrenceRule(rule);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // TODO: Add an exception to reccurring event
+    
+    // Add a todo after the range
+    QOrganizerTodo todo;
+    todo.setDisplayLabel("Todo");
+    todo.setStartDateTime(dateTime.addDays(9));
+    todo.setDueDateTime(dateTime.addDays(10));
+    QVERIFY(m_om->saveItem(&todo));
+    
+    // Get items in the range
+    actualIds = m_om->itemIds(dateTime.addDays(1), dateTime.addDays(8));
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
+    QVERIFY(actualIds.contains(event.id())); // one occurence is in time range 
+    QVERIFY(!actualIds.contains(todo.id())); // should not be found because out of time range
 }
 
 void tst_SymbianOm::uniqueIds()
@@ -809,6 +839,30 @@ void tst_SymbianOm::supportedItemTypes()
         // TODO: Try saving an item with the given type.
         // This would require some logic though.
     }
+}
+
+void tst_SymbianOm::outOfMemory()
+{
+    // Qt documentation says:
+    // "The range of valid dates is from January 2nd, 4713 BCE, to sometime in the year 11 million CE."
+    QDateTime dateTime(QDate(-4713, 1, 2));
+    
+    // Add a reccurring event
+    QOrganizerEvent event;
+    event.setDisplayLabel("Daily event");
+    event.setStartDateTime(dateTime);
+    event.setEndDateTime(dateTime.addSecs(60*60));
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    event.setRecurrenceRule(rule);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // This will produce ~2500000 occurences. No way it will fit in memory
+    QList<QOrganizerItem> items = m_om->items(dateTime, QDateTime());
+    QVERIFY(m_om->error() == QOrganizerManager::OutOfMemoryError);
+
+    items = m_om->itemOccurrences(event);
+    QVERIFY(m_om->error() == QOrganizerManager::OutOfMemoryError);
 }
 
 /*!
