@@ -16,6 +16,7 @@
 *
 */
 #include "llcpserver_symbian.h"
+#include "llcpsocket_symbian.h"
 
 // TODO
 // will obslete with API updated
@@ -46,7 +47,9 @@ CLlcpServer* CLlcpServer::NewLC()
     CLlcpServer::CLlcpServer()
 */
 CLlcpServer::CLlcpServer()
-    :iLlcp( NULL )
+    :iLlcpSocket(NULL),
+     iLlcp( NULL ),
+     iSocketListening(EFalse)
     {
     }
 
@@ -62,9 +65,7 @@ void CLlcpServer::ConstructL()
     Destroys the LLCP socket.
 */
 CLlcpServer::~CLlcpServer()
-    {
-    
-    iPendingConnections.Close();
+    { 
     if ( iLlcp )
         {
         delete iLlcp;
@@ -72,49 +73,59 @@ CLlcpServer::~CLlcpServer()
         }
     }
 
+
+CLlcpSocketType2* CLlcpServer::nextPendingConnection()
+    {
+       return iLlcpSocket;
+    }
+
+bool CLlcpServer::hasPendingConnections() const
+    {
+    iLlcpSocket != NULL ? ETrue: EFalse;
+    }
+
 /*!
     Listen to the LLCP Socket by the URI \a serviceUri .
 */
 void CLlcpServer::Listen( const TDesC8& aServiceName)
     {
-        // TODO
-        // will updated to
-        // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-        iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap );  
+    TInt error = KErrNone; 
+    iLlcpSocket = CLlcpSocketType2::NewL();
+    // TODO
+    // will updated to
+    // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
+    TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));  
+    error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     }
 
+
+bool CLlcpServer::isListening() const
+    {
+        return iSocketListening;
+    }
 
 /*!
     Call back from MLlcpConnOrientedListener
 */
 void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
-    {  
-    }
-
-
-
-void CLlcpServer::CreateLocalConnection()
-    {
+    {   
     TInt error = KErrNone;
-    MLlcpConnLessTransporter* connType1 = NULL;
-    /*
-    if ( iLocalConnection )
-        return;
-        
-   TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( KInterestingSsap ) );
-
-    
-    if ( error == KErrNone )
+       
+    // create remote connection for the iLlcpsocket
+    if( !iLlcpSocket->RemoteConnection())
         {
-        TRAP( error, iLocalConnection = 
-                    COwnLlcpConnLess::NewL( connType1 )) ;              
-        
+        aConnection->AcceptConnectRequest();
+         
+        // Creating wrapper for connection. 
+        TRAP( error, iLlcpSocket->CreateRemoteConnectionL(aConnection));
         if ( error != KErrNone )
             {
-            delete iLocalConnection;
+            delete aConnection;
             }
         }
-     */
-    return;        
+    
+    //TODO emit The newConnection() signal is then emitted each time a client connects to the server.
+
     }
+
 
