@@ -89,12 +89,12 @@ QString contactDisplayName(const QMessageAddress &address)
     QContactDetailFilter filter;
     if (address.type() == QMessageAddress::Email) {
         // Match contacts on email address data
-        filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName);
+        filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
         filter.setValue(addressOnly);
         filter.setMatchFlags(QContactFilter::MatchContains);
     } else if (address.type() == QMessageAddress::Phone) {
         // Match contacts on phone number data
-        filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+        filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
         filter.setValue(addressOnly);
         filter.setMatchFlags(QContactFilter::MatchPhoneNumber);
     }
