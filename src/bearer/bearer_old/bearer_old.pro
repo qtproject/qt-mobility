@@ -5,15 +5,13 @@ TARGET = QtBearer{000a0000}
 QT += network
 message("Building QtBearer 10.0 to support version conflict in Symbian")
 
-VPATH += ..
-
-include (../../../common.pri) 
-include (../bearer.pri)
+include ($$PWD/../../../common.pri) 
+include ($$PWD/../bearer.pri)
 
 
-HEADERS += qnetworkconfiguration.h \
-           qnetworksession.h \
-           qnetworkconfigmanager.h
+HEADERS += $$PWD/../qnetworkconfiguration.h \
+           $$PWD/../qnetworksession.h \
+           $$PWD/../qnetworkconfigmanager.h
          
 
 symbian {
