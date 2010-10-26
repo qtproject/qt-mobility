@@ -2,9 +2,9 @@ DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
 
-SOURCES += qnetworksession.cpp \
-           qnetworkconfigmanager.cpp \
-           qnetworkconfiguration.cpp
+SOURCES += $$PWD/qnetworksession.cpp \
+           $$PWD/qnetworkconfigmanager.cpp \
+           $$PWD/qnetworkconfiguration.cpp
 
 symbian: {
     contains (occ_enabled, yes) {
@@ -25,12 +25,12 @@ symbian: {
     
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-    HEADERS += qnetworkconfigmanager_s60_p.h \
-               qnetworkconfiguration_s60_p.h \
-               qnetworksession_s60_p.h
-    SOURCES += qnetworkconfigmanager_s60_p.cpp \
-               qnetworkconfiguration_s60_p.cpp \
-               qnetworksession_s60_p.cpp
+    HEADERS += $$PWD/qnetworkconfigmanager_s60_p.h \
+               $$PWD/qnetworkconfiguration_s60_p.h \
+               $$PWD/qnetworksession_s60_p.h
+    SOURCES += $$PWD/qnetworkconfigmanager_s60_p.cpp \
+               $$PWD/qnetworkconfiguration_s60_p.cpp \
+               $$PWD/qnetworksession_s60_p.cpp
                
     LIBS += -lcommdb \
             -lapsettingshandlerui \
@@ -58,12 +58,12 @@ symbian: {
                 DEFINES += BEARER_MANAGEMENT_DEBUG
         }
 
-        HEADERS += qnetworksession_maemo_p.h \
-                   qnetworkconfigmanager_maemo_p.h \
-                   qnetworkconfiguration_maemo_p.h
+        HEADERS += $$PWD/qnetworksession_maemo_p.h \
+                   $$PWD/qnetworkconfigmanager_maemo_p.h \
+                   $$PWD/qnetworkconfiguration_maemo_p.h
 
-        SOURCES += qnetworkconfigmanager_maemo.cpp \
-                   qnetworksession_maemo.cpp
+        SOURCES += $$PWD/qnetworkconfigmanager_maemo.cpp \
+                   $$PWD/qnetworksession_maemo.cpp
 
         documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
@@ -81,51 +81,51 @@ symbian: {
 
         DEFINES += BEARER_ENGINE
 
-        HEADERS += qnetworkconfigmanager_p.h \
-                   qnetworkconfiguration_p.h \
-                   qnetworksession_p.h \
-                   qnetworksessionengine_p.h \
-                   qgenericengine_p.h
+        HEADERS += $$PWD/qnetworkconfigmanager_p.h \
+                   $$PWD/qnetworkconfiguration_p.h \
+                   $$PWD/qnetworksession_p.h \
+                   $$PWD/qnetworksessionengine_p.h \
+                   $$PWD/qgenericengine_p.h
 
-        SOURCES += qnetworkconfigmanager_p.cpp \
-                   qnetworksession_p.cpp \
-                   qnetworksessionengine.cpp \
-                   qgenericengine.cpp
+        SOURCES += $$PWD/qnetworkconfigmanager_p.cpp \
+                   $$PWD/qnetworksession_p.cpp \
+                   $$PWD/qnetworksessionengine.cpp \
+                   $$PWD/qgenericengine.cpp
 
         unix:!mac:contains(networkmanager_enabled, yes) {
             contains(QT_CONFIG,dbus) {
                 DEFINES += BACKEND_NM
                 QT += dbus
 
-                HEADERS += qnmdbushelper_p.h \
-                           qnetworkmanagerservice_p.h \
-                           qnmwifiengine_unix_p.h
+                HEADERS += $$PWD/qnmdbushelper_p.h \
+                           $$PWD/qnetworkmanagerservice_p.h \
+                           $$PWD/qnmwifiengine_unix_p.h
 
-                SOURCES += qnmdbushelper.cpp \
-                           qnetworkmanagerservice_p.cpp \
-                           qnmwifiengine_unix.cpp
+                SOURCES += $$PWD/qnmdbushelper.cpp \
+                           $$PWD/qnetworkmanagerservice_p.cpp \
+                           $$PWD/qnmwifiengine_unix.cpp
             } else {
                 message("NetworkManager backend requires Qt DBus support")
             }
         }
 
         win32: {
-            HEADERS += qnlaengine_win_p.h \
-                   qnetworksessionengine_win_p.h
+            HEADERS += $$PWD/qnlaengine_win_p.h \
+                   $$PWD/qnetworksessionengine_win_p.h
 
-            !wince*:HEADERS += qnativewifiengine_win_p.h
+            !wince*:HEADERS += $$PWD/qnativewifiengine_win_p.h
 
-            SOURCES += qnlaengine_win.cpp
+            SOURCES += $$PWD/qnlaengine_win.cpp
 
-            !wince*:SOURCES += qnativewifiengine_win.cpp
+            !wince*:SOURCES += $$PWD/qnativewifiengine_win.cpp
 
             !wince*:LIBS += -lWs2_32
             wince*:LIBS += -lWs2
         }
     }
     macx: {
-        HEADERS += qcorewlanengine_mac_p.h
-        SOURCES+= qcorewlanengine_mac.mm
+        HEADERS += $$PWD/qcorewlanengine_mac_p.h
+        SOURCES+= $$PWD/qcorewlanengine_mac.mm
         LIBS += -framework Foundation -framework SystemConfiguration
 
             contains(corewlan_enabled, yes) {
@@ -148,4 +148,4 @@ symbian: {
 }
 
 CONFIG += middleware
-include(../../features/deploy.pri)
+include($$PWD/../../features/deploy.pri)
