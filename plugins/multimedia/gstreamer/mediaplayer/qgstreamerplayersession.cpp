@@ -1274,7 +1274,7 @@ void QGstreamerPlayerSession::resourceReleasedHandler()
 
 void QGstreamerPlayerSession::resourceLostHandler()
 {
-    if (m_resourceState != NoResourceState) {
+    if (m_resourceState == HasResourceState) {
         m_resourceState = PendingResourceState;
         pause();
     }
