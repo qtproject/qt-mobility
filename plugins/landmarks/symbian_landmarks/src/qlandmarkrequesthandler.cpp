@@ -58,7 +58,8 @@ TWaitThrdData::TWaitThrdData()
 
 CLandmarkRequestAO::CLandmarkRequestAO(CPosLmOperation *aOperation,
     MLandmarkRequestObserver *aObserver) :
-    CActive(EPriorityStandard), iObserver(aObserver), iOperation(aOperation)
+    CActive(EPriorityStandard), iObserver(aObserver), iOperation(aOperation),
+        iIsDestructing(EFalse)
 {
     CActiveScheduler::Add(this);
 }
@@ -247,11 +248,10 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 
 void CLandmarkRequestAO::DoCancel()
 {
-    if( !iIsRequestRunning)
-        return;
-    
-    //qDebug() << "DoCancel : request is canceled";
+    qDebug() << "DoCancel : request is canceled";
     if (iOperation) {
+        //qDebug() << "a operational request is canceled";
+
         // Only way to cancel the operation is to delete the CPosLmOperation object.
         // Will also take care of cancelling any request which may be pending.
         delete iOperation;
@@ -457,7 +457,9 @@ void CLandmarkRequestAO::WakeupThreads(TInt aCompletion)
     TWaitThrdData* Ptr = NULL;
     TSglQueIter<TWaitThrdData> Iter(iParent->iWaitThrds);
 
-    iParent->iLock.Wait();
+    if (!iIsDestructing)
+        iParent->iLock.Wait();
+
     Iter.SetToFirst();
     while ((Ptr = Iter++) != NULL) {
 
