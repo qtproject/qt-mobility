@@ -937,7 +937,7 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 void QSystemBatteryInfoPrivate::setInitialData()
 {
     setBatteryStatus(QSystemBatteryInfo::BatteryLow);
-    setChargerType(QSystemBatteryInfo::USB_500mA);
+    setChargerType(QSystemBatteryInfo::USB_500mACharger;
     setChargingState(QSystemBatteryInfo::Charging);
 
     setNominalCapacity(9876);
