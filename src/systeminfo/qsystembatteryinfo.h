@@ -95,11 +95,11 @@ public:
     };
 
     enum ChargerType {
-        Unknown = -1,
-        None,
-        Wall,
-        USB_500mA,
-        USB_100mA
+        UnknownCharger = -1,
+        NoCharger,
+        WallCharger,
+        USB_500mACharger,
+        USB_100mACharger
     };
 
     QSystemBatteryInfo::ChargerType chargerType() const;
