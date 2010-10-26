@@ -232,7 +232,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
-    if(wlanSignalStrengthTimer->isActive())
+    if(wlanSignalStrengthTimer && wlanSignalStrengthTimer->isActive())
         wlanSignalStrengthTimer->stop();
 }
 
