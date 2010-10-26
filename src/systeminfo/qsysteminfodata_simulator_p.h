@@ -107,6 +107,14 @@ struct QSystemDisplayInfoData
 {
     int displayBrightness;
     int colorDepth;
+
+    QSystemDisplayInfo::DisplayOrientation orientation;
+    float contrast;
+    int dpiHeight;
+    int dpiWidth;
+    int physicalHeight;
+    int physicalWidth;
+
 };
 
 struct QSystemStorageInfoData
@@ -116,6 +124,8 @@ struct QSystemStorageInfoData
         QSystemStorageInfo::DriveType type;
         qint64 totalSpace;
         qint64 availableSpace;
+        QString uri;
+        QSystemStorageInfo::StorageState state;
     };
 
     QHash<QString, DriveInfo> drives;
@@ -134,13 +144,43 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::Profile currentProfile;
     QSystemDeviceInfo::PowerState currentPowerState;
 
+    QSystemDeviceInfo::KeyboardType keyboardType;
+    QSystemDeviceInfo::LockType lockType;
+
     int batteryLevel;
     bool deviceLocked;
+    bool currentBluetoothPower;
+
+    bool wirelessConnected;
+    bool keyboardFlip;
+    bool backLight;
+    bool keypadLight;
+    QUuid hostId;
+
 };
 
 struct QSystemScreenSaverData
 {
     unsigned screenSaverInhibited;
+};
+
+struct QSystemBatteryInfoData
+{
+    QSystemBatteryInfo::BatteryStatus batteryStatus;
+    QSystemBatteryInfo::ChargingState chargingState;
+    QSystemBatteryInfo::ChargerType chargerType;
+
+    int nominalCapacity;
+    int remainingCapacityPercent;
+    int remainingCapacitymAh;
+
+    int voltage;
+    int remainingChargingTime;
+
+    int currentFlow;
+    int cumulativeCurrentFlow;
+    int remainingCapacityBars;
+    int maxBars;
 };
 
 QTM_END_NAMESPACE
@@ -152,6 +192,7 @@ Q_DECLARE_METATYPE(QtMobility::QSystemDisplayInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemStorageInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemDeviceInfoData)
 Q_DECLARE_METATYPE(QtMobility::QSystemScreenSaverData)
+Q_DECLARE_METATYPE(QtMobility::QSystemBatteryInfoData)
 
 QT_END_HEADER
 

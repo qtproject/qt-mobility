@@ -25,7 +25,7 @@ SOURCES += qsystemgeneralinfo.cpp \
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
-DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
+DEFINES += QT_MAKEDLL
 
 
 win32:!simulator {
@@ -60,7 +60,17 @@ win32:!simulator {
 
 unix:!simulator {
     QT += gui
-    maemo5|maemo6|linux-*: {
+
+    !maemo5:!maemo6:linux-*: {
+
+        contains(build_unit_tests, yes) {
+            SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+            HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+            #   INCLUDEPATH += ../mobilitysimulator
+            #   qtAddLibrary(QtMobilitySimulator)
+            DEFINES += TESTR QT_SIMULATOR
+        } else {
+
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += linux/qsysteminfo_linux_common.cpp
         HEADERS += linux/qsysteminfo_linux_common_p.h
@@ -69,9 +79,6 @@ unix:!simulator {
             DEFINES += BLKID_SUPPORTED
             LIBS += -lblkid
         }
-    }
-
-    !maemo5:!maemo6:linux-*: {
             LIBS +=  -lX11 -lXrandr
             SOURCES += linux/qsysteminfo_linux.cpp
             HEADERS += linux/qsysteminfo_linux_p.h
@@ -118,7 +125,7 @@ unix:!simulator {
 
             }
         }
-        
+     }
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
@@ -233,10 +240,12 @@ unix:!simulator {
         DEPLOYMENT += QtSystemInfoDeployment
     }
 }
+
 simulator {
     SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
     HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
     INCLUDEPATH += ../mobilitysimulator
+    DEFINES += QT_BUILD_SYSINFO_LIB
     qtAddLibrary(QtMobilitySimulator)
 }
 

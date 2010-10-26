@@ -469,6 +469,12 @@ void QSystemDisplayInfoPrivate::setInitialData()
 {
     setDisplayBrightness(100);
     setColorDepth(32);
+    setOrientation(QSystemDisplayInfo::InvertedLandscape);
+    setContrast(0.3);
+    setDPIHeight(123);
+    setDPIWidth(123);
+    setPhysicalHeight(456);
+    setPhysicalWidth(456);
 }
 
 void QSystemDisplayInfoPrivate::setColorDepth(int depth)
@@ -482,6 +488,49 @@ void QSystemDisplayInfoPrivate::setDisplayBrightness(int brightness)
 {
     if (data.displayBrightness != brightness) {
         data.displayBrightness = brightness;
+    }
+}
+
+void QSystemDisplayInfoPrivate::setOrientation(QSystemDisplayInfo::DisplayOrientation v)
+{
+    if (data.orientation != v) {
+        data.orientation = v;
+    }
+}
+
+void QSystemDisplayInfoPrivate::setContrast(float v)
+{
+    if (data.contrast != v) {
+        data.contrast = v;
+    }
+}
+
+void QSystemDisplayInfoPrivate::setDPIHeight(int v)
+{
+    if (data.dpiHeight != v) {
+        data.dpiHeight = v;
+    }
+}
+
+void QSystemDisplayInfoPrivate::setDPIWidth(int v)
+{
+    if (data.dpiWidth != v) {
+        data.dpiWidth = v;
+    }
+
+}
+
+void QSystemDisplayInfoPrivate::setPhysicalHeight(int v)
+{
+    if (data.physicalHeight != v) {
+        data.physicalHeight = v;
+    }
+}
+
+void QSystemDisplayInfoPrivate::setPhysicalWidth(int v)
+{
+    if (data.physicalWidth != v) {
+        data.physicalWidth = v;
     }
 }
 
@@ -610,6 +659,65 @@ void QSystemDeviceInfoPrivate::setDeviceLocked(bool v)
     }
 }
 
+void QSystemDeviceInfoPrivate::setBluetoothPower(bool v)
+{
+    if (data.currentBluetoothPower != v) {
+        data.currentBluetoothPower = v;
+    }
+}
+
+
+void QSystemDeviceInfoPrivate::setKkeyboardType(QSystemDeviceInfo::KeyboardType v)
+{
+    if (data.keyboardType != v) {
+        data.keyboardType = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setWirelessKeyboardConnected(bool v)
+{
+    if (data.wirelessConnected != v) {
+        data.wirelessConnected = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setKeyboardFlipOpen(bool v)
+{
+    if (data.keyboardFlip != v) {
+        data.keyboardFlip = v;
+    }
+}
+
+
+void QSystemDeviceInfoPrivate::setKeypadLightOn(bool v)
+{
+    if (data.keypadLight != v) {
+        data.keypadLight = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setBackLightOn(bool v)
+{
+    if (data.backLight != v) {
+        data.backLight = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setHostId(const QUuid &v)
+{
+    if (data.hostId != v) {
+        data.hostId = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v)
+{
+    if (data.lockType != v) {
+        data.lockType = v;
+    }
+}
+
+
 //////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -651,6 +759,24 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &name) const
         return it.value().availableSpace;
     return -1;
 }
+
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &name) const
+{
+    QHash<QString, QSystemStorageInfoData::DriveInfo>::const_iterator it = data.drives.find(name);
+    if (it != data.drives.end())
+        return it.value().uri;
+    return QString();
+}
+
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &name) const
+{
+    QHash<QString, QSystemStorageInfoData::DriveInfo>::const_iterator it = data.drives.find(name);
+    if (it != data.drives.end())
+        return it.value().state;
+    return QSystemStorageInfo::UnknownStorageState;
+}
+
+
 
 bool QSystemStorageInfoPrivate::addDrive(const QString &name)
 {
@@ -730,6 +856,27 @@ bool QSystemStorageInfoPrivate::setAvailableSpace(const QString &name, qint64 sp
     return true;
 }
 
+bool QSystemStorageInfoPrivate::setUriForDrive(const QString &name, const QString &v)
+{
+    QHash<QString, QSystemStorageInfoData::DriveInfo>::iterator it = data.drives.find(name);
+    if (it == data.drives.end())
+        return false;
+
+     it.value().uri = v;
+     return true;
+}
+
+bool QSystemStorageInfoPrivate::setStorageState(const QString &name,QSystemStorageInfo::StorageState v)
+{
+    QHash<QString, QSystemStorageInfoData::DriveInfo>::iterator it = data.drives.find(name);
+    if (it == data.drives.end())
+        return false;
+
+    it.value().state = static_cast<QSystemStorageInfo::StorageState>(v);
+    emit storageStateChanged(name, v);
+    return true;
+}
+
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
@@ -756,6 +903,123 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 {
     return true;
 }
+
+
+//////////////
+///////
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
+        : QObject(parent)
+{
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+}
+
+void QSystemBatteryInfoPrivate::setInitialData()
+{
+    setBatteryStatus(QSystemBatteryInfo::BatteryLow);
+    setChargerType(QSystemBatteryInfo::USB_500mA);
+    setChargingState(QSystemBatteryInfo::Charging);
+
+    setNominalCapacity(9876);
+    setRemainingCapacityPercent(56);
+    setRemainingCapacitymAh(567);
+
+    setVoltage(24);
+    setRemainingChargingTime(45);
+    setCurrentFlow(14);
+    setCumulativeCurrentFlow(87);
+    setRemainingCapacityBars(3);
+    setMaxBars(7);
+}
+
+void QSystemBatteryInfoPrivate::setBatteryStatus(QSystemBatteryInfo::BatteryStatus v)
+{
+    if (data.batteryStatus != v) {
+        data.batteryStatus = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setChargerType(QSystemBatteryInfo::ChargerType v)
+{
+    if (data.chargerType != v) {
+        data.chargerType = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setChargingState(QSystemBatteryInfo::ChargingState v)
+{
+    if (data.chargingState != v) {
+        data.chargingState = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setNominalCapacity(int v)
+{
+    if (data.nominalCapacity != v) {
+        data.nominalCapacity = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setRemainingCapacityPercent(int v)
+{
+    if (data.remainingCapacityPercent != v) {
+        data.remainingCapacityPercent = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setRemainingCapacitymAh(int v)
+{
+    if (data.remainingCapacitymAh != v) {
+        data.remainingCapacitymAh = v;
+    }
+}
+
+
+void QSystemBatteryInfoPrivate::setVoltage(int v)
+{
+    if (data.voltage != v) {
+        data.voltage = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setRemainingChargingTime(int v)
+{
+    if (data.remainingChargingTime != v) {
+        data.remainingChargingTime = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setCurrentFlow(int v)
+{
+    if (data.currentFlow != v) {
+        data.currentFlow = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setCumulativeCurrentFlow(int v)
+{
+    if (data.cumulativeCurrentFlow != v) {
+        data.cumulativeCurrentFlow = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setRemainingCapacityBars(int v)
+{
+    if (data.remainingCapacityBars != v) {
+        data.remainingCapacityBars = v;
+    }
+}
+
+void QSystemBatteryInfoPrivate::setMaxBars(int v)
+{
+    if (data.maxBars != v) {
+        data.maxBars = v;
+    }
+}
+
+
 
 #include "moc_qsysteminfo_simulator_p.cpp"
 
