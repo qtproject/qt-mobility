@@ -777,6 +777,10 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
+bool QSystemDisplayInfoPrivate::backLightOn()
+{
+    return false;
+}
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
