@@ -816,9 +816,11 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmark(QLandmark* landmark,
         m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkUpdated, landmarkIds);
     }
 
-    if (!result)
+    if (!result) {
         //qDebug() << "Error " << *error << " = " << *errorString;
-        return result;
+    }
+
+    return result;
 }
 
 /*!
@@ -966,9 +968,10 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmark(const QLandmarkId &land
         m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, landmarkIds);
     }
 
-    if (!result)
+    if (!result) {
         //qDebug() << "Error " << *error << " = " << *errorString;
-        return result;
+    }
+    return result;
 }
 
 /*!
@@ -1123,9 +1126,10 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategory(QLandmarkCategory* catego
             QLandmarkId> (), categoryIds);
     }
 
-    if (!result)
+    if (!result) {
         //qDebug() << "Error " << *error << " = " << *errorString;
-        return result;
+    }
+    return result;
 }
 
 /*!
@@ -3092,7 +3096,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         for (int i = 0; i < keyList.size(); ++i) {
             if (attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchCaseSensitive) {
 
-                qDebug() << "Symbian Landmarks Apis don't support MatchCaseSensitive based search.";
+                //qDebug() << "Symbian Landmarks Apis don't support MatchCaseSensitive based search.";
                 User::Leave(KErrNotSupported);
             }
         }
@@ -3102,8 +3106,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             "radius") || keyList.contains("altitude") || keyList.contains("radius")
             || keyList.contains("iconurl")) {
 
-            qDebug()
-                << "Symbian Landmarks Apis don't support position based search & icon url based search.";
+            //qDebug() << "Symbian Landmarks Apis don't support position & icon url based search.";
             User::Leave(KErrNotSupported);
         }
 
@@ -3723,16 +3726,22 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
             if (aData->iLandmarkIds.size() > 0) {
 
                 // get all landmark data
-                QLandmark qtLandmark;
-                aData->iLandmarks.clear();
-                foreach (const QLandmarkId& lmId,aData->iLandmarkIds)
-                    {
-                        // use landmark fetch method to get landmark from landmark id
-                        qtLandmark = landmark(lmId, &error, &errorString);
-                        if (error == QLandmarkManager::NoError) {
-                            aData->iLandmarks.append(qtLandmark);
-                        }
-                    }
+                QMap<int, QLandmarkManager::Error> errorMap;
+                aData->iLandmarks = this->landmarks(aData->iLandmarkIds, &errorMap, &error,
+                    &errorString);
+
+                /*
+                 QLandmark qtLandmark;
+                 aData->iLandmarks.clear();
+                 foreach (const QLandmarkId& lmId,aData->iLandmarkIds)
+                 {
+                 // use landmark fetch method to get landmark from landmark id
+                 qtLandmark = landmark(lmId, &error, &errorString);
+                 if (error == QLandmarkManager::NoError) {
+                 aData->iLandmarks.append(qtLandmark);
+                 }
+                 }
+                 */
 
                 error = QLandmarkManager::NoError;
                 errorString.clear();
@@ -4625,7 +4634,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
             errorString);
     }
 
-    qDebug() << "result size = " << resultcount << " limit = " << limit << " offset = " << offset;
+    //qDebug() << "result size = " << resultcount << " limit = " << limit << " offset = " << offset;
     return true;
 }
 
