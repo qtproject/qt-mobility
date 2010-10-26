@@ -50,6 +50,7 @@
 #include <qmediastreamscontrol.h>
 
 #include <gst/gst.h>
+#include <policy/resource-set.h>
 
 class QGstreamerBusHelper;
 class QGstreamerMessage;
@@ -138,6 +139,13 @@ private slots:
     void updateVideoRenderer();
     void updateVideoResolutionTag();
 
+    bool doPlay();
+
+    // resource policy awareness
+    void resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>& /*grantedOptionalResList*/);
+    void resourceReleasedHandler();
+    void resourceLostHandler();
+
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
 
@@ -176,6 +184,17 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+
+    // resource policy awareness
+    ResourcePolicy::ResourceSet *m_resourceSet;
+    ResourcePolicy::AudioResource *m_audioResource;
+
+    enum ResourceState {
+        NoResourceState = 0,
+        PendingResourceState,
+        HasResourceState
+    };
+    ResourceState m_resourceState;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H

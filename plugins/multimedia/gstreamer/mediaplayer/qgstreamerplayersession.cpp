@@ -106,7 +106,10 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
-     m_duration(-1)
+     m_duration(-1),
+     m_resourceSet(0),
+     m_audioResource(0),
+     m_resourceState(NoResourceState)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -171,6 +174,20 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
         m_volume = int(volume*100);
     }
+
+    // resource policy awareness
+    m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
+    m_resourceSet->setAlwaysReply();
+
+    m_audioResource = new ResourcePolicy::AudioResource("player");
+    m_audioResource->setProcessID(QCoreApplication::applicationPid());
+    m_audioResource->setStreamTag("media.name", "*");
+    m_resourceSet->addResourceObject(m_audioResource);
+
+    connect(m_resourceSet, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)),
+            this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
+    connect(m_resourceSet, SIGNAL(lostResources()), this, SLOT(resourceLostHandler()));
+    connect(m_resourceSet, SIGNAL(resourcesReleased()), this, SLOT(resourceReleasedHandler()));
 }
 
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
@@ -585,15 +602,14 @@ bool QGstreamerPlayerSession::isSeekable() const
 bool QGstreamerPlayerSession::play()
 {
     if (m_playbin) {
-        m_pendingState = QMediaPlayer::PlayingState;
-        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
-            m_pendingState = m_state = QMediaPlayer::StoppedState;
-
-            emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
-        } else
+        if (m_resourceState == NoResourceState) {
+            m_resourceState = PendingResourceState;
+            m_resourceSet->acquire();
             return true;
+        }
+        else if (m_resourceState == HasResourceState) {
+            return doPlay();
+        }
     }
 
     return false;
@@ -603,8 +619,11 @@ bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
-        if (m_pendingVideoSink != 0)
+        if (m_pendingVideoSink != 0) {
+            if (m_resourceState == HasResourceState)
+                m_resourceSet->release();
             return true;
+        }
 
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
@@ -612,8 +631,11 @@ bool QGstreamerPlayerSession::pause()
 
             emit stateChanged(m_state);
             emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
-        } else
+        } else {
+            if (m_resourceState == HasResourceState)
+                m_resourceSet->release();
             return true;
+        }
     }
 
     return false;
@@ -632,6 +654,10 @@ void QGstreamerPlayerSession::stop()
         //we have to do it here, since gstreamer will not emit bus messages any more
         if (oldState != m_state)
             emit stateChanged(m_state);
+
+        // release the resource
+        if (m_resourceState != NoResourceState)
+            m_resourceSet->release();
     }
 }
 
@@ -1215,6 +1241,44 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
     }
 }
 
+bool QGstreamerPlayerSession::doPlay()
+{
+    if (m_playbin && m_resourceState == HasResourceState) {
+        m_pendingState = QMediaPlayer::PlayingState;
+        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
+            m_pendingState = m_state = QMediaPlayer::StoppedState;
+
+            emit stateChanged(m_state);
+            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
+        } else
+            return true;
+    }
+
+    return false;
+}
+
+void QGstreamerPlayerSession::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
+                                                      /*grantedOptionalResList*/)
+{
+    if (m_resourceState == PendingResourceState) {
+        m_resourceState = HasResourceState;
+        doPlay();
+    }
+}
+
+void QGstreamerPlayerSession::resourceReleasedHandler()
+{
+    m_resourceState = NoResourceState;
+}
+
+void QGstreamerPlayerSession::resourceLostHandler()
+{
+    if (m_resourceState != NoResourceState) {
+        m_resourceState = PendingResourceState;
+        pause();
+    }
+}
 
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {
