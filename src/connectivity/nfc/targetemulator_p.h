@@ -78,7 +78,7 @@ private:
     quint8 hr0;
     quint8 hr1;
 
-    QByteArray staticMemory;
+    QByteArray memory;
 };
 
 #endif // TARGETEMULATOR_P_H

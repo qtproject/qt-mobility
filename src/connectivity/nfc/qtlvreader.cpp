@@ -82,8 +82,10 @@ QTlvReader::QTlvReader(QNearFieldTarget *target)
 :   m_target(target), m_index(-1)
 {
     if (qobject_cast<QNearFieldTagType1 *>(m_target)) {
-        addReservedMemory(0, 12);    // skip uid, cc
-        addReservedMemory(96, 16);   // skip reserved block D, lock block E
+        addReservedMemory(0, 12);   // skip uid, cc
+        addReservedMemory(104, 16); // skip reserved block D, lock block E
+
+        addReservedMemory(120, 8);  // skip reserved block F
     }
 }
 
@@ -226,26 +228,25 @@ void QTlvReader::readMoreData(int sparseOffset)
     while (sparseOffset >= m_data.length()) {
         // read the next segment
         int absOffset = absoluteOffset(m_data.length());
-        quint8 segment = absOffset / 120;
+        quint8 segment = absOffset / 128;
 
         QByteArray data;
 
         if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
-            data = segment ? tag->readSegment(segment) : tag->readAll().mid(2);
+            data = (absOffset < 120) ? tag->readAll().mid(2) : tag->readSegment(segment);
         }
 
-        int startOffset = absOffset - (segment * 120);
+        int startOffset = absOffset - (segment * 128);
 
         int length = -1;
         foreach (int offset, m_reservedMemory.keys()) {
             if (offset <= absOffset)
                 continue;
 
-            if (offset < (segment + 1) * 120)
+            if (offset < (segment + 1) * 128)
                 length = offset - absOffset;
         }
 
-        //qDebug() << "appending" << length << "bytes";
         m_data.append(data.mid(startOffset, length));
     }
 }
