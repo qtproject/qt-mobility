@@ -246,7 +246,8 @@ public:
 
     void setInitialData();
 
-signals:
+Q_SIGNALS:
+
     void batteryLevelChanged(int) const;
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
     void powerStateChanged(QSystemDeviceInfo::PowerState) const;
@@ -274,7 +275,8 @@ public:
 
     bool addDrive(const QString &name);
     bool addDrive(const QString &name, QSystemStorageInfo::DriveType type,
-                  qint64 totalSpace, qint64 availableSpace);
+                  qint64 totalSpace, qint64 availableSpace,
+                  const QString &uri);
     bool removeDrive(const QString &name);
     bool setName(const QString &oldname, const QString &newname);
     bool setType(const QString &name, QSystemStorageInfo::DriveType type);
@@ -286,9 +288,9 @@ public:
 
     void setInitialData();
 
-signals:
-    void logicalDrivesChanged(bool added);
-    void storageStateChanged(const QString &vol,QSystemStorageInfo::StorageState state);
+Q_SIGNALS:
+    void logicalDriveChanged(bool added,const QString &vol) const;
+    void storageStateChanged(const QString &vol,QSystemStorageInfo::StorageState state) const;
 
 private:
     QSystemStorageInfoData data;
@@ -359,6 +361,7 @@ public:
 private:
     QSystemBatteryInfoData data;
 };
+QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate();
 
 QTM_END_NAMESPACE
 QT_END_HEADER

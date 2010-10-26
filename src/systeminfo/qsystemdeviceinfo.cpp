@@ -44,7 +44,7 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-        Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 #ifdef QT_SIMULATOR
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }

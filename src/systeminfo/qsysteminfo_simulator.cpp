@@ -742,8 +742,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
 
 void QSystemStorageInfoPrivate::setInitialData()
 {
-    addDrive("internal drive", QSystemStorageInfo::InternalDrive, 256*1024*qint64(1024), 32*1024*qint64(1024));
-    addDrive("removable drive", QSystemStorageInfo::RemovableDrive, 4*1024*1024*qint64(1024), 3*1024*1024*qint64(1024));
+    addDrive("internal drive", QSystemStorageInfo::InternalDrive, 256*1024*qint64(1024), 32*1024*qint64(1024),"XXXXXXXX");
+    addDrive("removable drive", QSystemStorageInfo::RemovableDrive, 4*1024*1024*qint64(1024), 3*1024*1024*qint64(1024),"YYYYYYYYY");
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives() const
@@ -795,10 +795,12 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(cons
 
 bool QSystemStorageInfoPrivate::addDrive(const QString &name)
 {
-    return addDrive(name, QSystemStorageInfo::NoDrive, 0, 0);
+    return addDrive(name, QSystemStorageInfo::NoDrive, 0, 0, "");
 }
 
-bool QSystemStorageInfoPrivate::addDrive(const QString &name, QSystemStorageInfo::DriveType type, qint64 totalSpace, qint64 availableSpace)
+bool QSystemStorageInfoPrivate::addDrive(const QString &name, QSystemStorageInfo::DriveType type,
+                                         qint64 totalSpace, qint64 availableSpace,
+                                         const QString &uri)
 {
     QHash<QString, QSystemStorageInfoData::DriveInfo>::const_iterator it = data.drives.find(name);
     if (it != data.drives.end())
@@ -808,16 +810,32 @@ bool QSystemStorageInfoPrivate::addDrive(const QString &name, QSystemStorageInfo
     d.type = static_cast<QSystemStorageInfo::DriveType>(type);
     d.totalSpace = totalSpace;
     d.availableSpace = availableSpace;
+    d.uri = uri;
+
+    QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
+    long percent = 100 - (totalSpace - availableSpace) * 100 / totalSpace;
+
+    if(percent < 41 && percent > 10 ) {
+        storState = QSystemStorageInfo::LowStorageState;
+    } else if(percent < 11 && percent > 2 ) {
+        storState =  QSystemStorageInfo::VeryLowStorageState;
+    } else if(percent < 3  ) {
+        storState =  QSystemStorageInfo::CriticalStorageState;
+    } else {
+         storState =  QSystemStorageInfo::NormalStorageState;
+    }
+    d.state = storState;
     data.drives[name] = d;
 
-    emit logicalDrivesChanged(true);
+
+    emit logicalDriveChanged(true, name);
     return true;
 }
 
 bool QSystemStorageInfoPrivate::removeDrive(const QString &name)
 {
     if (data.drives.remove(name) > 0) {
-        emit logicalDrivesChanged(false);
+        emit logicalDriveChanged(false, name);
         return true;
     }
     return false;
@@ -834,7 +852,7 @@ bool QSystemStorageInfoPrivate::setName(const QString &oldname, const QString &n
     data.drives.remove(oldname);
     data.drives[newname] = copy;
 
-    emit logicalDrivesChanged(false);
+    emit logicalDriveChanged(false, newname);
     return true;
 }
 
@@ -845,7 +863,7 @@ bool QSystemStorageInfoPrivate::setType(const QString &name, QSystemStorageInfo:
         return false;
 
     it.value().type = static_cast<QSystemStorageInfo::DriveType>(type);
-    emit logicalDrivesChanged(false);
+    emit logicalDriveChanged(false,name);
     return true;
 }
 
@@ -856,7 +874,7 @@ bool QSystemStorageInfoPrivate::setTotalSpace(const QString &name, qint64 space)
         return false;
 
     it.value().totalSpace = space;
-    emit logicalDrivesChanged(false);
+    emit logicalDriveChanged(false,name);
     return true;
 }
 
@@ -867,7 +885,7 @@ bool QSystemStorageInfoPrivate::setAvailableSpace(const QString &name, qint64 sp
         return false;
 
     it.value().availableSpace = space;
-    emit logicalDrivesChanged(false);
+    emit logicalDriveChanged(false,name);
     return true;
 }
 

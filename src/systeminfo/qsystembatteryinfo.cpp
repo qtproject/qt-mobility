@@ -49,8 +49,9 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
 
 //#ifdef QT_SIMULATOR
-//QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
+//QSystemDeviceInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
 //#endif
+
 
 /*!
        \class QSystemBatteryInfo
@@ -161,7 +162,7 @@ This signal is emitted when the charger type has changed, such as when a phone g
    Constructs a QSystemBatteryInfo object with the given \a parent.
   */
 QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent) :
-    QObject(parent)
+    QObject(parent), d(batteryInfoPrivate())
 {
     qRegisterMetaType<QSystemBatteryInfo::BatteryStatus>("QSystemBatteryInfo::BatteryStatus");
     qRegisterMetaType<QSystemBatteryInfo::ChargingState>("QSystemBatteryInfo::ChargingState");
