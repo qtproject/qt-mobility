@@ -157,9 +157,18 @@ void AddressFinder::excludePeriodEnabled(int state)
 }
 
 //! [address-selected]
-void AddressFinder::addressSelected(const QString &address)
+void AddressFinder::addressSelected(int index)
 {
     messageCombo->clear();
+
+    if (index == -1)
+        return;
+
+#ifdef USE_CONTACTS_COMBOBOX
+    QString address = contactList->itemData(index).toString();
+#else
+    QString address = contactList->item(index)->data(Qt::UserRole).toString();
+#endif
 
     QString addressOnly(simpleAddress(address));
 
@@ -331,7 +340,13 @@ void AddressFinder::continueSearch()
                     addressList.append(addressOnly);
 
                     // Add the recipient to our visible list of contacts to keep in touch with
-                    contactList->addItem(contactDisplayName(address));
+#ifdef USE_CONTACTS_COMBOBOX
+                    contactList->addItem(contactDisplayName(address), addressOnly);
+#else
+                    QListWidgetItem* newListWidgetItem = new QListWidgetItem(contactDisplayName(address));
+                    newListWidgetItem->setData(Qt::UserRole, addressOnly);
+                    contactList->addItem(newListWidgetItem);
+#endif
                 }
 
                 if (details.isEmpty()) {
@@ -353,22 +368,11 @@ void AddressFinder::continueSearch()
         tabChanged(1);
 #endif
 
-        if (
 #ifdef USE_CONTACTS_COMBOBOX
-                contactList->currentIndex() != -1
+        addressSelected(contactList->currentIndex());
 #else
-                contactList->currentItem()
+        addressSelected(contactList->currentRow());
 #endif
-                ) {
-            // Select the first address automatically
-            addressSelected(
-#ifdef USE_CONTACTS_COMBOBOX
-                    contactList->currentText()
-#else
-                    contactList->currentItem()->text()
-#endif
-                    );
-        }
     }
 }
 //! [continue-search]
@@ -456,10 +460,10 @@ void AddressFinder::setupUi()
 
 #ifdef USE_CONTACTS_COMBOBOX
     contactList = new QComboBox(this);
-    connect(contactList, SIGNAL(currentIndexChanged(QString)), this, SLOT(addressSelected(QString)));
+    connect(contactList, SIGNAL(currentIndexChanged(int)), this, SLOT(addressSelected(int)));
 #else
     contactList = new QListWidget(this);
-    connect(contactList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
+    connect(contactList, SIGNAL(currentRowChanged(int)), this, SLOT(addressSelected(int)));
 #endif
 
 #ifndef USE_SEARCH_BUTTON
