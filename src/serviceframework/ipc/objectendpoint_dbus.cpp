@@ -124,7 +124,7 @@ public:
     for method and property access. Signals are automatically relayed from QtDBus to the proxy object.
 */
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
-    : QObject(parent), dispatch(comm), service(0)
+    : QObject(parent), dispatch(comm), service(0), iface(0)
 {
     Q_ASSERT(dispatch);
     d = new ObjectEndPointPrivate;
@@ -150,6 +150,8 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
 ObjectEndPoint::~ObjectEndPoint()
 {
+    if(iface)
+       delete  iface;
     delete d;
 }
 
@@ -185,7 +187,7 @@ void ObjectEndPoint::unregisterObjectDBus(const QRemoteServiceRegister::Entry& e
     QString objPath = "/" + entry.interfaceName() + "/" + entry.version() +
         "/" + QString::number(hash);
     objPath.replace(QString("."), QString("/"));
-    connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
+    QDBusConnection::sessionBus().unregisterObject(objPath, QDBusConnection::UnregisterTree);
 }
 
 /*!
@@ -248,7 +250,6 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
 
                 int serviceIndex = iface->metaObject()->indexOfSignal(sig);
                 QByteArray signal = QByteArray("2").append(sig);
-                QByteArray method = QByteArray("1").append(sig);
 
                 if (serviceIndex > 0) {
                     if (customType) {
@@ -258,7 +259,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
                             new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
                         intercept->setMetaIndex(i);
                     } else {
-                        QObject::connect(iface, signal.constData(), service, method.constData());
+                        QObject::connect(iface, signal.constData(), service, signal.constData());
                     }
                 }
             }
@@ -331,8 +332,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 #ifdef DEBUG
         qDebug() << "Client Interface ObjectPath:" << objPath;
 #endif
-        // Instantiate our DBus interface and its corresponding signals object 
-        iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
+        // Instantiate our DBus interface and its corresponding signals object
+        if(!iface)
+            iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
         signalsObject = new QServiceMetaObjectDBus(iface, true);
 
         // Wake up waiting proxy construction code
@@ -354,8 +356,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         }
 
         // Start DBus connection and register proxy service
-	connection = new QDBusConnection(QDBusConnection::sessionBus());
-        if (!connection->isConnected()) {
+        if (!QDBusConnection::sessionBus().isConnected()) {
             qWarning() << "Cannot connect to DBus";
         }
 
@@ -366,7 +367,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         objPath.replace(QString("."), QString("/"));
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
-        connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
+        QDBusConnection::sessionBus().registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
        
         // Add new instance to client ownership list
         ClientInstance c;
@@ -406,8 +407,8 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
             qDebug() << "METHOD" << type << ":" << returnType << mm.signature();
         }
         qDebug() << "++++++++++++++++++++++++++++++++++++++++++++++++++++";
-        
-        iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
+        if(!iface)
+            iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
         const QMetaObject *i_meta = iface->metaObject();
         qDebug() << "++++++++++++++++++++DBUS SERVICE++++++++++++++++++++";
         qDebug() << i_meta->className();
