@@ -2108,7 +2108,7 @@ void tst_QOrganizerManager::recurrenceWithGenerator()
     if (cm->saveItem(&event)) {
         QList<QOrganizerItem> items = cm->itemOccurrences(event,
                 QDateTime(startDate, QTime(0, 0, 0)),
-                QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
+                QDateTime(endDate, QTime(23, 59, 59, 999)));
 
         QList<QDate> actualDates;
         for (int i = 0; i < items.size(); i++) {
@@ -2997,7 +2997,7 @@ void tst_QOrganizerManager::itemFetch()
         QVERIFY(item.type() == QOrganizerItemType::TypeEvent);
     }
 
-    // second - call items, get an occurrence, resave as an exceptionl call ife() -- get back parent + exception
+    // second - call items, get an occurrence, resave as an exception call ife() -- get back parent + exception
     items = cm->items();
     QOrganizerEventOccurrence exception;
     bool foundOccurrence = false;
@@ -3021,6 +3021,7 @@ void tst_QOrganizerManager::itemFetch()
         } else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
             eventOccurrenceCount += 1;
         }
+        QVERIFY(!item.id().isNull()); // should NEVER be null, since that would be a generated occurrence.
     }
     QCOMPARE(eventCount, 1);
     QCOMPARE(eventOccurrenceCount, 1);
