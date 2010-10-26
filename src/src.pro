@@ -12,11 +12,7 @@ contains(mobility_modules,serviceframework) {
     }
 }
 
-contains(mobility_modules,bearer){
-    SUBDIRS += bearer
-    symbian: SUBDIRS += bearer/bearer_old
-}
-    
+contains(mobility_modules,bearer): SUBDIRS += bearer
 contains(mobility_modules,location): SUBDIRS += location
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 
