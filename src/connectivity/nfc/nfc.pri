@@ -44,7 +44,9 @@ symbian {
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/symbian/nearfieldmanager_symbian.h \
+        nfc/symbian/nearfieldtarget_symbian.h \
         nfc/symbian/nearfieldtagtype1_symbian.h \
+        nfc/symbian/nearfieldndeftarget_symbian.h \
         nfc/symbian/nearfieldtargetfactory_symbian.h \
         nfc/symbian/llcpsocket_symbian.h \
         nfc/symbian/llcpserver_symbian.h \
@@ -54,7 +56,9 @@ symbian {
         nfc/qnearfieldmanager_symbian.cpp \
         nfc/qnearfieldtagtype1_symbian.cpp \
         nfc/symbian/nearfieldmanager_symbian.cpp \	
+        nfc/symbian/nearfieldtarget_symbian.cpp \
         nfc/symbian/nearfieldtagtype1_symbian.cpp \
+        nfc/symbian/nearfieldndeftarget_symbian.cpp \
         nfc/symbian/nearfieldtargetfactory_symbian.cpp \
         nfc/symbian/llcpsocket_symbian.cpp \
         nfc/symbian/llcpserver_symbian.cpp \

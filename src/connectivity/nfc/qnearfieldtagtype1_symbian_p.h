@@ -43,6 +43,7 @@
 #define QNEARFIELDTAGTYPE1SYMBIAN_H
 
 #include <qnearfieldtagtype1.h>
+#include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
 
 QT_BEGIN_HEADER
@@ -55,7 +56,7 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1
 
 public:
 
-    explicit QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent = 0);
+    explicit QNearFieldTagType1Symbian(CNearFieldTarget *tag, QObject *parent = 0);
     
     ~QNearFieldTagType1Symbian();
 
@@ -88,9 +89,13 @@ public:
         mAccessMethods = accessMethods;
     }
 
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
+    void setNdefMessages(const QList<QNdefMessage> &messages);
+
 private:
     // Own
-    CNearFieldTagType1 * mTag;
+    CNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
 };
 

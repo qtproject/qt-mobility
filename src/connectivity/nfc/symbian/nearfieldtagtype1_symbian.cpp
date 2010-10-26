@@ -50,7 +50,7 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag), CActive(EPriorityStandard)
+CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag)
     {
     }
 
@@ -74,7 +74,6 @@ void CNearFieldTagType1::ConstructL()
     iNfcType1Connection = CNfcType1Connection::NewL(iNfcServer);
     iWait = new(ELeave)CActiveSchedulerWait();
     
-    User::LeaveIfError(iNfcTag->OpenConnection(*iNfcType1Connection));
     CActiveScheduler::Add(this); // Add to scheduler
     }
 
@@ -249,4 +248,31 @@ TNfcType1Address CNearFieldTagType1::AddsOperand(TUint8 aSegmentAddress) const
 TNfcType1Address CNearFieldTagType1::Add8Operand(TUint8 aBlockAddress) const
     {
     
+    }
+
+CNearFieldTagType1 * CNearFieldTagType1::CastToTagType1()
+    {
+    TInt error = KErrNone;
+    
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    return (error == KErrNone) ? const_cast<CNearFieldTagType1 *>(this) 
+                               : reinterpret_cast<CNearFieldTagType1 *>(0);
+    }
+
+TInt CNearFieldTagType1::OpenConnection()
+    {
+    return iNfcTag->OpenConnection(*iNfcType1Connection);
+    }
+
+void CNearFieldTagType1::CloseConnection()
+    {
+    return iNfcTag->CloseConnection(*iNfcType1Connection);
+    }
+
+TBool CNearFieldTagType1::IsConnectionOpened()
+    {
+    return iNfcType1Connection->IsActivated();
     }

@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new tag type 1 near field target with \a tag and \a parent.
 */
-QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldTagType1 *tag, QObject *parent)
+QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTagType1(parent), mTag(tag)
 {
 }
@@ -77,6 +77,15 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 */
 QByteArray QNearFieldTagType1Symbian::readIdentification()
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+
+    if (tagType1)
+    {
+    }
+    else
+    {
+        return QByteArray();
+    }
 }
 
 /*!
@@ -136,6 +145,30 @@ QList<QByteArray> QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray
 {
 }
 
+bool QNearFieldTagType1Symbian::hasNdefMessage()
+{
+    bool result = false;
+
+    CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
+    if (ndefTarget)
+    {
+        if (ndefTarget->OpenConnection() == KErrNone)
+        {
+            result = ndefTarget->hasNdefMessage();
+        }
+    }
+    
+    return result; 
+}
+
+QList<QNdefMessage> QNearFieldTagType1Symbian::ndefMessages()
+{
+}
+
+
+void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+{
+}
 #include "moc_qnearfieldtagtype1_symbian_p.cpp"
 
 QTM_END_NAMESPACE
