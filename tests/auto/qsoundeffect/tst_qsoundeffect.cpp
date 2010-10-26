@@ -48,6 +48,9 @@
 #include <qaudio.h>
 #include <qsoundeffect_p.h>
 
+#if defined(Q_OS_SYMBIAN)
+#define SRCDIR ""
+#endif
 
 class tst_QSoundEffect : public QObject
 {

@@ -16,10 +16,10 @@ MOBILITY = multimedia
 
 QT += declarative
 
-wince* {
-    deploy.sources += 4.wav
-    DEPLOYMENT = deploy
-    DEFINES += SRCDIR=\\\"\\\"
+wince*:symbian {
+    deploy.files += 4.wav
+    DEPLOYMENT += deploy
+    !symbian:DEFINES += SRCDIR=\\\"\\\"
 } else {
     DEFINES += SRCDIR=\\\"$$PWD/\\\"
 }
