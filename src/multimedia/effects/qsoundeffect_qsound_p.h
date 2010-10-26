@@ -109,10 +109,7 @@ private:
     QSoundEffect::Status m_status;
     QSound *m_sound;
     QUrl m_source;
-    int m_timerID;
     int m_nextRunningCount;
-
-    void timerEvent(QTimerEvent *event);
 };
 
 QT_END_NAMESPACE
