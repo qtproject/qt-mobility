@@ -304,6 +304,7 @@ void CCntServer::CreateMessageMapL()
 	iMsgLut.InsertL(ECntItemCreate, static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemCreateL));
 	iMsgLut.InsertL(ECntItemUpdate, static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemUpdateL));
 	iMsgLut.InsertL(ECntItemDelete, static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemDeleteL));
+	iMsgLut.InsertL(ECntItemsDelete, static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemsDeleteL));
 	iMsgLut.InsertL(ECntItemRead,   static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemReadL));
 	iMsgLut.InsertL(ECntItemCommit, static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemCommitL));
 	iMsgLut.InsertL(ECntItemOpen,   static_cast<MsgHandlerFptr>(&CCntItemMsgHandler::ItemOpenL));

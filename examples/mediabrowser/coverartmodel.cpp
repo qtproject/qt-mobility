@@ -58,9 +58,8 @@ CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
 {
 }
 
-#ifndef QT_NO_QFUTURE
 #if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
-QString CoverArtModel::imagePath(const QModelIndex &index) const
+QUrl CoverArtModel::imageUrl(const QModelIndex &index) const
 {
     QString title = index.data(Qt::DisplayRole).toString();
     QString artist = index.data(AlbumDelegate::Artist).toString();
@@ -72,7 +71,7 @@ QString CoverArtModel::imagePath(const QModelIndex &index) const
             + hash(title)
             + QLatin1String(".jpeg");
 
-    return thumbnailPath(QUrl::fromLocalFile(fileName));
+    return QUrl::fromLocalFile(fileName);
 }
 
 QString CoverArtModel::hash(const QString &identifier) const
@@ -85,5 +84,4 @@ QString CoverArtModel::hash(const QString &identifier) const
                 QCryptographicHash::Md5).toHex();
     }
 }
-#endif
 #endif

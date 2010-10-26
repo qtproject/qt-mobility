@@ -72,7 +72,7 @@ void tst_QSoundEffect::initTestCase()
     sound = new QSoundEffect;
 
     QVERIFY(sound->source().isEmpty());
-    QVERIFY(sound->loops() == 1);
+    QVERIFY(sound->loopCount() == 1);
     QVERIFY(sound->volume() == 100);
     QVERIFY(sound->isMuted() == false);
 #endif
@@ -99,10 +99,10 @@ void tst_QSoundEffect::testSource()
 void tst_QSoundEffect::testLooping()
 {
 #ifndef QT_MULTIMEDIA_QMEDIAPLAYER
-    QSignalSpy readSignal(sound, SIGNAL(loopsChanged()));
+    QSignalSpy readSignal(sound, SIGNAL(loopCountChanged()));
 
-    sound->setLoops(5);
-    QCOMPARE(sound->loops(),5);
+    sound->setLoopCount(5);
+    QCOMPARE(sound->loopCount(),5);
 
     sound->play();
 
@@ -116,8 +116,8 @@ void tst_QSoundEffect::testVolume()
 #ifndef QT_MULTIMEDIA_QMEDIAPLAYER
     QSignalSpy readSignal(sound, SIGNAL(volumeChanged()));
 
-    sound->setVolume(50);
-    QCOMPARE(sound->volume(),50);
+    sound->setVolume(0.5);
+    QCOMPARE(sound->volume(),0.5);
 
     QTest::qWait(20);
     QCOMPARE(readSignal.count(),1);

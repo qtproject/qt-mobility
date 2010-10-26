@@ -69,7 +69,7 @@ using namespace Simulator;
  */
 
 /* static data for manager class */
-QContactSimulatorEngine* QContactSimulatorEngine::engine = 0;
+QContactMemoryEngineData* QContactSimulatorEngine::engineData = 0;
 
 /*!
  * Factory function for 'creating' a simulator backend.
@@ -79,23 +79,30 @@ QContactSimulatorEngine* QContactSimulatorEngine::engine = 0;
 QContactSimulatorEngine* QContactSimulatorEngine::createSimulatorEngine(const QMap<QString, QString>& parameters)
 {
     Q_UNUSED(parameters);
-    if (engine) {
-        return engine;
+
+    // all simulator engines always share the same engineData
+    QContactMemoryEngineData* data = QContactSimulatorEngine::engineData;
+    if (data) {
+        data->m_refCount.ref();
     } else {
-        QContactMemoryEngineData *data = new QContactMemoryEngineData();
+        data = new QContactMemoryEngineData();
         // it is essential that this gets the same manager uri as the one used on the simulator side
         data->m_id = QLatin1String("simulator");
         data->m_anonymous = false;
-        engine = new QContactSimulatorEngine(data);
-        return engine;
+
+        QContactSimulatorEngine::engineData = data;
+
+        // give an engine to the simulator connection
+        data->m_refCount.ref(); // push the refcount to two
+        Simulator::ContactConnection::instance()->setEngine(new QContactSimulatorEngine(data));
     }
+    return new QContactSimulatorEngine(data);
 }
 
 QContactSimulatorEngine::QContactSimulatorEngine(QContactMemoryEngineData *data)
     : QContactMemoryEngine(data)
     , mNotifySimulator(true)
 {
-    ContactConnection::instance()->setEngine(this);
 }
 
 void QContactSimulatorEngine::setNotifySimulator(bool on)

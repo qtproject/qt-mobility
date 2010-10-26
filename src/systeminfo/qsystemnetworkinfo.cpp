@@ -130,20 +130,6 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
           This signal is emitted whenever the network mode changes, specified by \a mode.
         */
 
-/*!
-  \fn void QSystemNetworkInfo::cellIdChanged(int id)
-
-  This signal is emitted whenever the cell tower id changes, specified by \a id.
-*/
-/*
-
-   \brief The QSystemNetworkInfo class provides access to network information.
-
-    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-
-        Constructs a QSystemNetworkInfo object with the given \a parent.
-*/
-
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())
 {
@@ -175,7 +161,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-   return netInfoPrivate()->networkSignalStrength(mode);
+    QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
+    if(info  == QSystemNetworkInfo::UndefinedStatus
+            || info == QSystemNetworkInfo::NoNetworkAvailable) {
+        return 0;
+    }
+    return netInfoPrivate()->networkSignalStrength(mode);
 }
 
 /*!

@@ -59,7 +59,7 @@ QTM_USE_NAMESPACE
 /*! Sets the start date time of the event to \a startDateTime */
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setStartDateTime(startDateTime);
     saveDetail(&etr);
 }
@@ -67,14 +67,14 @@ void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 /*! Returns the date time at which the first instance of the event starts */
 QDateTime QOrganizerEvent::startDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.startDateTime();
 }
 
 /*! Sets the end date time of the event to \a endDateTime */
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setEndDateTime(endDateTime);
     saveDetail(&etr);
 }
@@ -82,35 +82,50 @@ void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 /*! Returns the date time at which the first instance of the event ends */
 QDateTime QOrganizerEvent::endDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.endDateTime();
 }
 
-/*! Sets whether the time component of the start datetime or end datetime are significant. */
-void QOrganizerEvent::setTimeSpecified(bool isTimeSpecified)
+/*!
+  Sets whether the time-of-day component of the event's start date-time or end date-time is
+  insignificant (eg. this is generally set to true for a birthday).  If \a isAllDay is true,
+  the time-of-day component is considered insignificant, and the event will be an all-day
+  item.
+ */
+void QOrganizerEvent::setAllDay(bool isAllDay)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
-    etr.setTimeSpecified(isTimeSpecified);
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
+    etr.setAllDay(isAllDay);
     saveDetail(&etr);
 }
 
-/*! Returns whether the time component of the start datetime or end datetime are significant. */
-bool QOrganizerEvent::isTimeSpecified() const
+/*! Returns true if and only if the time component of the start date/time or end date/time are
+ * insignificant. */
+bool QOrganizerEvent::isAllDay() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
-    return etr.isTimeSpecified();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
+    return etr.isAllDay();
 }
 
 /*! Sets the list of dates \a rdates to be dates on which the event occurs */
-void QOrganizerEvent::setRecurrenceDates(const QList<QDate>& rdates)
+void QOrganizerEvent::setRecurrenceDates(const QSet<QDate>& rdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceDates(rdates);
     saveDetail(&rec);
 }
 
+/*!
+  \internal
+  Sets a single date \a rdate to be the date on which the event occurs.
+  \sa setRecurrenceDates() */
+void QOrganizerEvent::setRecurrenceDate(const QDate& rdate)
+{
+    setRecurrenceDates(QSet<QDate>() << rdate);
+}
+
 /*! Returns the list of dates which have been explicitly set as dates on which the event occurs */
-QList<QDate> QOrganizerEvent::recurrenceDates() const
+QSet<QDate> QOrganizerEvent::recurrenceDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceDates();
@@ -118,48 +133,102 @@ QList<QDate> QOrganizerEvent::recurrenceDates() const
 
 /*! Sets the list of recurrence rules \a rrules to be the rules which define when the event occurs, other than those dates
     specified explicitly via setRecurrenceDates(). */
-void QOrganizerEvent::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
     saveDetail(&rec);
 }
 
+/*! Sets a single recurrence rule \a rrule to be the rule which define when the event occurs, other than those dates
+    specified explicitly via setRecurrenceDates().
+    \sa setRecurrenceRules()*/
+void QOrganizerEvent::setRecurrenceRule(const QOrganizerRecurrenceRule& rrule)
+{
+    setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
+}
+
 /*! Returns the list of recurrence rules which define when the event occurs */
-QList<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerEvent::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceRules();
 }
 
+/*! Returns a recurrence rule which has been explicitly set for the event.
+    Note: if more than one rule exists, the order of the rules is undefined, so any one could be returned.
+ */
+QOrganizerRecurrenceRule QOrganizerEvent::recurrenceRule() const
+{
+    QSet<QOrganizerRecurrenceRule> rrules = recurrenceRules();
+    if (!rrules.isEmpty())
+        return *rrules.begin();
+    return QOrganizerRecurrenceRule();
+}
+
 /*! Sets the given list of dates \a exdates to be dates on which the event explicitly does not occur,
-    when the recurrence rules suggest that the event should occur on those dates. */
-void QOrganizerEvent::setExceptionDates(const QList<QDate>& exdates)
+    even if the recurrence rules suggest that the event should occur on those dates.  Any previously
+    specified exception dates will be cleared when this function is called.
+ */
+void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionDates(exdates);
     saveDetail(&rec);
 }
 
+/*!
+  \internal
+  Sets the given single date \a exdate to be the date on which the event explicitly does not occur,
+  event if the recurrence rules suggest that the event should occur on this date.  Any previously
+  specified exception dates will be cleared when this function is called.
+  \sa setExceptionDates()
+ */
+void QOrganizerEvent::setExceptionDate(const QDate& exdate)
+{
+    setExceptionDates(QSet<QDate>() << exdate);
+}
+
 /*! Returns the list of dates on which the event explicitly does not occur despite
     the recurrence rules for the event */
-QList<QDate> QOrganizerEvent::exceptionDates() const
+QSet<QDate> QOrganizerEvent::exceptionDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionDates();
 }
 
 /*! Sets the given list of recurrence rules \a exrules to be the rules which define when
-    the event does not occur. */
-void QOrganizerEvent::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules)
+    the event does not occur.  Any previously specified exception rules will be cleared
+    when this function is called. */
+void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
     saveDetail(&rec);
 }
 
+/*! Sets the given single recurrence rules \a xrule to be the rule which defines when
+    the event does not occur.  Any previously specified exception rules will be cleared
+    when this function is called.
+    \sa setExceptionRules()
+ */
+void QOrganizerEvent::setExceptionRule(const QOrganizerRecurrenceRule& xrule)
+{
+    setExceptionRules(QSet<QOrganizerRecurrenceRule>() << xrule);
+}
+
+/*! Returns an exception rule which has been explicitly set for the event.
+    Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.*/
+QOrganizerRecurrenceRule QOrganizerEvent::exceptionRule() const
+{
+    QSet<QOrganizerRecurrenceRule> exrules = exceptionRules();
+    if (!exrules.isEmpty())
+        return *exrules.begin();
+    return QOrganizerRecurrenceRule();
+}
+
 /*! Returns the list of exception rules for the event */
-QList<QOrganizerItemRecurrenceRule> QOrganizerEvent::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerEvent::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();
@@ -180,52 +249,17 @@ QOrganizerItemPriority::Priority QOrganizerEvent::priority() const
     return pd.priority();
 }
 
-/*! Returns the name of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationName() const
+/*! Returns the label of the location at which the event occurs, if known */
+QString QOrganizerEvent::location() const
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.locationName();
+    return ld.label();
 }
 
-/*! Sets the name of the location at which the event occurs to \a locationName */
-void QOrganizerEvent::setLocationName(const QString& locationName)
+/*! Sets the label of the location at which the event occurs to \a location */
+void QOrganizerEvent::setLocation(const QString& location)
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setLocationName(locationName);
-    saveDetail(&ld);
-}
-
-/*! Returns the address of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationAddress() const
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.address();
-}
-
-/*! Sets the address of the location at which the event occurs to \a locationAddress */
-void QOrganizerEvent::setLocationAddress(const QString& locationAddress)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setAddress(locationAddress);
-    saveDetail(&ld);
-}
-
-/*! Returns the geo-coordinates of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationGeoCoordinates() const
-{
-    // XXX TODO: consistency with QOILocation API ?
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.geoLocation();
-}
-
-/*!
-    \preliminary
-    Sets the geo-coordinates of the location at which the event occurs to \a locationCoordinates.
-    The coordinates should be in the format "latitude;longitude"
- */
-void QOrganizerEvent::setLocationGeoCoordinates(const QString& locationCoordinates)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setGeoLocation(locationCoordinates);
+    ld.setLabel(location);
     saveDetail(&ld);
 }

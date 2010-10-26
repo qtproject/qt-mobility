@@ -48,11 +48,13 @@
 #include <qlandmarkcategoryfilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkproximityfilter.h>
+#include <QDebug>
 
 #include "landmarkfilterdialog.h"
 
-LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QWidget *parent, Qt::WindowFlags flags)
+LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QLandmarkManager * manager, QWidget *parent, Qt::WindowFlags flags)
     : QDialog(parent, flags),
+    manager(manager),
       fetchRequest(fetchRequest)
 
 {
@@ -69,7 +71,7 @@ LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, 
     connect(filterProximityCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(otherFiltersCheckBoxStateChanged(int)));
 
-    connect(&manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+    connect(manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
             this, SLOT(categoryRemoved(QList<QLandmarkCategoryId>)));
 
     filterAllCheckBox->setCheckState(Qt::Checked);
@@ -135,7 +137,7 @@ void LandmarkFilterDialog::otherFiltersCheckBoxStateChanged(int state)
 void LandmarkFilterDialog::showEvent(QShowEvent *showEvent)
 {
 
-    QList<QLandmarkCategory> categories = manager.categories();
+    QList<QLandmarkCategory> categories = manager->categories();
     categoryComboBox->clear();
 
     for (int i=0; i < categories.count(); ++i) {

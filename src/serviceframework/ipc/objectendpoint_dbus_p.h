@@ -73,6 +73,8 @@ public:
     void methodCall(const QServicePackage& p);
     void propertyCall(const QServicePackage& p);
 
+    QString getInstanceId() const;
+
     QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
     QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
     
@@ -81,7 +83,8 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void newPackageReady();
-    void disconnected();
+    void disconnected(const QString& clientId, const QString & instanceId);
+    void unregisterObjectDBus(const QRemoteServiceRegister::Entry& entry, const QUuid& id);
 
 private:
     void waitForResponse(const QUuid& requestId);

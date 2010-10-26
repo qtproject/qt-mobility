@@ -33,10 +33,41 @@
 
 \section1 How to register and unregister service plugins in S60?
 
+All services must be registered for clients to be able to locate and use them.
+Symbian provides 3 different methods to register services.
+
+\list
+\o \l{Automatic registration}
+\o \l{Secure registration}
+\o \l{ROM build registration}
+\endlist
+
+\section2 Automatic registration
+
 Registration phase is a little different compared to other platforms because of the
 authenticity of the provider is done during (un)registering phase based on the verification 
-of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented 
-by the service provider. Installer application is responsible for the registering (and the unregistering) 
+of VID/SID (vendor ID or secure ID). Durring automatic registration the VID/SID is set to 0.  This method
+is suitable for services that aren't security critical.
+
+To use automatic registration the XML file is copied to the imports directory of the service framework database
+server.  In the pro file for example:
+
+\code
+xmlautoimport.path = /private/2002AC7F/import/
+xmlautoimport.sources = <service xml file>.xml
+DEPLOYMENT += xmlautoimport
+\endcode
+
+Or in a symbian .pkg file by:
+
+\code
+"/epoc32/data/z/private/2002AC7F/import/<service xml file>.xml" - "c:\private\2002AC7F\import\<service xml file>.xml"
+\endcode
+
+\section2 Secure registration
+
+For security registration a tiny installer application can be implemented by the service provider.
+The installer application can then provide a VID/PID and is responsible for the registering (and the unregistering)
 of the service. The example code for the installer is shown below. The whole installer project can be found under 
 \c {examples/serviceinstaller_sfw_symbian}.
 
@@ -57,12 +88,16 @@ More info about VID and SID can be found from:
     \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
 \endlist
 
+\section2 ROM build registration
+
+For application built into the ROM the host tool servicedbgen must be used prior to building the ROM image to add the service
+to the database.
 
 \section1 What's special from the security perspective?
 
 There is only one database in S60 because both databases (user and system) are combined to the same database.
 The database is located behind the server's private folder, (\c{c:\private\E3b48c24}). This ensures the database can't
-be thumbered (e.g. remove, move or replace) without Allfiles capability which isn't user-grantable (More about the
+be altered without Allfiles capability which isn't user-grantable (More about the
 capabilities: \l http://wiki.forum.nokia.com/index.php/Capabilities). That makes it impossible for example to replace the
 whole database with the new one which might contain malicious services.
 
@@ -72,8 +107,9 @@ are mapped to the same database.
 \section1 Directory structure
 
 There are different implementations for the both emulator and device because emulator doesn't support multiple
-applications to be loaded at the same time, (Known issue: \l {http://bugreports.qt.nokia.com/browse/QTBUG-2950}{QTBUG-2950}).
-The dll approach must be used in the emulator environment and the exe approach instead of dll in the real device.
+applications running at the same time, (Known issue: \l {http://bugreports.qt.nokia.com/browse/QTBUG-2950}{QTBUG-2950})
+prior to Symbian^3. The dll approach must be used in the emulator environment and the exe approach instead of
+dll in the real device.
 
 Note! The greatest part of the S60 specific code is located under the symbian folder in a directory hierarchy of
 Service FW. ServiceDatabase class contains also S60 specific code and the DatabaseManager class has been replaced

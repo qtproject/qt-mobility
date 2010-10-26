@@ -66,10 +66,7 @@
   
     <h2>Downloading and Installing</h2>
     <h3>System Requirements</h3>
-    <p><b>Symbian S60 and Maemo platforms:</b> </p>
-    <p>Qt 4.7.0 final should be used.</p>
-    <p><b>Symbian^3 platform:</b></p>
-    <p>Qt 4.6.3 should be used.</p>  
+    <p>Qt 4.7 should be used.</p>
     <p><a href="http://qt.nokia.com/downloads"> http://qt.nokia.com/downloads</a></p>
     <p>Latest QtMobility packages can be found here: </p>
     <a href="http://qt.nokia.com/products/appdev/add-on-products/catalog/4/new-qt-apis/mobility"> http://qt.nokia.com/products/appdev/add-on-products/catalog/4/new-qt-apis/mobility </a></p>

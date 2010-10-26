@@ -130,7 +130,7 @@ private slots:
     void videoStateChanged(QMediaPlayer::State state);
     
 private:
-    QAbstractVideoWidget *m_widget;
+    QScopedPointer<QAbstractVideoWidget> m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
     bool m_fullScreenEnabled;
 };

@@ -45,89 +45,68 @@ flexibility when requesting information from remote or slow local datastores.
 \section1 Using the API
 
 The asynchronous API offered by the Organizer module is available through classes
-derived from the QOrganizerAbstractRequest class.  It consists of three major sections:
+derived from the QOrganizerAbstractRequest class.  It consists of three major
+categories:
 \list
   \o Organizer Item Manipulation
   \o Item Collection Manipulation
   \o Schema Manipulation
 \endlist
 
-The functionality offered by the synchronous API in these two categories is also
-available through the asynchronous API.  There is one category of functionality
-which is not provided by the asynchronous API which is provided by the synchronous
-API: some information and reporting functionality is only provided through the
-synchronous API.
-
-For detailed information about the information and reporting functionality
-provided, please refer to the documentation for the
-\l{Organizer Synchronous API}.
-
 \section2 Organizer Item Manipulation
 
 The most common type of operation that clients will perform involves retrieval
 or modification of organizer items.  For in-depth information about item
-manipulation, please refer to the \l{Organizer Synchronous API}, as the data
-semantics of such operations are the same.
+manipulation, please refer to the main \l{Organizer} API page.
 
-There are four different types of operation which are supported by the asynchronous API:
+There are six different types of operation which are supported by the asynchronous API:
 \list
   \o Fetch item ids
-  \o Fetch items
+  \o Fetch persistent items (for export)
+  \o Fetch items (including generated occurrences) in a time period
+  \o Fetch the occurrences of a specific item
   \o Save items (create or update)
   \o Remove items
 \endlist
 
-These operations are supported via the QOrganizerItemLocalIdFetchRequest,
-QOrganizerItemFetchRequest, QOrganizerItemSaveRequest and
-QOrganizerItemRemoveRequest classes, respectively.
-
-The synchronous API offered by the QOrganizerItemManager class to allow
-manipulation of organizer items consists of the following functions:
+These operations are supported via the classes:
 \list
-  \o itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const
-  \o itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const
-  \o items(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const
-  \o items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const
-  \o saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap)
-  \o removeItems(QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap)
+\o QOrganizerItemIdFetchRequest
+\o QOrganizerItemFetchForExportRequest
+\o QOrganizerItemFetchRequest
+\o QOrganizerItemOccurrenceFetchRequest
+\o QOrganizerItemSaveRequest
+\o QOrganizerItemRemoveRequest
 \endlist
-
 
 \section2 Item Collection Manipulation
 
 Every item is saved in a collection in a manager.  Each collection has various
 properties which, if the manager supports such operations, may be modified
-by clients.
+by clients.  For in-depth information about collections, please refer to the
+main \l{Organizer} API page.
 
-There are four different types of operation which are supported by the asynchronous API:
+
+There are three different types of operation which are supported by the asynchronous API:
 \list
-  \o Fetch collection ids
   \o Fetch collections (that is, the object which defines the properties of a collection)
   \o Save collections (create or update)
   \o Remove collections
 \endlist
 
-These operations are supported via the QOrganizerCollectionLocalIdFetchRequest,
-QOrganizerCollectionFetchRequest, QOrganizerCollectionSaveRequest and
-QOrganizerCollectionRemoveRequest classes, respectively.
-
-The synchronous API offered by the QOrganizerItemManager class to allow
-manipulation of collections consists of the following functions:
+These operations are supported via the classes:
 \list
-  \o QList<QOrganizerCollectionLocalId> collectionIds() const;
-  \o QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
-  \o bool saveCollection(QOrganizerCollection* collection);
-  \o bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+\o QOrganizerCollectionFetchRequest
+\o QOrganizerCollectionSaveRequest
+\o QOrganizerCollectionRemoveRequest
 \endlist
-
-The synchronous API also offers a function which returns the id of the default
-collection of the manager.
 
 
 \section2 Schema Manipulation
 
-The schema supported by a plugin is the list of detail definitions which are supported by the plugin.
-For in-depth information about the schema, please refer to the \l{Organizer Synchronous API}.
+The schema supported by a engine is the list of detail definitions which are
+supported by the engine.  For in-depth information about the schema, please
+refer to the main \l{Qt Organizer Schema} page.
 
 There are three different types of operation which are supported by the asynchronous API:
 \list
@@ -136,36 +115,39 @@ There are three different types of operation which are supported by the asynchro
   \o Remove detail definitions (if supported by the backend)
 \endlist
 
-These operations are supported via the the QOrganizerItemDetailDefinitionFetchRequest,
-QOrganizerItemDetailDefinitionSaveRequest and QOrganizerItemDetailDefinitionRemoveRequest classes,
-respectively.
-
-The synchronous API offered by the QOrganizerItemManager class to allow manipulation of the schema consists
-of the following functions:
+These operations are supported via the classes:
 \list
-  \o detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const
-  \o detailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent) const
-  \o saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType = QOrganizerItemType::TypeEvent)
-  \o removeDetailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent)
+\o QOrganizerItemDetailDefinitionFetchRequest
+\o QOrganizerItemDetailDefinitionSaveRequest
+\o QOrganizerItemDetailDefinitionRemoveRequest
 \endlist
 
-\section1 Examples Of Usage
+\section1 Usage
 
-\section2 Fetching Items
+All asynchronous operations are performed in a similar pattern:
+a request of the desired type (which is derived from
+QOrganizerAbstractRequest) is created, certain criteria are set which
+determine the intent of the request, QOrganizerAbstractRequest::stateChanged()
+signal of the request is connected to a slot which deals with the results.
+The request can then be started.
 
-The client sets up a request for items matching a specific criteria
-from a particular manager.
+Note that if the client is interested in receiving the results of the request
+as they become available, rather than only the final set of results once the
+request changes state (to \c FinishedState, for example), the client should
+instead connect the QOrganizerAbstractRequest::resultsAvailable() signal to the
+slot which deals with the results.
 
-Results from the request will be displayed to the user as they are
-received.
+\section2 Error Reporting
 
-\section2 Other Asynchronous Operations
+When a asynchronous operation fails, clients need to be able to retrieve error
+information associated with that asynchronous operation.  It is possible to
+retrieve this error information by calling the
+QOrganizerAbstractRequest::error() function on the corresponding request.
 
-All other asynchronous operations are performed in a similar manner to the
-previous example. A request of the desired type (which is derived from
-QOrganizerItemAbstractRequest) is created, certain criteria are set which
-determine the intent of the request, and the signals of the request
-are connected to slots which deals with the results.  The request can then
-be started.
+For some asynchronous operations (for example, batch save or remove operations)
+it is possible that multiple errors may occur during the operation.  In those
+cases, clients can call the errorMap() function on the request object to
+retrieve a map of input index to error.  See, for instance,
+QOrganizerItemSaveRequest::errorMap().
 
 */

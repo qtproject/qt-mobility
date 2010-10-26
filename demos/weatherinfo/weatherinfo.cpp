@@ -555,19 +555,24 @@ private:
             m_iconItem->setPos(1, pad);
         }
 
+        QFont textFont = font();
+        textFont.setPixelSize(static_cast<int>(height() * 0.1));
+
         m_temperatureItem->setPos(2, 2);
+        m_temperatureItem->setFont(textFont);
         qreal h = m_conditionItem->boundingRect().height();
         m_conditionItem->setPos(10, height() - h);
+        m_conditionItem->setFont(textFont);
 
         if (m_dayItems.count()) {
             qreal left = width() * 0.6;
             qreal h = height() / m_dayItems.count();
-            QFont textFont = font();
-            textFont.setPixelSize(static_cast<int>(h * 0.3));
+            textFont.setPixelSize(static_cast<int>(h * 0.2));
             qreal statusWidth = 0;
             qreal rangeWidth = 0;
             for (int i = 0; i < m_dayItems.count(); ++i) {
                 m_dayItems[i]->setFont(textFont);
+                m_rangeItems[i]->setFont(textFont);
                 QRectF brect = m_dayItems[i]->boundingRect();
                 statusWidth = qMax(statusWidth, brect.width());
                 brect = m_rangeItems[i]->boundingRect();
@@ -600,7 +605,7 @@ private:
 
     void layoutItemsPortrait() {
 
-        m_statusItem->setRect(0, 0, width() - 1, height() / 2 - 1);
+        m_statusItem->setRect(0, 0, width() - 1, height() * 0.7 - 1);
 
         if (!m_iconItem->boundingRect().isEmpty()) {
             qreal dim = qMin(width() * 0.8, height() * 0.4);
@@ -612,18 +617,25 @@ private:
             m_iconItem->setPos(ofsx, ofsy);
         }
 
+        QFont textFont = font();
+        textFont.setPixelSize(static_cast<int>(width() * 0.1));
+
         m_temperatureItem->setPos(2, 2);
+        m_temperatureItem->setFont(textFont);
         qreal ch = m_conditionItem->boundingRect().height();
         qreal cw = m_conditionItem->boundingRect().width();
-        m_conditionItem->setPos(width() - cw , height() / 2 - ch - 20);
+        m_conditionItem->setPos(width() - cw , height() / 2 - ch);
+        m_conditionItem->setFont(textFont);
 
         if (m_dayItems.count()) {
             qreal top = height() * 0.5;
             qreal w = width() / m_dayItems.count();
+            textFont.setPixelSize(static_cast<int>(w * 0.2));
             qreal statusHeight = 0;
             qreal rangeHeight = 0;
             for (int i = 0; i < m_dayItems.count(); ++i) {
-                m_dayItems[i]->setFont(font());
+                m_dayItems[i]->setFont(textFont);
+                m_rangeItems[i]->setFont(textFont);
                 QRectF brect = m_dayItems[i]->boundingRect();
                 statusHeight = qMax(statusHeight, brect.height());
                 brect = m_rangeItems[i]->boundingRect();

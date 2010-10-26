@@ -78,7 +78,7 @@ public:
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
-class tst_QLandmarkLmxHandler : public QObject
+class tst_QLandmarkFileHandler_Lmx : public QObject
 {
     Q_OBJECT
 
@@ -508,7 +508,7 @@ private:
         a0.setCity("Brisbane");
         a0.setState("Queensland");
         a0.setCountry("Australia");
-        a0.setPostCode("4000");
+        a0.setPostcode("4000");
         w0.setAddress(a0);
         w0.setPhoneNumber("123456789");
         w0.setUrl(QUrl("http://example.com/testUrl"));
@@ -578,7 +578,7 @@ private:
 
         QLandmark w11;
         QGeoAddress a11;
-        a11.setPostCode("4000");
+        a11.setPostcode("4000");
         w11.setAddress(a11);
         w << w11;
 
@@ -592,7 +592,7 @@ private:
         a13.setCity("Brisbane");
         a13.setState("Queensland");
         a13.setCountry("Australia");
-        a13.setPostCode("4000");
+        a13.setPostcode("4000");
         w13.setAddress(a13);
         w13.setPhoneNumber("123456789");
         w << w13;
@@ -614,5 +614,5 @@ private:
     }
 };
 
-QTEST_MAIN(tst_QLandmarkLmxHandler)
+QTEST_MAIN(tst_QLandmarkFileHandler_Lmx)
 #include "tst_qlandmarkfilehandler_lmx.moc"

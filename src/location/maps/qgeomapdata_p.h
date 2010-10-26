@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include "qgraphicsgeomap.h"
 #include "qgeomapgroupobject.h"
 
 #include "qgeocoordinate.h"
@@ -69,11 +68,10 @@ class QGeoMapOverlay;
 class QGeoMapDataPrivate
 {
 public:
-    QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
+    QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine);
     virtual ~QGeoMapDataPrivate();
 
     QGeoMappingManagerEngine *engine;
-    QGraphicsGeoMap *geoMap;
     QGeoMapGroupObject* containerObject;
 
     qreal zoomLevel;

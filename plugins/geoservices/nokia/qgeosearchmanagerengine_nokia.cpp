@@ -58,35 +58,34 @@
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com"),
-        m_referer("localhost")
+        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    QList<QString> keys = parameters.keys();
-
-    if (keys.contains("places.proxy")) {
+    if (parameters.contains("places.proxy")) {
         QString proxy = parameters.value("places.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if (keys.contains("places.host")) {
+    if (parameters.contains("places.host")) {
         QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
-    if (keys.contains("places.referer")) {
-        QString referer = parameters.value("places.referer").toString();
-        if (!referer.isEmpty())
-            m_referer = referer;
+    if (parameters.contains("places.referer")) {
+        m_referer = parameters.value("places.referer").toString();
     }
 
-    if (keys.contains("places.token")) {
-        QString token = parameters.value("places.token").toString();
-        if (!token.isEmpty())
-            m_token = token;
+    if (parameters.contains("places.token")) {
+        m_token = parameters.value("places.token").toString();
     }
+    else if (parameters.contains("token")) {
+        m_token = parameters.value("token").toString();
+    }
+
 
     setSupportsGeocoding(true);
     setSupportsReverseGeocoding(true);
@@ -136,9 +135,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.city();
     }
 
-    if (!address.postCode().isEmpty()) {
+    if (!address.postcode().isEmpty()) {
         requestString += "&zip=";
-        requestString += address.postCode();
+        requestString += address.postcode();
     }
 
     if (!address.street().isEmpty()) {

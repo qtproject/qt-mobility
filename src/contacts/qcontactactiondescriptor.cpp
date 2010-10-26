@@ -301,4 +301,18 @@ uint qHash(const QContactActionDescriptor& key)
     return ret;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
+QDebug& operator<<(QDebug dbg, const QContactActionDescriptor& descriptor)
+{
+    dbg.nospace() << "QContactActionDescriptor("
+                  << descriptor.serviceName() << ","
+                  << descriptor.actionName() << ","
+                  << descriptor.d->m_identifier << ","
+                  << descriptor.implementationVersion() << ","
+                  << descriptor.d->m_factory
+                  << ')';
+    return dbg.maybeSpace();
+}
+#endif
+
 QTM_END_NAMESPACE

@@ -78,7 +78,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& profile) :
+QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QStringList& profiles) :
     mDetailHandler(NULL),
     mDetailHandler2(NULL),
     mDetailHandlerVersion(0),
@@ -111,7 +111,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
 
-    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
+    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profiles);
 }
 
 /*!
@@ -120,6 +120,9 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginDetailHandlers) {
+        delete pluginHandler;
+    }
 }
 
 
@@ -132,10 +135,6 @@ bool QVersitContactExporterPrivate::exportContact(
     QVersitContactExporter::Error* error)
 {
     QList<QContactDetail> allDetails = contact.details();
-    if (allDetails.isEmpty()) {
-        *error = QVersitContactExporter::EmptyContactError;
-        return false;
-    }
     foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler
