@@ -5,7 +5,11 @@ CONFIG += ordered
 include(../../common.pri)
 
 !symbian {
-SUBDIRS += qsparql
+    maemo6 {
+        SUBDIRS += qsparql
+    } else {
+        SUBDIRS += sqlite
+    }
 }
 
 symbian {
