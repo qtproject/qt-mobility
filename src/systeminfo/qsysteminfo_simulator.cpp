@@ -239,6 +239,9 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     data.features.fill(false, featureMeta.keyCount());
     QMetaEnum versionMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Version"));
     data.versions.fill("unknown", versionMeta.keyCount() + 1);
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemInfoPrivate::setInitialData()
@@ -333,6 +336,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     init.status = QSystemNetworkInfo::UndefinedStatus;
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemNetworkInfoPrivate::setInitialData()
@@ -463,6 +469,9 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDisplayInfoPrivate::setInitialData()
@@ -539,6 +548,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDeviceInfoPrivate::setInitialData()
@@ -723,6 +735,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemStorageInfoPrivate::setInitialData()
@@ -910,6 +925,9 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()

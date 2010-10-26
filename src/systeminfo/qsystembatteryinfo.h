@@ -95,8 +95,8 @@ public:
     };
 
     enum ChargerType {
-        Unknown = -1,
-        None,
+        UnknownCharger = -1,
+        NoCharger,
         Wall,
         USB_500mA,
         USB_100mA

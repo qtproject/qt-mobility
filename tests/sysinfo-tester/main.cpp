@@ -131,6 +131,34 @@ static const symbol_t NetworkMode_lut[] =
   {0,0}
 };
 
+static const symbol_t BatteryStatus_lut[] =
+{
+    SYM(QSystemBatteryInfo::BatteryUnknown),
+    SYM(QSystemBatteryInfo::BatteryCritical),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::BatteryLow),
+    SYM(QSystemBatteryInfo::BatteryOk),
+    SYM(QSystemBatteryInfo::BatteryFull),
+};
+
+static const symbol_t ChargingState_lut[] =
+{
+    SYM(QSystemBatteryInfo::NotCharging),
+    SYM(QSystemBatteryInfo::Charging),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::ChargingFailed),
+};
+
+static const symbol_t ChargerType_lut[] =
+{
+    SYM(QSystemBatteryInfo::UnknownCharger),
+    SYM(QSystemBatteryInfo::NoCharger),
+    SYM(QSystemBatteryInfo::Wall),
+    SYM(QSystemBatteryInfo::USB_500mA),
+    SYM(QSystemBatteryInfo::BatteryOk),
+    SYM(QSystemBatteryInfo::USB_100mA),
+};
+
 /* ------------------------------------------------------------------------- *
  * test_systeminfo
  * ------------------------------------------------------------------------- */
@@ -323,12 +351,37 @@ static void test_systemnetworkinfo(void)
   }
 }
 
+/* ------------------------------------------------------------------------- *
+ * test_systemscreensaver
+ * ------------------------------------------------------------------------- */
 static void test_systemscreensaver(void)
 {
   QSystemScreenSaver screensaver;
 
   X(screensaver.screenSaverInhibited());
   X(screensaver.setScreenSaverInhibit());
+}
+
+/* ------------------------------------------------------------------------- *
+ * test_systembatteryinfo
+ * ------------------------------------------------------------------------- */
+
+static void test_systembatteryinfo(void)
+{
+    QSystemBatteryInfo batteryinfo;
+
+    X(batteryinfo.nominalCapacity());
+    X(batteryinfo.remainingCapacityPercent());
+    X(batteryinfo.remainingCapacitymAh());
+
+    X(batteryinfo.voltage());
+    X(batteryinfo.remainingChargingTime());
+    X(batteryinfo.currentFlow());
+    X(batteryinfo.cumulativeCurrentFlow());
+
+    X(batteryinfo.remainingCapacityBars());
+    X(batteryinfo.maxBars());
+    X(batteryinfo.batteryStatus());
 }
 
 struct dummy_t
@@ -343,6 +396,7 @@ struct dummy_t
   ADD(systemnetworkinfo),
   ADD(systemscreensaver),
   ADD(systemdisplayinfo),
+  ADD(systembatteryinfo),
 #undef ADD
   {0,0}
 };
