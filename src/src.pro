@@ -14,9 +14,7 @@ contains(mobility_modules,serviceframework) {
 
 contains(mobility_modules,bearer){
     SUBDIRS += bearer
-    symbian {
-        !contains(MOBILITY_SD_MCL_BUILD, yes):exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso): SUBDIRS += bearer/bearer_old
-    }
+    symbian: !contains(MOBILITY_SD_MCL_BUILD, yes): exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso): SUBDIRS += bearer/bearer_old
 }
     
 contains(mobility_modules,location): SUBDIRS += location
