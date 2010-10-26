@@ -88,9 +88,13 @@ public:
         mAccessMethods = accessMethods;
     }
 
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
+    void setNdefMessages(const QList<QNdefMessage> &messages);
+
 private:
     // Own
-    CNearFieldTagType1 * mTag;
+    CNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
 };
 

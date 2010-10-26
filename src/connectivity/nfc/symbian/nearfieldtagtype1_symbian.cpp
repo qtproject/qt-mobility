@@ -250,3 +250,8 @@ TNfcType1Address CNearFieldTagType1::Add8Operand(TUint8 aBlockAddress) const
     {
     
     }
+
+CNearFieldTagType1 * CNearFieldTagType1::CastToTagType1()
+    {
+    return const_cast<CNearFieldTagType1 *>(this);
+    }
