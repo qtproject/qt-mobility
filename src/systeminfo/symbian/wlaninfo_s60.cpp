@@ -56,23 +56,22 @@ CWlanInfo::CWlanInfo(QObject *parent) : QObject(parent)
     , m_wlanSsid()
     , m_wlanSignalStrength(-1)
 {
-#ifndef __WINSCW__    
+#ifndef __WINSCW__
     TRAP_IGNORE( m_wlanMgmtClient = CWlanMgmtClient::NewL();)
-        
-		if (m_wlanMgmtClient){
-			m_wlanMgmtClient->ActivateNotificationsL(*this);
-	    m_timer = new QTimer(this);
-	    connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWlanInfo()));
-	    m_timer->setInterval(1000);
-	    m_timer->start();
-	  	}
-#endif    
+        if (m_wlanMgmtClient) {
+            m_wlanMgmtClient->ActivateNotificationsL(*this);
+            m_timer = new QTimer(this);
+            connect(m_timer, SIGNAL(timeout()), this, SLOT(checkWlanInfo()));
+            m_timer->setInterval(1000);
+            m_timer->start();
+       }
+#endif
 }
 
 CWlanInfo::~CWlanInfo()
 {
     if (m_wlanMgmtClient)
-    	m_wlanMgmtClient->CancelNotifications();
+        m_wlanMgmtClient->CancelNotifications();
     delete m_wlanMgmtClient;
 }
 
@@ -93,9 +92,9 @@ bool CWlanInfo::wlanNetworkConnectionStatus() const
 
 void CWlanInfo::checkWlanInfo()
 {
-#ifndef __WINSCW__    
-		if(!m_wlanMgmtClient)
-			return;
+#ifndef __WINSCW__
+    if(!m_wlanMgmtClient)
+        return;
     TWlanConnectionMode connectionMode;
     TInt err = m_wlanMgmtClient->GetConnectionMode(connectionMode);
     if (err == KErrNone && connectionMode != EWlanConnectionModeNotConnected) {
