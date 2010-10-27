@@ -2320,7 +2320,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
 
 /*!
   Returns true if the given \a item (or an occurrence of the item) occurs within the range
-  specified by the \a startPeriod and the \a endPeriod.
+  specified by the \a startPeriod and the \a endPeriod, inclusive.
   A default-constructed \a startPeriod signifies that the lower bound of the range is
   infinitely small (i.e., will match anything up to the \a endPeriod) and a default-constructed
   \a endPeriod signifies that the upper bound of the range is infinitely large
