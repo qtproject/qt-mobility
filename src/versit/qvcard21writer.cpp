@@ -150,6 +150,29 @@ bool QVCard21Writer::encodeVersitValue(QMultiHash<QString,QString>& parameters, 
     return false;
 }
 
+int sortIndexOfTypeValue(const QString& type) {
+    if (   type == QLatin1String("CELL")
+        || type == QLatin1String("FAX")) {
+        return 0;
+    } else if (type == QLatin1String("HOME")
+            || type == QLatin1String("WORK")) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
+
+bool typeValueLessThan(const QString& a, const QString& b) {
+    return sortIndexOfTypeValue(a) < sortIndexOfTypeValue(b);
+}
+
+/*! Ensure CELL and FAX are at the front because they are "more important" and some vCard
+    parsers may ignore everything after the first TYPE */
+void sortTypeValues(QStringList* values)
+{
+    qSort(values->begin(), values->end(), typeValueLessThan);
+}
+
 /*!
  * Encodes the \a parameters and writes it to the device.
  */
@@ -158,10 +181,13 @@ void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
     QList<QString> names = parameters.uniqueKeys();
     foreach (const QString& name, names) {
         QStringList values = parameters.values(name);
+        if (name == QLatin1String("TYPE")) {
+            // TYPE parameters should be sorted
+            sortTypeValues(&values);
+        }
         foreach (const QString& value, values) {
             writeString(QLatin1String(";"));
-            QString typeParameterName(QLatin1String("TYPE"));
-            if (name.length() > 0 && name != typeParameterName) {
+            if (name.length() > 0 && name != QLatin1String("TYPE")) {
                 writeString(name);
                 writeString(QLatin1String("="));
             }

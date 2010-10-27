@@ -56,7 +56,7 @@ namespace SymbianHelpers {
     enum EngineType {
         EngineTypeMTM = 0,
         EngineTypeFreestyle,
-        EngineDefault
+        EngineTypeNotDefined,
     };
 
     EngineType idType(const QString& id);
@@ -64,18 +64,27 @@ namespace SymbianHelpers {
     EngineType idType(const QMessageAccountId& id);
     EngineType idType(const QMessageFolderId& id);
 
-    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
-    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
-    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
-    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineTypeNotDefined);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineTypeNotDefined);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineTypeNotDefined);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineTypeNotDefined);
 
     QString stripIdPrefix(const QString& id);
     QMessageId stripIdPrefix(const QMessageId& id);
     QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
     QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
 
+    QMessageId buildQMessageId(
+        const quint64 mailboxId,
+        const quint64 folderId,
+        const quint64 messageId,
+        const EngineType& type = EngineTypeNotDefined);
+    void splitQMessageId(const QMessageId& id, quint64& mailboxId, quint64& folderId, quint64& messageId);
+
     static const char* mtmPrefix = "MTM_";
     static const char* freestylePrefix = "FS_";
+    static const char* idDelimiter = "_";
+
 }
 
 namespace MessagingUtil

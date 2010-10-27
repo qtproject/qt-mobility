@@ -998,8 +998,9 @@ bool CFSEngine::exportUpdates(const QMessageAccountId &id)
     }
 }
 
-void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
+void CFSEngine::exportUpdatesL(QMessageServicePrivate &privateService, const QMessageAccountId &id)
 {
+    Q_UNUSED(privateService);
     TMailboxId mailboxId(stripIdPrefix(id.toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     mailbox->SynchroniseL(*this);

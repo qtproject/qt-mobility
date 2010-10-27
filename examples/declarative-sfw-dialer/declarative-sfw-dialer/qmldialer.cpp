@@ -46,7 +46,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("declarative-sfw-dialer.qml");
+    const QString mainQmlApp = QLatin1String("qrc:/declarative-sfw-dialer.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);

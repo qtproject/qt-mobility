@@ -62,7 +62,9 @@ class DBusSession: public QObject, protected QDBusContext
 {
     Q_OBJECT
 public:
-    DBusSession() {} 
+    DBusSession(QObject* parent = 0)
+        : QObject(parent)
+    {}
     ~DBusSession() {}
 
 public slots:

@@ -182,6 +182,7 @@ private:
     TReal32 iProgress;
     TBool iIsComplete;
     TBool iIsRequestRunning;
+    TBool iIsDestructing;
 };
 
 /**
