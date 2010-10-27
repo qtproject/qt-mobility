@@ -71,6 +71,7 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_player = new QMediaPlayer(this, QMediaPlayer::LowLatency);
     connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(stateChanged(QMediaPlayer::State)));
     connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+    connect(m_player, SIGNAL(error(QMediaPlayer::Error)), SLOT(error(QMediaPlayer::Error)));
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
@@ -139,6 +140,8 @@ QSoundEffect::Status QSoundEffectPrivate::status() const
 
 void QSoundEffectPrivate::play()
 {
+    if (m_status == QSoundEffect::Null || m_status == QSoundEffect::Error)
+        return;
     if (m_loopCount < 0) {
         m_runningCount = -1;
     }
@@ -192,6 +195,18 @@ void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
     }
 }
 
+void QSoundEffectPrivate::error(QMediaPlayer::Error err)
+{
+    bool playingDirty = false;
+    if (m_playing) {
+        m_playing = false;
+        playingDirty = true;
+    }
+    setStatus(QSoundEffect::Error);
+    if (playingDirty)
+        emit playingChanged();
+}
+
 void QSoundEffectPrivate::setStatus(QSoundEffect::Status status)
 {
     if (m_status == status)
@@ -207,7 +222,6 @@ void QSoundEffectPrivate::setPlaying(bool playing)
 {
     if (m_playing == playing)
         return;
-    setStatus(QSoundEffect::Ready);
     m_playing = playing;
     emit playingChanged();
 }
