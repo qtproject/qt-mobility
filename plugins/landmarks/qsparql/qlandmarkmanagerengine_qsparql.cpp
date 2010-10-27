@@ -53,12 +53,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QSettings>
-/*
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlRecord>
-#include <QSqlQuery>
-*/
+
 #include <QThreadPool>
 #include <QUuid>
 
@@ -134,9 +129,6 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     qRegisterMetaType<QLandmarkExportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
-    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
-    //m_databaseOperations.connectionName = m_dbConnectionName;
-
     if (m_dbFilename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                            QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
@@ -145,83 +137,30 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         dir.mkpath(dir.path());
         m_dbFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
     }
-   /*
-    db.setDatabaseName(m_dbFilename);
-    if (!db.open()) {
-        qWarning() << db.lastError().text();
-    }
-   */
     if (filename == ":memory:")
         return;
 
-    // check for fk support
-    /*
-    QSqlQuery checkForeignKeys("PRAGMA foreign_keys;", db);
-    bool result = false;
-    while (checkForeignKeys.next()) {
-        QString r = checkForeignKeys.value(0).toString();
-        if ((r == "0") || (r == "1"))
-            result = true;
-    }
-
-    QFile file;
-    if (result)
-        file.setFileName(":/qlandmarkmanagerengine_qsparql_fk.ddl");
-    else
-        file.setFileName(":/qlandmarkmanagerengine_qsparql_no_fk.ddl");
-
-    // read in ddl to set up tables
-    // all tables and indices use IF NOT EXISTS to avoid duplication
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&file);
-        QString s = in.readAll();
-        QStringList queries = s.split("@@@");
-
-        bool transacting = db.transaction();
-
-        {//check for database with old schema
-            //TODO: database verion checking
-        }
-        for (int i = 0; i < queries.size(); ++i) {
-            QString q = queries.at(i).trimmed();
-            if (q == "")
-                continue;
-
-            q += ";";
-            QSqlQuery query(db);
-            if (!query.exec(q)) {
-                qWarning() << QString("Statement %1: %2").arg(i + 1).arg(query.lastError().databaseText());
-            }
-        }
-        if (transacting)
-            db.commit();
-    }
-    file.close();
-    */
     m_databaseOperations.managerUri = managerUri();
-   /*
-    connect(m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-            this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-    connect(m_databaseOperations,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-            this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-    connect(m_databaseOperations,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-            this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-    */
+
+    connect(&m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+            this, SLOT(landmarksAdding(QList<QLandmarkId>)));
+    connect(&m_databaseOperations,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+            this, SLOT(landmarksChanging(QList<QLandmarkId>)));
+    connect(&m_databaseOperations,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+            this, SLOT(landmarksRemoving(QList<QLandmarkId>)));
+
     connect(&m_databaseOperations,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesAdded(QList<QLandmarkCategoryId>)));
+            this, SLOT(categoriesAdding(QList<QLandmarkCategoryId>)));
     connect(&m_databaseOperations,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesChanged(QList<QLandmarkCategoryId>)));
+            this, SLOT(categoriesChanging(QList<QLandmarkCategoryId>)));
     connect(&m_databaseOperations,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesRemoved(QList<QLandmarkCategoryId>)));
+            this, SLOT(categoriesRemoving(QList<QLandmarkCategoryId>)));
 }
 
 QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
 {
     QThreadPool *threadPool = QThreadPool::globalInstance();
     threadPool->waitForDone();
-
-    //QSqlDatabase::database(m_dbConnectionName).close();
-    //QSqlDatabase::removeDatabase(m_dbConnectionName);
 }
 
 /* URI reporting */
@@ -310,14 +249,11 @@ QList<QLandmarkCategory> QLandmarkManagerEngineQsparql::categories(int limit, in
     return m_databaseOperations.categories(catIds, nameSort, limit, offset, error, errorString, false);
 }
 
-
 bool QLandmarkManagerEngineQsparql::saveLandmark(QLandmark* landmark,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-
     return m_databaseOperations.saveLandmark(landmark, error, errorString);
-
 }
 
 bool QLandmarkManagerEngineQsparql::saveLandmarks(QList<QLandmark> * landmarks,
@@ -565,138 +501,40 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 
 void QLandmarkManagerEngineQsparql::databaseChanged()
 {
-   /*
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    QSqlQuery query(db);
-    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
-#ifdef QT_LANDMARK_QSPARQL_ENGINE_DEBUG
-        qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
-#endif
-        return;
-    }
-    query.addBindValue(m_latestLandmarkTimestamp);
-    if (!query.exec()) {
-#ifdef QT_LANDMARK_QSPARQL_ENGINE_DEBUG
-        qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
-#endif
-
-        return;
-    }
-
-    QList<QLandmarkId> addedLandmarkIds;
-    QList<QLandmarkId> changedLandmarkIds;
-    QList<QLandmarkId> removedLandmarkIds;
-
-    QString action;
-    QLandmarkId landmarkId;
-    landmarkId.setManagerUri(managerUri());
-    bool ok;
-    qint64 timestamp;
-
-    while(query.next()) {
-        timestamp = query.value(2).toLongLong(&ok);
-        if (!ok) //this should never happen
-            continue;
-
-        if (timestamp > m_latestLandmarkTimestamp)
-            m_latestLandmarkTimestamp = timestamp;
-
-        action = query.value(1).toString();
-        landmarkId.setLocalId((query.value(0).toString()));
-
-        if (action == "ADD") {
-            addedLandmarkIds << landmarkId;
-        } else if (action == "CHANGE") {
-            changedLandmarkIds << landmarkId;
-        } else if (action == "REMOVE") {
-            removedLandmarkIds << landmarkId;
-        }
-    }
-
-    if (addedLandmarkIds.count() > 0)
-        emit landmarksAdded(addedLandmarkIds);
-
-    if (changedLandmarkIds.count() > 0)
-        emit landmarksChanged(changedLandmarkIds);
-
-    if (removedLandmarkIds.count() > 0)
-        emit landmarksRemoved(removedLandmarkIds);
-
-    //now check for added/modified/removed categories
-    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
-#ifdef QT_LANDMARK_QSPARQL_ENGINE_DEBUG
-        qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
-#endif
-        return;
-    }
-    query.addBindValue(m_latestCategoryTimestamp);
-    if (!query.exec()) {
-#ifdef QT_LANDMARK_QSPARQL_ENGINE_DEBUG
-        qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
-#endif
-        return;
-    }
-    QList<QLandmarkCategoryId> addedCategoryIds;
-    QList<QLandmarkCategoryId> changedCategoryIds;
-    QList<QLandmarkCategoryId> removedCategoryIds;
-
-    QLandmarkCategoryId categoryId;
-    categoryId.setManagerUri(managerUri());
-
-    while(query.next()) {
-        timestamp = query.value(2).toLongLong(&ok);
-        if (!ok) //this should never happen
-            continue;
-
-        if (timestamp > m_latestCategoryTimestamp)
-            m_latestCategoryTimestamp = timestamp;
-
-        action = query.value(1).toString();
-        categoryId.setLocalId(query.value(0).toString());
-        if (action == "ADD") {
-            addedCategoryIds << categoryId;
-        } else if (action == "CHANGE") {
-            changedCategoryIds << categoryId;
-        } else if (action == "REMOVE") {
-            removedCategoryIds << categoryId;
-        }
-    }
-
-    if (addedCategoryIds.count() > 0)
-        emit categoriesAdded(addedCategoryIds);
-
-    if (changedCategoryIds.count() > 0)
-        emit categoriesChanged(changedCategoryIds);
-
-    if (removedCategoryIds.count() > 0)
-        emit categoriesRemoved(removedCategoryIds);
-*/
 }
 
- void QLandmarkManagerEngineQsparql::categoriesAdded(QList<QLandmarkCategoryId> ids) {
+void QLandmarkManagerEngineQsparql::landmarksAdding(QList<QLandmarkId> ids) {
+   if (m_changeNotificationsEnabled)
+       emit landmarksAdded(ids);
+}
+
+void QLandmarkManagerEngineQsparql::landmarksChanging(QList<QLandmarkId> ids) {
+    if (m_changeNotificationsEnabled)
+       emit landmarksChanged(ids);
+}
+
+void QLandmarkManagerEngineQsparql::landmarksRemoving(QList<QLandmarkId> ids) {
+    if  (m_changeNotificationsEnabled)
+        emit landmarksRemoved(ids);
+}
+
+ void QLandmarkManagerEngineQsparql::categoriesAdding(QList<QLandmarkCategoryId> ids) {
     if (m_changeNotificationsEnabled)
         emit categoriesAdded(ids);
 }
 
-void QLandmarkManagerEngineQsparql::categoriesChanged(QList<QLandmarkCategoryId> ids) {
+void QLandmarkManagerEngineQsparql::categoriesChanging(QList<QLandmarkCategoryId> ids) {
      if (m_changeNotificationsEnabled)
         emit categoriesChanged(ids);
 }
 
-void QLandmarkManagerEngineQsparql::categoriesRemoved(QList<QLandmarkCategoryId> ids) {
+void QLandmarkManagerEngineQsparql::categoriesRemoving(QList<QLandmarkCategoryId> ids) {
      if  (m_changeNotificationsEnabled)
          emit categoriesRemoved(ids);
 }
 
 void QLandmarkManagerEngineQsparql::setChangeNotificationsEnabled(bool enabled)
 {
-    /*
-    if (enabled) {
-        QDateTime dateTime= QDateTime::currentDateTime();
-        m_latestLandmarkTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-        m_latestCategoryTimestamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    }*/
     m_changeNotificationsEnabled = enabled;
 }
 

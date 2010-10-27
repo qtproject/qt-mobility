@@ -199,9 +199,12 @@ public slots:
 
 private slots:
     void databaseChanged();
-    void categoriesAdded(QList<QLandmarkCategoryId> ids);
-    void categoriesChanged(QList<QLandmarkCategoryId> ids);
-    void categoriesRemoved(QList<QLandmarkCategoryId> ids);
+    void landmarksAdding(QList<QLandmarkId> ids);
+    void landmarksChanging(QList<QLandmarkId> ids);
+    void landmarksRemoving(QList<QLandmarkId> ids);
+    void categoriesAdding(QList<QLandmarkCategoryId> ids);
+    void categoriesChanging(QList<QLandmarkCategoryId> ids);
+    void categoriesRemoving(QList<QLandmarkCategoryId> ids);
 
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
