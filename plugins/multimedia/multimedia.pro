@@ -31,7 +31,7 @@ unix:!mac:!symbian {
     } else {
         SUBDIRS += audiocapture
     }
-    SUBDIRS += v4l
+    !maemo*:SUBDIRS += v4l
 }
 
 mac {
