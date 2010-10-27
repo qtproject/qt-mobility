@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,7 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICEREGISTER_P_H
-#define QREMOTESERVICEREGISTER_P_H
-
-#include "qremoteserviceregister.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-class QRemoteServiceRegisterPrivate: public QObject
+int main(int, char**)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
-public:
-    QRemoteServiceRegisterPrivate(QObject* parent);
-    virtual ~QRemoteServiceRegisterPrivate();
-
-    virtual void publishServices(const QString& ident ) = 0;
-
-    virtual bool quitOnLastInstanceClosed() const;
-    virtual void setQuitOnLastInstanceClosed(const bool quit);
-
-    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
-
-public slots:
-    // Must be implemented in the subclass
-    //void processIncoming();
-
-protected:
-    virtual QRemoteServiceRegister::SecurityFilter getSecurityFilter();
-
-private:
-    bool m_quit;
-    QRemoteServiceRegister::SecurityFilter iFilter;
-
-public:
-    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
-    static QRemoteServiceRegisterPrivate* constructPrivateObject(QObject *parent);    
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    return 0;
+}

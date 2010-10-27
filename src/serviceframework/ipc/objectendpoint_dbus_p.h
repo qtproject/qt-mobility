@@ -94,7 +94,6 @@ private:
     QPointer<QObject> service;
     ObjectEndPointPrivate* d;
     
-    QDBusConnection *connection;
     QDBusInterface *iface;
     QServiceMetaObjectDBus *signalsObject;
 };

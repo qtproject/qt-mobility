@@ -81,7 +81,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         qmessagesortorder_stub.cpp \
         qmessagestore_stub.cpp \
         qmessageservice_stub.cpp
-    maemo5 {
+    maemo5 { 
         QT += dbus
         CONFIG += link_pkgconfig
         PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
@@ -220,15 +220,18 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-	contains(messaging_freestyle_enabled, yes) {
-   	CONFIG += FREESTYLEMAIL
-	DEFINES += FREESTYLEMAILUSED
-	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
-	}
-	contains(messaging_ncnlist_enabled, no) {
-	DEFINES += NCNLISTREMOVED
-	}
-	contains(messaging_qthighway_enabled, yes) {
+        contains(messaging_freestylenm_enabled, yes) { 
+            CONFIG += FREESTYLENMAIL
+            DEFINES += FREESTYLENMAILUSED
+        }
+        contains(CONFIG, !FREESTYLENMAIL):contains(messaging_freestyle_enabled, yes) { 
+            CONFIG += FREESTYLEMAIL
+            DEFINES += FREESTYLEMAILUSED
+            DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+        }
+        contains(messaging_ncnlist_enabled, no):DEFINES += NCNLISTREMOVED
+        contains(messaging_qthighway_enabled, yes) { 
+            INCLUDEPATH += /sf/mw/qtextensions/qthighway/inc
             CONFIG += QTHIGHWAY
             DEFINES += QTHIGHWAYUSED
         }
@@ -241,10 +244,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessagecontentcontainer_symbian_p.h \
             qmessage_symbian_p.h \
             maemohelpers_p.h
-            contains(CONFIG, FREESTYLEMAIL) {
-               HEADERS += qfsengine_symbian_p.h
-            }
-
+        contains(CONFIG, FREESTYLEMAIL):HEADERS += qfsengine_symbian_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -263,10 +263,14 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             qmessagestore_symbian.cpp \
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
-            
-        contains(CONFIG, FREESTYLEMAIL) {
-	    SOURCES += qfsengine_symbian.cpp
-	}
+        contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
+        contains(CONFIG, FREESTYLENMAIL) {
+            HEADERS += qfsnmengine_symbian_p.h \
+                qfsnmasyncoperations_symbian.h
+            SOURCES += qfsnmengine_symbian.cpp \
+                qfsnmasyncoperations_symbian.cpp
+        }
+        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi
         contains(CONFIG, QTHIGHWAY) {
             LIBS += -lxqservice \
                     -lxqserviceutil \
@@ -288,7 +292,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             -lcone \
             -lapgrfx \
             -lapmime \
-            -lecom 
+            -lecom
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82

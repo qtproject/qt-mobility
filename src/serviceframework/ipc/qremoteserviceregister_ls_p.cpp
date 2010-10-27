@@ -91,6 +91,7 @@ public:
     ~LocalSocketEndPoint() 
     {
         disconnect(this, SLOT(ipcfault()));
+        socket->close();
     }
 
 Q_SIGNALS:
@@ -273,6 +274,8 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
             QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
                              proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
         }
+        ipcEndPoint->setParent(proxy);
+        endPoint->setParent(proxy);
         return proxy;
     }
     return 0;

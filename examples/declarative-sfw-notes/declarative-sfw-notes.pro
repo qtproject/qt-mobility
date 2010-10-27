@@ -4,6 +4,7 @@ include(deployment.pri)
 QT += declarative network script
 SOURCES += qmlnotes.cpp
 TARGET = qmlnotes
+RESOURCES += declarative-sfw-notes.qrc
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
