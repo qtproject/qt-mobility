@@ -136,10 +136,11 @@ contains(mobility_modules,gallery) {
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo \
 	       todo
-    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        SUBDIRS += \
-               qmlorganizer
-    }
+#disable qmlorganizer, as it is not completed
+#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+#        SUBDIRS += \
+#               qmlorganizer
+#    }
 }
 
 # Feedback API examples
