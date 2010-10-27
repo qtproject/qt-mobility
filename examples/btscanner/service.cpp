@@ -76,8 +76,12 @@ void ServiceDiscoveryDialog::addService(const QBluetoothServiceInfo &info)
     if (info.serviceName().isEmpty())
         return;
 
-    ui->list->addItem(QString("%1\n\t%2\n\t%3").arg(info.serviceName(),
-            info.attribute(QBluetoothServiceInfo::ServiceDescription).toString(),
-            info.attribute(QBluetoothServiceInfo::ServiceProvider).toString()));
+    QString line = info.serviceName();
+    if(!info.serviceDescription().isEmpty())
+        line.append("\n\t" + info.serviceDescription());
+    if(!info.serviceProvider().isEmpty())
+        line.append("\n\t" + info.serviceProvider());
+
+    ui->list->addItem(line);
 }
 
