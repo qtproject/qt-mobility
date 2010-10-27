@@ -121,6 +121,7 @@ private:
     QVideoEncoderSettings videoSettings;
     QString videoContainerFormat;
     bool isCapturingImage;
+    bool applicationExiting;
 };
 
 #endif

@@ -64,7 +64,8 @@ Camera::Camera(QWidget *parent) :
     camera(0),
     imageCapture(0),
     mediaRecorder(0),
-    isCapturingImage(false)
+    isCapturingImage(false),
+    applicationExiting(false)
 {
     ui->setupUi(this);
 
@@ -308,9 +309,10 @@ void Camera::updateLockStatus(QCamera::LockStatus status, QCamera::LockChangeRea
 }
 
 void Camera::takeImage()
+
 {
-    imageCapture->capture();
     isCapturingImage = true;
+    imageCapture->capture();
 }
 
 void Camera::startCamera()
@@ -410,14 +412,17 @@ void Camera::imageSaved(int id, const QString &fileName)
     Q_UNUSED(fileName);
 
     isCapturingImage = false;
+    if (applicationExiting)
+        close();
 }
 
 void Camera::closeEvent(QCloseEvent *event)
 {
     if (isCapturingImage) {
+        setEnabled(false);
+        applicationExiting = true;
         event->ignore();
-        QTimer::singleShot(1,this, SLOT(close()));
-        return;
+    } else {
+        event->accept();
     }
-    event->accept();
 }
