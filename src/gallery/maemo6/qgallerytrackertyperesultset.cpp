@@ -131,7 +131,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
     } else if (!accumulative) {
         QDBusPendingReply<QVector<QStringList> > reply(call);
 
-        if( queryMethod == "SparqlQuery" )
+        if ( queryMethod == "SparqlQuery" )
         {
             QVector<QStringList> v = reply.value();
             count = v[0].first().toInt();
@@ -148,10 +148,8 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
              */
             std::vector<QStringList> v = reply.value().toStdVector();
             std::vector<QStringList>::const_iterator pos = find_if( v.begin(), v.end(), FindType( service ));
-            if( pos != v.end() )
-            {
+            if ( pos != v.end() )
                 count = (*pos).last().toInt();
-            }
 
             // TODO Do we need this?
             if (refresh) {

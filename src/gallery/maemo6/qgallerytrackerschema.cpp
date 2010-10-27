@@ -1483,7 +1483,7 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         arguments->updateMask = type.updateMask;
         arguments->queryInterface = dbus->metaDataInterface();
         arguments->queryMethod = QLatin1String("SparqlQuery");
-        if( type.service == "nfo:genre")
+        if (type.service == "nfo:genre")
         {
             arguments->queryArguments = QVariantList()
                 << "SELECT COUNT(DISTINCT ?x) WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}";
@@ -1515,13 +1515,13 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     Q_UNUSED(filter);
     int index;
     if ( (index = itemTypes.indexOfItemId(rootItemId) ) != -1) {
-        if( itemTypes[index].prefix == "Artist::" )
+        if (itemTypes[index].prefix == "Artist::")
             *query = "{?track nie:isLogicalPartOf ?x} FILTER( nmm:performer(?track) = <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">)";
         else
             *query = "{?x nie:isLogicalPartOf <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">}";
     }
     else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
-        if( aggregateTypes[index].prefix == "audioGenre::" )
+        if (aggregateTypes[index].prefix == "audioGenre::")
             *query = "{?track nie:isLogicalPartOf ?x} FILTER(nfo:genre(?track) = '" + aggregateTypes[index].prefix.strip(rootItemId).toString() + "' )";
     } else {
         result = QDocumentGallery::ItemIdError;
@@ -1618,10 +1618,10 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     return columns;
 }
 
-static QString qt_preparePropertySelection( const QStringList& fields, const QString& variable )
+static QString qt_preparePropertySelection( const QStringList &fields, const QString &variable )
 {
     QString result;
-    foreach( const QString& field, fields )
+    foreach ( const QString &field, fields )
     {
         result += field;
         result += "(?";
@@ -1961,7 +1961,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->compositeOffset = arguments->tableWidth;
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
-    if( type.service == "nfo:genre")
+    if (type.service == "nfo:genre")
     {
         arguments->queryArguments = QVariantList()
                                 << "SELECT DISTINCT " + qt_preparePropertySelection(identityFields, "x") + " WHERE {?x rdf:type nfo:Media}";
