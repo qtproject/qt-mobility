@@ -66,8 +66,12 @@ pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
         }
     } else if (format.sampleSize() == 32) {
         switch (format.byteOrder()) {
-        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S32BE; break;
-        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S32LE; break;
+        case QAudioFormat::BigEndian:
+            format.sampleType() == QAudioFormat::Float ? spec.format = PA_SAMPLE_FLOAT32BE : spec.format = PA_SAMPLE_S32BE;
+            break;
+        case QAudioFormat::LittleEndian:
+            format.sampleType() == QAudioFormat::Float ? spec.format = PA_SAMPLE_FLOAT32LE : spec.format = PA_SAMPLE_S32LE;
+            break;
         }
     }
 
@@ -139,7 +143,7 @@ QAudioFormat sampleSpecToAudioFormat(pa_sample_spec spec)
 
     switch (spec.format) {
         case PA_SAMPLE_U8:
-            format.setByteOrder(QAudioFormat::LittleEndian); // TODO:
+            format.setByteOrder(QAudioFormat::LittleEndian);
             format.setSampleType(QAudioFormat::UnSignedInt);
             format.setSampleSize(8);
         break;

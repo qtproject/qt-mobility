@@ -99,7 +99,7 @@ QList<QAudioFormat::Endian> QPulseAudioDeviceInfo::supportedByteOrders()
 
 QList<QAudioFormat::SampleType> QPulseAudioDeviceInfo::supportedSampleTypes()
 {
-    return QList<QAudioFormat::SampleType>() << QAudioFormat::SignedInt << QAudioFormat::UnSignedInt;// << QAudioFormat::Float;
+    return QList<QAudioFormat::SampleType>() << QAudioFormat::SignedInt << QAudioFormat::UnSignedInt << QAudioFormat::Float;
 }
 
 QT_END_NAMESPACE
