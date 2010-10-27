@@ -62,23 +62,9 @@ bool QPulseAudioDeviceInfo::isFormatSupported(const QAudioFormat &format) const
 
 QAudioFormat QPulseAudioDeviceInfo::preferredFormat() const
 {
-    QAudioFormat nearest;
-    if (m_mode == QAudio::AudioOutput) {
-        nearest.setFrequency(44100);
-        nearest.setChannels(2);
-        nearest.setByteOrder(QAudioFormat::LittleEndian);
-        nearest.setSampleType(QAudioFormat::SignedInt);
-        nearest.setSampleSize(16);
-        nearest.setCodec(QLatin1String("audio/pcm"));
-    } else {
-        nearest.setFrequency(8000);
-        nearest.setChannels(1);
-        nearest.setSampleType(QAudioFormat::UnSignedInt);
-        nearest.setSampleSize(8);
-        nearest.setCodec(QLatin1String("audio/pcm"));
-        nearest.setByteOrder(QAudioFormat::LittleEndian);
-    }
-    return nearest;
+    QPulseAudioEngine *pulseEngine = QPulseAudioEngine::instance();
+    QAudioFormat format = pulseEngine->m_preferredFormats.value(m_device);
+    return format;
 }
 
 QString QPulseAudioDeviceInfo::deviceName() const

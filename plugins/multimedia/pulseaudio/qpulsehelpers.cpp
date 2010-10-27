@@ -130,6 +130,85 @@ QString stateToQString(pa_context_state_t state)
 }
 #endif
 
+QAudioFormat sampleSpecToAudioFormat(pa_sample_spec spec)
+{
+    QAudioFormat format;
+    format.setFrequency(spec.rate);
+    format.setChannelCount(spec.channels);
+    format.setCodec("audio/pcm");
+
+    switch (spec.format) {
+        case PA_SAMPLE_U8:
+            format.setByteOrder(QAudioFormat::LittleEndian); // TODO:
+            format.setSampleType(QAudioFormat::UnSignedInt);
+            format.setSampleSize(8);
+        break;
+        case PA_SAMPLE_ALAW:
+        // TODO:
+        break;
+        case PA_SAMPLE_ULAW:
+        // TODO:
+        break;
+        case PA_SAMPLE_S16LE:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(16);
+        break;
+        case PA_SAMPLE_S16BE:
+            format.setByteOrder(QAudioFormat::BigEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(16);
+        break;
+        case PA_SAMPLE_FLOAT32LE:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::Float);
+            format.setSampleSize(32);
+        break;
+        case PA_SAMPLE_FLOAT32BE:
+            format.setByteOrder(QAudioFormat::BigEndian);
+            format.setSampleType(QAudioFormat::Float);
+            format.setSampleSize(32);
+        break;
+        case PA_SAMPLE_S32LE:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(32);
+        break;
+        case PA_SAMPLE_S32BE:
+            format.setByteOrder(QAudioFormat::BigEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(32);
+        break;
+        case PA_SAMPLE_S24LE:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(24);
+        break;
+        case PA_SAMPLE_S24BE:
+            format.setByteOrder(QAudioFormat::BigEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(24);
+        break;
+        case PA_SAMPLE_S24_32LE:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(24);
+        break;
+        case PA_SAMPLE_S24_32BE:
+            format.setByteOrder(QAudioFormat::BigEndian);
+            format.setSampleType(QAudioFormat::SignedInt);
+            format.setSampleSize(24);
+        break;
+        case PA_SAMPLE_MAX:
+        case PA_SAMPLE_INVALID:
+        default:
+            format.setByteOrder(QAudioFormat::LittleEndian);
+            format.setSampleType(QAudioFormat::Unknown);
+            format.setSampleSize(0);
+    }
+
+    return format;
+}
 }
 
 QT_END_NAMESPACE

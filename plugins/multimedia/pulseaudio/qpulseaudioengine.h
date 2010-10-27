@@ -53,8 +53,12 @@
 // We mean it.
 //
 
+#include <QtCore/qmap.h>
+#include <QtCore/qbytearray.h>
 #include <qaudiosystemplugin.h>
 #include <pulse/pulseaudio.h>
+#include "qpulsehelpers.h"
+#include <QAudioFormat>
 
 QT_BEGIN_NAMESPACE
 
@@ -80,6 +84,7 @@ private:
 public:
     QList<QByteArray> m_sinks;
     QList<QByteArray> m_sources;
+    QMap<QByteArray, QAudioFormat> m_preferredFormats;
 
     QByteArray m_defaultSink;
     QByteArray m_defaultSource;

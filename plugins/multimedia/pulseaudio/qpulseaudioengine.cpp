@@ -119,6 +119,8 @@ static void sinkInfoCallback(pa_context *context, const pa_sink_info *info, int 
                   info->description);
 #endif
 
+    QAudioFormat format = QPulseAudioInternal::sampleSpecToAudioFormat(info->sample_spec);
+    pulseEngine->m_preferredFormats.insert(info->name, format);
     pulseEngine->m_sinks.append(info->name);
 }
 
@@ -151,6 +153,8 @@ static void sourceInfoCallback(pa_context *context, const pa_source_info *info, 
               info->description);
 #endif
 
+    QAudioFormat format = QPulseAudioInternal::sampleSpecToAudioFormat(info->sample_spec);
+    pulseEngine->m_preferredFormats.insert(info->name, format);
     pulseEngine->m_sources.append(info->name);
 }
 
