@@ -49,7 +49,7 @@
 QTM_BEGIN_NAMESPACE
 
 class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
 class CFSEngine;
 #endif
 

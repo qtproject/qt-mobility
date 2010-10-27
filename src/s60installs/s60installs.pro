@@ -45,7 +45,7 @@ isEmpty(QT_LIBINFIX):symbian {
     #we cannot use S60_VERSION == 5.2 as Qt 4.6.x does not define it yet
     #see $QTDIR/mkspecs/common/symbian/symbian.conf for details
     exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
-        pkg_version = $$replace(VERSION,"\.",",")
+        pkg_version = $$replace(VERSION,"\\.",",")
         qtmobilitydeployment.pkg_prerules += "$${LITERAL_HASH}{\"QtMobility\"},(0x2002AC89),$${pkg_version},TYPE=SA,RU,NR"
     }
 
@@ -220,6 +220,20 @@ isEmpty(QT_LIBINFIX):symbian {
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += bearer
+    }
+    
+    contains(mobility_modules, bearer):symbian:!contains(MOBILITY_SD_MCL_BUILD, yes): exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+        bearer10_0 = \ 
+	"IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+            "ELSEIF package(0x102032BE)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+            "ELSE" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+            "ENDIF"
+        qtmobilitydeployment.pkg_postrules += bearer10_0
     }
 
     contains(mobility_modules, contacts) {

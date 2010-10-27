@@ -51,55 +51,69 @@ QTM_BEGIN_NAMESPACE
 
 
 /*!
- * \class QOrganizerRecurrenceRule
- *
- * \brief The QOrganizerRecurrenceRule class describes the a rule by which a QOrganizerItem repeats.
+  \class QOrganizerRecurrenceRule
+
+  \brief The QOrganizerRecurrenceRule class describes the a rule by which a QOrganizerItem repeats.
 
   \inmodule QtOrganizer
- *
- * This class is a mapping of a subset of the iCalendar RRULE property value, and each field in this
- * class corresponds to a fragment of iCalendar's RRULE.  This class supports the same fragments as
- * those supported by RRULE, except for describing recurrences on a higher frequency than Daily.
- * That is, this class doesn't support hourly, minutely or secondly recurrences, nor does it support
- * specifying which hour, minute or second of a day to recur on.  These types of rules are
- * unsupported because most calendaring backends don't support them, and it simplifies recurrences
- * by enforcing that there can be at most one occurrence of an item per day.
- *
- *
- * The general rules for interaction between the fields when generating the occurence dates is as
- * follows:
- *
- * When a criterion takes a list, the items in the list are unioned together.
- * eg. with [dayOfWeek == Tuesday,Thursday], the event occurs if it is Tuesday or Thursday
- *
- * Frequency and specific criteria interact a bit more complicatedly.  For each criterion on a
- * larger timespan than the frequency, the dates matching the criterion are intersected with the
- * dates resulting from the frequency.
- * eg. [frequency = Daily, month = January] means every day in January
- * For each criterion on a shorter timespan than the frequency, the criterion is unioned.
- * eg. [frequency = Weekly, dayOfWeek = Wednesday,Friday] means every Wednesday and Friday of
- * every week.
- * This makes the frequency field superfluous in many cases when other criteria are present.
- * eg. all of the below mean the same thing:
- * [frequency = Daily, dayOfWeek = Monday,Tuesday]
- * [frequency = Weekly, dayOfWeek = Monday,Tuesday]
- * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
- * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
- * However, the frequency field may start affecting the result differently when other fields are
- * added like interval and positions.
- *
- * For the purpose of calculating occurrence dates, information not contained in the rule is in some
- * cases derived from the startDateTime field of the event that the detail is associated with.
- * There are three cases where such derivation is necessary.
- * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
- * the startDateTime occurs on.
- * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
- * be derived from the startDateTime
- * Case 3: frequency == Yearly.  If none of month, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
- * are specified, derive month and dayOfMonth.  If month is specified but not weekOfYear, dayOfYear,
- * dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
- * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
- * For any cases not covered here, do not derive any of the fields.
+
+  This class is a mapping of a subset of the iCalendar RRULE property value, and each field in this
+  class corresponds to a fragment of iCalendar's RRULE.  This class supports the same fragments as
+  those supported by RRULE, except for describing recurrences on a higher frequency than Daily.
+  That is, this class doesn't support hourly, minutely or secondly recurrences, nor does it support
+  specifying which hour, minute or second of a day to recur on.  These types of rules are
+  unsupported because most calendaring backends don't support them, and it simplifies recurrences
+  by enforcing that there can be at most one occurrence of an item per day.
+
+  The general rules for interaction between the fields when generating the occurence dates is as
+  follows:
+  \list
+    \o When a criterion takes a list, the items in the list are unioned together.
+    \list
+      \o eg. with [dayOfWeek == Tuesday,Thursday], the event occurs if it is Tuesday or Thursday
+    \endlist
+
+    \o Frequency and specific criteria interact in a more complicated fashion.  For each criterion on a
+  larger timespan than the frequency, the dates matching the criterion are intersected with the
+  dates resulting from the frequency.
+    \list
+      \o eg. [frequency = Daily, month = January] means every day in January
+  For each criterion on a shorter timespan than the frequency, the criterion is unioned.
+      \o eg. [frequency = Weekly, dayOfWeek = Wednesday,Friday] means every Wednesday and Friday of
+  every week.
+    \endlist
+  This makes the frequency field superfluous in many cases when other criteria are present.
+  eg. all of the below mean the same thing:
+    \list
+      \o [frequency = Daily, dayOfWeek = Monday,Tuesday]
+      \o [frequency = Weekly, dayOfWeek = Monday,Tuesday]
+      \o [frequency = Monthly, dayOfWeek = Monday,Tuesday]
+      \o [frequency = Yearly, dayOfWeek = Monday,Tuesday]
+    \endlist
+  However, the frequency field may start affecting the result differently when other fields are
+  added like interval and positions.
+
+  \o For the purpose of calculating occurrence dates, information not contained in the rule is in some
+  cases derived from the startDateTime field of the event that the detail is associated with.
+  There are three cases where such derivation is necessary.
+    \list
+      \o Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
+  the startDateTime occurs on.
+      \o Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
+  be derived from the startDateTime
+      \o Case 3: frequency == Yearly.  If none of monthOfYear, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
+  are specified, derive monthOfYear and dayOfMonth.  If monthOfYear is specified but not weekOfYear, dayOfYear,
+  dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
+  dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
+  For any cases not covered here, do not derive any of the fields.
+    \endlist
+  \endlist
+
+  A recurrence rule may be limited by either count or date, or it may be unlimited.
+  If limited by count, the series generated by the rule will have at most \c count
+  occurrences.  If limited by date, the series generated by the rule may have occurrences
+  up to (and including) the limit \c date.  See \l setLimit() for more information on
+  this topic.
  */
 
 /*!
@@ -131,7 +145,7 @@ QTM_BEGIN_NAMESPACE
  * \enum QOrganizerRecurrenceRule::LimitType
  * \value NoLimit The recurrence rule has no limit specified
  * \value CountLimit The recurrence rule specifies a certain count of repetitions in the series
- * \value DateLimit The recurrence rule specifies that the series ends at a particular date
+ * \value DateLimit The recurrence rule specifies that the series ends after a particular date
  */
 
 /*!

@@ -77,6 +77,17 @@ QtMessaging
 ------
 
  - Harmattan backend implemented
+    * Provides unified support of SMS and E-mail messaging under maemo6 (Harmattan) platform
+    * Full support of E-mail messages based on QMF and xdg-email utility for GUI functions
+    * Full support of SMS messages
+      * sending based on libtelepathy-qt4
+      * account management based on libtelepathy-qt4
+      * storage based on libcommhistory
+      * GUI functions are based on libmessagingif
+    * no support for case-sensitive filtering for E-Mails
+    * no support of QMessageDataComparator::MatchFullWord flag in SMS and E-mail search
+    * xdg-email: if do not specify "cc" list and "bcc" list, mail composer fill these fields by the "to" list
+
  - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
  - Fix failure to compile with Qt 4.7, QTMOBILITY-390
  - Fix ORing with an empty filter results in empty filter MOBILITY-1241
@@ -86,11 +97,11 @@ QtMessaging
  - Fremantle, fix simultaneous SMS queries not possible, MOBILITY-1363
  - Fremantle, Message caching, prefilter functionality and related tests implemented
  - Fremantle, Modified and removed signals added for SMS messages
- - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
- - Symbian, fix MMS message size limit not documented, MOBILITY-1224
- - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
- - Symbian, fix hardcoded paths to moc files, MOBILITY-1510
- - Symbian, MTM, send status signaling improved, MOBILITY-1148
+ - Symbian S60, fix keepintouch searching doesn't stop, MOBILITY-1418
+ - Symbian S60, fix MMS message size limit not documented, MOBILITY-1224
+ - Symbian S60, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian S60, fix hardcoded paths to moc files, MOBILITY-1510
+ - Symbian S60, MTM, send status signaling improved, MOBILITY-1148
  - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
  - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
  - Symbian^3, queryMessage crashes fixed, MOBILITY-1479, QTMOBILITY-535

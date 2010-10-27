@@ -356,7 +356,7 @@ QMap<int, QOrganizerManager::Error> QOrganizerManager::errorMap() const
 
 /*!
   Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a parentItem recurring item, which
-  occur between the given \a periodStart date and the given \a periodEnd date.
+  occur between the given \a periodStart date and the given \a periodEnd date, inclusive.
 
   If \a periodStart is after \a periodEnd, the operation will fail.
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
@@ -385,7 +385,7 @@ QList<QOrganizerItemId> QOrganizerManager::itemIds(const QOrganizerItemFilter& f
 
 /*!
   Returns a list of organizer item ids of persisted items that match the given \a filter, sorted according to the given list of \a sortOrders,
-  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate.
+  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate, inclusive.
   A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
   and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
   If both the \a startDate and \a endDate are invalid, this function will return the ids of all items which match the \a filter criteria.
@@ -424,7 +424,7 @@ QList<QOrganizerItem> QOrganizerManager::items(const QOrganizerItemFilter& filte
 
 /*!
   Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders,
-  for any item or occurrence of an item which occurs in the range specified by the given \a startDate and \a endDate.
+  for any item or occurrence of an item which occurs in the range specified by the given \a startDate and \a endDate, inclusive.
   A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
   and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
   If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
@@ -452,7 +452,7 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
 
 /*!
   Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders,
-  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate.
+  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate, inclusive.
   A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
   and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
   If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.

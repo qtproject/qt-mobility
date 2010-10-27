@@ -56,8 +56,6 @@
 
     There are several predefined enumerations and constants provided in this object.
 
-    \snippet doc/src/snippets/declarative/declarative-feedback.qml Base Effect
-
     \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
 */
 
@@ -70,8 +68,6 @@
 
     You can't create one of these elements directly, but several other elements
     inherit the methods and properties of these elements.
-
-    \snippet doc/src/snippets/declarative/declarative-feedback.qml Base Effect
 
     \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
 */
@@ -128,8 +124,9 @@
   */
 
 
-/*!
-    \qmlproper QFeedbackEffect::ErrorType
+// Hmm, can't document enums properly yet
+/*
+    \qmlproperty QFeedbackEffect::ErrorType
 
     This enum describes the possible errors happening on the effect.
 
@@ -256,8 +253,6 @@
 
     The Actuator class maps directly to the QFeedbackActuator C++ class, and
     can be used with HapticsEffect elements.
-
-    \snippet doc/src/snippets/declarative/declarative-feedback.qml Actuator
 
     \sa HapticsEffect, {QFeedbackActuator}
 */

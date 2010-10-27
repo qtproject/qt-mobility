@@ -33,7 +33,8 @@ OTHER_FILES += \
     contents/images/gloss.png \
     contents/images/default.svg \
     contents/images/button-pressed.png \
-    contents/images/button.png
+    contents/images/button.png \
+    contents/month.js
 
 symbian: {
     load(data_caging_paths)

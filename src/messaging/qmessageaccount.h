@@ -71,7 +71,7 @@ private:
     QMessageAccountPrivate *d_ptr;
 #ifdef Q_OS_SYMBIAN
     friend class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
+#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
     friend class CFSEngine;
 #endif
 
