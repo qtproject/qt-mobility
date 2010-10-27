@@ -50,7 +50,7 @@
 class CNfcType1Connection;
 class MNfcTag;
 
-class CNearFieldTagType1 : public CNearFieldTarget
+class CNearFieldTagType1 : public CActive, public MNearFieldTarget
     {
 public:
     // Cancel and destroy

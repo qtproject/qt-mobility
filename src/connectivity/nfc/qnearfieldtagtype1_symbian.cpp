@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new tag type 1 near field target with \a tag and \a parent.
 */
-QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldTarget *tag, QObject *parent)
+QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTagType1(parent), mTag(tag)
 {
 }

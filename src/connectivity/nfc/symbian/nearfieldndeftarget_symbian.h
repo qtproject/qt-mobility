@@ -58,7 +58,7 @@ class CNdefMessage;
 
 class CNdefConnection;
 
-class CNearFieldNdefTarget : public CNearFieldTarget, 
+class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
     {
 public:
@@ -72,7 +72,7 @@ public:
     static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag);
 
 public: // New functions
-    void SetRealTarget(CNearFieldTarget * aRealTarget);
+    void SetRealTarget(MNearFieldTarget * aRealTarget);
 
     // NdefAccess
     bool hasNdefMessage(){};
@@ -99,17 +99,6 @@ private:
     // Second-phase constructor
     void ConstructL();
 
-private: // From CActive
-    // Handle completion
-    void RunL();
-
-    // How to cancel me
-    void DoCancel();
-
-    // Override to handle leaves from RunL(). Default implementation causes
-    // the active scheduler to panic.
-    TInt RunError( TInt aError );
-    
 private: // From MNdefHandler
     void ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart );    
     void ReadComplete( CNdefMessage* aMessage );
@@ -118,7 +107,7 @@ private: // From MNdefHandler
     
 private:
     // own
-    CNearFieldTarget * iTagConnection;
+    MNearFieldTarget * iTagConnection;
     CActiveSchedulerWait * iWait;
     CNdefConnection * iNdefConnection;
     // own by real target if real target is created

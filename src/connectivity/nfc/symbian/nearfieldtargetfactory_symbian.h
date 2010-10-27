@@ -45,7 +45,7 @@
 #include <qnearfieldtarget.h>
 
 class MNfcTag;
-class CNearFieldTarget;
+class MNearFieldTarget;
 
 QTM_USE_NAMESPACE
 
@@ -55,7 +55,7 @@ public:
     static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, QObject * aParent);
 private:
     static QNearFieldTarget * CreateTagType1L(MNfcTag * aNfcTag, QObject * aParent);
-    static CNearFieldTarget * WrapNdefAccessL(MNfcTag * aNfcTag, CNearFieldTarget * aTarget);
+    static MNearFieldTarget * WrapNdefAccessL(MNfcTag * aNfcTag, MNearFieldTarget * aTarget);
     static QNearFieldTarget::AccessMethods ConnectionMode2AccessMethods(MNfcTag * aNfcTag);
     };
 

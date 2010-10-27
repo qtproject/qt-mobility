@@ -82,7 +82,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, Q
     return tag;
     }
    
-CNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, CNearFieldTarget * aTarget)
+MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, MNearFieldTarget * aTarget)
     {
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
         {

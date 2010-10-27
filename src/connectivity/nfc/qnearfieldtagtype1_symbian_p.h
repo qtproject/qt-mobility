@@ -56,7 +56,7 @@ class QNearFieldTagType1Symbian : public QNearFieldTagType1
 
 public:
 
-    explicit QNearFieldTagType1Symbian(CNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldTagType1Symbian(MNearFieldTarget *tag, QObject *parent = 0);
     
     ~QNearFieldTagType1Symbian();
 
@@ -95,7 +95,7 @@ public:
 
 private:
     // Own
-    CNearFieldTarget * mTag;
+    MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
 };
 

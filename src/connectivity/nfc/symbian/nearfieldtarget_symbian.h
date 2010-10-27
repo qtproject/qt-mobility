@@ -54,11 +54,11 @@ class CNearFieldTagType3;
 class CNearFieldTagType4;
 #endif
 
-class CNearFieldTarget : public CActive
+class MNearFieldTarget 
     {
 public:
     // Cancel and destroy
-    ~CNearFieldTarget();
+    virtual ~MNearFieldTarget();
 
 public:
     virtual CNearFieldTagType1 * CastToTagType1();
@@ -73,9 +73,6 @@ public:
     virtual TInt OpenConnection() = 0;
     virtual void CloseConnection() = 0;
     virtual TBool IsConnectionOpened() = 0;
-    
-protected:
-    CNearFieldTarget();
     };
 
 #endif // NEARFIELDTARGET_H

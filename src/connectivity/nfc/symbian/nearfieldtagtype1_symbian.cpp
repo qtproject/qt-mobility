@@ -50,7 +50,7 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : iNfcTag(aNfcTag)
+CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : CActive(EPriorityStandard), iNfcTag(aNfcTag)
     {
     }
 

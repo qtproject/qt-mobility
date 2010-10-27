@@ -73,18 +73,15 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag)
 
 void CNearFieldNdefTarget::ConstructL()
     {
-    CActiveScheduler::Add(this); // Add to scheduler
     }
 
-void CNearFieldNdefTarget::SetRealTarget(CNearFieldTarget * aRealTarget)
+void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
     {
     iTagConnection = aRealTarget;
     }
 
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
-    Cancel(); // Cancel any request, if outstanding
-    
     if (iTagConnection)
         {
         delete iTagConnection;
@@ -94,22 +91,6 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         delete iNfcTag;
         }
     }
-
-void CNearFieldNdefTarget::DoCancel()
-    {
-    }
-
-void CNearFieldNdefTarget::RunL()
-    {
-    
-    SetActive(); // Tell scheduler a request is active
-    }
-
-TInt CNearFieldNdefTarget::RunError(TInt aError)
-    {
-    return aError;
-    }
-
 
 CNearFieldTagType1 * CNearFieldNdefTarget::CastToTagType1()
     {
