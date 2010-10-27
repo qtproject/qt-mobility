@@ -2997,24 +2997,29 @@ void tst_QOrganizerManager::itemFetch()
         QVERIFY(item.type() == QOrganizerItemType::TypeEvent);
     }
 
-    // second - call items, get an occurrence, resave as an exception call ife() -- get back parent + exception
+    // second - call items, resave only the first occurrence as an exception,
+    // call ife() -- get back parent + exception
     items = cm->items();
-    QOrganizerEventOccurrence exception;
-    bool foundOccurrence = false;
-    foreach (const QOrganizerItem& item, items) {
-        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
-            exception = item;
-            foundOccurrence = true;
-            break;
-        }
-    }
-    QVERIFY(foundOccurrence);
-    exception.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(15, 0, 0))); // starts an hour earlier than parent.
-    QVERIFY(cm->saveItem(&exception));
-    items = cm->itemsForExport();
-    QCOMPARE(items.count(), 2);
     int eventCount = 0;
     int eventOccurrenceCount = 0;
+    foreach (const QOrganizerItem& item, items) {
+        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            if (eventOccurrenceCount == 0) {
+                QOrganizerEventOccurrence exception(item);
+                exception.setDisplayLabel("exception");
+                QVERIFY(cm->saveItem(&exception));
+            }
+            eventOccurrenceCount++;
+        } else if (item.type() == QOrganizerItemType::TypeEvent) {
+            eventCount++;
+        }
+    }
+    QCOMPARE(eventOccurrenceCount, 3);
+    QCOMPARE(eventCount, 0);
+    items = cm->itemsForExport();
+    QCOMPARE(items.count(), 2);
+    eventCount = 0;
+    eventOccurrenceCount = 0;
     foreach (const QOrganizerItem& item, items) {
         if (item.type() == QOrganizerItemType::TypeEvent) {
             eventCount += 1;
@@ -3025,6 +3030,30 @@ void tst_QOrganizerManager::itemFetch()
     }
     QCOMPARE(eventCount, 1);
     QCOMPARE(eventOccurrenceCount, 1);
+
+    // third, have all occurrences persisted
+    items = cm->items();
+    foreach (const QOrganizerItem& item, items) {
+        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            QOrganizerEventOccurrence exception(item);
+            exception.setDisplayLabel("exception");
+            QVERIFY(cm->saveItem(&exception));
+        }
+    }
+    items = cm->itemsForExport();
+    QCOMPARE(items.size(), 4);
+    eventCount = 0;
+    eventOccurrenceCount = 0;
+    foreach (const QOrganizerItem& item, items) {
+        if (item.type() == QOrganizerItemType::TypeEvent) {
+            eventCount += 1;
+        } else if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            eventOccurrenceCount += 1;
+        }
+        QVERIFY(!item.id().isNull()); // should NEVER be null, since that would be a generated occurrence.
+    }
+    QCOMPARE(eventCount, 1);
+    QCOMPARE(eventOccurrenceCount, 3);
 }
 
 void tst_QOrganizerManager::spanOverDays()
