@@ -43,15 +43,63 @@
 
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
+#include "qsysteminfo_simulator_p.h"
+//#include "qsysteminfo_simulator.cpp"
 #include <QDebug>
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemInfo::Version);
 Q_DECLARE_METATYPE(QSystemInfo::Feature);
 
+/**
+ * Starts an event loop that runs until the given signal is received.
+ * Optionally the event loop can return earlier on a timeout.
+ *
+ * \return \p true if the requested signal was received
+ *         \p false on timeout
+ */
+static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+{
+    QEventLoop loop;
+    QObject::connect(obj, signal, &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
+
+//static void setLanguage(const QString & lang)
+//{
+//    QSystemInfoPrivate *s = getSystemInfoPrivate();
+//    s->setCurrentLanguage(lang);
+//}
+
+class ChangeLanguageThread : public QThread
+{
+public:
+    void run()
+    {
+        sleep(2);
+        QSystemInfo si;
+        QSystemInfoPrivate *s = si.priv;
+        s->setCurrentLanguage("Klingon");
+    }
+};
+
 class tst_QSystemInfo : public QObject
 {
     Q_OBJECT
+
+public:
+    tst_QSystemInfo();
+    virtual ~tst_QSystemInfo();
+
+    friend class QSystemInfo;
 
 private slots:
     void initTestCase();
@@ -69,7 +117,21 @@ private slots:
 
     void tst_detailFeatures_data();
     void tst_detailFeatures();
+    void currentLanguageChanged();
+
+private:
+    ChangeLanguageThread *changeLangThread;
 };
+
+tst_QSystemInfo::tst_QSystemInfo()
+{
+    changeLangThread = new ChangeLanguageThread();
+}
+
+tst_QSystemInfo::~tst_QSystemInfo()
+{
+    delete changeLangThread, changeLangThread = 0;
+}
 
 void tst_QSystemInfo::initTestCase()
 {
@@ -152,7 +214,6 @@ void tst_QSystemInfo::tst_hasFeatures()
     {
         QFETCH(QSystemInfo::Feature, feature);
         QSystemInfo si;
-        qWarning() << si.hasFeatureSupported(feature);
         QVERIFY(si.hasFeatureSupported(feature) == false
                 || si.hasFeatureSupported(feature) == true);
     }
@@ -170,6 +231,14 @@ void tst_QSystemInfo::tst_detailFeatures()
 //        QSystemInfo si;
 //        QVERIFY(!si.getDetailOfFeature(feature).isEmpty());
 //    }
+}
+
+void tst_QSystemInfo::currentLanguageChanged()
+{
+    QSystemInfo si;
+    changeLangThread->start();
+
+    QVERIFY(::waitForSignal(&si, SIGNAL(currentLanguageChanged(const QString &)), 10 * 1000));
 }
 
 

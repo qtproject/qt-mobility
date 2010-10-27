@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
 
-class QSystemInfoPrivate : public QObject
+class Q_SYSINFO_EXPORT QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -96,12 +96,14 @@ public:
     void setVersion(QSystemInfo::Version v, const QString &to);
 
     void setInitialData();
+  //  QSystemInfoPrivate *getSystemInfoPrivate();
 
 signals:
     void currentLanguageChanged(const QString &) const;
 
 private:
     QSystemInfoData data;
+     QSystemInfoPrivate *d;
 };
 QSystemInfoPrivate *getSystemInfoPrivate();
 

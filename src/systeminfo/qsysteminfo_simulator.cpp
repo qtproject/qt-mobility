@@ -231,7 +231,7 @@ static void ensureSimulatorConnection()
 }
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),d(this)
 {
     ensureSimulatorConnection();
 

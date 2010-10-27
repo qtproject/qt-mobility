@@ -99,7 +99,9 @@ public:
 	};
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-
+//#ifdef TESTR
+    QSystemInfoPrivate *priv;
+//#endif
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 private:

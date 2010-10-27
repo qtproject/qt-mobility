@@ -48,9 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
 
-//#ifdef QT_SIMULATOR
-//QSystemDeviceInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
-//#endif
+#ifdef QT_SIMULATOR
+QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
+#endif
 
 
 /*!
