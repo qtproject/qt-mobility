@@ -62,8 +62,6 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
 
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 {
-    delete m_resultObject;
-
     m_session->RemoveObjectObserver( *this );
 }
 #ifdef MDS_25_COMPILATION_ENABLED
@@ -100,7 +98,7 @@ void QMDEGalleryItemResultSet::HandleObjectRemoved(CMdESession& aSession, const 
     TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryItemResultSet::ENotifyRemove, aObjectIdArray);)
 
     if (err != KErrNone)
-        emit error(err);    
+        emit error(err);
 }
 #endif //MDS_25_COMPILATION_ENABLED
 
@@ -109,9 +107,11 @@ void QMDEGalleryItemResultSet::doHandleObjectNotificationL( CMdESession& /*aSess
     const RArray<TItemId>& aObjectIdArray )
 {
     if (aType == QMDEGalleryItemResultSet::ENotifyModify) {
+        m_itemArray.Remove(0);
         delete m_resultObject;
         TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( aObjectIdArray[0] ) );
         if (m_resultObject) {
+            m_itemArray.Append(m_resultObject);
             QString type = QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( m_resultObject );
             QStringList propertyList;
             QDocumentGalleryMDSUtility::GetDataFieldsForItemType( propertyList, type );
@@ -126,6 +126,7 @@ void QMDEGalleryItemResultSet::doHandleObjectNotificationL( CMdESession& /*aSess
             emit metaDataChanged( 0, 1, keys );
         }
     } else if (aType == QMDEGalleryItemResultSet::ENotifyRemove) {
+        m_itemArray.Remove(0);
         delete m_resultObject;
         m_resultObject = NULL;
         m_isValid = false;
@@ -142,6 +143,7 @@ void QMDEGalleryItemResultSet::createQuery()
     // After that resultObject contains NULL or the needed item
     if (m_resultObject) {
         m_currentObjectIDs.Append( m_resultObject->Id() );
+        m_itemArray.Append(m_resultObject);
         if (m_live) {
             TRAPD( err,
                 m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
