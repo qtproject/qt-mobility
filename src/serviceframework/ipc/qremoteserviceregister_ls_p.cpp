@@ -131,29 +131,6 @@ private:
     QLocalSocket* socket;
 };
 
-struct PROXY
-{
-public:
-    ObjectEndPoint*      pObjectEndPoint;
-    QLocalSocket*        pSocket;
-    QString servicename;
-
-    void init(){
-        pObjectEndPoint = 0;
-        pSocket = 0;
-        servicename = "";
-    }
-
-    bool operator==(const PROXY& other)
-    {
-        if(pObjectEndPoint == other.pObjectEndPoint
-            && servicename == other.servicename)
-            return true; 
-        return false;
-    }
-};
-static QList<PROXY>proxylist;
-
 QRemoteServiceRegisterLocalSocketPrivate::QRemoteServiceRegisterLocalSocketPrivate(QObject* parent)
     : QRemoteServiceRegisterPrivate(parent)
 {

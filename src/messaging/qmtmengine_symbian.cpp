@@ -383,7 +383,6 @@ QMessageAccountIdList CMTMEngine::accountsByType(QMessage::Type type) const
 
 void CMTMEngine::updateEmailAccountsL() const
 {
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)    
     QStringList keys = iAccounts.keys();
     keys.removeOne(iSMSAccountidAsString);
     keys.removeOne(iMMSAccountidAsString);
@@ -476,7 +475,6 @@ void CMTMEngine::updateEmailAccountsL() const
     }
     
     CleanupStack::PopAndDestroy(pEmailAccounts);
-#endif    
 }
 
 TUid CMTMEngine::mtmUidByType(MTMType aMTMType)
@@ -4617,13 +4615,6 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         // Ignore MMS Notifications <=> Wait until actual MMS message has been received
         return;
     }
-    
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)    
-    // Email messages are handled by CFSEngine
-    if (aMsgType == KUidMsgTypeSMTP || aMsgType == KUidMsgTypePOP3 || aMsgType == KUidMsgTypeIMAP4) {
-        return;
-    }
-#endif
 
 #ifdef NCNLISTREMOVED
     if (aMsgType == KUidMsgTypeSMS) { // we need to check if sms message is 'indicator clear message' (for voice messages)
