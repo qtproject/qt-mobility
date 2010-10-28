@@ -40,7 +40,6 @@
 ****************************************************************************/
 //system includes
 #include <calcommon.h>
-#include <calinstance.h>
 #include <calsession.h>
 #include <calchangecallback.h>
 #include <calentryview.h>
@@ -48,7 +47,6 @@
 #include <calrrule.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <QColor>
-#include <calinstanceiterator.h>
 #include <calcalendariterator.h>
 #include <calcalendarinfo.h>
 // This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local 

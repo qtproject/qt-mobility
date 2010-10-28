@@ -372,15 +372,9 @@ QMap<QString, QString> QOrganizerItemMemoryEngine::managerParameters() const
 QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
-    int index = d->m_organizeritemIds.indexOf(organizeritemId);
-    if (index != -1) {
-        // found the organizer item successfully.
-        *error = QOrganizerManager::NoError;
-        return d->m_organizeritems.at(index);
-    }
-
-    *error = QOrganizerManager::DoesNotExistError;
-    return QOrganizerItem();
+    QOrganizerItem retn(item(organizeritemId));
+    *error = retn.isEmpty() ? QOrganizerManager::DoesNotExistError : QOrganizerManager::NoError;
+    return retn;
 }
 
 /*! \reimp */
@@ -884,20 +878,43 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemsForExport(const QDateTime
     return internalItems(startDate, endDate, filter, sortOrders, fetchHint, error, true);
 }
 
+QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemId& organizeritemId) const
+{
+    int index = d->m_organizeritemIds.indexOf(organizeritemId);
+    if (index != -1) {
+        // found the organizer item successfully.
+        return d->m_organizeritems.at(index);
+    }
+
+    return QOrganizerItem();
+}
+
 QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool forExport) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
     Q_UNUSED(error);
 
     QList<QOrganizerItem> sorted;
+    QSet<QOrganizerItemId> parentsAdded;
     bool isDefFilter = (filter.type() == QOrganizerItemFilter::DefaultFilter);
 
     foreach(const QOrganizerItem& c, d->m_organizeritems) {
         if (itemHasReccurence(c)) {
-            addItemRecurrences(sorted, c, startDate, endDate, filter, sortOrders, forExport);
+            addItemRecurrences(sorted, c, startDate, endDate, filter, sortOrders, forExport, &parentsAdded);
         } else {
             if ((isDefFilter || QOrganizerManagerEngine::testFilter(filter, c)) && QOrganizerManagerEngine::isItemBetweenDates(c, startDate, endDate)) {
                 QOrganizerManagerEngine::addSorted(&sorted,c, sortOrders);
+                if (forExport
+                        && (c.type() == QOrganizerItemType::TypeEventOccurrence
+                        ||  c.type() == QOrganizerItemType::TypeTodoOccurrence)) {
+                    QOrganizerItemId parentId(c.detail<QOrganizerItemParent>().parentId());
+                    if (!parentsAdded.contains(parentId)) {
+                        parentsAdded.insert(parentId);
+                        QOrganizerManagerEngine::addSorted(&sorted, item(parentId), sortOrders);
+
+                    }
+
+                }
             }
         }
     }
@@ -905,7 +922,8 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
     return sorted;
 }
 
-void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
+
+void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport, QSet<QOrganizerItemId>* parentsAdded) const
 {
     QOrganizerManager::Error error = QOrganizerManager::NoError;
     QList<QOrganizerItem> recItems = internalItemOccurrences(c, startDate, endDate, forExport ? 1 : 50, false, &error); // XXX TODO: why maxcount of 50?
@@ -913,11 +931,16 @@ void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorte
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem& oi, recItems) {
             QOrganizerManagerEngine::addSorted(&sorted, forExport ? c : oi, sortOrders);
+            if (forExport)
+                parentsAdded->insert(c.id());
         }
     } else {
         foreach(const QOrganizerItem& oi, recItems) {
-            if (QOrganizerManagerEngine::testFilter(filter, oi))
+            if (QOrganizerManagerEngine::testFilter(filter, oi)) {
                 QOrganizerManagerEngine::addSorted(&sorted, forExport ? c : oi, sortOrders);
+                if (forExport)
+                    parentsAdded->insert(c.id());
+            }
         }
     }
 }
