@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMDEGALLERYTYPERESULTSET_P_H
-#define QMDEGALLERYTYPERESULTSET_P_H
+#ifndef QMDEGALLERYCATEGORYRESULTSET_P_H
+#define QMDEGALLERYCATEGORYRESULTSET_P_H
 
 //
 //  W A R N I N G
@@ -53,22 +53,49 @@
 // We mean it.
 //
 
-#include <qstringlist.h>
+#include "qgalleryresultset.h"
 
-#include "qmdegalleryresultset_p.h"
+#include "qgalleryfilter.h"
 
-#include <mdequery.h>
+#include <mdelogiccondition.h>
+#include <mdenamespacedef.h>
+#include <mdeobjectquery.h>
+
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTypeRequest;
+class QMdeSession;
 
-class QMDEGalleryTypeResultSet : public QGalleryResultSet, public MMdEQueryObserver
+class QMDEGalleryCategoryResultSet : public QGalleryResultSet, public MMdEQueryObserver
 {
     Q_OBJECT
 public:
-    QMDEGalleryTypeResultSet(QMdeSession *session, QGalleryTypeRequest *request);
-    ~QMDEGalleryTypeResultSet();
+    static int appendScopeCondition(
+            CMdELogicCondition *condition,
+            const QVariant &rootItem,
+            CMdENamespaceDef &namespaceDef);
+
+    static int createTypeQuery(
+            QScopedPointer<CMdEObjectQuery> *query,
+            QMdeSession *session,
+            const QString &itemType,
+            MMdEQueryObserver *observer);
+
+    static bool isCategoryType(const QString &itemType);
+
+    static QString itemIdType(const QString &itemId);
+
+    QMDEGalleryCategoryResultSet(
+            QMdeSession *session,
+            const QString &itemType,
+            const QStringList &propertyNames,
+            const QStringList &sortPropertyNames,
+            const QVariant &rootItem,
+            const QGalleryFilter &filter,
+            int offset,
+            int limit,
+            QObject *parent = 0);
+    ~QMDEGalleryCategoryResultSet();
 
     int propertyKey(const QString &property) const;
     QGalleryProperty::Attributes propertyAttributes(int key) const;
@@ -81,6 +108,7 @@ public:
     QVariant itemId() const;
     QUrl itemUrl() const;
     QString itemType() const;
+    QList<QGalleryResource> resources() const;
 
     QVariant metaData(int key) const;
     bool setMetaData(int key, const QVariant &value);
@@ -93,13 +121,21 @@ public:
     void HandleQueryNewResults(CMdEQuery &aQuery, TInt aFirstNewItemIndex, TInt aNewItemCount);
     void HandleQueryCompleted(CMdEQuery& aQuery, TInt aError);
 
+
 private:
     const QString m_itemType;
-    QScopedPointer<CMdEObjectQuery> m_query;
+    const QStringList m_propertyNames;
+    const QStringList m_sortPropertyNames;
+    const QVariant m_rootItem;
+    const QGalleryFilter m_filter;
+    const int m_offset;
+    const int m_limit;
     int m_count;
-    int m_itemCount;
     int m_currentIndex;
+    QScopedPointer<CMdEObjectQuery> m_query;
+
 };
 
 QTM_END_NAMESPACE
-#endif // QMDEGALLERYTYPERESULTSET_H
+
+#endif

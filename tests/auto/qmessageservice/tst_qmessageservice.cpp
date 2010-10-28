@@ -262,7 +262,6 @@ void tst_QMessageService::initTestCase()
 
 
     existingAccountsFilter = ~QMessageFilter();
-    
     foreach(QMessageAccountId id, existingAccountIds) {
         existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
     }
@@ -283,7 +282,6 @@ void tst_QMessageService::initTestCase()
 
     existingFolderIds = manager->queryFolders().toSet();
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
         ("path", "My messages")
@@ -317,7 +315,6 @@ void tst_QMessageService::initTestCase()
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
-#endif
 
     existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
@@ -326,12 +323,8 @@ void tst_QMessageService::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        ("parentFolderPath", "Drafts")
-#else
         ("parentFolderPath", "My messages")
-#endif
-        #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
         ("type", "email")
 #else
         ("type", "sms")
@@ -347,11 +340,7 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        ("parentFolderPath", "Drafts")
-#else
         ("parentFolderPath", "Innbox")
-#endif
         ("type", "email")
         ("to", "Important.Person@example.com")
         ("from", "Esteemed.Colleague@example.com")
@@ -365,11 +354,7 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:no")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        ("parentFolderPath", "Drafts")
-#else
         ("parentFolderPath", "Innbox")
-#endif
         ("type", "email")
         ("to", "Important.Person@example.com,Minion@example.com")
         ("from", "Big.Boss@example.com")
@@ -411,11 +396,7 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:yes");
 #else
     << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        ("parentFolderPath", "Drafts")
-#else
         ("parentFolderPath", "X-Announce")
-#endif
         ("type", "email")
         ("to", "announce@example.com,maintenance-log@example.com")
         ("from", "sysadmin@example.com")
@@ -427,11 +408,7 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-spam", "filter:maybe")
         << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        ("parentFolderPath", "Drafts")
-#else
         ("parentFolderPath", "X-Archived")
-#endif
         ("type", "email")
         ("to", "announce@example.com")
         ("from", "Big.Boss@example.com")
@@ -1080,7 +1057,6 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("timeStamp equality 1")
         << QMessageFilter::byTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
@@ -1258,9 +1234,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
@@ -1274,7 +1248,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     QTest::newRow("status equality 3")
         << QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal) 
@@ -1282,7 +1255,6 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status inequality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual) 
@@ -1296,7 +1268,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     QTest::newRow("status inequality 3")
         << QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual) 
@@ -1304,7 +1275,6 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status mask inclusion 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) 
@@ -1318,7 +1288,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     QTest::newRow("status mask inclusion 3")
         << QMessageFilter::byStatus(QMessage::Read | QMessage::Removed, QMessageDataComparator::Includes) 
@@ -1332,7 +1301,6 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status mask exclusion 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes) 
@@ -1352,7 +1320,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     QTest::newRow("status mask exclusion empty")
         << QMessageFilter::byStatus(static_cast<QMessage::StatusFlags>(0), QMessageDataComparator::Excludes) 
@@ -1360,7 +1327,6 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("priority equality 1")
         << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal) 
@@ -1398,9 +1364,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("size equality 1")
         << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[3] )
@@ -1507,10 +1471,7 @@ void tst_QMessageService::testQueryCountData()
 #endif
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-    
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
@@ -1524,7 +1485,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 #endif
-    
+
     QTest::newRow("parentAccountId equality invalid")
         << QMessageFilter::byParentAccountId(QMessageAccountId(), QMessageDataComparator::Equal) 
         << QMessageIdList()
@@ -1550,8 +1511,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << QMessageIdList()
         << "";
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED) 
-    
+
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
@@ -1614,7 +1574,6 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("standardFolder equality 1")
         << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
@@ -1664,9 +1623,7 @@ void tst_QMessageService::testQueryCountData()
 #endif        
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilter::byParentFolderId(folderIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] )
@@ -1774,7 +1731,6 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 #endif
-#endif //#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("ancestorFolderIds inclusion 1")
@@ -1874,7 +1830,6 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif    
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
@@ -1921,9 +1876,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QMessageFilter orEquals(QMessageFilter::bySubject("agenda", QMessageDataComparator::Includes));
     orEquals |= QMessageFilter::bySubject("ee", QMessageDataComparator::Excludes);
     QTest::newRow("QMessageFilter::operator|=")
@@ -1931,9 +1884,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
         << "";
-#endif !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
-
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("body")
         << QMessageFilter()
@@ -1947,7 +1897,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Test options
@@ -1974,7 +1923,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
-        
 }
 
 void tst_QMessageService::testQueryMessages_data()

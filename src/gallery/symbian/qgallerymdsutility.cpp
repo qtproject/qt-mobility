@@ -43,6 +43,9 @@
 #include <QDir>
 //Backend
 #include "qgallerymdsutility_p.h"
+
+#include "qmdegallerycategoryresultset_p.h"
+
 //Symbian
 #include <mdeconstants.h>
 #include <mdesession.h>
@@ -1992,25 +1995,51 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
     // Add filtering conditions
     QGalleryFilter filter = request->filter();
+    QVariant rootItem = request->rootItem();
 
-    switch (filter.type()) {
-    case QGalleryFilter::Invalid:
-        break;
-    case QGalleryFilter::Intersection:
-        rootCond.SetOperator( ELogicConditionOperatorAnd );
-        conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
-        break;
-    case QGalleryFilter::Union:
-        rootCond.SetOperator( ELogicConditionOperatorOr );
-        conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
-        break;
-    case QGalleryFilter::MetaData:
-        conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
-        break;
-    default:
-        return QDocumentGallery::FilterError;
+    if (rootItem.isValid()) {
+        rootCond.SetOperator(ELogicConditionOperatorAnd);
+
+        conditionError = QMDEGalleryCategoryResultSet::appendScopeCondition(
+                &rootCond, rootItem, defaultNameSpace);
+
+        if (conditionError != QDocumentGallery::NoError) {
+            switch (filter.type()) {
+            case QGalleryFilter::Invalid:
+                break;
+            case QGalleryFilter::Intersection:
+                conditionError = AddFilter(rootCond, filter, defaultNameSpace);
+                break;
+            case QGalleryFilter::Union:
+                rootCond.SetOperator( ELogicConditionOperatorOr );
+                conditionError = AddUnionFilter(rootCond, filter, defaultNameSpace);
+                break;
+            case QGalleryFilter::MetaData:
+                conditionError = AddMetadataFilter(rootCond, filter, defaultNameSpace);
+                break;
+            default:
+                return QDocumentGallery::FilterError;
+            }
+        }
+    } else {
+        switch (filter.type()) {
+        case QGalleryFilter::Invalid:
+            break;
+        case QGalleryFilter::Intersection:
+            rootCond.SetOperator( ELogicConditionOperatorAnd );
+            conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
+            break;
+        case QGalleryFilter::Union:
+            rootCond.SetOperator( ELogicConditionOperatorOr );
+            conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
+            break;
+        case QGalleryFilter::MetaData:
+            conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
+            break;
+        default:
+            return QDocumentGallery::FilterError;
+        }
     }
-
     if (conditionError != QDocumentGallery::NoError) {
         return conditionError;
     }

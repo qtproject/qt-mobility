@@ -39,10 +39,6 @@
 **
 ****************************************************************************/
 
-#ifndef QMESSAGESERVICE_SYMBIAN_H
-#define QMESSAGESERVICE_SYMBIAN_H
-
-
 #include "qmessageservice.h"
 
 
@@ -110,5 +106,3 @@ private:
 
 
 QTM_END_NAMESPACE
-
-#endif

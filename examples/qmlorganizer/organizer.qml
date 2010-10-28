@@ -14,8 +14,8 @@ Rectangle {
 
     SystemPalette { id: activePalette }
 
-    //OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}
- OrganizerItem {id:organizerItem; guid:'1112232133'}
+   // OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}
+    //OrganizerItem {id:organizerItem; guid:'1112232133'}
     // Quick hack top menu bar to change views
     states: [
         State {name: "MonthView"; PropertyChanges { target: monthView; opacity: 1; }},
