@@ -45,9 +45,6 @@
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
 #endif
-#ifdef FREESTYLENMAILUSED
-#include "qfsnmengine_symbian_p.h"
-#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -111,7 +108,7 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
     if (type == QMessage::Email) {
         QMessageAccountId id = CFSEngine::instance()->defaultAccount(type);
         if (id.isValid())

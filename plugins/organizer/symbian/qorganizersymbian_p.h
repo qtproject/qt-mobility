@@ -221,34 +221,18 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerManager::Error* error) const;
-
-    QList<QOrganizerItemId> itemIds(const QDateTime& periodStart,
+    QList<QOrganizerItemId> itemIds(
+        const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         QOrganizerManager::Error* error) const;
-    QList<QOrganizerItemId> getIdsModifiedSinceDateL(
-        const QDateTime& periodStart,
-        const QDateTime& periodEnd,
-        const QOrganizerItemFilter& filter) const;
-    void itemIdsL(
-        QList<QOrganizerItemId>& ids, 
-        const QDateTime& periodStart,
-        const QDateTime& periodEnd,
-        const QOrganizerItemFilter& filter, 
-        const QList<QOrganizerItemSortOrder>& sortOrders) const;
     QList<QOrganizerItem> itemsForExport(const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerManager::Error* error) const;
-    void itemsForExportL(QList<QOrganizerItem>& itemsList, 
-        const QDateTime& periodStart,
-        const QDateTime& periodEnd,
-        const QOrganizerItemFilter& filter, 
-        const QList<QOrganizerItemSortOrder>& sortOrders, 
-        const QOrganizerItemFetchHint& fetchHint) const;
     QOrganizerItem item(const QOrganizerItemId& itemId, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerManager::Error* error) const;
@@ -315,15 +299,27 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, 
         QOrganizerManager::Error* qtError);
-    void itemOccurrencesL(
-        QList<QOrganizerItem> &itemOccurrences,
-        const QOrganizerItem &parentItem,
+    QList<QOrganizerItemId> itemIdsL(
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    QList<QOrganizerItemId> itemIdsL(
+        const QList<OrganizerSymbianCollection> &collections,
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd) const;
+    QList<QOrganizerItem> itemsForExportL(
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;    
+    QList<QOrganizerItem> itemOccurrencesL(
+        const QOrganizerItemId &parentItemId,
         const QDateTime &periodStart,
         const QDateTime &periodEnd,
         int maxCount,
         const QOrganizerItemFetchHint &fetchHint) const;
-    QList<QOrganizerItem> itemsL(
-        QList<QOrganizerItem> &itemOccurrences,
+    QList<QOrganizerItem> itemOccurrencesL(
         const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter &filter,
@@ -336,13 +332,29 @@ public:
         QOrganizerCollectionId collectionId,
         QList<QOrganizerItem> &itemOccurrences) const;
     QOrganizerItem itemL(const QOrganizerItemId& itemId,
-            const QOrganizerItemFetchHint& fetchHint) const;
+        const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item,
         QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemId& organizeritemId);
-    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
+    QList<QOrganizerItem> slowFilterIdsToItemsL(
+        const QList<QOrganizerItemId> &itemIds,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    QList<QOrganizerItemId> slowFilterIdsL(
+        const QList<QOrganizerItemId> &itemIds,
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;    
+    QList<QOrganizerItem> slowFilterItems(
+        const QList<QOrganizerItem> &items, 
+        const QOrganizerItemFilter& filter, 
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    void addFilteredAndSorted(
+        QList<QOrganizerItem> *items,
+        const QOrganizerItem &item,
+        const QOrganizerItemFilter& filter,
+        const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    QList<OrganizerSymbianCollection> filteredSymbianCollectionsL(
+        const QOrganizerItemFilter &filter) const;
 
 private:
     QList<QOrganizerCollection> collectionsL() const;
