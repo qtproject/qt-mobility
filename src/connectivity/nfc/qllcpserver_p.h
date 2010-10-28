@@ -39,33 +39,19 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_H
-#define QLLCPSERVER_H
+#ifndef QLLCPSERVER_P_H
+#define QLLCPSERVER_P_H
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/QObject>
-#include <QtNetwork/QAbstractSocket>
-
-QT_BEGIN_HEADER
+#include "qllcpserver.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocket;
-class QLlcpServerPrivate;
-
-class QLlcpServer : public QObject
+class QLlcpServerPrivate
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QLlcpServer)
-
 public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
-
-    explicit QLlcpServer(QObject *parent = 0);
-    virtual ~QLlcpServer();
+    QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;
@@ -75,20 +61,12 @@ public:
     QString serviceUri() const;
     quint8 serverPort() const;
 
-    virtual bool hasPendingConnections() const;
-    virtual QLlcpSocket *nextPendingConnection();
+    bool hasPendingConnections() const;
+    QLlcpSocket *nextPendingConnection();
 
-    Error serverError() const;
-
-signals:
-    void newConnection();
-
-private:
-    QLlcpServerPrivate *d_ptr;
+    QLlcpServer::Error serverError() const;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QLLCPSERVER_H
+#endif // QLLCPSERVER_P_H

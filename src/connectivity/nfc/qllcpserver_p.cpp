@@ -39,56 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_H
-#define QLLCPSERVER_H
-
-#include <qmobilityglobal.h>
-
-#include <QtCore/QObject>
-#include <QtNetwork/QAbstractSocket>
-
-QT_BEGIN_HEADER
+#include "qllcpserver_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocket;
-class QLlcpServerPrivate;
-
-class QLlcpServer : public QObject
+QLlcpServerPrivate::QLlcpServerPrivate()
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QLlcpServer)
+}
 
-public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
+bool QLlcpServerPrivate::listen(const QString &serviceUri)
+{
+    Q_UNUSED(serviceUri);
 
-    explicit QLlcpServer(QObject *parent = 0);
-    virtual ~QLlcpServer();
+    return false;
+}
 
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
+bool QLlcpServerPrivate::isListening() const
+{
+    return false;
+}
 
-    void close();
+void QLlcpServerPrivate::close()
+{
+}
 
-    QString serviceUri() const;
-    quint8 serverPort() const;
+QString QLlcpServerPrivate::serviceUri() const
+{
+    return QString();
+}
 
-    virtual bool hasPendingConnections() const;
-    virtual QLlcpSocket *nextPendingConnection();
+quint8 QLlcpServerPrivate::serverPort() const
+{
+    return 0;
+}
 
-    Error serverError() const;
+bool QLlcpServerPrivate::hasPendingConnections() const
+{
+    return false;
+}
 
-signals:
-    void newConnection();
+QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
+{
+    return 0;
+}
 
-private:
-    QLlcpServerPrivate *d_ptr;
-};
+QLlcpServer::Error QLlcpServerPrivate::serverError() const
+{
+    return QLlcpServer::UnknownSocketError;
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QLLCPSERVER_H

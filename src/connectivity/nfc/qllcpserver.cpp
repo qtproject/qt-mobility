@@ -41,6 +41,14 @@
 
 #include "qllcpserver.h"
 
+#if defined(QT_SIMULATOR)
+#include "qllcpserver_simulator_p.h"
+#elif defined(Q_OS_SYMBIAN)
+#include "qllcpserver_symbian_p.h"
+#else
+#include "qllcpserver_p.h"
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -88,7 +96,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new NFC LLCP server with \a parent.
 */
 QLlcpServer::QLlcpServer(QObject *parent)
-:   QObject(parent)
+:   QObject(parent), d_ptr(new QLlcpServerPrivate)
 {
 }
 
@@ -97,21 +105,25 @@ QLlcpServer::QLlcpServer(QObject *parent)
 */
 QLlcpServer::~QLlcpServer()
 {
+    delete d_ptr;
 }
 
 /*!
-    Tells the server to listen for incoming connections on \a port. If the server is currently
-    listening then it will return false. Returns true on success; otherwise returns false.
+    Tells the server to listen for incoming connections on \a serviceUri. If the server is
+    currently listening then it will return false. Returns true on success; otherwise returns
+    false.
 
-    serverPort() will return the \a port that is passed into listen.
+    serviceUri() will return the \a serviceUri that is passed into listen.
+
+    serverPort() will return the port that is assigned to the server.
 
     \sa serverPort(), isListening(), close()
 */
-bool QLlcpServer::listen(quint8 port)
+bool QLlcpServer::listen(const QString &serviceUri)
 {
-    Q_UNUSED(port);
+    Q_D(QLlcpServer);
 
-    return false;
+    return d->listen(serviceUri);
 }
 
 /*!
@@ -119,7 +131,9 @@ bool QLlcpServer::listen(quint8 port)
 */
 bool QLlcpServer::isListening() const
 {
-    return false;
+    Q_D(const QLlcpServer);
+
+    return d->isListening();
 }
 
 /*!
@@ -127,14 +141,31 @@ bool QLlcpServer::isListening() const
 */
 void QLlcpServer::close()
 {
+    Q_D(QLlcpServer);
+
+    d->close();
 }
 
 /*!
-    Returns the LLCP port that the server is listening on.
+    Returns the LLCP service URI that the server is listening on.
+*/
+QString QLlcpServer::serviceUri() const
+{
+    Q_D(const QLlcpServer);
+
+    return d->serviceUri();
+}
+
+/*!
+    Returns the LLCP port associated with the service URI that the server is listening on.
+
+    \note This call is not supported on all platforms and will return 0 on these platforms.
 */
 quint8 QLlcpServer::serverPort() const
 {
-    return 0;
+    Q_D(const QLlcpServer);
+
+    return d->serverPort();
 }
 
 /*!
@@ -144,7 +175,9 @@ quint8 QLlcpServer::serverPort() const
 */
 bool QLlcpServer::hasPendingConnections() const
 {
-    return false;
+    Q_D(const QLlcpServer);
+
+    return d->hasPendingConnections();
 }
 
 /*!
@@ -160,7 +193,9 @@ bool QLlcpServer::hasPendingConnections() const
 */
 QLlcpSocket *QLlcpServer::nextPendingConnection()
 {
-    return 0;
+    Q_D(QLlcpServer);
+
+    return d->nextPendingConnection();
 }
 
 /*!
@@ -168,7 +203,9 @@ QLlcpSocket *QLlcpServer::nextPendingConnection()
 */
 QLlcpServer::Error QLlcpServer::serverError() const
 {
-    return UnknownSocketError;
+    Q_D(const QLlcpServer);
+
+    return d->serverError();
 }
 
 #include "moc_qllcpserver.cpp"
