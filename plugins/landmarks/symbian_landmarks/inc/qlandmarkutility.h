@@ -276,6 +276,11 @@ public:
      * Prepares the path for the file
      */
     static QString preparePath(QString filename);
+    
+    /**
+     * Prepares default protocol for landmark url
+     */
+    static void RemoveDefaultProtocolL(TPtr& landmarkUrl);
 
 };
 
