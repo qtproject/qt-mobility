@@ -39,46 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef TARGETEMULATOR_P_H
-#define TARGETEMULATOR_P_H
+#ifndef QLLCPSERVER_P_H
+#define QLLCPSERVER_P_H
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QByteArray>
+#include <qmobilityglobal.h>
 
-QT_FORWARD_DECLARE_CLASS(QSettings)
+#include "qllcpserver.h"
 
-class TagBase
+QTM_BEGIN_NAMESPACE
+
+class QLlcpServerPrivate
 {
 public:
-    TagBase();
-    ~TagBase();
+    QLlcpServerPrivate();
 
-    virtual void load(QSettings *settings) = 0;
+    bool listen(const QString &serviceUri);
+    bool isListening() const;
 
-    virtual QByteArray processCommand(const QByteArray &command) = 0;
+    void close();
 
-    virtual QByteArray uid() const = 0;
+    QString serviceUri() const;
+    quint8 serverPort() const;
+
+    bool hasPendingConnections() const;
+    QLlcpSocket *nextPendingConnection();
+
+    QLlcpServer::Error serverError() const;
 };
 
-class NfcTagType1 : public TagBase
-{
-public:
-    NfcTagType1();
-    ~NfcTagType1();
+QTM_END_NAMESPACE
 
-    void load(QSettings *settings);
-
-    QByteArray processCommand(const QByteArray &command);
-
-    QByteArray uid() const;
-
-private:
-    quint8 readData(quint8 block, quint8 byte);
-
-    quint8 hr0;
-    quint8 hr1;
-
-    QByteArray memory;
-};
-
-#endif // TARGETEMULATOR_P_H
+#endif // QLLCPSERVER_P_H

@@ -42,6 +42,16 @@
 
 #include "qllcpsocket.h"
 
+#if defined(QT_SIMULATOR)
+#include "qllcpsocket_simulator_p.h"
+#elif defined(Q_OS_SYMBIAN)
+#include "qllcpsocket_symbian_p.h"
+#else
+#include "qllcpsocket_p.h"
+#endif
+
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QLlcpSocket
     \brief The QLlcpSocket class provides an NFC LLCP socket.
@@ -106,7 +116,7 @@
     Construct a new unconnected LLCP socket with \a parent.
 */
 QLlcpSocket::QLlcpSocket(QObject *parent)
-:   QIODevice(parent)
+:   QIODevice(parent), d_ptr(new QLlcpSocketPrivate)
 {
 }
 
@@ -115,15 +125,17 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 */
 QLlcpSocket::~QLlcpSocket()
 {
+    delete d_ptr;
 }
 
 /*!
     Connects to the service identified by the URI \a serviceUri on \a target.
 */
-void QLlcpSocket::connectToService(const QNearFieldTarget &target, const QString &serviceUri)
+void QLlcpSocket::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
-    Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    Q_D(QLlcpSocket);
+
+    d->connectToService(target, serviceUri);
 }
 
 /*!
@@ -131,6 +143,9 @@ void QLlcpSocket::connectToService(const QNearFieldTarget &target, const QString
 */
 void QLlcpSocket::disconnectFromService()
 {
+    Q_D(QLlcpSocket);
+
+    d->disconnectFromService();
 }
 
 /*!
@@ -138,7 +153,9 @@ void QLlcpSocket::disconnectFromService()
 */
 bool QLlcpSocket::bind(quint8 port)
 {
-    Q_UNUSED(port);
+    Q_D(QLlcpSocket);
+
+    return d->bind(port);
 
     return false;
 }
@@ -151,7 +168,9 @@ bool QLlcpSocket::bind(quint8 port)
 */
 bool QLlcpSocket::hasPendingDatagrams() const
 {
-    return false;
+    Q_D(const QLlcpSocket);
+
+    return d->hasPendingDatagrams();
 }
 
 /*!
@@ -162,7 +181,9 @@ bool QLlcpSocket::hasPendingDatagrams() const
 */
 qint64 QLlcpSocket::pendingDatagramSize() const
 {
-    return -1;
+    Q_D(const QLlcpSocket);
+
+    return d->pendingDatagramSize();
 }
 
 /*!
@@ -171,10 +192,9 @@ qint64 QLlcpSocket::pendingDatagramSize() const
 */
 qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
+    Q_D(QLlcpSocket);
 
-    return -1;
+    return d->writeDatagram(data, size);
 }
 
 /*!
@@ -184,9 +204,9 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
 */
 qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 {
-    Q_UNUSED(datagram);
+    Q_D(QLlcpSocket);
 
-    return -1;
+    return d->writeDatagram(datagram);
 }
 
 /*!
@@ -204,12 +224,9 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *target,
                                  quint8 *port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxSize);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
+    Q_D(QLlcpSocket);
 
-    return -1;
+    return d->readDatagram(data, maxSize, target, port);
 }
 
 /*!
@@ -218,15 +235,12 @@ qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *t
 
     \sa readDatagram()
 */
-qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, const QNearFieldTarget &target,
+qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, QNearFieldTarget *target,
                                   quint8 port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
+    Q_D(QLlcpSocket);
 
-    return -1;
+    return d->writeDatagram(data, size, target, port);
 }
 
 /*!
@@ -234,14 +248,12 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, const QNearFiel
 
     Sends the datagram \a datagram to the service identified by the URI \a port on \a target.
 */
-qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, const QNearFieldTarget &target,
+qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, QNearFieldTarget *target,
                                   quint8 port)
 {
-    Q_UNUSED(datagram);
-    Q_UNUSED(target);
-    Q_UNUSED(port);
+    Q_D(QLlcpSocket);
 
-    return -1;
+    return d->writeDatagram(datagram, target, port);
 }
 
 /*!
@@ -249,7 +261,9 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, const QNearFieldTa
 */
 QLlcpSocket::Error QLlcpSocket::error() const
 {
-    return UnknownSocketError;
+    Q_D(const QLlcpSocket);
+
+    return d->error();
 }
 
 /*!
@@ -257,10 +271,9 @@ QLlcpSocket::Error QLlcpSocket::error() const
 */
 qint64 QLlcpSocket::readData(char *data, qint64 maxlen)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(maxlen);
+    Q_D(QLlcpSocket);
 
-    return 0;
+    return d->readData(data, maxlen);
 }
 
 /*!
@@ -268,8 +281,11 @@ qint64 QLlcpSocket::readData(char *data, qint64 maxlen)
 */
 qint64 QLlcpSocket::writeData(const char *data, qint64 len)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(len);
+    Q_D(QLlcpSocket);
 
-    return 0;
+    return d->writeData(data, len);
 }
+
+#include <moc_qllcpsocket.cpp>
+
+QTM_END_NAMESPACE

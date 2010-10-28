@@ -39,46 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef TARGETEMULATOR_P_H
-#define TARGETEMULATOR_P_H
+#ifndef QTLVREADER_P_H
+#define QTLVREADER_P_H
 
-#include <QtCore/QtGlobal>
+#include <qmobilityglobal.h>
+
 #include <QtCore/QByteArray>
+#include <QtCore/QMap>
 
-QT_FORWARD_DECLARE_CLASS(QSettings)
+QT_BEGIN_HEADER
 
-class TagBase
+QTM_BEGIN_NAMESPACE
+
+class QNearFieldTarget;
+class QTlvReader
 {
 public:
-    TagBase();
-    ~TagBase();
+    explicit QTlvReader(QNearFieldTarget *target);
+    explicit QTlvReader(const QByteArray &data);
 
-    virtual void load(QSettings *settings) = 0;
+    void addReservedMemory(int offset, int length);
 
-    virtual QByteArray processCommand(const QByteArray &command) = 0;
+    bool atEnd() const;
 
-    virtual QByteArray uid() const = 0;
-};
+    void readNext();
 
-class NfcTagType1 : public TagBase
-{
-public:
-    NfcTagType1();
-    ~NfcTagType1();
-
-    void load(QSettings *settings);
-
-    QByteArray processCommand(const QByteArray &command);
-
-    QByteArray uid() const;
+    quint8 tag() const;
+    int length();
+    QByteArray data();
 
 private:
-    quint8 readData(quint8 block, quint8 byte);
+    void readMoreData(int sparseOffset);
+    int absoluteOffset(int sparseOffset) const;
 
-    quint8 hr0;
-    quint8 hr1;
-
-    QByteArray memory;
+    QNearFieldTarget *m_target;
+    QByteArray m_data;
+    int m_index;
+    QMap<int, int> m_reservedMemory;
 };
 
-#endif // TARGETEMULATOR_P_H
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QTLVREADER_P_H

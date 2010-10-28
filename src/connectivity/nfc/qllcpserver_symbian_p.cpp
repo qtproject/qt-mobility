@@ -39,46 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef TARGETEMULATOR_P_H
-#define TARGETEMULATOR_P_H
+#include "qllcpserver_symbian_p.h"
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QByteArray>
+QTM_BEGIN_NAMESPACE
 
-QT_FORWARD_DECLARE_CLASS(QSettings)
-
-class TagBase
+QLlcpServerPrivate::QLlcpServerPrivate()
 {
-public:
-    TagBase();
-    ~TagBase();
+}
 
-    virtual void load(QSettings *settings) = 0;
-
-    virtual QByteArray processCommand(const QByteArray &command) = 0;
-
-    virtual QByteArray uid() const = 0;
-};
-
-class NfcTagType1 : public TagBase
+bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-public:
-    NfcTagType1();
-    ~NfcTagType1();
+    Q_UNUSED(serviceUri);
 
-    void load(QSettings *settings);
+    return false;
+}
 
-    QByteArray processCommand(const QByteArray &command);
+bool QLlcpServerPrivate::isListening() const
+{
+    return false;
+}
 
-    QByteArray uid() const;
+void QLlcpServerPrivate::close()
+{
+}
 
-private:
-    quint8 readData(quint8 block, quint8 byte);
+QString QLlcpServerPrivate::serviceUri() const
+{
+    return QString();
+}
 
-    quint8 hr0;
-    quint8 hr1;
+quint8 QLlcpServerPrivate::serverPort() const
+{
+    return 0;
+}
 
-    QByteArray memory;
-};
+bool QLlcpServerPrivate::hasPendingConnections() const
+{
+    return false;
+}
 
-#endif // TARGETEMULATOR_P_H
+QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
+{
+    return 0;
+}
+
+QLlcpServer::Error QLlcpServerPrivate::serverError() const
+{
+    return QLlcpServer::UnknownSocketError;
+}
+
+QTM_END_NAMESPACE

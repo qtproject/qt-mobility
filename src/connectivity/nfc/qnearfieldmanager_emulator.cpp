@@ -74,17 +74,17 @@ signals:
 
 private:
     QMap<TagBase *, bool>::Iterator m_current;
+    int timerId;
 } tagActivator;
 
 TagActivator::TagActivator()
+:   timerId(-1)
 {
 
 }
 
 TagActivator::~TagActivator()
 {
-    qDebug() << Q_FUNC_INFO;
-
     QMutexLocker locker(&tagMutex);
     qDeleteAll(tagMap.keys());
     tagMap.clear();
@@ -121,12 +121,15 @@ void TagActivator::initialize()
 
     m_current = tagMap.end();
 
-    startTimer(100);
+    timerId = startTimer(100);
 }
 
 void TagActivator::reset()
 {
     QMutexLocker locker(&tagMutex);
+
+    killTimer(timerId);
+    timerId = -1;
 
     qDeleteAll(tagMap.keys());
     tagMap.clear();
@@ -154,6 +157,7 @@ void TagActivator::timerEvent(QTimerEvent *e)
         *m_current = true;
 
         tagMutex.unlock();
+
         emit tagActivated(m_current.key());
         tagMutex.lock();
     }

@@ -52,9 +52,12 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QLlcpSocket;
+class QLlcpServerPrivate;
+
 class QLlcpServer : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QLlcpServer)
 
 public:
     enum Error {
@@ -64,11 +67,12 @@ public:
     explicit QLlcpServer(QObject *parent = 0);
     virtual ~QLlcpServer();
 
-    bool listen(quint8 port = 0);
+    bool listen(const QString &serviceUri);
     bool isListening() const;
 
     void close();
 
+    QString serviceUri() const;
     quint8 serverPort() const;
 
     virtual bool hasPendingConnections() const;
@@ -78,6 +82,9 @@ public:
 
 signals:
     void newConnection();
+
+private:
+    QLlcpServerPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE

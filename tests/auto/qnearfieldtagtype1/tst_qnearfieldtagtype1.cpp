@@ -60,10 +60,22 @@ public:
     tst_QNearFieldTagType1();
 
 private slots:
-    void test();
+    void init();
+    void cleanup();
+
+    void staticMemoryModel();
+    void dynamicMemoryModel();
+
+private:
+    void waitForMatchingTarget();
+
+    QNearFieldManagerPrivateImpl *emulatorBackend;
+    QNearFieldManager *manager;
+    QNearFieldTagType1 *target;
 };
 
 tst_QNearFieldTagType1::tst_QNearFieldTagType1()
+:   emulatorBackend(0), manager(0), target(0)
 {
     QDir::setCurrent(QLatin1String(SRCDIR));
 
@@ -79,27 +91,45 @@ signals:
     void matchedNdefMessage(const QNdefMessage &message, QNearFieldTarget *target);
 };
 
-void tst_QNearFieldTagType1::test()
+void tst_QNearFieldTagType1::init()
 {
-    QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
-    QNearFieldManager manager(emulatorBackend, 0);
+    emulatorBackend = new QNearFieldManagerPrivateImpl;
+    manager = new QNearFieldManager(emulatorBackend, 0);
+}
 
+void tst_QNearFieldTagType1::cleanup()
+{
+    emulatorBackend->reset();
+
+    delete manager;
+    manager = 0;
+    emulatorBackend = 0;
+    target = 0;
+}
+
+void tst_QNearFieldTagType1::waitForMatchingTarget()
+{
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(QNearFieldTarget::NfcTagType1, &listener,
-                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    int id = manager->registerTargetDetectedHandler(QNearFieldTarget::NfcTagType1, &listener,
+                                                    SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
 
     QTRY_VERIFY(!messageSpy.isEmpty());
 
-    QNearFieldTagType1 *target =
+    target =
         qobject_cast<QNearFieldTagType1 *>(messageSpy.first().at(1).value<QNearFieldTarget *>());
 
     QVERIFY(target);
 
     QCOMPARE(target->type(), QNearFieldTarget::NfcTagType1);
+}
+
+void tst_QNearFieldTagType1::staticMemoryModel()
+{
+    waitForMatchingTarget();
 
     // readIdentification()
     {
@@ -167,7 +197,72 @@ void tst_QNearFieldTagType1::test()
         }
     }
 
-    emulatorBackend->reset();
+
+}
+
+void tst_QNearFieldTagType1::dynamicMemoryModel()
+{
+    bool testedStatic = false;
+    bool testedDynamic = false;
+
+    while (!testedStatic || !testedDynamic) {
+        waitForMatchingTarget();
+
+        QByteArray id = target->readIdentification();
+
+        quint8 hr0 = id.at(0);
+        bool dynamic = (((hr0 & 0xf0) == 0x10) && ((hr0 & 0x0f) != 0x01));
+
+        if (dynamic) {
+            testedDynamic = true;
+
+            // block 0, UID is locked
+            {
+                QByteArray block = target->readBlock(0x00);
+                QCOMPARE(target->uid(), block.left(7));
+                QCOMPARE(quint8(block.at(7)), quint8(0x00));
+                QVERIFY(!target->writeBlock(0x00, QByteArray(8, quint8(0x55))));
+                QCOMPARE(target->uid(), block.left(7));
+                QCOMPARE(quint8(block.at(7)), quint8(0x00));
+            }
+
+            // static data area
+            QByteArray segment = target->readSegment(0);
+            for (int i = 1; i < 0x0d; ++i) {
+                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0x55))));
+                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0x55)));
+                segment.replace(i * 8, 8, QByteArray(8, quint8(0x55)));
+                QCOMPARE(target->readSegment(0), segment);
+
+                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0xaa))));
+                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0xaa)));
+                segment.replace(i * 8, 8, QByteArray(8, quint8(0xaa)));
+                QCOMPARE(target->readSegment(0), segment);
+
+                QVERIFY(target->writeBlock(i, QByteArray(8, quint8(0x55)), QNearFieldTagType1::WriteOnly));
+                QCOMPARE(target->readBlock(i), QByteArray(8, quint8(0xff)));
+                segment.replace(i * 8, 8, QByteArray(8, quint8(0xff)));
+                QCOMPARE(target->readSegment(0), segment);
+            }
+
+            // static / dynamic reserved lock area
+            for (int i = 0x0d; i < 0x10; ++i) {
+                QByteArray block = target->readBlock(i);
+                QVERIFY(!target->writeBlock(i, QByteArray(8, quint8(0x55))));
+                QCOMPARE(target->readBlock(i), block);
+            }
+        } else {
+            testedStatic = true;
+
+            for (int i = 0; i < 256; ++i) {
+                QVERIFY(target->readBlock(i).isEmpty());
+                QVERIFY(!target->writeBlock(i, QByteArray(8, quint8(0x55))));
+            }
+            for (int i = 0; i < 16; ++i) {
+                QVERIFY(target->readSegment(i).isEmpty());
+            }
+        }
+    }
 }
 
 QTEST_MAIN(tst_QNearFieldTagType1);
