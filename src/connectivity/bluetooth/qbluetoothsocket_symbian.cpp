@@ -377,4 +377,9 @@ void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
     }
 }
 
+void QBluetoothSocketPrivate::_q_readNotify()
+{
+
+}
+
 QTM_END_NAMESPACE

@@ -116,8 +116,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new Bluetooth device discovery agent with parent \a parent.
 */
 QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
-: QObject(*new QBluetoothDeviceDiscoveryAgentPrivate, parent)
+: QObject(parent)
 {
+  d = QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(this);
 }
 
 /*!
@@ -134,15 +135,11 @@ QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(QObject *parent)
 */
 QBluetoothDeviceDiscoveryAgent::InquiryType QBluetoothDeviceDiscoveryAgent::inquiryType() const
 {
-    Q_D(const QBluetoothDeviceDiscoveryAgent);
-
     return d->inquiryType;
 }
 
 void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type)
 {
-    Q_D(QBluetoothDeviceDiscoveryAgent);
-
     d->inquiryType = type;
 }
 
@@ -151,8 +148,6 @@ void QBluetoothDeviceDiscoveryAgent::setInquiryType(QBluetoothDeviceDiscoveryAge
 */
 QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() const
 {
-    Q_D(const QBluetoothDeviceDiscoveryAgent);
-
     return d->discoveredDevices;
 }
 
@@ -164,8 +159,6 @@ QList<QBluetoothDeviceInfo> QBluetoothDeviceDiscoveryAgent::discoveredDevices() 
 */
 void QBluetoothDeviceDiscoveryAgent::start()
 {
-    Q_D(QBluetoothDeviceDiscoveryAgent);
-
     if (!isActive())
         d->start();
 }
@@ -175,11 +168,15 @@ void QBluetoothDeviceDiscoveryAgent::start()
 */
 void QBluetoothDeviceDiscoveryAgent::stop()
 {
-    Q_D(QBluetoothDeviceDiscoveryAgent);
-
     if (isActive())
         d->stop();
 }
+
+bool QBluetoothDeviceDiscoveryAgent::isActive() const
+{
+    return d->isActive();
+}
+
 
 /*!
     Returns the last error which has occured.

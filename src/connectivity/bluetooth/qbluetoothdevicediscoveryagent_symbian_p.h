@@ -39,47 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_P_H
+#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
+#define QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
 
 #include "qbluetoothdevicediscoveryagent.h"
+#include "qbluetoothdevicediscoveryagent_p.h"
 
-QT_BEGIN_HEADER
+#include <es_sock.h>
+#include <bt_sock.h>
 
 QTM_BEGIN_NAMESPACE
-
-class QBluetoothDeviceDiscoveryAgentPrivate : public QObject
+        
+class QBluetoothDeviceDiscoveryAgentPrivateSymbian : public QBluetoothDeviceDiscoveryAgentPrivate, public CActive
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-    QBluetoothDeviceDiscoveryAgentPrivate(QObject *parent) : QObject(parent)
-    {
-      connect(this, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)), parent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)));
-      connect(this, SIGNAL(finished()), parent, SIGNAL(finished()));
-      connect(this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), parent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
-    }
-    virtual ~QBluetoothDeviceDiscoveryAgentPrivate() { };
+    QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent);
+    virtual ~QBluetoothDeviceDiscoveryAgentPrivateSymbian();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual bool isActive() const = 0;
+    virtual void start();
+    virtual void stop();
+    virtual bool isActive() const;
     
-    QList<QBluetoothDeviceInfo> discoveredDevices;
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
-    QBluetoothDeviceDiscoveryAgent *q;   
-    
-signals:
-    void deviceDiscovered(const QBluetoothDeviceInfo &info);
-    void finished();
-    void error(QBluetoothDeviceDiscoveryAgent::Error error);
 
-public:
-    static QBluetoothDeviceDiscoveryAgentPrivate* constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent);
+private:
+    void RunL();
+    void DoCancel();     
 
+    RHostResolver hostResolver;
+    RSocketServ socketServer;
+    TNameEntry entry;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

@@ -77,9 +77,9 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::start()
                                            QDBusConnection::systemBus());
 
     QObject::connect(adapter, SIGNAL(DeviceFound(QString,QVariantMap)),
-                     q, SLOT(_q_deviceFound(QString,QVariantMap)));
+                     this, SLOT(_q_deviceFound(QString,QVariantMap)));
     QObject::connect(adapter, SIGNAL(PropertyChanged(QString,QDBusVariant)),
-                     q, SLOT(_q_propertyChanged(QString,QDBusVariant)));
+                     this, SLOT(_q_propertyChanged(QString,QDBusVariant)));
 
     QDBusPendingReply<> discoveryReply = adapter->StartDiscovery();
     if (discoveryReply.isError()) {
@@ -119,5 +119,13 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::_q_propertyChanged(const QStrin
         emit finished();
     }
 }
+
+QBluetoothDeviceDiscoveryAgentPrivate* QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent){
+  QBluetoothDeviceDiscoveryAgentPrivateBluez *d = new QBluetoothDeviceDiscoveryAgentPrivateBluez(parent);
+  d->q = parent;
+  return d;
+}
+
+#include "moc_qbluetoothdevicediscoveryagent_bluez_p.cpp"
 
 QTM_END_NAMESPACE

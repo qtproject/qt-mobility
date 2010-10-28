@@ -86,11 +86,10 @@ public:
     void HandleIoctlCompleteL(TInt aErr);
     void HandleReceiveCompleteL(TInt aErr);
     void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
-#elif !defined(QT_NO_DBUS)
-    void _q_readNotify();
+    void HandleShutdownCompleteL(TInt aErr);  
 #endif
-
+    void _q_readNotify();
+    
 public:
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;

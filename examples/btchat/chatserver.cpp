@@ -68,6 +68,15 @@ void ChatServer::startServer()
     rfcommServer->listen();
     //! [Create the server]
 
+    serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceRecordHandle, (uint)0x00010010);
+
+    //! [Class Uuuid must contain at least 1 entry]
+    QBluetoothServiceInfo::Sequence classId;
+    classId << QVariant::fromValue(QBluetoothUuid(serviceUuid));
+    serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceClassIds, classId);
+    //! [Class Uuuid must contain at least 1 entry]
+
+
     //! [Service name, description and provider]
     serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceName, tr("Bt Chat Server"));
     serviceInfo.setAttribute(QBluetoothServiceInfo::ServiceDescription,
