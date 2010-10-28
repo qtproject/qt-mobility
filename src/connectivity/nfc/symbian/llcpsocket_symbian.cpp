@@ -753,7 +753,6 @@ void COwnLlcpConnOriented::DoCancel()
 
 
 //  ############# CLlcpSocketType2 #######################
-
 /*!
     CLlcpSocketPrivate::ContructL()
 */
@@ -761,6 +760,42 @@ void CLlcpSocketType2::ConstructL()
     {  
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
+
+
+/*!
+    CLlcpSocketType1::CLlcpSocketType1()
+*/
+/*
+CLlcpSocketType2::CLlcpSocketType2( )
+    : iLlcp( NULL ),
+    iLocalConnection(NULL),
+    iRemoteConnection(NULL)
+    {
+    }
+*/
+
+
+/*!
+    CLlcpSocketType1::NewLC()
+*/
+CLlcpSocketType2* CLlcpSocketType2::NewLC()
+    {
+    CLlcpSocketType2* self = new (ELeave) CLlcpSocketType2();
+    CleanupStack::PushL( self );
+    self->ConstructL();
+    return self;
+    }
+
+
+
+CLlcpSocketType2* CLlcpSocketType2::NewL()
+    {
+    CLlcpSocketType2* self = CLlcpSocketType2::NewLC();
+    CleanupStack::Pop( self );
+    return self;
+    }
+
+
 
 /*!
     Connects to the service identified by the URI \a serviceUri (on \a target).

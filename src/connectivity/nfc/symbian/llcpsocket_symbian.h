@@ -105,12 +105,12 @@ class CLlcpSocketType2 : public CBase
    {
 public:
    /*!
-    * Creates a new CLlcpSocketType1 object.
+    * Creates a new CLlcpSocketType2 object.
     */
    static CLlcpSocketType2* NewL();
    
    /*!
-    * Creates a new CLlcpSocketType1 object.
+    * Creates a new CLlcpSocketType2 object.
     */
    static CLlcpSocketType2* NewLC();
    
@@ -131,7 +131,7 @@ public:
    
 private:
     // Constructor
-   CLlcpSocketType2();
+   //CLlcpSocketType2();
     
     // Second phase constructor
     void ConstructL();
