@@ -45,6 +45,7 @@
 #include "qmdesession_p.h"
 
 #include "qdocumentgallery.h"
+#include "qgalleryresource.h"
 
 #include <mdeconstants.h>
 #include <mdeobjectdef.h>
