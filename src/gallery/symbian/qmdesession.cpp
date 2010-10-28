@@ -152,6 +152,19 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
     return query;
 }
 
+CMdEObjectQuery *QMdeSession::NewObjectQuery(
+        CMdENamespaceDef &namespaceDef,
+        CMdEObjectDef &objectDef,
+        MMdEQueryObserver *observer)
+{
+    CMdEObjectQuery* query = 0;
+    TRAPD(err, query = m_cmdeSession->NewObjectQueryL(namespaceDef, objectDef, observer));
+
+    return err == KErrNone
+            ? query
+            : 0;
+}
+
 int QMdeSession::RemoveObject( const unsigned int itemId )
 {
     TItemId result = 0;
