@@ -47,6 +47,7 @@ CLlcpSocketType1* CLlcpSocketType1::NewLC()
 */
 CLlcpSocketType1::CLlcpSocketType1( )
     : iLlcp( NULL ),
+    iLocalConnection(NULL),
     iRemoteConnection(NULL),
     iConnLessStarted(EFalse)
     {
@@ -72,6 +73,7 @@ CLlcpSocketType1::~CLlcpSocketType1()
         delete iLlcp;
         iLlcp = NULL;
         }
+
     }
 
 
@@ -120,6 +122,48 @@ bool CLlcpSocketType1::Bind(TInt8 portNum)
     }
  
 /*!
+    Sends the datagram at aData  to the service that this socket is connected to.
+    Returns the number of bytes sent on success; otherwise return -1;
+*/
+TInt CLlcpSocketType1::WriteDatagram(const TDesC8& aData,TInt8 aPortNum)
+    {
+    TInt val = -1;
+    TInt error = KErrNone;
+    
+    CreateLocalConnection(aPortNum);
+    error = iLocalConnection->Transfer( aData);
+    if (KErrNone == error)
+        {
+        val =  0;
+        }
+    return val; 
+    }
+
+
+TInt CLlcpSocketType1::ReadDatagram(TInt64 aMaxSize)
+    {
+    TInt val = -1;
+    TInt error = KErrNone;
+    
+    // Start receiving data again
+    error = iRemoteConnection->Receive(aMaxSize);
+    if (KErrNone == error)
+        {
+        val =  0;
+        }
+    return val;    
+    }
+    
+
+/*!
+    Call back from MLlcpConnLessListener
+*/
+void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
+    {
+    CreateRemoteConnection(aConnection);
+    }
+
+/*!
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
 */
@@ -167,48 +211,7 @@ void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnect
          }    
     }
 
- 
-/*!
-    Sends the datagram at aData  to the service that this socket is connected to.
-    Returns the number of bytes sent on success; otherwise return -1;
-*/
-TInt CLlcpSocketType1::WriteDatagram(const TDesC8& aData,TInt8 portNum)
-    {
-    TInt val = -1;
-    TInt error = KErrNone;
-    
-    CreateLocalConnection(portNum);
-    error = iLocalConnection->Transfer( aData);
-    if (KErrNone == error)
-        {
-        val =  0;
-        }
-    return val; 
-    }
 
-
-TInt CLlcpSocketType1::ReadDatagram( TDes8& aData )
-    {
-    TInt val = -1;
-    TInt error = KErrNone;
-    
-    // Start receiving data again
-    error = iRemoteConnection->Receive(aData);
-    if (KErrNone == error)
-        {
-        val =  0;
-        }
-    return val;    
-    }
-    
-
-/*!
-    Call back from MLlcpConnLessListener
-*/
-void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
-    {
-    CreateRemoteConnection(aConnection);
-    }
 
    
 /*!
@@ -310,7 +313,7 @@ void COwnLlcpConnLess::TransferCancel()
 /*!
     Receive data from remote peer to local peer via connectionLess transport
 */
-TInt COwnLlcpConnLess::Receive( TDes8& aData)
+TInt COwnLlcpConnLess::Receive(TInt64 aMaxSize)
     {
     TInt error = KErrNone;
     
@@ -318,6 +321,10 @@ TInt COwnLlcpConnLess::Receive( TDes8& aData)
         {
         TInt length = 0;
         length = iConnection->SupportedDataLength();
+        if (length > aMaxSize)
+            {
+            length = aMaxSize;
+            }   
         
         if ( length > 0 )
             {
@@ -465,7 +472,6 @@ void COwnLlcpConnOriented::ConstructL()
         }
     }
     
-
 /*!
  * Destructor.
  */
@@ -563,7 +569,7 @@ void COwnLlcpConnOriented::TransferCancel()
 /*!
     Receive data from remote peer to local peer via connection oriented transport
 */
-TInt COwnLlcpConnOriented::Receive()
+TInt COwnLlcpConnOriented::Receive(TInt64 aMaxSize)
     {
     TInt error = KErrNone;
     
@@ -573,6 +579,10 @@ TInt COwnLlcpConnOriented::Receive()
             {
             TInt length = 0;
             length = iConnection->SupportedDataLength();
+            if (length > aMaxSize)
+                {
+                length = aMaxSize;
+                }         
             
             if ( length > 0 )
                 {
@@ -750,26 +760,38 @@ void COwnLlcpConnOriented::DoCancel()
 void CLlcpSocketType2::ConstructL()
     {  
     iLlcp = CLlcpProvider::NewL( iNfcServer );
+    }
 
-    if ( !iConnOrientedStarted )
-        {
-        CreateLocalConnection();    
-        iConnOrientedStarted = EFalse;
-        }
+/*!
+    Connects to the service identified by the URI \a serviceUri (on \a target).
+*/
+void CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
+    {
+    CreateLocalConnection(aServiceName);    
+    iLocalConnection->Connect(aServiceName);
+    }
+
+/*!
+    Disconnects the socket.
+*/
+void CLlcpSocketType2::DisconnectFromService()
+    {   
+        Cleanup();
     }
 
 /*!
     Creating MLlcpConnOrientedTransporter object if  connection type connectionOriented,
     Creating Creating wrapper for local peer connection.
 */
-void CLlcpSocketType2::CreateLocalConnection()
+void CLlcpSocketType2::CreateLocalConnection(const TDesC8& aServiceName)
     {
     TInt error = KErrNone;
     MLlcpConnOrientedTransporter *connType2 = NULL;
     
     if ( iLocalConnection )
         return;
-        
+    
+    // TODO KInterestingSsap ==> aServiceName
     TRAP( error, connType2 = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap ) );
     
     if ( error == KErrNone )
@@ -784,6 +806,38 @@ void CLlcpSocketType2::CreateLocalConnection()
         }
     return;        
     }
+
+/*!
+    Sends the datagram at aData  to the service that this socket is connected to.
+    Returns the number of bytes sent on success; otherwise return -1;
+*/
+TInt CLlcpSocketType2::WriteDatagram(const TDesC8& aData)
+    {
+    TInt val = -1;
+    TInt error = KErrNone;
+   
+    error = iLocalConnection->Transfer( aData);
+    if (KErrNone == error)
+        {
+        val =  0;
+        }
+    return val; 
+    }
+
+TInt CLlcpSocketType2::ReadDatagram(TInt64 aMaxSize)
+    {
+    TInt val = -1;
+    TInt error = KErrNone;
+    
+    // Start receiving data again
+    error = iRemoteConnection->Receive(aMaxSize);
+    if (KErrNone == error)
+        {
+        val =  0;
+        }
+    return val;    
+    }
+    
 
 
 /*!
@@ -806,15 +860,6 @@ void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aCon
           
           // Creating wrapper for connection. 
           TRAP( error, iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection ) );
-          if ( error == KErrNone )
-              {
-              // Start receiving data
-              iRemoteConnection->Receive();
-              }
-          else
-              {
-              delete aConnection;
-              }
           }
       else
           {
@@ -825,41 +870,10 @@ void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aCon
     }
 
 
-/*!
-    Connects to the service identified by the URI \a serviceUri (on \a target).
-*/
-void CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
-    {
-    iLocalConnection->Connect(aServiceName);
-    }
 
 COwnLlcpConnOriented* CLlcpSocketType2::RemoteConnection() const 
     {
     return iRemoteConnection;
-    }
-
-void CLlcpSocketType2::CreateRemoteConnectionL(MLlcpConnOrientedTransporter* aConnection)
-    {
-    if (!iRemoteConnection)
-        {
-        iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection );
-        }
-    }
-
-/*!
-    Disconnects the socket.
-*/
-void CLlcpSocketType2::DisconnectFromService()
-    { 
-    if ( iConnOrientedStarted )
-        {
-
-        // Stopping to listen SSAP 35.
-        iLlcp->StopListeningConnLessRequest( KInterestingSsap );
-        iConnOrientedStarted = EFalse;
-        
-        Cleanup();
-        } 
     }
 
 
@@ -871,7 +885,6 @@ void CLlcpSocketType2::Cleanup()
     if ( iRemoteConnection )
         {
         iRemoteConnection->ReceiveCancel();
-        iRemoteConnection->TransferCancel();
         
         delete iRemoteConnection;
         iRemoteConnection = NULL;
@@ -879,7 +892,6 @@ void CLlcpSocketType2::Cleanup()
     
     if ( iLocalConnection )
         {
-        iLocalConnection->ReceiveCancel();
         iLocalConnection->TransferCancel();
         
         delete iLocalConnection;

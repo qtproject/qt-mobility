@@ -43,7 +43,7 @@ public:
    
 public:    
    TInt WriteDatagram(const TDesC8& aData,TInt8 portNum);
-   TInt ReadDatagram( TDes8& aData );
+   TInt ReadDatagram(TInt64 aMaxSize);
    bool Bind(TInt8 portNum);
    
 private: // From MLlcpConnLessListener
@@ -123,11 +123,12 @@ public:
    void ConnectToService( const TDesC8& aServiceName);
    void DisconnectFromService();
    TInt WriteDatagram(const TDesC8& aData);
+   TInt ReadDatagram(TInt64 aMaxSize);
    
 public:
    COwnLlcpConnOriented* RemoteConnection() const;
-   void CreateRemoteConnectionL(MLlcpConnOrientedTransporter* aConnection);
-    
+   void CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
+   
 private:
     // Constructor
    CLlcpSocketType2();
@@ -137,8 +138,8 @@ private:
     
     void Cleanup();   
     
-    void CreateLocalConnection();
-    void CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
+    void CreateLocalConnection(const TDesC8& aServiceName);
+
     
 private:
    /*!
@@ -171,7 +172,6 @@ private:
    
    COwnLlcpConnOriented* iRemoteConnection;   
    
-   bool iConnOrientedStarted;
    };
  
 
@@ -212,7 +212,7 @@ public:
    /*!
     * Starts receive data from ConnLess.
     */
-   TInt Receive(TDes8& aData);
+   TInt Receive(TInt64 aMaxSize);
    
    /*!
     * Cancels COwnLlcpConnection::Receive() request.
@@ -299,7 +299,7 @@ public: //  From AbstractConnection
    /*!
         Transfer given data to remote device.
     */
-   TInt Receive(); // Replace StartReceive
+   TInt Receive(TInt64 aMaxSize); // Replace StartReceive
    
    /*!
         Cancels COwnLlcpConnection::Tranfer() request.

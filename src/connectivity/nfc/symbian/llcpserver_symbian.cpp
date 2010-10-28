@@ -71,6 +71,11 @@ CLlcpServer::~CLlcpServer()
         delete iLlcp;
         iLlcp = NULL;
         }
+    if ( iLlcpSocket )
+        {
+        delete iLlcpSocket;
+        iLlcpSocket = NULL;
+        }    
     }
 
 
@@ -90,11 +95,15 @@ bool CLlcpServer::hasPendingConnections() const
 void CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     TInt error = KErrNone; 
-    iLlcpSocket = CLlcpSocketType2::NewL();
-    // TODO
-    // will updated to
-    // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-    TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));  
+    TRAP(error,iLlcpSocket = CLlcpSocketType2::NewL());
+    if (error == KErrNone)
+        {
+        // TODO
+        // will updated to
+        // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
+        TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));         
+        }
+
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     }
 
@@ -117,14 +126,10 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         aConnection->AcceptConnectRequest();
          
         // Creating wrapper for connection. 
-        TRAP( error, iLlcpSocket->CreateRemoteConnectionL(aConnection));
-        if ( error != KErrNone )
-            {
-            delete aConnection;
-            }
+        iLlcpSocket->CreateRemoteConnection(aConnection);
         }
     
-    //TODO emit The newConnection() signal is then emitted each time a client connects to the server.
+    //TODO  The newConnection() signal is then emitted each time a client connects to the server.
 
     }
 
