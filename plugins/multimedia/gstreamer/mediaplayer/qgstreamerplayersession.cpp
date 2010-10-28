@@ -106,10 +106,13 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
-     m_duration(-1),
+     m_duration(-1)
+#ifdef Q_WS_MAEMO_6
+     ,
      m_resourceSet(0),
      m_audioResource(0),
      m_resourceState(NoResourceState)
+#endif // Q_WS_MAEMO_6
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -175,6 +178,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         m_volume = int(volume*100);
     }
 
+#ifdef Q_WS_MAEMO_6
     // resource policy awareness
     m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
     m_resourceSet->setAlwaysReply();
@@ -188,6 +192,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
             this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
     connect(m_resourceSet, SIGNAL(lostResources()), this, SLOT(resourceLostHandler()));
     connect(m_resourceSet, SIGNAL(resourcesReleased()), this, SLOT(resourceReleasedHandler()));
+#endif // Q_WS_MAEMO_6
 }
 
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
@@ -601,6 +606,7 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
+#ifdef Q_WS_MAEMO_6
     if (m_playbin) {
         if (m_resourceState == NoResourceState) {
             m_resourceState = PendingResourceState;
@@ -613,6 +619,9 @@ bool QGstreamerPlayerSession::play()
     }
 
     return false;
+#else
+    return doPlay();
+#endif // Q_WS_MAEMO_6
 }
 
 bool QGstreamerPlayerSession::pause()
@@ -620,8 +629,10 @@ bool QGstreamerPlayerSession::pause()
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
         if (m_pendingVideoSink != 0) {
+#ifdef Q_WS_MAEMO_6
             if (m_resourceState == HasResourceState)
                 m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
             return true;
         }
 
@@ -632,8 +643,10 @@ bool QGstreamerPlayerSession::pause()
             emit stateChanged(m_state);
             emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else {
+#ifdef Q_WS_MAEMO_6
             if (m_resourceState == HasResourceState)
                 m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
             return true;
         }
     }
@@ -655,9 +668,11 @@ void QGstreamerPlayerSession::stop()
         if (oldState != m_state)
             emit stateChanged(m_state);
 
+#ifdef Q_WS_MAEMO_6
         // release the resource
         if (m_resourceState != NoResourceState)
             m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
     }
 }
 
@@ -1243,7 +1258,11 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
 
 bool QGstreamerPlayerSession::doPlay()
 {
+#ifdef Q_WS_MAEMO_6
     if (m_playbin && m_resourceState == HasResourceState) {
+#else
+    if (m_playbin) {
+#endif // Q_WS_MAEMO_6
         m_pendingState = QMediaPlayer::PlayingState;
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
@@ -1258,6 +1277,7 @@ bool QGstreamerPlayerSession::doPlay()
     return false;
 }
 
+#ifdef Q_WS_MAEMO_6
 void QGstreamerPlayerSession::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
                                                       /*grantedOptionalResList*/)
 {
@@ -1279,6 +1299,7 @@ void QGstreamerPlayerSession::resourceLostHandler()
         pause();
     }
 }
+#endif // Q_WS_MAEMO_6
 
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {

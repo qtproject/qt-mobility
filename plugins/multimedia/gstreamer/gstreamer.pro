@@ -8,13 +8,6 @@ INCLUDEPATH+=../../../src/multimedia \
              ../../../src/multimedia/video \
              ../../../src/multimedia/audio
 
-
-
-
-#INCLUDEPATH += /usr/include/resource/qt4/
-#LIBS += -lresourceqt -ldbus-qeventloop
-
-
 CONFIG += mobility
 MOBILITY = multimedia
 
@@ -35,9 +28,6 @@ PKGCONFIG += \
     gstreamer-audio-0.10 \
     gstreamer-video-0.10
 
-PKGCONFIG += libresourceqt1
-
-
 maemo* {
   PKGCONFIG +=gstreamer-plugins-bad-0.10
 
@@ -46,6 +36,10 @@ maemo* {
   SOURCES += camerabuttonlistener_maemo.cpp
 
   QT += dbus
+}
+
+maemo6 {
+    PKGCONFIG += libresourceqt1
 }
 
 # Input
