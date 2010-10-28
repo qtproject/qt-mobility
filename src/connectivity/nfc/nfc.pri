@@ -33,10 +33,24 @@ SOURCES += \
     nfc/qtlvreader.cpp \
     nfc/qllcpserver.cpp
 
-simulator:HEADERS += \
-    nfc/qnearfieldmanager_simulator_p.h
+simulator:PRIVATE_HEADERS += \
+    nfc/qnearfieldmanager_simulator_p.h \
+    nfc/qllcpsocket_simulator_p.h
 
 simulator:SOURCES += \
-    nfc/qnearfieldmanager_simulator.cpp
+    nfc/qnearfieldmanager_simulator.cpp \
+    nfc/qllcpsocket_simulator_p.cpp
+
+symbian:PRIVATE_HEADERS += \
+    nfc/qllcpsocket_symbian_p.h
+
+symbian:SOURCES += \
+    nfc/qllcpsocket_symbian_p.cpp
+
+!simulator:!symbian:PRIVATE_HEADERS += \
+    nfc/qllcpsocket_p.h
+
+!simulator:!symbian:SOURCES += \
+    nfc/qllcpsocket_p.cpp
 
 INCLUDEPATH += $$PWD

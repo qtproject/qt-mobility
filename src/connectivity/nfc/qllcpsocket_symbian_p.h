@@ -39,40 +39,19 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSOCKET_H
-#define QLLCPSOCKET_H
+#ifndef QLLCPSOCKET_P_H
+#define QLLCPSOCKET_P_H
 
 #include <qmobilityglobal.h>
 
-#include <QtCore/QIODevice>
-#include <QtNetwork/QAbstractSocket>
-
-QT_BEGIN_HEADER
+#include "qllcpsocket.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTarget;
-class QLlcpSocketPrivate;
-
-class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
+class QLlcpSocketPrivate
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QLlcpSocket)
-
 public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
-
-    enum State {
-        UnconnectedState = QAbstractSocket::UnconnectedState,
-        ConnectingState = QAbstractSocket::ConnectingState,
-        ConnectedState = QAbstractSocket::ConnectedState,
-        ClosingState = QAbstractSocket::ClosingState
-    };
-
-    explicit QLlcpSocket(QObject *parent = 0);
-    ~QLlcpSocket();
+    QLlcpSocketPrivate();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
@@ -91,24 +70,12 @@ public:
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
-    Error error() const;
+    QLlcpSocket::Error error() const;
 
-signals:
-    void connected();
-    void disconnected();
-    void error(QLlcpSocket::Error socketError);
-    void stateChanged(QLlcpSocket::State socketState);
-
-protected:
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
-
-private:
-    QLlcpSocketPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QLLCPSOCKET_H
+#endif // QLLCPSOCKET_P_H
