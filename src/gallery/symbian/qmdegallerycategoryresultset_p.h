@@ -75,6 +75,12 @@ public:
             const QVariant &rootItem,
             CMdENamespaceDef &namespaceDef);
 
+    static int createTypeQuery(
+            QScopedPointer<CMdEObjectQuery> *query,
+            QMdeSession *session,
+            const QString &itemType,
+            MMdEQueryObserver *observer);
+
     static bool isCategoryType(const QString &itemType);
 
     static QString itemIdType(const QString &itemId);

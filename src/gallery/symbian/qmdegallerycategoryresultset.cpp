@@ -444,6 +444,39 @@ int QMDEGalleryCategoryResultSet::appendScopeCondition(
     }
 }
 
+int QMDEGalleryCategoryResultSet::createTypeQuery(
+        QScopedPointer<CMdEObjectQuery> *query,
+        QMdeSession *session,
+        const QString &itemType,
+        MMdEQueryObserver *observer)
+{
+    const int index = qt_indexOf(itemType, qt_mdeGalleryCategoryTypes);
+    if (index == -1)
+        return QDocumentGallery::ItemTypeError;
+
+    const QMdeGalleryCategoryType &type = qt_mdeGalleryCategoryTypes[index];
+
+    CMdENamespaceDef *namespaceDef = 0;
+    TRAPD(err, namespaceDef = &session->GetDefaultNamespaceDefL());
+    if (err != KErrNone)
+        return QDocumentGallery::ConnectionError;
+
+    CMdEObjectDef *objectDef = qt_getObjectDef(
+            *namespaceDef, *type.mdeObject);
+    if (!objectDef)
+        return QDocumentGallery::ConnectionError;
+
+    CMdEPropertyDef *propertyDef = qt_getPropertyDef(*objectDef, *type.mdeProperty);
+    if (!propertyDef)
+        return QDocumentGallery::ConnectionError;
+
+    query->reset(session->NewObjectQuery(*namespaceDef, *objectDef, observer));
+
+    return *query
+            ? qt_addPropertyFilter(query->data(), *propertyDef)
+            : QDocumentGallery::ConnectionError;
+}
+
 bool QMDEGalleryCategoryResultSet::isCategoryType(const QString &itemType)
 {
     return qt_indexOf(itemType, qt_mdeGalleryCategoryTypes) != -1;
