@@ -130,6 +130,9 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
           This signal is emitted whenever the network mode changes, specified by \a mode.
         */
 
+/*!
+    Constructs a QSystemNetworkInfo with the given \a parent.
+*/
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())
 {

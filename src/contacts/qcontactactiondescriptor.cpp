@@ -200,7 +200,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataOptionalParameterKeys
 Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
 
 /*!
-  Returns the meta data for the given meta data key \a key in the context of the given action targets \a targets with the given invocation parameters \a parameters.
+  Returns the meta data for the given meta data key \a key for the the given action targets \a targets with the given invocation parameters \a parameters.
  */
 QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
 {
@@ -211,24 +211,25 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
     return QVariant();
 }
 
-
 /*!
   Returns the meta data for the given meta data key \a key with the given invocation parameters \a parameters.
  */
 QVariant QContactActionDescriptor::metaData(const QString& key, const QVariantMap& parameters) const
 {
-    if (d->m_factory) {
-        return d->m_factory->metaData(key, QList<QContactActionTarget>(), parameters, *this);
-    }
-
-    return QVariant();
+    return metaData(key, QList<QContactActionTarget>(), parameters);
 }
 
+/*!
+  Returns the meta data for the given meta data key \a key for the \a target, with the given invocation parameters \a parameters.
+ */
 QVariant QContactActionDescriptor::metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters) const
 {
     return metaData(key, QList<QContactActionTarget>() << target, parameters);
 }
 
+/*!
+  Returns the meta data for the given meta data key \a key for a target identified by \a contact and \a detail, with the given invocation parameters \a parameters.
+ */
 QVariant QContactActionDescriptor::metaData(const QString& key, const QContact& contact, const QContactDetail& detail, const QVariantMap& parameters) const
 {
     return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);

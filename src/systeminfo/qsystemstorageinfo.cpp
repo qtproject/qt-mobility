@@ -97,6 +97,9 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 
+/*!
+    Constructs a QSystemStorageInfo with the given \a parent.
+*/
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {

@@ -814,6 +814,16 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
 */
 
 /*!
+  \fn QOrganizerItemReminder::QOrganizerItemReminder(const char*)
+  \internal
+*/
+
+/*!
+  \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
+  \internal
+*/
+
+/*!
    \fn int QOrganizerItemReminder::repetitionDelay() const
 
    Returns the delay (in seconds) between each repetition of the reminder.
@@ -951,9 +961,9 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
 */
 
 /*!
-   \fn QOrganizerItemEmailReminder::attachments()
+   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
 
-   Returns a list of attachments.
+   Returns the attachments of the email.
 */
 
 /*!

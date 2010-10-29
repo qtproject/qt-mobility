@@ -63,26 +63,80 @@ QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
 
   This class keeps an internal buffer which it uses to temporarily store data which it has read from
   the device but not returned to the user.
+
+  The isCodecCertain constructor parameter/getter can be used by the client to indicate whether
+  the codec supplied is known for sure, or if it was a guess.
  */
 
 /*!
   Constructs a LineReader that reads from the given \a device using the given \a codec.
-  \a chunkSize is the number of bytes to read at a time (it is useful for testing but shouldn't
-  otherwise be set).
+  If the \a codec is null, it is guessed at by sniffing the first few bytes of the input.
+  */
+LineReader::LineReader(QIODevice* device, QTextCodec *codec)
+    : mDevice(device),
+    mCodec(codec),
+    mIsCodecUtf8Compatible(false),
+    mChunkSize(1000),
+    mOdometer(0),
+    mSearchFrom(0)
+{
+    if (!mCodec) {
+        static QTextCodec* utf16be = QTextCodec::codecForName("UTF-16BE");
+        static QTextCodec* utf16le = QTextCodec::codecForName("UTF-16LE");
+        static QTextCodec* utf32be = QTextCodec::codecForName("UTF-32BE");
+        static QTextCodec* utf32le = QTextCodec::codecForName("UTF-32LE");
+        static const QByteArray& beginUtf16be(VersitUtils::encode("BEGIN:", utf16be));
+        static const QByteArray& beginUtf16le(VersitUtils::encode("BEGIN:", utf16le));
+        static const QByteArray& beginUtf32be(VersitUtils::encode("BEGIN:", utf32be));
+        static const QByteArray& beginUtf32le(VersitUtils::encode("BEGIN:", utf32le));
+
+        // Do some basic charset detection using the byte-order-mark (BOM)
+        // We need 4 bytes to do BOM sniffing for UTF-32, UTF-16 and UTF-8
+        QByteArray firstSixBytes = mDevice->read(6);
+        mCodec = QTextCodec::codecForUtfText(firstSixBytes, NULL);
+        if (mCodec) {
+            mIsCodecCertain = true;
+        } else {
+            if (beginUtf16be.startsWith(firstSixBytes)) {
+                mCodec = utf16be;
+                mIsCodecCertain = true;
+            } else if (beginUtf16le.startsWith(firstSixBytes)) {
+                mCodec = utf16le;
+                mIsCodecCertain = true;
+            } else if (beginUtf32be.startsWith(firstSixBytes)) {
+                mCodec = utf32be;
+                mIsCodecCertain = true;
+            } else if (beginUtf32le.startsWith(firstSixBytes)) {
+                mCodec = utf32le;
+                mIsCodecCertain = true;
+            } else {
+                mCodec = QTextCodec::codecForLocale();
+                mIsCodecCertain = false;
+                mIsCodecUtf8Compatible = true;
+            }
+        }
+        mBuffer = LByteArray(firstSixBytes, 0, 0);
+    } else {
+        mIsCodecCertain = true;
+    }
+    mCrlfList = *VersitUtils::newlineList(mCodec);
+}
+
+/*!
+  Constructs a LineReader that reads from the given \a device using the given \a codec.
+  \a chunkSize is the number of bytes to read at a time (it is useful for testing but this
+  constructor shouldn't otherwise be used).
   */
 LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
     : mDevice(device),
     mCodec(codec),
+    mIsCodecCertain(true),
     mChunkSize(chunkSize),
     mCrlfList(*VersitUtils::newlineList(mCodec)),
-    mBuffer(LByteArray(QByteArray())),
     mOdometer(0),
-    mSearchFrom(0),
-    mColon(VersitUtils::encode(':', mCodec)),
-    mEquals(VersitUtils::encode('=', mCodec)),
-    mSpace(VersitUtils::encode(' ', mCodec)),
-    mTab(VersitUtils::encode('\t', mCodec))
+    mSearchFrom(0)
 {
+    Q_ASSERT(mCodec != NULL);
 }
 
 /*!
@@ -104,6 +158,8 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
   */
 LByteArray LineReader::readLine()
 {
+    QByteArray colon(VersitUtils::encode(':', mCodec));
+    QByteArray equals(VersitUtils::encode('=', mCodec));
     if (!mPushedLines.isEmpty()) {
         LByteArray retval(mPushedLines.pop());
         return retval;
@@ -120,8 +176,8 @@ LByteArray LineReader::readLine()
         // LByteArray copies the QByteArray, which is implicitly shared
         LByteArray prevLine(mBuffer.mData, prevStart, prevEnd);
         if (mBuffer.isEmpty()
-                || mBuffer.contains(mColon)
-                || prevLine.endsWith(mEquals)) {
+                || mBuffer.contains(colon)
+                || prevLine.endsWith(equals)) {
             // Normal, the next line is empty, or a new property, or it's been wrapped using
             // QUOTED-PRINTABLE.  Rewind it back one line so it gets read next time round.
             mBuffer.setBounds(prevStart, prevEnd);
@@ -183,7 +239,7 @@ void LineReader::pushLine(const QByteArray& line)
 /*!
   How many bytes have been returned in the LByteArray in the lifetime of the LineReader.
  */
-int LineReader::odometer()
+int LineReader::odometer() const
 {
     return mOdometer;
 }
@@ -193,7 +249,7 @@ int LineReader::odometer()
   to return false and for there to be no more data left (eg. if there are trailing newlines at the
   end of the input.  In this case, readLine() will return an empty line.
  */
-bool LineReader::atEnd()
+bool LineReader::atEnd() const
 {
     return mPushedLines.isEmpty() && mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
 }
@@ -201,9 +257,27 @@ bool LineReader::atEnd()
 /*!
   Returns the codec that the LineReader reads with.
  */
-QTextCodec* LineReader::codec()
+QTextCodec* LineReader::codec() const
 {
     return mCodec;
+}
+
+/*!
+  Returns true if the line reader has been told for sure what the codec is, or if a byte-order-mark
+  has told us for sure what the codec is.
+ */
+bool LineReader::isCodecCertain() const
+{
+    return mIsCodecCertain;
+}
+
+/*! Valid if isCodecCertain(), false iff we've seen an invalid utf8 sequence */
+bool LineReader::isCodecUtf8Compatible() const {
+    return mIsCodecUtf8Compatible;
+}
+
+void LineReader::setCodecUtf8Incompatible() {
+    mIsCodecUtf8Compatible = false;
 }
 
 /*!
@@ -218,8 +292,10 @@ QTextCodec* LineReader::codec()
 bool LineReader::tryReadLine(LByteArray *cursor, bool atEnd)
 {
     int crlfPos = -1;
+    QByteArray space(VersitUtils::encode(' ', mCodec));
+    QByteArray tab(VersitUtils::encode('\t', mCodec));
 
-    int spaceLength = mSpace.length();
+    int spaceLength = space.length();
 
     forever {
         foreach(const QByteArrayMatcher& crlf, mCrlfList) {
@@ -232,8 +308,8 @@ bool LineReader::tryReadLine(LByteArray *cursor, bool atEnd)
                 break;
             } else if (crlfPos > cursor->mStart) {
                 // Found the CRLF.
-                if (QVersitReaderPrivate::containsAt(cursor->mData, mSpace, crlfPos + crlfLength)
-                    || QVersitReaderPrivate::containsAt(cursor->mData, mTab, crlfPos + crlfLength)) {
+                if (QVersitReaderPrivate::containsAt(cursor->mData, space, crlfPos + crlfLength)
+                    || QVersitReaderPrivate::containsAt(cursor->mData, tab, crlfPos + crlfLength)) {
                     // If it's followed by whitespace, collapse it.
                     cursor->mData.remove(crlfPos, crlfLength + spaceLength);
                     mSearchFrom = crlfPos;
@@ -273,7 +349,7 @@ void QVersitReaderPrivate::init(QVersitReader* reader)
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
     mDocumentNestingLevel(0),
-    mDefaultCodec(QTextCodec::codecForName("UTF-8")),
+    mDefaultCodec(0),
     mState(QVersitReader::InactiveState),
     mError(QVersitReader::NoError),
     mIsCanceling(false)
@@ -575,14 +651,14 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray* line, QVersitPropert
             property->setValue(QVariant::fromValue(subDocument));
         }
     } else {
-        QTextCodec* codec;
         bool isBinary = unencode(&value, property, lineReader);
         if (isBinary) {
             property->setValue(value);
             property->setValueType(QVersitProperty::BinaryType);
         }
         else {
-            property->setValue(decodeCharset(value, property, lineReader->codec(), &codec));
+            QTextCodec* ignored = 0;
+            property->setValue(decodeCharset(value, property, lineReader, &ignored));
             splitStructuredValue(property, false);
         }
     }
@@ -600,10 +676,10 @@ void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType vers
 
     QByteArray value = line->toByteArray();
 
-    QTextCodec* codec;
 
     if (property->valueType() == QVersitProperty::VersitDocumentType) {
-        QString valueString(decodeCharset(value, property, lineReader->codec(), &codec));
+        QTextCodec* codec;
+        QString valueString(decodeCharset(value, property, lineReader, &codec));
         removeBackSlashEscaping(&valueString);
         // Make a line reader from the value of the property.
         QByteArray subDocumentValue(codec->fromUnicode(valueString));
@@ -612,6 +688,7 @@ void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType vers
         subDocumentData.seek(0);
         LineReader subDocumentLineReader(&subDocumentData, codec);
 
+        // Recursive call!
         QVersitDocument subDocument(versitType);
         if (!parseVersitDocument(&subDocumentLineReader, &subDocument)) {
             property->clear();
@@ -624,7 +701,8 @@ void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType vers
             property->setValue(value);
             property->setValueType(QVersitProperty::BinaryType);
         } else {
-            property->setValue(decodeCharset(value, property, lineReader->codec(), &codec));
+            QTextCodec* ignored = 0;
+            property->setValue(decodeCharset(value, property, lineReader, &ignored));
             bool isList = splitStructuredValue(property, true);
             // Do backslash unescaping
             if (isList) {
@@ -669,7 +747,8 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument* document, con
 
 /*!
  * On entry, \a value should be the byte array to unencode.  It is modified to be the unencoded
- * version.  Returns true if and only if the value was base-64 encoded.
+ * version.  Returns true if and only if the value was base-64 encoded.  (This is used as a
+ * heuristic later to decide whether to decode the byte array as text)
  * \a lineReader is supplied in case more lines need to be read (for quoted-printable).  The
  * \a property is supplied so we know what kind of encoding was used.
  */
@@ -705,27 +784,38 @@ bool QVersitReaderPrivate::unencode(QByteArray* value,
 
 /*!
  * Decodes \a value, after working out what charset it is in using the context of \a property and
- * returns it.  The codec used to decode is returned in \a codec.
+ * returns it.  The codec used to decode is returned in \a codec.  If the CHARSET parameter was
+ * specified, *charsetSpecified is set to true (else, false).
  */
 QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
                                             QVersitProperty* property,
-                                            QTextCodec* defaultCodec,
+                                            LineReader* lineReader,
                                             QTextCodec** codec) const
 {
-    const QString charset(QLatin1String("CHARSET"));
+    static const QString charset(QLatin1String("CHARSET"));
+
+    *codec = NULL;
     if (property->parameters().contains(charset)) {
         QString charsetValue = *property->parameters().find(charset);
         property->removeParameters(charset);
         *codec = QTextCodec::codecForName(charsetValue.toAscii());
-        if (*codec != NULL) {
-            return (*codec)->toUnicode(value);
+    } else if (!lineReader->isCodecCertain()
+            && lineReader->isCodecUtf8Compatible()) {
+        // Guess the codec because we don't know for sure what it is and it could possibly be
+        // either UTF-8 or an 8-bit codec.
+        if (VersitUtils::isValidUtf8(value)) {
+            // Valid UTF-8
+            *codec = QTextCodec::codecForName("UTF-8");
         } else {
-            *codec = defaultCodec;
-            return defaultCodec->toUnicode(value);
+            // Invalid UTF-8 - don't try to test future properties for UTF-8-compatibility
+            lineReader->setCodecUtf8Incompatible();
         }
     }
-    *codec = defaultCodec;
-    return defaultCodec->toUnicode(value);
+
+    if (*codec == NULL)
+        *codec = lineReader->codec();
+
+    return (*codec)->toUnicode(value);
 }
 
 /*!

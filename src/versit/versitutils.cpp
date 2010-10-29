@@ -124,3 +124,78 @@ QVersitProperty VersitUtils::takeProperty(const QVersitDocument& document,
     }
     return QVersitProperty();
 }
+
+/*!
+ * Returns true iff \a bytes is a valid UTF-8 sequence.
+ */
+bool VersitUtils::isValidUtf8(const QByteArray& bytes) {
+    int sequenceLength = 1; // number of bytes in total for a sequence
+    int continuation = 0;   // number of bytes left in a continuation
+    quint32 codePoint = 0;
+    for (int i = 0; i < bytes.size(); i++) {
+        quint8 byte = bytes[i];
+        if (continuation == 0) {
+            if (byte & 0x80) { // 1xxxxxxx
+                if (byte & 0x40) { // 11xxxxxx
+                    if (byte == 0xc0 || byte == 0xc1) // 1100000x
+                        return false; // overlong 2 byte sequence
+                    if (byte & 0x20) { // 111xxxxx
+                        if (byte & 0x10) { // 1111xxxx
+                            if (byte & 0x08) { // 11111xxx
+                                // Outside unicode range
+                                return false;
+                            } else { // 11110xxx
+                                sequenceLength = 4;
+                                continuation = 3; // three more bytes
+                                codePoint = byte & 0x07; // take the last 3 bits
+                            }
+                        } else { // 1110xxxx
+                            sequenceLength = 3;
+                            continuation = 2; // two more bytes
+                            codePoint = byte & 0x0f; // take last 4 bits
+                        }
+                    } else { // 110xxxxx
+                        sequenceLength = 2;
+                        continuation = 1; // one more byte
+                        codePoint = byte & 0x1f; // take last 5 bits
+                    }
+                } else { // 10xxxxxx
+                    // unexpected continuation
+                    return false;
+                }
+            } else { // 0xxxxxxx
+                sequenceLength = 1;
+            }
+        } else { // continuation > 0
+            if ((byte & 0xc0) != 0x80) // 10xxxxxx
+                return false; // expected continuation not found
+            codePoint = (codePoint << 6) | (byte & 0x3f); // append last 6 bits
+            continuation--;
+        }
+
+        if (continuation == 0) {
+            // Finished decoding a character - it's not overlong and that it's in range
+            switch (sequenceLength) {
+                // 1-byte sequence can't be overlong
+                // 2-byte sequence has already been checked for overlongness
+                case 3:
+                    if (codePoint < 0x800) // overlong
+                        return false;
+
+                    // Filter out codepoints outside the Unicode range
+                    if ((codePoint >= 0xd800 && codePoint <= 0xdfff) // utf-16 surrogate halves
+                            || (codePoint >= 0xfffe && codePoint <= 0xffff)) { // reversed utf-16 BOM
+                        return false;
+                    }
+                    break;
+                case 4:
+                    if (codePoint < 0x10000      // overlong
+                        || codePoint > 0x10ffff) // above Unicode range
+                        return false;
+                    break;
+            }
+            codePoint = 0;
+        }
+    }
+    return continuation == 0;
+}

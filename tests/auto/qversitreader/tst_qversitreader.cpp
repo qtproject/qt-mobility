@@ -130,11 +130,224 @@ void tst_QVersitReader::testDevice()
 
 void tst_QVersitReader::testDefaultCodec()
 {
-    QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-8"));
+    QVERIFY(mReader->defaultCodec() == 0);
     mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
     QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
 
+void tst_QVersitReader::testValidateUtf8()
+{
+    QFETCH(QByteArray, bytes);
+    QFETCH(bool, isValid);
+    QCOMPARE(VersitUtils::isValidUtf8(bytes), isValid);
+}
+
+void tst_QVersitReader::testValidateUtf8_data()
+{
+    // These test cases are taken from
+    // http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+    // See that page for a description of what they test
+    QTest::addColumn<QByteArray>("bytes");
+    QTest::addColumn<bool>("isValid");
+    // The first 18 are marked as "valid" according to the above page
+    QTest::newRow("1") << QByteArray("\xce\xba\xe1\xbd\xb9\xcf\x83\xce\xbc\xce\xb5") << true;
+    QTest::newRow("2") << QByteArray("\x00") << true;
+    QTest::newRow("3") << QByteArray("\xc2\x80") << true;
+    QTest::newRow("4") << QByteArray("\xe0\xa0\x80") << true;
+    QTest::newRow("5") << QByteArray("\xf0\x90\x80\x80") << true;
+    // We treat 5 and 6 byte characters as invalid as per RFC3629
+    QTest::newRow("6") << QByteArray("\xf8\x88\x80\x80\x80") << false;
+    QTest::newRow("7") << QByteArray("\xfc\x84\x80\x80\x80\x80") << false;
+    QTest::newRow("8") << QByteArray("\x7f") << true;
+    QTest::newRow("9") << QByteArray("\xdf\xbf") << true;
+    QTest::newRow("10") << QByteArray("\xef\xbf\xbd") << true;
+    QTest::newRow("11") << QByteArray("\xf4\x8f\xbf\xbf") << true;
+    // We treat 5 and 6 byte characters as invalid as per RFC3629
+    QTest::newRow("12") << QByteArray("\xfb\xbf\xbf\xbf\xbf") << false;
+    QTest::newRow("13") << QByteArray("\xfd\xbf\xbf\xbf\xbf\xbf") << false;
+    QTest::newRow("14") << QByteArray("\xed\x9f\xbf") << true;
+    QTest::newRow("15") << QByteArray("\xee\x80\x80") << true;
+    QTest::newRow("16") << QByteArray("\xef\xbf\xbd") << true;
+    QTest::newRow("17") << QByteArray("\xf4\x8f\xbf\xbf") << true;
+    QTest::newRow("18") << QByteArray("\xf4\x90\x80\x80") << false; // outside the range
+
+    // The rest are marked as "invalid" according to the above page
+    QTest::newRow("19") << QByteArray("\x80") << false;
+    QTest::newRow("20") << QByteArray("\xbf") << false;
+    QTest::newRow("21") << QByteArray("\x80\xbf") << false;
+    QTest::newRow("22") << QByteArray("\x80\xbf\x80") << false;
+    QTest::newRow("23") << QByteArray("\x80\xbf\x80\xbf") << false;
+    QTest::newRow("24") << QByteArray("\x80\xbf\x80\xbf\x80") << false;
+    QTest::newRow("25") << QByteArray("\x80\xbf\x80\xbf\x80\xbf") << false;
+    QTest::newRow("26") << QByteArray("\x80\xbf\x80\xbf\x80\xbf\x80") << false;
+    QTest::newRow("27") << QByteArray("\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d"
+            "\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1"
+            "\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5"
+            "\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf") << false;
+    QTest::newRow("28") << QByteArray("\xc0\x20\xc1\x20\xc2\x20\xc3\x20\xc4\x20\xc5\x20\xc6\x20"
+            "\xc7\x20\xc8\x20\xc9\x20\xca\x20\xcb\x20\xcc\x20\xcd\x20\xce\x20\xcf\x20\xd0\x20"
+            "\xd1\x20\xd2\x20\xd3\x20\xd4\x20\xd5\x20\xd6\x20\xd7\x20\xd8\x20\xd9\x20\xda\x20"
+            "\xdb\x20\xdc\x20\xdd\x20\xde\x20\xdf\x20") << false;
+    QTest::newRow("29") << QByteArray("\xe0\x20\xe1\x20\xe2\x20\xe3\x20\xe4\x20\xe5\x20\xe6\x20"
+            "\xe7\x20\xe8\x20\xe9\x20\xea\x20\xeb\x20\xec\x20\xed\x20\xee\x20\xef\x20") << false;
+    QTest::newRow("30") << QByteArray("\xf0\x20\xf1\x20\xf2\x20\xf3\x20\xf4\x20\xf5\x20\xf6\x20"
+            "\xf7\x20") << false;
+    QTest::newRow("31") << QByteArray("\xf8\x20\xf9\x20\xfa\x20\xfb\x20") << false;
+    QTest::newRow("32") << QByteArray("\xfc\x20\xfd\x20") << false;
+    QTest::newRow("33") << QByteArray("\xc0") << false;
+    QTest::newRow("34") << QByteArray("\xe0\x80") << false;
+    QTest::newRow("35") << QByteArray("\xf0\x80\x80") << false;
+    QTest::newRow("36") << QByteArray("\xf8\x80\x80\x80") << false;
+    QTest::newRow("37") << QByteArray("\xfc\x80\x80\x80\x80") << false;
+    QTest::newRow("38") << QByteArray("\xdf") << false;
+    QTest::newRow("39") << QByteArray("\xef\xbf") << false;
+    QTest::newRow("40") << QByteArray("\xf7\xbf\xbf") << false;
+    QTest::newRow("41") << QByteArray("\xfb\xbf\xbf\xbf") << false;
+    QTest::newRow("42") << QByteArray("\xfd\xbf\xbf\xbf\xbf") << false;
+    QTest::newRow("43") << QByteArray("\xc0\xe0\x80\xf0\x80\x80\xf8\x80\x80\x80\xfc\x80\x80\x80"
+            "\x80\xdf\xef\xbf\xf7\xbf\xbf\xfb\xbf\xbf\xbf\xfd\xbf\xbf\xbf\xbf") << false;
+    QTest::newRow("44") << QByteArray("\xfe") << false;
+    QTest::newRow("45") << QByteArray("\xff") << false;
+    QTest::newRow("46") << QByteArray("\xfe\xfe\xff\xff") << false;
+    QTest::newRow("47") << QByteArray("\xc0\xaf") << false;
+    QTest::newRow("48") << QByteArray("\xe0\x80\xaf") << false;
+    QTest::newRow("49") << QByteArray("\xf0\x80\x80\xaf") << false;
+    QTest::newRow("50") << QByteArray("\xf8\x80\x80\x80\xaf") << false;
+    QTest::newRow("51") << QByteArray("\xfc\x80\x80\x80\x80\xaf") << false;
+    QTest::newRow("52") << QByteArray("\xc1\xbf") << false;
+    QTest::newRow("53") << QByteArray("\xe0\x9f\xbf") << false;
+    QTest::newRow("54") << QByteArray("\xf0\x8f\xbf\xbf") << false;
+    QTest::newRow("55") << QByteArray("\xf8\x87\xbf\xbf\xbf") << false;
+    QTest::newRow("56") << QByteArray("\xfc\x83\xbf\xbf\xbf\xbf") << false;
+    QTest::newRow("57") << QByteArray("\xc0\x80") << false;
+    QTest::newRow("58") << QByteArray("\xe0\x80\x80") << false;
+    QTest::newRow("59") << QByteArray("\xf0\x80\x80\x80") << false;
+    QTest::newRow("60") << QByteArray("\xf8\x80\x80\x80\x80") << false;
+    QTest::newRow("61") << QByteArray("\xfc\x80\x80\x80\x80\x80") << false;
+    QTest::newRow("62") << QByteArray("\xed\xa0\x80") << false;
+    QTest::newRow("63") << QByteArray("\xed\xad\xbf") << false;
+    QTest::newRow("64") << QByteArray("\xed\xae\x80") << false;
+    QTest::newRow("65") << QByteArray("\xed\xaf\xbf") << false;
+    QTest::newRow("66") << QByteArray("\xed\xb0\x80") << false;
+    QTest::newRow("67") << QByteArray("\xed\xbe\x80") << false;
+    QTest::newRow("68") << QByteArray("\xed\xbf\xbf") << false;
+    QTest::newRow("69") << QByteArray("\xed\xa0\x80\xed\xb0\x80") << false;
+    QTest::newRow("70") << QByteArray("\xed\xa0\x80\xed\xbf\xbf") << false;
+    QTest::newRow("71") << QByteArray("\xed\xad\xbf\xed\xb0\x80") << false;
+    QTest::newRow("72") << QByteArray("\xed\xad\xbf\xed\xbf\xbf") << false;
+    QTest::newRow("73") << QByteArray("\xed\xae\x80\xed\xb0\x80") << false;
+    QTest::newRow("74") << QByteArray("\xed\xae\x80\xed\xbf\xbf") << false;
+    QTest::newRow("75") << QByteArray("\xed\xaf\xbf\xed\xb0\x80") << false;
+    QTest::newRow("76") << QByteArray("\xed\xaf\xbf\xed\xbf\xbf") << false;
+    QTest::newRow("77") << QByteArray("\xef\xbf\xbe") << false;
+    QTest::newRow("78") << QByteArray("\xef\xbf\xbf") << false;
+
+    // My own tests
+    // 0x110000 is the first one outside the Unicode range
+    QTest::newRow("79") << QByteArray("\xf4\x90\x80\x80") << false;
+    // a 3 byte sequence followed by a single byte
+    QTest::newRow("80") << QByteArray("\xef\xbf\xbd\x20") << true;
+    // a 4 byte sequence followed by a single byte
+    QTest::newRow("81") << QByteArray("\xf4\x8f\xbf\xbf\x20") << true;
+}
+
+void tst_QVersitReader::testDetectCodec()
+{
+    QFETCH(QByteArray, bytes);
+    QFETCH(QString, expectedFnValue);
+
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("ISO 8859-1"));
+    mInputDevice->close();
+    mInputDevice->setData(bytes);
+    mInputDevice->open(QBuffer::ReadOnly);
+    mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
+    QVERIFY(mReader->defaultCodec() == 0);
+    QVERIFY2(mReader->startReading(), QString::number(mReader->error()).toAscii().data());
+    QVERIFY2(mReader->waitForFinished(), QString::number(mReader->error()).toAscii().data());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
+    QVERIFY(mReader->defaultCodec() == 0); // shouldn't change
+    QList<QVersitDocument> results = mReader->results();
+    QCOMPARE(results.count(),1);
+    QVersitDocument document = results.first();
+    QCOMPARE(document.properties().size(), 1);
+    QVersitProperty property = document.properties().first();
+    QCOMPARE(property.name(), QLatin1String("FN"));
+    QCOMPARE(property.value(), expectedFnValue);
+}
+
+void tst_QVersitReader::testDetectCodec_data()
+{
+    QTest::addColumn<QByteArray>("bytes");
+    QTest::addColumn<QString>("expectedFnValue");
+
+    const QString& documentString =
+        QLatin1String("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n");
+    {
+        const QByteArray& document =
+            "\xef\xbb\xbf" + documentString.toUtf8();
+        QTest::newRow("UTF-8 with BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            QTextCodec::codecForName("UTF-16BE")->fromUnicode(documentString);
+        QTest::newRow("UTF-16BE with BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            QTextCodec::codecForName("UTF-16LE")->fromUnicode(documentString);
+        QTest::newRow("UTF-16LE with BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            VersitUtils::encode(documentString.toAscii(), QTextCodec::codecForName("UTF-16BE"));
+        QTest::newRow("UTF-16BE without BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            VersitUtils::encode(documentString.toAscii(), QTextCodec::codecForName("UTF-16LE"));
+        QTest::newRow("UTF-16LE without BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            QTextCodec::codecForName("UTF-32BE")->fromUnicode(documentString);
+        QTest::newRow("UTF-32BE with BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document =
+            QTextCodec::codecForName("UTF-32LE")->fromUnicode(documentString);
+        QTest::newRow("UTF-32LE with BOM") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document = documentString.toUtf8();
+        QTest::newRow("Plain ASCII") << document << QString::fromAscii("John");
+    }
+    {
+        const QByteArray& document = "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:"
+                                    + KATAKANA_NOKIA
+                                    + "\r\nEND:VCARD\r\n";
+        QTest::newRow("Non-ASCII UTF-8") << document << QString::fromUtf8(KATAKANA_NOKIA);
+    }
+    {
+        // some Scandinavian characters, note that "\xe4\xe4" is invalid UTF-8, as is "\xf6n"
+        const QByteArray& document =
+            "BEGIN:VCARD\r\nVERSION:2.1\r\n"
+            "FN:P\xe4\xe4kk\xf6nen\r\n"
+            "END:VCARD\r\n";
+        QTest::newRow("Non-ASCII Latin-1") << document
+            << QString::fromLatin1("P\xe4\xe4kk\xf6nen");
+    }
+    {
+        // as above, but quoted-printable
+        const QByteArray& document =
+            "BEGIN:VCARD\r\nVERSION:2.1\r\n"
+            "FN;ENCODING=QUOTED-PRINTABLE:P=E4=E4kk=F6nen\r\n"
+            "END:VCARD\r\n";
+        QTest::newRow("Non-ASCII Latin-1 QP") << document
+            << QString::fromLatin1("P\xe4\xe4kk\xf6nen");
+    }
+}
 
 void tst_QVersitReader::testReading()
 {

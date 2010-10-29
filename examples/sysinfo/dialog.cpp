@@ -541,7 +541,6 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
     if(currentBatStat == status || currentPowerState != QSystemDeviceInfo::BatteryPower)
         return;
     QString msg;
-//    if(di->isBatteryCharging()) {
         switch(status) {
         case QSystemDeviceInfo::BatteryCritical:
             {
@@ -573,8 +572,7 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             }
             break;
         };
-  //  }
-
+        currentBatStat = status;
 }
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
