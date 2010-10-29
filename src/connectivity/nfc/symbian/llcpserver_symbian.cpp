@@ -47,7 +47,6 @@ CLlcpServer* CLlcpServer::NewLC()
     CLlcpServer::CLlcpServer()
 */
 CLlcpServer::CLlcpServer()
-    :iLlcpSocket(NULL),
      iLlcp( NULL ),
      iSocketListening(EFalse)
     {
