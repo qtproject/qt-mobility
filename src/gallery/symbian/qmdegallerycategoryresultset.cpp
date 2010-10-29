@@ -671,17 +671,19 @@ int QMDEGalleryCategoryResultSet::currentIndex() const
 
 bool QMDEGalleryCategoryResultSet::fetch(int index)
 {
-    if (index >= 0 && index < m_count) {
-        if (index != m_currentIndex) {
-            m_currentIndex = index;
+    const bool isValid = index >= m_offset && index < m_count;
 
+    if (index != m_currentIndex) {
+        const bool wasValid = m_currentIndex >= m_offset && m_currentIndex < m_count;
+
+        m_currentIndex = index;
+
+        if (isValid || wasValid)
             emit currentItemChanged();
-            emit currentIndexChanged(m_currentIndex);
-        }
-        return true;
-    } else {
-        return false;
+
+        emit currentIndexChanged(m_currentIndex);
     }
+    return isValid;
 }
 
 void QMDEGalleryCategoryResultSet::cancel()

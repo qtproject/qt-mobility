@@ -159,17 +159,19 @@ int QMDEGalleryTypeResultSet::currentIndex() const
 
 bool QMDEGalleryTypeResultSet::fetch(int index)
 {
-    if (index >= 0 && index < m_itemCount) {
-        if (index != m_currentIndex) {
-            m_currentIndex = index;
+    const bool isValid = index == 0 && m_itemCount == 1;
 
+    if (index != m_currentIndex) {
+        const bool wasValid = m_currentIndex == 0 && m_itemCount == 1;
+
+        m_currentIndex = index;
+
+        if (isValid || wasValid)
             emit currentItemChanged();
-            emit currentIndexChanged(m_currentIndex);
-        }
-        return true;
-    } else {
-        return false;
+
+        emit currentIndexChanged(m_currentIndex);
     }
+    return isValid;
 }
 
 void QMDEGalleryTypeResultSet::cancel()
@@ -188,17 +190,17 @@ void QMDEGalleryTypeResultSet::HandleQueryCompleted(CMdEQuery &aQuery, TInt aErr
     case KErrNone:
         {
             m_count = aQuery.Count();
-    
+
             m_itemCount = 1;
             const int currentIndex = m_currentIndex;
             if (m_currentIndex >= 0)
                 m_currentIndex += 1;
-    
+
             emit itemsInserted(0, 1);
-    
+
             if (currentIndex != m_currentIndex)
                 emit currentIndexChanged(m_currentIndex);
-    
+
             finish();
         }
         break;
