@@ -66,10 +66,10 @@ public:
     ~CNearFieldNdefTarget();
 
     // Two-phased constructor.
-    static CNearFieldNdefTarget* NewL(MNfcTag * aNfcTag);
+    static CNearFieldNdefTarget* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Two-phased constructor.
-    static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag);
+    static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
 public: // New functions
     void SetRealTarget(MNearFieldTarget * aRealTarget);
@@ -94,7 +94,7 @@ public:
 
 private:
     // C++ constructor
-    CNearFieldNdefTarget(MNfcTag * aNfcTag);
+    CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Second-phase constructor
     void ConstructL();
@@ -114,7 +114,7 @@ private:
     // otherwise, own by this.
     MNfcTag * iNfcTag;
     
-    RNfcServer iNfcServer;
+    RNfcServer& iNfcServer;
     };
 
 #endif // NEARFIELDNDEFTARGET_H

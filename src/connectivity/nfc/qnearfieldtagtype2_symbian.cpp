@@ -86,5 +86,9 @@ void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 {
 }
 
+QByteArray QNearFieldTagType2Symbian::uid() const
+{
+}
+
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"
 QTM_END_NAMESPACE

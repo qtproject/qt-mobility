@@ -52,21 +52,22 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag) : iNfcTag(aNfcTag)
+CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
+                                                                                        iNfcServer(aNfcServer)
     {
     }
 
-CNearFieldNdefTarget* CNearFieldNdefTarget::NewLC(MNfcTag * aNfcTag)
+CNearFieldNdefTarget* CNearFieldNdefTarget::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldNdefTarget* self = new (ELeave) CNearFieldNdefTarget(aNfcTag);
+    CNearFieldNdefTarget* self = new (ELeave) CNearFieldNdefTarget(aNfcTag, aNfcServer);
     CleanupStack::PushL(self);
     self->ConstructL();
     return self;
     }
 
-CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag)
+CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldNdefTarget* self = CNearFieldNdefTarget::NewLC(aNfcTag);
+    CNearFieldNdefTarget* self = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
     CleanupStack::Pop(); // self;
     return self;
     }

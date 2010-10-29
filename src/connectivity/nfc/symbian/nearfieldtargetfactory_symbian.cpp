@@ -42,8 +42,10 @@
 #include <nfctag.h>
 #include "nearfieldtargetfactory_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldtagtype2_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
+#include "qnearfieldtagtype2_symbian_p.h"
 
 /*!
     \class TNearFieldTargetFactory
@@ -65,6 +67,10 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
         {
         tag = CreateTagType1L(aNfcTag, aNfcServer, aParent);
         }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType2))
+        {
+        tag = CreateTagType2L(aNfcTag, aNfcServer, aParent);
+        }
     return tag;
     }
 
@@ -75,10 +81,24 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
 QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
-    CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
+    CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag, aNfcServer);
     QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(WrapNdefAccessL(aNfcTag, aNfcServer, tagType1), aParent);
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
     CleanupStack::Pop(tagType1);
+    return tag;
+    }
+
+/*!
+    Create tag type 2 instance according to the tag infomation in \a aNfcTag and assign 
+    the \a aParent as target's parent. 
+*/
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagType2L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+    {
+    // ownership of aNfcTag transferred.
+    CNearFieldTagType2 * tagType2 = CNearFieldTagType2::NewLC(aNfcTag, aNfcServer);
+    QNearFieldTagType2Symbian * tag= new(ELeave)QNearFieldTagType2Symbian(WrapNdefAccessL(aNfcTag, aNfcServer, tagType2), aParent);
+    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
+    CleanupStack::Pop(tagType2);
     return tag;
     }
    
@@ -86,7 +106,7 @@ MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, R
     {
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
         {
-        CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag);
+        CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
         ndefTarget->SetRealTarget(aTarget);
         CleanupStack::Pop(ndefTarget);
         return ndefTarget;
