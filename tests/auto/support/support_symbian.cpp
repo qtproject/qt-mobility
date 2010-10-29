@@ -57,19 +57,6 @@
 #include <metadatabase.h>
 #include <commsdat.h>
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-const TInt KDefaultImapFetchSize = 10;
-const TInt KDefaultPopFetchSize = 30;
-const TInt KDefaultSyncLimit  = 30;
-const TInt KDefaultPopPort = 110;
-const TInt KDefaultImapPort = 993;
-const TInt KDefaultSmtpPort = 465;
-_LIT(KDefaultAddress,"user.name@testemail.com");
-_LIT8(KDefaultUserName,"username");
-_LIT8(KDefaultPassword,"password");
-_LIT(KDefaultServerIn, "imap.server.testemail.com");
-_LIT(KDefaultServerOut, "smtp.server.testemail.com");
-#else
 _LIT(KPopServer, "ban-sindhub01.intra");
 _LIT8(KPopLoginName, "ban-sindhub01");
 _LIT8(KPopPassword, "ban-sindhub01");
@@ -80,10 +67,6 @@ _LIT8(KImapLoginName,"ban-sindhub01");
 
 _LIT(KSmtpServerAddress, "ban-sindhub01.intra");
 _LIT(KEmailAlias, "Messaging example");
-#endif
-
-#define IMAP_ACCOUNTID_PREFIX 0x2000E53F
-#define POP3_ACCOUNTID_PREFIX 0x2000E53E
 
 #define KDocumentsEntryIdValue    0x1008
 
@@ -283,11 +266,7 @@ void clearMessageStoreL()
         CImImap4Settings* settings = new(ELeave) CImImap4Settings();
         CleanupStack::PushL(settings);
         pEmailAccounts->LoadImapSettingsL(imapAccounts[i], *settings);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        if (settings->ServerAddress().Compare(KDefaultServerIn) == 0) {
-#else        
         if (settings->ServerAddress().Compare(KImapServer) == 0) {
-#endif            
             pEmailAccounts->DeleteImapAccountL(imapAccounts[i]);
             deleteServiceRelatedEntriesFromFolder(imapAccounts[i].iImapService, KDocumentsEntryIdValue);
         }
@@ -300,11 +279,7 @@ void clearMessageStoreL()
         CImPop3Settings* settings = new(ELeave) CImPop3Settings();
         CleanupStack::PushL(settings);
         pEmailAccounts->LoadPopSettingsL(popAccounts[i], *settings);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        if (settings->ServerAddress().Compare(KDefaultServerIn) == 0) {
-#else        
         if (settings->ServerAddress().Compare(KPopServer) == 0) {
-#endif            
             pEmailAccounts->DeletePopAccountL(popAccounts[i]);
             deleteServiceRelatedEntriesFromFolder(popAccounts[i].iPopService, KDocumentsEntryIdValue);
         }
@@ -317,11 +292,7 @@ void clearMessageStoreL()
         CImSmtpSettings* settings = new(ELeave) CImSmtpSettings();
         CleanupStack::PushL(settings);
         pEmailAccounts->LoadSmtpSettingsL(smtpAccounts[i], *settings);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-        if (settings->ServerAddress().Compare(KDefaultServerOut) == 0) {
-#else        
         if (settings->ServerAddress().Compare(KSmtpServerAddress) == 0) {
-#endif            
             pEmailAccounts->DeleteSmtpAccountL(smtpAccounts[i]);
             deleteServiceRelatedEntriesFromFolder(smtpAccounts[i].iSmtpService, KDocumentsEntryIdValue);
         }
@@ -348,56 +319,22 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     CImPop3Settings* pImPop3Settings = new(ELeave) CImPop3Settings();
     CleanupStack::PushL(pImPop3Settings);
     pEmailAccounts->PopulateDefaultPopSettingsL(*pImPop3Settings, *pImIAPPreferences);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    pImPop3Settings->SetAutoSendOnConnect(ETrue);
-    pImPop3Settings->SetDisconnectedUserMode(ETrue);
-    pImPop3Settings->SetDeleteEmailsWhenDisconnecting(EFalse);
-    pImPop3Settings->SetAcknowledgeReceipts(EFalse);
-    pImPop3Settings->SetGetMailOptions(EGetPop3EmailMessages);
-    pImPop3Settings->SetInboxSynchronisationLimit(KDefaultSyncLimit);
-    pImPop3Settings->SetPopulationLimitL(KDefaultPopFetchSize);
-    pImPop3Settings->SetSecureSockets(EFalse);
-    pImPop3Settings->SetSSLWrapper(EFalse);
-    
-    pImPop3Settings->SetLoginNameL(KDefaultUserName);
-    pImPop3Settings->SetPasswordL(KDefaultPassword);
-    pImPop3Settings->SetServerAddressL(KDefaultServerIn); 
-    pImPop3Settings->SetPort(KDefaultPopPort);
-#else    
     pImPop3Settings->SetServerAddressL(KPopServer);
     pImPop3Settings->SetLoginNameL(KPopLoginName);
     pImPop3Settings->SetPasswordL(KPopPassword);
     pImPop3Settings->SetPort(110);
-#endif    
     TPopAccount popAccount = pEmailAccounts->CreatePopAccountL(accountName, *pImPop3Settings, *pImIAPPreferences, EFalse);
 
     // Create SMTP Account
     CImSmtpSettings *pImSmtpSettings = new (ELeave) CImSmtpSettings();
     CleanupStack::PushL(pImSmtpSettings);
     pEmailAccounts->PopulateDefaultSmtpSettingsL(*pImSmtpSettings, *pImIAPPreferences);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    pImSmtpSettings->SetBodyEncoding(EMsgOutboxMIME);
-    pImSmtpSettings->SetAddVCardToEmail(EFalse);
-    pImSmtpSettings->SetAddSignatureToEmail(EFalse);
-    pImSmtpSettings->SetRequestReceipts(EFalse);
-    pImSmtpSettings->SetSMTPAuth(ETrue);
-    pImSmtpSettings->SetToCcIncludeLimitL(KSmtpToCcIncludeLimitMax);
-    pImSmtpSettings->SetSecureSockets(EFalse);
-    pImSmtpSettings->SetSSLWrapper(EFalse);
-    
-    pImSmtpSettings->SetEmailAddressL(KDefaultAddress);
-    pImSmtpSettings->SetLoginNameL(KDefaultUserName);
-    pImSmtpSettings->SetPasswordL(KDefaultPassword);
-    pImSmtpSettings->SetPort(KDefaultSmtpPort);
-    pImSmtpSettings->SetServerAddressL(KDefaultServerOut);
-#else    
     pImSmtpSettings->SetServerAddressL(KSmtpServerAddress);
     pImSmtpSettings->SetEmailAliasL(KEmailAlias);
-    pImSmtpSettings->SetPort(25);
-#endif    
     pImSmtpSettings->SetEmailAddressL(fromAddress);
     pImSmtpSettings->SetReplyToAddressL(fromAddress);
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
+    pImSmtpSettings->SetPort(25);
     pEmailAccounts->CreateSmtpAccountL(popAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
 
     CleanupStack::PopAndDestroy(pImSmtpSettings);
@@ -405,16 +342,7 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-#if defined(FREESTYLEMAILUSED) 
-    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService), SymbianHelpers::EngineTypeFreestyle));
-#elif defined(FREESTYLENMAILUSED)
-    quint64 id = POP3_ACCOUNTID_PREFIX;
-    id << 16;
-    id += popAccount.iPopService; 
-    return QMessageAccountId(addIdPrefix(QString::number(id), SymbianHelpers::EngineTypeFreestyle));
-#else    
     return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService), SymbianHelpers::EngineTypeMTM));
-#endif    
 }
 
 QMessageAccountId createPopAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -514,59 +442,22 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     CImImap4Settings* pImap4Settings = new(ELeave)CImImap4Settings;
     CleanupStack::PushL(pImap4Settings);
     pEmailAccounts->PopulateDefaultImapSettingsL(*pImap4Settings, *pImIAPPreferences);
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    pImap4Settings->SetAutoSendOnConnect(ETrue);
-    pImap4Settings->SetDisconnectedUserMode(ETrue);
-    pImap4Settings->SetDeleteEmailsWhenDisconnecting(EFalse);
-    pImap4Settings->SetAcknowledgeReceipts(EFalse);
-    pImap4Settings->SetSynchronise(EUseLocal);
-    pImap4Settings->SetInboxSynchronisationLimit(KDefaultSyncLimit);
-    pImap4Settings->SetBodyTextSizeLimitL(KDefaultImapFetchSize);
-    pImap4Settings->SetPathSeparator('/');
-    pImap4Settings->SetUpdatingSeenFlags(ETrue);
-    
-    pImap4Settings->SetLoginNameL(KDefaultUserName);
-    pImap4Settings->SetPasswordL(KDefaultPassword);
-    pImap4Settings->SetServerAddressL(KDefaultServerIn); 
-    pImap4Settings->SetPort(KDefaultImapPort);
-    pImap4Settings->SetSecureSockets(EFalse);
-    pImap4Settings->SetSSLWrapper(ETrue);    
-#else
     pImap4Settings->SetServerAddressL(KImapServer);
     pImap4Settings->SetLoginNameL(KImapLoginName);
     pImap4Settings->SetPasswordL(KImapPassword);
     pImap4Settings->SetPort(143);
-#endif   
     TImapAccount imapAccount = pEmailAccounts->CreateImapAccountL(accountName, *pImap4Settings, *pImIAPPreferences, EFalse);
 
     // Create SMTP Account
     CImSmtpSettings* pImSmtpSettings = new (ELeave) CImSmtpSettings();
     CleanupStack::PushL(pImSmtpSettings);
     pEmailAccounts->PopulateDefaultSmtpSettingsL(*pImSmtpSettings, *pImIAPPreferences);
-
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    pImSmtpSettings->SetBodyEncoding(EMsgOutboxMIME);
-    pImSmtpSettings->SetAddVCardToEmail(EFalse);
-    pImSmtpSettings->SetAddSignatureToEmail(EFalse);
-    pImSmtpSettings->SetRequestReceipts(EFalse);
-    pImSmtpSettings->SetSMTPAuth(ETrue);
-    pImSmtpSettings->SetToCcIncludeLimitL(KSmtpToCcIncludeLimitMax);
-    pImSmtpSettings->SetSecureSockets(EFalse);
-    pImSmtpSettings->SetSSLWrapper(EFalse);
-    
-    pImSmtpSettings->SetEmailAddressL(KDefaultAddress);
-    pImSmtpSettings->SetLoginNameL(KDefaultUserName);
-    pImSmtpSettings->SetPasswordL(KDefaultPassword);
-    pImSmtpSettings->SetPort(KDefaultSmtpPort);
-    pImSmtpSettings->SetServerAddressL(KDefaultServerOut);
-#else    
     pImSmtpSettings->SetServerAddressL(KSmtpServerAddress);
     pImSmtpSettings->SetEmailAliasL(KEmailAlias);
-    pImSmtpSettings->SetPort(25);
-#endif
     pImSmtpSettings->SetEmailAddressL(fromAddress);
     pImSmtpSettings->SetReplyToAddressL(fromAddress);
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
+    pImSmtpSettings->SetPort(25);
     TSmtpAccount smtpAccount = pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
     
     TSmtpAccount defaultAccount;
@@ -580,16 +471,7 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-#if defined(FREESTYLEMAILUSED) 
-    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService), SymbianHelpers::EngineTypeFreestyle));
-#elif defined(FREESTYLENMAILUSED)
-    quint64 id = IMAP_ACCOUNTID_PREFIX;
-    id = id << 32;
-    id += imapAccount.iImapService; 
-    return QMessageAccountId(addIdPrefix(QString::number(id), SymbianHelpers::EngineTypeFreestyle));
-#else    
     return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService), SymbianHelpers::EngineTypeMTM));
-#endif    
 }
 
 QMessageAccountId createImapAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -649,9 +531,6 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
 
 QMessageFolderId addFolder(const Parameters &params)
 {
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    return QMessageFolderId(); // Local folders can not be created for FreeStyle
-#else    
     QString accountName(params["parentAccountName"]);
     TPtrC16 symbianAccountName(KNullDesC);
     symbianAccountName.Set(reinterpret_cast<const TUint16*>(accountName.utf16()));
@@ -664,7 +543,6 @@ QMessageFolderId addFolder(const Parameters &params)
     TRAPD(err, id = addFolderL(symbianAccountName, symbianFolderName));
     Q_UNUSED(err)
     return id;
-#endif
 }
 
 QMessageId addMessage(const Parameters &params)

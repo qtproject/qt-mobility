@@ -79,7 +79,7 @@ public:
 private slots:
     void includePeriodChanged(int);
     void excludePeriodEnabled(int);
-    void addressSelected(const QString&);
+    void addressSelected(int);
     void searchMessages();
     void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);

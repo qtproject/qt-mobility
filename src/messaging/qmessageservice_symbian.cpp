@@ -55,9 +55,6 @@
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
 #endif
-#ifdef FREESTYLENMAILUSED
-#include "qfsnmengine_symbian_p.h"
-#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -89,8 +86,8 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-            bool retVal = CFSEngine::instance()->sendEmail(*this, message);
+#ifdef FREESTYLEMAILUSED
+            bool retVal = CFSEngine::instance()->sendEmail(message);
             if (retVal == true) {
                 setFinished(retVal);
             }
@@ -110,7 +107,7 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->showMessage(id);
 #else
             return false;
@@ -127,7 +124,7 @@ bool QMessageServicePrivate::compose(const QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->composeMessage(message);
 #else
             return false;
@@ -157,7 +154,7 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 #endif
@@ -182,7 +179,7 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 #endif
@@ -202,7 +199,7 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
     _pendingRequestCount++;
     CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 #endif
@@ -213,7 +210,7 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
 {
     switch (idType(messageId)) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
             return false;
@@ -230,7 +227,7 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->retrieveBody(*this, id);
 #else
             return false;
@@ -247,7 +244,7 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
             return false;
@@ -317,8 +314,8 @@ bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
     switch (idType(id)) {
             case EngineTypeFreestyle:
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                return CFSEngine::instance()->exportUpdates(*this, id);
+#ifdef FREESTYLEMAILUSED
+                return CFSEngine::instance()->exportUpdates(id);
 #else
                 return false;
 #endif

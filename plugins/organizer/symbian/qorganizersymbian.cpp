@@ -40,7 +40,6 @@
 ****************************************************************************/
 //system includes
 #include <calcommon.h>
-#include <calinstance.h>
 #include <calsession.h>
 #include <calchangecallback.h>
 #include <calentryview.h>
@@ -48,7 +47,6 @@
 #include <calrrule.h>
 #ifdef SYMBIAN_CALENDAR_V2
 #include <QColor>
-#include <calinstanceiterator.h>
 #include <calcalendariterator.h>
 #include <calcalendarinfo.h>
 // This file (calenmulticaluids.hrh) no longer exists in S^4, so use a local 
@@ -525,20 +523,22 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
 
         // Set instance origin, the detail is set here because transform classes are not aware of
         // the required APIs
-        TCalLocalUid parentLocalUid(0);
-        if (isException) {
-            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
-            CCalEntry *parentEntry = findParentEntryLC(collectionId, itemOccurrence, *globalUid);
-            parentLocalUid = parentEntry->LocalUidL();
-            CleanupStack::PopAndDestroy(parentEntry);
-            CleanupStack::PopAndDestroy(globalUid);
-        } else {
-            parentLocalUid = calInstance->Entry().LocalUidL();
+        if (isException || isRecurring) {
+            TCalLocalUid parentLocalUid(0);
+            if (isException) {
+                HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
+                CCalEntry *parentEntry = findParentEntryLC(collectionId, itemOccurrence, *globalUid);
+                parentLocalUid = parentEntry->LocalUidL();
+                CleanupStack::PopAndDestroy(parentEntry);
+                CleanupStack::PopAndDestroy(globalUid);
+            } else {
+                parentLocalUid = calInstance->Entry().LocalUidL();
+            }
+            QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
+            origin.setParentId(toItemId(localCollectionIdValue, parentLocalUid));
+            origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
+            itemOccurrence.saveDetail(&origin);
         }
-        QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
-        origin.setParentId(toItemId(localCollectionIdValue, parentLocalUid));
-        origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
-        itemOccurrence.saveDetail(&origin);
 
         // Set collection id
         itemOccurrence.setCollectionId(collectionId);

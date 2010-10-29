@@ -90,13 +90,11 @@ private slots:
     void testAccountOrdering_data();
     void testAccountOrdering();
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     void testFolderFilter_data();
     void testFolderFilter();
 
     void testFolderOrdering_data();
     void testFolderOrdering();
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     void testMessageFilter_data();
     void testMessageFilter();
@@ -231,7 +229,6 @@ void tst_QMessageStoreKeys::initTestCase()
 
     existingFolderIds = manager->queryFolders().toSet();
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
                             ("path", "My messages")
@@ -265,7 +262,6 @@ void tst_QMessageStoreKeys::initTestCase()
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
-#endif
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     // Local folders can be seen through every account
@@ -291,11 +287,7 @@ void tst_QMessageStoreKeys::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                             ("parentFolderPath", "Drafts")
-#else
                              ("parentFolderPath", "My messages")
-#endif
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN)) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) // SMS messages must be in SMS store on Windows and on Symbian
                              ("type", "email")
 #else
@@ -312,11 +304,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                             ("parentFolderPath", "Drafts")
-#else
                              ("parentFolderPath", "Innbox")
-#endif
                              ("type", "email")
                              ("to", "Important.Person@example.com")
                              ("from", "Esteemed.Colleague@example.com")
@@ -330,11 +318,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("custom-spam", "filter:no")
                              ("custom-flagged", "true")
                   << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                             ("parentFolderPath", "Drafts")
-#else
                              ("parentFolderPath", "Innbox")
-#endif
                              ("type", "email")
                              ("to", "Important.Person@example.com,Minion@example.com")
                              ("from", "Big.Boss@example.com")
@@ -376,11 +360,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("custom-spam", "filter:yes");
 #else
                   << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                             ("parentFolderPath", "Drafts")
-#else
                              ("parentFolderPath", "X-Announce")
-#endif
                              ("type", "email")
                              ("to", "announce@example.com,maintenance-log@example.com")
                              ("from", "sysadmin@example.com")
@@ -392,11 +372,7 @@ void tst_QMessageStoreKeys::initTestCase()
                              ("status-read", "true")
                              ("custom-spam", "filter:maybe")
                   << Params()("parentAccountName", "Work")
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                             ("parentFolderPath", "Drafts")
-#else
                              ("parentFolderPath", "X-Archived")
-#endif
                              ("type", "email")
                              ("to", "announce@example.com")
                              ("from", "Big.Boss@example.com")
@@ -796,7 +772,6 @@ void tst_QMessageStoreKeys::testAccountOrdering()
     }
 }
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 void tst_QMessageStoreKeys::testFolderFilter_data()
 {
     QTest::addColumn<QMessageFolderFilter>("filter");
@@ -1430,9 +1405,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 void tst_QMessageStoreKeys::testFolderFilter()
 {
     QFETCH(QMessageFolderFilter, filter);
@@ -1450,9 +1423,7 @@ void tst_QMessageStoreKeys::testFolderFilter()
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 void tst_QMessageStoreKeys::testFolderOrdering_data()
 {
     QTest::addColumn<FolderSortList>("sorts");
@@ -1501,9 +1472,7 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[0] << folderIds[2] << folderIds[3] );
 #endif
 }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 void tst_QMessageStoreKeys::testFolderOrdering()
 {
     QFETCH(FolderSortList, sorts);
@@ -1533,7 +1502,6 @@ void tst_QMessageStoreKeys::testFolderOrdering()
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
@@ -2081,7 +2049,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("timeStamp equality 1")
         << QMessageFilter::byTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
@@ -2259,9 +2226,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[4] )
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -2488,9 +2453,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 #endif
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -2526,7 +2489,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << QMessageIdList()
         << "";
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
@@ -2588,7 +2550,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
     QTest::newRow("standardFolder equality 1")
         << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
@@ -2638,9 +2599,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 #endif        
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilter::byParentFolderId(folderIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] )
@@ -2748,7 +2707,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("ancestorFolderIds inclusion 1")
@@ -2848,7 +2806,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 #endif    
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
@@ -2919,7 +2876,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
 #endif
-#endif //#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 
     // Test matchFlags
     QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
@@ -2948,7 +2904,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
 void tst_QMessageStoreKeys::testMessageFilter()
 {
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QFETCH(QMessageFilter, filter);
     QFETCH(QMessageIdList, ids);
     QFETCH(QMessageIdList, negatedIds);
@@ -2969,7 +2924,6 @@ void tst_QMessageStoreKeys::testMessageFilter()
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering_data()
@@ -3039,7 +2993,6 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[4] ) );
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("timeStamp ascending")
         << ( MessageSortList() << QMessageSortOrder::byTimeStamp(Qt::AscendingOrder) )
@@ -3316,13 +3269,10 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[0] ) );
 #endif
 #endif
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
-
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()
 {
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QFETCH(MessageSortList, sorts);
     QFETCH(MessageListList, ids);
 
@@ -3373,6 +3323,5 @@ void tst_QMessageStoreKeys::testMessageOrdering()
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
 }
 

@@ -768,9 +768,8 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
 {
     QString labelText;
     QStandardItemModel* standardModel = new QStandardItemModel(this);
-    messageListView_3->setModel(standardModel);
-    stackedWidget->setCurrentIndex(11);
-
+    messageListView->setModel(standardModel);
+    stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
         QMessage message = m_manager.message(ids[i]);
         QString from = message.from().addressee();
@@ -784,7 +783,7 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
         QStandardItem* item2 = new QStandardItem(subject);
         standardModel->appendRow(item1);
         standardModel->appendRow(item2);
-        messageListView_3->setModel(standardModel);
+        messageListView->setModel(standardModel);
     }
     
 }

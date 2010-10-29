@@ -248,9 +248,6 @@ void tst_QMessageStore::testFolder_data()
     QTest::addColumn<QString>("parentFolderPath");
     QTest::addColumn<QString>("nameResult");
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    QTest::newRow("Drafts") << "Drafts" << "Drafts" << "" << "Drafts";
-#else
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
@@ -258,8 +255,7 @@ void tst_QMessageStore::testFolder_data()
     QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
     QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
     QTest::newRow("Backup") << "Unbox/Archived/Backup" << "Backup" << "Unbox/Archived" << "Backup";
-#endif
-#endif
+#endif    
 }
 
 void tst_QMessageStore::testFolder()
@@ -283,11 +279,6 @@ void tst_QMessageStore::testFolder()
     QFETCH(QString, parentFolderPath);
     QFETCH(QString, nameResult);
 
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    QMessageFolderIdList folders = manager->queryFolders(QMessageFolderFilter::byName(name) &
-                                                         QMessageFolderFilter::byParentAccountId(testAccountId));
-    QMessageFolderId folderId = folders[0];
-#else
     Support::Parameters p;
     p.insert("path", path);
     p.insert("name", name);
@@ -308,14 +299,12 @@ void tst_QMessageStore::testFolder()
 #else
     QCOMPARE(manager->countFolders(), originalCount + 1);
 #endif    
-#endif    
+    
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
     QCOMPARE(folder.path(), path);
     QCOMPARE(folder.name(), nameResult);
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QCOMPARE(folder.parentAccountId(), testAccountId);
-#endif    
 
     QCOMPARE(QMessageFolder(folder).id(), folderId);
     QVERIFY(!(folderId < folderId));
@@ -391,7 +380,6 @@ void tst_QMessageStore::testMessage_data()
         << customData
         << "byId";
 
-#if !defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
     QTest::newRow("2")
         << "alice@example.com"
         << "bob@example.com"
@@ -475,8 +463,6 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<int>() << 512 << 4096 )
         << customData
         << "byFilter";
-#endif //!defined(FREESTYLEMAILUSED) && !defined(FREESTYLENMAILUSED)
-
 }
 
 void tst_QMessageStore::testMessage()
@@ -497,16 +483,12 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    QMessageFolderFilter filter(QMessageFolderFilter::byName("Drafts") & QMessageFolderFilter::byParentAccountId(testAccountId));
-#else
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
 #else
     // Created Messages can not be stored into "Inbox" folder in Symbian & Meamo
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Unbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
 #endif
-#endif    
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
@@ -592,19 +574,8 @@ void tst_QMessageStore::testMessage()
 
     int originalCount = manager->countMessages();
 
-#if defined(FREESTYLENMAILUSED)
-    QEventLoop eventLoop;
-    connect(manager, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), &eventLoop, SLOT(quit()));
-#endif    
-    
     // Test message addition
     QMessageId messageId(Support::addMessage(p));
-#if defined(FREESTYLENMAILUSED)
-    // Wait until messageAdded signal quits eventLoop or until
-    // 5 seconds timout is reached.
-    QTimer::singleShot(5000, &eventLoop, SLOT(quit())); // 5 seconds timeout
-    eventLoop.exec();
-#endif    
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
     QCOMPARE(manager->countMessages(), originalCount + 1);
@@ -661,11 +632,9 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(message.cc(), ccAddresses);
 
-#ifndef FREESTYLENMAILUSED
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Dates can not be stored with addMessage in Maemo implementation
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
-#endif
 #endif
     QCOMPARE(message.subject(), subject);
 
@@ -682,16 +651,12 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.parentFolderId(), testFolderId);
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) // Created Messages are not stored in Standard Folders in Symbian & Maemo
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
-#elif defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)       
-    QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
 #endif    
   
-#ifndef FREESTYLENMAILUSED
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Message size calculation is not yet good enough in Maemo implementation
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
 #endif
-#endif    
 
     QMessageContentContainerId bodyId(message.bodyId());
     QCOMPARE(bodyId.isValid(), true);
@@ -788,9 +753,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
     QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
-#if !defined(FREESTYLENMAILUSED)
     QCOMPARE(updated.date(), dt);
-#endif
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
@@ -802,11 +765,9 @@ void tst_QMessageStore::testMessage()
   
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
-#if !defined(FREESTYLENMAILUSED)    
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
-#endif
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);

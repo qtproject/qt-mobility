@@ -57,6 +57,9 @@ MetaDataBinding::MetaDataBinding(
     connect(resultSet, SIGNAL(currentItemChanged()), this, SLOT(itemChanged()));
     connect(resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
             this, SLOT(metaDataChanged(int,int,QList<int>)));
+
+    if (resultSet->isValid())
+        itemChanged();
 }
 
 MetaDataBinding::~MetaDataBinding()
