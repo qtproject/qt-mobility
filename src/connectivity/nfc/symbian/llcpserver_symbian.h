@@ -50,8 +50,8 @@ private:
     
 private:
    
-    //RPointerArray<CLlcpSocketType2>  iPendingConnections;
-    CLlcpSocketType2 *iLlcpSocket;
+    RPointerArray<CLlcpSocketType2>  iLlcpSocketArray;
+    //CLlcpSocketType2 *iLlcpSocket;
     
    /*!
     * Handle to NFC-server.
@@ -67,6 +67,9 @@ private:
    CLlcpProvider* iLlcp;
    
    bool iSocketListening;
+   
+   //not own
+   QNearFieldManagerPrivateImpl& iCallback;
    
    };
     

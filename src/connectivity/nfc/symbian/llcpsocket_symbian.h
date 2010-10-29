@@ -87,15 +87,11 @@ private:
     *
     * This is used to send data to local device.
     */
-   //COwnLlcpConnLess* iRemoteConnless;
-   
    COwnLlcpConnLess* iRemoteConnection;   
    
    bool iConnLessStarted;
    
-   
    };
-
 
 
 /*!
@@ -122,25 +118,23 @@ public:
 public:    
    void ConnectToService( const TDesC8& aServiceName);
    void DisconnectFromService();
-   TInt WriteDatagram(const TDesC8& aData);
-   TInt ReadDatagram(TInt64 aMaxSize);
+   TInt StartWriteDatagram(const TDesC8& aData);
+   TInt StartReadDatagram(TInt64 aMaxSize);
+   bool TransferCompleted();
+   bool ReceiveCompleted();
+   bool ReceiveData(TDesC8& aData);
    
 public:
-   COwnLlcpConnOriented* RemoteConnection() const;
    void CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
    
 private:
     // Constructor
-   //CLlcpSocketType2();
-    
+    CLlcpSocketType2();
     // Second phase constructor
-    void ConstructL();
-    
+    void ConstructL();   
     void Cleanup();   
-    
     void CreateLocalConnection(const TDesC8& aServiceName);
 
-    
 private:
    /*!
     * Handle to NFC-server.
@@ -282,9 +276,16 @@ public:
     */
    ~COwnLlcpConnOriented();
 
-public: //  From AbstractConnection
+public: 
+   /*!
+    * Disonnect with remote peer .
+    */    
+   void Disconnect();
    
-   TInt Connect(const TDesC8& aServiceName);
+   /*!
+    * Connect to remote peer as given service uri.
+    */
+   void Connect(const TDesC8& aServiceName);
    
    /*!
         Transfer given data to remote device.
@@ -292,24 +293,28 @@ public: //  From AbstractConnection
    TInt Transfer( const TDesC8& aData );
    
    /*!
-        Cancels COwnLlcpConnection::Tranfer() request.
+        Cancels COwnLlcpConnOriented::Tranfer() request.
     */ 
    void TransferCancel();
    
    /*!
         Transfer given data to remote device.
     */
-   TInt Receive(TInt64 aMaxSize); // Replace StartReceive
+   TInt Receive(TInt64 aMaxSize); 
    
    /*!
         Cancels COwnLlcpConnection::Tranfer() request.
     */ 
    void ReceiveCancel();
    
+   bool ReceiveCompeleted();
+   bool TransferCompleted();
+   
+   const TDesC& ReceiveData() const;
+   
 public: // From CActive
 
-    void RunL();
-    
+    void RunL(); 
     void DoCancel();
    
 private:
