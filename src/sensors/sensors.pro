@@ -42,11 +42,13 @@ SENSORS=\
     qaccelerometer\
     qambientlightsensor\
     qcompass\
+    qlightsensor\
     qmagnetometer\
     qorientationsensor\
     qproximitysensor\
     qrotationsensor\
     qtapsensor\
+    qgyroscope\
 
 for(s,SENSORS) {
     # Client API

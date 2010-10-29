@@ -55,11 +55,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         \class QSystemDeviceInfo
         \ingroup systeminfo
         \inmodule QtSystemInfo
-        \brief The QSystemDeviceInfo class provides access to device information from the system.
 
-        \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-
-   Constructs a QSystemDeviceInfo with the given \a parent.
  */
 
         /*!
@@ -192,9 +188,21 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 
      This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
 */
+/*!
+    \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
+     This signal is emitted whenever the device lock state changes, indicated by \a on, locked or unlocked.
+*/
 
-          QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+/*!
+   \brief The QSystemDeviceInfo class provides access to device information from the system.
+
+   \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+
+   Constructs a QSystemDeviceInfo with the given \a parent.
+   */
+
+QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
@@ -449,6 +457,7 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
 }
 
 /*!
+  \property QSystemDeviceInfo::keyboardType
   \brief The Keyboard Type
 
   Returns the type of keyboards found.
@@ -459,6 +468,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardType()
 }
 
 /*!
+  \property QSystemDeviceInfo::isWirelessKeyboardConnected
   \brief wireless keyboard connected
 
   Returns true if a wireless keyboard is connected, otherwise false;
@@ -469,6 +479,7 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 }
 
 /*!
+  \property QSystemDeviceInfo::isKeyboardFlipOpen
   \brief Flip keyboard open.
 
   Returns true if the flip keyboard is open, otherwise false;
@@ -479,6 +490,7 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
 }
 
 /*!
+  \property QSystemDeviceInfo::keypadLightOn
   \brief Keypad light on.
 
   Returns true if the key pad, or keyboard lights are on, otherwise false;
@@ -489,6 +501,7 @@ bool QSystemDeviceInfo::keypadLightOn()
 }
 
 /*!
+  \property QSystemDeviceInfo::backLightOn
   \brief backlight on.
 
   Returns true if the display backlight is on, otherwise false;
@@ -499,6 +512,7 @@ bool QSystemDeviceInfo::backLightOn()
 }
 
 /*!
+  \property QSystemDeviceInfo::hostId
   \brief unique host id.
 
   Returns a unique identifier for the machine.
@@ -512,6 +526,7 @@ QUuid QSystemDeviceInfo::hostId()
 }
 
 /*!
+  \property QSystemDeviceInfo::typeOfLock
  \brief Type of lock.
 
  Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
