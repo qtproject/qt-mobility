@@ -50,8 +50,8 @@
 
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
-
-#include <QtCore/QDebug>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QDesktopServices>
 
 AnnotatedUrl::AnnotatedUrl(QWidget *parent)
 :   QWidget(parent)
@@ -59,13 +59,16 @@ AnnotatedUrl::AnnotatedUrl(QWidget *parent)
     QGridLayout *grid = new QGridLayout;
 
     m_image = new QLabel;
-    grid->addWidget(m_image, 0, 0);
+    grid->addWidget(m_image, 0, 0, 2, 1, Qt::AlignCenter);
 
     m_title = new QLabel;
+    QFont titleFont = m_title->font();
+    titleFont.setBold(true);
+    m_title->setFont(titleFont);
     grid->addWidget(m_title, 0, 1);
 
     m_url = new QLabel;
-    grid->addWidget(m_url, 1, 0, 1, 2);
+    grid->addWidget(m_url, 1, 1);
 
     setLayout(grid);
 }
@@ -76,7 +79,6 @@ AnnotatedUrl::~AnnotatedUrl()
 
 void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
 {
-    qDebug() << Q_FUNC_INFO;
     if (!target->hasNdefMessage())
         return;
 
@@ -119,6 +121,16 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
             QNdefNfcUriRecord uriRecord(record);
 
             m_url->setText(uriRecord.uri().toString());
+        } else if (record.typeNameFormat() == QNdefRecord::Mime &&
+                   record.type().startsWith("image/")) {
+            m_image->setPixmap(QPixmap::fromImage(QImage::fromData(record.payload())));
+
         }
     }
+}
+
+void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (rect().contains(event->pos()))
+        QDesktopServices::openUrl(QUrl(m_url->text()));
 }
