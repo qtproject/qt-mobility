@@ -142,9 +142,9 @@ void FileBrowser::activated(const QModelIndex &index)
         if (fileInfo.fileName() == QLatin1String("."))
             fileInfo = fileSystemModel->fileInfo(view->rootIndex());
 
-        DocumentPropertiesWidget *widget = new DocumentPropertiesWidget(fileInfo, gallery, this);
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5)
+        DocumentPropertiesWidget *widget = new DocumentPropertiesWidget(fileInfo, gallery, this);
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
 
         QScrollArea *window = new QScrollArea(this);
@@ -154,11 +154,25 @@ void FileBrowser::activated(const QModelIndex &index)
         window->setWidgetResizable(true);
         window->setWidget(widget);
         window->show();
+#elif defined (Q_OS_SYMBIAN)
+        QScrollArea *window = new QScrollArea(this);
+        DocumentPropertiesWidget *widget = new DocumentPropertiesWidget(fileInfo, gallery, window);
+        widget->setWindowModality(Qt::WindowModal);
+        window->setWindowFlags(window->windowFlags() | Qt::Dialog);
+        window->setAttribute(Qt::WA_DeleteOnClose);
+        window->setWidgetResizable(true);
+        window->setWidget(widget);
+        window->showMaximized();
 #else
+        DocumentPropertiesWidget *widget = new DocumentPropertiesWidget(fileInfo, gallery, this);
         widget->setWindowFlags(widget->windowFlags() | Qt::Dialog);
         widget->setAttribute(Qt::WA_DeleteOnClose);
         widget->setWindowModality(Qt::WindowModal);
+# if defined(Q_OS_SYMBIAN)
+        widget->showMaximized();
+# else
         widget->show();
+# endif
 #endif
     }
 }

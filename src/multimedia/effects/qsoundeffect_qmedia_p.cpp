@@ -64,14 +64,22 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     QObject(parent),
     m_loopCount(1),
     m_runningCount(0),
-    m_player(0)
+    m_player(0),
+    m_status(QSoundEffect::Null),
+    m_playing(false)
 {
     m_player = new QMediaPlayer(this, QMediaPlayer::LowLatency);
     connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(stateChanged(QMediaPlayer::State)));
+    connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
 {
+}
+
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    return QMediaPlayer::supportedMimeTypes();
 }
 
 QUrl QSoundEffectPrivate::source() const
@@ -114,10 +122,26 @@ void QSoundEffectPrivate::setMuted(bool muted)
     m_player->setMuted(muted);
 }
 
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return m_status == QSoundEffect::Ready;
+}
+
+bool QSoundEffectPrivate::isPlaying() const
+{
+    return m_playing;
+}
+
+QSoundEffect::Status QSoundEffectPrivate::status() const
+{
+    return m_status;
+}
+
 void QSoundEffectPrivate::play()
 {
-    if (m_loopCount < 0)
+    if (m_loopCount < 0) {
         m_runningCount = -1;
+    }
     else {
         if (m_runningCount < 0)
             m_runningCount = 0;
@@ -135,13 +159,57 @@ void QSoundEffectPrivate::stop()
 void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        if (m_runningCount < 0)
+        if (m_runningCount < 0) {
             m_player->play();
-        else if (m_runningCount == 0)
+        } else if (m_runningCount == 0) {
+            setPlaying(false);
             return;
-        else if (--m_runningCount > 0)
+        } else if (--m_runningCount > 0) {
             m_player->play();
+        } else {
+            setPlaying(false);
+        }
+    } else {
+        setPlaying(true);
     }
+}
+
+void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+{
+    switch(status) {
+    case QMediaPlayer::LoadingMedia:
+        setStatus(QSoundEffect::Loading);
+        break;
+    case QMediaPlayer::NoMedia:
+        setStatus(QSoundEffect::Null);
+        break;
+    case QMediaPlayer::InvalidMedia:
+        setStatus(QSoundEffect::Error);
+        break;
+    default:
+        setStatus(QSoundEffect::Ready);
+        break;
+    }
+}
+
+void QSoundEffectPrivate::setStatus(QSoundEffect::Status status)
+{
+    if (m_status == status)
+        return;
+    bool oldLoaded = isLoaded();
+    m_status = status;
+    emit statusChanged();
+    if (oldLoaded != isLoaded())
+        emit loadedChanged();
+}
+
+void QSoundEffectPrivate::setPlaying(bool playing)
+{
+    if (m_playing == playing)
+        return;
+    setStatus(QSoundEffect::Ready);
+    m_playing = playing;
+    emit playingChanged();
 }
 
 QT_END_NAMESPACE

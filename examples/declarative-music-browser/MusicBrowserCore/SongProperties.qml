@@ -81,7 +81,7 @@ Rectangle {
                 font.pointSize: 20
                 horizontalAlignment: Text.AlignRight
 
-                text: song.metaData.trackNumber
+                text: song.available ? song.metaData.trackNumber : ""
             }
 
             LineEdit {
@@ -96,7 +96,7 @@ Rectangle {
 
                 font.pointSize: 20
 
-                text: song.metaData.title
+                text: song.available ? song.metaData.title : ""
 
                 onTextChanged: song.metaData.title = text
             }
@@ -134,8 +134,10 @@ Rectangle {
                 Image {
                     id: albumCover
 
-                    property url albumUrl: Utility.getAlbumArtThumbnailUrl(
-                            song.metaData.albumArtist, song.metaData.albumTitle)
+                    property url albumUrl: song.available
+                            ? Utility.getAlbumArtThumbnailUrl(
+                                    song.metaData.albumArtist, song.metaData.albumTitle)
+                            : ""
 
                     anchors.left: parent.left
                     anchors.top: parent.top
@@ -158,7 +160,7 @@ Rectangle {
 
                     font.pointSize: 18
 
-                    text: song.metaData.albumTitle
+                    text: song.available ? song.metaData.albumTitle : ""
 
                     onTextChanged: song.metaData.albumTitle = text
                 }
@@ -173,7 +175,7 @@ Rectangle {
 
                     font.pointSize: 15
 
-                    text: song.metaData.albumArtist
+                    text: song.available ? song.metaData.albumArtist : ""
 
                     onTextChanged: song.metaData.albumArtist = text
                 }
@@ -206,7 +208,7 @@ Rectangle {
 
                 font.pointSize: 15
 
-                text: song.metaData.artist
+                text: song.available ? song.metaData.artist : ""
 
                 onTextChanged: song.metaData.artist = text
             }
@@ -238,7 +240,7 @@ Rectangle {
 
                 font.pointSize: 15
 
-                text: song.metaData.genre
+                text: song.available ? song.metaData.genre : ""
 
                 onTextChanged: song.metaData.genre = text
             }
@@ -272,7 +274,7 @@ Rectangle {
                 color: "white"
                 font.pointSize: 15
 
-                text: Utility.formatDuration(song.metaData.duration)
+                text: song.available ? Utility.formatDuration(song.metaData.duration) : ""
             }
         }
     }

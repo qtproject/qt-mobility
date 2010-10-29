@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Text {
         text: "Click Me!";
@@ -95,7 +95,6 @@ void QDeclarativeAudio::_q_error(int errorCode, const QString &errorString)
 QDeclarativeAudio::QDeclarativeAudio(QObject *parent)
     : QObject(parent)
 {
-    setObject(this);
 }
 
 QDeclarativeAudio::~QDeclarativeAudio()
@@ -232,35 +231,6 @@ QDeclarativeAudio::Status QDeclarativeAudio::status() const
 }
 
 /*!
-    \qmlsignal Audio::onLoaded()
-
-    This handler is called when the media source has been loaded.
-*/
-
-/*!
-    \qmlsignal Audio::onBuffering()
-
-    This handler is called when the media  starts buffering.
-*/
-
-/*!
-    \qmlsignal Audio::onStalled()
-
-    This handler is called when playback has stalled while the media buffers.
-*/
-
-/*!
-    \qmlsignal Audio::onBuffered()
-
-    This handler is called when the media has finished buffering.
-*/
-
-/*!
-    \qmlsignal Audio::onEndOfMedia()
-
-    This handler is called when playback stops because end of the media has been reached.
-*/
-/*!
     \qmlproperty int Audio::duration
 
     This property holds the duration of the media in milliseconds.
@@ -328,6 +298,11 @@ QDeclarativeAudio::Status QDeclarativeAudio::status() const
 QDeclarativeAudio::Error QDeclarativeAudio::error() const
 {
     return Error(m_error);
+}
+
+void QDeclarativeAudio::classBegin()
+{
+    setObject(this);
 }
 
 void QDeclarativeAudio::componentComplete()

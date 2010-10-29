@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
 #if defined(Q_WS_MAEMO_5) | defined(Q_WS_MAEMO_6)
-    const QString mainQmlApp = QLatin1String("maemo-sfw-notes.qml");
+    const QString mainQmlApp = QLatin1String("qrc:/maemo-sfw-notes.qml");
 #else
-    const QString mainQmlApp = QLatin1String("declarative-sfw-notes.qml");
+    const QString mainQmlApp = QLatin1String("qrc:/declarative-sfw-notes.qml");
 #endif
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));

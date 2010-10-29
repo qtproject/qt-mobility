@@ -44,7 +44,7 @@
 
 //QTM_USE_NAMESPACE
 
-QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+QOrganizerManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -55,16 +55,48 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
     return ret;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
+QOrganizerItemEngineId* QOrganizerItemSkeletonFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
-    /* TODO - instantiate your engine-specific item id in this function */
-    return new QOrganizerItemSkeletonEngineLocalId;
+    /*
+      TODO
+
+      Instantiate your engine-specific item id in this function.
+
+      If idString is not empty, then you should deserialize the idString
+      (the opposite of your QOrganizerItemEngineId derived-class'
+      toString() function), otherwise you should instantiate an empty
+      engine-specific collection id.
+
+      This function allows clients to deserialize serialized ids from
+      your engine.
+     */
+    Q_UNUSED(parameters);
+    QOrganizerItemSkeletonEngineId* retn = new QOrganizerItemSkeletonEngineId;
+    if (!idString.isEmpty())
+        retn->m_itemId = idString.toUInt();
+    return retn;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* QOrganizerItemSkeletonFactory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
-    /* TODO - instantiate your engine-specific collection id in this function */
-    return new QOrganizerCollectionSkeletonEngineLocalId;
+    /*
+      TODO
+
+      Instantiate your engine-specific collection id in this function.
+
+      If idString is not empty, then you should deserialize the idString
+      (the opposite of your QOrganizerCollectionEngineId derived-class'
+      toString() function), otherwise you should instantiate an empty
+      engine-specific collection id.
+
+      This function allows clients to deserialize serialized ids from
+      your engine.
+     */
+    Q_UNUSED(parameters);
+    QOrganizerCollectionSkeletonEngineId* retn = new QOrganizerCollectionSkeletonEngineId;
+    if (!idString.isEmpty())
+        retn->m_collectionId = idString.toUInt();
+    return retn;
 }
 
 QString QOrganizerItemSkeletonFactory::managerName() const
@@ -74,8 +106,8 @@ QString QOrganizerItemSkeletonFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
 
-QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
-    : QOrganizerItemEngineLocalId(), m_localItemId(0)
+QOrganizerItemSkeletonEngineId::QOrganizerItemSkeletonEngineId()
+    : QOrganizerItemEngineId(), m_itemId(0)
 {
     /*
       TODO
@@ -84,10 +116,10 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
 
       This default constructor should not be used when returning a null id,
       but is provided in order to allow use of the ids in a list, and as an
-      enabler for the implementation of QOrganizerItemLocalId.
+      enabler for the implementation of QOrganizerItemId.
 
       When returning a null id, the backend should simply return a default
-      constructed QOrganizerItemLocalId.
+      constructed QOrganizerItemId.
 
       In this example, we use just a single quint32 to identify the item,
       however your engine may require more information in order to uniquely
@@ -97,8 +129,8 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
      */
 }
 
-QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32 itemId)
-    : QOrganizerItemEngineLocalId(), m_localItemId(itemId)
+QOrganizerItemSkeletonEngineId::QOrganizerItemSkeletonEngineId(quint32 itemId)
+    : QOrganizerItemEngineId(), m_itemId(itemId)
 {
     /*
       TODO
@@ -108,87 +140,73 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32
       engine code.
 
       In particular, you will most likely be returning to clients an id by calling:
-      QOrganizerItemLocalId id(new QOrganizerItemSkeletonEngineLocalId(3));
-      or something similar.  Note that the QOrganizerItemLocalId constructor which
-      takes a QOrganizerItemEngineLocalId pointer as a parameter takes ownership
+      QOrganizerItemId id(new QOrganizerItemSkeletonEngineId(3));
+      or something similar.  Note that the QOrganizerItemId constructor which
+      takes a QOrganizerItemEngineId pointer as a parameter takes ownership
       of that pointer (and so controls its lifetime).
      */
 }
 
-QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other)
-    : QOrganizerItemEngineLocalId(), m_localItemId(other.m_localItemId)
+QOrganizerItemSkeletonEngineId::QOrganizerItemSkeletonEngineId(const QOrganizerItemSkeletonEngineId& other)
+    : QOrganizerItemEngineId(), m_itemId(other.m_itemId)
 {
-    /* TODO - implement a copy constructor for your engine-specific local id class */
+    /* TODO - implement a copy constructor for your engine-specific id class */
 }
 
-QOrganizerItemSkeletonEngineLocalId::~QOrganizerItemSkeletonEngineLocalId()
+QOrganizerItemSkeletonEngineId::~QOrganizerItemSkeletonEngineId()
 {
-    /* TODO - Clean up any memory in use by your engine-specific local id. */
+    /* TODO - Clean up any memory in use by your engine-specific id. */
 }
 
-bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemSkeletonEngineId::isEqualTo(const QOrganizerItemEngineId* other) const
 {
     /*
       TODO
 
-      The isEqualTo(other) function is called by the QOrganizerItemLocalId::operator==(other) function.
+      The isEqualTo(other) function is called by the QOrganizerItemId::operator==(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
       is required to uniquely identify an item in a manager.
      */
 
-    quint32 otherlocalItemId = static_cast<const QOrganizerItemSkeletonEngineLocalId*>(other)->m_localItemId;
-    if (m_localItemId != otherlocalItemId)
+    quint32 otherItemId = static_cast<const QOrganizerItemSkeletonEngineId*>(other)->m_itemId;
+    if (m_itemId != otherItemId)
         return false;
     return true;
 }
 
-bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemSkeletonEngineId::isLessThan(const QOrganizerItemEngineId* other) const
 {
     /*
       TODO
 
-      The isLessThan(other) function is called by the QOrganizerItemLocalId::operator<(other) function.
+      The isLessThan(other) function is called by the QOrganizerItemId::operator<(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
       is required to uniquely identify an item in a manager.
      */
 
-    quint32 otherlocalItemId = static_cast<const QOrganizerItemSkeletonEngineLocalId*>(other)->m_localItemId;
-    return (m_localItemId < otherlocalItemId);
+    quint32 otherItemId = static_cast<const QOrganizerItemSkeletonEngineId*>(other)->m_itemId;
+    return (m_itemId < otherItemId);
 }
 
-uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
+QString QOrganizerItemSkeletonEngineId::managerUri() const
+{
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
+}
+
+QOrganizerItemEngineId* QOrganizerItemSkeletonEngineId::clone() const
 {
     /*
       TODO
 
-      The engine-local id type value is used by QOrganizerItemLocalId to ensure that
-      comparisons are occurring between ids of the same engine-specific type.
-      Such comparisons would return false if the types are not equal.
-
-      As such, it is important that the type identifier of your engine does not
-      clash with that of any other engine, in order to avoid possibly undefined
-      behaviour during comparison.
-
-      We recommend returning the pre-calculated hash value of your manager name.
-      Engines should embed the hash value into their application as a constant,
-      read-only data value (uint), instead of calculating the value in this
-      function.  For example purposes, however, we calculate it every time, below.
-     */
-
-    return qHash(QString(QLatin1String("skeleton")));
-}
-
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
-{
-    /*
-      TODO
-
-      When a QOrganizerItemLocalId is copied or assigned, it performs a clone of
-      the engine-specific local id.  This function is called in that case.
+      When a QOrganizerItemId is copied or assigned, it performs a clone of
+      the engine-specific id.  This function is called in that case.
 
       Implement this function so that the data members of your engine-specific id
       are deep-copied.
@@ -197,20 +215,20 @@ QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
       with just a single quint32 is given below.
      */
 
-    QOrganizerItemSkeletonEngineLocalId *myClone = new QOrganizerItemSkeletonEngineLocalId;
-    myClone->m_localItemId = m_localItemId;
+    QOrganizerItemSkeletonEngineId *myClone = new QOrganizerItemSkeletonEngineId;
+    myClone->m_itemId = m_itemId;
     return myClone;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug& QOrganizerItemSkeletonEngineId::debugStreamOut(QDebug& dbg) const
 {
     /*
       TODO
 
       In order to allow clients to debug applications, you must implement this
       function.  We recommend streaming the name of your class followed by the
-      values of the data members in your engine-specific local id class in
+      values of the data members in your engine-specific id class in
       parentheses.
 
       An example implementation for the case where an item can be uniquely identified
@@ -221,13 +239,12 @@ QDebug QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
       directive is defined.
      */
 
-    dbg.nospace() << "QOrganizerItemSkeletonEngineLocalId(" << m_localItemId << ")";
+    dbg.nospace() << "QOrganizerItemSkeletonEngineId(" << m_itemId << ")";
     return dbg.maybeSpace();
 }
 #endif
 
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+QString QOrganizerItemSkeletonEngineId::toString() const
 {
     /*
       TODO
@@ -237,41 +254,12 @@ QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out
 
       An example implementation for the case where an item can be uniquely identified
       with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
      */
 
-    out << m_localItemId;
-    return out;
+    return QString::number(m_itemId);
 }
 
-QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    /*
-      TODO
-
-      In order to allow clients to deserialize QOrganizerItemId's, you must implement
-      this function.  If the dataStreamOut() function is implemented as:
-          out << dataMemberOne << dataMemberTwo;
-      then this function should be implemented as:
-          in >> dataMemberOne >> dataMemberTwo;
-
-      An example implementation for the case where an item can be uniquely identified
-      with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
-     */
-
-    in >> m_localItemId;
-    return in;
-}
-#endif
-
-uint QOrganizerItemSkeletonEngineLocalId::hash() const
+uint QOrganizerItemSkeletonEngineId::hash() const
 {
     /*
       TODO
@@ -287,12 +275,12 @@ uint QOrganizerItemSkeletonEngineLocalId::hash() const
       qHash() individual data members and combine the results somehow.
      */
 
-    return QT_PREPEND_NAMESPACE(qHash)(m_localItemId);
+    return QT_PREPEND_NAMESPACE(qHash)(m_itemId);
 }
 
 
-QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId()
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+QOrganizerCollectionSkeletonEngineId::QOrganizerCollectionSkeletonEngineId()
+    : QOrganizerCollectionEngineId(), m_collectionId(0)
 {
     /*
       TODO
@@ -301,10 +289,10 @@ QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLoc
 
       This default constructor should not be used when returning a null id,
       but is provided in order to allow use of the ids in a list, and as an
-      enabler for the implementation of QOrganizerCollectionLocalId.
+      enabler for the implementation of QOrganizerCollectionId.
 
       When returning a null id, the backend should simply return a default
-      constructed QOrganizerCollectionLocalId.
+      constructed QOrganizerCollectionId.
 
       In this example, we use just a single quint32 to identify the collection,
       however your engine may require more information in order to uniquely
@@ -313,8 +301,8 @@ QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLoc
      */
 }
 
-QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(quint32 collectionId)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+QOrganizerCollectionSkeletonEngineId::QOrganizerCollectionSkeletonEngineId(quint32 collectionId)
+    : QOrganizerCollectionEngineId(), m_collectionId(collectionId)
 {
     /*
       TODO
@@ -324,89 +312,75 @@ QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLoc
       engine code.
 
       In particular, you will most likely be returning to clients an id by calling:
-      QOrganizerCollectionLocalId id(new QOrganizerCollectionSkeletonEngineLocalId(3));
-      or something similar.  Note that the QOrganizerCollectionLocalId constructor which
-      takes a QOrganizerCollectionEngineLocalId pointer as a parameter takes ownership
+      QOrganizerCollectionId id(new QOrganizerCollectionSkeletonEngineId(3));
+      or something similar.  Note that the QOrganizerCollectionId constructor which
+      takes a QOrganizerCollectionEngineId pointer as a parameter takes ownership
       of that pointer (and so controls its lifetime).
      */
 }
 
-QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+QOrganizerCollectionSkeletonEngineId::QOrganizerCollectionSkeletonEngineId(const QOrganizerCollectionSkeletonEngineId& other)
+    : QOrganizerCollectionEngineId(), m_collectionId(other.m_collectionId)
 {
-    /* TODO - implement a copy constructor for your engine-specific local id class */
+    /* TODO - implement a copy constructor for your engine-specific id class */
 }
 
-QOrganizerCollectionSkeletonEngineLocalId::~QOrganizerCollectionSkeletonEngineLocalId()
+QOrganizerCollectionSkeletonEngineId::~QOrganizerCollectionSkeletonEngineId()
 {
-    /* TODO - Clean up any memory in use by your engine-specific local id. */
+    /* TODO - Clean up any memory in use by your engine-specific id. */
 }
 
-bool QOrganizerCollectionSkeletonEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionSkeletonEngineId::isEqualTo(const QOrganizerCollectionEngineId* other) const
 {
     /*
       TODO
 
-      The isEqualTo(other) function is called by the QOrganizerCollectionLocalId::operator==(other) function.
+      The isEqualTo(other) function is called by the QOrganizerCollectionId::operator==(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
       is required to uniquely identify a collection in a manager.
      */
 
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineLocalId*>(other)->m_localCollectionId;
-    if (m_localCollectionId != otherlocalCollectionId)
+    quint32 otherCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineId*>(other)->m_collectionId;
+    if (m_collectionId != otherCollectionId)
         return false;
     return true;
 }
 
-bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionSkeletonEngineId::isLessThan(const QOrganizerCollectionEngineId* other) const
 {
     /*
       TODO
 
-      The isLessThan(other) function is called by the QOrganizerCollectionLocalId::operator<(other) function.
+      The isLessThan(other) function is called by the QOrganizerCollectionId::operator<(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
       is required to uniquely identify a collection in a manager.
      */
 
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineLocalId*>(other)->m_localCollectionId;
-    if (m_localCollectionId < otherlocalCollectionId)
+    quint32 otherCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineId*>(other)->m_collectionId;
+    if (m_collectionId < otherCollectionId)
         return true;
     return false;
 }
 
-uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
+QString QOrganizerCollectionSkeletonEngineId::managerUri() const
 {
-    /*
-      TODO
-
-      The engine-local id type value is used by QOrganizerCollectionLocalId to ensure that
-      comparisons are occurring between ids of the same engine-specific type.
-      Such comparisons would return false if the types are not equal.
-
-      As such, it is important that the type identifier of your engine does not
-      clash with that of any other engine, in order to avoid possibly undefined
-      behaviour during comparison.
-
-      We recommend returning the pre-calculated hash value of your manager name.
-      Engines should embed the hash value into their application as a constant,
-      read-only data value (uint), instead of calculating the value in this
-      function.  For example purposes, however, we calculate it every time, below.
-     */
-
-    return qHash(QString(QLatin1String("skeleton")));
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::clone() const
+QOrganizerCollectionEngineId* QOrganizerCollectionSkeletonEngineId::clone() const
 {
     /*
       TODO
 
-      When a QOrganizerCollectionLocalId is copied or assigned, it performs a clone of
-      the engine-specific local id.  This function is called in that case.
+      When a QOrganizerCollectionId is copied or assigned, it performs a clone of
+      the engine-specific id.  This function is called in that case.
 
       Implement this function so that the data members of your engine-specific id
       are deep-copied.
@@ -415,20 +389,20 @@ QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::cl
       with just a single quint32 is given below.
      */
 
-    QOrganizerCollectionSkeletonEngineLocalId *myClone = new QOrganizerCollectionSkeletonEngineLocalId;
-    myClone->m_localCollectionId = m_localCollectionId;
+    QOrganizerCollectionSkeletonEngineId *myClone = new QOrganizerCollectionSkeletonEngineId;
+    myClone->m_collectionId = m_collectionId;
     return myClone;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug& QOrganizerCollectionSkeletonEngineId::debugStreamOut(QDebug& dbg) const
 {
     /*
       TODO
 
       In order to allow clients to debug applications, you must implement this
       function.  We recommend streaming the name of your class followed by the
-      values of the data members in your engine-specific local id class in
+      values of the data members in your engine-specific id class in
       parentheses.
 
       An example implementation for the case where a collection can be uniquely identified
@@ -439,13 +413,12 @@ QDebug QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
       directive is defined.
      */
 
-    dbg.nospace() << "QOrganizerCollectionSkeletonEngineLocalId(" << m_localCollectionId << ")";
+    dbg.nospace() << "QOrganizerCollectionSkeletonEngineId(" << m_collectionId << ")";
     return dbg.maybeSpace();
 }
 #endif
 
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+QString QOrganizerCollectionSkeletonEngineId::toString() const
 {
     /*
       TODO
@@ -455,41 +428,12 @@ QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStrea
 
       An example implementation for the case where a collection can be uniquely identified
       with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
      */
 
-    out << m_localCollectionId;
-    return out;
+    return QString::number(m_collectionId);
 }
 
-QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    /*
-      TODO
-
-      In order to allow clients to deserialize QOrganizerCollectionId's, you must implement
-      this function.  If the dataStreamOut() function is implemented as:
-          out << dataMemberOne << dataMemberTwo;
-      then this function should be implemented as:
-          in >> dataMemberOne >> dataMemberTwo;
-
-      An example implementation for the case where a collection can be uniquely identified
-      with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
-     */
-
-    in >> m_localCollectionId;
-    return in;
-}
-#endif
-
-uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
+uint QOrganizerCollectionSkeletonEngineId::hash() const
 {
     /*
       TODO
@@ -505,7 +449,7 @@ uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
       qHash() individual data members and combine the results somehow.
      */
 
-    return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+    return QT_PREPEND_NAMESPACE(qHash)(m_collectionId);
 }
 
 
@@ -533,21 +477,23 @@ int QOrganizerItemSkeletonEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
 
-        This function should create a list of instances that occur in the time period from the supplied item.
+        This function should create a list of occurrences that occur in the time period from the supplied item,
+        generated from the parent item.
+
         The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
         valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
 
-        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
+        Basically, if the parent item is an Event, a list of EventOccurrences should be returned.  Similarly for
         Todo/TodoOccurrence.
 
         If there are no instances, return an empty list.
 
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
+        The returned items should have a QOrganizerItemParent detail that points to the parentItem and the
         original instance that the event would have occurred on (e.g. with an exception).
 
         They should not have recurrence information details in them.
@@ -555,10 +501,10 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    return QOrganizerManagerEngine::itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -571,21 +517,21 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
         If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
     */
 
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    *error = QOrganizerManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            ret.append(item);
+        if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerManagerEngine::testFilter(filter, item)) {
+            QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
-    return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+    return QOrganizerManager::extractIds(ret);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -600,20 +546,20 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFi
     */
 
     Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    *error = QOrganizerManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
+        if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerManagerEngine::testFilter(filter, item)) {
+            QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
     /* An alternative formulation, depending on how your engine is implemented is just:
 
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
+        foreach(const QOrganizerItemId& id, itemIds(filter, sortOrders, error)) {
             ret.append(item(id, fetchHint, error);
         }
      */
@@ -621,7 +567,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFi
     return ret;
 }
 
-QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -632,32 +578,33 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
         fetch at least what is mentioned in the fetch hint).
 
     */
-    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+    return QOrganizerManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     /*
         TODO
 
-        Save a list of items into the collection specified (or their current collection
+        Save a list of items into the collection specified in each (or their current collection
         if no collection is specified and they already exist, or the default collection
         if no collection is specified and they do not exist).
 
-        For each item, convert it to your local type, assign an item id, and update the
+        For each item, convert it to your type, assign an item id, and update the
         QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
+        Then, examine the collection id specified in each item and save the item in that collection.
 
-        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
+        If you encounter an error (e.g. converting to type, or saving), insert an entry into
         the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
         You should set the "error" variable as well (first, last, most serious error etc).
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, collectionId, errorMap, error);
+    return QOrganizerManagerEngine::saveItems(items, errorMap, error);
 
 }
 
-bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -669,77 +616,75 @@ bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId
 
         DoesNotExistError should be used if the id refers to a non existent item.
     */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+    return QOrganizerManagerEngine::removeItems(itemIds, errorMap, error);
 }
 
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
+    return QOrganizerManagerEngine::detailDefinitions(itemType, error);
 }
 
-QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error) const
 {
     /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::detailDefinition(definitionId, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
+    return QOrganizerManagerEngine::saveDetailDefinition(def, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
 
-QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerManager::Error* error) const
 {
     /*
         TODO
 
         This allows clients to determine which collection an item will be saved,
         if the item is saved via saveItems() without specifying a collection id
-        of a collection in which to save the item.
-
-        If the backend does not support multiple collections (calendars) it may
-        return the default constructed collection id.
+        of a collection in which to save the item, via item->setCollectionId().
 
         There is always at least one collection in a manager, and all items are
         saved in exactly one collection.
      */
-    return QOrganizerItemManagerEngine::defaultCollectionId(error);
+    return QOrganizerManagerEngine::defaultCollection(error);
 }
 
-QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the ids of all collections currently
-        in this manager.  Some backends will have a prepopulated list of valid
-        collections, others will not.
+        This allows clients to retrieve a collection by (manager) id.
+        Prior to saving items, clients will set which collection the item will/should
+        be saved by calling item->setCollectionId().
      */
-    return QOrganizerItemManagerEngine::collectionIds(error);
+    return QOrganizerManagerEngine::collection(collectionId, error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizerManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the collections which correspond
-        to the given collection ids.  A collection can have properties
+        This allows clients to retrieve a list of all of the collections currently
+        in this manager.  Some backends will have a prepopulated list of valid
+        collections, others will not.  A collection can have properties
         like colour, description, perhaps a priority, etc etc.
      */
-    return QOrganizerItemManagerEngine::collections(collectionIds, errorMap, error);
+    return QOrganizerManagerEngine::collections(error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -748,10 +693,10 @@ bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collecti
         mutable collections.  If the backend does support mutable collections, it
         should report that it supports the MutableCollections manager feature.
      */
-    return QOrganizerItemManagerEngine::saveCollection(collection, error);
+    return QOrganizerManagerEngine::saveCollection(collection, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -767,10 +712,10 @@ bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLo
         the backend may decide whether to fail (with a permissions error) or to
         succeed and arbitrarily choose another collection to be the default collection.
      */
-    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
+    return QOrganizerManagerEngine::removeCollection(collectionId, error);
 }
 
-bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -809,20 +754,20 @@ bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* r
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-    return QOrganizerItemManagerEngine::startRequest(req);
+    return QOrganizerManagerEngine::startRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
 
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+    return QOrganizerManagerEngine::cancelRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
+bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
     /*
         TODO
@@ -836,10 +781,10 @@ bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstract
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+    return QOrganizerManagerEngine::waitForRequestFinished(req, msecs);
 }
 
-void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
+void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -860,23 +805,23 @@ void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractReques
         ordering problems :D
 
     */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+    return QOrganizerManagerEngine::requestDestroyed(req);
 }
 
-bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
+bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const
 {
     // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
-        case QOrganizerItemManager::MutableDefinitions:
+        case QOrganizerManager::MutableDefinitions:
             // TODO If you support save/remove detail definition, return true
             return false;
 
-        case QOrganizerItemManager::Anonymous:
+        case QOrganizerManager::Anonymous:
             // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
             // (mostly for an in memory engine)
             return false;
-        case QOrganizerItemManager::ChangeLogs:
+        case QOrganizerManager::ChangeLogs:
             // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
             return false;
     }

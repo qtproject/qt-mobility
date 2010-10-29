@@ -224,6 +224,16 @@ public:
 
     \brief The QGalleryIntersectionFilter class provides a filter which matches
     the intersection of two or more meta-data filters.
+
+    An intersection filter represents the intersection of a list of gallery
+    filters.  Filters can be added to an intersection using either the append(),
+    prepend(), or insert() functions, or using the
+    \l {operator<<()}{<< operator}.
+
+    Intersection filters can also combining two gallery filters with the
+    && operator.
+
+    \sa QGalleryFilter, QGalleryMetaDataFilter
 */
 
 /*!
@@ -371,6 +381,33 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 }
 
 /*!
+    Prepends a meta-data \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends a union \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of an intersection \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
     Inserts a meta-data \a filter into an intersection at \a index.
 */
 
@@ -425,7 +462,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &f
     Removes the filter at \a index from an intersection.
 */
 
-void QGalleryIntersectionFilter::removeAt(int index)
+void QGalleryIntersectionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }
@@ -437,6 +474,18 @@ void QGalleryIntersectionFilter::removeAt(int index)
 void QGalleryIntersectionFilter::clear()
 {
     d->filters.clear();
+}
+
+/*!
+    Appends a \a filter to an intersection.
+*/
+
+QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator <<(
+        const QGalleryIntersectionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
 }
 
 /*!
@@ -466,6 +515,15 @@ QGalleryIntersectionFilter operator &&(
 
     \brief The QGalleryUnionFilter class provides a filter which matches the
     union of two or more meta-data filters.
+
+    A union filter represents the union of a list of gallery filters.
+    Filters can be added to an union using either the append(), prepend(), or
+    insert() functions, or using the \l {operator<<()}{<< operator}.
+
+    Union filters can also combining two gallery filters with the
+    && operator.
+
+    \sa QGalleryFilter, QGalleryMetaDataFilter
 */
 
 /*!
@@ -610,6 +668,33 @@ void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
 }
 
 /*!
+    Prepends a meta-data \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends an intersection \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of a union \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
     Inserts a meta-data \a filter into a union at \a index.
 */
 
@@ -661,7 +746,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &f
     Removes the filter at \a index from a union.
 */
 
-void QGalleryUnionFilter::removeAt(int index)
+void QGalleryUnionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }
@@ -673,6 +758,17 @@ void QGalleryUnionFilter::removeAt(int index)
 void QGalleryUnionFilter::clear()
 {
     d->filters.clear();
+}
+
+/*!
+    Appends a \a filter to a union.
+*/
+
+QGalleryUnionFilter &QGalleryUnionFilter::operator <<(const QGalleryUnionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
 }
 
 /*!
@@ -702,6 +798,18 @@ QGalleryUnionFilter operator ||(
 
     \brief The QGalleryMetaDataFilter class provides a filter which accepts
     items with meta-data properties matching a specific value.
+
+    A meta-data filter represents a \l {comparator()}{comparison} between the
+    value of an item's meta-data property() and a fixed value().  A filter
+    can be constructed by passing the property name, value, and comparator
+    to the filter contructor or by using one of the operator overloads or
+    constructor functions on QGalleryProperty.
+
+    Meta-data filters can also be combined to create \l {QGalleryUnionFilter}
+    {union} or \l {QGalleryIntersectionFilter}{intersection} filters using the
+    || and && operators respectively.
+
+    \sa QGalleryFilter, QGalleryProperty
 */
 
 /*!
@@ -884,6 +992,15 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 
     \brief The QGalleryFilter class provides filtering criteria for gallery
     requests.
+
+    A gallery filter may be a {QGalleryMetaData}{meta-data},
+    {QGalleryUnionFilter}{union}, or {QGalleryIntersectionFilter}{intersection}
+    filter.  The type of a QGalleryFilter is given by the type() function, and
+    a filter can be cast to its specific type using one of toMetaFilter(),
+    toUnionFilter() or toIntersectionFilter().  Casting to different type of
+    filter will always result in an invalid filter.
+
+    \sa QGalleryMetaDataFilter, QGalleryUnionFilter, QGalleryIntersectionFilter
 */
 
 /*!

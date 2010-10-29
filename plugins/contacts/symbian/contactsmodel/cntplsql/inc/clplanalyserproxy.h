@@ -60,6 +60,8 @@ public:
 	void UpdateL(CContactItem& aItem, TUint aSessionId, TBool aSpeeDailUpdate = EFalse);
 	/** Delete a Contact. */
 	CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType);
+    /** Delete multiple contacts. */
+    void DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType);    
 	/** Change the type of an existing Contact. */	
 	void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
 
@@ -78,7 +80,7 @@ private:
                          const TContactItemId aContactId,
                          const TUint aConnectionId = 0,
                          const TContactDbObserverEventTypeV2 aTypeV2 = EContactDbObserverEventV2Null,
-                         const TContactItemId aAdditionalContactId = 0);
+                         const CContactIdArray* aAdditoinalContactIds = 0);
 
 	MContactDbObserverV2& iCntDbObserver;
 	MIniFileManager& iIniManager;

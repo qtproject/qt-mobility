@@ -5,8 +5,6 @@ DEPENDPATH += ../../../../src/publishsubscribe
 
 QT = core
 
-CONFIG+= testcase
-
 include(../../../../common.pri)
 
 CONFIG += mobility

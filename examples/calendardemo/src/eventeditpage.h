@@ -47,7 +47,7 @@
 #include <qorganizerevent.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItemSaveRequest;
 class QOrganizerEvent;
 class QOrganizerItem;
@@ -73,7 +73,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event);
+    void eventChanged(QOrganizerManager *manager, const QOrganizerEvent &event);
     void frequencyChanged(const QString&);
     void countChanged(int);
     void untilChanged(QDate);
@@ -89,7 +89,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerEvent m_organizerEvent;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;

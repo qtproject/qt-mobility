@@ -169,7 +169,7 @@ QGeoCoordinate QGeoBoundingCircle::center() const
 }
 
 /*!
-    Sets the radius in metres of this bounding circle to radius.
+    Sets the radius in metres of this bounding circle to \a radius.
 */
 void QGeoBoundingCircle::setRadius(qreal radius)
 {

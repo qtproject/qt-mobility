@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include <QtCore>
-#include <QDebug>
 
 #include "notesmanager.h"
 
@@ -51,7 +50,7 @@ NotesManager::NotesManager(QObject *parent)
 bool NotesManager::init()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("notesmanager.db");
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/notesmanager.db");
     if (!db.open())
         db.setDatabaseName(QDir::homePath() + "/notesmanager.db");
 

@@ -143,7 +143,7 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
-    Default is whatever defaultMode is.
+    If not set, the default is whatever defaultMode is.
 */
 
 void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
@@ -213,7 +213,7 @@ QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
 void QDeclarativeNetworkInfo::startStatusChanged()
 {
     connect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
 }
 
 /*!
@@ -225,7 +225,7 @@ void QDeclarativeNetworkInfo::startStatusChanged()
 void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 {
     connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
 }
 
 /*!
@@ -237,7 +237,7 @@ void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 void QDeclarativeNetworkInfo::startNameChanged()
 {
     connect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-            this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+            this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),Qt::UniqueConnection);
 }
 
 /*!
@@ -249,7 +249,7 @@ void QDeclarativeNetworkInfo::startNameChanged()
 void QDeclarativeNetworkInfo::startModeChanged()
 {
     connect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-            this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+            this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)),Qt::UniqueConnection);
 }
 
 /*!
@@ -261,7 +261,7 @@ void QDeclarativeNetworkInfo::startModeChanged()
 void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged()
 {
     connect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
-            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+            this,SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
 }
 
 /*!
@@ -273,7 +273,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged()
 void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
 {
     connect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
-            this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+            this,SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
 }
 
 /*!
@@ -405,3 +405,13 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
     return list;
 }
 
+/*!
+    \qmlmethod NetworkInfo::mode()
+    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
+
+    \sa useMode(useMode(QSystemNetworkInfo::NetworkMode)
+*/
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
+{
+    return m_mode;
+}

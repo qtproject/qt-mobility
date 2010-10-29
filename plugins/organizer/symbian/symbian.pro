@@ -42,7 +42,7 @@ symbian: {
         transform/organizeritemdescriptiontransform.h \
         transform/organizeritemdisplaylabeltransform.h \
         transform/organizeritemguidtransform.h \
-        transform/organizeriteminstanceorigintransform.h \
+        transform/organizeritemparenttransform.h \
         transform/organizeritemlocationtransform.h \
         transform/organizeritemprioritytransform.h \
         transform/organizeritemrecurrencetransform.h \
@@ -65,7 +65,7 @@ symbian: {
         transform/organizeritemdescriptiontransform.cpp \
         transform/organizeritemdisplaylabeltransform.cpp \
         transform/organizeritemguidtransform.cpp \
-        transform/organizeriteminstanceorigintransform.cpp \
+        transform/organizeritemparenttransform.cpp \
         transform/organizeritemlocationtransform.cpp \
         transform/organizeritemprioritytransform.cpp \
         transform/organizeritemrecurrencetransform.cpp \

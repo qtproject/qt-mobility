@@ -956,4 +956,28 @@ void QCamera::unlock()
     Signal emitted when error state changes to \a value.
 */
 
+/*!
+    \fn void QCamera::captureModeChanged(QCamera::CaptureMode mode)
+
+    Signals the capture \a mode has changed.
+*/
+
+/*!
+  \fn QCamera::stateChanged(QCamera::State state)
+
+  Signals the camera \a state has changed.
+
+  Usually the state changes is caused by calling
+  load(), unload(), start() and stop(),
+  but the state can also be changed change as a result of camera error.
+*/
+
+/*!
+  \fn QCamera::statusChanged(QCamera::Status status)
+
+  Signals the camera \a status has changed.
+
+*/
+
+
 #include "moc_qcamera.cpp"

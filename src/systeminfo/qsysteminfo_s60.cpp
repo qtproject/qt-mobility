@@ -634,8 +634,11 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 
 void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 {
-    emit networkNameChanged(QSystemNetworkInfo::WlanMode,
-        DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+		if (status)
+			emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+		else
+			networkNameChanged();//Restore default network name, as WLAN will leave name as blank
 }
 
 void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()

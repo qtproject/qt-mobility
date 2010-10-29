@@ -31,6 +31,7 @@
 #include <cntfldst.h> 		// for ccontacttextfield
 #include <cntfield.h> 		// for ccontacttextfield
 #include "cntstd.h"   		// for panic codes
+#include "ccntipccodes.h"
 
 // Event related headers
 #include <cntdbobs.h> 	    // for ccontactdbobserver
@@ -1014,7 +1015,7 @@ TBool CStateOpening::DoStepL()
 			event.iContactId = 0;
 			event.iConnectionId = 0;
 	        event.iTypeV2 = EContactDbObserverEventV2Null;
-	        event.iAdditionalContactId = 0;
+	        event.iAdditionalContactIds = NULL;
 			// The HandleBackupRestoreEventL() method of the CCntDbManager that
 			// owns this state machine is called to send the appropriate request
 			// to the state machine and to notify any observers.  The request
@@ -1247,22 +1248,48 @@ TAccept CStateWritable::AcceptRequestL(CReqCommitCnt* aRequest)
 */
 TAccept CStateWritable::AcceptRequestL(CReqDeleteCnt* aRequest)
 	{
-	// Check if the contact has been locked 
-	if (iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
+	// Check if the contact has been locked (single contact operation) 
+	if (aRequest->RequestCode() == ECntItemDelete && 
+	        iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
   		{
   		// If the request can not be procesed after the timeout period, it should 
   		// complete with KErrInUse - the contact is locked 
 		return DeferWithTimeOutError(aRequest);
 		}	
 	
+    // Check if the contacts have been locked (multiple contacts operation) 
+    if (aRequest->RequestCode() == ECntItemsDelete) 
+        {
+        if (aRequest->IdArray() == NULL || aRequest->IdArray()->Count() == 0)
+            {
+            User::LeaveIfError(KErrArgument);
+            }
+        for (TInt i = 0; i < aRequest->IdArray()->Count(); i++)
+            {
+            if (iStateMachine.TransactionLockL().IsLocked(aRequest->IdArray()->operator[](i)))
+                {
+                // If the request can not be procesed after the timeout period, it should 
+                // complete with KErrInUse - some contact is locked 
+                return DeferWithTimeOutError(aRequest);
+                }
+            }
+        }	
+	
 	TRAPD(deleteErr,
 		{
 		TransactionStartLC(aRequest->SessionId());
 	
 		iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-		CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), ESendEvent);
-		CleanupStack::PopAndDestroy(cntItem);
-	
+		if (aRequest->RequestCode() == ECntItemDelete)
+		    {
+		    CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), ESendEvent);
+		    CleanupStack::PopAndDestroy(cntItem);
+		    }
+		else if (aRequest->RequestCode() == ECntItemsDelete)
+            {
+            iPersistenceLayer.PersistenceBroker().DeleteMultipleContactsL(aRequest->IdArray(), aRequest->SessionId(), ESendEvent);
+            }
+		
 		TransactionCommitLP();
 		});
 	if (deleteErr == KSqlErrGeneral)
@@ -1787,7 +1814,7 @@ TAccept CStateTransaction::AcceptRequestL(CReqDbRollbackTrans* aRequest)
 		event.iContactId	= KNullContactId;
 		event.iConnectionId = iSessionId;
 	    event.iTypeV2 = EContactDbObserverEventV2Null;
-	    event.iAdditionalContactId = KNullContactId;		
+	    event.iAdditionalContactIds = NULL;		
 		iStateMachine.DbManager().HandleDatabaseEventV2L(event);
 
 		aRequest->Complete();
@@ -1939,12 +1966,44 @@ TAccept CStateTransaction::AcceptRequestL(CReqDeleteCnt* aRequest)
   		}	
 	
 	// Check if the contact has been locked by any session - including this session
-  	if (iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()) == EFalse)
+	TBool locked = false;
+	if (aRequest->RequestCode() == ECntItemDelete && 
+	            iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
+	    {
+	    locked = true;
+	    }
+    if (aRequest->RequestCode() == ECntItemsDelete) 
+        {
+        if (aRequest->IdArray() == NULL || aRequest->IdArray()->Count() == 0)
+            {
+            User::LeaveIfError(KErrArgument);
+            }
+        for (TInt i = 0; i < aRequest->IdArray()->Count(); i++)
+            {
+            if (iStateMachine.TransactionLockL().IsLocked(aRequest->IdArray()->operator[](i)))
+                {
+                locked = true;
+                }
+            }
+        }	
+	
+  	if (!locked)
   		{
 	 	if (iSessionId == aRequest->SessionId())
 	 		{
 	 		CContactItem* item = NULL; 
-	 		TRAPD(deleteErr, item = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), aRequest->NotificationEventAction());CleanupStack::PopAndDestroy(item));
+	 		
+	 		TInt deleteErr;
+	        if (aRequest->RequestCode() == ECntItemDelete)
+	            {
+	            TRAP(deleteErr, item = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), aRequest->NotificationEventAction());
+                    CleanupStack::PopAndDestroy(item));
+	            }
+	        else if (aRequest->RequestCode() == ECntItemsDelete)
+	            {
+	            TRAP(deleteErr, iPersistenceLayer.PersistenceBroker().DeleteMultipleContactsL(aRequest->IdArray(), aRequest->SessionId(), ESendEvent));
+	            }	 		
+	 		
 	 		if (deleteErr == KSqlErrGeneral)
 	 			{
 	 			// Delete failed, probably due to idle sorter activity
@@ -2116,7 +2175,7 @@ void CStateTransaction::PropagateDatabaseEventsL()
 		unknownChangeEvent.iContactId 	 = KNullContactId;
 		unknownChangeEvent.iConnectionId = KCntNullConnectionId;
 		unknownChangeEvent.iTypeV2 = EContactDbObserverEventV2Null;
-		unknownChangeEvent.iAdditionalContactId = KCntNullConnectionId;
+		unknownChangeEvent.iAdditionalContactIds = NULL;
 		
 		iStateMachine.DbManager().HandleDatabaseEventV2L(unknownChangeEvent);
 		}
