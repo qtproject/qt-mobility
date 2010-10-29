@@ -47,7 +47,7 @@ CLlcpServer* CLlcpServer::NewLC()
     CLlcpServer::CLlcpServer()
 */
 CLlcpServer::CLlcpServer()
-     iLlcp( NULL ),
+     :iLlcp( NULL ),
      iSocketListening(EFalse)
     {
     }
@@ -70,7 +70,7 @@ CLlcpServer::~CLlcpServer()
         delete iLlcp;
         iLlcp = NULL;
         }
-    iLlcpSocketArray.close();  
+    iLlcpSocketArray.Close();  
     }
 
 /*!
@@ -88,14 +88,14 @@ CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     CLlcpSocketType2 *llcpSocket = iLlcpSocketArray[0];
     if (iLlcpSocketArray.Count() > 0)
         {
-        iLlcpSocketArray.Remove(0)
+        iLlcpSocketArray.Remove(0);
         }
        return llcpSocket;
     }
 
 bool CLlcpServer::hasPendingConnections() const
     {
-    iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
+    return iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
     }
 
 /*!

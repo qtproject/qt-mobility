@@ -66,7 +66,7 @@ private:
     */
    CLlcpProvider* iLlcp;
    
-   bool iSocketListening;
+   TBool iSocketListening;
    };
     
 #endif /* LLCPSERVER_SYMBIAN_H_ */

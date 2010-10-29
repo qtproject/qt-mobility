@@ -164,7 +164,7 @@ bool CLlcpSocketType1::ReceiveData(TDesC8& aData)
     {
       if (ReceiveCompleted())
           {
-          aData = iLocalConnection->ReceiveData();
+          //aData = iLocalConnection->ReceiveData();
           return ETrue;
           }
       return EFalse;
@@ -172,7 +172,7 @@ bool CLlcpSocketType1::ReceiveData(TDesC8& aData)
 
 bool CLlcpSocketType1::ReceiveCompleted()
     {
-    return iLocalConnection->ReceiveCompleted();
+    return iLocalConnection->ReceiveCompeleted();
     }
 
     
@@ -391,7 +391,7 @@ bool COwnLlcpConnLess::TransferCompleted()
     iActionState != ETransmitting ? ETrue : EFalse;
     }
 
-const TDesC& COwnLlcpConnLess::ReceiveData() const
+const TDesC8& COwnLlcpConnLess::ReceiveData() const
     {
     return iReceiveBuf;
     }
@@ -682,7 +682,7 @@ bool COwnLlcpConnOriented::TransferCompleted()
     }
 
 
-const TDesC& COwnLlcpConnOriented::ReceiveData() const
+const TDesC8& COwnLlcpConnOriented::ReceiveData() const
     {
     return iReceiveBuf;
     }
@@ -951,7 +951,7 @@ bool CLlcpSocketType2::ReceiveData(TDesC8& aData)
 
 bool CLlcpSocketType2::ReceiveCompleted()
     {
-    return iLocalConnection->ReceiveCompleted();
+    return iLocalConnection->ReceiveCompeleted();
     }
 
 

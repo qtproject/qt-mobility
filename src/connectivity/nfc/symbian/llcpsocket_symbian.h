@@ -220,7 +220,7 @@ public:
    bool ReceiveCompeleted();
    bool TransferCompleted();
    
-   const TDesC& ReceiveData() const;
+   const TDesC8& ReceiveData() const;
    
 public: // From CActive
     void RunL();
@@ -319,7 +319,7 @@ public:
    bool ReceiveCompeleted();
    bool TransferCompleted();
    
-   const TDesC& ReceiveData() const;
+   const TDesC8& ReceiveData() const;
    
 public: // From CActive
 
