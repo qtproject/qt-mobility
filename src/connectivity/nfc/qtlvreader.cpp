@@ -93,7 +93,7 @@ QTlvReader::QTlvReader(QNearFieldTarget *target)
     Constructs a new TLV reader for \a data.
 */
 QTlvReader::QTlvReader(const QByteArray &data)
-:   m_target(0), m_data(data), m_index(-1)
+:   m_target(0), m_rawData(data), m_index(-1)
 {
 }
 
@@ -114,27 +114,42 @@ bool QTlvReader::atEnd() const
     if (m_index == -1)
         return false;
 
-    return (m_index == m_data.length()) || (tag() == 0xfe);
+    return (m_index == m_tlvData.length()) || (tag() == 0xfe);
 }
 
 /*!
-    Moves to the next TLV.
+    Moves to the next TLV. Returns true on success; otherwise returns false.
 */
-void QTlvReader::readNext()
+bool QTlvReader::readNext()
 {
     if (atEnd())
-        return;
+        return false;
 
     // Move to next TLV
-    if (m_index == -1)
+    if (m_index == -1) {
         m_index = 0;
-    else if (tag() == 0x00 || tag() == 0xfe)
+    } else if (tag() == 0x00 || tag() == 0xfe) {
         ++m_index;
-    else
-        m_index = m_index + 1 + 1 + length();
+    } else {
+        int tlvLength = length();
+        m_index += (tlvLength < 0xff) ? tlvLength + 2 : tlvLength + 4;
+    }
 
     // Ensure that tag byte is available
-    readMoreData(m_index);
+    if (!readMoreData(m_index))
+        return false;
+
+    // Ensure that length byte(s) are available
+    if (length() == -1)
+        return false;
+
+    // Ensure that data bytes are available
+    int tlvLength = length();
+
+    int dataOffset = (tlvLength < 0xff) ? m_index + 2 : m_index + 4;
+
+    if (!readMoreData(dataOffset + tlvLength - 1))
+        return false;
 
     switch (tag()) {
     case 0x01: { // Lock Control TLV
@@ -178,6 +193,8 @@ void QTlvReader::readNext()
         break;
     }
     }
+
+    return true;
 }
 
 /*!
@@ -185,27 +202,36 @@ void QTlvReader::readNext()
 */
 quint8 QTlvReader::tag() const
 {
-    return m_data.at(m_index);
+    return m_tlvData.at(m_index);
 }
 
 /*!
-    Returns the length of the data of the current TLV.
+    Returns the length of the data of the current TLV. Returns -1 if a parse error occurs.
 */
 int QTlvReader::length()
 {
-    readMoreData(m_index + 1);
+    if (tag() == 0x00 || tag() == 0xfe)
+        return 0;
 
-    int length = m_data.at(m_index + 1);
-    if (length == 0xff) {
-        readMoreData(m_index + 3);
-        length = (m_data.at(m_index + 2) << 8) | m_data.at(m_index + 3);
-        if (length < 0xff || length == 0xffff) {
-            qWarning("Invalid 3 byte length");
-            return 0;
-        }
+    if (!readMoreData(m_index + 1))
+        return -1;
+
+    quint8 shortLength = m_tlvData.at(m_index + 1);
+    if (shortLength != 0xff)
+        return shortLength;
+
+    if (!readMoreData(m_index + 3))
+        return -1;
+
+    quint16 longLength = (quint8(m_tlvData.at(m_index + 2)) << 8) |
+                          quint8(m_tlvData.at(m_index + 3));
+
+    if (longLength < 0xff || longLength == 0xffff) {
+        qWarning("Invalid 3 byte length");
+        return 0;
     }
 
-    return length;
+    return longLength;
 }
 
 /*!
@@ -215,40 +241,43 @@ QByteArray QTlvReader::data()
 {
     int tlvLength = length();
 
-    readMoreData(m_index + 1 + 1 + tlvLength - 1);
+    int dataOffset = (tlvLength < 0xff) ? m_index + 2 : m_index + 4;
 
-    return m_data.mid(m_index + 1 + 1, tlvLength);
+    if (!readMoreData(dataOffset + tlvLength - 1))
+        return QByteArray();
+
+    return m_tlvData.mid(dataOffset, tlvLength);
 }
 
 /*!
     Reads more data until \a sparseOffset is available in m_data.
 */
-void QTlvReader::readMoreData(int sparseOffset)
+bool QTlvReader::readMoreData(int sparseOffset)
 {
-    while (sparseOffset >= m_data.length()) {
-        // read the next segment
-        int absOffset = absoluteOffset(m_data.length());
-        quint8 segment = absOffset / 128;
+    while (sparseOffset >= m_tlvData.length()) {
+        int absOffset = absoluteOffset(m_tlvData.length());
 
         QByteArray data;
 
-        if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
+        if (!m_rawData.isEmpty()) {
+            data = m_rawData.mid(absOffset, dataLength(absOffset));
+        } else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
+            quint8 segment = absOffset / 128;
+
             data = (absOffset < 120) ? tag->readAll().mid(2) : tag->readSegment(segment);
+
+            int length = dataLength(absOffset);
+
+            data = data.mid(absOffset - (segment * 128), length);
         }
 
-        int startOffset = absOffset - (segment * 128);
+        if (data.isEmpty() && sparseOffset >= m_tlvData.length())
+            return false;
 
-        int length = -1;
-        foreach (int offset, m_reservedMemory.keys()) {
-            if (offset <= absOffset)
-                continue;
-
-            if (offset < (segment + 1) * 128)
-                length = offset - absOffset;
-        }
-
-        m_data.append(data.mid(startOffset, length));
+        m_tlvData.append(data);
     }
+
+    return true;
 }
 
 /*!
@@ -263,6 +292,22 @@ int QTlvReader::absoluteOffset(int sparseOffset) const
     }
 
     return absoluteOffset;
+}
+
+/*!
+    Returns the length of the contiguous non-reserved data block starting from absolute offset
+    \a startOffset.  -1 is return as the length of the last contiguous data block.
+*/
+int QTlvReader::dataLength(int startOffset) const
+{
+    foreach (int offset, m_reservedMemory.keys()) {
+        if (offset <= startOffset)
+            continue;
+
+        return offset - startOffset;
+    }
+
+    return -1;
 }
 
 QTM_END_NAMESPACE
