@@ -28,6 +28,7 @@
 #include "koreaninput.h"
 #include <QString>
 #include <QStringList>
+//#include <QRegExp>
 
 
 const int KMinimumSearchPatternLength = 1;
@@ -217,8 +218,9 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
 
 QStringList CntSqlKoreanItuT::getSearchPattern(const QString &pattern)
     {
-    //return pattern.split("0", QString::SkipEmptyParts);
-    return mKoreaninput->Tokenize(pattern);
+    QString &fRef = const_cast<QString&>(pattern);
+    fRef.remove(QRegExp("\\*|\\#"));//remove * and #
+    return mKoreaninput->Tokenize(fRef);
     }
 
 CntSqlKoreanItuT::SqlQueryType CntSqlKoreanItuT::getSQLQueryType(const QString &pattern)
