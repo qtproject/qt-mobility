@@ -41,10 +41,22 @@
 #include "qlandmarkutility.h"
 #include <qnumeric.h>
 #include <QDebug>
+//
 _LIT8(Klmx,"application/vnd.nokia.landmarkcollection+xml");
 _LIT8(Kgpx,"application/gps+xml");
 _LIT8(Kkml,"application/vnd.google-earth.kml+xml");
 _LIT8(Kkmz,"application/vnd.google-earth.kmz");
+// constants for landmark url
+//
+#define KUrlProtocolEnds 3
+#define KMaxUrlFieldLen 150
+//
+// Empty Mime Type indicator
+_LIT( KDoubleSlash, "//");
+//used for url field to identify protocol present or not
+_LIT( KProtocol, ":" );
+//used as default protocol for url field.
+_LIT(KHttp, "http://");
 
 /*
  * Landmark Utility To convert qt landmark data class to symbian landmark data classes
@@ -142,13 +154,20 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
         }
 
         // set landmark url
-        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldMediaLinks)) {
+        if (symbianLandmark->IsPositionFieldAvailable(EPositionFieldMediaLinksStart)) {
             TPtrC lmUrl;
-            symbianLandmark->GetPositionField(EPositionFieldMediaLinks, lmUrl);
+            symbianLandmark->GetPositionField(EPositionFieldMediaLinksStart, lmUrl);
             if (lmUrl.Length() > 0) {
-                lmBuf.Copy(lmUrl);
-                QString LandmarkUrl((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                //qDebug() << "landmark url " << LandmarkUrl;
+
+                HBufC* lmkField = HBufC::NewL(KMaxFileName);
+                CleanupStack::PushL(lmkField);
+                lmkField->Des().Copy(lmUrl);
+                TPtr a = lmkField->Des();
+                LandmarkUtility::RemoveDefaultProtocolL(a);
+                QString LandmarkUrl((QChar*) (lmkField->Ptr()), lmkField->Length());
+                CleanupStack::PopAndDestroy(lmkField);
+
+                qDebug() << "landmark url " << LandmarkUrl;
                 //TODO: tmp fix, need to know exact reason.
                 if (LandmarkUrl != "0")
                     qtLandmark->setUrl(LandmarkUrl);
@@ -339,10 +358,12 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     QString qtlmUrl = qtLandmark->url().toString();
     if (qtlmUrl.length() > 0) {
         TPtrC symbianLmUrl(reinterpret_cast<const TText*> (qtlmUrl.constData()), qtlmUrl.length());
-        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, symbianLmUrl);
+        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, _L("1"));
+        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinksStart, symbianLmUrl);
     }
     else {
-        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, KNullDesC);
+        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, _L("0"));
+        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinksStart, KNullDesC);
     }
 
     // set address
@@ -525,7 +546,8 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     QString lmUrl = qtLandmark->url().toString();
     if (lmUrl.length() > 0) {
         TPtrC symbianLmUrl(reinterpret_cast<const TText*> (lmUrl.constData()), lmUrl.length());
-        symbianLandmark->SetPositionFieldL(EPositionFieldMediaLinks, symbianLmUrl);
+        symbianLandmark->SetPositionFieldL(EPositionFieldMediaLinks, _L("1"));
+        symbianLandmark->SetPositionFieldL(EPositionFieldMediaLinksStart, symbianLmUrl);
     }
 
     // set address
@@ -1125,6 +1147,24 @@ QString LandmarkUtility::preparePath(QString filename)
     }
 
     return filename;
+}
+
+/**
+ * landmark url utility
+ */
+void LandmarkUtility::RemoveDefaultProtocolL(TPtr& landmarkUrl)
+{
+    TInt emptySlashPos(0);
+    if (landmarkUrl.Length() > 0) {
+        emptySlashPos = landmarkUrl.Find(KDoubleSlash);
+        if (emptySlashPos == 0) {
+            landmarkUrl.Delete(emptySlashPos, 2);
+        }
+        if (landmarkUrl.Length() > KMaxUrlFieldLen) {
+            TInt pos = landmarkUrl.Find(KProtocol);
+            landmarkUrl.Delete(emptySlashPos, (pos + KUrlProtocolEnds));
+        }
+    }
 }
 
 // end of file
