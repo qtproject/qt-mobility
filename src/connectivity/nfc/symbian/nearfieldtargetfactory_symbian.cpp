@@ -76,7 +76,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, R
     {
     // ownership of aNfcTag transferred.
     CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
-    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(WrapNdefAccessL(aNfcTag, tagType1), aParent);
+    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(WrapNdefAccessL(aNfcTag, aNfcServer, tagType1), aParent);
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
     CleanupStack::Pop(tagType1);
     return tag;

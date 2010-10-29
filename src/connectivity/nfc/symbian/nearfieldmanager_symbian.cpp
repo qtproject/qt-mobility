@@ -92,7 +92,7 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
 	TRAP_IGNORE(
 		if (aNfcTag)
 			{
-			QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag,&iCallback);
+			QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
 			QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
 			}
 			);
@@ -114,7 +114,7 @@ void CNearFieldManager::TagLost()
 void CNearFieldManager::LlcpRemoteFound()
 	{
 	TRAP_IGNORE(
-		QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, &iCallback);
+		QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
 		QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
 		);
 	}
