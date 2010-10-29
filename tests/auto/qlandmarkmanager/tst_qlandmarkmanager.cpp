@@ -835,7 +835,7 @@ private:
             m_listener =0;
         }
         QMap<QString, QString> map;
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         m_manager = new QLandmarkManager();
 #else
 
@@ -862,7 +862,7 @@ private:
     void deleteDb() {
         QFile file;
 
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -898,8 +898,8 @@ private:
         file.remove();
     }
 
-#ifdef Q_OS_SYMBIAN
-    void clearDb() {
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))    
+	void clearDb() {
 
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i)
@@ -941,8 +941,7 @@ private slots:
 
     void init();
     void cleanup();
-
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     void createDbNew();
     void createDbExists();
 #endif
@@ -1141,7 +1140,7 @@ void tst_QLandmarkManager::initTestCase() {
 
 void tst_QLandmarkManager::init() {
     createDb();
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     clearDb();
 #endif
 }
@@ -1154,7 +1153,7 @@ void tst_QLandmarkManager::cleanupTestCase() {
     QFile::remove(exportFile);
 }
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
 void tst_QLandmarkManager::createDbNew() {
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QVERIFY(tablesExist());
