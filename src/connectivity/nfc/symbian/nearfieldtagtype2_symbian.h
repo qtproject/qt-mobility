@@ -39,54 +39,48 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDNDEFTARGET_H
-#define NEARFIELDNDEFTARGET_H
+#ifndef NEARFIELDTAGTYPE2_H
+#define NEARFIELDTAGTYPE2_H
 
 #include <e32base.h>	// For CActive, link against: euser.lib
 #include <nfcserver.h>
-#include <ndefconnection.h>
-#include <e32cmn.h> 
-#include <ndefhandler.h>
-
+#include <nfctype1address.h>
 #include "nearfieldtarget_symbian.h"
 
-class CNearFieldTagType1;
-class CNearFieldTagType2;
-class CNearFieldTagType3;
-class CNearFieldTagType4;
-class CNdefMessage;
+class CNfcType2Connection;
+class MNfcTag;
 
-class CNdefConnection;
-
-class CNearFieldNdefTarget : public MNearFieldTarget, 
-                             public MNdefHandler
+class CNearFieldTagType2 : public CActive, public MNearFieldTarget
     {
 public:
     // Cancel and destroy
-    ~CNearFieldNdefTarget();
+    ~CNearFieldTagType2();
 
     // Two-phased constructor.
-    static CNearFieldNdefTarget* NewL(MNfcTag * aNfcTag);
+    static CNearFieldTagType2* NewL(MNfcTag * aNfcTag);
 
     // Two-phased constructor.
-    static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag);
+    static CNearFieldTagType2* NewLC(MNfcTag * aNfcTag);
 
 public: // New functions
-    void SetRealTarget(MNearFieldTarget * aRealTarget);
-
-    // NdefAccess
-    bool hasNdefMessage(){};
-    void ndefMessages(RPointerArray<CNdefMessage>& aMessages){};
-    void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages){};
+    
+    // DIGPROTO
+    void ReadIdentificationL(TDes8& aData);
+    
+    // Static memory functions
+    void ReadAllL(TDes8& aData);
+    void WriteByteEraseL(TUint8 aAddress, const TDesC8& aData);
+    void WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData);
+    
+    // Dynamic memory functions
+    void ReadByteL(TUint8 aAddress, TDes8& aData);
+    void ReadSegmentL(TUint aSegmentAddress, TDes8& aData);
+    void ReadBlockL(TUint aBlockAddress, TDes8& aData);
+    void WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData);
+    void WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData);
 
 public:
-    CNearFieldTagType1 * CastToTagType1();
-#if 0
     CNearFieldTagType2 * CastToTagType2();
-    CNearFieldTagType3 * CastToTagType3();
-    CNearFieldTagType4 * CastToTagType4();
-#endif
-    CNearFieldNdefTarget * CastToNdefTarget();
     
     TInt OpenConnection();
     void CloseConnection();
@@ -94,27 +88,39 @@ public:
 
 private:
     // C++ constructor
-    CNearFieldNdefTarget(MNfcTag * aNfcTag);
+    CNearFieldTagType2(MNfcTag * aNfcTag);
 
     // Second-phase constructor
     void ConstructL();
 
-private: // From MNdefHandler
-    void ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart );    
-    void ReadComplete( CNdefMessage* aMessage );
-    void WriteComplete();
-    void HandleError( TInt aError );
+private: // From CActive
+    // Handle completion
+    void RunL();
+
+    // How to cancel me
+    void DoCancel();
+
+    // Override to handle leaves from RunL(). Default implementation causes
+    // the active scheduler to panic.
+    TInt RunError( TInt aError );
     
+private: // utility functions
+    // Convert static memory structure address to TNfcType1Address
+    TNfcType1Address AddOperand(TUint8 aAddress) const;
+    
+    // Convert dynamic memory structure address to TNfcType1Address for segment operation 
+    TNfcType1Address AddsOperand(TUint8 aSegmentAddress) const;
+    
+    // Convert dynamic memory structure address to TNfcType1Address for block operation
+    TNfcType1Address Add8Operand(TUint8 aBlockAddress) const;
+
 private:
     // own
-    MNearFieldTarget * iTagConnection;
+    CNfcType2Connection * iNfcType2Connection;
     CActiveSchedulerWait * iWait;
-    CNdefConnection * iNdefConnection;
-    // own by real target if real target is created
-    // otherwise, own by this.
     MNfcTag * iNfcTag;
     
     RNfcServer iNfcServer;
     };
 
-#endif // NEARFIELDNDEFTARGET_H
+#endif // NEARFIELDTAGTYPE2_H
