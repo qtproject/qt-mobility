@@ -58,12 +58,12 @@
     Create target instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
-QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QObject * aParent)
+QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
-        tag = CreateTagType1L(aNfcTag, aParent);
+        tag = CreateTagType1L(aNfcTag, aNfcServer, aParent);
         }
     return tag;
     }
@@ -72,7 +72,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, QOb
     Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, QObject * aParent)
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
     CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag);
@@ -82,7 +82,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, Q
     return tag;
     }
    
-MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, MNearFieldTarget * aTarget)
+MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget)
     {
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
         {

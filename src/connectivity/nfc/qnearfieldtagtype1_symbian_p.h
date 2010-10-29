@@ -90,7 +90,9 @@ public:
     }
 
     bool hasNdefMessage();
+    
     QList<QNdefMessage> ndefMessages();
+    
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
 private:
