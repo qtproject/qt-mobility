@@ -91,20 +91,27 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
-    if (url.isEmpty() || url.scheme() != QLatin1String("file")) {
+    if (url.isEmpty()) {
         m_source = QUrl();
         setStatus(QSoundEffect::Null);
+        return;
+    }
+
+    if (url.scheme() != QLatin1String("file")) {
+        m_source = url;
+        setStatus(QSoundEffect::Error);
         return;
     }
 
     if (m_sound != 0)
         delete m_sound;
 
-    setStatus(QSoundEffect::Loading);
     m_source = url;
     m_sound = new QSound(m_source.toLocalFile(), this);
     m_sound->setLoops(m_loopCount);
-    setStatus(QSoundEffect::Ready);
+    m_status = QSoundEffect::Ready;
+    emit statusChanged();
+    emit loadedChanged();
 }
 
 int QSoundEffectPrivate::loopCount() const
@@ -146,12 +153,15 @@ bool QSoundEffectPrivate::isLoaded() const
 
 void QSoundEffectPrivate::play()
 {
+    if (m_status == QSoundEffect::Null || m_status == QSoundEffect::Error)
+        return;
     if (m_timerID != 0)
         killTimer(m_timerID);
     m_timerID = startTimer(500);
     m_sound->play();
     setPlaying(true);
 }
+
 
 void QSoundEffectPrivate::stop()
 {
