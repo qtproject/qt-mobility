@@ -71,22 +71,32 @@ CLlcpServer::~CLlcpServer()
         delete iLlcp;
         iLlcp = NULL;
         }
-    if ( iLlcpSocket )
-        {
-        delete iLlcpSocket;
-        iLlcpSocket = NULL;
-        }    
+    iLlcpSocketArray.close();  
     }
 
+/*!
+    Returns the next pending connection as a connected CLlcpSocketType2
+    object.
 
+    The socket is created as a child of the server, which means that
+    it is automatically deleted when the CLlcpServer object is
+    destroyed. It is still a good idea to delete the object
+    explicitly when you are done with it, to avoid wasting memory.
+*/
 CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     {
-       return iLlcpSocket;
+    // take first element
+    CLlcpSocketType2 *llcpSocket = iLlcpSocketArray[0];
+    if (iLlcpSocketArray.Count() > 0)
+        {
+        iLlcpSocketArray.Remove(0)
+        }
+       return llcpSocket;
     }
 
 bool CLlcpServer::hasPendingConnections() const
     {
-    iLlcpSocket != NULL ? ETrue: EFalse;
+    iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
     }
 
 /*!
@@ -95,7 +105,7 @@ bool CLlcpServer::hasPendingConnections() const
 void CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     TInt error = KErrNone; 
-    TRAP(error,iLlcpSocket = CLlcpSocketType2::NewL());
+
     if (error == KErrNone)
         {
         // TODO
@@ -121,13 +131,13 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
     TInt error = KErrNone;
        
     // create remote connection for the iLlcpsocket
-    if( !iLlcpSocket->RemoteConnection())
-        {
-        aConnection->AcceptConnectRequest();
-         
-        // Creating wrapper for connection. 
-        iLlcpSocket->CreateRemoteConnection(aConnection);
-        }
+    aConnection->AcceptConnectRequest();
+
+    CLlcpSocketType2 *llcpSocket = NULL;
+    TRAP(error,llcpSocket = CLlcpSocketType2::NewL());
+    // Creating wrapper for connection. 
+    llcpSocket->CreateRemoteConnection(aConnection);
+    iLlcpSocketArray.Append(llcpSocket);       
     
     //TODO  The newConnection() signal is then emitted each time a client connects to the server.
 

@@ -176,7 +176,6 @@ void CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
         return;
         
    TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
-
     
     if ( error == KErrNone )
         {
@@ -210,8 +209,6 @@ void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnect
          delete aConnection;
          }    
     }
-
-
 
    
 /*!
@@ -452,8 +449,6 @@ COwnLlcpConnOriented* COwnLlcpConnOriented::NewLC( MLlcpConnOrientedTransporter*
 
 COwnLlcpConnOriented::COwnLlcpConnOriented( MLlcpConnOrientedTransporter* aConnection )
     : CActive( EPriorityStandard ),
-      iConnection( aConnection ),
-      iClientStatus( NULL ),
       iConnState( ENotConnected ),
       iActionState( EIdle )
     {
@@ -489,7 +484,10 @@ COwnLlcpConnOriented::~COwnLlcpConnOriented()
     iReceiveBuf.Close();
     }
 
-TInt COwnLlcpConnOriented::Connect(const TDesC8& aServiceName)
+/*!
+ * Connect to remote peer as given service uri.
+ */
+void COwnLlcpConnOriented::Connect(const TDesC8& aServiceName)
     {
     TInt error = KErrNone;
     TRequestStatus aStatus = KRequestPending;
@@ -500,20 +498,31 @@ TInt COwnLlcpConnOriented::Connect(const TDesC8& aServiceName)
         // Starting connecting if is in idle state
         iConnection->Connect( iStatus );
         SetActive();
-        iConnState = EConnecting;
-        
+        iConnState = EConnecting;  
         iClientStatus = status;
+        }    
+    }
+
+/*!
+ * Disonnect with remote peer.
+ */
+void COwnLlcpConnOriented::Disconnect()
+    {     
+    if ( iConnState != ENotConnected )
+        {
+        iConnection->Disconnect();
+        iConnState = ENotConnected;
         }    
     }
 
 /*!
     Transfer data from local peer to remote peer via connection oriented transport
 */
-TInt COwnLlcpConnOriented::Transfer( /*TRequestStatus& aStatus,*/ const TDesC8& aData )
+TInt COwnLlcpConnOriented::Transfer( const TDesC8& aData )
     {
     TInt error = KErrNone;
     TRequestStatus aStatus = KRequestPending;
-    TRequestStatus* status = &aStatus; // local
+    TRequestStatus* status = &aStatus; 
     
     // Copying data to internal buffer. 
     iTransmitBuf.Zero();
@@ -565,7 +574,6 @@ void COwnLlcpConnOriented::TransferCancel()
     Cancel();
     }
    
-
 /*!
     Receive data from remote peer to local peer via connection oriented transport
 */
@@ -624,7 +632,23 @@ void COwnLlcpConnOriented::ReceiveCancel()
     {
     Cancel();
     }
-   
+
+
+bool COwnLlcpConnOriented::ReceiveCompeleted()
+    {
+    iActionState != EReceiving ? ETrue : EFalse;    
+    }
+
+bool COwnLlcpConnOriented::TransferCompleted()
+    {
+    iActionState != ETransmitting ? ETrue : EFalse;
+    }
+
+
+const TDesC& COwnLlcpConnOriented::ReceiveData() const
+    {
+    return iReceiveBuf;
+    }
 
 void COwnLlcpConnOriented::RunL()
     {
@@ -761,19 +785,15 @@ void CLlcpSocketType2::ConstructL()
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
 
-
 /*!
-    CLlcpSocketType1::CLlcpSocketType1()
+    CLlcpSocketType2::CLlcpSocketType2()
 */
-/*
 CLlcpSocketType2::CLlcpSocketType2( )
     : iLlcp( NULL ),
     iLocalConnection(NULL),
     iRemoteConnection(NULL)
     {
     }
-*/
-
 
 /*!
     CLlcpSocketType1::NewLC()
@@ -786,16 +806,12 @@ CLlcpSocketType2* CLlcpSocketType2::NewLC()
     return self;
     }
 
-
-
 CLlcpSocketType2* CLlcpSocketType2::NewL()
     {
     CLlcpSocketType2* self = CLlcpSocketType2::NewLC();
     CleanupStack::Pop( self );
     return self;
     }
-
-
 
 /*!
     Connects to the service identified by the URI \a serviceUri (on \a target).
@@ -811,7 +827,8 @@ void CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
 */
 void CLlcpSocketType2::DisconnectFromService()
     {   
-        Cleanup();
+    iLocalConnection->Disconnect();
+    Cleanup();
     }
 
 /*!
@@ -846,11 +863,12 @@ void CLlcpSocketType2::CreateLocalConnection(const TDesC8& aServiceName)
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
-TInt CLlcpSocketType2::WriteDatagram(const TDesC8& aData)
+TInt CLlcpSocketType2::StartWriteDatagram(const TDesC8& aData)
     {
     TInt val = -1;
     TInt error = KErrNone;
    
+    //asynchronous transfer
     error = iLocalConnection->Transfer( aData);
     if (KErrNone == error)
         {
@@ -859,12 +877,17 @@ TInt CLlcpSocketType2::WriteDatagram(const TDesC8& aData)
     return val; 
     }
 
-TInt CLlcpSocketType2::ReadDatagram(TInt64 aMaxSize)
+
+/*!
+    Receive the datagram at aData from the service that this socket is connected to.
+    Returns the number of bytes receive on success; otherwise return -1;
+*/
+TInt CLlcpSocketType2::StartReadDatagram(TInt64 aMaxSize)
     {
     TInt val = -1;
     TInt error = KErrNone;
     
-    // Start receiving data again
+    //asynchronous receive
     error = iRemoteConnection->Receive(aMaxSize);
     if (KErrNone == error)
         {
@@ -872,7 +895,27 @@ TInt CLlcpSocketType2::ReadDatagram(TInt64 aMaxSize)
         }
     return val;    
     }
-    
+
+
+bool CLlcpSocketType2::TransferCompleted()
+    {
+    return iLocalConnection->TransferCompleted();
+    }
+
+bool CLlcpSocketType2::ReceiveData(TDesC8& aData)
+    {
+      if (ReceiveCompleted())
+          {
+          aData = iLocalConnection->ReceiveData();
+          return ETrue;
+          }
+      return EFalse;
+    }
+
+bool CLlcpSocketType2::ReceiveCompleted()
+    {
+    return iLocalConnection->ReceiveCompleted();
+    }
 
 
 /*!
@@ -903,14 +946,6 @@ void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aCon
           delete aConnection;
           }
     }
-
-
-
-COwnLlcpConnOriented* CLlcpSocketType2::RemoteConnection() const 
-    {
-    return iRemoteConnection;
-    }
-
 
 /*!
     Cancel the Receive/Transfer and destroy the local/remote connection.
