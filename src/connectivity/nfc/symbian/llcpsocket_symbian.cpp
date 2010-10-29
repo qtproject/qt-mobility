@@ -125,7 +125,7 @@ bool CLlcpSocketType1::Bind(TInt8 portNum)
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
-TInt CLlcpSocketType1::WriteDatagram(const TDesC8& aData,TInt8 aPortNum)
+TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     {
     TInt val = -1;
     TInt error = KErrNone;
@@ -140,7 +140,7 @@ TInt CLlcpSocketType1::WriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     }
 
 
-TInt CLlcpSocketType1::ReadDatagram(TInt64 aMaxSize)
+TInt CLlcpSocketType1::StartReadDatagram(TInt64 aMaxSize)
     {
     TInt val = -1;
     TInt error = KErrNone;
@@ -153,6 +153,28 @@ TInt CLlcpSocketType1::ReadDatagram(TInt64 aMaxSize)
         }
     return val;    
     }
+
+
+bool CLlcpSocketType1::TransferCompleted()
+    {
+    return iLocalConnection->TransferCompleted();
+    }
+
+bool CLlcpSocketType1::ReceiveData(TDesC8& aData)
+    {
+      if (ReceiveCompleted())
+          {
+          aData = iLocalConnection->ReceiveData();
+          return ETrue;
+          }
+      return EFalse;
+    }
+
+bool CLlcpSocketType1::ReceiveCompleted()
+    {
+    return iLocalConnection->ReceiveCompleted();
+    }
+
     
 
 /*!
@@ -357,6 +379,21 @@ TInt COwnLlcpConnLess::Receive(TInt64 aMaxSize)
 void COwnLlcpConnLess::ReceiveCancel()
     {
     Cancel();
+    }
+
+bool COwnLlcpConnLess::ReceiveCompeleted()
+    {
+    iActionState != EReceiving ? ETrue : EFalse;    
+    }
+
+bool COwnLlcpConnLess::TransferCompleted()
+    {
+    iActionState != ETransmitting ? ETrue : EFalse;
+    }
+
+const TDesC& COwnLlcpConnLess::ReceiveData() const
+    {
+    return iReceiveBuf;
     }
    
 
