@@ -67,10 +67,6 @@ private:
    CLlcpProvider* iLlcp;
    
    bool iSocketListening;
-   
-   //not own
-   QNearFieldManagerPrivateImpl& iCallback;
-   
    };
     
 #endif /* LLCPSERVER_SYMBIAN_H_ */

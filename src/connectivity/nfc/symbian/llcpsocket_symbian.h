@@ -42,9 +42,13 @@ public:
    ~CLlcpSocketType1();
    
 public:    
-   TInt WriteDatagram(const TDesC8& aData,TInt8 portNum);
-   TInt ReadDatagram(TInt64 aMaxSize);
+   TInt StartWriteDatagram(const TDesC8& aData,TInt8 portNum);
+   TInt StartReadDatagram(TInt64 aMaxSize);
    bool Bind(TInt8 portNum);
+   
+   bool TransferCompleted();
+   bool ReceiveCompleted();
+   bool ReceiveData(TDesC8& aData);
    
 private: // From MLlcpConnLessListener
     void FrameReceived( MLlcpConnLessTransporter* aConnection );
@@ -212,6 +216,11 @@ public:
     * Cancels COwnLlcpConnection::Receive() request.
     */ 
    void ReceiveCancel();
+   
+   bool ReceiveCompeleted();
+   bool TransferCompleted();
+   
+   const TDesC& ReceiveData() const;
    
 public: // From CActive
     void RunL();
