@@ -79,12 +79,12 @@
 #include <qnumeric.h>
 #include <QXmlStreamReader>
 #include <QStringList>
-//#ifdef QSPARQL
+
 #include <QtSparql/QSparqlConnection>
 #include <QtSparql/QSparqlConnectionOptions>
 #include <QtSparql/QSparqlQuery>
 #include <QtSparql/QSparqlResult>
-//#endif
+
 QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -463,91 +463,31 @@ QSparqlResult* executeQuery(QSparqlConnection *conn, const QString &statement, c
    }
    return queryResult;
 }
-/*
-    enum {Prepare =0 , Execute=1};
-    for(int stage=Prepare; stage <= Execute; ++stage) {
-        if ( stage == Prepare) {
-            if (bindValues.count() != 0)
-                success = query->prepare(statement);
-            else
-                 success = true;
-        }
-        else { // stage == Execute
-            if (bindValues.count() != 0)
-                success = query->exec();
-            else
-                success = query->exec(statement);
-        }
 
-        if (!success) {
-            QString errorText;
-            errorText = "Problem: Could not %1 statement: %2"
-                "Reason: %3"
-                "Parameters: %4\n";
-            QString parameters;
-
-            QStringList keys = bindValues.keys();
-            if (keys.count() > 0) {
-                for(int i = 0; i < keys.count(); ++i) {
-                    parameters.append(QString("\n\t[:") + keys.at(i) + "]: " + bindValues.value(keys.at(i)).toString());
-                }
-            } else {
-                parameters = "None";
-            }
-
-            int result = query->lastError().number();
-            if (result == 26 || result == 11) {//SQLILTE_NOTADB || SQLITE_CORRUPT
-                *error = QLandmarkManager::UnknownError;
-            } else if ( result == 8) {//SQLITE_READONLY
-                *error = QLandmarkManager::PermissionsError;
-            }
-            else {
-                *error = QLandmarkManager::UnknownError;
-            }
-
-            *errorString =  errorText.arg(stage == Prepare ?"prepare":"execute")
-                                     .arg(statement)
-                                     .arg(query->lastError().text())
-                                     .arg(parameters);
-
-            query->finish();
-            query->clear();
-            return false;
-        }
-
-        QStringList keys = bindValues.keys();
-        if (stage == Prepare && bindValues.count()!=0) {
-            foreach(const QString &key, keys)
-                query->bindValue(QString(":") + key,bindValues.value(key));
-        }
-    }
-
-    *error = QLandmarkManager::NoError;
-    *errorString ="";
-    return true;
-}
-*/
 QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 {
     Q_UNUSED(radius);
     Q_UNUSED(coord);
-    return "select ?u ?latitude ?longitude { ?u a slo:GeoLocation ; "
+    return "select ?u ?latitude ?longitude { ?g a slo:GeoLocation ; "
        "nie:title ?name ; "
        "slo:latitude ?latitude ; "
-       "slo:longitude ?longitude . }";
+       "slo:longitude ?longitude . "
+       "?u slo:location ?g }";
 }
 
 QString landmarkIdsDefaultQueryString()
 {
-     return "select ?u ?latitude ?longitude { ?u a slo:GeoLocation ; "
-        "nie:title ?name ; "
+     return "select ?u ?latitude ?longitude { ?g a slo:GeoLocation ; "
         "slo:latitude ?latitude ; "
-        "slo:longitude ?longitude . }";
-}
+        "slo:longitude ?longitude . "
+        "?u slo:location ?g }";
+ }
 
 QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
 {
-    QString queryString = "select ?u ?latitude ?longitude {?u a slo:GeoLocation ; nie:title ?name ; slo:latitude ?latitude ; slo:longitude ?longitude . FILTER (?name IN ('u',";
+    QString queryString = "select ?u ?latitude ?longitude "
+    "{?g a slo:GeoLocation ; nie:title ?name ; slo:latitude ?latitude ; "
+    "slo:longitude ?longitude . ?u slo:location ?g . FILTER (?name IN ('u',";
     foreach(const QLandmarkId &id, ids) {
         queryString += "'";
         queryString += id.localId() += "',";
@@ -562,10 +502,9 @@ QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
 QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
 {
     if (filter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
-        //return QString("select ?u {?u a slo:GeoLocation ; nie:title ?name . FILTER (?name IN ('u','%1'))}").arg(filter.name());
-        return QString("select ?u  {?u a slo:GeoLocation ; nie:title ?name . FILTER regex( ?name, '%1') }").arg(filter.name());
+        return QString("select ?u  {?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER regex( ?name, '%1') }").arg(filter.name());
     else
-        return QString("select ?u  {?u a slo:GeoLocation ; nie:title ?name . FILTER regex( ?name, '%1', 'i') }").arg(filter.name());
+        return QString("select ?u  {?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER regex( ?name, '%1', 'i') }").arg(filter.name());
 }
 
 QString landmarkIdsCategoryQueryString(const QLandmarkCategoryFilter &filter)
@@ -585,7 +524,8 @@ QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
     //note: it is already assumed tly > bry
     bool lonWrap = (tlx > brx);
 
-    QString queryString = "select ?u ?latitude ?longitude {?u a slo:GeoLocation ; nie:title ?name ; slo:latitude ?latitude ; slo:longitude ?longitude . FILTER ((";
+    QString queryString = "select ?u ?latitude ?longitude {?g a slo:GeoLocation ; nie:title ?name ; "
+        "slo:latitude ?latitude ; slo:longitude ?longitude . ?u slo:location ?g . FILTER ((";
 
     //TODO: handle case where the poles are covered by the bounding box
 
@@ -623,63 +563,25 @@ bool removeLandmarkHelper(const QLandmarkId &landmarkId,
     }
     QSparqlConnection conn("QTRACKER");
     QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(
-            "delete { ?:landmark_uri a rdfs:Resource . }",
-             QSparqlQuery::DeleteStatement);
+            "delete { ?pa a nco:PostalAddress . }"
+            "WHERE { ?g slo:postalAddress ?pa . "
+            "?:landmark_uri slo:location ?g . }"
+            "delete { ?g a slo:GeoLocation . }"
+            "WHERE { ?:landmark_uri slo:location ?g . } "
+            "delete { ?:landmark_uri a slo:Landmark . }",
+            QSparqlQuery::DeleteStatement);
 
     qsparqlDeleteQuery.unbindValues();
-    qsparqlDeleteQuery.bindValue("landmark_uri", landmarkId.localId());
+    qsparqlDeleteQuery.bindValue("landmark_uri", QUrl(landmarkId.localId()));
 
-    bool ok = conn.isValid();
-    Q_UNUSED(ok);
     QSparqlResult* deleteResult = conn.exec(qsparqlDeleteQuery);
     deleteResult->waitForFinished();
-
     if (deleteResult->hasError()) {
         *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Unable to execute remove landmark statement.");
+        *errorString = QString("Unable to execute remove landmark statement.2");
         return false;
     }
     return true;
-    /*
-    QSqlDatabase db = QSqlDatabase::database(connectionName);
-
-    QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
-    QSqlQuery query(q0, db);
-    if (!query.next()) {
-        if (error)
-            *error = QLandmarkManager::DoesNotExistError;
-         if (errorString)
-            *errorString = QString("Landmark with local id, %1, does not exist in database").arg(landmarkId.localId());
-        return false;
-    }
-
-    QStringList queryStrings;
-    queryStrings << "DELETE FROM landmark WHERE id = :lmId;";
-    queryStrings << "DELETE FROM landmark_category WHERE landmarkId = :lmId;";
-    queryStrings << "DELETE FROM landmark_attribute WHERE landmarkId=:lmId";
-
-    foreach(const QString &queryString, queryStrings) {
-        if(!query.prepare(queryString)) {
-            *error = QLandmarkManager::UnknownError;
-            *errorString = QString("Unable to prepare statement: %1\nReason:%2")
-                           .arg(query.lastQuery())
-                           .arg(query.lastError().text());
-            return false;
-        }
-
-        query.bindValue(":lmId", landmarkId.localId());
-
-        if (!query.exec()) {
-                *error = QLandmarkManager::UnknownError;
-                *errorString = QString("Unable to execute statement: %1\nReason: %2")
-                               .arg(query.lastQuery())
-                               .arg(query.lastError().text());
-            return false;
-        }
-
-    }
-    return true;
-    */
 }
 
 bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory &cat2) {
@@ -736,9 +638,9 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
     if (queryRun && queryRun->isCanceled) {
         return QLandmark();
     }
-    QString queryString = QString("select ?name ?latitude ?longitude ?altitude {?u a slo:GeoLocation ; "
+    QString queryString = QString("select ?name ?latitude ?longitude {?g a slo:GeoLocation ; "
         "nie:title ?name ; slo:latitude ?latitude ; "
-        "slo:longitude ?longitude . OPTIONAL { ?u slo:altitude ?altitude } . FILTER regex( ?u, '%1') }").arg(landmarkId.localId());
+        "slo:longitude ?longitude . ?u slo:location ?g . FILTER regex( ?u, '%1') }").arg(landmarkId.localId());
 
    qWarning() << "Kysely1: " << queryString;
     QSparqlQuery qsparqlQuery = QSparqlQuery(queryString, QSparqlQuery::SelectStatement);
@@ -969,10 +871,9 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 }
 
                 if (selectAll) {
-                    //queryString = QString("SELECT id FROM landmark");
-                    queryString = QString("select ?u { ?u a slo:GeoLocation . }");
+                    queryString = QString("select ?u { ?u a slo:Landmark . }");
                     break;
-                } /*else {
+                } else {
                     if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                         QStringList lmLocalIds;
                         if (attributeFilter.attributeKeys().contains("name")) {
@@ -989,7 +890,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                                 lmLocalIds << id.localId();
                             }
                             filterKeys.removeAll("name");
-                        } else {
+                        }
+                        /*} else {
                             bindValues.insert("key", filterKeys.at(0));
                             queryString = QString("SELECT landmarkId FROM %1 WHERE key = :key");
                             queryString = queryString.arg("landmark_attribute");
@@ -1003,17 +905,20 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                                 lmLocalIds << query.value(0).toString();
                             }
                         }
-
+                        */
+                        /* jv
                         if (filterKeys.count() > 0) {
                             QLandmarkId id;
                             id.setManagerUri(managerUri);
 
-                            queryString = QString("SELECT key, value FROM %1 WHERE landmarkId=:lmId");
-                            queryString = queryString.arg("landmark_attribute");
+                            //queryString = QString("SELECT key, value FROM %1 WHERE landmarkId=:lmId");
+                            //queryString = queryString.arg("landmark_attribute");
+
 
                             for (int i=0; i < lmLocalIds.count(); ++i) {
                                 bindValues.clear();
                                 bindValues.insert("lmId", lmLocalIds.at(i));
+
                                 if (!executeQuery(&query, queryString,
                                                   bindValues, error, errorString)) {
                                     return QList<QLandmarkId>();
@@ -1071,6 +976,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                                 result << id;
                             }
                         }
+                        */
+                    /*
                     } else {
                         if (attributeFilter.attributeKeys().contains("name")) {
                             QLandmarkNameFilter nameFilter;
@@ -1137,9 +1044,9 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                             landmarkId.setManagerUri(managerUri);
                             if (!result.contains(landmarkId))
                                 result << landmarkId;
-                        }
+                        }*/
                     }
-                }*/
+                }
             }
         idsFound = true;
         break;
@@ -1154,43 +1061,44 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             }
 
             //queryString = QString("SELECT id FROM landmark WHERE ");
-            queryString = QString("select ?u { ?u a slo:GeoLocation ; nie:title ?name . FILTER  }");
+            queryString = QString("select ?u { ?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER ");
             QString nameKey = "?name";
             QString nameValue = nameFilter.name();
+
+            // FILTER regex( ?name, '%1', 'i') }").arg(filter.name());
 
             if (nameValue.isEmpty()) {
                     if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly
                         || nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString) {                     
-                        queryString.append(nameKey + " IS NULL ");
+                        queryString.append("isBlank(?name) }" );
                     } else {
-                        queryString = QString("select ?u { ?u a slo:GeoLocation . }");
-                        //queryString = "SELECT id from landmark ";
+                        queryString = QString("select ?u { ?u a slo:Landmark . }");
                     }
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
-                queryString.append(nameKey + " = :" + nameKey + " ");
-                bindValues.insert(nameKey, nameValue);
+                queryString.append("regex( ?name, '%1' ) }").arg(nameValue);
             } else {
-                queryString.append(nameKey + " LIKE :" + nameKey + " ");
-
+                queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
+                //queryString.append(nameKey + " LIKE :" + nameKey + " ");
+               /*
                 if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith)
-                    bindValues.insert(nameKey, QString("%") + nameValue );
+                    //bindValues.insert(nameKey, QString("%") + nameValue );
                 else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith)
-                    bindValues.insert(nameKey, nameValue + "%");
+                    //bindValues.insert(nameKey, nameValue + "%");
                 else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains)
-                    bindValues.insert(nameKey, QString("%") + nameValue + "%");
+                    //bindValues.insert(nameKey, QString("%") + nameValue + "%");
                 else if (nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString)
-                    bindValues.insert(nameKey, nameValue);
+                    //bindValues.insert(nameKey, nameValue);
+                */
             }
             break;
         }
     case QLandmarkFilter::LandmarkIdFilter: {
             QLandmarkIdFilter idFilter = filter;
-                //provide a query string exeecute so to that sqlite can handle sorting by name
+                //provide a query string exeecute so to that qsparql can handle sorting by name
                 queryString = landmarkIdsQueryString(idFilter.landmarkIds());
             break;
         }
     case QLandmarkFilter::CategoryFilter: {
-        //QSqlQuery query(db);
         QMap<QString, QVariant> bindValues;
         QLandmarkCategoryFilter categoryFilter = filter;
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
@@ -1665,11 +1573,101 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
     }
-
     bool update = landmark->landmarkId().isValid();
-    QSparqlConnection conn("QTRACKER");
+
+    if (update) {
+        bool removeResult = removeLandmarkHelper(landmark->landmarkId(), error, errorString, managerUri);
+        if(!removeResult) {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = "Unable to execute update statement. ";
+            return false;
+        }
+    }
+
+    QSparqlConnection conn("QTRACKER"); 
     QString queryString;
 
+    queryString.append("insert { ?:uri_value a slo:Landmark ");
+
+    if (!landmark->description().isEmpty()) {
+        queryString.append("; nie:description \'");
+        queryString.append(landmark->description());
+        queryString.append("\' ");
+    }
+    if (!landmark->url().toString().isEmpty()) {
+        queryString.append("; slo:url \'");
+        queryString.append(landmark->url().toString());
+        queryString.append("\' ");
+    }
+    if (!landmark->iconUrl().toString().isEmpty()) {
+        queryString.append("; slo:iconUrl \'");
+        queryString.append(landmark->iconUrl().toString());
+        queryString.append("\' ");
+    }
+    /*
+    queryString.append("; slo:hasContact _:c . ");
+    queryString.append("_:c a nco:Contact ");
+   */
+    queryString.append("; slo:location _:x . ");
+    queryString.append("_:x a slo:GeoLocation ");
+
+    if (!landmark->name().isEmpty()) {
+        queryString.append("; nie:title \'");
+        queryString.append(landmark->name());
+        queryString.append("\' ");
+    }
+    QGeoCoordinate geoCoord;
+    geoCoord = landmark->coordinate();
+    if (!qIsNaN(geoCoord.latitude())) {
+        queryString.append("; slo:latitude ");
+        queryString.append(QString::number(geoCoord.latitude()));
+        queryString.append(" ");
+    }
+    if (!qIsNaN(geoCoord.longitude())) {
+        queryString.append("; slo:longitude ");
+        queryString.append(QString::number(geoCoord.longitude()));
+        queryString.append(" ");
+    }
+    if (!qIsNaN(geoCoord.altitude())) {
+        queryString.append("; slo:altitude ");
+        queryString.append(QString::number(geoCoord.altitude()));
+        queryString.append(" ");
+    }
+    if (!qIsNaN(landmark->radius())) {
+        queryString.append("; slo:radius ");
+        queryString.append(QString::number(landmark->radius()));
+        queryString.append(" ");
+    }
+
+    queryString.append("; slo:postalAddress _:pa . ");
+    queryString.append("_:pa a nco:PostalAddress ");
+
+    if (!landmark->address().country().isEmpty()) {
+        queryString.append("; nco:country \'");
+        queryString.append(landmark->address().country());
+        queryString.append("\' ");
+    }
+    if (!landmark->address().county().isEmpty()) {
+        queryString.append("; nco:region \'");
+        queryString.append(landmark->address().county());
+        queryString.append("\' ");
+    }
+    if (!landmark->address().city().isEmpty()) {
+        queryString.append("; nco:locality \'");
+        queryString.append(landmark->address().city());
+        queryString.append("\' ");
+    }
+    if (!landmark->address().street().isEmpty()) {
+        queryString.append("; nco:streetAddress \'");
+        queryString.append(landmark->address().street());
+        queryString.append("\' ");
+    }
+    if (!landmark->address().postcode().isEmpty()) {
+        queryString.append("; nco:postalcode \'");
+        queryString.append(landmark->address().postcode());
+        queryString.append("\' ");
+    }
+   /*
    queryString.append("insert { ?:uri_value a slo:GeoLocation ");
     if (!landmark->name().isEmpty()) {
         queryString.append("; nie:title \'");
@@ -1700,14 +1698,14 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
    //         queryString.append("; ?:uri_value slo:belongsToCategory ");
    //         queryString.append(id.localId());
    //         queryString.append(" ");
-   /*
-                queryString.append("; slo:belongsToCategory _:ca . ");
-                queryString.append("_:ca a slo:LandmarkCategory ; ");
-                queryString.append("slo:LandmarkCategory \'");
-                queryString.append("http://www.tracker-project.org/temp/slo#predefined-landmark-category-accommodation");
+
+     //           queryString.append("; slo:belongsToCategory _:ca . ");
+     //           queryString.append("_:ca a slo:LandmarkCategory ; ");
+     //           queryString.append("slo:LandmarkCategory \'");
+     //           queryString.append("http://www.tracker-project.org/temp/slo#predefined-landmark-category-accommodation");
                 //queryString.append(id.localId());
-                queryString.append("\' ");
-     */
+      //          queryString.append("\' ");
+
         //} else {
         //    landmark->removeCategoryId(id);
        // }
@@ -1733,6 +1731,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
                 queryString.append(QString::number(landmark->radius()));
                 queryString.append(" ");
             }
+            */
             /*
         } else if (key.compare("phoneNumber", Qt::CaseSensitive) == 0) {
             if (!landmark->phoneNumber().isEmpty()) {
@@ -1743,7 +1742,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
                 queryString.append("\' ");
             }
             */
-        }
+    //    }
             /*
         } else if (key.compare("url", Qt::CaseSensitive) ==0 ) {
             if (!landmark->url().toString().isEmpty()) {
@@ -1768,19 +1767,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             //return landmark->address().postcode();
         }
         */
-        /*
-        if (!query.prepare("REPLACE INTO landmark_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
-            *error = QLandmarkManager::UnknownError;
-            *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
-                           .arg(query.lastQuery()).arg(query.lastError().text());
-            return false;
-        }
-
-        query.bindValue(":lmId", landmark->landmarkId().localId());
-        query.bindValue(":key", key);
-        query.bindValue(":value", landmark->attribute(key));
-        */
-    }
+    //}
 
     queryString.append(". }");
     qWarning() << queryString;
@@ -1795,40 +1782,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         uriValue = conn.createUrn("uri_value");
         qsparqlInsertQuery.bindValue(uriValue);
     }
-    /*
-    QSparqlQuery qsparqlInsertQuery = QSparqlQuery(
-            "insert { ?:uri_value a slo:GeoLocation ; "
-            "nie:title ?:name_value ; "
-            "nie:description ?:description_value ; "
-            "slo:latitude ?:latitude_value ; "
-            "slo:longitude ?:longitude_value ; "
-            "slo:altitude ?:altitude_value. }",
-             QSparqlQuery::InsertStatement);
 
-    qsparqlInsertQuery.unbindValues();
-    QSparqlBinding uriValue;
-    if (update) {
-        qsparqlInsertQuery.bindValue( "uri_value",  landmark->landmarkId().localId());
-    } else {
-        uriValue = conn.createUrn("uri_value");
-        qsparqlInsertQuery.bindValue(uriValue);
-    }
-    if (!landmark->name().isEmpty())
-        qsparqlInsertQuery.bindValue("name_value", landmark->name());
-    if (!landmark->description().isEmpty())
-        qsparqlInsertQuery.bindValue("description_value", landmark->description());
-    QGeoCoordinate geoCoord;
-    geoCoord = landmark->coordinate();
-    if (!qIsNaN(geoCoord.latitude()))
-        qsparqlInsertQuery.bindValue("latitude_value", geoCoord.latitude() );
-    if (!qIsNaN(geoCoord.longitude()))
-        qsparqlInsertQuery.bindValue("longitude_value", geoCoord.longitude());
-    if (!qIsNaN(geoCoord.altitude()))
-        qsparqlInsertQuery.bindValue("altitude_value", geoCoord.altitude());
-    else
-        qsparqlInsertQuery.bindValue("altitude_value", double(0.0));
-
-*/
     QSparqlResult* insertResult = conn.exec(qsparqlInsertQuery);
     insertResult->waitForFinished();
 
@@ -1845,186 +1799,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             *errorString = "Unable to execute insert statement. ";
             return false;
     }
-
-  //return true;
-   //#endif
-/*
-    QSqlDatabase db = QSqlDatabase::database(connectionName);
-
-    QHash<QString, QVariant> bindValues;
-
-    if (update) {
-        bindValues.insert("id",landmark->landmarkId().localId());
-
-        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->landmarkId().localId());
-        QSqlQuery query0(q0, db);
-        if (!query0.next()) {
-            if (error)
-                *error = QLandmarkManager::DoesNotExistError;
-            if (errorString)
-                *errorString = "Landmark id does not exist in this landmark manager.";
-
-            return false;
-        }
-    }
-
-    QStringList landmarkAttributes = landmark->attributeKeys();
-    foreach (const QString &key, landmarkAttributes) {
-        if (!coreAttributes.contains(key) && !coreGenericAttributes.contains(key)) {
-            *error = QLandmarkManager::NotSupportedError;
-            *errorString = QString("The manager does not recognise the following key:") + key;
-            return false;
-        }
-    }
-
-    if (!landmark->name().isEmpty())
-        bindValues.insert("name", landmark->name());
-    else
-        bindValues.insert("name", QVariant());
-
-    QGeoCoordinate coord;
-    coord = landmark->coordinate();
-    if (!qIsNaN(coord.latitude()))
-        bindValues.insert("latitude", coord.latitude());
-    else
-        bindValues.insert("latitude", QVariant());
-
-    if (!qIsNaN(coord.longitude()))
-        bindValues.insert("longitude", coord.longitude());
-    else
-        bindValues.insert("longitude", QVariant());
-
-    if (!qIsNaN(coord.altitude()))
-        bindValues.insert("altitude", coord.altitude());
-    else
-        bindValues.insert("altitude",QVariant());
-
-    QString q1;
-    QStringList keys = bindValues.keys();
-
-    if (update) {
-        QStringList placeholderKeys = keys;
-        for (int i=0; i < placeholderKeys.count(); ++i) {
-            placeholderKeys[i] = placeholderKeys[i] + "= :" + placeholderKeys[i];
-        }
-        q1 = QString("UPDATE landmark SET %1 WHERE id = :lmId;").arg(placeholderKeys.join(","));
-        bindValues.insert("lmId", landmark->landmarkId().localId());
-    } else {
-        q1 = QString("REPLACE INTO landmark (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(", :")));
-    }
-
-    QSqlQuery query1(db);
-
-    if (!query1.prepare(q1)) {
-        *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Unable to prepare statment: ") + q1 + "\nReason:" + query1.lastError().text();
-        return false;
-    }
-
-    foreach(const QString &key, bindValues.keys()) {
-        query1.bindValue(QString(":").append(key), bindValues.value(key));
-    }
-
-    if (!query1.exec()) {
-        *error = QLandmarkManager::UnknownError;
-        *errorString = "Unable to execute statment: " + q1 + "\nReason:" + query1.lastError().text();
-        return false;
-    }
-
-    QLandmarkId id;
-    id.setManagerUri(managerUri);
-    if (update)
-        id.setLocalId(landmark->landmarkId().localId());
-    else
-        id.setLocalId(query1.lastInsertId().toString());
-
-    QStringList lmCats;
-
-    for (int i = landmark->categoryIds().size() - 1; i >= 0; --i) {
-        QLandmarkCategoryId id = landmark->categoryIds().at(i);
-        if (id.managerUri() == managerUri)
-            lmCats << id.localId();
-        else
-            landmark->removeCategoryId(id);
-    }
-*/
-  /*
-
-
-   return QString("select ?u {?u slo:belongsToCategory '%1' . }").arg(filter.categoryId().localId());
-
-
-    QStringList queries;
-
-    QString queryString;
-
-    QSqlQuery catQuery(db);
-    for (int i=0;i < lmCats.size(); ++i) {
-        queryString = QString("SELECT id FROM category WHERE id = %1").arg(lmCats.at(i));
-        if (!catQuery.exec(queryString)) {
-            return false;
-        }
-
-        if (!catQuery.next()) {
-            if (error)
-                *error = QLandmarkManager::BadArgumentError;
-            if (errorString)
-                *errorString = "Landmark contains a category id that does not exist";
-            return false;
-        }
-    }
-    catQuery.finish();
-    */
-/*
-    queries << "CREATE TEMP TABLE IF NOT EXISTS lc_refresh (i INTEGER);";
-
-    for (int i = 0; i < lmCats.size(); ++i) {
-        queries << QString("INSERT INTO lc_refresh (i) VALUES (%1);").arg(lmCats.at(i));
-    }
-
-    queries << QString("DELETE FROM landmark_category WHERE landmarkId = %1 AND categoryId NOT IN lc_refresh;").arg(id.localId());
-    queries << QString("REPLACE INTO landmark_category SELECT %1, i FROM lc_refresh;").arg(id.localId());
-    queries << "DROP TABLE IF EXISTS lc_refresh;";
-
-    for (int i = 0; i < queries.size(); ++i) {
-        QSqlQuery query(db);
-        if (!query.exec(queries.at(i))) {
-            qWarning() << query.lastError().databaseText();
-            *error = QLandmarkManager::UnknownError;
-            *errorString = "Unable to execute statment: " + query.lastQuery() + "\nReason:" + query.lastError().text();
-            return false;
-        }
-    }
-
-    if (!update) {
-        landmark->setLandmarkId(id);
-    }
-
-    QStringList attributeKeys = coreGenericAttributes;
-    QSqlQuery query(db);
-
-    foreach(const QString &key, attributeKeys) {
-        if (!landmark->attributeKeys().contains(key))
-            continue;
-        if (!query.prepare("REPLACE INTO landmark_attribute (landmarkId,key,value) VALUES(:lmId,:key,:value)")) {
-            *error = QLandmarkManager::UnknownError;
-            *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
-                           .arg(query.lastQuery()).arg(query.lastError().text());
-            return false;
-        }
-
-        query.bindValue(":lmId", landmark->landmarkId().localId());
-        query.bindValue(":key", key);
-        query.bindValue(":value", landmark->attribute(key));
-
-        if (!query.exec()) {
-            *error = QLandmarkManager::UnknownError;
-            *errorString = QString("Unable to execute statement: %1\nReason:%2")
-                           .arg(query.lastQuery()).arg(query.lastError().text());
-            return false;
-        }
-    }
-*/
  return true;
 }
 
@@ -2204,11 +1978,6 @@ QList<QLandmarkCategoryId> DatabaseOperations::categoryIds(const QLandmarkNameSo
     QList<QLandmarkCategoryId> result;
 
     QString uri = managerUri;
-    //QSqlDatabase db = QSqlDatabase::database(connectionName);
-
-    //QSqlQuery query(db);
-    //QString queryString("SELECT id FROM category ORDER BY name ");
-
     QString queryString = QString("select ?u {?u a slo:LandmarkCategory ; nie:title ?name . } ORDER BY");
     //QSparqlConnection conn("QTRACKER");
 
@@ -2290,15 +2059,6 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
     }
 
     QLandmarkCategory cat;
-
-    QStringList columns;
-    columns << "name";
-
-    //QSqlDatabase db = QSqlDatabase::database(connectionName);
-    //QString q1 = QString("SELECT %1 FROM category WHERE id = %2;").arg(columns.join(",")).arg(landmarkCategoryId.localId());
-    //QSqlQuery query(q1, db);
-
-    //QString q1 = QString("select ?name {?u a slo:LandmarkCategory ; nie:title ?name . FILTER regex( ?u, '%1') }").arg(landmarkCategoryId.localId());
     QString q1 = QString("select ?name ?iconUrl {?u a slo:LandmarkCategory ; nie:title ?name . OPTIONAL { ?u nie:url ?iconUrl } . FILTER regex( ?u, '%1') }").
         arg(landmarkCategoryId.localId());
 
