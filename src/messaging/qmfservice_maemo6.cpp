@@ -289,8 +289,11 @@ bool QMFService::compose(const QMessage &message)
     setError(QMessageManager::NoError);
 
     QStringList arguments;
-    arguments  << "--subject" << message.subject()
-            << "--body" << message.textContent();
+    if (message.subject().size())
+        arguments << "--subject" << message.subject();
+
+    if (message.textContent().size())
+        arguments << "--body" << message.textContent();
 
     if (message.cc().size())
         arguments << "--cc" << MessagingHelper::addressListToString(message.cc());
