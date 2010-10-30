@@ -188,11 +188,21 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     else
       QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
     //    qDebug() << "event_type:"  << ev.fld_event_type << ev.fld_event_type_id << "Outgoing:" << ev.fld_outgoing << " Folder:" << message.standardFolder();
-    message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
-    QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
-    QMessageAddressList messageAddresslist;
-    messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
-    message.setTo(messageAddresslist);
+
+    if (ev.fld_outgoing) {
+        // Outgoing message
+        message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
+        QMessagePrivate::setSenderName(message, QString(ev.fld_local_uid));
+        message.setTo(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
+    } else {
+        // Incoming message
+        message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
+        QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
+        QMessageAddressList messageAddresslist;
+        messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
+        message.setTo(messageAddresslist);
+    }
+
     message.setBody(QString::fromUtf8(ev.fld_free_text));
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_id = QMessageId(QString("el")+QString::number(ev.fld_id));
@@ -284,11 +294,21 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
 	 if (ev.fld_outgoing) QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
 	 else
 	   QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
-         message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
-         QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
-         QMessageAddressList messageAddresslist;
-         messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
-         message.setTo(messageAddresslist);
+
+         if (ev.fld_outgoing) {
+             // Outgoing message
+             message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
+             QMessagePrivate::setSenderName(message, QString(ev.fld_local_uid));
+             message.setTo(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
+         } else {
+             // Incoming message
+             message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
+             QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
+             QMessageAddressList messageAddresslist;
+             messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
+             message.setTo(messageAddresslist);
+         }
+
          message.setBody(QString::fromUtf8(ev.fld_free_text));
          QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
          privateMessage->_id = id;
