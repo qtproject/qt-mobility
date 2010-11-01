@@ -39,71 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef QGYROSCOPE_H
+#define QGYROSCOPE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qsensor.h"
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
+QTM_BEGIN_NAMESPACE
 
+class QGyroscopeReadingPrivate;
 
-QT_BEGIN_HEADER
+class Q_SENSORS_EXPORT QGyroscopeReading : public QSensorReading
+{
+    Q_OBJECT
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
+    DECLARE_READING(QGyroscopeReading)
+public:
+    qreal x() const;
+    void setX(qreal x);
 
-QT_BEGIN_NAMESPACE
+    qreal y() const;
+    void setY(qreal y);
 
+    qreal z() const;
+    void setZ(qreal z);
+};
 
-class QSoundEffectPrivate : public QObject
+class Q_SENSORS_EXPORT QGyroscopeFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QGyroscopeReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QGyroscopeReading*>(reading)); }
+};
+
+class Q_SENSORS_EXPORT QGyroscope : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
-
-    static QStringList supportedMimeTypes();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
-    void stop();
-
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
-
-private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+    explicit QGyroscope(QObject *parent = 0) : QSensor(QGyroscope::type, parent) {}
+    virtual ~QGyroscope() {}
+    QGyroscopeReading *reading() const { return static_cast<QGyroscopeReading*>(QSensor::reading()); }
+    static char const * const type;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
-QT_END_HEADER
+#endif
 
-#endif // QSOUNDEFFECT_QMEDIA_H

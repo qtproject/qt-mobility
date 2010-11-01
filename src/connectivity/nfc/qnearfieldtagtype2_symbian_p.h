@@ -57,6 +57,8 @@ public:
     explicit QNearFieldTagType2Symbian(MNearFieldTarget * tag, QObject *parent = 0);
 
     ~QNearFieldTagType2Symbian();
+    
+    QByteArray uid() const;
 
     QByteArray readBlock(quint8 blockAddress);
     bool writeBlock(quint8 blockAddress, const QByteArray &data);

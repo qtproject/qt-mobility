@@ -125,7 +125,8 @@ QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
     QList<QNdefMessage> ndefMessages;
 
     while (!reader.atEnd()) {
-        reader.readNext();
+        if (!reader.readNext())
+            break;
 
         // NDEF Message TLV
         if (reader.tag() == 0x03)

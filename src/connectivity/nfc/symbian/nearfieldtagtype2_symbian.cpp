@@ -50,21 +50,23 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTagType2::CNearFieldTagType2(MNfcTag * aNfcTag) : CActive(EPriorityStandard), iNfcTag(aNfcTag)
+CNearFieldTagType2::CNearFieldTagType2(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : CActive(EPriorityStandard), 
+                                                                                    iNfcTag(aNfcTag),
+                                                                                    iNfcServer(aNfcServer)
     {
     }
 
-CNearFieldTagType2* CNearFieldTagType2::NewLC(MNfcTag * aNfcTag)
+CNearFieldTagType2* CNearFieldTagType2::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType2* self = new (ELeave) CNearFieldTagType2(aNfcTag);
+    CNearFieldTagType2* self = new (ELeave) CNearFieldTagType2(aNfcTag, aNfcServer);
     CleanupStack::PushL(self);
     self->ConstructL();
     return self;
     }
 
-CNearFieldTagType2* CNearFieldTagType2::NewL(MNfcTag * aNfcTag)
+CNearFieldTagType2* CNearFieldTagType2::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType2* self = CNearFieldTagType2::NewLC(aNfcTag);
+    CNearFieldTagType2* self = CNearFieldTagType2::NewLC(aNfcTag, aNfcServer);
     CleanupStack::Pop(); // self;
     return self;
     }

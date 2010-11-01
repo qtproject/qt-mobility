@@ -149,4 +149,5 @@ EXPORTS
 	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 148 NONAME
 	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 149 NONAME
 	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 150 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11backLightOnEv @ 151 NONAME
 

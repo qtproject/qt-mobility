@@ -61,7 +61,7 @@ private:
     void ConstructL();  
     void Cleanup();   
     
-    void CreateLocalConnection(TInt8 portNum);
+    TInt CreateLocalConnection(TInt8 portNum);
     void CreateRemoteConnection(MLlcpConnLessTransporter* aConnection);
     
 private:
@@ -99,7 +99,7 @@ private:
 
 
 /*!
- *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
+ *  CLASS DECLARATION for CLlcpSocketType2 (ConnectOriented Transportation).
  */
 class CLlcpSocketType2 : public CBase
    {
@@ -128,16 +128,16 @@ public:
    bool ReceiveCompleted();
    bool ReceiveData(TDesC8& aData);
    
-public:
-   void CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
-   
 private:
     // Constructor
     CLlcpSocketType2();
     // Second phase constructor
     void ConstructL();   
-    void Cleanup();   
-    void CreateLocalConnection(const TDesC8& aServiceName);
+    void Cleanup();
+ 
+public:
+   TInt CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
+   TInt CreateLocalConnection(const TDesC8& aServiceName);
 
 private:
    /*!
@@ -166,8 +166,6 @@ private:
     *
     * This is used to send data to local device.
     */
-   //COwnLlcpConnLess* iRemoteConnless;
-   
    COwnLlcpConnOriented* iRemoteConnection;   
    
    };

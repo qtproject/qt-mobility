@@ -64,6 +64,9 @@ public:
 public slots:
     void targetDetected(QNearFieldTarget *target);
 
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
+
 private:
     QLabel *m_image;
     QLabel *m_title;

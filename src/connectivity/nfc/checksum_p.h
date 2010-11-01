@@ -39,71 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef CHECKSUM_P_H
+#define CHECKSUM_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
-
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-class QSoundEffectPrivate : public QObject
-{
-    Q_OBJECT
-public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
-
-    static QStringList supportedMimeTypes();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
-    void stop();
-
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
-
-private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+// Copied from qbytearray.cpp
+// Modified to initialise the crc with 0x6363 instead of 0xffff and to not invert the final result.
+static const quint16 crc_tbl[16] = {
+    0x0000, 0x1081, 0x2102, 0x3183,
+    0x4204, 0x5285, 0x6306, 0x7387,
+    0x8408, 0x9489, 0xa50a, 0xb58b,
+    0xc60c, 0xd68d, 0xe70e, 0xf78f
 };
 
-QT_END_NAMESPACE
+quint16 qNfcChecksum(const char *data, uint len)
+{
+    register quint16 crc = 0x6363;
+    uchar c;
+    const uchar *p = reinterpret_cast<const uchar *>(data);
+    while (len--) {
+        c = *p++;
+        crc = ((crc >> 4) & 0x0fff) ^ crc_tbl[((crc ^ c) & 15)];
+        c >>= 4;
+        crc = ((crc >> 4) & 0x0fff) ^ crc_tbl[((crc ^ c) & 15)];
+    }
+    return crc;
+}
 
-QT_END_HEADER
-
-#endif // QSOUNDEFFECT_QMEDIA_H
+#endif // CHECKSUM_P_H

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef QGYROSCOPE_P_H
+#define QGYROSCOPE_P_H
 
 //
 //  W A R N I N G
@@ -53,57 +53,24 @@
 // We mean it.
 //
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
+QTM_BEGIN_NAMESPACE
 
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-class QSoundEffectPrivate : public QObject
+class QGyroscopeReadingPrivate
 {
-    Q_OBJECT
 public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
+    QGyroscopeReadingPrivate()
+        : x(0)
+        , y(0)
+        , z(0)
+    {
+    }
 
-    static QStringList supportedMimeTypes();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
-    void stop();
-
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
-
-private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
-QT_END_HEADER
+#endif
 
-#endif // QSOUNDEFFECT_QMEDIA_H

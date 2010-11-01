@@ -9,5 +9,4 @@ SOURCES += main.cpp \
 HEADERS  += mainwindow.h \
     annotatedurl.h
 
-FORMS    += mainwindow.ui \
-    annotatedurl.ui
+FORMS    += mainwindow.ui

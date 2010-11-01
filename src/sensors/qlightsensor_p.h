@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef QLIGHTSENSOR_P_H
+#define QLIGHTSENSOR_P_H
 
 //
 //  W A R N I N G
@@ -53,57 +53,22 @@
 // We mean it.
 //
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
+#include "qsensor_p.h"
 
+QTM_BEGIN_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-class QSoundEffectPrivate : public QObject
+class QLightReadingPrivate : public QSensorReadingPrivate
 {
-    Q_OBJECT
 public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
+    QLightReadingPrivate()
+        : lux(0)
+    {
+    }
 
-    static QStringList supportedMimeTypes();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
-    void stop();
-
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
-
-private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+    qreal lux;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
-QT_END_HEADER
+#endif
 
-#endif // QSOUNDEFFECT_QMEDIA_H

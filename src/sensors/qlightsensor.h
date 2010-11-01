@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,71 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef QLIGHTSENSOR_H
+#define QLIGHTSENSOR_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qsensor.h"
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
+QTM_BEGIN_NAMESPACE
 
+class QLightReadingPrivate;
 
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-class QSoundEffectPrivate : public QObject
+class Q_SENSORS_EXPORT QLightReading : public QSensorReading
 {
     Q_OBJECT
+    Q_PROPERTY(qreal lux READ lux)
+    DECLARE_READING(QLightReading)
 public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
-
-    static QStringList supportedMimeTypes();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
-    void stop();
-
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
-
-private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+    qreal lux() const;
+    void setLux(qreal lux);
 };
 
-QT_END_NAMESPACE
+class Q_SENSORS_EXPORT QLightFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QLightReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QLightReading*>(reading)); }
+};
 
-QT_END_HEADER
+class Q_SENSORS_EXPORT QLightSensor : public QSensor
+{
+    Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(qreal fieldOfView)
+#endif
+public:
+    explicit QLightSensor(QObject *parent = 0) : QSensor(QLightSensor::type, parent) {}
+    virtual ~QLightSensor() {}
+    QLightReading *reading() const { return static_cast<QLightReading*>(QSensor::reading()); }
+    static char const * const type;
+};
 
-#endif // QSOUNDEFFECT_QMEDIA_H
+QTM_END_NAMESPACE
+
+#endif
+

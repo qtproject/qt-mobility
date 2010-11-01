@@ -50,21 +50,23 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag) : CActive(EPriorityStandard), iNfcTag(aNfcTag)
+CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : CActive(EPriorityStandard), 
+                                                                                    iNfcTag(aNfcTag),
+                                                                                    iNfcServer(aNfcServer)
     {
     }
 
-CNearFieldTagType1* CNearFieldTagType1::NewLC(MNfcTag * aNfcTag)
+CNearFieldTagType1* CNearFieldTagType1::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType1* self = new (ELeave) CNearFieldTagType1(aNfcTag);
+    CNearFieldTagType1* self = new (ELeave) CNearFieldTagType1(aNfcTag, aNfcServer);
     CleanupStack::PushL(self);
     self->ConstructL();
     return self;
     }
 
-CNearFieldTagType1* CNearFieldTagType1::NewL(MNfcTag * aNfcTag)
+CNearFieldTagType1* CNearFieldTagType1::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType1* self = CNearFieldTagType1::NewLC(aNfcTag);
+    CNearFieldTagType1* self = CNearFieldTagType1::NewLC(aNfcTag, aNfcServer);
     CleanupStack::Pop(); // self;
     return self;
     }
@@ -93,7 +95,6 @@ CNearFieldTagType1::~CNearFieldTagType1()
     delete iWait;
     delete iNfcType1Connection;
     delete iNfcTag;
-    iNfcServer.Close();
     }
 
 void CNearFieldTagType1::DoCancel()

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,71 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_QMEDIA_H
-#define QSOUNDEFFECT_QMEDIA_H
+#ifndef GENERICALSSENSOR_H
+#define GENERICALSSENSOR_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qsensorbackend.h>
+#include <qlightsensor.h>
+#include <qambientlightsensor.h>
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include "qmediaplayer.h"
+QTM_USE_NAMESPACE
 
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-class QSoundEffectPrivate : public QObject
+class genericalssensor : public QSensorBackend, public QLightFilter
 {
-    Q_OBJECT
 public:
-    explicit QSoundEffectPrivate(QObject* parent);
-    ~QSoundEffectPrivate();
+    static char const * const id;
 
-    static QStringList supportedMimeTypes();
+    genericalssensor(QSensor *sensor);
 
-    QUrl source() const;
-    void setSource(const QUrl &url);
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-    int volume() const;
-    void setVolume(int volume);
-    bool isMuted() const;
-    void setMuted(bool muted);
-    bool isLoaded() const;
-
-public Q_SLOTS:
-    void play();
+    void start();
     void stop();
 
-Q_SIGNALS:
-    void volumeChanged();
-    void mutedChanged();
-    void loadedChanged();
-
-private Q_SLOTS:
-    void stateChanged(QMediaPlayer::State);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus);
+    bool filter(QLightReading *reading);
 
 private:
-    int            m_loopCount;
-    int            m_runningCount;
-    bool           m_loaded;
-    QMediaPlayer  *m_player;
+    QAmbientLightReading m_reading;
+    QLightSensor *lightSensor;
 };
 
-QT_END_NAMESPACE
+#endif
 
-QT_END_HEADER
-
-#endif // QSOUNDEFFECT_QMEDIA_H

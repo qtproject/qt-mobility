@@ -57,10 +57,10 @@ public:
     ~CNearFieldTagType2();
 
     // Two-phased constructor.
-    static CNearFieldTagType2* NewL(MNfcTag * aNfcTag);
+    static CNearFieldTagType2* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Two-phased constructor.
-    static CNearFieldTagType2* NewLC(MNfcTag * aNfcTag);
+    static CNearFieldTagType2* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
 public: // New functions
     
@@ -88,7 +88,7 @@ public:
 
 private:
     // C++ constructor
-    CNearFieldTagType2(MNfcTag * aNfcTag);
+    CNearFieldTagType2(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Second-phase constructor
     void ConstructL();
@@ -120,7 +120,7 @@ private:
     CActiveSchedulerWait * iWait;
     MNfcTag * iNfcTag;
     
-    RNfcServer iNfcServer;
+    RNfcServer& iNfcServer;
     };
 
 #endif // NEARFIELDTAGTYPE2_H

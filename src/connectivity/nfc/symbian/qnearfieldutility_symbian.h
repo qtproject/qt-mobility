@@ -60,7 +60,7 @@ public:
      */
     static CNdefMessage* FromQNdefMsgToCNdefMsgL( QNdefMessage& msg );
     static QNdefMessage FromCNdefMsgToQndefMsgL( CNdefMessage& msg );
- 
+    static TPtrC8 FromQByteArrayToTPtrC8( QByteArray& qbytearray);
 };
 
 QTM_END_NAMESPACE

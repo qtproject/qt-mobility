@@ -56,6 +56,7 @@ public:
     static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
 private:
     static QNearFieldTarget * CreateTagType1L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
+    static QNearFieldTarget * CreateTagType2L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
     static MNearFieldTarget * WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget);
     static QNearFieldTarget::AccessMethods ConnectionMode2AccessMethods(MNfcTag * aNfcTag);
     };

@@ -59,7 +59,6 @@ private:
     */ 
    RNfcServer iNfcServer;
    
-   
    /*!
     * Pointer to CLlcpProvider object.
     * Own.
@@ -67,6 +66,8 @@ private:
    CLlcpProvider* iLlcp;
    
    TBool iSocketListening;
+   
+   RBuf8 iServiceName;
    };
     
 #endif /* LLCPSERVER_SYMBIAN_H_ */

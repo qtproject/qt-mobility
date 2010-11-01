@@ -50,8 +50,12 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     const QString sensorName = "tapsensor";
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
-//    addOutputRange(0, 4, 1); // axes only, no direction
-    sensor->setProperty("returnDoubleTapEvents", true); //by default doubles
+
+    QVariant v = sensor->property("returnDoubleTapEvents");
+    if (!(v.isValid()))
+        sensor->setProperty("returnDoubleTapEvents", true); //by default doubles
+
+    m_isDoubleTapSensor =  v.toBool();
 
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
@@ -61,15 +65,13 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     else
         qWarning() << "Unable to initialize "<<sensorName;
 
-
     setReading<QTapReading>(&m_reading);
 }
 
 
 void maemo6tapsensor::start(){
+
     maemo6sensorbase::start();
-    QVariant v = sensor()->property("returnDoubleTapEvents");
-    m_isDoubleTapSensor =  v.isValid() && v.toBool()? true: false;
     // Set tap type (single/double)
     m_reading.setDoubleTap(m_isDoubleTapSensor);
 }
@@ -77,6 +79,7 @@ void maemo6tapsensor::start(){
 
 void maemo6tapsensor::slotDataAvailable(const Tap& data)
 {
+
 
     if (data.type() == TapData::DoubleTap){
         if (!m_isDoubleTapSensor) return;
@@ -97,6 +100,7 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
         case TapData::BackFace:  o = QTapReading::Y_Neg;     break;
         default:                 o = QTapReading::Undefined;
     }
+
     m_reading.setTapDirection(o);
     m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();
