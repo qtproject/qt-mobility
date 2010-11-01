@@ -1130,6 +1130,18 @@ private slots:
 
     void testConvenienceFunctions();
 #endif
+    void simpleTest() {
+    QLandmark lm;
+    QGeoCoordinate coord(10,20);
+    lm.setName("Lm1");
+    lm.setCoordinate(coord);
+    QVERIFY(m_manager->saveLandmark(&lm));
+    QLandmark lmRetrieved = m_manager->landmark(lm.landmarkId()); 
+    qDebug() << "manager error = "<< m_manager->error() << "  error string" << m_manager->errorString();
+    qDebug() << "lmRetrieved name =" << lmRetrieved.name();
+    qDebug() << "Number of landmarks = " << m_manager->landmarks().count();
+    QCOMPARE(lmRetrieved, lm);
+    }
 };
 
 
