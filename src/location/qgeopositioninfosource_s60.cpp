@@ -731,10 +731,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         }
         //if the selected module for request update is same as the previous one reuse the request
         if (mList[index].mUid == mReqModuleId) {
-        	if (mReqUpdateAO) {
-        		mReqUpdateAO->requestUpdate(aTimeout);
-            return;
-          }
+            if (mReqUpdateAO) {
+                mReqUpdateAO->requestUpdate(aTimeout);
+                return;
+            }
         }
 
         TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));
