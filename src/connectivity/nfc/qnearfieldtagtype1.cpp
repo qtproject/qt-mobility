@@ -208,7 +208,7 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
         return 0;
 
     if (response.at(0) != address)
-        qDebug() << Q_FUNC_INFO << "response was for wrong address";
+        return 0;
 
     return response.at(1);
 }
@@ -248,7 +248,7 @@ bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
     quint8 writeData = response.at(1);
 
     if (writeAddress != address)
-        qDebug() << Q_FUNC_INFO << "response was for wrong address";
+        return false;
 
     if (mode == EraseAndWrite)
         return writeData == data;
@@ -280,7 +280,7 @@ QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
 
     quint8 readSegmentAddress = response.at(0);
     if ((readSegmentAddress >> 4) != segmentAddress)
-        qDebug() << Q_FUNC_INFO << "response was for wrong segment address";
+        return QByteArray();
 
     return response.mid(1);
 }
@@ -304,7 +304,7 @@ QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
 
     quint8 readBlockAddress = response.at(0);
     if (readBlockAddress != blockAddress)
-        qDebug() << Q_FUNC_INFO << "response was for wrong block address";
+        return QByteArray();
 
     return response.mid(1);
 }
@@ -344,7 +344,7 @@ bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data,
     quint8 writeBlockAddress = response.at(0);
 
     if (writeBlockAddress != blockAddress)
-        qDebug() << Q_FUNC_INFO << "response was for wrong block address";
+        return false;
 
     if (mode == EraseAndWrite) {
         return response.mid(1) == data;
