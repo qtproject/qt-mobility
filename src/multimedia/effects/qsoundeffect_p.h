@@ -108,9 +108,9 @@ public:
 
     bool isMuted() const;
     void setMuted(bool muted);
-    bool isLoaded() const;
 
     bool isLoaded() const;
+
     bool isPlaying() const;
     Status status() const;
 

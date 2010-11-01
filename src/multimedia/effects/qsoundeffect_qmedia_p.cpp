@@ -90,7 +90,6 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
-    m_loaded = false;
     m_player->setMedia(url);
 }
 
