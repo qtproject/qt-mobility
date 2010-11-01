@@ -128,6 +128,7 @@
 #define TEST_SIGNALS
 #define TEST_DESTRUCTION
 #define TEST_PROXIMITY_RADIUS
+#define TEST_VIEWPORT
 #define EXPORT_URL
 
 //#define WORKAROUND
@@ -1123,6 +1124,10 @@ void testProximityRadius();
 void testProximityRadius_data();
 #endif
 
+#ifdef TEST_VIEWPORT
+void testViewport();
+void testViewport_data();
+#endif
 
 #ifdef EXPORT_URL
  void exportUrl();
@@ -8034,6 +8039,29 @@ void tst_QLandmarkManager::testProximityRadius()
 }
 
 void tst_QLandmarkManager::testProximityRadius_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef TEST_VIEWPORT
+void tst_QLandmarkManager::testViewport()
+{
+    //the viewport should be ignored when saving a landmark.
+    QFETCH(QString, type);
+    QGeoPlace place;
+    place.setCoordinate(QGeoCoordinate(1,1));
+    place.setViewport(QGeoBoundingBox(QGeoCoordinate(10,-10), QGeoCoordinate(-10,10)));
+
+    QLandmark lm1(place);
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    lm1.setViewport(QGeoBoundingBox());
+    QCOMPARE(m_manager->landmark(lm1.landmarkId()), lm1);
+}
+
+void tst_QLandmarkManager::testViewport_data() {
     QTest::addColumn<QString>("type");
 
     QTest::newRow("sync") << "sync";
