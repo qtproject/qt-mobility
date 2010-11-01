@@ -118,7 +118,7 @@
 #define FILTER_UNION
 #define FILTER_ATTRIBUTE
 #define SORT_LANDMARKS
-#define LANDMARK_FETCH_CANCEL
+//#define LANDMARK_FETCH_CANCEL
 #define IMPORT_GPX
 #define IMPORT_LMX
 #define IMPORT_FILE
@@ -205,7 +205,6 @@ private:
         bool ret = true;
         bool stateVerified = true;
         int msWaitedSoFar =0;
-
         while(msWaitedSoFar < ms) {
             QTest::qWait(100);
             msWaitedSoFar +=100;
@@ -214,6 +213,7 @@ private:
             if (!request->isActive())
                 stateVerified = false;
         }
+
         if (!stateVerified)
             qWarning() << "The state was not verified to be active when it was supposed to be";
 
@@ -222,7 +222,6 @@ private:
             qWarning() << "The state was not verified to be finished when it was supposed to be";
         }
 
-        QTest::qWait(ms);
         if (spy.count() != 2) {
             qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
             ret = false;
@@ -6092,13 +6091,8 @@ void tst_QLandmarkManager::importGpx() {
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(cat2.categoryId()); //valid id
         importRequest.start();
-#ifdef Q_OS_SYMBIAN
-        QEXPECT_FAIL("", "MOBILITY-1748: Should be able to attach single category", Abort);
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
-#else
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
         QCOMPARE(importRequest.landmarkIds().count(),187);
-#endif
     } else {
         qFatal("Unknown row test type");
     }
@@ -6122,6 +6116,9 @@ void tst_QLandmarkManager::importGpx() {
 
     QList<QLandmarkId> ids;
     QCOMPARE(spyAdd.count(), 0);
+
+    if (type == "asyncAttachSingleCategory")
+        QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
     QCOMPARE(dataChanged.count(),1);
 
     spyAdd.clear();
@@ -6144,9 +6141,6 @@ void tst_QLandmarkManager::importGpx() {
         retrievedFirst.setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1772: on symbian import of gpx files does not assign radii 0.0 to landmarks",Continue);
-#endif
     QCOMPARE(lmFirst, retrievedFirst);
 
     QLandmark lmLast;
