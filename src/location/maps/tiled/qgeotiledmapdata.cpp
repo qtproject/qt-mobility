@@ -862,7 +862,8 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 *******************************************************************************/
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
-    : QGeoMapDataPrivate(parent, engine) {}
+    : QGeoMapDataPrivate(parent, engine),
+    scene(0) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -872,6 +873,9 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
     }
 
     itemMap.clear();
+
+    if (scene)
+        delete scene;
 }
 
 void QGeoTiledMapDataPrivate::updateMapImage()

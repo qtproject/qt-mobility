@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef NOTIFICATIONCALLBACK_H
 #define NOTIFICATIONCALLBACK_H
 
