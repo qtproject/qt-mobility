@@ -73,7 +73,6 @@ CLlcpSocketType1::~CLlcpSocketType1()
         delete iLlcp;
         iLlcp = NULL;
         }
-
     }
 
 
@@ -104,6 +103,7 @@ void CLlcpSocketType1::Cleanup()
 
 bool CLlcpSocketType1::Bind(TInt8 portNum)
     {
+    bool bindOK = ETrue;
     TInt error = KErrNone;
     if ( !iConnLessStarted )
         {
@@ -111,14 +111,16 @@ bool CLlcpSocketType1::Bind(TInt8 portNum)
         TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,portNum ));
         iConnLessStarted = ETrue;
         }   
-    if ( error == KErrNone )
-        {
-        return ETrue;
-        }
     else
         {
-        return EFalse;
+        bindOK = EFalse;
         }
+    
+    if (bindOK)
+        {
+        error == KErrNone ? bindOK =  ETrue :  bindOK =  EFalse;
+        }
+    return bindOK;
     }
  
 /*!
@@ -130,11 +132,13 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     TInt val = -1;
     TInt error = KErrNone;
     
-    CreateLocalConnection(aPortNum);
-    error = iLocalConnection->Transfer( aData);
-    if (KErrNone == error)
+    if (KErrNone == CreateLocalConnection(aPortNum))
         {
-        val =  0;
+        error = iLocalConnection->Transfer( aData);
+        if (KErrNone == error)
+            {
+            val =  0;
+            }
         }
     return val; 
     }
@@ -164,7 +168,7 @@ bool CLlcpSocketType1::ReceiveData(TDesC8& aData)
     {
       if (ReceiveCompleted())
           {
-          //aData = iLocalConnection->ReceiveData();
+          aData = iRemoteConnection->ReceiveData();
           return ETrue;
           }
       return EFalse;
@@ -189,13 +193,13 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
 */
-void CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
+TInt CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
     {
     TInt error = KErrNone;
     MLlcpConnLessTransporter* connType1 = NULL;
     
     if ( iLocalConnection )
-        return;
+        return error;
         
    TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
     
@@ -207,9 +211,10 @@ void CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
         if ( error != KErrNone )
             {
             delete iLocalConnection;
+            iLocalConnection = NULL;
             }
         }
-    return;        
+    return error;        
     }
 
 void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnection)
@@ -383,12 +388,12 @@ void COwnLlcpConnLess::ReceiveCancel()
 
 bool COwnLlcpConnLess::ReceiveCompeleted()
     {
-    iActionState != EReceiving ? ETrue : EFalse;    
+    return iActionState != EReceiving ? ETrue : EFalse;    
     }
 
 bool COwnLlcpConnLess::TransferCompleted()
     {
-    iActionState != ETransmitting ? ETrue : EFalse;
+    return iActionState != ETransmitting ? ETrue : EFalse;
     }
 
 const TDesC8& COwnLlcpConnLess::ReceiveData() const
@@ -396,18 +401,14 @@ const TDesC8& COwnLlcpConnLess::ReceiveData() const
     return iReceiveBuf;
     }
    
-
 void COwnLlcpConnLess::RunL()
     {
     TInt error = iStatus.Int();
-    
     switch ( iActionState )
-        {
-        
+        {     
         case EReceiving:
             {
-            //TODO emit readyRead signals
-          
+            //TODO emit readyRead signals   
             if ( error == KErrNone )
                 {
                 iActionState = EIdle;
@@ -432,7 +433,6 @@ void COwnLlcpConnLess::RunL()
             break;
         }    
     }
-
     
 void COwnLlcpConnLess::DoCancel()
     {
@@ -526,7 +526,6 @@ COwnLlcpConnOriented::~COwnLlcpConnOriented()
  */
 void COwnLlcpConnOriented::Connect(const TDesC8& aServiceName)
     {
-    TInt error = KErrNone;
     TRequestStatus aStatus = KRequestPending;
     TRequestStatus* status = &aStatus; // local   
       
@@ -673,12 +672,12 @@ void COwnLlcpConnOriented::ReceiveCancel()
 
 bool COwnLlcpConnOriented::ReceiveCompeleted()
     {
-    iActionState != EReceiving ? ETrue : EFalse;    
+    return iActionState != EReceiving ? ETrue : EFalse;    
     }
 
 bool COwnLlcpConnOriented::TransferCompleted()
     {
-    iActionState != ETransmitting ? ETrue : EFalse;
+    return iActionState != ETransmitting ? ETrue : EFalse;
     }
 
 
@@ -812,7 +811,6 @@ void COwnLlcpConnOriented::DoCancel()
     }
 
 
-
 //  ############# CLlcpSocketType2 #######################
 /*!
     CLlcpSocketPrivate::ContructL()
@@ -850,21 +848,41 @@ CLlcpSocketType2* CLlcpSocketType2::NewL()
     return self;
     }
 
+
+/*!
+    Destroys the LLCP socket.
+*/
+CLlcpSocketType2::~CLlcpSocketType2()
+    {
+    Cleanup();
+    
+    if ( iLlcp )
+        {
+        delete iLlcp;
+        iLlcp = NULL;
+        }
+    }
+
 /*!
     Connects to the service identified by the URI \a serviceUri (on \a target).
 */
 void CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
-    {
-    CreateLocalConnection(aServiceName);    
-    iLocalConnection->Connect(aServiceName);
+    {    
+    if (KErrNone == CreateLocalConnection(aServiceName))
+        {
+        iLocalConnection->Connect(aServiceName);
+        }
     }
 
 /*!
     Disconnects the socket.
 */
 void CLlcpSocketType2::DisconnectFromService()
-    {   
-    iLocalConnection->Disconnect();
+    {
+    if (iLocalConnection)
+        {
+           iLocalConnection->Disconnect();
+        }
     Cleanup();
     }
 
@@ -872,13 +890,13 @@ void CLlcpSocketType2::DisconnectFromService()
     Creating MLlcpConnOrientedTransporter object if  connection type connectionOriented,
     Creating Creating wrapper for local peer connection.
 */
-void CLlcpSocketType2::CreateLocalConnection(const TDesC8& aServiceName)
+TInt CLlcpSocketType2::CreateLocalConnection(const TDesC8& aServiceName)
     {
     TInt error = KErrNone;
     MLlcpConnOrientedTransporter *connType2 = NULL;
     
     if ( iLocalConnection )
-        return;
+        return error;
     
     // TODO KInterestingSsap ==> aServiceName
     TRAP( error, connType2 = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap ) );
@@ -891,9 +909,10 @@ void CLlcpSocketType2::CreateLocalConnection(const TDesC8& aServiceName)
         if ( error != KErrNone )
             {
             delete iLocalConnection;
+            iLocalConnection = NULL;
             }
         }
-    return;        
+    return error;        
     }
 
 /*!
@@ -954,11 +973,10 @@ bool CLlcpSocketType2::ReceiveCompleted()
     return iLocalConnection->ReceiveCompeleted();
     }
 
-
 /*!
     Creating Creating wrapper for remote peer connection of which type is connection oriented.
 */
-void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection)
+TInt CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection)
     {
       TInt error = KErrNone;      
           
@@ -974,7 +992,7 @@ void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aCon
               }
           
           // Creating wrapper for connection. 
-          TRAP( error, iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection ) );
+           error, iRemoteConnection = COwnLlcpConnOriented::NewL( aConnection ) ;
           }
       else
           {
@@ -982,6 +1000,7 @@ void CLlcpSocketType2::CreateRemoteConnection(MLlcpConnOrientedTransporter* aCon
           aConnection->DeclineConnectRequest();
           delete aConnection;
           }
+      return error;
     }
 
 /*!
