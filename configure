@@ -284,8 +284,6 @@ checkostype()
     match="Darwin"
     if [ `uname -s` = "${match}" ]; then
         OS="darwin"
-        QMKSPEC="-spec macx-g++"
-        echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
     fi
 }
 
@@ -295,7 +293,7 @@ findframeworks()
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`$QMAKE_EXEC -spec macx-g++ 1.pro 2>&1`
+    SOMETHING=`$QMAKE_EXEC 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -313,7 +311,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
