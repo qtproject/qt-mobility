@@ -205,10 +205,15 @@ void tst_QNearFieldTagType1::dynamicMemoryModel()
     bool testedStatic = false;
     bool testedDynamic = false;
 
-    while (!testedStatic || !testedDynamic) {
+    QByteArray firstId;
+    forever {
         waitForMatchingTarget();
 
         QByteArray id = target->readIdentification();
+        if (firstId.isEmpty())
+            firstId = id;
+        else if (firstId == id)
+            break;
 
         quint8 hr0 = id.at(0);
         bool dynamic = (((hr0 & 0xf0) == 0x10) && ((hr0 & 0x0f) != 0x01));
