@@ -71,6 +71,7 @@ CLlcpServer::~CLlcpServer()
         iLlcp = NULL;
         }
     iLlcpSocketArray.Close();  
+    iServiceName.Close();
     }
 
 /*!
@@ -110,6 +111,7 @@ void CLlcpServer::Listen( const TDesC8& aServiceName)
         // TODO
         // will updated to
         // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
+        iServiceName = aServiceName;
         TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));         
         }
 
@@ -119,7 +121,7 @@ void CLlcpServer::Listen( const TDesC8& aServiceName)
 
 bool CLlcpServer::isListening() const
     {
-        return iSocketListening;
+    return iSocketListening;
     }
 
 /*!
@@ -135,9 +137,24 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
     CLlcpSocketType2 *llcpSocket = NULL;
     TRAP(error,llcpSocket = CLlcpSocketType2::NewL());
     // Creating wrapper for connection. 
-    llcpSocket->CreateRemoteConnection(aConnection);
-    iLlcpSocketArray.Append(llcpSocket);       
-    
+    if (KErrNone == error)
+        {
+        TRAP(error,llcpSocket->CreateLocalConnection(iServiceName));
+        if (KErrNone != error)
+            {
+            //TODO emit error
+            }
+        TRAP(error,llcpSocket->CreateRemoteConnection(aConnection));
+        if (KErrNone != error)
+            {
+            //TODO emit error
+            }
+        iLlcpSocketArray.Append(llcpSocket);
+        }
+    else
+        {
+        //TODO emit errors
+        }
     //TODO  The newConnection() signal is then emitted each time a client connects to the server.
 
     }
