@@ -17,7 +17,7 @@
 */
 #include "llcpserver_symbian.h"
 #include "llcpsocket_symbian.h"
-
+#include "../qllcpserver_symbian_p.h"
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -99,10 +99,15 @@ bool CLlcpServer::hasPendingConnections() const
     return iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
     }
 
+const TDesC8&  CLlcpServer::serviceUri() const
+    {
+       return iServiceName;
+    }
+
 /*!
     Listen to the LLCP Socket by the URI \a serviceUri .
 */
-void CLlcpServer::Listen( const TDesC8& aServiceName)
+bool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     TInt error = KErrNone; 
 
@@ -116,6 +121,7 @@ void CLlcpServer::Listen( const TDesC8& aServiceName)
         }
 
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
+    return iSocketListening;
     }
 
 

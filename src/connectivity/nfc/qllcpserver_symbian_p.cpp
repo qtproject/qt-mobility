@@ -40,23 +40,33 @@
 ****************************************************************************/
 
 #include "qllcpserver_symbian_p.h"
+#include "symbian/llcpserver_symbian.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate()
 {
+    QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL());
 }
+
+QLlcpServerPrivate::~QLlcpServerPrivate()
+    {
+    delete m_symbianbackend;
+    }
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-    Q_UNUSED(serviceUri);
-
-    return false;
+    //TODO
+    //const TDesC8& aServiceName = "test";
+    TPtrC8 serviceName( reinterpret_cast<const TText8*> (serviceUri.constData()),
+            serviceUri.size());
+    
+    return m_symbianbackend->Listen(serviceName);
 }
 
 bool QLlcpServerPrivate::isListening() const
 {
-    return false;
+    return m_symbianbackend->isListening();
 }
 
 void QLlcpServerPrivate::close()
@@ -65,7 +75,10 @@ void QLlcpServerPrivate::close()
 
 QString QLlcpServerPrivate::serviceUri() const
 {
-    return QString();
+    const TDesC8& theDescriptor= m_symbianbackend->serviceUri();
+    QString serviceName = QString::fromRawData(reinterpret_cast<const QChar*>(theDescriptor.Ptr()),
+    theDescriptor.Length());
+    return serviceName;
 }
 
 quint8 QLlcpServerPrivate::serverPort() const
@@ -75,7 +88,7 @@ quint8 QLlcpServerPrivate::serverPort() const
 
 bool QLlcpServerPrivate::hasPendingConnections() const
 {
-    return false;
+    return m_symbianbackend->hasPendingConnections();
 }
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
@@ -88,4 +101,3 @@ QLlcpServer::Error QLlcpServerPrivate::serverError() const
     return QLlcpServer::UnknownSocketError;
 }
 
-QTM_END_NAMESPACE

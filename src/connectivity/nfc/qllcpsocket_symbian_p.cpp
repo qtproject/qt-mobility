@@ -40,11 +40,15 @@
 ****************************************************************************/
 
 #include "qllcpsocket_symbian_p.h"
+#include "symbian/llcpsocket_symbian.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QLlcpSocketPrivate::QLlcpSocketPrivate()
+   : m_symbianSocketType1(NULL),
+     m_symbianSocketType2(NULL)
 {
+    // lazy initializtion according to the llcp tranporation type
 }
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
@@ -59,14 +63,18 @@ void QLlcpSocketPrivate::disconnectFromService()
 
 bool QLlcpSocketPrivate::bind(quint8 port)
 {
-    Q_UNUSED(port);
-
-    return false;
+    QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+    return m_symbianSocketType1->Bind(port);
 }
 
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
-    return false;
+    bool val = false;
+    if (m_symbianSocketType1)
+        {
+        //val = m_symbianSocketType1->hasPendingDatagrams();
+        }
+    return val;
 }
 
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
@@ -103,12 +111,17 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
     Q_UNUSED(target);
-    Q_UNUSED(port);
+    
+    if (m_symbianSocketType1 == NULL)
+        {
+        QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+        }
 
-    return -1;
+    TPtrC8 myDescriptor((const TUint8*)data, size);
+    qint64 val = m_symbianSocketType1->StartWriteDatagram(myDescriptor, port);
+
+    return val;
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
@@ -123,6 +136,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
 
 QLlcpSocket::Error QLlcpSocketPrivate::error() const
 {
+    //emit error(QLlcpSocket::UnknownSocketError);
     return QLlcpSocket::UnknownSocketError;
 }
 
@@ -142,4 +156,3 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
     return -1;
 }
 
-QTM_END_NAMESPACE

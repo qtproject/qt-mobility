@@ -33,10 +33,11 @@ public:
    ~CLlcpServer();
    
 public:    
-   void Listen( const TDesC8& aServiceName);
+   bool Listen( const TDesC8& aServiceName);
    bool isListening() const;
    CLlcpSocketType2 *nextPendingConnection();
    bool hasPendingConnections() const;
+   const TDesC8& serviceUri() const;
     
 private: // From MLlcpConnOrientedListener   
     void RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection ); 
