@@ -19,6 +19,10 @@ class AbstractConnection;
 class COwnLlcpConnLess;
 class COwnLlcpConnOriented;
 
+#include <qmobilityglobal.h>
+#include "../qllcpsocket_symbian_p.h"
+
+
 /*!
  *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
  */
@@ -29,12 +33,12 @@ public:
    /*!
     * Creates a new CLlcpSocketType1 object.
     */
-   static CLlcpSocketType1* NewL();
+   static CLlcpSocketType1* NewL(QtMobility::QLlcpSocketPrivate&);
    
    /*!
     * Creates a new CLlcpSocketType1 object.
     */
-   static CLlcpSocketType1* NewLC();
+   static CLlcpSocketType1* NewLC(QtMobility::QLlcpSocketPrivate&);
    
    /*!
     * Destructor
@@ -55,7 +59,7 @@ private: // From MLlcpConnLessListener
     
 private:
     // Constructor
-    CLlcpSocketType1();
+    CLlcpSocketType1(QtMobility::QLlcpSocketPrivate&);
     
     // Second phase constructor
     void ConstructL();  
@@ -94,6 +98,8 @@ private:
    COwnLlcpConnLess* iRemoteConnection;   
    
    bool iConnLessStarted;
+   
+   QtMobility::QLlcpSocketPrivate& iCallback;
    
    };
 
@@ -377,6 +383,33 @@ private:
     
     TActionState iActionState;
     };
-  
+ 
+
+
+/*
+class CLlcpSocket 
+    {
+public:
+    enum TLlcpConnectionType
+        {
+        ELlcpConnLess,
+        ELlcpConnOriented 
+        };       
+    
+    static CLlcpSocketType1* NewL(TLlcpConnectionType aType);
+    
+public:
+    CLlcpSocketType1* socketHandler();
+    CLlcpSocketType2* type2Handler();
+    TLlcpConnectionType TransportType();
+
+    union
+    {
+        
+    }
+private:
+    
+    };
+*/
 
 #endif /* LLCPSOCKET_SYMBIAN_H_ */

@@ -46,6 +46,9 @@
 
 #include "qllcpsocket.h"
 
+class CLlcpSocketType1;
+class CLlcpSocketType2;
+
 QTM_BEGIN_NAMESPACE
 
 class QLlcpSocketPrivate
@@ -74,6 +77,15 @@ public:
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
+
+private:
+    CLlcpSocketType1* m_symbianSocketType1;
+    CLlcpSocketType2* m_symbianSocketType2;
+
+signals:
+        //void connected();
+        //void disconnected();
+        //void error(QLlcpSocket::Error socketError);
 };
 
 QTM_END_NAMESPACE

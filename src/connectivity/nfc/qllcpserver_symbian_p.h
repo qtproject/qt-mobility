@@ -39,12 +39,13 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_P_H
-#define QLLCPSERVER_P_H
+#ifndef QLLCPSERVER_SYMBIAN_P_H
+#define QLLCPSERVER_SYMBIAN_P_H
 
 #include <qmobilityglobal.h>
-
 #include "qllcpserver.h"
+
+class CLlcpServer;
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,6 +53,7 @@ class QLlcpServerPrivate
 {
 public:
     QLlcpServerPrivate();
+    ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
     bool isListening() const;
@@ -65,8 +67,12 @@ public:
     QLlcpSocket *nextPendingConnection();
 
     QLlcpServer::Error serverError() const;
+    
+private:
+    CLlcpServer* m_symbianbackend;
 };
 
 QTM_END_NAMESPACE
+
 
 #endif // QLLCPSERVER_P_H

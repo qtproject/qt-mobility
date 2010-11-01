@@ -15,6 +15,7 @@
 * Description: 
 *
 */
+
 #include "llcpsocket_symbian.h"
 
 // TODO
@@ -24,9 +25,9 @@ const TInt KInterestingSsap = 35;
 /*!
     CLlcpSocketType1::NewL()
 */
-CLlcpSocketType1* CLlcpSocketType1::NewL()
+CLlcpSocketType1* CLlcpSocketType1::NewL(QtMobility::QLlcpSocketPrivate& aCallback)
     {
-    CLlcpSocketType1* self = CLlcpSocketType1::NewLC();
+    CLlcpSocketType1* self = CLlcpSocketType1::NewLC(aCallback);
     CleanupStack::Pop( self );
     return self;
     }
@@ -34,9 +35,9 @@ CLlcpSocketType1* CLlcpSocketType1::NewL()
 /*!
     CLlcpSocketType1::NewLC()
 */
-CLlcpSocketType1* CLlcpSocketType1::NewLC()
+CLlcpSocketType1* CLlcpSocketType1::NewLC(QtMobility::QLlcpSocketPrivate& aCallback)
     {
-    CLlcpSocketType1* self = new (ELeave) CLlcpSocketType1();
+    CLlcpSocketType1* self = new (ELeave) CLlcpSocketType1(aCallback);
     CleanupStack::PushL( self );
     self->ConstructL();
     return self;
@@ -45,11 +46,12 @@ CLlcpSocketType1* CLlcpSocketType1::NewLC()
 /*!
     CLlcpSocketType1::CLlcpSocketType1()
 */
-CLlcpSocketType1::CLlcpSocketType1( )
+CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
     : iLlcp( NULL ),
     iLocalConnection(NULL),
     iRemoteConnection(NULL),
-    iConnLessStarted(EFalse)
+    iConnLessStarted(EFalse),
+    iCallback(aCallback)
     {
     }
 
@@ -58,6 +60,7 @@ CLlcpSocketType1::CLlcpSocketType1( )
 */
 void CLlcpSocketType1::ConstructL()
     {  
+    iNfcServer.Open();
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
 
@@ -73,6 +76,7 @@ CLlcpSocketType1::~CLlcpSocketType1()
         delete iLlcp;
         iLlcp = NULL;
         }
+    iNfcServer.Close();
     }
 
 
