@@ -64,8 +64,8 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_muted(false),
     m_loopCount(1),
     m_volume(100),
-    m_timerID(0),
     m_sound(0),
+    m_timerID(0),
     m_playing(false),
     m_status(QSoundEffect::Null)
 {
@@ -165,7 +165,6 @@ void QSoundEffectPrivate::play()
 
 void QSoundEffectPrivate::stop()
 {
-    m_nextRunningCount = 0;
     if (m_timerID != 0)
         killTimer(m_timerID);
     m_timerID = 0;
@@ -189,7 +188,7 @@ QSoundEffect::Status QSoundEffectPrivate::status() const
     return m_status;
 }
 
-void QSoundEffectPrivate::play()
+void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
 {
     setPlaying(!m_sound->isFinished());
     if (isPlaying())

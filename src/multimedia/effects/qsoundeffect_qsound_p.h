@@ -109,7 +109,6 @@ private:
     QSoundEffect::Status m_status;
     QSound *m_sound;
     QUrl m_source;
-    int m_nextRunningCount;
 };
 
 QT_END_NAMESPACE
