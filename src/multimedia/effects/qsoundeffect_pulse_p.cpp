@@ -171,14 +171,7 @@ private:
             pa_threaded_mainloop_free(m_mainLoop);
             return;
         }
-
-        //wait for the context to be ready, otherwise we will fail on stream operations later
-        while(pa_context_get_state(m_context) != PA_CONTEXT_READY)
-            pa_threaded_mainloop_wait(m_mainLoop);
-
         unlock();
-
-        //shall we wait untill context is ready
 
         m_prepared = true;
     }
@@ -204,7 +197,6 @@ private:
                 pa_ext_stream_restore_set_subscribe_cb(c, &stream_restore_monitor_callback, self);
                 pa_ext_stream_restore_subscribe(c, 1, NULL, self);
     #endif
-                pa_threaded_mainloop_signal(self->m_mainLoop, 0);
                 QMetaObject::invokeMethod(self, "contextReady", Qt::QueuedConnection);
                 break;
             default:

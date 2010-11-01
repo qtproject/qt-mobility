@@ -121,10 +121,9 @@ int QSoundEffectPrivate::loopCount() const
 
 void QSoundEffectPrivate::setLoopCount(int lc)
 {
-    if (lc == 0)
-        lc = 1;
     m_loopCount = lc;
-    //if (m_sound) m_sound->setLoops(lc);
+    if (m_sound)
+        m_sound->setLoops(lc);
 }
 
 int QSoundEffectPrivate::volume() const
@@ -190,7 +189,7 @@ QSoundEffect::Status QSoundEffectPrivate::status() const
     return m_status;
 }
 
-void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
+void QSoundEffectPrivate::play()
 {
     setPlaying(!m_sound->isFinished());
     if (isPlaying())

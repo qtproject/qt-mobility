@@ -70,7 +70,7 @@ public:
             out << "Double ";
         else
             out << "Single ";
-        out << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 5).arg( 1000000.0 / diff, 3, 'f', 1) << endl;
+        out << output<< QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 5).arg( 1000000.0 / diff, 3, 'f', 1) << endl;
         return false; // don't store the reading in the sensor
     }
 private:
@@ -86,12 +86,14 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
 
+
+    TapSensorFilter filter;
+
     QTapSensor doublesensor;
     doublesensor.setProperty("returnDoubleTapEvents", true);
     if (rate_val > 0) {
         doublesensor.setDataRate(rate_val);
     }
-    TapSensorFilter filter;
     doublesensor.addFilter(&filter);
     doublesensor.start();
     if (!doublesensor.isActive()) {
@@ -101,11 +103,18 @@ int main(int argc, char **argv)
 
     QTapSensor singlesensor;
     singlesensor.setProperty("returnDoubleTapEvents", false);
+
+    bool isDouble = singlesensor.property("returnDoubleTapEvents").toBool();
+
+
     if (rate_val > 0) {
         singlesensor.setDataRate(rate_val);
     }
     singlesensor.addFilter(&filter);
     singlesensor.start();
+
+    isDouble = singlesensor.property("returnDoubleTapEvents").toBool();
+
     if (!singlesensor.isActive()) {
         qWarning("Tapsensor (single) didn't start!");
         return 1;
