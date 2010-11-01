@@ -38,48 +38,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "commonutil_symbian.h"
 
-#ifndef QTLVREADER_P_H
-#define QTLVREADER_P_H
-
-#include <qmobilityglobal.h>
-
-#include <QtCore/QByteArray>
-#include <QtCore/QMap>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNearFieldTarget;
-class QTlvReader
+void CommonUtil::TDesC82QByteArray(const TDesC8& src, QByteArray& dest)
 {
-public:
-    explicit QTlvReader(QNearFieldTarget *target);
-    explicit QTlvReader(const QByteArray &data);
+    for(int i = 0; i < src.Length(); ++i)
+    {
+        dest.append(src[i]);
+    }
+}
 
-    void addReservedMemory(int offset, int length);
-
-    bool atEnd() const;
-
-    void readNext();
-
-    quint8 tag() const;
-    int length();
-    QByteArray data();
-
-private:
-    void readMoreData(int sparseOffset);
-    int absoluteOffset(int sparseOffset) const;
-
-    QNearFieldTarget *m_target;
-    QByteArray m_data;
-    int m_index;
-    QMap<int, int> m_reservedMemory;
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QTLVREADER_P_H
+void CommonUtil::QByteArray2TDes8(const QByteArray& src, TDes8& dest)
+{
+    for(int i = 0; i < src.count(); ++i)
+    {
+        dest[i] = src[i];
+    }
+}

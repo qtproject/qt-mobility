@@ -46,6 +46,7 @@
 #include <e32std.h>		// For RTimer, link against: euser.lib
 
 class CNearFieldTagType1;
+class CNearFieldTagType2;
 class CNearFieldNdefTarget;
 
 #if 0
@@ -62,8 +63,8 @@ public:
 
 public:
     virtual CNearFieldTagType1 * CastToTagType1();
-#if 0
     virtual CNearFieldTagType2 * CastToTagType2();
+#if 0
     virtual CNearFieldTagType3 * CastToTagType3();
     virtual CNearFieldTagType4 * CastToTagType4();
 #endif

@@ -39,47 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QTLVREADER_P_H
-#define QTLVREADER_P_H
+#ifndef QNEARFIELDTAGIMPL_H
+#define QNEARFIELDTAGIMPL_H
 
-#include <qmobilityglobal.h>
+#include <qnearfieldtarget.h>
 
-#include <QtCore/QByteArray>
-#include <QtCore/QMap>
+QTM_USE_NAMESPACE
+class MNearFieldTarget;
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNearFieldTarget;
-class QTlvReader
+class QNearFieldTagImpl
 {
 public:
-    explicit QTlvReader(QNearFieldTarget *target);
-    explicit QTlvReader(const QByteArray &data);
+    QNearFieldTagImpl(MNearFieldTarget *tag);
+    bool _hasNdefMessage();
+    QList<QNdefMessage> _ndefMessages();
+    void _setNdefMessages(const QList<QNdefMessage> &messages);
 
-    void addReservedMemory(int offset, int length);
+    void _setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+    {
+        mAccessMethods = accessMethods;
+    }
 
-    bool atEnd() const;
+    QNearFieldTarget::AccessMethods _accessMethods() const
+    {
+        return mAccessMethods;
+    }
 
-    void readNext();
-
-    quint8 tag() const;
-    int length();
-    QByteArray data();
-
-private:
-    void readMoreData(int sparseOffset);
-    int absoluteOffset(int sparseOffset) const;
-
-    QNearFieldTarget *m_target;
-    QByteArray m_data;
-    int m_index;
-    QMap<int, int> m_reservedMemory;
+protected:
+    MNearFieldTarget * mTag;
+    QNearFieldTarget::AccessMethods mAccessMethods;
 };
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QTLVREADER_P_H
+#endif // QNEARFIELDTAGIMPL_H

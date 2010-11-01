@@ -65,11 +65,11 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
-        tag = CreateTagType1L(aNfcTag, aNfcServer, aParent);
+        tag = CreateTagTypeL<CNearFieldTagType1, QNearFieldTagType1Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType2))
         {
-        tag = CreateTagType2L(aNfcTag, aNfcServer, aParent);
+        tag = CreateTagTypeL<CNearFieldTagType2, QNearFieldTagType2Symbian>(aNfcTag, aNfcServer, aParent);
         }
     return tag;
     }
@@ -78,27 +78,14 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagType1L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+template <typename CTAGTYPE, typename QTAGTYPE>
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
-    CNearFieldTagType1 * tagType1 = CNearFieldTagType1::NewLC(aNfcTag, aNfcServer);
-    QNearFieldTagType1Symbian * tag= new(ELeave)QNearFieldTagType1Symbian(WrapNdefAccessL(aNfcTag, aNfcServer, tagType1), aParent);
+    CTAGTYPE * tagType = CTAGTYPE::NewLC(aNfcTag, aNfcServer);
+    QTAGTYPE * tag= new(ELeave)QTAGTYPE(WrapNdefAccessL(aNfcTag, aNfcServer, tagType), aParent);
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
-    CleanupStack::Pop(tagType1);
-    return tag;
-    }
-
-/*!
-    Create tag type 2 instance according to the tag infomation in \a aNfcTag and assign 
-    the \a aParent as target's parent. 
-*/
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagType2L(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
-    {
-    // ownership of aNfcTag transferred.
-    CNearFieldTagType2 * tagType2 = CNearFieldTagType2::NewLC(aNfcTag, aNfcServer);
-    QNearFieldTagType2Symbian * tag= new(ELeave)QNearFieldTagType2Symbian(WrapNdefAccessL(aNfcTag, aNfcServer, tagType2), aParent);
-    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
-    CleanupStack::Pop(tagType2);
+    CleanupStack::Pop(tagType);
     return tag;
     }
    

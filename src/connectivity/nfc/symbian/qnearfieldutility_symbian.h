@@ -42,7 +42,7 @@
 
 #ifndef QNFCNDEFUTILITY_SYMBIAN_H_
 #define QNFCNDEFUTILITY_SYMBIAN_H_
-
+#include <qndefmessage.h>
 class CNdefMessage;
 
 QTM_BEGIN_NAMESPACE
@@ -58,11 +58,10 @@ public:
      * Maps between CNdefMessage and QNdefMessage
      *
      */
-    static CNdefMessage* FromQNdefMsgToCNdefMsgL( QNdefMessage& msg );
-    static QNdefMessage FromCNdefMsgToQndefMsgL( CNdefMessage& msg );
+    static CNdefMessage* FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg );
+    static QNdefMessage FromCNdefMsgToQndefMsgL( const CNdefMessage& msg );
  
 };
 
 QTM_END_NAMESPACE
-
 #endif /* QNFCNDEFUTILITY_SYMBIAN_H_ */

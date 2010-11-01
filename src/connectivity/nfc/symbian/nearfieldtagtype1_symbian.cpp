@@ -119,7 +119,7 @@ TInt CNearFieldTagType1::RunError(TInt aError)
     is returned if an error occurs.
 */
 
-void CNearFieldTagType1::ReadIdentificationL(TDes8& aData)
+const TDesC8& CNearFieldTagType1::ReadIdentification()
     {
     
     }

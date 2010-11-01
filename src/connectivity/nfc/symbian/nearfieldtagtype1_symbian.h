@@ -65,7 +65,7 @@ public:
 public: // New functions
     
     // DIGPROTO
-    void ReadIdentificationL(TDes8& aData);
+    const TDesC8& ReadIdentification();
     
     // Static memory functions
     void ReadAllL(TDes8& aData);

@@ -17,8 +17,7 @@ PRIVATE_HEADERS += \
     nfc/qnearfieldtarget_p.h \
     nfc/qnearfieldmanager_p.h \
     nfc/qnearfieldmanagerimpl_p.h \
-    nfc/qtlvreader_p.h \
-    nfc/checksum_p.h
+    nfc/qtlvreader_p.h
 
 SOURCES += \
     nfc/qnearfieldmanager.cpp \
@@ -75,7 +74,9 @@ symbian {
         nfc/symbian/nearfieldtargetfactory_symbian.h \
         nfc/symbian/qnearfieldutility_symbian.h \
         nfc/symbian/llcpserver_symbian.h \
-        nfc/symbian/llcpsocket_symbian.h
+        nfc/symbian/llcpsocket_symbian.h \
+        nfc/symbian/commonutil_symbian.h \
+        nfc/symbian/nearfieldtagimpl_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
@@ -89,7 +90,9 @@ symbian {
         nfc/symbian/nearfieldtargetfactory_symbian.cpp \
         nfc/symbian/qnearfieldutility_symbian.cpp \
         nfc/symbian/llcpserver_symbian.cpp \
-        nfc/symbian/llcpsocket_symbian.cpp
+        nfc/symbian/llcpsocket_symbian.cpp \
+        nfc/symbian/commonutil_symbian.cpp \
+        nfc/symbian/nearfieldtagimpl_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 

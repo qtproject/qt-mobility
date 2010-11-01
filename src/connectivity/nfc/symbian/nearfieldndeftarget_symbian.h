@@ -57,6 +57,7 @@ class CNearFieldTagType4;
 class CNdefMessage;
 
 class CNdefConnection;
+class MNfcTag;
 
 class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
@@ -81,8 +82,8 @@ public: // New functions
 
 public:
     CNearFieldTagType1 * CastToTagType1();
-#if 0
     CNearFieldTagType2 * CastToTagType2();
+#if 0
     CNearFieldTagType3 * CastToTagType3();
     CNearFieldTagType4 * CastToTagType4();
 #endif

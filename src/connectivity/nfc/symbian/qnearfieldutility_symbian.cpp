@@ -54,7 +54,7 @@ QNFCNdefUtility::~QNFCNdefUtility()
     {
     }
 
-CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( QNdefMessage& msg )
+CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg )
     {
         QByteArray payload = msg.toByteArray();
         CNdefMessage* cmsg = CNdefMessage::NewL();
@@ -64,7 +64,7 @@ CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( QNdefMessage& msg )
     }
 
 
-QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( CNdefMessage& msg )
+QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
     {
         QNdefMessage result;
         HBufC8* newBuf = HBufC8::NewL(msg.SizeL());

@@ -56,12 +56,12 @@ CNearFieldTagType1 * MNearFieldTarget::CastToTagType1()
     {
     return reinterpret_cast<CNearFieldTagType1 *>(0);
     }
-#if 0
 CNearFieldTagType2 * MNearFieldTarget::CastToTagType2()
     {
     return reinterpret_cast<CNearFieldTagType2 *>(0);
     }
 
+#if 0
 CNearFieldTagType3 * MNearFieldTarget::CastToTagType3()
     {
     return reinterpret_cast<CNearFieldTagType3 *>(0);

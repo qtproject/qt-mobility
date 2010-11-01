@@ -45,12 +45,14 @@
 #include <qnearfieldtagtype1.h>
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldtagimpl_symbian.h"
+#include "commonutil_symbian.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType1Symbian : public QNearFieldTagType1
+class QNearFieldTagType1Symbian : public QNearFieldTagType1, private QNearFieldTagImpl
 {
     Q_OBJECT
 
@@ -61,11 +63,6 @@ public:
     ~QNearFieldTagType1Symbian();
 
     virtual QByteArray uid() const;
-
-    virtual QNearFieldTarget::AccessMethods accessMethods() const
-    {
-        return mAccessMethods;
-    }
 
     // DIGPROTO
     virtual QByteArray readIdentification();
@@ -83,22 +80,16 @@ public:
 
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-    
+
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {
-        mAccessMethods = accessMethods;
+        _setAccessMethods(accessMethods);
     }
 
-    bool hasNdefMessage();
-    
-    QList<QNdefMessage> ndefMessages();
-    
-    void setNdefMessages(const QList<QNdefMessage> &messages);
-
-private:
-    // Own
-    MNearFieldTarget * mTag;
-    QNearFieldTarget::AccessMethods mAccessMethods;
+    QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return _accessMethods();
+    }
 };
 
 QTM_END_NAMESPACE

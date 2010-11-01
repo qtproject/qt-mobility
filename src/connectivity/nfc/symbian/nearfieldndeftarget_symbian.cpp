@@ -101,12 +101,12 @@ CNearFieldTagType1 * CNearFieldNdefTarget::CastToTagType1()
         }
     return iTagConnection ? iTagConnection->CastToTagType1() : reinterpret_cast<CNearFieldTagType1 *>(0);
     }
-#if 0
+
 CNearFieldTagType2 * CNearFieldNdefTarget::CastToTagType2()
     {
     return iTagConnection ? iTagConnection->CastToTagType2() : reinterpret_cast<CNearFieldTagType2 *>(0);
     }
-
+#if 0
 CNearFieldTagType3 * CNearFieldNdefTarget::CastToTagType3()
     {
     return iTagConnection ? iTagConnection->CastToTagType3() : reinterpret_cast<CNearFieldTagType3 *>(0);

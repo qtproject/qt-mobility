@@ -53,12 +53,11 @@ class QLlcpServerPrivate
 public:
     QLlcpServerPrivate();
 
-    bool listen(const QString &serviceUri);
+    bool listen(quint8 port = 0);
     bool isListening() const;
 
     void close();
 
-    QString serviceUri() const;
     quint8 serverPort() const;
 
     bool hasPendingConnections() const;

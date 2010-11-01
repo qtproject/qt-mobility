@@ -38,48 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef COMMON_UTIL_H
+#define COMMON_UTIL_H
 
-#ifndef QTLVREADER_P_H
-#define QTLVREADER_P_H
+#include <QByteArray>
 
-#include <qmobilityglobal.h>
-
-#include <QtCore/QByteArray>
-#include <QtCore/QMap>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNearFieldTarget;
-class QTlvReader
+class CommonUtil
 {
 public:
-    explicit QTlvReader(QNearFieldTarget *target);
-    explicit QTlvReader(const QByteArray &data);
-
-    void addReservedMemory(int offset, int length);
-
-    bool atEnd() const;
-
-    void readNext();
-
-    quint8 tag() const;
-    int length();
-    QByteArray data();
-
-private:
-    void readMoreData(int sparseOffset);
-    int absoluteOffset(int sparseOffset) const;
-
-    QNearFieldTarget *m_target;
-    QByteArray m_data;
-    int m_index;
-    QMap<int, int> m_reservedMemory;
+    static void TDesC82QByteArray(const TDesC8& src, QByteArray& dest);
+    static void QByteArray2TDes8(const QByteArray& src, TDes8& dest);
 };
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QTLVREADER_P_H
+#endif // COMMON_UTIL_H
