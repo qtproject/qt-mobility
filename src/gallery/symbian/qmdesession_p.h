@@ -100,6 +100,11 @@ public: // From MMdESessionObserver
         QGalleryQueryRequest *request,
         int &error);
 
+    CMdEObjectQuery *NewObjectQuery(
+            CMdENamespaceDef &namespaceDef,
+            CMdEObjectDef &objectDef,
+            MMdEQueryObserver *observer = 0);
+
     int RemoveObject( const unsigned int itemId );
 
     void AddItemAddedObserverL( MMdEObjectObserver &observer, CMdELogicCondition &condition );

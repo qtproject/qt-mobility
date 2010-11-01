@@ -34,7 +34,7 @@ unix:!mac:!symbian {
     !maemo*:SUBDIRS += v4l
 }
 
-mac {
+mac:!simulator {
     SUBDIRS += audiocapture qt7
 }
 
