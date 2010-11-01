@@ -965,16 +965,18 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
 
     if (param){
       GList *v = e_vcard_attribute_param_get_values(param);
-      QString context = CONST_CHAR(v->data);
-      if (context == "HOME")
-        address->setContexts(QContactDetail::ContextHome);
-      else if (context == "WORK")
-        address->setContexts(QContactDetail::ContextWork);
+      if (v) {
+        QString context = CONST_CHAR(v->data);
+        if (context == "HOME")
+          address->setContexts(QContactDetail::ContextHome);
+        else if (context == "WORK")
+          address->setContexts(QContactDetail::ContextWork);
+      }
     }
 
     // Set Address Values
     GList *v = NULL;
-    v =e_vcard_attribute_get_values(attr);
+    v = e_vcard_attribute_get_values(attr);
     if (!v) {
       // ADR attribute data is corrupted.  Skipping.
       g_list_free(attrList);
@@ -1052,11 +1054,13 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 
     if (param){
       GList *v = e_vcard_attribute_param_get_values(param);
-      QString context = CONST_CHAR(v->data);
-      if (context == "HOME")
-        email->setContexts(QContactDetail::ContextHome);
-      else if (context == "WORK")
-        email->setContexts(QContactDetail::ContextWork);
+      if (v) {
+        QString context = CONST_CHAR(v->data);
+        if (context == "HOME")
+          email->setContexts(QContactDetail::ContextHome);
+        else if (context == "WORK")
+          email->setContexts(QContactDetail::ContextWork);
+      }
     }
 
     // Set Address Values
