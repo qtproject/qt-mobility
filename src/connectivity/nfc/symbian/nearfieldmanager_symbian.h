@@ -56,11 +56,14 @@
 #include <ndefmessagelistener.h>
 #include <ndefdiscovery.h>
 
+#include "../qndefrecord.h"
+
 class QNearFieldManagerPrivateImpl;
 
 class CNearFieldManager : public CBase,
 						  public MNfcTagConnectionListener,
-						  public MLlcpLinkListener
+						  public MLlcpLinkListener,
+						  public MNdefMessageListener
   {
 public:
     
@@ -69,6 +72,11 @@ public:
     virtual ~CNearFieldManager();
     
     void StartTagDetectionL();
+    //for registerTargetDetectedHandler ... api
+    TInt AddNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf, 
+                                       const QByteArray& aType );
+    void RemoveNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf, 
+                                              const QByteArray& aType );
     
 public: // From MNfcTagConnectionListener
     
@@ -79,16 +87,23 @@ public: // From MLlcpLinkListener
    
     void LlcpRemoteFound();
     void LlcpRemoteLost();
- 
+
+public: // From MNdefMessageListener
+    
+    void MessageDetected( CNdefMessage* aMessage );
+    
 private:
     
     CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback);
     void ConstructL();
     //own
+    RNfcServer iServer;
+    //for Tag discovery
     CNfcTagDiscovery* iNfcTagDiscovery;    
     CNfcTagSubscription* iTagSubscription;
-    RNfcServer iServer;
+    //for LLCP discovery
     CLlcpProvider* iLlcpProvider;
+    //for NDEF discovery
     CNdefDiscovery* iNdefDiscovery;
     //not own
     QNearFieldManagerPrivateImpl& iCallback;

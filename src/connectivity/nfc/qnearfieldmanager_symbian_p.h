@@ -74,7 +74,10 @@ public:
 private://call back function by symbian backend implementation
 	void targetFound(QNearFieldTarget* target);
 	void targetDisconnected();
-
+	
+private slots:
+	void invokeTargetDetectedHandler();
+	
 private:
     struct Callback {
         QNearFieldTarget::Type targetType;
