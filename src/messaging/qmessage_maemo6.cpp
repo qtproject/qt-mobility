@@ -474,6 +474,8 @@ void QMessage::clearAttachments()
     d_ptr->_modified = true;
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
     container->_attachments.clear();
+    // fix for MOBILITY-1588
+    setStatus(QMessage::HasAttachments, false);
 }
 
 bool QMessage::isModified() const

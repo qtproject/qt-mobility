@@ -223,8 +223,11 @@ void S60VideoWidgetControl::setSaturation(int saturation)
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        if (e->type() == QEvent::WinIdChange
-            || e->type() == QEvent::ParentChange 
+        if (e->type() == QEvent::ParentChange) {
+            if (QWidget *parent = m_widget->parentWidget())
+                parent->setProperty("_q_DummyWindowSurface", true);
+            emit widgetUpdated();
+        } else if (e->type() == QEvent::WinIdChange
             || e->type() == QEvent::Show) {
             emit widgetUpdated();
         } else if (e->type() == QEvent::Resize
