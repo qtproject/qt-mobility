@@ -118,7 +118,7 @@
 #define FILTER_UNION
 #define FILTER_ATTRIBUTE
 #define SORT_LANDMARKS
-#define LANDMARK_FETCH_CANCEL
+//#define LANDMARK_FETCH_CANCEL
 #define IMPORT_GPX
 #define IMPORT_LMX
 #define IMPORT_FILE
@@ -127,6 +127,8 @@
 #define MISC
 #define TEST_SIGNALS
 #define TEST_DESTRUCTION
+#define TEST_PROXIMITY_RADIUS
+#define TEST_VIEWPORT
 #define EXPORT_URL
 
 //#define WORKAROUND
@@ -205,7 +207,6 @@ private:
         bool ret = true;
         bool stateVerified = true;
         int msWaitedSoFar =0;
-
         while(msWaitedSoFar < ms) {
             QTest::qWait(100);
             msWaitedSoFar +=100;
@@ -214,6 +215,7 @@ private:
             if (!request->isActive())
                 stateVerified = false;
         }
+
         if (!stateVerified)
             qWarning() << "The state was not verified to be active when it was supposed to be";
 
@@ -222,7 +224,6 @@ private:
             qWarning() << "The state was not verified to be finished when it was supposed to be";
         }
 
-        QTest::qWait(ms);
         if (spy.count() != 2) {
             qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
             ret = false;
@@ -1116,6 +1117,16 @@ private slots:
 
 #ifdef TEST_DESTRUCTION
  void testDestruction();
+#endif
+
+#ifdef TEST_PROXIMITY_RADIUS
+void testProximityRadius();
+void testProximityRadius_data();
+#endif
+
+#ifdef TEST_VIEWPORT
+void testViewport();
+void testViewport_data();
 #endif
 
 #ifdef EXPORT_URL
@@ -6092,13 +6103,8 @@ void tst_QLandmarkManager::importGpx() {
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(cat2.categoryId()); //valid id
         importRequest.start();
-#ifdef Q_OS_SYMBIAN
-        QEXPECT_FAIL("", "MOBILITY-1748: Should be able to attach single category", Abort);
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
-#else
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
         QCOMPARE(importRequest.landmarkIds().count(),187);
-#endif
     } else {
         qFatal("Unknown row test type");
     }
@@ -6122,6 +6128,9 @@ void tst_QLandmarkManager::importGpx() {
 
     QList<QLandmarkId> ids;
     QCOMPARE(spyAdd.count(), 0);
+
+    if (type == "asyncAttachSingleCategory")
+        QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
     QCOMPARE(dataChanged.count(),1);
 
     spyAdd.clear();
@@ -6144,9 +6153,6 @@ void tst_QLandmarkManager::importGpx() {
         retrievedFirst.setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1772: on symbian import of gpx files does not assign radii 0.0 to landmarks",Continue);
-#endif
     QCOMPARE(lmFirst, retrievedFirst);
 
     QLandmark lmLast;
@@ -8013,7 +8019,54 @@ void tst_QLandmarkManager::testDestruction()
     delete fetchRequest;
     qDebug() << "testDestruction(): After Delete";
 }
+#endif
 
+#ifdef TEST_PROXIMITY_RADIUS
+void tst_QLandmarkManager::testProximityRadius()
+{
+    //simple unit test for MOBILITY-1735
+    QFETCH(QString, type);
+    QLandmark lm1;
+    lm1.setName("Landmark 1");
+    lm1.setCoordinate(QGeoCoordinate(0,5));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(0,0));
+    proximityFilter.setRadius(lm1.coordinate().distanceTo(QGeoCoordinate(0,0)));
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,proximityFilter,&lms,QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 1);
+}
+
+void tst_QLandmarkManager::testProximityRadius_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef TEST_VIEWPORT
+void tst_QLandmarkManager::testViewport()
+{
+    //the viewport should be ignored when saving a landmark.
+    QFETCH(QString, type);
+    QGeoPlace place;
+    place.setCoordinate(QGeoCoordinate(1,1));
+    place.setViewport(QGeoBoundingBox(QGeoCoordinate(10,-10), QGeoCoordinate(-10,10)));
+
+    QLandmark lm1(place);
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    lm1.setViewport(QGeoBoundingBox());
+    QCOMPARE(m_manager->landmark(lm1.landmarkId()), lm1);
+}
+
+void tst_QLandmarkManager::testViewport_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
 #endif
 
 #ifdef EXPORT_URL
