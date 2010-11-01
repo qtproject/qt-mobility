@@ -17,7 +17,7 @@ PRIVATE_HEADERS += \
     nfc/qnearfieldtarget_p.h \
     nfc/qnearfieldmanager_p.h \
     nfc/qnearfieldmanagerimpl_p.h \
-    nfc/qtlvreader_p.h
+    nfc/qtlvreader_p.h \
     nfc/qtlvreader_p.h \
     nfc/checksum_p.h \
     nfc/qllcpserver_p.h \
