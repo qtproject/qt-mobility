@@ -156,8 +156,8 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
     typedef QVector<QStringList>::const_iterator iterator;
 
     const QVector<QStringList> resultSet = reply.value();
-    
-qDebug() << "ResultSet:" << resultSet;    
+
+    qDebug() << "ResultSet:" << resultSet;
 
     QVector<QVariant> &values = iCache.values;
 

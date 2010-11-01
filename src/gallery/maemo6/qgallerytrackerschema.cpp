@@ -164,7 +164,7 @@ namespace
     };
 
     struct QGalleryItemType
-    { 
+    {
         QLatin1String itemType;
         QLatin1String service;
         QGalleryTypePrefix prefix;
@@ -508,7 +508,7 @@ static bool qt_writeConditionHelper(
                 ++it) {
             if (!qt_writeCondition(error, query, *it, properties, composites))
                 return false;
-            if( --count > 0)
+            if ( --count > 0 )
                 *query += op;
         }
         *query += ")";
@@ -758,12 +758,12 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 static void qt_writeFileIdCondition(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     const int separatorIndex = itemId.string()->lastIndexOf(QLatin1Char('/'));
-    
+
     if (separatorIndex > 0) {
         const QString path = itemId.string()->mid(
                 itemId.position(), separatorIndex - itemId.position());
         QString fileName = itemId.string()->mid(separatorIndex + 1);
-        
+
         xml->writeStartElement(QLatin1String("rdfq:and"));
         qt_writeEqualsCondition(xml, QLatin1String("File:Path"), path);
         qt_writeEqualsCondition(xml, QLatin1String("File:Name"), fileName);
@@ -877,8 +877,6 @@ static bool qt_writeFileRootContainerCondition(QDocumentGallery::Error *, QXmlSt
 // Audio
 ////////
 
-#define QT_GALLERY_AUDIO_ARTIST_PROPERTY \
-    QT_GALLERY_ITEM_PROPERTY("artist"      , "nmm:performer"     , String, CanRead | CanWrite | CanSort | CanFilter)
 #define QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY \
     QT_GALLERY_ITEM_PROPERTY("albumTitle"  , "nmm:albumTitle"      , String    , CanRead | CanWrite | CanSort | CanFilter)
 #define QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY \
@@ -887,21 +885,20 @@ static bool qt_writeFileRootContainerCondition(QDocumentGallery::Error *, QXmlSt
 static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
 {
     QT_GALLERY_FILE_PROPERTIES,
-//    QT_GALLERY_AUDIO_ARTIST_PROPERTY,
     QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY,
     QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY,
-    QT_GALLERY_ITEM_PROPERTY("title"       , "nie:title"              , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("genre"       , "nfo:genre"              , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("duration"    , "nfo:duration"           , Int       , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("trackNumber" , "nmm:trackNumber"        , Int       , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("description" , "nie:description"        , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("audioCodec"  , "nfo:codec"              , String    , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("sampleRate"  , "nfo:sampleRate"         , Int       , CanRead | CanWrite | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("audioBitRate", "nfo:averageAudioBitrate", Int       , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("channelCount", "nfo:channels"           , Int       , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("playCount"   , "nie:usageCounter"       , Int       , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("lyrics"      , "nmm:lyrics"             , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist", "nmm:artistName(nmm:performer", String, CanRead | CanFilter | CanSort )
+    QT_GALLERY_ITEM_PROPERTY("title"       , "nie:title"                   , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("genre"       , "nfo:genre"                   , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("duration"    , "nfo:duration"                , Int       , CanRead | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("trackNumber" , "nmm:trackNumber"             , Int       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("description" , "nie:description"             , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("audioCodec"  , "nfo:codec"                   , String    , CanRead | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("sampleRate"  , "nfo:sampleRate"              , Int       , CanRead | CanWrite | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("audioBitRate", "nfo:averageAudioBitrate"     , Int       , CanRead | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("channelCount", "nfo:channels"                , Int       , CanRead | CanSort | CanFilter | IsResource),
+    QT_GALLERY_ITEM_PROPERTY("playCount"   , "nie:usageCounter"            , Int       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("lyrics"      , "nmm:lyrics"                  , String    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist"      , "nmm:artistName(nmm:performer", String, CanRead | CanFilter | CanSort )
 //    QT_GALLERY_ITEM_PROPERTY(""          , "Audio:ReleaseDate"  , DateTime  , QGalleryProperty::Attributes()),
 //    QT_GALLERY_ITEM_PROPERTY("discNumber", "Audio:DiscNo"       , Int       , CanRead | CanWrite | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY("performer" , "Audio:Performer"    , String    , CanRead | CanWrite | CanSort | CanFilter),
@@ -1449,7 +1446,7 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
     QDocumentGallery::Error error = QDocumentGallery::NoError;
 
     QString query;
-    
+
     QString tmp( ( m_itemIndex >= 0  ? qt_galleryItemTypeList[m_itemIndex].itemType :  qt_galleryAggregateTypeList[m_aggregateIndex].itemType));
     qDebug() << "QUERY PARAMETERS:" << "rootItem:" << rootItemId << "\nproperties:" << propertyNames << "\ntype:" <<  tmp;
 
