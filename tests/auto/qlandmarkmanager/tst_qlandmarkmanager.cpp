@@ -127,6 +127,7 @@
 #define MISC
 #define TEST_SIGNALS
 #define TEST_DESTRUCTION
+#define TEST_PROXIMITY_RADIUS
 #define EXPORT_URL
 
 //#define WORKAROUND
@@ -1116,6 +1117,12 @@ private slots:
 #ifdef TEST_DESTRUCTION
  void testDestruction();
 #endif
+
+#ifdef TEST_PROXIMITY_RADIUS
+void testProximityRadius();
+void testProximityRadius_data();
+#endif
+
 
 #ifdef EXPORT_URL
  void exportUrl();
@@ -8007,7 +8014,31 @@ void tst_QLandmarkManager::testDestruction()
     delete fetchRequest;
     qDebug() << "testDestruction(): After Delete";
 }
+#endif
 
+#ifdef TEST_PROXIMITY_RADIUS
+void tst_QLandmarkManager::testProximityRadius()
+{
+    //simple unit test for MOBILITY-1735
+    QFETCH(QString, type);
+    QLandmark lm1;
+    lm1.setName("Landmark 1");
+    lm1.setCoordinate(QGeoCoordinate(0,5));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(0,0));
+    proximityFilter.setRadius(lm1.coordinate().distanceTo(QGeoCoordinate(0,0)));
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,proximityFilter,&lms,QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 1);
+}
+
+void tst_QLandmarkManager::testProximityRadius_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
 #endif
 
 #ifdef EXPORT_URL
