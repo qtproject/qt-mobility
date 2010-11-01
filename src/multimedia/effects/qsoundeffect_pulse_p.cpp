@@ -315,6 +315,7 @@ void QSoundEffectPrivate::setSource(const QUrl &url)
         m_networkAccessManager = new QNetworkAccessManager(this);
 
     m_stream = m_networkAccessManager->get(QNetworkRequest(m_source));
+    connect(m_stream, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(decoderError()));
 
     unloadSample();
     loadSample();
@@ -394,6 +395,9 @@ void QSoundEffectPrivate::play()
         return;
     }
 
+    if (m_status == QSoundEffect::Null || m_status == QSoundEffect::Error)
+        return;
+
     if (!m_sampleLoaded) {
         m_playQueued = true;
     } else if (m_runningCount >= 0) {
@@ -437,8 +441,14 @@ void QSoundEffectPrivate::decoderReady()
 void QSoundEffectPrivate::decoderError()
 {
     qWarning("QSoundEffect(pulseaudio): Error decoding source");
+    bool playingDirty = false;
+    if (m_playing) {
+        m_playing = false;
+        playingDirty = true;
+    }
     setStatus(QSoundEffect::Error);
-    setPlaying(false);
+    if (playingDirty)
+        emit playingChanged();
 }
 
 void QSoundEffectPrivate::checkPlayTime()

@@ -95,10 +95,7 @@ int QMDEGalleryResultSet::itemCount() const
 bool QMDEGalleryResultSet::isValid() const
 {
     // Index based check
-    if ( itemCount() != 0 && itemCount() >= currentIndex() )
-        return true;
-    else
-        return false;
+    return m_cursorPosition >= 0 && m_cursorPosition < m_itemArray.Count();
 }
 
 QVariant QMDEGalleryResultSet::itemId() const
@@ -206,61 +203,20 @@ int QMDEGalleryResultSet::currentIndex() const
 
 bool QMDEGalleryResultSet::fetch(int index)
 {
-    if (m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count()) {
-        return false;
-    } else {
+    const bool isValid = index >= 0 && index < m_itemArray.Count();
+
+    if (index != m_cursorPosition) {
+        const bool wasValid = m_isValid;
+        m_isValid = isValid;
+
         m_cursorPosition = index;
-        m_isValid = true;
-        return true;
-    }
-}
 
-bool QMDEGalleryResultSet::fetchNext()
-{
-    int newIndex = m_cursorPosition + 1;
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
+        if (isValid || wasValid)
+            emit currentItemChanged();
 
-bool QMDEGalleryResultSet::fetchPrevious()
-{
-    int newIndex = m_cursorPosition - 1;
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
+        emit currentIndexChanged(m_cursorPosition);
     }
-}
-
-bool QMDEGalleryResultSet::fetchFirst()
-{
-    int newIndex = 0; // first item
-    if (m_itemArray.Count() <= 0) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
-
-bool QMDEGalleryResultSet::fetchLast()
-{
-    int newIndex = m_itemArray.Count() - 1; // last item
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
+    return isValid;
 }
 
 #include "moc_qmdegalleryresultset_p.cpp"

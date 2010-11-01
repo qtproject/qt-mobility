@@ -42,17 +42,6 @@
 #ifndef QGEOSATELLITEINFOSOURCE60_H_
 #define QGEOSATELLITEINFOSOURCE60_H_
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
@@ -123,7 +112,7 @@ public:
     /**
      * Update the position info
      */
-    void updatePosition(TPositionSatelliteInfo aPosSatInfo, int aError , bool isStartUpdate);
+    void updatePosition(TPositionSatelliteInfo &aPosSatInfo, int aError , bool isStartUpdate);
 
 
     /**
@@ -165,8 +154,8 @@ public slots :
 
 
 private:
-
-    /**
+	
+	    /**
      * Constructor for performing 1st stage construction
      */
     CQGeoSatelliteInfoSourceS60(QObject* aParent = 0);
@@ -176,7 +165,7 @@ private:
      */
     void ConstructL();
 
-    void updateStatus(TPositionModuleInfo aModInfo, TInt aStatus);
+    void updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus);
 
     //get the index of the module in the List array
     TInt checkModule(TPositionModuleId aId) const;
@@ -187,7 +176,7 @@ private:
     //get the more accuarte method with time to first fix < than timeout
     TInt getMoreAccurateMethod(TInt aTimeout, TUint8 aBits);
 
-    void TPositionSatelliteInfo2QGeoSatelliteInfo(TPositionSatelliteInfo aSatInfo,
+    void TPositionSatelliteInfo2QGeoSatelliteInfo(TPositionSatelliteInfo &aSatInfo,
             QList<QGeoSatelliteInfo> &qListSatInView,
             QList<QGeoSatelliteInfo> &qListSatInUse);
 
