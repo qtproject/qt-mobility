@@ -62,18 +62,21 @@ public:
 
     bool atEnd() const;
 
-    void readNext();
+    bool readNext();
 
     quint8 tag() const;
     int length();
     QByteArray data();
 
 private:
-    void readMoreData(int sparseOffset);
+    bool readMoreData(int sparseOffset);
     int absoluteOffset(int sparseOffset) const;
+    int dataLength(int startOffset) const;
 
     QNearFieldTarget *m_target;
-    QByteArray m_data;
+    QByteArray m_rawData;
+
+    QByteArray m_tlvData;
     int m_index;
     QMap<int, int> m_reservedMemory;
 };

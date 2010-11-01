@@ -51,17 +51,28 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
 #endif
 
 // display
+/*!
+    \enum QSystemInfo::DisplayOrientation
+    This enum describes the orientation of the default window.
+
+    \value Unknown                  Unknown orientation or error.
+    \value Landscape                Landscape is wider than high.
+    \value Portrait                 Portrait is higher than wide.
+    \value InvertedLandscape        Landscape that is inverted.
+    \value InvertedPortrait         Portrait that is inverted.
+  */
+
  /*!
    \class QSystemDisplayInfo
    \ingroup systeminfo
    \inmodule QtSystemInfo
 
-        \brief The QSystemDisplayInfo class provides access to display information from the system.
+    \brief The QSystemDisplayInfo class provides access to display information from the system.
+*/
 
-   \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
+/*!
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
-
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
 {
@@ -166,6 +177,13 @@ int QSystemDisplayInfo::physicalWidth(int screen)
         return displayInfoPrivate()->physicalWidth(screen);
 }
 
+/*!
+    Returns whether the display backlighting is on or not.
+*/
+bool QSystemDisplayInfo::backLightOn()
+{
+    return displayInfoPrivate()->backLightOn();
+}
 
 
 

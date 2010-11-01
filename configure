@@ -562,9 +562,10 @@ if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
-    compileTest connman connman
 fi
-
+if [ "$LINUX_TARGET" = meego ]; then
+compileTest connman connman
+fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
