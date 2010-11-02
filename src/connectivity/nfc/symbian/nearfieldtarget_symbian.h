@@ -50,7 +50,6 @@ class CNearFieldTagType2;
 class CNearFieldNdefTarget;
 
 #if 0
-class CNearFieldTagType2;
 class CNearFieldTagType3;
 class CNearFieldTagType4;
 #endif

@@ -121,7 +121,7 @@ TInt CNearFieldTagType1::RunError(TInt aError)
 
 const TDesC8& CNearFieldTagType1::ReadIdentification()
     {
-    
+    return iNfcTag->Uid(); 
     }
 
 /*!
@@ -131,9 +131,9 @@ const TDesC8& CNearFieldTagType1::ReadIdentification()
     array is returned if an error occurs.
 */
     
-void CNearFieldTagType1::ReadAllL(TDes8& aData)
+TInt CNearFieldTagType1::ReadAll(TDes8& aData)
     {
-    
+    return iNfcType1Connection->ReadAll(aData);    
     }
 
 /*!
@@ -144,9 +144,9 @@ void CNearFieldTagType1::ReadAllL(TDes8& aData)
 
     Returns true on success; otherwise returns false.
 */
-void CNearFieldTagType1::WriteByteEraseL(TUint8 aAddress, const TDesC8& aData)
+TInt CNearFieldTagType1::WriteByteErase(TUint8 aAddress, TUint8 aData)
     {
-    
+    return iNfcType1Connection->WriteByteErase(aAddress, aData); 
     }
 
 /*!
@@ -157,9 +157,9 @@ void CNearFieldTagType1::WriteByteEraseL(TUint8 aAddress, const TDesC8& aData)
 
     Returns true on success; otherwise returns false.
 */
-void CNearFieldTagType1::WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData)
+TInt CNearFieldTagType1::WriteByteNoErase(TUint8 aAddress, TUint8 aData)
     {
-    
+    return iNfcType1Connection->WriteByteNoErase(aAddress, aData); 
     }
 
 
@@ -167,9 +167,9 @@ void CNearFieldTagType1::WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData)
     Reads and returns a single byte from the static memory area of the tag. The \a address
     parameter specifices the linear byte address to read.
 */
-void CNearFieldTagType1::ReadByteL(TUint8 aAddress, TDes8& aData)
+TInt CNearFieldTagType1::ReadByte(TUint8 aAddress, TUint8 aData)
     {
-    
+    return iNfcType1Connection->ReadByte(aAddress, aData); 
     }
 
 
@@ -177,18 +177,18 @@ void CNearFieldTagType1::ReadByteL(TUint8 aAddress, TDes8& aData)
     Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
     byte array is returned if an error occurs.
 */
-void CNearFieldTagType1::ReadSegmentL(TUint aSegmentAddress, TDes8& aData)
+TInt CNearFieldTagType1::ReadSegment(TUint aSegmentAddress, TDes8& aData)
     {
-    
+    return iNfcType1Connection->ReadSegment(aSegmentAddress, aData); 
     }
 
 /*!
     Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
     array is returned if an error occurs.
 */
-void CNearFieldTagType1::ReadBlockL(TUint aBlockAddress, TDes8& aData)
+TInt CNearFieldTagType1::ReadBlock(TUint aBlockAddress, TDes8& aData)
     {
-    
+    return iNfcType1Connection->ReadBlock(aBlockAddress, aData); 
     }
 
 /*!
@@ -200,9 +200,9 @@ void CNearFieldTagType1::ReadBlockL(TUint aBlockAddress, TDes8& aData)
     Returns true on success; otherwise returns false.
 
 */
-void CNearFieldTagType1::WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData)
+TInt CNearFieldTagType1::WriteBlockErase(TUint aBlockAddress, const TDesC8& aData)
     {
-    
+    return iNfcType1Connection->WriteBlockErase(aBlockAddress, aData); 
     }
 
 
@@ -215,9 +215,9 @@ void CNearFieldTagType1::WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aDa
     Returns true on success; otherwise returns false.
 
 */
-void CNearFieldTagType1::WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData)
+TInt CNearFieldTagType1::WriteBlockNoErase(TUint aBlockAddress, const TDesC8& aData)
     {
-    
+    return iNfcType1Connection->WriteBlockErase(aBlockAddress, aData); 
     }
 
 /*!
@@ -233,22 +233,6 @@ TNfcType1Address CNearFieldTagType1::AddOperand(TUint8 aAddress) const
     address.SetByte(aAddress&byteMask);
     
     return address;
-    }
-
-/*!
-    Convert \a aSegmentAddress to segmentaddress address
-*/
-TNfcType1Address CNearFieldTagType1::AddsOperand(TUint8 aSegmentAddress) const
-    {
-    
-    }
-
-/*!
-    Convert \a aBlockAddress to block address
-*/
-TNfcType1Address CNearFieldTagType1::Add8Operand(TUint8 aBlockAddress) const
-    {
-    
     }
 
 CNearFieldTagType1 * CNearFieldTagType1::CastToTagType1()

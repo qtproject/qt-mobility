@@ -76,14 +76,17 @@ QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
 {
+    _hasNdefMessage();
 }
 
 QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()
 {
+    return _ndefMessages();
 }
 
 void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
 {
+    _setNdefMessages(messages);
 }
 
 QByteArray QNearFieldTagType2Symbian::uid() const

@@ -45,12 +45,14 @@
 #include <qnearfieldtagtype2.h>
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagtype2_symbian.h"
+#include "nearfieldtagimpl_symbian.h"
+#include "commonutil_symbian.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType2Symbian : public QNearFieldTagType2
+class QNearFieldTagType2Symbian : public QNearFieldTagType2, private QNearFieldTagImpl
 {
     Q_OBJECT
 public:
@@ -73,19 +75,15 @@ public:
 
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
-    QNearFieldTarget::AccessMethods accessMethods() const
-    {
-        return mAccessMethods;
-    }
-
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {
-        mAccessMethods = accessMethods;
+        _setAccessMethods(accessMethods);
     }
-private:
-    // Own
-    MNearFieldTarget * mTag;
-    QNearFieldTarget::AccessMethods mAccessMethods;
+
+    QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return _accessMethods();
+    }
 };
 
 QTM_END_NAMESPACE
