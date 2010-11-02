@@ -61,7 +61,13 @@ public:
     static CNdefMessage* FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg );
     static QNdefMessage FromCNdefMsgToQndefMsgL( const CNdefMessage& msg );
  
-    static TPtrC8 FromQByteArrayToTPtrC8( QByteArray& qbytearray);
+    static TPtrC8 FromQByteArrayToTPtrC8(const QByteArray& qbytearray);
+    static QByteArray FromTDesCToQByteArray( const TDesC8& des);
+    
+    static TPtrC FromQStringToTptrC(const QString& qstring);
+    static TPtrC8 FromQStringToTptrC8(const QString& qstring);
+    static QString FromDesC8ToQString(const TDesC8&);
+    
 };
 
 QTM_END_NAMESPACE

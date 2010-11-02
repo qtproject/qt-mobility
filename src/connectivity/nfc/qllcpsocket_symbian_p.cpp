@@ -41,6 +41,8 @@
 
 #include "qllcpsocket_symbian_p.h"
 #include "symbian/llcpsocket_symbian.h"
+#include "symbian/commonutil_symbian.h" // will delete
+#include "symbian/qnearfieldutility_symbian.h" 
 
 QTM_USE_NAMESPACE
 
@@ -54,7 +56,10 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
     Q_UNUSED(target);
-    Q_UNUSED(serviceUri);
+    
+    QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+    TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
+    m_symbianSocketType2->ConnectToService(serviceName);
 }
 
 void QLlcpSocketPrivate::disconnectFromService()
@@ -127,11 +132,12 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(datagram);
     Q_UNUSED(target);
-    Q_UNUSED(port);
-
-    return -1;
+    
+    RBuf8 myDescriptor;
+    CommonUtil::QByteArray2TDes8(datagram,myDescriptor);
+    qint64 val = m_symbianSocketType1->StartWriteDatagram(myDescriptor, port);
+    return val;
 }
 
 QLlcpSocket::Error QLlcpSocketPrivate::error() const

@@ -41,6 +41,7 @@
 
 #include "qllcpserver_symbian_p.h"
 #include "symbian/llcpserver_symbian.h"
+#include "symbian/qnearfieldutility_symbian.h"
 
 QTM_USE_NAMESPACE
 
@@ -58,8 +59,9 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     //TODO
     //const TDesC8& aServiceName = "test";
-    TPtrC8 serviceName( reinterpret_cast<const TText8*> (serviceUri.constData()),
-            serviceUri.size());
+    //TPtrC8 serviceName( reinterpret_cast<const TText8*> (serviceUri.constData()),
+    //        serviceUri.size());
+    TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
     
     return m_symbianbackend->Listen(serviceName);
 }
