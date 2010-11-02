@@ -41,17 +41,26 @@
 
 #include "qllcpsocket_symbian_p.h"
 #include "symbian/llcpsocket_symbian.h"
-#include "symbian/commonutil_symbian.h" // will delete
 #include "symbian/qnearfieldutility_symbian.h" 
 
 QTM_USE_NAMESPACE
 
 QLlcpSocketPrivate::QLlcpSocketPrivate()
    : m_symbianSocketType1(NULL),
-     m_symbianSocketType2(NULL)
+     m_symbianSocketType2(NULL),
+     m_socketType(QLlcpSocketPrivate::connectionUnknown)  
 {
     // lazy initializtion according to the llcp tranporation type
 }
+/*
+enum SocketType 
+{
+   connectionType1 = 1, // ConnectionLess mode
+   connectionType2 = 2, // ConnectionOriented mode
+   connectionUnknown = -1
+};
+*/
+
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
@@ -72,18 +81,31 @@ bool QLlcpSocketPrivate::bind(quint8 port)
     return m_symbianSocketType1->Bind(port);
 }
 
+/*!
+    Returns true if at least one datagram is waiting to be read;
+    otherwise returns false.
+*/
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
     bool val = false;
     if (m_symbianSocketType1)
         {
-        //val = m_symbianSocketType1->hasPendingDatagrams();
+        val = m_symbianSocketType1->HasPendingDatagrams();
         }
     return val;
 }
 
+/*!
+    Returns the size of the first pending connectionless datagram. If there is
+    no datagram available, this function returns -1.
+*/
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
+    int val = -1;
+    if (m_symbianSocketType1)
+        {
+        val = m_symbianSocketType1->PendingDatagramSize();
+        }    
     return -1;
 }
 
@@ -109,6 +131,11 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
     Q_UNUSED(maxSize);
     Q_UNUSED(target);
     Q_UNUSED(port);
+    
+    if (m_symbianSocketType1 == NULL)
+        {
+        QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+        }
 
     return -1;
 }
@@ -134,8 +161,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
 {
     Q_UNUSED(target);
     
-    RBuf8 myDescriptor;
-    CommonUtil::QByteArray2TDes8(datagram,myDescriptor);
+    const TDesC8& myDescriptor = QNFCNdefUtility::FromQByteArrayToTPtrC8(datagram);
     qint64 val = m_symbianSocketType1->StartWriteDatagram(myDescriptor, port);
     return val;
 }
@@ -161,4 +187,15 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 
     return -1;
 }
+
+
+void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
+    {
+      // emit bytesWritten(bytes);
+    }
+
+void QLlcpSocketPrivate::invokeReadyRead()
+    {
+      // emit readyRead();
+    }
 

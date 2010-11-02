@@ -151,14 +151,18 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
 TInt CLlcpSocketType1::StartReadDatagram(TInt64 aMaxSize)
     {
     TInt val = -1;
-    TInt error = KErrNone;
-    
-    // Start receiving data again
-    error = iRemoteConnection->Receive(aMaxSize);
-    if (KErrNone == error)
+    if (NULL == iRemoteConnection)
         {
-        val =  0;
+        TInt error = KErrNone;
+        
+        // Start receiving data again
+        error = iRemoteConnection->Receive(aMaxSize);
+        if (KErrNone == error)
+            {
+            val =  0;
+            }        
         }
+
     return val;    
     }
 
@@ -168,14 +172,34 @@ bool CLlcpSocketType1::TransferCompleted()
     return iLocalConnection->TransferCompleted();
     }
 
-bool CLlcpSocketType1::ReceiveData(TDesC8& aData)
+bool CLlcpSocketType1::ReceiveData(RBuf &aRbuf)
     {
-      if (ReceiveCompleted())
+      if (ReceiveCompleted() && iRemoteConnection != NULL)
           {
-          aData = iRemoteConnection->ReceiveData();
+          iRemoteConnection->ReceiveDataFromBuf(aRbuf);
           return ETrue;
           }
       return EFalse;
+    }
+
+bool CLlcpSocketType1::HasPendingDatagrams() const
+    {
+    bool val = false;
+    if (NULL != iRemoteConnection)
+        {
+        val = iRemoteConnection->HasPendingDatagrams();
+        } 
+    return val;
+    }
+
+TInt64 CLlcpSocketType1::PendingDatagramSize() const
+    {
+    TInt64 val = -1;
+    if (NULL != iRemoteConnection)
+        {
+        val = iRemoteConnection->PendingDatagramSize();
+        } 
+    return val;
     }
 
 bool CLlcpSocketType1::ReceiveCompleted()
@@ -193,6 +217,20 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     CreateRemoteConnection(aConnection);
     }
 
+/*!
+    Call back from MLlcpReadWriteCb
+*/
+void CLlcpSocketType1::ReceiveComplete( TDes8& aData )
+    {
+    iCallback.invokeReadyRead();
+    }
+/*!
+    Call back from MLlcpReadWriteCb
+*/
+void CLlcpSocketType1::WriteComplete( TInt aSize)
+    {
+    iCallback.invokeBytesWritten(aSize);
+    }
 /*!
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
@@ -223,6 +261,9 @@ TInt CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
 
 void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnection)
     {
+    if (NULL == aConnection)
+        return;
+    
     TInt error = KErrNone;
      
      // Only accepting one incoming remote connection
@@ -240,8 +281,7 @@ void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnect
          delete aConnection;
          }    
     }
-
-   
+  
 /*!
     Construct a new wrapper for connectionLess transport.
 */
@@ -400,11 +440,25 @@ bool COwnLlcpConnLess::TransferCompleted()
     return iActionState != ETransmitting ? ETrue : EFalse;
     }
 
-const TDesC8& COwnLlcpConnLess::ReceiveData() const
+void COwnLlcpConnLess::ReceiveDataFromBuf(RBuf& aRbuf) 
     {
-    return iReceiveBuf;
+    if (iReceiveBuf.Size() == 0)
+        return;
+    
+    aRbuf.Copy(iReceiveBuf);
+    iReceiveBuf.Zero();
+    }
+
+bool COwnLlcpConnLess::HasPendingDatagrams() const
+    {
+    return iReceiveBuf.Size() > 0 ? true : false;
     }
    
+TInt64 COwnLlcpConnLess::PendingDatagramSize() const
+    {
+    return iReceiveBuf.Size();
+    }
+
 void COwnLlcpConnLess::RunL()
     {
     TInt error = iStatus.Int();
@@ -487,7 +541,6 @@ COwnLlcpConnOriented* COwnLlcpConnOriented::NewLC( MLlcpConnOrientedTransporter*
     return self;
     }
    
-
 COwnLlcpConnOriented::COwnLlcpConnOriented( MLlcpConnOrientedTransporter* aConnection )
     : CActive( EPriorityStandard ),
       iConnState( ENotConnected ),

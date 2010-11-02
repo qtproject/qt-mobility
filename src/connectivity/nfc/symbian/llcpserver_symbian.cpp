@@ -86,9 +86,10 @@ CLlcpServer::~CLlcpServer()
 CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     {
     // take first element
-    CLlcpSocketType2 *llcpSocket = iLlcpSocketArray[0];
+    CLlcpSocketType2 *llcpSocket = NULL;
     if (iLlcpSocketArray.Count() > 0)
         {
+        llcpSocket = iLlcpSocketArray[0];
         iLlcpSocketArray.Remove(0);
         }
        return llcpSocket;
@@ -111,14 +112,11 @@ bool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     TInt error = KErrNone; 
 
-    if (error == KErrNone)
-        {
-        // TODO
-        // will updated to
-        // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-        iServiceName = aServiceName;
-        TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));         
-        }
+    // TODO
+    // will updated to
+    // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
+    iServiceName = aServiceName;
+    TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));         
 
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     return iSocketListening;
@@ -134,7 +132,10 @@ bool CLlcpServer::isListening() const
     Call back from MLlcpConnOrientedListener
 */
 void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
-    {   
+    { 
+    if (aConnection == NULL)
+        return;
+    
     TInt error = KErrNone;
        
     // create remote connection for the iLlcpsocket
@@ -145,12 +146,12 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
     // Creating wrapper for connection. 
     if (KErrNone == error)
         {
-        TRAP(error,llcpSocket->CreateLocalConnection(iServiceName));
+        error = llcpSocket->CreateLocalConnection(iServiceName);
         if (KErrNone != error)
             {
             //TODO emit error
             }
-        TRAP(error,llcpSocket->CreateRemoteConnection(aConnection));
+        error = llcpSocket->CreateRemoteConnection(aConnection);
         if (KErrNone != error)
             {
             //TODO emit error
