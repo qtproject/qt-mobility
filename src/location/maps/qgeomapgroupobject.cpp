@@ -199,7 +199,8 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
     QGeoMapObject::setMapData(mapData);
     for (int i = 0; i < d_ptr->children.size(); ++i) {
         d_ptr->children[i]->setMapData(mapData);
-        emit childAdded(d_ptr->children[i]);
+        if (mapData)
+            emit childAdded(d_ptr->children[i]);
     }
 }
 
