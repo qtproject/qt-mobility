@@ -9,6 +9,7 @@
 QTM_BEGIN_NAMESPACE
 
 #define MINIMUM_UPDATE_INTERVAL 1000
+#define UPDATE_TIMEOUT_COLD_START 120000
 
 // Helper function to convert data into a QGeoPositionInfo
 static QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
@@ -164,8 +165,11 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     g_object_unref (master);
 
     if (!m_client) {
-        qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMasterClient: %s\n", error->message);
-        g_error_free (error);
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMasterClient.");
+        if (error) {
+            qCritical (error->message);
+            g_error_free (error);
+        }
         return -1;
     }
 
@@ -175,8 +179,11 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
                                                  TRUE,                        // require_updates (signals)
                                                  m_preferredResources,
                                                  &error)){
-        qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed: %s", error->message);
-        g_error_free (error);
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed.");
+        if (error) {
+            qCritical (error->message);
+            g_error_free (error);
+        }
         g_object_unref (m_client);
         return -1;
     }
@@ -257,21 +264,28 @@ int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
 
 void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
-    g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, NULL);
+    qDebug("QGeoPositionInfoSourceGeoclueMaster::stopUpdates");
+    g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval()) {
+    if (timeout < minimumUpdateInterval() && timeout != 0) {
         emit updateTimeout();
         return;
     }
     if (m_requestTimer.isActive()) {
         return;
     }
-    m_requestTimer.start(timeout);
+    // TODO a better logic for timeout value (specs leave it impl dependant).
+    // Especially if there are active updates ongoing, there is no point of waiting
+    // for whole cold start time.
+    if (timeout == 0)
+        m_requestTimer.start(UPDATE_TIMEOUT_COLD_START);
+    else
+        m_requestTimer.start(timeout);
     geoclue_position_get_position_async (m_pos, (GeocluePositionCallback)position_callback,this);
 }
 
