@@ -47,6 +47,7 @@
 #include <qnearfieldmanager.h>
 #include <qndefmessage.h>
 #include <qnearfieldtagtype1.h>
+#include <qndefnfctextrecord.h>
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 
@@ -65,6 +66,8 @@ private slots:
 
     void staticMemoryModel();
     void dynamicMemoryModel();
+
+    void ndefMessages();
 
 private:
     void waitForMatchingTarget();
@@ -267,6 +270,40 @@ void tst_QNearFieldTagType1::dynamicMemoryModel()
                 QVERIFY(target->readSegment(i).isEmpty());
             }
         }
+    }
+}
+
+void tst_QNearFieldTagType1::ndefMessages()
+{
+    QByteArray firstId;
+    forever {
+        waitForMatchingTarget();
+
+        QByteArray id = target->readIdentification();
+        if (firstId.isEmpty())
+            firstId = id;
+        else if (firstId == id)
+            break;
+
+        QVERIFY(target->hasNdefMessage());
+
+        QList<QNdefMessage> ndefMessages = target->ndefMessages();
+
+        QList<QNdefMessage> messages;
+        QNdefNfcTextRecord textRecord;
+        textRecord.setText(QLatin1String("tst_QNearFieldTagType1::ndefMessages"));
+
+        messages.append(QNdefMessage(textRecord));
+
+        target->setNdefMessages(messages);
+
+        QVERIFY(target->hasNdefMessage());
+
+        QList<QNdefMessage> storedMessages = target->ndefMessages();
+
+        QVERIFY(ndefMessages != storedMessages);
+
+        QVERIFY(messages == storedMessages);
     }
 }
 
