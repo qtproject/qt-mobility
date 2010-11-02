@@ -827,27 +827,28 @@ void CLlcpSocketType2::ConstructL()
 /*!
     CLlcpSocketType2::CLlcpSocketType2()
 */
-CLlcpSocketType2::CLlcpSocketType2( )
+CLlcpSocketType2::CLlcpSocketType2( QtMobility::QLlcpSocketPrivate* aCallback)
     : iLlcp( NULL ),
     iLocalConnection(NULL),
-    iRemoteConnection(NULL)
+    iRemoteConnection(NULL),
+    iCallback(aCallback)
     {
     }
 
 /*!
     CLlcpSocketType1::NewLC()
 */
-CLlcpSocketType2* CLlcpSocketType2::NewLC()
+CLlcpSocketType2* CLlcpSocketType2::NewLC(QtMobility::QLlcpSocketPrivate* aCallback)
     {
-    CLlcpSocketType2* self = new (ELeave) CLlcpSocketType2();
+    CLlcpSocketType2* self = new (ELeave) CLlcpSocketType2(aCallback);
     CleanupStack::PushL( self );
     self->ConstructL();
     return self;
     }
 
-CLlcpSocketType2* CLlcpSocketType2::NewL()
+CLlcpSocketType2* CLlcpSocketType2::NewL(QtMobility::QLlcpSocketPrivate* aCallback)
     {
-    CLlcpSocketType2* self = CLlcpSocketType2::NewLC();
+    CLlcpSocketType2* self = CLlcpSocketType2::NewLC(aCallback);
     CleanupStack::Pop( self );
     return self;
     }

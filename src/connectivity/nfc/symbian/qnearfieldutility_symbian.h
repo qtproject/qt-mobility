@@ -63,6 +63,9 @@ public:
  
     static TPtrC8 FromQByteArrayToTPtrC8(const QByteArray& qbytearray);
     static TPtrC FromQStringToTptrC(const QString& qstring);
+    static TPtrC8 FromQStringToTptrC8(const QString& qstring);
+    static QString FromDesC8ToQString(const TDesC8&);
+    
 };
 
 QTM_END_NAMESPACE

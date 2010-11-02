@@ -90,4 +90,17 @@ TPtrC QNFCNdefUtility::FromQStringToTptrC(const QString& qstring)
     TPtrC ptr (reinterpret_cast<const TText*>(qstring.constData()),qstring.length());
     return ptr;
     }
+
+TPtrC8 QNFCNdefUtility::FromQStringToTptrC8(const QString& qstring)
+    {
+    TPtrC8 ptr (reinterpret_cast<const TUint8*>(qstring.constData()),qstring.length());
+    return ptr;
+    }
+
+QString QNFCNdefUtility::FromDesC8ToQString(const TDesC8& aDescriptor)
+    {
+    return QString::fromRawData(reinterpret_cast<const QChar*>(aDescriptor.Ptr()),
+            aDescriptor.Length());
+    }
+
 QTM_END_NAMESPACE

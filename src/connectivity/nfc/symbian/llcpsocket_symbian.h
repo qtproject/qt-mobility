@@ -100,7 +100,6 @@ private:
    bool iConnLessStarted;
    
    QtMobility::QLlcpSocketPrivate& iCallback;
-   
    };
 
 
@@ -113,12 +112,12 @@ public:
    /*!
     * Creates a new CLlcpSocketType2 object.
     */
-   static CLlcpSocketType2* NewL();
+   static CLlcpSocketType2* NewL(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
    
    /*!
     * Creates a new CLlcpSocketType2 object.
     */
-   static CLlcpSocketType2* NewLC();
+   static CLlcpSocketType2* NewLC(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
    
    /*!
     * Destructor
@@ -136,7 +135,7 @@ public:
    
 private:
     // Constructor
-    CLlcpSocketType2();
+    CLlcpSocketType2(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
     // Second phase constructor
     void ConstructL();   
     void Cleanup();
@@ -173,6 +172,8 @@ private:
     * This is used to send data to local device.
     */
    COwnLlcpConnOriented* iRemoteConnection;   
+   
+   QtMobility::QLlcpSocketPrivate*  iCallback; // not own 
    
    };
  
@@ -263,6 +264,7 @@ private:
     RBuf8 iReceiveBuf;
     
     TActionState iActionState;
+    
     };
 
 
@@ -384,32 +386,4 @@ private:
     TActionState iActionState;
     };
  
-
-
-/*
-class CLlcpSocket 
-    {
-public:
-    enum TLlcpConnectionType
-        {
-        ELlcpConnLess,
-        ELlcpConnOriented 
-        };       
-    
-    static CLlcpSocketType1* NewL(TLlcpConnectionType aType);
-    
-public:
-    CLlcpSocketType1* socketHandler();
-    CLlcpSocketType2* type2Handler();
-    TLlcpConnectionType TransportType();
-
-    union
-    {
-        
-    }
-private:
-    
-    };
-*/
-
 #endif /* LLCPSOCKET_SYMBIAN_H_ */
