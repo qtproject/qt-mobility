@@ -385,6 +385,7 @@ void ContactListPage::exportClicked()
         qWarning() << "No manager selected; cannot export";
         return;
     }
+    qDebug() << "Exporting contacts: " << m_contacts;
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     if (docPath.isEmpty())
         docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
