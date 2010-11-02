@@ -117,6 +117,7 @@ public Q_SLOTS:
     virtual void setActiveEndpoint(const QString& name) = 0;
 
 protected:
+    int error() const;
     void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
     void loaded();
     void buffering();

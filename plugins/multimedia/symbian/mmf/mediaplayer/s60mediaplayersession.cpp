@@ -491,6 +491,11 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
     }
 }
 
+int S60MediaPlayerSession::error() const
+{
+    return m_error;
+}
+
 void S60MediaPlayerSession::setError(int error, const QString &errorString, bool forceReset)
 {
     if( forceReset ) {
