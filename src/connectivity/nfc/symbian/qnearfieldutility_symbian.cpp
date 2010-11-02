@@ -79,10 +79,15 @@ QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
         return result;
     }
 
-TPtrC8 QNFCNdefUtility::FromQByteArrayToTPtrC8( QByteArray& qbytearray)
+TPtrC8 QNFCNdefUtility::FromQByteArrayToTPtrC8(const QByteArray& qbytearray)
     {
     TPtrC8 ptr(reinterpret_cast<const TUint8*>(qbytearray.constData()), qbytearray.size());
     return ptr;
     }
 
+TPtrC QNFCNdefUtility::FromQStringToTptrC(const QString& qstring)
+    {
+    TPtrC ptr (reinterpret_cast<const TText*>(qstring.constData()),qstring.length());
+    return ptr;
+    }
 QTM_END_NAMESPACE
