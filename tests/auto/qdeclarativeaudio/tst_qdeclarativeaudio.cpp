@@ -1217,6 +1217,7 @@ void tst_QDeclarativeAudio::loops()
     int stopped = 0;
     int loopsChanged = 0;
 
+    audio.classBegin();
     audio.componentComplete();
 
     QCOMPARE(audio.isPlaying(), false);
