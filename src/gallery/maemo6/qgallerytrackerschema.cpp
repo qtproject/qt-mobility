@@ -1678,6 +1678,24 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     return columns;
 }
 
+static QString qt_writeSorting( const QStringList &x, const QVector<QGalleryTrackerSortCriteria> &sortCriteria)
+{
+    int count = x.size();
+    if ( count > 0 )
+    {
+        QString result(" ORDER BY ");
+        for ( int i = 0; i < count; ++i )
+        {
+            if( sortCriteria[i].flags & QGalleryTrackerSortCriteria::Ascending )
+                result += qt_writePropertyFunctions( QStringList() << " ASC("+x[i], "x" );
+            else
+                result += qt_writePropertyFunctions( QStringList() << " DESC("+x[i], "x" );
+        }
+        return result;
+    }
+    return "";
+}
+
 void QGalleryTrackerSchema::populateItemArguments(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
@@ -1739,7 +1757,6 @@ void QGalleryTrackerSchema::populateItemArguments(
 
         int propertyIndex;
         if ((propertyIndex = compositeProperties.indexOfProperty(*it)) >= 0) {
-//            Q_ASSERT(0);
             const QGalleryItemPropertyList &dependencies
                     = compositeProperties[propertyIndex].dependencies;
 
@@ -1834,7 +1851,9 @@ void QGalleryTrackerSchema::populateItemArguments(
                                 << "SELECT DISTINCT ?x nie:url(?x) " + qt_writePropertyFunctions(arguments->fieldNames, "x")
                                 + " WHERE {{ ?x rdf:type " + service + "}"
                                 + ( !query.isEmpty() ? query : "" )
-                                + "}";
+                                + "}"
+                                + qt_writeSorting( sortFieldNames, arguments->sortCriteria );
+                                ;
 
     arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0,qt_galleryItemTypeList[m_itemIndex].prefix));
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
