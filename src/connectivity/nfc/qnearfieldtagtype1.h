@@ -64,7 +64,7 @@ public:
 
     bool hasNdefMessage();
     QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    //void setNdefMessages(const QList<QNdefMessage> &messages);
 
     quint8 version();
     int memorySize();

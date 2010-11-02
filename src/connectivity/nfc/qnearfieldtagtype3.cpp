@@ -38,17 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qnearfieldtagtype3.h>
+#include "qnearfieldtagtype3.h"
+#include <QtCore/QByteArray>
 
-QNearFieldTagType3::QNearFieldTagType3(QObject *parent = 0)
-{
-}
+QTM_BEGIN_NAMESPACE
 
-quint8 qnearfieldtagtype3::version()
-{
-}
-
-int qnearfieldtagtype3::memorySize()
+QNearFieldTagType3::QNearFieldTagType3(QObject *parent) : QNearFieldTarget(parent)
 {
 }
 
@@ -63,3 +58,7 @@ bool QNearFieldTagType3::writeBlock(quint8 blockAddress, const QByteArray &data)
 bool QNearFieldTagType3::selectSector(quint8 sector)
 {
 }
+
+#include "moc_qnearfieldtagtype3.cpp"
+
+QTM_END_NAMESPACE

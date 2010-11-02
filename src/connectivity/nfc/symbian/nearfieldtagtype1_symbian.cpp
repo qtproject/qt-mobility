@@ -133,7 +133,9 @@ const TDesC8& CNearFieldTagType1::ReadIdentification()
     
 TInt CNearFieldTagType1::ReadAll(TDes8& aData)
     {
+#if 0
     return iNfcType1Connection->ReadAll(aData);    
+#endif
     }
 
 /*!
@@ -146,7 +148,9 @@ TInt CNearFieldTagType1::ReadAll(TDes8& aData)
 */
 TInt CNearFieldTagType1::WriteByteErase(TUint8 aAddress, TUint8 aData)
     {
+#if 0
     return iNfcType1Connection->WriteByteErase(aAddress, aData); 
+#endif
     }
 
 /*!
@@ -159,7 +163,9 @@ TInt CNearFieldTagType1::WriteByteErase(TUint8 aAddress, TUint8 aData)
 */
 TInt CNearFieldTagType1::WriteByteNoErase(TUint8 aAddress, TUint8 aData)
     {
+#if 0
     return iNfcType1Connection->WriteByteNoErase(aAddress, aData); 
+#endif
     }
 
 
@@ -167,11 +173,12 @@ TInt CNearFieldTagType1::WriteByteNoErase(TUint8 aAddress, TUint8 aData)
     Reads and returns a single byte from the static memory area of the tag. The \a address
     parameter specifices the linear byte address to read.
 */
-TInt CNearFieldTagType1::ReadByte(TUint8 aAddress, TUint8 aData)
+TInt CNearFieldTagType1::ReadByte(TUint8 aAddress, TUint8& aData)
     {
+#if 0
     return iNfcType1Connection->ReadByte(aAddress, aData); 
+#endif
     }
-
 
 /*!
     Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
@@ -179,7 +186,9 @@ TInt CNearFieldTagType1::ReadByte(TUint8 aAddress, TUint8 aData)
 */
 TInt CNearFieldTagType1::ReadSegment(TUint aSegmentAddress, TDes8& aData)
     {
+#if 0
     return iNfcType1Connection->ReadSegment(aSegmentAddress, aData); 
+#endif
     }
 
 /*!
@@ -188,7 +197,9 @@ TInt CNearFieldTagType1::ReadSegment(TUint aSegmentAddress, TDes8& aData)
 */
 TInt CNearFieldTagType1::ReadBlock(TUint aBlockAddress, TDes8& aData)
     {
+#if 0
     return iNfcType1Connection->ReadBlock(aBlockAddress, aData); 
+#endif
     }
 
 /*!
@@ -202,7 +213,9 @@ TInt CNearFieldTagType1::ReadBlock(TUint aBlockAddress, TDes8& aData)
 */
 TInt CNearFieldTagType1::WriteBlockErase(TUint aBlockAddress, const TDesC8& aData)
     {
+#if 0
     return iNfcType1Connection->WriteBlockErase(aBlockAddress, aData); 
+#endif
     }
 
 
@@ -217,7 +230,9 @@ TInt CNearFieldTagType1::WriteBlockErase(TUint aBlockAddress, const TDesC8& aDat
 */
 TInt CNearFieldTagType1::WriteBlockNoErase(TUint aBlockAddress, const TDesC8& aData)
     {
+#if 0
     return iNfcType1Connection->WriteBlockErase(aBlockAddress, aData); 
+#endif
     }
 
 /*!

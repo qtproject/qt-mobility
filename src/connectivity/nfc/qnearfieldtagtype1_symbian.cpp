@@ -41,7 +41,6 @@
 #include <nfctag.h>
 #include "qnearfieldutility_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
-#include "nearfieldtagimpl_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -183,7 +182,7 @@ QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
     if (tagType1)
     {
         TBuf8<BlockOpreationBytes> response;
-        if (KErrNone == tagType1->readBlock(blockAddress, response))
+        if (KErrNone == tagType1->ReadBlock(blockAddress, response))
         {
             CommonUtil::TDesC82QByteArray(response, result);
         }
@@ -230,6 +229,7 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
+#if 0
     QByteArray result;
     if (!command.isEmpty())
     {
@@ -260,7 +260,7 @@ QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 
             
 
-                
+#endif            
 }
 
 /*!

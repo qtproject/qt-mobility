@@ -10,6 +10,7 @@ HEADERS += \
     nfc/qndefnfcurirecord.h \
     nfc/qnearfieldtagtype1.h \
     nfc/qnearfieldtagtype2.h \
+    nfc/qnearfieldtagtype3.h \
     nfc/qllcpserver.h
 
 PRIVATE_HEADERS += \
@@ -34,6 +35,7 @@ SOURCES += \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp \
     nfc/qnearfieldtagtype2.cpp \
+    nfc/qnearfieldtagtype3.cpp \
     nfc/qtlvreader.cpp \
     nfc/qllcpserver.cpp
 
@@ -70,6 +72,7 @@ symbian {
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/qnearfieldtagtype2_symbian_p.h \
+        nfc/qnearfieldtagtype3_symbian_p.h \
         nfc/symbian/nearfieldmanager_symbian.h \
         nfc/symbian/nearfieldtarget_symbian.h \
         nfc/symbian/nearfieldtagtype1_symbian.h \
@@ -86,6 +89,7 @@ symbian {
         nfc/qnearfieldmanager_symbian.cpp \
         nfc/qnearfieldtagtype1_symbian.cpp \
         nfc/qnearfieldtagtype2_symbian.cpp \
+        nfc/qnearfieldtagtype3_symbian.cpp \
         nfc/symbian/nearfieldmanager_symbian.cpp \	
         nfc/symbian/nearfieldtarget_symbian.cpp \
         nfc/symbian/nearfieldtagtype1_symbian.cpp \

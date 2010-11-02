@@ -42,6 +42,8 @@
 #define QNEARFIELDTAGTYPE3SYMBIAN_H
 
 #include <qnearfieldtagtype3.h>
+#include "nearfieldtagimpl_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -51,7 +53,7 @@ class QNearFieldTagType3Symbian : public QNearFieldTagType3, private QNearFieldT
     Q_OBJECT
 public:
 
-    QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent = 0);
 
     ~QNearFieldTagType3Symbian();
 
@@ -77,7 +79,7 @@ public:
     virtual QByteArray readBlock(quint8 blockAddress);
     virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
     virtual bool selectSector(quint8 sector);
-}
+};
     
 QTM_END_NAMESPACE
 QT_END_HEADER

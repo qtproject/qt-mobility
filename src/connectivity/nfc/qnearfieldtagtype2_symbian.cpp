@@ -44,7 +44,7 @@
 QTM_BEGIN_NAMESPACE
 
 QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObject *parent)
-                                : QNearFieldTagType2(parent), mTag(tag)
+                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
 {
 }
 
@@ -52,7 +52,6 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 {
     delete mTag;
 }
-
 
 QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {

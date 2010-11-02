@@ -45,13 +45,11 @@
 #include <qnearfieldtarget.h>
 
 QT_BEGIN_HEADER
-    
 QTM_BEGIN_NAMESPACE
     
 class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
 {
     Q_OBJECT
-        
 public:
     explicit QNearFieldTagType3(QObject *parent = 0);
 
@@ -60,12 +58,9 @@ public:
     virtual QByteArray readBlock(quint8 blockAddress);
     virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
     virtual bool selectSector(quint8 sector);
-
 };
 
 QTM_END_NAMESPACE
-    
 QT_END_HEADER
-    
 #endif // QNEARFIELDTAGTYPE3_H
 

@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <nfctag.h>
 #include "qnearfieldtagtype3_symbian_p.h"
 
 QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
@@ -87,3 +88,5 @@ bool QNearFieldTagType3Symbian::writeBlock(quint8 blockAddress, const QByteArray
 bool QNearFieldTagType3Symbian::selectSector(quint8 sector)
 {
 }
+
+#include "moc_qnearfieldtagtype3_symbian_p.cpp"
