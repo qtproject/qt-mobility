@@ -42,6 +42,7 @@
 #ifndef QLLCPSOCKET_P_H
 #define QLLCPSOCKET_P_H
 
+#include <QtCore/QObject>
 #include <qmobilityglobal.h>
 
 #include "qllcpsocket.h"
@@ -51,8 +52,10 @@ class CLlcpSocketType2;
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocketPrivate
+class QLlcpSocketPrivate //: public QObject
 {
+    //Q_OBJECT
+    
 public:
     QLlcpSocketPrivate();
 
@@ -79,10 +82,24 @@ public:
     qint64 writeData(const char *data, qint64 len);
 
 private:
+    enum SocketType 
+    {
+       connectionType1 = 1, // ConnectionLess mode
+       connectionType2 = 2, // ConnectionOriented mode
+       connectionUnknown = -1
+    };
+    
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
+    SocketType m_socketType;
 
-signals:
+public:
+     void invokeBytesWritten(qint64 bytes);
+     void invokeReadyRead();
+     
+//signals:
+//     void readyRead();
+//     void bytesWritten(qint64 bytes);
         //void connected();
         //void disconnected();
         //void error(QLlcpSocket::Error socketError);

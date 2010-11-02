@@ -22,12 +22,29 @@ class COwnLlcpConnOriented;
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
 
+class MLlcpReadWriteCb
+    {  
+public:
+
+    /**
+     * Empty Destructor.
+     */
+    virtual ~MLlcpReadWriteCb() {};
+    
+    /**
+     * Called 
+     */
+    virtual void ReceiveComplete( TDes8& aData ) = 0;
+    virtual void WriteComplete( TInt) = 0;
+        
+    };      
 
 /*!
  *  CLASS DECLARATION for CLlcpSocketType1 (ConnectLess Tran).
  */
 class CLlcpSocketType1 : public CBase,
-                         public MLlcpConnLessListener
+                         public MLlcpConnLessListener,
+                         public MLlcpReadWriteCb
    {
 public:
    /*!
@@ -52,11 +69,22 @@ public:
    
    bool TransferCompleted();
    bool ReceiveCompleted();
-   bool ReceiveData(TDesC8& aData);
+   bool ReceiveData(RBuf &aRbuf);
    
+   /*!
+       Returns true if at least one datagram is waiting to be read;
+       otherwise returns false.
+   */
+   bool HasPendingDatagrams() const;  
+   TInt64 PendingDatagramSize() const;
+    
+private:  // from  MLlcpReadWriteCb
+     void ReceiveComplete( TDes8& aData );
+     void WriteComplete( TInt );
+     
 private: // From MLlcpConnLessListener
     void FrameReceived( MLlcpConnLessTransporter* aConnection );
-    
+     
 private:
     // Constructor
     CLlcpSocketType1(QtMobility::QLlcpSocketPrivate&);
@@ -225,7 +253,11 @@ public:
    bool ReceiveCompeleted();
    bool TransferCompleted();
    
-   const TDesC8& ReceiveData() const;
+   void ReceiveDataFromBuf(RBuf& aRbuf);
+   
+   bool HasPendingDatagrams() const;
+   
+   TInt64 PendingDatagramSize() const;
    
 public: // From CActive
     void RunL();
@@ -386,4 +418,8 @@ private:
     TActionState iActionState;
     };
  
+
+
+
+
 #endif /* LLCPSOCKET_SYMBIAN_H_ */

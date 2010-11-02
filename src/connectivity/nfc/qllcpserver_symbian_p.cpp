@@ -57,12 +57,7 @@ QLlcpServerPrivate::~QLlcpServerPrivate()
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-    //TODO
-    //const TDesC8& aServiceName = "test";
-    //TPtrC8 serviceName( reinterpret_cast<const TText8*> (serviceUri.constData()),
-    //        serviceUri.size());
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
-    
     return m_symbianbackend->Listen(serviceName);
 }
 
@@ -78,8 +73,7 @@ void QLlcpServerPrivate::close()
 QString QLlcpServerPrivate::serviceUri() const
 {
     const TDesC8& theDescriptor= m_symbianbackend->serviceUri();
-    QString serviceName = QString::fromRawData(reinterpret_cast<const QChar*>(theDescriptor.Ptr()),
-    theDescriptor.Length());
+    QString serviceName = QNFCNdefUtility::FromDesC8ToQString(theDescriptor);
     return serviceName;
 }
 
