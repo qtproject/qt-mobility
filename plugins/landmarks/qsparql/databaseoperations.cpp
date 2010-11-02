@@ -3060,7 +3060,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const Q
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
 
     switch(sortOrder.type()) {
-    case (QLandmarkSortOrder::DefaultSort):
+    case (QLandmarkSortOrder::NoSort):
         break;
     case (QLandmarkSortOrder::NameSort): {
         QLandmarkNameSort  nameSort = sortOrder;
