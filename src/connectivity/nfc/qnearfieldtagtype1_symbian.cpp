@@ -212,7 +212,7 @@ bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray
     
 bool QNearFieldTagType1Symbian::hasNdefMessage()
 {
-    _hasNdefMessage();
+    return _hasNdefMessage();
 }
 
 QList<QNdefMessage> QNearFieldTagType1Symbian::ndefMessages()

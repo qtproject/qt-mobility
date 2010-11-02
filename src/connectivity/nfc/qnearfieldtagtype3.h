@@ -39,53 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTAGTYPE1_H
-#define QNEARFIELDTAGTYPE1_H
+#ifndef QNEARFIELDTAGTYPE3_H
+#define QNEARFIELDTAGTYPE3_H
 
 #include <qnearfieldtarget.h>
 
 QT_BEGIN_HEADER
-
+    
 QTM_BEGIN_NAMESPACE
-
-class Q_CONNECTIVITY_EXPORT QNearFieldTagType1 : public QNearFieldTarget
+    
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
 {
     Q_OBJECT
-
+        
 public:
-    enum WriteMode {
-        EraseAndWrite,
-        WriteOnly
-    };
+    explicit QNearFieldTagType3(QObject *parent = 0);
 
-    explicit QNearFieldTagType1(QObject *parent = 0);
-
-    Type type() const { return NfcTagType1; }
-
-    bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
-
-    quint8 version();
-    int memorySize();
-
-    // DIGPROTO
-    virtual QByteArray readIdentification();
-
-    // static memory functions
-    virtual QByteArray readAll();
-    virtual quint8 readByte(quint8 address);
-    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
-
-    // dynamic memory functions
-    virtual QByteArray readSegment(quint8 segmentAddress);
+    Type type() const { return NfcTagType3; }
+    
     virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
-                            WriteMode mode = EraseAndWrite);
+    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
+    virtual bool selectSector(quint8 sector);
+
 };
 
 QTM_END_NAMESPACE
-
+    
 QT_END_HEADER
+    
+#endif // QNEARFIELDTAGTYPE3_H
 
-#endif // QNEARFIELDTAGTYPE1_H

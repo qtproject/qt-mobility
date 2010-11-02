@@ -38,54 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QNEARFIELDTAGTYPE3SYMBIAN_H
+#define QNEARFIELDTAGTYPE3SYMBIAN_H
 
-#ifndef QNEARFIELDTAGTYPE1_H
-#define QNEARFIELDTAGTYPE1_H
-
-#include <qnearfieldtarget.h>
+#include <qnearfieldtagtype3.h>
 
 QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QNearFieldTagType1 : public QNearFieldTarget
+class QNearFieldTagType3Symbian : public QNearFieldTagType3, private QNearFieldTagImpl
 {
     Q_OBJECT
-
 public:
-    enum WriteMode {
-        EraseAndWrite,
-        WriteOnly
-    };
 
-    explicit QNearFieldTagType1(QObject *parent = 0);
+    QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent = 0);
 
-    Type type() const { return NfcTagType1; }
+    ~QNearFieldTagType3Symbian();
+
+    virtual QByteArray uid() const;
+
+    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+    {
+        _setAccessMethods(accessMethods);
+    }
+
+    QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return _accessMethods();
+    }
 
     bool hasNdefMessage();
     QList<QNdefMessage> ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
-    quint8 version();
-    int memorySize();
+    virtual QByteArray sendCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 
-    // DIGPROTO
-    virtual QByteArray readIdentification();
-
-    // static memory functions
-    virtual QByteArray readAll();
-    virtual quint8 readByte(quint8 address);
-    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
-
-    // dynamic memory functions
-    virtual QByteArray readSegment(quint8 segmentAddress);
     virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
-                            WriteMode mode = EraseAndWrite);
-};
-
+    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
+    virtual bool selectSector(quint8 sector);
+}
+    
 QTM_END_NAMESPACE
-
 QT_END_HEADER
+#endif // QNEARFIELDTAGTYPE3SYMBIAN_H
 
-#endif // QNEARFIELDTAGTYPE1_H

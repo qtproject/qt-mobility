@@ -38,54 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "qnearfieldtagtype3_symbian_p.h"
 
-#ifndef QNEARFIELDTAGTYPE1_H
-#define QNEARFIELDTAGTYPE1_H
-
-#include <qnearfieldtarget.h>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class Q_CONNECTIVITY_EXPORT QNearFieldTagType1 : public QNearFieldTarget
+QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
+                                : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
 {
-    Q_OBJECT
+}
 
-public:
-    enum WriteMode {
-        EraseAndWrite,
-        WriteOnly
-    };
+QNearFieldTagType3Symbian::~QNearFieldTagType3Symbian()
+{
+}
 
-    explicit QNearFieldTagType1(QObject *parent = 0);
+QByteArray QNearFieldTagType3Symbian::uid() const
+{
+}
 
-    Type type() const { return NfcTagType1; }
+bool QNearFieldTagType3Symbian::hasNdefMessage()
+{
+    return _hasNdefMessage();
+}
 
-    bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+QList<QNdefMessage> QNearFieldTagType3Symbian::ndefMessages()
+{
+    return _ndefMessages();
+}
 
-    quint8 version();
-    int memorySize();
+void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+{
+    _setNdefMessages(messages); 
+}
 
-    // DIGPROTO
-    virtual QByteArray readIdentification();
+QByteArray QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
+{
+}
 
-    // static memory functions
-    virtual QByteArray readAll();
-    virtual quint8 readByte(quint8 address);
-    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
+QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
+{
+}
 
-    // dynamic memory functions
-    virtual QByteArray readSegment(quint8 segmentAddress);
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
-                            WriteMode mode = EraseAndWrite);
-};
+QByteArray QNearFieldTagType3Symbian::readBlock(quint8 blockAddress)
+{
+}
 
-QTM_END_NAMESPACE
+bool QNearFieldTagType3Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
+{
+}
 
-QT_END_HEADER
-
-#endif // QNEARFIELDTAGTYPE1_H
+bool QNearFieldTagType3Symbian::selectSector(quint8 sector)
+{
+}
