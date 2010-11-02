@@ -536,14 +536,32 @@ static bool qt_writeCondition(
     return qt_writeConditionHelper( error, query, filter.filters(), properties, composites, "||" );
 }
 
+static QString qt_writePropertyFunctions( const QStringList &fields, const QString &variable )
+{
+    QString result;
+    foreach ( const QString &field, fields )
+    {
+
+        int parenthesisCount = field.count('(');
+        result += field;
+        result += "(?";
+        result += variable;
+        result += ") ";
+        while ( parenthesisCount-- > 0 )
+            result += ") ";
+    }
+
+    return result.trimmed();
+}
+
 static void qt_write_comparison( const QString &field, const QString &value, const QString &op, const QString &variable_name, QString *query )
 {
-    *query += "("  + field + "(?" + variable_name + ")" + op + "'" + value + "')";
+    *query += "("  + qt_writePropertyFunctions( QStringList() << field, variable_name ) + op + "'" + value + "')";
 }
 
 static void qt_write_function( const QString &function, const QString &field, const QString &value, const QString &variable_name, QString *query )
 {
-    *query += function + "(" + field + "(?" + variable_name + "),\"" + value + "\")";
+    *query += function + "(" + qt_writePropertyFunctions( QStringList() << field, variable_name )  + ",\"" + value + "\")";
 }
 
 static bool qt_writeCondition(
@@ -1658,23 +1676,6 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     }
 
     return columns;
-}
-
-static QString qt_writePropertyFunctions( const QStringList &fields, const QString &variable )
-{
-    QString result;
-    foreach ( const QString &field, fields )
-    {
-        int parenthesisCount = field.count('(');
-        result += field;
-        result += "(?";
-        result += variable;
-        result += ") ";
-        while( parenthesisCount-- > 0 )
-            result += ") ";
-    }
-
-    return result.trimmed();
 }
 
 void QGalleryTrackerSchema::populateItemArguments(
