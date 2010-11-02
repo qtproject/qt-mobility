@@ -161,8 +161,11 @@ void QDeclarativeMediaBase::_q_statusChanged()
     if (m_state == QMediaPlayer::PausedState)
         m_paused = true;
 
-    if (m_status != status)
+    if (m_status != status) {
+        if (m_status == QMediaPlayer::EndOfMedia && m_runningCount != 0)
+            setPlaying(true);
         emit statusChanged();
+    }
 
     if (m_state != state) {
         switch (m_state) {
