@@ -114,10 +114,9 @@ protected:
 
 private slots:
     void windowHandleChanged();
-    void windowSizeChanged();
+    void displayRectChanged();
     void aspectRatioChanged();
 #ifndef MMF_VIDEO_SURFACES_SUPPORTED
-    void windowPositionChanged();
     void suspendDirectScreenAccess();
     void resumeDirectScreenAccess();
 #endif

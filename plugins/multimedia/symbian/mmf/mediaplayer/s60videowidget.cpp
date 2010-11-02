@@ -255,7 +255,7 @@ WId S60VideoWidgetControl::videoWinId() const
     return wid;
 }
 
-QRect S60VideoWidgetControl::videoWindowRect() const
+QRect S60VideoWidgetControl::videoDisplayRect() const
 {
     const RWindow *window = videoWindowHandle();
     const TSize size = window ? window->Size() : TSize();

@@ -117,7 +117,7 @@ public:
 
     // S60VideoOutputInterface
     WId videoWinId() const;
-    QRect videoWindowRect() const;
+    QRect videoDisplayRect() const;
     Qt::AspectRatioMode videoAspectRatio() const;
 
 private:

@@ -166,10 +166,9 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         }
         if (videoOutput) {
             connect(videoOutput, SIGNAL(windowHandleChanged()), this, SLOT(windowHandleChanged()));
-            connect(videoOutput, SIGNAL(windowSizeChanged()), this, SLOT(windowSizeChanged()));
+            connect(videoOutput, SIGNAL(displayRectChanged()), this, SLOT(displayRectChanged()));
             connect(videoOutput, SIGNAL(aspectRatioChanged()), this, SLOT(aspectRatioChanged()));
 #ifndef MMF_VIDEO_SURFACES_SUPPORTED
-            connect(videoOutput, SIGNAL(windowPositionChanged()), this, SLOT(windowPositionChanged()));
             connect(videoOutput, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
             connect(videoOutput, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
 #endif
@@ -185,7 +184,8 @@ S60VideoOutputInterface *S60VideoPlayerSession::videoOutput() const
     S60VideoOutputInterface *result = 0;
     if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(m_videoOutput))
         result = control;
-    Q_ASSERT(result);
+    if (S60VideoOverlay *control = qobject_cast<S60VideoOverlay *>(m_videoOutput))
+        result = control;
     return result;
 }
 
@@ -199,9 +199,14 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         || QMediaPlayer::EndOfMedia == mediaStatus()) {
         int error = KErrNone;
         S60VideoOutputInterface *output = videoOutput();
-        RWindow *const window = output->videoWindowHandle();
-        const TRect rect = QRect2TRect(output->videoWindowRect());
+        RWindow *const window = output ? output->videoWindowHandle() : 0;
+
+        const QRect qrect = output ? output->videoDisplayRect() : QRect();
+        const TRect extentRect = QRect2TRect(qrect);
+        TRect clipRect = extentRect;
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
+        const TRect windowRect = window ? TRect(TPoint(), window->Size()) : TRect();
+        clipRect.Intersection(windowRect);
         if (m_pendingChanges & WindowHandle) {
             if (m_displayWindow) {
                 m_player->RemoveDisplayWindow(*m_displayWindow);
@@ -210,16 +215,16 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
             if (window) {
                 window->SetBackgroundColor(TRgb(0, 0, 0, 255));
                 TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
-                                                        *window, rect, rect));
+                                                        *window, extentRect, clipRect));
                 if (KErrNone == error)
                     m_displayWindow = window;
             }
             m_pendingChanges = ScaleFactors;
         }
         if (KErrNone == error && (m_pendingChanges & DisplayRect) && m_displayWindow) {
-            TRAP(error, m_player->SetVideoExtentL(*m_displayWindow, rect));
+            TRAP(error, m_player->SetVideoExtentL(*m_displayWindow, extentRect));
             if (KErrNone == error)
-                TRAP(error, m_player->SetWindowClipRectL(*m_displayWindow, rect));
+                TRAP(error, m_player->SetWindowClipRectL(*m_displayWindow, clipRect));
             m_pendingChanges ^= DisplayRect;
             m_pendingChanges |= ScaleFactors;
         }
@@ -227,19 +232,19 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         if (m_pendingChanges & WindowHandle || m_pendingChanges & DisplayRect) {
             if (window)
                TRAP(error, m_player->SetDisplayWindowL(*m_wsSession, *m_screenDevice,
-                                                       *window, rect, rect));
+                                                       *window, extentRect, clipRect));
             m_dsaActive = (KErrNone == error);
             m_dsaStopped = false;
             m_pendingChanges = ScaleFactors;
         }
 
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
-        if (KErrNone == error && (m_pendingChanges & ScaleFactors) && m_displayWindow) {
+        if (KErrNone == error && (m_pendingChanges & ScaleFactors) && m_displayWindow && output) {
             QSize scaled = m_originalSize;
             if (output->videoAspectRatio() == Qt::IgnoreAspectRatio)
-                scaled.scale(output->videoWindowRect().size(), Qt::IgnoreAspectRatio);
+                scaled.scale(output->videoDisplayRect().size(), Qt::IgnoreAspectRatio);
             else if(output->videoAspectRatio() == Qt::KeepAspectRatio)
-                scaled.scale(output->videoWindowRect().size(), Qt::KeepAspectRatio);
+                scaled.scale(output->videoDisplayRect().size(), Qt::KeepAspectRatio);
             const qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
             const qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
@@ -390,7 +395,7 @@ void S60VideoPlayerSession::windowHandleChanged()
     applyPendingChanges();
 }
 
-void S60VideoPlayerSession::windowSizeChanged()
+void S60VideoPlayerSession::displayRectChanged()
 {
     m_pendingChanges |= DisplayRect;
     applyPendingChanges();
@@ -403,12 +408,6 @@ void S60VideoPlayerSession::aspectRatioChanged()
 }
 
 #ifndef MMF_VIDEO_SURFACES_SUPPORTED
-void S60VideoPlayerSession::windowPositionChanged()
-{
-    m_pendingChanges |= DisplayRect;
-    applyPendingChanges();
-}
-
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {
     m_dsaStopped = stopDirectScreenAccess();

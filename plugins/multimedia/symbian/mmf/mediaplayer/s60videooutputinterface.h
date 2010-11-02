@@ -54,7 +54,7 @@ public:
     // If MMF_VIDEO_SURFACES_SUPPORTED is defined, the return value is the video
     // rectangle relative to the video window.  If not, the return value is the
     // absolute screen rectangle.
-    virtual QRect videoWindowRect() const = 0;
+    virtual QRect videoDisplayRect() const = 0;
     virtual Qt::AspectRatioMode videoAspectRatio() const = 0;
 };
 
