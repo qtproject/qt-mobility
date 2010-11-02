@@ -54,12 +54,14 @@ int main(int argc, char **argv)
     
     CPSPathMapperServer *server = new CPSPathMapperServer;
     TInt err = server->Start(KPSPathMapperServerName);
+    if (err != KErrAlreadyExists) {
 
-    if (err != KErrNone) {
-        CPSPathMapperServer::PanicServer(ESvrStartServer);
-    }
-    RProcess::Rendezvous(err);
-
-    return app.exec();
+        if (err != KErrNone) {
+            CPSPathMapperServer::PanicServer(ESvrStartServer);
+        }
+        RProcess::Rendezvous(err);
+		return app.exec();
+    }    
+    return 0;
 }
 

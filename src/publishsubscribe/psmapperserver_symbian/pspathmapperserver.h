@@ -58,8 +58,16 @@ class CPSPathMapperServer : public CServer2
 
     public:
         static void PanicServer(TPSPathMapperServerPanic aPanic);
+        
+        void IncreaseSessions();
+        void DecreaseSessions();
+                
+        void Shutdown();
 
     private:
+        static const TInt timeoutInterval;
+        int iSessionCount;
+        CPeriodic *iPeriodic;
         PathMapper iPathMapper;
 };
 

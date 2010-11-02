@@ -41,13 +41,26 @@
 #include "pspathmapperserver.h"
 #include "clientservercommon.h"
 #include "pspathmappersession.h"
+#include <QCoreApplication>
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
+static TInt Timeout(TAny *aObject);
+
+const TInt CPSPathMapperServer::timeoutInterval = 30000000; // 30 seconds
+
+TInt Timeout(TAny *aObject)
+  {
+    ((CPSPathMapperServer *)aObject)->Shutdown();
+    return 1;
+  }
+
 CPSPathMapperServer::CPSPathMapperServer()
-    : CServer2(EPriorityNormal, ESharableSessions)
+    : CServer2(EPriorityNormal, ESharableSessions), iSessionCount(0)
 {
+    iPeriodic = CPeriodic::NewL(0);
+    iPeriodic->Start(timeoutInterval, timeoutInterval, TCallBack(Timeout, this));
 }
 
 CSession2 *CPSPathMapperServer::NewSessionL(const TVersion &aVersion, const RMessage2 & /*aMessage*/) const
@@ -57,7 +70,7 @@ CSession2 *CPSPathMapperServer::NewSessionL(const TVersion &aVersion, const RMes
         User::Leave(KErrNotSupported);
     }
 
-    return new (ELeave) CPSPathMapperServerSession(iPathMapper);
+    return new (ELeave) CPSPathMapperServerSession(iPathMapper, *const_cast<CPSPathMapperServer*>(this));
 }
 
 void CPSPathMapperServer::PanicServer(TPSPathMapperServerPanic aPanic)
@@ -65,6 +78,28 @@ void CPSPathMapperServer::PanicServer(TPSPathMapperServerPanic aPanic)
     _LIT(KTxtServerPanic, "Path mapper server panic");
     User::Panic(KTxtServerPanic, aPanic);
 }
+
+void CPSPathMapperServer::IncreaseSessions()
+{
+    iSessionCount++;
+    iPeriodic->Cancel();
+}
+
+void CPSPathMapperServer::DecreaseSessions()
+{
+	if (iSessionCount > 0)
+	    iSessionCount--;
+    if (iSessionCount == 0)
+    {
+        iPeriodic->Start(timeoutInterval, timeoutInterval, TCallBack(Timeout, this));
+    }
+}
+
+void CPSPathMapperServer::Shutdown()
+{
+    QCoreApplication::exit(0);
+}
+
 
 QTM_END_NAMESPACE
 

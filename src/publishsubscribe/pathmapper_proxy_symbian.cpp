@@ -77,11 +77,18 @@ PathMapper::RPathMapperServerSession::RPathMapperServerSession()
 
 TInt PathMapper::RPathMapperServerSession::Connect()
 {
-    TInt err = StartServer();
-    if (err == KErrNone)    {
-        err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
+    TInt retryCount = 2;    // A maximum of two iterations of the loop required
+    for(;;)
+    {
+        TInt err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
+        if ((err != KErrNotFound) && (err != KErrServerTerminated))
+            return err;
+        if (--retryCount == 0)
+            return err;
+        err = StartServer();
+        if ((err != KErrNone) && (err != KErrAlreadyExists))
+            return err;
     }
-    return err;
 }
 
 
