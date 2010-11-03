@@ -32,6 +32,7 @@ SOURCES += \
     bluetooth/qbluetoothdeviceinfo.cpp\
     bluetooth/qbluetoothserviceinfo.cpp\
     bluetooth/qbluetoothdevicediscoveryagent.cpp\
+    bluetooth/qbluetoothdevicediscoveryagent_p.cpp\
     bluetooth/qbluetoothservicediscoveryagent.cpp\
     bluetooth/qbluetoothsocket.cpp\
     bluetooth/qrfcommserver.cpp \
@@ -46,22 +47,28 @@ SOURCES += \
 
 symbian {
     PRIVATE_HEADERS += \
-        bluetooth/utils_symbian_p.h
+        bluetooth/utils_symbian_p.h\
+		bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h        
 
     SOURCES += \
-        bluetooth/qbluetoothserviceinfo_symbian.cpp\
-        bluetooth/qbluetoothdevicediscoveryagent_symbian.cpp\
+        bluetooth/qbluetoothserviceinfo_symbian.cpp\     
+        bluetooth/qbluetoothdevicediscoveryagent_symbian_p.cpp\        
         bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
         bluetooth/qbluetoothsocket_symbian.cpp\
         bluetooth/qrfcommserver_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
-}
+} else:contains(QT_CONFIG, dbus) {
+    QT += dbus
 
-unix:!symbian {
+    include(bluez/bluez.pri)
+
+    PRIVATE_HEADERS += \
+        bluetooth/qbluetoothdevicediscoveryagent_bluez_p.h
+
     SOURCES += \
-        bluetooth/qbluetoothserviceinfo_bluez.cpp \
-        bluetooth/qbluetoothdevicediscoveryagent_bluez.cpp \
+        bluetooth/qbluetoothserviceinfo_bluez.cpp \                
+        bluetooth/qbluetoothdevicediscoveryagent_bluez_p.cpp\
         bluetooth/qbluetoothservicediscoveryagent_bluez.cpp \
         bluetooth/qbluetoothsocket_bluez.cpp \
         bluetooth/qrfcommserver_bluez.cpp \

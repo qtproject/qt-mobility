@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothdevicediscoveryagent_p.h"
+#include "qbluetoothdevicediscoveryagent_symbian_p.h"
 #include "qbluetoothaddress.h"
 #include "utils_symbian_p.h"
 
@@ -49,8 +49,8 @@ QTM_BEGIN_NAMESPACE
 
 _LIT(KBTLinkManagerTxt,"BTLinkManager");
 
-QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
-: CActive(EPriorityStandard)
+QBluetoothDeviceDiscoveryAgentPrivateSymbian::QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent)
+: QBluetoothDeviceDiscoveryAgentPrivate(parent), CActive(EPriorityStandard)
 {
     TInt result;
 
@@ -80,7 +80,7 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
     CActiveScheduler::Add(this);
 }
 
-QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
+QBluetoothDeviceDiscoveryAgentPrivateSymbian::~QBluetoothDeviceDiscoveryAgentPrivateSymbian()
 {
     /* cancel active object */
     Cancel();
@@ -89,7 +89,7 @@ QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
     hostResolver.Close();
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::start()
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::start()
 {
     if (!IsActive()) {
         TInquirySockAddr address;
@@ -106,43 +106,48 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     }
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::stop()
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::stop()
 {
     DoCancel();
 }
 
-bool QBluetoothDeviceDiscoveryAgent::isActive() const
+bool QBluetoothDeviceDiscoveryAgentPrivateSymbian::isActive() const
 {
-    Q_D(const QBluetoothDeviceDiscoveryAgent);
-
-    return d->IsActive();
+  return IsActive();
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::RunL()
-{
-    Q_Q(QBluetoothDeviceDiscoveryAgent);
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::RunL()
+{    
     if (iStatus == KErrNone) {
         QString deviceName = QString::fromUtf16(entry().iName.Ptr(), entry().iName.Length());
 
         QBluetoothDeviceInfo device(qTBTDevAddrToQBluetoothAddress(static_cast<TBTSockAddr>(entry().iAddr).BTAddr()), deviceName, 0);
         discoveredDevices.append(device);
 
-        emit q->deviceDiscovered(device);
+        emit deviceDiscovered(device);
 
         hostResolver.Next(entry, iStatus);
 
         SetActive();
     } else if (iStatus == KErrEof) {
-        emit q->finished(false);
+        emit finished();
     } else {
         qWarning("Bluetooth device scan error %d", iStatus.Int());
-        emit q->finished(true);
+        emit finished();
     }
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::DoCancel()
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::DoCancel()
 {
     hostResolver.Cancel();
 }
+
+QBluetoothDeviceDiscoveryAgentPrivate* QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent){
+  QBluetoothDeviceDiscoveryAgentPrivateSymbian *d = new QBluetoothDeviceDiscoveryAgentPrivateSymbian(parent);
+  d->q = parent;
+  return d;
+}
+
+#include "moc_qbluetoothdevicediscoveryagent_symbian_p.cpp"
 
 QTM_END_NAMESPACE

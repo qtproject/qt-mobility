@@ -52,6 +52,8 @@
 #include <bt_sock.h>
 #endif
 
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -84,9 +86,10 @@ public:
     void HandleIoctlCompleteL(TInt aErr);
     void HandleReceiveCompleteL(TInt aErr);
     void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
+    void HandleShutdownCompleteL(TInt aErr);  
 #endif
-
+    void _q_readNotify();
+    
 public:
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
@@ -101,6 +104,12 @@ public:
 
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
+#elif !defined(QT_NO_DBUS)
+    int socket;
+    QSocketNotifier *readNotifier;
+
+    mutable QString localName;
+    mutable QString peerName;
 #endif
 };
 

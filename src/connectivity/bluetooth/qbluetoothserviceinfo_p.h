@@ -53,6 +53,8 @@
 #include <btsdp.h>
 #endif
 
+class OrgBluezServiceInterface;
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -66,8 +68,10 @@ public:
     void setRegisteredAttribute(quint16 attributeId, const QVariant &value) const;
     void removeRegisteredAttribute(quint16 attributeId) const;
 
-#ifdef Q_OS_SYMBIAN
     bool ensureSdpConnection() const;
+
+#ifndef QT_NO_DBUS
+    bool registerService() const;
 #endif
 
     QBluetoothDeviceInfo deviceInfo;
@@ -77,6 +81,12 @@ public:
     mutable RSdp sdpSession;
     mutable RSdpDatabase sdpDatabase;
     mutable TSdpServRecordHandle serviceRecord;
+#endif
+
+#ifndef QT_NO_DBUS
+    mutable OrgBluezServiceInterface *service;
+    mutable quint32 serviceRecord;
+    mutable bool registered;
 #endif
 };
 

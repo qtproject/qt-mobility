@@ -48,7 +48,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothAddress);
 Q_DECLARE_METATYPE(QBluetoothDeviceInfo::ServiceClasses)
 Q_DECLARE_METATYPE(QBluetoothDeviceInfo::MajorDeviceClass)
 

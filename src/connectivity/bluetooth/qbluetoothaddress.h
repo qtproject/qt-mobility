@@ -44,8 +44,9 @@
 
 #include "qmobilityglobal.h"
 
-#include <QByteArray>
-#include <QString>
+#include <QtCore/QByteArray>
+#include <QtCore/QString>
+#include <QtCore/QMetaType>
 
 QT_BEGIN_HEADER
 
@@ -77,6 +78,8 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QBluetoothAddress)
 
 QT_END_HEADER
 

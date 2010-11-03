@@ -57,7 +57,6 @@ class QBluetoothDeviceDiscoveryAgentPrivate;
 class Q_CONNECTIVITY_EXPORT QBluetoothDeviceDiscoveryAgent : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
     Q_PROPERTY(QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType READ inquiryType WRITE setInquiryType)
 
 public:
@@ -92,6 +91,11 @@ signals:
     void deviceDiscovered(const QBluetoothDeviceInfo &info);
     void finished();
     void error(QBluetoothDeviceDiscoveryAgent::Error error);
+
+private:
+    QBluetoothDeviceDiscoveryAgentPrivate *d;
+    
+    friend class QBluetoothDeviceDiscoveryAgentPrivate;
 };
 
 QTM_END_NAMESPACE

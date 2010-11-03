@@ -98,6 +98,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QBluetoothLocalDevice.
 */
 QBluetoothLocalDevice::QBluetoothLocalDevice()
+:   d_ptr(0)
 {
 }
 

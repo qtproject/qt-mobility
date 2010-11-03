@@ -49,7 +49,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothAddress)
 Q_DECLARE_METATYPE(QBluetoothSocket::SocketState)
 Q_DECLARE_METATYPE(QBluetoothSocket::SocketType)
 
@@ -140,7 +139,7 @@ void tst_QBluetoothSocket::tst_clientConnection_data()
     QTest::addColumn<quint16>("port");
     QTest::addColumn<QByteArray>("data");
 
-    QBluetoothAddress address("001167602023");
+    QBluetoothAddress address("00:1E:3A:81:BA:69");
     quint16 port = 10;
 
     QTest::newRow("unavailable, error") << Error << QBluetoothAddress("112233445566") << quint16(10) << QByteArray();

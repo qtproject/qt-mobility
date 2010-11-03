@@ -152,7 +152,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
 
         // All returned QBluetoothDeviceInfo should be valid.
         while (!discoveredSpy.isEmpty()) {
-            const QBluetoothDeviceInfo info = qvariant_cast<QBluetoothDeviceInfo>(discoveredSpy.takeFirst().at(0));
+            const QBluetoothDeviceInfo info =
+                qvariant_cast<QBluetoothDeviceInfo>(discoveredSpy.takeFirst().at(0));
             QVERIFY(info.isValid());
         }
     }

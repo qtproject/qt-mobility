@@ -55,6 +55,14 @@
 #include <btsdp.h>
 #endif
 
+#ifndef QT_NO_DBUS
+class OrgBluezManagerInterface;
+class OrgBluezAdapterInterface;
+class OrgBluezDeviceInterface;
+class QDBusPendingCallWatcher;
+class QXmlStreamReader;
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -89,6 +97,9 @@ public:
     // private slots
     void _q_deviceDiscoveryFinished();
     void _q_serviceDiscoveryFinished();
+#ifndef QT_NO_DBUS
+    void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
+#endif
 
 #ifdef Q_OS_SYMBIAN
     /* MSdpAgentNotifier virtual functions */
@@ -108,6 +119,8 @@ private:
 
 #ifdef Q_OS_SYMBIAN
     void initAgent(const QBluetoothAddress &address);
+#elif !defined(QT_NO_DBUS)
+    QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
 
 public:
@@ -131,6 +144,10 @@ private:
     TSdpAttributeID currentAttributeId;
 
     QStack<QVariant> stack;
+#elif !defined(QT_NO_DBUS)
+    OrgBluezManagerInterface *manager;
+    OrgBluezAdapterInterface *adapter;
+    OrgBluezDeviceInterface *device;
 #endif
 };
 

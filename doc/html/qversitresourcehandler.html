@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qversitresourcehandler.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QVersitResourceHandler Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QVersitResourceHandler"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitResourceHandler Class Reference</h1>
+<p>The QVersitResourceHandler class is an interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing. <a href="#details">More...</a></p>
+<pre>    #include &lt;QVersitResourceHandler&gt;</pre><p>Inherited by <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>.</p>
+<ul>
+<li><a href="qversitresourcehandler-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qversitresourcehandler.html#dtor.QVersitResourceHandler">~QVersitResourceHandler</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitresourcehandler.html#loadResource">loadResource</a></b> ( const QString &amp; <i>location</i>, QByteArray * <i>contents</i>, QString * <i>mimeType</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitresourcehandler.html#saveResource">saveResource</a></b> ( const QByteArray &amp; <i>contents</i>, const QVersitProperty &amp; <i>property</i>, QString * <i>location</i> ) = 0</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QVersitResourceHandler class is an interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing.</p>
+<p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>, <a href="qversitcontactexporter.html">QVersitContactExporter</a>, and <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QVersitResourceHandler/~QVersitResourceHandler"></a>
+<h3 class="fn"><a name="dtor.QVersitResourceHandler"></a>QVersitResourceHandler::~QVersitResourceHandler ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Frees any memory used by the handler.</p>
+<a name="//apple_ref/cpp/instm/QVersitResourceHandler/loadResource"></a>
+<h3 class="fn"><a name="loadResource"></a>bool QVersitResourceHandler::loadResource ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>location</i>, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> * <i>contents</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>mimeType</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Loads a file from <i>location</i>. *<i>contents</i> is filled with the contents of the file and *<i>mimeType</i> is set to the MIME type that it is determined to be. Returns true on success, false on failure.</p>
+<a name="//apple_ref/cpp/instm/QVersitResourceHandler/saveResource"></a>
+<h3 class="fn"><a name="saveResource"></a>bool QVersitResourceHandler::saveResource ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>location</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Saves the binary data <i>contents</i> to a file on a persistent storage medium.</p>
+<p><i>property</i> holds the <a href="qversitproperty.html">QVersitProperty</a> which is the context in which the binary is coming from. The <a href="qversitresourcehandler.html">QVersitResourceHandler</a> can use this, for example, to determine file extension it should choose. *<i>location</i> is filled with the contents of the file. Returns true on success, false on failure.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

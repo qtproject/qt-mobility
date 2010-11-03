@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qbluetoothlocaldevice.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QBluetoothLocalDevice Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QBluetoothLocalDevice"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QBluetoothLocalDevice Class Reference<br /><span class="small-subtitle">[QtConnectivity module]</span>
+</h1>
+<p>The QBluetoothLocalDevice class provides access to local Bluetooth devices. <a href="#details">More...</a></p>
+<pre>    #include &lt;QBluetoothLocalDevice&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<ul>
+<li><a href="qbluetoothlocaldevice-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#HostMode-enum">HostMode</a></b> { HostUnconnectable, HostConnectable, HostDiscoverable }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#Pairing-enum">Pairing</a></b> { Unpaired, Paired, AuthorizedPaired }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#PowerState-enum">PowerState</a></b> { PowerOn, PowerOff }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#QBluetoothLocalDevice">QBluetoothLocalDevice</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#dtor.QBluetoothLocalDevice">~QBluetoothLocalDevice</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothAddress </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#address">address</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">HostMode </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#hostMode">hostMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#name">name</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Pairing </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#pairing">pairing</a></b> ( const QBluetoothAddress &amp; <i>address</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#powerState">powerState</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#setHostMode">setHostMode</a></b> ( QBluetoothLocalDevice::HostMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#setPairing">setPairing</a></b> ( const QBluetoothAddress &amp; <i>address</i>, Pairing <i>pairing</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#setPowerState">setPowerState</a></b> ( PowerState <i>powerState</i> )</td></tr>
+</table>
+<hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QBluetoothLocalDevice&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#allDevices">allDevices</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothLocalDevice </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothlocaldevice.html#defaultDevice">defaultDevice</a></b> ()</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QBluetoothLocalDevice class provides access to local Bluetooth devices.</p>
+<p>QBluetoothLocalDevice provides functions for getting and setting the state of local Bluetooth devices.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QBluetoothLocalDevice/HostMode"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/HostUnconnectable"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/HostConnectable"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/HostDiscoverable"></a>
+<h3 class="fn"><a name="HostMode-enum"></a>enum QBluetoothLocalDevice::HostMode</h3>
+<p>This enum describes the most of the local Bluetooth device.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::HostUnconnectable</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Remove Bluetooth devices cannot connect to the local Bluetooth device.</td></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::HostConnectable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Remote Bluetooth devices can connect to the local Bluetooth device if they have previously been paired with it or otherwise know its address.</td></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::HostDiscoverable</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Remote Bluetooth devices can discover the presense of the local Bluetooth device.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QBluetoothLocalDevice/Pairing"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/Unpaired"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/Paired"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/AuthorizedPaired"></a>
+<h3 class="fn"><a name="Pairing-enum"></a>enum QBluetoothLocalDevice::Pairing</h3>
+<p>This enum describes the pairing state between two Bluetooth devices.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::Unpaired</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The Bluetooth devices are not paired.</td></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::Paired</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The Bluetooth devices are paired. The system will prompt the user for authorization when the remote device initiates a connection to the local device.</td></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::AuthorizedPaired</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The Bluetooth devices are paired. The system will not prompt the user for authorization when the remote device initiates a connection to the local device.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QBluetoothLocalDevice/PowerState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/PowerOn"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothLocalDevice/PowerOff"></a>
+<h3 class="fn"><a name="PowerState-enum"></a>enum QBluetoothLocalDevice::PowerState</h3>
+<p>This enum describes the power state of the local Bluetooth device.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::PowerOn</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The device is powered on.</td></tr>
+<tr><td valign="top"><tt>QBluetoothLocalDevice::PowerOff</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The device is powered off.</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/QBluetoothLocalDevice"></a>
+<h3 class="fn"><a name="QBluetoothLocalDevice"></a>QBluetoothLocalDevice::QBluetoothLocalDevice ()</h3>
+<p>Constructs a <a href="qbluetoothlocaldevice.html">QBluetoothLocalDevice</a>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/~QBluetoothLocalDevice"></a>
+<h3 class="fn"><a name="dtor.QBluetoothLocalDevice"></a>QBluetoothLocalDevice::~QBluetoothLocalDevice ()</h3>
+<p>Destroys the <a href="qbluetoothlocaldevice.html">QBluetoothLocalDevice</a>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/address"></a>
+<h3 class="fn"><a name="address"></a><a href="qbluetoothaddress.html">QBluetoothAddress</a> QBluetoothLocalDevice::address () const</h3>
+<p>Returns the address of this local Bluetooth device.</p>
+<a name="//apple_ref/cpp/clm/QBluetoothLocalDevice/allDevices"></a>
+<h3 class="fn"><a name="allDevices"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QBluetoothLocalDevice&gt; QBluetoothLocalDevice::allDevices ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a list of all available local Bluetooth devices.</p>
+<a name="//apple_ref/cpp/clm/QBluetoothLocalDevice/defaultDevice"></a>
+<h3 class="fn"><a name="defaultDevice"></a>QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the default local Bluetooth device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/hostMode"></a>
+<h3 class="fn"><a name="hostMode"></a><a href="qbluetoothlocaldevice.html#HostMode-enum">HostMode</a> QBluetoothLocalDevice::hostMode () const</h3>
+<p>Returns the current host mode of this local Bluetooth device.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#setHostMode">setHostMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/isValid"></a>
+<h3 class="fn"><a name="isValid"></a>bool QBluetoothLocalDevice::isValid () const</h3>
+<p>Returns true the <a href="qbluetoothlocaldevice.html">QBluetoothLocalDevice</a> represents an available local Bluetooth device; otherwise return false.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/name"></a>
+<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QBluetoothLocalDevice::name () const</h3>
+<p>Returns the name of this local Bluetooth device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/pairing"></a>
+<h3 class="fn"><a name="pairing"></a><a href="qbluetoothlocaldevice.html#Pairing-enum">Pairing</a> QBluetoothLocalDevice::pairing ( const <a href="qbluetoothaddress.html">QBluetoothAddress</a> &amp; <i>address</i> ) const</h3>
+<p>Returns the current pairing between this local Bluetooth device and the remote Bluetooth device with <i>address</i>.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#setPairing">setPairing</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/powerState"></a>
+<h3 class="fn"><a name="powerState"></a><a href="qbluetoothlocaldevice.html#PowerState-enum">PowerState</a> QBluetoothLocalDevice::powerState () const</h3>
+<p>Returns the current power state of this local Bluetooth device.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#setPowerState">setPowerState</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/setHostMode"></a>
+<h3 class="fn"><a name="setHostMode"></a>void QBluetoothLocalDevice::setHostMode ( <a href="qbluetoothlocaldevice.html#HostMode-enum">QBluetoothLocalDevice::HostMode</a> <i>mode</i> )</h3>
+<p>Sets the host mode the this local Bluetooth device to <i>mode</i>.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#hostMode">hostMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/setPairing"></a>
+<h3 class="fn"><a name="setPairing"></a>void QBluetoothLocalDevice::setPairing ( const <a href="qbluetoothaddress.html">QBluetoothAddress</a> &amp; <i>address</i>, <a href="qbluetoothlocaldevice.html#Pairing-enum">Pairing</a> <i>pairing</i> )</h3>
+<p>Sets pairing of this local Bluetooth device and the remote Bluetooth device with <i>address</i> to <i>pairing</i>.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#pairing">pairing</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothLocalDevice/setPowerState"></a>
+<h3 class="fn"><a name="setPowerState"></a>void QBluetoothLocalDevice::setPowerState ( <a href="qbluetoothlocaldevice.html#PowerState-enum">PowerState</a> <i>powerState</i> )</h3>
+<p>Sets the power state of this local Bluetooth device to <i>powerState</i>.</p>
+<p>See also <a href="qbluetoothlocaldevice.html#powerState">powerState</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -40,19 +40,169 @@
 ****************************************************************************/
 
 #include "qbluetoothlocaldevice.h"
+#include "qbluetoothaddress.h"
 
-#include <QtCore/QString>
+#include "bluez/manager_p.h"
+#include "bluez/adapter_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
+class QBluetoothLocalDevicePrivate
 {
-    return QBluetoothLocalDevice();
-}
+public:
+    OrgBluezAdapterInterface *adapter;
+};
 
 QString QBluetoothLocalDevice::name() const
 {
-    return QString();
+    Q_D(const QBluetoothLocalDevice);
+    if (!d)
+        return QString();
+
+    QDBusPendingReply<QVariantMap> reply = d->adapter->GetProperties();
+    reply.waitForFinished();
+    if (reply.isError())
+        return QString();
+
+    return reply.value().value(QLatin1String("Name")).toString();
+}
+
+QBluetoothAddress QBluetoothLocalDevice::address() const
+{
+    Q_D(const QBluetoothLocalDevice);
+    if (!d)
+        return QBluetoothAddress();
+
+    QDBusPendingReply<QVariantMap> reply = d->adapter->GetProperties();
+    reply.waitForFinished();
+    if (reply.isError())
+        return QBluetoothAddress();
+
+    return QBluetoothAddress(reply.value().value(QLatin1String("Address")).toString());
+}
+
+void QBluetoothLocalDevice::setPowerState(PowerState powerState)
+{
+    Q_D(QBluetoothLocalDevice);
+    if (!d)
+        return;
+
+    switch (powerState) {
+    case PowerOn:
+        d->adapter->SetProperty(QLatin1String("Powered"), QDBusVariant(QVariant::fromValue(true)));
+    case PowerOff:
+        d->adapter->SetProperty(QLatin1String("Powered"),
+                                QDBusVariant(QVariant::fromValue(false)));
+    default:
+        ;
+    }
+}
+
+QBluetoothLocalDevice::PowerState QBluetoothLocalDevice::powerState() const
+{
+    Q_D(const QBluetoothLocalDevice);
+    if (!d)
+        return PowerOff;
+
+    QDBusPendingReply<QVariantMap> reply = d->adapter->GetProperties();
+    reply.waitForFinished();
+    if (reply.isError())
+        return PowerOff;
+
+    return reply.value().value(QLatin1String("Powered")).toBool() ? PowerOn : PowerOff;
+}
+
+void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
+{
+    Q_D(QBluetoothLocalDevice);
+    if (!d)
+        return;
+
+    switch (mode) {
+    case HostDiscoverable:
+        d->adapter->SetProperty(QLatin1String("Powered"), QDBusVariant(QVariant::fromValue(true)));
+        d->adapter->SetProperty(QLatin1String("Discoverable"),
+                                QDBusVariant(QVariant::fromValue(true)));
+        break;
+    case HostConnectable:
+        d->adapter->SetProperty(QLatin1String("Powered"), QDBusVariant(QVariant::fromValue(true)));
+        d->adapter->SetProperty(QLatin1String("Discoverable"),
+                                QDBusVariant(QVariant::fromValue(false)));
+        break;
+    case HostUnconnectable:
+        d->adapter->SetProperty(QLatin1String("Powered"),
+                                QDBusVariant(QVariant::fromValue(false)));
+        d->adapter->SetProperty(QLatin1String("Discoverable"),
+                                QDBusVariant(QVariant::fromValue(false)));
+        break;
+    }
+}
+
+QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
+{
+    Q_D(const QBluetoothLocalDevice);
+    if (!d)
+        return HostUnconnectable;
+
+    QDBusPendingReply<QVariantMap> reply = d->adapter->GetProperties();
+    reply.waitForFinished();
+    if (reply.isError())
+        return HostUnconnectable;
+
+    if (reply.value().value(QLatin1String("Discoverable")).toBool())
+        return HostDiscoverable;
+    else if (reply.value().value(QLatin1String("Powered")).toBool())
+        return HostConnectable;
+
+    return HostUnconnectable;
+}
+
+QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
+{
+    OrgBluezManagerInterface manager(QLatin1String("org.bluez"), QLatin1String("/"),
+                                     QDBusConnection::systemBus());
+
+    QDBusPendingReply<QDBusObjectPath> reply = manager.DefaultAdapter();
+    reply.waitForFinished();
+    if (reply.isError())
+        return QBluetoothLocalDevice();
+
+    OrgBluezAdapterInterface *adapter = new OrgBluezAdapterInterface(QLatin1String("org.bluez"),
+                                                                     reply.value().path(),
+                                                                     QDBusConnection::systemBus());
+
+    QBluetoothLocalDevice localDevice;
+    localDevice.d_ptr = new QBluetoothLocalDevicePrivate;
+    localDevice.d_func()->adapter = adapter;
+
+    return localDevice;
+}
+
+QList<QBluetoothLocalDevice> QBluetoothLocalDevice::allDevices()
+{
+    QList<QBluetoothLocalDevice> localDevices;
+
+    OrgBluezManagerInterface manager(QLatin1String("org.bluez"), QLatin1String("/"),
+                                     QDBusConnection::systemBus());
+
+    QDBusPendingReply<QList<QDBusObjectPath> > reply = manager.ListAdapters();
+    reply.waitForFinished();
+    if (reply.isError())
+        return localDevices;
+
+
+
+    foreach (const QDBusObjectPath &path, reply.value()) {
+        OrgBluezAdapterInterface *adapter =
+            new OrgBluezAdapterInterface(QLatin1String("org.bluez"), path.path(),
+                                         QDBusConnection::systemBus());
+
+        QBluetoothLocalDevice localDevice;
+        localDevice.d_func()->adapter = adapter;
+        localDevices.append(localDevice);
+    }
+
+    return localDevices;
 }
 
 QTM_END_NAMESPACE

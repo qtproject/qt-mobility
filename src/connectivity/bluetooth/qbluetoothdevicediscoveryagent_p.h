@@ -44,52 +44,38 @@
 
 #include "qbluetoothdevicediscoveryagent.h"
 
-#include <private/qobject_p.h>
-
-#ifdef Q_OS_SYMBIAN
-#include <es_sock.h>
-#include <bt_sock.h>
-#endif
-
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceDiscoveryAgentPrivate : public QObjectPrivate
-#ifdef Q_OS_SYMBIAN
-, public CActive
-#endif
+class QBluetoothDeviceDiscoveryAgentPrivate : public QObject
 {
-    Q_DECLARE_PUBLIC(QBluetoothDeviceDiscoveryAgent)
-
+Q_OBJECT
 public:
-    QBluetoothDeviceDiscoveryAgentPrivate();
-    ~QBluetoothDeviceDiscoveryAgentPrivate();
+    QBluetoothDeviceDiscoveryAgentPrivate(QObject *parent) : QObject(parent)
+    {
+      connect(this, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)), parent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)));
+      connect(this, SIGNAL(finished()), parent, SIGNAL(finished()));
+      connect(this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), parent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+    }
+    virtual ~QBluetoothDeviceDiscoveryAgentPrivate() { };
 
-    void start();
-    void stop();
-
-private:
-#ifdef Q_OS_SYMBIAN
-    void RunL();
-    void DoCancel();
-#endif
-
-public:
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual bool isActive() const = 0;
+    
     QList<QBluetoothDeviceInfo> discoveredDevices;
-
-private:
     QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
+    QBluetoothDeviceDiscoveryAgent *q;   
+    
+signals:
+    void deviceDiscovered(const QBluetoothDeviceInfo &info);
+    void finished();
+    void error(QBluetoothDeviceDiscoveryAgent::Error error);
 
-#ifdef Q_OS_SYMBIAN
-    RHostResolver hostResolver;
-    RSocketServ socketServer;
-    TNameEntry entry;
-#endif
+public:
+    static QBluetoothDeviceDiscoveryAgentPrivate* constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent);
+
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

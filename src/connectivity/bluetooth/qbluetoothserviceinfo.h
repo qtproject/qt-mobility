@@ -63,6 +63,7 @@ class Q_CONNECTIVITY_EXPORT QBluetoothServiceInfo
 {
 public:
     enum AttributeId {
+        ServiceRecordHandle = 0x0000,
         ServiceClassIds = 0x0001,
         ServiceId = 0x0003,
         ProtocolDescriptorList = 0x0004,
