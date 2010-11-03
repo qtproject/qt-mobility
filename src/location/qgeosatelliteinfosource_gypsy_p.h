@@ -15,6 +15,10 @@
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
 #include <gypsy/gypsy-satellite.h>
+#include <gypsy/gypsy-device.h>
+#include <QTimer>
+
+#define Q_LOCATION_GYPSY_DEBUG
 
 QTM_BEGIN_NAMESPACE
 
@@ -24,6 +28,7 @@ class QGeoSatelliteInfoSourceGypsy : public QGeoSatelliteInfoSource
 
 public:
       explicit QGeoSatelliteInfoSourceGypsy(QObject *parent = 0);
+      ~QGeoSatelliteInfoSourceGypsy();
       int init();
 
 public slots:
@@ -35,11 +40,17 @@ public slots:
 signals:
       void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
       void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-      void requestTimeout();
+
+private slots:
+      void requestUpdateTimeout();
 
 private:
       Q_DISABLE_COPY(QGeoSatelliteInfoSourceGypsy)
-      GypsySatellite *satellite;
+      GypsySatellite* m_satellite;
+      GypsyDevice* m_device;
+      QTimer m_requestTimer;
+      bool m_updatesOngoing;
+      bool m_requestOngoing;
   };
 
 QTM_END_NAMESPACE
