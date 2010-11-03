@@ -17,7 +17,7 @@ PRIVATE_HEADERS += \
     nfc/qnearfieldtarget_p.h \
     nfc/qnearfieldmanager_p.h \
     nfc/qnearfieldmanagerimpl_p.h \
-    nfc/qtlvreader_p.h \
+    nfc/qtlv_p.h \
     nfc/checksum_p.h
 
 SOURCES += \
@@ -31,7 +31,7 @@ SOURCES += \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp \
     nfc/qnearfieldtagtype2.cpp \
-    nfc/qtlvreader.cpp \
+    nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 
 simulator:PRIVATE_HEADERS += \

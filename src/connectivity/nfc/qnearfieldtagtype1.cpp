@@ -41,7 +41,7 @@
 
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
-#include "qtlvreader_p.h"
+#include "qtlv_p.h"
 
 #include <QtCore/QByteArray>
 
