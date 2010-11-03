@@ -94,6 +94,12 @@ bool QtMobility::Simulator::Connection::resumeEffect(int effectId)
                                       effectId);
 }
 
+bool QtMobility::Simulator::Connection::pauseEffect(int effectId)
+{
+    return RemoteMetacall<bool>::call(mConnection->sendSocket(), TimeoutSync, "pauseFeedbackEffect",
+                                      effectId);
+}
+
 bool QtMobility::Simulator::Connection::stopEffect(int effectId)
 {
     return RemoteMetacall<bool>::call(mConnection->sendSocket(), TimeoutSync, "stopFeedbackEffect",

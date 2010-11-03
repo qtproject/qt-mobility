@@ -80,6 +80,7 @@ public:
     void connect(QFeedbackSimulator *plugin);
     int startEffect(int actuatorId, const QString &info, int duration);
     bool resumeEffect(int effectId);
+    bool pauseEffect(int effectId);
     bool stopEffect(int effectId);
     void setEffectDuration(int effectId, int duration);
     void setActuatorEnabled(int actuatorId, bool enabled);

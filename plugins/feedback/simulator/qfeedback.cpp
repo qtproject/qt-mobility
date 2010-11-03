@@ -247,9 +247,11 @@ void QFeedbackSimulator::setAnyEffectState(const QtMobility::QFeedbackEffect *ef
         case QFeedbackEffect::Paused:
             return;
         case QFeedbackEffect::Running:
-            // ### implement
-            qDebug() << "Pause is not supported";
-            reportError(effect, QFeedbackEffect::UnknownError);
+            if (effectId != -1 && mConnection->pauseEffect(effectId)) {
+                forceEffectState(effectId, state);
+            } else {
+                reportError(effect, QFeedbackEffect::UnknownError);
+            }
             return;
         case QFeedbackEffect::Stopped:
         case QFeedbackEffect::Loading:
