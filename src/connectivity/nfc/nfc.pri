@@ -5,11 +5,11 @@ HEADERS += \
     nfc/qndefrecord.h \
     nfc/qndefnfctextrecord.h \
     nfc/qndefmessage.h \
-    nfc/qllcpsocket.h \
     nfc/qndeffilter.h \
     nfc/qndefnfcurirecord.h \
     nfc/qnearfieldtagtype1.h \
     nfc/qnearfieldtagtype2.h \
+    nfc/qllcpsocket.h \
     nfc/qllcpserver.h
 
 PRIVATE_HEADERS += \
@@ -19,9 +19,7 @@ PRIVATE_HEADERS += \
     nfc/qnearfieldmanagerimpl_p.h \
     nfc/qtlvreader_p.h \
     nfc/qtlvreader_p.h \
-    nfc/checksum_p.h \
-    nfc/qllcpserver_p.h \
-    nfc/qllcpsocket_p.h
+    nfc/checksum_p.h 
 
 SOURCES += \
     nfc/qnearfieldmanager.cpp \
@@ -29,12 +27,12 @@ SOURCES += \
     nfc/qndefrecord.cpp \
     nfc/qndefnfctextrecord.cpp \
     nfc/qndefmessage.cpp \
-    nfc/qllcpsocket.cpp \
     nfc/qndeffilter.cpp \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp \
     nfc/qnearfieldtagtype2.cpp \
     nfc/qtlvreader.cpp \
+    nfc/qllcpsocket.cpp \
     nfc/qllcpserver.cpp
 
 simulator:PRIVATE_HEADERS += \
@@ -47,11 +45,11 @@ simulator:SOURCES += \
     nfc/qllcpsocket_simulator_p.cpp \
     nfc/qllcpserver_simulator_p.cpp
 
-symbian:PRIVATE_HEADERS += \
+!symbian:PRIVATE_HEADERS += \
     nfc/qllcpsocket_symbian_p.h \
     nfc/qllcpserver_symbian_p.h
 
-symbian:SOURCES += \
+!symbian:SOURCES += \
     nfc/qllcpsocket_symbian_p.cpp \
     nfc/qllcpserver_symbian_p.cpp
 
@@ -70,6 +68,8 @@ symbian {
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/qnearfieldtagtype2_symbian_p.h \
+        nfc/qllcpsocket_symbian_p.h \
+        nfc/qllcpserver_symbian_p.h \
         nfc/symbian/nearfieldmanager_symbian.h \
         nfc/symbian/nearfieldtarget_symbian.h \
         nfc/symbian/nearfieldtagtype1_symbian.h \
@@ -86,6 +86,8 @@ symbian {
         nfc/qnearfieldmanager_symbian.cpp \
         nfc/qnearfieldtagtype1_symbian.cpp \
         nfc/qnearfieldtagtype2_symbian.cpp \
+        nfc/qllcpsocket_symbian_p.cpp \
+        nfc/qllcpserver_symbian_p.cpp \
         nfc/symbian/nearfieldmanager_symbian.cpp \	
         nfc/symbian/nearfieldtarget_symbian.cpp \
         nfc/symbian/nearfieldtagtype1_symbian.cpp \

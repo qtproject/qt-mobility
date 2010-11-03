@@ -138,7 +138,7 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     
     if (KErrNone == CreateLocalConnection(aPortNum))
         {
-        error = iLocalConnection->Transfer( aData);
+        error = iLocalConnection->Transfer(*this, aData);
         if (KErrNone == error)
             {
             val =  0;
@@ -156,7 +156,7 @@ TInt CLlcpSocketType1::StartReadDatagram(TInt64 aMaxSize)
         TInt error = KErrNone;
         
         // Start receiving data again
-        error = iRemoteConnection->Receive(aMaxSize);
+        error = iRemoteConnection->Receive(*this, aMaxSize);
         if (KErrNone == error)
             {
             val =  0;
@@ -166,20 +166,14 @@ TInt CLlcpSocketType1::StartReadDatagram(TInt64 aMaxSize)
     return val;    
     }
 
-
-bool CLlcpSocketType1::TransferCompleted()
+TInt64 CLlcpSocketType1::ReceiveData(TPtr8 &aTPtr)
     {
-    return iLocalConnection->TransferCompleted();
-    }
-
-bool CLlcpSocketType1::ReceiveData(RBuf &aRbuf)
-    {
-      if (ReceiveCompleted() && iRemoteConnection != NULL)
+      if (iRemoteConnection != NULL)
           {
-          iRemoteConnection->ReceiveDataFromBuf(aRbuf);
-          return ETrue;
+          iRemoteConnection->ReceiveDataFromBuf(aTPtr);
+          return aTPtr.Length();
           }
-      return EFalse;
+      return -1;
     }
 
 bool CLlcpSocketType1::HasPendingDatagrams() const
@@ -202,28 +196,23 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
     return val;
     }
 
-bool CLlcpSocketType1::ReceiveCompleted()
-    {
-    return iLocalConnection->ReceiveCompeleted();
-    }
-
-    
-
 /*!
     Call back from MLlcpConnLessListener
 */
 void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
     CreateRemoteConnection(aConnection);
+    iCallback.invokeReadyRead();
     }
 
 /*!
     Call back from MLlcpReadWriteCb
 */
-void CLlcpSocketType1::ReceiveComplete( TDes8& aData )
+void CLlcpSocketType1::ReceiveComplete()
     {
     iCallback.invokeReadyRead();
     }
+
 /*!
     Call back from MLlcpReadWriteCb
 */
@@ -248,7 +237,7 @@ TInt CLlcpSocketType1::CreateLocalConnection(TInt8 portNum)
     if ( error == KErrNone )
         {
         TRAP( error, iLocalConnection = 
-                    COwnLlcpConnLess::NewL( connType1 )) ;              
+                    COwnLlcpConnLess::NewL(connType1 )) ;              
         
         if ( error != KErrNone )
             {
@@ -270,7 +259,7 @@ void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnect
      if ( !iRemoteConnection )
          { 
          // Creating wrapper for connection. 
-         TRAP( error, iRemoteConnection = COwnLlcpConnLess::NewL( aConnection ) );
+         TRAP( error, iRemoteConnection = COwnLlcpConnLess::NewL(aConnection ) );
          if ( error != KErrNone )
              {
              delete aConnection;
@@ -287,7 +276,7 @@ void CLlcpSocketType1::CreateRemoteConnection(MLlcpConnLessTransporter* aConnect
 */
 COwnLlcpConnLess* COwnLlcpConnLess::NewL( MLlcpConnLessTransporter* aConnection )
     {
-    COwnLlcpConnLess* self = COwnLlcpConnLess::NewLC( aConnection );
+    COwnLlcpConnLess* self = COwnLlcpConnLess::NewLC(aConnection );
     CleanupStack::Pop( self );
     return self;
     }
@@ -295,9 +284,9 @@ COwnLlcpConnLess* COwnLlcpConnLess::NewL( MLlcpConnLessTransporter* aConnection 
 /*!
     Construct a new wrapper for connectionLess transport.
 */
-COwnLlcpConnLess* COwnLlcpConnLess::NewLC( MLlcpConnLessTransporter* aConnection )
+COwnLlcpConnLess* COwnLlcpConnLess::NewLC(MLlcpConnLessTransporter* aConnection )
     {
-    COwnLlcpConnLess* self = new (ELeave) COwnLlcpConnLess( aConnection );
+    COwnLlcpConnLess* self = new (ELeave) COwnLlcpConnLess(aConnection );
     CleanupStack::PushL( self );
     self->ConstructL();
     return self;
@@ -306,10 +295,11 @@ COwnLlcpConnLess* COwnLlcpConnLess::NewLC( MLlcpConnLessTransporter* aConnection
 /*!
     Constructor
 */
-COwnLlcpConnLess::COwnLlcpConnLess( MLlcpConnLessTransporter* aConnection )
+COwnLlcpConnLess::COwnLlcpConnLess(  MLlcpConnLessTransporter* aConnection )
     : CActive( EPriorityStandard ),
       iConnection( aConnection ),
-      iActionState( EIdle )
+      iActionState( EIdle ),
+      iLlcpReadWriteCb(NULL)
     {
     }
     
@@ -341,7 +331,7 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
 /*!
     Send data from local peer to remote peer via connectionLess transport
 */
-TInt COwnLlcpConnLess::Transfer( const TDesC8& aData )
+TInt COwnLlcpConnLess::Transfer(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
     {
     TInt error = KErrNone;
     
@@ -359,6 +349,7 @@ TInt COwnLlcpConnLess::Transfer( const TDesC8& aData )
             iConnection->Transmit( iStatus, iTransmitBuf );
             SetActive();
             iActionState = ETransmitting;
+            iLlcpReadWriteCb = &aLlcpSendCb;
             }
         else
             {
@@ -378,10 +369,20 @@ void COwnLlcpConnLess::TransferCancel()
     Cancel();
     }
    
+
+
+/*!
+    Cancel data receive from local peer to remote peer via connectionLess transport
+*/
+void COwnLlcpConnLess::ReceiveCancel()
+    {
+    Cancel();
+    }
+
 /*!
     Receive data from remote peer to local peer via connectionLess transport
 */
-TInt COwnLlcpConnLess::Receive(TInt64 aMaxSize)
+TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb, TInt64 aMaxSize)
     {
     TInt error = KErrNone;
     
@@ -404,6 +405,7 @@ TInt COwnLlcpConnLess::Receive(TInt64 aMaxSize)
                 iConnection->Receive( iStatus, iReceiveBuf );
                 SetActive();
                 iActionState = EReceiving;
+                iLlcpReadWriteCb = &aLlcpReceiveCb;
                 }
             }
         else
@@ -422,31 +424,33 @@ TInt COwnLlcpConnLess::Receive(TInt64 aMaxSize)
     return error;
     }
 
-/*!
-    Cancel data receive from local peer to remote peer via connectionLess transport
-*/
-void COwnLlcpConnLess::ReceiveCancel()
-    {
-    Cancel();
-    }
-
-bool COwnLlcpConnLess::ReceiveCompeleted()
-    {
-    return iActionState != EReceiving ? ETrue : EFalse;    
-    }
-
-bool COwnLlcpConnLess::TransferCompleted()
-    {
-    return iActionState != ETransmitting ? ETrue : EFalse;
-    }
-
-void COwnLlcpConnLess::ReceiveDataFromBuf(RBuf& aRbuf) 
+void COwnLlcpConnLess::ReceiveDataFromBuf(TPtr8 &aTPtr) 
     {
     if (iReceiveBuf.Size() == 0)
         return;
     
-    aRbuf.Copy(iReceiveBuf);
-    iReceiveBuf.Zero();
+    TInt readLength = aTPtr.Length();
+    TInt bufLength =  iReceiveBuf.Length();  
+  
+    if (readLength >= bufLength)
+        {
+        // swallow all the data from iReceiveBuf
+        for (TInt i=0; i < bufLength; i++)
+            {
+            aTPtr[i] = iReceiveBuf[i];
+            }
+        iReceiveBuf.Zero(); 
+        }
+    else
+        {
+        TInt i = 0;
+        for (; i < readLength; i++)
+            {
+            aTPtr[i] = iReceiveBuf[i];
+            }   
+        iReceiveBuf.Delete(0,readLength);
+        }
+
     }
 
 bool COwnLlcpConnLess::HasPendingDatagrams() const
@@ -469,6 +473,11 @@ void COwnLlcpConnLess::RunL()
             //TODO emit readyRead signals   
             if ( error == KErrNone )
                 {
+                MLlcpReadWriteCb* cb = iLlcpReadWriteCb;
+                iLlcpReadWriteCb = NULL;
+                iActionState = EIdle;
+                cb->ReceiveComplete();                
+                
                 iActionState = EIdle;
                 }
             }
@@ -520,8 +529,6 @@ void COwnLlcpConnLess::DoCancel()
     iActionState = EIdle;
     }
 
-
-
 COwnLlcpConnOriented* COwnLlcpConnOriented::NewL( MLlcpConnOrientedTransporter* aConnection )
     {
     COwnLlcpConnOriented* self = COwnLlcpConnOriented::NewLC( aConnection );
@@ -529,10 +536,6 @@ COwnLlcpConnOriented* COwnLlcpConnOriented::NewL( MLlcpConnOrientedTransporter* 
     return self;
     }
    
-// -----------------------------------------------------------------------------
-// CMyOwnLlcpApplication::NewLC()
-// -----------------------------------------------------------------------------
-//
 COwnLlcpConnOriented* COwnLlcpConnOriented::NewLC( MLlcpConnOrientedTransporter* aConnection )
     {
     COwnLlcpConnOriented* self = new (ELeave) COwnLlcpConnOriented( aConnection );

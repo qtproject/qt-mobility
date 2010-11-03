@@ -42,22 +42,25 @@
 #ifndef QLLCPSOCKET_P_H
 #define QLLCPSOCKET_P_H
 
-#include <QtCore/QObject>
 #include <qmobilityglobal.h>
-
 #include "qllcpsocket.h"
+
+#include <QtCore/QObject>
 
 class CLlcpSocketType1;
 class CLlcpSocketType2;
 
+QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocketPrivate //: public QObject
+class QLlcpSocketPrivate : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
     
 public:
     QLlcpSocketPrivate();
+    ~QLlcpSocketPrivate();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
@@ -82,6 +85,10 @@ public:
     qint64 writeData(const char *data, qint64 len);
 
 private:
+    void socketType1Check() const;
+    void socketType2Check() const;
+    
+private:
     enum SocketType 
     {
        connectionType1 = 1, // ConnectionLess mode
@@ -92,19 +99,28 @@ private:
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
     SocketType m_socketType;
+    
+    bool m_readDatagramStarted;
+    int m_port;
 
 public:
      void invokeBytesWritten(qint64 bytes);
      void invokeReadyRead();
      
-//signals:
-//     void readyRead();
-//     void bytesWritten(qint64 bytes);
-        //void connected();
-        //void disconnected();
-        //void error(QLlcpSocket::Error socketError);
+signals:
+     void readyRead();
+     void bytesWritten(qint64 bytes);
+     void error(QLlcpSocket::Error socketError) const;
+     /*  From QLlcpSocket
+     signals:
+         void connected();
+         void disconnected();
+         void error(QLlcpSocket::Error socketError);
+         void stateChanged(QLlcpSocket::State socketState);
+     */
 };
 
 QTM_END_NAMESPACE
+QT_END_HEADER
 
 #endif // QLLCPSOCKET_P_H

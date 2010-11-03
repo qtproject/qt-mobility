@@ -34,7 +34,7 @@ public:
     /**
      * Called 
      */
-    virtual void ReceiveComplete( TDes8& aData ) = 0;
+    virtual void ReceiveComplete() = 0;
     virtual void WriteComplete( TInt) = 0;
         
     };      
@@ -67,9 +67,7 @@ public:
    TInt StartReadDatagram(TInt64 aMaxSize);
    bool Bind(TInt8 portNum);
    
-   bool TransferCompleted();
-   bool ReceiveCompleted();
-   bool ReceiveData(RBuf &aRbuf);
+   TInt64 ReceiveData(TPtr8 &aTPtr);
    
    /*!
        Returns true if at least one datagram is waiting to be read;
@@ -79,7 +77,7 @@ public:
    TInt64 PendingDatagramSize() const;
     
 private:  // from  MLlcpReadWriteCb
-     void ReceiveComplete( TDes8& aData );
+     void ReceiveComplete( );
      void WriteComplete( TInt );
      
 private: // From MLlcpConnLessListener
@@ -217,12 +215,12 @@ public:
    /*!
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnLess* NewL( MLlcpConnLessTransporter* aConnection );
+   static COwnLlcpConnLess* NewL( MLlcpConnLessTransporter*);
    
    /*!
     * Creates a new COwnLlcpConnection object.
     */
-   static COwnLlcpConnLess* NewLC( MLlcpConnLessTransporter* aConnection );
+   static COwnLlcpConnLess* NewLC(MLlcpConnLessTransporter*);
    
    /*!
     * Destructor.
@@ -233,7 +231,7 @@ public:
    /*!
     * Transfer given data to remote device.
     */
-   TInt Transfer( const TDesC8& aData );
+   TInt Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
    
    /*!
     * Cancels COwnLlcpConnection::Tranfer() request.
@@ -243,17 +241,14 @@ public:
    /*!
     * Starts receive data from ConnLess.
     */
-   TInt Receive(TInt64 aMaxSize);
+   TInt Receive(MLlcpReadWriteCb&,TInt64 aMaxSize);
    
    /*!
     * Cancels COwnLlcpConnection::Receive() request.
     */ 
    void ReceiveCancel();
-   
-   bool ReceiveCompeleted();
-   bool TransferCompleted();
-   
-   void ReceiveDataFromBuf(RBuf& aRbuf);
+    
+   void ReceiveDataFromBuf(TPtr8&);
    
    bool HasPendingDatagrams() const;
    
@@ -266,7 +261,7 @@ public: // From CActive
 private:
 
     // Constructor
-    COwnLlcpConnLess( MLlcpConnLessTransporter* aConnection );
+    COwnLlcpConnLess( MLlcpConnLessTransporter*);
     
     // Second phase constructor
     void ConstructL();
@@ -296,6 +291,8 @@ private:
     RBuf8 iReceiveBuf;
     
     TActionState iActionState;
+    
+    MLlcpReadWriteCb* iLlcpReadWriteCb; // not own
     
     };
 
