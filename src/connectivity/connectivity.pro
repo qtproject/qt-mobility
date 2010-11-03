@@ -6,7 +6,6 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
-#disabled on symbian on Aaron's request
 include(nfc/nfc.pri)
 include(bluetooth/bluetooth.pri)
 

@@ -55,7 +55,8 @@ symbian {
         bluetooth/qbluetoothdevicediscoveryagent_symbian_p.cpp\        
         bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
         bluetooth/qbluetoothsocket_symbian.cpp\
-        bluetooth/qrfcommserver_symbian.cpp
+        bluetooth/qrfcommserver_symbian.cpp \
+        bluetooth/qbluetoothlocaldevice_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
 } else:contains(QT_CONFIG, dbus) {
