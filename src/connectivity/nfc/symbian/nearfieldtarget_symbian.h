@@ -49,10 +49,8 @@ class CNearFieldTagType1;
 class CNearFieldTagType2;
 class CNearFieldNdefTarget;
 
-#if 0
 class CNearFieldTagType3;
 class CNearFieldTagType4;
-#endif
 
 class MNearFieldTarget 
     {
@@ -63,10 +61,8 @@ public:
 public:
     virtual CNearFieldTagType1 * CastToTagType1();
     virtual CNearFieldTagType2 * CastToTagType2();
-#if 0
     virtual CNearFieldTagType3 * CastToTagType3();
     virtual CNearFieldTagType4 * CastToTagType4();
-#endif
     
     virtual CNearFieldNdefTarget * CastToNdefTarget();
 

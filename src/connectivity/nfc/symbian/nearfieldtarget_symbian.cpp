@@ -42,11 +42,9 @@
 #include "nearfieldtarget_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
-#if 0
 #include "nearfieldtagtype2_symbian.h"
 #include "nearfieldtagtype3_symbian.h"
 #include "nearfieldtagtype4_symbian.h"
-#endif
 
 MNearFieldTarget::~MNearFieldTarget()
     {
@@ -61,7 +59,6 @@ CNearFieldTagType2 * MNearFieldTarget::CastToTagType2()
     return reinterpret_cast<CNearFieldTagType2 *>(0);
     }
 
-#if 0
 CNearFieldTagType3 * MNearFieldTarget::CastToTagType3()
     {
     return reinterpret_cast<CNearFieldTagType3 *>(0);
@@ -71,7 +68,6 @@ CNearFieldTagType4 * MNearFieldTarget::CastToTagType4()
     {
     return reinterpret_cast<CNearFieldTagType4 *>(0);
     }
-#endif
 
 CNearFieldNdefTarget * MNearFieldTarget::CastToNdefTarget()
     {

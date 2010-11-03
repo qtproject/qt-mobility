@@ -43,10 +43,14 @@
 #include "nearfieldtargetfactory_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
 #include "nearfieldtagtype2_symbian.h"
+#include "nearfieldtagtype3_symbian.h"
+#include "nearfieldtagtype4_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "qnearfieldtagtype2_symbian_p.h"
-
+#include "qnearfieldtagtype3_symbian_p.h"
+#include "qnearfieldtagtype4_symbian_p.h"
+#include "qnearfieldllcpdevice_symbian_p.h"
 /*!
     \class TNearFieldTargetFactory
     \brief The TNearFieldTargetFactory class creates detected target instance according
@@ -71,11 +75,23 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
         {
         tag = CreateTagTypeL<CNearFieldTagType2, QNearFieldTagType2Symbian>(aNfcTag, aNfcServer, aParent);
         }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType3))
+        {
+        tag = CreateTagTypeL<CNearFieldTagType3, QNearFieldTagType3Symbian>(aNfcTag, aNfcServer, aParent); 
+        }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfc14443P4))
+        {
+        tag = CreateTagTypeL<CNearFieldTagType4, QNearFieldTagType4Symbian>(aNfcTag, aNfcServer, aParent);
+        }
+    else if (!aNfcTag)
+        {
+        tag = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
+        }
     return tag;
     }
 
 /*!
-    Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
+    Create tag type instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
 template <typename CTAGTYPE, typename QTAGTYPE>
@@ -104,9 +120,6 @@ MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, R
         }
     }
            
-/*!
-    Convert connection mode information in \a aNfcTag to access methods
-*/
 QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
     {
     QNearFieldTarget::AccessMethods accessMethod;
@@ -119,4 +132,3 @@ QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMe
         accessMethod |= QNearFieldTarget::TagTypeSpecificAccess;
         }
     }
-

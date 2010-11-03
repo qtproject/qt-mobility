@@ -39,9 +39,15 @@
  **
  ****************************************************************************/
 #include <nfctype1connection.h>
+#include <nfctype2connection.h>
+#include <nfctype3connection.h>
+#include <iso14443connection.h>
 #include <ndefconnection.h>
 #include <nfctag.h>
 #include "nearfieldtagtype1_symbian.h"
+#include "nearfieldtagtype2_symbian.h"
+#include "nearfieldtagtype3_symbian.h"
+#include "nearfieldtagtype4_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 
 /*!
@@ -106,7 +112,6 @@ CNearFieldTagType2 * CNearFieldNdefTarget::CastToTagType2()
     {
     return iTagConnection ? iTagConnection->CastToTagType2() : reinterpret_cast<CNearFieldTagType2 *>(0);
     }
-#if 0
 CNearFieldTagType3 * CNearFieldNdefTarget::CastToTagType3()
     {
     return iTagConnection ? iTagConnection->CastToTagType3() : reinterpret_cast<CNearFieldTagType3 *>(0);
@@ -116,7 +121,6 @@ CNearFieldTagType4 * CNearFieldNdefTarget::CastToTagType4()
     {
     return iTagConnection ? iTagConnection->CastToTagType4() : reinterpret_cast<CNearFieldTagType4 *>(0);
     }
-#endif
 
 CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
     {

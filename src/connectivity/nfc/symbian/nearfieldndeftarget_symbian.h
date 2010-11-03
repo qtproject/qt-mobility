@@ -83,10 +83,8 @@ public: // New functions
 public:
     CNearFieldTagType1 * CastToTagType1();
     CNearFieldTagType2 * CastToTagType2();
-#if 0
     CNearFieldTagType3 * CastToTagType3();
     CNearFieldTagType4 * CastToTagType4();
-#endif
     CNearFieldNdefTarget * CastToNdefTarget();
     
     TInt OpenConnection();

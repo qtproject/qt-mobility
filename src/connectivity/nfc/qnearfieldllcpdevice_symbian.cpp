@@ -39,55 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTAGTYPE4SYMBIAN_H
-#define QNEARFIELDTAGTYPE4SYMBIAN_H
-
-#include <qnearfieldtarget.h>
-#include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagtype4_symbian.h"
-#include "nearfieldtagimpl_symbian.h"
-#include "commonutil_symbian.h"
-
-QT_BEGIN_HEADER
+#include "qnearfieldllcpdevice_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType4Symbian : public QNearFieldTarget, private QNearFieldTagImpl
+QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
+                                  : mNfcServer(nfcServer), QNearFieldTarget(parent)
 {
-    Q_OBJECT
+}
 
-public:
+QByteArray QNearFieldLlcpDeviceSymbian::uid() const
+{
+    return QByteArray();
+}
 
-    explicit QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent = 0);
-    
-    ~QNearFieldTagType4Symbian();
+/*!
+    \fn QNearFieldTarget::Type QNearFieldTarget::type() const = 0
 
-    virtual QByteArray uid() const;
-    Type type() const { return NfcTagType4; }
+    Returns the type of tag type of this near field target.
+*/
+QNearFieldTarget::Type QNearFieldLlcpDeviceSymbian::type() const
+{
+    return QNearFieldTarget::AnyTarget;
+}
 
-    bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+/*!
+    \fn QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const = 0
 
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    Returns the access methods support by this near field target.
+*/
+QNearFieldTarget::AccessMethods QNearFieldLlcpDeviceSymbian::accessMethods() const
+{
+    return QNearFieldTarget::LlcpAccess;
+}
 
-    virtual QByteArray sendAPDUCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
+void QNearFieldLlcpDeviceSymbian::setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+{
+}
 
-    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-    {
-        _setAccessMethods(accessMethods);
-    }
-
-    QNearFieldTarget::AccessMethods accessMethods() const
-    {
-        return _accessMethods();
-    }
-};
+#include "moc_qnearfieldllcpdevice_symbian_p.cpp"
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QNEARFIELDTAGTYPE4SYMBIAN_H

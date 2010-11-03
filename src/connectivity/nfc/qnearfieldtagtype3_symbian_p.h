@@ -69,6 +69,8 @@ public:
         return _accessMethods();
     }
 
+    Type type() const { return NfcTagType3; }
+
     bool hasNdefMessage();
     QList<QNdefMessage> ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);

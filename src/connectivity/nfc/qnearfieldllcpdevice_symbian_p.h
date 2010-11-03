@@ -39,55 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTAGTYPE4SYMBIAN_H
-#define QNEARFIELDTAGTYPE4SYMBIAN_H
+
+#ifndef QNEARFIELDLLCPDEVICE_H
+#define QNEARFIELDLLCPDEVICE_H
 
 #include <qnearfieldtarget.h>
-#include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagtype4_symbian.h"
-#include "nearfieldtagimpl_symbian.h"
-#include "commonutil_symbian.h"
+#include <nfcserver.h>
 
 QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType4Symbian : public QNearFieldTarget, private QNearFieldTagImpl
+class QNearFieldLlcpDeviceSymbian : public QNearFieldTarget
 {
     Q_OBJECT
-
 public:
-
-    explicit QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent = 0);
+    QByteArray uid() const;
+    Type type() const;
+    AccessMethods accessMethods() const;
+    void setAccessMethods(const AccessMethods& accessMethods);
     
-    ~QNearFieldTagType4Symbian();
+    RNfcServer& nfcServer() {return mNfcServer;}
 
-    virtual QByteArray uid() const;
-    Type type() const { return NfcTagType4; }
-
-    bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
-
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-
-    virtual QByteArray sendAPDUCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
-
-    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-    {
-        _setAccessMethods(accessMethods);
-    }
-
-    QNearFieldTarget::AccessMethods accessMethods() const
-    {
-        return _accessMethods();
-    }
+private:
+    RNfcServer& mNfcServer;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNEARFIELDTAGTYPE4SYMBIAN_H
+#endif // QNEARFIELDLLCPDEVICE_H

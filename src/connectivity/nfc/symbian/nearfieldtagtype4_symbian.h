@@ -62,7 +62,7 @@ public:
     static CNearFieldTagType4* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
 public:
-    CNearFieldTagType4 * CastToTagType3();
+    CNearFieldTagType4 * CastToTagType4();
     
     TInt OpenConnection();
     void CloseConnection();
@@ -95,4 +95,4 @@ private:
     RNfcServer& iNfcServer;
     };
 
-#endif // NEARFIELDTAGTYPE1_H
+#endif // NEARFIELDTAGTYPE4_H

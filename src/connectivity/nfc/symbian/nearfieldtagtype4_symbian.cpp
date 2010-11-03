@@ -112,7 +112,7 @@ TInt CNearFieldTagType4::RunError(TInt aError)
     return aError;
     }
 
-CNearFieldTagType4 * CNearFieldTagType4::CastToTagType3()
+CNearFieldTagType4 * CNearFieldTagType4::CastToTagType4()
     {
     TInt error = KErrNone;
     
