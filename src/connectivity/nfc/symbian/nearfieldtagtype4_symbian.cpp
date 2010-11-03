@@ -99,6 +99,7 @@ CNearFieldTagType4::~CNearFieldTagType4()
 
 void CNearFieldTagType4::DoCancel()
     {
+    iNfcType4Connection->ExchangeDataCancel();
     }
 
 void CNearFieldTagType4::RunL()
