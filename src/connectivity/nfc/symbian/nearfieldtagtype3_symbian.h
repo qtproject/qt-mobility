@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
  **
  ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
@@ -39,38 +39,60 @@
  **
  ****************************************************************************/
 
+#ifndef NEARFIELDTAGTYPE3_H
+#define NEARFIELDTAGTYPE3_H
+
+#include <e32base.h>	// For CActive, link against: euser.lib
+#include <nfcserver.h>
 #include "nearfieldtarget_symbian.h"
-#include "nearfieldtagtype1_symbian.h"
-#include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagtype2_symbian.h"
-#include "nearfieldtagtype3_symbian.h"
-#include "nearfieldtagtype4_symbian.h"
 
-MNearFieldTarget::~MNearFieldTarget()
-    {
-    }
+class CNfcType3Connection;
+class MNfcTag;
 
-CNearFieldTagType1 * MNearFieldTarget::CastToTagType1()
+class CNearFieldTagType3 : public CActive, public MNearFieldTarget
     {
-    return reinterpret_cast<CNearFieldTagType1 *>(0);
-    }
-CNearFieldTagType2 * MNearFieldTarget::CastToTagType2()
-    {
-    return reinterpret_cast<CNearFieldTagType2 *>(0);
-    }
+public:
+    // Cancel and destroy
+    ~CNearFieldTagType3();
 
-CNearFieldTagType3 * MNearFieldTarget::CastToTagType3()
-    {
-    return reinterpret_cast<CNearFieldTagType3 *>(0);
-    }
+    // Two-phased constructor.
+    static CNearFieldTagType3* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
-CNearFieldTagType4 * MNearFieldTarget::CastToTagType4()
-    {
-    return reinterpret_cast<CNearFieldTagType4 *>(0);
-    }
+    // Two-phased constructor.
+    static CNearFieldTagType3* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
-CNearFieldNdefTarget * MNearFieldTarget::CastToNdefTarget()
-    {
-    return reinterpret_cast<CNearFieldNdefTarget *>(0);
-    }
+public:
+    CNearFieldTagType3 * CastToTagType3();
+    
+    TInt OpenConnection();
+    void CloseConnection();
+    TBool IsConnectionOpened();
 
+private:
+    // C++ constructor
+    CNearFieldTagType3(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
+
+    // Second-phase constructor
+    void ConstructL();
+
+private: // From CActive
+    // Handle completion
+    void RunL();
+
+    // How to cancel me
+    void DoCancel();
+
+    // Override to handle leaves from RunL(). Default implementation causes
+    // the active scheduler to panic.
+    TInt RunError( TInt aError );
+    
+private:
+    // own
+    CNfcType3Connection * iNfcType3Connection;
+    CActiveSchedulerWait * iWait;
+    MNfcTag * iNfcTag;
+    
+    RNfcServer& iNfcServer;
+    };
+
+#endif // NEARFIELDTAGTYPE3_H

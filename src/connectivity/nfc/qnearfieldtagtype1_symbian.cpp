@@ -41,9 +41,13 @@
 #include <nfctag.h>
 #include "qnearfieldutility_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
-#include "nearfieldtagimpl_symbian.h"
 
 QTM_BEGIN_NAMESPACE
+
+static const int ReadAllBytes = 124;
+static const int ReadSegmentBytes = 131;
+static const int BlockOpreationBytes = 11;
+static const int WriteBlockBytes = 14; // 8 bytes data + 4 bytes UI + 2 bytes CRC
 
 /*!
     \class QNearFieldTagType1Symbian
@@ -98,6 +102,20 @@ QByteArray QNearFieldTagType1Symbian::readIdentification()
 */
 QByteArray QNearFieldTagType1Symbian::readAll()
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    QByteArray result;
+
+    if (tagType1)
+    {
+        TBuf8<ReadAllBytes> response;
+        int error = tagType1->ReadAll(response);
+        if (error == KErrNone)
+        {
+            CommonUtil::TDesC82QByteArray(response, result);
+        }
+    }
+
+    return result;
 }
 
 /*!
@@ -105,6 +123,16 @@ QByteArray QNearFieldTagType1Symbian::readAll()
 */
 quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    quint8 result = 0;
+
+    if (tagType1)
+    {
+        // TODO: ask Aaron to add error code define
+        int error = tagType1->ReadByte(address, result);
+    }
+
+    return result;
 }
 
 /*!
@@ -112,6 +140,16 @@ quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
 */
 bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    int error = KErrNotSupported;
+
+    if (tagType1)
+    {
+        error = (mode == EraseAndWrite) ? tagType1->WriteByteErase(address, data) 
+                                        : tagType1->WriteByteNoErase(address, data);
+    }
+    
+    return (error == KErrNone);
 }
 
 /*!
@@ -119,6 +157,19 @@ bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode
 */
 QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    QByteArray result;
+
+    if (tagType1)
+    {
+        TBuf8<ReadSegmentBytes> response;
+        if (KErrNone == tagType1->ReadSegment(segmentAddress, response))
+        {
+            CommonUtil::TDesC82QByteArray(response, result);
+        }
+    }
+    
+    return result;
 }
 
 /*!
@@ -126,6 +177,17 @@ QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 */
 QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    QByteArray result;
+    if (tagType1)
+    {
+        TBuf8<BlockOpreationBytes> response;
+        if (KErrNone == tagType1->ReadBlock(blockAddress, response))
+        {
+            CommonUtil::TDesC82QByteArray(response, result);
+        }
+    }
+    return result;
 }
 
 /*!
@@ -134,6 +196,32 @@ QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
+    int error = KErrNotSupported;
+    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
+    
+    if (tagType1)
+    {
+        TBuf8<WriteBlockBytes> cmdData;
+        CommonUtil::QByteArray2TDes8(data, cmdData);
+        error = (mode == EraseAndWrite) ? tagType1->WriteBlockErase(blockAddress, cmdData)
+                                        : tagType1->WriteBlockNoErase(blockAddress, cmdData);
+    }
+    return (error == KErrNone);
+}
+    
+bool QNearFieldTagType1Symbian::hasNdefMessage()
+{
+    return _hasNdefMessage();
+}
+
+QList<QNdefMessage> QNearFieldTagType1Symbian::ndefMessages()
+{
+    return _ndefMessages();
+}
+
+void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+{
+    _setNdefMessages(messages);
 }
 
 /*!
@@ -141,6 +229,38 @@ bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray
 */
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
+#if 0
+    QByteArray result;
+    if (!command.isEmpty())
+    {
+        quint8 commandCode = command.at(0);
+        switch(commandCode)
+        {
+            case 0x00:
+            {
+                result = readAll();
+                break;
+            }
+            case 0x78:
+            {
+                result = readIdentification();
+                break;
+            }
+            case 0x01:
+            {
+                result.append(readByte(command.at(1)));
+                break;
+            }
+            case 0x53:
+            {
+                // TODO: need add parameters to write operation so that we can get entire
+                // response of the command.
+                result
+
+
+            
+
+#endif            
 }
 
 /*!

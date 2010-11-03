@@ -68,16 +68,16 @@ public: // New functions
     const TDesC8& ReadIdentification();
     
     // Static memory functions
-    void ReadAllL(TDes8& aData);
-    void WriteByteEraseL(TUint8 aAddress, const TDesC8& aData);
-    void WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData);
+    TInt ReadAll(TDes8& aData);
+    TInt ReadByte(TUint8 aAddress, TUint8& aData);
+    TInt WriteByteErase(TUint8 aAddress, TUint8 aData);
+    TInt WriteByteNoErase(TUint8 aAddress, TUint8 aData);
     
     // Dynamic memory functions
-    void ReadByteL(TUint8 aAddress, TDes8& aData);
-    void ReadSegmentL(TUint aSegmentAddress, TDes8& aData);
-    void ReadBlockL(TUint aBlockAddress, TDes8& aData);
-    void WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData);
-    void WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData);
+    TInt ReadSegment(TUint aSegmentAddress, TDes8& aData);
+    TInt ReadBlock(TUint aBlockAddress, TDes8& aData);
+    TInt WriteBlockErase(TUint aBlockAddress, const TDesC8& aData);
+    TInt WriteBlockNoErase(TUint aBlockAddress, const TDesC8& aData);
 
 public:
     CNearFieldTagType1 * CastToTagType1();
@@ -108,12 +108,6 @@ private: // utility functions
     // Convert static memory structure address to TNfcType1Address
     TNfcType1Address AddOperand(TUint8 aAddress) const;
     
-    // Convert dynamic memory structure address to TNfcType1Address for segment operation 
-    TNfcType1Address AddsOperand(TUint8 aSegmentAddress) const;
-    
-    // Convert dynamic memory structure address to TNfcType1Address for block operation
-    TNfcType1Address Add8Operand(TUint8 aBlockAddress) const;
-
 private:
     // own
     CNfcType1Connection * iNfcType1Connection;

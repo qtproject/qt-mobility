@@ -78,6 +78,11 @@ public:
     virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
                             WriteMode mode = EraseAndWrite);
 
+
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
+    void setNdefMessages(const QList<QNdefMessage> &messages);
+
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 

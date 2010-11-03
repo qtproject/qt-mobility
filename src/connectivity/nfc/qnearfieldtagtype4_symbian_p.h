@@ -38,59 +38,56 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <nfctag.h>
-#include "qnearfieldtagtype2_symbian_p.h"
+
+#ifndef QNEARFIELDTAGTYPE4SYMBIAN_H
+#define QNEARFIELDTAGTYPE4SYMBIAN_H
+
+#include <qnearfieldtarget.h>
+#include "nearfieldndeftarget_symbian.h"
+#include "nearfieldtagtype4_symbian.h"
+#include "nearfieldtagimpl_symbian.h"
+#include "commonutil_symbian.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObject *parent)
-                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
+class QNearFieldTagType4Symbian : public QNearFieldTarget, private QNearFieldTagImpl
 {
-}
+    Q_OBJECT
 
-QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
-{
-    delete mTag;
-}
+public:
 
-QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
-{
-}
+    explicit QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent = 0);
+    
+    ~QNearFieldTagType4Symbian();
 
-bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
-{
-}
+    virtual QByteArray uid() const;
+    Type type() const { return NfcTagType4; }
 
-bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
-{
-}
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
+    void setNdefMessages(const QList<QNdefMessage> &messages);
 
-QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
-{
-}
+    virtual QByteArray sendCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 
-QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
-{
-}
+    virtual QByteArray sendAPDUCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
 
-bool QNearFieldTagType2Symbian::hasNdefMessage()
-{
-    _hasNdefMessage();
-}
+    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
+    {
+        _setAccessMethods(accessMethods);
+    }
 
-QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()
-{
-    return _ndefMessages();
-}
+    QNearFieldTarget::AccessMethods accessMethods() const
+    {
+        return _accessMethods();
+    }
+};
 
-void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
-{
-    _setNdefMessages(messages);
-}
-
-QByteArray QNearFieldTagType2Symbian::uid() const
-{
-}
-
-#include "moc_qnearfieldtagtype2_symbian_p.cpp"
 QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE4SYMBIAN_H

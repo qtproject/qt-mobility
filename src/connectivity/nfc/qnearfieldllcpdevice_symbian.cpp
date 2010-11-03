@@ -38,59 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <nfctag.h>
-#include "qnearfieldtagtype2_symbian_p.h"
+
+#include "qnearfieldllcpdevice_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObject *parent)
-                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
+QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
+                                  : mNfcServer(nfcServer), QNearFieldTarget(parent)
 {
 }
 
-QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
+QByteArray QNearFieldLlcpDeviceSymbian::uid() const
 {
-    delete mTag;
+    return QByteArray();
 }
 
-QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
+/*!
+    \fn QNearFieldTarget::Type QNearFieldTarget::type() const = 0
+
+    Returns the type of tag type of this near field target.
+*/
+QNearFieldTarget::Type QNearFieldLlcpDeviceSymbian::type() const
 {
+    return QNearFieldTarget::AnyTarget;
 }
 
-bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
+/*!
+    \fn QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const = 0
+
+    Returns the access methods support by this near field target.
+*/
+QNearFieldTarget::AccessMethods QNearFieldLlcpDeviceSymbian::accessMethods() const
 {
+    return QNearFieldTarget::LlcpAccess;
 }
 
-bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
-{
-}
-
-QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
-{
-}
-
-QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
-{
-}
-
-bool QNearFieldTagType2Symbian::hasNdefMessage()
-{
-    _hasNdefMessage();
-}
-
-QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()
-{
-    return _ndefMessages();
-}
-
-void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
-{
-    _setNdefMessages(messages);
-}
-
-QByteArray QNearFieldTagType2Symbian::uid() const
+void QNearFieldLlcpDeviceSymbian::setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
 {
 }
 
-#include "moc_qnearfieldtagtype2_symbian_p.cpp"
+#include "moc_qnearfieldllcpdevice_symbian_p.cpp"
+
 QTM_END_NAMESPACE

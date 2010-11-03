@@ -39,58 +39,80 @@
 **
 ****************************************************************************/
 #include <nfctag.h>
-#include "qnearfieldtagtype2_symbian_p.h"
+#include "qnearfieldutility_symbian.h"
+#include "qnearfieldtagtype4_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObject *parent)
-                                : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
+/*!
+    \class QNearFieldTagType4Symbian
+    \brief The QNearFieldTagType4Symbian class provides symbian backend implementation for communicating with an NFC Tag
+           Type 1 tag.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    Constructs a new tag type 1 near field target with \a tag and \a parent.
+*/
+QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent)
+                                : QNearFieldTarget(parent), QNearFieldTagImpl(tag)
 {
 }
 
-QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
+/*!
+    Destructor
+*/
+QNearFieldTagType4Symbian::~QNearFieldTagType4Symbian()
 {
     delete mTag;
 }
 
-QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
+QByteArray QNearFieldTagType4Symbian::uid() const
 {
 }
-
-bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
+    
+bool QNearFieldTagType4Symbian::hasNdefMessage()
 {
+    return _hasNdefMessage();
 }
 
-bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
-{
-}
-
-QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
-{
-}
-
-QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
-{
-}
-
-bool QNearFieldTagType2Symbian::hasNdefMessage()
-{
-    _hasNdefMessage();
-}
-
-QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()
+QList<QNdefMessage> QNearFieldTagType4Symbian::ndefMessages()
 {
     return _ndefMessages();
 }
 
-void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType4Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages);
 }
 
-QByteArray QNearFieldTagType2Symbian::uid() const
+/*!
+    \reimp
+*/
+QByteArray QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 {
 }
 
-#include "moc_qnearfieldtagtype2_symbian_p.cpp"
+/*!
+    \reimp
+*/
+QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray> &commands)
+{
+}
+
+QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
+{
+}
+
+/*!
+    \reimp
+*/
+QList<QByteArray> QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
+{
+}
+
+#include "moc_qnearfieldtagtype4_symbian_p.cpp"
+
 QTM_END_NAMESPACE
