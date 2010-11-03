@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFODATA_SIMULATOR_P_H
-#define QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 //
 //  W A R N I N G
@@ -53,59 +53,58 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include <QtCore/QMetaType>
-#include <QtCore/QDateTime>
+#include <qmobilityglobal.h>
+#include "qfeedbackdata_simulator_p.h"
+#include <QtCore/QObject>
 #include <QtCore/QList>
 
 QT_BEGIN_HEADER
+
+QT_FORWARD_DECLARE_CLASS(QLocalSocket)
+class QFeedbackSimulator;
+
 QTM_BEGIN_NAMESPACE
 
-struct QGeoPositionInfoData
+
+namespace Simulator {
+
+class MobilityConnection;
+
+class Connection : public QObject
 {
-    // Coordinate information
-    double latitude;
-    double longitude;
-    double altitude;
+    Q_OBJECT
+public:
+    explicit Connection(MobilityConnection *mobilityCon);
+    static Connection *instance();
 
-    // Attributes
-    // ### transmit whether attributes are set or not
-    qreal direction;
-    qreal groundSpeed;
-    qreal verticalSpeed;
-    qreal magneticVariation;
-    qreal horizontalAccuracy;
-    qreal verticalAccuracy;
+    void connect(QFeedbackSimulator *plugin);
+    int startEffect(int actuatorId, const QString &info, int duration);
+    bool resumeEffect(int effectId);
+    bool pauseEffect(int effectId);
+    bool stopEffect(int effectId);
+    void setEffectDuration(int effectId, int duration);
+    void setActuatorEnabled(int actuatorId, bool enabled);
 
-    // DateTime info
-    QDateTime dateTime;
+private slots:
+    // called remotely
+    void initialFeedbackDataSent();
+    void setActuator(QtMobility::ActuatorData data);
+    void removeActuator(int id);
+    void setDefaultActuator(int id);
+    void setFeedbackEffectState(int effectId, int state);
 
-    int minimumInterval;
-    bool enabled;
+private:
+    void getInitialData();
+
+    MobilityConnection *mConnection;
+    bool mRegisteredWithSimulator;
+    bool mInitialDataReceived;
+    QFeedbackSimulator *mPlugin;
 };
 
-struct QGeoSatelliteInfoData
-{
-    struct SatelliteInfo
-    {
-        int prn;
-        qreal azimuth;
-        qreal elevation;
-        int signalStrength;
-        bool inUse;
-    };
-
-    QList<SatelliteInfo> satellites;
-};
-
-void qt_registerLocationTypes();
+} // namespace Simulator
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData::SatelliteInfo)
-
 QT_END_HEADER
 
-#endif // QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#endif // CONNECTION_H

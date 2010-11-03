@@ -39,73 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFODATA_SIMULATOR_P_H
-#define QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#include "qfeedbackdata_simulator_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtCore/QDataStream>
 
-#include "qmobilityglobal.h"
-#include <QtCore/QMetaType>
-#include <QtCore/QDateTime>
-#include <QtCore/QList>
+QDataStream &operator<<(QDataStream &out, const QtMobility::ActuatorData &s)
+{
+    out << s.id << s.name << static_cast<int>(s.state) << s.enabled;
+    return out;
+}
 
-QT_BEGIN_HEADER
+QDataStream &operator>>(QDataStream &in, QtMobility::ActuatorData &s)
+{
+    int stateInt;
+    in >> s.id >> s.name >> stateInt >> s.enabled;
+    s.state = static_cast<QtMobility::QFeedbackActuator::State>(stateInt);
+    return in;
+}
+
 QTM_BEGIN_NAMESPACE
 
-struct QGeoPositionInfoData
+void qt_registerFeedbackTypes()
 {
-    // Coordinate information
-    double latitude;
-    double longitude;
-    double altitude;
-
-    // Attributes
-    // ### transmit whether attributes are set or not
-    qreal direction;
-    qreal groundSpeed;
-    qreal verticalSpeed;
-    qreal magneticVariation;
-    qreal horizontalAccuracy;
-    qreal verticalAccuracy;
-
-    // DateTime info
-    QDateTime dateTime;
-
-    int minimumInterval;
-    bool enabled;
-};
-
-struct QGeoSatelliteInfoData
-{
-    struct SatelliteInfo
-    {
-        int prn;
-        qreal azimuth;
-        qreal elevation;
-        int signalStrength;
-        bool inUse;
-    };
-
-    QList<SatelliteInfo> satellites;
-};
-
-void qt_registerLocationTypes();
+    qRegisterMetaTypeStreamOperators<ActuatorData>("QtMobility::ActuatorData");
+}
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData::SatelliteInfo)
-
-QT_END_HEADER
-
-#endif // QGEOPOSITIONINFODATA_SIMULATOR_P_H
