@@ -210,18 +210,18 @@ isEmpty(QT_LIBINFIX):symbian {
         # QDocumentGallery built against EPOCROOT51 has mds 2.5 libs in place (Symbian^3 and N97)
         # QDocumentGallery built against EPOCROOT32 has no mds libs at all (stub implementation, api only)
         # Also if checked mds library is present on c-drive then also check whether mds is installed
-		gallerymdscheck = \
-			"if exists(\"z:\sys\bin\locationutility.dll\")" \
-			"   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
-			"elseif exists(\"c:\sys\bin\locationutility.dll\") AND package(0x200009F5)" \
-			"   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
-			"elseif exists(\"z:\sys\bin\locationmanagerserver.exe\")" \
-			"   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
-			"elseif exists(\"c:\sys\bin\locationmanagerserver.exe\") AND package(0x200009F5)" \
-			"   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
-			"else" \
-			"   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
-			"endif"
+        gallerymdscheck = \
+            "if exists(\"z:\sys\bin\locationutility.dll\")" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"c:\sys\bin\locationutility.dll\") AND package(0x200009F5)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"z:\sys\bin\locationmanagerserver.exe\")" \
+            "   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"c:\sys\bin\locationmanagerserver.exe\") AND package(0x200009F5)" \
+            "   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "else" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "endif"
 
         qtmobilitydeployment.pkg_postrules += gallerymdscheck
 
