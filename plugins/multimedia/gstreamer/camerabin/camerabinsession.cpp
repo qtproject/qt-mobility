@@ -1151,12 +1151,14 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
                                << QSize(2048, 1536)
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
-        const QSize minSize = res.first();
+        QSize minSize = res.first();
         QSize maxSize = res.last();
 
 #ifdef Q_WS_MAEMO_5
         if (mode == QCamera::CaptureVideo)
             maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureStillImage)
+            minSize = QSize(640, 480);
 #elif defined(Q_WS_MAEMO_6)
         if (mode == QCamera::CaptureStillImage)
             maxSize = QSize(4000, 3000);
