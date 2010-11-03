@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
   QContactRelationshipFilter groupFilter;                               // select all contacts which are involved
   groupFilter.setRelationshipType(QContactRelationship::HasMember);     // in a group relationship
   groupFilter.setRelatedContactId(groupContact.id());                   // with the group contact
-  groupFilter.setRelatedContactRole(QContactRelationshipFilter::First); // where the group contact is the first participant
+  groupFilter.setRelatedContactRole(QContactRelationship::First); // where the group contact is the first participant
   \endcode
 
   Another common use-case might be to select the groups which a particular contact is a member of.
@@ -73,9 +73,9 @@ QTM_BEGIN_NAMESPACE
 
   \code
   QContactRelationshipFilter whichGroupsFilter;                                 // select all contacts which are involved
-  whichGroupsFilter.setRelationshipType(QContactRelationshipFilter::HasMember); // in a group relationship
+  whichGroupsFilter.setRelationshipType(QContactRelationship::HasMember); // in a group relationship
   whichGroupsFilter.setRelatedContactId(particularContact.id());                // with the particular contact
-  whichGroupsFilter.setRelatedContactRole(QContactRelationshipFilter::Second);  // where the particular contact is the second participant
+  whichGroupsFilter.setRelatedContactRole(QContactRelationship::Second);  // where the particular contact is the second participant
   \endcode
 
  */
