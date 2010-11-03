@@ -153,7 +153,7 @@ void Connection::removeActuator(int id)
 
 void QtMobility::Simulator::Connection::setDefaultActuator(int id)
 {
-    Q_ASSERT(mPlugin->mActuators.contains(id));
+    Q_ASSERT(mPlugin->mActuators.contains(id) || id == -1);
     mPlugin->mDefaultActuator = id;
 }
 
