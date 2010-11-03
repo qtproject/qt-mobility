@@ -52,27 +52,58 @@ QTM_BEGIN_NAMESPACE
 class QDeclarativeGeoMapTextObject : public QGeoMapTextObject
 {
     Q_OBJECT
+    Q_ENUMS(HorizontalAlignment)
+    Q_ENUMS(VerticalAlignment)
 
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(HorizontalAlignment horizontalAlignment READ horizontalAlignment WRITE setHorizontalAlignment NOTIFY horizontalAlignmentChanged)
+    Q_PROPERTY(VerticalAlignment verticalAlignment READ verticalAlignment WRITE setVerticalAlignment NOTIFY verticalAlignmentChanged)
 
 public:
+    enum HorizontalAlignment {
+        AlignHCenter = Qt::AlignHCenter,
+        AlignLeft = Qt::AlignLeft,
+        AlignRight = Qt::AlignRight
+    };
+
+    enum VerticalAlignment {
+        AlignVCenter = Qt::AlignVCenter,
+        AlignTop = Qt::AlignTop,
+        AlignBottom = Qt::AlignBottom
+    };
+
     QDeclarativeGeoMapTextObject();
     ~QDeclarativeGeoMapTextObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate() const;
+    QDeclarativeCoordinate* declarativeCoordinate();
     void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
 
     QColor color() const;
     void setColor(const QColor &color);
 
-signals:
+    HorizontalAlignment horizontalAlignment() const;
+    void setHorizontalAlignment(HorizontalAlignment alignment);
+
+    VerticalAlignment verticalAlignment() const;
+    void setVerticalAlignment(VerticalAlignment alignment);
+
+Q_SIGNALS:
     void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
     void colorChanged(const QColor &color);
+    void horizontalAlignmentChanged(HorizontalAlignment alignment);
+    void verticalAlignmentChanged(VerticalAlignment alignment);
+
+private Q_SLOTS:
+    void coordinateLatitudeChanged(double latitude);
+    void coordinateLongitudeChanged(double longitude);
+    void coordinateAltitudeChanged(double altitude);
 
 private:
-    mutable QDeclarativeCoordinate* m_coordinate;
-    mutable QColor m_color;
+    QDeclarativeCoordinate* m_coordinate;
+    QColor m_color;
+    HorizontalAlignment m_hAlignment;
+    VerticalAlignment m_vAlignment;
     Q_DISABLE_COPY(QDeclarativeGeoMapTextObject)
 };
 

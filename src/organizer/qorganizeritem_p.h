@@ -80,11 +80,6 @@ public:
     {
     }
 
-    static void setCollectionId(QOrganizerItem *item, const QOrganizerCollectionId& collectionId)
-    {
-        item->d->m_collectionId = collectionId;
-    }
-
     ~QOrganizerItemData() {}
 
     QOrganizerItemId m_id;

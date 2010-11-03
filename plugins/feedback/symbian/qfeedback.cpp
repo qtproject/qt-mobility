@@ -150,7 +150,7 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     case QFeedbackEffect::ThemeBasicKeypad:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::ThemeMultitouchActivate:
+    case QFeedbackEffect::ThemeMultiPointTouchActivate:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::ThemeRotateStep:
@@ -201,6 +201,13 @@ QFeedbackInterface::PluginPriority QFeedbackSymbian::pluginPriority()
 
 QFeedbackSymbian::QFeedbackSymbian() : m_vibra(0), m_vibraActive(true)
 {
+#ifndef NO_TACTILE_SUPPORT
+    //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
+    if (touchInstance()->TouchFeedbackSupported()) {
+        m_actuators << createFeedbackActuator(this, TOUCH_DEVICE);
+    }
+#endif //NO_TACTILE_SUPPORT
+    m_actuators << createFeedbackActuator(this, VIBRA_DEVICE);
 }
 
 QFeedbackSymbian::~QFeedbackSymbian()
@@ -216,19 +223,9 @@ CHWRMVibra *QFeedbackSymbian::vibra()
     return m_vibra;
 }
 
-QList<QFeedbackActuator> QFeedbackSymbian::actuators()
+QList<QFeedbackActuator*> QFeedbackSymbian::actuators()
 {
-    QList<QFeedbackActuator> ret;
-#ifdef ADVANCED_TACTILE_SUPPORT
-    //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
-    bool touch = false;
-    TRAP_IGNORE(touch = touchInstance()->TouchFeedbackSupported());
-    if (touch) {
-        ret << createFeedbackActuator(TOUCH_DEVICE);
-    }
-#endif //ADVANCED_TACTILE_SUPPORT
-    ret << createFeedbackActuator(VIBRA_DEVICE);
-    return ret;
+    return m_actuators;
 }
 
 void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
@@ -322,6 +319,9 @@ bool QFeedbackSymbian::isActuatorCapabilitySupported(const QFeedbackActuator &, 
 
 void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty prop)
 {
+    if (!effect->actuator()) {
+        return;
+    }
     TInt err = KErrNone;
     switch(prop)
     {
@@ -329,7 +329,7 @@ void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect
         if (!m_elapsed.contains(effect) || m_elapsed[effect].isPaused())
             break;
 
-        switch(effect->actuator().id())
+        switch(effect->actuator()->id())
         {
         case VIBRA_DEVICE:
             TRAP(err, vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity())));
@@ -352,8 +352,10 @@ void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect
 void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State newState)
 {
     TInt err = KErrNone;
-    switch(effect->actuator().id())
-    {
+    if (!effect->actuator()) {
+        return;
+    }
+    switch(effect->actuator()->id())    {
     case VIBRA_DEVICE:
         switch(newState)
         {

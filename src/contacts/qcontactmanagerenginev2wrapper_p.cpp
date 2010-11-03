@@ -80,6 +80,7 @@ void QContactManagerEngineV2Wrapper::requestDestroyed(QContactAbstractRequest* r
     if (controller) {
         // If we own it, just delete the controller (and ignore any subrequests' signals from now on)
         delete controller;
+        m_controllerForRequest.insert(req, 0);
     } else {
         m_engine->requestDestroyed(req);
     }
@@ -119,13 +120,14 @@ void QContactManagerEngineV2Wrapper::requestStateChanged(QContactAbstractRequest
     RequestController* controller = qobject_cast<RequestController*>(sender());
     Q_ASSERT(controller);
     QContactAbstractRequest* request = controller->request();
-    Q_ASSERT(request);
 
     if (state == QContactAbstractRequest::FinishedState) {
         delete controller;
-        // Keep the key in m_controllerForRequest but point it to null to indicate a defunct
-        // controller
-        m_controllerForRequest.insert(request, 0);
+        if (request) { // It's possible the request was deleted by the sender.
+            // Keep the key in m_controllerForRequest but point it to null to indicate a defunct
+            // controller
+            m_controllerForRequest.insert(request, 0);
+        }
     } else {
         updateRequestState(request, state);
     }
@@ -198,7 +200,6 @@ void RequestController::handleUpdatedSubRequest(QContactAbstractRequest::State s
         } else {
             // XXX maybe Canceled should be handled
         }
-        emit stateChanged(state);
     }
 }
 

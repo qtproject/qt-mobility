@@ -50,7 +50,7 @@ class  QDeclarativeContactSyncTarget : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString syncTarget READ syncTarget WRITE setSyncTarget NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "syncTarget")
 public:
     enum FieldType {
@@ -61,13 +61,30 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactSyncTarget());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
         return QDeclarativeContactDetail::SyncTarget;
     }
-
-    void setSyncTarget(const QString& syncTarget) {detail().setValue(QContactSyncTarget::FieldSyncTarget, syncTarget);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case SyncTarget:
+            return QContactSyncTarget::FieldSyncTarget;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setSyncTarget(const QString& v)
+    {
+        if (!readOnly() && v != syncTarget()) {
+            detail().setValue(QContactSyncTarget::FieldSyncTarget, v);
+            emit fieldsChanged();
+        }
+    }
     QString syncTarget() const {return detail().value(QContactSyncTarget::FieldSyncTarget);}
 signals:
     void fieldsChanged();

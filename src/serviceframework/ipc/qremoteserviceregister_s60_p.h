@@ -116,8 +116,7 @@ public slots:
      void ipcFailure(QService::UnrecoverableIPCError);
     
 signals:
-    // void ReadyRead();
-    void Disconnected(); // TODO not sure if this should be done like others
+    void Disconnected();
     void errorUnrecoverableIPCFault(QService::UnrecoverableIPCError);
 
 protected:
@@ -198,6 +197,7 @@ class QRemoteServiceRegisterSymbianPrivate: public QRemoteServiceRegisterPrivate
 
 public:
     QRemoteServiceRegisterSymbianPrivate(QObject* parent);
+    ~QRemoteServiceRegisterSymbianPrivate();
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);

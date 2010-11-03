@@ -66,7 +66,7 @@ QTM_USE_NAMESPACE
  */
 void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setStartDateTime(startDateTime);
     saveDetail(&ttr);
 }
@@ -76,7 +76,7 @@ void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
  */
 QDateTime QOrganizerTodo::startDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.startDateTime();
 }
 
@@ -85,7 +85,7 @@ QDateTime QOrganizerTodo::startDateTime() const
  */
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setDueDateTime(dueDateTime);
     saveDetail(&ttr);
 }
@@ -95,31 +95,35 @@ void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
  */
 QDateTime QOrganizerTodo::dueDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.dueDateTime();
 }
 
-/*! Passing in \a isTimeSpecified determines whether the time component of
-the start datetime or end datetime are significant.
-*/
-void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
+/*!
+  Sets whether the time-of-day component of the todo's start date-time or end date-time is
+  insignificant (eg. this is generally set to true for a birthday).  If \a isAllDay is true,
+  the time-of-day component is considered insignificant, and the todo will be an all-day
+  item.
+ */
+void QOrganizerTodo::setAllDay(bool isAllDay)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
-    ttr.setTimeSpecified(isTimeSpecified);
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
+    ttr.setAllDay(isAllDay);
     saveDetail(&ttr);
 }
 
-/*! Returns whether the time component of the start datetime or end datetime are significant. */
-bool QOrganizerTodo::isTimeSpecified() const
+/*! Returns true if and only if the time component of the start date/time or end date/time are
+ * insignificant. */
+bool QOrganizerTodo::isAllDay() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
-    return ttr.isTimeSpecified();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
+    return ttr.isAllDay();
 }
 
 /*!
   Sets the dates on which the todo reoccurs to \a rdates
  */
-void QOrganizerTodo::setRecurrenceDates(const QList<QDate>& rdates)
+void QOrganizerTodo::setRecurrenceDates(const QSet<QDate>& rdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceDates(rdates);
@@ -130,16 +134,25 @@ void QOrganizerTodo::setRecurrenceDates(const QList<QDate>& rdates)
   Returns the dates on which the todo reoccurs, which have been explicitly set
   by calling \l setRecurrenceDates()
  */
-QList<QDate> QOrganizerTodo::recurrenceDates() const
+QSet<QDate> QOrganizerTodo::recurrenceDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceDates();
 }
 
 /*!
+  Clears the set of recurrence rules which define when the todo occurs, and replaces
+  it will the single recurrence rule \a rrule.
+ */
+void QOrganizerTodo::setRecurrenceRule(const QOrganizerRecurrenceRule& rrule)
+{
+    setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
+}
+
+/*!
   Sets the recurrence rules which define when the todo occurs to \a rrules
  */
-void QOrganizerTodo::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
@@ -147,9 +160,22 @@ void QOrganizerTodo::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule
 }
 
 /*!
+  Returns a recurrence rule which defines when the todo occurs.
+  If more than one recurrence rule has been set in the todo,
+  one will be returned at random.
+ */
+QOrganizerRecurrenceRule QOrganizerTodo::recurrenceRule() const
+{
+    QSet<QOrganizerRecurrenceRule> rrules = recurrenceRules();
+    if (!rrules.isEmpty())
+        return *rrules.begin();
+    return QOrganizerRecurrenceRule();
+}
+
+/*!
   Returns the list of recurrence rules which define when the todo occurs
  */
-QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerTodo::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceRules();
@@ -159,7 +185,7 @@ QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
   Sets the dates on which the todo does not occur despite the date
   fulfilling the recurrence rules of the todo, to \a exdates
  */
-void QOrganizerTodo::setExceptionDates(const QList<QDate>& exdates)
+void QOrganizerTodo::setExceptionDates(const QSet<QDate>& exdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionDates(exdates);
@@ -170,10 +196,20 @@ void QOrganizerTodo::setExceptionDates(const QList<QDate>& exdates)
   Returns the dates on which the todo does not occur, where it otherwise
   would occur as described by the recurrence rules.
  */
-QList<QDate> QOrganizerTodo::exceptionDates() const
+QSet<QDate> QOrganizerTodo::exceptionDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionDates();
+}
+
+/*!
+  Clears the set of recurrence rules which describe the dates on which the todo does
+  not occur, where it otherwise would occur as described by the recurrence rules, and
+  inserts into the cleared list the single exception rule \a exrule.
+ */
+void QOrganizerTodo::setExceptionRule(const QOrganizerRecurrenceRule& exrule)
+{
+    setExceptionRules(QSet<QOrganizerRecurrenceRule>() << exrule);
 }
 
 /*!
@@ -181,7 +217,7 @@ QList<QDate> QOrganizerTodo::exceptionDates() const
   not occur, where it otherwise would occur as described by the recurrence rules
   set with \l setRecurrenceRules(), to \a exrules
  */
-void QOrganizerTodo::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules)
+void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
@@ -189,11 +225,24 @@ void QOrganizerTodo::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>
 }
 
 /*!
+  Returns a recurrence rule which describe the dates on which the todo does not occur, where
+  it otherwise would occur as described by the recurrence rules.  If more than one exception
+  rule was set for the todo item, one of those exception rules will be returned at random.
+ */
+QOrganizerRecurrenceRule QOrganizerTodo::exceptionRule() const
+{
+    QSet<QOrganizerRecurrenceRule> exrules = exceptionRules();
+    if (!exrules.isEmpty())
+        return *exrules.begin();
+    return QOrganizerRecurrenceRule();
+}
+
+/*!
   Returns the recurrence rules which describe the dates on which the todo
   does not occur, where it otherwise would occur as described by the recurrence rules
   set the \l setRecurrenceRules().
  */
-QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerTodo::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();

@@ -52,8 +52,37 @@ QTM_BEGIN_NAMESPACE
 
     \inmodule QtGallery
 
-    \brief The QGalleryResultSet class provides an interface for accessing the
-    results of an gallery query.
+    \brief The QGalleryResultSet class provides a gallery response which returns
+    the results of a query.
+
+    Implementations of QGalleryResultSet are used to return a result set in
+    response to a QGalleryAbstractRequest.  A QGalleryResultSet provides
+    functions for accessing identifying information and meta-data of items
+    queried from a gallery.
+
+    Only one item in a result set can be accessed at a time, so before
+    information about an item can be accessed it must be selected using one of
+    the fetch() functions.  When a new index is selected the result set will
+    emit the currentIndexChanged() signal, and when the currently selected item
+    changes the currentItemChanged() signal will be emitted.  If the
+    currentIndex() contains a gallery item isValid() will return true, otherwise
+    it will return false. Information identifying the current item in a result
+    set can be accessed using the itemId(), itemUrl() and itemType() functions.
+
+    For each meta-data property that can be addressed by a result set it will
+    provide a unique key which queried by passing the property's name to the
+    propertyKey() function.  Passing this key to the metaData() function will
+    return the current item's value for that property.  Some result sets may
+    contain editable meta-data values which can be changed using the
+    setMetaData() function.  The attributes of a meta-data property such as
+    whether it's writable can be queried from propertyAttributes() and the
+    type of value that will returned by metaData() can be queried using
+    propertyType().
+
+    Whenever items are added or removed from a result set the itemsInserted()
+    and itemsRemoved() signals will be emitted identifying where and how many
+    items were changed.  If the meta-data of one or more items in a result set
+    changes the metaDataChanged() signal will be emitted.
 */
 
 /*!

@@ -58,6 +58,7 @@ class S60VideoCaptureSession;
 class S60CameraSettings;
 class CCameraEngine;
 class S60CameraViewfinderEngine;
+class QTimer;
 
 /*
  * Control for controlling camera base operations (e.g. start/stop and capture
@@ -66,7 +67,7 @@ class S60CameraViewfinderEngine;
 class S60CameraControl : public QCameraControl, public MCameraEngineObserver
 {
     Q_OBJECT
-    
+
 public: // Enums
 
     enum ViewfinderOutputType {
@@ -74,29 +75,29 @@ public: // Enums
         VideoRendererOutput,
         VideoWindowOutput
     };
-    
+
 public: // Constructors & Destructor
-    
+
     S60CameraControl(QObject *parent = 0);
-    S60CameraControl(S60VideoCaptureSession *videosession, 
-                     S60ImageCaptureSession *imagesession, 
+    S60CameraControl(S60VideoCaptureSession *videosession,
+                     S60ImageCaptureSession *imagesession,
                      QObject *parent = 0);
     ~S60CameraControl();
-    
+
 public: // QCameraControl
-    
+
     // State
     QCamera::State state() const;
     void setState(QCamera::State state);
 
     // Status
     QCamera::Status status() const;
-    
+
     // Capture Mode
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode);
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    
+
     // Property Setting
     bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
 
@@ -109,10 +110,10 @@ Q_SIGNALS:
 */
 
 public: // Internal
-    
+
     void setError(const TInt error, const QString &description);
-    CCameraEngine *resetCameraOrientation();
-    
+    void resetCameraOrientation();
+
     // To provide QVideoDeviceControl info
     static int deviceCount();
     static QString name(const int index);
@@ -122,26 +123,34 @@ public: // Internal
     void setSelectedDevice(const int index);
 
     void setVideoOutput(QObject *output, ViewfinderOutputType type);
-    
+
 private Q_SLOTS: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
+    // Needed to detect image capture completion when trying to rotate the camera
+    void imageCaptured(const int imageId, const QImage& preview);
+    /*
+     * This method moves the camera to the StandBy status:
+     *    - If camera access was lost
+     *    - If camera has been inactive in LoadedStatus for a long time
+     */
+    void toStandByStatus();
     void advancedSettingsCreated();
-    
+
 protected: // MCameraEngineObserver
 
     void MceoCameraReady();
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
 private: // Internal
-    
+
     QCamera::Error fromSymbianErrorToQtMultimediaError(int aError);
-    
+
     void loadCamera();
     void unloadCamera();
     void startCamera();
     void stopCamera();
-    
+
     void resetCamera();
     void setCameraHandles();
 
@@ -151,13 +160,14 @@ Q_SIGNALS: // Internal Signals
     void devicesChanged();
 
 private: // Data
-    
+
     CCameraEngine               *m_cameraEngine;
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;
     S60VideoCaptureSession      *m_videoSession;
     S60CameraSettings           *m_advancedSettings;
     QObject                     *m_videoOutput;
+    QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;
     QCamera::CaptureMode        m_requestedCaptureMode;
     QCamera::Status             m_internalState;
@@ -165,6 +175,7 @@ private: // Data
     int                         m_deviceIndex;
     mutable int                 m_error;
     bool                        m_changeCaptureModeWhenReady;
+    bool                        m_rotateCameraWhenReady;
     S60VideoCaptureSession::TVideoCaptureState m_videoCaptureState;
 };
 

@@ -56,7 +56,6 @@ QTM_USE_NAMESPACE
 
 const QString managerNameSymbian("symbian");
 
-Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
 Q_DECLARE_METATYPE(QOrganizerItemPriority)
 
 class TestTodoOccurrence : public QObject
@@ -85,16 +84,16 @@ private:
     void addOccurrencedata(QString itemType);
     
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
 };
 
 void TestTodoOccurrence::init()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerNameSymbian);
+    m_om = new QOrganizerManager(managerNameSymbian);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestTodoOccurrence::cleanup()
@@ -112,7 +111,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail_data()
     QTest::addColumn<QDateTime>("firstInstanceDueDateTime");
     QTest::addColumn<QDateTime>("secondInstanceDueDateTime");
     QTest::addColumn<QDateTime>("thirdInstanceDueDateTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     QTest::addColumn<int>("numberOfInstances");
     
     addSimpleOccurrenceData(QOrganizerItemType::TypeTodo);
@@ -124,9 +123,9 @@ void TestTodoOccurrence::addSimpleOccurrenceData(QString itemType)
 	QDateTime secondInstanceDueDateTime(QDate::currentDate());
 	QDateTime thirdInstanceDueDateTime(QDate::currentDate());
 	
-	QOrganizerItemRecurrenceRule dailyRrule;
-	dailyRrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-	dailyRrule.setEndDate(QDate::currentDate().addDays(4));
+	QOrganizerRecurrenceRule dailyRrule;
+	dailyRrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+	dailyRrule.setLimit(QDate::currentDate().addDays(4));
 	dailyRrule.setInterval(2);
 	secondInstanceDueDateTime.setDate(firstInstanceDueDateTime.date().addDays(2));
 	thirdInstanceDueDateTime.setDate(firstInstanceDueDateTime.date().addDays(4));
@@ -140,13 +139,13 @@ void TestTodoOccurrence::addSimpleOccurrenceData(QString itemType)
 		<< dailyRrule
 		<< 3; 
 	
-	QOrganizerItemRecurrenceRule weeklyRrule;
-	weeklyRrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+	QOrganizerRecurrenceRule weeklyRrule;
+	weeklyRrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
 	secondInstanceDueDateTime = firstInstanceDueDateTime.addDays(7);
 	thirdInstanceDueDateTime = firstInstanceDueDateTime.addDays(14);
-	weeklyRrule.setCount(3);
-	QList<Qt::DayOfWeek> daysOfWeek;
-	daysOfWeek.append((Qt::DayOfWeek)QDate::currentDate().dayOfWeek());
+	weeklyRrule.setLimit(3);
+	QSet<Qt::DayOfWeek> daysOfWeek;
+	daysOfWeek << (Qt::DayOfWeek)QDate::currentDate().dayOfWeek();
 	weeklyRrule.setDaysOfWeek(daysOfWeek);
 	
 	QTest::newRow("weekly on Wednesday for 3 weeks")
@@ -158,13 +157,13 @@ void TestTodoOccurrence::addSimpleOccurrenceData(QString itemType)
 		<< weeklyRrule
 		<< 3;
 	
-	QOrganizerItemRecurrenceRule monthlyRrule;
-	monthlyRrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+	QOrganizerRecurrenceRule monthlyRrule;
+	monthlyRrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
 	secondInstanceDueDateTime = firstInstanceDueDateTime.addMonths(1);
 	thirdInstanceDueDateTime = firstInstanceDueDateTime.addMonths(2);
-	monthlyRrule.setCount(3);
-	QList<int> days;
-	days.append(QDate::currentDate().day());
+	monthlyRrule.setLimit(3);
+	QSet<int> days;
+	days << QDate::currentDate().day();
 	monthlyRrule.setDaysOfMonth(days);
 	
 	QTest::newRow("monthly for 3 months")
@@ -176,11 +175,11 @@ void TestTodoOccurrence::addSimpleOccurrenceData(QString itemType)
 		<< monthlyRrule
 		<< 3;
 	
-	QOrganizerItemRecurrenceRule yearlyRrule;
-	yearlyRrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+	QOrganizerRecurrenceRule yearlyRrule;
+	yearlyRrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
 	secondInstanceDueDateTime = firstInstanceDueDateTime.addYears(1);
 	thirdInstanceDueDateTime = firstInstanceDueDateTime.addYears(2);
-	yearlyRrule.setCount(3);
+	yearlyRrule.setLimit(3);
 
 	QTest::newRow("yearly for 3 years")
 		<< itemType
@@ -199,7 +198,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QFETCH(QDateTime, firstInstanceDueDateTime);
     QFETCH(QDateTime, secondInstanceDueDateTime);
     QFETCH(QDateTime, thirdInstanceDueDateTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(int, numberOfInstances);
 
     // Set the item type
@@ -207,8 +206,8 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     item.setStartDateTime(startTime);
     item.setDueDateTime(startTime);
    
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    rrules.append(rrule);
+    QSet<QOrganizerRecurrenceRule> rrules;
+    rrules << rrule;
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
    
@@ -218,30 +217,30 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QVERIFY(m_om->saveItem(&item));
     
     // Fetch the saved item
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     QCOMPARE(item.type(), itemType);
     // Fetch the instances of the item.
     QList<QOrganizerItem> instanceList = 
-    		m_om->itemInstances(item,startTime,thirdInstanceDueDateTime);
+                m_om->itemOccurrences(item,startTime,thirdInstanceDueDateTime);
     QCOMPARE(instanceList.size(), numberOfInstances);
     QOrganizerItem todoItem = instanceList.at(2);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence thirdTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
     QCOMPARE(thirdTodoOccurence.dueDateTime(), thirdInstanceDueDateTime);
-    QCOMPARE(thirdTodoOccurence.localId(), QOrganizerItemLocalId());
-    QCOMPARE(thirdTodoOccurence.parentLocalId(), item.localId());
+    QCOMPARE(thirdTodoOccurence.id(), QOrganizerItemId());
+    QCOMPARE(thirdTodoOccurence.parentId(), item.id());
     
     // Fetch instances using maxcount only.
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),2);
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),2);
     QCOMPARE(instanceList.size(), 2);
     todoItem = instanceList.at(0);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence firstTodoOccurrence = static_cast<QOrganizerTodoOccurrence>(todoItem);
-    QCOMPARE(firstTodoOccurrence.localId(), QOrganizerItemLocalId());
+    QCOMPARE(firstTodoOccurrence.id(), QOrganizerItemId());
     QCOMPARE(firstTodoOccurrence.dueDateTime(), firstInstanceDueDateTime);
-    QCOMPARE(firstTodoOccurrence.parentLocalId(), item.localId());   
+    QCOMPARE(firstTodoOccurrence.parentId(), item.id());   
     QCOMPARE(firstTodoOccurrence.status(), QOrganizerTodoProgress::StatusNotStarted);
     
     // Mark the third instance as done and check for the appropriate status.
@@ -251,7 +250,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     thirdTodoOccurence.saveDetail(&status);
     QVERIFY(m_om->saveItem(&thirdTodoOccurence));
     instanceList.clear();
-    instanceList = m_om->itemInstances
+    instanceList = m_om->itemOccurrences
     		(item,startTime,thirdInstanceDueDateTime);
     todoItem = instanceList.at(2);
     thirdTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
@@ -262,7 +261,7 @@ void TestTodoOccurrence::addOccurrenceDetail_data()
 {
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     QTest::addColumn<QDateTime>("fourthInstanceDateTime");
     QTest::addColumn<QDateTime>("fifthInstanceDateTime");
     QTest::addColumn<QOrganizerItemPriority>("priority");
@@ -275,16 +274,16 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	QDateTime fourthInstanceDateTime;
 	QDateTime fifthInstanceDateTime;
 	QOrganizerItemPriority priority;
-	QList<Qt::DayOfWeek> daysOfWeek;
-	QList<int> days;
-	QList<int> positions;
+	QSet<Qt::DayOfWeek> daysOfWeek;
+	QSet<int> days;
+	QSet<int> positions;
 	
 	// Repeating weekly on tuesday and thursday.
-	QOrganizerItemRecurrenceRule weeklyRrule;
-	weeklyRrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-	weeklyRrule.setCount(6);
-	daysOfWeek.append(Qt::Tuesday);
-	daysOfWeek.append(Qt::Thursday);
+	QOrganizerRecurrenceRule weeklyRrule;
+	weeklyRrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
+	weeklyRrule.setLimit(6);
+	daysOfWeek << Qt::Tuesday;
+	daysOfWeek << Qt::Thursday;
 	weeklyRrule.setDaysOfWeek(daysOfWeek);
 	fourthInstanceDateTime.setDate(QDate(2010, 9, 16));
 	fifthInstanceDateTime.setDate(QDate(2010, 9, 21));
@@ -300,7 +299,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	
 	// Repeating for alternate weeks
 	daysOfWeek.clear();
-	weeklyRrule.setCount(6);
+	weeklyRrule.setLimit(6);
 	weeklyRrule.setInterval(2);
 	fourthInstanceDateTime.setDate(QDate(2010, 9, 23));
 	fifthInstanceDateTime.setDate(QDate(2010, 10, 5));
@@ -315,11 +314,11 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 		<< priority;
 	
 	// Monthly which repeats on every 6th and 22nd of the month.
-	QOrganizerItemRecurrenceRule monthlyRrule;
-	monthlyRrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-	monthlyRrule.setCount(6);
-	days.append(6);
-	days.append(22);
+	QOrganizerRecurrenceRule monthlyRrule;
+	monthlyRrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
+	monthlyRrule.setLimit(6);
+	days << 6;
+	days << 22;
 	monthlyRrule.setDaysOfMonth(days);
 
 	fourthInstanceDateTime.setDate(QDate(2010, 10,22));
@@ -334,13 +333,13 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 		<< priority;
 	
 	// Monthly which repeats on every 2nd wednesday and thursday of the month.
-	QOrganizerItemRecurrenceRule monthlyRruleUsingSetPosition;
-	monthlyRruleUsingSetPosition.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-	monthlyRruleUsingSetPosition.setCount(6);
-	positions.append(2);
+	QOrganizerRecurrenceRule monthlyRruleUsingSetPosition;
+	monthlyRruleUsingSetPosition.setFrequency(QOrganizerRecurrenceRule::Monthly);
+	monthlyRruleUsingSetPosition.setLimit(6);
+	positions << 2;
 	daysOfWeek.clear();
-	daysOfWeek.append(Qt::Wednesday);
-	daysOfWeek.append(Qt::Thursday);
+	daysOfWeek << Qt::Wednesday;
+	daysOfWeek << Qt::Thursday;
 	monthlyRruleUsingSetPosition.setDaysOfWeek(daysOfWeek);
 	monthlyRruleUsingSetPosition.setPositions(positions);
 			
@@ -356,17 +355,17 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 		<< priority;
 	
 	// Yearly repeating on the month of september on 2nd tuesday of that month.
-	QOrganizerItemRecurrenceRule yearlyRrule;
-	yearlyRrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-	yearlyRrule.setCount(6);
-	QList<QOrganizerItemRecurrenceRule::Month> months;
-	months.append(QOrganizerItemRecurrenceRule::September);
-	yearlyRrule.setMonths(months);
+	QOrganizerRecurrenceRule yearlyRrule;
+	yearlyRrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+	yearlyRrule.setLimit(6);
+	QSet<QOrganizerRecurrenceRule::Month> months;
+	months << QOrganizerRecurrenceRule::September;
+	yearlyRrule.setMonthsOfYear(months);
 	daysOfWeek.clear();
-	daysOfWeek.append(Qt::Tuesday);
+	daysOfWeek << Qt::Tuesday;
 	yearlyRrule.setDaysOfWeek(daysOfWeek);
 	positions.clear();
-	positions.append(2);
+	positions << 2;
 	yearlyRrule.setPositions(positions);
 
 	fourthInstanceDateTime.setDate(QDate(2013, 9,10));
@@ -385,7 +384,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 {
 	QFETCH(QString, itemType);
 	QFETCH(QDateTime, startTime);
-	QFETCH(QOrganizerItemRecurrenceRule, rrule);
+	QFETCH(QOrganizerRecurrenceRule, rrule);
 	QFETCH(QDateTime, fourthInstanceDateTime);
 	QFETCH(QDateTime, fifthInstanceDateTime);
 	QFETCH(QOrganizerItemPriority, priority);
@@ -397,8 +396,8 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	item.setStartDateTime(startTime);
 	item.setDueDateTime(startTime);
 
-	QList<QOrganizerItemRecurrenceRule> rrules;
-	rrules.append(rrule);
+	QSet<QOrganizerRecurrenceRule> rrules;
+	rrules << rrule;
 	QOrganizerItemRecurrence recurrence;
 	recurrence.setRecurrenceRules(rrules);
 
@@ -409,7 +408,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QVERIFY(m_om->saveItem(&item));
 
 	// Fetch the saved item
-	item = m_om->item(item.localId());
+	item = m_om->item(item.id());
 
 	QCOMPARE(item.type(), itemType);
 	QCOMPARE(item.displayLabel(), displayLabel);
@@ -417,15 +416,15 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QCOMPARE(todoPriority.priority(), priority.priority());
 	// Fetch the instances of the item.
 	QList<QOrganizerItem> instanceList = 
-			m_om->itemInstances(item,startTime,fifthInstanceDateTime.addDays(400));
-	QCOMPARE(instanceList.size(), rrule.count());
+                        m_om->itemOccurrences(item,startTime,fifthInstanceDateTime.addDays(400));
+	QCOMPARE(instanceList.size(), rrule.limitCount());
 	QOrganizerItem todoItem = instanceList.at(4);
 	QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
 	QOrganizerTodoOccurrence fifthTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
 	QCOMPARE(fifthTodoOccurence.startDateTime(), fifthInstanceDateTime);
 	QCOMPARE(fifthTodoOccurence.dueDateTime(), fifthInstanceDateTime);
-	QCOMPARE(fifthTodoOccurence.localId(), QOrganizerItemLocalId());
-	QCOMPARE(fifthTodoOccurence.parentLocalId(), item.localId());
+	QCOMPARE(fifthTodoOccurence.id(), QOrganizerItemId());
+	QCOMPARE(fifthTodoOccurence.parentId(), item.id());
 	
 	todoItem = instanceList.at(3);
 	QOrganizerTodoOccurrence fourthTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
@@ -438,12 +437,12 @@ void TestTodoOccurrence::editOccurrenceNegative_data()
 {
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     
     QString itemType = QOrganizerItemType::TypeTodo;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(10);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(10);
 
     QTest::newRow("daily repeating entry")
     << itemType
@@ -455,26 +454,26 @@ void TestTodoOccurrence::editOccurrenceNegative()
 {
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
      
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerTodoTimeRange timeRange;
+    QOrganizerTodoTime timeRange;
     timeRange.setStartDateTime(startTime);
     timeRange.setDueDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    rrules.append(rrule);
+    QSet<QOrganizerRecurrenceRule> rrules;
+    rrules << rrule;
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
      
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Add comment to the item and save.
     QOrganizerItemComment comment;
@@ -482,37 +481,37 @@ void TestTodoOccurrence::editOccurrenceNegative()
     // Comments are not supporeted.
     QVERIFY(item.saveDetail(&comment));  
     QVERIFY(!m_om->saveItem(&item));
-    QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
+    QVERIFY(m_om->error() == QOrganizerManager::InvalidDetailError);
     
 
     //Fetch first instance of the saved entry to modify
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,startTime);
     QCOMPARE(instanceList.size(),1);
     QOrganizerItem firstItem = instanceList.at(0);
     QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence firstInstance = static_cast<QOrganizerTodoOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
    
-    //Try to save instance with invalid guid and parentlocalId fails
+    //Try to save instance with invalid guid and parentId fails
     // TODO: Disabled because of API change. REFACTOR!
     //firstInstance.setGuid(QString(""));
-    //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
+    //firstInstance.setParentId(QOrganizerItemId(-1));
     //QVERIFY(!m_om->saveItem(&firstInstance));
-    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
     
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
     firstInstance.setOriginalDate(QDate(1000,1,1));
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
     
-    //Save the instance with invalid localid
+    //Save the instance with invalid id
     // TODO: Disabled because of API change. REFACTOR!
     //QOrganizerItemId itemId;
-    //itemId.setLocalId(1);
+    //itemId.setId(1);
     //firstInstance.setId(itemId);
     //QVERIFY(!m_om->saveItem(&firstInstance));
-    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
 }
 
 void TestTodoOccurrence::addOccurrenceWithException_data()
@@ -522,7 +521,7 @@ void TestTodoOccurrence::addOccurrenceWithException_data()
     QTest::addColumn<QDateTime>("startTime");
     QTest::addColumn<QDate>("rDate");
     QTest::addColumn<QDate>("exceptionDate");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     QTest::addColumn<QOrganizerItemPriority>("priority");
     QTest::addColumn<QString>("modifiedDescription");
     QTest::addColumn<QDateTime>("modifiedStartTime");
@@ -534,9 +533,9 @@ void TestTodoOccurrence::addOccurrenceWithException_data()
     QString description("checkoccurrence");
     QString newDescription("modifyOccurrence");
     
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(10);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(10);
     QDate rDate(QDate::currentDate().year() , 9, 11);
     QDate exceptionDate(QDate::currentDate().year() , 9, 3);
     QTest::newRow("Daily todo for 10 occurrences")
@@ -550,9 +549,9 @@ void TestTodoOccurrence::addOccurrenceWithException_data()
     << newDescription
     << QDateTime(QDate(QDate::currentDate().year() , 8, 30));        
 
-    QOrganizerItemRecurrenceRule monthRule;
-    monthRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-    monthRule.setCount(5);
+    QOrganizerRecurrenceRule monthRule;
+    monthRule.setFrequency(QOrganizerRecurrenceRule::Monthly);
+    monthRule.setLimit(5);
 
     QTest::newRow("Monthly todo for 5 occurrences")
     << itemType
@@ -565,12 +564,12 @@ void TestTodoOccurrence::addOccurrenceWithException_data()
     << newDescription
     << QDateTime(QDate(QDate::currentDate().year() , 8, 1));        
 
-    QOrganizerItemRecurrenceRule yearRule;
-    yearRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    QList<QOrganizerItemRecurrenceRule::Month> months;
-    months.append(QOrganizerItemRecurrenceRule::September);
-    yearRule.setCount(3);
-    yearRule.setMonths(months);
+    QOrganizerRecurrenceRule yearRule;
+    yearRule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+    QSet<QOrganizerRecurrenceRule::Month> months;
+    months << QOrganizerRecurrenceRule::September;
+    yearRule.setLimit(3);
+    yearRule.setMonthsOfYear(months);
     QDate yearException(QDate(QDate::currentDate().year() , 9, 1));
     QTest::newRow("yearly rule every other year")
     << itemType
@@ -591,24 +590,24 @@ void TestTodoOccurrence::addOccurrenceWithException()
     QFETCH(QDateTime, startTime);
     QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(QOrganizerItemPriority, priority);
     
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerTodoTimeRange timeRange;
+    QOrganizerTodoTime timeRange;
     timeRange.setStartDateTime(startTime);
     timeRange.setDueDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    QList<QDate> exceptionList;
-    QList<QDate> rDateList;
-    rrules.append(rrule);
-    rDateList.append(rDate);
-    exceptionList.append(exceptionDate);
+    QSet<QOrganizerRecurrenceRule> rrules;
+    QSet<QDate> exceptionList;
+    QSet<QDate> rDateList;
+    rrules << rrule;
+    rDateList << rDate;
+    exceptionList << exceptionDate;
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     recurrence.setExceptionDates(exceptionList);
@@ -621,15 +620,15 @@ void TestTodoOccurrence::addOccurrenceWithException()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
             
     //Fetch instance on the exception date.An empty list should be returned
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
     QCOMPARE(instanceList.size(),0);
 
     //Fetch the instance on rdate should return one instance
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,QDateTime(rDate),QDateTime(rDate));
+    instanceList = m_om->itemOccurrences(item,QDateTime(rDate),QDateTime(rDate));
     QCOMPARE(instanceList.size(),1);
     QOrganizerItem rDateItem = instanceList.at(0);
     QCOMPARE(rDateItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -638,10 +637,10 @@ void TestTodoOccurrence::addOccurrenceWithException()
 
     // Fetch the item again
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),20);
-    QCOMPARE(instanceList.size(),rrule.count());
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),20);
+    QCOMPARE(instanceList.size(),rrule.limitCount());
 
-    QOrganizerItem lastItem = instanceList.at(rrule.count()-1);
+    QOrganizerItem lastItem = instanceList.at(rrule.limitCount()-1);
     QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence lastTodo = static_cast<QOrganizerTodoOccurrence>(lastItem);
 
@@ -662,7 +661,7 @@ void TestTodoOccurrence::editOccurrence()
     QFETCH(QDateTime, startTime);
     QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(QOrganizerItemPriority, priority);
     QFETCH(QString,modifiedDescription);
     QFETCH(QDateTime, modifiedStartTime);
@@ -670,14 +669,14 @@ void TestTodoOccurrence::editOccurrence()
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerTodoTimeRange timeRange;
+    QOrganizerTodoTime timeRange;
     timeRange.setStartDateTime(startTime);
     timeRange.setDueDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    rrules.append(rrule);
+    QSet<QOrganizerRecurrenceRule> rrules;
+    rrules << rrule;
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
@@ -688,10 +687,10 @@ void TestTodoOccurrence::editOccurrence()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     //Fetch first and third instance of the saved entry to modify
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
     QCOMPARE(instanceList.size(), 3);
             
     QOrganizerItem firstItem = instanceList.at(0);
@@ -713,7 +712,7 @@ void TestTodoOccurrence::editOccurrence()
     
     //Fetch the first and third instances and verify
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
     QCOMPARE(instanceList.size(),3);
     QOrganizerItem changedFirstItem = instanceList.at(0);
     QCOMPARE(changedFirstItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -736,7 +735,7 @@ void TestTodoOccurrence::editOccurrence()
     QVERIFY(m_om->saveItem(&firstInstance));
     
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,modifiedStartTime,modifiedStartTime);
+    instanceList = m_om->itemOccurrences(item,modifiedStartTime,modifiedStartTime);
     QCOMPARE(instanceList.size(),1);
     QOrganizerTodoOccurrence newInstance = static_cast<QOrganizerTodoOccurrence>(instanceList[0]);
     QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());

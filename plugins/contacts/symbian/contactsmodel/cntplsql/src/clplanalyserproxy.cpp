@@ -119,21 +119,15 @@ void CLplAnalyserProxy::UpdateL(CContactItem& aItem, TUint aSessionId, TBool aSp
 			    {
 			    //some contacts were added
 			    groupMemberListUpdated = true;
-			    for (int i = 0; i < groupItem.iAddedContactIds->Count(); i++)
-			        {
-	                NotifyObserverL(EContactDbObserverEventNull, aItem.Id(), 0,
-	                    EContactDbObserverEventV2ContactAddedToGroup, groupItem.iAddedContactIds->operator[](i));			        
-			        }
+			    NotifyObserverL(EContactDbObserverEventNull, aItem.Id(), 0,
+			            EContactDbObserverEventV2ContactsAddedToGroup, groupItem.iAddedContactIds);
 			    }
 			if (groupItem.iRemovedContactIds != NULL && groupItem.iRemovedContactIds->Count() > 0)
 	            {
 	            //some contacts were removed
 	            groupMemberListUpdated = true;
-                for (int i = 0; i < groupItem.iRemovedContactIds->Count(); i++)
-                    {
-	                NotifyObserverL(EContactDbObserverEventNull, aItem.Id(), 0,
-	                    EContactDbObserverEventV2ContactRemovedFromGroup, groupItem.iRemovedContactIds->operator[](i));                    
-	                }
+	            NotifyObserverL(EContactDbObserverEventNull, aItem.Id(), 0,
+	                    EContactDbObserverEventV2ContactsRemovedFromGroup, groupItem.iRemovedContactIds);
 	            }
             if (!groupMemberListUpdated)
                 {
@@ -228,6 +222,31 @@ CContactItem* CLplAnalyserProxy::DeleteLC(TContactItemId  aItemId, TUint aSessio
 	return(item);
 	}
 
+/**
+Delete multiple contacts.
+*/
+void CLplAnalyserProxy::DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType)
+    {
+    // Delegate delete to generic proxy.
+    CLplGenericProxy::DeleteMultipleContactsL(aIdArray, aSessionId, aEventType); 
+    
+    // Notify observers of the change.
+    NotifyObserverL(EContactDbObserverEventNull, KNullContactId, 0,
+            EContactDbObserverEventV2ContactsOrGroupsDeleted, aIdArray);
+
+    // If an item with a speed dial is deleted then update the speed
+    // dials.
+    for (TInt i = 0; i < aIdArray->Count(); i++)
+        {
+        CheckSpeedDialDeletesL(aIdArray->operator[](i));
+        }
+    
+    //update own card id
+    if (aIdArray->Find(iProperties.OwnCardIdL()) != KErrNotFound)
+        {
+        iProperties.SetOwnCardIdL(KNullContactId);
+        }
+    }
 
 /**
 Change the type of an existing Contact item.
@@ -261,7 +280,8 @@ Notify observer of database event.
 */
 void CLplAnalyserProxy::NotifyObserverL(const TContactDbObserverEventType aType,
         const TContactItemId aContactId, const TUint aConnectionId,
-        const TContactDbObserverEventTypeV2 aTypeV2, const TContactItemId aAdditionalContactId)
+        const TContactDbObserverEventTypeV2 aTypeV2,
+        const CContactIdArray* aAdditionalContactIds)
 	{
 	#if defined(__PROFILE_DEBUG__)
 		RDebug::Print(_L("[CNTMODEL] MTD: CLplAnalyserProxy::NotifyObserverL"));
@@ -281,7 +301,7 @@ void CLplAnalyserProxy::NotifyObserverL(const TContactDbObserverEventType aType,
 		}
 	
 	event.iTypeV2 = aTypeV2;
-	event.iAdditionalContactId = aAdditionalContactId;
+	event.iAdditionalContactIds = aAdditionalContactIds;
 
 	iCntDbObserver.HandleDatabaseEventV2L(event);	
 

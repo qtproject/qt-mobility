@@ -353,6 +353,7 @@ QList<int> QCameraExposure::supportedIsoSensitivities(bool *continuous) const
 }
 
 /*!
+    \fn QCameraExposure::setManualIsoSensitivity(int iso)
     Sets the manual sensitivity to \a iso
 */
 
@@ -363,6 +364,7 @@ void QCameraExposure::setManualIsoSensitivity(int iso)
 }
 
 /*!
+     \fn QCameraExposure::setAutoIsoSensitivity()
      Turn on auto sensitivity
 */
 
@@ -374,7 +376,9 @@ void QCameraExposure::setAutoIsoSensitivity()
 
 /*!
     \property QCameraExposure::shutterSpeed
-    \brief The effective length of time the shutter is open in seconds.
+    \brief Camera's shutter speed in seconds.
+
+    \sa supportedShutterSpeeds(), setAutoShutterSpeed(), setManualShutterSpeed()
 */
 
 /*!
@@ -387,12 +391,14 @@ void QCameraExposure::setAutoIsoSensitivity()
     \property QCameraExposure::isoSensitivity
     \brief The sensor ISO sensitivity.
 
-    \sa QCameraExposure::supportedIsoSensitivities(), QCameraExposure::setAutoIsoSensitivity()
+    \sa supportedIsoSensitivities(), setAutoIsoSensitivity(), setManualIsoSensitivity()
 */
 
 /*!
     \property QCameraExposure::aperture
     \brief Lens aperture is specified as an F number, the ratio of the focal length to effective aperture diameter.
+
+    \sa supportedApertures(), setAutoAperture(), setManualAperture()
 */
 
 
@@ -438,7 +444,8 @@ QList<qreal> QCameraExposure::supportedApertures(bool * continuous) const
 }
 
 /*!
-    Sets the aperture to \a aperture
+    \fn QCameraExposure::setManualAperture(qreal aperture)
+    Sets the manual camera \a aperture value.
 */
 
 void QCameraExposure::setManualAperture(qreal aperture)
@@ -448,6 +455,7 @@ void QCameraExposure::setManualAperture(qreal aperture)
 }
 
 /*!
+    \fn QCameraExposure::setAutoAperture()
     Turn on auto aperture
 */
 
@@ -458,7 +466,7 @@ void QCameraExposure::setAutoAperture()
 }
 
 /*!
-    Return the current shutter speed in seconds.
+    Returns the current shutter speed in seconds.
 */
 
 qreal QCameraExposure::shutterSpeed() const
@@ -501,7 +509,7 @@ QList<qreal> QCameraExposure::supportedShutterSpeeds(bool *continuous) const
 }
 
 /*!
-    Set the shutter speed to \a seconds
+    Set the manual shutter speed to \a seconds
 */
 
 void QCameraExposure::setManualShutterSpeed(qreal seconds)
@@ -566,6 +574,12 @@ void QCameraExposure::setAutoShutterSpeed()
 /*!
     \property QCameraExposure::flashReady
     \brief Indicates if the flash is charged and ready to use.
+*/
+
+/*!
+    \fn void QCameraExposure::flashReady(bool ready)
+
+    Signal the flash \a ready status has changed.
 */
 
 /*!

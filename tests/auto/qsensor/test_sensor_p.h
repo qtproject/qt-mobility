@@ -53,9 +53,7 @@
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
-class TestSensorReadingPrivate : public QSensorReadingPrivate
+class TestSensorReadingPrivate
 {
 public:
     TestSensorReadingPrivate()

@@ -57,8 +57,8 @@ class QGalleryTypeRequestPrivate;
 class Q_GALLERY_EXPORT QGalleryTypeRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY typeChanged)
 public:
@@ -87,6 +87,8 @@ public:
     QVariant metaData(const QString &property) const;
 
 Q_SIGNALS:
+    void propertyNamesChanged();
+    void autoUpdateChanged();
     void itemTypeChanged();
     void resultSetChanged(QGalleryResultSet *resultSet);
     void metaDataChanged(const QList<int> &keys);

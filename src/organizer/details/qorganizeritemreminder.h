@@ -59,17 +59,13 @@ class Q_ORGANIZER_EXPORT QOrganizerItemReminder : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldReminderType;
-    const char* FieldDateTime;
-    const char* FieldTimeDelta;
-    const char* FieldRepetitionCount;
-    const char* FieldRepetitionDelay;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldSecondsBeforeStart;
+    static const QLatin1Constant FieldRepetitionCount;
+    static const QLatin1Constant FieldRepetitionDelay;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemReminder, "Reminder")
-    Q_DECLARE_LATIN1_CONSTANT(FieldReminderType, "ReminderType");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDateTime, "DateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldTimeDelta, "TimeDelta");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSecondsBeforeStart, "SecondsBeforeStart");
     Q_DECLARE_LATIN1_CONSTANT(FieldRepetitionCount, "RepetitionCount");
     Q_DECLARE_LATIN1_CONSTANT(FieldRepetitionDelay, "RepetitionDelay");
 #endif
@@ -85,13 +81,10 @@ public:
         //TactileReminder,
     };
 
-    ReminderType reminderType() const {return static_cast<ReminderType>(value<int>(FieldReminderType));}
+    ReminderType reminderType() const;
 
-    // XXX TODO: convert date time to timezone date time
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
-    void setTimeDelta(int secondsBefore) {setValue(FieldTimeDelta, secondsBefore);}
-    int timeDelta() const {return value<int>(FieldTimeDelta);}
+    void setSecondsBeforeStart(int seconds) {setValue(FieldSecondsBeforeStart, seconds);}
+    int secondsBeforeStart() const {return value<int>(FieldSecondsBeforeStart);}
 
     // duration/repetition
     void setRepetition(int count, int delaySeconds) {setValue(FieldRepetitionCount, count); setValue(FieldRepetitionDelay, delaySeconds);}
@@ -103,10 +96,10 @@ protected:
     QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName) : QOrganizerItemDetail(detail, definitionName) {}
 };
 
-#define Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(className, definitionNameString, reminderType) \
-    className() : QOrganizerItemReminder(DefinitionName.latin1()) {setValue(QOrganizerItemReminder::FieldReminderType, static_cast<int>(reminderType));} \
-    className(const QOrganizerItemDetail& field) : QOrganizerItemReminder(field, DefinitionName.latin1()) {setValue(QOrganizerItemReminder::FieldReminderType, static_cast<int>(reminderType));} \
-    className& operator=(const QOrganizerItemDetail& other) {assign(other, DefinitionName.latin1()); setValue(QOrganizerItemReminder::FieldReminderType, static_cast<int>(reminderType)); return *this;} \
+#define Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(className, definitionNameString) \
+    className() : QOrganizerItemReminder(DefinitionName.latin1()) {} \
+    className(const QOrganizerItemDetail& field) : QOrganizerItemReminder(field, DefinitionName.latin1()) {} \
+    className& operator=(const QOrganizerItemDetail& other) {assign(other, DefinitionName.latin1()); return *this;} \
     \
     Q_DECLARE_LATIN1_CONSTANT(DefinitionName, definitionNameString);
 

@@ -24,6 +24,9 @@
 #include <cntphonenumparser.h>
 #endif
 
+//max amount of contacts deleted in one go 
+const TInt KDeleteBatchSize = 400;
+
 /**
 @param aDatabase A handle to the database.
 @param aProperties A contact properties object.
@@ -682,6 +685,57 @@ void CPplCommAddrTable::DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorO
 		}
 	}
 
+/**
+Deletes all the communication addresses for specified contact items. Should be used when
+deleting contact items from the database altogether.
+
+@param aIdArray The contact items whose communcation addresses are to be deleted.
+*/
+void CPplCommAddrTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
+    {
+    _LIT(KDeleteQuery, "DELETE FROM comm_addr WHERE contact_id IN (");
+    TInt count = aIdArray->Count();
+    bool allContactsProcessed = false;
+    TInt round = 0;
+    while (!allContactsProcessed) 
+        {
+        RBuf deleteQuery;
+        deleteQuery.CreateL(KDeleteQuery().Length());
+        CleanupClosePushL(deleteQuery);
+        deleteQuery.Copy(KDeleteQuery);
+        TInt startValue = round*KDeleteBatchSize;
+        TInt endValue = (round+1)*KDeleteBatchSize < count ? (round+1)*KDeleteBatchSize : count;
+        for (TInt j = startValue; j < endValue; j++)
+            {
+            //add all contact ids to the delete query
+            TContactItemId id = aIdArray->operator[](j);
+            TBuf<16> number;
+            number.Num(id);
+            deleteQuery.ReAllocL(deleteQuery.Length() + number.Length() + 1); //1 is for comma or
+                                                                              //closing bracket
+            deleteQuery.Append(number);
+            if (j < endValue - 1)
+                {
+                //last id doesn't need a comma afterwards
+                deleteQuery.Append(',');
+                }
+            else
+                {
+                deleteQuery.Append(')');
+                }
+            }
+        
+        TInt err = iDatabase.Exec(deleteQuery);
+        User::LeaveIfError(err);
+        CleanupStack::PopAndDestroy(&deleteQuery);
+        
+        round++;
+        if (endValue == count)
+            {
+            allContactsProcessed = true;
+            }
+        }
+    }
 
 /**
 Creates the comm_addr table and its indexes in the database.

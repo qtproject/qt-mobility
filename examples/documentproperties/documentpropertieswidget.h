@@ -52,6 +52,7 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
+class QGalleryItemRequest;
 class QGalleryQueryRequest;
 class QGalleryResultSet;
 QTM_END_NAMESPACE
@@ -59,7 +60,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class DocumentPropertiesWidget : public QWidget
+class DocumentPropertiesWidget : public QDialog
 {
     Q_OBJECT
 public:
@@ -70,25 +71,18 @@ public:
             Qt::WindowFlags flags = 0);
 
 private slots:
-    void itemsInserted(int index, int count);
-    void itemsRemoved(int index, int count);
-    void metaDataChanged(int index, int count, const QList<int> &keys);
+    void queryRequestFinished();
 
+private:
     void requestAudioProperties();
     void requestDocumentProperties();
     void requestImageProperties();
     void requestVideoProperties();
 
-private:
-    void requestProperties(
-            const QString &itemType, const QStringList &propertyNames, const QStringList &labels);
-    void insertRow(int index, const QString &propertyName, const QString &label);
-    void updateValue(int widgetIndex, int propertyKey);
 
-    QGalleryQueryRequest *request;
-    QGalleryResultSet *resultSet;
-    QList<int> propertyKeys;
-    QList<QWidget *> widgets;
+    QDocumentGallery *documentGallery;
+    QGalleryQueryRequest *queryRequest;
+    QGalleryItemRequest *itemRequest;
 };
 
 #endif

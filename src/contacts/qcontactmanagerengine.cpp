@@ -1236,6 +1236,28 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
         d.setFields(fields);
         d.setUnique(false);
         retn.insert(d.name(), d);
+
+        // There are a few extra fields in some details
+
+        // Birthday gets a calendar id
+        d = retn.value(QContactBirthday::DefinitionName);
+        fields = d.fields();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactBirthday::FieldCalendarId, f);
+        d.setFields(fields);
+        retn.insert(d.name(), d);
+
+        // Urls can be blogs
+        d = retn.value(QContactUrl::DefinitionName);
+        fields = d.fields();
+        f = fields.value(QContactUrl::FieldSubType);
+        QVariantList v = f.allowableValues();
+        v.append(QString(QLatin1String(QContactUrl::SubTypeBlog)));
+        f.setAllowableValues(v);
+        fields.insert(QContactUrl::FieldSubType, f);
+        d.setFields(fields);
+        retn.insert(d.name(), d);
     }
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.

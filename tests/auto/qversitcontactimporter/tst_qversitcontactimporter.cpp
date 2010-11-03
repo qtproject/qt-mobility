@@ -1345,10 +1345,10 @@ void tst_QVersitContactImporter::testInvalidDocument()
     document.setType(QVersitDocument::VCard21Type);
     documents.append(document);
     QVERIFY(!mImporter->importDocuments(documents));
-    QMap<int, QVersitContactImporter::Error> errors = mImporter->errors();
-    QCOMPARE(errors.size(), 1);
-    QVERIFY(errors.contains(0));
-    QVERIFY(errors.value(0) == QVersitContactImporter::InvalidDocumentError);
+    QMap<int, QVersitContactImporter::Error> errorMap = mImporter->errorMap();
+    QCOMPARE(errorMap.size(), 1);
+    QVERIFY(errorMap.contains(0));
+    QVERIFY(errorMap.value(0) == QVersitContactImporter::InvalidDocumentError);
     QList<QContact> contacts = mImporter->contacts();
     QCOMPARE(contacts.size(), 1);
     QContactPhoneNumber phoneDetail = contacts.first().detail<QContactPhoneNumber>();
@@ -1358,9 +1358,11 @@ void tst_QVersitContactImporter::testInvalidDocument()
     document.clear();
     document.setType(QVersitDocument::VCard21Type);
     QVERIFY(!mImporter->importDocuments(QList<QVersitDocument>() << document));
-    errors = mImporter->errors();
-    QCOMPARE(errors.size(), 1);
-    QCOMPARE(errors.value(0), QVersitContactImporter::EmptyDocumentError);
+    errorMap = mImporter->errorMap();
+    QCOMPARE(errorMap.size(), 1);
+    QCOMPARE(errorMap.value(0), QVersitContactImporter::EmptyDocumentError);
+    QCOMPARE(mImporter->errors(), errorMap);
+
 }
 
 QVersitDocument tst_QVersitContactImporter::createDocumentWithProperty(

@@ -126,6 +126,12 @@
 #define PREVIEW_CAPS_4_3 \
     "video/x-raw-rgb, width = (int) 640, height = (int) 480"
 
+//using GST_STATE_READY for QCamera::LoadedState
+//doesn't work reliably at least with some webcams.
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_5)
+#define USE_READY_STATE_ON_LOADED
+#endif
+
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
 CameraBinSession::CameraBinSession(QObject *parent)
@@ -302,20 +308,25 @@ void CameraBinSession::setupCaptureResolution()
         //it's also necessary to setup video resolution,
         //which is used for viewfinder
 
-        QSize viewfinderResolution(640, 480);
-        int viewfinderRate = 2993;
-        if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
-            viewfinderResolution = QSize(800, 450);
-            viewfinderRate = 2988;
-        }
+        if (m_inputDevice != QLatin1String("/dev/video1")) {
+            //this is necessary to set only for the mail camera,
+            //not for face one.
 
-        g_signal_emit_by_name(G_OBJECT(m_pipeline),
-                              SET_VIDEO_RESOLUTION_FPS,
-                              viewfinderResolution.width(),
-                              viewfinderResolution.height(),
-                              viewfinderRate,
-                              100, // framerate denom
-                              NULL);
+            QSize viewfinderResolution(640, 480);
+            int viewfinderRate = 2993;
+            if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
+                viewfinderResolution = QSize(800, 450);
+                viewfinderRate = 2988;
+            }
+
+            g_signal_emit_by_name(G_OBJECT(m_pipeline),
+                                  SET_VIDEO_RESOLUTION_FPS,
+                                  viewfinderResolution.width(),
+                                  viewfinderResolution.height(),
+                                  viewfinderRate,
+                                  100, // framerate denom
+                                  NULL);
+        }
 #endif
     }
 
@@ -556,7 +567,13 @@ void CameraBinSession::setState(QCamera::State newState)
             updateVideoSourceCaps();
             m_videoInputHasChanged = false;
         }
+#ifdef USE_READY_STATE_ON_LOADED
         gst_element_set_state(m_pipeline, GST_STATE_READY);
+#else
+        m_state = QCamera::LoadedState;
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        emit stateChanged(m_state);
+#endif
         break;
     case QCamera::ActiveState:
         if (setupCameraBin()) {
@@ -564,9 +581,7 @@ void CameraBinSession::setState(QCamera::State newState)
             GstState pending = GST_STATE_NULL;
             gst_element_get_state(m_pipeline, &binState, &pending, 0);
 
-            if (pending == GST_STATE_READY ||
-               (pending == GST_STATE_VOID_PENDING && binState == GST_STATE_READY))
-            {
+            if (pending == GST_STATE_VOID_PENDING && binState == GST_STATE_READY) {
                 m_pendingResolutionUpdate = false;
                 setupCaptureResolution();
                 gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
@@ -701,7 +716,10 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                         }
                         gst_caps_unref(caps);
 
-                        emit imageExposed(m_requestId);
+                        static int exposedSignalIndex = metaObject()->indexOfSignal("imageExposed(int)");
+                        metaObject()->method(exposedSignalIndex).invoke(this,
+                                                                 Qt::QueuedConnection,
+                                                                 Q_ARG(int,m_requestId));
 
                         static int signalIndex = metaObject()->indexOfSignal("imageCaptured(int,QImage)");
                         metaObject()->method(signalIndex).invoke(this,

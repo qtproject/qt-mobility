@@ -51,7 +51,7 @@ QT_USE_NAMESPACE
 /*
  * Plugin implementation for the Camera Service
  */
-class S60CameraServicePlugin : public QMediaServiceProviderPlugin, 
+class S60CameraServicePlugin : public QMediaServiceProviderPlugin,
                                public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
