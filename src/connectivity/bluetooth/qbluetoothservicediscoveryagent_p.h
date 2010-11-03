@@ -42,7 +42,7 @@
 #ifndef QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 #define QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 
-#include <private/qobject_p.h>
+#include "qobjectpriv_p.h"
 
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
