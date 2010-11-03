@@ -146,7 +146,7 @@ void QFeedbackSimulator::setEffectState(const QFeedbackHapticsEffect *effect, QF
 {
     const int totalDuration = totalEffectDuration(effect);
     setAnyEffectState(effect, state, effect->actuator()->id(), totalDuration,
-                      tr("Haptics effect"));
+                      tr("Custom haptics effect"));
 }
 
 QFeedbackEffect::State QFeedbackSimulator::effectState(const QFeedbackHapticsEffect *effect)
@@ -162,7 +162,7 @@ void QFeedbackSimulator::setLoaded(QFeedbackFileEffect *, bool)
 void QFeedbackSimulator::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
     setAnyEffectState(effect, state, mDefaultActuator, effect->duration(),
-                      tr("File effect: %1").arg(effect->source().toString()));
+                      tr("File: %1").arg(effect->source().toString()));
 }
 
 QFeedbackEffect::State QFeedbackSimulator::effectState(const QFeedbackFileEffect *effect)
@@ -191,7 +191,7 @@ bool QFeedbackSimulator::play(QFeedbackEffect::ThemeEffect theme)
     QString themeString = themeEnum.valueToKey(theme);
 
     int effectId = mConnection->startEffect(mDefaultActuator,
-                                            tr("Theme effect: %1").arg(themeString), 2000);
+                                            themeString, 2000);
     if (effectId != -1) {
         mActuatorData[mDefaultActuator].state = QFeedbackActuator::Busy;
         return true;
