@@ -34,6 +34,8 @@
 #include <cntdef.h>
 #include <cntitem.h>
 #include <cntfldst.h>
+#include <f32file.h>
+#include <e32std.h>
 
 #include <sqldb.h>
 #include <e32hashtab.h>
@@ -146,6 +148,7 @@ private:
 	void GetTypeFlagFields(TInt aTypeFlags, TUid& aType, TUint& aAttributes, TUint& aHintFields);
 	TInt GenerateTypeFlags(TUid aType, TUint aAttributes, TUint aHintFields);
 	TUint NumDigits(TInt aNum);
+	void SetImagesDirL();
 	
 private:
 	CLplContactProperties& iProperties;
@@ -157,6 +160,8 @@ private:
 	CCntSqlStatement* iDeleteStmnt;
 	RHashMap<TInt, TPtrC> iFieldMap;
 	RSqlDatabase&  iDatabase;
+	RFs iFs;
+	TPath iImagesDirPath;
 	
 	CContactIdArray* iCardTemplateIds;
 	TContactItemId iOwnCardId;
