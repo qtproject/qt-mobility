@@ -66,9 +66,11 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMa
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
     if (graphicsItem) {
-        tiledMapDataPrivate->scene->removeItem(graphicsItem);
+        if (graphicsItem->scene())
+            graphicsItem->scene()->removeItem(graphicsItem);
         tiledMapDataPrivate->itemMap.remove(graphicsItem);
         delete graphicsItem;
+        graphicsItem = 0;
     }
 }
 

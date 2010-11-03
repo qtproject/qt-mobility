@@ -43,6 +43,7 @@ class CCntPackager;
 class MContactDbObserver;
 class CContactDefaultViewDefinition;
 class CContactTextDef;
+class CImageRescaler;
 
 const TInt KUidBufferSize = 400;
 
@@ -214,6 +215,9 @@ private:
 	// Number of attempts to restart the server after an unexpected process
 	// termination.
 	TInt iNoOfSvrStartAttempts;
+	
+	// Image rescaling
+	CImageRescaler* iRescaler;
 	};
 	
 #endif // RCNTMODEL_H
