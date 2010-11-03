@@ -11,7 +11,7 @@ CONFIG += mobility
 MOBILITY = connectivity
 
 SOURCES = main.cpp \
-    nfc.cpp
+    nfc.cpp \
     devicediscovery.cpp \
     servicediscovery.cpp
 

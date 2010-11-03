@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <bluetooth/qbluetoothservicediscoveryagent.h>
+#include <qbluetoothservicediscoveryagent.h>
 
 #include <QtCore/QObject>
 
