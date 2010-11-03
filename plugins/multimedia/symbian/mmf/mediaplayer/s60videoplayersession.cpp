@@ -208,7 +208,7 @@ bool S60VideoPlayerSession::resetNativeHandles()
     if (widgetControl) {
         QWidget *videoWidget = widgetControl->videoWidget();
         newId = widgetControl->videoWidgetWId();
-        newRect = QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
+        newRect = videoWidget ? QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size())) : TRect();
         aspectRatioMode = widgetControl->aspectRatioMode();
     } else {
         if (QApplication::activeWindow())
@@ -220,14 +220,11 @@ bool S60VideoPlayerSession::resetNativeHandles()
     if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode)
         return false;
 
-    if (newId) {
-        m_rect = newRect;
-        m_windowId = newId;
-        m_window = m_windowId->DrawableWindow();
-        m_aspectRatioMode = aspectRatioMode;
-        return true;
-    }
-    return false;
+    m_rect = newRect;
+    m_windowId = newId;
+    m_window = m_windowId ? m_windowId->DrawableWindow() : 0;
+    m_aspectRatioMode = aspectRatioMode;
+    return true;
 }
 
 bool S60VideoPlayerSession::isVideoAvailable()
@@ -485,9 +482,10 @@ void S60VideoPlayerSession::resetVideoDisplay()
             || mediaStatus() == QMediaPlayer::BufferingMedia
             || mediaStatus() == QMediaPlayer::BufferedMedia
             || mediaStatus() == QMediaPlayer::EndOfMedia) {
-            Q_ASSERT(m_displayWindow != 0);
-            TRAPD(err, m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second));
-            setError(err);
+            if (m_displayWindow) {
+                TRAPD(err, m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second));
+                setError(err);
+            }
         }
     }
 }

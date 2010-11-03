@@ -99,11 +99,11 @@ QBlackWidget::~QBlackWidget()
 {
 }
 
-void QBlackWidget::beginNativePaintEvent(const QRect& /*controlRect*/) 
+void QBlackWidget::beginNativePaintEvent(const QRect& /*controlRect*/)
 {
     emit beginVideoWindowNativePaint();
 }
-    
+
 void QBlackWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 {
     CCoeEnv::Static()->WsSession().Flush();
@@ -139,6 +139,9 @@ void S60VideoWidgetControl::initializeVideoOutput()
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
 {
+    QScopedPointer<QAbstractVideoWidget> widget(m_widget.take());
+    // Remove window handle from video player session before widget is deleted
+    emit widgetUpdated();
 }
 
 QWidget *S60VideoWidgetControl::videoWidget()
@@ -245,13 +248,14 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 
 WId S60VideoWidgetControl::videoWidgetWId()
 {
-    if (m_widget->internalWinId())
-        return m_widget->internalWinId();
-     
-    if (m_widget->effectiveWinId())
-        return m_widget->effectiveWinId();
-     
-    return NULL;
+    WId wid = 0;
+    if (m_widget) {
+        if (m_widget->internalWinId())
+            wid = m_widget->internalWinId();
+        else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+            wid = m_widget->effectiveWinId();
+    }
+    return wid;
 }
 
 QSize S60VideoWidgetControl::videoWidgetSize()
@@ -275,15 +279,15 @@ void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::StoppedState";
         qt_widget_private(m_widget.data())->extraData()->disableBlit = false;
-#endif        
+#endif
 #endif
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
 #ifdef USE_PRIVATE_QWIDGET_METHODS
-#if QT_VERSION <= 0x040600 && !defined(FF_QT)       
+#if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::PlayingState";
         qt_widget_private(m_widget.data())->extraData()->disableBlit = true;
-#endif  
+#endif
 #endif
     }
 }
