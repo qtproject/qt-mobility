@@ -67,6 +67,8 @@ public:
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
+    
+    TInt SendAPDUCommand(const TDesC8& aCommand, TDes8& aResponse);
 
 private:
     // C++ constructor
@@ -93,6 +95,8 @@ private:
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;
+    
+    TInt iOperationError;
     };
 
 #endif // NEARFIELDTAGTYPE4_H
