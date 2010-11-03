@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef NOTIFICATIONSATELLITECALLBACK_H_
-#define NOTIFICATIONSATELLITECALLBACK_H_
+#ifndef QFEEDBACKDATA_SIMULATOR_P_H
+#define QFEEDBACKDATA_SIMULATOR_P_H
 
 //
 //  W A R N I N G
@@ -54,22 +54,27 @@
 //
 
 #include "qmobilityglobal.h"
-#include <e32base.h>    // For CActive, link against: euser.lib
-#include <lbs.h>
-#include <lbscommon.h>
-#include <lbssatellite.h>
+#include "qfeedbackactuator.h"
+#include <QtCore/QMetaType>
 
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class INotificationSatelliteCallback
+class ActuatorData
 {
 public:
-
-    virtual void updateDeviceStatus(void) = 0 ;
-
-    virtual void updatePosition(TPositionSatelliteInfo  &aSatInfo, int error, bool isStartUpdate) = 0 ;
+    int id;
+    QString name;
+    QFeedbackActuator::State state;
+    bool enabled;
 };
+
+void qt_registerFeedbackTypes();
 
 QTM_END_NAMESPACE
 
-#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */
+Q_DECLARE_METATYPE(QtMobility::ActuatorData)
+
+QT_END_HEADER
+
+#endif // QFEEDBACKDATA_SIMULATOR_P_H

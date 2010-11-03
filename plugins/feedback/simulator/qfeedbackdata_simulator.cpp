@@ -39,37 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef NOTIFICATIONSATELLITECALLBACK_H_
-#define NOTIFICATIONSATELLITECALLBACK_H_
+#include "qfeedbackdata_simulator_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtCore/QDataStream>
 
-#include "qmobilityglobal.h"
-#include <e32base.h>    // For CActive, link against: euser.lib
-#include <lbs.h>
-#include <lbscommon.h>
-#include <lbssatellite.h>
+QDataStream &operator<<(QDataStream &out, const QtMobility::ActuatorData &s)
+{
+    out << s.id << s.name << static_cast<int>(s.state) << s.enabled;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QtMobility::ActuatorData &s)
+{
+    int stateInt;
+    in >> s.id >> s.name >> stateInt >> s.enabled;
+    s.state = static_cast<QtMobility::QFeedbackActuator::State>(stateInt);
+    return in;
+}
 
 QTM_BEGIN_NAMESPACE
 
-class INotificationSatelliteCallback
+void qt_registerFeedbackTypes()
 {
-public:
-
-    virtual void updateDeviceStatus(void) = 0 ;
-
-    virtual void updatePosition(TPositionSatelliteInfo  &aSatInfo, int error, bool isStartUpdate) = 0 ;
-};
+    qRegisterMetaTypeStreamOperators<ActuatorData>("QtMobility::ActuatorData");
+}
 
 QTM_END_NAMESPACE
-
-#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */

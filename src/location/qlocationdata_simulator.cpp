@@ -61,6 +61,7 @@ void qt_registerLocationTypes()
 QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s)
 {
     out << s.latitude << s.longitude << s.altitude;
+    out << s.direction << s.groundSpeed << s.verticalSpeed << s.magneticVariation << s.horizontalAccuracy << s.verticalAccuracy;
     out << s.dateTime;
     out << s.minimumInterval << s.enabled;
     return out;
@@ -69,6 +70,7 @@ QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s)
 QDataStream &operator>>(QDataStream &in, QGeoPositionInfoData &s)
 {
     in >> s.latitude >> s.longitude >> s.altitude;
+    in >> s.direction >> s.groundSpeed >> s.verticalSpeed >> s.magneticVariation >> s.horizontalAccuracy >> s.verticalAccuracy;
     in >> s.dateTime;
     in >> s.minimumInterval >> s.enabled;
     return in;

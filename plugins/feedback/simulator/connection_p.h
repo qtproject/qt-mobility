@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef NOTIFICATIONSATELLITECALLBACK_H_
-#define NOTIFICATIONSATELLITECALLBACK_H_
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 //
 //  W A R N I N G
@@ -53,23 +53,58 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-#include <e32base.h>    // For CActive, link against: euser.lib
-#include <lbs.h>
-#include <lbscommon.h>
-#include <lbssatellite.h>
+#include <qmobilityglobal.h>
+#include "qfeedbackdata_simulator_p.h"
+#include <QtCore/QObject>
+#include <QtCore/QList>
+
+QT_BEGIN_HEADER
+
+QT_FORWARD_DECLARE_CLASS(QLocalSocket)
+class QFeedbackSimulator;
 
 QTM_BEGIN_NAMESPACE
 
-class INotificationSatelliteCallback
+
+namespace Simulator {
+
+class MobilityConnection;
+
+class Connection : public QObject
 {
+    Q_OBJECT
 public:
+    explicit Connection(MobilityConnection *mobilityCon);
+    static Connection *instance();
 
-    virtual void updateDeviceStatus(void) = 0 ;
+    void connect(QFeedbackSimulator *plugin);
+    int startEffect(int actuatorId, const QString &info, int duration);
+    bool resumeEffect(int effectId);
+    bool pauseEffect(int effectId);
+    bool stopEffect(int effectId);
+    void setEffectDuration(int effectId, int duration);
+    void setActuatorEnabled(int actuatorId, bool enabled);
 
-    virtual void updatePosition(TPositionSatelliteInfo  &aSatInfo, int error, bool isStartUpdate) = 0 ;
+private slots:
+    // called remotely
+    void initialFeedbackDataSent();
+    void setActuator(QtMobility::ActuatorData data);
+    void removeActuator(int id);
+    void setDefaultActuator(int id);
+    void setFeedbackEffectState(int effectId, int state);
+
+private:
+    void getInitialData();
+
+    MobilityConnection *mConnection;
+    bool mRegisteredWithSimulator;
+    bool mInitialDataReceived;
+    QFeedbackSimulator *mPlugin;
 };
 
-QTM_END_NAMESPACE
+} // namespace Simulator
 
-#endif /* NOTIFICATIONSATELLITECALLBACK_H_ */
+QTM_END_NAMESPACE
+QT_END_HEADER
+
+#endif // CONNECTION_H
