@@ -28,7 +28,8 @@ SOURCES += \
     bluetooth/qbluetoothuuid.cpp\
     bluetooth/qbluetoothdeviceinfo.cpp\
     bluetooth/qbluetoothserviceinfo.cpp\
-    bluetooth/qbluetoothdevicediscoveryagent.cpp\    
+    bluetooth/qbluetoothdevicediscoveryagent.cpp\
+    bluetooth/qbluetoothdevicediscoveryagent_p.cpp\
     bluetooth/qbluetoothservicediscoveryagent.cpp\
     bluetooth/qbluetoothsocket.cpp\
     bluetooth/qrfcommserver.cpp \
@@ -60,8 +61,7 @@ symbian {
         bluetooth/qbluetoothdevicediscoveryagent_bluez_p.h
 
     SOURCES += \
-        bluetooth/qbluetoothserviceinfo_bluez.cpp \        
-        bluetooth/qbluetoothdevicediscoveryagent_p.cpp\
+        bluetooth/qbluetoothserviceinfo_bluez.cpp \                
         bluetooth/qbluetoothdevicediscoveryagent_bluez_p.cpp\
         bluetooth/qbluetoothservicediscoveryagent_bluez.cpp \
         bluetooth/qbluetoothsocket_bluez.cpp \

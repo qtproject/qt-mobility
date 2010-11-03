@@ -115,10 +115,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aErr
             qDebug() << "Error calling AttributeRequestL()";
         }
     } else if (aError == KErrEof) {
-        _q_serviceDiscoveryFinished(false);
+        _q_serviceDiscoveryFinished();
     } else {
         qDebug() << "Got error in" << __FUNCTION__ << aError;
-        _q_serviceDiscoveryFinished(true);
+        _q_serviceDiscoveryFinished();
     }
 }
 

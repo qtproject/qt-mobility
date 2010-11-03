@@ -148,4 +148,6 @@ QBluetoothDeviceDiscoveryAgentPrivate* QBluetoothDeviceDiscoveryAgentPrivate::co
   return d;
 }
 
+#include "moc_qbluetoothdevicediscoveryagent_symbian_p.cpp"
+
 QTM_END_NAMESPACE

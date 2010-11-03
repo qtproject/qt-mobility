@@ -44,8 +44,6 @@
 
 #include "qbluetoothdevicediscoveryagent.h"
 
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceDiscoveryAgentPrivate : public QObject
@@ -79,7 +77,5 @@ public:
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif
