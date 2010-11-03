@@ -293,7 +293,18 @@ void tst_QNearFieldTagType1::ndefMessages()
         QNdefNfcTextRecord textRecord;
         textRecord.setText(QLatin1String("tst_QNearFieldTagType1::ndefMessages"));
 
-        messages.append(QNdefMessage(textRecord));
+        QNdefMessage message;
+        message.append(textRecord);
+
+        if (target->memorySize() > 120) {
+            QNdefRecord record;
+            record.setTypeNameFormat(QNdefRecord::ExternalRtd);
+            record.setType("com.nokia.qt:ndefMessagesTest");
+            record.setPayload(QByteArray(120, quint8(0x55)));
+            message.append(record);
+        }
+
+        messages.append(message);
 
         target->setNdefMessages(messages);
 
