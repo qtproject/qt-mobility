@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item remove request whose parent is the specified \a parent */
 QOrganizerItemRemoveRequest::QOrganizerItemRemoveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemRemoveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemRemoveRequestPrivate, parent)
 {
 }
 
@@ -67,10 +67,10 @@ QOrganizerItemRemoveRequest::QOrganizerItemRemoveRequest(QObject* parent)
   Sets the id of the organizer item which will be removed to \a organizeritemId.
   Equivalent to calling:
   \code
-      setOrganizerItemIds(QList<QOrganizerItemLocalId>() << organizeritemIds);
+      setOrganizerItemIds(QList<QOrganizerItemId>() << organizeritemIds);
   \endcode
  */
-void QOrganizerItemRemoveRequest::setItemId(const QOrganizerItemLocalId& organizeritemId)
+void QOrganizerItemRemoveRequest::setItemId(const QOrganizerItemId& organizeritemId)
 {
     Q_D(QOrganizerItemRemoveRequest);
     d->m_organizeritemIds.clear();
@@ -78,21 +78,21 @@ void QOrganizerItemRemoveRequest::setItemId(const QOrganizerItemLocalId& organiz
 }
 
 /*! Sets the list of ids of organizer items which will be removed to \a organizeritemIds */
-void QOrganizerItemRemoveRequest::setItemIds(const QList<QOrganizerItemLocalId>& organizeritemIds)
+void QOrganizerItemRemoveRequest::setItemIds(const QList<QOrganizerItemId>& organizeritemIds)
 {
     Q_D(QOrganizerItemRemoveRequest);
     d->m_organizeritemIds = organizeritemIds;
 }
 
 /*! Returns the list of ids of organizer items which will be removed */
-QList<QOrganizerItemLocalId> QOrganizerItemRemoveRequest::itemIds() const
+QList<QOrganizerItemId> QOrganizerItemRemoveRequest::itemIds() const
 {
     Q_D(const QOrganizerItemRemoveRequest);
     return d->m_organizeritemIds;
 }
 
 /*! Returns the map of input organizer item list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemRemoveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemRemoveRequest);
     return d->m_errors;

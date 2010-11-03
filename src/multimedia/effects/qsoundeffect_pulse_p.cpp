@@ -253,6 +253,8 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_dataUploaded(0),
     m_loopCount(1),
     m_runningCount(0),
+    m_playing(false),
+    m_status(QSoundEffect::Null),
     m_reply(0),
     m_stream(0),
     m_pulseStream(0),
@@ -295,6 +297,7 @@ void QSoundEffectPrivate::setSource(const QUrl &url)
     if (url.isEmpty()) {
         m_source = QUrl();
         unloadSample();
+        setStatus(QSoundEffect::Null);
         return;
     }
 
@@ -304,6 +307,7 @@ void QSoundEffectPrivate::setSource(const QUrl &url)
         m_networkAccessManager = new QNetworkAccessManager(this);
 
     m_stream = m_networkAccessManager->get(QNetworkRequest(m_source));
+    connect(m_stream, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(decoderError()));
 
     unloadSample();
     loadSample();
@@ -343,7 +347,36 @@ void QSoundEffectPrivate::setMuted(bool muted)
 
 bool QSoundEffectPrivate::isLoaded() const
 {
-    return m_sampleLoaded;
+    return m_status == QSoundEffect::Ready;
+}
+
+bool QSoundEffectPrivate::isPlaying() const
+{
+    return m_playing;
+}
+
+QSoundEffect::Status QSoundEffectPrivate::status() const
+{
+    return m_status;
+}
+
+void QSoundEffectPrivate::setPlaying(bool playing)
+{
+    if (m_playing == playing)
+        return;
+    m_playing = playing;
+    emit playingChanged();
+}
+
+void QSoundEffectPrivate::setStatus(QSoundEffect::Status status)
+{
+    if (m_status == status)
+        return;
+    bool oldLoaded = isLoaded();
+    m_status = status;
+    emit statusChanged();
+    if (oldLoaded != isLoaded())
+        emit loadedChanged();
 }
 
 void QSoundEffectPrivate::play()
@@ -354,22 +387,22 @@ void QSoundEffectPrivate::play()
         return;
     }
 
+    if (m_status == QSoundEffect::Null || m_status == QSoundEffect::Error)
+        return;
+
     if (!m_sampleLoaded) {
         m_playQueued = true;
-        return;
+    } else if (m_runningCount >= 0) {
+        if (m_runningCount > 0) {
+            if (m_timerID != 0)
+                killTimer(m_timerID);
+            m_timerID = 0;
+        }
+        m_runningCount = m_loopCount;
+        playSample();
     }
 
-    if (m_runningCount < 0)
-        return;
-
-    if (m_runningCount > 0) {
-        if (m_timerID != 0)
-            killTimer(m_timerID);
-        m_timerID = 0;
-    }
-
-    m_runningCount = m_loopCount;
-    playSample();
+    setPlaying(true);
 }
 
 void QSoundEffectPrivate::decoderReady()
@@ -400,6 +433,14 @@ void QSoundEffectPrivate::decoderReady()
 void QSoundEffectPrivate::decoderError()
 {
     qWarning("QSoundEffect(pulseaudio): Error decoding source");
+    bool playingDirty = false;
+    if (m_playing) {
+        m_playing = false;
+        playingDirty = true;
+    }
+    setStatus(QSoundEffect::Error);
+    if (playingDirty)
+        emit playingChanged();
 }
 
 void QSoundEffectPrivate::checkPlayTime()
@@ -417,6 +458,7 @@ void QSoundEffectPrivate::loadSample()
     m_waveDecoder = new QWaveDecoder(m_stream);
     connect(m_waveDecoder, SIGNAL(formatKnown()), SLOT(decoderReady()));
     connect(m_waveDecoder, SIGNAL(invalidFormat()), SLOT(decoderError()));
+    setStatus(QSoundEffect::Loading);
 }
 
 void QSoundEffectPrivate::unloadSample()
@@ -487,17 +529,17 @@ void QSoundEffectPrivate::uploadSample()
         }
     }
     daemon()->unlock();
-
-    emit loadedChanged();
+    setStatus(QSoundEffect::Ready);
 }
 
 void QSoundEffectPrivate::playSample()
 {
-    pa_volume_t volume = PA_VOLUME_NORM;
-
+    pa_volume_t volume;
     daemon()->lock();
 #ifdef Q_WS_MAEMO_5
     volume = PA_VOLUME_NORM / 100 * ((daemon()->volume() + m_volume) / 2);
+#else
+    volume = pa_sw_volume_from_linear(qreal(m_volume) * 0.01);
 #endif
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
@@ -519,6 +561,7 @@ void QSoundEffectPrivate::stop()
     if (m_timerID != 0)
         killTimer(m_timerID);
     m_timerID = 0;
+    setPlaying(false);
 }
 
 void QSoundEffectPrivate::createPulseStream()
@@ -544,6 +587,8 @@ void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
         playSample();
     else if (--m_runningCount > 0)
         playSample();
+    else
+        setPlaying(false);
     m_timerID = 0;
     killTimer(event->timerId());
 }

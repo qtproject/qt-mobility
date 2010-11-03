@@ -6,7 +6,3 @@ symbian {
 }
 qmlbattery_files.sources = $$qmlbattery_src/battery-bubble.qml $$qmlbattery_src/images
 DEPLOYMENT += qmlbattery_files
-
-install_files.files = $$qmlbattery_src/battery-bubble.qml $$qmlbattery_src/images
-install_files.path = $$QT_MOBILITY_EXAMPLES
-INSTALLS += install_files

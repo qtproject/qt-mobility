@@ -56,8 +56,8 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     , m_rowCount(0)
     , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+            this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
@@ -183,7 +183,7 @@ void QDeclarativeGalleryQueryModel::setLimit(int limit)
 void QDeclarativeGalleryQueryModel::reload()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
 
@@ -193,7 +193,7 @@ void QDeclarativeGalleryQueryModel::reload()
 void QDeclarativeGalleryQueryModel::cancel()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.cancel();
 }
@@ -201,7 +201,7 @@ void QDeclarativeGalleryQueryModel::cancel()
 void QDeclarativeGalleryQueryModel::clear()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.clear();
 }
@@ -351,7 +351,7 @@ void QDeclarativeGalleryQueryModel::deferredExecute()
         m_updateStatus = PendingUpdate;
 
         QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-    } else if (m_updateStatus == CancelledUpdate) {
+    } else if (m_updateStatus == CanceledUpdate) {
         m_updateStatus = PendingUpdate;
     }
 }
@@ -373,9 +373,9 @@ bool QDeclarativeGalleryQueryModel::event(QEvent *event)
     }
 }
 
-void QDeclarativeGalleryQueryModel::_q_statusChanged()
+void QDeclarativeGalleryQueryModel::_q_stateChanged()
 {
-    m_status = Status(m_request.status());
+    m_status = Status(m_request.state());
 
     if (m_status == Error) {
         const QString message = m_request.errorString();
@@ -497,7 +497,7 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 
     \inmodule QtGallery
 
-    \brief The GalleryQueryRequest element is used to specify a model
+    \brief The DocumentGalleryModel element is used to specify a model
     containing items from the document gallery.
 
     \ingroup qml-gallery
@@ -574,9 +574,9 @@ void QDeclarativeDocumentGalleryModel::classBegin()
     \o Finished The query has finished
     \o Idle The query is finished and will be automatically updated as new
     items become available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
+    \o Canceling The query was canceled but hasn't yet reached the
+    canceled status.
+    \o Canceled The query was canceled.
     \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */
@@ -705,9 +705,9 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 */
 
 /*!
-    \qmlsignal DocumentGalleryModel::onCancelled()
+    \qmlsignal DocumentGalleryModel::onCanceled()
 
-    Signals that a query was cancelled.
+    Signals that a query was canceled.
 */
 
 /*!

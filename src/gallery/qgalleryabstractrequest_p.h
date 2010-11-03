@@ -70,7 +70,7 @@ public:
             QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
         : gallery(gallery)
         , type(type)
-        , status(QGalleryAbstractRequest::Inactive)
+        , state(QGalleryAbstractRequest::Inactive)
         , error(QGalleryAbstractRequest::NoError)
         , currentProgress(0)
         , maximumProgress(0)
@@ -83,7 +83,7 @@ public:
     }
 
     void _q_finished();
-    void _q_cancelled();
+    void _q_canceled();
     void _q_resumed();
     void _q_progressChanged(int current, int maximum);
 
@@ -91,7 +91,7 @@ public:
     QWeakPointer<QAbstractGallery> gallery;
     QScopedPointer<QGalleryAbstractResponse> response;
     QGalleryAbstractRequest::RequestType type;
-    QGalleryAbstractRequest::Status status;
+    QGalleryAbstractRequest::State state;
     int error;
     int currentProgress;
     int maximumProgress;

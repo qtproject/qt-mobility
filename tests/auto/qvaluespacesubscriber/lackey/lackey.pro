@@ -5,7 +5,8 @@ DEPENDPATH += ../../../../src/publishsubscribe
 
 QT = core
 
-CONFIG+= testcase
+# Put the binary where tests can find it
+CONFIG += testhelper
 
 include(../../../../common.pri)
 

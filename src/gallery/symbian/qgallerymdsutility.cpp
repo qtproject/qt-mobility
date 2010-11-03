@@ -40,15 +40,18 @@
 ****************************************************************************/
 
 #include <qurl.h>
+#include <QDir>
 //Backend
 #include "qgallerymdsutility_p.h"
+
+#include "qmdegallerycategoryresultset_p.h"
+
 //Symbian
 #include <mdeconstants.h>
 #include <mdesession.h>
 #include <utf.h>
 #include <e32cmn.h>
 #include <e32des8.h>
-
 #include <QFileInfo>
 
 QTM_BEGIN_NAMESPACE
@@ -84,8 +87,10 @@ CMdEObjectDef* QDocumentGalleryMDSUtility::ObjDefFromItemTypeForMDS20L( CMdEName
 {
     if (itemType == QDocumentGallery::Audio.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
+#if defined(MDS_25_COMPILATION_ENABLED) || defined(MDS_25_92MCL_COMPILATION_ENABLED)         
     } else if (itemType == QDocumentGallery::File.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+#endif        
     } else if (itemType == QDocumentGallery::Image.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
     } else if (itemType == QDocumentGallery::PhotoAlbum.name()) {
@@ -1990,25 +1995,51 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
     // Add filtering conditions
     QGalleryFilter filter = request->filter();
+    QVariant rootItem = request->rootItem();
 
-    switch (filter.type()) {
-    case QGalleryFilter::Invalid:
-        break;
-    case QGalleryFilter::Intersection:
-        rootCond.SetOperator( ELogicConditionOperatorAnd );
-        conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
-        break;
-    case QGalleryFilter::Union:
-        rootCond.SetOperator( ELogicConditionOperatorOr );
-        conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
-        break;
-    case QGalleryFilter::MetaData:
-        conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
-        break;
-    default:
-        return QDocumentGallery::FilterError;
+    if (rootItem.isValid()) {
+        rootCond.SetOperator(ELogicConditionOperatorAnd);
+
+        conditionError = QMDEGalleryCategoryResultSet::appendScopeCondition(
+                &rootCond, rootItem, defaultNameSpace);
+
+        if (conditionError != QDocumentGallery::NoError) {
+            switch (filter.type()) {
+            case QGalleryFilter::Invalid:
+                break;
+            case QGalleryFilter::Intersection:
+                conditionError = AddFilter(rootCond, filter, defaultNameSpace);
+                break;
+            case QGalleryFilter::Union:
+                rootCond.SetOperator( ELogicConditionOperatorOr );
+                conditionError = AddUnionFilter(rootCond, filter, defaultNameSpace);
+                break;
+            case QGalleryFilter::MetaData:
+                conditionError = AddMetadataFilter(rootCond, filter, defaultNameSpace);
+                break;
+            default:
+                return QDocumentGallery::FilterError;
+            }
+        }
+    } else {
+        switch (filter.type()) {
+        case QGalleryFilter::Invalid:
+            break;
+        case QGalleryFilter::Intersection:
+            rootCond.SetOperator( ELogicConditionOperatorAnd );
+            conditionError = AddIntersectionFilter( rootCond, filter, defaultNameSpace );
+            break;
+        case QGalleryFilter::Union:
+            rootCond.SetOperator( ELogicConditionOperatorOr );
+            conditionError = AddUnionFilter( rootCond, filter, defaultNameSpace );
+            break;
+        case QGalleryFilter::MetaData:
+            conditionError = AddMetadataFilter( rootCond, filter, defaultNameSpace );
+            break;
+        default:
+            return QDocumentGallery::FilterError;
+        }
     }
-
     if (conditionError != QDocumentGallery::NoError) {
         return conditionError;
     }
@@ -2035,12 +2066,14 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
         if (err || !propDef) {
             continue;
         }
-
+        int orderRuleErr = 0;
         if (ascending) {
-            TRAP_IGNORE( query->AppendOrderRuleL( TMdEOrderRule( *propDef, ESortAscending ) ) );
+            TRAP(orderRuleErr, query->AppendOrderRuleL(TMdEOrderRule(*propDef, ESortAscending)))
         } else {
-            TRAP_IGNORE( query->AppendOrderRuleL( TMdEOrderRule( *propDef, ESortDescending ) ) );
+            TRAP(orderRuleErr, query->AppendOrderRuleL(TMdEOrderRule(*propDef, ESortDescending)))
         }
+        if (orderRuleErr != KErrNone)
+            return QDocumentGallery::FilterError;
     }
     return QDocumentGallery::NoError;
 }
@@ -2732,21 +2765,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
     case ETitle:
         {
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* titleProp = NULL;
-            int foundIndex = item->Property( *propDef, titleProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && titleProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )titleProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EMime:
         return false;
@@ -2758,21 +2777,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }            
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* authorProp = NULL;
-            int foundIndex = item->Property( *propDef, authorProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && authorProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )authorProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case ECopyright:
         {
@@ -2782,21 +2787,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* copyProp = NULL;
-            int foundIndex = item->Property( *propDef, copyProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && copyProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )copyProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EDescription:
         {
@@ -2806,21 +2797,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* desProp = NULL;
-            int foundIndex = item->Property( *propDef, desProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && desProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )desProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EComments:
         {
@@ -2830,21 +2807,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* comProp = NULL;
-            int foundIndex = item->Property( *propDef, comProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && comProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )comProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef); 
         }
     case ERating:
         {
@@ -2854,20 +2817,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* rateProp = NULL;
-            int foundIndex = item->Property( *propDef, rateProp );
-            if ( foundIndex != KErrNotFound && rateProp ) {
-                CMdEUint8Property*     uint8Property = NULL;
-                uint8Property = ( CMdEUint8Property* )rateProp;
-                TRAPD( err, uint8Property->SetValueL( value.toUInt() ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddUint8PropertyL( *propDef, value.toUInt() ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef); 
         }
     case EDuration:
         {
@@ -2898,21 +2848,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* artistProp = NULL;
-            int foundIndex = item->Property( *propDef, artistProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && artistProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )artistProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EGenre:
         {
@@ -2922,21 +2858,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
-            if( !propDef )
-                return false;
-
-            CMdEProperty* genreProp = NULL;
-            int foundIndex = item->Property( *propDef, genreProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && genreProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )genreProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);     
         }
     case EComposer:
         {
@@ -2946,21 +2868,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
-            if( !propDef )
-                return false;
-
-            CMdEProperty* composerProp = NULL;
-            int foundIndex = item->Property( *propDef, composerProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && composerProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )composerProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EAlbumTitle:
         {
@@ -2970,21 +2878,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
-            if( !propDef )
-                return false;
-
-            CMdEProperty* albumTitleProp = NULL;
-            int foundIndex = item->Property( *propDef, albumTitleProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && albumTitleProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )albumTitleProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EAlbumArtist:
         {
@@ -2993,21 +2887,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
-            if( !propDef )
-                return false;
-
-            CMdEProperty* albumArtistProp = NULL;
-            int foundIndex = item->Property( *propDef, albumArtistProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && albumArtistProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )albumArtistProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case ETrackNumber:
         {
@@ -3215,21 +3095,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
 
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* makeProp = NULL;
-            int foundIndex = item->Property( *propDef, makeProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && makeProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )makeProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case ECameraModel:
         {
@@ -3237,21 +3103,7 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return false;
 
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
-            if( !propDef )
-                return false;
-
-            CMdEProperty* modelProp = NULL;
-            int foundIndex = item->Property( *propDef, modelProp );
-            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
-            if ( foundIndex != KErrNotFound && modelProp ) {
-                CMdETextProperty*     textProperty = NULL;
-                textProperty = ( CMdETextProperty* )modelProp;
-                TRAPD( err, textProperty->SetValueL( text ) );
-                return err == KErrNone ? true : false ;
-            } else {
-                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
-                return err == KErrNone ? true : false ;
-            }
+            return setMdeStringProperty(item, value, propDef);
         }
     case EExposureProgram:
         {
@@ -3450,6 +3302,27 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
     }
 }
 
+bool QDocumentGalleryMDSUtility::setMdeStringProperty(CMdEObject *item, const QVariant &value, CMdEPropertyDef* propDef)
+{
+    if (!propDef)
+        return false;
+    CMdEProperty *propertyToSet = NULL;
+    int foundIndex = item->Property(*propDef, propertyToSet);
+    TRAPD(err,
+        HBufC *text = qStringToS60Desc(value.toString());
+        if (!text)
+            return false;
+        CleanupStack::PushL(text);
+        if (foundIndex != KErrNotFound && propertyToSet) {
+            CMdETextProperty *textProperty = NULL;
+            textProperty = (CMdETextProperty*) propertyToSet;
+            textProperty->SetValueL(*text);
+        } else
+            item->AddTextPropertyL(*propDef, *text);
+        CleanupStack::PopAndDestroy(text);
+        )
+    return err == KErrNone;     
+}
 #endif // MDS_25_COMPILATION_ENABLED
 
 int QDocumentGalleryMDSUtility::InsertUInt32PropertyCondition( CMdELogicCondition &rootCond,
@@ -3521,57 +3394,72 @@ int QDocumentGalleryMDSUtility::InsertStringPropertyCondition( CMdELogicConditio
     QGalleryMetaDataFilter &filter )
 {
     int err;
-    const TDesC text(qStringToS60Desc(valueToMatch.toString() )->Des());
+    int returnValue = QDocumentGallery::NoError;
+
+    HBufC *text = qStringToS60Desc(valueToMatch.toString());
+    if (!text)
+        return QDocumentGallery::NoError; 
+
+    CleanupStack::PushL(text);
     switch (filter.comparator()) {
     case QGalleryFilter::Equals:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareEquals,
-                text) );
+                *text) );
         break;
     case QGalleryFilter::Contains:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareContains,
-                text) );
+                *text) );
         break;
     case QGalleryFilter::StartsWith:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareBeginsWith,
-                text));
+                *text));
         break;
     case QGalleryFilter::EndsWith:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareEndsWith,
-                text));
+                *text));
         break;
     default:
-        return QDocumentGallery::FilterError;
+        returnValue = QDocumentGallery::FilterError;
     }
-    if (err) {
-        return QDocumentGallery::FilterError;
-    }
-    return QDocumentGallery::NoError;
+    CleanupStack::PopAndDestroy(text);
+    if (err)
+        returnValue = QDocumentGallery::FilterError;
+    
+    return returnValue;
 }
 
 int QDocumentGalleryMDSUtility::InsertUriPropertyCondition( CMdELogicCondition &rootCond,
     QVariant &valueToMatch,
     QGalleryMetaDataFilter &filter )
 {
-    int err;
-    const TDesC text( qStringToS60Desc( valueToMatch.toString() )->Des() );
+    int err = 0;
+    int returnValue = QDocumentGallery::NoError;
+    if (rootCond.Locked())
+        return QDocumentGallery::FilterError;
+
+    HBufC *buffer = qStringToS60Desc(QDir::toNativeSeparators(valueToMatch.toString()));
+    if (!buffer)
+        return QDocumentGallery::FilterError;
+
+    CleanupStack::PushL(buffer);
     switch (filter.comparator()) {
     case QGalleryFilter::Equals:
-        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUri, text));
+        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUri, *buffer));
         break;
     case QGalleryFilter::StartsWith:
-        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUriBeginsWith, text));
+        TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUriBeginsWith, *buffer));
         break;
     default:
-        return QDocumentGallery::FilterError;
+        returnValue = QDocumentGallery::FilterError;
     }
-    if (err) {
-        return QDocumentGallery::FilterError;
-    }
-    return QDocumentGallery::NoError;
+    CleanupStack::PopAndDestroy(buffer);
+    if (err)
+        returnValue = QDocumentGallery::FilterError;
+    return returnValue;
 }
 
 int QDocumentGalleryMDSUtility::InsertUIntPropertyCondition( CMdELogicCondition &rootCond,

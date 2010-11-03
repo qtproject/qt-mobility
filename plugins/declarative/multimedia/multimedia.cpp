@@ -47,6 +47,7 @@
 
 #include "qdeclarativevideo_p.h"
 #include "qdeclarativeaudio_p.h"
+#include "qdeclarativemediametadata_p.h"
 #include "qdeclarativecamera_p.h"
 #include "qdeclarativecamerapreviewprovider_p.h"
 
@@ -70,6 +71,7 @@ public:
         qmlRegisterUncreatableType<QDeclarativeVideo>(uri, 1, 1, "Video", "Type not supported in symbian");
 #endif
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
+        qmlRegisterType<QDeclarativeMediaMetaData>();
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri)

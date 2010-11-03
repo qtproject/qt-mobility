@@ -51,16 +51,16 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="uniqueChat">
+       <widget class="QRadioButton" name="privateChat">
         <property name="text">
-         <string>Unique Chat</string>
+         <string>Private Chat</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="sharedChat">
+       <widget class="QRadioButton" name="globalChat">
         <property name="text">
-         <string>Shared Chat</string>
+         <string>Global Chat</string>
         </property>
         <property name="checked">
          <bool>true</bool>

@@ -63,7 +63,7 @@ public:
 
     virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
 
-    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
+    virtual QGeoMapData* createMapData();
 
     QSize tileSize() const;
 

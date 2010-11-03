@@ -1344,7 +1344,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="currentMMCLabel">
+          <widget class="QLabel" name="currentMNCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1375,12 +1375,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="currentMNCLabel">
+          <widget class="QLabel" name="currentMCCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1411,12 +1411,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="homeMMCLabel">
+          <widget class="QLabel" name="homeMCCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>

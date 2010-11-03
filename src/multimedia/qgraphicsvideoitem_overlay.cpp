@@ -228,7 +228,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
                 connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
                 connect(d->windowControl, SIGNAL(nativeSizeChanged()), SLOT(_q_updateNativeSize()));
 
-                d->windowControl->setProperty("colorKey", QVariant(QColor(16,7,2)));
+                //d->windowControl->setProperty("colorKey", QVariant(QColor(16,7,2)));
                 d->windowControl->setProperty("autopaintColorKey", QVariant(false));
 
                 if (d->winId)
@@ -325,7 +325,7 @@ void QGraphicsVideoItem::paint(
 
     QColor colorKey = Qt::black;
 
-    if (d->windowControl) {
+    if (d->windowControl != 0 && widget != 0) {
         d->windowControl->setWinId(widget->winId());
 
         QTransform transform = painter->combinedTransform();

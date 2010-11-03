@@ -342,7 +342,7 @@ void tst_QDeclarativeLandmark::construction_data()
     // Address
     QTest::newRow("Address: No properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}" << true;
     QTest::newRow("Address: Id property") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {id: exampleId}" << true;
-    QTest::newRow("Address: Writable properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {country: 'Australia'; countryCode: '61'; state: 'QLD'; county: 'dracula county'; city: 'Brisbane'; district: 'Runcorn'; street: 'Wonderstreet'; postCode: '3344'}" << true;
+    QTest::newRow("Address: Writable properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {country: 'Australia'; countryCode: '61'; state: 'QLD'; county: 'dracula county'; city: 'Brisbane'; district: 'Runcorn'; street: 'Wonderstreet'; postcode: '3344'}" << true;
     // BoundingBox
     QTest::newRow("BoundingBox: No properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}" << true;
     QTest::newRow("BoundingBox: writable properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {bottomLeft: Coordinate{} bottomRight: Coordinate{} topLeft: Coordinate{} topRight: Coordinate{} center: Coordinate{} height: 3; width: 4}" << true;
@@ -406,7 +406,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("offset").toInt(), -1);
     QCOMPARE(source_obj->property("count").toInt(), 0);
     delete source_obj;
-    
+
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark }");
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
@@ -415,7 +415,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
-    
+
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmark }");
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
@@ -445,7 +445,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("city").toString(), QString());
     QCOMPARE(source_obj->property("district").toString(), QString());
     QCOMPARE(source_obj->property("street").toString(), QString());
-    QCOMPARE(source_obj->property("postCode").toString(), QString());
+    QCOMPARE(source_obj->property("postcode").toString(), QString());
     delete source_obj;
 
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}");
@@ -703,7 +703,7 @@ void tst_QDeclarativeLandmark::basicSignals()
     QSignalSpy cityChangedSpy(source_obj, SIGNAL(cityChanged()));
     QSignalSpy districtChangedSpy(source_obj, SIGNAL(districtChanged()));
     QSignalSpy streetChangedSpy(source_obj, SIGNAL(streetChanged()));
-    QSignalSpy postCodeChangedSpy(source_obj, SIGNAL(postCodeChanged()));
+    QSignalSpy postcodeChangedSpy(source_obj, SIGNAL(postcodeChanged()));
     source_obj->setProperty("country", "new");
     source_obj->setProperty("countryCode", "new");
     source_obj->setProperty("state", "new");
@@ -711,7 +711,7 @@ void tst_QDeclarativeLandmark::basicSignals()
     source_obj->setProperty("city", "new");
     source_obj->setProperty("district", "new");
     source_obj->setProperty("street", "new");
-    source_obj->setProperty("postCode", "new");
+    source_obj->setProperty("postcode", "new");
     QTRY_VERIFY(!countryChangedSpy.isEmpty());
     QTRY_VERIFY(!countryCodeChangedSpy.isEmpty());
     QTRY_VERIFY(!stateChangedSpy.isEmpty());
@@ -719,7 +719,7 @@ void tst_QDeclarativeLandmark::basicSignals()
     QTRY_VERIFY(!cityChangedSpy.isEmpty());
     QTRY_VERIFY(!districtChangedSpy.isEmpty());
     QTRY_VERIFY(!streetChangedSpy.isEmpty());
-    QTRY_VERIFY(!postCodeChangedSpy.isEmpty());
+    QTRY_VERIFY(!postcodeChangedSpy.isEmpty());
     delete source_obj;
 
     // Place
@@ -1163,7 +1163,7 @@ void tst_QDeclarativeLandmark::declarativeCategoryList()
     // Count()
     QTRY_COMPARE(QDeclarativeLandmarkCategoryModel::categories_count(&declarativeList), model->count());
     // At()
-    for (int i = 0; i < model->count(); i++) {        
+    for (int i = 0; i < model->count(); i++) {
         // TODO make this a 'contains' check
         //QCOMPARE(QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name(), model->categoryList().at(i).name());
     }

@@ -54,15 +54,15 @@
 // We mean it.
 //
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
+#include "qorganizermanager.h"
+#include "qorganizermanager_p.h"
 
 #include <QMap>
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemInvalidEngine : public QOrganizerItemManagerEngine
+class QOrganizerItemInvalidEngine : public QOrganizerManagerEngine
 {
 public:
     QOrganizerItemInvalidEngine();
@@ -72,16 +72,16 @@ public:
     int managerVersion() const {return 0;}
 
     /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem&, QOrganizerItemManager::Error* error) const
+    virtual QString synthesizedDisplayLabel(const QOrganizerItem&, QOrganizerManager::Error* error) const
     {
-        *error =  QOrganizerItemManager::NotSupportedError;
+        *error =  QOrganizerManager::NotSupportedError;
         return QString();
     }
 
     /*! \reimp */
-    virtual QOrganizerItem compatibleItem(const QOrganizerItem&, QOrganizerItemManager::Error* error) const
+    virtual QOrganizerItem compatibleItem(const QOrganizerItem&, QOrganizerManager::Error* error) const
     {
-        *error =  QOrganizerItemManager::NotSupportedError;
+        *error =  QOrganizerManager::NotSupportedError;
         return QOrganizerItem();
     }
 };

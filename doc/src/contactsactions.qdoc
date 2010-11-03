@@ -94,14 +94,14 @@ you must do four things:
 \o Implement a QServicePluginInterface-derived class
 \o Implement a QContactActionFactory-derived class
 \o Implement (one or more) QContactAction-derived classes
-\o Write an xml file which describes their service plugin
+\o Write an xml file which describes your service plugin
 \endlist
 
 For more information on the QServicePluginInterface and the format of the service description
-xml, please see the \l{Service Framework}{Qt Mobility Service Framework} documentation.
+xml, please see the \l{Qt Service Framework}{Qt Mobility Service Framework} documentation.
 An example action plugin is provided later in this document.
 
-Note that while the plugins are loaded by the \l{Service Framework}{Qt Mobility Service Framework},
+Note that while the plugins are loaded by the \l{Qt Service Framework}{Qt Mobility Service Framework},
 clients of the Qt Contacts Action API are entirely shielded from this implementation detail.
 
 The QContactActionDescriptor class is actually a client-facing interface to an action factory,
@@ -115,7 +115,7 @@ icons and labels) documented in QContactActionDescriptor, to allow client applic
 provide meaningful user interface elements to represent the action.
 
 We recommend that action implementors read the documentation of the
-\l{Service Framework}{Qt Mobility Service Framework} carefully, to better understand
+\l{Qt Service Framework}{Qt Mobility Service Framework} carefully, to better understand
 how their implementation plugin may be updated with patch releases or major releases,
 and how these considerations affect the implementation of the plugin.
 
@@ -151,5 +151,61 @@ and installed in an appropriate location (once again, please see the documentati
     </interface>
 </service>
 \endcode
+
+\section2 Deployment
+
+Depending on the platform, the service which provides the action must be
+deployed in a certain way.
+
+\section3 Deployment on Maemo5
+
+The Qt Mobility Service Framework provides the "servicefw" tool which allows
+third parties to register their service with the system at installation time
+on the Maemo5 platform.  In order to register their service, the plugin and
+service description xml file should both be deployed to the installation
+directory of your application or component, and then the command:
+\code
+    servicefw add "path/to/servicedescription.xml" --system
+\endcode
+should be run as a post-install step to register the service in the system
+scope.  Your service will be persistently registered with the system.
+
+Similarly, you should run the command:
+\code
+    servicefw remove "yourservicename"
+\endcode
+as an uninstall step for the package which provides your component.  This
+will ensure that your service is removed from the service framework database
+(although you would still have to remove the files from physical storage).
+
+\section3 Deployment on Symbian
+
+The Qt Mobility Service Framework will automatically check a particular
+directory on Symbian for new or updated service description xmls.
+That is, any service described by an xml file in that location will
+automatically be registered in the system scope on that device.
+To ensure that your service description xml file is deployed properly,
+simply insert the following (or something similar) into the .pro
+(qmake project) file of your service:
+\code
+    symbian {
+        load(data_caging_paths)
+        pluginDep.sources = yourserviceplugin.dll
+        pluginDep.path = $$QT_PLUGINS_BASE_DIR
+        DEPLOYMENT += pluginDep
+
+        xmlautoimport.path = /private/2002AC7F/import/
+        xmlautoimport.sources = yourservicedescription.xml
+        DEPLOYMENT += xmlautoimport
+
+        TARGET.EPOCALLOWDLLDATA = 1
+        TARGET.CAPABILITY = ## whatever your service requires
+        load(armcc_warnings)
+    }
+\endcode
+
+Note that the UID in the xmlautoimport.path statement is the pre-assigned
+UID of the "other components" directory.  For more information on the topic,
+please see the documentation for the Qt Mobility Service Framework.
 
 */

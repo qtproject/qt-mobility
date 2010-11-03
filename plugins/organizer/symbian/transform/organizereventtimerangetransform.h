@@ -39,18 +39,18 @@
 **
 ****************************************************************************/
 
-#ifndef ORGANIZEREVENTTIMERANGETRANSFORM_H_
-#define ORGANIZEREVENTTIMERANGETRANSFORM_H_
+#ifndef ORGANIZEREVENTTIMETRANSFORM_H_
+#define ORGANIZEREVENTTIMETRANSFORM_H_
 
 #include "organizeritemdetailtransform.h"
 
-class OrganizerEventTimeRangeTransform : public OrganizerItemDetailTransform
+class OrganizerEventTimeTransform : public OrganizerItemDetailTransform
 {
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
-    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
 };
 
-#endif /* ORGANIZEREVENTTIMERANGETRANSFORM_H_ */
+#endif /* ORGANIZEREVENTTIMETRANSFORM_H_ */
