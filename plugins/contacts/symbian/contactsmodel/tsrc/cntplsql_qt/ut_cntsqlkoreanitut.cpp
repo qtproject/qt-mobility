@@ -290,7 +290,56 @@ void UT_CntSqlKoreanItuT::testGetSearchPattern()
     QStringList result;
     QStringList reference;
     reference << "2" << "0";
+    //result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("132264");
+    reference << "132" << "264" ;
     result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("13226");
+    reference << "132" << "26" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("132226");
+    reference << "1322" << "26" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("261632");
+    reference << "26" << "1632" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("12457680");
+    reference << "12457680";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("26457580");
+    reference << "26457580";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("45726580");
+    reference << "45726580";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
     QCOMPARE( result, reference );
     
     reference.clear();
@@ -305,11 +354,11 @@ void UT_CntSqlKoreanItuT::testGetSearchPattern()
     result = mSqlKoreanItuT->getSearchPattern(pattern);
     QCOMPARE( result, reference );
     
-    /*reference.clear();
+    reference.clear();
     pattern = QString("132465");
     reference << "132" << "465" ;
     result = mSqlKoreanItuT->getSearchPattern(pattern);
-    QCOMPARE( result, reference );*/
+    QCOMPARE( result, reference );
     
     reference.clear();
     pattern = QString("87*");
