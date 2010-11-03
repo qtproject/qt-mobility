@@ -46,7 +46,6 @@
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagtype4_symbian.h"
 #include "nearfieldtagimpl_symbian.h"
-#include "commonutil_symbian.h"
 
 QT_BEGIN_HEADER
 
@@ -69,11 +68,11 @@ public:
     QList<QNdefMessage> ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    QByteArray sendCommand(const QByteArray &command);
+    QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 
-    virtual QByteArray sendAPDUCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
+    QByteArray sendAPDUCommand(const QByteArray &command);
+    QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

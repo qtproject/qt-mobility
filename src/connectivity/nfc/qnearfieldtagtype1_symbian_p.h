@@ -46,7 +46,6 @@
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagtype1_symbian.h"
 #include "nearfieldtagimpl_symbian.h"
-#include "commonutil_symbian.h"
 
 QT_BEGIN_HEADER
 

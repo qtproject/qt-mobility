@@ -41,6 +41,7 @@
 #include <nfctag.h>
 #include "qnearfieldutility_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
+#include "qnearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -87,8 +88,7 @@ QByteArray QNearFieldTagType1Symbian::readIdentification()
 
     if (tagType1)
     {
-        QByteArray result;
-        CommonUtil::TDesC82QByteArray(tagType1->ReadIdentification(), result);
+        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(tagType1->ReadIdentification());
         return result;
     }
     else
@@ -111,7 +111,7 @@ QByteArray QNearFieldTagType1Symbian::readAll()
         int error = tagType1->ReadAll(response);
         if (error == KErrNone)
         {
-            CommonUtil::TDesC82QByteArray(response, result);
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
         }
     }
 
@@ -165,7 +165,7 @@ QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
         TBuf8<ReadSegmentBytes> response;
         if (KErrNone == tagType1->ReadSegment(segmentAddress, response))
         {
-            CommonUtil::TDesC82QByteArray(response, result);
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
         }
     }
     
@@ -184,7 +184,7 @@ QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
         TBuf8<BlockOpreationBytes> response;
         if (KErrNone == tagType1->ReadBlock(blockAddress, response))
         {
-            CommonUtil::TDesC82QByteArray(response, result);
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
         }
     }
     return result;
@@ -202,7 +202,7 @@ bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray
     if (tagType1)
     {
         TBuf8<WriteBlockBytes> cmdData;
-        CommonUtil::QByteArray2TDes8(data, cmdData);
+        QNFCNdefUtility::FromQByteArrayToTDes8(data, cmdData);
         error = (mode == EraseAndWrite) ? tagType1->WriteBlockErase(blockAddress, cmdData)
                                         : tagType1->WriteBlockNoErase(blockAddress, cmdData);
     }

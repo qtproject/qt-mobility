@@ -104,6 +104,11 @@ QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray
 
 QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
 {
+    CNearFieldTagType4 * iTagType4 = mTag->CastToTagType4();
+    if (iTagType4)
+    {
+        //if (KErrNone == iTagType4->SendAPDUCommand())
+    }
 }
 
 /*!

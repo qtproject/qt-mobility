@@ -103,8 +103,11 @@ void CNearFieldTagType4::DoCancel()
 
 void CNearFieldTagType4::RunL()
     {
-    
-    SetActive(); // Tell scheduler a request is active
+    iOperationError = iStatus.Int();
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
     }
 
 TInt CNearFieldTagType4::RunError(TInt aError)
@@ -137,4 +140,36 @@ void CNearFieldTagType4::CloseConnection()
 TBool CNearFieldTagType4::IsConnectionOpened()
     {
     return iNfcType4Connection->IsActivated();
+    }
+
+TInt CNearFieldTagType4::SendAPDUCommand(const TDesC8& aCommand, TDes8& aResponse)
+    {
+    TInt error = KErrNone;
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    if (KErrNone == error)
+        {
+        if (!IsActive())
+            {
+            if (!iWait->IsStarted())
+                {
+                iOperationError = KErrNone;
+                iNfcType4Connection->ExchangeData(iStatus, aCommand, aResponse);
+                SetActive();
+                iWait->Start();
+                error = iOperationError;
+                }
+            else
+                {
+                error = KErrInUse;
+                }
+            }
+        else
+            {
+            error = KErrInUse;
+            }
+        }
+    return error;
     }
