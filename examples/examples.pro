@@ -148,6 +148,11 @@ contains(mobility_modules,connectivity) {
     SUBDIRS += connectivity
 }
 
+# Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += btscanner btchat
+}
+
 sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources

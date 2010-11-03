@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qcontactdetail.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QLatin1Constant Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLatin1Constant"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLatin1Constant Class Reference</h1>
+<p>The QLatin1Constant class holds a Latin 1 string constant <a href="#details">More...</a></p>
+<pre>    #include &lt;QLatin1Constant&gt;</pre><ul>
+<li><a href="qlatin1constant-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qlatin1constant.html#latin1">latin1</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlatin1constant.html#operator-not-eq">operator!=</a></b> ( const QLatin1Constant &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlatin1constant.html#operator-eq-eq">operator==</a></b> ( const QLatin1Constant &amp; <i>other</i> ) const</td></tr>
+</table>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a></b></td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLatin1Constant class holds a Latin 1 string constant</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLatin1Constant/latin1"></a>
+<h3 class="fn"><a name="latin1"></a>const char * QLatin1Constant::latin1 () const</h3>
+<p>Returns the value of this literal as a C style string (null terminated).</p>
+<a name="//apple_ref/cpp/instm/QLatin1Constant/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLatin1Constant::operator!= ( const QLatin1Constant &amp; <i>other</i> ) const</h3>
+<p>Returns false if this <a href="qlatin1constant.html">QLatin1Constant</a> is the same as <i>other</i> (either same object or same string literal), and true otherwise.</p>
+<a name="//apple_ref/cpp/instm/QLatin1Constant/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QLatin1Constant::operator== ( const QLatin1Constant &amp; <i>other</i> ) const</h3>
+<p>Returns true if this <a href="qlatin1constant.html">QLatin1Constant</a> is the same as <i>other</i> (either same object or same string literal), and false otherwise.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//Q_DECLARE_LATIN1_CONSTANT"></a>
+<h3 class="fn"><a name="Q_DECLARE_LATIN1_CONSTANT"></a>Q_DECLARE_LATIN1_CONSTANT</h3>
+<p>This macro, along with the related <a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a> macro, allows you to describe a &quot;Latin 1 string constant&quot;.</p>
+<p>The resulting constant can be passed to functions accepting a <a href="http://qt.nokia.com/doc/4.6/qlatin1string.html">QLatin1String</a>, a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
+<p>The first parameter is the name of the variable to declare. The second parameter is the value of the constant, as a string literal.</p>
+<p>For example:</p>
+<pre><span class="comment">    // in a header file</span>
+    Q_DECLARE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);</pre>
+<p>The declaration should be paired with a matching <a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a> with the same arguments to actually define the constant.</p>
+<p>See also <a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a>.</p>
+<a name="//apple_ref/cpp/macro//Q_DEFINE_LATIN1_CONSTANT"></a>
+<h3 class="fn"><a name="Q_DEFINE_LATIN1_CONSTANT"></a>Q_DEFINE_LATIN1_CONSTANT</h3>
+<p>This macro, along with the related <a href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</a> macro, allows you to describe a &quot;Latin 1 string constant&quot;.</p>
+<p>The resulting constant can be passed to functions accepting a <a href="http://qt.nokia.com/doc/4.6/qlatin1string.html">QLatin1String</a>, a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
+<p>The first parameter is the name of the variable to define. The second parameter is the value of the constant, as a string literal.</p>
+<p>For example:</p>
+<pre><span class="comment">    // in a header file</span>
+    Q_DECLARE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);
+
+<span class="comment">    // in source file</span>
+    Q_DEFINE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);</pre>
+<p>You can use this macro without the matching DECLARE macro if you are using the constant only in a single compilation unit.</p>
+<p>See also <a href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</a>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

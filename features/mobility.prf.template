@@ -104,6 +104,7 @@ contains(MOBILITY, organizer) {
 
 contains(MOBILITY, connectivity) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtConnectivity
+    INCLUDEPATH += $${QMAKE_INCDIR_QT}/QtNetwork
     qtAddLibrary(QtConnectivity)
 }
 

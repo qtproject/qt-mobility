@@ -235,3 +235,16 @@ contains(mobility_modules,connectivity) {
         qnearfieldtagtype1
 }
 
+# Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += \
+        qbluetoothaddress\
+        qbluetoothuuid\
+        qbluetoothdeviceinfo\
+        qbluetoothdevicediscoveryagent\
+        qbluetoothserviceinfo\
+        qbluetoothservicediscoveryagent\
+        qbluetoothsocket\
+        qrfcommserver
+}
+

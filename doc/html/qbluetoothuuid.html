@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qbluetoothuuid.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QBluetoothUuid Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QBluetoothUuid"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QBluetoothUuid Class Reference<br /><span class="small-subtitle">[QtConnectivity module]</span>
+</h1>
+<p>The QBluetoothUuid class provides a Bluetooth UUID. <a href="#details">More...</a></p>
+<pre>    #include &lt;QBluetoothUuid&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/quuid.html">QUuid</a>.</p>
+<ul>
+<li><a href="qbluetoothuuid-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#ProtocolUuid-enum">ProtocolUuid</a></b> { Sdp, Udp, Rfcomm, Tcp, ..., L2cap }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#ServiceClassUuid-enum">ServiceClassUuid</a></b> { PublicBrowseGroup, ObexObjectPush }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid">QBluetoothUuid</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-2">QBluetoothUuid</a></b> ( ProtocolUuid <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-3">QBluetoothUuid</a></b> ( ServiceClassUuid <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-4">QBluetoothUuid</a></b> ( quint16 <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-5">QBluetoothUuid</a></b> ( quint32 <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-6">QBluetoothUuid</a></b> ( quint128 <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-7">QBluetoothUuid</a></b> ( const QString &amp; <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-8">QBluetoothUuid</a></b> ( const QBluetoothUuid &amp; <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#QBluetoothUuid-9">QBluetoothUuid</a></b> ( const QUuid &amp; <i>uuid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#dtor.QBluetoothUuid">~QBluetoothUuid</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#minimumSize">minimumSize</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#toUInt16">toUInt16</a></b> ( bool * <i>ok</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#toUInt32">toUInt32</a></b> ( bool * <i>ok</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint128 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#toUInt128">toUInt128</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothuuid.html#operator-eq-eq">operator==</a></b> ( const QBluetoothUuid &amp; <i>other</i> ) const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/quuid.html#public-functions">QUuid</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>4 public variables inherited from <a href="http://qt.nokia.com/doc/4.6/quuid.html#public-variables">QUuid</a></li>
+<li><div class="fn"></div>1 static public member inherited from <a href="http://qt.nokia.com/doc/4.6/quuid.html#static-public-members">QUuid</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QBluetoothUuid class provides a Bluetooth UUID.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QBluetoothUuid/ProtocolUuid"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Sdp"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Udp"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Rfcomm"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Tcp"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Obex"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Ip"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Ftp"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/Http"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/L2cap"></a>
+<h3 class="fn"><a name="ProtocolUuid-enum"></a>enum QBluetoothUuid::ProtocolUuid</h3>
+<p>This enum is a convienience type for Bluetooth protocol UUIDs. Values of this type will be implicitly converted into a <a href="qbluetoothuuid.html">QBluetoothUuid</a> when necessary.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Sdp</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">SDP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Udp</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">UDP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Rfcomm</tt></td><td align="center" valign="top"><tt>0x0003</tt></td><td valign="top">RFCOMM protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Tcp</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">TCP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Obex</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">OBEX protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Ip</tt></td><td align="center" valign="top"><tt>0x0009</tt></td><td valign="top">IP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Ftp</tt></td><td align="center" valign="top"><tt>0x000A</tt></td><td valign="top">FTP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::Http</tt></td><td align="center" valign="top"><tt>0x000C</tt></td><td valign="top">HTTP protocol UUID.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::L2cap</tt></td><td align="center" valign="top"><tt>0x0100</tt></td><td valign="top">L2CAP protocol UUID.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QBluetoothUuid/ServiceClassUuid"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/PublicBrowseGroup"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothUuid/ObexObjectPush"></a>
+<h3 class="fn"><a name="ServiceClassUuid-enum"></a>enum QBluetoothUuid::ServiceClassUuid</h3>
+<p>This enum is a convienience type for Bluetooth service class UUIDs. Values of this type will be implicitly converted into a <a href="qbluetoothuuid.html">QBluetoothUuid</a> when necessary.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::PublicBrowseGroup</tt></td><td align="center" valign="top"><tt>0x1002</tt></td><td valign="top">Public browse group service class. Services which have the public browse group in their <a href="qbluetoothserviceinfo.html#AttributeId-enum">browse group list</a> are discoverable by remote devices.</td></tr>
+<tr><td valign="top"><tt>QBluetoothUuid::ObexObjectPush</tt></td><td align="center" valign="top"><tt>0x1105</tt></td><td valign="top">OBEX object push service UUID.</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/QBluetoothUuid"></a>
+<h3 class="fn"><a name="QBluetoothUuid"></a>QBluetoothUuid::QBluetoothUuid ()</h3>
+<p>Constructs a new null Bluetooth UUID.</p>
+<h3 class="fn"><a name="QBluetoothUuid-2"></a>QBluetoothUuid::QBluetoothUuid ( <a href="qbluetoothuuid.html#ProtocolUuid-enum">ProtocolUuid</a> <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the protocol UUID <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-3"></a>QBluetoothUuid::QBluetoothUuid ( <a href="qbluetoothuuid.html#ServiceClassUuid-enum">ServiceClassUuid</a> <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the service class UUID <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-4"></a>QBluetoothUuid::QBluetoothUuid ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the 16 bit UUID <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-5"></a>QBluetoothUuid::QBluetoothUuid ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the 32 bit UUID <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-6"></a>QBluetoothUuid::QBluetoothUuid ( quint128 <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the 128 bit UUID <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-7"></a>QBluetoothUuid::QBluetoothUuid ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID from the string <i>uuid</i>.</p>
+<p>The string must be in the form XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.</p>
+<h3 class="fn"><a name="QBluetoothUuid-8"></a>QBluetoothUuid::QBluetoothUuid ( const QBluetoothUuid &amp; <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID that is a copy of <i>uuid</i>.</p>
+<h3 class="fn"><a name="QBluetoothUuid-9"></a>QBluetoothUuid::QBluetoothUuid ( const <a href="http://qt.nokia.com/doc/4.6/quuid.html">QUuid</a> &amp; <i>uuid</i> )</h3>
+<p>Constructs a new Bluetooth UUID that is a copy of <i>uuid</i>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/~QBluetoothUuid"></a>
+<h3 class="fn"><a name="dtor.QBluetoothUuid"></a>QBluetoothUuid::~QBluetoothUuid ()</h3>
+<p>Destroys the Bluetooth UUID.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/minimumSize"></a>
+<h3 class="fn"><a name="minimumSize"></a>int QBluetoothUuid::minimumSize () const</h3>
+<p>Returns the minimum size in bytes that this UUID can be represented in. For non-null UUIDs 2, 4 or 16 is returned. 0 is returned for null UUIDs.</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/quuid.html#isNull">isNull</a>(), <a href="qbluetoothuuid.html#toUInt16">toUInt16</a>(), <a href="qbluetoothuuid.html#toUInt32">toUInt32</a>(), and <a href="qbluetoothuuid.html#toUInt128">toUInt128</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/toUInt16"></a>
+<h3 class="fn"><a name="toUInt16"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QBluetoothUuid::toUInt16 ( bool * <i>ok</i> = 0 ) const</h3>
+<p>Returns the 16 bit representation of this UUID. If <i>ok</i> is passed it is set to true if the conversion is possible otherwise it is set to false. The return value is undefined if <i>ok</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/toUInt32"></a>
+<h3 class="fn"><a name="toUInt32"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QBluetoothUuid::toUInt32 ( bool * <i>ok</i> = 0 ) const</h3>
+<p>Returns the 32 bit representation of this UUID. If <i>ok</i> is passed it is set to true if the conversion is possible otherwise it is set to false. The return value is undefined if <i>ok</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/toUInt128"></a>
+<h3 class="fn"><a name="toUInt128"></a>quint128 QBluetoothUuid::toUInt128 () const</h3>
+<p>Returns the 128 bit representation of this UUID.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothUuid/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QBluetoothUuid::operator== ( const QBluetoothUuid &amp; <i>other</i> ) const</h3>
+<p>Returns true if <i>other</i> is equal to this Bluetooth UUID; otherwise returns false.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qbluetoothaddress.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QBluetoothAddress Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QBluetoothAddress"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QBluetoothAddress Class Reference<br /><span class="small-subtitle">[QtConnectivity module]</span>
+</h1>
+<p>The QBluetoothAddress class provides a Bluetooth address. <a href="#details">More...</a></p>
+<pre>    #include &lt;QBluetoothAddress&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<ul>
+<li><a href="qbluetoothaddress-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#QBluetoothAddress">QBluetoothAddress</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#QBluetoothAddress-2">QBluetoothAddress</a></b> ( quint64 <i>address</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#QBluetoothAddress-3">QBluetoothAddress</a></b> ( const QString &amp; <i>address</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#QBluetoothAddress-4">QBluetoothAddress</a></b> ( const QBluetoothAddress &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#isNull">isNull</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#toString">toString</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#toUInt64">toUInt64</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#operator-not-eq">operator!=</a></b> ( const QBluetoothAddress &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#operator-lt">operator&lt;</a></b> ( const QBluetoothAddress &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothAddress &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#operator-eq">operator=</a></b> ( const QBluetoothAddress &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothaddress.html#operator-eq-eq">operator==</a></b> ( const QBluetoothAddress &amp; <i>other</i> ) const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QBluetoothAddress class provides a Bluetooth address.</p>
+<p>This class holds a Bluetooth address in a platform- and protocol- independent manner.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/QBluetoothAddress"></a>
+<h3 class="fn"><a name="QBluetoothAddress"></a>QBluetoothAddress::QBluetoothAddress ()</h3>
+<p>Constructs an null Bluetooth address.</p>
+<h3 class="fn"><a name="QBluetoothAddress-2"></a>QBluetoothAddress::QBluetoothAddress ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> <i>address</i> )</h3>
+<p>Constructs a new Bluetooth address and assigns <i>address</i> to it.</p>
+<h3 class="fn"><a name="QBluetoothAddress-3"></a>QBluetoothAddress::QBluetoothAddress ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>address</i> )</h3>
+<p>Constructs a new Bluetooth address and assigns <i>address</i> to it.</p>
+<p>The format of <i>address</i> can be either XX:XX:XX:XX:XX:XX or XXXXXXXXXXXX, where X is a hexadecimal digit. Case is not important.</p>
+<h3 class="fn"><a name="QBluetoothAddress-4"></a>QBluetoothAddress::QBluetoothAddress ( const QBluetoothAddress &amp; <i>other</i> )</h3>
+<p>Constructs a new Bluetooth address which is a copy of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/clear"></a>
+<h3 class="fn"><a name="clear"></a>void QBluetoothAddress::clear ()</h3>
+<p>Sets the Bluetooth address to 00:00:00:00:00:00.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/isNull"></a>
+<h3 class="fn"><a name="isNull"></a>bool QBluetoothAddress::isNull () const</h3>
+<p>Returns true if the Bluetooth address is valid, otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/toString"></a>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QBluetoothAddress::toString () const</h3>
+<p>Returns the Bluetooth address as a string of the form XX:XX:XX:XX:XX:XX.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/toUInt64"></a>
+<h3 class="fn"><a name="toUInt64"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QBluetoothAddress::toUInt64 () const</h3>
+<p>Returns this Bluetooth address as a quint64.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QBluetoothAddress::operator!= ( const QBluetoothAddress &amp; <i>other</i> ) const</h3>
+<p>Compares this Bluetooth address with <i>other</i>.</p>
+<p>Returns true if the Bluetooth addresses are not equal, otherwise returns true.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/operator&lt;"></a>
+<h3 class="fn"><a name="operator-lt"></a>bool QBluetoothAddress::operator&lt; ( const QBluetoothAddress &amp; <i>other</i> ) const</h3>
+<p>Returns true if the Bluetooth address is less than <i>other</i>; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QBluetoothAddress &amp; QBluetoothAddress::operator= ( const QBluetoothAddress &amp; <i>other</i> )</h3>
+<p>Assigns <i>other</i> to this Bluetooth address.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothAddress/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QBluetoothAddress::operator== ( const QBluetoothAddress &amp; <i>other</i> ) const</h3>
+<p>Compares this Bluetooth address to <i>other</i>.</p>
+<p>Returns true if the Bluetooth address are equal, otherwise returns false.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

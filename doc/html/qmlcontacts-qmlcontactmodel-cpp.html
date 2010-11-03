@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.1: qmlcontactmodel.cpp Example File (qmlcontacts/qmlcontactmodel.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">qmlcontactmodel.cpp Example File<br /><span class="small-subtitle">qmlcontacts/qmlcontactmodel.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &lt;qcontactdetails.h&gt;
+
+    #include &quot;qmlcontactmodel.h&quot;
+    #include &quot;qcontactmanager.h&quot;
+    #include &quot;qcontactdetailfilter.h&quot;
+    #include &quot;qversitreader.h&quot;
+    #include &quot;qversitcontactimporter.h&quot;
+    #include &lt;QColor&gt;
+    #include &lt;QHash&gt;
+    #include &lt;QDebug&gt;
+    #include &lt;QPixmap&gt;
+    #include &lt;QFile&gt;
+
+    QMLContactModel::QMLContactModel(QObject *parent) :
+        QAbstractListModel(parent),
+        m_manager(0)
+    {
+        QHash&lt;int, QByteArray&gt; roleNames;
+        roleNames = QAbstractItemModel::roleNames();
+        roleNames.insert(InterestLabelRole, &quot;interestLabel&quot;);
+        roleNames.insert(InterestRole, &quot;interest&quot;);
+        roleNames.insert(ContactRole, &quot;contact&quot;);
+        roleNames.insert(ContactIdRole, &quot;contactId&quot;);
+        roleNames.insert(AvatarRole, &quot;avatar&quot;);
+        roleNames.insert(PresenceAvailableRole, &quot;presenceSupported&quot;);
+        roleNames.insert(PresenceTextRole, &quot;presenceText&quot;);
+        roleNames.insert(PresenceStateRole, &quot;presenceState&quot;);
+        roleNames.insert(PresenceMessageRole, &quot;presenceMessage&quot;);
+        setRoleNames(roleNames);
+
+        m_fetchHint.setOptimizationHints(QContactFetchHint::NoActionPreferences | QContactFetchHint::NoRelationships);
+        m_fetchHint.setDetailDefinitionsHint(QStringList()
+                                             &lt;&lt; QContactPhoneNumber::DefinitionName
+                                             &lt;&lt; QContactEmailAddress::DefinitionName
+                                             &lt;&lt; QContactThumbnail::DefinitionName
+                                             &lt;&lt; QContactAvatar::DefinitionName
+                                             &lt;&lt; QContactGlobalPresence::DefinitionName
+                                             &lt;&lt; QContactDisplayLabel::DefinitionName
+                                             &lt;&lt; QContactOnlineAccount::DefinitionName);
+        m_sortOrder.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
+        m_sortOrder.setCaseSensitivity(Qt::CaseSensitive);
+
+        connect(&amp;m_contactsRequest, SIGNAL(resultsAvailable()), this, SLOT(resultsReceived()));
+        m_contactsRequest.setFetchHint(m_fetchHint);
+        m_contactsRequest.setSorting(m_sortOrder);
+
+        QContactDetailFilter d;
+        d.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+        d.setValue(QContactType::TypeContact);
+
+        m_contactsRequest.setFilter(d);
+
+        setManager(QString());
+    }
+
+    QStringList QMLContactModel::availableManagers() const
+    {
+        return QContactManager::availableManagers();
+    }
+
+    QString QMLContactModel::manager() const
+    {
+        return m_manager-&gt;managerName();
+    }
+    QList&lt;QObject*&gt; QMLContactModel::details(int id) const
+    {
+        if (m_contactMap.contains(id))
+            return m_contactMap.value(id)-&gt;details();
+        return QList&lt;QObject*&gt;();
+    }
+    void QMLContactModel::exposeContactsToQML()
+    {
+        foreach (const QContact&amp; c, m_contacts) {
+            if (!m_contactMap.contains(c.localId())) {
+                QMLContact* qc = new QMLContact(this);
+                qc-&gt;setContact(c);
+                m_contactMap.insert(c.localId(), qc);
+            } else {
+                m_contactMap.value(c.localId())-&gt;setContact(c);
+            }
+        }
+    }
+
+    void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
+    {
+        QVersitReader reader;
+        QFile file(&quot;contents/example.vcf&quot;);
+        bool ok = file.open(QIODevice::ReadOnly);
+        if (ok) {
+           reader.setDevice(&amp;file);
+           if (reader.startReading() &amp;&amp; reader.waitForFinished()) {
+               QVersitContactImporter importer;
+               importer.importDocuments(reader.results());
+               QList&lt;QContact&gt; contacts = importer.contacts();
+               manager-&gt;saveContacts(&amp;contacts, 0);
+           }
+        }
+    }
+
+    int QMLContactModel::rowCount(const QModelIndex &amp;parent) const
+    {
+        Q_UNUSED(parent);
+        return m_contacts.count();
+    }
+
+    void QMLContactModel::setManager(const QString&amp; managerName)
+    {
+        if (m_manager)
+            delete m_manager;
+
+        foreach (const QContactLocalId&amp; id, m_contactMap.keys()) {
+            delete m_contactMap.value(id);
+        }
+        m_contactMap.clear();
+
+        m_manager = new QContactManager(managerName);
+
+        if (managerName == &quot;memory&quot; &amp;&amp; m_manager-&gt;contactIds().isEmpty()) {
+            fillContactsIntoMemoryEngine(m_manager);
+        }
+
+        qWarning() &lt;&lt; &quot;Changed backend to: &quot; &lt;&lt; managerName;
+        m_contactsRequest.setManager(m_manager);
+        connect(m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
+        fetchAgain();
+    }
+
+    void QMLContactModel::resultsReceived()
+    {
+        int oldCount = m_contacts.count();
+
+        int newCount = m_contactsRequest.contacts().count();
+        if (newCount &gt; oldCount) {
+            <span class="comment">// Assuming the order is the same</span>
+            beginInsertRows(QModelIndex(), newCount - oldCount, newCount);
+            m_contacts = m_contactsRequest.contacts();
+            endInsertRows();
+        } else {
+            <span class="comment">// Hmm, shouldn't happen</span>
+            reset();
+            beginInsertRows(QModelIndex(), 0, m_contactsRequest.contacts().count());
+            m_contacts =  m_contactsRequest.contacts();
+            endInsertRows();
+        }
+
+        exposeContactsToQML();
+    }
+
+    void QMLContactModel::fetchAgain()
+    {
+        m_contacts.clear();
+        reset();
+        m_contactsRequest.start();
+    }
+
+    QPair&lt;QString, QString&gt; QMLContactModel::interestingDetail(const QContact&amp;c) const
+    {
+        <span class="comment">// Try a phone number, then email, then online account</span>
+        <span class="comment">// This does only check the first detail of each type</span>
+        QContactDetail p = c.details&lt;QContactPhoneNumber&gt;().value(0);
+        if (!p.isEmpty())
+            return qMakePair(tr(&quot;Phone&quot;), p.value(QContactPhoneNumber::FieldNumber));
+
+        p = c.details&lt;QContactEmailAddress&gt;().value(0);
+        if (!p.isEmpty())
+            return qMakePair(tr(&quot;Email&quot;), p.value(QContactEmailAddress::FieldEmailAddress));
+
+        p = c.details&lt;QContactOnlineAccount&gt;().value(0);
+        if (!p.isEmpty())
+            return qMakePair(p.value(QContactOnlineAccount::FieldServiceProvider), p.value(QContactOnlineAccount::FieldAccountUri));
+
+        <span class="comment">// Well, don't know.</span>
+        return qMakePair(QString(), QString());
+    }
+
+    QVariant QMLContactModel::data(const QModelIndex &amp;index, int role) const
+    {
+        QContact c = m_contacts.value(index.row());
+        switch(role) {
+            case Qt::DisplayRole:
+                return c.displayLabel();
+            case InterestLabelRole:
+                return interestingDetail(c).first;
+            case InterestRole:
+                return interestingDetail(c).second;
+            case ContactRole:
+                if (m_contactMap.contains(c.localId())) {
+                   return m_contactMap.value(c.localId())-&gt;contactMap();
+               }
+            case ContactIdRole:
+                return c.localId();
+            case AvatarRole:
+                <span class="comment">//Just let the imager provider deal with it</span>
+                return QString(&quot;image:<span class="comment">//thumbnail/%1.%2&quot;).arg(manager()).arg(c.localId());</span>
+            case Qt::DecorationRole:
+                {
+                    QContactThumbnail t = c.detail&lt;QContactThumbnail&gt;();
+                    if (!t.thumbnail().isNull())
+                        return QPixmap::fromImage(t.thumbnail());
+                }
+                return QPixmap();
+            case PresenceAvailableRole:
+                return !c.detail&lt;QContactGlobalPresence&gt;().isEmpty();
+            case PresenceMessageRole:
+                return c.detail&lt;QContactGlobalPresence&gt;().customMessage();
+            case PresenceTextRole:
+                return c.detail&lt;QContactGlobalPresence&gt;().presenceStateText();
+            case PresenceStateRole:
+                return c.detail&lt;QContactGlobalPresence&gt;().presenceState();
+        }
+        return QVariant();
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>
