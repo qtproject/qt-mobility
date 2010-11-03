@@ -9,11 +9,8 @@ HEADERS += \
     nfc/qndefnfcurirecord.h \
     nfc/qnearfieldtagtype1.h \
     nfc/qnearfieldtagtype2.h \
-<<<<<<< HEAD
     nfc/qllcpsocket.h \
-=======
     nfc/qnearfieldtagtype3.h \
->>>>>>> cdfd6da95b1a1d75bccb50a240ceeaaf6963f439
     nfc/qllcpserver.h
 
 PRIVATE_HEADERS += \
@@ -73,14 +70,11 @@ symbian {
         nfc/qnearfieldmanager_symbian_p.h \
         nfc/qnearfieldtagtype1_symbian_p.h \
         nfc/qnearfieldtagtype2_symbian_p.h \
-<<<<<<< HEAD
         nfc/qllcpsocket_symbian_p.h \
         nfc/qllcpserver_symbian_p.h \
-=======
         nfc/qnearfieldtagtype3_symbian_p.h \
         nfc/qnearfieldtagtype4_symbian_p.h \
         nfc/qnearfieldllcpdevice_symbian_p.h \
->>>>>>> cdfd6da95b1a1d75bccb50a240ceeaaf6963f439
         nfc/symbian/nearfieldmanager_symbian.h \
         nfc/symbian/nearfieldtarget_symbian.h \
         nfc/symbian/nearfieldtagtype1_symbian.h \
@@ -99,14 +93,11 @@ symbian {
         nfc/qnearfieldmanager_symbian.cpp \
         nfc/qnearfieldtagtype1_symbian.cpp \
         nfc/qnearfieldtagtype2_symbian.cpp \
-<<<<<<< HEAD
         nfc/qllcpsocket_symbian_p.cpp \
         nfc/qllcpserver_symbian_p.cpp \
-=======
         nfc/qnearfieldtagtype3_symbian.cpp \
         nfc/qnearfieldtagtype4_symbian.cpp \
         nfc/qnearfieldllcpdevice_symbian.cpp \
->>>>>>> cdfd6da95b1a1d75bccb50a240ceeaaf6963f439
         nfc/symbian/nearfieldmanager_symbian.cpp \	
         nfc/symbian/nearfieldtarget_symbian.cpp \
         nfc/symbian/nearfieldtagtype1_symbian.cpp \
