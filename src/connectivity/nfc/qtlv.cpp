@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qtlvreader_p.h"
+#include "qtlv_p.h"
 
 #include "qnearfieldtagtype1.h"
 
@@ -75,6 +75,47 @@ QTM_BEGIN_NAMESPACE
     \endcode
 */
 
+QPair<int, int> qParseReservedMemoryControlTlv(const QByteArray &tlvData)
+{
+    quint8 position = tlvData.at(0);
+    int pageAddr = position >> 4;
+    int byteOffset = position & 0x0f;
+
+    int size = quint8(tlvData.at(1));
+    if (size == 0)
+        size = 256;
+
+    quint8 pageControl = tlvData.at(2);
+    int bytesPerPage = pageControl & 0x0f;
+
+    if (!bytesPerPage)
+        return qMakePair(0, 0);
+
+    int byteAddress = pageAddr * (1 << bytesPerPage) + byteOffset;
+    return qMakePair(byteAddress, size);
+}
+
+QPair<int, int> qParseLockControlTlv(const QByteArray &tlvData)
+{
+    quint8 position = tlvData.at(0);
+    int pageAddr = position >> 4;
+    int byteOffset = position & 0x0f;
+
+    int size = quint8(tlvData.at(1));
+    if (size == 0)
+        size = 256;
+    size = size / 8;
+
+    quint8 pageControl = tlvData.at(2);
+    int bytesPerPage = pageControl & 0x0f;
+
+    if (!bytesPerPage)
+        return qMakePair(0, 0);
+
+    int byteAddress = pageAddr * (1 << bytesPerPage) + byteOffset;
+    return qMakePair(byteAddress, size);
+}
+
 /*!
     Constructs a new TLV reader for \a target.
 */
@@ -104,6 +145,21 @@ QTlvReader::QTlvReader(const QByteArray &data)
 void QTlvReader::addReservedMemory(int offset, int length)
 {
     m_reservedMemory.insert(offset, length);
+}
+
+/*!
+    Returns the number of bytes of reserved memory found so far.  The actual number of reserved
+    bytes will not be known until atEnd() returns true.
+*/
+int QTlvReader::reservedMemorySize() const
+{
+    int total = 0;
+
+    QMap<int, int>::ConstIterator i;
+    for (i = m_reservedMemory.constBegin(); i != m_reservedMemory.constEnd(); ++i)
+        total += i.value();
+
+    return total;
 }
 
 /*!
@@ -153,43 +209,13 @@ bool QTlvReader::readNext()
 
     switch (tag()) {
     case 0x01: { // Lock Control TLV
-        const QByteArray tlvData = data();
-
-        quint8 position = tlvData.at(0);
-        int pageAddr = position >> 4;
-        int byteOffset = position & 0x0f;
-
-        quint8 size = tlvData.at(1);
-
-        quint8 pageControl = tlvData.at(2);
-        int bytesPerPage = pageControl & 0x0f;
-
-        if (bytesPerPage) {
-            int byteAddress = pageAddr * (1 << (bytesPerPage - 1)) + byteOffset;
-
-            addReservedMemory(byteAddress, (size ? size : 256) / 8);
-        }
-
+        QPair<int, int> locked = qParseLockControlTlv(data());
+        addReservedMemory(locked.first, locked.second);
         break;
     }
     case 0x02: { // Reserved Memory Control TLV
-        const QByteArray tlvData = data();
-
-        quint8 position = tlvData.at(0);
-        int pageAddr = position >> 4;
-        int byteOffset = position & 0x0f;
-
-        quint8 size = tlvData.at(1);
-
-        quint8 pageControl = tlvData.at(2);
-        int bytesPerPage = pageControl & 0x0f;
-
-        if (bytesPerPage) {
-            int byteAddress = pageAddr * (1 << (bytesPerPage - 1)) + byteOffset;
-
-            addReservedMemory(byteAddress, size ? size : 256);
-        }
-
+        QPair<int, int> reserved = qParseReservedMemoryControlTlv(data());
+        addReservedMemory(reserved.first, reserved.second);
         break;
     }
     }
@@ -308,6 +334,151 @@ int QTlvReader::dataLength(int startOffset) const
     }
 
     return -1;
+}
+
+
+QTlvWriter::QTlvWriter(QNearFieldTarget *target)
+:   m_target(target), m_rawData(0), m_index(0)
+{
+    if (qobject_cast<QNearFieldTagType1 *>(m_target)) {
+        addReservedMemory(0, 12);   // skip uid, cc
+        addReservedMemory(104, 16); // skip reserved block D, lock block E
+
+        addReservedMemory(120, 8);  // skip reserved block F
+    }
+}
+
+QTlvWriter::QTlvWriter(QByteArray *data)
+:   m_target(0), m_rawData(data), m_index(0)
+{
+}
+
+QTlvWriter::~QTlvWriter()
+{
+    flush(true);
+}
+
+void QTlvWriter::addReservedMemory(int offset, int length)
+{
+    m_reservedMemory.insert(offset, length);
+}
+
+void QTlvWriter::writeTlv(quint8 tagType, const QByteArray &data)
+{
+    m_buffer.append(tagType);
+
+    if (tagType != 0x00 && tagType != 0xfe) {
+        int length = data.length();
+        if (length < 0xff) {
+            m_buffer.append(quint8(length));
+        } else {
+            m_buffer.append(0xff);
+            m_buffer.append(quint16(length) >> 8);
+            m_buffer.append(quint16(length) & 0x00ff);
+        }
+
+        m_buffer.append(data);
+    }
+
+    flush();
+
+    switch (tagType) {
+    case 0x01: {    // Lock Control TLV
+        QPair<int, int> locked = qParseLockControlTlv(data);
+        addReservedMemory(locked.first, locked.second);
+        break;
+    }
+    case 0x02: {    // Reserved Memory Control TLV
+        QPair<int, int> reserved = qParseReservedMemoryControlTlv(data);
+        addReservedMemory(reserved.first, reserved.second);
+        break;
+    }
+    }
+}
+
+void QTlvWriter::flush(bool all)
+{
+    while (!m_buffer.isEmpty()) {
+        int spaceRemaining = moveToNextAvailable();
+        if (spaceRemaining < 1)
+            break;
+
+        int length = qMin(spaceRemaining, m_buffer.length());
+
+        if (m_rawData) {
+            m_rawData->replace(m_index, length, m_buffer);
+            m_index += length;
+            m_buffer = m_buffer.mid(length);
+        } else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
+            int bufferIndex = 0;
+
+            // static memory - can only use writeByte()
+            while (m_index < 120 && bufferIndex < length)
+                tag->writeByte(m_index++, m_buffer.at(bufferIndex++));
+
+            // dynamic memory - writeBlock() full
+            while (m_index >= 120 && (m_index % 8 == 0) && bufferIndex + 8 < length) {
+                tag->writeBlock(m_index / 8, m_buffer.mid(bufferIndex, 8));
+                m_index += 8;
+                bufferIndex += 8;
+            }
+
+            // partial block
+
+            int currentBlock = m_index / 8;
+            int nextBlock = currentBlock + 1;
+            int currentBlockStart = currentBlock * 8;
+            int nextBlockStart = nextBlock * 8;
+
+            int fillLength = qMin(nextBlockStart - m_index, spaceRemaining - bufferIndex);
+
+            if (fillLength && (all || m_buffer.length() - bufferIndex >= fillLength)) {
+                // sufficient data available
+                QByteArray block = tag->readBlock(currentBlock);
+
+                int fill = qMin(fillLength, m_buffer.length() - bufferIndex);
+
+                for (int i = m_index - currentBlockStart; i < fill; ++i)
+                    block[i] = m_buffer.at(bufferIndex++);
+
+                tag->writeBlock(currentBlock, block);
+            }
+
+            m_buffer = m_buffer.mid(bufferIndex);
+
+            if (m_buffer.length() < fillLength)
+                break;
+        }
+    }
+}
+
+int QTlvWriter::moveToNextAvailable()
+{
+    int length = -1;
+
+    // move index to next available byte
+    QMap<int, int>::ConstIterator i;
+    for (i = m_reservedMemory.constBegin(); i != m_reservedMemory.constEnd(); ++i) {
+        if (m_index < i.key()) {
+            length = i.key() - m_index;
+            break;
+        } else if (m_index == i.key()) {
+            m_index += i.value();
+        } else if (m_index > i.key() && m_index < (i.key() + i.value())) {
+            m_index = i.key() + i.value();
+        }
+    }
+
+    if (length == -1) {
+        if (m_rawData)
+            return m_rawData->length() - m_index;
+        else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target))
+            return tag->memorySize() - m_index;
+    }
+
+    Q_ASSERT(length != -1);
+
+    return length;
 }
 
 QTM_END_NAMESPACE

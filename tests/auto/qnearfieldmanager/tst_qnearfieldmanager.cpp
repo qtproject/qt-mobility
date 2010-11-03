@@ -176,9 +176,10 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 
     filter.clear();
     filter.setOrderMatch(true);
+    filter.appendRecord(QNdefRecord::Mime, "image/png");
     filter.appendRecord<QNdefNfcTextRecord>(2, 10);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
-    QTest::newRow("Multiple Text + URI") << QNearFieldTarget::NfcTagType1 << filter;
+    QTest::newRow("Image + Multiple Text + URI") << QNearFieldTarget::NfcTagType1 << filter;
 
     filter.clear();
     filter.setOrderMatch(true);
@@ -207,8 +208,6 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     QTRY_VERIFY(!messageSpy.isEmpty());
 
     const QNdefMessage message = messageSpy.first().at(0).value<QNdefMessage>();
-
-    qDebug() << "Verify message";
 
     QNearFieldTarget *target = messageSpy.first().at(1).value<QNearFieldTarget *>();
 

@@ -224,7 +224,15 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
                                                      const QByteArray &type,
                                                      QObject *object, const char *method)
 {
-    return registerTargetDetectedHandler(targetType, typeNameFormat, type, object, method);
+    QMetaMethod metaMethod = methodForSignature(object, method);
+    if (!metaMethod.enclosingMetaObject())
+        return -1;
+
+    Q_UNUSED(targetType);
+    Q_UNUSED(typeNameFormat);
+    Q_UNUSED(type);
+
+    return -1;
 }
 
 /*!
@@ -246,30 +254,6 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
     Q_D(QNearFieldManager);
 
     return d->registerTargetDetectedHandler(targetType, object, metaMethod);
-}
-
-/*!
-    Registers \a object to receive notifications on \a method when a tag with a tag type of
-    \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
-    \a type.  The \a method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
-
-    Returns an identifier, which can be used to unregister the handler, on success; otherwise
-    returns -1.
-*/
-int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     quint8 typeNameFormat, const QByteArray &type,
-                                                     QObject *object, const char *method)
-{
-    QMetaMethod metaMethod = methodForSignature(object, method);
-    if (!metaMethod.enclosingMetaObject())
-        return -1;
-
-    Q_UNUSED(targetType);
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(type);
-
-    return -1;
 }
 
 /*!

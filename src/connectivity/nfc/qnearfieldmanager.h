@@ -77,9 +77,6 @@ public:
                                       const QByteArray &type,
                                       QObject *object, const char *method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      quint8 typeNameFormat, const QByteArray &type,
-                                      QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       const QNdefFilter &filter,
                                       QObject *object, const char *method);
 

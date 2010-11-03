@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QTLVREADER_P_H
-#define QTLVREADER_P_H
+#ifndef QTLV_P_H
+#define QTLV_P_H
 
 #include <qmobilityglobal.h>
 
 #include <QtCore/QByteArray>
 #include <QtCore/QMap>
+#include <QtCore/QPair>
 
 QT_BEGIN_HEADER
 
@@ -59,6 +60,7 @@ public:
     explicit QTlvReader(const QByteArray &data);
 
     void addReservedMemory(int offset, int length);
+    int reservedMemorySize() const;
 
     bool atEnd() const;
 
@@ -81,8 +83,36 @@ private:
     QMap<int, int> m_reservedMemory;
 };
 
+class QTlvWriter
+{
+public:
+    explicit QTlvWriter(QNearFieldTarget *target);
+    explicit QTlvWriter(QByteArray *data);
+    ~QTlvWriter();
+
+    void addReservedMemory(int offset, int length);
+
+    void writeTlv(quint8 tag, const QByteArray &data = QByteArray());
+
+private:
+    void flush(bool all = false);
+
+    int moveToNextAvailable();
+
+    QNearFieldTarget *m_target;
+    QByteArray *m_rawData;
+
+    int m_index;
+    QMap<int, int> m_reservedMemory;
+
+    QByteArray m_buffer;
+};
+
+QPair<int, int> qParseReservedMemoryControlTlv(const QByteArray &tlvData);
+QPair<int, int> qParseLockControlTlv(const QByteArray &tlvData);
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QTLVREADER_P_H
+#endif // QTLV_P_H
