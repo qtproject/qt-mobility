@@ -45,6 +45,7 @@
 #if defined(QT_SIMULATOR)
 #include "qnearfieldmanager_simulator_p.h"
 #elif defined(Q_OS_SYMBIAN)
+#include "qnearfieldmanager_symbian_p.h"
 #else
 #include "qnearfieldmanagerimpl_p.h"
 #endif
