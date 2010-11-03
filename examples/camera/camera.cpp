@@ -63,7 +63,9 @@ Camera::Camera(QWidget *parent) :
     ui(new Ui::Camera),
     camera(0),
     imageCapture(0),
-    mediaRecorder(0)
+    mediaRecorder(0),
+    isCapturingImage(false),
+    applicationExiting(false)
 {
     ui->setupUi(this);
 
@@ -133,8 +135,9 @@ void Camera::setCamera(const QByteArray &cameraDevice)
     updateLockStatus(camera->lockStatus(), QCamera::UserRequest);
     updateRecorderState(mediaRecorder->state());
 
-    connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui->takeImageButton, SLOT(setEnabled(bool)));
+    connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), this, SLOT(readyForCapture(bool)));
     connect(imageCapture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(processCapturedImage(int,QImage)));
+    connect(imageCapture, SIGNAL(imageSaved(int,QString)), this, SLOT(imageSaved(int,QString)));
 
     connect(camera, SIGNAL(lockStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
             this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
@@ -194,7 +197,6 @@ void Camera::processCapturedImage(int requestId, const QImage& img)
                                     Qt::SmoothTransformation);
 
     ui->lastImagePreviewLabel->setPixmap(QPixmap::fromImage(scaledImage));
-
     //display captured image for 4 seconds
     displayCapturedImage();
     QTimer::singleShot(4000, this, SLOT(displayViewfinder()));
@@ -307,7 +309,9 @@ void Camera::updateLockStatus(QCamera::LockStatus status, QCamera::LockChangeRea
 }
 
 void Camera::takeImage()
+
 {
+    isCapturingImage = true;
     imageCapture->capture();
 }
 
@@ -395,4 +399,30 @@ void Camera::displayViewfinder()
 void Camera::displayCapturedImage()
 {
     ui->stackedWidget->setCurrentIndex(1);
+}
+
+void Camera::readyForCapture(bool ready)
+{
+    ui->takeImageButton->setEnabled(ready);
+}
+
+void Camera::imageSaved(int id, const QString &fileName)
+{
+    Q_UNUSED(id);
+    Q_UNUSED(fileName);
+
+    isCapturingImage = false;
+    if (applicationExiting)
+        close();
+}
+
+void Camera::closeEvent(QCloseEvent *event)
+{
+    if (isCapturingImage) {
+        setEnabled(false);
+        applicationExiting = true;
+        event->ignore();
+    } else {
+        event->accept();
+    }
 }

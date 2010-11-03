@@ -2467,12 +2467,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
-    if (!landmark->viewport().isEmpty()) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString = "Landmark viewport boundry settings not supported.";
-        return result;
-    }
-
     if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri()
         != managerUri()) {
         *error = QLandmarkManager::LandmarkDoesNotExistError;
