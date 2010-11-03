@@ -42,7 +42,7 @@
 #include "qorganizeritemcollectionfilter.h"
 #include "qorganizeritemcollectionfilter_p.h"
 #include "qorganizeritemfilter_p.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,11 +59,11 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter);
 
 /*!
  * \fn QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem local id filter
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem id filter
  */
 
 /*!
- * Constructs a new organizeritem local id filter
+ * Constructs a new organizeritem id filter
  */
 QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
     : QOrganizerItemFilter(new QOrganizerItemCollectionFilterPrivate)
@@ -74,7 +74,7 @@ QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
  * Clears the list which contains the ids of possible matching organizeritems, and sets it to the list
  * which contains a single id \a id.
  */
-void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionLocalId &id)
+void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionId &id)
 {
     Q_D(QOrganizerItemCollectionFilter);
     d->m_ids.clear();
@@ -84,7 +84,7 @@ void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionL
 /*!
  * Sets the list which contains the ids of possible matching organizeritems to \a ids
  */
-void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionLocalId> &ids)
+void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionId> &ids)
 {
     Q_D(QOrganizerItemCollectionFilter);
     d->m_ids = ids;
@@ -93,7 +93,7 @@ void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerColle
 /*!
  * Returns the list of ids of organizeritems which match this filter
  */
-QSet<QOrganizerCollectionLocalId> QOrganizerItemCollectionFilter::collectionIds() const
+QSet<QOrganizerCollectionId> QOrganizerItemCollectionFilter::collectionIds() const
 {
     Q_D(const QOrganizerItemCollectionFilter);
     return d->m_ids;

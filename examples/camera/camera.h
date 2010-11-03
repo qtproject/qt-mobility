@@ -101,9 +101,13 @@ private slots:
     void displayViewfinder();
     void displayCapturedImage();
 
+    void readyForCapture(bool);
+    void imageSaved(int, const QString&);
+
 protected:
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent * event);
+    void closeEvent(QCloseEvent *event );
 
 private:
     Ui::Camera *ui;
@@ -116,6 +120,8 @@ private:
     QAudioEncoderSettings audioSettings;
     QVideoEncoderSettings videoSettings;
     QString videoContainerFormat;
+    bool isCapturingImage;
+    bool applicationExiting;
 };
 
 #endif

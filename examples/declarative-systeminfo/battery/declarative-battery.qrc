@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>battery-bubble.qml</file>
+     <file>images/blueStar.png</file>
+     <file>images/blueStone.png</file>
+     <file>images/redStone.png</file>
+     <file>images/yellowStone.png</file>
+ </qresource>
+ </RCC>

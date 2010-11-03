@@ -68,11 +68,11 @@
 #include <extendedcalendar.h>
 
 #include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanagerengine.h"
-#include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizermanager.h"
+#include "qorganizermanagerengine.h"
+#include "qorganizermanagerenginefactory.h"
 #include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
 QTM_BEGIN_NAMESPACE
@@ -81,18 +81,18 @@ class QOrganizerTodo;
 class QOrganizerNote;
 class QOrganizerJournal;
 class QOrganizerItemRecurrence;
-class QOrganizerItemRecurrenceRule;
+class QOrganizerRecurrenceRule;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 using namespace KCal;
 
-class QOrganizerItemMaemo6Factory : public QObject, public QOrganizerItemManagerEngineFactory
+class QOrganizerItemMaemo6Factory : public QObject, public QOrganizerManagerEngineFactory
 {
   Q_OBJECT
-  Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
+  Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
-    QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
     QString managerName() const;
     QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
     QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
@@ -117,7 +117,7 @@ public:
     ExtendedCalendar m_calendarBackend;
 };
 
-class QOrganizerItemMaemo6Engine : public QOrganizerItemManagerEngine
+class QOrganizerItemMaemo6Engine : public QOrganizerManagerEngine
 {
     Q_OBJECT
 
@@ -129,45 +129,45 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerManager::Error* error) const;
+    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const;
+    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    bool saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
+    bool saveItem(QOrganizerItem* item, QOrganizerManager::Error* error);
+    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error);
 
     /* Collections - every item belongs to exactly one collection */
-    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
-    bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerManager::Error* error) const;
+    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error) const;
+    bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
 
     /* Capabilities reporting */
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
+    bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
-    void requestDestroyed(QOrganizerItemAbstractRequest* req);
-    bool startRequest(QOrganizerItemAbstractRequest* req);
-    bool cancelRequest(QOrganizerItemAbstractRequest* req);
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+    void requestDestroyed(QOrganizerAbstractRequest* req);
+    bool startRequest(QOrganizerAbstractRequest* req);
+    bool cancelRequest(QOrganizerAbstractRequest* req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs);
 
 private:
     QOrganizerItemMaemo6Engine();
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     Incidence* incidence(const QOrganizerItemLocalId& itemId) const;
-    Incidence* softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
+    Incidence* softSaveItem(QOrganizerItem* item, QOrganizerManager::Error* error);
     Event* createKEvent(const QOrganizerEvent& note);
     Todo* createKTodo(const QOrganizerTodo& note);
     Journal* createKJournal(const QOrganizerJournal& note);
@@ -176,7 +176,7 @@ private:
     void convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence,
             Recurrence* kRecurrence);
     RecurrenceRule* createKRecurrenceRule(Recurrence* kRecurrence,
-            const QOrganizerItemRecurrenceRule& rrule);
+            const QOrganizerRecurrenceRule& rrule);
 
     QOrganizerItemMaemo6EngineData* d;
 

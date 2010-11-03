@@ -43,25 +43,25 @@
 #include "qtorganizer.h"
 #include <QDateTime>
 
-QOrganizerItemManager* TimeZone::getManager()
+QOrganizerManager* TimeZone::getManager()
 {
-    static QOrganizerItemManager* manager(new QOrganizerItemManager());
+    static QOrganizerManager* manager(new QOrganizerManager());
     return manager;
 }
 
 QDateTime TimeZone::convert(const QDateTime& dateTime) const
 {
     Q_ASSERT(isValid());
-    QOrganizerItemManager* manager = getManager();
+    QOrganizerManager* manager = getManager();
     int offset = 100000; // impossible value
     QDateTime latestPhase;
     foreach(const TimeZonePhase& phase, mPhases) {
         QOrganizerEvent event;
         event.setStartDateTime(phase.startDateTime());
-        event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
+        event.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << phase.recurrenceRule());
         event.setRecurrenceDates(phase.recurrenceDates());
         QList<QOrganizerItem> occurrences =
-            manager->itemInstances(event, phase.startDateTime(), dateTime, 500);
+            manager->itemOccurrences(event, phase.startDateTime(), dateTime, 500);
         if (!occurrences.isEmpty()) {
             QDateTime phaseStart(static_cast<QOrganizerEventOccurrence>(occurrences.last()).startDateTime());
             if (phaseStart > latestPhase) {

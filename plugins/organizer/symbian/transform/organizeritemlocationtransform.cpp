@@ -50,10 +50,13 @@ void OrganizerItemLocationTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
+
+    fields.insert(QOrganizerItemLocation::FieldLabel, f);
 #ifdef SYMBIAN_CALENDAR_V2
-    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
+    f.setDataType(QVariant::Double);
+    fields.insert(QOrganizerItemLocation::FieldLatitude, f);
+    fields.insert(QOrganizerItemLocation::FieldLongitude, f);
 #endif
-    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
     d.setFields(fields);
     d.setUnique(true);
 
@@ -67,68 +70,45 @@ void OrganizerItemLocationTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
 
 void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-	QString locationName = toQString(entry.LocationL());
+    QString label = toQString(entry.LocationL());
 	QOrganizerItemLocation location;
-	if (!locationName.isEmpty()) {
-		location.setLocationName(locationName);
-		item->saveDetail(&location);
-	}	
+    if (!label.isEmpty())
+        location.setLabel(label);
+
 #ifdef SYMBIAN_CALENDAR_V2
-	QString latLongStr;
-	double latitude;
-	double longitude;
-	CCalGeoValue *geoValue = entry.GeoValueL();
-	// Get the latitude and longitude values and store it in a string
-	// with default precision 6.
-	if (geoValue) {
-		bool latLongValueSet = false;
-		latLongValueSet = geoValue->GetLatLong(latitude, longitude);
-		if(latLongValueSet) {
-			latLongStr = QString("%1")
-												.arg(QString::number(latitude, 'f'));
-			latLongStr.append(";");
-			latLongStr.append(QString("%1")
-			                  .arg(QString::number(longitude, 'f')));
-		}
-		location.setGeoLocation(latLongStr);
-		item->saveDetail(&location);
-	}
+    double latitude;
+    double longitude;
+    CCalGeoValue *geoValue = entry.GeoValueL();
+    if (geoValue) {
+        if (geoValue->GetLatLong(latitude, longitude)) {
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+        }
+    }
 #endif
+    if (!location.isEmpty())
+        item->saveDetail(&location);
 }
 
 void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     QOrganizerItemLocation loc = item.detail<QOrganizerItemLocation>();
-    if (!loc.isEmpty()) {
-        // NOTE: what about geoLocation & address?
-        entry->SetLocationL(toPtrC16(loc.locationName()));
+    if (!loc.label().isEmpty()) {
+        entry->SetLocationL(toPtrC16(loc.label()));
     }
-#ifdef SYMBIAN_CALENDAR_V2
-    QString latLongString = loc.geoLocation();
-    if(!latLongString.isEmpty()) 
+    if(loc.hasValue(QOrganizerItemLocation::FieldLatitude) && loc.hasValue(QOrganizerItemLocation::FieldLongitude))
     {
-		int separatorPosition = latLongString.indexOf(";");
-		QString latString(latLongString.left(separatorPosition));
-		QString longString(latLongString.right(latLongString.length() - separatorPosition -1));
-		bool ok = false;
-		double latitude = latString.toDouble(&ok);
-		if(ok) {
-			double longitude = longString.toDouble(&ok);
-			if(ok) {
-				CCalGeoValue* geoValue = CCalGeoValue::NewL();
-				CleanupStack::PushL(geoValue);
-				geoValue->SetLatLongL(latitude, longitude);
-				entry->SetGeoValueL(*geoValue);
-				CleanupStack::PopAndDestroy(geoValue);
-			}
-		}
-	}
+#ifdef SYMBIAN_CALENDAR_V2
+        CCalGeoValue* geoValue = CCalGeoValue::NewL();
+        CleanupStack::PushL(geoValue);
+        geoValue->SetLatLongL(loc.latitude(), loc.longitude());
+        entry->SetGeoValueL(*geoValue);
+        CleanupStack::PopAndDestroy(geoValue);
 #else
-    if(!loc.geoLocation().isEmpty()) {
-    	// We do not support saving of geolocation.
-    	User::Leave(KErrNotSupported);
-    }
+        // We do not support saving of latitude/longitude.
+        User::Leave(KErrNotSupported);
 #endif
+    }
 }
 
 QString OrganizerItemLocationTransform::detailDefinitionName()

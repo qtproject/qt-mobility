@@ -341,7 +341,7 @@ void QSystemNetworkInfoPrivate::setInitialData()
     setLocationAreaCode(54321);
     setCurrentMobileCountryCode("242");
     setCurrentMobileNetworkCode("123456789");
-    setHomeMobileCountryCode("+47");
+    setHomeMobileCountryCode("247");
     setHomeMobileNetworkCode("987654321");
     setCurrentMode(QSystemNetworkInfo::EthernetMode);
 }

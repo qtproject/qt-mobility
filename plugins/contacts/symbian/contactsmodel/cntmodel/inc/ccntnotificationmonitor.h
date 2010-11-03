@@ -34,6 +34,7 @@
 
 #include <cntdbobs.h> // for tcontactdbobserverevent.
 
+class CCntPackager;
 
 /**
 The CCntNotificationMonitor class provides the base class for monitoring of
@@ -71,6 +72,7 @@ public:
 
 private:
 	CCntDbNotifyMonitor(RCntModel& aSession);
+	void    ConstructL();
 	void 	RunL();
 	void 	Start();
 	TInt	RunError(TInt aError);
@@ -80,6 +82,8 @@ private:
 	RPointerArray<MContactDbObserverV2> iObserverV2Array;
 	TPckgBuf<TContactDbObserverEventV2> iEventMsg;
 	TInt iCurrentProcessedObserver;
+	CCntPackager* iPackager;
+	TDes8* iPackagerBuffer;
 };
 
 

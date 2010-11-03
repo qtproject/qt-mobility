@@ -25,8 +25,13 @@
 #include "persistencelayerimpl.h"
 #include "clplcontactproperties.h"
 #include "cntfilesearch.h"
-#include <bautils.h>
 #include "persistencelayer.h"
+#include "cntdbconsts_internal.h"
+
+#include <pathinfo.h>
+#include <driveinfo.h>
+#include <bautils.h>
+#include <utf.h>
 
 const TInt KDriveNameWidth = 2; // e.g. "C:"
 
@@ -74,6 +79,10 @@ CPplContactsFile ConstructL.
 */	
 void CPplContactsFile::ConstructL()
 	{
+    // Do this first since the contacts table created by the
+    // iItemManager will need to know if the directory exists.
+    CreateImagesDirL();
+    
 	iItemManager = CPplContactItemManager::NewL(iDatabase, *this, iContactProperties, iIccContactStore);
 	iContactProperties.SetContactItemManagerL(*iItemManager);
 	
@@ -190,6 +199,151 @@ void CPplContactsFile::OpenL(const TDesC& aFileName, TBool aNotify)
 	}
 
 /**
+Delete and create the images folder. This removes all the files in
+this folder.
+*/
+void CPplContactsFile::DeleteImagesDirL()
+    {
+    LocalFsL();
+    TInt drive;
+    
+#ifdef __WINS__
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
+#else
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
+#endif
+    
+    // Do not leave with this error. The phone does not have to have this support
+    if (err == KErrNotSupported)
+        {
+        return;
+        }
+    else
+        {
+        User::LeaveIfError(err);
+        }
+    
+    // Get the root path in this drive to create
+    // to create the images directory
+    TPath dir;
+    User::LeaveIfError(PathInfo::GetRootPath(dir, drive));
+    dir.Append(KImagesFolder);
+    
+    CFileMan* fileMan = CFileMan::NewL(iLocalFs);
+    err = fileMan->RmDir(dir); // err not used
+    delete fileMan;
+    }
+
+
+/**
+Create a public hidded internal folder to store contact thumbnail images
+*/
+void CPplContactsFile::CreateImagesDirL()
+    {
+    LocalFsL();
+    TInt drive;
+    
+#ifdef __WINS__
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
+#else
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
+#endif
+    
+    // Do not leave with this error. The phone does not have to have this support
+    if (err == KErrNotSupported)
+        {
+        return;
+        }
+    else
+        {
+        User::LeaveIfError(err);
+        }
+    
+    // Get the root path in this drive to create
+    // to create the images directory
+    TPath dir;
+    User::LeaveIfError(PathInfo::GetRootPath(dir, drive));
+    dir.Append(KImagesFolder);
+    
+    // Ensure images directory exists
+    if (!BaflUtils::FolderExists(iLocalFs, dir))
+        {
+        BaflUtils::EnsurePathExistsL(iLocalFs, dir);
+        User::LeaveIfError(iLocalFs.SetAtt(dir, KEntryAttHidden, KEntryAttNormal));
+        
+        CreateImagesBackupRegistrationFileL(dir);
+        }
+    }
+
+/**
+Create a backup registration file used to inform the backup and restore
+utility to backup the internal folder and all its images.
+*/
+void CPplContactsFile::CreateImagesBackupRegistrationFileL(const TPath& aDir)
+    {
+    LocalFsL();
+    
+    _LIT8(KXmlFilePart1, "<?xml version=\"1.0\" standalone=\"yes\"?>\r\n"
+        "<backup_registration>\r\n"
+        "    <public_backup delete_before_restore=\"yes\">\r\n"
+        "        <include_directory name=\"");
+    _LIT8(KXmlFilePart2, "\"/>\r\n"
+        "    </public_backup>\r\n"
+        "</backup_registration>\r\n");
+    
+    TPath privatePath;
+    User::LeaveIfError(iLocalFs.PrivatePath(privatePath));
+    User::LeaveIfError(iLocalFs.SetSessionPath(privatePath));
+
+    // If the path does not exist create it.
+    TInt err = iLocalFs.MkDirAll(privatePath);
+    if (err != KErrAlreadyExists && err != KErrNone)
+        {
+        User::Leave(err);
+        }
+
+    _LIT(KImagesBackupFolderName, "backup_registration_images.xml");
+    
+    // Remove previous backup registration file. The drive path may have
+    // changed so this file needs to be regenerated all the time
+    BaflUtils::DeleteFile(iLocalFs, KImagesBackupFolderName()); // Error value not necessary
+
+    const TInt newFileNameLength = KImagesBackupFolderName().Length();
+   
+    HBufC* newFileName = HBufC::NewLC(newFileNameLength);
+    
+    TPtr newFileNamePtr(newFileName->Des());
+    newFileNamePtr.Append(KImagesBackupFolderName);
+
+    // Create registration file.
+    RFile file;
+    CleanupClosePushL(file);
+
+    // File should not exist since it was deleted
+    User::LeaveIfError(file.Create(iLocalFs, *newFileName, EFileWrite));
+        
+    HBufC* nameAndExt = NULL;
+    nameAndExt = HBufC::NewLC(aDir.Length());
+    nameAndExt->Des().Append(aDir);
+
+    // Convert foldername and extension to UTF8 before writing to file.
+    HBufC8* folderName = HBufC8::NewLC(aDir.Length());
+    TPtr8 pFolderName(folderName->Des());
+    
+    User::LeaveIfError(CnvUtfConverter::ConvertFromUnicodeToUtf8(pFolderName,
+        *nameAndExt));
+
+    // Write data into file.
+    User::LeaveIfError(file.Write(KXmlFilePart1()));
+    User::LeaveIfError(file.Write(pFolderName));
+    User::LeaveIfError(file.Write(KXmlFilePart2()));
+    User::LeaveIfError(file.Flush());
+
+    User::LeaveIfError(iLocalFs.SetSessionPath(aDir));
+    CleanupStack::PopAndDestroy(4, newFileName); // folderName, nameAndExt, file, newFileName
+    }
+
+/**
 Utility method used to generate EContactDbObserverEventTablesOpened event
 */
 void CPplContactsFile::GenerateNotificationEventL(TBool aNotify)
@@ -207,7 +361,7 @@ void CPplContactsFile::GenerateNotificationEventL(TBool aNotify)
 		event.iContactId = 0;
  		event.iConnectionId = 0;
  		event.iTypeV2 = EContactDbObserverEventV2Null;
- 		event.iAdditionalContactId = 0;
+ 		event.iAdditionalContactIds = NULL;
  		TRAP_IGNORE(iDbObserver->HandleDatabaseEventV2L(event));
  		}
 	}
@@ -246,7 +400,7 @@ void CPplContactsFile::CloseTablesL(TBool aNotify)
   		event.iContactId = 0;
   		event.iConnectionId = 0;
         event.iTypeV2 = EContactDbObserverEventV2Null;
-        event.iAdditionalContactId = 0;
+        event.iAdditionalContactIds = NULL;
   		TRAP_IGNORE(iDbObserver->HandleDatabaseEventV2L(event));	
   		}
   	}
@@ -314,6 +468,11 @@ EXPORT_C void CPplContactsFile::CreateL(const TDesC& aFileName, TPlCreateMode aM
 	
 	User::LeaveIfError(iDatabase.Create(fileName, iConfigureStr));
   	iItemManager->CreateTablesL();
+  	
+  	// If the folder exists recreate it since the database is new
+  	DeleteImagesDirL();
+  	CreateImagesDirL();
+  	
   	iContactProperties.SystemTemplateManager().RecreateSystemTemplateL();
 
 	CleanupStack::Pop(); // The TCleanupItem.
@@ -330,7 +489,10 @@ void CPplContactsFile::DeleteL(const TDesC& aFileName)
 	TFileName fileName;
 	GetPhysicalFileNameL(fileName, aFileName);	
 	
-	User::LeaveIfError(iLocalFs.Delete(fileName));  
+	User::LeaveIfError(iLocalFs.Delete(fileName));
+	
+	DeleteImagesDirL();
+    
 	iFileIsOpen = EFalse;
 	}
 

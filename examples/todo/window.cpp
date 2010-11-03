@@ -50,7 +50,7 @@ Window::Window()
 {
     setupGui();
 
-    manager = new QOrganizerItemManager("memory");
+    manager = new QOrganizerManager("memory");
 
     setWindowTitle(tr("ToDo Example"));
     refreshList();
@@ -112,7 +112,7 @@ void Window::deleteTodo()
         QVariant variant = items.at(0)->data(Qt::UserRole);
         if (variant.canConvert<QOrganizerTodo>()) {
             QOrganizerTodo theTodo = variant.value<QOrganizerTodo>();
-            manager->removeItem(theTodo.localId());
+            manager->removeItem(theTodo.id());
             refreshList();
         }
     }
@@ -125,11 +125,11 @@ void Window::refreshList()
     listWidget->clear();
 
     QOrganizerItemSortOrder sortOrder;
-    sortOrder.setDetailDefinitionName(QOrganizerTodoTimeRange::DefinitionName,
-        QOrganizerTodoTimeRange::FieldDueDateTime);
+    sortOrder.setDetailDefinitionName(QOrganizerTodoTime::DefinitionName,
+        QOrganizerTodoTime::FieldDueDateTime);
 
     QList<QOrganizerItem> items =
-        manager->items(QList<QOrganizerItemSortOrder>() << sortOrder);
+        manager->items(QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>() << sortOrder);
 //! [5]
     if (items.isEmpty()) {
        new QListWidgetItem("<No Todos>", listWidget);

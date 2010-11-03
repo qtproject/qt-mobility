@@ -79,10 +79,8 @@ public:
     {
         Q_ASSERT(session);
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG        
-        qDebug() << "Symbian IPC endpoint created. 255 buffer v3";
+        qDebug() << "Symbian IPC endpoint created. 255 buffer";
 #endif
-        // TODO does not exist / work / may be useless.
-        // connect(session, SIGNAL(ReadyRead()), this, SLOT(readIncoming()));
         connect(session, SIGNAL(Disconnected()), this, SIGNAL(disconnected()));
     }
 
@@ -96,7 +94,7 @@ public:
     void PackageReceived(QServicePackage package)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "GTR SymbianClientEndPoint: package received. Enqueueing and emiting ReadyRead()";
+        qDebug() << "PackageReceived. Enqueueing and emiting ReadyRead()";
 #endif
         incoming.enqueue(package);
         emit readyRead();
@@ -165,7 +163,7 @@ protected:
 #endif
         TRAPD(err, session->SendServicePackageL(package));
         if(err != KErrNone){
-          qDebug() << "Failed to send request: " << err;
+            qDebug() << "flushPackage: Failed to send request: " << err;
         }
     }
 
@@ -179,12 +177,13 @@ QRemoteServiceRegisterSymbianPrivate::QRemoteServiceRegisterSymbianPrivate(QObje
 {
 }
 
+QRemoteServiceRegisterSymbianPrivate::~QRemoteServiceRegisterSymbianPrivate()
+{
+    delete m_server;
+}
+
 void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
 {
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "QRemoteServiceRegisterPrivate::publishServices() for ident: " << ident;
-    qDebug("OTR TODO change publishServices to to return value ");
-#endif    
     // Create service side of the Symbian Client-Server architecture.
     m_server = new CServiceProviderServer(this);
     TPtrC serviceIdent(reinterpret_cast<const TUint16*>(ident.utf16()));
@@ -195,11 +194,10 @@ void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
     TInt err = m_server->Start(serviceIdent);
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG    
     if (err != KErrNone) {
-        qDebug() << "RTR server->Start() failed, TODO return false.";
+        qDebug() << "publishServices: server->Start() failed: " << err;
     } else {
-        qDebug("GTR QRemoteServiceRegisterPrivate::server providing service started successfully");
+        qDebug("publishServices: service started successfully");
     }
-    qDebug() << "Service fired rendezvous";
 #endif
     // If we're started by the client, notify them we're running
     RProcess::Rendezvous(KErrNone);
@@ -208,7 +206,7 @@ void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
 void QRemoteServiceRegisterSymbianPrivate::processIncoming(CServiceProviderServerSession* newSession)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG  
-    qDebug("GTR Processing incoming session creation.");
+    qDebug("processingIncoming session creation.");
 #endif
     // Create service provider-side endpoints.
     SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession, this);
@@ -233,7 +231,7 @@ QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateOb
 QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry &entry, const QString &location)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "QRemoteServiceRegisterPrivate::proxyForService for location: " << location;
+    qDebug() << "proxyForService for location: " << location;
 #endif
     // Create client-side session for the IPC and connect it to the service
     // provide. If service provider is not up, it will be started.
@@ -244,7 +242,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     int i = 0;
     while (err != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG      
-        qDebug() << "QRemoteServiceRegisterPrivate::proxyForService Connecting in loop: " << i;
+        qDebug() << "proxyForService Connecting in loop: " << i;
 #endif        
         if (i > 10) {
             qWarning() << "QtSFW failed to connect to service provider.";
@@ -307,7 +305,7 @@ TInt RServiceSession::Connect()
     TInt err = StartServer();
     if (err == KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "GTR StartServer() successful, Creating session.";
+        qDebug() << "StartServer successful, Creating session.";
 #endif
         TPtrC serviceAddressPtr(reinterpret_cast<const TUint16*>(iServerAddress.utf16()));
         err = CreateSession(serviceAddressPtr, Version());
@@ -332,13 +330,13 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
     out.setVersion(QDataStream::Qt_4_6);
     out << aPackage;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "Size of package sent from client to server: " << block.count();
+    qDebug() << "SendServicePackage: Size of package sent from client to server: " << block.count();
 #endif
     TPtrC8 ptr8((TUint8*)(block.constData()), block.size());
     TIpcArgs args(&ptr8, &iError);
     TInt err = SendReceive(EServicePackage, args);
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG    
-    qDebug() << "OTR SendPackage error handling, error code received: " << err;
+    qDebug() << "SendServicePackage error code received: " << err;
 #endif
     if(err != KErrNone){
       enum QService::UnrecoverableIPCError e  = QService::ErrorUnknown;
@@ -351,7 +349,6 @@ void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
         e = QService::ErrorOutofMemory;
         break;
       }
-      qDebug() << "OTR SendPackage error handling, errorUnrecoverableIPCFault emitting2: " << e;
       emit errorUnrecoverableIPCFault(e);
     }
 }
@@ -368,23 +365,20 @@ TInt RServiceSession::StartServer()
     TFindServer findServer(serviceAddressPtr);
     TFullName name;
     // Looks up from Kernel-side if there are active servers with the given name.
-    // If not found, a process providing the service needs to be started.
-    // TODO how to map service address to executable file name.
+    // If not found, a process providing the service needs to be started.    
     if (findServer.Next(name) != KErrNone) {
 #ifdef __WINS__
-        qWarning("WINS Support for QSFW OOP not implemented.");
+          qWarning("WINS Support for QSFW OOP not implemented.");
 #else
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "RServiceSession::StartServer() GTR Service not found from Kernel. Starting a process. 2";
-        qDebug() << "RServiceSession::StartServer() OTR TODO hard coded to start test service: " << iServerAddress;
+        qDebug() << "RServiceSession::StartServer() Service not found. Starting " << iServerAddress;
 #endif
         TRequestStatus status;
         RProcess serviceServerProcess;
-        //_LIT(KServiceProviderServer, "qservicemanager_ipc_service");
         ret = serviceServerProcess.Create(serviceAddressPtr, KNullDesC);
         if (ret != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-            qDebug() << "RTR RProcess::Create failed";
+            qDebug() << "StartServer RProcess::Create failed: " << ret;
 #endif
             return ret;
         }
@@ -394,14 +388,14 @@ TInt RServiceSession::StartServer()
 
         if (status != KRequestPending) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-            qDebug() << "RTR Service Server Process Rendezvous() failed, killing process.";
+            qDebug() << "StartServer Service Server Process Rendezvous() failed, killing process.";
 #endif
             serviceServerProcess.Kill(KErrNone);
             serviceServerProcess.Close();
             return KErrGeneral;
         } else {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
-            qDebug() << "GTR Service Server Process Rendezvous() successful, resuming process.";
+            qDebug() << "StartServer Service Server Process Rendezvous() successful, resuming process.";
 #endif
             serviceServerProcess.Resume();
         }
@@ -579,7 +573,7 @@ CServiceProviderServerSession::CServiceProviderServerSession(CServiceProviderSer
 void CServiceProviderServerSession::ConstructL()
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug("OTR CServiceProviderServerSession::ConstructL() TODO empty");
+    qDebug("OTR CServiceProviderServerSession::ConstructL()");
 #endif
     iTotalSize = 0;    // No data
     iBlockData.clear();// clear the buffer
@@ -599,8 +593,7 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "CServiceProviderServerSession::ServiceL for message: " << aMessage.Function();
-#endif
-    // TODO leaving needs to be analyzed if OK
+#endif    
     switch (aMessage.Function()) 
     {
     case EServicePackage:
@@ -608,14 +601,10 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
         aMessage.Complete(KErrNone);
         break;
     case EPackageRequest:
-        //User::LeaveIfError(HandlePackageRequestL(aMessage));
-        // Message is completed only when we have signals to transfer.
         HandlePackageRequestL(aMessage);
         break;
     case EPackageRequestCancel:
-        //User::LeaveIfError(HandlePackageRequestCancelL(aMessage));
         HandlePackageRequestCancelL(aMessage);
-        // TODO
         break;
     }
 }
@@ -632,8 +621,9 @@ TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMess
     TPtr8 ptrToBuf(servicePackageBuf8->Des());
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone) {
+        // TODO: is this error handleing correct
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG      
-        qDebug("OTR TODO HandleServicePackageL. Message read failed.");
+        qDebug() << "HandleServicePackageL. Message read failed: " << ret;
 #endif
         //iDb->lastError().setError(DBError::UnknownError);
         //aMessage.Write(1, LastErrorCode());
@@ -706,7 +696,7 @@ void CServiceProviderServerSession::SendServicePackageL(const QServicePackage& a
           size = iMsg.GetDesMaxLength(0);
           // enequeue the package so we send the  next chunk
           // when the next request comes through
-          iPendingPackageQueue.enqueue(aPackage); 
+          iPendingPackageQueue.prepend(aPackage); 
         }
         TPtrC8 ptr8((TUint8*)(iBlockData.constData()), size);      
         iMsg.WriteL(0, ptr8);

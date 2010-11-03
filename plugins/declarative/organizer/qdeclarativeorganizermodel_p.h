@@ -1,39 +1,40 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
-**     the names of its contributors may be used to endorse or promote
-**     products derived from this software without specific prior written
-**     permission.
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -58,51 +59,32 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
-    Q_PROPERTY(QStringList availableManagers READ availableManagers NOTIFY availableManagersChanged)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
     Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences READ occurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> events READ events NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences READ eventOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todos READ todos NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
-    Q_PROPERTY(Error error READ error NOTIFY errorChanged)
-    Q_ENUMS(Error)
+    Q_PROPERTY(QString error READ error)
 public:
     enum {
-        OrganizerItemIdRole = Qt::UserRole + 500,
-        OrganizerItemRole
-
+        OrganizerItemRole = Qt::UserRole + 500
     };
 
-    enum Error {
-        NoError = QOrganizerItemManager::NoError,
-        DoesNotExistError = QOrganizerItemManager::DoesNotExistError,
-        AlreadyExistsError = QOrganizerItemManager::AlreadyExistsError,
-        InvalidDetailError = QOrganizerItemManager::InvalidDetailError,
-        LockedError = QOrganizerItemManager::LockedError,
-        DetailAccessError = QOrganizerItemManager::DetailAccessError,
-        PermissionsError = QOrganizerItemManager::PermissionsError,
-        OutOfMemoryError = QOrganizerItemManager::OutOfMemoryError,
-        NotSupportedError = QOrganizerItemManager::NotSupportedError,
-        BadArgumentError = QOrganizerItemManager::BadArgumentError,
-        UnspecifiedError = QOrganizerItemManager::UnspecifiedError,
-        VersionMismatchError = QOrganizerItemManager::VersionMismatchError,
-        LimitReachedError = QOrganizerItemManager::LimitReachedError,
-        InvalidItemTypeError = QOrganizerItemManager::InvalidItemTypeError,
-        InvalidCollectionError = QOrganizerItemManager::InvalidCollectionError,
-        InvalidOccurrenceError = QOrganizerItemManager::InvalidOccurrenceError
-    };
 
     explicit QDeclarativeOrganizerModel(QObject *parent = 0);
-    explicit QDeclarativeOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
+    explicit QDeclarativeOrganizerModel(QOrganizerManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
-    Error error() const;
+    QString error() const;
     QString manager() const;
     void setManager(const QString& managerName);
     QStringList availableManagers() const;
@@ -116,13 +98,12 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     QDeclarativeOrganizerItemFilter* filter() const;
-    void setFilter(QDeclarativeOrganizerItemFilter* filter);
 
     QDeclarativeOrganizerItemFetchHint* fetchHint() const;
-    void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
 
     QDeclarativeListProperty<QDeclarativeOrganizerItem> items() ;
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences();
     QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders() ;
     QDeclarativeListProperty<QDeclarativeOrganizerItem> events();
     QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences();
@@ -135,6 +116,11 @@ public:
     Q_INVOKABLE void removeItems(const QList<uint>& ids);
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
 
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
+
+    void setFilter(QDeclarativeOrganizerItemFilter* filter);
+    void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
     static QOrganizerItemId itemIdFromHash(uint key);
     static QOrganizerCollectionId collectionIdFromHash(uint key);
@@ -149,7 +135,10 @@ signals:
     void errorChanged();
     void startPeriodChanged();
     void endPeriodChanged();
+    void autoUpdateChanged();
+
 public slots:
+    void update();
     void exportItems(const QString& file);
     void importItems(const QString& file);
 private slots:

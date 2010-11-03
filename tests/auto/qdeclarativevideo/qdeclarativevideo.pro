@@ -12,13 +12,12 @@ INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/multimedia
 HEADERS += \
         $$PWD/../../../plugins/declarative/multimedia/qdeclarativevideo_p.h \
         $$PWD/../../../plugins/declarative/multimedia/qdeclarativemediabase_p.h \
-        $$PWD/../../../plugins/declarative/multimedia/qmetadatacontrolmetaobject_p.h
+        $$PWD/../../../plugins/declarative/multimedia/qdeclarativemediametadata_p.h
 
 SOURCES += \
         tst_qdeclarativevideo.cpp \
         $$PWD/../../../plugins/declarative/multimedia/qdeclarativevideo.cpp \
-        $$PWD/../../../plugins/declarative/multimedia/qdeclarativemediabase.cpp \
-        $$PWD/../../../plugins/declarative/multimedia/qmetadatacontrolmetaobject.cpp
+        $$PWD/../../../plugins/declarative/multimedia/qdeclarativemediabase.cpp
 
 CONFIG += mobility
 MOBILITY = multimedia

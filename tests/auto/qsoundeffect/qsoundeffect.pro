@@ -16,15 +16,15 @@ MOBILITY = multimedia
 
 QT += declarative
 
-wince* {
-    deploy.sources += 4.wav
+wince*|symbian {
+    deploy.sources = test.wav
     DEPLOYMENT = deploy
-    DEFINES += SRCDIR=\\\"\\\"
+    !symbian:DEFINES += SRCDIR=\\\"\\\"
 } else {
     DEFINES += SRCDIR=\\\"$$PWD/\\\"
 }
 
-unix:!mac {
+unix:!mac:!symbian {
     !contains(QT_CONFIG, pulseaudio) {
         DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
     }

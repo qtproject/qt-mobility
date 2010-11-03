@@ -147,6 +147,7 @@ private:
     void addManagers(); // add standard managers to the data
     QContact createContact(QContactDetailDefinition nameDef, QString firstName, QString lastName, QString phoneNumber);
     void saveContactName(QContact *contact, QContactDetailDefinition nameDef, QContactName *contactName, const QString &name) const;
+    void validateDefinitions(const QMap<QString, QContactDetailDefinition>& defs) const;
 
     QScopedPointer<QContactManagerDataHolder> managerDataHolder;
 
@@ -201,6 +202,7 @@ private slots:
     void memoryManager();
     void changeSet();
     void fetchHint();
+    void engineDefaultSchema();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -1471,6 +1473,7 @@ void tst_QContactManager::invalidManager()
     QMap<int, QContactManager::Error> errorMap;
     errorMap.insert(0, QContactManager::NoError);
     QVERIFY(!manager.saveContacts(0, &errorMap));
+    QVERIFY(manager.errorMap().count() == 0);
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
@@ -2375,13 +2378,8 @@ void tst_QContactManager::errorStayingPut()
     QVERIFY(m2.error() == QContactManager::BadArgumentError);
 }
 
-void tst_QContactManager::detailDefinitions()
+void tst_QContactManager::validateDefinitions(const QMap<QString, QContactDetailDefinition>& defs) const
 {
-    QFETCH(QString, uri);
-    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
-    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
-
-    /* Validate the existing definitions */
 
     // Do some sanity checking on the definitions first
     if (defs.keys().count() != defs.uniqueKeys().count()) {
@@ -2445,7 +2443,68 @@ void tst_QContactManager::detailDefinitions()
             }
         }
     }
+}
 
+void tst_QContactManager::engineDefaultSchema()
+{
+    /* Test the default schemas - mostly just that they are valid, and v2 has certain changes */
+    QMap<QString, QMap<QString, QContactDetailDefinition> > v1defaultSchemas = QContactManagerEngine::schemaDefinitions();
+    QMap<QString, QMap<QString, QContactDetailDefinition> > v1Schemas = QContactManagerEngine::schemaDefinitions(1);
+    QMap<QString, QMap<QString, QContactDetailDefinition> > v2Schemas = QContactManagerEngine::schemaDefinitions(2);
+
+    QVERIFY(v1Schemas == v1defaultSchemas);
+    QVERIFY(v1Schemas != v2Schemas);
+
+    QCOMPARE(v1Schemas.keys().count(), v1Schemas.uniqueKeys().count());
+    QCOMPARE(v2Schemas.keys().count(), v2Schemas.uniqueKeys().count());
+
+    foreach(const QString& type, v1Schemas.keys()) {
+        validateDefinitions(v1Schemas.value(type));
+    }
+
+    foreach(const QString& type, v2Schemas.keys()) {
+        validateDefinitions(v2Schemas.value(type));
+    }
+
+    /* Make sure that birthdays do not have calendar ids in v1, but do in v2*/
+    QVERIFY(!v1Schemas.value(QContactType::TypeContact).value(QContactBirthday::DefinitionName).fields().contains(QContactBirthday::FieldCalendarId));
+    QVERIFY(!v1Schemas.value(QContactType::TypeGroup).value(QContactBirthday::DefinitionName).fields().contains(QContactBirthday::FieldCalendarId));
+    QVERIFY(v2Schemas.value(QContactType::TypeContact).value(QContactBirthday::DefinitionName).fields().contains(QContactBirthday::FieldCalendarId));
+    QVERIFY(v2Schemas.value(QContactType::TypeGroup).value(QContactBirthday::DefinitionName).fields().contains(QContactBirthday::FieldCalendarId));
+
+    /* Urls can be blogs in v2 but not b1 */
+    QVERIFY(!v1Schemas.value(QContactType::TypeContact).value(QContactUrl::DefinitionName).fields().value(QContactUrl::FieldSubType).allowableValues().contains(QString(QLatin1String(QContactUrl::SubTypeBlog))));
+    QVERIFY(!v1Schemas.value(QContactType::TypeGroup).value(QContactUrl::DefinitionName).fields().value(QContactUrl::FieldSubType).allowableValues().contains(QString(QLatin1String(QContactUrl::SubTypeBlog))));
+    QVERIFY(v2Schemas.value(QContactType::TypeContact).value(QContactUrl::DefinitionName).fields().value(QContactUrl::FieldSubType).allowableValues().contains(QString(QLatin1String(QContactUrl::SubTypeBlog))));
+    QVERIFY(v2Schemas.value(QContactType::TypeGroup).value(QContactUrl::DefinitionName).fields().value(QContactUrl::FieldSubType).allowableValues().contains(QString(QLatin1String(QContactUrl::SubTypeBlog))));
+
+    /* Make sure family, favorite and hobby are not in v1, but are in v2 */
+    QVERIFY(!v1Schemas.value(QContactType::TypeContact).contains(QContactFamily::DefinitionName));
+    QVERIFY(!v1Schemas.value(QContactType::TypeGroup).contains(QContactFamily::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeContact).contains(QContactFamily::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeGroup).contains(QContactFamily::DefinitionName));
+
+    QVERIFY(!v1Schemas.value(QContactType::TypeContact).contains(QContactFavorite::DefinitionName));
+    QVERIFY(!v1Schemas.value(QContactType::TypeGroup).contains(QContactFavorite::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeContact).contains(QContactFavorite::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeGroup).contains(QContactFavorite::DefinitionName));
+
+    QVERIFY(!v1Schemas.value(QContactType::TypeContact).contains(QContactHobby::DefinitionName));
+    QVERIFY(!v1Schemas.value(QContactType::TypeGroup).contains(QContactHobby::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeContact).contains(QContactHobby::DefinitionName));
+    QVERIFY(v2Schemas.value(QContactType::TypeGroup).contains(QContactHobby::DefinitionName));
+}
+
+void tst_QContactManager::detailDefinitions()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+
+    /* Validate the existing definitions */
+    foreach(const QString& contactType, cm->supportedContactTypes()) {
+        validateDefinitions(cm->detailDefinitions(contactType));
+    }
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
