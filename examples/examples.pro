@@ -33,22 +33,18 @@ contains(mobility_modules,location) {
         SUBDIRS += landmarkbrowser
     }
 
-#    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
-#    	SUBDIRS += geoservicedemo \
-#                    mapviewer
-#
-#    } else {
-#        contains(mobility_modules,bearer) {
-#    	    SUBDIRS += geoservicedemo \
-#                       mapviewer
-#        }
-#    }
-
-    contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo \
+    equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS +=  flickrdemo \
+                        geoservicedemo \
+                        mapviewer
+        }
+    } else {
+        SUBDIRS +=  flickrdemo \
                     geoservicedemo \
                     mapviewer
-      }  
+    }
+
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-location
     }

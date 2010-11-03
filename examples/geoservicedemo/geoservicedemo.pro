@@ -4,7 +4,6 @@ TARGET = GeoServiceDemo
 TEMPLATE = app
 
 INCLUDEPATH += ../../src/location \
-               ../../src/bearer \
                ../../src/location/maps
 
 SOURCES += main.cpp\
@@ -27,11 +26,13 @@ HEADERS  += routepresenter.h \
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location bearer
-#contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
-#    MOBILITY += bearer
-#    INCLUDEPATH += ../../src/bearer
-#}
+MOBILITY = location 
+equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
+    MOBILITY += bearer
+    INCLUDEPATH += ../../src/bearer
+} else {
+    # use Bearer Management classes in QtNetwork module
+}
 
 symbian: {
     TARGET.CAPABILITY = Location \
