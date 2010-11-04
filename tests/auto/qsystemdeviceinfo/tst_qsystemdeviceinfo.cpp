@@ -683,15 +683,15 @@ void tst_QSystemDeviceInfo::batteryStatusChanged(QSystemDeviceInfo::BatteryStatu
 {
     QSystemDeviceInfo di;
     int level = di.batteryLevel();
-    if(level == -1)
+    if (level == -1)
         QVERIFY(batteryStatus ==QSystemDeviceInfo::NoBatteryLevel);
-    if(level < 4) {
+    if (level < 4) {
         QVERIFY(batteryStatus == QSystemDeviceInfo::BatteryCritical);
-    } else if(level < 11) {
+    } else if (level < 11) {
         QVERIFY(batteryStatus == QSystemDeviceInfo::BatteryVeryLow);
-    } else if(level < 41) {
+    } else if (level < 41) {
         QVERIFY(batteryStatus == QSystemDeviceInfo::BatteryLow);
-    } else if(level > 40) {
+    } else if (level > 40) {
         QVERIFY(batteryStatus == QSystemDeviceInfo::BatteryNormal);
     }
 }
