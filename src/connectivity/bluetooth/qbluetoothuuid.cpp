@@ -46,8 +46,10 @@
 
 #include <QDebug>
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
+#include <QtEndian>
+
+//#include <arpa/inet.h>
+//#include <netinet/in.h>
 #include <string.h>
 
 QTM_BEGIN_NAMESPACE
@@ -145,16 +147,17 @@ QBluetoothUuid::QBluetoothUuid(quint32 uuid)
 */
 QBluetoothUuid::QBluetoothUuid(quint128 uuid)
 {
+    // TODO: look at the memcpy(), should not be needed
     quint32 tmp32;
     memcpy(&tmp32, &uuid.data[0], 4);
-    data1 = ntohl(tmp32);
+    data1 = qFromBigEndian<quint32>(tmp32);
 
     quint16 tmp16;
     memcpy(&tmp16, &uuid.data[4], 2);
-    data2 = ntohs(tmp16);
+    data2 = qFromBigEndian<quint16>(tmp16);
 
     memcpy(&tmp16, &uuid.data[6], 2);
-    data3 = ntohs(tmp16);
+    data3 = qFromBigEndian<quint16>(tmp16);
 
     memcpy(data4, &uuid.data[8], 8);
 }
@@ -264,13 +267,13 @@ quint128 QBluetoothUuid::toUInt128() const
 {
     quint128 uuid;
 
-    quint32 tmp32 = htonl(data1);
+    quint32 tmp32 = qToBigEndian<quint32>(data1);
     memcpy(&uuid.data[0], &tmp32, 4);
 
-    quint16 tmp16 = htons(data2);
+    quint16 tmp16 = qToBigEndian<quint16>(data2);
     memcpy(&uuid.data[4], &tmp16, 2);
 
-    tmp16 = htons(data3);
+    tmp16 = qToBigEndian<quint16>(data3);
     memcpy(&uuid.data[6], &tmp16, 2);
 
     memcpy(&uuid.data[8], data4, 8);
