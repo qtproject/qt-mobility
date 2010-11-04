@@ -315,6 +315,16 @@ void QFeedbackSimulator::forceEffectState(int effectId, QFeedbackEffect::State s
     }
 }
 
+void QFeedbackSimulator::emitStateChanged(int effectId)
+{
+    const QFeedbackEffect *effect = mIdToEffect.value(effectId);
+    if (!effect)
+        return;
+    connect(this, SIGNAL(stateChangedProxySignal()), effect, SIGNAL(stateChanged()));
+    emit stateChangedProxySignal();
+    disconnect(this, SIGNAL(stateChangedProxySignal()), effect, SIGNAL(stateChanged()));
+}
+
 void QFeedbackSimulator::setActuator(const QtMobility::ActuatorData &data)
 {
     mActuatorData.insert(data.id, data);
@@ -352,4 +362,3 @@ void QFeedbackSimulator::rebuildActuatorList()
             mActuatorList += actuator;
     }
 }
-

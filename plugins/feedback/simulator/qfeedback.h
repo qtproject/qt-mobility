@@ -92,11 +92,16 @@ public:
     // ThemeInterface
     virtual bool play(QFeedbackEffect::ThemeEffect);
 
+signals:
+    // used to call stateChanged on an effect
+    void stateChangedProxySignal();
+
 private:
     void setAnyEffectState(const QFeedbackEffect *effect, QFeedbackEffect::State state,
                            int actuatorId, int duration, const QString &info);
     QFeedbackEffect::State anyEffectState(const QFeedbackEffect *);
     void forceEffectState(int effectId, QFeedbackEffect::State state);
+    void emitStateChanged(int effectId);
 
     void setActuator(const ActuatorData &data);
     void removeActuator(int id);
