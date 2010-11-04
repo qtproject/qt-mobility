@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFODATA_SIMULATOR_P_H
-#define QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#ifndef QFEEDBACKDATA_SIMULATOR_P_H
+#define QFEEDBACKDATA_SIMULATOR_P_H
 
 //
 //  W A R N I N G
@@ -54,58 +54,27 @@
 //
 
 #include "qmobilityglobal.h"
+#include "qfeedbackactuator.h"
 #include <QtCore/QMetaType>
-#include <QtCore/QDateTime>
-#include <QtCore/QList>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-struct QGeoPositionInfoData
+class ActuatorData
 {
-    // Coordinate information
-    double latitude;
-    double longitude;
-    double altitude;
-
-    // Attributes
-    // ### transmit whether attributes are set or not
-    qreal direction;
-    qreal groundSpeed;
-    qreal verticalSpeed;
-    qreal magneticVariation;
-    qreal horizontalAccuracy;
-    qreal verticalAccuracy;
-
-    // DateTime info
-    QDateTime dateTime;
-
-    int minimumInterval;
+public:
+    int id;
+    QString name;
+    QFeedbackActuator::State state;
     bool enabled;
 };
 
-struct QGeoSatelliteInfoData
-{
-    struct SatelliteInfo
-    {
-        int prn;
-        qreal azimuth;
-        qreal elevation;
-        int signalStrength;
-        bool inUse;
-    };
-
-    QList<SatelliteInfo> satellites;
-};
-
-void qt_registerLocationTypes();
+void qt_registerFeedbackTypes();
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData::SatelliteInfo)
+Q_DECLARE_METATYPE(QtMobility::ActuatorData)
 
 QT_END_HEADER
 
-#endif // QGEOPOSITIONINFODATA_SIMULATOR_P_H
+#endif // QFEEDBACKDATA_SIMULATOR_P_H
