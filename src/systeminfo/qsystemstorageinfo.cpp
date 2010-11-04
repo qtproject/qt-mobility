@@ -107,10 +107,10 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
 
     connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
-           this,SIGNAL(logicalDriveChanged(bool,const QString &)));
+           this,SIGNAL(logicalDriveChanged(bool,const QString &)),Qt::UniqueConnection);
 
     connect(d,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
-           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)));
+           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
 }
 
 /*!

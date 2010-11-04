@@ -174,6 +174,9 @@ public:
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
     QSystemDeviceInfo::LockType typeOfLock(); //1.2
+#ifdef TESTR
+    QSystemDeviceInfoPrivate *priv;
+#endif
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);

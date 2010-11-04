@@ -68,6 +68,25 @@
 QTM_BEGIN_NAMESPACE
 #endif
 
+#ifdef TESTR
+SystemInfoConnection::SystemInfoConnection(QObject *parent)
+    : QObject(parent)
+{
+}
+
+QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
+{
+    return getSystemNetworkInfoPrivate();
+}
+QSystemDeviceInfoPrivate *SystemInfoConnection::deviceInfoPrivate()
+{
+    return getSystemDeviceInfoPrivate();
+}
+
+#include "qsysteminfo_simulator.moc"
+#endif
+
+
 #ifdef QT_BUILD_SYSINFO_LIB
 #include <mobilityconnection_p.h>
 #include <private/qsimulatordata_p.h>
@@ -231,7 +250,7 @@ static void ensureSimulatorConnection()
 }
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
-    : QObject(parent),d(this)
+    : QObject(parent)
 {
     ensureSimulatorConnection();
 
@@ -336,20 +355,26 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     init.status = QSystemNetworkInfo::UndefinedStatus;
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
+
 #ifdef TESTR
     setInitialData();
 #endif
+}
+
+QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
+{
 }
 
 void QSystemNetworkInfoPrivate::setInitialData()
 {
     setCellId(12345);
     setLocationAreaCode(54321);
-    setCurrentMobileCountryCode("242");
-    setCurrentMobileNetworkCode("123456789");
-    setHomeMobileCountryCode("+47");
-    setHomeMobileNetworkCode("987654321");
-    setCurrentMode(QSystemNetworkInfo::EthernetMode);
+    setCurrentMobileCountryCode(QLatin1String("242"));
+    setCurrentMobileNetworkCode(QLatin1String("123456789"));
+    setHomeMobileCountryCode(QLatin1String("242"));
+    setHomeMobileNetworkCode(QLatin1String("987654321"));
+    setCurrentMode(QSystemNetworkInfo::GsmMode);
+    setNetworkStatus(QSystemNetworkInfo::GsmMode,QSystemNetworkInfo::Roaming);
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m) const
@@ -369,6 +394,10 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode m) const
 {
+    if(data.networkInfo.isEmpty()) {
+         qDebug() << Q_FUNC_INFO << "not";
+    }
+//< data.networkInfo.count();
     return data.networkInfo[static_cast<int>(m)].status;
 }
 
@@ -381,6 +410,7 @@ void QSystemNetworkInfoPrivate::setCellId(int id)
 {
     if (data.cellId != id) {
         data.cellId = id;
+        emit cellIdChanged(id);
     }
 }
 
@@ -425,6 +455,7 @@ void QSystemNetworkInfoPrivate::setCurrentMode(QSystemNetworkInfo::NetworkMode m
 {
     if (data.currentMode != m) {
         data.currentMode = m;
+        emit networkModeChanged(m);
     }
 }
 
@@ -568,6 +599,7 @@ void QSystemDeviceInfoPrivate::setInitialData()
     setProductName("simulator product name");
     setBatteryLevel(84);
     setDeviceLocked(false);
+    setKeyboardType(QSystemDeviceInfo::SoftwareKeyboard);
 }
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus() const
@@ -654,13 +686,14 @@ void QSystemDeviceInfoPrivate::setProductName(const QString &v)
 void QSystemDeviceInfoPrivate::setBatteryLevel(int v)
 {
     if (data.batteryLevel != v) {
-        QSystemDeviceInfo::BatteryStatus oldstatus = batteryStatus();
         data.batteryLevel = v;
         emit batteryLevelChanged(v);
 
         QSystemDeviceInfo::BatteryStatus newstatus = batteryStatus();
-        if (newstatus != oldstatus)
+        if (newstatus != oldstatus) {
             emit batteryStatusChanged(newstatus);
+            oldstatus = newstatus;
+        }
     }
 }
 
@@ -668,6 +701,7 @@ void QSystemDeviceInfoPrivate::setDeviceLocked(bool v)
 {
     if (data.deviceLocked != v) {
         data.deviceLocked = v;
+        emit deviceLocked(v);
     }
 }
 
@@ -675,11 +709,12 @@ void QSystemDeviceInfoPrivate::setBluetoothPower(bool v)
 {
     if (data.currentBluetoothPower != v) {
         data.currentBluetoothPower = v;
+        emit bluetoothStateChanged(v);
     }
 }
 
 
-void QSystemDeviceInfoPrivate::setKkeyboardType(QSystemDeviceInfo::KeyboardType v)
+void QSystemDeviceInfoPrivate::setKeyboardType(QSystemDeviceInfo::KeyboardType v)
 {
     if (data.keyboardType != v) {
         data.keyboardType = v;
@@ -690,6 +725,7 @@ void QSystemDeviceInfoPrivate::setWirelessKeyboardConnected(bool v)
 {
     if (data.wirelessConnected != v) {
         data.wirelessConnected = v;
+        emit wirelessKeyboardConnected(v);
     }
 }
 
@@ -697,6 +733,7 @@ void QSystemDeviceInfoPrivate::setKeyboardFlipOpen(bool v)
 {
     if (data.keyboardFlip != v) {
         data.keyboardFlip = v;
+        emit keyboardFlip(v);
     }
 }
 
@@ -722,11 +759,21 @@ void QSystemDeviceInfoPrivate::setHostId(const QUuid &v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v)
+void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v, bool on)
 {
+    bool lockTypeChanged = false;
+    bool deviceLockChanged = false;
     if (data.lockType != v) {
         data.lockType = v;
+        lockTypeChanged = true;
     }
+    if (data.deviceLocked != on) {
+        data.deviceLocked = on;
+        setDeviceLocked(on);
+        deviceLockChanged = true;
+    }
+    if(lockTypeChanged || deviceLockChanged)
+        emit lockChanged(v,on);
 }
 
 

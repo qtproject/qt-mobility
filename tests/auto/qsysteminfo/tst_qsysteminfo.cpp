@@ -84,11 +84,11 @@ class ChangeLanguageThread : public QThread
 public:
     void run()
     {
-        sleep(2);
         QSystemInfo si;
         QSystemInfoPrivate *s = si.priv;
-        s->setCurrentLanguage("Klingon");
+        s->setCurrentLanguage(lang);
     }
+     QString lang;
 };
 
 class tst_QSystemInfo : public QObject
@@ -119,6 +119,8 @@ private slots:
     void tst_detailFeatures();
     void currentLanguageChanged();
 
+    void slotCurrentLanguageChanged(const QString &);
+
 private:
     ChangeLanguageThread *changeLangThread;
 };
@@ -142,6 +144,7 @@ void tst_QSystemInfo::initTestCase()
 void tst_QSystemInfo::tst_currentLanguage()
 {
     QSystemInfo si;
+    si.priv->setInitialData();
     QVERIFY(!si.currentLanguage().isEmpty());
     QCOMPARE(si.currentLanguage().length(), 2);
     QVERIFY(si.currentLanguage() == si.currentLanguage().toLower());
@@ -151,6 +154,7 @@ void tst_QSystemInfo::tst_currentLanguage()
 void tst_QSystemInfo::tst_availableLanguages()
 {
     QSystemInfo si;
+    si.priv->setInitialData();
     QVERIFY(!si.availableLanguages().isEmpty());
     QStringList available = si.availableLanguages();
     foreach(QString lang, available) {
@@ -176,6 +180,7 @@ void tst_QSystemInfo::tst_versions()
         QFETCH(QSystemInfo::Version, version);
         QFETCH(QString, parameter);
         QSystemInfo si;
+        si.priv->setInitialData();
         QString vers = si.version(version, parameter);
         QVERIFY(!vers.isEmpty()
             || vers.isEmpty());
@@ -185,6 +190,7 @@ void tst_QSystemInfo::tst_versions()
 void tst_QSystemInfo::tst_countryCode()
 {
     QSystemInfo si;
+    si.priv->setInitialData();
     QVERIFY(!si.currentCountryCode().isEmpty());
     QCOMPARE(si.currentCountryCode().length(),2);
     QVERIFY(si.currentCountryCode() == si.currentCountryCode().toUpper());
@@ -214,6 +220,7 @@ void tst_QSystemInfo::tst_hasFeatures()
     {
         QFETCH(QSystemInfo::Feature, feature);
         QSystemInfo si;
+        si.priv->setInitialData();
         QVERIFY(si.hasFeatureSupported(feature) == false
                 || si.hasFeatureSupported(feature) == true);
     }
@@ -236,9 +243,19 @@ void tst_QSystemInfo::tst_detailFeatures()
 void tst_QSystemInfo::currentLanguageChanged()
 {
     QSystemInfo si;
-    changeLangThread->start();
+    connect(&si,SIGNAL(currentLanguageChanged(const QString &)),this,
+            SLOT(slotCurrentLanguageChanged(const QString &)));
 
+    changeLangThread->lang = "kl";
+    changeLangThread->start();
+    QSignalSpy errorSpy(&si, SIGNAL(currentLanguageChanged(const QString &)));
     QVERIFY(::waitForSignal(&si, SIGNAL(currentLanguageChanged(const QString &)), 10 * 1000));
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QSystemInfo::slotCurrentLanguageChanged(const QString &lang)
+{
+    QVERIFY(lang == "kl");
 }
 
 

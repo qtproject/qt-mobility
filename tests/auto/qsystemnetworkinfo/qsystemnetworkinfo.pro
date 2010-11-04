@@ -5,7 +5,7 @@ QT = core network
 SOURCES  += tst_qsystemnetworkinfo.cpp
 
 INCLUDEPATH += ../../../src/systeminfo
-
+DEFINES += TESTR QT_SIMULATOR
 include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = systeminfo

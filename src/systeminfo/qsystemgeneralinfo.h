@@ -96,12 +96,12 @@ public:
         VideoOutFeature,
         HapticsFeature,
         FmTransmitterFeature
-	};
+    };
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-//#ifdef TESTR
+#ifdef TESTR
     QSystemInfoPrivate *priv;
-//#endif
+#endif
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 private:

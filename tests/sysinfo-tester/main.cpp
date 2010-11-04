@@ -327,11 +327,19 @@ static void test_systemnetworkinfo(void)
   X(networkinfo.locationAreaCode());
 
   for(const symbol_t *sym = NetworkMode_lut; sym->key; ++sym) {
-    QtMobility::QSystemNetworkInfo::NetworkMode mode =
-    (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
+      QtMobility::QSystemNetworkInfo::NetworkMode mode =
+              (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
-    qDebug() << "";
-    qDebug() << "NetworkMode:" << sym->key;
+      if(qApp->arguments().count() > 2) {
+          if(!QString(sym->key).contains(qApp->arguments().at(2),Qt::CaseInsensitive)) {
+              continue;
+          }
+        //  continue;
+      } /*else {
+      }*/
+
+      qDebug() << "";
+      qDebug() << "NetworkMode:" << sym->key;
 
     QNetworkInterface iface = networkinfo.interfaceForMode(mode);
     qDebug() << "  networkinfo.interfaceForMode() ->" << iface;

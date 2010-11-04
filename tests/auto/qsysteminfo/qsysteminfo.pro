@@ -3,7 +3,7 @@ CONFIG+=testcase
 
 SOURCES  += tst_qsysteminfo.cpp
 QT = core network
-
+DEFINES += TESTR
 INCLUDEPATH += ../../../src/systeminfo
 
 include(../../../common.pri)

@@ -96,22 +96,21 @@ public:
     void setVersion(QSystemInfo::Version v, const QString &to);
 
     void setInitialData();
-  //  QSystemInfoPrivate *getSystemInfoPrivate();
 
 signals:
     void currentLanguageChanged(const QString &) const;
 
 private:
     QSystemInfoData data;
-     QSystemInfoPrivate *d;
 };
 QSystemInfoPrivate *getSystemInfoPrivate();
 
-class QSystemNetworkInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
     explicit QSystemNetworkInfoPrivate(QObject *parent = 0);
+    virtual ~QSystemNetworkInfoPrivate();
 
     int cellId() const { return data.cellId; }
     int locationAreaCode() const { return data.locationAreaCode; }
@@ -149,13 +148,14 @@ signals:
     void currentMobileNetworkCodeChanged(const QString &) const;
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
     void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
+    void cellIdChanged(int);
 
 private:
     QSystemNetworkInfoData data;
 };
 QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate();
 
-class QSystemDisplayInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemDisplayInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -188,7 +188,7 @@ private:
 };
 QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate();
 
-class QSystemDeviceInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -237,14 +237,14 @@ public:
 
     void setBluetoothPower(bool v);
 
-    void setKkeyboardType(QSystemDeviceInfo::KeyboardType v);
+    void setKeyboardType(QSystemDeviceInfo::KeyboardType v);
     void setWirelessKeyboardConnected(bool v);
     void setKeyboardFlipOpen(bool v);
 
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
     void setHostId(const QUuid &v);
-    void setTypeOfLock(QSystemDeviceInfo::LockType v);
+    void setTypeOfLock(QSystemDeviceInfo::LockType v,bool on);
 
     void setInitialData();
 
@@ -256,12 +256,18 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile) const;
     void bluetoothStateChanged(bool) const;
 
+    void wirelessKeyboardConnected(bool connected);
+    void keyboardFlip(bool open);
+    void deviceLocked(bool isLocked);
+    void lockChanged(QSystemDeviceInfo::LockType, bool);
+
 private:
     QSystemDeviceInfoData data;
+    QSystemDeviceInfo::BatteryStatus oldstatus;
 };
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate();
 
-class QSystemStorageInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -299,7 +305,7 @@ private:
 };
 QSystemStorageInfoPrivate *getSystemStorageInfoPrivate();
 
-class QSystemScreenSaverPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -316,7 +322,7 @@ private:
 };
 
 
-class QSystemBatteryInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemBatteryInfoPrivate : public QObject
 {
     Q_OBJECT
 
@@ -364,6 +370,17 @@ private:
     QSystemBatteryInfoData data;
 };
 QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate();
+
+#ifdef TESTR
+class Q_SYSINFO_EXPORT SystemInfoConnection : public QObject
+{
+    Q_OBJECT
+public:
+    SystemInfoConnection(QObject *parent = 0);
+    QSystemNetworkInfoPrivate *networkInfoPrivate();
+    QSystemDeviceInfoPrivate *deviceInfoPrivate();
+};
+#endif
 
 QTM_END_NAMESPACE
 QT_END_HEADER
