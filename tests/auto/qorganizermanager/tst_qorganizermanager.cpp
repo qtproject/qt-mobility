@@ -2390,18 +2390,27 @@ void tst_QOrganizerManager::signalEmission()
     /* Now some cross manager testing */
     if (!m1->hasFeature(QOrganizerManager::Anonymous)) {
         // verify that signals are emitted for modifications made to other managers (same id).
+        QSignalSpy spyDC(m1.data(), SIGNAL(dataChanged()));
+        spyDC.clear();
         QOrganizerItemDisplayLabel ncs = todo.detail(QOrganizerItemDisplayLabel::DefinitionName);
         ncs.setLabel("Test");
         QVERIFY(todo.saveDetail(&ncs));
         todo.setId(QOrganizerItemId()); // reset id so save can succeed.
         QVERIFY(m2->saveItem(&todo));
+
+        // now modify and resave.
         ncs.setLabel("Test2");
         QVERIFY(todo.saveDetail(&ncs));
         QVERIFY(m2->saveItem(&todo));
-        QTRY_COMPARE(spyCA.count(), 1); // check that we received the update signals.
-        QTRY_COMPARE(spyCM.count(), 1); // check that we received the update signals.
+
+        // we should have one addition and one modification (or at least a data changed signal).
+        QTRY_VERIFY(spyDC.count() || (spyCA.count() == 1)); // check that we received the update signals.
+        QTRY_VERIFY(spyDC.count() || (spyCM.count() == 1)); // check that we received the update signals.
+        todo = m2->item(todo.id()); // reload it.
+        QVERIFY(m1->item(todo.id()) == todo); // ensure we can read it from m1.
+        spyDC.clear();
         m2->removeItem(todo.id());
-        QTRY_COMPARE(spyCR.count(), 1); // check that we received the remove signal.
+        QTRY_VERIFY(spyDC.count() || (spyCR.count() == 1)); // check that we received the remove signal.
     }
 }
 
