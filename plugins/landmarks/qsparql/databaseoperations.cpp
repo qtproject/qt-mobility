@@ -569,7 +569,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         QString queryString2 = QString("select ?u {?u a slo:LandmarkCategory . "
                                               "?landmarkId slo:belongsToCategory ?u . FILTER regex( ?landmarkId, '%1') }").arg(landmarkId.localId());
         QSparqlQuery qsparqlQuery2 = QSparqlQuery(queryString2, QSparqlQuery::SelectStatement);
-        QSparqlResult* qsparqlResult2 = m_conn->exec(qsparqlQuery);
+        QSparqlResult* qsparqlResult2 = m_conn->exec(qsparqlQuery2);
         qsparqlResult2->waitForFinished();
 
         if (qsparqlResult2->hasError()) {
@@ -583,10 +583,12 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
             if (queryRun && queryRun->isCanceled) {
                 return QLandmark();
             }
-            QLandmarkCategoryId id;
-            id.setManagerUri(uri);
-            id.setLocalId(qsparqlResult2->value(0).toString());
-            lm.addCategoryId(id);
+            if (!qsparqlResult2->value(0).toString().isEmpty()) {
+                QLandmarkCategoryId id;
+                id.setManagerUri(uri);
+                id.setLocalId(qsparqlResult2->value(0).toString());
+                lm.addCategoryId(id);
+            }
         }
         QMap<QString,QVariant> bindValues;
         QString q0 = QString("select ?a {?u a slo:Landmark ; slo:iconUrl ?a . FILTER regex( ?u, '%1') }").arg(landmarkId.localId());
@@ -596,7 +598,8 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
             if (!queryResult->value(0).isNull())
                 lm.setIconUrl(QUrl(queryResult->value(0).toString()));
         }
-        q0 = QString("select ?a {?u a slo:Landmark ; nie:url ?a . FILTER regex( ?u, '%1') }").arg(landmarkId.localId());
+        q0 = QString("select ?r { ?u a slo:Landmark ; slo:hasContact ?c . ?c a nco:PersonContact ; nco:url ?r"
+            " . FILTER regex( ?u, '%1') }").arg(landmarkId.localId());
         queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
         if(!queryResult->hasError()) {
             queryResult->next();
@@ -955,18 +958,14 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 queryString.append("regex( ?name, '%1' ) }").arg(nameValue);
             } else {
-                queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
-                //queryString.append(nameKey + " LIKE :" + nameKey + " ");
-               /*
                 if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith)
-                    //bindValues.insert(nameKey, QString("%") + nameValue );
+                    queryString.append("regex( ?name, '%1$', 'i') }").arg(nameValue);
                 else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith)
-                    //bindValues.insert(nameKey, nameValue + "%");
+                    queryString.append("regex( ?name, '^%1', 'i') }").arg(nameValue);
                 else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains)
-                    //bindValues.insert(nameKey, QString("%") + nameValue + "%");
+                    queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
                 else if (nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString)
-                    //bindValues.insert(nameKey, nameValue);
-                */
+                    queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
             }
             break;
         }
@@ -1482,11 +1481,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append(landmark->description());
         queryString.append("\' ");
     }
-    if (!landmark->url().toString().isEmpty()) {
-        queryString.append("; nie:url \'");
-        queryString.append(landmark->url().toString());
-        queryString.append("\' ");
-    }
     if (!landmark->iconUrl().toString().isEmpty()) {
         queryString.append("; slo:iconUrl \'");
         queryString.append(landmark->iconUrl().toString());
@@ -1556,9 +1550,14 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append(landmark->address().postcode());
         queryString.append("\' ");
     }
+    queryString.append(". _:c a nco:PersonContact");
+    if (!landmark->url().toString().isEmpty()) {
+        queryString.append(" ; nco:url \'");
+        queryString.append(landmark->url().toString());
+        queryString.append("\' ");
+    }
     if (!landmark->phoneNumber().isEmpty()) {
-        queryString.append(". _:c a nco:PersonContact ; ");
-        queryString.append("nco:hasPhoneNumber _:pn . ");
+        queryString.append("; nco:hasPhoneNumber _:pn . ");
         queryString.append("_:pn a nco:PhoneNumber ; ");
         queryString.append("nco:phoneNumber \'");
         queryString.append(landmark->phoneNumber());
@@ -1677,12 +1676,18 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             *errorString = lastErrorString;
     }
 
-    if (addedIds.size() != 0)
-        emit landmarksAdded(addedIds);
-
-    if (changedIds.size() != 0)
-        emit landmarksChanged(changedIds);
-
+    if (addedIds.size() != 0) {
+        if  (addedIds.size() < 50)
+            emit landmarksAdded(addedIds);
+        //else
+        //    emit dataChanged();
+    }
+    if (changedIds.size() != 0) {
+        if  (addedIds.size() < 50)
+            emit landmarksChanged(changedIds);
+        //else
+        //    emit dataChanged();
+    }
     return noErrors;
 }
 
