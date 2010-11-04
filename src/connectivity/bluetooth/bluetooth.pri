@@ -24,7 +24,9 @@ PRIVATE_HEADERS += \
     bluetooth/qbluetoothdevicediscoveryagent_p.h\
     bluetooth/qbluetoothservicediscoveryagent_p.h\
     bluetooth/qbluetoothsocket_p.h\
-    bluetooth/qrfcommserver_p.h
+    bluetooth/qrfcommserver_p.h \
+    bluetooth/qiodevice_p.h \
+    bluetooth/qobjectpriv_p.h
 
 SOURCES += \
     bluetooth/qbluetoothaddress.cpp\

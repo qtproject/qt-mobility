@@ -191,6 +191,7 @@ private:
     size_t capacity;
 };
 
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 7, 0))
 class Q_CORE_EXPORT QIODevicePrivate
     : public QObjectPrivate
 {
@@ -233,6 +234,51 @@ public:
 
     QIODevice *q_ptr;
 };
+
+#elif (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
+
+class Q_CORE_EXPORT QIODevicePrivate
+    : public QObjectPrivate
+{
+    Q_DECLARE_PUBLIC(QIODevice)
+
+public:
+    QIODevicePrivate();
+    virtual ~QIODevicePrivate();
+
+    QIODevice::OpenMode openMode;
+    QString errorString;
+
+    QIODevicePrivateLinearBuffer buffer;
+    qint64 pos;
+    qint64 devicePos;
+    // these three are for fast position updates during read, avoiding isSequential test
+    qint64 seqDumpPos;
+    qint64 *pPos;
+    qint64 *pDevicePos;
+    bool baseReadLineDataCalled;
+    bool firstRead;
+
+    virtual bool putCharHelper(char c);
+
+    enum AccessMode {
+        Unset,
+        Sequential,
+        RandomAccess
+    };
+    mutable AccessMode accessMode;
+    inline bool isSequential() const
+    {
+        if (accessMode == Unset)
+            accessMode = q_func()->isSequential() ? Sequential : RandomAccess;
+        return accessMode == Sequential;
+    }
+    
+
+    QIODevice *q_ptr;
+
+};
+#endif
 
 QT_END_NAMESPACE
 
