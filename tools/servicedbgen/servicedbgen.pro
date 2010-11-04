@@ -1,8 +1,11 @@
 TEMPLATE = app
 TARGET = servicedbgen
 CONFIG += console
+CONFIG += static
 QT += sql
 QT -= gui
+
+QTPLUGIN += qsqlite 
 
 DEFINES += SERVICE_XML_GENERATOR
 DEFINES += QT_SFW_SERVICEDATABASE_GENERATE
@@ -27,3 +30,8 @@ SOURCES += servicedbgen.cpp \
 
 include(../../common.pri)
 include(../../features/deploy.pri)
+
+win32 {
+   QMAKE_LFLAGS += -static-libgcc
+}
+ 
