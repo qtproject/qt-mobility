@@ -183,7 +183,7 @@ public:
     bool waitForRequestFinished(QOrganizerAbstractRequest *req, int msecs);
 
 public Q_SLOTS:
-    void dataChanged();
+    void databaseChanged();
 
 private:
     QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem &parentItem, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerManager::Error *error) const;
