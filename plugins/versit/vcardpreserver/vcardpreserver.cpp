@@ -73,7 +73,9 @@ Q_DEFINE_LATIN1_CONSTANT(ValueField, "Value");
 QSet<QString> VCardPreserverFactory::profiles() const
 {
     QSet<QString> retval;
-    retval.insert(QVersitContactHandlerFactory::ProfilePreserve);
+    // TODO: use this line in 1.2 when the constant is enabled
+    //retval.insert(QVersitContactHandlerFactory::ProfilePreserve);
+    retval.insert(QLatin1String("Preserve"));
     return retval;
 }
 

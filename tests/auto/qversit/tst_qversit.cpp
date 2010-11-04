@@ -469,11 +469,11 @@ void tst_QVersit::testPreserveVCard()
     QList<QVersitDocument> parsedDocuments = reader.results();
 
     QVersitDocument::VersitType versitType = parsedDocuments.first().type();
-    QVersitContactImporter importer(QVersitContactHandlerFactory::ProfilePreserve);
+    QVersitContactImporter importer("Preserve");
     QVERIFY(importer.importDocuments(parsedDocuments));
     QList<QContact> contacts = importer.contacts();
 
-    QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfilePreserve);
+    QVersitContactExporter exporter("Preserve");
     QVERIFY(exporter.exportContacts(contacts, versitType));
     QList<QVersitDocument> documents = exporter.documents();
 
@@ -522,7 +522,7 @@ void tst_QVersit::testPreserveVCardWithBackup()
     // Import them
     QVersitDocument::VersitType versitType = parsedDocuments.first().type();
     QVersitContactImporter importer(QStringList()
-            << QVersitContactHandlerFactory::ProfilePreserve
+            << "Preserve"
             << QVersitContactHandlerFactory::ProfileBackup);
     QVERIFY(importer.importDocuments(parsedDocuments));
     QList<QContact> contacts = importer.contacts();
@@ -536,7 +536,7 @@ void tst_QVersit::testPreserveVCardWithBackup()
     // Export them
     QVersitContactExporter exporter(QStringList()
             << QVersitContactHandlerFactory::ProfileBackup
-            << QVersitContactHandlerFactory::ProfilePreserve);
+            << "Preserve");
     QVERIFY(exporter.exportContacts(contacts, versitType));
     QList<QVersitDocument> documents = exporter.documents();
 
