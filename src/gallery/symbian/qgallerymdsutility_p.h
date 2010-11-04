@@ -75,6 +75,7 @@ public:
         EUri = 0,
         EFileName,
         EFilePath,
+        EPath,
         EFileSize,
         ELastModified,
         ETitle,
@@ -134,6 +135,8 @@ public:
     static HBufC *qStringToS60Desc(const QString& string);
     static QDateTime symbianTTimetoQDateTime(const TTime& time);
     static TTime QDateTimetosymbianTTime(const QDateTime& time);
+    static TBool GetName(const TDesC& aFilename, TPtrC& aName);
+    static TBool GetPath(const TDesC& aFilename, TPtrC& aPath);
 
     static CMdEPropertyDef *GetMDSPropertyDefL(const QString &property,
         CMdENamespaceDef& defaultNameSpace);
