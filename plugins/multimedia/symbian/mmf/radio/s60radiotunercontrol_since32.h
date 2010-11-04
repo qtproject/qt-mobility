@@ -46,9 +46,9 @@
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 
-#include <radioutility.h>
-#include <radiofmtunerutility.h>
-#include <radioplayerutility.h>
+#include <RadioUtility.h>
+#include <RadioFmTunerUtility.h>
+#include <RadioPlayerUtility.h>
 
 class S60RadioTunerService;
 class CFMRadioEngineCallObserver;
