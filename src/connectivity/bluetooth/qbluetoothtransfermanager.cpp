@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qbluetoothtransfermanager.h"
+#include "qbluetoothtransferrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
