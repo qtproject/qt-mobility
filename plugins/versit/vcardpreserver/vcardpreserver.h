@@ -39,48 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTHANDLER_H
-#define QVERSITCONTACTHANDLER_H
+#ifndef VCARDPRESERVER_H
+#define VCARDPRESERVER_H
 
-#include "qversitcontactimporter.h"
-#include "qversitcontactexporter.h"
+#include <QObject>
+#include <QtPlugin>
+#include "qversitcontacthandler.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-// qdoc seems to not find QVersitContactHandler if it is declared first.. ugh
-class QVersitContactHandler;
-
-class Q_VERSIT_EXPORT QVersitContactHandlerFactory
+class VCardPreserverFactory : public QObject, public QVersitContactHandlerFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
+
 public:
-    virtual ~QVersitContactHandlerFactory() {}
-    virtual QSet<QString> profiles() const { return QSet<QString>(); }
-    virtual QString name() const = 0;
-    virtual int index() const { return 0; }
-    virtual QVersitContactHandler* createHandler() const = 0;
-
-#ifdef Q_QDOC
-    static const QLatin1Constant ProfileSync;
-    static const QLatin1Constant ProfileBackup;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
-    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
-    // This is not enabled for 1.1.x because it's binary incompatible with 1.1.0
-    // TODO: enable this for 1.2
-    //Q_DECLARE_LATIN1_CONSTANT(ProfilePreserve, "Preserve");
-#endif
+    QSet<QString> profiles() const;
+    QString name() const;
+    int index() const;
+    QVersitContactHandler* createHandler() const;
 };
-
-class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
-                                              public QVersitContactExporterDetailHandlerV2
-{
-public:
-    virtual ~QVersitContactHandler() {}
-};
-
-QTM_END_NAMESPACE
-
-#define QT_VERSIT_CONTACT_HANDLER_INTERFACE "com.nokia.qt.mobility.versit.contacthandlerfactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QVersitContactHandlerFactory, QT_VERSIT_CONTACT_HANDLER_INTERFACE);
 
 #endif
