@@ -212,5 +212,5 @@ QString ThumbnailCache::thumbnailPath(const QUrl &url) const
         return thumbnailPath;
 #endif
 
-    return url.path();
+    return url.toLocalFile();
 }
