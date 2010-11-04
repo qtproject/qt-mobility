@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 #include "qllcpsocket_symbian_p.h"
-#include "symbian/llcpsocket_symbian.h"
+#include "symbian/llcpsockettype1_symbian.h"
+#include "symbian/llcpsockettype2_symbian.h"
 #include "symbian/qnearfieldutility_symbian.h" 
 
 QTM_BEGIN_NAMESPACE

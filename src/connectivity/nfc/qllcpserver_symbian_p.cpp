@@ -43,11 +43,11 @@
 #include "symbian/llcpserver_symbian.h"
 #include "symbian/qnearfieldutility_symbian.h"
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate()
 {
-    QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL());
+    QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
 }
 
 QLlcpServerPrivate::~QLlcpServerPrivate()
@@ -66,8 +66,14 @@ bool QLlcpServerPrivate::isListening() const
     return m_symbianbackend->isListening();
 }
 
+/*!
+    Stops listening for incoming connections.
+*/
 void QLlcpServerPrivate::close()
 {
+    m_symbianbackend->StopListening();
+    qDeleteAll(m_pendingConnections);
+    m_pendingConnections.clear();
 }
 
 QString QLlcpServerPrivate::serviceUri() const
@@ -87,13 +93,28 @@ bool QLlcpServerPrivate::hasPendingConnections() const
     return m_symbianbackend->hasPendingConnections();
 }
 
+void QLlcpServerPrivate::invokeNewConnection()
+    {
+    //QLlcpSocket *socket = new QLlcpSocket(this);
+    //m_pendingConnections.append(socket);
+    
+    emit newConnection();
+    }
+
+
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
-    return 0;
+    if (m_pendingConnections.isEmpty())
+        return 0;
+    return m_pendingConnections.takeFirst();
 }
+
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {
     return QLlcpServer::UnknownSocketError;
 }
+#include "moc_qllcpserver_symbian_p.cpp"
+
+QTM_END_NAMESPACE
 

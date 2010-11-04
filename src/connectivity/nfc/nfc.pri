@@ -85,7 +85,8 @@ symbian {
         nfc/symbian/nearfieldtargetfactory_symbian.h \
         nfc/symbian/qnearfieldutility_symbian.h \
         nfc/symbian/llcpserver_symbian.h \
-        nfc/symbian/llcpsocket_symbian.h \
+        nfc/symbian/llcpsockettype1_symbian.h \
+        nfc/symbian/llcpsockettype2_symbian.h \        
         nfc/symbian/nearfieldtagimpl_symbian.h
 
     SOURCES += \
@@ -107,7 +108,8 @@ symbian {
         nfc/symbian/nearfieldtargetfactory_symbian.cpp \
         nfc/symbian/qnearfieldutility_symbian.cpp \
         nfc/symbian/llcpserver_symbian.cpp \
-        nfc/symbian/llcpsocket_symbian.cpp \
+        nfc/symbian/llcpsockettype1_symbian.cpp \
+        nfc/symbian/llcpsockettype2_symbian.cpp \        
         nfc/symbian/nearfieldtagimpl_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw

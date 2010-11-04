@@ -10,6 +10,9 @@
 
 class CLlcpSocketType2;
 
+#include <qmobilityglobal.h>
+#include "../qllcpserver_symbian_p.h"
+
 /*!
  *  CLASS DECLARATION for CLlcpSocketPrivate.
  */
@@ -20,12 +23,12 @@ public:
    /*!
     * Creates a new CLlcpServer object.
     */
-   static CLlcpServer* NewL();
+   static CLlcpServer* NewL(QtMobility::QLlcpServerPrivate&);
    
    /*!
     * Creates a new CLlcpServer object.
     */
-   static CLlcpServer* NewLC();
+   static CLlcpServer* NewLC(QtMobility::QLlcpServerPrivate&);
    
    /*!
     * Destructor
@@ -34,6 +37,7 @@ public:
    
 public:    
    bool Listen( const TDesC8& aServiceName);
+   void StopListening();
    bool isListening() const;
    CLlcpSocketType2 *nextPendingConnection();
    bool hasPendingConnections() const;
@@ -44,7 +48,7 @@ private: // From MLlcpConnOrientedListener
     
 private:
     // Constructor
-    CLlcpServer();
+    CLlcpServer(QtMobility::QLlcpServerPrivate&);
     
     // Second phase constructor
     void ConstructL();
@@ -69,6 +73,8 @@ private:
    TBool iSocketListening;
    
    RBuf8 iServiceName;
+   
+   QtMobility::QLlcpServerPrivate& iCallback;
    };
     
 #endif /* LLCPSERVER_SYMBIAN_H_ */

@@ -44,13 +44,18 @@
 
 #include <qmobilityglobal.h>
 #include "qllcpserver.h"
+#include <QtCore/QObject>
+#include <QList>
 
 class CLlcpServer;
+class QLlcpSocket;
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpServerPrivate
+class QLlcpServerPrivate : public QObject
 {
+    Q_OBJECT
+    
 public:
     QLlcpServerPrivate();
     ~QLlcpServerPrivate();
@@ -67,9 +72,15 @@ public:
     QLlcpSocket *nextPendingConnection();
 
     QLlcpServer::Error serverError() const;
+
+public:
+    void invokeNewConnection();
+signals:
+    void newConnection();
     
 private:
     CLlcpServer* m_symbianbackend;
+    QList<QLlcpSocket *> m_pendingConnections;
 };
 
 QTM_END_NAMESPACE
