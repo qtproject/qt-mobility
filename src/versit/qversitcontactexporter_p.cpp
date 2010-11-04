@@ -610,7 +610,7 @@ void QVersitContactExporterPrivate::encodeAvatar(
         *generatedProperties << property;
         *processedFields << QContactAvatar::FieldImageUrl;
     } else {
-        if (encodeContentFromFile(contactAvatar.imageUrl().path(), property)) {
+        if (encodeContentFromFile(contactAvatar.imageUrl().toLocalFile(), property)) {
             *generatedProperties << property;
             *processedFields << QContactAvatar::FieldImageUrl;
         }
