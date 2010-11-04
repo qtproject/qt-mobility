@@ -270,7 +270,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             TFileName fullName = inputItem->Uri();
             TPtrC name;
-            if( GetName(fullName, name) ){
+            if( GetName(fullName, name) ) {
                 QFileInfo fileinfo(s60DescToQString(name));
                 output.setValue(fileinfo.fileName());
             }
@@ -286,7 +286,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             TFileName fullName = inputItem->Uri();
             TPtrC path;
-            if( GetPath( fullName, path) ){
+            if( GetPath( fullName, path) ) {
                 QFileInfo fileinfo(s60DescToQString(path));
                 output.setValue(fileinfo.absoluteFilePath());
             }
@@ -811,7 +811,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         {
             TFileName fullName = inputItem->Uri();
             TPtrC name;
-            if( GetName(fullName, name) ){
+            if( GetName(fullName, name) ) {
                 QFileInfo fileinfo(s60DescToQString(name));
                 output.setValue(fileinfo.fileName());
             }
@@ -827,7 +827,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         {
             TFileName fullName = inputItem->Uri();
             TPtrC path;
-            if( GetPath( fullName, path) ){
+            if( GetPath( fullName, path) ) {
                 QFileInfo fileinfo(s60DescToQString(path));
                 output.setValue(fileinfo.absoluteFilePath());
             }
@@ -1431,9 +1431,9 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
 
 int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
 {
-    if (property == QDocumentGallery::url.name()){
+    if (property == QDocumentGallery::url.name()) {
         return EUri;
-    } else if (property == QDocumentGallery::fileName.name()){
+    } else if (property == QDocumentGallery::fileName.name()) {
         return EFileName;
     } else if(property == QDocumentGallery::filePath.name()) {
         return EFilePath;
@@ -1619,45 +1619,40 @@ TTime QDocumentGalleryMDSUtility::QDateTimetosymbianTTime(const QDateTime& time)
 }
 
 TBool QDocumentGalleryMDSUtility::GetName(const TDesC& aFilename, TPtrC& aName)
-    {
+{
     // find name (everything after last back slash)
     TInt pos = aFilename.LocateReverseF( '\\' );
-    if( pos >= 0 )
-        {
+    if( pos >= 0 ) {
         aName.Set( aFilename.Mid( pos + 1 ) );
 
         // remove extension
         TInt pos = aName.LocateReverseF( '.' );
-        if( pos >= 0 )
-            {
+        if( pos >= 0 ) {
             aName.Set( aName.Left( pos ) );
-            }
-
-        if( aName.Length() > 0 )
-            {
-            return ETrue;
-            }
         }
 
-    return EFalse;
+        if( aName.Length() > 0 ) {
+            return ETrue;
+        }
     }
+
+    return EFalse;
+}
 
 TBool QDocumentGalleryMDSUtility::GetPath(const TDesC& aFilename, TPtrC& aPath)
-    {
+{
     // find path (everything before last back slash)
     TInt pos = aFilename.LocateReverseF( '\\' );
-    if( pos >= 0 )
-        {
+    if( pos >= 0 ) {
         aPath.Set( aFilename.Left( pos + 1 ) );
 
-        if( aPath.Length() > 0 )
-            {
+        if( aPath.Length() > 0 ) {
             return ETrue;
-            }
         }
+    }
 
     return EFalse;
-    }
+}
 
 CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &property,
     CMdENamespaceDef& defaultNameSpace )
