@@ -100,6 +100,11 @@ CNearFieldTagType4::~CNearFieldTagType4()
 void CNearFieldTagType4::DoCancel()
     {
     iNfcType4Connection->ExchangeDataCancel();
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
+    iOperationError = KErrCancel;
     }
 
 void CNearFieldTagType4::RunL()

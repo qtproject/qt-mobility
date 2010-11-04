@@ -62,6 +62,12 @@ class MNfcTag;
 class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
     {
+    typedef enum TOperation
+        {
+        ENull,
+        ERead,
+        EWrite
+        };
 public:
     // Cancel and destroy
     ~CNearFieldNdefTarget();
@@ -76,9 +82,9 @@ public: // New functions
     void SetRealTarget(MNearFieldTarget * aRealTarget);
 
     // NdefAccess
-    bool hasNdefMessage(){};
-    void ndefMessages(RPointerArray<CNdefMessage>& aMessages){};
-    void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages){};
+    TBool hasNdefMessage();
+    void ndefMessages(RPointerArray<CNdefMessage>& aMessages);
+    void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
 
 public:
     CNearFieldTagType1 * CastToTagType1();
@@ -114,6 +120,11 @@ private:
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;
+
+    TOperation iCurrentOperation;
+
+    // Not own
+    CNdefMessage * iMessage;
     };
 
 #endif // NEARFIELDNDEFTARGET_H

@@ -52,6 +52,14 @@ class MNfcTag;
 
 class CNearFieldTagType2 : public CActive, public MNearFieldTarget
     {
+    typedef enum TOperation
+        {
+        ENull,
+        ERead,
+        EWrite,
+        ESelect
+        };
+        
 public:
     // Cancel and destroy
     ~CNearFieldTagType2();
@@ -63,21 +71,9 @@ public:
     static CNearFieldTagType2* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
 public: // New functions
-    
-    // DIGPROTO
-    void ReadIdentificationL(TDes8& aData);
-    
-    // Static memory functions
-    void ReadAllL(TDes8& aData);
-    void WriteByteEraseL(TUint8 aAddress, const TDesC8& aData);
-    void WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData);
-    
-    // Dynamic memory functions
-    void ReadByteL(TUint8 aAddress, TDes8& aData);
-    void ReadSegmentL(TUint aSegmentAddress, TDes8& aData);
-    void ReadBlockL(TUint aBlockAddress, TDes8& aData);
-    void WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData);
-    void WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData);
+    TInt ReadBlock(TUint8 aBlockAddress, TDes8& aResponse);
+    TInt WriteBlock(TUint8 aBlockAddress, const TDesC8& aData);
+    TInt SelectSector(TUint8 sector);
 
 public:
     CNearFieldTagType2 * CastToTagType2();
@@ -103,16 +99,6 @@ private: // From CActive
     // Override to handle leaves from RunL(). Default implementation causes
     // the active scheduler to panic.
     TInt RunError( TInt aError );
-    
-private: // utility functions
-    // Convert static memory structure address to TNfcType1Address
-    TNfcType1Address AddOperand(TUint8 aAddress) const;
-    
-    // Convert dynamic memory structure address to TNfcType1Address for segment operation 
-    TNfcType1Address AddsOperand(TUint8 aSegmentAddress) const;
-    
-    // Convert dynamic memory structure address to TNfcType1Address for block operation
-    TNfcType1Address Add8Operand(TUint8 aBlockAddress) const;
 
 private:
     // own
@@ -121,6 +107,9 @@ private:
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;
+
+    TOperation iCurrentOperation;
+    TInt iOperationError;
     };
 
 #endif // NEARFIELDTAGTYPE2_H

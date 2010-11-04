@@ -80,6 +80,7 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag, RNfcServer& 
 
 void CNearFieldNdefTarget::ConstructL()
     {
+    iWait = new (ELeave) CActiveSchedulerWait;
     }
 
 void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
@@ -89,6 +90,14 @@ void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
 
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
+    if (ERead == iCurrentOperation)
+        {
+        iNdefConnection->CancelRead();
+        }
+    else if (EWrite == iCurrentOperation)
+        {
+        iNdefConnection->CancelWrite();
+        }
     if (iTagConnection)
         {
         delete iTagConnection;
@@ -162,12 +171,95 @@ void CNearFieldNdefTarget::ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNde
 
 void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
     {
+    iMessage = aMessage;
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
     }
 
 void CNearFieldNdefTarget::WriteComplete()
     {
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
     }
 
 void CNearFieldNdefTarget::HandleError( TInt aError )
     {
+    }   
+
+TBool CNearFieldNdefTarget::hasNdefMessage()
+    {
+    TBool result = EFalse;
+    if (!IsConnectionOpened())
+        {
+        result = (KErrNone == OpenConnection());
+        }
+    if (result)
+        {
+        TRAPD(err, result = iNdefConnection->IsEmptyL());
+        result = (KErrNone == err) ? result : EFalse;
+        }
+    return result;
+    }
+
+void CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
+    {
+    TInt error = KErrNone;
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    if (KErrNone == error)
+        {
+        if (!iWait->IsStarted())
+            {
+            error = iNdefConnection->ReadMessage();
+            if (KErrNone == error)
+                {
+                iCurrentOperation = ERead;
+                iWait->Start();
+                iCurrentOperation = ENull;
+                aMessages.Append(iMessage);
+                }
+            }
+        else
+            {
+            error = KErrInUse;
+            }
+        }
+    }
+
+void CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aMessages)
+    {
+    CNdefMessage * message;
+    if (aMessages.Count() > 0)
+        {
+        // current only support single ndef message
+        message = aMessages[0];
+        TInt error = KErrNone;
+        if (!IsConnectionOpened())
+            {
+            error = OpenConnection();
+            }
+        if (KErrNone == error)
+            {
+            if (!iWait->IsStarted())
+                {
+                error = iNdefConnection->WriteMessage(*message);
+                if (KErrNone == error)
+                    {
+                    iCurrentOperation = EWrite;
+                    iWait->Start();
+                    iCurrentOperation = ENull;
+                    }
+                }
+            }
+        else
+            {
+            error = KErrInUse;
+            }
+        }
     }

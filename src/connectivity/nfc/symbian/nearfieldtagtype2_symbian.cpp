@@ -39,6 +39,7 @@
  **
  ****************************************************************************/
 #include <nfctype2connection.h>
+#include <nfctype2address.h>
 #include <nfctag.h>
 #include "nearfieldtagtype2_symbian.h"
 
@@ -49,6 +50,9 @@
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 */
+
+static const TInt KBlockSize = 16;
+static const TInt KCRCSize = 1;
 
 CNearFieldTagType2::CNearFieldTagType2(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : CActive(EPriorityStandard), 
                                                                                     iNfcTag(aNfcTag),
@@ -100,156 +104,34 @@ CNearFieldTagType2::~CNearFieldTagType2()
 
 void CNearFieldTagType2::DoCancel()
     {
+    if (ERead == iCurrentOperation)
+        {
+        iNfcType2Connection->ReadCancel();
+        }
+    else if (EWrite == iCurrentOperation)
+        {
+        iNfcType2Connection->WriteCancel();
+        }
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
+    iOperationError = KErrCancel;
+    iCurrentOperation = ENull;
     }
 
 void CNearFieldTagType2::RunL()
     {
-    
-    SetActive(); // Tell scheduler a request is active
+    iOperationError = iStatus.Int();
+    if (iWait->IsStarted())
+        {
+        iWait->AsyncStop();
+        }
     }
 
 TInt CNearFieldTagType2::RunError(TInt aError)
     {
     return aError;
-    }
-
-/*!
-    Returns identification information read from the tag.
-
-    The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
-    is returned if an error occurs.
-*/
-
-void CNearFieldTagType2::ReadIdentificationL(TDes8& aData)
-    {
-    
-    }
-
-/*!
-    Reads and returns HR0, HR1 and all data in the static memory area of the tag.
-
-    The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
-    array is returned if an error occurs.
-*/
-    
-void CNearFieldTagType2::ReadAllL(TDes8& aData)
-    {
-    
-    }
-
-/*!
-    Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
-    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
-
-    Returns true on success; otherwise returns false.
-*/
-void CNearFieldTagType2::WriteByteEraseL(TUint8 aAddress, const TDesC8& aData)
-    {
-    
-    }
-
-/*!
-    Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
-    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
-
-    Returns true on success; otherwise returns false.
-*/
-void CNearFieldTagType2::WriteByteNoEraseL(TUint8 aAddress, const TDesC8& aData)
-    {
-    
-    }
-
-
-/*!
-    Reads and returns a single byte from the static memory area of the tag. The \a address
-    parameter specifices the linear byte address to read.
-*/
-void CNearFieldTagType2::ReadByteL(TUint8 aAddress, TDes8& aData)
-    {
-    
-    }
-
-
-/*!
-    Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
-    byte array is returned if an error occurs.
-*/
-void CNearFieldTagType2::ReadSegmentL(TUint aSegmentAddress, TDes8& aData)
-    {
-    
-    }
-
-/*!
-    Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
-    array is returned if an error occurs.
-*/
-void CNearFieldTagType2::ReadBlockL(TUint aBlockAddress, TDes8& aData)
-    {
-    
-    }
-
-/*!
-    Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
-    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
-
-    Returns true on success; otherwise returns false.
-
-*/
-void CNearFieldTagType2::WriteBlockEraseL(TUint aBlockAddress, const TDesC8& aData)
-    {
-    
-    }
-
-
-/*!
-    Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
-    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
-
-    Returns true on success; otherwise returns false.
-
-*/
-void CNearFieldTagType2::WriteBlockNoEraseL(TUint aBlockAddress, const TDesC8& aData)
-    {
-    
-    }
-
-/*!
-    Convert \a aAddress to byte-block address
-*/
-TNfcType1Address CNearFieldTagType2::AddOperand(TUint8 aAddress) const
-    {
-    const TUint8 staticBlockMask = 0x78;
-    const TUint8 byteMask = 0x07;
-    
-    TNfcType1Address address;
-    address.SetBlock((aAddress&staticBlockMask)>>3);
-    address.SetByte(aAddress&byteMask);
-    
-    return address;
-    }
-
-/*!
-    Convert \a aSegmentAddress to segmentaddress address
-*/
-TNfcType1Address CNearFieldTagType2::AddsOperand(TUint8 aSegmentAddress) const
-    {
-    
-    }
-
-/*!
-    Convert \a aBlockAddress to block address
-*/
-TNfcType1Address CNearFieldTagType2::Add8Operand(TUint8 aBlockAddress) const
-    {
-    
     }
 
 CNearFieldTagType2 * CNearFieldTagType2::CastToTagType2()
@@ -277,4 +159,77 @@ void CNearFieldTagType2::CloseConnection()
 TBool CNearFieldTagType2::IsConnectionOpened()
     {
     return iNfcType2Connection->IsActivated();
+    }
+
+TInt CNearFieldTagType2::ReadBlock(TUint8 aBlockAddress, TDes8& aResponse)
+    {
+    TInt error = KErrNone;
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    if (KErrNone == error)
+        {
+        if (!IsActive())
+            {
+            if (!iWait->IsStarted())
+                {
+                iOperationError = KErrNone;
+                iNfcType2Connection->Read(iStatus, aResponse, KBlockSize + KCRCSize, TNfcType2Address(0, aBlockAddress));
+                SetActive();
+                iCurrentOperation =  ERead;
+                iWait->Start();
+                error = iOperationError;
+                iCurrentOperation = ENull;
+                }
+            else
+                {
+                error = KErrInUse;
+                }
+            }
+        else
+            {
+            error = KErrInUse;
+            }
+        }
+    return error;
+    }
+
+TInt CNearFieldTagType2::WriteBlock(TUint8 aBlockAddress, const TDesC8& aData)
+    {
+    TInt error = KErrNone;
+    if (!IsConnectionOpened())
+        {
+        error = OpenConnection();
+        }
+    if (KErrNone == error)
+        {
+        if (!IsActive())
+            {
+            if (!iWait->IsStarted())
+                {
+                iOperationError = KErrNone;
+                iNfcType2Connection->Write(iStatus, aData, aBlockAddress);
+                SetActive();
+                iCurrentOperation =  EWrite;
+                iWait->Start();
+                error = iOperationError;
+                iCurrentOperation = ENull;
+                }
+            else
+                {
+                error = KErrInUse;
+                }
+            }
+        else
+            {
+            error = KErrInUse;
+            }
+        }
+    return error;
+    }
+    
+TInt CNearFieldTagType2::SelectSector(TUint8 sector)
+    {
+    return KErrNotSupported;
     }
