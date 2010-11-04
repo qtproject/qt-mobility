@@ -394,10 +394,6 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode m) const
 {
-    if(data.networkInfo.isEmpty()) {
-         qDebug() << Q_FUNC_INFO << "not";
-    }
-//< data.networkInfo.count();
     return data.networkInfo[static_cast<int>(m)].status;
 }
 
