@@ -45,7 +45,7 @@ QTM_USE_NAMESPACE
 
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfilePreserve, "Preserve");
+//Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfilePreserve, "Preserve");
 
 /*!
   \class QVersitContactHandler
@@ -73,7 +73,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfilePreserve, "Preserv
 
    The constant string signifying a plugin that is relevant to import and export in a
    synchronization context.
-   \sa profiles(), 
+   \sa profiles(),
    QVersitContactImporter::QVersitContactImporter(),
    QVersitContactExporter::QVersitContactExporter()
  */
@@ -88,7 +88,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfilePreserve, "Preserv
    QVersitContactExporter::QVersitContactExporter()
  */
 
-/*!
+/* TODO: make this a qdoc comment in 1.2
    \variable QVersitContactHandlerFactory::ProfilePreserve
 
    The constant string signifying a plugin that will preserve a vCard within a QContact, so that
