@@ -374,8 +374,9 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
         case QFeedbackEffect::Running:
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
-            TRAP(err, vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity())));
-            m_elapsed[effect].start();
+            int millis = effect->duration() - m_elapsed[effect].elapsed();
+            TRAP(err, vibra()->StartVibraL(millis, qRound(100 * effect->intensity())));
+            m_elapsed[effect].start(effect, millis);
             break;
         }
         break;
@@ -398,10 +399,11 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
         case QFeedbackEffect::Running:
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
+            int millis = effect->duration() - m_elapsed[effect].elapsed();
             TRAP(err, touchInstance()->StartFeedback(defaultWidget(),
                                          DEFAULT_CONTINUOUS_EFFECT,
-                                         0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000)));
-            m_elapsed[effect].start();
+                                         0, qRound(effect->intensity() * 100), qMax(0, millis * 1000)));
+            m_elapsed[effect].start(effect, millis);
             break;
         }
         break;
@@ -417,7 +419,12 @@ QFeedbackEffect::State QFeedbackSymbian::effectState(const QFeedbackHapticsEffec
 {
     if (m_elapsed.contains(effect) && m_elapsed[effect].elapsed() < effect->duration()) {
 
-        return m_elapsed[effect].isPaused() ? QFeedbackEffect::Paused : QFeedbackEffect::Running;
+        if (m_elapsed[effect].isPaused())
+            return QFeedbackEffect::Paused;
+        // If there is a timer, and it's elapsed, it should be stopped
+        if (m_elapsed[effect].isTimerActive())
+            return QFeedbackEffect::Running;
+        // Otherwise, the timer has elapsed or never started, so fall through to Stopped
     }
     
     return QFeedbackEffect::Stopped;
