@@ -83,8 +83,8 @@ public:
     QStringList fields() const { return m_values.keys(); }
 
     QString value(const QString &field) const { return m_values.value(field); }
-    void setValue(const QString &field, const QString &value) {
-        Q_ASSERT(!m_watcher); m_values[field] = value; }
+    void setValue(const QString &field, const QString &value, const QString &oldValue) {
+        Q_ASSERT(!m_watcher); m_values[field] = value; m_oldValues[field] = oldValue;}
 
     QMap<QString, QString> values() const { return m_values; }
 
@@ -99,14 +99,17 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void watcherFinished(QDBusPendingCallWatcher *watcher);
+    void insertWatcherFinished(QDBusPendingCallWatcher *watcher);
 
 private:
     QDBusPendingCallWatcher *m_watcher;
+    QDBusPendingCallWatcher *m_insert_watcher;
     int m_index;
     QGalleryDBusInterfacePointer m_metaDataInterface;
     QString m_uri;
     QString m_service;
     QMap<QString, QString> m_values;
+    QMap<QString, QString> m_oldValues;
 };
 
 QTM_END_NAMESPACE

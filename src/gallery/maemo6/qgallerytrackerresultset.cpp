@@ -572,7 +572,11 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 {
     edit->deleteLater();
 
+#if 1
+    emit q_func()->itemEdited(m_service);
+#else
     emit q_func()->itemEdited(edit->service());
+#endif
 }
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(

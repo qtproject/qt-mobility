@@ -183,7 +183,7 @@ namespace
         QGalleryItemPropertyList properties;
         QGalleryAggregatePropertyList aggregateProperties;
         QGalleryCompositePropertyList compositeProperties;
-        void (*writeIdCondition)(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId);
+/*        void (*writeIdCondition)(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId); */
         int updateMask;
     };
 
@@ -278,7 +278,7 @@ namespace
     private:
         QStringList m_sortOrder;
     };
-
+#if 0
     class QXmlStackStreamWriter
     {
     public:
@@ -315,6 +315,7 @@ namespace
         int count;
 
     };
+#endif
 }
 
 #define QT_GALLERY_ITEM_PROPERTY(PropertyName, Field, Type, Attr) \
@@ -384,10 +385,11 @@ namespace
     QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
     QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
     QGalleryCompositePropertyList(), \
-    qt_write##Type##IdCondition, \
+/*    qt_write##Type##IdCondition, */\
     UpdateMask \
 }
 
+#if 0
 template <typename T> bool qt_writeValue(
         QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value);
 
@@ -468,7 +470,8 @@ template <> bool qt_writeValue<QVariant>(
         }
     }
 }
-
+#endif
+#if 0
 static bool qt_writeEqualsCondition(
       QXmlStreamWriter *xml, const QString &propertyName, const QString &value)
 {
@@ -482,10 +485,11 @@ static bool qt_writeEqualsCondition(
 
     return true;
 }
+#endif
 
 static bool qt_writeCondition(
         QDocumentGallery::Error *error,
-        QString *xml,
+        QString *query,
         const QGalleryFilter &filter,
         const QGalleryItemPropertyList &properties,
         const QGalleryCompositePropertyList &composites);
@@ -1139,11 +1143,12 @@ static const QGalleryAggregateProperty qt_galleryAlbumArtistAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
+#if 0
 static void qt_writeAlbumArtistIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), itemId.toString());
 }
-
+#endif
 ////////
 // Album
 ////////
@@ -1199,13 +1204,12 @@ static const QGalleryAggregateProperty qt_galleryAudioGenreAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
-
-
+#if 0
 static void qt_writeAudioGenreIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), itemId.toString());
 }
-
+#endif
 //////////////
 // Photo Album
 //////////////

@@ -42,6 +42,7 @@
 #include "qgallerytrackermetadataedit_p.h"
 
 #include <QtDBus/qdbuspendingcall.h>
+#include <QtCore/qdebug.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,6 +53,7 @@ QGalleryTrackerMetaDataEdit::QGalleryTrackerMetaDataEdit(
         QObject *parent)
     : QObject(parent)
     , m_watcher(0)
+    , m_insert_watcher(0)
     , m_index(-1)
     , m_metaDataInterface(metaDataInterface)
     , m_uri(uri)
@@ -63,23 +65,54 @@ QGalleryTrackerMetaDataEdit::~QGalleryTrackerMetaDataEdit()
 {
 }
 
+static QString createSparql( const QString &command, const QString& subject, const QString& predicate, const QString& object)
+{
+    QString statement = command + " {<" + subject + "> " + predicate + " \'"  + object + "\'}";
+    qDebug() << "statement:" << statement;
+    return statement;
+}
+
 void QGalleryTrackerMetaDataEdit::commit()
 {
     if (m_values.isEmpty()) {
         emit finished(this);
     } else {
-        m_watcher = new QDBusPendingCallWatcher(m_metaDataInterface->asyncCall(
-                QLatin1String("Set"),
-                m_service,
-                m_uri,
-                QStringList(m_values.keys()),
-                QStringList(m_values.values())), this);
+        /*
+         * First phase: delete old value
+         */
+        m_watcher = new QDBusPendingCallWatcher(
+                m_metaDataInterface->asyncCall(
+                    QLatin1String("SparqlUpdate"),
+                    createSparql("DELETE", m_service, m_values.key(m_values.values().at( 0 ) ), m_oldValues.values().at( 0 ) )
+                    )
+                , this);
 
+        bool send_insert = true;
         if (m_watcher->isFinished()) {
+            if (m_watcher->isError())
+                send_insert = false;
             watcherFinished(m_watcher);
         } else {
             connect(m_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                     this, SLOT(watcherFinished(QDBusPendingCallWatcher*)));
+        }
+
+        /*
+         * Second phase: insert new value
+         */
+        if ( send_insert ) {
+            m_insert_watcher = new QDBusPendingCallWatcher(
+                            m_metaDataInterface->asyncCall(
+                                QLatin1String("SparqlUpdate"),
+                                createSparql("INSERT", m_service, m_values.key(m_values.values().at( 0 ) ), m_values.values().at( 0 ) )
+                            )
+                            , this);
+           if (m_insert_watcher->isFinished()) {
+               insertWatcherFinished(m_insert_watcher);
+           } else {
+               connect(m_insert_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                       this, SLOT(insertWatcherFinished(QDBusPendingCallWatcher*)));
+           }
         }
     }
 }
@@ -109,8 +142,22 @@ void QGalleryTrackerMetaDataEdit::watcherFinished(QDBusPendingCallWatcher *watch
         qWarning("DBUS error %s", qPrintable(watcher->error().message()));
 
         m_values.clear();
+        emit finished(this);
     }
+}
 
+void QGalleryTrackerMetaDataEdit::insertWatcherFinished(QDBusPendingCallWatcher *watcher)
+{
+    Q_ASSERT(watcher == m_insert_watcher);
+
+    m_insert_watcher->deleteLater();
+    m_insert_watcher = 0;
+
+    if (watcher->isError()) {
+        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
+
+        m_values.clear();
+    }
     emit finished(this);
 }
 

@@ -117,8 +117,8 @@ bool QGalleryTrackerEditableResultSet::setMetaData(int key, const QVariant &valu
     if (!edit) {
         edit = new QGalleryTrackerMetaDataEdit(
                 d->metaDataInterface,
-                d->currentRow->toString(),
                 (d->currentRow + 1)->toString(),
+                d->currentRow->toString(),
                 this);
         edit->setIndex(d->currentIndex);
 
@@ -135,7 +135,8 @@ bool QGalleryTrackerEditableResultSet::setMetaData(int key, const QVariant &valu
 
     edit->setValue(
             d->fieldNames.at(key - d->valueOffset),
-            d->valueColumns.at(key - d->valueOffset)->toString(value));
+            d->valueColumns.at(key - d->valueOffset)->toString(value),
+            (d->currentRow + key)->toString());
 
     return true;
 }
