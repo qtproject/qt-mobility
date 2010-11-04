@@ -142,6 +142,8 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
 
     m_databaseOperations.managerUri = managerUri();
 
+    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+
     connect(&m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
             this, SLOT(landmarksAdding(QList<QLandmarkId>)));
     connect(&m_databaseOperations,SIGNAL(landmarksChanged(QList<QLandmarkId>)),

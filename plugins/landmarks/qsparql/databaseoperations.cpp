@@ -1677,16 +1677,16 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
     }
 
     if (addedIds.size() != 0) {
-        if  (addedIds.size() < 50)
+        if (addedIds.size() < 50)
             emit landmarksAdded(addedIds);
-        //else
-        //    emit dataChanged();
+        else
+            emit dataChanged();
     }
     if (changedIds.size() != 0) {
-        if  (addedIds.size() < 50)
+        if (changedIds.size() < 50)
             emit landmarksChanged(changedIds);
-        //else
-        //    emit dataChanged();
+        else
+            emit dataChanged();
     }
     return noErrors;
 }
@@ -2129,13 +2129,18 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         if (errorString)
             *errorString = lastErrorString;
     }
-
-    if (addedIds.size() != 0)
-        emit categoriesAdded(addedIds);
-
-    if (changedIds.size() != 0)
-        emit categoriesChanged(changedIds);
-
+    if (addedIds.size() != 0) {
+        if (addedIds.size() < 50)
+            emit categoriesAdded(addedIds);
+        else
+            emit dataChanged();
+    }
+    if (changedIds.size() != 0) {
+        if (changedIds.size() < 50)
+            emit categoriesChanged(changedIds);
+        else
+            emit dataChanged();
+    }
     return noErrors;
 }
 

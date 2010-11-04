@@ -98,6 +98,7 @@ public:
 class DatabaseOperations : public QObject  {
     Q_OBJECT
     signals:
+    void dataChanged();
     void landmarksAdded(QList<QLandmarkId> ids);
     void landmarksChanged(QList<QLandmarkId> ids);
     void landmarksRemoved(QList<QLandmarkId> ids);
