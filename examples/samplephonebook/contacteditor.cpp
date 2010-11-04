@@ -310,10 +310,15 @@ void ContactEditor::saveClicked()
             av.setImageUrl(QUrl(m_newAvatarPath));
             curr.saveDetail(&av);
 
+            /*
+            // This is commented out because the vCard exporter will generate an image for the
+            // avatar and an image for the thumbnail.  Ideally, we would scale the thumbnail down
+            // here to a smaller size.
             QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
             QImage img(m_thumbnail);
             thumb.setThumbnail(img);
             curr.saveDetail(&thumb);
+            */
         }
 
         curr = m_manager->compatibleContact(curr);
