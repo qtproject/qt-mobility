@@ -379,6 +379,7 @@ public:
     SystemInfoConnection(QObject *parent = 0);
     QSystemNetworkInfoPrivate *networkInfoPrivate();
     QSystemDeviceInfoPrivate *deviceInfoPrivate();
+    QSystemStorageInfoPrivate *storageInfoPrivate();
 };
 #endif
 

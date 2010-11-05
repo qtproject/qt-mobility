@@ -78,9 +78,15 @@ QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
 {
     return getSystemNetworkInfoPrivate();
 }
+
 QSystemDeviceInfoPrivate *SystemInfoConnection::deviceInfoPrivate()
 {
     return getSystemDeviceInfoPrivate();
+}
+
+QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
+{
+    return getSystemStorageInfoPrivate();
 }
 
 #include "qsysteminfo_simulator.moc"
@@ -917,7 +923,7 @@ bool QSystemStorageInfoPrivate::setTotalSpace(const QString &name, qint64 space)
         return false;
 
     it.value().totalSpace = space;
-    emit logicalDriveChanged(false,name);
+  //  emit logicalDriveChanged(false,name);
     return true;
 }
 
@@ -927,8 +933,20 @@ bool QSystemStorageInfoPrivate::setAvailableSpace(const QString &name, qint64 sp
     if (it == data.drives.end())
         return false;
 
+    long percent = 100 -(it.value().totalSpace  - space) * 100 / it.value().totalSpace;
+
+    if(percent < 41 && percent > 10 ) {
+        emit storageStateChanged(name,QSystemStorageInfo::LowStorageState);
+    } else if(percent < 11 && percent > 2 ) {
+       emit storageStateChanged(name,QSystemStorageInfo::VeryLowStorageState);
+    } else if(percent < 3  ) {
+        emit storageStateChanged(name,QSystemStorageInfo::CriticalStorageState);
+    } else {
+         emit storageStateChanged(name,QSystemStorageInfo::NormalStorageState);
+    }
+
     it.value().availableSpace = space;
-    emit logicalDriveChanged(false,name);
+//    emit logicalDriveChanged(false,name);
     return true;
 }
 

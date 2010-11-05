@@ -43,10 +43,67 @@
 
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
+#include "qsysteminfo_simulator_p.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemStorageInfo::DriveType);
 Q_DECLARE_METATYPE(QSystemStorageInfo::StorageState);
+
+/**
+ * Starts an event loop that runs until the given signal is received.
+ * Optionally the event loop can return earlier on a timeout.
+ *
+ * \return \p true if the requested signal was received
+ *         \p false on timeout
+ */
+static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+{
+    QEventLoop loop;
+    QObject::connect(obj, signal, &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
+
+class ChangeStorageThread : public QThread
+{
+public:
+    void run()
+    {
+        QMutexLocker locker(&mutex);
+        SystemInfoConnection si;
+        QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
+
+//        if (addIt) {
+//            if (!remove) {
+//                st->addDrive(volName, driveType, totalSpace, availableSpace,"XXX");
+//            } else {
+//                st->removeDrive(volName);
+//            }
+//        } else {
+//            st->setTotalSpace(volName,totalSpace);
+//            st->setAvailableSpace(volName,availableSpace);
+//            st->setStorageState(volName,state);
+//        }
+
+        this->exit();
+
+    }
+    QString volName;
+    quint64 totalSpace;
+    quint64 availableSpace;
+    QSystemStorageInfo::StorageState state;
+    QSystemStorageInfo::DriveType driveType;
+    bool addIt;
+    bool remove;
+    QMutex mutex;
+};
 
 class tst_QSystemStorageInfo : public QObject
 {
@@ -59,8 +116,24 @@ private slots:
     void tst_availableDiskSpace();
     void tst_logicalDrives();
     void tst_typeForDrive();
+
     void tst_getStorageState();
 
+    void tst_storageStateChanged_data();
+    void tst_storageStateChanged();
+
+    void tst_logicalDriveChanged_data();
+    void tst_logicalDriveChanged();
+
+    void logicalDriveChanged(bool added,const QString &vol);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
+
+private:
+    void newDrives();
+    QSystemStorageInfo::StorageState sstate;
+    QSystemStorageInfo::DriveType driveType;
+    bool driveAdded;
+    QString dName;
 };
 
 void tst_QSystemStorageInfo::initTestCase()
@@ -122,6 +195,129 @@ void tst_QSystemStorageInfo::tst_getStorageState()
                 || state == QSystemStorageInfo::VeryLowStorageState
                 || state == QSystemStorageInfo::CriticalStorageState);
     }
+}
+
+void tst_QSystemStorageInfo::tst_storageStateChanged_data()
+{
+    QTest::addColumn<QSystemStorageInfo::DriveType>("drivetype");
+    QTest::addColumn<QSystemStorageInfo::StorageState>("storagestate");
+    QTest::addColumn<QString>("drivename");
+
+    QTest::newRow("NoDrive") << QSystemStorageInfo::NoDrive
+                             << QSystemStorageInfo::UnknownStorageState
+                             << "NoDrive";
+    QTest::newRow("InternalDrive") << QSystemStorageInfo::InternalDrive
+                                      << QSystemStorageInfo::NormalStorageState
+                                      << "InternalDrive";
+    QTest::newRow("RemovableDrive") << QSystemStorageInfo::RemovableDrive
+                                       << QSystemStorageInfo::LowStorageState
+                                           << "RemovableDrive";
+    QTest::newRow("RemoteDrive") << QSystemStorageInfo::RemoteDrive
+                                    << QSystemStorageInfo::VeryLowStorageState
+                                       << "RemoteDrive";
+    QTest::newRow("CdromDrive") << QSystemStorageInfo::CdromDrive
+                                   << QSystemStorageInfo::CriticalStorageState
+                                       << "CdromDrive";
+    QTest::newRow("InternalFlashDrive") << QSystemStorageInfo::InternalFlashDrive
+                                        << QSystemStorageInfo::UnknownStorageState
+                                           << "InternalFlashDrive";
+    QTest::newRow("RamDrive") << QSystemStorageInfo::RamDrive
+                                 << QSystemStorageInfo::UnknownStorageState
+                                 << "RamDrive";
+    SystemInfoConnection si;
+    QSystemStorageInfo sti;
+    QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
+    QStringList curDrives = sti.logicalDrives();
+    foreach (const QString &name, curDrives)
+        st->removeDrive(name);
+
+}
+
+void tst_QSystemStorageInfo::newDrives()
+{
+    QFETCH(QString, drivename);
+    QFETCH(QSystemStorageInfo::DriveType, drivetype);
+
+    QSystemStorageInfo sti;
+    QStringList curDrives = sti.logicalDrives();
+    SystemInfoConnection si;
+    QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
+
+    st->addDrive(drivename, drivetype, 100, 90,"YYY");
+}
+
+
+void tst_QSystemStorageInfo::tst_storageStateChanged()
+{
+    QFETCH(QSystemStorageInfo::DriveType, drivetype);
+    QFETCH(QString, drivename);
+
+    QSystemStorageInfo sti;
+    QStringList curDrives = sti.logicalDrives();
+    SystemInfoConnection si;
+    QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
+    driveAdded = true;
+    dName = drivename;
+    st->addDrive(drivename, drivetype, 100, 50,"YYY");
+    connect(&sti,SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)),
+            this,SLOT(storageStateChanged(const QString &, QSystemStorageInfo::StorageState)));
+
+    sstate = QSystemStorageInfo::CriticalStorageState;
+    st->setAvailableSpace(drivename,1);
+    QVERIFY(sti.availableDiskSpace(drivename) == 1);
+    sstate = QSystemStorageInfo::NormalStorageState;
+    st->setAvailableSpace(drivename,99);
+    QVERIFY(sti.availableDiskSpace(drivename) == 99);
+    sstate = QSystemStorageInfo::NormalStorageState;
+    st->setAvailableSpace(drivename,41);
+    QVERIFY(sti.availableDiskSpace(drivename) == 41);
+    sstate = QSystemStorageInfo::LowStorageState;
+    st->setAvailableSpace(drivename,40);
+    QVERIFY(sti.availableDiskSpace(drivename) == 40);
+    sstate = QSystemStorageInfo::VeryLowStorageState;
+    st->setAvailableSpace(drivename,9);
+    QVERIFY(sti.availableDiskSpace(drivename) == 9);
+
+    driveAdded = false;
+    st->removeDrive(drivename);
+}
+
+void tst_QSystemStorageInfo::tst_logicalDriveChanged_data()
+{
+    tst_storageStateChanged_data();
+}
+
+void tst_QSystemStorageInfo::tst_logicalDriveChanged()
+{
+    QFETCH(QSystemStorageInfo::DriveType, drivetype);
+    QFETCH(QString, drivename);
+
+    QSystemStorageInfo sti;
+    QStringList curDrives = sti.logicalDrives();
+    SystemInfoConnection si;
+    QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
+
+    connect(&sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
+            this,SLOT(logicalDriveChanged(bool,const QString &)));
+
+    driveAdded = true;
+    dName = drivename;
+    st->addDrive(drivename, drivetype, 100, 50,"YYY");
+
+    driveAdded = false;
+    st->removeDrive(drivename);
+}
+
+void tst_QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol)
+{
+    QVERIFY(added == driveAdded);
+    QVERIFY(vol == dName);
+}
+
+void tst_QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+{
+    QVERIFY(vol == dName);
+    QVERIFY(state == sstate);
 }
 
 
