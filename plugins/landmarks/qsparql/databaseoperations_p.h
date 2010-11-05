@@ -232,6 +232,10 @@ class DatabaseOperations : public QObject  {
                             QLandmarkManager::Error *error,
                             QString *errorString) const;
 
+    bool isReadOnly(const QLandmarkCategoryId &categoryId,
+                            QLandmarkManager::Error *error,
+                            QString *errorString) const;
+
     QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrders) const;
 

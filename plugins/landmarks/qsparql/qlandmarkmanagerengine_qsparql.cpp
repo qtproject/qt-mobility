@@ -428,13 +428,12 @@ bool QLandmarkManagerEngineQsparql::isReadOnly(const QLandmarkId &landmarkId, QL
 
 bool QLandmarkManagerEngineQsparql::isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const
 {
-    Q_UNUSED(categoryId);
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return false;
+    return m_databaseOperations.isReadOnly(categoryId, error, errorString);
 }
 
 /* Asynchronous Request Support */
