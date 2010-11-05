@@ -7,7 +7,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL
 
 include(nfc/nfc.pri)
-include(bluetooth/bluetooth.pri)
+!win32:include(bluetooth/bluetooth.pri)
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

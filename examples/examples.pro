@@ -155,7 +155,7 @@ contains(mobility_modules,connectivity) {
 
 # Connectivity
 contains(mobility_modules,connectivity) {
-    SUBDIRS += btscanner btchat
+    !win32:SUBDIRS += btscanner btchat
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

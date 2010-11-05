@@ -8,7 +8,9 @@ SUBDIRS += \
         qndefrecord \
         qndefmessage \
         qnearfieldmanager \
-        qnearfieldtagtype1 \
+        qnearfieldtagtype1
+
+!win32:SUBDIRS += \
         qbluetoothaddress\
         qbluetoothuuid\
         qbluetoothdeviceinfo\
