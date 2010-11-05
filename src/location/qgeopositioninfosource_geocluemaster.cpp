@@ -55,6 +55,32 @@ static void position_changed (GeocluePosition      *position,
     }
 }
 
+// Callback for velocity-changed -signal
+static void velocity_changed (GeoclueVelocity *velocity,
+                              GeoclueVelocityFields fields,
+                              int timestamp,
+                              double speed,
+                              double direction,
+                              double climb,
+                              gpointer userdata) // Ptr to this
+{
+    Q_UNUSED(velocity)
+    Q_UNUSED(timestamp)
+    Q_UNUSED(direction)
+    Q_UNUSED(climb)
+    if (!(fields & GEOCLUE_VELOCITY_FIELDS_SPEED)) {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "Velocity update from geoclue failed.";
+#endif
+        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateFailed();
+        return;
+    }
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+    qDebug() << "Velocity changed, speed: " << speed;
+#endif
+    static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateSucceeded(speed);
+}
+
 // Callback for single async update
 static void position_callback (GeocluePosition      *pos,
                    GeocluePositionFields fields,
@@ -84,7 +110,8 @@ static void position_callback (GeocluePosition      *pos,
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
     : QGeoPositionInfoSource(parent), m_updateInterval(0), m_preferredResources(GEOCLUE_RESOURCE_ALL),
-      m_client(0), m_pos(0)
+      m_client(0), m_pos(0), m_vel(0), m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false),
+      m_lastVelocity(0)
 {
     m_requestTimer.setSingleShot(true);
     QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(requestUpdateTimeout()));
@@ -95,8 +122,23 @@ QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 {
     if (m_pos)
         g_object_unref (m_pos);
+    if (m_vel)
+        g_object_unref(m_vel);
     if (m_client)
         g_object_unref (m_client);
+}
+
+void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateFailed()
+{
+    // Set the velocitydata non-fresh.
+    m_lastVelocityIsFresh = false;
+}
+
+void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
+{
+    // Store the velocity and mark it as fresh. Simple but hopefully adequate.
+    m_lastVelocity = speed;
+    m_lastVelocityIsFresh = true;
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::singleUpdateFailed()
@@ -111,7 +153,10 @@ void QGeoPositionInfoSourceGeoclueMaster::singleUpdateSucceeded(QGeoPositionInfo
 {
     if (m_requestTimer.isActive())
         m_requestTimer.stop();
-    emit positionUpdated(info);
+    if (m_lastVelocityIsFresh) {
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
+        emit positionUpdated(info);
+    }
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
@@ -120,6 +165,8 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
     // Currently this is emitted each time an error occurs, and thereby it assumes
     // that there does not come many erroneous updates from position source.
     // This assumption may be invalid.
+    m_lastVelocityIsFresh = false;
+    m_lastPositionIsFresh = false;
     emit updateTimeout();
 }
 
@@ -130,6 +177,10 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(QGeoPositionInf
     // If a non-intervalled startUpdates has been issued, send an update.
     if (!m_updateTimer.isActive()) {
         m_lastPositionIsFresh = false;
+        if (m_lastVelocityIsFresh) {
+            info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
+            m_lastVelocityIsFresh = false;
+        }
         emit positionUpdated(info);
     }
 }
@@ -159,7 +210,10 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     if (m_pos) {
         g_object_unref(m_pos);
         m_client = 0;
-
+    }
+    if (m_vel) {
+        g_object_unref(m_vel);
+        m_vel = 0;
     }
     m_client = geoclue_master_create_client (master, NULL, &error);
     g_object_unref (master);
@@ -185,14 +239,24 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
             g_error_free (error);
         }
         g_object_unref (m_client);
+        m_client = 0;
         return -1;
     }
     m_pos = geoclue_master_client_create_position (m_client, NULL);
     if (!m_pos) {
         qCritical("QGeoPositionInfoSourceGeoclueMaster failed to get a position object");
         g_object_unref (m_client);
+        m_client = 0;
         return -1;
     }
+    // Succeeding velocity is not mandatory. Master does not provide abstraction
+    // for velocity provider, hence request Gypsy provider directly.
+    m_vel = geoclue_velocity_new("org.freedesktop.Geoclue.Providers.Gypsy",
+                                 "/org/freedesktop/Geoclue/Providers/Gypsy");
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+    if (m_vel == NULL)
+        qDebug("QGeoPositionInfoSourceGeoclueMaster velocity provider not available.");
+#endif
     return 0;
 }
 
@@ -256,6 +320,10 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
     }
     g_signal_connect (G_OBJECT (m_pos), "position-changed",
                       G_CALLBACK (position_changed),this);
+    if (m_vel) {
+        g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
+                          G_CALLBACK (velocity_changed),this);
+    }
 }
 
 int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
@@ -264,8 +332,8 @@ int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
 
 void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
-    qDebug("QGeoPositionInfoSourceGeoclueMaster::stopUpdates");
     g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
+    g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
 }
@@ -279,7 +347,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
     if (m_requestTimer.isActive()) {
         return;
     }
-    // TODO a better logic for timeout value (specs leave it impl dependant).
+    // Create better logic for timeout value (specs leave it impl dependant).
     // Especially if there are active updates ongoing, there is no point of waiting
     // for whole cold start time.
     if (timeout == 0)
@@ -308,6 +376,7 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
     if (m_lastPositionIsFresh) {
         emit positionUpdated(m_lastPosition);
         m_lastPositionIsFresh = false;
+        m_lastVelocityIsFresh = false;
     }
 }
 

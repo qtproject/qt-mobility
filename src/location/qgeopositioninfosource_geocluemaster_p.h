@@ -14,6 +14,7 @@
 
 #include <qgeopositioninfosource.h>
 #include <geoclue/geoclue-master.h>
+#include <geoclue/geoclue-velocity.h>
 #include <QTimer>
 
 #define Q_LOCATION_GEOCLUE_DEBUG
@@ -46,6 +47,8 @@ public:
     void singleUpdateSucceeded(QGeoPositionInfo info);
     void regularUpdateFailed();
     void regularUpdateSucceeded(QGeoPositionInfo info);
+    void velocityUpdateFailed();
+    void velocityUpdateSucceeded(double speed);
 
 public slots:
     virtual void startUpdates();
@@ -64,9 +67,12 @@ private:
     GeoclueResourceFlags m_preferredResources;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
+    GeoclueVelocity* m_vel;
     QTimer m_updateTimer;
     QTimer m_requestTimer;
     bool m_lastPositionIsFresh;
+    bool m_lastVelocityIsFresh;
+    double m_lastVelocity;
     QGeoPositionInfo m_lastPosition;
 };
 
