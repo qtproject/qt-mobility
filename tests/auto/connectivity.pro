@@ -7,8 +7,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
         qndefrecord \
         qndefmessage \
-        qnearfieldmanager \
         qnearfieldtagtype1
+#        qnearfieldmanager \
 
 !win32:SUBDIRS += \
         qbluetoothaddress\
