@@ -42,7 +42,6 @@
 #include "qgallerytrackermetadataedit_p.h"
 
 #include <QtDBus/qdbuspendingcall.h>
-#include <QtCore/qdebug.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,7 +52,6 @@ QGalleryTrackerMetaDataEdit::QGalleryTrackerMetaDataEdit(
         QObject *parent)
     : QObject(parent)
     , m_watcher(0)
-    , m_insert_watcher(0)
     , m_index(-1)
     , m_metaDataInterface(metaDataInterface)
     , m_uri(uri)
@@ -65,10 +63,31 @@ QGalleryTrackerMetaDataEdit::~QGalleryTrackerMetaDataEdit()
 {
 }
 
-static QString createSparql( const QString &command, const QString& subject, const QString& predicate, const QString& object)
+static QString _qt_createSubUpdateStatement(
+        const QString &command,
+        const QString &subject,
+        const QString &predicate,
+        const QString &object)
 {
-    QString statement = command + " {<" + subject + "> " + predicate + " \'"  + object + "\'}";
-    qDebug() << "statement:" << statement;
+    return command + "{<" + subject + "> " + predicate + " \'"  + object + "\'}";
+}
+
+static QString _qt_createUpdateStatement(
+        const QString &subject,
+        const QMap<QString, QString> &m_values,
+        const QMap<QString, QString> &m_oldValues)
+{
+    QString statement;
+    for ( QMap<QString,QString>::const_iterator newIterator = m_values.constBegin(), oldIterator = m_oldValues.constBegin();
+            newIterator != m_values.constEnd();
+            ++newIterator, ++oldIterator
+          ){
+        // Delete old value (if it exists ) and insert new value ( if it exists )
+        if ( !oldIterator.value().isEmpty() )
+            statement += _qt_createSubUpdateStatement("DELETE", subject, newIterator.key(), oldIterator.value() );
+        if ( !newIterator.value().isEmpty() )
+            statement += _qt_createSubUpdateStatement("INSERT", subject, newIterator.key(), newIterator.value() );
+    }
     return statement;
 }
 
@@ -77,42 +96,18 @@ void QGalleryTrackerMetaDataEdit::commit()
     if (m_values.isEmpty()) {
         emit finished(this);
     } else {
-        /*
-         * First phase: delete old value
-         */
         m_watcher = new QDBusPendingCallWatcher(
                 m_metaDataInterface->asyncCall(
                     QLatin1String("SparqlUpdate"),
-                    createSparql("DELETE", m_service, m_values.key(m_values.values().at( 0 ) ), m_oldValues.values().at( 0 ) )
+                    _qt_createUpdateStatement( m_service, m_values, m_oldValues )
                     )
                 , this);
 
-        bool send_insert = true;
         if (m_watcher->isFinished()) {
-            if (m_watcher->isError())
-                send_insert = false;
             watcherFinished(m_watcher);
         } else {
             connect(m_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                     this, SLOT(watcherFinished(QDBusPendingCallWatcher*)));
-        }
-
-        /*
-         * Second phase: insert new value
-         */
-        if ( send_insert ) {
-            m_insert_watcher = new QDBusPendingCallWatcher(
-                            m_metaDataInterface->asyncCall(
-                                QLatin1String("SparqlUpdate"),
-                                createSparql("INSERT", m_service, m_values.key(m_values.values().at( 0 ) ), m_values.values().at( 0 ) )
-                            )
-                            , this);
-           if (m_insert_watcher->isFinished()) {
-               insertWatcherFinished(m_insert_watcher);
-           } else {
-               connect(m_insert_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                       this, SLOT(insertWatcherFinished(QDBusPendingCallWatcher*)));
-           }
         }
     }
 }
@@ -142,22 +137,8 @@ void QGalleryTrackerMetaDataEdit::watcherFinished(QDBusPendingCallWatcher *watch
         qWarning("DBUS error %s", qPrintable(watcher->error().message()));
 
         m_values.clear();
-        emit finished(this);
     }
-}
 
-void QGalleryTrackerMetaDataEdit::insertWatcherFinished(QDBusPendingCallWatcher *watcher)
-{
-    Q_ASSERT(watcher == m_insert_watcher);
-
-    m_insert_watcher->deleteLater();
-    m_insert_watcher = 0;
-
-    if (watcher->isError()) {
-        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
-
-        m_values.clear();
-    }
     emit finished(this);
 }
 

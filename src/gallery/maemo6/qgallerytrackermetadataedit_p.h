@@ -99,11 +99,9 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void watcherFinished(QDBusPendingCallWatcher *watcher);
-    void insertWatcherFinished(QDBusPendingCallWatcher *watcher);
 
 private:
     QDBusPendingCallWatcher *m_watcher;
-    QDBusPendingCallWatcher *m_insert_watcher;
     int m_index;
     QGalleryDBusInterfacePointer m_metaDataInterface;
     QString m_uri;
