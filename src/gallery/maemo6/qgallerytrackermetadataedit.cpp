@@ -51,7 +51,6 @@ QGalleryTrackerMetaDataEdit::QGalleryTrackerMetaDataEdit(
         const QString &service,
         QObject *parent)
     : QObject(parent)
-    , m_watcher(0)
     , m_index(-1)
     , m_metaDataInterface(metaDataInterface)
     , m_uri(uri)
@@ -96,19 +95,11 @@ void QGalleryTrackerMetaDataEdit::commit()
     if (m_values.isEmpty()) {
         emit finished(this);
     } else {
-        m_watcher = new QDBusPendingCallWatcher(
-                m_metaDataInterface->asyncCall(
-                    QLatin1String("SparqlUpdate"),
-                    _qt_createUpdateStatement( m_service, m_values, m_oldValues )
-                    )
-                , this);
-
-        if (m_watcher->isFinished()) {
-            watcherFinished(m_watcher);
-        } else {
-            connect(m_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                    this, SLOT(watcherFinished(QDBusPendingCallWatcher*)));
-        }
+        m_metaDataInterface->call(
+                QLatin1String("SparqlUpdate"),
+                _qt_createUpdateStatement( m_service, m_values, m_oldValues )
+                );
+        emit finished(this);
     }
 }
 
@@ -124,22 +115,6 @@ void QGalleryTrackerMetaDataEdit::itemsRemoved(int index, int count)
         m_index -= count;
     else if (index < m_index)
         m_index = -1;
-}
-
-void QGalleryTrackerMetaDataEdit::watcherFinished(QDBusPendingCallWatcher *watcher)
-{
-    Q_ASSERT(watcher == m_watcher);
-
-    m_watcher->deleteLater();
-    m_watcher = 0;
-
-    if (watcher->isError()) {
-        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
-
-        m_values.clear();
-    }
-
-    emit finished(this);
 }
 
 #include "moc_qgallerytrackermetadataedit_p.cpp"

@@ -59,8 +59,6 @@
 
 #include <QtCore/qstringlist.h>
 
-class QDBusPendingCallWatcher;
-
 QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerMetaDataEdit : public QObject
@@ -84,7 +82,7 @@ public:
 
     QString value(const QString &field) const { return m_values.value(field); }
     void setValue(const QString &field, const QString &value, const QString &oldValue) {
-        Q_ASSERT(!m_watcher); m_values[field] = value; m_oldValues[field] = oldValue;}
+        m_values[field] = value; m_oldValues[field] = oldValue;}
 
     QMap<QString, QString> values() const { return m_values; }
 
@@ -97,11 +95,7 @@ public Q_SLOTS:
     void itemsInserted(int index, int count);
     void itemsRemoved(int index, int count);
 
-private Q_SLOTS:
-    void watcherFinished(QDBusPendingCallWatcher *watcher);
-
 private:
-    QDBusPendingCallWatcher *m_watcher;
     int m_index;
     QGalleryDBusInterfacePointer m_metaDataInterface;
     QString m_uri;
