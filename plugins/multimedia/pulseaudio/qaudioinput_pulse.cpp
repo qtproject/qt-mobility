@@ -216,6 +216,7 @@ void QPulseAudioInput::stop()
     if (m_deviceState == QAudio::StoppedState)
         return;
 
+    m_errorState = QAudio::NoError;
     m_deviceState = QAudio::StoppedState;
 
     close();
