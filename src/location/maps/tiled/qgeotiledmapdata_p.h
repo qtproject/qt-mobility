@@ -72,6 +72,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
+class QGeoTiledMapObjectInfo;
 
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
@@ -96,6 +97,10 @@ public:
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
 
+    void removeObjectInfo(QGeoTiledMapObjectInfo* object);
+
+    void addObjectInfo(QGeoTiledMapObjectInfo* object);
+
     int zoomFactor;
 
     QPoint worldReferenceViewportCenter;
@@ -114,12 +119,13 @@ public:
     QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
+
+    Q_DECLARE_PUBLIC(QGeoTiledMapData)
+private:
     QGraphicsScene *scene;
 
     QHash<QGraphicsItem*, QGeoMapObject*> itemMap;
 
-    Q_DECLARE_PUBLIC(QGeoTiledMapData)
-private:
     Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 
