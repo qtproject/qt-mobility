@@ -542,7 +542,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         bool ok;
         QGeoCoordinate coord;
 
-        if (!qsparqlResult->value(2).isNull()) {
+        if (!qsparqlResult->value(2).toString().isEmpty()) {
             coord.setLatitude(qsparqlResult->value(2).toDouble(&ok));
             if (!ok) {
                 *error = QLandmarkManager::UnknownError;
@@ -551,7 +551,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
                 return QLandmark();
             }
         }
-        if (!qsparqlResult->value(3).isNull()) {
+        if (!qsparqlResult->value(3).toString().isEmpty()) {
             coord.setLongitude(qsparqlResult->value(3).toDouble(&ok));
             if (!ok) {
                 *error = QLandmarkManager::UnknownError;
