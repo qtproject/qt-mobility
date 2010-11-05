@@ -2031,6 +2031,25 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
 
     QSparqlConnection conn("QTRACKER");
 
+    QString checkString = QString("select ?c { ?c a slo:LandmarkCategory ; nie:title ?name . FILTER regex( ?name, '^%1$') }").arg(category->name());
+    QSparqlQuery query = QSparqlQuery(checkString, QSparqlQuery::SelectStatement);
+    QSparqlResult* queryResult = conn.exec(query);
+    queryResult->waitForFinished();
+    if (queryResult->hasError()) {
+        if (error)
+            *error =  QLandmarkManager::UnknownError;
+        if (errorString)
+            *errorString = QString("Category saving failed.");
+        return false;
+    }
+    if (queryResult->next()) {
+        if (!update || (update && (queryResult->value(0).toString() != category->categoryId().localId()))) {
+           *error = QLandmarkManager::AlreadyExistsError;
+           *errorString = QString("Category with name: %1 already exists").arg(category->name());
+           return false;
+        }
+    }
+
     QString queryString = QString("insert { ?:uri_value a slo:LandmarkCategory ");
 
     if (!category->name().isEmpty()) {
@@ -2056,6 +2075,7 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
     }
     QSparqlResult* insertResult = conn.exec(qsparqlInsertQuery);
 
+    insertResult->waitForFinished();
     if (!insertResult->hasError()) {
         QLandmarkCategoryId id;
         id.setManagerUri(managerUri);
