@@ -344,9 +344,12 @@ void QBluetoothSocket::connectToService(const QBluetoothAddress &address, quint1
 {
     Q_D(QBluetoothSocket);
 
+    qDebug() << "set open mode";
     setOpenMode(openMode);
 
+    qDebug() << "connectToServevice: " << address.toString() << port;
     d->connectToService(address, port, openMode);
+    qDebug() << "done";
 }
 
 /*!

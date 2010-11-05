@@ -324,6 +324,8 @@ bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType sock
     if (d->readNotifier)
         delete d->readNotifier;
 
+    qDebug() << "setSocketDescriptor()";
+
     d->socketType = socketType;
     d->socket = socketDescriptor;
 
@@ -333,6 +335,7 @@ bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType sock
         fcntl(d->socket, F_SETFL, flags | O_NONBLOCK);
 
     d->readNotifier = new QSocketNotifier(d->socket, QSocketNotifier::Read);
+    qDebug() << "readNotifier: " << d->readNotifier;
     connect(d->readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 
     setSocketState(socketState);
@@ -393,6 +396,7 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     Q_Q(QBluetoothSocket);
 
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
+    qDebug() << "readNotifier: " << readNotifier << "q:"<<q;
     QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
 
     return true;

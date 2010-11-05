@@ -92,6 +92,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
             emit q->error(error);
             _q_serviceDiscoveryFinished();
+            qDebug() << "Error: " << error;
             return;
         }
 
@@ -101,6 +102,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
             error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
             emit q->error(error);
             _q_serviceDiscoveryFinished();
+            qDebug() << "Error: " << error;
             return;
         }
     }
@@ -111,12 +113,14 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
 
     QString pattern;
     foreach (const QBluetoothUuid &uuid, uuidFilter)
-        pattern += uuid.toString() + QLatin1Char(' ');
+        pattern += uuid.toString().remove(QChar('{')).remove(QChar('}')) + QLatin1Char(' ');
 
+    qDebug() << "Discover: " << pattern.trimmed();
     QDBusPendingReply<ServiceMap> discoverReply = device->DiscoverServices(pattern.trimmed());
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(discoverReply, q);
     QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                      q, SLOT(_q_discoveredServices(QDBusPendingCallWatcher*)));
+    qDebug() << "Working: " << address.toString();
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
@@ -133,11 +137,14 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
         _q_serviceDiscoveryFinished();
+        qDebug() << "discoveredServices error: " << error << reply.error().message();
         return;
     }
 
     foreach (const QString &record, reply.value()) {
         QXmlStreamReader xml(record);
+
+        qDebug() << "Service xml" << record;
 
         QBluetoothServiceInfo serviceInfo;
         serviceInfo.setDevice(discoveredDevices.at(0));
@@ -164,6 +171,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         Q_Q(QBluetoothServiceDiscoveryAgent);
 
         discoveredServices.append(serviceInfo);
+        qDebug() << "Discovered service" << serviceInfo;
         emit q->serviceDiscovered(serviceInfo);
     }
 

@@ -45,6 +45,7 @@
 #include "qbluetoothsocket.h"
 
 #include <QtGlobal>
+//#include <private/qiodevice_p.h>
 #include "qiodevice_p.h"
 
 #ifdef Q_OS_SYMBIAN
