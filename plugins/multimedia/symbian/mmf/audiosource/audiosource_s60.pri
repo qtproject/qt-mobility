@@ -12,7 +12,7 @@ symbian:LIBS += -lmediaclientaudio \
         #We use audioinputrouting.lib for recording audio from different sources -lmediaclientaudioinputstream \ -lcone \
         DEFINES += AUDIOINPUT_ROUTING
         message("Audio Input Routing enabled onwards 3.2 SDK")
-        LIBS += -laudioinputrouting
+        LIBS += -lAudioInputRouting
     }
 }
 
