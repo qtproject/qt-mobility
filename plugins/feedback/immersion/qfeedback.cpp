@@ -240,7 +240,7 @@ void QFeedbackImmersion::startTimerForHandle(VibeInt32 handle, const QFeedbackHa
     if (effect->period() <= 0 && effect->duration() > 0) {
         QTimer* t = new QTimer();
         t->setSingleShot(true);
-        t->setInterval(effect->duration());
+        t->setInterval(effect->duration() + effect->attackTime() + effect->fadeTime());
         connect(t, SIGNAL(timeout()), const_cast<QFeedbackHapticsEffect*>(effect), SIGNAL(stateChanged()));
         effectTimers.insert(effectHandle, t);
         t->start();
