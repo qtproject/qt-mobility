@@ -899,9 +899,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         emit error(int(QMediaPlayer::FormatError), QString::fromLatin1("Cannot play stream of type: <unknown>"));
                     else
                         emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
-#ifdef DEBUG_PLAYBIN
-                    qDebug() << "Error:" << QString::fromUtf8(err->message);
-#endif
+                    qWarning() << "Error:" << QString::fromUtf8(err->message);
                     g_error_free(err);
                     g_free(debug);
                     stop();
@@ -1001,9 +999,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 gchar *debug;
                 gst_message_parse_error(gm, &err, &debug);
                 emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
-#ifdef DEBUG_PLAYBIN
-                qDebug() << "Error:" << QString::fromUtf8(err->message);
-#endif
+                qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
         } else if (m_usePlaybin2) {
@@ -1013,9 +1009,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 gst_message_parse_warning(gm, &err, &debug);
                 if (err->domain == GST_STREAM_ERROR && err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND)
                     emit error(int(QMediaPlayer::FormatError), QString::fromLatin1("Cannot play stream of type: <unknown>"));
-#ifdef DEBUG_PLAYBIN
-                qDebug() << "Warning:" << QString::fromUtf8(err->message);
-#endif
+                qWarning() << "Warning:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
             } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR
@@ -1026,9 +1020,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 gchar *debug;
                 gst_message_parse_error(gm, &err, &debug);
                 emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
-#ifdef DEBUG_PLAYBIN
-                qDebug() << "Error:" << QString::fromUtf8(err->message);
-#endif
+                qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
             }
