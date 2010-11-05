@@ -71,40 +71,6 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
-class ChangeStorageThread : public QThread
-{
-public:
-    void run()
-    {
-        QMutexLocker locker(&mutex);
-        SystemInfoConnection si;
-        QSystemStorageInfoPrivate *st = si.storageInfoPrivate();
-
-//        if (addIt) {
-//            if (!remove) {
-//                st->addDrive(volName, driveType, totalSpace, availableSpace,"XXX");
-//            } else {
-//                st->removeDrive(volName);
-//            }
-//        } else {
-//            st->setTotalSpace(volName,totalSpace);
-//            st->setAvailableSpace(volName,availableSpace);
-//            st->setStorageState(volName,state);
-//        }
-
-        this->exit();
-
-    }
-    QString volName;
-    quint64 totalSpace;
-    quint64 availableSpace;
-    QSystemStorageInfo::StorageState state;
-    QSystemStorageInfo::DriveType driveType;
-    bool addIt;
-    bool remove;
-    QMutex mutex;
-};
-
 class tst_QSystemStorageInfo : public QObject
 {
     Q_OBJECT
