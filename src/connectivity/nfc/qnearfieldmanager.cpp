@@ -149,7 +149,6 @@ QNearFieldManager::QNearFieldManager(QObject *parent)
             this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
 
-#ifdef QT_BUILD_INTERNAL
 /*!
     \internal
 
@@ -166,7 +165,6 @@ QNearFieldManager::QNearFieldManager(QNearFieldManagerPrivate *backend, QObject 
     connect(d_ptr, SIGNAL(targetLost(QNearFieldTarget*)),
             this, SIGNAL(targetLost(QNearFieldTarget*)));
 }
-#endif
 
 /*!
     Destroys the near field manager.

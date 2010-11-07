@@ -62,9 +62,7 @@ class Q_CONNECTIVITY_EXPORT QNearFieldManager : public QObject
 
 public:
     explicit QNearFieldManager(QObject *parent = 0);
-#ifdef QT_BUILD_INTERNAL
     explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
-#endif
     ~QNearFieldManager();
 
     template<typename T>
