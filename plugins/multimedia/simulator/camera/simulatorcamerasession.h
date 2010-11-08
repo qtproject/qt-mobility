@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,51 @@
 **
 ****************************************************************************/
 
+#ifndef SIMULATORCAMERACAPTURESESSION_H
+#define SIMULATORCAMERACAPTURESESSION_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <qmediarecordercontrol.h>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include <QtCore/qurl.h>
+#include <QtCore/qdir.h>
 
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
+#include "qcamera.h"
 
-class CameraBinControl : public QCameraControl
+class SimulatorCameraSession : public QObject
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    SimulatorCameraSession(QObject *parent);
+    ~SimulatorCameraSession();
 
-    bool isValid() const { return true; }
-
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
+    QCamera::CaptureMode captureMode();
     void setCaptureMode(QCamera::CaptureMode mode);
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+    QDir defaultDir(QCamera::CaptureMode mode) const;
+    QString generateFileName(const QString &prefix, const QDir &dir, const QString &ext) const;
 
-public slots:
-    void reloadLater();
+    void setImage(const QImage *image);
+    QObject *viewfinder() const;
+    void setViewfinder(QObject *viewfinder);
 
-private slots:
-    void updateStatus();
-    void delayedReload();
+    int captureImage(const QString &fileName);
+
+signals:
+    void stateChanged(QCamera::State state);
+    void error(int error, const QString &errorString);
+    void imageExposed(int requestId);
+    void imageCaptured(int requestId, const QImage &img);
+    void imageSaved(int requestId, const QString &fileName);
+    void viewfinderChanged();
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    QCamera::CaptureMode mCaptureMode;
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+    QObject *mViewfinder;
+    const QImage *mImage;
+
+public:
+    int mRequestId;
 };
 
-#endif // CAMERABINCONTROL_H
+#endif // SIMULATORCAMERACAPTURESESSION_H

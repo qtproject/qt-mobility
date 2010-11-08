@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,43 @@
 **
 ****************************************************************************/
 
+#ifndef QSIMULATORMULTIMEDIADATA_P_H
+#define QSIMULATORMULTIMEDIADATA_P_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include "qmobilityglobal.h"
+#include <QtCore/QMetaType>
+#include <QtCore/QDateTime>
+#include <qcamera.h>
 
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
+QT_BEGIN_HEADER
+QTM_BEGIN_NAMESPACE
 
-class CameraBinControl : public QCameraControl
-{
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
-
-    bool isValid() const { return true; }
-
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+struct QCameraData {
+    struct QCameraDetails {
+        QString description;
+        QString imagePath;
+    };
+    QHash<QString, QCameraDetails> cameras;
 };
 
-#endif // CAMERABINCONTROL_H
+void qt_registerCameraTypes();
+
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QCameraData)
+Q_DECLARE_METATYPE(QtMobility::QCameraData::QCameraDetails)
+
+QT_END_HEADER
+
+#endif // QMULTIMEDIADATA_SIMULATOR_P_H

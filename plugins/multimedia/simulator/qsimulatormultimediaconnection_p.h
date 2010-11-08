@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,51 @@
 **
 ****************************************************************************/
 
+#ifndef SIMULATORMULTIMEDIACONNECTION_H
+#define SIMULATORMULTIMEDIACONNECTION_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include "qsimulatormultimediadata_p.h"
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+QT_BEGIN_HEADER
 
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+namespace Simulator
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    class MobilityConnection;
 
-    bool isValid() const { return true; }
+    class MultimediaConnection : public QObject
+    {
+        Q_OBJECT
+    public:
+        MultimediaConnection (MobilityConnection *mobilityCon);
+        virtual ~MultimediaConnection () {}
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+        void getInitialData();
 
-    QCamera::Status status() const { return m_status; }
+    private slots:
+        void setCameraData(const QtMobility::QCameraData &);
+        void addCamera(const QString &, const QtMobility::QCameraData::QCameraDetails &);
+        void removeCamera(const QString &);
+        void changeCamera(const QString &, const QtMobility::QCameraData::QCameraDetails &);
+        void initialCameraDataSent();
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+    private:
+        MobilityConnection *mConnection;
+        bool mInitialDataReceived;
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+    signals:
+        void cameraDataChanged(const QtMobility::QCameraData &data);
+        void cameraAdded(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
+        void cameraRemoved(const QString &name);
+        void cameraChanged(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
+    };
+} // end namespace Simulator
 
-public slots:
-    void reloadLater();
+QCameraData get_qtCameraData();
 
-private slots:
-    void updateStatus();
-    void delayedReload();
+QTM_END_NAMESPACE
+QT_END_HEADER
 
-private:
-    void updateSupportedResolutions(const QString &device);
+#endif
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
-};
-
-#endif // CAMERABINCONTROL_H
