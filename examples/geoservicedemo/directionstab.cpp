@@ -138,7 +138,10 @@ void DirectionsInputDialog::accept()
 
 DirectionsTab::DirectionsTab(QWidget *parent) :
         QWidget(parent),
-        m_routingManager(0)
+        m_routingManager(0),
+        m_searchManager(0),
+        m_startReply(0),
+        m_endReply(0)
 {
     m_startpoint = "53 Brandl St, Eight Mile Plains, Australia";
     //m_startpoint = "Start Point:";
@@ -249,6 +252,14 @@ void DirectionsTab::on_btnUpdate_clicked()
 
 void DirectionsTab::getDirections()
 {
+    if (m_startReply)
+        m_startReply->deleteLater();
+    m_startReply = 0;
+
+    if (m_endReply)
+        m_endReply->deleteLater();
+    m_endReply = 0;
+
     QGeoRouteRequest request(m_start.coordinate(), m_end.coordinate());
     request.setTravelModes(m_requestTravelModes);
     request.setRouteOptimization(m_requestRouteOptimizations);
@@ -270,11 +281,12 @@ void DirectionsTab::searchStartFinished()
         QList<QGeoPlace> places = m_startReply->places();
         m_start = places[0];
 
-        if (m_endReply->isFinished())
+        if (m_endReply && m_endReply->isFinished())
             getDirections();
+    } else {
+        m_startReply->deleteLater();
+        m_startReply = 0;
     }
-    
-    m_startReply->deleteLater();
 }
 
 void DirectionsTab::searchEndFinished()
@@ -283,11 +295,13 @@ void DirectionsTab::searchEndFinished()
         QList<QGeoPlace> places = m_endReply->places();
         m_end = places[0];
            
-        if (m_startReply->isFinished())
+        if (m_startReply && m_startReply->isFinished())
             getDirections();
+    } else {
+        m_endReply->deleteLater();
+        m_endReply = 0;
     }
     
-    m_endReply->deleteLater();
 }
 
 void DirectionsTab::addDirection(const QString& icon, const QString& text, const QColor& color)
