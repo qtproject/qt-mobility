@@ -43,7 +43,7 @@
 #ifndef QBLUETOOTHLOCALDEVICE_H
 #define QBLUETOOTHLOCALDEVICE_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 #include <QtCore/QList>
 
@@ -65,9 +65,9 @@ public:
         AuthorizedPaired
     };
 
-    enum PowerState {
-        PowerOn,
-        PowerOff
+    enum PowerState {        
+        PowerOff,
+        PowerOn
     };
 
     enum HostMode {

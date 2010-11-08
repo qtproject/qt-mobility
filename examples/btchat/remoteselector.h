@@ -43,9 +43,9 @@
 
 #include <QtGui/QDialog>
 
-#include <bluetooth/qbluetoothuuid.h>
-#include <bluetooth/qbluetoothserviceinfo.h>
-#include <bluetooth/qbluetoothservicediscoveryagent.h>
+#include <qbluetoothuuid.h>
+#include <qbluetoothserviceinfo.h>
+#include <qbluetoothservicediscoveryagent.h>
 
 QT_FORWARD_DECLARE_CLASS(QModelIndex)
 QT_FORWARD_DECLARE_CLASS(QListWidgetItem)

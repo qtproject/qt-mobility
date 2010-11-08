@@ -42,9 +42,9 @@
 #ifndef QBLUETOOTHSERVICEINFO_H
 #define QBLUETOOTHSERVICEINFO_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
-#include "qbluetoothuuid.h"
+#include <qbluetoothuuid.h>
 
 #include <QtCore/QMetaType>
 #include <QtCore/QList>

@@ -41,8 +41,8 @@
 #include "remoteselector.h"
 #include "ui_remoteselector.h"
 
-#include <bluetooth/qbluetoothdeviceinfo.h>
-#include <bluetooth/qbluetoothaddress.h>
+#include <qbluetoothdeviceinfo.h>
+#include <qbluetoothaddress.h>
 
 QTM_USE_NAMESPACE
 

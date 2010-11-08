@@ -42,12 +42,12 @@
 #ifndef QBLUETOOTHSERVICEDISCOVERYAGENT_H
 #define QBLUETOOTHSERVICEDISCOVERYAGENT_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 #include <QObject>
 
-#include "qbluetoothserviceinfo.h"
-#include "qbluetoothuuid.h"
+#include <qbluetoothserviceinfo.h>
+#include <qbluetoothuuid.h>
 
 QT_BEGIN_HEADER
 

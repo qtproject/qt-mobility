@@ -1,12 +1,13 @@
 TARGET = btscanner
 
-INCLUDEPATH += ../../src/connectivity
-DEPENDPATH += ../../src/connectivity
+INCLUDEPATH += ../../src/connectivity/bluetooth
+DEPENDPATH += ../../src/connectivity/bluetooth
 
 include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity
+TEMPLATE = app
 
 SOURCES = \
     main.cpp \
