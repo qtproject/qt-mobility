@@ -41,15 +41,8 @@ static void position_changed (GeocluePosition      *position,
     Q_UNUSED(accuracy);
     if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
           fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "Position-changed from GeoClue master failed.";
-#endif
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->regularUpdateFailed();
     } else {
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-    qDebug() << "Position-changed from GeoClue master, lat, lon, alt, time, fields: " <<
-                latitude << longitude << altitude << timestamp << fields;
-#endif
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->regularUpdateSucceeded(
                     geoclueToPositionInfo(fields, timestamp, latitude, longitude, altitude));
     }
@@ -69,15 +62,9 @@ static void velocity_changed (GeoclueVelocity *velocity,
     Q_UNUSED(direction)
     Q_UNUSED(climb)
     if (!(fields & GEOCLUE_VELOCITY_FIELDS_SPEED)) {
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug() << "Velocity update from geoclue failed.";
-#endif
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateFailed();
         return;
     }
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-    qDebug() << "Velocity changed, speed: " << speed;
-#endif
     static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateSucceeded(speed);
 }
 
@@ -96,9 +83,6 @@ static void position_callback (GeocluePosition      *pos,
     Q_UNUSED(accuracy);
     if (error || !(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
                    fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-#ifdef Q_LOCATION_GEOCLUE_DEBUG
-        qDebug("QGeoPositionInfoSourceGeoClueMaster error getting single update.");
-#endif
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateFailed();
         if (error)
             g_error_free (error);
@@ -130,12 +114,18 @@ QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 
 void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateFailed()
 {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster velocity update failed.";
+#endif
     // Set the velocitydata non-fresh.
     m_lastVelocityIsFresh = false;
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
 {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster velocity update succeeded, speed: " << speed;
+#endif
     // Store the velocity and mark it as fresh. Simple but hopefully adequate.
     m_lastVelocity = speed;
     m_lastVelocityIsFresh = true;
@@ -143,6 +133,9 @@ void QGeoPositionInfoSourceGeoclueMaster::velocityUpdateSucceeded(double speed)
 
 void QGeoPositionInfoSourceGeoclueMaster::singleUpdateFailed()
 {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster single update failed (requestUpdate)";
+#endif
     if (m_requestTimer.isActive())
         m_requestTimer.stop();
     // Send timeout even if time wasn't up yet, because we are not trying again
@@ -153,14 +146,20 @@ void QGeoPositionInfoSourceGeoclueMaster::singleUpdateSucceeded(QGeoPositionInfo
 {
     if (m_requestTimer.isActive())
         m_requestTimer.stop();
-    if (m_lastVelocityIsFresh) {
+    if (m_lastVelocityIsFresh)
         info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
-        emit positionUpdated(info);
-    }
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster single update succeeded: ";
+        qDebug() << "Lat, lon, alt, speed:" << info.coordinate().latitude() << info.coordinate().longitude() << info.coordinate().altitude() << info.attribute(QGeoPositionInfo::GroundSpeed);
+#endif
+    emit positionUpdated(info);
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
 {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster regular update failed.";
+#endif
     // Emit timeout and keep on listening in case error condition clears.
     // Currently this is emitted each time an error occurs, and thereby it assumes
     // that there does not come many erroneous updates from position source.
@@ -174,15 +173,19 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(QGeoPositionInf
 {
     m_lastPosition = info;
     m_lastPositionIsFresh = true;
+    if (m_lastVelocityIsFresh) {
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
+        m_lastVelocityIsFresh = false;
+    }
     // If a non-intervalled startUpdates has been issued, send an update.
     if (!m_updateTimer.isActive()) {
         m_lastPositionIsFresh = false;
-        if (m_lastVelocityIsFresh) {
-            info.setAttribute(QGeoPositionInfo::GroundSpeed, m_lastVelocity); // assume groundspeed
-            m_lastVelocityIsFresh = false;
-        }
         emit positionUpdated(info);
     }
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster regular update succeeded: ";
+        qDebug() << "Lat, lon, alt, speed:" << info.coordinate().latitude() << info.coordinate().longitude() << info.coordinate().altitude() << info.attribute(QGeoPositionInfo::GroundSpeed);
+#endif
 }
 
 int QGeoPositionInfoSourceGeoclueMaster::init()
@@ -255,7 +258,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
                                  "/org/freedesktop/Geoclue/Providers/Gypsy");
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
     if (m_vel == NULL)
-        qDebug("QGeoPositionInfoSourceGeoclueMaster velocity provider not available.");
+        qDebug("QGeoPositionInfoSourceGeoclueMaster velocity provider (Gypsy) not available.");
 #endif
     return 0;
 }
@@ -275,26 +278,22 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
 {
     switch (methods) {
     case SatellitePositioningMethods:
-        qDebug() << "satellite requested";
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
-        qDebug() << "geoclue counterpart is:" << GEOCLUE_RESOURCE_GPS;
         break;
     case NonSatellitePositioningMethods:
-        qDebug() << "non-satellite requested";
         m_preferredResources = (GeoclueResourceFlags)(GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK);
-        qDebug() << "geoclue counterpart is:" << (GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK);
         break;
     case AllPositioningMethods:
-        qDebug() << "all requested";
         m_preferredResources = GEOCLUE_RESOURCE_ALL;
-        qDebug() << "geoclue counterpart is:" << (GEOCLUE_RESOURCE_ALL);
         break;
     default:
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");
         break;
     }
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
-    qDebug() << "GC Master, requested to set methods to, and set them to:" << methods << m_preferredResources;
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+    qDebug() << "QGeoPositionInfoSourceGeoclueMaster requested to set methods to, and set them to: " << methods << m_preferredResources;
+#endif
     configurePositionSource();
 }
 
