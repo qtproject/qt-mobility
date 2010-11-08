@@ -256,7 +256,7 @@ bool QBluetoothServiceInfo::unregisterService() const
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.DeleteRecord(d->serviceRecord);
+    d->sdpDatabase.DeleteRecordL(d->serviceRecord);
 
     return true;
 }
