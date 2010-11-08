@@ -82,9 +82,6 @@
 
     \annotatedlist qml-location
 
-    \note  On Symbian (as at Qt Mobility 1.1.0), the QML for the Landmarks API may not behave as expected due to a bug described in QTMOBILITY-611.  There may be problems in updating a
-      LandmarkAbstractModel element.
-
     \section1 Maps
 
     The Map element can be used be used to display a map of the world.  The
