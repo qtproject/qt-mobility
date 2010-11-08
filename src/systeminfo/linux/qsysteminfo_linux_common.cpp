@@ -1574,10 +1574,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
-//    qDebug() << __FUNCTION__ << path << item << value.variant();
     QOfonoNetworkRegistrationInterface netiface(path);
-//    QOfonoNetworkOperatorInterface netop(path);
-//    qDebug() << netop.getTechnologies();
 
     if(item == "Strength") {
         Q_EMIT networkSignalStrengthChanged(ofonoTechToMode(netiface.getTechnology()),value.variant().toInt());
@@ -1603,8 +1600,6 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
 {
-//    qDebug() << __FUNCTION__ << path << item << value.variant();
-
 }
 
 #endif
@@ -1677,7 +1672,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
         foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
             if(!opPath.path().isEmpty()) {
                 QOfonoNetworkOperatorInterface netop(opPath.path(),this);
-                if(netop.getStatus() == "current")
+//                if(netop.getStatus() == "current")
                     return netop.getMnc();
             }
         }
@@ -1699,10 +1694,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode()
                     return home;
                 } else {
                     QOfonoNetworkRegistrationInterface netIface(modem,this);
-                    if(netIface.getStatus() == "registered") {
-                        //on home network, not roaming
                         return currentMobileCountryCode();
-                    }
                 }
             }
         }
