@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTSORTORDER_P_H
 #define QDECLARATIVECONTACTSORTORDER_P_H
 
@@ -46,55 +45,51 @@
 #include <QDeclarativeExtensionPlugin>
 
 #include "qcontactsortorder.h"
+#include "qdeclarativecontactdetail_p.h"
 
 QTM_USE_NAMESPACE
 
 class QDeclarativeContactSortOrder :public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString detail READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY sortOrderChanged)
-    Q_PROPERTY(QString field READ detailFieldName WRITE setDetailFieldName NOTIFY sortOrderChanged)
-    Q_PROPERTY(SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
+    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY sortOrderChanged)
+    Q_PROPERTY(int field READ field WRITE setField NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
-    Q_PROPERTY(CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
-    Q_ENUMS(BlankPolicy);
-    Q_ENUMS(SortOrder);
-    Q_ENUMS(CaseSensitivity);
+    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
+    Q_ENUMS(BlankPolicy)
 public:
 
     enum BlankPolicy {
-        BlanksFirst,
-        BlanksLast
+        BlanksFirst = QContactSortOrder::BlanksFirst,
+        BlanksLast = QContactSortOrder::BlanksLast
     };
 
-    enum SortOrder {
-        AscendingOrder,
-        DescendingOrder
-    };
-
-    enum CaseSensitivity {
-        CaseInsensitive,
-        CaseSensitive
-    };
 
     QDeclarativeContactSortOrder(QObject* parent = 0);
-    QString detailDefinitionName() const;
 
-    void setDetailDefinitionName(const QString& definitionName);
+    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType);
+
+    QDeclarativeContactDetail::ContactDetailType detail() const;
+
+    void setField(int fieldType);
+
+    int field() const;
+
     BlankPolicy blankPolicy() const;
     void setBlankPolicy(BlankPolicy blankPolicy);
-    SortOrder direction() const;
-    void setDirection(SortOrder direction);
-    CaseSensitivity caseSensitivity() const;
-    void setCaseSensitivity(CaseSensitivity sensitivity);
-    QString detailFieldName() const;
-    void setDetailFieldName(const QString& fieldName);
+    Qt::SortOrder direction() const;
+    void setDirection(Qt::SortOrder direction);
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
     QContactSortOrder sortOrder();
     void setSortOrder(const QContactSortOrder& sortOrder);
 
 signals:
     void sortOrderChanged();
 private:
+    QDeclarativeContactDetail::ContactDetailType m_detailType;
+    int m_fieldType;
     QContactSortOrder m_sortOrder;
 };
 

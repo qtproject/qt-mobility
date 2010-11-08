@@ -215,7 +215,7 @@ private:
     friend class QContact;
     friend class QContactDetailPrivate;
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
+    Q_CONTACTS_EXPORT friend QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
 #endif
     QSharedDataPointer<QContactDetailPrivate> d;
 };

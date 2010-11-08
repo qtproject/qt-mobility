@@ -38,18 +38,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef ORGANIZERTODOTIMERANGETRANSFORM_H_
-#define ORGANIZERTODOTIMERANGETRANSFORM_H_
+#ifndef ORGANIZERTODOTIMETRANSFORM_H_
+#define ORGANIZERTODOTIMETRANSFORM_H_
 
 #include "organizeritemdetailtransform.h"
 
-class OrganizerTodoTimeRangeTransform : public OrganizerItemDetailTransform
+class OrganizerTodoTimeTransform : public OrganizerItemDetailTransform
 {
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
-    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
 };
 
-#endif /* ORGANIZERTODOTIMERANGETRANSFORM_H_ */
+#endif /* ORGANIZERTODOTIMETRANSFORM_H_ */

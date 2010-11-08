@@ -41,7 +41,7 @@
 
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
-#include "qtlvreader_p.h"
+#include "qtlv_p.h"
 
 #include <QtCore/QByteArray>
 #include <QDebug>
@@ -125,7 +125,8 @@ QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
     QList<QNdefMessage> ndefMessages;
 
     while (!reader.atEnd()) {
-        reader.readNext();
+        if (!reader.readNext())
+            break;
 
         // NDEF Message TLV
         if (reader.tag() == 0x03)
@@ -133,6 +134,50 @@ QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
     }
 
     return ndefMessages;
+}
+
+/*!
+    \reimp
+*/
+void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
+{
+    const QByteArray id = readIdentification();
+
+    // Check if target is NFC TagType1 tag
+    quint8 hr0 = id.at(0);
+    if (!(hr0 & 0x10))
+        return;
+
+    if (readByte(8) != 0xe1)
+        return;
+
+    typedef QPair<quint8, QByteArray> Tlv;
+    QList<Tlv> tlvs;
+
+    QTlvReader reader(this);
+    while (!reader.atEnd()) {
+        if (!reader.readNext())
+            break;
+
+        switch (reader.tag()) {
+        case 0x01:
+        case 0x02:
+        case 0xfd:
+            tlvs.append(qMakePair(reader.tag(), reader.data()));
+            break;
+        default:
+            ;
+        }
+    }
+
+    QTlvWriter writer(this);
+    foreach (const Tlv &tlv, tlvs)
+        writer.writeTlv(tlv.first, tlv.second);
+
+    foreach (const QNdefMessage &message, messages)
+        writer.writeTlv(0x03, message.toByteArray());
+
+    writer.writeTlv(0xfe);
 }
 
 /*!

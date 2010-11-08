@@ -80,7 +80,6 @@ public:
     QString description;
     QUrl iconUrl;
     qreal radius;
-    QHash<QString, QVariant> customAttributes;
     QString phoneNumber;
     QUrl url;
     QLandmarkId id;

@@ -106,15 +106,19 @@ void registerExampleService()
 
 Q_DECLARE_METATYPE(QMetaType::Type);
 
-/*bool check(const void *p)
+/*
+bool check(const void *p)
 {
-    const QRemoteServiceregisterLocalSocketCred *cr = (const struct QRemoteServiceiRegisterLocalSocketCred *)p;
+    // Denies clients who have odd processs Ids
+    const QRemoteServiceRegisterCredentials *cr = (const struct QRemoteServiceRegisterCredentials *)p;
     if(cr->pid%2) {
            qDebug() << "Failing client: " << cr->pid;
         return false;
     }
+
     return true;
-}*/
+}
+*/
 
 int main(int argc, char** argv)
 {
@@ -122,7 +126,7 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister *serviceRegister = new QRemoteServiceRegister();
     //serviceRegister->setSecurityFilter(check);
 
     QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService2>(
@@ -134,6 +138,7 @@ int main(int argc, char** argv)
     unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
 
     serviceRegister->publishEntries("sfwecho_service");
+    serviceRegister->setQuitOnLastInstanceClosed(true);
 
     int res =  app.exec();
 

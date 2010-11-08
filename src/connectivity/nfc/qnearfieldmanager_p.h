@@ -70,23 +70,20 @@ public:
     }
 
     virtual int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                              QObject *object, const QMetaMethod &method)
+                                              QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(targetType);
         Q_UNUSED(object);
-        Q_UNUSED(method);
 
         return -1;
     }
 
     virtual int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                              const QNdefFilter &filter,
-                                              QObject *object, const QMetaMethod &method)
+                                              const QNdefFilter &/*filter*/,
+                                              QObject *object, const QMetaMethod &/*method*/)
     {
         Q_UNUSED(targetType);
-        Q_UNUSED(filter);
         Q_UNUSED(object);
-        Q_UNUSED(method);
 
         return -1;
     }

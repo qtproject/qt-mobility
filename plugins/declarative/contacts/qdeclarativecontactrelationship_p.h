@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QDECLARATIVECONTACTRELATIONSHIP_P_H
 #define QDECLARATIVECONTACTRELATIONSHIP_P_H
 
@@ -53,26 +52,37 @@ QTM_USE_NAMESPACE
 class QDeclarativeContactRelationship : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int first READ first WRITE setFirst NOTIFY valueChanged)
-    Q_PROPERTY(int second READ second WRITE setSecond NOTIFY valueChanged)
-    Q_PROPERTY(QString type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_ENUMS(Role);
+    Q_PROPERTY(QContactLocalId first READ first WRITE setFirst NOTIFY valueChanged)
+    Q_PROPERTY(QContactLocalId second READ second WRITE setSecond NOTIFY valueChanged)
+    Q_PROPERTY(QVariant type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
+    Q_ENUMS(RelationshipRole)
+    Q_ENUMS(RelationshipType)
 public:
-    enum Role {
-        First = 0,
-        Second,
-        Either
+    enum RelationshipRole {
+        First = QContactRelationship::First,
+        Second = QContactRelationship::Second,
+        Either = QContactRelationship::Either
+    };
+
+    enum RelationshipType {
+        Unknown = 0,
+        HasMember,
+        Aggregates,
+        IsSameAs,
+        HasAssistant,
+        HasManager,
+        HasSpouse
     };
 
     QDeclarativeContactRelationship(QObject* parent = 0);
 
-    int first() const;
-    int second() const;
-    QString relationshipType() const;
+    QContactLocalId first() const;
+    QContactLocalId second() const;
+    QVariant relationshipType() const;
 
-    void setFirst( int firstId);
-    void setSecond( int secondId);
-    void setRelationshipType(const QString& relationshipType);
+    void setFirst( QContactLocalId firstId);
+    void setSecond( QContactLocalId secondId);
+    void setRelationshipType(const QVariant& relationshipType);
 
     QContactRelationship relationship() const;
     void setRelationship(const QContactRelationship& relationship);

@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
-QVCard21Writer::QVCard21Writer() : QVersitDocumentWriter()
+QVCard21Writer::QVCard21Writer(QVersitDocument::VersitType type) : QVersitDocumentWriter(type)
 {
 }
 
@@ -67,6 +67,7 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     QVariant variant(property.variantValue());
 
     QString renderedValue;
+    QByteArray renderedBytes;
     bool useUtf8 = false;
 
     /* Structured values need to have their components backslash-escaped (in vCard 2.1, semicolons
@@ -102,7 +103,10 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         useUtf8 = encodeVersitValue(parameters, renderedValue);
     } else if (variant.type() == QVariant::ByteArray) {
         parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
-        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
+        if (mCodecIsAsciiCompatible) // optimize by not converting to unicode
+            renderedBytes = variant.toByteArray().toBase64();
+        else
+            renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
 
     // Encode parameters
@@ -121,7 +125,10 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         // one extra line break after the value are needed in vCard 2.1
         writeCrlf();
         writeString(QLatin1String(" "));
-        writeString(renderedValue, useUtf8);
+        if (renderedBytes.isEmpty())
+            writeString(renderedValue, useUtf8);
+        else
+            writeBytes(renderedBytes);
         writeCrlf();
     }
     writeCrlf();
@@ -143,6 +150,29 @@ bool QVCard21Writer::encodeVersitValue(QMultiHash<QString,QString>& parameters, 
     return false;
 }
 
+int sortIndexOfTypeValue(const QString& type) {
+    if (   type == QLatin1String("CELL")
+        || type == QLatin1String("FAX")) {
+        return 0;
+    } else if (type == QLatin1String("HOME")
+            || type == QLatin1String("WORK")) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
+
+bool typeValueLessThan(const QString& a, const QString& b) {
+    return sortIndexOfTypeValue(a) < sortIndexOfTypeValue(b);
+}
+
+/*! Ensure CELL and FAX are at the front because they are "more important" and some vCard
+    parsers may ignore everything after the first TYPE */
+void sortTypeValues(QStringList* values)
+{
+    qSort(values->begin(), values->end(), typeValueLessThan);
+}
+
 /*!
  * Encodes the \a parameters and writes it to the device.
  */
@@ -151,10 +181,13 @@ void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
     QList<QString> names = parameters.uniqueKeys();
     foreach (const QString& name, names) {
         QStringList values = parameters.values(name);
+        if (name == QLatin1String("TYPE")) {
+            // TYPE parameters should be sorted
+            sortTypeValues(&values);
+        }
         foreach (const QString& value, values) {
             writeString(QLatin1String(";"));
-            QString typeParameterName(QLatin1String("TYPE"));
-            if (name.length() > 0 && name != typeParameterName) {
+            if (name.length() > 0 && name != QLatin1String("TYPE")) {
                 writeString(name);
                 writeString(QLatin1String("="));
             }

@@ -96,16 +96,16 @@ public:
     inline bool operator!=(const QNdefRecord &other) const { return !operator==(other); }
 
 protected:
-    QNdefRecord(const QNdefRecord &other, quint8 typeNameFormat, const QByteArray &type);
-    QNdefRecord(quint8 typeNameFormat, const QByteArray &type);
+    QNdefRecord(const QNdefRecord &other, TypeNameFormat typeNameFormat, const QByteArray &type);
+    QNdefRecord(TypeNameFormat typeNameFormat, const QByteArray &type);
 
 private:
     QSharedDataPointer<QNdefRecordPrivate> d;
 };
 
 #define Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type) \
-    className() : QNdefRecord(quint8(typeNameFormat), type) { } \
-    className(const QNdefRecord &other) : QNdefRecord(other, quint8(typeNameFormat), type) { }
+    className() : QNdefRecord(typeNameFormat, type) { } \
+    className(const QNdefRecord &other) : QNdefRecord(other, typeNameFormat, type) { }
 
 #define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat_, type_) \
     QTM_BEGIN_NAMESPACE \

@@ -65,6 +65,7 @@ public:
 
     void close();
 
+    QString serviceUri() const;
     quint8 serverPort() const;
     QString serviceUri() const;
 

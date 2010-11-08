@@ -199,6 +199,8 @@ private slots:
     void contactSave_data() { addManagers(); }
     void contactPartialSave();
     void contactPartialSave_data() { addManagers(); }
+    void contactPartialSaveAsync();
+    void contactPartialSaveAsync_data() {addManagers();}
 
     void definitionFetch();
     void definitionFetch_data() { addManagers(); }
@@ -1154,7 +1156,6 @@ void tst_QContactAsync::contactPartialSave()
 
     QContactLocalId aId = contacts[0].localId();
     QContactLocalId bId = contacts[1].localId();
-    QContactLocalId cId = contacts[2].localId();
 
     // Test 1: saving a contact with a changed detail masked out does nothing
     QContactPhoneNumber phn(contacts[0].detail<QContactPhoneNumber>());
@@ -1278,6 +1279,48 @@ void tst_QContactAsync::contactPartialSave()
     QCOMPARE(errorMap.count(), 2);
     QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
     QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
+}
+
+void tst_QContactAsync::contactPartialSaveAsync()
+{
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    QList<QContact> contacts;
+
+    int numContacts = 10;
+    // add contacts
+    for (int i = 0; i < numContacts; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirstName("John");
+        name.setMiddleName(QString::number(i));
+        name.setLastName("Doe");
+        QContactPhoneNumber phone;
+        QString number = "555-100"+QString::number(i);
+        phone.setNumber(number);
+        c.saveDetail(&name);
+        c.saveDetail(&phone);
+        contacts.append(c);
+    }
+
+    QContactSaveRequest *saveRequest = new QContactSaveRequest();
+    saveRequest->setManager(cm);
+    saveRequest->setContacts(contacts);
+    saveRequest->start();
+    saveRequest->waitForFinished(20000);
+    QVERIFY(saveRequest->isFinished());
+    QCOMPARE(saveRequest->contacts().count(), numContacts);
+    delete saveRequest;
+    qRegisterMetaType<QContactAbstractRequest::State>("QContactAbstractRequest::State");
+
+    saveRequest = new QContactSaveRequest();
+    saveRequest->setManager(cm);
+    saveRequest->setContacts(contacts);
+    saveRequest->setDefinitionMask(QStringList(QContactTag::DefinitionName));
+    saveRequest->start();
+    QTest::qWait(1000);
+    QVERIFY(saveRequest->isFinished());
 }
 
 void tst_QContactAsync::definitionFetch()

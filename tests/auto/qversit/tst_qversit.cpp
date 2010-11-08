@@ -133,12 +133,14 @@ void tst_QVersit::testImportVCardFiles()
     QVERIFY(reader.startReading());
     QVERIFY(reader.waitForFinished());
     QList<QVersitDocument> documents = reader.results();
+    QVERIFY(!documents.isEmpty());
     QCOMPARE(reader.error(), QVersitReader::NoError);
     QVersitContactImporter importer;
     MyQVersitResourceHandler resourceHandler;
     importer.setResourceHandler(&resourceHandler);
     QVERIFY(importer.importDocuments(documents));
     QList<QContact> contacts = importer.contacts();
+    QVERIFY(!contacts.isEmpty());
 
     if (expectedContacts.size() > 0) {
         QCOMPARE(contacts.size(), expectedContacts.size());
@@ -275,6 +277,10 @@ void tst_QVersit::testImportVCardFiles_data()
         QTest::newRow("test1.vcf") << QString::fromAscii("test1.vcf")
             << QByteArray("UTF-8") << (QList<QContact>() << contact);
     }
+
+    // A file with bad wrapping (no preceding space on a line continuation)
+    QTest::newRow("badwrap.vcf") << QString::fromAscii("badwrap.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
 }
 
 void tst_QVersit::testExportImportVCard()

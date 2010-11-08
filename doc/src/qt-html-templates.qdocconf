@@ -1,4 +1,5 @@
 HTML.stylesheets        =  style/style.css \
+                                    style/OfflineStyle.css \
 									style/style_ie7.css \
 									style/style_ie8.css \
 									style/style_ie6.css

@@ -18,9 +18,8 @@ PRIVATE_HEADERS += \
     nfc/qnearfieldtarget_p.h \
     nfc/qnearfieldmanager_p.h \
     nfc/qnearfieldmanagerimpl_p.h \
-    nfc/qtlvreader_p.h \
-    nfc/qtlvreader_p.h \
-    nfc/checksum_p.h 
+    nfc/qtlv_p.h \
+    nfc/checksum_p.h
 
 SOURCES += \
     nfc/qnearfieldmanager.cpp \
@@ -33,8 +32,8 @@ SOURCES += \
     nfc/qnearfieldtagtype1.cpp \
     nfc/qnearfieldtagtype2.cpp \
     nfc/qnearfieldtagtype3.cpp \
-    nfc/qtlvreader.cpp \
     nfc/qllcpsocket.cpp \
+    nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 
 simulator:PRIVATE_HEADERS += \
@@ -46,14 +45,6 @@ simulator:SOURCES += \
     nfc/qnearfieldmanager_simulator.cpp \
     nfc/qllcpsocket_simulator_p.cpp \
     nfc/qllcpserver_simulator_p.cpp
-
-!symbian:PRIVATE_HEADERS += \
-    nfc/qllcpsocket_symbian_p.h \
-    nfc/qllcpserver_symbian_p.h
-
-!symbian:SOURCES += \
-    nfc/qllcpsocket_symbian_p.cpp \
-    nfc/qllcpserver_symbian_p.cpp
 
 !simulator:!symbian:PRIVATE_HEADERS += \
     nfc/qllcpsocket_p.h \

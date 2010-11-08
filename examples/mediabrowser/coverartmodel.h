@@ -53,17 +53,15 @@ class CoverArtModel : public ThumbnailModel
 public:
     CoverArtModel(QAbstractGallery *gallery, QObject *parent = 0);
 
-#ifndef QT_NO_QFUTURE
 #if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
 protected:
-    QString imagePath(const QModelIndex &index) const;
+    QUrl imageUrl(const QModelIndex &index) const;
 
 private:
     QString hash(const QString &identifier) const;
 
     QRegExp illegalCharacters;
     QString whitespace;
-#endif
 #endif
 };
 

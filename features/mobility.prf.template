@@ -104,13 +104,14 @@ contains(MOBILITY, organizer) {
 
 contains(MOBILITY, connectivity) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtConnectivity
+    INCLUDEPATH += $${QMAKE_INCDIR_QT}/QtNetwork
     qtAddLibrary(QtConnectivity)
 }
 
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.
 # Mobility libs have UID3 0x2002AC89
 # self-signed Mobility libs have UID3 0xE002AC89
-symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
+symbian:contains(CONFIG, mobility):!isEmpty(default_deployment.pkg_prerules):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
         "(0x2002AC89), 1, 2, 0, {\"QtMobility\"}"

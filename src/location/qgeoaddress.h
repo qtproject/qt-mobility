@@ -84,8 +84,8 @@ public:
     QString street() const;
     void setStreet(const QString &street);
 
-    QString postCode() const;
-    void setPostCode(const QString &postCode);
+    QString postcode() const;
+    void setPostcode(const QString &postcode);
 
     bool isEmpty() const;
     void clear();

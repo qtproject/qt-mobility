@@ -110,21 +110,37 @@ QContactActionTarget::~QContactActionTarget()
 {
 }
 
+/*!
+ * Returns the contact that this action target will operate on.
+ * \sa details()
+ */
 QContact QContactActionTarget::contact() const
 {
     return d->m_contact;
 }
 
+/*!
+ * Returns the details that this action target will operate on.
+ * \sa contact()
+ */
 QList<QContactDetail> QContactActionTarget::details() const
 {
     return d->m_details;
 }
 
+/*!
+ * Sets the contact that this action target will operate on to \a contact.
+ * \sa setDetails()
+ */
 void QContactActionTarget::setContact(const QContact& contact)
 {
     d->m_contact = contact;
 }
 
+/*!
+ * Sets the details that this action target will operate on to \a details.
+ * \sa setContact()
+ */
 void QContactActionTarget::setDetails(const QList<QContactDetail>& details)
 {
     d->m_details = details;
@@ -140,8 +156,7 @@ bool QContactActionTarget::isValid() const
 }
 
 /*!
- * Returns true if the action name, service name and service-specified implementation version
- * specified by this action target are equal to those specified by \a other
+ * Returns true if the contacts and details specified by this action target are equal to those specified by \a other
  */
 bool QContactActionTarget::operator==(const QContactActionTarget& other) const
 {
@@ -150,12 +165,30 @@ bool QContactActionTarget::operator==(const QContactActionTarget& other) const
 }
 
 /*!
- * Returns true if the action name, service name or service-specified implementation version
- * specified by this action target are different to that specified by \a other
+ * Returns true if the contacts or details specified by this action target are different to that specified by \a other
  */
 bool QContactActionTarget::operator!=(const QContactActionTarget& other) const
 {
     return !(*this == other);
+}
+
+/*!
+  Returns the type of this action target.
+
+  The type is determined by the properties that have been set on this target.
+ */
+QContactActionTarget::Type QContactActionTarget::type() const
+{
+    if (d->m_contact.isEmpty())
+        return QContactActionTarget::Invalid;
+    switch (d->m_details.count()) {
+        case 0:
+            return QContactActionTarget::WholeContact;
+        case 1:
+            return QContactActionTarget::SingleDetail;
+        default:
+            return QContactActionTarget::MultipleDetails;
+    }
 }
 
 /*! Returns the hash value for \a key. */
@@ -167,5 +200,41 @@ uint qHash(const QContactActionTarget& key)
     }
     return ret;
 }
+
+#ifndef QT_NO_DATASTREAM
+/*! Streams the given \a target to the datastream \a out */
+QDataStream& operator<<(QDataStream& out, const QContactActionTarget& target)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactActionTarget
+    out << formatVersion;
+    out << target.d->m_contact;
+    out << target.d->m_details;
+    return out;
+}
+
+/*! Streams \a target in from the datastream \a in */
+QDataStream& operator>>(QDataStream& in, QContactActionTarget& target)
+{
+    QContactActionTarget retn;
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        in >> retn.d->m_contact;
+        in >> retn.d->m_details;
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    target = retn;
+    return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug& operator<<(QDebug dbg, const QContactActionTarget& target)
+{
+    dbg.nospace() << "QContactActionTarget(" << target.contact() << target.details() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 QTM_END_NAMESPACE
