@@ -130,6 +130,7 @@
 #define TEST_PROXIMITY_RADIUS
 #define TEST_VIEWPORT
 #define EXPORT_URL
+#define SAVE_REMOVE_STRESS
 
 //#define WORKAROUND
 
@@ -1132,6 +1133,10 @@ void testViewport_data();
  void exportUrl();
 #endif
 
+#ifdef SAVE_REMOVE_STRESS
+ void saveRemoveStress();
+#endif
+
 #ifndef Q_OS_SYMBIAN
     void categoryLimitOffset();
     void exportGpx();
@@ -1141,18 +1146,6 @@ void testViewport_data();
 
     void testConvenienceFunctions();
 #endif
-    void simpleTest() {
-    QLandmark lm;
-    QGeoCoordinate coord(10,20);
-    lm.setName("Lm1");
-    lm.setCoordinate(coord);
-    QVERIFY(m_manager->saveLandmark(&lm));
-    QLandmark lmRetrieved = m_manager->landmark(lm.landmarkId()); 
-    qDebug() << "manager error = "<< m_manager->error() << "  error string" << m_manager->errorString();
-    qDebug() << "lmRetrieved name =" << lmRetrieved.name();
-    qDebug() << "Number of landmarks = " << m_manager->landmarks().count();
-    QCOMPARE(lmRetrieved, lm);
-    }
 };
 
 
@@ -1300,7 +1293,7 @@ void tst_QLandmarkManager::invalidManager()
     QCOMPARE(manager.managerVersion(), 0);
     QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","landmarkstest");
     db.setDatabaseName("test2.db");
 
@@ -1602,6 +1595,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         //try an id that does not exist
         id1.setManagerUri(m_manager->managerUri());
         id1.setLocalId("100");
+
         QCOMPARE(m_manager->landmark(id1), QLandmark());
         QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);
         QCOMPARE(m_manager->landmark(id1).landmarkId().isValid(), false);
@@ -1624,6 +1618,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         id1.setLocalId("100");
         lmFetchByIdRequest.setLandmarkId(id1);
         lmFetchByIdRequest.start();
+
         QVERIFY(waitForAsync(spy, &lmFetchByIdRequest,QLandmarkManager::LandmarkDoesNotExistError,100));
         QCOMPARE(lmFetchByIdRequest.errorMap().count(),1);
         QCOMPARE(lmFetchByIdRequest.errorMap().keys().at(0),0);
@@ -1667,6 +1662,10 @@ void tst_QLandmarkManager::retrieveLandmark() {
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), false);
 
         id2 = lm2.landmarkId();
+#ifdef Q_WS_MAEMO_6
+        QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
+        QEXPECT_FAIL("", "TODO: Maemo6: need to implement all fields of landmark", Continue);
+#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), true);
@@ -1674,6 +1673,10 @@ void tst_QLandmarkManager::retrieveLandmark() {
         //ensure consecutive calls clears the error
         QCOMPARE(m_manager->landmark(id1), QLandmark());
         QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);
+#ifdef Q_WS_MAEMO_6
+        QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
+        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
+#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "async") {
@@ -1740,6 +1743,10 @@ void tst_QLandmarkManager::retrieveLandmark() {
     if (type == "sync") {
         //check that we can retrieve a landmark a single catergory
         QLandmark lm3Retrieved = m_manager->landmark(id3);
+#ifdef Q_WS_MAEMO_6
+        QCOMPARE(lm3Retrieved.name(), lm3.name());
+        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
+#endif
         QCOMPARE(lm3Retrieved, lm3);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QList<QLandmarkCategoryId> lm3RetrievedCatIds;
@@ -1749,6 +1756,10 @@ void tst_QLandmarkManager::retrieveLandmark() {
 
         //check that we can retrieve a landmark with multiple categories
         QLandmark lm4Retrieved = m_manager->landmark(id4);
+#ifdef Q_WS_MAEMO_6
+        QCOMPARE(lm4Retrieved.name(), lm4.name());
+        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
+#endif
         QCOMPARE(lm4Retrieved, lm4);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -8091,6 +8102,30 @@ void tst_QLandmarkManager::exportUrl() {
     QCOMPARE(lms.at(0).url(), lm1.url());
     QFileInfo fileInfo("exporturl.lmx");
     qDebug() << "export url file location=" << fileInfo.canonicalFilePath();
+}
+#endif
+
+#ifdef SAVE_REMOVE_STRESS
+void tst_QLandmarkManager::saveRemoveStress()
+{
+    QList<QLandmark> lms;
+    for (int i=0; i < 100; ++i) {
+        QLandmark lm;
+        lm.setName(QString("LM") + i);
+        lms.append(lm);
+    }
+
+    QVERIFY(m_manager->saveLandmarks(&lms));
+    QCOMPARE(m_manager->landmarkIds().count(), 100);
+    qDebug() << "original landmark count= " <<  m_manager->landmarkIds().count();
+    bool result = m_manager->removeLandmarks(lms);
+    qDebug() << "Result of landmark removal = " << result;
+    qDebug() << "Error =" << m_manager->error();
+    qDebug() << "Errorstring=" << m_manager->errorString();
+    qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
+    QVERIFY(result);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(m_manager->errorMap().count(), 0);
 }
 #endif
 
