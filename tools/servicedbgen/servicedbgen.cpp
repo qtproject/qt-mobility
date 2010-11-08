@@ -448,7 +448,9 @@ void CommandProcessor::remove(const QStringList &desList, ServiceDatabase *db)
     }
 }
 
+#ifdef STATIC_BUILD
 Q_IMPORT_PLUGIN(qsqlite)
+#endif
 
 int main(int argc, char *argv[])
 {
