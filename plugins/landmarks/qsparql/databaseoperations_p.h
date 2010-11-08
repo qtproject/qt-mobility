@@ -141,6 +141,10 @@ class DatabaseOperations : public QObject  {
                        QMap<int, QLandmarkManager::Error> *errorMap,
                        QLandmarkManager::Error *error, QString *errorString);
 
+    bool removeLandmarkHelper(const QLandmarkId &landmarkId,
+                        QLandmarkManager::Error *error,
+                        QString *errorString, const QString &managerUri);
+
     bool removeLandmark(const QLandmarkId &landmarkId,
                         QLandmarkManager::Error *error, QString *errorString);
 
@@ -180,6 +184,7 @@ class DatabaseOperations : public QObject  {
     bool removeCategoryHelper(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString);
+
     bool removeCategory(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString);
