@@ -214,9 +214,10 @@ QTM_BEGIN_NAMESPACE
     Constructs a Bluetooth socket of \a socketType type, with \a parent.
 */
 QBluetoothSocket::QBluetoothSocket(QBluetoothSocket::SocketType socketType, QObject *parent)
-: QIODevice(*new QBluetoothSocketPrivate, parent)
+//: QIODevice(*new QBluetoothSocketPrivate, parent)
+: QIODevice(parent)
 {
-    Q_D(QBluetoothSocket);
+    d = QBluetoothSocketPrivate::constructPrivate(this);
 
     d->ensureNativeSocket(socketType);
 
@@ -227,8 +228,10 @@ QBluetoothSocket::QBluetoothSocket(QBluetoothSocket::SocketType socketType, QObj
     Constructs a Bluetooth socket with \a parent.
 */
 QBluetoothSocket::QBluetoothSocket(QObject *parent)
-: QIODevice(*new QBluetoothSocketPrivate, parent)
+//: QIODevice(*new QBluetoothSocketPrivate, parent)
+  : QIODevice(parent)
 {
+    d = QBluetoothSocketPrivate::constructPrivate(this);
     setOpenMode(QIODevice::ReadWrite);
 }
 
@@ -254,8 +257,6 @@ bool QBluetoothSocket::isSequential() const
 */
 qint64 QBluetoothSocket::bytesAvailable() const
 {
-    Q_D(const QBluetoothSocket);
-
     if (d->rxOffset == -1)
         return QIODevice::bytesAvailable();
     else
@@ -268,8 +269,6 @@ qint64 QBluetoothSocket::bytesAvailable() const
 */
 qint64 QBluetoothSocket::bytesToWrite() const
 {
-    Q_D(const QBluetoothSocket);
-
     return d->txBuffer.length();
 }
 
@@ -288,8 +287,6 @@ qint64 QBluetoothSocket::bytesToWrite() const
 */
 void QBluetoothSocket::connectToService(const QBluetoothServiceInfo &service, OpenMode openMode)
 {
-    Q_D(QBluetoothSocket);
-
     setOpenMode(openMode);
 
     if (service.protocolServiceMultiplexer() > 0) {
@@ -342,8 +339,6 @@ void QBluetoothSocket::connectToService(const QBluetoothAddress &address, const 
 */
 void QBluetoothSocket::connectToService(const QBluetoothAddress &address, quint16 port, OpenMode openMode)
 {
-    Q_D(QBluetoothSocket);
-
     qDebug() << "set open mode";
     setOpenMode(openMode);
 
@@ -357,8 +352,6 @@ void QBluetoothSocket::connectToService(const QBluetoothAddress &address, quint1
 */
 QBluetoothSocket::SocketType QBluetoothSocket::socketType() const
 {
-    Q_D(const QBluetoothSocket);
-
     return d->socketType;
 }
 
@@ -367,8 +360,6 @@ QBluetoothSocket::SocketType QBluetoothSocket::socketType() const
 */
 QBluetoothSocket::SocketState QBluetoothSocket::state() const
 {
-    Q_D(const QBluetoothSocket);
-
     return d->state;
 }
 
@@ -377,8 +368,6 @@ QBluetoothSocket::SocketState QBluetoothSocket::state() const
 */
 QBluetoothSocket::SocketError QBluetoothSocket::error() const
 {
-    Q_D(const QBluetoothSocket);
-
     return d->socketError;
 }
 
@@ -387,8 +376,6 @@ QBluetoothSocket::SocketError QBluetoothSocket::error() const
 */
 void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
 {
-    Q_D(QBluetoothSocket);
-
     d->state = state;
 }
 
@@ -397,8 +384,6 @@ void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
 */
 void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error)
 {
-    Q_D(QBluetoothSocket);
-
     d->socketError = error;
 }
 

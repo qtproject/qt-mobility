@@ -45,6 +45,14 @@
 #include "qbluetoothsocket.h"
 
 #include <QtGlobal>
+//#include <private/qiodevice_p.h>
+//#include "qiodevice_p.h"
+//#include <private/qobject_p.h>
+
+#ifdef Q_OS_SYMBIAN
+#include <es_sock.h>
+#include <bt_sock.h>
+#endif
 
 #ifndef QBLUETOOTHDEVICE_BUFFERSIZE
 #define QBLUETOOTHDEVICE_BUFFERSIZE Q_INT64_C(16384)
@@ -55,6 +63,8 @@ QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+class QBluetoothSocket;
 
 // This is QIODevice's read buffer, optimised for read(), isEmpty() and getChar()
 class QBluetoothPrivateLinearBuffer
@@ -182,52 +192,59 @@ private:
 };
 
 
-
-class QBluetoothSocket;
-
 class QBluetoothSocketPrivate : public QObject
+#ifdef Q_OS_SYMBIAN
+                              , public MBluetoothSocketNotifier
+#endif
 {
-    Q_OBJECT
+    Q_DECLARE_PUBLIC(QBluetoothSocket)
 
 public:
+    QBluetoothSocketPrivate();
+    ~QBluetoothSocketPrivate();
 
-    QBluetoothSocketPrivate(QBluetoothSocket *parent);
-    virtual ~QBluetoothSocketPrivate();
+    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
 
-    virtual void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
+    bool ensureNativeSocket(QBluetoothSocket::SocketType type);
 
-    virtual bool ensureNativeSocket(QBluetoothSocket::SocketType type);
+#ifdef Q_OS_SYMBIAN
+    void startReceive();
+    void ensureBlankNativeSocket();
 
-    virtual void _q_readNotify();
-
-    static QBluetoothSocketPrivate *constructPrivate(QBluetoothSocket *parent);
+    /* MBluetoothSocketNotifier virtual functions */
+    void HandleAcceptCompleteL(TInt aErr);
+    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
+    void HandleConnectCompleteL(TInt aErr);
+    void HandleIoctlCompleteL(TInt aErr);
+    void HandleReceiveCompleteL(TInt aErr);
+    void HandleSendCompleteL(TInt aErr);
+    void HandleShutdownCompleteL(TInt aErr);  
+#endif
+    void _q_readNotify();
     
 public:
     QBluetoothPrivateLinearBuffer buffer;
-    int socket;
     QBluetoothSocket::SocketType socketType;
     QBluetoothSocket::SocketState state;
     QBluetoothSocket::SocketError socketError;
-    QString localName;
-    QString peerName;
-    QSocketNotifier *readNotifier;
-
 
     QByteArray rxBuffer;
     qint64 rxOffset;
     QByteArray txBuffer;
 
-    QBluetoothSocket *q;
+#ifdef Q_OS_SYMBIAN
+    CBluetoothSocket *socket;
 
-Q_SIGNALS:
-    void readyRead();
-    void connected();
-    void disconnected();
-    void error(QBluetoothSocket::SocketError error);
-    void stateChanged(QBluetoothSocket::SocketState state);
+    TPtr8 rxDescriptor;
+    TSockXfrLength rxLength;
+#elif !defined(QT_NO_DBUS)
+    int socket;
+    QSocketNotifier *readNotifier;
 
+    mutable QString localName;
+    mutable QString peerName;
+#endif
 };
-
 
 QTM_END_NAMESPACE
 

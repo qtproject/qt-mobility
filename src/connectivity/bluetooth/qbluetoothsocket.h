@@ -59,9 +59,9 @@ class QBluetoothServiceInfo;
 
 class Q_CONNECTIVITY_EXPORT QBluetoothSocket : public QIODevice
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QBluetoothSocket)
+    Q_OBJECT    
 
+    friend class QBluetoothSocketPrivate;
     friend class QRfcommServer;
     friend class QRfcommServerPrivate;
 
@@ -134,7 +134,7 @@ public:
     //bool waitForDisconnected(int msecs = 30000);
     //virtual bool waitForReadyRead(int msecs = 30000);
 
-signals:
+Q_SIGNALS:
     void connected();
     void disconnected();
     void error(QBluetoothSocket::SocketError error);
@@ -148,7 +148,8 @@ protected:
     void setSocketError(SocketError error);
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
+    QBluetoothSocketPrivate *d;
+//    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
 };
 
 #ifndef QT_NO_DEBUG_STREAM

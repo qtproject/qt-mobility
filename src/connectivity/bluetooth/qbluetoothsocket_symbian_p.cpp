@@ -80,12 +80,12 @@ QSocketServerPrivate::~QSocketServerPrivate()
         socketServer.Close();
 }
 
-QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
+QBluetoothSocketPrivate::QBluetoothSocketPrivate()
 :   rxOffset(0), rxDescriptor(0, 0),
     socketType(QBluetoothSocket::UnknownSocketType),
     state(QBluetoothSocket::UnconnectedState),
     socketError(QBluetoothSocket::UnknownSocketError),
-    socket(0),q(parent)
+    socket(0)
 {
 }
 
