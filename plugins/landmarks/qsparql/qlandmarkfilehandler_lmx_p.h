@@ -58,8 +58,8 @@
 #include <qlandmarkcategoryid.h>
 #include "databaseoperations_p.h"
 
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
+class QXmlStreamReader;
+class QXmlStreamWriter;
 
 class QIODevice;
 
@@ -115,8 +115,8 @@ private:
 
     QList<QLandmark> m_landmarks;
 
-    QXmlStreamReader *m_reader;
     QXmlStreamWriter *m_writer;
+    QXmlStreamReader *m_reader;
 
     QLandmarkManager::TransferOption m_option;
     QString m_error;

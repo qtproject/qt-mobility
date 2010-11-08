@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -37,54 +37,52 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_H
-#define QGEOCODEXMLPARSER_H
+#include "qlandmarkmanagerenginefactory_qsparql_p.h"
+#include "qlandmarkmanagerengine_qsparql_p.h"
+#include <QtPlugin>
 
-#include <QString>
-#include <QList>
-#include <QXmlStreamReader>
+QLandmarkManagerEngineFactoryQsparql::QLandmarkManagerEngineFactoryQsparql() {}
 
-class QIODevice;
+QLandmarkManagerEngineFactoryQsparql::~QLandmarkManagerEngineFactoryQsparql() {}
 
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
-
-QTM_USE_NAMESPACE
-
-class QGeoCodeXmlParser
+QList<int> QLandmarkManagerEngineFactoryQsparql::supportedImplementationVersions() const
 {
-public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
+    QList<int> versions;
+    versions << 1;
+    return versions;
+}
 
-    bool parse(QIODevice* source);
+QLandmarkManagerEngine* QLandmarkManagerEngineFactoryQsparql::engine(const QMap<QString, QString> &parameters,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    QString filename;
 
-    QList<QGeoPlace> results() const;
-    QString errorString() const;
+    QList<QString> keys = parameters.keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        QString key = keys.at(i);
+        if (key == "filename")
+            filename = parameters.value(keys.at(i));
+    }
 
-private:
-    bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
+    QLandmarkManagerEngine * enginePtr = new QLandmarkManagerEngineQsparql(filename, error, errorString);
+    if(*error != QLandmarkManager::NoError)
+    {
+        delete enginePtr;
+        enginePtr =0;
+        return NULL;
+    }
+    else {
+        return enginePtr;
+    }
+}
 
-    QXmlStreamReader *m_reader;
+QString QLandmarkManagerEngineFactoryQsparql::managerName() const
+{
+    return "com.nokia.qt.landmarks.engines.qsparql";
+}
 
-    QList<QGeoPlace> m_results;
-    QString m_errorString;
-};
+Q_EXPORT_PLUGIN2(qtlandmarks_qsparql, QLandmarkManagerEngineFactoryQsparql)
 
-#endif
