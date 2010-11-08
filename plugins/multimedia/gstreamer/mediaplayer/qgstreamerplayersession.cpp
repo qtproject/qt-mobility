@@ -372,7 +372,10 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
                                   QString("playbin_%1_set").arg(dumpNum).toAscii().constData());
 #endif
 
-    GstElement *videoSink = m_renderer ? m_renderer->videoSink() : m_nullVideoSink;
+    GstElement *videoSink = 0;
+    if (m_renderer && m_renderer->isReady())
+        videoSink = m_renderer->videoSink();
+
     if (!videoSink)
         videoSink = m_nullVideoSink;
 
