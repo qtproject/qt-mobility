@@ -44,7 +44,6 @@
 #include "qtlv_p.h"
 
 #include <QtCore/QByteArray>
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
