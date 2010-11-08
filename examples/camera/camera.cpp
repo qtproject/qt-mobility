@@ -142,6 +142,9 @@ void Camera::setCamera(const QByteArray &cameraDevice)
     connect(camera, SIGNAL(lockStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
             this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 
+    ui->captureWidget->setTabEnabled(0, (camera->isCaptureModeSupported(QCamera::CaptureStillImage)));
+    ui->captureWidget->setTabEnabled(1, (camera->isCaptureModeSupported(QCamera::CaptureVideo)));
+
     updateCaptureMode();
     camera->start();
 }
@@ -329,7 +332,9 @@ void Camera::updateCaptureMode()
 {
     int tabIndex = ui->captureWidget->currentIndex();
     QCamera::CaptureMode captureMode = tabIndex == 0 ? QCamera::CaptureStillImage : QCamera::CaptureVideo;
-    camera->setCaptureMode(captureMode);
+
+    if (camera->isCaptureModeSupported(captureMode))
+        camera->setCaptureMode(captureMode);
 }
 
 void Camera::updateCameraState(QCamera::State state)
