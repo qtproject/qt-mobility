@@ -1013,7 +1013,8 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 g_error_free(err);
                 g_free(debug);
             } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR
-                       && qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "decodebin2", 10) == 0) {
+                       && (QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("decodebin2"))
+                           || QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("uridecodebin")))) {
                 emit invalidMedia();
                 stop();
                 GError *err;
