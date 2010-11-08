@@ -333,17 +333,19 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
+
+    networkModeChanged(ni->currentMode());
+    netStatusComboBox->setCurrentIndex((int)ni->currentMode());
+    netStatusComboActivated((int)ni->currentMode());
+
     cellIdLabel->setText(QString::number(ni->cellId()));
     locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
     currentMCCLabel->setText(ni->currentMobileCountryCode());
     currentMNCLabel->setText(ni->currentMobileNetworkCode());
 
     homeMCCLabel->setText(ni->homeMobileCountryCode());
-    homeMNCLabel->setText(ni->homeMobileNetworkCode());
 
-    networkModeChanged(ni->currentMode());
-    netStatusComboBox->setCurrentIndex((int)ni->currentMode());
-    netStatusComboActivated((int)ni->currentMode());
+    homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
 void Dialog::netStatusComboActivated(int index)
 {
