@@ -58,7 +58,9 @@
 
 #include "../qndefrecord.h"
 
+namespace QtMobility{
 class QNearFieldManagerPrivateImpl;
+}
 
 class CNearFieldManager : public CBase,
 						  public MNfcTagConnectionListener,
@@ -67,8 +69,8 @@ class CNearFieldManager : public CBase,
   {
 public:
     
-    static CNearFieldManager* NewL(QNearFieldManagerPrivateImpl& aCallback);
-    static CNearFieldManager* NewLC(QNearFieldManagerPrivateImpl& aCallback);
+    static CNearFieldManager* NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
+    static CNearFieldManager* NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     virtual ~CNearFieldManager();
     
     void StartTagDetectionL();
@@ -94,7 +96,7 @@ public: // From MNdefMessageListener
     
 private:
     
-    CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback);
+    CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     void ConstructL();
     //own
     RNfcServer iServer;
@@ -106,6 +108,6 @@ private:
     //for NDEF discovery
     CNdefDiscovery* iNdefDiscovery;
     //not own
-    QNearFieldManagerPrivateImpl& iCallback;
+    QtMobility::QNearFieldManagerPrivateImpl& iCallback;
     };
 #endif /* QNEARFIELDMANAGER_SYMBIAN_H_ */

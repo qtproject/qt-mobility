@@ -53,6 +53,8 @@
 
 #include "symbian/nearfieldmanager_symbian.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QNearFieldManagerPrivateImpl
     \brief The QNearFieldManagerPrivateImpl class provides symbian backend access to NFC service.
@@ -271,6 +273,64 @@ void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler()
 		}	
 	}
 
+void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(QNdefMessage msg)
+	{
+		for (int i = 0; i < m_registeredHandlers.count(); ++i) {
+			if (m_freeIds.contains(i))
+				continue;
+	
+			Callback &callback = m_registeredHandlers[i];
+	
+	
+			bool matched = true;
+	
+			QList<VerifyRecord> filterRecords;
+			for (int j = 0; j < callback.filter.recordCount(); ++j) {
+				VerifyRecord vr;
+				vr.count = 0;
+				vr.filterRecord = callback.filter.recordAt(j);
+	
+				filterRecords.append(vr);
+			}
+	
+			foreach (const QNdefRecord &record, msg) {
+				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+					VerifyRecord &vr = filterRecords[j];
+	
+					if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
+						vr.filterRecord.type == record.type()) {
+						++vr.count;
+						break;
+					} else {
+						if (callback.filter.orderMatch()) {
+							if (vr.filterRecord.minimum <= vr.count &&
+								vr.count <= vr.filterRecord.maximum) {
+								continue;
+							} else {
+								matched = false;
+							}
+						}
+					}
+				}
+	
+	
+				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+					const VerifyRecord &vr = filterRecords.at(j);
+	
+					if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
+						continue;
+					else
+						matched = false;
+				}
+	
+				if (matched) {
+					callback.method.invoke(callback.object, Q_ARG(QNdefMessage, msg),
+															Q_ARG(QNearFieldTarget *, NULL));
+				}
+			}
+		}
+	}
+
 /*!
     Callback function when symbian NFC backend lost the NFC \a target.
 */
@@ -283,4 +343,6 @@ void QNearFieldManagerPrivateImpl::targetDisconnected()
 		}
 	}
 
-//#include "qnearfieldmanager_symbian.moc"
+#include "moc_qnearfieldmanager_symbian_p.cpp"
+
+QTM_END_NAMESPACE

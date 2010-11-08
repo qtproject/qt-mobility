@@ -42,6 +42,7 @@
 #include "nearfieldmanager_symbian.h"
 #include "nearfieldtargetfactory_symbian.h"
 #include "../qnearfieldmanager_symbian_p.h"
+#include "qnearfieldutility_symbian.h"
 
 #include <ndefmessage.h>
 
@@ -74,6 +75,8 @@ void CNearFieldManager::ConstructL()
 */
 void CNearFieldManager::StartTagDetectionL()
 	{
+	User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
+	
 	iTagSubscription = CNfcTagSubscription::NewL();   
 	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
 	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
@@ -82,7 +85,7 @@ void CNearFieldManager::StartTagDetectionL()
 	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
 	iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
 	
-	iNfcTagDiscovery->AddTagConnectionListener( *this );
+	
 	iLlcpProvider->AddLlcpLinkListenerL( *this );
 	}
 
@@ -97,7 +100,7 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
 		iNdefDiscovery = CNdefDiscovery::NewL( iServer );
 		iNdefDiscovery->AddNdefMessageListener( *this );		
 		}
-	TPtrC8 type(reinterpret_cast<const TUint8*>(aType.constData()), aType.size());
+	TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
 	return iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
 	}
 
@@ -109,7 +112,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
 	{
 	if ( iNdefDiscovery )
 		{
-		TPtrC8 type(reinterpret_cast<const TUint8*>(aType.constData()), aType.size());
+		TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
 		iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
 		}
 	}
@@ -170,15 +173,18 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     {
     if ( aMessage )
         {
-        //Just omit the message, logic will handle in QNearFieldManagerPrivateImpl::targetFound()
-        delete aMessage;  
+		TRAP_IGNORE(
+			QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+			QT_TRYCATCH_LEAVING(iCallback.invokeTargetDetectedHandler(msg));
+			delete aMessage;
+		);
         }
     }
 
 /*!
     New a CNearFieldManager instance.
 */
-CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
 	: iCallback(aCallback)
     {    
     }
@@ -186,7 +192,7 @@ CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
 /*!
     Create a new instance of this class.
 */
-CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = NewLC(aCallback);
     CleanupStack::Pop( self );  
@@ -196,7 +202,7 @@ CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallba
 /*!
     Create a new instance of this class and push to cleanup stack.
 */
-CNearFieldManager* CNearFieldManager::NewLC(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager* CNearFieldManager::NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = new (ELeave) CNearFieldManager(aCallback);
     CleanupStack::PushL( self );
