@@ -130,6 +130,7 @@
 #define TEST_PROXIMITY_RADIUS
 #define TEST_VIEWPORT
 #define EXPORT_URL
+#define SAVE_REMOVE_STRESS
 
 //#define WORKAROUND
 
@@ -1130,6 +1131,10 @@ void testViewport_data();
 
 #ifdef EXPORT_URL
  void exportUrl();
+#endif
+
+#ifdef SAVE_REMOVE_STRESS
+ void saveRemoveStress();
 #endif
 
 #ifndef Q_OS_SYMBIAN
@@ -8097,6 +8102,30 @@ void tst_QLandmarkManager::exportUrl() {
     QCOMPARE(lms.at(0).url(), lm1.url());
     QFileInfo fileInfo("exporturl.lmx");
     qDebug() << "export url file location=" << fileInfo.canonicalFilePath();
+}
+#endif
+
+#ifdef SAVE_REMOVE_STRESS
+void tst_QLandmarkManager::saveRemoveStress()
+{
+    QList<QLandmark> lms;
+    for (int i=0; i < 100; ++i) {
+        QLandmark lm;
+        lm.setName(QString("LM") + i);
+        lms.append(lm);
+    }
+
+    QVERIFY(m_manager->saveLandmarks(&lms));
+    QCOMPARE(m_manager->landmarkIds().count(), 100);
+    qDebug() << "original landmark count= " <<  m_manager->landmarkIds().count();
+    bool result = m_manager->removeLandmarks(lms);
+    qDebug() << "Result of landmark removal = " << result;
+    qDebug() << "Error =" << m_manager->error();
+    qDebug() << "Errorstring=" << m_manager->errorString();
+    qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
+    QVERIFY(result);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(m_manager->errorMap().count(), 0);
 }
 #endif
 
