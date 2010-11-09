@@ -87,7 +87,12 @@ void QSimulatorVideoRendererControl::start()
     if (!mSurface)
         return;
     stop();
-    QVideoSurfaceFormat format(mImage.size(), QVideoFrame::Format_RGB32);
+    QVideoFrame::PixelFormat pixelFormat = QVideoFrame::pixelFormatFromImageFormat(mImage.format());
+    if (pixelFormat == QVideoFrame::Format_Invalid) {
+        mImage = mImage.convertToFormat(QImage::Format_RGB32);
+        pixelFormat = QVideoFrame::Format_RGB32;
+    }
+    QVideoSurfaceFormat format(mImage.size(), pixelFormat);
     mSurface->start(format);
     mSurface->present(mImage);
     mRunning = true;
