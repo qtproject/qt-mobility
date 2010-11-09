@@ -228,7 +228,7 @@ void ServiceBrowser::setDefaultInterfaceImplementation()
 void ServiceBrowser::registerExampleServices()
 {
     QStringList exampleXmlFiles;
-    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
+    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml" << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
@@ -239,6 +239,7 @@ void ServiceBrowser::unregisterExampleServices()
 {
     serviceManager->removeService("FileManagerService");
     serviceManager->removeService("BluetoothTransferService");
+    serviceManager->removeService("NotesManagerService");
 }
 
 void ServiceBrowser::reloadAttributesRadioButtonText()
