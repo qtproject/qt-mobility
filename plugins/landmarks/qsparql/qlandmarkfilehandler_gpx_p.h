@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILEHANDLER_LMX_P_H
-#define QLANDMARKFILEHANDLER_LMX_P_H
+#ifndef QLANDMARKFILEHANDLER_GPX_P_H
+#define QLANDMARKFILEHANDLER_GPX_P_H
 
 //
 //  W A R N I N G
@@ -54,77 +54,69 @@
 //
 
 #include <qlandmark.h>
-#include <qlandmarkmanager.h>
-#include <qlandmarkcategoryid.h>
-#include "databaseoperations_p.h"
+#include <qlandmarkmanagerengine.h>
 
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
+class QXmlStreamReader;
+class QXmlStreamWriter;
 
 class QIODevice;
 
 QTM_USE_NAMESPACE
 
-class QLandmarkFileHandlerLmx : public QObject
+class QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(volatile const bool *cancel=0);
-    ~QLandmarkFileHandlerLmx();
+    enum Behavior{ExportAll, ExportSubset};//requirement whether we need to export all landmarks given
+                                         //or only those that are capable of being exported ie have valid coords.
 
-    QList<QLandmark> landmarks() const;
-    void setLandmarks(const QList<QLandmark> &landmarks);
+    QLandmarkFileHandlerGpx(const volatile bool *cancel = 0);
+    ~QLandmarkFileHandlerGpx();
 
-    void setCategoryIdNameHash(const QHash<QString,QString> &categoryIdNameHash);
-    QList<QStringList> landmarkCategoryNames();
+    QList<QLandmark> waypoints() const;
+    void setWaypoints(const QList<QLandmark> &waypoints);
 
-    void setTransferOption(QLandmarkManager::TransferOption option);
+    QList<QList<QLandmark> > tracks() const;
+    void setTracks(const QList<QList<QLandmark> > &tracks);
+
+    QList<QList<QLandmark> > routes() const;
+    void setRoutes(const QList<QList<QLandmark> > &routes);
 
     bool importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
-    QLandmarkManager::Error errorCode() const;
+    QLandmarkManager::Error error();
 
-//TODO: remove obsolete signals
-signals:
-    void error(const QString &error);
-    void finishedImport();
-    void finishedExport();
+    void setBehavior(Behavior behavior);
 
 private:
-    bool readLmx();
-    bool readLandmarkCollection(QList<QLandmark> &landmarkCollection);
-    bool readLandmark(QLandmark &landmark);
-    bool readCoordinates(QLandmark &landmark);
-    bool readAddressInfo(QLandmark &landmark);
-    bool readMediaLink(QLandmark &landmark);
-    bool readCategory(QString &name);
+    bool readGpx();
+    bool readWaypoint(QLandmark &landmark, const QString &elementName);
+    bool readRoute(QList<QLandmark> &route);
+    bool readTrack(QList<QLandmark> &track);
+    bool readTrackSegment(QList<QLandmark> &track);
 
-    bool writeLmx();
-    bool writeLandmarkCollection(const QList<QLandmark> &landmarkCollection);
-    bool writeLandmark(const QLandmark &landmark);
-    bool writeCoordinates(const QLandmark &landmark);
-    bool writeAddressInfo(const QLandmark &landmark);
-    bool writeMediaLink(const QLandmark &landmark);
-    bool writeCategory(const QLandmarkCategoryId &categoryId);
+    bool writeGpx();
+    bool writeWaypoint(const QLandmark &landmark, const QString &elementName);
+    bool writeRoute(const QList<QLandmark> &route);
+    bool writeTrack(const QList<QLandmark> &track);
 
-    QString m_ns;
     QString m_nsPrefix;
+    QString m_ns;
 
-    QList<QLandmark> m_landmarks;
+    QList<QLandmark> m_waypoints;
+    QList<QList<QLandmark> > m_tracks;
+    QList<QList<QLandmark> > m_routes;
 
     QXmlStreamReader *m_reader;
     QXmlStreamWriter *m_writer;
 
-    QLandmarkManager::TransferOption m_option;
-    QString m_error;
     QLandmarkManager::Error m_errorCode;
+    QString m_errorString;
+    Behavior m_behavior;
     volatile const bool *m_cancel;
-    QList<QStringList> m_landmarkCategoryNames;//list of category names belonging to each landmark
-
-    QHash<QString, QString> m_categoryIdNameHash;//category id to name hash
 };
 
-#endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H
+#endif // #ifndef QLANDMARKGPXHANDLER_H

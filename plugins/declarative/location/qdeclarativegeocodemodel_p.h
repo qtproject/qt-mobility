@@ -37,54 +37,48 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_H
-#define QGEOCODEXMLPARSER_H
+#ifndef QDECLARATIVEGEOCODEMODEL_H
+#define QDECLARATIVEGEOCODEMODEL_H
 
-#include <QString>
-#include <QList>
-#include <QXmlStreamReader>
+#include "qdeclarativegeosearchmodel_p.h"
 
-class QIODevice;
+#include "qdeclarativegeoaddress_p.h"
 
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
+QTM_BEGIN_NAMESPACE
 
-QTM_USE_NAMESPACE
-
-class QGeoCodeXmlParser
+class QDeclarativeGeocodeModel : public QDeclarativeGeoSearchModel
 {
+
+    Q_OBJECT
+
+    Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged)
+
 public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
+    explicit QDeclarativeGeocodeModel(QObject *parent = 0);
+    ~QDeclarativeGeocodeModel();
 
-    bool parse(QIODevice* source);
+    void setAddress(QDeclarativeGeoAddress *address);
+    QDeclarativeGeoAddress* address();
 
-    QList<QGeoPlace> results() const;
-    QString errorString() const;
+    // From QDeclarativeParserStatus
+    virtual void componentComplete();
+
+    // From QAbstractListModel
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+Q_SIGNALS:
+    void addressChanged(QDeclarativeGeoAddress *address);
 
 private:
-    bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
+    void update();
 
-    QXmlStreamReader *m_reader;
-
-    QList<QGeoPlace> m_results;
-    QString m_errorString;
+    bool complete_;
+    QDeclarativeGeoAddress address_;
 };
+
+QTM_END_NAMESPACE
 
 #endif

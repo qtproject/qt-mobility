@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -37,54 +37,41 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_H
-#define QGEOCODEXMLPARSER_H
+#ifndef QLANDMARKMANAGERENGINEFACTORY_QSPARQLP_H
+#define QLANDMARKMANAGERENGINEFACTORY_QSPARQLP_H
 
-#include <QString>
-#include <QList>
-#include <QXmlStreamReader>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QIODevice;
-
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
+#include <qlandmarkmanagerenginefactory.h>
+#include <QObject>
 
 QTM_USE_NAMESPACE
 
-class QGeoCodeXmlParser
+class QLandmarkManagerEngineFactoryQsparql : public QObject, public QLandmarkManagerEngineFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QLandmarkManagerEngineFactory)
 public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
+    QLandmarkManagerEngineFactoryQsparql();
+    ~QLandmarkManagerEngineFactoryQsparql();
 
-    bool parse(QIODevice* source);
+    QList<int> supportedImplementationVersions() const;
 
-    QList<QGeoPlace> results() const;
-    QString errorString() const;
-
-private:
-    bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
-
-    QXmlStreamReader *m_reader;
-
-    QList<QGeoPlace> m_results;
-    QString m_errorString;
+    QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
+                                   QLandmarkManager::Error *error,
+                                   QString *errorString);
+    QString managerName() const;
 };
 
-#endif
+#endif // QLANDMARKMANAGERENGINEFACTORY_QSPARQLP_H

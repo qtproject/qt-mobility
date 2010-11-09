@@ -250,14 +250,6 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    QList<QLandmark> newLandmarks = manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount());
-
-    updateTable(newLandmarks);
-    updateRowLabels();
-    landmarks.append(newLandmarks);
-
-    if (table->rowCount() < limit)
-        nextLandmarkButton->setEnabled(false);
 }
 
 void LandmarkBrowser::on_setFilterButton_clicked()
