@@ -332,10 +332,9 @@ QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 
 QString landmarkIdsDefaultQueryString()
 {
-     return "select ?u ?latitude ?longitude { ?g a slo:GeoLocation ; "
-        "slo:latitude ?latitude ; "
-        "slo:longitude ?longitude . "
-        "?u slo:location ?g }";
+    return "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g slo:latitude ?latitude } . "
+        "OPTIONAL { ?g slo:longitude ?longitude }}";
  }
 
 QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
