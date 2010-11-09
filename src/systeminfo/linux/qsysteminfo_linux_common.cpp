@@ -2998,7 +2998,12 @@ QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()
 QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObject *parent)
 : QObject(parent)
 {
-
+#if !defined(QT_NO_DBUS)
+    halIsAvailable = halAvailable();
+    setConnection();
+//    currentPowerState();
+#endif
+    getBatteryStats();
 }
 
 QSystemBatteryInfoLinuxCommonPrivate::~QSystemBatteryInfoLinuxCommonPrivate()
@@ -3025,7 +3030,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
 {
-    return 0;
+    return currentBatLevelPercent;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacitymAh() const
@@ -3036,7 +3041,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacitymAh() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
 {
-    return 0;
+    return currentVoltage;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
@@ -3046,7 +3051,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
 {
-    return 0;
+    return dischargeRate;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::cumulativeCurrentFlow() const
@@ -3071,6 +3076,356 @@ void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
 
 void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 {
+
+}
+
+
+void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
+{
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+    if(uPowerAvailable()) {
+        QUPowerInterface *power;
+        power = new QUPowerInterface(this);
+        connect(power,SIGNAL(changed()),this,(SLOT(upowerChanged())));
+        foreach(const QDBusObjectPath &objpath, power->enumerateDevices()) {
+            QUPowerDeviceInterface *powerDevice;
+            powerDevice = new QUPowerDeviceInterface(objpath.path(),this);
+            //qDebug() << objpath.path() << powerDevice->getType();
+            if(powerDevice->getType() == 2) {
+                connect(powerDevice,SIGNAL(changed()),this,SLOT(upowerDeviceChanged()));
+                //    return powerDevice.percentLeft();
+            }
+        }
+    }
+#endif
+#if !defined(QT_NO_DBUS)
+    if(halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            QString lastdev;
+            foreach(const QString &dev, list) {
+                if(lastdev == dev)
+                    continue;
+                lastdev = dev;
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    const QString batType = halIfaceDevice->getPropertyString("battery.type");
+                    if((batType == "primary" || batType == "pda") &&
+                            halIfaceDevice->setConnections() ) {
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qDebug() << "connection malfunction";
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
+        list = iface.findDeviceByCapability("ac_adapter");
+        if(!list.isEmpty()) {
+            foreach(const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    if(halIfaceDevice->setConnections() ) {
+                        qDebug() << "connect ac_adapter" ;
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qDebug() << "connection malfunction";
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
+        list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid()) {
+                    if(halIfaceDevice->setConnections()) {
+                        qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
+                        if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
+                                    this,SLOT(halChanged(int,QVariantList)))) {
+                            qDebug() << "connection malfunction";
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+    }
+#endif
+}
+
+//#if !defined(QT_NO_DBUS)
+void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
+{
+    for(int i=0; i < map.count(); i++) {
+       if(map.at(i).toString() == "battery.charge_level.percentage") {
+            const int level = remainingCapacityPercent();
+            emit batteryLevelChanged(level);
+            QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
+
+            if(level < 4) {
+                stat = QSystemBatteryInfo::BatteryCritical;
+            } else if(level < 11) {
+                 stat = QSystemBatteryInfo::BatteryVeryLow;
+            } else if(level < 41) {
+                 stat =  QSystemBatteryInfo::BatteryLow;
+            } else if(level > 40) {
+                 stat = QSystemBatteryInfo::BatteryOk;
+            } else if(level == 100) {
+                 stat = QSystemBatteryInfo::BatteryFull;
+            }
+            if(currentBatStatus != stat) {
+                currentBatStatus = stat;
+                Q_EMIT batteryStatusChanged(stat);
+            }
+        }
+        if((map.at(i).toString() == "ac_adapter.present")
+        || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
+            QSystemBatteryInfo::ChargingState state = curChargeState;
+            emit chargingStateChanged(state);
+       }
+    } //end map
+}
+
+void QSystemBatteryInfoLinuxCommonPrivate::upowerChanged()
+{
+    getBatteryStats();
+}
+
+void QSystemBatteryInfoLinuxCommonPrivate::upowerDeviceChanged()
+{
+    getBatteryStats();
+}
+
+//QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::currentChargingState()
+//{
+//    QSystemBatteryInfo::ChargingState pState = QSystemBatteryInfo::ChargingFailed;
+
+//#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+//    if(uPowerAvailable()) {
+
+//        QUPowerInterface power(this);
+//        foreach(const QDBusObjectPath &objpath, power.enumerateDevices()) {
+//            QUPowerDeviceInterface powerDevice(objpath.path(),this);
+//            if(!powerDevice.isPowerSupply())
+//                continue;
+
+//            //charging state
+//            if(powerDevice.getType() == 1
+//                    || powerDevice.getType() == 2) {
+//                switch(powerDevice.getState()) {
+//                case 1:// charging
+//                    pState = QSystemBatteryInfo::Charging;
+//                    break;
+//                case 2: //discharging
+//                case 3: //empty
+//                case 4: //fully charged
+//                case 5: //pending charge
+//                case 6: //pending discharge
+//                    pState = QSystemBatteryInfo::NotCharging;
+//                    break;
+//                default:
+//                    pState = QSystemBatteryInfo::ChargingFailed;
+//                };
+//            }
+//            //energy flow
+//            cVoltage = powerDevice.voltage();
+//            cEnergy = powerDevice.energyDischargeRate();
+//            cLevel = powerDevice.percentLeft();
+
+//        } //end enumerateDevices
+
+
+//#endif
+//#if !defined(QT_NO_DBUS)
+//    if(halIsAvailable) {
+//        QHalInterface iface;
+//        QStringList list = iface.findDeviceByCapability("battery");
+//        if(!list.isEmpty()) {
+//            foreach(const QString &dev, list) {
+//                QHalDeviceInterface ifaceDevice(dev);
+//                if (iface.isValid()) {
+//                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+//                        pState = QSystemBatteryInfo::Charging;
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//    }
+//#endif
+//    if(curChargeState != pState) {
+//        curChargeState = pState;
+//        Q_EMIT chargingStateChanged(pState);
+//  }
+
+
+//   return pState;
+//}
+
+//QSystemBatteryInfo::ChargerType QSystemBatteryInfoLinuxCommonPrivate::currentChargerType()
+//{
+//   return cState;
+
+//}
+
+void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    int cLevel = 0;
+    int cEnergy = 0;
+    int cVoltage = 0;
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingFailed;
+    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::Unknown;
+
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+    if(uPowerAvailable()) {
+
+        QUPowerInterface power(this);
+        foreach(const QDBusObjectPath &objpath, power.enumerateDevices()) {
+            QUPowerDeviceInterface powerDevice(objpath.path(),this);
+            if(!powerDevice.isPowerSupply())
+                continue;
+
+            //chargerType;
+            if (powerDevice.getType() == 1) {
+                cType = QSystemBatteryInfo::Wall;
+            } else {
+                cType = QSystemBatteryInfo::None;
+            }
+
+            //charging state
+            if(powerDevice.getType() == 1
+                    || powerDevice.getType() == 2) {
+                switch(powerDevice.getState()) {
+                case 1:// charging
+                    cState = QSystemBatteryInfo::Charging;
+                case 2: //discharging
+                case 3: //empty
+                case 4: //fully charged
+                case 5: //pending charge
+                case 6: //pending discharge
+                    cState = QSystemBatteryInfo::NotCharging;
+                default:
+                    cState = QSystemBatteryInfo::ChargingFailed;
+                };
+            }
+            //energy flow
+            cVoltage = powerDevice.voltage();
+            cEnergy = powerDevice.energyDischargeRate();
+            cLevel = powerDevice.percentLeft();
+
+            qDebug() << "Volts:" << cVoltage
+                    << "Ebergy:" << cEnergy
+                    << "Level:" << cLevel;
+
+        } //end enumerateDevices
+    }
+#endif
+#if !defined(QT_NO_DBUS)
+    if(halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (iface.isValid()) {
+                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                        cState = QSystemBatteryInfo::Charging;
+                        break;
+                    }
+                }
+            }
+        }
+        list = iface.findDeviceByCapability("ac_adapter");
+        if (!list.isEmpty()) {
+            foreach (const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
+                        cType = QSystemBatteryInfo::Wall;
+                        break;
+                    } else {
+                        cType = QSystemBatteryInfo::None;
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+#endif
+#if !defined(QT_NO_DBUS)
+    if (halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("battery");
+        if (!list.isEmpty()) {
+            list = iface.findDeviceByCapability("ac_adapter");
+            if (!list.isEmpty()) {
+                foreach (const QString &dev, list) {
+                    QHalDeviceInterface ifaceDevice(dev);
+                    if (ifaceDevice.isValid()) {
+                        if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
+                            cType = QSystemBatteryInfo::Wall;
+                            break;
+                        } else {
+                            cType = QSystemBatteryInfo::None;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif
+
+    if(curChargeType != cType) {
+        curChargeType = cType;
+        Q_EMIT chargerTypeChanged(cType);
+  }
+
+    if(curChargeState != cState) {
+        curChargeState = cState;
+        Q_EMIT chargingStateChanged(cState);
+  }
+    if(dischargeRate != cEnergy) {
+     dischargeRate = cEnergy;
+     currentFlowChanged(cEnergy);
+    }
+
+    if(currentBatLevelPercent != 0 && currentBatLevelPercent != cLevel) {
+        Q_EMIT batteryLevelChanged(cLevel);
+        Q_EMIT remainingCapacityPercentChanged(cLevel);
+        //Q_EMIT remainingCapacitymAhChanged
+        currentBatLevelPercent = cLevel;
+    }
+
+    QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
+
+    if(cLevel < 4) {
+        stat = QSystemBatteryInfo::BatteryCritical;
+    } else if(cLevel < 11) {
+         stat = QSystemBatteryInfo::BatteryVeryLow;
+    } else if(cLevel < 41) {
+         stat =  QSystemBatteryInfo::BatteryLow;
+    } else if(cLevel > 40) {
+         stat = QSystemBatteryInfo::BatteryOk;
+    } else if(cLevel == 100) {
+         stat = QSystemBatteryInfo::BatteryFull;
+    }
+        if(currentBatStatus != stat) {
+            if(currentBatStatus != QSystemBatteryInfo::BatteryUnknown) {
+                Q_EMIT batteryStatusChanged(stat);
+            }
+            currentBatStatus = stat;
+        }
 
 }
 

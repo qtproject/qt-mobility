@@ -418,9 +418,35 @@ Q_SIGNALS:
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
 
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+    QUDisksInterface *udisksIface;
+
+private Q_SLOTS:
+    void setConnection();
+    virtual void halChanged(int,QVariantList);
+    virtual void upowerChanged();
+    virtual void upowerDeviceChanged();
+    void getBatteryStats();
+#endif
+private:
+//    QSystemBatteryInfo::ChargingState currentChargingState();
+//    QSystemBatteryInfo::ChargerType currentChargerType();
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+
+
 };
 
 QTM_END_NAMESPACE

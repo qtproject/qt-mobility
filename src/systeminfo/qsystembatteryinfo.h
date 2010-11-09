@@ -89,9 +89,9 @@ public:
     };
 
     enum ChargingState {
-        NotCharging = 0,
-        Charging,
-        ChargingFailed
+        ChargingFailed = -1,
+        NotCharging,
+        Charging
     };
 
     enum ChargerType {
@@ -102,7 +102,7 @@ public:
         USB_100mA
     };
 
-    QSystemBatteryInfo::ChargerType chargerType() const;
+        QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
 
 
