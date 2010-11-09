@@ -93,6 +93,9 @@ maemo6 {
     QMAKE_PKGCONFIG_CFLAGS += -I$${QT_MOBILITY_INCLUDE}/QtMobility
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
+    contains(maemo6-landmarks_enabled, yes) {
+        DEFINES += QSPARQL_USED
+    }
 }
 
 maemo5 {

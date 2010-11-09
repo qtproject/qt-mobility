@@ -6,7 +6,11 @@ include(../../common.pri)
 
 !symbian {
     maemo6 {
-        SUBDIRS += qsparql
+        contains(maemo6-landmarks_enabled, yes) {
+            SUBDIRS += qsparql
+        } else {
+            SUBDIRS += sqlite
+        }
     } else {
         SUBDIRS += sqlite
     }
