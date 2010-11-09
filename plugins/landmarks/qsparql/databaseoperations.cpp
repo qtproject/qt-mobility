@@ -1800,15 +1800,12 @@ QList<QLandmarkCategoryId> DatabaseOperations::categoryIds(const QLandmarkNameSo
     QString uri = managerUri;
     QString queryString = QString("select ?u {?u a slo:LandmarkCategory ; nie:title ?name . } ORDER BY");
 
-    /*
-    if (nameSort.caseSensitivity() == Qt::CaseInsensitive)
-        queryString.append("COLLATE NOCASE ");
-    else {
+    if (nameSort.caseSensitivity() == Qt::CaseSensitive) {
         *error = QLandmarkManager::NotSupportedError;
         *errorString = "Case sensitive name sorting of categories is not supported";
         return QList<QLandmarkCategoryId>();
     }
-    */
+
     if (nameSort.direction() == Qt::AscendingOrder)
         queryString.append(" ASC(?name) ");
     else
@@ -2183,13 +2180,10 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
             *errorString = lastErrorString;
     }
     if (addedIds.size() != 0) {
-        if (addedIds.size() < 50) {
-            qWarning() << "addedIds size is " << addedIds.size();
+        if (addedIds.size() < 50)
             emit categoriesAdded(addedIds);
-        } else {
-            qWarning() << "addedIds size is now " << addedIds.size();
+        else
             emit dataChanged();
-        }
     }
     if (changedIds.size() != 0) {
         if (changedIds.size() < 50)
