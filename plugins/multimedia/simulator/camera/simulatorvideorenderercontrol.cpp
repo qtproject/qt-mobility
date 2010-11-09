@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include "simulatorvideorenderercontrol.h"
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
+#include <qvideosurfaceformat.h>
 #include <QFile>
-#include <QAbstractVideoSurface>
-#include <QVideoFrame>
-#include <QVideoSurfaceFormat>
 #include <QColor>
 #include <QPainter>
 
