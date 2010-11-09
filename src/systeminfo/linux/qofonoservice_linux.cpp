@@ -95,7 +95,7 @@ QList <QDBusObjectPath> QOfonoManagerInterface::getModems()
 
     QList<QDBusObjectPath> modems;
     if(reply.isValid()) {
-        foreach(QOfonoProperties property, reply.value()) {
+        foreach(const QOfonoProperties &property, reply.value()) {
             modems << property.path;
         }
     } else {
@@ -109,7 +109,7 @@ QDBusObjectPath QOfonoManagerInterface::currentModem()
 {
     QList<QDBusObjectPath> modems = getModems();
 
-    foreach(const QDBusObjectPath modem, modems) {
+    foreach(const QDBusObjectPath &modem, modems) {
         QOfonoModemInterface device(modem.path());
         if(device.isPowered() /*&& device.isOnline()*/)
         return modem;
@@ -391,7 +391,7 @@ QList <QDBusObjectPath> QOfonoNetworkRegistrationInterface::getOperators()
     QList<QDBusObjectPath> ops;
 
     if(reply.isValid()) {
-        foreach(QOfonoProperties property, reply.value()) {
+        foreach(const QOfonoProperties &property, reply.value()) {
             ops << property.path;
         }
     } else {

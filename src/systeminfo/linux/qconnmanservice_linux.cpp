@@ -242,7 +242,7 @@ void QConnmanManagerInterface::releaseSession()
 
 QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
 {
-    foreach(const QString servicepath,getServices()) {
+    foreach(const QString &servicepath,getServices()) {
         if (!servicepath.isEmpty()) {
             QConnmanServiceInterface serv(servicepath,this);
             if (serv.getName() == service) {
@@ -253,7 +253,7 @@ QDBusObjectPath QConnmanManagerInterface::lookupService(const QString &service)
             }
             QConnmanTechnologyInterface tech(getPathForTechnology(serv.getType()));
             if (tech.isValid())  {
-                foreach(const QString dev,tech.getDevices()) {
+                foreach(const QString &dev,tech.getDevices()) {
                     QConnmanDeviceInterface devIface(dev);
                     if (devIface.getInterface() == service ||
                        devIface.getName() == service)
@@ -323,7 +323,7 @@ QStringList QConnmanManagerInterface::getServices()
 
 QString QConnmanManagerInterface::getPathForTechnology(const QString &name)
 {
-    foreach(const QString path, getTechnologies()) {
+    foreach(const QString &path, getTechnologies()) {
         if (path.contains(name)) {
             return path;
         }
