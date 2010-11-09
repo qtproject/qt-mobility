@@ -68,7 +68,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
     m_session(session),
     m_state(QCamera::UnloadedState),
-    m_status(QCamera::UnloadedStatus)
+    m_status(QCamera::UnloadedStatus),
+    m_reloadPending(false)
 {
     connect(m_session, SIGNAL(stateChanged(QCamera::State)),
             this, SLOT(updateStatus()));
