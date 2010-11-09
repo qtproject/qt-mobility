@@ -58,6 +58,8 @@ win32:!simulator {
 
 unix:!simulator {
     QT += gui
+    PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
+
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += linux/qsysteminfo_linux_common.cpp
@@ -241,5 +243,4 @@ simulator {
 HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
-
 
