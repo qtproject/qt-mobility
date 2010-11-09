@@ -242,7 +242,7 @@ void QFeedbackImmersion::startTimerForHandle(VibeInt32 handle, const QFeedbackHa
         t->setSingleShot(true);
         t->setInterval(effect->duration() + effect->attackTime() + effect->fadeTime());
         connect(t, SIGNAL(timeout()), const_cast<QFeedbackHapticsEffect*>(effect), SIGNAL(stateChanged()));
-        effectTimers.insert(effectHandle, t);
+        effectTimers.insert(handle, t);
         t->start();
     }
 }
@@ -258,7 +258,7 @@ void QFeedbackImmersion::startTimerForHandle(VibeInt32 handle, QFeedbackFileEffe
         t->setSingleShot(true);
         t->setInterval(effect->duration());
         connect(t, SIGNAL(timeout()), effect, SIGNAL(stateChanged()));
-        effectTimers.insert(effectHandle, t);
+        effectTimers.insert(handle, t);
         t->start();
     }
 }
@@ -324,7 +324,7 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackHapticsEff
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(effect->actuator()), effectHandle, &effectState);
 
-    return convertImmState(effectState);
+    return convertImmState(effectHandle, effectState);
 }
 
 // **************************
@@ -418,7 +418,7 @@ void QFeedbackImmersion::setEffectState(QFeedbackFileEffect *effect, QFeedbackEf
         reportError(effect, QFeedbackEffect::UnknownError);
 }
 
-QFeedbackEffect::State QFeedbackImmersion::convertImmState(VibeInt32 effectState) const
+QFeedbackEffect::State QFeedbackImmersion::convertImmState(VibeInt32 effectHandle, VibeInt32 effectState) const
 {
     // here we detect changes in the state of the effect
     // and make sure any timers are updated
@@ -455,7 +455,7 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackFileEffect
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(0), effectHandle, &effectState);
 
-    return convertImmState(effectState);
+    return convertImmState(effectHandle, effectState);
 }
 
 int QFeedbackImmersion::effectDuration(const QFeedbackFileEffect *effect)
