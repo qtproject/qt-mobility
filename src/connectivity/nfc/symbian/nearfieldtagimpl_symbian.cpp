@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "nearfieldtagimpl_symbian.h"
-#include "nearfieldtarget_symbian.h"
+#include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldutility_symbian.h"
 
@@ -108,4 +108,23 @@ void QNearFieldTagImpl::_setNdefMessages(const QList<QNdefMessage> &messages)
         
         result.Close();
     }
+}
+
+QByteArray QNearFieldTagImpl::_sendCommand(const QByteArray &command, int timeout, int responseSize)
+{
+    CNearFieldTag * tag = mTag->CastToTag();
+    QByteArray result;
+    if (tag)
+    {
+        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+        TRAPD( err, 
+            RBuf8 response;
+            response.CleanupClosePushL();
+            response.CreateL(responseSize);
+            User::LeaveIfError(tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)));
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
+            CleanupStack::PopAndDestroy();
+        )
+    }
+    return result;
 }

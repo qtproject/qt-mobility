@@ -45,11 +45,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-static const int ReadAllBytes = 124;
-static const int ReadSegmentBytes = 131;
-static const int BlockOpreationBytes = 11;
-static const int WriteBlockBytes = 14; // 8 bytes data + 4 bytes UI + 2 bytes CRC
-
 /*!
     \class QNearFieldTagType1Symbian
     \brief The QNearFieldTagType1Symbian class provides symbian backend implementation for communicating with an NFC Tag
@@ -84,17 +79,6 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 */
 QByteArray QNearFieldTagType1Symbian::readIdentification()
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-
-    if (tagType1)
-    {
-        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(tagType1->ReadIdentification());
-        return result;
-    }
-    else
-    {
-        return QByteArray();
-    }
 }
 
 /*!
@@ -102,20 +86,17 @@ QByteArray QNearFieldTagType1Symbian::readIdentification()
 */
 QByteArray QNearFieldTagType1Symbian::readAll()
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    QByteArray result;
+    QByteArray command;
+    command.append(char(0x00)); // RALL
+    command.append(char(0x00));
+    command.append(char(0x00));
+    command.append(uid().left(4)); // UID
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
 
-    if (tagType1)
-    {
-        TBuf8<ReadAllBytes> response;
-        int error = tagType1->ReadAll(response);
-        if (error == KErrNone)
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-        }
-    }
-
-    return result;
+    return sendCommand(command);
 }
 
 /*!
@@ -123,16 +104,31 @@ QByteArray QNearFieldTagType1Symbian::readAll()
 */
 quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    quint8 result = 0;
+    // MSB must be 0
+    if (address & 0x80)
+        return 0;
 
-    if (tagType1)
-    {
-        // TODO: ask Aaron to add error code define
-        int error = tagType1->ReadByte(address, result);
-    }
+    QByteArray command;
+    command.append(char(0x01));     // READ
+    command.append(char(address));  // Address
+    command.append(char(0x00));     // Data (unused)
+    command.append(uid().left(4));  // 4 bytes of UID
 
-    return result;
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return 0;
+
+    // address doesn't match
+    if (response.at(0) != address)
+        return 0;
+
+    return response.at(1);
 }
 
 /*!
@@ -140,16 +136,45 @@ quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
 */
 bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    int error = KErrNotSupported;
+    // MSB must be 0
+    if (address & 0x80)
+        return false;
 
-    if (tagType1)
-    {
-        error = (mode == EraseAndWrite) ? tagType1->WriteByteErase(address, data) 
-                                        : tagType1->WriteByteNoErase(address, data);
-    }
-    
-    return (error == KErrNone);
+    QByteArray command;
+
+    if (mode == EraseAndWrite)
+        command.append(char(0x53)); // WRITE-E
+    else if (mode == WriteOnly)
+        command.append(char(0x1a)); // WRITE-NE
+    else
+        return false;
+
+    command.append(char(address));  // Address
+    command.append(char(data));     // Data
+    command.append(uid().left(4));  // 4 bytes of UID
+
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 writeAddress = response.at(0);
+    quint8 writeData = response.at(1);
+
+    if (writeAddress != address)
+        return false;
+
+    if (mode == EraseAndWrite)
+        return writeData == data;
+    else if (mode == WriteOnly)
+        return (writeData & data) == data;
+    else
+        return false;
 }
 
 /*!
@@ -157,19 +182,30 @@ bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode
 */
 QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    QByteArray result;
+    if (segmentAddress & 0xf0)
+        return QByteArray();
 
-    if (tagType1)
-    {
-        TBuf8<ReadSegmentBytes> response;
-        if (KErrNone == tagType1->ReadSegment(segmentAddress, response))
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-        }
-    }
+    QByteArray command;
+    command.append(char(0x10));                 // RSEG
+    command.append(char(segmentAddress << 4));  // Segment address
+    command.append(QByteArray(8, char(0x00)));  // Data (unused)
+    command.append(uid().left(4));              // 4 bytes of UIDD
     
-    return result;
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return QByteArray();
+
+    quint8 readSegmentAddress = response.at(0);
+    if ((readSegmentAddress >> 4) != segmentAddress)
+        return QByteArray();
+
+    return response.mid(1);
 }
 
 /*!
@@ -177,17 +213,27 @@ QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 */
 QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    QByteArray result;
-    if (tagType1)
-    {
-        TBuf8<BlockOpreationBytes> response;
-        if (KErrNone == tagType1->ReadBlock(blockAddress, response))
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-        }
-    }
-    return result;
+    QByteArray command;
+    command.append(char(0x02));                 // READ8
+    command.append(char(blockAddress));         // Block address
+    command.append(QByteArray(8, char(0x00)));  // Data (unused)
+    command.append(uid().left(4));              // 4 bytes of UID
+
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return QByteArray();
+
+    quint8 readBlockAddress = response.at(0);
+    if (readBlockAddress != blockAddress)
+        return QByteArray();
+
+    return response.mid(1);
 }
 
 /*!
@@ -196,17 +242,48 @@ QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
-    int error = KErrNotSupported;
-    CNearFieldTagType1 * tagType1 = mTag->CastToTagType1();
-    
-    if (tagType1)
-    {
-        TBuf8<WriteBlockBytes> cmdData;
-        QNFCNdefUtility::FromQByteArrayToTDes8(data, cmdData);
-        error = (mode == EraseAndWrite) ? tagType1->WriteBlockErase(blockAddress, cmdData)
-                                        : tagType1->WriteBlockNoErase(blockAddress, cmdData);
+    if (data.length() != 8)
+        return false;
+
+    QByteArray command;
+
+    if (mode == EraseAndWrite)
+        command.append(char(0x54));     // WRITE-E8
+    else if (mode == WriteOnly)
+        command.append(char(0x1b));     // WRITE-NE8
+    else
+        return false;
+
+    command.append(char(blockAddress)); // Block address
+    command.append(data);               // Data
+    command.append(uid().left(4));      // 4 bytes of UID
+
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 writeBlockAddress = response.at(0);
+
+    if (writeBlockAddress != blockAddress)
+        return false;
+
+    if (mode == EraseAndWrite) {
+        return response.mid(1) == data;
+    } else if (mode == WriteOnly) {
+        const QByteArray writeData = response.mid(1);
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+        return true;
+    } else {
+        return false;
     }
-    return (error == KErrNone);
 }
     
 bool QNearFieldTagType1Symbian::hasNdefMessage()
@@ -229,38 +306,46 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
-#if 0
+    int timeout = 100 * 1000; // 100ms
+    int responseSize = 0;
     QByteArray result;
-    if (!command.isEmpty())
+
+    if (command.length() > 0)
     {
-        quint8 commandCode = command.at(0);
-        switch(commandCode)
+        switch (command.at(0))
         {
-            case 0x00:
+            case 0x00: // RALL
             {
-                result = readAll();
+                responseSize = 124;
                 break;
             }
-            case 0x78:
+            case 0x01: // READ
+            case 0x53: // WRITE-E
+            case 0x1a: // WRITE-NE
             {
-                result = readIdentification();
+                responseSize = 4;
+                break;
+            } 
+            case 0x10: // RSEG
+            {
+                responseSize = 131;
                 break;
             }
-            case 0x01:
+            case 0x02: // READ8
+            case 0x54: // WRITE-E8
+            case 0x1b: // WRITE_NE8
             {
-                result.append(readByte(command.at(1)));
+                responseSize = 11;
                 break;
             }
-            case 0x53:
+            default:
             {
-                // TODO: need add parameters to write operation so that we can get entire
-                // response of the command.
-                result
-
-
-            
-
-#endif            
+                return result;
+            }
+        }
+        result = _sendCommand(command, timeout, responseSize);
+    }
+    return result;            
 }
 
 /*!

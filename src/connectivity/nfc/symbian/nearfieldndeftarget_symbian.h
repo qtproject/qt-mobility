@@ -50,10 +50,7 @@
 
 #include "nearfieldtarget_symbian.h"
 
-class CNearFieldTagType1;
-class CNearFieldTagType2;
-class CNearFieldTagType3;
-class CNearFieldTagType4;
+class CNearFieldTag;
 class CNdefMessage;
 
 class CNdefConnection;
@@ -87,16 +84,13 @@ public: // New functions
     void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
 
 public:
-    CNearFieldTagType1 * CastToTagType1();
-    CNearFieldTagType2 * CastToTagType2();
-    CNearFieldTagType3 * CastToTagType3();
-    CNearFieldTagType4 * CastToTagType4();
+    CNearFieldTag * CastToTag();
     CNearFieldNdefTarget * CastToNdefTarget();
     
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
-
+    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout);
 private:
     // C++ constructor
     CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer);

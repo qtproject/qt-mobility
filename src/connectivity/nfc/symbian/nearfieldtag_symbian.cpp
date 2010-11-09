@@ -38,63 +38,44 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
-#include <nfctype1connection.h>
 #include <nfctag.h>
-#include "nearfieldtagtype1_symbian.h"
+#include <nfcconnection.h>
+#include "nearfieldtag_symbian.h"
 
 /*!
-    \class CNearFieldTagType1
-    \brief The CNearFieldTagType1 class provides ways to access tag type1
+    \class CNearFieldTag
+    \brief The CNearFieldTag class provides ways to access tag type1
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 */
 
-CNearFieldTagType1::CNearFieldTagType1(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
-                                                                                    iNfcServer(aNfcServer)
+CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
+                                                                          iNfcServer(aNfcServer)
     {
     }
 
-CNearFieldTagType1* CNearFieldTagType1::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
+CNearFieldTag* CNearFieldTag::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType1* self = new (ELeave) CNearFieldTagType1(aNfcTag, aNfcServer);
+    CNearFieldTag* self = new (ELeave) CNearFieldTag(aNfcTag, aNfcServer);
     CleanupStack::PushL(self);
-    self->ConstructL();
     return self;
     }
 
-CNearFieldTagType1* CNearFieldTagType1::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
+CNearFieldTag* CNearFieldTag::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     {
-    CNearFieldTagType1* self = CNearFieldTagType1::NewLC(aNfcTag, aNfcServer);
+    CNearFieldTag* self = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
     CleanupStack::Pop(); // self;
     return self;
     }
 
-void CNearFieldTagType1::ConstructL()
+CNearFieldTag::~CNearFieldTag()
     {
-    iNfcType1Connection = CNfcType1Connection::NewL(iNfcServer);
-    }
-
-CNearFieldTagType1::~CNearFieldTagType1()
-    {
-    delete iNfcType1Connection;
+    delete iTagConnection;
     delete iNfcTag;
     }
 
-/*!
-    Returns identification information read from the tag.
-
-    The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
-    is returned if an error occurs.
-*/
-
-const TDesC8& CNearFieldTagType1::ReadIdentification()
-    {
-    return iNfcTag->Uid(); 
-    }
-
-
-CNearFieldTagType1 * CNearFieldTagType1::CastToTagType1()
+CNearFieldTag * CNearFieldTag::CastToTag()
     {
     TInt error = KErrNone;
     
@@ -102,27 +83,27 @@ CNearFieldTagType1 * CNearFieldTagType1::CastToTagType1()
         {
         error = OpenConnection();
         }
-    return (error == KErrNone) ? const_cast<CNearFieldTagType1 *>(this) 
-                               : reinterpret_cast<CNearFieldTagType1 *>(0);
+    return (error == KErrNone) ? const_cast<CNearFieldTag *>(this) 
+                               : reinterpret_cast<CNearFieldTag *>(0);
     }
 
-TInt CNearFieldTagType1::OpenConnection()
+TInt CNearFieldTag::OpenConnection()
     {
-    return iNfcTag->OpenConnection(*iNfcType1Connection);
+    return iNfcTag->OpenConnection(*iTagConnection);
     }
 
-void CNearFieldTagType1::CloseConnection()
+void CNearFieldTag::CloseConnection()
     {
-    return iNfcTag->CloseConnection(*iNfcType1Connection);
+    return iNfcTag->CloseConnection(*iTagConnection);
     }
 
-TBool CNearFieldTagType1::IsConnectionOpened()
+TBool CNearFieldTag::IsConnectionOpened()
     {
-    return iNfcType1Connection->IsActivated();
+    return iTagConnection->IsActivated();
     }
 
-TInt CNearFieldTagType1::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTimeIntervalMicroSeconds32& aTimeout)
+TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
-    return (IsConnectionOpened()) ? iNfcType1Connection->RawModeAccess(aCommand, aResponse, aTimeout)
+    return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(aCommand, aResponse, aTimeout)
                                   : KErrInUse;
     }

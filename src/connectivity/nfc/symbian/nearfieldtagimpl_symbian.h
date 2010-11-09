@@ -65,6 +65,8 @@ public:
         return mAccessMethods;
     }
 
+    QByteArray _sendCommand(const QByteArray &command, int timeout, int reponseSize);
+
 protected:
     MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;

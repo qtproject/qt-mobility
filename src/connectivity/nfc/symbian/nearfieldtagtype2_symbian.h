@@ -50,16 +50,8 @@
 class CNfcType2Connection;
 class MNfcTag;
 
-class CNearFieldTagType2 : public CActive, public MNearFieldTarget
+class CNearFieldTagType2 : public MNearFieldTarget
     {
-    typedef enum TOperation
-        {
-        ENull,
-        ERead,
-        EWrite,
-        ESelect
-        };
-        
 public:
     // Cancel and destroy
     ~CNearFieldTagType2();
@@ -70,18 +62,13 @@ public:
     // Two-phased constructor.
     static CNearFieldTagType2* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
-public: // New functions
-    TInt ReadBlock(TUint8 aBlockAddress, TDes8& aResponse);
-    TInt WriteBlock(TUint8 aBlockAddress, const TDesC8& aData);
-    TInt SelectSector(TUint8 sector);
-
 public:
     CNearFieldTagType2 * CastToTagType2();
     
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
-
+    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTimeIntervalMicroSeconds32& aTimeout);
 private:
     // C++ constructor
     CNearFieldTagType2(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -89,27 +76,12 @@ private:
     // Second-phase constructor
     void ConstructL();
 
-private: // From CActive
-    // Handle completion
-    void RunL();
-
-    // How to cancel me
-    void DoCancel();
-
-    // Override to handle leaves from RunL(). Default implementation causes
-    // the active scheduler to panic.
-    TInt RunError( TInt aError );
-
 private:
     // own
     CNfcType2Connection * iNfcType2Connection;
-    CActiveSchedulerWait * iWait;
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;
-
-    TOperation iCurrentOperation;
-    TInt iOperationError;
     };
 
 #endif // NEARFIELDTAGTYPE2_H

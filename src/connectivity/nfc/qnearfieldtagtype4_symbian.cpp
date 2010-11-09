@@ -105,18 +105,6 @@ QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray
 
 QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
 {
-    CNearFieldTagType4 * iTagType4 = mTag->CastToTagType4();
-    QByteArray result;
-    if (iTagType4)
-    {
-        // TODO: length problem of APDU command!!!
-        TBuf8<16> buf;
-        if (KErrNone == iTagType4->SendAPDUCommand(QNFCNdefUtility::FromQByteArrayToTPtrC8(command), buf))
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(buf);
-        }
-    }
-    return result;
 }
 
 /*!
@@ -124,12 +112,6 @@ QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
 */
 QList<QByteArray> QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
 {
-    QList<QByteArray> result;
-    foreach (const QByteArray cmd, commands)
-    {
-        result.append(sendAPDUCommand(cmd));
-    }
-    return result;
 }
 
 #include "moc_qnearfieldtagtype4_symbian_p.cpp"

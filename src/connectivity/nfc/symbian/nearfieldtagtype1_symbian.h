@@ -42,7 +42,6 @@
 #ifndef NEARFIELDTAGTYPE1_H
 #define NEARFIELDTAGTYPE1_H
 
-#include <e32base.h>	// For CActive, link against: euser.lib
 #include <nfcserver.h>
 #include <nfctype1address.h>
 #include "nearfieldtarget_symbian.h"
@@ -50,7 +49,7 @@
 class CNfcType1Connection;
 class MNfcTag;
 
-class CNearFieldTagType1 : public CActive, public MNearFieldTarget
+class CNearFieldTagType1 : public MNearFieldTarget
     {
 public:
     // Cancel and destroy
@@ -63,21 +62,8 @@ public:
     static CNearFieldTagType1* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
 public: // New functions
-    
     // DIGPROTO
     const TDesC8& ReadIdentification();
-    
-    // Static memory functions
-    TInt ReadAll(TDes8& aData);
-    TInt ReadByte(TUint8 aAddress, TUint8& aData);
-    TInt WriteByteErase(TUint8 aAddress, TUint8 aData);
-    TInt WriteByteNoErase(TUint8 aAddress, TUint8 aData);
-    
-    // Dynamic memory functions
-    TInt ReadSegment(TUint aSegmentAddress, TDes8& aData);
-    TInt ReadBlock(TUint aBlockAddress, TDes8& aData);
-    TInt WriteBlockErase(TUint aBlockAddress, const TDesC8& aData);
-    TInt WriteBlockNoErase(TUint aBlockAddress, const TDesC8& aData);
 
 public:
     CNearFieldTagType1 * CastToTagType1();
@@ -86,32 +72,17 @@ public:
     void CloseConnection();
     TBool IsConnectionOpened();
 
+    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, TTimeIntervalMicroSeconds32& aTimeout);
 private:
     // C++ constructor
     CNearFieldTagType1(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Second-phase constructor
     void ConstructL();
-
-private: // From CActive
-    // Handle completion
-    void RunL();
-
-    // How to cancel me
-    void DoCancel();
-
-    // Override to handle leaves from RunL(). Default implementation causes
-    // the active scheduler to panic.
-    TInt RunError( TInt aError );
-    
-private: // utility functions
-    // Convert static memory structure address to TNfcType1Address
-    TNfcType1Address AddOperand(TUint8 aAddress) const;
     
 private:
     // own
     CNfcType1Connection * iNfcType1Connection;
-    CActiveSchedulerWait * iWait;
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;

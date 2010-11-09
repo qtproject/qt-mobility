@@ -39,28 +39,46 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDTARGETFACTORY_H_
-#define NEARFIELDTARGETFACTORY_H_
+#ifndef NEARFIELDTAG_H
+#define NEARFIELDTAG_H
+#include <nfcserver.h>
 
-#include <qnearfieldtarget.h>
+#include "nearfieldtarget_symbian.h"
 
 class MNfcTag;
-class RNfcServer;
-class MNearFieldTarget;
+class MNfcConnection;
 
-QTM_USE_NAMESPACE
-
-class TNearFieldTargetFactory
+class CNearFieldTag : public MNearFieldTarget
     {
 public:
-    static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
-private:
-    static MNearFieldTarget * WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget);
-    static QNearFieldTarget::AccessMethods ConnectionMode2AccessMethods(MNfcTag * aNfcTag);
+    // Cancel and destroy
+    ~CNearFieldTag();
 
-    template <typename CTAGCONNECTION, typename QTAGTYPE>
-    static QNearFieldTarget * CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
+    // Two-phased constructor.
+    static CNearFieldTag* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
+
+    // Two-phased constructor.
+    static CNearFieldTag* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
+
+public:
+    CNearFieldTag * CastToTag();
+    void SetConnection(MNfcConnection * aTagConnection) { iTagConnection = aTagConnection; }
+    
+    TInt OpenConnection();
+    void CloseConnection();
+    TBool IsConnectionOpened();
+
+    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse,const TTimeIntervalMicroSeconds32& aTimeout);
+private:
+    // C++ constructor
+    CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
+
+private:
+    // own
+    MNfcConnection * iTagConnection;
+    MNfcTag * iNfcTag;
+    
+    RNfcServer& iNfcServer;
     };
 
-
-#endif /* NEARFIELDTARGETFACTORY_H */
+#endif // NEARFIELDTAG_H
