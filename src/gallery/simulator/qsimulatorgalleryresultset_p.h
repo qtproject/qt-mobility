@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,52 +38,60 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QSIMULATORGALLERYRESULTSET_H
+#define QSIMULATORGALLERYRESULTSET_H
 
+#include <qmobilityglobal.h>
+#include "docgalleryconnection_simulator.h"
+#include "qgalleryresultset.h"
+#include "qgalleryqueryrequest.h"
+#include "qgalleryitemrequest.h"
+#include <QtCore/QObject>
+#include <QtGui/QImage>
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+QTM_BEGIN_NAMESPACE
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
-
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
-
-class CameraBinControl : public QCameraControl
+class QSimulatorGalleryResultSet  : public QGalleryResultSet
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    explicit QSimulatorGalleryResultSet(QObject *parent = 0);
 
-    bool isValid() const { return true; }
+    ~QSimulatorGalleryResultSet();
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+    int propertyKey(const QString &property) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const ;
+    QVariant::Type propertyType(int key) const;
 
-    QCamera::Status status() const { return m_status; }
+    int itemCount() const;
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+    bool isValid() const;
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+    QVariant itemId() const;
+    QUrl itemUrl() const;
+    QString itemType() const;
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
+
+    int currentIndex() const;
+    bool fetch(int index);
+
+signals:
 
 public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    Simulator::DocGalleryConnection* connection;
+    QGalleryQueryRequest* queryRequest;
+    QGalleryItemRequest* itemRequest;
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+    QString filePath;
+    QString itemTypeString;
+    QImage image;
+    bool valid;
+    int mCurrentIndex;
 };
 
-#endif // CAMERABINCONTROL_H
+QTM_END_NAMESPACE
+
+#endif // QSIMULATORGALLERYRESULTSET_H

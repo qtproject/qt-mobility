@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,50 +40,36 @@
 ****************************************************************************/
 
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#ifndef QSIMULATORSERVICEPLUGIN_H
+#define QSIMULATORSERVICEPLUGIN_H
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include <qmediaserviceproviderplugin.h>
+#include "qsimulatormultimediaconnection_p.h"
 
 QT_USE_NAMESPACE
-QT_USE_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+class QSimulatorServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    QSimulatorServicePlugin();
 
-    bool isValid() const { return true; }
+    // QMediaServiceProviderPlugin
+    QStringList keys() const;
+    QMediaService* create(QString const& key);
+    void release(QMediaService *service);
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
+    // QMediaServiceSupportedDevicesInterface
+    QList<QByteArray> devices(const QByteArray &service) const;
+    QString deviceDescription(const QByteArray &service, const QByteArray &device);
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    static void ensureSimulatorConnection();
+    static QTM_PREPEND_NAMESPACE(Simulator::MultimediaConnection) *mMultimediaConnection;
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+signals:
+    void cameraDataChanged();
 };
 
-#endif // CAMERABINCONTROL_H
+#endif // QSIMULATORSERVICEPLUGIN_H

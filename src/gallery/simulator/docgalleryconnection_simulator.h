@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,60 @@
 **
 ****************************************************************************/
 
+#ifndef DOCGALLERYCONNECTION_SIMULATOR_P_H
+#define DOCGALLERYCONNECTION_SIMULATOR_P_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include "qmobilityglobal.h"
+#include "docgallerysimulatordata.h"
+#include <QtCore/QObject>
+#include <QtCore/QList>
 
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+QT_BEGIN_HEADER
+
+class QLocalSocket;
+
+QTM_BEGIN_NAMESPACE
+
+namespace Simulator {
+class MobilityConnection;
+
+class DocGalleryConnection : public QObject
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    explicit DocGalleryConnection(MobilityConnection *mobilityCon);
+    static DocGalleryConnection *instance();
 
-    bool isValid() const { return true; }
+    QLocalSocket *sendSocket();
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
+    QtMobility::DocGallerySimulatorData galleryData() const;
 private slots:
-    void updateStatus();
-    void delayedReload();
+    void setDocGalleryData(const QtMobility::DocGallerySimulatorData &data);
+    void initialDocGalleryDataSent();
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    void getInitialData();
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+    DocGallerySimulatorData mGalleryData;
+
+    MobilityConnection *mConnection;
+    bool mRegisteredWithSimulator;
+    bool mInitialDataReceived;
 };
+}
+QTM_END_NAMESPACE
+QT_END_HEADER
 
-#endif // CAMERABINCONTROL_H
+#endif // DOCGALLERYCONNECTION_SIMULATOR_P_H

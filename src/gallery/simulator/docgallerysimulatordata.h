@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,52 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef DOCGALLERYSIMULATORDATA_H
+#define DOCGALLERYSIMULATORDATA_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include "qmobilityglobal.h"
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QMetaType>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
-
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
-
-class CameraBinControl : public QCameraControl
+QTM_BEGIN_NAMESPACE
+struct DocGalleryImageItem
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
-
-    bool isValid() const { return true; }
-
-    QCamera::State state() const;
-    void setState(QCamera::State state);
-
-    QCamera::Status status() const { return m_status; }
-
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
-
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
+    QString fileName;
+    int width;
+    int height;
+    QString title;
+    QString tags;
 };
 
-#endif // CAMERABINCONTROL_H
+struct DocGalleryArtistItem
+{
+    QString artist;
+};
+
+struct DocGallerySimulatorData
+{
+    QList<DocGalleryImageItem> images;
+    QList<DocGalleryArtistItem> artists;
+};
+
+void qt_registerDocGalleryTypes();
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::DocGallerySimulatorData)
+
+#endif // DOCGALLERYSIMULATORDATA_H

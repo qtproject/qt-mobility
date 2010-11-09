@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,52 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "docgallerysimulatordata.h"
 
+QTM_BEGIN_NAMESPACE
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
-
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
-
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
-
-class CameraBinControl : public QCameraControl
+void qt_registerDocGalleryTypes()
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    qRegisterMetaTypeStreamOperators<DocGallerySimulatorData>("QtMobility::DocGallerySimulatorData");
+}
 
-    bool isValid() const { return true; }
+QDataStream &operator<<(QDataStream &out, const DocGallerySimulatorData &s)
+{
+    out << s.artists << s.images;
+    return out;
+}
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+QDataStream &operator<<(QDataStream &out, const DocGalleryArtistItem &i)
+{
+    out << i.artist;
+    return out;
+}
 
-    QCamera::Status status() const { return m_status; }
+QDataStream &operator<<(QDataStream &out, const DocGalleryImageItem &i)
+{
+    out << i.fileName << i.tags << i.title << i.width << i.height;
+    return out;
+}
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+QDataStream &operator>>(QDataStream &in, DocGallerySimulatorData &s)
+{
+    in >> s.artists >> s.images;
+    return in;
+}
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+QDataStream &operator>>(QDataStream &in, DocGalleryArtistItem &i)
+{
+    in >> i.artist;
+    return in;
+}
 
-public slots:
-    void reloadLater();
+QDataStream &operator>>(QDataStream &in, DocGalleryImageItem &i)
+{
+    in >> i.fileName >> i.tags >> i.title >> i.width >> i.height;
+    return in;
+}
 
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
-};
-
-#endif // CAMERABINCONTROL_H
+QTM_END_NAMESPACE

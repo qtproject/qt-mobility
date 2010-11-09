@@ -58,8 +58,8 @@ QTM_BEGIN_NAMESPACE
     QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
     which meet the criteria defined by the filter.
 
-    QMessageAccountFilters can be combined using the logical operators (&), (|) and (~) to
-    create more refined queries.
+    QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
+    operators to create more refined queries.
 
     \sa QMessageManager, QMessageAccount
 */

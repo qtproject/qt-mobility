@@ -40,50 +40,48 @@
 ****************************************************************************/
 
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#ifndef SIMULATORCAMERACONTROL_H
+#define SIMULATORCAMERACONTROL_H
 
 #include <QHash>
 #include <qcameracontrol.h>
-#include "camerabinsession.h"
+#include "simulatorcamerasession.h"
 
 QT_USE_NAMESPACE
 QT_USE_NAMESPACE
 
-class CameraBinControl : public QCameraControl
+class SimulatorCameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    SimulatorCameraControl(SimulatorCameraSession *session );
+    virtual ~SimulatorCameraControl();
 
     bool isValid() const { return true; }
 
     QCamera::State state() const;
     void setState(QCamera::State state);
 
-    QCamera::Status status() const { return m_status; }
+    QCamera::Status status() const;
 
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode mode);
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
+
     bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
 
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
+signals:
+    void startCamera();
+    void stopCamera();
 
 private:
     void updateSupportedResolutions(const QString &device);
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
+    SimulatorCameraSession *m_session;
+    QCamera::State mState;
+    QCamera::Status mStatus;
     bool m_reloadPending;
 };
 
-#endif // CAMERABINCONTROL_H
+#endif // CAMERACONTROL_H

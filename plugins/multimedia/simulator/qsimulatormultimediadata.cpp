@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,40 @@
 **
 ****************************************************************************/
 
+#include "qsimulatormultimediadata_p.h"
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <QtCore/QDataStream>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+QTM_BEGIN_NAMESPACE
 
-QT_USE_NAMESPACE
-QT_USE_NAMESPACE
-
-class CameraBinControl : public QCameraControl
+void qt_registerCameraTypes()
 {
-    Q_OBJECT
-public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    qRegisterMetaTypeStreamOperators<QCameraData::QCameraDetails>("QtMobility::QCameraData::QCameraDetails");
+    qRegisterMetaTypeStreamOperators<QCameraData>("QtMobility::QCameraData");
+}
 
-    bool isValid() const { return true; }
+QDataStream &operator<<(QDataStream &out, const QCameraData &s)
+{
+    out << s.cameras;
+    return out;
+}
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+QDataStream &operator>>(QDataStream &in, QCameraData &s)
+{
+    in >> s.cameras;
+    return in;
+}
 
-    QCamera::Status status() const { return m_status; }
+QDataStream &operator<<(QDataStream &out, const QCameraData::QCameraDetails &s)
+{
+    out << s.description << s.imagePath;
+    return out;
+}
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+QDataStream &operator>>(QDataStream &in, QCameraData::QCameraDetails &s)
+{
+    in >> s.description >> s.imagePath;
+    return in;
+}
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
-private:
-    void updateSupportedResolutions(const QString &device);
-
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    bool m_reloadPending;
-};
-
-#endif // CAMERABINCONTROL_H
+QTM_END_NAMESPACE
