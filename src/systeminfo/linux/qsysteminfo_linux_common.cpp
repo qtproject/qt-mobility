@@ -655,7 +655,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
 //    QSystemNetworkInfo::Roaming
     if(connmanIsAvailable) {
 
-        QDBusObjectPath path = connmanManager->lookupService(modeToTechnology(mode));
+        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
         if(!path.path().isEmpty()) {
             QConnmanServiceInterface serviceIface(path.path(),this);
 
