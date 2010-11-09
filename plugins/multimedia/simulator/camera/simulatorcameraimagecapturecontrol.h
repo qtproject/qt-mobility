@@ -74,7 +74,10 @@ public: // QCameraImageCaptureControl
     int capture(const QString &fileName);
     void cancelCapture();
 
-private: // Data
+private:
+    void updateReadyForCapture(bool ready);
+
+    bool mReadyForCapture;
     SimulatorCameraSession *m_session;
     SimulatorCameraService *m_service;
     SimulatorCameraControl *m_cameraControl;

@@ -70,6 +70,7 @@ public:
 
 signals:
     void stateChanged(QCamera::State state);
+    void captureError(int id, int error, const QString &errorString);
     void error(int error, const QString &errorString);
     void imageExposed(int requestId);
     void imageCaptured(int requestId, const QImage &img);

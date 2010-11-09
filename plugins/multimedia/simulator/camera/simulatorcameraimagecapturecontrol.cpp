@@ -48,6 +48,7 @@
 
 SimulatorCameraImageCaptureControl::SimulatorCameraImageCaptureControl(SimulatorCameraSession *session, SimulatorCameraService *service) :
     QCameraImageCaptureControl(service),
+    mReadyForCapture(true),
     m_driveMode(QCameraImageCapture::SingleImageCapture) // Default DriveMode
 {
     m_session = session;
@@ -58,8 +59,6 @@ SimulatorCameraImageCaptureControl::SimulatorCameraImageCaptureControl(Simulator
     // Chain these signals from session class
     connect(m_session, SIGNAL(imageCaptured(const int, QImage)),
             this, SIGNAL(imageCaptured(const int, QImage)));
-    connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
-            this, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_session, SIGNAL(imageSaved(const int, const QString&)),
             this, SIGNAL(imageSaved(const int, const QString&)));
     connect(m_session, SIGNAL(imageExposed(int)),
@@ -78,7 +77,7 @@ bool SimulatorCameraImageCaptureControl::isReadyForCapture() const
         return false;
     }
 
-    return true;
+    return mReadyForCapture;
 }
 
 QCameraImageCapture::DriveMode SimulatorCameraImageCaptureControl::driveMode() const
@@ -102,12 +101,20 @@ int SimulatorCameraImageCaptureControl::capture(const QString &fileName)
         emit error(0, QCameraImageCapture::NotReadyError, tr("Incorrect CaptureMode."));
         return 0;
     }
-
-    return m_session->captureImage(fileName);
+    updateReadyForCapture(false);
+    int imageId = m_session->captureImage(fileName);
+    updateReadyForCapture(true);
+    return imageId;
 }
 
 void SimulatorCameraImageCaptureControl::cancelCapture()
 {
+}
+
+void SimulatorCameraImageCaptureControl::updateReadyForCapture(bool ready)
+{
+    mReadyForCapture = ready;
+    emit readyForCaptureChanged(mReadyForCapture);
 }
 
 // End of file
