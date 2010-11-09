@@ -167,6 +167,7 @@ void QtMobility::Simulator::Connection::setFeedbackEffectState(int effectId, int
 {
     QFeedbackEffect::State state = static_cast<QFeedbackEffect::State>(stateInt);
     mPlugin->forceEffectState(effectId, state);
+    mPlugin->emitStateChanged(effectId);
 }
 
 #include "moc_connection_p.cpp"

@@ -129,6 +129,7 @@ signals:
     void streamsChanged();
     void seekableChanged(bool);
     void error(int error, const QString &errorString);
+    void invalidMedia();
 
 private slots:
     void busMessage(const QGstreamerMessage &message);

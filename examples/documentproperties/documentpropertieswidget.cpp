@@ -106,13 +106,13 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
         new MetaDataBinding(
                 lastAccessed, "dateTime", resultSet, QDocumentGallery::lastAccessed, this);
 
+        setLayout(layout);
+
         if (queryRequest->state() == QGalleryAbstractRequest::Active)
             connect(queryRequest, SIGNAL(finished()), this, SLOT(queryRequestFinished()));
         else if (queryRequest->state() == QGalleryAbstractRequest::Finished)
             queryRequestFinished();
     }
-
-    setLayout(layout);
 }
 
 void DocumentPropertiesWidget::queryRequestFinished()

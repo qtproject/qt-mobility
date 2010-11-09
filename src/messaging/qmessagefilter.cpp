@@ -132,7 +132,7 @@ QTM_BEGIN_NAMESPACE
     The result of combining an empty filter with a non-empty filter using an OR operation is the
     empty filter.
 
-    The result of combining two empty filters is an empty filter.
+    The result of combining two empty filters using either an AND or OR operation is an empty filter.
 */
 
 /*!
