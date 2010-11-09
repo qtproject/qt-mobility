@@ -121,7 +121,7 @@
 #if defined(UDEV_SUPPORTED)
 #include "qudevservice_linux_p.h"
 #endif
-#include "qsysteminfo_dbus.h"
+#include "qsysteminfo_dbus_p.h"
 
 static QString sysinfodValueForKey(const QString& key)
 {

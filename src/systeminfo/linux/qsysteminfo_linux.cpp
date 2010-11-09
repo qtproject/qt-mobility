@@ -82,7 +82,7 @@
 //#endif
 
 #endif
-#include "qsysteminfo_dbus.h"
+#include "qsysteminfo_dbus_p.h"
 
 QTM_BEGIN_NAMESPACE
 
