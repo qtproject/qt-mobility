@@ -212,7 +212,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QStringList filters;
              filters << "*";
              const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-             foreach(const QString &dir, sysList) {
+             foreach (const QString &dir, sysList) {
                  const QFileInfo btFile(sysPath + dir+"/address");
                  if(btFile.exists()) {
                      return true;
@@ -237,7 +237,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QStringList filters;
              filters << "*";
              QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             foreach(const QString &dir, sysList) {
+             foreach (const QString &dir, sysList) {
                 if (dir.contains("radio")) {
                     featureSupported = true;
                 }
@@ -266,7 +266,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              if (iface.isValid()) {
                  QHalInterface halIface;
                  const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
-                 foreach(const QString &device, halDevices) {
+                 foreach (const QString &device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
                          if(ifaceDevice.getPropertyString("info.subsystem") == "mmc_host") {
@@ -349,7 +349,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  {
      QHalInterface halIface;
      const QStringList halDevices = halIface.getAllDevices();
-     foreach(const QString &device, halDevices) {
+     foreach (const QString &device, halDevices) {
          if(device.contains(param)) {
              return true;
          }
@@ -361,7 +361,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  {
      QHalInterface halIface;
      const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
-     foreach(const QString &device, halDevices) {
+     foreach (const QString &device, halDevices) {
          QHalDeviceInterface ifaceDevice(device);
          if (ifaceDevice.isValid()) {
              if(ifaceDevice.getPropertyString("info.subsystem") == "usb_device") {
@@ -428,7 +428,7 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
     QStringList filters;
     filters << QLatin1String("*");
     const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(const QString &dir, sysList) {
+    foreach (const QString &dir, sysList) {
         const QDir sysDir2(sysPath + dir);
         if(dir.contains(featureStr)) {
             const QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
@@ -455,7 +455,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
+            foreach (const QString &dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo wiFi(devFile + "/phy80211");
                 const QFileInfo fi("/proc/net/route");
@@ -520,7 +520,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
+            foreach (const QString &dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
@@ -595,7 +595,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
+            foreach (const QString &dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
@@ -627,7 +627,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
             const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
+            foreach (const QString &dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/address");
                 if(fi.exists()) {
@@ -718,7 +718,7 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
             const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
+            foreach (const QString &dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/carrier");
                 if(fi.exists()) {
@@ -758,7 +758,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
             if (iface.isValid()) {
                 const QStringList list = iface.findDeviceByCapability("net.80211");
                 if(!list.isEmpty()) {
-                    foreach(const QString &netDev, list) {
+                    foreach (const QString &netDev, list) {
                         QHalDeviceInterface ifaceDevice(netDev);
                         const QString deviceName  = ifaceDevice.getPropertyString("net.interface");
                         if(list.count() > 1) {
@@ -789,7 +789,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
             if (iface.isValid()) {
                 const QStringList list = iface.findDeviceByCapability("net.80203");
                 if(!list.isEmpty()) {
-                    foreach(const QString &netDev, list) {
+                    foreach (const QString &netDev, list) {
                         QHalDeviceInterface ifaceDevice(netDev);
                         const QString deviceName  = ifaceDevice.getPropertyString("net.interface");
                         if(list.count() > 1) {
@@ -826,7 +826,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
     const QString baseSysDir = "/sys/class/net/";
     const QDir eDir(baseSysDir);
     const QStringList dirs = eDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach(const QString &dir, dirs) {
+    foreach (const QString &dir, dirs) {
         const QString devFile = baseSysDir + dir;
         const QFileInfo devfi(devFile + "/device");
         if(!devfi.exists()) {
@@ -909,7 +909,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &fi
         QStringList filters;
         filters << "*";
         const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(const QString &dir, sysList) {
+        foreach (const QString &dir, sysList) {
             QFile btFile(sysPath + dir+"/"+file);
             if(btFile.exists()) {
                 if (btFile.open(QIODevice::ReadOnly)) {
@@ -952,7 +952,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
         if (iface.isValid()) {
             const QStringList list = iface.findDeviceByCapability("laptop_panel");
             if(!list.isEmpty()) {
-                foreach(const QString &lapDev, list) {
+                foreach (const QString &lapDev, list) {
                     QHalDeviceInterface ifaceDevice(lapDev);
                     QHalDeviceLaptopPanelInterface lapIface(lapDev);
                     const float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels") - 1;
@@ -971,7 +971,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
                                                         QDir::Dirs
                                                         | QDir::NoDotAndDotDot,
                                                         QDir::Name);
-        foreach(const QString &brightnessFileName, brightnessList) {
+        foreach (const QString &brightnessFileName, brightnessList) {
             float numLevels = 0.0;
             float curLevel = 0.0;
 
@@ -981,7 +981,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
                                                               QDir::Dirs
                                                               | QDir::NoDotAndDotDot,
                                                               QDir::Name);
-            foreach(const QString &vidFileName, vidDirList) {
+            foreach (const QString &vidFileName, vidDirList) {
                 QFile curBrightnessFile(backlightPath+brightnessFileName+"/"+vidFileName+"/brightness");
                 if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                     qDebug()<<"File not opened";
@@ -1227,7 +1227,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("volume");
         if(!list.isEmpty()) {
-            foreach(const QString &vol, list) {
+            foreach (const QString &vol, list) {
                 QHalDeviceInterface ifaceDevice(vol);
                 if(mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
@@ -1374,7 +1374,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
             QString lastdev;
-            foreach(const QString &dev, list) {
+            foreach (const QString &dev, list) {
                 if(lastdev == dev)
                     continue;
                 lastdev = dev;
@@ -1395,7 +1395,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 
         list = iface.findDeviceByCapability("ac_adapter");
         if(!list.isEmpty()) {
-            foreach(const QString &dev, list) {
+            foreach (const QString &dev, list) {
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections() ) {
@@ -1412,7 +1412,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 
         list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
-            foreach(const QString &dev, list) {
+            foreach (const QString &dev, list) {
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections()) {
@@ -1553,7 +1553,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
     QStringList filters;
     filters << "event*";
     const QStringList inputList = inputDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(const QString &inputFileName, inputList) {
+    foreach (const QString &inputFileName, inputList) {
         QFile file(inputsPath+inputFileName+"/device/name");
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             qDebug()<<"File not opened";
@@ -1596,7 +1596,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
-            foreach(const QString &dev, list) {
+            foreach (const QString &dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
                     if(!ifaceDevice.getPropertyBool("battery.present")
@@ -1665,7 +1665,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
        QHalInterface iface;
        QStringList list = iface.findDeviceByCapability("battery");
        if(!list.isEmpty()) {
-           foreach(const QString &dev, list) {
+           foreach (const QString &dev, list) {
                QHalDeviceInterface ifaceDevice(dev);
                if (iface.isValid()) {
                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
@@ -1677,7 +1677,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
        list = iface.findDeviceByCapability("ac_adapter");
        if(!list.isEmpty()) {
-           foreach(const QString &dev, list) {
+           foreach (const QString &dev, list) {
                QHalDeviceInterface ifaceDevice(dev);
                if (ifaceDevice.isValid()) {
                    if(ifaceDevice.getPropertyBool("ac_adapter.present")) {
