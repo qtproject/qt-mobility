@@ -130,7 +130,9 @@
 #define TEST_PROXIMITY_RADIUS
 #define TEST_VIEWPORT
 #define EXPORT_URL
-#define SAVE_REMOVE_STRESS
+#define REMOVE_STRESS
+#define SAVE_STRESS
+#define SIMPLE_TEST
 
 //#define WORKAROUND
 
@@ -1133,8 +1135,18 @@ void testViewport_data();
  void exportUrl();
 #endif
 
-#ifdef SAVE_REMOVE_STRESS
- void saveRemoveStress();
+#ifdef REMOVE_STRESS
+ void removeStress();
+ void removeStress_data();
+#endif
+
+#ifdef SAVE_STRESS
+ void saveStress();
+ void saveStress_data();
+#endif
+
+#ifdef SIMPLE_TEST
+    void simpleTest();
 #endif
 
 #ifndef Q_OS_SYMBIAN
@@ -8105,9 +8117,10 @@ void tst_QLandmarkManager::exportUrl() {
 }
 #endif
 
-#ifdef SAVE_REMOVE_STRESS
-void tst_QLandmarkManager::saveRemoveStress()
+#ifdef REMOVE_STRESS
+void tst_QLandmarkManager::removeStress()
 {
+    QFETCH(QString, type);
     QList<QLandmark> lms;
     for (int i=0; i < 100; ++i) {
         QLandmark lm;
@@ -8118,14 +8131,134 @@ void tst_QLandmarkManager::saveRemoveStress()
     QVERIFY(m_manager->saveLandmarks(&lms));
     QCOMPARE(m_manager->landmarkIds().count(), 100);
     qDebug() << "original landmark count= " <<  m_manager->landmarkIds().count();
-    bool result = m_manager->removeLandmarks(lms);
-    qDebug() << "Result of landmark removal = " << result;
-    qDebug() << "Error =" << m_manager->error();
-    qDebug() << "Errorstring=" << m_manager->errorString();
-    qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
-    QVERIFY(result);
-    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-    QCOMPARE(m_manager->errorMap().count(), 0);
+
+    if (type == "sync") {
+        bool result = m_manager->removeLandmarks(lms);
+        qDebug() << "Result of landmark removal = " << result;
+        qDebug() << "Error =" << m_manager->error();
+        qDebug() << "Errorstring=" << m_manager->errorString();
+        qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
+        if (m_manager->errorMap().count() > 0)
+            qDebug() << "Error map keys= " << m_manager->errorMap().keys();
+        QVERIFY(result);
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(m_manager->errorMap().count(), 0);
+    } else {
+        QLandmarkSaveRequest lmRemoveRequest(m_manager);
+        QSignalSpy spy(&lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        lmRemoveRequest.setLandmarks(lms);
+        lmRemoveRequest.start();
+        waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError);
+        qDebug() << "Async remove error = " << lmRemoveRequest.error();
+        qDebug() << "Async remove string=" << lmRemoveRequest.errorString();
+        qDebug() << "Async remove Error map size =" << lmRemoveRequest.errorMap().count();
+        if (lmRemoveRequest.errorMap().count() > 0) {
+            qDebug() << "Async remove error map keys: " << lmRemoveRequest.errorMap().keys();
+        }
+        QCOMPARE(lmRemoveRequest.error(), QLandmarkManager::NoError);
+    }
+
+    QCOMPARE(m_manager->landmarkIds().count(), 0);
+}
+
+void tst_QLandmarkManager::removeStress_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef SAVE_STRESS
+void tst_QLandmarkManager::saveStress()
+{
+    QFETCH(QString, type);
+    QList<QLandmark> lms;
+    for (int i=0; i < 100; ++i) {
+        QLandmark lm;
+        lm.setName(QString("LM") + i);
+        QGeoAddress address;
+        address.setStreet(QString("LM") + i + " street");
+        address.setDistrict(QString("LM") + i +" district");
+        address.setCity(QString("LM") + i + " city");
+        address.setState(QString("LM") + i + " State");
+        address.setCountry(QString("LM") + i + " country");
+        address.setCountryCode(QString("LM") + i + "CountryCode");
+        address.setPostcode(QString("LM") + i + " post code");
+        lm.setAddress(address);
+        QGeoCoordinate coordinate(10,20);
+        lm.setCoordinate(coordinate);
+        lm.setPhoneNumber(QString("LM") + i + " phone number");
+        lm.setIconUrl(QUrl(QString("LM") + i + " iconUrl"));
+        lm.setRadius(2000);
+        lm.setUrl(QUrl(QString("LM") + i + " 2nd url"));
+        lms.append(lm);
+    }
+
+    bool saveResult = false;
+    if (type == "sync") {
+        saveResult = m_manager->saveLandmarks(&lms);
+        qDebug() << "Result of landmark save" << saveResult;
+        qDebug() << "Error =" << m_manager->error();
+        qDebug() << "Errorstring=" << m_manager->errorString();
+        qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
+        if (m_manager->errorMap().count() > 0)
+            qDebug() << "Error map keys= " << m_manager->errorMap().keys();
+        QVERIFY(saveResult);
+    } else if (type == "async") {
+        QLandmarkSaveRequest lmSaveRequest(m_manager);
+        QSignalSpy spy(&lmSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        lmSaveRequest.setLandmarks(lms);
+        lmSaveRequest.start();
+        waitForAsync(spy, &lmSaveRequest, QLandmarkManager::NoError);
+        qDebug() << "Async Save error =" << lmSaveRequest.error();
+        qDebug() << "Async save error string=" << lmSaveRequest.errorString();
+        qDebug() << "Async error map size = " << lmSaveRequest.errorMap().count();
+        if (lmSaveRequest.errorMap().count() > 0) {
+            qDebug() << "Async error map keys =" << m_manager->errorMap().keys();
+        }
+        QCOMPARE(lmSaveRequest.error(), QLandmarkManager::NoError);
+    }
+    QCOMPARE(m_manager->landmarkIds().count(),100);
+}
+
+void tst_QLandmarkManager::saveStress_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef SIMPLE_TEST
+void tst_QLandmarkManager::simpleTest()
+{
+    QString prefix;
+#ifdef Q_OS_SYMBIAN
+    prefix = "";
+#else
+    prefix = ":";
+#endif
+
+    QList<QLandmarkId> lm_ids = m_manager->landmarkIds();
+    m_manager->removeLandmarks(lm_ids);
+    qDebug() << "Remove  error =" << m_manager->error();
+    qDebug() << "Remove error string=" << m_manager->errorString();
+    m_manager->importLandmarks(prefix + "data/places.gpx");
+    lm_ids = m_manager->landmarkIds();
+    QList<QLandmark> lms;
+    foreach(QLandmark lm, m_manager->landmarks(lm_ids)) {
+        QGeoAddress address = lm.address(); address.setStreet("test");
+        lm.setAddress(address);
+        lms.append(lm);
+        bool isOk = m_manager->saveLandmark(&lm);
+        qDebug() << "saving was ok? =" << isOk;
+        qDebug() << "saving error= " << m_manager->error();
+        qDebug() << "saving eror string = " << m_manager->errorString();
+        QVERIFY(isOk);
+    }
 }
 #endif
 
