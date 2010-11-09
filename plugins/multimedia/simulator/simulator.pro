@@ -4,10 +4,10 @@ TARGET = $$qtLibraryTarget(qsimulatorengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../../common.pri)
-INCLUDEPATH+=../../../src/multimedia \
-             ../../../src/multimedia/video \
-             ../../../src/multimedia/audio \
-             ../../../src/mobilitysimulator
+INCLUDEPATH+=$${SOURCE_DIR}/src/multimedia \
+             $${SOURCE_DIR}/src/multimedia/video \
+             $${SOURCE_DIR}/src/multimedia/audio \
+             $${SOURCE_DIR}/src/mobilitysimulator
 
 CONFIG += mobility
 MOBILITY = multimedia
