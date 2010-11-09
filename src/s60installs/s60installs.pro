@@ -142,12 +142,11 @@ isEmpty(QT_LIBINFIX):symbian {
                 "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\immersion\\qmakepluginstubs\\qtfeedback_immersion.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_immersion.qtplugin\""
         }
 
-# MMK is disabled for 1.1.0
-#        contains(mobility_modules, multimedia) {
-#            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_mmk.dll
-#            pluginstubs += \
-#                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\mmk\\qmakepluginstubs\\qtfeedback_mmk.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_mmk.qtplugin\""
-#        }
+        equals(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6):contains(mobility_modules,multimedia) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_mmk.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\mmk\\qmakepluginstubs\\qtfeedback_mmk.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_mmk.qtplugin\""
+        }
 
         feedback = \
             "IF package(0x1028315F)" \
