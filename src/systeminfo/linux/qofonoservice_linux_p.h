@@ -88,6 +88,21 @@ QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
+struct QOfonoProperties
+{
+    QDBusObjectPath path;
+    QVariantMap properties;
+};
+
+Q_DECLARE_METATYPE(QOfonoProperties)
+
+QDBusArgument &operator<<(QDBusArgument &argument,const QOfonoProperties &prop);
+
+const QDBusArgument &operator>>(const QDBusArgument &argument,QOfonoProperties &prop);
+
+typedef QList<QOfonoProperties> QOfonoPropertyMap;
+Q_DECLARE_METATYPE(QOfonoPropertyMap)
+
 class QOfonoManagerInterface : public  QDBusAbstractInterface
 {
     Q_OBJECT
@@ -97,7 +112,7 @@ public:
     QOfonoManagerInterface( QObject *parent = 0);
     ~QOfonoManagerInterface();
 
-     QDBusObjectPath path() const;
+    QDBusObjectPath path() const;
 
     QVariantMap getProperties();
     bool setProperty(const QString &name, const QDBusVariant &value);

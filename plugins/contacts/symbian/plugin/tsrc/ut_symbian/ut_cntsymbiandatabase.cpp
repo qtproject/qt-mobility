@@ -80,8 +80,8 @@ void TestCntSymbianDatabase::init()
     addedOrigContactId = 0;
     changedContactId = 0;
     changedOrigContactId = 0;
-    removedContactId = 0;
-    removedOrigContactId = 0;
+    removedContactId.clear();
+    removedOrigContactId.clear();
     ownCardId = 0;
     ownCardOrigId = 0;
     addedRelId1 = 0;
@@ -169,7 +169,43 @@ void TestCntSymbianDatabase::createChangeRemoveContactEvents()
 
     // wait a bit and check that both engines got an event about changed contact
     QTest::qWait(1000); //1sec
-    QVERIFY(removedOrigContactId != 0);
+    QVERIFY(removedOrigContactId.count() != 0);
+    QVERIFY(removedOrigContactId == removedContactId);
+    
+    delete engine;
+}
+
+void TestCntSymbianDatabase::batchRemoveOperation()
+{
+    // one more engine to check that it also gets db events
+    QContactManager::Error error;
+    QMap<int, QContactManager::Error> errorMap;
+    QMap<QString, QString> emptyParameters;
+    CntSymbianEngine* engine = new CntSymbianEngine(emptyParameters, &error);
+    QVERIFY(error == QContactManager::NoError);
+    connect(engine, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), this, SLOT(handleAdded(const QList<QContactLocalId>&)));
+    connect(engine, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), this, SLOT(handleChanged(const QList<QContactLocalId>&)));
+    connect(engine, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), this, SLOT(handleRemoved(const QList<QContactLocalId>&)));
+    
+    // save and delete 2 contacts
+    QContact c1;
+    c1.setType(QContactType::TypeContact);
+    QVERIFY(m_engine->saveContact(&c1, &error));
+    QVERIFY(error == QContactManager::NoError);
+    QContact c2;
+    c2.setType(QContactType::TypeContact);
+    QVERIFY(m_engine->saveContact(&c2, &error));
+    QVERIFY(error == QContactManager::NoError);
+    
+    QList<QContactLocalId> contacts;
+    contacts.append(c1.localId());
+    contacts.append(c2.localId());
+    QVERIFY(m_engine->removeContacts(contacts, &errorMap, &error));
+    QVERIFY(error == QContactManager::NoError);
+    
+    // wait a bit and check that both engines got an event about deleted contacts
+    QTest::qWait(1000); //1sec
+    QVERIFY(removedOrigContactId.count() != 0);
     QVERIFY(removedOrigContactId == removedContactId);
     
     delete engine;
@@ -263,9 +299,8 @@ void TestCntSymbianDatabase::handleChangedOrig(const QList<QContactLocalId>& con
 
 void TestCntSymbianDatabase::handleRemovedOrig(const QList<QContactLocalId>& contactIds)
 {
-    if (contactIds.count() > 0) {
-        removedOrigContactId = contactIds.at(0);
-    }
+    removedOrigContactId.clear();
+    removedOrigContactId.append(contactIds);
 }
 
 void TestCntSymbianDatabase::handleMyCardChangedOrig(const QContactLocalId& /*oldId*/, const QContactLocalId& newId)
@@ -306,9 +341,8 @@ void TestCntSymbianDatabase::handleChanged(const QList<QContactLocalId>& contact
 
 void TestCntSymbianDatabase::handleRemoved(const QList<QContactLocalId>& contactIds)
 {
-    if (contactIds.count() > 0) {
-        removedContactId = contactIds.at(0);
-    }
+    removedContactId.clear();
+    removedContactId.append(contactIds);
 }
 
 void TestCntSymbianDatabase::handleMyCardChanged(const QContactLocalId& /*oldId*/, const QContactLocalId& newId)

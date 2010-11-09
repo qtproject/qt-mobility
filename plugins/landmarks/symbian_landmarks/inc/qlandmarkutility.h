@@ -104,8 +104,7 @@ public:
      * set landmark attributes to existing symbian landmark object from 
      * qt landmark object.
      */
-    static void setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark,
-        CPosLmCategoryManager* catMgr);
+    static void setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark);
 
     /*
      * returns new qt landmark id object converted from symbian landmark id object.
@@ -277,6 +276,11 @@ public:
      * Prepares the path for the file
      */
     static QString preparePath(QString filename);
+    
+    /**
+     * Prepares default protocol for landmark url
+     */
+    static void RemoveDefaultProtocolL(TPtr& landmarkUrl);
 
 };
 

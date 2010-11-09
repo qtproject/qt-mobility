@@ -150,7 +150,7 @@ public: // Methods
 
     void startRecording();
     void pauseRecording();
-    void stopRecording();
+    void stopRecording(const bool reInitialize = true);
     void setMuted(const bool muted);
 
     // Output Location

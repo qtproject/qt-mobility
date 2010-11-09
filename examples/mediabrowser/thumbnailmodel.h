@@ -43,8 +43,7 @@
 
 #include <qgalleryquerymodel.h>
 
-#include <QtCore/qcache.h>
-#include <QtCore/qfuturewatcher.h>
+#include "thumbnailcache.h"
 
 QTM_USE_NAMESPACE
 
@@ -57,21 +56,17 @@ public:
     ThumbnailModel(QAbstractGallery *gallery, QObject *parent = 0);
     ~ThumbnailModel();
 
-#ifndef QT_NO_QFUTURE
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 protected:
-    virtual QString imagePath(const QModelIndex &index) const;
+    virtual QUrl imageUrl(const QModelIndex &index) const;
 
-    QString thumbnailPath(const QUrl &url) const;
 private slots:
     void thumbnailLoaded();
 
 private:
-    static QImage load(const QString &fileName);
+    mutable ThumbnailCache cache;
 
-    mutable QCache<QString, QFutureWatcher<QImage> > cache;
-#endif
 };
 
 #endif

@@ -128,8 +128,8 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     Constructs a QGeoServiceProvider whose backend has the name \a
     providerName, using the provided \a parameters.
 
-    If multiple plugins have the same \a providerName, the plugin with the highest
-    reported providerVersion() will be used.
+    If multiple plugins have the same \a providerName, the plugin with the
+    highest reported providerVersion() will be used.
 
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.

@@ -20,6 +20,7 @@ SOURCES += $$PWD/qmdegalleryresultset.cpp \
            $$PWD/qmdegallerytyperesultset.cpp \
            $$PWD/qmdegalleryitemresultset.cpp \
            $$PWD/qmdegalleryqueryresultset.cpp \
+           $$PWD/qmdegallerycategoryresultset.cpp \
            $$PWD/qmdesession.cpp \
            $$PWD/qdocumentgallery_symbian.cpp
 
@@ -28,4 +29,5 @@ PRIVATE_HEADERS += $$PWD/qmdegalleryresultset_p.h \
            $$PWD/qmdegallerytyperesultset_p.h \
            $$PWD/qmdegalleryitemresultset_p.h \
            $$PWD/qmdegalleryqueryresultset_p.h \
+           $$PWD/qmdegallerycategoryresultset_p.h \
            $$PWD/qmdesession_p.h

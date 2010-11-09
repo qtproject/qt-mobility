@@ -67,19 +67,19 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality of a
-    particular QContactManager. Instances of the class will emit signals when
+    particular QLandmarkManager. Instances of the class will emit signals when
     the state of the request changes, or when more results become available.
 
     Clients should not attempt to create instances of this class directly, but
     should instead use the use-case-specific classes derived from this class.
 
     All such request classes have a similar interface: clients set the
-    parameters of the asynchronous call, including which manager the request
-    will be made of, and then call the start() slot of the request. The manager
+    parameters of the asynchronous call, then call the start() slot of the request. The manager
     will then enqueue or begin to process the request, at which point the
-    request's state will transition from \c InactiveState to \c ActiveState.
+    request's state will transition from the \c InactiveState to \c ActiveState.
     After any state transition, the request will emit the stateChanged()
-    signal. The manager may periodically update the request with results, at
+    signal. The manager may (if it supports it)
+    periodically update the request with results, at
     which point the request will emit the resultsAvailable() signal. These
     results are not guaranteed to have a stable ordering. Error information is
     considered a result, so some requests will emit the resultsAvailable()
@@ -92,10 +92,11 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     the stateChanged() signal, and in the slot to which that signal is
     connected, check whether the state has changed to the \c FinishedState
     (which signifies that the manager has finished handling the request, and
-    that the request will not be updated with any more results). If the client
+    that the request will not be updated with any more results).  If the client
     is not interested in any results (including error information), they may
-    choose to delete the request after calling \l start(), or simply not
-    connect the request's signals to any slots.
+    choose to delete the request after calling \l start(), or simply may not
+    connect the the request's signals to any slots.  (Please see the note
+    below if you are working on Symbian with QtMobility 1.1.0)
 
     If the request is allocated via operator new, the client must delete the
     request when they are no longer using it in order to avoid leaking memory.
@@ -108,17 +109,23 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     connected to a signal emitted by the request, for example \l
     stateChanged()).
 
-    An active request may be deleted by the client, but the client will not
-    receive any notifications about whether the request succeeded or not,
-    nor any results of the request.
+    An active request may be deleted by the client, but the client will
+    not receive notifications about whether the request succeeded or not,
+    nor the results of the request.
 
     Because clients retain ownership of any request object, and may delete a
-    request object at any time, manager engine implementors must be careful to
-    ensure that they do not assume that a request has not been deleted at some
-    point during processing of a request, particularly if the engine has a
-    multithreaded implementation.
-*/
+    request object at any time, the manager engine,  implementers must be
+    careful to ensue that they do not assume that a request has not been
+    deleted at some time point during processing of a request, particularly
+    if the engine has a multithreaded implementation.
 
+    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
+    deletion of a request whilst in the active state that may cause
+    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
+    The request must be in the inactive or finished state before it
+    can be destroyed.  As a workaround to delete an active request,
+    ensure the request is canceled first before deletion.
+*/
 
 QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
 {
@@ -137,7 +144,6 @@ void QLandmarkAbstractRequestPrivate::notifyEngine(QLandmarkAbstractRequest* req
             }
         }
 }
-
 
 /*!
     \enum QLandmarkAbstractRequest::RequestType
@@ -188,9 +194,18 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 }
 
 /*!
-    Destroys the asynchronous request.  Because the request object is effectively a handle to
-    a request operation, the operation may continue or it may be canceled, depending upon
-    the engine implementation, even though the request object itself has been destroyed.
+    Destroys the asynchronous request.  Because the request object is effectiely a handle to a
+    request operation, the operation may continue or it may just be canceled, depending upon
+    the enine implementation, even though the request itself has been destroyed.
+    The sqlite engine continues the operation behind the scenes if the
+    request is destroyed whilst active.  For the symbian engine see the note below.
+
+    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
+    deletion of a request whilst in the active state that may cause
+    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
+    The request must be in the inactive or finished state before it
+    can be destroyed.  As a workaround to delete an active request,
+    ensure the request is canceled first before deletion.
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
@@ -316,6 +331,11 @@ bool QLandmarkAbstractRequest::start()
         return false;
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
+    if (!engine) {
+        d_ptr->error = QLandmarkManager::InvalidManagerError;
+        d_ptr->errorString = "The manager is invalid";
+        return false;
+    }
 
     if (d_ptr->state != QLandmarkAbstractRequest::ActiveState) {
         ml.unlock();
@@ -335,7 +355,7 @@ bool QLandmarkAbstractRequest::start()
     could not be made or the request is not in the
     QLandmarkManager::Active state.
 
-    \sa start().
+    \sa start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
@@ -362,7 +382,8 @@ bool QLandmarkAbstractRequest::cancel()
 
     Returns true if the request was canceled or completed
     within the given period, otherwise returns false.  Some backends may be unable
-    to support this  operation saafely and will return false immediately.
+    to support this  operation safely and will return false immediately.
+    The sqlite backend does currently does not support waitForFinished.
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when

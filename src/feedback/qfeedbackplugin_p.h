@@ -72,7 +72,7 @@ class QDummyBackend : QObject, public QFeedbackHapticsInterface
 public:
     QDummyBackend() : QObject(qApp) { }
 
-    QList<QFeedbackActuator> actuators() { return QList<QFeedbackActuator>(); }
+    QList<QFeedbackActuator*> actuators() { return QList<QFeedbackActuator*>(); }
 
     void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
     QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }

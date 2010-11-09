@@ -154,6 +154,8 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
+    currentBatStat = di->batteryStatus();
+
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
 //! [manuf-id]
@@ -172,11 +174,12 @@ void Dialog::setupDevice()
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
-    if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+    currentPowerState = di->currentPowerState();
+    if(currentPowerState == QSystemDeviceInfo::BatteryPower) {
         radioButton_2->setChecked(true);
-    } else  if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPower) {
         radioButton_3->setChecked(true);
-    } else if(di->currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPowerChargingBattery) {
         radioButton_4->setChecked(true);
     } else {
         radioButton->setChecked(true);
@@ -330,9 +333,19 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
+
     networkModeChanged(ni->currentMode());
     netStatusComboBox->setCurrentIndex((int)ni->currentMode());
     netStatusComboActivated((int)ni->currentMode());
+
+    cellIdLabel->setText(QString::number(ni->cellId()));
+    locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+    currentMCCLabel->setText(ni->currentMobileCountryCode());
+    currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+    homeMCCLabel->setText(ni->homeMobileCountryCode());
+
+    homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -358,17 +371,17 @@ void Dialog::netStatusComboActivated(int index)
 
         cellIdLabel->setText(QString::number(ni->cellId()));
         locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
-        currentMMCLabel->setText(ni->currentMobileCountryCode());
+        currentMCCLabel->setText(ni->currentMobileCountryCode());
         currentMNCLabel->setText(ni->currentMobileNetworkCode());
 
-        homeMMCLabel->setText(ni->homeMobileCountryCode());
+        homeMCCLabel->setText(ni->homeMobileCountryCode());
         homeMNCLabel->setText(ni->homeMobileNetworkCode());
     } else {
         cellIdLabel->setText("");
         locationAreaCodeLabel->setText("");
-        currentMMCLabel->setText("");
+        currentMCCLabel->setText("");
         currentMNCLabel->setText("");
-        homeMMCLabel->setText("");
+        homeMCCLabel->setText("");
         homeMNCLabel->setText("");
     }
 }
@@ -500,7 +513,7 @@ void Dialog::updateBatteryStatus(int level)
 
 void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 {
-
+    currentPowerState = newState;
     switch (newState) {
     case QSystemDeviceInfo::BatteryPower:
         {
@@ -527,13 +540,13 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 {
-    // this wont annoy users will it?
+    if(currentBatStat == status || currentPowerState != QSystemDeviceInfo::BatteryPower)
+        return;
     QString msg;
-//    if(di->isBatteryCharging()) {
         switch(status) {
         case QSystemDeviceInfo::BatteryCritical:
             {
-                msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+                msg = "Battery is Critical (4% or less), please save your work or plug in the charger.";
                 QMessageBox::critical(this,"QSystemInfo",msg);
             }
             break;
@@ -547,7 +560,6 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             {
                 msg = "Battery is Low (40% or less)";
                 QMessageBox::information(this,"QSystemInfo",msg);
-
             }
             break;
         case QSystemDeviceInfo::BatteryNormal:
@@ -562,12 +574,15 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             }
             break;
         };
-  //  }
-
+        currentBatStat = status;
 }
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
 {
+    if (strength < 0) {
+        strength = 0;
+    }
+
     if(mode == QSystemNetworkInfo::WlanMode) {
         if(netStatusComboBox->currentText() == "Wlan") {
             signalLevelProgressBar->setValue(strength);
@@ -732,17 +747,19 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
 
 void Dialog::updateProfile()
 {
+
     if(di) {
         QString profilestring;
+        qDebug() << di->currentProfile();
         switch(di->currentProfile()) {
-            case QSystemDeviceInfo::UnknownProfile:
-            {
-                profilestring = "Unknown";
-            }
-            break;
             case QSystemDeviceInfo::SilentProfile:
             {
                 profilestring = "Silent";
+            }
+            break;
+            case QSystemDeviceInfo::BeepProfile:
+            {
+                profilestring = "Beep";
             }
             break;
             case QSystemDeviceInfo::NormalProfile:
@@ -771,10 +788,14 @@ void Dialog::updateProfile()
             }
             break;
             case QSystemDeviceInfo::CustomProfile:
-                {
-                    profilestring = "custom";
-                }
-                break;
+            {
+                profilestring = "custom";
+            }
+            break;
+            default:
+            {
+                profilestring = "Unknown";
+            }
         };
         profileLabel->setText(profilestring);
     }

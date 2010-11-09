@@ -51,16 +51,12 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 #endif
 
 // device
- /*!
+        /*!
         \class QSystemDeviceInfo
         \ingroup systeminfo
         \inmodule QtSystemInfo
         \brief The QSystemDeviceInfo class provides access to device information from the system.
-
-        \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-
-   Constructs a QSystemDeviceInfo with the given \a parent.
- */
+        */
 
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
@@ -122,6 +118,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value VibProfile              Vibrate profile.
             \value OfflineProfile          Offline profile.
             \value PowersaveProfile        Powersave profile.
+            \value BeepProfile             Beep profile.
             \value CustomProfile           Custom profile.
 
           */
@@ -144,7 +141,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value Keypad             Device has keypad (1,2,3, etc).
             \value Keyboard           Device has qwerty keyboard.
             \value SingleTouch        Device has single touch screen.
-            \value MultiTouch         Device has muti touch screen.
+            \value MultiTouch         Device has multi-point touch screen.
             \value Mouse              Device has a mouse.
         */
 
@@ -192,9 +189,21 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 
      This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
 */
+/*!
+    \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
+     This signal is emitted whenever the device lock state changes, indicated by \a on, locked or unlocked.
+*/
 
-          QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+/*!
+   \brief The QSystemDeviceInfo class provides access to device information from the system.
+
+   \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+
+   Constructs a QSystemDeviceInfo with the given \a parent.
+   */
+
+QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
@@ -226,27 +235,27 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             batteryLevelChanged(int))))) {
         connect(d,SIGNAL(batteryLevelChanged(int)),
-                this,SIGNAL(batteryLevelChanged(int)));
+                this,SIGNAL(batteryLevelChanged(int)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
         connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             bluetoothStateChanged(bool))))) {
         connect(d,SIGNAL(bluetoothStateChanged(bool)),
-                this,SIGNAL(bluetoothStateChanged(bool)));
+                this,SIGNAL(bluetoothStateChanged(bool)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             currentProfileChanged(QSystemDeviceInfo::Profile))))) {
         connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             powerStateChanged(QSystemDeviceInfo::PowerState))))) {
         connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
     }
 }
 
@@ -449,6 +458,7 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
 }
 
 /*!
+  \property QSystemDeviceInfo::keyboardType
   \brief The Keyboard Type
 
   Returns the type of keyboards found.
@@ -459,6 +469,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardType()
 }
 
 /*!
+  \property QSystemDeviceInfo::isWirelessKeyboardConnected
   \brief wireless keyboard connected
 
   Returns true if a wireless keyboard is connected, otherwise false;
@@ -469,6 +480,7 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 }
 
 /*!
+  \property QSystemDeviceInfo::isKeyboardFlipOpen
   \brief Flip keyboard open.
 
   Returns true if the flip keyboard is open, otherwise false;
@@ -479,6 +491,7 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
 }
 
 /*!
+  \property QSystemDeviceInfo::keypadLightOn
   \brief Keypad light on.
 
   Returns true if the key pad, or keyboard lights are on, otherwise false;
@@ -489,6 +502,7 @@ bool QSystemDeviceInfo::keypadLightOn()
 }
 
 /*!
+  \property QSystemDeviceInfo::backLightOn
   \brief backlight on.
 
   Returns true if the display backlight is on, otherwise false;
@@ -499,6 +513,7 @@ bool QSystemDeviceInfo::backLightOn()
 }
 
 /*!
+  \property QSystemDeviceInfo::hostId
   \brief unique host id.
 
   Returns a unique identifier for the machine.
@@ -512,6 +527,7 @@ QUuid QSystemDeviceInfo::hostId()
 }
 
 /*!
+  \property QSystemDeviceInfo::typeOfLock
  \brief Type of lock.
 
  Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.

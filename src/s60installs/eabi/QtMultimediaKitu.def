@@ -165,17 +165,17 @@ EXPORTS
 	_ZN12QMediaPlayerD2Ev @ 164 NONAME
 	_ZN12QSoundEffect11qt_metacallEN11QMetaObject4CallEiPPv @ 165 NONAME
 	_ZN12QSoundEffect11qt_metacastEPKc @ 166 NONAME
-	_ZN12QSoundEffect12loopsChangedEv @ 167 NONAME
+	_ZN12QSoundEffect12loopsChangedEv @ 167 NONAME ABSENT
 	_ZN12QSoundEffect12mutedChangedEv @ 168 NONAME
 	_ZN12QSoundEffect13sourceChangedEv @ 169 NONAME
 	_ZN12QSoundEffect13volumeChangedEv @ 170 NONAME
 	_ZN12QSoundEffect16staticMetaObjectE @ 171 NONAME DATA 16
 	_ZN12QSoundEffect19getStaticMetaObjectEv @ 172 NONAME
 	_ZN12QSoundEffect4playEv @ 173 NONAME
-	_ZN12QSoundEffect8setLoopsEi @ 174 NONAME
+	_ZN12QSoundEffect8setLoopsEi @ 174 NONAME ABSENT
 	_ZN12QSoundEffect8setMutedEb @ 175 NONAME
 	_ZN12QSoundEffect9setSourceERK4QUrl @ 176 NONAME
-	_ZN12QSoundEffect9setVolumeEi @ 177 NONAME
+	_ZN12QSoundEffect9setVolumeEf @ 177 NONAME
 	_ZN12QSoundEffectC1EP7QObject @ 178 NONAME
 	_ZN12QSoundEffectC2EP7QObject @ 179 NONAME
 	_ZN12QSoundEffectD0Ev @ 180 NONAME
@@ -921,7 +921,7 @@ EXPORTS
 	_ZNK12QMediaPlayer8playlistEv @ 920 NONAME
 	_ZNK12QMediaPlayer8positionEv @ 921 NONAME
 	_ZNK12QSoundEffect10metaObjectEv @ 922 NONAME
-	_ZNK12QSoundEffect5loopsEv @ 923 NONAME
+	_ZNK12QSoundEffect5loopsEv @ 923 NONAME ABSENT
 	_ZNK12QSoundEffect6sourceEv @ 924 NONAME
 	_ZNK12QSoundEffect6volumeEv @ 925 NONAME
 	_ZNK12QSoundEffect7isMutedEv @ 926 NONAME
@@ -1604,4 +1604,19 @@ EXPORTS
 	_ZNK7QCamera6statusEv @ 1603 NONAME
 	_ZTI19QCameraFlashControl @ 1604 NONAME
 	_ZTV19QCameraFlashControl @ 1605 NONAME
+	_ZN12QCameraFocus25maximumDigitalZoomChangedEf @ 1606 NONAME
+	_ZN12QCameraFocus25maximumOpticalZoomChangedEf @ 1607 NONAME
+	_ZN12QSoundEffect12setLoopCountEi @ 1608 NONAME
+	_ZN12QSoundEffect13loadedChangedEv @ 1609 NONAME
+	_ZN12QSoundEffect16loopCountChangedEv @ 1610 NONAME
+	_ZN12QSoundEffect18supportedMimeTypesEv @ 1611 NONAME
+	_ZN12QSoundEffect4stopEv @ 1612 NONAME
+	_ZN19QCameraFocusControl25maximumDigitalZoomChangedEf @ 1613 NONAME
+	_ZN19QCameraFocusControl25maximumOpticalZoomChangedEf @ 1614 NONAME
+	_ZNK12QSoundEffect8isLoadedEv @ 1615 NONAME
+	_ZNK12QSoundEffect9loopCountEv @ 1616 NONAME
+	_ZN12QSoundEffect13statusChangedEv @ 1617 NONAME
+	_ZN12QSoundEffect14playingChangedEv @ 1618 NONAME
+	_ZNK12QSoundEffect6statusEv @ 1619 NONAME
+	_ZNK12QSoundEffect9isPlayingEv @ 1620 NONAME
 

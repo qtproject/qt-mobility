@@ -289,4 +289,54 @@ EXPORTS
 	_ZN10QtMobility22sensors_unit_test_hookEi @ 288 NONAME
 	_ZN10QtMobility7QSensor13activeChangedEv @ 289 NONAME
 	_ZN10QtMobility7QSensor9setActiveEb @ 290 NONAME
+	_ZN10QtMobility10QGyroscope11qt_metacallEN11QMetaObject4CallEiPPv @ 291 NONAME
+	_ZN10QtMobility10QGyroscope11qt_metacastEPKc @ 292 NONAME
+	_ZN10QtMobility10QGyroscope16staticMetaObjectE @ 293 NONAME DATA 16
+	_ZN10QtMobility10QGyroscope19getStaticMetaObjectEv @ 294 NONAME
+	_ZN10QtMobility10QGyroscope4typeE @ 295 NONAME DATA 4
+	_ZN10QtMobility12QLightSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 296 NONAME
+	_ZN10QtMobility12QLightSensor11qt_metacastEPKc @ 297 NONAME
+	_ZN10QtMobility12QLightSensor16staticMetaObjectE @ 298 NONAME DATA 16
+	_ZN10QtMobility12QLightSensor19getStaticMetaObjectEv @ 299 NONAME
+	_ZN10QtMobility12QLightSensor4typeE @ 300 NONAME DATA 4
+	_ZN10QtMobility13QLightReading11qt_metacallEN11QMetaObject4CallEiPPv @ 301 NONAME
+	_ZN10QtMobility13QLightReading11qt_metacastEPKc @ 302 NONAME
+	_ZN10QtMobility13QLightReading14copyValuesFromEPNS_14QSensorReadingE @ 303 NONAME
+	_ZN10QtMobility13QLightReading16staticMetaObjectE @ 304 NONAME DATA 16
+	_ZN10QtMobility13QLightReading19getStaticMetaObjectEv @ 305 NONAME
+	_ZN10QtMobility13QLightReading6setLuxEf @ 306 NONAME
+	_ZN10QtMobility13QLightReadingC1EP7QObject @ 307 NONAME
+	_ZN10QtMobility13QLightReadingC2EP7QObject @ 308 NONAME
+	_ZN10QtMobility13QLightReadingD0Ev @ 309 NONAME
+	_ZN10QtMobility13QLightReadingD1Ev @ 310 NONAME
+	_ZN10QtMobility13QLightReadingD2Ev @ 311 NONAME
+	_ZN10QtMobility17QGyroscopeReading11qt_metacallEN11QMetaObject4CallEiPPv @ 312 NONAME
+	_ZN10QtMobility17QGyroscopeReading11qt_metacastEPKc @ 313 NONAME
+	_ZN10QtMobility17QGyroscopeReading14copyValuesFromEPNS_14QSensorReadingE @ 314 NONAME
+	_ZN10QtMobility17QGyroscopeReading16staticMetaObjectE @ 315 NONAME DATA 16
+	_ZN10QtMobility17QGyroscopeReading19getStaticMetaObjectEv @ 316 NONAME
+	_ZN10QtMobility17QGyroscopeReading4setXEf @ 317 NONAME
+	_ZN10QtMobility17QGyroscopeReading4setYEf @ 318 NONAME
+	_ZN10QtMobility17QGyroscopeReading4setZEf @ 319 NONAME
+	_ZN10QtMobility17QGyroscopeReadingC1EP7QObject @ 320 NONAME
+	_ZN10QtMobility17QGyroscopeReadingC2EP7QObject @ 321 NONAME
+	_ZN10QtMobility17QGyroscopeReadingD0Ev @ 322 NONAME
+	_ZN10QtMobility17QGyroscopeReadingD1Ev @ 323 NONAME
+	_ZN10QtMobility17QGyroscopeReadingD2Ev @ 324 NONAME
+	_ZNK10QtMobility10QGyroscope10metaObjectEv @ 325 NONAME
+	_ZNK10QtMobility12QLightSensor10metaObjectEv @ 326 NONAME
+	_ZNK10QtMobility13QLightReading10metaObjectEv @ 327 NONAME
+	_ZNK10QtMobility13QLightReading3luxEv @ 328 NONAME
+	_ZNK10QtMobility17QGyroscopeReading10metaObjectEv @ 329 NONAME
+	_ZNK10QtMobility17QGyroscopeReading1xEv @ 330 NONAME
+	_ZNK10QtMobility17QGyroscopeReading1yEv @ 331 NONAME
+	_ZNK10QtMobility17QGyroscopeReading1zEv @ 332 NONAME
+	_ZTIN10QtMobility10QGyroscopeE @ 333 NONAME
+	_ZTIN10QtMobility12QLightSensorE @ 334 NONAME
+	_ZTIN10QtMobility13QLightReadingE @ 335 NONAME
+	_ZTIN10QtMobility17QGyroscopeReadingE @ 336 NONAME
+	_ZTVN10QtMobility10QGyroscopeE @ 337 NONAME
+	_ZTVN10QtMobility12QLightSensorE @ 338 NONAME
+	_ZTVN10QtMobility13QLightReadingE @ 339 NONAME
+	_ZTVN10QtMobility17QGyroscopeReadingE @ 340 NONAME
 

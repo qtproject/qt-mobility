@@ -495,7 +495,36 @@ CContactItem* CPplContactItemManager::DeleteLC(TContactItemId  aItemId, TUint aS
 	return savedContactItem;
 	
 	}
-	
+
+/**
+Deletes the given contacts from the database.Forward the call to CPplTableBase
+based classes representing the tables in the contact database. In low disk condition
+a KErrDiskFull will be thrown.
+
+@param aIdArray The contact IDs of the contact items to be deleted.
+@param aSessionId The ID of the session that issued the request.  Used to
+prevent Phonebook Synchroniser deadlock.
+
+@leave KErrDiskFull if a full disk error appears
+*/  
+void CPplContactItemManager::DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction /*aEventType*/)
+    {
+    TBool controlTransaction = !(iTransactionManager.IsTransactionActive());
+    if(controlTransaction)
+        {
+        StartTransactionL(aSessionId);
+        }
+    
+    static_cast<CPplContactTable*>(iContactTable)->DeleteMultipleContactsL(aIdArray);
+    static_cast<CPplGroupsTable*>(iGroupTable)->DeleteMultipleContactsL(aIdArray);
+    static_cast<CPplCommAddrTable*>(iCommAddrTable)->DeleteMultipleContactsL(aIdArray);
+    
+    if(controlTransaction)
+        {
+        CommitTransactionL();
+        }
+    }
+
 /**
 Perform a deletion in low disk condition
 
