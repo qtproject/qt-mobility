@@ -75,12 +75,20 @@ public:
     QList<QNdefMessage> ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
+    quint16 systemCode();
+    QList<quint16> services();
+    int serviceMemorySize(quint16 serviceCode);
+
+    QByteArray serviceData(quint16 serviceCode);
+    void writeServiceData(quint16 serviceCode, const QByteArray &data);
+
+    virtual void poll(quint16 systemCode, PollRequestFlags requestFlags, quint8 timeSlots);
+    virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList);
+    virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
+                        const QByteArray &data);  
+
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
-    virtual bool selectSector(quint8 sector);
 };
     
 QTM_END_NAMESPACE

@@ -77,15 +77,36 @@ QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray
 {
 }
 
-QByteArray QNearFieldTagType3Symbian::readBlock(quint8 blockAddress)
+quint16 QNearFieldTagType3Symbian::systemCode()
 {
 }
 
-bool QNearFieldTagType3Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
+QList<quint16> QNearFieldTagType3Symbian::services()
 {
 }
 
-bool QNearFieldTagType3Symbian::selectSector(quint8 sector)
+int QNearFieldTagType3Symbian::serviceMemorySize(quint16 serviceCode)
+{
+}
+
+QByteArray QNearFieldTagType3Symbian::serviceData(quint16 serviceCode)
+{
+}
+
+void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByteArray &data)
+{
+}
+
+void QNearFieldTagType3Symbian::poll(quint16 systemCode, PollRequestFlags requestFlags, quint8 timeSlots)
+{
+}
+
+QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
+{
+}
+
+void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
+                                       const QByteArray &data)  
 {
 }
 
