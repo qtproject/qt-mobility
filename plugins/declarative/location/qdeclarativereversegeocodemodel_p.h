@@ -37,58 +37,48 @@
 **
 ** $QT_END_LICENSE$
 **
-***************************************************************************/
+****************************************************************************/
 
-#ifndef QDECLARATIVEGEOPLACE_P_H
-#define QDECLARATIVEGEOPLACE_P_H
+#ifndef QDECLARATIVEREVERSEGEOCODEMODEL_H
+#define QDECLARATIVEREVERSEGEOCODEMODEL_H
 
-#include <qgeoplace.h>
+#include "qdeclarativegeosearchmodel_p.h"
+
 #include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeoboundingbox_p.h"
-#include "qdeclarativegeoaddress_p.h"
-
-#include <QVariant>
-#include <QtDeclarative/qdeclarative.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoPlace : public QObject
+class QDeclarativeReverseGeocodeModel : public QDeclarativeGeoSearchModel
 {
+
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeGeoBoundingBox* viewport READ viewport WRITE setViewport NOTIFY viewportChanged)
+
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged)
 
 public:
-    explicit QDeclarativeGeoPlace(QObject* parent = 0);
-    QDeclarativeGeoPlace(const QGeoPlace& place, QObject* parent);
-    virtual ~QDeclarativeGeoPlace();
-    void setPlace(const QGeoPlace& place);
+    explicit QDeclarativeReverseGeocodeModel(QObject *parent = 0);
+    ~QDeclarativeReverseGeocodeModel();
 
-    QDeclarativeGeoBoundingBox* viewport();
-    void setViewport(QDeclarativeGeoBoundingBox* box);
-
+    void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
-    void setCoordinate(QDeclarativeCoordinate* coordinate);
 
-    QDeclarativeGeoAddress* address();
-    void setAddress(QDeclarativeGeoAddress* address);
+    // From QDeclarativeParserStatus
+    virtual void componentComplete();
 
-signals:
-    void viewportChanged();
-    void coordinateChanged();
-    void addressChanged();
+    // From QAbstractListModel
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+Q_SIGNALS:
+    void coordinateChanged(QDeclarativeCoordinate *coordinate);
 
 private:
-    QDeclarativeGeoBoundingBox m_declarativeBox;
-    QDeclarativeCoordinate m_declarativeCoordinate;
-    QDeclarativeGeoAddress m_declarativeAddress;
+    void update();
+
+    bool complete_;
+    QDeclarativeCoordinate coordinate_;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoPlace))
-
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoPlace));
-
-#endif // QDECLARATIVEGEOPLACE_P_H
+#endif

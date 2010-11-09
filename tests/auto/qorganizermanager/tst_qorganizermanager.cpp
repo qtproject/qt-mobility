@@ -3009,6 +3009,7 @@ void tst_QOrganizerManager::itemFetch()
     // second - call items, resave only the first occurrence as an exception,
     // call ife() -- get back parent + exception
     items = cm->items();
+    QCOMPARE(items.size(), 3); // 3 occurrences.
     int eventCount = 0;
     int eventOccurrenceCount = 0;
     foreach (const QOrganizerItem& item, items) {
@@ -3025,6 +3026,8 @@ void tst_QOrganizerManager::itemFetch()
     }
     QCOMPARE(eventOccurrenceCount, 3);
     QCOMPARE(eventCount, 0);
+    items = cm->items(); // reload items after saving exception
+    QCOMPARE(items.size(), 3); // saving the exception shouldn't have added more items.
     items = cm->itemsForExport();
     QCOMPARE(items.count(), 2);
     eventCount = 0;
@@ -3042,6 +3045,7 @@ void tst_QOrganizerManager::itemFetch()
 
     // third, have all occurrences persisted
     items = cm->items();
+    QCOMPARE(items.size(), 3); // should be three occurrences
     foreach (const QOrganizerItem& item, items) {
         if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
             QOrganizerEventOccurrence exception(item);
@@ -3050,7 +3054,7 @@ void tst_QOrganizerManager::itemFetch()
         }
     }
     items = cm->itemsForExport();
-    QCOMPARE(items.size(), 4);
+    QCOMPARE(items.size(), 4); // parent + 3 persisted exceptions
     eventCount = 0;
     eventOccurrenceCount = 0;
     foreach (const QOrganizerItem& item, items) {
@@ -3269,6 +3273,15 @@ void tst_QOrganizerManager::idComparison()
         // TODO: The test should be refactored so it could run on all platforms
     }
 
+    // delete all collections in the database so that we know there can be no interference from previous test runs.
+    QList<QOrganizerCollection> allCollections = cm->collections();
+    for (int i = 0; i < allCollections.size(); ++i) {
+        QOrganizerCollectionId currentId = allCollections.at(i).id();
+        if (currentId != cm->defaultCollection().id()) {
+            cm->removeCollection(currentId);
+        }
+    }
+
     // step one: make a few items and collections to save (and harvest their ids)
     QOrganizerEvent e1;
     e1.setDescription("test event one");
@@ -3294,10 +3307,10 @@ void tst_QOrganizerManager::idComparison()
     c1.setMetaData(QOrganizerCollection::KeyName, "IdComparisonTest");
 
     // step two: save and harvest the ids
-    cm->saveItem(&e1);
-    cm->saveItem(&e2);
-    cm->saveItem(&t1);
-    cm->saveCollection(&c1);
+    QVERIFY(cm->saveItem(&e1));
+    QVERIFY(cm->saveItem(&e2));
+    QVERIFY(cm->saveItem(&t1));
+    QVERIFY(cm->saveCollection(&c1));
     QOrganizerItemId e1id = e1.id();
     QOrganizerItemId e2id = e2.id();
     QOrganizerItemId t1id = t1.id();
@@ -3588,6 +3601,15 @@ void tst_QOrganizerManager::collections()
     //if (!oim->hasFeature(QOrganizerManager::MutableCollections)) {
     //    QSKIP("This manager does not support mutable collections!", SkipSingle);
     //}
+
+    // delete all collections in the database so that we know there can be no interference from previous test runs.
+    QList<QOrganizerCollection> allCollections = oim->collections();
+    for (int i = 0; i < allCollections.size(); ++i) {
+        QOrganizerCollectionId currentId = allCollections.at(i).id();
+        if (currentId != oim->defaultCollection().id()) {
+            oim->removeCollection(currentId);
+        }
+    }
 
     QOrganizerCollection c1, c2, c3;
     c1.setMetaData(QOrganizerCollection::KeyName, "Test One");
