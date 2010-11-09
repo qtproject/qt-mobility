@@ -106,7 +106,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 #endif
     const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(const QString locale, locales) {
+    foreach(const QString &locale, locales) {
         languages << locale.mid(0,2);
     }
     languages << currentLanguage();
@@ -1148,7 +1148,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
-            foreach(const QString dev, list) {
+            foreach(const QString &dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (iface.isValid()) {
                     if (ifaceDevice.getPropertyString("maemo.charger.connection_status") == "connected") {
@@ -1289,7 +1289,7 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
     qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
-        foreach (const ProfileDataValue value, values) {
+        foreach (const ProfileDataValue &value, values) {
             qDebug() << value.key << value.val;
             if (value.key == "ringing.alert.type") {
                 silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
