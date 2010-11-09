@@ -94,6 +94,8 @@ void QNearFieldTagType4Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QByteArray QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 {
+    // 512 bytes for one operation
+    return _sendCommand(command, 100*1000, 512);
 }
 
 /*!
@@ -101,10 +103,16 @@ QByteArray QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 */
 QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    QList<QByteArray> result;
+    foreach(const QByteArray cmd, commands)
+    {
+        result.append(sendCommand(cmd));
+    }
 }
 
 QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
 {
+    return sendCommand(command);
 }
 
 /*!
@@ -112,6 +120,7 @@ QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
 */
 QList<QByteArray> QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
 {
+    return sendCommands(commands);
 }
 
 #include "moc_qnearfieldtagtype4_symbian_p.cpp"
