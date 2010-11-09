@@ -83,23 +83,30 @@ void QVersitWriterPrivate::init(QVersitWriter* writer)
 void QVersitWriterPrivate::write()
 {
     bool canceled = false;
+
+    // Try to get the type from the parameter to startWriting...
+    QVersitDocument::VersitType type = documentType();
+
     foreach (const QVersitDocument& document, mInput) {
         if (isCanceling()) {
             canceled = true;
             break;
         }
-        QScopedPointer<QVersitDocumentWriter> writer(writerForType(document.type()));
+
+        QScopedPointer<QVersitDocumentWriter> writer(
+                writerForType( // ... get type from the document if not specified in startWriting
+                    type == QVersitDocument::InvalidType ? document.type() : type,
+                    document));
         QTextCodec* codec = mDefaultCodec;
         if (codec == NULL) {
-            if (document.type() == QVersitDocument::VCard21Type)
+            if (type == QVersitDocument::VCard21Type)
                 codec = QTextCodec::codecForName("ISO-8859-1");
             else
                 codec = QTextCodec::codecForName("UTF-8");
         }
         writer->setCodec(codec);
         writer->setDevice(mIoDevice);
-        writer->encodeVersitDocument(document);
-        if (!writer->mSuccessful) {
+        if (!writer->encodeVersitDocument(document)) {
             setError(QVersitWriter::IOError);
             break;
         }
@@ -148,15 +155,33 @@ QVersitWriter::Error QVersitWriterPrivate::error() const
  * Returns a QVersitDocumentWriter that can encode a QVersitDocument of type \a type.
  * The caller is responsible for deleting the object.
  */
-QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::VersitType type)
+QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::VersitType type, const QVersitDocument& document)
 {
     switch (type) {
+        case QVersitDocument::InvalidType:
+        {
+            // Neither startWriting or the document provided the type.
+            // Need to infer the type from the document's componentType
+            QString componentType(document.componentType());
+            if (componentType == QLatin1String("VCARD")) {
+                return new QVCard30Writer(QVersitDocument::VCard30Type);
+            } else if (componentType == QLatin1String("VCALENDAR")
+                    || componentType == QLatin1String("VEVENT")
+                    || componentType == QLatin1String("VTODO")
+                    || componentType == QLatin1String("VJOURNAL")
+                    || componentType == QLatin1String("VTIMEZONE")
+                    || componentType == QLatin1String("VALARM")) {
+                return new QVCard30Writer(QVersitDocument::ICalendar20Type);
+            } else {
+                return new QVCard30Writer(QVersitDocument::VCard30Type);
+            }
+        }
         case QVersitDocument::VCard21Type:
-            return new QVCard21Writer;
+            return new QVCard21Writer(type);
         case QVersitDocument::VCard30Type:
-            return new QVCard30Writer;
+            return new QVCard30Writer(type);
         default:
-            return new QVCard30Writer;
+            return new QVCard30Writer(type);
     }
 }
 
@@ -166,10 +191,22 @@ void QVersitWriterPrivate::setCanceling(bool canceling)
     mIsCanceling = canceling;
 }
 
-bool QVersitWriterPrivate::isCanceling()
+bool QVersitWriterPrivate::isCanceling() const
 {
     QMutexLocker locker(&mMutex);
     return mIsCanceling;
+}
+
+void QVersitWriterPrivate::setDocumentType(QVersitDocument::VersitType type)
+{
+    QMutexLocker locker(&mMutex);
+    mType = type;
+}
+
+QVersitDocument::VersitType QVersitWriterPrivate::documentType() const
+{
+    QMutexLocker locker(&mMutex);
+    return mType;
 }
 
 #include "moc_qversitwriter_p.cpp"

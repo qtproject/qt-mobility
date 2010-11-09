@@ -48,6 +48,9 @@
 #include <qaudio.h>
 #include <qsoundeffect_p.h>
 
+#if defined(Q_OS_SYMBIAN)
+#define SRCDIR ""
+#endif
 
 class tst_QSoundEffect : public QObject
 {
@@ -62,28 +65,28 @@ private slots:
     void testVolume();
     void testMuting();
 
+    void testPlaying();
+    void testStatus();
+
 private:
     QSoundEffect* sound;
 };
 
 void tst_QSoundEffect::initTestCase()
 {
-#ifndef QT_MULTIMEDIA_QMEDIAPLAYER
-    sound = new QSoundEffect;
+    sound = new QSoundEffect(this);
 
     QVERIFY(sound->source().isEmpty());
-    QVERIFY(sound->loops() == 1);
-    QVERIFY(sound->volume() == 100);
+    QVERIFY(sound->loopCount() == 1);
+    QVERIFY(sound->volume() == 1);
     QVERIFY(sound->isMuted() == false);
-#endif
 }
 
 void tst_QSoundEffect::testSource()
 {
-#ifndef QT_MULTIMEDIA_QMEDIAPLAYER
     QSignalSpy readSignal(sound, SIGNAL(sourceChanged()));
 
-    QUrl url = QUrl::fromLocalFile(QString("%1%2").arg(SRCDIR).arg("test.wav"));
+    QUrl url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
     sound->setSource(url);
 
     QCOMPARE(sound->source(),url);
@@ -93,40 +96,35 @@ void tst_QSoundEffect::testSource()
     sound->play();
 
     QTest::qWait(3000);
-#endif
 }
 
 void tst_QSoundEffect::testLooping()
 {
-#ifndef QT_MULTIMEDIA_QMEDIAPLAYER
-    QSignalSpy readSignal(sound, SIGNAL(loopsChanged()));
+    QSignalSpy readSignal(sound, SIGNAL(loopCountChanged()));
 
-    sound->setLoops(5);
-    QCOMPARE(sound->loops(),5);
+    sound->setLoopCount(5);
+    QCOMPARE(sound->loopCount(),5);
 
     sound->play();
 
     // test.wav is about 200ms, wait until it has finished playing 5 times
     QTest::qWait(3000);
-#endif
+
 }
 
 void tst_QSoundEffect::testVolume()
 {
-#ifndef QT_MULTIMEDIA_QMEDIAPLAYER
     QSignalSpy readSignal(sound, SIGNAL(volumeChanged()));
 
-    sound->setVolume(50);
-    QCOMPARE(sound->volume(),50);
+    sound->setVolume(0.5);
+    QCOMPARE(sound->volume(),0.5);
 
     QTest::qWait(20);
     QCOMPARE(readSignal.count(),1);
-#endif
 }
 
 void tst_QSoundEffect::testMuting()
 {
-#ifndef QT_MULTIMEDIA_QMEDIAPLAYER
     QSignalSpy readSignal(sound, SIGNAL(mutedChanged()));
 
     sound->setMuted(true);
@@ -134,10 +132,74 @@ void tst_QSoundEffect::testMuting()
 
     QTest::qWait(20);
     QCOMPARE(readSignal.count(),1);
-
-    delete sound;
-#endif
 }
+
+void tst_QSoundEffect::testPlaying()
+{
+    sound->setLoopCount(QSoundEffect::Infinite);
+    //valid source
+    QUrl url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
+    sound->setSource(url);
+    QTestEventLoop::instance().enterLoop(1);
+    sound->play();
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(sound->isPlaying(), true);
+    sound->stop();
+
+    //empty source
+    url = QUrl();
+    sound->setSource(url);
+    QTestEventLoop::instance().enterLoop(1);
+    sound->play();
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(sound->isPlaying(), false);
+
+    //invalid source
+    url = QUrl((QLatin1String("invalid source")));
+    sound->setSource(url);
+    QTestEventLoop::instance().enterLoop(1);
+    sound->play();
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(sound->isPlaying(), false);
+
+    sound->setLoopCount(1);
+}
+
+void tst_QSoundEffect::testStatus()
+{
+    QUrl url = QUrl();
+    sound->setSource(url);
+    QSignalSpy readSignal(sound, SIGNAL(statusChanged()));
+    QCOMPARE(sound->status(), QSoundEffect::Null);
+
+    int signalCount = 1;
+    //valid source
+    url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
+    sound->setSource(url);
+    QCOMPARE(readSignal.count(), signalCount);
+
+    if (sound->status() == QSoundEffect::Loading) {
+        QTestEventLoop::instance().enterLoop(1);
+        QCOMPARE(readSignal.count(), ++signalCount);
+    }
+    QCOMPARE(sound->status(), QSoundEffect::Ready);
+
+    //empty source
+    url = QUrl();
+    sound->setSource(url);
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(readSignal.count(), ++signalCount);
+    QCOMPARE(sound->status(), QSoundEffect::Null);
+
+    //invalid source
+    sound->setLoopCount(QSoundEffect::Infinite);
+    url = QUrl(QLatin1String("invalid source"));
+
+    sound->setSource(url);
+    QTestEventLoop::instance().enterLoop(1);
+    QCOMPARE(sound->status(), QSoundEffect::Error);
+}
+
 
 QTEST_MAIN(tst_QSoundEffect)
 

@@ -735,6 +735,15 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeHomePage, "HomePage");
 Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeFavourite, "Favourite");
 
 /*!
+   \variable QContactUrl::SubTypeBlog
+
+    The predefined string constant for a sub type value,
+    indicating this url refers to one of the contact's blogs.
+    \sa subType(), setSubType()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
+
+/*!
    \fn QContactUrl::url() const
    Returns the url stored in this detail.
  */
@@ -955,6 +964,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
 Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
+   \variable QContactBirthday::FieldCalendarId
+
+   The field key constant for the value containing the id of the calendar event.
+   \sa calendarId(), setCalendarId()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldCalendarId, "CalendarId");
+
+/*!
    \fn QContactBirthday::date() const
    Returns the date of the birthday which is stored in this detail.
    If the birthday stored is a QDateTime, this returns the date portion.
@@ -975,6 +992,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 /*!
    \fn QContactBirthday::setDateTime(const QDateTime& dateTime)
    Sets the date and time of the birthday which is stored in this detail to \a dateTime.
+ */
+
+
+/*!
+   \fn QContactBirthday::calendarId() const
+ * Returns the identifier of the calendar entry associated with this birthday.
+ */
+
+/*!
+   \fn QContactBirthday::setCalendarId(const QString& calendarId)
+   Sets the identifier of the calendar entry associated with this birthday to \a calendarId.
  */
 
 /* ==================== QContactGender ======================= */

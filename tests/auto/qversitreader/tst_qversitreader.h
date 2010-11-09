@@ -84,6 +84,10 @@ private slots: // Tests
 
     void testDevice();
     void testDefaultCodec();
+    void testValidateUtf8();
+    void testValidateUtf8_data();
+    void testDetectCodec();
+    void testDetectCodec_data();
     void testReading();
     void testResult();
     void testParseNextVersitProperty();

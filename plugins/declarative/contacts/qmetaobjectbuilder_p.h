@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QMETAOBJECTBUILDER_H
 #define QMETAOBJECTBUILDER_H
 

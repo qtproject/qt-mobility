@@ -109,6 +109,8 @@ public:
     virtual ~QSystemInfoPrivate();
     QStringList availableLanguages() const;
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
+    QString currentLanguage() const;
+    QString currentCountryCode() const;
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 };
@@ -147,7 +149,7 @@ public:
 protected:
 
 private Q_SLOTS:
-    void bluetoothNetworkStatusCheck();
+    void bluetoothNetworkStatusCheck(QString device);
     void setupNetworkInfo();
 #if defined(Q_WS_MAEMO_6)
     // Slots only available in Maemo6
@@ -161,13 +163,14 @@ private Q_SLOTS:
 #if defined(Q_WS_MAEMO_5)
     // Slots only available in Maemo5
     void cellNetworkSignalStrengthChanged(uchar,uchar);
-    void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
 #endif
+    void icdStatusChanged(QString,QString,QString,QString);
     void usbCableAction();
     void wlanSignalStrengthCheck();
+    void networkModeChangeCheck();
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a
@@ -183,6 +186,8 @@ private:
 
     int cellSignalStrength;
     QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
+    QSystemNetworkInfo::NetworkStatus currentWlanNetworkStatus;
+    QSystemNetworkInfo::NetworkMode currentNetworkMode;
     int currentCellId;
     int currentCellNetworkStatus;
     int currentEthernetSignalStrength;
@@ -242,8 +247,6 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
-    QString model();
-    QString productName();
 
 protected:
 #if !defined(QT_NO_DBUS)
@@ -263,6 +266,7 @@ private:
     QString profileName;
     bool silentProfile;
     bool vibratingAlertEnabled;
+    bool beepProfile;
     int ringingAlertVolume;
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
 

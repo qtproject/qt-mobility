@@ -46,9 +46,23 @@
 #include <calinstanceview.h>
 #include "organizersymbianutils.h"
 #include "qorganizeritemchangeset.h"
-#include "qorganizeritemmanagerengine.h"
+#include "qorganizermanagerengine.h"
 
 using namespace OrganizerSymbianUtils;
+
+// Custom metadata keys for a collection
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyIsValid, "IsValid");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyFileName, "FileName");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyEnabled, "Enabled");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyFolderLUID, "FolderLUID");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyCreationTime, "CreationTime");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyModificationTime, "ModificationTime");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeySyncStatus, "SyncStatus");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyIsSharedFolder, "IsSharedFolder");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyGlobalUUID, "GlobalUUID");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyDeviceSyncServiceOwner, "DeviceSyncServiceOwner");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyOwnerName, "OwnerName");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyMarkAsDelete, "MarkAsDelete");
 
 OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
     :QSharedData(), 
@@ -110,7 +124,7 @@ void OrganizerSymbianCollectionPrivate::CalChangeNotification(RArray<TCalChangeE
     int count = aChangeItems.Count();
     for (int i=0; i<count; i++) 
     {
-        QOrganizerItemLocalId id = toItemLocalId(m_calCollectionId, aChangeItems[i].iEntryId);
+        QOrganizerItemId id = toItemId(m_calCollectionId, aChangeItems[i].iEntryId);
         switch(aChangeItems[i].iChangeType)
         {
         case MCalChangeCallBack2::EChangeAdd:       
@@ -142,12 +156,11 @@ OrganizerSymbianCollection::OrganizerSymbianCollection()
     d = new OrganizerSymbianCollectionPrivate();
 }
 
-OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerItemManagerEngine *engine)
+OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerManagerEngine *engine)
     :d(0)
 {
     d = new OrganizerSymbianCollectionPrivate();
     d->m_engine = engine;
-    d->m_id.setManagerUri(engine->managerUri());
 }
 
 OrganizerSymbianCollection::OrganizerSymbianCollection(const OrganizerSymbianCollection &other)
@@ -221,7 +234,7 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     // collection so it does not matter if its just a magic number.
     d->m_calCollectionId = 1;
 #endif
-    d->m_id.setLocalId(toCollectionLocalId(d->m_calCollectionId));
+    d->m_id = toCollectionId(d->m_calCollectionId);
     
     // Start listening to calendar events
     TCalTime minTime;
@@ -250,11 +263,6 @@ void OrganizerSymbianCollection::createViewsL()
 QOrganizerCollectionId OrganizerSymbianCollection::id() const
 {
     return d->m_id;
-}
-
-QOrganizerCollectionLocalId OrganizerSymbianCollection::localId() const 
-{ 
-    return d->m_id.localId(); 
 }
 
 quint64 OrganizerSymbianCollection::calCollectionId() const
@@ -317,7 +325,7 @@ QOrganizerCollection OrganizerSymbianCollection::toQOrganizerCollectionL() const
     collection.setMetaData(toMetaDataL(*calInfo));       
     CleanupStack::PopAndDestroy(calInfo);
 #else
-    collection.setMetaData("FileName", d->m_fileName);
+    collection.setMetaData(OrganizerSymbianCollection::KeyFileName, d->m_fileName);
 #endif
 
     // Set id

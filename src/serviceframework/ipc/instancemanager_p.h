@@ -80,6 +80,8 @@ public:
     const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
     QList<QRemoteServiceRegister::Entry> allEntries() const;
 
+    int totalInstances() const;
+
     QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
     void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
 
@@ -88,6 +90,7 @@ public:
 Q_SIGNALS:
     void allInstancesClosed();
     void instanceClosed(const QRemoteServiceRegister::Entry&);
+    void instanceClosed(const QRemoteServiceRegister::Entry&, const QUuid&);
 
 private:
     mutable QMutex lock;

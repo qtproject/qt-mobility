@@ -167,8 +167,9 @@ public:
     int getDPIWidth(int screen);
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
-    int physicalWidth(int screen);};
-
+    int physicalWidth(int screen);
+    bool backLightOn();
+};
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,

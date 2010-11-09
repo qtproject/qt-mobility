@@ -72,7 +72,7 @@ public:
 Q_SIGNALS:
     void finished();
     void resumed();
-    void cancelled();
+    void canceled();
     void progressChanged(int current, int maximum);
 
 protected:

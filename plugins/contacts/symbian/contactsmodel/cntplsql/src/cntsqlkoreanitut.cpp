@@ -28,6 +28,8 @@
 #include "koreaninput.h"
 #include <QString>
 #include <QStringList>
+#include <QRegExp>
+
 
 
 const int KMinimumSearchPatternLength = 1;
@@ -195,9 +197,10 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
     QString upper;
     QString num;
     
+    QString keyMapString = mTwelveKeyMap->GetMappedString(token);
     if(position < KColumnLimit )
         {
-        int err = mTwelveKeyMap->GetNumericLimits(token, lower, upper);
+        int err = mTwelveKeyMap->GetNumericLimits(keyMapString, lower, upper);
         if(err)
            {
            return QString("");
@@ -216,8 +219,50 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
 
 QStringList CntSqlKoreanItuT::getSearchPattern(const QString &pattern)
     {
-    //return pattern.split("0", QString::SkipEmptyParts);
-    return mKoreaninput->Tokenize(pattern);
+    QRegExp syllable("([1245780]{1,2}[369]{1,2}[1245780]{0,2})(?![369])");
+    QRegExp consonants("[1245780]");
+    
+    QString &fRef = const_cast<QString&>(pattern);
+    fRef.remove(QRegExp("\\*|\\#"));//remove * and #
+    QStringList list;
+    int pos = 0;
+    int count = 0;
+    int length = fRef.length();
+    
+    while ((pos = consonants.indexIn(fRef, pos)) != -1) {
+         list << consonants.cap(0);
+         pos += consonants.matchedLength();
+        }
+    if ( length == list.count() )
+        {
+        return list;
+        }
+    else 
+        {
+        pos = 0;
+        list.clear();
+        while ((pos = syllable.indexIn(fRef, pos)) != -1) {
+             list << syllable.cap(0);
+             pos += syllable.matchedLength();
+             if(pos != -1 )
+                 {
+                 count = pos;
+                 }
+            }
+        pos = syllable.indexIn(fRef);
+        if (count == length && syllable.pos(0) == 0)
+               {
+               return list;
+               }
+           else
+               {
+               list.clear();
+               list = QStringList(pattern);
+               return list;
+               }
+        }
+   
+    /*return mKoreaninput->Tokenize(pattern);*/
     }
 
 CntSqlKoreanItuT::SqlQueryType CntSqlKoreanItuT::getSQLQueryType(const QString &pattern)

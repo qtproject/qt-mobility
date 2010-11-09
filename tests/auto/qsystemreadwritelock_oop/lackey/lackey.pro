@@ -6,9 +6,10 @@ SOURCES += main.cpp
 TARGET = lackey
 INCLUDEPATH += ../../../../src/publishsubscribe
 DEPENDPATH += ../../../../src/publishsubscribe
-QT = core network
+QT = core network testlib
 
-CONFIG+= testcase
+# Put the binary where tests can find it
+CONFIG += testhelper
 
 include(../../../../common.pri)
 

@@ -4,5 +4,5 @@ qmlstorageinfo_src = $$PWD
 symbian {
     load(data_caging_paths)
 }
-qmlstorageinfo_files.sources = qmlstorageinfo_src/storage.qml 
+qmlstorageinfo_files.sources = $$qmlstorageinfo_src/storage.qml
 DEPLOYMENT += qmlstorageinfo_files

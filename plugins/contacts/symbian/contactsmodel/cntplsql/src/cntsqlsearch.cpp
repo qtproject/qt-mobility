@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QLocale>
 
+
 const char KLimitLength = 15;
 const int KTwoTokens = 2;
 const int KOneToken = 1;

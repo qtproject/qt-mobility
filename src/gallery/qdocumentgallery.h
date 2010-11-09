@@ -145,6 +145,9 @@ public:
     static const QGalleryProperty resumePosition;
     static const QGalleryProperty director;
 
+    // Type
+    static const QGalleryProperty count;
+
     enum Error
     {
         NoError = QGalleryAbstractRequest::NoError,

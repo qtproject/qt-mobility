@@ -137,7 +137,6 @@
 #include <qabstractgallery.h>
 #include <qgalleryqueryrequest.h>
 #include <qgalleryresource.h>
-#include <qgalleryremoverequest.h>
 #include <qgalleryresultset.h>
 #include <qgalleryproperty.h>
 
@@ -156,15 +155,15 @@
 #include <maps/qgeoserviceprovider.h>
 #include <maps/qgeosearchmanager.h>
 #include <maps/qgeomaprouteobject.h>
-#include <maps/qgeonavigationinstruction.h>
+//#include <maps/qgeonavigationinstruction.h>
 #include <maps/qgeomapdata.h>
 #include <maps/qgeoroutingmanagerengine.h>
 #include <maps/qgeomappolygonobject.h>
-#include <maps/qgeonavigator.h>
+//#include <maps/qgeonavigator.h>
 #include <maps/qgeoroute.h>
 #include <maps/qgeomappolylineobject.h>
 #include <maps/qgeomappingmanager.h>
-#include <maps/qgeomapmarkerobject.h>
+//#include <maps/qgeomapmarkerobject.h>
 #include <maps/qgeosearchreply.h>
 #include <maps/tiled/qgeotiledmapreply.h>
 #include <maps/tiled/qgeotiledmapdata.h>
@@ -177,13 +176,13 @@
 #include <maps/qgeosearchmanagerengine.h>
 #include <qgeoareamonitor.h>
 #include <landmarks/qlandmarksortorder.h>
-#include <landmarks/qlandmarkfreetextfilter.h>
+//#include <landmarks/qlandmarkfreetextfilter.h>
 #include <landmarks/qlandmarkabstractrequest.h>
 #include <landmarks/qlandmarkproximityfilter.h>
 #include <landmarks/qlandmarkmanager.h>
 #include <landmarks/qlandmarkexportrequest.h>
 #include <landmarks/qlandmark.h>
-#include <landmarks/qlandmarkfetchhint.h>
+//#include <landmarks/qlandmarkfetchhint.h>
 #include <landmarks/qlandmarknamesort.h>
 #include <landmarks/qlandmarkcategorysaverequest.h>
 #include <landmarks/qlandmarkremoverequest.h>
@@ -196,7 +195,7 @@
 #include <landmarks/qlandmarkunionfilter.h>
 #include <landmarks/qlandmarkintersectionfilter.h>
 #include <landmarks/qlandmarkidfilter.h>
-#include <landmarks/qlandmarkdistancesort.h>
+//#include <landmarks/qlandmarkdistancesort.h>
 #include <landmarks/qlandmarkmanagerengine.h>
 #include <landmarks/qlandmarkcategory.h>
 #include <landmarks/qlandmarkimportrequest.h>
@@ -283,7 +282,7 @@
 #include <qaudiocapturesource.h>
 #include <qmediaplaylistnavigator.h>
 #include <qcamerafocuscontrol.h>
-#include <effects/qsoundeffect.h>
+// #include <effects/qsoundeffect.h>
 #include <qmediacontent.h>
 #include <qmediaresource.h>
 #include <qtmedianamespace.h>
@@ -404,11 +403,12 @@
 #include <qversitcontacthandler.h>
 #include <qversitproperty.h>
 #include <qversitcontactexporter.h>
-#include <qversitorganizerimporter.h>
 #include <qversitcontactimporter.h>
 #include <qversitwriter.h>
 #include <qversitreader.h>
-#include <qversitorganizerexporter.h>
 #include <qversitdocument.h>
 #include <qversitresourcehandler.h>
 
+//QtVersitOrganizer
+#include <qversitorganizerimporter.h>
+#include <qversitorganizerexporter.h>

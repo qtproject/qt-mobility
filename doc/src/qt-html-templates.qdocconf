@@ -1,4 +1,5 @@
 HTML.stylesheets        =  style/style.css \
+                                    style/OfflineStyle.css \
 									style/style_ie7.css \
 									style/style_ie8.css \
 									style/style_ie6.css
@@ -25,7 +26,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "    </div>\n" \
 			  "    <div id=\"shortCut\">\n" \
 			  "      <ul>\n" \
-			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Mobility 1.1 BETA</a></span></li>\n" \
+			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Mobility 1.2 TP</a></span></li>\n" \
 			  "        <li class=\"shortCut-topleft-active\"><a href=\"http://doc.qt.nokia.com\">ALL VERSIONS" \
 			  "        </a></li>\n" \
 			  "      </ul>\n" \

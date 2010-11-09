@@ -50,6 +50,7 @@ QTM_USE_NAMESPACE
 #ifndef HAPTICSQUARE_H_
 #define HAPTICSQUARE_H_
 
+//! [0]
 class HapticSquare : public QWidget
 {
     Q_OBJECT
@@ -73,6 +74,7 @@ private:
     QFeedbackHapticsEffect m_rumble;
     QFeedbackHapticsEffect m_ocean;
 };
+//! [0]
 
 #endif
 

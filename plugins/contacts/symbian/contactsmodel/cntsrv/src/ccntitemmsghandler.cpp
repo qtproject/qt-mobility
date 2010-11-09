@@ -39,6 +39,7 @@ const TInt KCntItemIpcCodes[] =
 	ECntItemCreate,
 	ECntItemUpdate,
 	ECntItemDelete,
+	ECntItemsDelete,
 	ECntItemRead,
 	ECntItemCommit,
 	ECntItemOpen,
@@ -150,7 +151,18 @@ void CCntItemMsgHandler::ItemDeleteL(const RMessage2& aMessage)
 	// to be popped from CleanupStack.		
 	CleanupStack::Pop(request);
 	}
-	
+
+void CCntItemMsgHandler::ItemsDeleteL(const RMessage2& aMessage)
+    {
+    CheckForManagerL();
+    CReqDeleteCnt* request = CReqDeleteCnt::NewLC(iSessionId, aMessage, iTimeOut, &iPackager);
+    iManager->StateMachineL().ProcessRequestL(request);  // ownership transferred
+    
+    // ProcessRequestL received ownership of the request, the request only need
+    // to be popped from CleanupStack.      
+    CleanupStack::Pop(request);
+    }
+
 void CCntItemMsgHandler::ItemReadL(const RMessage2& aMessage)
 	{
 	CheckForManagerL();
