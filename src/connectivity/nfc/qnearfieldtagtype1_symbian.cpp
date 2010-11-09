@@ -307,7 +307,6 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
     int timeout = 100 * 1000; // 100ms
-    int responseSize = 0;
     QByteArray result;
 
     if (command.length() > 0)
@@ -316,26 +315,26 @@ QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
         {
             case 0x00: // RALL
             {
-                responseSize = 124;
+                result = _sendCommand<124>(command, timeout);
                 break;
             }
             case 0x01: // READ
             case 0x53: // WRITE-E
             case 0x1a: // WRITE-NE
             {
-                responseSize = 4;
+                result = _sendCommand<4>(command, timeout);
                 break;
             } 
             case 0x10: // RSEG
             {
-                responseSize = 131;
+                result = _sendCommand<131>(command, timeout);
                 break;
             }
             case 0x02: // READ8
             case 0x54: // WRITE-E8
             case 0x1b: // WRITE_NE8
             {
-                responseSize = 11;
+                result = _sendCommand<11>(command, timeout);
                 break;
             }
             default:
@@ -343,7 +342,6 @@ QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
                 return result;
             }
         }
-        result = _sendCommand(command, timeout, responseSize);
     }
     return result;            
 }
@@ -353,6 +351,12 @@ QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 */
 QList<QByteArray> QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    QList<QByteArray> result;
+    foreach(const QByteArray cmd, commands)
+    {
+        result.append(sendCommand(cmd));
+    }
+    return result; 
 }
 
 #include "moc_qnearfieldtagtype1_symbian_p.cpp"

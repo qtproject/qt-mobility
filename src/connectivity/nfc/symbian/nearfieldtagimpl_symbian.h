@@ -43,6 +43,9 @@
 #define QNEARFIELDTAGIMPL_H
 
 #include <qnearfieldtarget.h>
+#include "nearfieldtag_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
+#include "qnearfieldutility_symbian.h"
 
 QTM_USE_NAMESPACE
 class MNearFieldTarget;
@@ -67,9 +70,29 @@ public:
 
     QByteArray _sendCommand(const QByteArray &command, int timeout, int reponseSize);
 
+    template<int N>
+    QByteArray _sendCommand(const QByteArray &command, int timeout);
+
 protected:
     MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
 };
+
+template<int N>
+QByteArray QNearFieldTagImpl::_sendCommand(const QByteArray &command, int timeout)
+{
+    CNearFieldTag * tag = mTag->CastToTag();
+    QByteArray result;
+    if (tag)
+    {
+        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+        TBuf8<N> response;
+        if (KErrNone == tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)))
+        {
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
+        }
+    }
+    return result;
+}
 
 #endif // QNEARFIELDTAGIMPL_H

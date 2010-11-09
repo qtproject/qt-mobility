@@ -40,9 +40,6 @@
 ****************************************************************************/
 
 #include "nearfieldtagimpl_symbian.h"
-#include "nearfieldtag_symbian.h"
-#include "nearfieldndeftarget_symbian.h"
-#include "qnearfieldutility_symbian.h"
 
 QNearFieldTagImpl::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)
 {
@@ -128,3 +125,5 @@ QByteArray QNearFieldTagImpl::_sendCommand(const QByteArray &command, int timeou
     }
     return result;
 }
+
+
