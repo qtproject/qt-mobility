@@ -41,7 +41,7 @@
 #ifndef CHATSERVER_H
 #define CHATSERVER_H
 
-#include <bluetooth/qbluetoothserviceinfo.h>
+#include <qbluetoothserviceinfo.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QList>

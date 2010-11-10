@@ -42,11 +42,11 @@
 #ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_H
 #define QBLUETOOTHDEVICEDISCOVERYAGENT_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 #include <QObject>
 
-#include "qbluetoothdeviceinfo.h"
+#include <qbluetoothdeviceinfo.h>
 
 QT_BEGIN_HEADER
 

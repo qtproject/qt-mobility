@@ -445,4 +445,7 @@ EXPORTS
 	?staticMetaObject@QBluetoothTransferReply@QtMobility@@2UQMetaObject@@B @ 444 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferReply::staticMetaObject
 	?staticMetaObject@QBluetoothTransferManager@QtMobility@@2UQMetaObject@@B @ 445 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferManager::staticMetaObject
 	?staticMetaObject@QNearFieldTarget@QtMobility@@2UQMetaObject@@B @ 446 NONAME ; struct QMetaObject const QtMobility::QNearFieldTarget::staticMetaObject
+	??0QNearFieldManager@QtMobility@@QAE@PAVQNearFieldManagerPrivate@1@PAVQObject@@@Z @ 447 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QtMobility::QNearFieldManagerPrivate *, class QObject *)
+	?defaultDevice@QBluetoothLocalDevice@QtMobility@@SA?AV12@XZ @ 448 NONAME ; class QtMobility::QBluetoothLocalDevice QtMobility::QBluetoothLocalDevice::defaultDevice(void)
+	?name@QBluetoothLocalDevice@QtMobility@@QBE?AVQString@@XZ @ 449 NONAME ; class QString QtMobility::QBluetoothLocalDevice::name(void) const
 

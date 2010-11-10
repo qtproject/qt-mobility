@@ -40,8 +40,8 @@
 
 #include "chatserver.h"
 
-#include <bluetooth/qrfcommserver.h>
-#include <bluetooth/qbluetoothsocket.h>
+#include <qrfcommserver.h>
+#include <qbluetoothsocket.h>
 
 //! [Service UUID]
 static const QLatin1String serviceUuid("e8e10f95-1a70-4b27-9ccf-02010264e9c8");

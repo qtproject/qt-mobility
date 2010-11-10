@@ -43,7 +43,7 @@
 #define QBLUETOOTHTRANSFERMANAGER_H
 
 #include <qmobilityglobal.h>
-#include "qbluetoothaddress.h"
+#include <qbluetoothaddress.h>
 
 #include <QtCore/QObject>
 

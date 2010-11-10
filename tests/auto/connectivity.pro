@@ -4,18 +4,20 @@ requires(contains(mobility_modules,connectivity))
 
 TEMPLATE = subdirs
 
-SUBDIRS += \
-        qndefrecord \
-        qndefmessage \
-        qnearfieldmanager \
-        qnearfieldtagtype1 \
-        qbluetoothaddress\
-        qbluetoothuuid\
-        qbluetoothdeviceinfo\
-        qbluetoothdevicediscoveryagent\
-        qbluetoothserviceinfo\
-        qbluetoothservicediscoveryagent\
-        qbluetoothsocket\
-        qrfcommserver
+#SUBDIRS += \
+#        qndefrecord \
+#        qndefmessage \
+#        qnearfieldtagtype1
+#        qnearfieldmanager \
+
+#!win32:SUBDIRS += \
+#        qbluetoothaddress\
+#        qbluetoothuuid\
+#        qbluetoothdeviceinfo\
+#        qbluetoothdevicediscoveryagent\
+#        qbluetoothserviceinfo\
+#        qbluetoothservicediscoveryagent\
+#        qbluetoothsocket\
+#        qrfcommserver
 
 

@@ -203,7 +203,7 @@ void QBluetoothServiceInfoPrivate::setRegisteredAttribute(quint16 attributeId, c
 
 void QBluetoothServiceInfoPrivate::removeRegisteredAttribute(quint16 attributeId) const
 {
-    sdpDatabase.DeleteAttribute(serviceRecord, attributeId);
+    sdpDatabase.DeleteAttributeL(serviceRecord, attributeId);
 }
 
 bool QBluetoothServiceInfoPrivate::ensureSdpConnection() const
@@ -256,7 +256,7 @@ bool QBluetoothServiceInfo::unregisterService() const
     if (!d->ensureSdpConnection())
         return false;
 
-    d->sdpDatabase.DeleteRecord(d->serviceRecord);
+    d->sdpDatabase.DeleteRecordL(d->serviceRecord);
 
     return true;
 }

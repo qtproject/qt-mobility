@@ -412,4 +412,8 @@ EXPORTS
 	_ZTVN10QtMobility18QNearFieldTagType2E @ 411 NONAME
 	_ZTVN10QtMobility23QBluetoothTransferReplyE @ 412 NONAME
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 413 NONAME
+	_ZN10QtMobility17QNearFieldManagerC1EPNS_24QNearFieldManagerPrivateEP7QObject @ 414 NONAME
+	_ZN10QtMobility17QNearFieldManagerC2EPNS_24QNearFieldManagerPrivateEP7QObject @ 415 NONAME
+	_ZN10QtMobility21QBluetoothLocalDevice13defaultDeviceEv @ 416 NONAME
+	_ZNK10QtMobility21QBluetoothLocalDevice4nameEv @ 417 NONAME
 

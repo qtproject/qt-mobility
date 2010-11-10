@@ -43,7 +43,7 @@
 #ifndef QBLUETOOTH_H
 #define QBLUETOOTH_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 QT_BEGIN_HEADER
 

@@ -42,12 +42,12 @@
 #ifndef QRFCOMMSERVER_H
 #define QRFCOMMSERVER_H
 
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
 
 #include <QObject>
 
-#include "qbluetoothaddress.h"
-#include "qbluetooth.h"
+#include <qbluetoothaddress.h>
+#include <qbluetooth.h>
 
 QT_BEGIN_HEADER
 

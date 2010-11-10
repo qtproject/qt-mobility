@@ -9,4 +9,4 @@ contains(mobility_modules,organizer): SUBDIRS += qtorganizerdocsample
 contains(mobility_modules,location): SUBDIRS += qtlandmarksdocsample
 contains(mobility_modules,sensors): SUBDIRS += sensors
 contains(mobility_modules,feedback): SUBDIRS += qtfeedbackdocsample
-contains(mobility_modules,connectivity): SUBDIRS += connectivity
+!win32:contains(mobility_modules,connectivity): SUBDIRS += connectivity
