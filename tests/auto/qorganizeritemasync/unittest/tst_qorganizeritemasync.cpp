@@ -2072,6 +2072,8 @@ void tst_QOrganizerItemAsync::definitionRemove()
     spy.clear();
 
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 1);
+    QVERIFY(drr.error() == QOrganizerManager::NoError);
+    QVERIFY(drr.errorMap().isEmpty());
     oim->detailDefinition(removeIds.first(), QOrganizerItemType::TypeEvent); // check that it has already been removed.
     QCOMPARE(oim->error(), QOrganizerManager::DoesNotExistError);
 
@@ -2278,6 +2280,8 @@ void tst_QOrganizerItemAsync::definitionSave()
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testDef));
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
+    QVERIFY(dsr.error() == QOrganizerManager::NoError);
+    QVERIFY(dsr.errorMap().isEmpty());
 
     // cancelling
     fields.insert("TestDefinitionFieldThree - shouldn't get saved", f);
@@ -2511,6 +2515,8 @@ void tst_QOrganizerItemAsync::collectionRemove()
     spy.clear();
 
     QCOMPARE(oim->collections().size(), originalCount - 1); // should have removed that particular collection.
+    QVERIFY(crr.error() == QOrganizerManager::NoError);
+    QVERIFY(crr.errorMap().isEmpty());
 
     // remove all collections
     QList<QOrganizerCollectionId> allCollectionIds;
@@ -2698,6 +2704,8 @@ void tst_QOrganizerItemAsync::collectionSave()
         }
     }
     QCOMPARE(oim->collections().size(), originalCount + 1); // ie shouldn't have added an extra one (would be +2)
+    QVERIFY(csr.error() == QOrganizerManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
 
     // cancelling
     QOrganizerCollection temp;

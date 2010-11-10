@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>icons/startmarker.png</file>
+     <file>icons/endmarker.png</file>
+     <file>icons/pathmarker.png</file>
+ </qresource>
+ </RCC>

@@ -49,7 +49,7 @@
 
 #include <fbs.h>        // CFbsBitmap
 #include <pathinfo.h>
-#include <ImageConversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
+#include <imageconversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
 
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,

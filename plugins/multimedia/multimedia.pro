@@ -18,6 +18,8 @@ win32:!wince*:!simulator {
     contains(directshow_enabled, yes): SUBDIRS += directshow
 }
 
+simulator: SUBDIRS += simulator
+
 unix:!mac:!symbian {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
