@@ -54,6 +54,9 @@
 #include <apgcli.h>		// for RApaLsSession
 #include <utf.h>       	// CnvUtfConverter
 #include <apmrec.h>		// TDataRecognitionResult
+#ifdef FREESTYLEMAILUSED
+#include "emailapidefs.h" // TMessageContentId
+#endif
 
 QTM_BEGIN_NAMESPACE
 class QMessageContentContainerPrivate
@@ -68,6 +71,11 @@ public:
 
     bool _available;
     int _size;
+#ifdef FREESTYLEMAILUSED
+    mutable bool _contentRetrieved;
+    bool _freestyleAttachment;
+    EmailInterface::TMessageContentId _fsContentId;
+#endif
     QByteArray _type;
     QByteArray _subType;
     QByteArray _charset;
@@ -86,15 +94,25 @@ public:
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
             :
             q_ptr(contentContainer), _message(0), _available(false), _size(0),
+#ifdef FREESTYLEMAILUSED
+            _contentRetrieved(true),
+            _freestyleAttachment(false),
+            _fsContentId(),
+#endif
             _containingMessageId(0), _attachmentId(0)
-
     {
     }
 
     QMessageContentContainerPrivate(const QMessageContentContainerPrivate& other)
     	: 
     	q_ptr(other.q_ptr), _message(other._message), _available(other._available),
-    	_size(other._size), _type(other._type), _subType(other._subType),
+        _size(other._size),
+#ifdef FREESTYLEMAILUSED
+        _contentRetrieved(other._contentRetrieved),
+        _freestyleAttachment(other._freestyleAttachment),
+        _fsContentId(other._fsContentId),
+#endif
+        _type(other._type), _subType(other._subType),
     	_charset(other._charset), _name(other._name), _content(other._content),
     	_textContent(other._textContent), _filename(other._filename), _messageId(other._messageId),
     	_id(other._id),  _attachments(other._attachments), _header(other._header),
@@ -132,8 +150,14 @@ public:
     
     static QByteArray attachmentFilename(const QMessageContentContainer& container);
     
+#ifdef FREESTYLEMAILUSED
+    static QMessageContentContainer from(long int messageId, unsigned int attachmentId, QByteArray &name,
+                                         QByteArray &mimeType, QByteArray &mimeSubType, int size,
+                                         EmailInterface::TMessageContentId fsContentId = EmailInterface::TMessageContentId());
+#else
     static QMessageContentContainer from(long int messageId, unsigned int attachmentId, QByteArray &name,
                                          QByteArray &mimeType, QByteArray &mimeSubType, int size);
+#endif
     
     static QMessageContentContainerPrivate* implementation(const QMessageContentContainer &container);
 };

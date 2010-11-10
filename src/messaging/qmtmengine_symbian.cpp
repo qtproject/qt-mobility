@@ -57,6 +57,7 @@
 #include "qmessageservice_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagecontentcontainer_p.h"
+#include "maemohelpers_p.h"
 
 #include <msvstd.h>
 #include <msvids.h> // TMsvId's
@@ -328,9 +329,14 @@ int CMTMEngine::countAccounts(const QMessageAccountFilter &filter) const
 
 QMessageAccount CMTMEngine::account(const QMessageAccountId &id) const
 {
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err)
-    return iAccounts[id.toString()];
+    QMessageAccount account;
+
+    TRAP_IGNORE(updateEmailAccountsL());
+    if (iAccounts.contains(id.toString())) {
+        account = iAccounts[id.toString()];
+    }
+
+    return account;
 }
 
 QMessageAccountId CMTMEngine::accountIdByServiceId(TMsvId serviceId) const
@@ -383,6 +389,7 @@ QMessageAccountIdList CMTMEngine::accountsByType(QMessage::Type type) const
 
 void CMTMEngine::updateEmailAccountsL() const
 {
+#ifndef FREESTYLEMAILUSED
     QStringList keys = iAccounts.keys();
     keys.removeOne(iSMSAccountidAsString);
     keys.removeOne(iMMSAccountidAsString);
@@ -475,6 +482,7 @@ void CMTMEngine::updateEmailAccountsL() const
     }
     
     CleanupStack::PopAndDestroy(pEmailAccounts);
+#endif
 }
 
 TUid CMTMEngine::mtmUidByType(MTMType aMTMType)
@@ -674,6 +682,10 @@ bool CMTMEngine::updateMessage(QMessage* m)
             retVal = false;
     }
 
+    if (retVal) {
+        MessageCache::instance()->remove(m->id());
+    }
+
     return retVal;
 }
 
@@ -699,8 +711,11 @@ bool CMTMEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpt
     
     bool retVal = false;
     TRAPD(err, retVal = removeMessageL(id, option));
-    if (err != KErrNone)
+    if (err == KErrNone) {
+        MessageCache::instance()->remove(id);
+    } else {
         retVal = false;
+    }
     
     return retVal;
 }
@@ -2207,8 +2222,13 @@ QMessage CMTMEngine::message(const QMessageId& id) const
         return QMessage();
     
     QMessage message;
-    TRAPD(err, message = messageL(id));
-    Q_UNUSED(err)
+    message = MessageCache::instance()->message(id);
+    if (message.type() == QMessage::NoType) {
+        TRAPD(err, message = messageL(id));
+        if (err == KErrNone) {
+            MessageCache::instance()->insert(message);
+        }
+    }
 
     return message;
 }
@@ -4616,6 +4636,13 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         return;
     }
 
+#ifdef FREESTYLEMAILUSED
+    // Email messages are handled by CFSEngine
+    if (aMsgType == KUidMsgTypeSMTP || aMsgType == KUidMsgTypePOP3 || aMsgType == KUidMsgTypeIMAP4) {
+        return;
+    }
+#endif
+
 #ifdef NCNLISTREMOVED
     if (aMsgType == KUidMsgTypeSMS) { // we need to check if sms message is 'indicator clear message' (for voice messages)
         if (aEvent == EMsvEntriesCreated) {
@@ -4732,9 +4759,11 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
     if (aEvent == EMsvEntriesCreated) {
         notificationType = QMessageStorePrivate::Added; 
     } else if (aEvent == EMsvEntriesChanged || aEvent == EMsvEntriesMoved) {
-        notificationType = QMessageStorePrivate::Updated; 
+        notificationType = QMessageStorePrivate::Updated;
+        MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
     } if (aEvent == EMsvEntriesDeleted) {
-        notificationType = QMessageStorePrivate::Removed; 
+        notificationType = QMessageStorePrivate::Removed;
+        MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
     }
 
     if (matchingFilters.count() > 0) {
@@ -4781,7 +4810,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             tryToDeliverMessageNotifications();
         } else {
             // Message was removed before reading was possible
-            // => All avents related to removed messageId can be ignored
+            // => All events related to removed messageId can be ignored
             // => Remove all related events from undelivered message events queue
             for (int i=iUndeliveredMessageEvents.count()-1; i >= 0; i--) {
                 if (iUndeliveredMessageEvents[i].messageId == aMessageId) {
@@ -6148,6 +6177,10 @@ void CAsynchronousMTMOperation::RunL()
         ipMsvOperation = NULL;
 
         isActive = false;
+        if (iMessageId) {
+            // Make sure that new message contents will be updated to cache
+            MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(iMessageId), SymbianHelpers::EngineTypeMTM)));
+        }
         ipPrivateService->setFinished(true);
         ipParent->deleteAsynchronousMTMOperation(this);
         break;

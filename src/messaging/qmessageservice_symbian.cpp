@@ -87,19 +87,19 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            bool retVal = CFSEngine::instance()->sendEmail(message);
-            if (retVal == true) {
-                setFinished(retVal);
-            }
-            return retVal;
+        {
+        bool retVal = CFSEngine::instance()->sendEmail(message);
+        if (retVal == true) {
+             setFinished(retVal);
+        }
+        return retVal;
+        }
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->sendEmail((QMessageServicePrivate&)*this, message);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->sendEmail((QMessageServicePrivate&)*this, message);
     }
 }
 
@@ -112,11 +112,9 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->showMessage(id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->showMessage(id);
     }
 }
 
@@ -129,11 +127,9 @@ bool QMessageServicePrivate::compose(const QMessage &message)
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->composeMessage(message);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->composeMessage(message);
     }
 }
 
@@ -215,11 +211,9 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieve(*this, messageId, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieve(*this, messageId, id);
     }
 }
 
@@ -232,11 +226,9 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveBody(*this, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieveBody(*this, id);
     }
 }
 
@@ -249,11 +241,9 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 #else
             return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveHeader(*this, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieveHeader(*this, id);
     }
 }
 
