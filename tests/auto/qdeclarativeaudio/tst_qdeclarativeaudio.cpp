@@ -481,6 +481,7 @@ void tst_QDeclarativeAudio::playing()
     int stopped = 0;
 
     audio.componentComplete();
+    audio.setSource(QUrl("http://example.com"));
 
     QCOMPARE(audio.isPlaying(), false);
 
@@ -577,6 +578,7 @@ void tst_QDeclarativeAudio::paused()
     int stopped = 0;
 
     audio.componentComplete();
+    audio.setSource(QUrl("http://example.com"));
 
     QCOMPARE(audio.isPlaying(), false);
     QCOMPARE(audio.isPaused(), false);

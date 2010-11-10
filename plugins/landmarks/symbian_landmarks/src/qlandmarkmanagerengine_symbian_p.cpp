@@ -108,8 +108,8 @@
 #include <EPos_CPosLmIdListCriteria.h> 
 #include <EPos_CPosLmCompositeCriteria.h> 
 #include <f32file.h>  
-#include <APGCLI.H>
-#include <APMSTD.H>
+#include <apgcli.h>
+#include <apmstd.h>
 // user includes
 #include "qlandmarkutility.h"
 #include "qlandmarkmanagerengine_symbian.h"
