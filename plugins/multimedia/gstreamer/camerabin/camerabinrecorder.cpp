@@ -63,13 +63,25 @@ CameraBinRecorder::CameraBinRecorder(CameraBinSession *session)
 
 #ifdef Q_WS_MAEMO_6
     // resource policy awareness
-    m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
+    m_resourceSet = new ResourcePolicy::ResourceSet("camera", this);
     m_resourceSet->setAlwaysReply();
 
     m_audioResource = new ResourcePolicy::AudioResource("player");
     m_audioResource->setProcessID(QCoreApplication::applicationPid());
     m_audioResource->setStreamTag("media.name", "*");
     m_resourceSet->addResourceObject(m_audioResource);
+
+    QList<ResourcePolicy::ResourceType> otherResources;
+    otherResources << ResourcePolicy::AudioRecorderType
+            << ResourcePolicy::VideoRecorderType
+            << ResourcePolicy::VideoPlaybackType
+            << ResourcePolicy::ScaleButtonType
+            << ResourcePolicy::SnapButtonType
+            << ResourcePolicy::LensCoverType;
+
+    foreach(ResourcePolicy::ResourceType resource, otherResources)
+        m_resourceSet->addResource(resource);
+    m_resourceSet->update();
 
     connect(m_resourceSet, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)),
             this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
@@ -123,10 +135,10 @@ void CameraBinRecorder::doRecord()
 void CameraBinRecorder::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
                                                       /*grantedOptionalResList*/)
 {
-    if (m_resourceState == PendingResourceState) {
-        m_resourceState = HasResourceState;
+    ResourceState prevResourceState = m_resourceState;
+    m_resourceState = HasResourceState;
+    if (prevResourceState == NoResourceState)
         doRecord();
-    }
 }
 
 void CameraBinRecorder::resourceReleasedHandler()
@@ -151,13 +163,10 @@ qint64 CameraBinRecorder::duration() const
 void CameraBinRecorder::record()
 {
 #ifdef Q_WS_MAEMO_6
-    if (m_resourceState == NoResourceState) {
-        m_resourceState = PendingResourceState;
+    if (m_resourceState == NoResourceState)
         m_resourceSet->acquire();
-    }
-    else if (m_resourceState == HasResourceState) {
+    else if (m_resourceState == HasResourceState)
         doRecord();
-    }
 #else
     doRecord();
 #endif // Q_WS_MAEMO_6
