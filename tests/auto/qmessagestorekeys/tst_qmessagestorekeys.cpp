@@ -1589,7 +1589,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 #endif
-    
+
 #ifdef FREESTYLEMAILUSED
     QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byName("dra", QMessageDataComparator::Includes));
 #else
@@ -1773,6 +1773,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] )
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
+
     QTest::newRow("id equality invalid")
         << QMessageFilter::byId(QMessageId(), QMessageDataComparator::Equal) 
         << QMessageIdList()
@@ -2813,7 +2814,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() )
     #else
         // Created folders are not mapped to any Standard Folder in Symbian/Maemo
-      // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
+        // <=> No messages will be returned, if messages are searched using Standard Folder Filter
         << ( QMessageIdList() )
         << ( QMessageIdList() )
     #endif
@@ -2870,7 +2871,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() )
     #else
         // Created folders are not mapped to any Standard Folder in Symbian/Maemo
-      // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
+        // <=> No messages will be returned, if messages are searched using Standard Folder Filter
         << ( QMessageIdList() )
         << ( QMessageIdList() )
     #endif
@@ -2956,7 +2957,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
 #else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
-#ifndef Q_OS_SYMBIAN    
+#ifndef Q_OS_SYMBIAN
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
 #else
