@@ -77,7 +77,7 @@ public:
     QList<QBluetoothDeviceInfo> discoveredDevices;
 
 private:
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
+//    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
 
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;
