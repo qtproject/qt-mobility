@@ -399,6 +399,7 @@ public:
     int cumulativeCurrentFlow() const;
     int remainingCapacityBars() const;
     int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -417,10 +418,40 @@ Q_SIGNALS:
     void currentFlowChanged(int);
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+    int getCumuloFlo();
+
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+    QUDisksInterface *udisksIface;
+
+private Q_SLOTS:
+    void setConnection();
+    virtual void halChanged(int,QVariantList);
+    virtual void upowerChanged();
+    virtual void upowerDeviceChanged();
+    void getBatteryStats();
+    void timeout();
+#endif
+private:
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+
+
 };
 
 QTM_END_NAMESPACE

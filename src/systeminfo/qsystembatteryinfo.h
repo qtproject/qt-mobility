@@ -89,9 +89,9 @@ public:
     };
 
     enum ChargingState {
-        NotCharging = 0,
-        Charging,
-        ChargingFailed
+        ChargingFailed = -1,
+        NotCharging,
+        Charging
     };
 
     enum ChargerType {
