@@ -5,7 +5,9 @@ TARGET=tst_geoservicesgeotiledmapplugin
 include (../../../../common.pri)
 
 INCLUDEPATH += ../../../../src/location \
-               ../../../../src/location/maps
+               ../../../../src/location/maps \
+               ../../../../src/location/maps/tiled
+
 # Input 
 HEADERS += ../../qlocationtestutils_p.h
 
@@ -19,7 +21,8 @@ symbian {
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
     TARGET.CAPABILITY = ALL -TCB
     LIBS           += -lqtgeoservices_statictiledgeomapplugin.lib
+} win32 {
+    LIBS           += -L../statictiledgeomapplugin/release -lqtgeoservices_statictiledgeomapplugin
 } else {
-     LIBS           += -L../statictiledgeomapplugin -lqtgeoservices_statictiledgeomapplugin
+    LIBS           += -L../statictiledgeomapplugin -lqtgeoservices_statictiledgeomapplugin
 }
-

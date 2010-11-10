@@ -15,7 +15,8 @@ SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
 INCLUDEPATH += $$SOURCE_DIR/src/location \
-                $$SOURCE_DIR/src/maps
+                $$SOURCE_DIR/src/location/maps \
+                $$SOURCE_DIR/src/location/maps/tiled
 
 RESOURCES += geoservicestestmaptiles.qrc
 

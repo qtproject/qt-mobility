@@ -52,7 +52,6 @@
 #include <QPainter>
 #include <QGraphicsView>
 #include <QStyleOptionGraphicsItem>
-#include <../statictiledgeomapplugin/qgeomappingmanagerengine_test.h>
 
 Q_IMPORT_PLUGIN( qtgeoservices_statictiledgeomapplugin)
 
@@ -129,7 +128,6 @@ private slots:
     void supportedMapTypes_data();
     void supportedMapTypes();
     void viewport();
-    void engineTileError();
 
 private:
     QGeoServiceProvider* m_serviceProvider;
@@ -142,7 +140,6 @@ void tst_GeoServicesGeoTiledMapPlugin::initTestCase()
     qRegisterMetaType<QGraphicsGeoMap::ConnectivityMode> ();
     qRegisterMetaType<QGraphicsGeoMap::MapType> ();
     qRegisterMetaType<QGeoCoordinate> ();
-    qRegisterMetaType<QGeoTiledMapReply::Error> ();
 
     m_serviceProvider = new QGeoServiceProvider("static.tiledgeomap.test.plugin");
 
@@ -837,24 +834,6 @@ void tst_GeoServicesGeoTiledMapPlugin::minimumZoomLevel()
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 0);
     QCOMPARE(spy3.count(), 0);
-}
-
-void tst_GeoServicesGeoTiledMapPlugin::engineTileError()
-{
-    QGeoMapReplyTest* reply = new QGeoMapReplyTest(QGeoTiledMapRequest());
-    QSignalSpy spy0(reply, SIGNAL(finished()));
-    QSignalSpy spy1(reply, SIGNAL( error(QGeoTiledMapReply::Error, const QString)));
-
-    for (int i = 0; i < 50 && spy0.count() == 0 && spy1.count() == 0; ++i)
-        QTest::qWait(10);
-
-    QVERIFY(reply->isFinished());
-    QVERIFY(reply->error() != QGeoTiledMapReply::NoError);
-    QVERIFY(reply->errorString().length());
-
-    QCOMPARE(spy0.count(), 1);
-    QCOMPARE(spy1.count(), 1);
-    delete reply;
 }
 
 QTEST_MAIN( tst_GeoServicesGeoTiledMapPlugin)

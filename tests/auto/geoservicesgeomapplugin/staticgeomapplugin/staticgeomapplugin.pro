@@ -15,7 +15,7 @@ SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
 INCLUDEPATH += $$SOURCE_DIR/src/location \
-                $$SOURCE_DIR/src/maps
+               $$SOURCE_DIR/src/location/maps
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

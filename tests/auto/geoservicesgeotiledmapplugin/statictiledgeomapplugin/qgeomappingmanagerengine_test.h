@@ -39,22 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGERENGINE_TEST_H
-#define QGEOMAPPINGMANAGERENGINE_TEST_H
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
 
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
+#include <qgeotiledmapreply.h>
 #include <qgeomapdata.h>
+#include <QObject>
 #include <QTimer>
-#include <QBuffer>
 #include <QFile>
-#include <QResource>
 
 QTM_USE_NAMESPACE
 
 class QGeoMapReplyTest: public QGeoTiledMapReply
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     QGeoMapReplyTest(const QGeoTiledMapRequest &request, QObject *parent = 0) :
@@ -80,7 +80,6 @@ public:
     {
         m_finishedTimer.stop();
     }
-    ;
 
     void abort()
     {
@@ -110,7 +109,8 @@ private:
 
 class QGeoTiledMappingManagerEngineTest: public QGeoTiledMappingManagerEngine
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     QGeoTiledMappingManagerEngineTest(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) :
