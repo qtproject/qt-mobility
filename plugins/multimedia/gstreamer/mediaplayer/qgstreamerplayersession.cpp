@@ -913,10 +913,14 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         }
 
                         if (m_state != prevState) {
+#ifdef Q_WS_MAEMO_6
                             if (m_resourceState == PendingResourceState)
                                 emit resourceLost();
                             else
                                 emit stateChanged(m_state);
+#else
+                            emit stateChanged(m_state);
+#endif //Q_WS_MAEMO_6
                         }
 
                         break;

@@ -80,8 +80,10 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SLOT(updateState(QMediaPlayer::State)));
+#ifdef Q_WS_MAEMO_6
     connect(m_session, SIGNAL(resourceLost()),
             this, SLOT(resourceLost()));
+#endif // Q_WS_MAEMO_6
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SLOT(setBufferProgress(int)));
     connect(m_session, SIGNAL(playbackFinished()),
@@ -378,11 +380,13 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
         emit mediaStatusChanged(m_mediaStatus);
 }
 
+#ifdef Q_WS_MAEMO_6
 void QGstreamerPlayerControl::resourceLost()
 {
     if (m_mediaStatus != QMediaPlayer::EndOfMedia)
         m_mediaStatus = QMediaPlayer::StalledMedia;
 }
+#endif // Q_WS_MAEMO_6
 
 void QGstreamerPlayerControl::processEOS()
 {
