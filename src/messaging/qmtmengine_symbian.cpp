@@ -4757,7 +4757,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
 
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
     if (aEvent == EMsvEntriesCreated) {
-        notificationType = QMessageStorePrivate::Added; 
+        notificationType = QMessageStorePrivate::Added;
     } else if (aEvent == EMsvEntriesChanged || aEvent == EMsvEntriesMoved) {
         notificationType = QMessageStorePrivate::Updated;
         MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));

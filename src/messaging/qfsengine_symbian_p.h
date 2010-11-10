@@ -244,7 +244,6 @@ private:
     friend class CFSContentFetchOperation;
     
 private:
-
     CEmailInterfaceFactory* m_factory;
     mutable MEmailInterface* m_ifPtr;
     mutable MEmailClientApi* m_clientApi;
@@ -352,7 +351,7 @@ private: // Data
     MEmailClientApi* m_clientApi;
     
     CEmailInterfaceFactory* m_factory; 
-    MEmailInterface* m_interfacePtr; 
+    MEmailInterface* m_interfacePtr;
     bool m_receiveNewMessages;
     QList<FSSearchOperation> m_searchOperations;
     

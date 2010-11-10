@@ -85,7 +85,7 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
         {
         bool retVal = CFSEngine::instance()->sendEmail(message);
@@ -95,7 +95,7 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
         return retVal;
         }
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -106,11 +106,11 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->showMessage(id);
+        return CFSEngine::instance()->showMessage(id);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -121,11 +121,11 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->composeMessage(message);
+        return CFSEngine::instance()->composeMessage(message);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -205,11 +205,11 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
     switch (idType(messageId)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieve(*this, messageId, id);
+        return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -220,11 +220,11 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveBody(*this, id);
+        return CFSEngine::instance()->retrieveBody(*this, id);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -235,11 +235,11 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveHeader(*this, id);
+        return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -303,15 +303,15 @@ void QMessageServicePrivate::messagesCounted(int count)
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
     switch (idType(id)) {
-            case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-                return CFSEngine::instance()->exportUpdates(id);
+        return CFSEngine::instance()->exportUpdates(id);
 #else
-                return false;
+        return false;
 #endif
-            case EngineTypeMTM:
-            default:
-                return CMTMEngine::instance()->exportUpdates(*this, id);
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->exportUpdates(*this, id);
     }
 }
 

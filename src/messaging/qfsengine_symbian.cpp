@@ -381,7 +381,7 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
 }
 
 void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
-                                const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
+                              const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
 {
     Q_UNUSED(aParentFolderId);
     QMessageManager::NotificationFilterIdSet matchingFilters;
@@ -540,6 +540,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
             fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
         }
     }
+
     if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
         // Message contains only body (not attachments)
         QString messageBody = message.textContent();
@@ -1660,6 +1661,7 @@ QMessageFolder CFSEngine::folderL(const QMessageFolderId &id) const
         }
         mailbox->Release();
     }
+
     return folder;
 }
 
@@ -2800,7 +2802,7 @@ CFSMessagesFindOperation::~CFSMessagesFindOperation()
 }
 
 int CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-                                                    QString body, QMessageDataComparator::MatchFlags matchFlags)
+                                                     QString body, QMessageDataComparator::MatchFlags matchFlags)
 {
     m_filterList.clear();
     m_filterList.append(filter);
@@ -2808,18 +2810,18 @@ int CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filte
 }
 
 int CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                                    const QMessageSortOrder& sortOrder,
-                                                    QString body,
-                                                    QMessageDataComparator::MatchFlags matchFlags)
+                                                     const QMessageSortOrder& sortOrder,
+                                                     QString body,
+                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
     TRAPD(err, filterAndOrderMessagesL(filters, sortOrder, body, matchFlags));
     return err;
 }
 
 void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                                    const QMessageSortOrder& sortOrder,
-                                                    QString body,
-                                                    QMessageDataComparator::MatchFlags matchFlags)
+                                                       const QMessageSortOrder& sortOrder,
+                                                       QString body,
+                                                       QMessageDataComparator::MatchFlags matchFlags)
 {
     m_numberOfHandledFilters = 0;
     m_resultCorrectlyOrdered = false;
@@ -3141,7 +3143,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                         }
                         i = static_cast<QMessage::StandardFolder>(static_cast<int>(i) + 1);
                     }
-                    CleanupStack::PopAndDestroy(mailbox);    
+                    CleanupStack::PopAndDestroy(mailbox);
                 }
             }
         }
@@ -3341,7 +3343,7 @@ void CFSMessagesFindOperation::searchAccountFolders()
         QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
     }
 }
-    
+
 void CFSMessagesFindOperation::SearchCompleted()
 {
     if (!m_body.isEmpty()) {

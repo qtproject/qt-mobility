@@ -87,7 +87,6 @@ public:
     QMessageContentContainerId _id;
     QList<QMessageContentContainer> _attachments;
     QMultiMap<QByteArray, QString>  _header;
-    
     long int _containingMessageId;
     unsigned int _attachmentId;
     

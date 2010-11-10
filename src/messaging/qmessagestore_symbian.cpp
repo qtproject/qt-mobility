@@ -191,11 +191,11 @@ int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
 QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->folder(id);
+        return CFSEngine::instance()->folder(id);
 #else
-            return QMessageFolder();
+        return QMessageFolder();
 #endif
     case EngineTypeMTM:
     default:
@@ -211,7 +211,7 @@ bool QMessageStorePrivate::addMessage(QMessage *m)
 #ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->addMessage(m);
 #else
-            return false;
+        return false;
 #endif
     case EngineTypeMTM:
     default:
@@ -265,7 +265,7 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
         
         for (int i=0; i < ids.count(); i++) {
             switch (idType(ids[i])) {
-                case EngineTypeFreestyle:
+            case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
                 if (!CFSEngine::instance()->removeMessage(ids[i], option)) {
                     retVal = false;
@@ -293,9 +293,9 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->message(id);
+        return CFSEngine::instance()->message(id);
 #else
         return QMessage();
 #endif
@@ -308,9 +308,9 @@ QMessage QMessageStorePrivate::message(const QMessageId& id) const
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->account(id);
+        return CFSEngine::instance()->account(id);
 #else
         return QMessageAccount();
 #endif
