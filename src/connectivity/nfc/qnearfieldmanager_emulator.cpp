@@ -263,15 +263,13 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     return m_registeredHandlers.count() - 1;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                                QObject *object,
+int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
                                                                 const QMetaMethod &method)
 {
     int id = getFreeId();
 
     Callback &callback = m_registeredHandlers[id];
 
-    callback.targetType = targetType;
     callback.filter = QNdefFilter();
     callback.object = object;
     callback.method = method;
@@ -279,8 +277,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
     return id;
 }
 
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                                const QNdefFilter &filter,
+int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
                                                                 QObject *object,
                                                                 const QMetaMethod &method)
 {
@@ -288,7 +285,6 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
 
     Callback &callback = m_registeredHandlers[id];
 
-    callback.targetType = targetType;
     callback.filter = filter;
     callback.object = object;
     callback.method = method;
@@ -337,11 +333,6 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
                 continue;
 
             Callback &callback = m_registeredHandlers[i];
-
-            if (callback.targetType != QNearFieldTarget::AnyTarget &&
-                target->type() != callback.targetType) {
-                continue;
-            }
 
             QList<QNdefMessage> messages = target->ndefMessages();
             foreach (const QNdefMessage &message, messages) {

@@ -65,10 +65,8 @@ public:
     void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
+    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
+    int registerTargetDetectedHandler(const QNdefFilter &filter,
                                       QObject *object, const QMetaMethod &method);
 
     bool unregisterTargetDetectedHandler(int id);
@@ -79,7 +77,6 @@ private slots:
 
 private:
     struct Callback {
-        QNearFieldTarget::Type targetType;
         QNdefFilter filter;
 
         QObject *object;
