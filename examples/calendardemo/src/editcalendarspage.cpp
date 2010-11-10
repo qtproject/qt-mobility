@@ -89,15 +89,15 @@ EditCalendarsPage::EditCalendarsPage(QWidget *parent)
     setLayout(mainLayout);
 
     // Add softkeys
-    QAction* cancelSoftKey = new QAction("Cancel", this);
+    QAction* cancelSoftKey = new QAction("Back", this);
     cancelSoftKey->setSoftKeyRole(QAction::NegativeSoftKey);
     addAction(cancelSoftKey);
-    connect(cancelSoftKey, SIGNAL(triggered(bool)), this, SLOT(cancelClicked()));
+    connect(cancelSoftKey, SIGNAL(triggered(bool)), this, SLOT(backClicked()));
 
-    QAction* saveSoftKey = new QAction("Save",this);
-    saveSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
-    addAction(saveSoftKey);
-    connect(saveSoftKey, SIGNAL(triggered(bool)), this, SLOT(saveClicked()));
+    QAction* editSoftKey = new QAction("Edit",this);
+    editSoftKey->setSoftKeyRole(QAction::PositiveSoftKey); // Perhaps SelectSoftKey
+    addAction(editSoftKey);
+    connect(editSoftKey, SIGNAL(triggered(bool)), this, SLOT(editClicked()));
 }
 
 EditCalendarsPage::~EditCalendarsPage()
