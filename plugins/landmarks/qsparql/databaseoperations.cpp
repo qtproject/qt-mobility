@@ -280,7 +280,7 @@ QList<QLandmarkId> sortQueryByDistance(QSparqlResult *qsparqlResult, const QLand
         point.coordinate.setLongitude(qsparqlResult->value(2).toDouble());
 
         point.landmarkId.setManagerUri(managerUri);
-        point.landmarkId.setLocalId(QString::number(qsparqlResult->value(0).toInt()));
+        point.landmarkId.setLocalId(qsparqlResult->value(0).toString());
 
         if (radius < 0 || (point.coordinate.distanceTo(center) < radius)
             || qFuzzyCompare(point.coordinate.distanceTo(center), radius)) {
@@ -323,11 +323,9 @@ QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 {
     Q_UNUSED(radius);
     Q_UNUSED(coord);
-    return "select ?u ?latitude ?longitude { ?g a slo:GeoLocation ; "
-       "nie:title ?name ; "
-       "slo:latitude ?latitude ; "
-       "slo:longitude ?longitude . "
-       "?u slo:location ?g }";
+    return "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g slo:latitude ?latitude } . "
+        "OPTIONAL { ?g slo:longitude ?longitude }}";
 }
 
 QString landmarkIdsDefaultQueryString()
@@ -381,8 +379,9 @@ QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
     //note: it is already assumed tly > bry
     bool lonWrap = (tlx > brx);
 
-    QString queryString = "select ?u ?latitude ?longitude {?g a slo:GeoLocation ; nie:title ?name ; "
-        "slo:latitude ?latitude ; slo:longitude ?longitude . ?u slo:location ?g . FILTER ((";
+    QString queryString = "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g slo:latitude ?latitude } . "
+        "OPTIONAL { ?g slo:longitude ?longitude } . FILTER ((";
 
     //TODO: handle case where the poles are covered by the bounding box
 
@@ -914,28 +913,44 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 *errorString = "The name filter's configuration is not supported";
                 return result;
             }
-            queryString = QString("select ?u { ?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER ");
+            queryString = QString("select ?u { ?g a slo:GeoLocation . ?u slo:location ?g . OPTIONAL { ?g nie:title ?name } . FILTER ");
             QString nameKey = "?name";
             QString nameValue = nameFilter.name();
-
-            if (nameValue.isEmpty()) {
-                    if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly
-                        || nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString) {                     
-                        queryString.append("isBlank(?name) }" );
-                    } else {
-                        queryString = QString("select ?u { ?u a slo:Landmark . }");
-                    }
+            QString regex;
+            if (nameValue.isEmpty()) {  
+                queryString = QString("select ?u { ?u a slo:Landmark . }");
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
-                queryString.append("regex( ?name, '%1' ) }").arg(nameValue);
+                if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                    regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
+                else
+                    regex = QString("regex( ?name, '^%1$', 'i') }").arg(nameValue);
+                queryString.append(regex);
             } else {
-                if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith)
-                    queryString.append("regex( ?name, '%1$', 'i') }").arg(nameValue);
-                else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith)
-                    queryString.append("regex( ?name, '^%1', 'i') }").arg(nameValue);
-                else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains)
-                    queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
-                else if (nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString)
-                    queryString.append("regex( ?name, '%1', 'i') }").arg(nameValue);
+                if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith) {
+                    if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                       regex = QString("regex( ?name, '%1$' ) }").arg(nameValue);
+                    else
+                        regex = QString("regex( ?name, '%1$', 'i') }").arg(nameValue);
+                    queryString.append(regex);
+                } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith) {
+                    if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                        regex = QString("regex( ?name, '^%1' ) }").arg(nameValue);
+                    else
+                        regex = QString("regex( ?name, '^%1', 'i') }").arg(nameValue);
+                    queryString.append(regex);
+                } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains) {
+                    if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                        regex = QString("regex( ?name, '%1' ) }").arg(nameValue);
+                    else
+                         regex = QString("regex( ?name, '%1', 'i') }").arg(nameValue);
+                    queryString.append(regex);
+                } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString) {
+                    if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                        regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
+                    else
+                        regex = QString("regex( ?name, '^%1$', 'i') }").arg(nameValue);
+                    queryString.append(regex);
+                }
             }
             break;
         }
@@ -988,9 +1003,9 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 return result;
             }
 
-            if (proximityFilter.radius() < 0) {
-                queryString =  ::landmarkIdsDefaultQueryString();
-                break;
+           if (proximityFilter.radius() < 0) {
+               queryString =  ::landmarkIdsDefaultQueryString();
+               break;
             }
            //fall through if we have a radius, we can use a box filter
            //to quickly cull out landmarks
@@ -1002,7 +1017,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             } else {
                 QGeoCoordinate center;
                 double radius; //use double since these are going to be usd in calculation with lat/long
-                if(filter.type() == QLandmarkFilter::ProximityFilter) {
+                if (filter.type() == QLandmarkFilter::ProximityFilter) {
                     QLandmarkProximityFilter proximityFilter;
                     proximityFilter = filter;
                     center = proximityFilter.center();
@@ -1234,7 +1249,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             *error = QLandmarkManager::UnknownError;
             return result;
         }
-       QLandmarkId id;
+        QLandmarkId id;
         while (qsparqlResult->next()) {
             if (queryRun && queryRun->isCanceled) {
                 *error = QLandmarkManager::CancelError;
