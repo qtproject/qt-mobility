@@ -8174,6 +8174,19 @@ void tst_QLandmarkManager::removeStress_data()
 #ifdef SAVE_STRESS
 void tst_QLandmarkManager::saveStress()
 {
+
+    QLandmarkCategory cat1;
+    cat1.setName("cat1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("cat2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("cat3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+
     QFETCH(QString, type);
     QList<QLandmark> lms;
     for (int i=0; i < 100; ++i) {
@@ -8194,6 +8207,9 @@ void tst_QLandmarkManager::saveStress()
         lm.setIconUrl(QUrl(QString("LM") + QString::number(i) + " iconUrl"));
         lm.setRadius(2000);
         lm.setUrl(QUrl(QString("LM") + QString::number(i) + " 2nd url"));
+        lm.addCategoryId(cat1.categoryId());
+        lm.addCategoryId(cat2.categoryId());
+        lm.addCategoryId(cat3.categoryId());
         lms.append(lm);
     }
 
