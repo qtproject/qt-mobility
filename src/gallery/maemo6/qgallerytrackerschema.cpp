@@ -1097,7 +1097,7 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Folder    , nfo:Folder        , folder    , File),
     QT_GALLERY_ITEM_TYPE(Document  , nfo:Document      , document  , Document),
     QT_GALLERY_ITEM_TYPE(Audio     , nfo:Audio         , audio     , Audio),
-    QT_GALLERY_ITEM_TYPE(Image     , nfo:Image         , image     , Image),
+    QT_GALLERY_ITEM_TYPE(Image     , nmm:Photo         , image     , Image),
     QT_GALLERY_ITEM_TYPE(Video     , nfo:Video         , video     , Video),
     QT_GALLERY_ITEM_TYPE(Playlist  , nmm:Playlist      , playlist  , Playlist),
     QT_GALLERY_ITEM_TYPE(Text      , nfo:TextDocument  , text      , File),
