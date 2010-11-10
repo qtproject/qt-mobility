@@ -174,6 +174,42 @@ QNearFieldManager::~QNearFieldManager()
     delete d_ptr;
 }
 
+/*!
+    Starts detecting targets of type \a targetTypes.  Causes the targetDetected() signal to be
+    emitted when a target with a type in \a targetTypes is within proximity.  If \a targetTypes is
+    empty targets of all types will be detected.
+
+    \sa stopTargetDetection()
+*/
+void QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+{
+    Q_D(QNearFieldManager);
+
+    if (targetTypes.isEmpty())
+        d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
+    else
+        d->startTargetDetection(targetTypes);
+}
+
+/*!
+    \overload
+*/
+void QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
+{
+    startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
+}
+
+/*!
+    Stops detecting targets.  The targetDetected() signal will no longer be emitted until another
+    call to startTargetDetection() is made.
+*/
+void QNearFieldManager::stopTargetDetection()
+{
+    Q_D(QNearFieldManager);
+
+    d->stopTargetDetection();
+}
+
 static QMetaMethod methodForSignature(QObject *object, const char *method)
 {
     QByteArray normalizedMethod = QMetaObject::normalizedSignature(method);

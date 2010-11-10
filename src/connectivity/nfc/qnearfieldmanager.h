@@ -65,6 +65,10 @@ public:
     explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
     ~QNearFieldManager();
 
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void startTargetDetection(QNearFieldTarget::Type targetType = QNearFieldTarget::AnyTarget);
+    void stopTargetDetection();
+
     template<typename T>
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       QObject *object, const char *method);

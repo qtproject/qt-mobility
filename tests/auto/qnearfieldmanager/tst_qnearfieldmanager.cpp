@@ -64,6 +64,7 @@ public:
     tst_QNearFieldManager();
 
 private slots:
+    void targetDetected_data();
     void targetDetected();
 
     void unregisterTargetDetectedHandler();
@@ -83,13 +84,25 @@ tst_QNearFieldManager::tst_QNearFieldManager()
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
 }
 
+void tst_QNearFieldManager::targetDetected_data()
+{
+    QTest::addColumn<QNearFieldTarget::Type>("type");
+
+    QTest::newRow("AnyTarget") << QNearFieldTarget::AnyTarget;
+    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1;
+}
+
 void tst_QNearFieldManager::targetDetected()
 {
+    QFETCH(QNearFieldTarget::Type, type);
+
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
 
     QSignalSpy targetDetectedSpy(&manager, SIGNAL(targetDetected(QNearFieldTarget*)));
     QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
+
+    manager.startTargetDetection(type);
 
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
@@ -110,6 +123,8 @@ void tst_QNearFieldManager::targetDetected()
     QCOMPARE(target, lostTarget);
 
     QVERIFY(!disconnectedSpy.isEmpty());
+
+    manager.stopTargetDetection();
 }
 
 void tst_QNearFieldManager::unregisterTargetDetectedHandler()

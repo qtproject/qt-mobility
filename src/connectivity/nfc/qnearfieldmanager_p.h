@@ -69,6 +69,15 @@ public:
     {
     }
 
+    virtual void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+    {
+        Q_UNUSED(targetTypes);
+    }
+
+    virtual void stopTargetDetection()
+    {
+    }
+
     virtual int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                               QObject *object, const QMetaMethod &/*method*/)
     {

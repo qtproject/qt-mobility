@@ -62,6 +62,9 @@ public:
 
     void reset();
 
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
+
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                       QObject *object, const QMetaMethod &method);
     int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
@@ -88,6 +91,7 @@ private:
     QList<Callback> m_registeredHandlers;
     QList<int> m_freeIds;
     QMap<TagBase *, QNearFieldTarget *> m_targets;
+    QList<QNearFieldTarget::Type> m_detectTargetTypes;
 };
 
 #endif // QNEARFIELDMANAGER_EMULATOR_H

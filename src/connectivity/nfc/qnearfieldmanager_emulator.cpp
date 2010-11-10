@@ -244,6 +244,16 @@ void QNearFieldManagerPrivateImpl::reset()
     tagActivator.reset();
 }
 
+void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+{
+    m_detectTargetTypes = targetTypes;
+}
+
+void QNearFieldManagerPrivateImpl::stopTargetDetection()
+{
+    m_detectTargetTypes.clear();
+}
+
 int QNearFieldManagerPrivateImpl::getFreeId()
 {
     if (!m_freeIds.isEmpty())
@@ -315,7 +325,11 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
         m_targets.insert(tag, target);
     }
 
-    emit targetDetected(target);
+    if (m_detectTargetTypes.contains(QNearFieldTarget::NfcTagType1) ||
+        m_detectTargetTypes.contains(QNearFieldTarget::AnyTarget)) {
+        emit targetDetected(target);
+    }
+
 
     if (target->hasNdefMessage()) {
         for (int i = 0; i < m_registeredHandlers.count(); ++i) {
