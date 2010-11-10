@@ -1286,7 +1286,6 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
         foreach (const ProfileDataValue &value, values) {
@@ -1307,14 +1306,22 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    QString name;
-    if(productName()== "RX-51")
-        return "N900";
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
 
-    name = "Harmattan"; //fake this for now
-
-    return name;
-
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    return reply.value();
+#endif
+    return QString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
@@ -1331,9 +1338,10 @@ QString QSystemDeviceInfoPrivate::productName()
                                        "com.nokia.SystemInfo",
                                        QDBusConnection::systemBus());
 
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/productName");
     return reply.value();
 #endif
+    return QString();
 }
 
 #endif
