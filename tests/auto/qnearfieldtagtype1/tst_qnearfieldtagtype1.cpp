@@ -47,6 +47,7 @@
 #include <qnearfieldmanager.h>
 #include <qndefmessage.h>
 #include <qnearfieldtagtype1.h>
+#include <qndefnfctextrecord.h>
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 
@@ -66,6 +67,8 @@ private slots:
     void staticMemoryModel();
     void dynamicMemoryModel();
 
+    void ndefMessages();
+
 private:
     void waitForMatchingTarget();
 
@@ -77,19 +80,13 @@ private:
 tst_QNearFieldTagType1::tst_QNearFieldTagType1()
 :   emulatorBackend(0), manager(0), target(0)
 {
+#ifndef Q_OS_SYMBIAN
     QDir::setCurrent(QLatin1String(SRCDIR));
+#endif
 
     qRegisterMetaType<QNdefMessage>("QNdefMessage");
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
 }
-
-class MessageListener : public QObject
-{
-    Q_OBJECT
-
-signals:
-    void matchedNdefMessage(const QNdefMessage &message, QNearFieldTarget *target);
-};
 
 void tst_QNearFieldTagType1::init()
 {
@@ -109,18 +106,16 @@ void tst_QNearFieldTagType1::cleanup()
 
 void tst_QNearFieldTagType1::waitForMatchingTarget()
 {
-    MessageListener listener;
-    QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    QSignalSpy targetDetectedSpy(manager, SIGNAL(targetDetected(QNearFieldTarget*)));
 
-    int id = manager->registerTargetDetectedHandler(QNearFieldTarget::NfcTagType1, &listener,
-                                                    SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    manager->startTargetDetection(QNearFieldTarget::NfcTagType1);
 
-    QVERIFY(id != -1);
-
-    QTRY_VERIFY(!messageSpy.isEmpty());
+    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     target =
-        qobject_cast<QNearFieldTagType1 *>(messageSpy.first().at(1).value<QNearFieldTarget *>());
+        qobject_cast<QNearFieldTagType1 *>(targetDetectedSpy.first().at(0).value<QNearFieldTarget *>());
+
+    manager->stopTargetDetection();
 
     QVERIFY(target);
 
@@ -267,6 +262,54 @@ void tst_QNearFieldTagType1::dynamicMemoryModel()
                 QVERIFY(target->readSegment(i).isEmpty());
             }
         }
+    }
+
+    QVERIFY(testedStatic);
+    QVERIFY(testedDynamic);
+}
+
+void tst_QNearFieldTagType1::ndefMessages()
+{
+    QByteArray firstId;
+    forever {
+        waitForMatchingTarget();
+
+        QByteArray id = target->readIdentification();
+        if (firstId.isEmpty())
+            firstId = id;
+        else if (firstId == id)
+            break;
+
+        QVERIFY(target->hasNdefMessage());
+
+        QList<QNdefMessage> ndefMessages = target->ndefMessages();
+
+        QList<QNdefMessage> messages;
+        QNdefNfcTextRecord textRecord;
+        textRecord.setText(QLatin1String("tst_QNearFieldTagType1::ndefMessages"));
+
+        QNdefMessage message;
+        message.append(textRecord);
+
+        if (target->memorySize() > 120) {
+            QNdefRecord record;
+            record.setTypeNameFormat(QNdefRecord::ExternalRtd);
+            record.setType("com.nokia.qt:ndefMessagesTest");
+            record.setPayload(QByteArray(120, quint8(0x55)));
+            message.append(record);
+        }
+
+        messages.append(message);
+
+        target->setNdefMessages(messages);
+
+        QVERIFY(target->hasNdefMessage());
+
+        QList<QNdefMessage> storedMessages = target->ndefMessages();
+
+        QVERIFY(ndefMessages != storedMessages);
+
+        QVERIFY(messages == storedMessages);
     }
 }
 

@@ -645,6 +645,7 @@ for module in $MOBILITY_MODULES; do
         connectivity)
             $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity
             $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/nfc
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/bluetooth
             ;;
         *)
             echo "Cannot generate headers for $module"

@@ -60,11 +60,15 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
+
 private slots:
     void targetInRange(const QByteArray &uid);
 
 private:
     Simulator::NfcConnection *nfcConnection;
+    QList<QNearFieldTarget::Type> detectTargetTypes;
 };
 
 QTM_END_NAMESPACE

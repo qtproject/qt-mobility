@@ -19,9 +19,9 @@ include(engines/engines.pri)
 PUBLIC_HEADERS += \
     qorganizercollection.h \
     qorganizercollectionchangeset.h \
-    qorganizercollectionenginelocalid.h \
+    qorganizercollectionengineid.h \
     qorganizercollectionid.h \
-    qorganizeritemabstractrequest.h \
+    qorganizerabstractrequest.h \
     qorganizeritemchangeset.h \
     qorganizeritemdetail.h \
     qorganizeritemdetaildefinition.h \
@@ -30,11 +30,11 @@ PUBLIC_HEADERS += \
     qorganizeritemfilter.h \
     qorganizeritem.h \
     qorganizeritemid.h \
-    qorganizeritemenginelocalid.h \
-    qorganizeritemmanager.h \
-    qorganizeritemmanagerengine.h \
-    qorganizeritemmanagerenginefactory.h \
-    qorganizeritemrecurrencerule.h \
+    qorganizeritemengineid.h \
+    qorganizermanager.h \
+    qorganizermanagerengine.h \
+    qorganizermanagerenginefactory.h \
+    qorganizerrecurrencerule.h \
     qorganizeritemsortorder.h \
     qtorganizerglobal.h \
     qtorganizer.h
@@ -42,26 +42,24 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     qorganizercollection_p.h \
     qorganizercollectionchangeset_p.h \
-    qorganizercollectionid_p.h \
-    qorganizeritemabstractrequest_p.h \
+    qorganizerabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
     qorganizeritem_p.h \
     qorganizeritemdetail_p.h \
-    qorganizeritemid_p.h \
     qorganizeritemfilter_p.h \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
-    qorganizeritemmanager_p.h \
-    qorganizeritemrecurrencerule_p.h \
+    qorganizermanager_p.h \
+    qorganizerrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
 
 SOURCES += \
     qorganizercollection.cpp \
     qorganizercollectionchangeset.cpp \
-    qorganizercollectionenginelocalid.cpp \
+    qorganizercollectionengineid.cpp \
     qorganizercollectionid.cpp \
-    qorganizeritemabstractrequest.cpp \
+    qorganizerabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
     qorganizeritem.cpp \
     qorganizeritemdetail.cpp \
@@ -70,13 +68,13 @@ SOURCES += \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
-    qorganizeritemenginelocalid.cpp \
-    qorganizeritemmanager.cpp \
-    qorganizeritemmanagerengine.cpp \
-    qorganizeritemmanagerenginefactory.cpp \
-    qorganizeritemrecurrencerule.cpp \
+    qorganizeritemengineid.cpp \
+    qorganizermanager.cpp \
+    qorganizermanagerengine.cpp \
+    qorganizermanagerenginefactory.cpp \
+    qorganizerrecurrencerule.cpp \
     qorganizeritemsortorder.cpp \
-    qorganizeritemmanager_p.cpp
+    qorganizermanager_p.cpp
 
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
@@ -109,6 +107,10 @@ symbian {
 CONFIG += app
 maemo5 {
     isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo5
+}
+
+simulator {
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=simulator
 }
 
 !isEmpty(ORGANIZER_DEFAULT_ENGINE): DEFINES += Q_ORGANIZER_DEFAULT_ENGINE=$$ORGANIZER_DEFAULT_ENGINE

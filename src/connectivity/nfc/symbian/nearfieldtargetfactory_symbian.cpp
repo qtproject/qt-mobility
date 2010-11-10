@@ -38,15 +38,20 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
-
-#include <nfctag.h>
 #include "nearfieldtargetfactory_symbian.h"
-#include "nearfieldtagtype1_symbian.h"
-#include "nearfieldtagtype2_symbian.h"
+#include <nfcserver.h>
+#include <nfctag.h>
+#include <nfctype1connection.h>
+#include <nfctype2connection.h>
+#include <nfctype3connection.h>
+#include <iso14443connection.h>
+#include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "qnearfieldtagtype2_symbian_p.h"
-
+#include "qnearfieldtagtype3_symbian_p.h"
+#include "qnearfieldtagtype4_symbian_p.h"
+#include "qnearfieldllcpdevice_symbian_p.h"
 /*!
     \class TNearFieldTargetFactory
     \brief The TNearFieldTargetFactory class creates detected target instance according
@@ -55,7 +60,6 @@
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 */
-
 /*!
     Create target instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
@@ -65,29 +69,45 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     QNearFieldTarget * tag = 0;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
-        tag = CreateTagTypeL<CNearFieldTagType1, QNearFieldTagType1Symbian>(aNfcTag, aNfcServer, aParent);
+        tag = CreateTagTypeL<CNfcType1Connection, QNearFieldTagType1Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType2))
         {
-        tag = CreateTagTypeL<CNearFieldTagType2, QNearFieldTagType2Symbian>(aNfcTag, aNfcServer, aParent);
+        tag = CreateTagTypeL<CNfcType2Connection, QNearFieldTagType2Symbian>(aNfcTag, aNfcServer, aParent);
+        }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType3))
+        {
+        tag = CreateTagTypeL<CNfcType3Connection, QNearFieldTagType3Symbian>(aNfcTag, aNfcServer, aParent); 
+        }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfc14443P4))
+        {
+        tag = CreateTagTypeL<CIso14443Connection, QNearFieldTagType4Symbian>(aNfcTag, aNfcServer, aParent);
+        }
+    else if (!aNfcTag)
+        {
+        tag = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
         }
     return tag;
     }
 
 /*!
-    Create tag type 1 instance according to the tag infomation in \a aNfcTag and assign 
+    Create tag type instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
-template <typename CTAGTYPE, typename QTAGTYPE>
+template <typename CTAGCONNECTION, typename QTAGTYPE>
 QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     // ownership of aNfcTag transferred.
-    CTAGTYPE * tagType = CTAGTYPE::NewLC(aNfcTag, aNfcServer);
+    CTAGCONNECTION * connection = CTAGCONNECTION::NewLC(aNfcServer);
+    CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
+    tagType->SetConnection(connection);
     QTAGTYPE * tag= new(ELeave)QTAGTYPE(WrapNdefAccessL(aNfcTag, aNfcServer, tagType), aParent);
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
     CleanupStack::Pop(tagType);
+    CleanupStack::Pop(connection);
     return tag;
     }
+
    
 MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget)
     {
@@ -104,9 +124,6 @@ MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, R
         }
     }
            
-/*!
-    Convert connection mode information in \a aNfcTag to access methods
-*/
 QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
     {
     QNearFieldTarget::AccessMethods accessMethod;
@@ -118,5 +135,5 @@ QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMe
         {
         accessMethod |= QNearFieldTarget::TagTypeSpecificAccess;
         }
+    return accessMethod;
     }
-

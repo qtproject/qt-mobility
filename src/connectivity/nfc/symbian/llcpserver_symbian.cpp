@@ -16,8 +16,9 @@
 *
 */
 #include "llcpserver_symbian.h"
-#include "llcpsocket_symbian.h"
+#include "llcpsockettype2_symbian.h"
 #include "../qllcpserver_symbian_p.h"
+
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -25,9 +26,9 @@ const TInt KInterestingSsap = 35;
 /*!
     CLlcpServer::NewL()
 */
-CLlcpServer* CLlcpServer::NewL()
+CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
     {
-    CLlcpServer* self = CLlcpServer::NewLC();
+    CLlcpServer* self = CLlcpServer::NewLC(aCallback);
     CleanupStack::Pop( self );
     return self;
     }
@@ -35,9 +36,9 @@ CLlcpServer* CLlcpServer::NewL()
 /*!
     CLlcpServer::NewLC()
 */
-CLlcpServer* CLlcpServer::NewLC()
+CLlcpServer* CLlcpServer::NewLC(QtMobility::QLlcpServerPrivate& aCallback)
     {
-    CLlcpServer* self = new (ELeave) CLlcpServer();
+    CLlcpServer* self = new (ELeave) CLlcpServer(aCallback);
     CleanupStack::PushL( self );
     self->ConstructL();
     return self;
@@ -46,9 +47,10 @@ CLlcpServer* CLlcpServer::NewLC()
 /*!
     CLlcpServer::CLlcpServer()
 */
-CLlcpServer::CLlcpServer()
+CLlcpServer::CLlcpServer(QtMobility::QLlcpServerPrivate& aCallback)
      :iLlcp( NULL ),
-     iSocketListening(EFalse)
+     iSocketListening(EFalse),
+     iCallback(aCallback)
     {
     }
 
@@ -57,6 +59,7 @@ CLlcpServer::CLlcpServer()
 */
 void CLlcpServer::ConstructL()
     {  
+    iNfcServer.Open();
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
 
@@ -72,6 +75,7 @@ CLlcpServer::~CLlcpServer()
         }
     iLlcpSocketArray.Close();  
     iServiceName.Close();
+    iNfcServer.Close();
     }
 
 /*!
@@ -122,6 +126,16 @@ bool CLlcpServer::Listen( const TDesC8& aServiceName)
     return iSocketListening;
     }
 
+void CLlcpServer::StopListening( )
+    {
+    // TODO
+    // will updated to  
+    //TRAP(error,iLlcp->StopListeningConnOrientedRequest(iServiceName)); 
+    iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
+    
+    iSocketListening = false;
+    }
+
 
 bool CLlcpServer::isListening() const
     {
@@ -150,6 +164,7 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         if (KErrNone != error)
             {
             //TODO emit error
+            //iCallback.error();
             }
         error = llcpSocket->CreateRemoteConnection(aConnection);
         if (KErrNone != error)
@@ -163,7 +178,7 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         //TODO emit errors
         }
     //TODO  The newConnection() signal is then emitted each time a client connects to the server.
-
+    iCallback.invokeNewConnection();
     }
 
 

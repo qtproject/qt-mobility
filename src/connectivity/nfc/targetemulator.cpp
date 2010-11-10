@@ -40,9 +40,11 @@
 ****************************************************************************/
 
 #include "targetemulator_p.h"
-#include "qnearfieldtarget.h"
 
 #include <QtCore/QSettings>
+
+// Implementation of qNfcChecksum
+#include "checksum_p.h"
 
 TagBase::TagBase()
 {
@@ -148,7 +150,7 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
             return QByteArray();
 
         // check checksum
-        if (crc != QtMobility::qNfcChecksum(command.left(7).constData(), 7))
+        if (crc != qNfcChecksum(command.left(7).constData(), 7))
             return QByteArray();
 
         switch (opcode) {
@@ -218,7 +220,7 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
             return QByteArray();
 
         // check checksum
-        if (crc != QtMobility::qNfcChecksum(command.left(14).constData(), 14))
+        if (crc != qNfcChecksum(command.left(14).constData(), 14))
             return QByteArray();
 
         switch (opcode) {
@@ -268,7 +270,7 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
     }
 
     if (!response.isEmpty()) {
-        quint16 crc = QtMobility::qNfcChecksum(response.constData(), response.length());
+        quint16 crc = qNfcChecksum(response.constData(), response.length());
         response.append(quint8(crc & 0xff));
         response.append(quint8(crc >> 8));
     }

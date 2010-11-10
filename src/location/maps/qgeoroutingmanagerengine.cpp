@@ -458,7 +458,6 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
       supportsAlternativeRoutes(false),
       supportsExcludeAreas(false)
 {
-    supportedFeatureWeights |= QGeoRouteRequest::NeutralFeatureWeight;
 }
 
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}

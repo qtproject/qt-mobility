@@ -58,8 +58,9 @@ QTM_BEGIN_NAMESPACE
 
     If no landmarks identifiers are set using setLandmarkIds() or
     an empty list is passed in, then all the landmarks will be exported.
-    Invalid landmark identifiers that do not refer to landmarks will be ignored.
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -118,8 +119,8 @@ QString QLandmarkExportRequest::fileName() const
 
 /*!
     Sets the name of the file to be written to \a fileName.  Internally,
-    QLandmarkExportRequest will create a QFile and open it in
-    QIODevice::WriteOnly mode, and use this file to export to.
+    QLandmarkExportRequest will create a QFile use this as the
+    device to export to.
 
     \sa fileName(), setDevice()
 */
@@ -151,8 +152,8 @@ void QLandmarkExportRequest::setFormat(const QString &format)
 }
 
 /*!
-    Returns the export option of the export request.
-    The export option defines how categories are treated
+    Returns the transfer option of the export request.
+    The transfer option defines how categories are treated
     during the export operation.  The default option is
     QLandmarkManager::IncludeCategoryData.
 
@@ -165,8 +166,8 @@ QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
 }
 
 /*!
-    Sets the export \a option of the export request.
-    The export \a option defines how categories are treated
+    Sets the transfer \a option of the export request.
+    The transfer \a option defines how categories are treated
     during the export operation.
 */
 void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
@@ -178,6 +179,8 @@ void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption 
 
 /*!
     Returns the list of identifiers of landmarks that will be exported.
+    By default the list of identifiers is empty, indicating that all
+    landmarks should be exported.
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {

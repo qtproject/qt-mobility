@@ -96,6 +96,17 @@ TPtrC QNFCNdefUtility::FromQStringToTptrC(const QString& qstring)
     return ptr;
     }
 
+void QNFCNdefUtility::FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8& buf)
+    {
+        int length = qbytearray.count()>buf.MaxSize()?qbytearray.count():buf.MaxSize();
+        buf.SetLength(length);
+
+        for(int i = 0; i < length; ++i)
+            {
+            buf[i] = qbytearray.at(i);
+            }
+    }
+
 TPtrC8 QNFCNdefUtility::FromQStringToTptrC8(const QString& qstring)
     {
     TPtrC8 ptr (reinterpret_cast<const TUint8*>(qstring.constData()),qstring.length());

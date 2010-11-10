@@ -201,8 +201,9 @@ private:
                                                        CMdENamespaceDef& defaultNameSpace);
 
     static bool SetMetaDataFieldForMDS20L( CMdEObject *item, const QVariant &value, int key );
-
-#endif // MDS_25_COMPILATION_ENABLED 
+    static bool setMdeStringProperty(CMdEObject *item, const QVariant &value, CMdEPropertyDef *propDef);
+#endif // MDS_25_COMPILATION_ENABLED
+    
 };
 
 QTM_END_NAMESPACE

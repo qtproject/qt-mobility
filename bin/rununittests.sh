@@ -160,7 +160,7 @@ cd $shell_path/../build/tests/bin
 ./tst_qmessagestorekeys
 
 #QOrganizer
-./tst_qorganizeritemmanager
+./tst_qorganizermanager
 ./tst_qorganizercollection
 ./tst_qorganizeritem
 ./tst_qorganizeritemasync

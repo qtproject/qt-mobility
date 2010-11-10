@@ -134,8 +134,13 @@ contains(mobility_modules,gallery) {
 
 # Organizer API examples
 contains(mobility_modules, organizer) {
-    SUBDIRS += calendardemo
-	SUBDIRS += todo
+    SUBDIRS += calendardemo \
+	       todo
+#disable qmlorganizer, as it is not completed
+#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+#        SUBDIRS += \
+#               qmlorganizer
+#    }
 }
 
 # Feedback API examples
@@ -146,6 +151,11 @@ contains(mobility_modules, feedback) {
 # Connectivity
 contains(mobility_modules,connectivity) {
     SUBDIRS += connectivity
+}
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    !win32:SUBDIRS += btscanner btchat
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

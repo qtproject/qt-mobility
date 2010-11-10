@@ -60,8 +60,9 @@ public:
      */
     static CNdefMessage* FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg );
     static QNdefMessage FromCNdefMsgToQndefMsgL( const CNdefMessage& msg );
- 
+     
     static TPtrC8 FromQByteArrayToTPtrC8(const QByteArray& qbytearray);
+    static void FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8& buf);
     static QByteArray FromTDesCToQByteArray( const TDesC8& des);
     
     static TPtrC FromQStringToTptrC(const QString& qstring);

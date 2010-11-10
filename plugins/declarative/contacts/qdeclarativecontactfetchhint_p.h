@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTFETCHHINT_H
 #define QDECLARATIVECONTACTFETCHHINT_H
 
@@ -63,11 +62,10 @@ class QDeclarativeContactFetchHint : public QObject
     Q_FLAGS(OptimizationHints);
 public:
     enum OptimizationHint {
-        AllRequired = 0x0,
-        NoRelationships = 0x1,
-        NoActionPreferences = 0x2,
-        NoBinaryBlobs = 0x4
-        // any other optimization hints?
+        AllRequired = QContactFetchHint::AllRequired,
+        NoRelationships = QContactFetchHint::NoRelationships,
+        NoActionPreferences = QContactFetchHint::NoActionPreferences,
+        NoBinaryBlobs = QContactFetchHint::NoBinaryBlobs
     };
     Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
 

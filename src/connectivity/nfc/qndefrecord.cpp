@@ -167,9 +167,10 @@ QNdefRecord::QNdefRecord(const QNdefRecord &other)
     format identified by \a typeNameFormat and type as identified by \a type; otherwise an empty
     NDEF record of the expected type name format and type is created.
 */
-QNdefRecord::QNdefRecord(const QNdefRecord &other, quint8 typeNameFormat, const QByteArray &type)
+QNdefRecord::QNdefRecord(const QNdefRecord &other, TypeNameFormat typeNameFormat,
+                         const QByteArray &type)
 {
-    if (other.d->typeNameFormat == typeNameFormat && other.d->type == type) {
+    if (other.d->typeNameFormat == quint8(typeNameFormat) && other.d->type == type) {
         d = other.d;
     } else {
         d = new QNdefRecordPrivate;
@@ -184,7 +185,7 @@ QNdefRecord::QNdefRecord(const QNdefRecord &other, quint8 typeNameFormat, const 
     Constructs an NDEF record with a type name format identified by \a typeNameFormat and type as
     identified by \a type.
 */
-QNdefRecord::QNdefRecord(quint8 typeNameFormat, const QByteArray &type)
+QNdefRecord::QNdefRecord(TypeNameFormat typeNameFormat, const QByteArray &type)
 :   d(new QNdefRecordPrivate)
 {
     d->typeNameFormat = typeNameFormat;

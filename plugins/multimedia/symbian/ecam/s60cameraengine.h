@@ -108,7 +108,7 @@ public:
     /**
      * Returns the index of the currently active camera device
      */
-    TInt currentCameraIndex() const { return iCameraHandle; }
+    TInt currentCameraIndex() const { return iCameraIndex; }
 
     /**
      * Returns the current state (TCameraEngineState)
@@ -349,16 +349,23 @@ private:  // Data
     MAdvancedSettingsObserver           *iAdvancedSettingsObserver;
     MCameraViewfinderObserver           *iViewfinderObserver;
     MCameraBuffer                       *iViewFinderBuffer;
-    MCameraBuffer                       *iImageBuffer;
-    HBufC8                              *iImageData; // MCameraObserver
-    TDesC8                              *iImageData2; // MCameraObserver2
-    CFbsBitmap                          *iImageBitmap;
-    TInt                                iCameraHandle;
+    /*
+     * Following pointers are for the image buffers:
+     *  * Makes buffering of 2 concurrent image buffers possible
+     */
+    MCameraBuffer                       *iImageBuffer1;
+    MCameraBuffer                       *iImageBuffer2;
+    TDesC8                              *iImageData1;
+    TDesC8                              *iImageData2;
+    CFbsBitmap                          *iImageBitmap1;
+    CFbsBitmap                          *iImageBitmap2;
+    TInt                                iCameraIndex;
     TInt                                iPriority;
     TCameraEngineState                  iEngineState;
     TCameraInfo                         iCameraInfo;
     CCamera::TFormat                    iImageCaptureFormat;
     bool                                iNew2LImplementation;
+    int                                 iLatestImageBufferIndex; // 0 = Buffer1, 1 = Buffer2
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
     CCamAutoFocus*                      iAutoFocus;
     CCamAutoFocus::TAutoFocusRange      iAFRange;

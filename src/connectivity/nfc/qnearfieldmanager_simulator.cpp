@@ -152,10 +152,23 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     delete nfcConnection;
 }
 
+void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+{
+    detectTargetTypes = targetTypes;
+}
+
+void QNearFieldManagerPrivateImpl::stopTargetDetection()
+{
+    detectTargetTypes.clear();
+}
+
 void QNearFieldManagerPrivateImpl::targetInRange(const QByteArray &uid)
 {
-    Simulator::TagType1 *target = new Simulator::TagType1(uid, this);
-    emit targetDetected(target);
+    if (detectTargetTypes.contains(QNearFieldTarget::NfcTagType1) ||
+        detectTargetTypes.contains(QNearFieldTarget::AnyTarget)) {
+        Simulator::TagType1 *target = new Simulator::TagType1(uid, this);
+        emit targetDetected(target);
+    }
 }
 
 #include "qnearfieldmanager_simulator.moc"

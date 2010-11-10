@@ -44,9 +44,8 @@
 
 #include <qnearfieldtagtype1.h>
 #include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagtype1_symbian.h"
+#include "nearfieldtag_symbian.h"
 #include "nearfieldtagimpl_symbian.h"
-#include "commonutil_symbian.h"
 
 QT_BEGIN_HEADER
 
@@ -77,6 +76,11 @@ public:
     virtual QByteArray readBlock(quint8 blockAddress);
     virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
                             WriteMode mode = EraseAndWrite);
+
+
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
+    void setNdefMessages(const QList<QNdefMessage> &messages);
 
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);

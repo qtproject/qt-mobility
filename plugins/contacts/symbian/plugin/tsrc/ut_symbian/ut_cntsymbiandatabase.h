@@ -63,8 +63,10 @@ private slots:
         
     void contactDatabase();
     void createChangeRemoveContactEvents();
+    void batchRemoveOperation();
     void ownCardEvents();
     void relationshipEvents();
+    
 
 private slots:
     void handleAddedOrig(const QList<QContactLocalId>& contactIds);
@@ -92,8 +94,8 @@ private:
     QContactLocalId addedOrigContactId;
     QContactLocalId changedContactId;
     QContactLocalId changedOrigContactId;
-    QContactLocalId removedContactId;
-    QContactLocalId removedOrigContactId;
+    QList<QContactLocalId> removedContactId;
+    QList<QContactLocalId> removedOrigContactId;
     QContactLocalId ownCardId;
     QContactLocalId ownCardOrigId;
     QContactLocalId addedRelId1;

@@ -62,10 +62,11 @@ public:
 
     void reset();
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
+
+    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
+    int registerTargetDetectedHandler(const QNdefFilter &filter,
                                       QObject *object, const QMetaMethod &method);
 
     bool unregisterTargetDetectedHandler(int id);
@@ -76,7 +77,6 @@ private slots:
 
 private:
     struct Callback {
-        QNearFieldTarget::Type targetType;
         QNdefFilter filter;
 
         QObject *object;
@@ -88,6 +88,7 @@ private:
     QList<Callback> m_registeredHandlers;
     QList<int> m_freeIds;
     QMap<TagBase *, QNearFieldTarget *> m_targets;
+    QList<QNearFieldTarget::Type> m_detectTargetTypes;
 };
 
 #endif // QNEARFIELDMANAGER_EMULATOR_H

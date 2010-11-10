@@ -43,9 +43,9 @@
 #define NEARFIELDTARGETFACTORY_H_
 
 #include <qnearfieldtarget.h>
-#include <nfcserver.h>
 
 class MNfcTag;
+class RNfcServer;
 class MNearFieldTarget;
 
 QTM_USE_NAMESPACE
@@ -55,10 +55,12 @@ class TNearFieldTargetFactory
 public:
     static QNearFieldTarget * CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
 private:
-    template <typename CTAGTYPE, typename QTAGTYPE>
-    static QNearFieldTarget * CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
     static MNearFieldTarget * WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget);
     static QNearFieldTarget::AccessMethods ConnectionMode2AccessMethods(MNfcTag * aNfcTag);
+
+    template <typename CTAGCONNECTION, typename QTAGTYPE>
+    static QNearFieldTarget * CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent);
     };
+
 
 #endif /* NEARFIELDTARGETFACTORY_H */

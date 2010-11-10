@@ -33,6 +33,12 @@
 #include "ccontactprivate.h" // for mprogresseventhander.
 #include "ccntpackager.h"
 #include <cntviewstore.h>
+#include <cntfield.h>
+#include "cntstd.h"
+#include <cntdef.h>
+#include <cntfldst.h>
+#include "cntimagerescaler.h"
+#include "cntdbconsts_internal.h"
 
 
 /** Contacts server version number. */ 
@@ -91,7 +97,8 @@ RCntModel::RCntModel()
 	iDbNotifyMonitor(NULL), 
 	iPackager(NULL),
 	iConnectionId(0),
-	iNoOfSvrStartAttempts(0)
+	iNoOfSvrStartAttempts(0),
+    iRescaler(NULL)
 	{
 	}
 
@@ -162,6 +169,12 @@ void RCntModel::ConnectL()
 	// ID.  This ID forms part of the database event notification message.  This
 	// ID is created during the connection to the server.
 	ConnectionId();
+    
+    // Create a image rescaler
+	if (iRescaler == NULL)
+	    {
+	    iRescaler = CImageRescaler::NewL();
+	    }
 	}
 
 	
@@ -174,6 +187,8 @@ void RCntModel::Close()
 	iPackager = NULL;
 	delete iDbNotifyMonitor;
 	iDbNotifyMonitor = NULL;
+	delete iRescaler;
+	iRescaler = NULL;
 	RHandleBase::Close();
 	}
 
@@ -745,6 +760,12 @@ Add a new contact to the database.
 */
 TContactItemId RCntModel::CreateContactL(CContactItem& aContact) const
 	{
+    // Process the image field
+    if (iRescaler)
+        {
+        iRescaler->ProcessImageFieldL(aContact);
+        }
+    
 	// Pack the contact into the first IPC argument.
 	TIpcArgs args;
 	TPtr8 ptr(iPackager->PackL(aContact));
@@ -772,6 +793,22 @@ void RCntModel::DeleteContactL(TContactItemId aCntId, TCntSendEventAction aCntEv
 	TIpcArgs args(aCntId, aCntEventType, aDecAccessCount);
 	User::LeaveIfError(SendReceive(ECntItemDelete, args));
 	}
+
+/**
+Delete contacts from the database.
+
+@param aContactIds The contacts to be deleted.
+
+@capability WriteUserData
+*/
+void RCntModel::DeleteContactsL(const CContactIdArray& aContactIds) const
+    {
+    // Pack the contact ids into the first IPC argument.
+    TIpcArgs args;
+    TPtr8 ptr(iPackager->PackL(aContactIds));
+    args.Set(0,&ptr);
+    User::LeaveIfError(SendReceive(ECntItemsDelete, args));
+    }
 
 /** 
 Open the database tables.
@@ -829,8 +866,14 @@ void RCntModel::CommitContactL(const CContactItem& aContact, TBool aSendChangedE
                     }
                 }           
             }
-        }	
-	
+        }
+    
+    // Process the image field
+    if (iRescaler)
+        {
+        iRescaler->ProcessImageFieldL(const_cast<CContactItem&>(aContact));
+        }
+    
 	// Pack the contact into the first IPC argument.
 	TIpcArgs args; 
 	TPtr8 ptr(iPackager->PackL((const_cast<CContactItem&>(aContact))));
@@ -1147,9 +1190,9 @@ Request a database event from the server.
 @param aStatus Completed when database event is available.
 @param aEvent When aStatus is completed contains the database event.
 */
-void RCntModel::StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent)
+void RCntModel::StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent, TDes8& aIdArray)
 	{	
-	SendReceive(ECntRequestEvent, TIpcArgs(&aEvent), aStatus);	
+	SendReceive(ECntRequestEvent, TIpcArgs(&aEvent, &aIdArray), aStatus);	
 	}
 
 

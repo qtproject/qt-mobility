@@ -56,7 +56,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include "qmediaplayer.h"
-
+#include "qsoundeffect_p.h"
 
 QT_BEGIN_HEADER
 
@@ -67,6 +67,7 @@ class QSoundEffectPrivate : public QObject
 {
     Q_OBJECT
 public:
+
     explicit QSoundEffectPrivate(QObject* parent);
     ~QSoundEffectPrivate();
 
@@ -81,6 +82,8 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
     bool isLoaded() const;
+    bool isPlaying() const;
+    QSoundEffect::Status status() const;
 
 public Q_SLOTS:
     void play();
@@ -90,15 +93,22 @@ Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
     void loadedChanged();
+    void playingChanged();
+    void statusChanged();
 
 private Q_SLOTS:
     void stateChanged(QMediaPlayer::State);
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
+    void error(QMediaPlayer::Error);
 
 private:
+    void setStatus(QSoundEffect::Status status);
+    void setPlaying(bool playing);
+
     int            m_loopCount;
     int            m_runningCount;
-    bool           m_loaded;
+    bool           m_playing;
+    QSoundEffect::Status  m_status;
     QMediaPlayer  *m_player;
 };
 

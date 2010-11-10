@@ -32,7 +32,7 @@ contains(mobility_modules,location) {
 #Contacts demos
 contains(mobility_modules,contacts) {
     contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        sources.files += qmlcontacts
+	SUBDIRS += qmlcontacts
     }
 }
 

@@ -46,8 +46,8 @@
 
 #include <QMap>
 #include <QVariant>
+#include <QString>
 
-class QString;
 class QStringList;
 
 QT_BEGIN_HEADER
@@ -74,7 +74,7 @@ public:
 
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName,
-                        const QMap<QString, QVariant> &parameters = (QMap<QString, QVariant>()));
+                        const QMap<QString,QVariant> &parameters = (QMap<QString,QVariant>()));
 
     ~QGeoServiceProvider();
 

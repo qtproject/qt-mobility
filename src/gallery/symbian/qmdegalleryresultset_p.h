@@ -95,11 +95,6 @@ public:
 
     virtual int currentIndex() const;
     virtual bool fetch(int index);
-    /* non pure virtual */
-    virtual bool fetchNext();
-    virtual bool fetchPrevious();
-    virtual bool fetchFirst();
-    virtual bool fetchLast();
 
 public: //MDS spesific
 
