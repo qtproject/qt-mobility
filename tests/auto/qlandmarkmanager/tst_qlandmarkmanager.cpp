@@ -8144,7 +8144,7 @@ void tst_QLandmarkManager::removeStress()
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QCOMPARE(m_manager->errorMap().count(), 0);
     } else {
-        QLandmarkSaveRequest lmRemoveRequest(m_manager);
+        QLandmarkRemoveRequest lmRemoveRequest(m_manager);
         QSignalSpy spy(&lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         lmRemoveRequest.setLandmarks(lms);
         lmRemoveRequest.start();
