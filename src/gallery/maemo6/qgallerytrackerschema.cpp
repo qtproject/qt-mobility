@@ -1321,6 +1321,7 @@ QString QGalleryTrackerSchema::itemType() const
         return QString();
 }
 
+#if 0
 QString QGalleryTrackerSchema::uriFromItemId(QDocumentGallery::Error *error, const QVariant &itemId)
 {
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
@@ -1337,6 +1338,7 @@ QString QGalleryTrackerSchema::uriFromItemId(QDocumentGallery::Error *error, con
         return QString();
     }
 }
+#endif
 
 int QGalleryTrackerSchema::serviceUpdateId(const QString &service)
 {
@@ -2052,6 +2054,22 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             + compositeAttributes
             + aliasAttributes;
     arguments->propertyTypes = identityTypes + aggregateTypes + compositeTypes + aliasTypes;
+}
+
+QString QGalleryTrackerSchema::serviceForType( const QString &galleryType )
+{
+    QGalleryTypeList<QGalleryItemType> typeList(qt_galleryItemTypeList );
+    int index = typeList.indexOfType( galleryType );
+    if ( index != -1 )
+        return typeList[index].service;
+
+    QGalleryTypeList<QGalleryAggregateType> aggregateTypeList( qt_galleryAggregateTypeList );
+    index = aggregateTypeList.indexOfType( galleryType );
+    if ( index != -1 )
+        return aggregateTypeList[index].service;
+
+    qWarning() << galleryType << " does not exists";
+    return "";
 }
 
 QTM_END_NAMESPACE

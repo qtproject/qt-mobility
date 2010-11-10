@@ -342,7 +342,7 @@ public:
         return iterator - rCache.values.begin(); }
     inline int iCacheIndex(const const_row_iterator &iterator) const {
         return iterator - iCache.values.begin(); }
-    
+
     void update();
     void requestUpdate()
     {

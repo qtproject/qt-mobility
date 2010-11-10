@@ -71,6 +71,11 @@ public:
             const QDBusConnection &connection = QDBusConnection::sessionBus(),
             QObject *parent = 0)
         : QDBusAbstractInterface(service, path, interface, connection, parent) {}
+
+Q_SIGNALS:
+    void IndexFinished(double elapsed);
+    void SubjectsAdded(const QStringList &subjects);
+    void SubjectsRemoved(const QStringList &subjects);
 };
 
 typedef QExplicitlySharedDataPointer<QGalleryDBusInterface> QGalleryDBusInterfacePointer;
@@ -87,9 +92,6 @@ public:
             QObject *parent = 0)
         : QGalleryDBusInterface(service, path, interface, connection, parent) {}
 
-Q_SIGNALS:
-    void IndexFinished(double elapsed);
-    void ServiceStatisticsUpdated(const QVector<QStringList> &statistics);
 };
 
 class QGalleryDBusInterfaceFactory
@@ -102,6 +104,7 @@ public:
     virtual QGalleryDBusInterfacePointer searchInterface() = 0;
     virtual QGalleryDBusInterfacePointer fileInterface() = 0;
     virtual QGalleryDBusInterfacePointer statisticsInterface() = 0;
+    virtual QGalleryDBusInterfacePointer resourcesClassInterface(const QString& objectPath) = 0;
 };
 
 QTM_END_NAMESPACE

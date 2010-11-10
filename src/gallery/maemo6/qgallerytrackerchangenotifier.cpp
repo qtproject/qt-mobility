@@ -42,16 +42,25 @@
 #include "qgallerytrackerchangenotifier_p.h"
 
 #include "qgallerytrackerschema_p.h"
+#include <QtCore/qdebug.h>
 
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerChangeNotifier::QGalleryTrackerChangeNotifier(
+        int serviceId,
         const QGalleryDBusInterfacePointer &daemonInterface, QObject *parent)
     : QObject(parent)
     , m_daemonInterface(daemonInterface)
+    , m_serviceId(serviceId)
+
 {
-    connect(m_daemonInterface.data(), SIGNAL(ServiceStatisticsUpdated(QVector<QStringList>)),
-            this, SLOT(statisticsChanged(QVector<QStringList>)));
+    Q_ASSERT( m_daemonInterface.data()->isValid());
+    bool ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsAdded(const QStringList&)),
+            this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
+    Q_ASSERT( ret );
+    ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsRemoved(const QStringList&)),
+            this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
+    Q_ASSERT( ret );
 }
 
 void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
@@ -59,16 +68,11 @@ void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
     emit itemsChanged(QGalleryTrackerSchema::serviceUpdateId(service));
 }
 
-void QGalleryTrackerChangeNotifier::statisticsChanged(const QVector<QStringList> &statistics)
+void QGalleryTrackerChangeNotifier::subjectsAddedOrRemoved(const QStringList &subjects)
 {
-    int updateId = 0;
+    qDebug() << __func__ << ":" << subjects;
 
-    typedef QVector<QStringList>::const_iterator iterator;
-    for (iterator it = statistics.begin(), end = statistics.end(); it != end; ++it) {
-        updateId |= QGalleryTrackerSchema::serviceUpdateId(it->value(0));
-    }
-
-    emit itemsChanged(updateId);
+    emit itemsChanged( m_serviceId );
 }
 
 #include "moc_qgallerytrackerchangenotifier_p.cpp"

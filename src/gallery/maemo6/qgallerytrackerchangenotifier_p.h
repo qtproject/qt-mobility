@@ -63,7 +63,7 @@ class QGalleryTrackerChangeNotifier : public QObject
 {
     Q_OBJECT
 public:
-    QGalleryTrackerChangeNotifier(
+    QGalleryTrackerChangeNotifier( int serviceId,
             const QGalleryDBusInterfacePointer &daemonInterface, QObject *parent = 0);
 
 public Q_SLOTS:
@@ -73,10 +73,11 @@ Q_SIGNALS:
     void itemsChanged(int updateId);
 
 private Q_SLOTS:
-    void statisticsChanged(const QVector<QStringList> &statistics);
+    void subjectsAddedOrRemoved(const QStringList &subjects);
 
 private:
     const QGalleryDBusInterfacePointer m_daemonInterface;
+    int m_serviceId;
 };
 
 QTM_END_NAMESPACE

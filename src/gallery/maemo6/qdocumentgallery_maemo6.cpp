@@ -55,7 +55,10 @@
 #include <QtCore/qmetaobject.h>
 #include <QtDBus/qdbusmetatype.h>
 
+#include <QtCore/qdebug.h>
+
 Q_DECLARE_METATYPE(QVector<QStringList>)
+Q_DECLARE_METATYPE(QStringList)
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,21 +75,42 @@ private:
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer statisticsInterface();
-    QGalleryTrackerChangeNotifier *changeNotifier();
+    QGalleryDBusInterfacePointer resourcesClassInterface(const QString &objectPath);
+
+    QGalleryTrackerChangeNotifier *getChangeNotifier( const QString &type );
+    QGalleryTrackerChangeNotifier *createChangeNotifier(
+            QScopedPointer<QGalleryTrackerChangeNotifier> &notifier, QString serviceId);
+    QGalleryTrackerChangeNotifier *audioChangeNotifier();
+    QGalleryTrackerChangeNotifier *artistChangeNotifier();
+    QGalleryTrackerChangeNotifier *documentChangeNotifier();
+    QGalleryTrackerChangeNotifier *videoChangeNotifier();
+    QGalleryTrackerChangeNotifier *playlistChangeNotifier();
+    QGalleryTrackerChangeNotifier *musicAlbumChangeNotifier();
+    QGalleryTrackerChangeNotifier *imageListChangeNotifier();
+    QGalleryTrackerChangeNotifier *imageChangeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
             QGalleryTrackerResultSetArguments *arguments,
             int offset,
             int limit,
             bool isItemType,
-            bool autoUpdate);
+            bool autoUpdate,
+            QGalleryTrackerChangeNotifier* notifier);
 
     QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
     QGalleryDBusInterfacePointer statisticsService;
-    QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
+    QMap< QString, QGalleryDBusInterfacePointer > resourcesClassServices;
+    QScopedPointer<QGalleryTrackerChangeNotifier> audioNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> artistNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> documentNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> videoNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> playlistNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> musicAlbumNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> imageListNotifier;
+    QScopedPointer<QGalleryTrackerChangeNotifier> imageNotifier;
 };
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::daemonInterface()
@@ -139,7 +163,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
 }
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::statisticsInterface()
 {
-    if(!statisticsService) {
+    if (!statisticsService) {
         statisticsService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker1"),
                 QLatin1String("/org/freedesktop/Tracker1/Statistics"),
@@ -148,12 +172,66 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::statisticsInterface()
     return statisticsService;
 }
 
-QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::resourcesClassInterface(const QString &objectPath)
+{
+    if ( resourcesClassServices.find( objectPath ) == resourcesClassServices.end() ) {
+        resourcesClassServices[ objectPath ] = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker1"),
+                objectPath,
+                "org.freedesktop.Tracker1.Resources.Class");
+    }
+    return resourcesClassServices[ objectPath ];
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::createChangeNotifier(
+        QScopedPointer<QGalleryTrackerChangeNotifier> &notifier,  QString serviceId)
 {
     if (!notifier)
-        notifier.reset(new QGalleryTrackerChangeNotifier(daemonInterface()));
-
+        notifier.reset(new QGalleryTrackerChangeNotifier(
+                QGalleryTrackerSchema::serviceUpdateId( serviceId),
+                resourcesClassInterface("/org/freedesktop/Tracker1/Resources/Classes/" + serviceId.replace(':','/') )
+                ));
     return notifier.data();
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::audioChangeNotifier()
+{
+    return createChangeNotifier( audioNotifier,  QGalleryTrackerSchema::serviceForType(QDocumentGallery::Audio) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::artistChangeNotifier()
+{
+    return createChangeNotifier( artistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Artist) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::documentChangeNotifier()
+{
+    return createChangeNotifier( documentNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Document) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::videoChangeNotifier()
+{
+    return createChangeNotifier( videoNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Video) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::playlistChangeNotifier()
+{
+    return createChangeNotifier( playlistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Playlist) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::musicAlbumChangeNotifier()
+{
+    return createChangeNotifier( musicAlbumNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Album) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::imageListChangeNotifier()
+{
+    return createChangeNotifier( imageListNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::PhotoAlbum) );
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::imageChangeNotifier()
+{
+    return createChangeNotifier( imageNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Image) );
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
@@ -168,8 +246,33 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     if (error != QDocumentGallery::NoError) {
         return new QGalleryAbstractResponse(error);
     } else {
-        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->autoUpdate());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->autoUpdate(), getChangeNotifier(request->itemType()) );
     }
+}
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::getChangeNotifier( const QString &itemType )
+{
+    QGalleryTrackerChangeNotifier * notifier = 0;
+qDebug() << "Getting notifier for:" << itemType;
+
+    if ( itemType == QDocumentGallery::Audio.name() )
+        notifier = audioChangeNotifier();
+    else if ( itemType == QDocumentGallery::Artist.name() )
+        notifier = artistChangeNotifier();
+    else if ( itemType == QDocumentGallery::Document.name() )
+        notifier = documentChangeNotifier();
+    else if ( itemType == QDocumentGallery::Video.name() )
+        notifier = videoChangeNotifier();
+    else if ( itemType == QDocumentGallery::Playlist.name() )
+        notifier = playlistChangeNotifier();
+    else if ( itemType == QDocumentGallery::Album.name() )
+        notifier = musicAlbumChangeNotifier();
+    else if ( itemType == QDocumentGallery::PhotoAlbum.name() )
+        notifier = imageListChangeNotifier();
+    else if ( itemType == QDocumentGallery::Image.name() )
+        notifier = imageChangeNotifier();
+
+    return notifier;
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTypeRequest *request)
@@ -186,9 +289,11 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
         QGalleryTrackerTypeResultSet *response = new QGalleryTrackerTypeResultSet(arguments);
 
         if (request->autoUpdate()) {
-            QObject::connect(
-                    changeNotifier(), SIGNAL(itemsChanged(int)),
-                    response, SLOT(refresh(int)));
+            QGalleryTrackerChangeNotifier * notifier = getChangeNotifier( request->itemType() );
+            if ( notifier )
+                QObject::connect(
+                        notifier, SIGNAL(itemsChanged(int)),
+                        response, SLOT(refresh(int)));
         }
 
         return response;
@@ -200,7 +305,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         int offset,
         int limit,
         bool isItemType,
-        bool autoUpdate)
+        bool autoUpdate,
+        QGalleryTrackerChangeNotifier* notifier)
 {
     QGalleryTrackerResultSet *response = 0;
 
@@ -212,11 +318,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
     }
 
     if (autoUpdate) {
-        QObject::connect(
-                changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
+        if ( notifier )
+            QObject::connect(
+                notifier, SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)) );
     }
-    QObject::connect(
-            response, SIGNAL(itemEdited(QString)), changeNotifier(), SLOT(itemsEdited(QString)));
+    if ( notifier )
+        QObject::connect(
+            response, SIGNAL(itemEdited(QString)), notifier, SLOT(itemsEdited(QString)));
 
     return response;
 }
@@ -245,7 +353,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),
-                request->autoUpdate());
+                request->autoUpdate(),
+                getChangeNotifier(request->rootType()) );
     }
 }
 
@@ -253,6 +362,7 @@ QDocumentGallery::QDocumentGallery(QObject *parent)
     : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
     qDBusRegisterMetaType<QVector<QStringList> >();
+    qDBusRegisterMetaType<QStringList>();
 }
 
 QDocumentGallery::~QDocumentGallery()
