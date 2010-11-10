@@ -55,6 +55,8 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
+#define TRACKER_QUERY_MAX_LIMIT 1024
+
 void QGalleryTrackerResultSetPrivate::update()
 {
     flags &= ~UpdateRequested;
@@ -88,12 +90,19 @@ void QGalleryTrackerResultSetPrivate::query()
     iCache.cutoff = 0;
 
     qSwap(rCache.values, iCache.values);
+    const int limit = queryLimit < 1 || queryLimit > TRACKER_QUERY_MAX_LIMIT ? TRACKER_QUERY_MAX_LIMIT : queryLimit;
+    QString sparqlStatement = queryArguments.at( 0 ).toString();
+    sparqlStatement += " LIMIT " + QString::number(limit);
+    if ( queryOffset > 0 )
+        sparqlStatement += ( queryOffset > 0 ? " OFFSET " + QString::number(queryOffset) : "" );
 
-//    const int limit = queryLimit < 1 || queryLimit > 1024 ? 1024 : queryLimit;
-qDebug() << "QUERY:" << queryArguments;
+    QVariantList arguments( queryArguments );
+    arguments.replace( 0, sparqlStatement );
+
+    qDebug() << "QUERY:" << arguments;
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, QVariantList(queryArguments) /*TODO support offset! << queryOffset << limit*/);
+            queryMethod, arguments );
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -136,7 +145,7 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
-        const int limit = queryLimit < 1 ? 1023 : queryLimit - iCache.count;
+        const int limit = queryLimit < 1 ? TRACKER_QUERY_MAX_LIMIT-1 : queryLimit - iCache.count;
         const bool reset = flags & Reset;
 
         flags &= ~Reset;
@@ -157,7 +166,7 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
 
     const QVector<QStringList> resultSet = reply.value();
 
-    qDebug() << "ResultSet:" << resultSet;
+    qDebug() << "ResultSet (" << resultSet.size() << "):" << resultSet;
 
     QVector<QVariant> &values = iCache.values;
 
@@ -545,12 +554,19 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
         const int offset = queryOffset + iCache.count;
-        const int limit = queryLimit < 1 || queryLimit - iCache.count > 1024
-                ? 1024
+        const int limit = queryLimit < 1 || queryLimit - iCache.count > TRACKER_QUERY_MAX_LIMIT
+                ? TRACKER_QUERY_MAX_LIMIT
                 : queryLimit - iCache.count;
 
+        QString sparqlStatement = queryArguments.at( 0 ).toString();
+        sparqlStatement += " LIMIT " + QString::number(limit);
+        sparqlStatement += " OFFSET " + QString::number(offset);
+
+        QVariantList arguments( queryArguments );
+        arguments.replace( 0, sparqlStatement );
+
         QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-                queryMethod, QVariantList(queryArguments) << offset << limit);
+                queryMethod, arguments );
 
         if (call.isFinished()) {
             queryFinished(call);
