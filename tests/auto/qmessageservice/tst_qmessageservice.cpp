@@ -256,15 +256,15 @@ void tst_QMessageService::initTestCase()
 
     Support::clearMessageStore();
 
+#ifndef FREESTYLEMAILUSED
     QMessageManager* manager = new QMessageManager(this);
 
     existingAccountIds = manager->queryAccounts().toSet();
-
-
     existingAccountsFilter = ~QMessageFilter();
     foreach(QMessageAccountId id, existingAccountIds) {
         existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
     }
+#endif
 
     QList<Support::Parameters> accountParams;
 
@@ -280,6 +280,49 @@ void tst_QMessageService::initTestCase()
         QVERIFY(accountIds.last().isValid());
     }
 
+#ifdef FREESTYLEMAILUSED
+    QMessageManager* manager = new QMessageManager(this);
+
+    existingAccountIds = manager->queryAccounts().toSet();
+    foreach (QMessageAccountId id, accountIds) {
+        existingAccountIds.remove(id);
+    }
+
+    existingAccountsFilter = ~QMessageFilter();
+    foreach (QMessageAccountId id, existingAccountIds) {
+        existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
+    }
+#endif
+
+#ifdef FREESTYLEMAILUSED
+    existingFolderIds = manager->queryFolders().toSet();
+
+    // Symbian FreeStyle email does not support local folder creation
+    // => Use standard folders instead
+    QMessageFolderIdList folders = manager->queryFolders(QMessageFolderFilter::byName("Drafts") &
+                                                         QMessageFolderFilter::byParentAccountId(accountIds[2])); // Alter Ego
+    QVERIFY(folders.count() > 0);
+    folderIds.append(folders[0]);
+    existingFolderIds.remove(folders[0]);
+
+    folders = manager->queryFolders(QMessageFolderFilter::byName("Drafts") &
+                                    QMessageFolderFilter::byParentAccountId(accountIds[0])); // Work
+    QVERIFY(folders.count() > 0);
+    folderIds.append(folders[0]);
+    existingFolderIds.remove(folders[0]);
+
+    folders = manager->queryFolders(QMessageFolderFilter::byName("Outbox") &
+                                    QMessageFolderFilter::byParentAccountId(accountIds[0])); // Work
+    QVERIFY(folders.count() > 0);
+    folderIds.append(folders[0]);
+    existingFolderIds.remove(folders[0]);
+
+    folders = manager->queryFolders(QMessageFolderFilter::byName("Sent") &
+                                    QMessageFolderFilter::byParentAccountId(accountIds[0])); // Work
+    QVERIFY(folders.count() > 0);
+    folderIds.append(folders[0]);
+    existingFolderIds.remove(folders[0]);
+#else
     existingFolderIds = manager->queryFolders().toSet();
 
     QList<Support::Parameters> folderParams;
@@ -315,6 +358,7 @@ void tst_QMessageService::initTestCase()
         folderIds.append(Support::addFolder(params));
         QVERIFY(folderIds.last().isValid());
     }
+#endif
 
     existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
@@ -323,7 +367,11 @@ void tst_QMessageService::initTestCase()
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
+#ifdef FREESTYLEMAILUSED
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "My messages")
+#endif
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
         ("type", "email")
 #else
@@ -340,11 +388,18 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
+#ifdef FREESTYLEMAILUSED
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "Innbox")
+#endif
         ("type", "email")
         ("to", "Important.Person@example.com")
         ("from", "Esteemed.Colleague@example.com")
         ("subject", "Meeting agenda")
+#ifdef FREESTYLEMAILUSED
+        ("text", "Yeah!")
+#endif
         ("date", "2000-01-01T12:00:00Z")
         ("receivedDate", "2000-01-01T20:00:00Z")
         ("priority", "High")
@@ -354,7 +409,11 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:no")
         ("custom-flagged", "true")
         << Params()("parentAccountName", "Work")
+#ifdef FREESTYLEMAILUSED
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "Innbox")
+#endif
         ("type", "email")
         ("to", "Important.Person@example.com,Minion@example.com")
         ("from", "Big.Boss@example.com")
@@ -396,7 +455,11 @@ void tst_QMessageService::initTestCase()
         ("custom-spam", "filter:yes");
 #else
     << Params()("parentAccountName", "Work")
+#ifdef FREESTYLEMAILUSED
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "X-Announce")
+#endif
         ("type", "email")
         ("to", "announce@example.com,maintenance-log@example.com")
         ("from", "sysadmin@example.com")
@@ -408,7 +471,11 @@ void tst_QMessageService::initTestCase()
         ("status-read", "true")
         ("custom-spam", "filter:maybe")
         << Params()("parentAccountName", "Work")
+#ifdef FREESTYLEMAILUSED
+        ("parentFolderPath", "Drafts")
+#else
         ("parentFolderPath", "X-Archived")
+#endif
         ("type", "email")
         ("to", "announce@example.com")
         ("from", "Big.Boss@example.com")
@@ -753,7 +820,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(FREESTYLEMAILUSED)
     QTest::newRow("sender equality 1")
         << QMessageFilter::bySender("Esteemed.Colleague@example.com", QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] )
@@ -785,7 +852,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(FREESTYLEMAILUSED)
     QTest::newRow("sender inequality 1")
         << QMessageFilter::bySender("Esteemed.Colleague@example.com", QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -1057,7 +1124,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(FREESTYLEMAILUSED)
     QTest::newRow("timeStamp equality 1")
         << QMessageFilter::byTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[4] )
@@ -1580,10 +1647,17 @@ void tst_QMessageService::testQueryCountData()
 #ifndef Q_OS_SYMBIAN
         << messageIds
         << ( QMessageIdList() )
-#else // Created folders are not mapped to any Standard Folder in Symbian 
+#else
+    #ifdef FREESTYLEMAILUSED
+        // All FreeStyle test messages were created to 'Drafts' folders
+        << messageIds
+        << ( QMessageIdList() )
+    #else
+        // Created folders are not mapped to any Standard Folder in Symbian
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
+    #endif
 #endif 
         << "";
 
@@ -1592,10 +1666,17 @@ void tst_QMessageService::testQueryCountData()
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
-#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
+#else
+    #ifdef FREESTYLEMAILUSED
+        // All FreeStyle test messages were created to 'Drafts' folders
+        << ( QMessageIdList() )
+        << messageIds
+    #else
+        // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
+    #endif
 #endif        
         << "";
 
@@ -1604,10 +1685,17 @@ void tst_QMessageService::testQueryCountData()
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
-#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
+#else
+    #ifdef FREESTYLEMAILUSED
+        // All FreeStyle test messages were created to 'Drafts' folders
+        << ( QMessageIdList() )
+        << messageIds
+    #else
+        // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
+    #endif
 #endif        
         << "";
 
@@ -1616,10 +1704,17 @@ void tst_QMessageService::testQueryCountData()
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << messageIds
         << ( QMessageIdList() )
-#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
+#else
+    #ifdef FREESTYLEMAILUSED
+        // All FreeStyle test messages were created to 'Drafts' folders
+        << messageIds
+        << ( QMessageIdList() )
+    #else
+        // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
+    #endif
 #endif        
         << "";
 #endif
@@ -1631,9 +1726,14 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("parentFolderId equality 2")
-        << QMessageFilter::byParentFolderId(folderIds[1], QMessageDataComparator::Equal) 
+        << QMessageFilter::byParentFolderId(folderIds[1], QMessageDataComparator::Equal)
+#ifdef FREESTYLEMAILUSED
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] )
+#else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId equality invalid")
@@ -1649,9 +1749,14 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("parentFolderId inequality 2")
-        << QMessageFilter::byParentFolderId(folderIds[1], QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byParentFolderId(folderIds[1], QMessageDataComparator::NotEqual)
+#ifdef FREESTYLEMAILUSED
+        << ( QMessageIdList() << messageIds[0] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+#else
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId inequality invalid")
@@ -1662,18 +1767,35 @@ void tst_QMessageService::testQueryCountData()
 
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentFolderId filter inclusion 1")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Drafts", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList()
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter inclusion 2")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Drafts", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList()
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter inclusion 3")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Drafts", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList()
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -1681,6 +1803,7 @@ void tst_QMessageService::testQueryCountData()
 #else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
 #endif
         << "";
 
@@ -1697,18 +1820,35 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("parentFolderId filter exclusion 1")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Drafts", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter exclusion 2")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Outbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+        << QMessageIdList()
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter exclusion 3")
+#ifdef FREESTYLEMAILUSED
+        << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("afts", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
+        << QMessageIdList()
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+#else
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[0] )
@@ -1716,6 +1856,7 @@ void tst_QMessageService::testQueryCountData()
 #else
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
 #endif
         << "";
 
@@ -1830,7 +1971,7 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif    
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(FREESTYLEMAILUSED)
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
         << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
