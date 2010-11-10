@@ -132,6 +132,7 @@
 #define EXPORT_URL
 #define REMOVE_STRESS
 #define SAVE_STRESS
+#define SAVE_CATEGORY_STRESS
 #define SIMPLE_TEST
 
 //#define WORKAROUND
@@ -1144,6 +1145,11 @@ void testViewport_data();
 #ifdef SAVE_STRESS
  void saveStress();
  void saveStress_data();
+#endif
+
+#ifdef SAVE_CATEGORY_STRESS
+ void saveCategoryStress();
+ void saveCategoryStress_data();
 #endif
 
 #ifdef SIMPLE_TEST
@@ -8236,7 +8242,7 @@ void tst_QLandmarkManager::saveStress()
         qDebug() << "Async save error string=" << lmSaveRequest.errorString();
         qDebug() << "Async error map size = " << lmSaveRequest.errorMap().count();
         if (lmSaveRequest.errorMap().count() > 0) {
-            qDebug() << "Async error map keys =" << m_manager->errorMap().keys();
+            qDebug() << "Async error map keys =" << lmSaveRequest->errorMap().keys();
         }
         QCOMPARE(lmSaveRequest.error(), QLandmarkManager::NoError);
     }
@@ -8251,6 +8257,60 @@ void tst_QLandmarkManager::saveStress_data()
     QTest::newRow("async") << "async";
 }
 #endif
+
+void tst_QLandmarkManager::saveCategoryStress()
+{
+    QFETCH(QString, type);
+    int originalCategoryCount = m_manager->categoryIds().count();
+    qDebug() << "original category count = " << originalCategoryCount;
+    if (type == "sync") {
+        for (int i=0; i < 100; ++i) {
+            QLandmarkCategory cat;
+            cat.setName(QString("cat") + QString::number(i));
+            bool saveResult = m_manager->saveCategory(&cat);
+            qDebug() << "Result of category save " << saveResult;
+            qDebug() << "error = " << m_manager->error();
+            qDebug() << "errorstring=" << m_manager->errorString();
+            qDebug() << "errormap size=" << m_manager->errorMap().count();
+
+            if (m_manager->errorMap().count() > 0)
+                qDebug() << "Error map keys= " << m_manager->errorMap().keys();
+            for ( int i=0; i < m_manager->errorMap().count(); ++i) {
+                qDebug() << "error at " << i <<  ": " << m_manager->errorMap().value(i);
+            }
+        }
+    } else if (type == "async") {
+
+        QLandmarkCategorySaveRequest catSaveRequest(m_manager);
+        QList<QLandmarkCategory> cats;
+        for (int i=0; i < 100; ++i) {
+            QLandmarkCategory cat;
+            cat.setName(QString("cat") + QString::number(i));
+            cats.append(cat);
+        }
+
+        QSignalSpy spy(&catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catSaveRequest.setCategories(cats);
+        catSaveRequest.start();
+        waitForAsync(spy, &catSaveRequest,QLandmarkManager::NoError);
+        qDebug() << "Async cat save error=" << catSaveRequest.error();
+        qDebug() << "Async cat save errorstring= " << catSaveRequest.errorString();
+        qDebug() << "Async error map size =" << catSaveRequest.errorMap().count();
+        if (catSaveRequest.errorMap().count() > 0) {
+            qDebug() << "Async error map keys =" << catSaveRequest.errorMap().keys();
+        }
+        QCOMPARE(catSaveRequest.error(), QLandmarkManager::NoError);
+    }
+    QCOMPARE(m_manager->categoryIds().count(),100 + originalCategoryCount);
+}
+
+void tst_QLandmarkManager::saveCategoryStress_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
 
 #ifdef SIMPLE_TEST
 void tst_QLandmarkManager::simpleTest()
