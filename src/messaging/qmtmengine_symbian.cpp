@@ -4638,7 +4638,41 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         }
     }
 #endif // NCNLISTREMOVED
-    
+
+    bool messageInPreparation = false;
+    TRAP_IGNORE(
+        CMsvEntry* pEntry = ipMsvSession->GetEntryL(aMessageId);
+        CleanupStack::PushL(pEntry);
+        TMsvEntry changedEntry = pEntry->Entry();
+        if (changedEntry.InPreparation()) {
+            messageInPreparation = true;
+        }
+        CleanupStack::PopAndDestroy(pEntry);
+        );
+    if (messageInPreparation) {
+        // Message that's related to event is in preparation state.
+        if (!iMessagesInPreparation.contains(aMessageId)) {
+            // Event is not yet in InPreparation list
+            // => Add event into InPreparation list.
+            iMessagesInPreparation.insert(aMessageId, aEvent);
+        }
+        // Don't handle event. Wait until preparation finishes.
+        return;
+    } else {
+        // Message that's related to event is NOT in preparation state.
+        if (iMessagesInPreparation.contains(aMessageId)) {
+            // Event was found from InPreparation list
+            if (aEvent != EMsvEntriesDeleted) {
+                // => Original event can be handled.
+                aEvent = iMessagesInPreparation.take(aMessageId);
+            } else {
+                // Message was deleted
+                // => There is no need to handle original event
+                iMessagesInPreparation.remove(aMessageId);
+            }
+        }
+    }
+
     QMessageManager::NotificationFilterIdSet matchingFilters;
 
     // Copy the filter map to protect against modification during traversal
