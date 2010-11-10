@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "S60audioencodercontrol.h"
+#include "s60audioencodercontrol.h"
 #include "s60videocapturesession.h"
 
 S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent) :

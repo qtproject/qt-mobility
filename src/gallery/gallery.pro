@@ -47,7 +47,9 @@ OTHER_FILES = \
         qgalleryproperty.qdoc \
         qgallerytype.qdoc
 
-unix:contains(QT_CONFIG, dbus) {
+simulator: {
+    include (simulator/simulator.pri)
+} else:unix:contains(QT_CONFIG, dbus) {
     maemo5:include (maemo5/maemo5.pri)
     maemo6:include (maemo6/maemo6.pri)
 } else:symbian:contains(mds_enabled, yes) {

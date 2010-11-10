@@ -6663,7 +6663,7 @@ void tst_QLandmarkManager::exportLmx() {
     QString lm1Description("lm1 Description");
     qreal lm1Radius(5);
     QString lm1PhoneNumber("lm1 phoneNumber");
-    QUrl lm1Url("lm1 URL");
+    QUrl lm1Url("http://lm1url.com");
     QGeoCoordinate lm1Coordinate(1,2,3);
     QGeoAddress lm1Address;
     lm1Address.setCountry("lm1 country");
@@ -6686,7 +6686,7 @@ void tst_QLandmarkManager::exportLmx() {
     QString lm2Description("lm2 Description");
     qreal lm2Radius(6);
     QString lm2PhoneNumber("lm2 phoneNumber");
-    QUrl lm2Url("lm2 URL");
+    QUrl lm2Url("http://lm2url.com");
     QGeoCoordinate lm2Coordinate(4,5,6);
     QGeoAddress lm2Address;
     lm2Address.setCountry("lm2 country");
@@ -6709,7 +6709,7 @@ void tst_QLandmarkManager::exportLmx() {
     QString lm3Description("lm3 Description");
     qreal lm3Radius(6);
     QString lm3PhoneNumber("lm3 phoneNumber");
-    QUrl lm3Url("lm3 URL");
+    QUrl lm3Url("http://lm3url.com");
     QGeoCoordinate lm3Coordinate(4,5,6);
     QGeoAddress lm3Address;
     lm3Address.setCountry("lm3 country");
@@ -6996,9 +6996,6 @@ void tst_QLandmarkManager::exportLmx() {
 
         lm2New.setLandmarkId(QLandmarkId());
         lm2.setLandmarkId(QLandmarkId());
-#ifdef Q_OS_SYMBIAN
-        QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
-#endif
         QCOMPARE(lm2New, lm2);
     }
 
@@ -7012,14 +7009,8 @@ void tst_QLandmarkManager::exportLmx() {
     lm1.setCategoryIds(QList<QLandmarkCategoryId>());
     lm3New.setCategoryIds(QList<QLandmarkCategoryId>());
     lm3.setCategoryIds(QList<QLandmarkCategoryId>());
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
-#endif
-    QCOMPARE(lm1New, lm1);
 
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1774: url data lost during export then import", Continue);
-#endif
+    QCOMPARE(lm1New, lm1);
     QCOMPARE(lm3New, lm3);
 
 #ifndef Q_OS_SYMBIAN

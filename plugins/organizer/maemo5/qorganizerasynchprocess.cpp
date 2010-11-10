@@ -331,28 +331,36 @@ void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDe
 
 void OrganizerAsynchProcess::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req)
 {
-    QOrganizerManager::Error err = QOrganizerManager::NoError;
+    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
+    QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     QStringList definitionNames = req->definitionNames();
     int nameCount = definitionNames.count();
     for(int i = 0; i < nameCount; ++i) {
-        m_engine->removeDetailDefinition(definitionNames.at(i), req->itemType(), &err);
-        errorMap.insert(i, err);
+        m_engine->removeDetailDefinition(definitionNames.at(i), req->itemType(), &tempError);
+        if (tempError != QOrganizerManager::NoError) {
+            errorMap.insert(i, tempError);
+            operationError = tempError;
+        }
     }
-    QOrganizerManagerEngine::updateDefinitionRemoveRequest(req, err, errorMap, QOrganizerAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateDefinitionRemoveRequest(req, operationError, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req)
 {
-    QOrganizerManager::Error err = QOrganizerManager::NoError;
+    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
+    QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     QList<QOrganizerItemDetailDefinition> definitions = req->definitions();
     int definitionCount = definitions.count();
     for (int i = 0; i < definitionCount; ++i) {
-        m_engine->saveDetailDefinition(definitions.at(i), req->itemType(), &err);
-        errorMap.insert(i, err);
+        m_engine->saveDetailDefinition(definitions.at(i), req->itemType(), &tempError);
+        if (tempError != QOrganizerManager::NoError) {
+            errorMap.insert(i, tempError);
+            operationError = tempError;
+        }
     }
-    QOrganizerManagerEngine::updateDefinitionSaveRequest(req, definitions, err, errorMap, QOrganizerAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateDefinitionSaveRequest(req, definitions, operationError, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
@@ -364,29 +372,39 @@ void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFe
 
 void OrganizerAsynchProcess::handleCollectionRemoveRequest(QOrganizerCollectionRemoveRequest *req)
 {
-    QOrganizerManager::Error err = QOrganizerManager::NoError;
+    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
+    QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
-    int i = 0;
-    foreach (QOrganizerCollectionId id, req->collectionIds()) {
-        m_engine->removeCollection(id, &err);
-        errorMap.insert(i, err);
-        i++;
+    QOrganizerCollectionId currentId;
+    QList<QOrganizerCollectionId> colsToRemove = req->collectionIds();
+    int collectionsCount = colsToRemove.count();
+    for (int i = 0; i < collectionsCount; ++i) {
+        currentId = colsToRemove.at(i);
+        m_engine->removeCollection(currentId, &tempError);
+        if (tempError != QOrganizerManager::NoError) {
+            errorMap.insert(i, tempError);
+            operationError = tempError;
+        }
     }
-    QOrganizerManagerEngine::updateCollectionRemoveRequest(req, err, errorMap, QOrganizerAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateCollectionRemoveRequest(req, operationError, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleCollectionSaveRequest(QOrganizerCollectionSaveRequest *req)
 {
-    QOrganizerManager::Error err = QOrganizerManager::NoError;
+    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
+    QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     QList<QOrganizerCollection> collections = req->collections();
     QList<QOrganizerCollection> retn;
     int collectionsCount = collections.count();
     for (int i = 0; i < collectionsCount; ++i) {
         QOrganizerCollection collection = collections.at(i);
-        m_engine->saveCollection(&collection, &err);
+        m_engine->saveCollection(&collection, &tempError);
         retn << collection;
-        errorMap.insert(i, err);
+        if (tempError != QOrganizerManager::NoError) {
+            errorMap.insert(i, tempError);
+            operationError = tempError;
+        }
     }
-    QOrganizerManagerEngine::updateCollectionSaveRequest(req, retn, err, errorMap, QOrganizerAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateCollectionSaveRequest(req, retn, operationError, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
