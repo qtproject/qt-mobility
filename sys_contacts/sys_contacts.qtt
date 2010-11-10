@@ -123,7 +123,7 @@ testcase = {
         verify(getValue(contactList).length == 0, "There must be zero contacts prior to running test, there are the following contacts:" + getValue(contactList));
     },
 
-    cleanup: funtion()
+    cleanup: function()
     {
         // While there are names, delete the names from the list
     },
