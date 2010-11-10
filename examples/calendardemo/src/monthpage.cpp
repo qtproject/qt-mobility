@@ -237,6 +237,9 @@ void MonthPage::refresh()
     // As the day item list is not showed do not refresh
     // the day items in Maemo5 or Maemo6 to improve performance
     refreshDayItems();
+#else
+    // We still need to emit this
+    emit currentDayChanged(m_calendarWidget->selectedDate());
 #endif
 }
 
