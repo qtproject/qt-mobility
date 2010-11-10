@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <QtPlugin>
+
 #include <stdio.h>
 #include <QtCore>
 #include <QtSql>
@@ -49,7 +51,6 @@
 QT_USE_NAMESPACE
 
 QTM_USE_NAMESPACE
-
 /*
  * If the emulator supports per process writeable static
  * data then we can use a separate server process and
@@ -143,7 +144,7 @@ bool CommandProcessor::initialize()
 {
     QString epocRoot(qgetenv("EPOCROOT").data());
     if (epocRoot.isEmpty()) {
-        *stdoutStream << "ERROR: EPOCROOT not set\n";
+        *stdoutStream << "servicedbgen failed: EPOCROOT not set\n";
         return false;
     }
 
@@ -174,7 +175,7 @@ bool CommandProcessor::initialize()
 void CommandProcessor::execute(const QStringList &options, const QString &cmd, const QStringList &args)
 {
     if(cmd.isEmpty())
-        MESSAGE("Error: no command given\n\n");
+        MESSAGE("servicedbgen failed: no command given\n\n");
 
     // setup options and collect target(s)
     // parse options, and fails if there's no cmd
@@ -200,7 +201,7 @@ void CommandProcessor::execute(const QStringList &options, const QString &cmd, c
         const GeneratorPaths &paths = i.value();
         ServiceDatabase *db = initTargetDatabase(paths.databasePath, true);
         if (!db) {
-            MESSAGE("ERROR: database for " << target << " cannot be opened/created.\n");
+            MESSAGE("servicedbgen failed: database for " << target << " cannot be opened/created.\n");
             continue;
         }
         MESSAGE("Database[" << i.key() << "]: " << db->databasePath() << '\n');
@@ -282,7 +283,7 @@ bool CommandProcessor::setOptions(const QStringList &options, QMap<QString, Gene
                 targets = pathMap;
             }
             else if (targetMap[target].isEmpty()) {
-                MESSAGE("ERROR: unknown target " << target << '\n');
+                MESSAGE("servicedbgen failed: unknown target " << target << '\n');
                 return false;
             }
             else if (!targets.contains(targetMap[target])){
@@ -299,7 +300,7 @@ bool CommandProcessor::setOptions(const QStringList &options, QMap<QString, Gene
                 pathMap["emulator"] = wsdMap["wsd"];
             }
             else {
-                MESSAGE("ERROR: unknown parameter " << wsd << '\n');
+                MESSAGE("servicedbgen failed: unknown parameter " << wsd << '\n');
                 return false;
             }
             if(targets.contains("emulator"))
@@ -394,7 +395,7 @@ QStringList CommandProcessor::targetServiceDescriptors(const QString &desPath, c
 void CommandProcessor::add(const QStringList &desList, ServiceDatabase *db)
 {
     if (desList.isEmpty()) {
-        MESSAGE("ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n");
+        MESSAGE("servicedbgen failed: No descriptor files/path specified, or the path does not contain service descriptors!\n");
         MESSAGE("Usage:\n\tadd <service-xml-file(s)>[|path-to-service-xmls]\n");
         showUsage();
         return;
@@ -406,7 +407,7 @@ void CommandProcessor::add(const QStringList &desList, ServiceDatabase *db)
         QFile f(serviceXml);
         ServiceMetaData parser(&f);
         if (!parser.extractMetadata()) {
-            MESSAGE("Parsing error: " << serviceXml << '\n');
+            MESSAGE("Parsing in servicedbgen failed: " << serviceXml << '\n');
             continue;
         }
 
@@ -420,14 +421,14 @@ void CommandProcessor::add(const QStringList &desList, ServiceDatabase *db)
             MESSAGE("Service " << results.name << " registered\n");
         }
         else
-            MESSAGE("ERROR: Service " << results.name << " registration to " << db->databasePath() << " failed\n");
+            MESSAGE("servicedbgen failed: Service " << results.name << " registration to " << db->databasePath() << " failed\n");
     }
 }
 
 void CommandProcessor::remove(const QStringList &desList, ServiceDatabase *db)
 {
     if (desList.isEmpty()) {
-        MESSAGE("ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n");
+        MESSAGE("servicedbgen failed: No descriptor files/path specified, or the path does not contain service descriptors!\n");
         MESSAGE("Usage:\n\tremove <service-xml-file(s)|path-to-service-xmls>\n");
         return;
     }
@@ -437,16 +438,19 @@ void CommandProcessor::remove(const QStringList &desList, ServiceDatabase *db)
     foreach (const QString &serviceXml, desList) {
         const QString &service = getServiceFromXML(serviceXml);
         if (service.isEmpty()) {
-            MESSAGE("ERROR: empty service descriptor or wrong parameter given.\n");
+            MESSAGE("servicedbgen failed: empty service descriptor or wrong parameter given.\n");
             continue;
         }
         if (db->unregisterService(service, securityToken))
             MESSAGE("Service " << service << " unregistered\n")
         else
-            MESSAGE("ERROR: Service " << service << " unregistration from " << db->databasePath() << " failed\n");
+            MESSAGE("servicedbgen failed: Service " << service << " unregistration from " << db->databasePath() << " failed\n");
     }
 }
 
+#ifdef STATIC_BUILD
+Q_IMPORT_PLUGIN(qsqlite)
+#endif
 
 int main(int argc, char *argv[])
 {
