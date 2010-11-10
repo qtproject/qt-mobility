@@ -610,7 +610,7 @@ bool QGstreamerPlayerSession::play()
     if (m_playbin) {
         if (m_resourceState == NoResourceState) {
             m_resourceState = PendingResourceState;
-            m_resourceSet->acquire();
+            acquireResources();
             return true;
         }
         else if (m_resourceState == HasResourceState) {
@@ -910,8 +910,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             }
                         }
 
-                        if (m_state != prevState)
-                            emit stateChanged(m_state);
+                        if (m_state != prevState) {
+                            if (m_resourceState == PendingResourceState)
+                                emit resourceLost();
+                            else
+                                emit stateChanged(m_state);
+                        }
 
                         break;
                     }
@@ -1278,6 +1282,14 @@ bool QGstreamerPlayerSession::doPlay()
 }
 
 #ifdef Q_WS_MAEMO_6
+void QGstreamerPlayerSession::acquireResources()
+{
+    m_resourceSet->addResource(ResourcePolicy::VideoPlaybackType);
+    // TODO: The video resource should be acquired only when necessary. We might play only audio...
+    m_resourceSet->update();
+    m_resourceSet->acquire();
+}
+
 void QGstreamerPlayerSession::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
                                                       /*grantedOptionalResList*/)
 {

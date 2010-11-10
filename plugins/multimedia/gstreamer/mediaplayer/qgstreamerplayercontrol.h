@@ -108,6 +108,7 @@ private Q_SLOTS:
     void fifoReadyWrite(int socket);
 
     void updateState(QMediaPlayer::State);
+    void resourceLost();
     void processEOS();
     void setBufferProgress(int progress);
 

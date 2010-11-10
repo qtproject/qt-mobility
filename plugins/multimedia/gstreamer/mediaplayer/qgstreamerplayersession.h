@@ -121,6 +121,7 @@ signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
+    void resourceLost();
     void volumeChanged(int volume);
     void mutedStateChanged(bool muted);
     void audioAvailableChanged(bool audioAvailable);
@@ -145,6 +146,7 @@ private slots:
 
 #ifdef Q_WS_MAEMO_6
     // resource policy awareness
+    void acquireResources();
     void resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>& /*grantedOptionalResList*/);
     void resourceReleasedHandler();
     void resourceLostHandler();

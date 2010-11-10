@@ -80,6 +80,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SLOT(updateState(QMediaPlayer::State)));
+    connect(m_session, SIGNAL(resourceLost()),
+            this, SLOT(resourceLost()));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SLOT(setBufferProgress(int)));
     connect(m_session, SIGNAL(playbackFinished()),
@@ -366,6 +368,12 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
         emit stateChanged(m_state);
     if (m_mediaStatus != oldStatus)
         emit mediaStatusChanged(m_mediaStatus);
+}
+
+void QGstreamerPlayerControl::resourceLost()
+{
+    if (m_mediaStatus != QMediaPlayer::EndOfMedia)
+        m_mediaStatus = QMediaPlayer::StalledMedia;
 }
 
 void QGstreamerPlayerControl::processEOS()
