@@ -676,7 +676,9 @@ static bool qt_writeFilePathCondition(
         *error = QDocumentGallery::FilterError;
         return false;
     } else {
-        *query += "( nie:url(?x) ='" + QUrl::fromLocalFile(filter.value().toString()).toEncoded() + "')";
+        QString encodedValue(QUrl::fromLocalFile(filter.value().toString()).toEncoded());
+        encodedValue.replace('\'',"\\\'");
+        *query += "( nie:url(?x) ='" + encodedValue + "')";
         return true;
     }
 }
