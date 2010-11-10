@@ -47,33 +47,59 @@
 
 #include <QColor>
 #include <QUrl>
+#include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapPixmapObject : public QGeoMapPixmapObject
 {
     Q_OBJECT
+    Q_ENUMS(Status)
 
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ declarativeCoordinate WRITE setDeclarativeCoordinate NOTIFY declarativeCoordinateChanged)
-    Q_PROPERTY(QUrl pixmap READ pixmapUrl WRITE setPixmapUrl NOTIFY pixmapUrlChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
 public:
+    enum Status {
+        Null,
+        Ready,
+        Loading,
+        Error
+    };
+
     QDeclarativeGeoMapPixmapObject();
     ~QDeclarativeGeoMapPixmapObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate() const;
+    QDeclarativeCoordinate* declarativeCoordinate();
     void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
 
-    QUrl pixmapUrl() const;
-    void setPixmapUrl(const QUrl &pixmapUrl);
+    QUrl source() const;
+    void setSource(const QUrl &source);
 
-signals:
+    Status status() const;
+
+Q_SIGNALS:
     void declarativeCoordinateChanged(const QDeclarativeCoordinate *coordinate);
-    void pixmapUrlChanged(const QUrl &pixmapUrl);
+    void sourceChanged(const QUrl &source);
+    void statusChanged(QDeclarativeGeoMapPixmapObject::Status status);
+
+private Q_SLOTS:
+    void coordinateLatitudeChanged(double latitude);
+    void coordinateLongitudeChanged(double longitude);
+    void coordinateAltitudeChanged(double altitude);
+    void finished();
+    void error(QNetworkReply::NetworkError error);
 
 private:
-    mutable QDeclarativeCoordinate* m_coordinate;
-    mutable QUrl m_pixmapUrl;
+    void setStatus(const QDeclarativeGeoMapPixmapObject::Status status);
+    void load();
+
+    Status m_status;
+    QDeclarativeCoordinate* m_coordinate;
+    QUrl m_source;
+    QNetworkReply *m_reply;
+
     Q_DISABLE_COPY(QDeclarativeGeoMapPixmapObject)
 };
 

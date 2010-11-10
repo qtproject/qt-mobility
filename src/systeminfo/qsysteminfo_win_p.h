@@ -185,7 +185,7 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
-
+    bool backLightOn();
 private:
     HDC deviceContextHandle;
     int getMonitorCaps(int caps, int screen);

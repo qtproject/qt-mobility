@@ -54,9 +54,11 @@ QTM_BEGIN_NAMESPACE
     request a list of landmarks from a landmark manager.
 
     For a QLandmarkFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-    landmarks (which may be retrieved by calling landmarks()), are updated, as well as if
+    landmarks (which may be retrieved by calling landmarks()) are updated, as well as if
     the overall operation error (which may be retrieved by calling error()) is updated.
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -81,7 +83,7 @@ QLandmarkFetchRequest::~QLandmarkFetchRequest()
 /*!
     Returns the filter which will be used to select the landmarks.
 
-    By default, the filter's type will be a LandmarkFilter::DefaultFilter
+    By default, the filter's type will be a QLandmarkFilter::DefaultFilter
     and thus match all landmarks.
 */
 QLandmarkFilter QLandmarkFetchRequest::filter() const
@@ -102,7 +104,8 @@ void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 }
 
 /*!
-    Returns the sort ordering which is used to sort the result.
+    Returns the sort ordering which is used to sort the result.  By default
+    the sort order list is empty, thus no sorting will take place.
 */
 QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 {
@@ -124,9 +127,9 @@ void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 }
 
 /*!
-    Sets the sort ordering of the request to a single\a sorting.  This function
+    Convenience function which sets the sort ordering of the request to a single \a sorting.  This function
     will only have an effect on results if invoked prior to calling
-    \l QLandmarkAbstractRequest::start()
+    \l QLandmarkAbstractRequest::start().
 */
 void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
@@ -137,7 +140,8 @@ void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 }
 
 /*!
-    Returns the maximum number of landmarks to be returned.
+    Returns the maximum number of landmarks to be returned.  By default the limit
+    is -1 indicating that all landmarks matching the filter sould be retrieved.
 */
 int QLandmarkFetchRequest::limit() const
 {
@@ -148,6 +152,10 @@ int QLandmarkFetchRequest::limit() const
 
 /*!
     Sets the maximum number of landmarks to be returned to \a limit.
+
+    A limit of -1 will retrieve all landmarks that match the filter.
+
+    (A limit of 0 will retrieve no landmarks.)
  */
 void QLandmarkFetchRequest::setLimit(int limit)
 {
@@ -157,7 +165,7 @@ void QLandmarkFetchRequest::setLimit(int limit)
 }
 
 /*!
-    Returns the index offset for the request.
+    Returns the index offset for the request.  By default the offset is set to 0.
 */
 int QLandmarkFetchRequest::offset() const
 {

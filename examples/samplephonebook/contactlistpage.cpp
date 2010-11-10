@@ -357,6 +357,7 @@ void ContactListPage::importClicked()
                 QVersitContactImporter importer;
                 if (importer.importDocuments(reader.results())) {
                     QList<QContact> contacts = importer.contacts();
+                    qDebug() << "Contacts imported: " << contacts;
                     QMap<int, QContactManager::Error> errorMap;
                     QList<QContact>::iterator it = contacts.begin();
                     while (it != contacts.end()) {

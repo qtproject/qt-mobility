@@ -56,7 +56,8 @@ QTM_USE_NAMESPACE
 
 QLandmarkManagerPrivate::QLandmarkManagerPrivate()
         : engine(0),
-        errorCode(QLandmarkManager::NoError)
+        errorCode(QLandmarkManager::NoError),
+        isConnected(false)
 {
 }
 
@@ -95,13 +96,6 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
             errorCode = QLandmarkManager::InvalidManagerError;
             errorString = "The landmark manager could not return the requested engine instance";
         }
-    }
-
-    if (engine) {
-        QObject::connect(engine,
-                SIGNAL(dataChanged()),
-                q,
-                SIGNAL(dataChanged()));
     }
 }
 

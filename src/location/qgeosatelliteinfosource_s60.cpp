@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+
 #include <QObject>
 #include <QDateTime>
 #include <limits.h>
@@ -262,7 +263,7 @@ TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aB
 }
 
 //private function : to update the mList array
-void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt aStatus)
+void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus)
 {
 
     TInt i, index;
@@ -487,7 +488,7 @@ void CQGeoSatelliteInfoSourceS60::updateDeviceStatus(void)
 
 //
 void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
-    TPositionSatelliteInfo  aSatInfo, QList<QGeoSatelliteInfo> &qListSatInView,
+    TPositionSatelliteInfo  &aSatInfo, QList<QGeoSatelliteInfo> &qListSatInView,
     QList<QGeoSatelliteInfo> &qListSatInUse)
 {
     TInt satInView = aSatInfo.NumSatellitesInView();
@@ -507,7 +508,7 @@ void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
     }
 }
 //
-void CQGeoSatelliteInfoSourceS60::updatePosition(TPositionSatelliteInfo aSatInfo,
+void CQGeoSatelliteInfoSourceS60::updatePosition(TPositionSatelliteInfo &aSatInfo,
         int aError, bool isStartUpdate)
 {
     QList<QGeoSatelliteInfo> qListSatInUse;
@@ -574,8 +575,10 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
         }
         //if the selected module for request update is same as the previous one reuse the request
         if (mList[index].mUid == mReqModuleId) {
-            mReqUpdateAO->requestUpdate(aTimeout);
-            return;
+            if (mReqUpdateAO) {
+            	mReqUpdateAO->requestUpdate(aTimeout);
+            	return;
+            }
         }
 
         TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));

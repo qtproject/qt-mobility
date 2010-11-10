@@ -301,7 +301,7 @@ void tst_QOrganizerItemDetail::assignment()
     QVERIFY(c1.comment() == QString()); // should reset the detail
     QCOMPARE(c1, QOrganizerItemComment());
 
-    QOrganizerItemManagerEngine::setDetailAccessConstraints(&p2, QOrganizerItemDetail::Irremovable);
+    QOrganizerManagerEngine::setDetailAccessConstraints(&p2, QOrganizerItemDetail::Irremovable);
     QVERIFY(p1 != p2);
 }
 

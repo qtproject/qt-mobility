@@ -41,7 +41,7 @@
 
 /*!
     \example hapticsplayer
-    \title HapticsPlayer
+    \title Haptics Player
 
     \tableofcontents
 
@@ -59,14 +59,16 @@
 
     \section2 Use Case
 
-    This example is more feature complete than the \l{Hapticsquare} example,
+    This example is more feature complete than the \l{hapticsquare}{Haptic Square} example,
     but is intended more as a way to test the haptics provider plugins which
     are available on a system, than as an example for application developers.
 
     It is useful for people who wish to learn how to use the API to create and
     play custom effects dynamically, or to allow users of an application to
-    select which haptic effect to play when a particular event occurs.
-    It is a more complex example than the \l{Hapticsquare} example, so it is
+    select which haptic effect to play when a particular event occurs.  It is also useful
+    to test how effects are implemented on specific devices.
+
+    It is a more complex example than the \l{hapticsquare}{Haptic Square} example, so it is
     suggested that developers look at that example first.
 
     \section2 Interface

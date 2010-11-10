@@ -53,7 +53,7 @@ void UT_CntSqlKoreanItuT::cleanupTestCase()
 
 void UT_CntSqlKoreanItuT::init()
 {   
-    mTwelveKeyMap = new C12keyKeyMap();
+    QT_TRAP_THROWING(mTwelveKeyMap = C12keyKeyMap::NewL());
     mSqlKoreanItuT = new CntSqlKoreanItuT(mTwelveKeyMap);
 }
 
@@ -142,6 +142,10 @@ void UT_CntSqlKoreanItuT::testBasicKoreanSearch()
     QString pattern("255");
     QString result;
     QString reference = "SELECT contact_id FROM predictivesearch2 WHERE ((nbr>144115188075855871 AND nbr<216172782113783808) AND (nbr2>360287970189639679 AND nbr2<432345564227567616) AND (nbr3>360287970189639679 AND nbr3<432345564227567616)) OR ((nbr2>144115188075855871 AND nbr2<216172782113783808) AND (nbr3>360287970189639679 AND nbr3<432345564227567616) AND (nbr4>360287970189639679 AND nbr4<432345564227567616)) OR ((nbr3>144115188075855871 AND nbr3<216172782113783808) AND (nbr4>360287970189639679 AND nbr4<432345564227567616)) OR (nbr4>144115188075855871 AND nbr4<216172782113783808) ORDER BY first_name, last_name ASC;"; 
+    result = mSqlKoreanItuT->basicKoreanSearch(pattern);
+    QCOMPARE( result, reference );
+    pattern = QString("87*"); 
+    reference = QString("SELECT contact_id FROM predictivesearch8 WHERE ((nbr>576460752303423487 AND nbr<648518346341351424) AND (nbr2>549439154539200511 AND nbr2<553942754166571008)) OR ((nbr2>576460752303423487 AND nbr2<648518346341351424) AND (nbr3>549439154539200511 AND nbr3<553942754166571008)) OR ((nbr3>576460752303423487 AND nbr3<648518346341351424) AND (nbr4>549439154539200511 AND nbr4<553942754166571008)) OR (nbr4>576460752303423487 AND nbr4<648518346341351424) ORDER BY first_name, last_name ASC;");
     result = mSqlKoreanItuT->basicKoreanSearch(pattern);
     QCOMPARE( result, reference );
     pattern = QString("2"); 
@@ -246,6 +250,25 @@ void UT_CntSqlKoreanItuT::testGetSearchColumns()
     result = mSqlKoreanItuT->getSearchColumns(pattern, position);
     QCOMPARE( result, reference ); 
     
+    position = 1;
+    pattern = QString("7#");
+    result = mSqlKoreanItuT->getSearchColumns(pattern, position);
+    qDebug() << pattern << "-> result" << result;
+    reference = QString("(nbr2>553942754166571007 AND nbr2<558446353793941504)");
+    QCOMPARE( result, reference ); 
+    
+    position = 1;
+    pattern = QString("7**");
+    result = mSqlKoreanItuT->getSearchColumns(pattern, position);
+    reference = QString("(nbr2>552253904306307071 AND nbr2<552535379283017728)");
+    QCOMPARE( result, reference ); 
+    
+    position = 1;
+    pattern = QString("7*");
+    result = mSqlKoreanItuT->getSearchColumns(pattern, position);
+    reference = QString("(nbr2>549439154539200511 AND nbr2<553942754166571008)");
+    QCOMPARE( result, reference ); 
+    
     position = 4;
     pattern = QString("5");
     result = mSqlKoreanItuT->getSearchColumns(pattern, position);
@@ -267,7 +290,56 @@ void UT_CntSqlKoreanItuT::testGetSearchPattern()
     QStringList result;
     QStringList reference;
     reference << "2" << "0";
+    //result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("132264");
+    reference << "132" << "264" ;
     result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("13226");
+    reference << "132" << "26" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("132226");
+    reference << "1322" << "26" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("261632");
+    reference << "26" << "1632" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0) << " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("12457680");
+    reference << "12457680";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("26457580");
+    reference << "26457580";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("45726580");
+    reference << "45726580";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    //qDebug() << pattern << "-> result 1" << result.at(0)<< " -> result 2" << result.at(1);
     QCOMPARE( result, reference );
     
     reference.clear();
@@ -279,6 +351,24 @@ void UT_CntSqlKoreanItuT::testGetSearchPattern()
     reference.clear();
     pattern = QString("255");
     reference << "2" << "5" << "5";
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("132465");
+    reference << "132" << "465" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("87*");
+    reference << "8" << "7" ;
+    result = mSqlKoreanItuT->getSearchPattern(pattern);
+    QCOMPARE( result, reference );
+    
+    reference.clear();
+    pattern = QString("8*#7*");
+    reference << "8" << "7" ;
     result = mSqlKoreanItuT->getSearchPattern(pattern);
     QCOMPARE( result, reference );
     

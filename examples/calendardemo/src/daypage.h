@@ -47,7 +47,7 @@
 #include <qorganizeritemid.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -73,7 +73,7 @@ public:
 
 public Q_SLOTS:
     void refresh();
-    void changeManager(QOrganizerItemManager *manager);
+    void changeManager(QOrganizerManager *manager);
     void dayChanged(QDate date);
     void editItem();
     void removeItem();
@@ -93,7 +93,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QDate m_day;
     QLabel *m_dateLabel;
     QListWidget *m_itemList;

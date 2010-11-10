@@ -270,6 +270,8 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
         contains(CONFIG, QTHIGHWAY) {
             LIBS += -lxqservice \
                     -lxqserviceutil \
+        } else {
+            LIBS += -lsendui
         }
         LIBS += -lsendas2 \
             -lmsgs \
@@ -280,7 +282,6 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             -limcm \
             -lbafl \
             -lmtur \
-            -lsendui \
             -lsmcm \
             -limcm \
             -leikcore \

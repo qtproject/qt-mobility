@@ -449,14 +449,20 @@ private:
 class CReqDeleteCnt : public CCntRequest
 	{
 public:	
-	static CReqDeleteCnt* NewLC(const TUint aSessionId, const RMessage2& aMessage, const TInt aTimeOut);
+	static CReqDeleteCnt* NewLC(const TUint aSessionId, const RMessage2& aMessage, const TInt aTimeOut, CCntPackager* aPackager = NULL);
 	TAccept VisitStateL(CState& aState);
 	~CReqDeleteCnt();
 	inline TContactItemId CntItemId() const;
 	inline TCntSendEventAction NotificationEventAction() const;
+	inline CContactIdArray* IdArray() const;
+	inline TInt RequestCode() const;
 
 private:
 	CReqDeleteCnt(const TUint aSessionId, const RMessage2& aMessage, const TInt aTimeOut);
+    void ConstructL(CCntPackager* aPackager);
+
+private:
+    CContactIdArray* iIdArray;
 	};
 
 
@@ -727,6 +733,16 @@ inline TContactItemId CReqDeleteCnt::CntItemId()const
 inline TCntSendEventAction CReqDeleteCnt::NotificationEventAction() const
     {
     return static_cast<TCntSendEventAction>(iMessage.Int1());
+    }
+
+inline CContactIdArray* CReqDeleteCnt::IdArray() const
+    {
+    return iIdArray;
+    }
+
+inline TInt CReqDeleteCnt::RequestCode() const
+    {
+    return iMessage.Function();
     }
 
 inline TContactItemId CReqCloseCnt::CntItemId()const
