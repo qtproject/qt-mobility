@@ -112,6 +112,8 @@ private Q_SLOTS:
     void processEOS();
     void setBufferProgress(int progress);
 
+    void handleInvalidMedia();
+
 private:
     bool openFifo();
     void closeFifo();

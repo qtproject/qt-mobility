@@ -47,7 +47,7 @@
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoaddress_p.h"
 
-#include <QtCore>
+#include <QVariant>
 #include <QtDeclarative/qdeclarative.h>
 
 QTM_BEGIN_NAMESPACE
@@ -86,6 +86,9 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoPlace))
+
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoPlace));
 
 #endif // QDECLARATIVEGEOPLACE_P_H

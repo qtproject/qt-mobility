@@ -9,7 +9,7 @@ isEmpty(QT_LIBINFIX):symbian {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
 
-    VERSION = 1.1.0
+    VERSION = 1.1.1
 
     vendorinfo = \
         "; Localised Vendor name" \
@@ -20,9 +20,11 @@ isEmpty(QT_LIBINFIX):symbian {
         " "
     qtmobilitydeployment.pkg_prerules += vendorinfo
 
+
     epoc31 = $$(EPOCROOT31)
     epoc32 = $$(EPOCROOT32)
     epoc50 = $$(EPOCROOT50)
+    epoc51 = $$(EPOCROOT51)
 
     # default to EPOCROOT if EPOCROOTxy not defined
     isEmpty(epoc31) {
@@ -39,6 +41,12 @@ isEmpty(QT_LIBINFIX):symbian {
         EPOCROOT50 = $${EPOCROOT}
     } else {
         EPOCROOT50 = $$(EPOCROOT50)
+    }
+    #Epocroot 51 is based on a N97 sdk
+    isEmpty(epoc51) {
+        EPOCROOT51 = $${EPOCROOT}
+    } else {
+        EPOCROOT51 = $$(EPOCROOT51)
     }
 
     #Symbian^3 and beyond requires special package flags
@@ -194,17 +202,38 @@ isEmpty(QT_LIBINFIX):symbian {
         }
     }
 
-    contains(mobility_modules, gallery) { 
-        qtmobilitydeployment.sources += \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll
-    contains(QT_CONFIG, declarative): {
+    contains(mobility_modules, gallery) {
+        #QDocumentGallery on S60/Symbian relies on MetaDataSystem. There exists few different versions of it and we must
+        #check what version is currently installed on devices. Check is made a with known dlls.
+        #Installation has these preconditions:
+        # QDocumentGallery built against EPOCROOT50 has mds 2.0 libs in place (3.1/3.2/5.0)
+        # QDocumentGallery built against EPOCROOT51 has mds 2.5 libs in place (Symbian^3 and N97)
+        # QDocumentGallery built against EPOCROOT32 has no mds libs at all (stub implementation, api only)
+        # Also if checked mds library is present on c-drive then also check whether mds is installed
+        gallerymdscheck = \
+            "if exists(\"z:\sys\bin\locationutility.dll\")" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"c:\sys\bin\locationutility.dll\") AND package(0x200009F5)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"z:\sys\bin\locationmanagerserver.exe\")" \
+            "   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "elseif exists(\"c:\sys\bin\locationmanagerserver.exe\") AND package(0x200009F5)" \
+            "   \"$${EPOCROOT51}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "else" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll\" - \"!:\\sys\\bin\\QtGallery.dll\"" \
+            "endif"
+
+        qtmobilitydeployment.pkg_postrules += gallerymdscheck
+
+        # QDocumentGallery QML plugin
+        contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_gallery.dll
             pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmakepluginstubs\\declarative_gallery.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\declarative_gallery.qtplugin\""
             qmldirs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\qmldir\""
-        }   
+        }
     }
 
     contains(mobility_modules, bearer) {
@@ -222,18 +251,20 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_postrules += bearer
     }
     
-    contains(mobility_modules, bearer):symbian:!contains(MOBILITY_SD_MCL_BUILD, yes): exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
-        bearer10_0 = \ 
-	"IF package(0x1028315F)" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
-            "ELSEIF package(0x102752AE)" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
-            "ELSEIF package(0x102032BE)" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
-            "ELSE" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
-            "ENDIF"
-        qtmobilitydeployment.pkg_postrules += bearer10_0
+    contains(mobility_modules, bearer) {
+            !contains(MOBILITY_SD_MCL_BUILD, yes):exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso) {
+            bearer10_0 = \ 
+	    "IF package(0x1028315F)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+                "ELSEIF package(0x102752AE)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+                "ELSEIF package(0x102032BE)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+                "ELSE" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer{000a0000}.dll\" - \"!:\\sys\\bin\\QtBearer{000a0000}.dll\"" \
+                "ENDIF"
+            qtmobilitydeployment.pkg_postrules += bearer10_0
+        }
     }
 
     contains(mobility_modules, contacts) {

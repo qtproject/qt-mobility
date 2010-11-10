@@ -274,7 +274,7 @@ void QSystemInfoPrivate::setAvailableLanguages(const QStringList &v)
 {
     if (data.availableLanguages != v) {
         data.availableLanguages.clear();
-        foreach (QString language, v)
+        foreach (const QString &language, v)
             data.availableLanguages.append(language.toLower());
     }
 }
@@ -341,7 +341,7 @@ void QSystemNetworkInfoPrivate::setInitialData()
     setLocationAreaCode(54321);
     setCurrentMobileCountryCode("242");
     setCurrentMobileNetworkCode("123456789");
-    setHomeMobileCountryCode("+47");
+    setHomeMobileCountryCode("247");
     setHomeMobileNetworkCode("987654321");
     setCurrentMode(QSystemNetworkInfo::EthernetMode);
 }

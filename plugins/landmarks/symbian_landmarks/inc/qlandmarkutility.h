@@ -46,7 +46,7 @@
 
 #include <EPos_Landmarks.h>
 #include <EPos_CPosLandmark.h>
-#include <Epos_CposLandmarkDatabase.h>
+#include <EPos_CPosLandmarkDatabase.h>
 #include <EPos_CPosLmCategoryManager.h> 
 #include <EPos_CPosLandmarkCategory.h>
 #include <EPos_TPosLmDatabaseEvent.h>
@@ -276,6 +276,11 @@ public:
      * Prepares the path for the file
      */
     static QString preparePath(QString filename);
+    
+    /**
+     * Prepares default protocol for landmark url
+     */
+    static void RemoveDefaultProtocolL(TPtr& landmarkUrl);
 
 };
 

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -186,7 +186,12 @@ void LandmarkBrowser::on_importLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
-    QString fileName = QFileDialog::getOpenFileName(this,tr("Import File"),".",fileFilterString);
+    QString fileName;
+#if defined(Q_WS_MAEMO_6) || defined (Q_WS_MAEMO_5)
+    fileName = QFileDialog::getOpenFileName(this,tr("Import File"),"/home/user",fileFilterString);
+#else
+    fileName = QFileDialog::getOpenFileName(this,tr("Import File"), ".",fileFilterString);
+#endif
     if (!fileName.isEmpty()) {
         landmarkImport->setFileName(fileName);
         landmarkImport->start();
@@ -204,7 +209,13 @@ void LandmarkBrowser::on_exportLandmarks_clicked()
         fileFilterString = tr("Landmark files (*.gpx *.lmx *)");
     #endif
 
-    QString fileName = QFileDialog::getSaveFileName(this,tr("Export File"),".",fileFilterString);
+    QString fileName;
+#if defined(Q_WS_MAEMO_6) || defined (Q_WS_MAEMO_5)
+    fileName = QFileDialog::getSaveFileName(this,tr("Export File"),"/home/user",fileFilterString);
+#else
+    fileName = QFileDialog::getSaveFileName(this,tr("Export File"),".",fileFilterString);
+#endif
+
     if (!fileName.isEmpty()) {
         landmarkExport->setFileName(fileName);
         if (lmxRadioButton->isChecked())
@@ -239,14 +250,6 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    QList<QLandmark> newLandmarks = manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount());
-
-    updateTable(newLandmarks);
-    updateRowLabels();
-    landmarks.append(newLandmarks);
-
-    if (table->rowCount() < limit)
-        nextLandmarkButton->setEnabled(false);
 }
 
 void LandmarkBrowser::on_setFilterButton_clicked()

@@ -108,8 +108,8 @@
 #include <EPos_CPosLmIdListCriteria.h> 
 #include <EPos_CPosLmCompositeCriteria.h> 
 #include <f32file.h>  
-#include <APGCLI.H>
-#include <APMSTD.H>
+#include <apgcli.h>
+#include <apmstd.h>
 // user includes
 #include "qlandmarkutility.h"
 #include "qlandmarkmanagerengine_symbian.h"
@@ -2464,12 +2464,6 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         *error = QLandmarkManager::BadArgumentError;
         *errorString
             = "Landmark Desciption is greater than its maxlength i.e. KPosLmMaxDescriptionLength = 4095.";
-        return result;
-    }
-
-    if (!landmark->viewport().isEmpty()) {
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString = "Landmark viewport boundry settings not supported.";
         return result;
     }
 

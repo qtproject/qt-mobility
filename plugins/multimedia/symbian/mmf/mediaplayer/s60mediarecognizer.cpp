@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "S60mediarecognizer.h"
+#include "s60mediarecognizer.h"
 #include <e32def.h>
 #include <e32cmn.h>
 #include <QtCore/qurl.h>

@@ -157,7 +157,7 @@ void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    qDebug() << ni.currentMobileCountryCode();
+//    qDebug() << ni.currentMobileCountryCode();
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
@@ -165,6 +165,10 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
         QVERIFY(!ni.currentMobileCountryCode().isEmpty());
+        bool ok;
+        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        QVERIFY(ok);
+        QVERIFY(ni.currentMobileCountryCode().count() == 3);
     } else {
         QVERIFY(ni.currentMobileCountryCode().isEmpty());
     }
@@ -173,7 +177,6 @@ void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-    qDebug() << ni.currentMobileNetworkCode();
     if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
@@ -181,6 +184,11 @@ void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
         QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
+        bool ok;
+        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        QVERIFY(ok);
+        QVERIFY((ni.currentMobileCountryCode().count() == 3)
+                || (ni.currentMobileCountryCode().count() == 2));
     } else {
         QVERIFY(ni.currentMobileNetworkCode().isEmpty());
     }
@@ -197,6 +205,10 @@ void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
         QVERIFY(!ni.homeMobileCountryCode().isEmpty());
+        bool ok;
+        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        QVERIFY(ok);
+        QVERIFY(ni.currentMobileCountryCode().count() == 3);
     } else {
         QVERIFY(ni.homeMobileCountryCode().isEmpty());
     }
@@ -212,6 +224,11 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
         QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
+        bool ok;
+        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        QVERIFY(ok);
+        QVERIFY((ni.currentMobileCountryCode().count() == 3)
+                || (ni.currentMobileCountryCode().count() == 2));
     } else {
         QVERIFY(ni.homeMobileNetworkCode().isEmpty());
     }

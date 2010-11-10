@@ -58,7 +58,7 @@
 #include "qgalleryqueryrequest.h"
 
 #include <QObject>
-#include <QEventloop>
+#include <QEventLoop>
 #include <mdesession.h>
 #include <mdequery.h>
 #include <e32std.h>
@@ -99,6 +99,11 @@ public: // From MMdESessionObserver
     CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer,
         QGalleryQueryRequest *request,
         int &error);
+
+    CMdEObjectQuery *NewObjectQuery(
+            CMdENamespaceDef &namespaceDef,
+            CMdEObjectDef &objectDef,
+            MMdEQueryObserver *observer = 0);
 
     int RemoveObject( const unsigned int itemId );
 

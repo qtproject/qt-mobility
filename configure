@@ -107,7 +107,8 @@ MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit me
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
-ORGANIZER_REQUESTED=
+# By default, all modules are requested.  Reset this later if -modules is supplied
+ORGANIZER_REQUESTED=yes
 
 usage() 
 {
@@ -241,6 +242,7 @@ while [ "$#" -gt 0 ]; do
             ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
+            ORGANIZER_REQUESTED=
             #reset default selection
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
