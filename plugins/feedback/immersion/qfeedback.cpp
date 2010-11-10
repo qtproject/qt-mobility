@@ -224,7 +224,7 @@ void QFeedbackImmersion::updateEffectProperty(const QFeedbackHapticsEffect *effe
 
 void QFeedbackImmersion::killTimerForHandle(VibeInt32 handle)
 {
-    QTimer* t = effectTimers.take(effectHandle);
+    QTimer* t = effectTimers.take(handle);
     if (t) {
         t->stop();
         delete t;
@@ -324,7 +324,7 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackHapticsEff
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(effect->actuator()), effectHandle, &effectState);
 
-    return convertImmState(effectHandle, effectState);
+    return updateImmState(effectHandle, effectState);
 }
 
 // **************************
@@ -418,7 +418,7 @@ void QFeedbackImmersion::setEffectState(QFeedbackFileEffect *effect, QFeedbackEf
         reportError(effect, QFeedbackEffect::UnknownError);
 }
 
-QFeedbackEffect::State QFeedbackImmersion::convertImmState(VibeInt32 effectHandle, VibeInt32 effectState) const
+QFeedbackEffect::State QFeedbackImmersion::updateImmState(VibeInt32 effectHandle, VibeInt32 effectState)
 {
     // here we detect changes in the state of the effect
     // and make sure any timers are updated
@@ -455,7 +455,7 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackFileEffect
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(0), effectHandle, &effectState);
 
-    return convertImmState(effectHandle, effectState);
+    return updateImmState(effectHandle, effectState);
 }
 
 int QFeedbackImmersion::effectDuration(const QFeedbackFileEffect *effect)
