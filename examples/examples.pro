@@ -144,6 +144,16 @@ contains(mobility_modules, feedback) {
     SUBDIRS += hapticsplayer hapticsquare # this not a good UI for mobile screens at the moment
 }
 
+# Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += connectivity
+}
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    !win32:SUBDIRS += btscanner btchat
+}
+
 sources.path = $$QT_MOBILITY_EXAMPLES
 
 INSTALLS += sources

@@ -59,7 +59,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback connectivity
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -140,7 +140,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts gallery location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework
-    echo                     sensors versit organizer feedback
+    echo                     sensors versit organizer feedback connectivity
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a selected module depends on other modules
     echo                     those modules (and their dependencies) will automatically be enabled.
@@ -322,6 +322,8 @@ if %FIRST% == bearer (
     echo     Sensors selected
 ) else if %FIRST% == gallery (
     echo     Gallery selected
+) else if %FIRST% == connectivity (
+    echo     Connectivity selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -637,6 +639,10 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == feedback (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtFeedback %SOURCE_PATH%\src\feedback
+) else if %FIRST% == connectivity (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\nfc
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\bluetooth
 )
 
 if "%REMAINING%" == "" (
@@ -666,6 +672,7 @@ echo.
 echo configure failed.
 goto errorTag
 
+REM Unset the internal variables
 :errorTag
 set BUILD_PATH=
 set CURRENTDIR=
