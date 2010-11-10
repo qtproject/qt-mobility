@@ -339,19 +339,24 @@ QString landmarkIdsDefaultQueryString()
 
 QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
 {
-    QString queryString = "select ?u ?latitude ?longitude "
-    "{?g a slo:GeoLocation ; nie:title ?name ; slo:latitude ?latitude ; "
-    "slo:longitude ?longitude . ?u slo:location ?g . FILTER (?name IN ('u',";
-    foreach(const QLandmarkId &id, ids) {
-        queryString += "'";
-        queryString += id.localId() += "',";
-    }
-    if (ids.count() > 0)
-        queryString.chop(1);
+    QString queryString = "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g slo:latitude ?latitude } . "
+        "OPTIONAL { ?g slo:longitude ?longitude } . FILTER ( ";
 
-    queryString += "))}";
+    foreach(const QLandmarkId &id, ids) {
+        QString regex = QString("regex( ?u, '^%1$') || ").arg(id.localId());
+        queryString.append(regex);
+    }
+    if (ids.count() > 0) {
+        queryString.chop(3);
+        queryString += ")";
+    } else {
+        queryString.append("regex( ?u, '^ $'))");
+    }
+    queryString += "}";
     return queryString;
 }
+
 
 QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
 {
@@ -1229,11 +1234,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             *error = QLandmarkManager::UnknownError;
             return result;
         }
-
-        QLandmarkId id;
-        qsparqlResult->current();
+       QLandmarkId id;
         while (qsparqlResult->next()) {
-
             if (queryRun && queryRun->isCanceled) {
                 *error = QLandmarkManager::CancelError;
                 *errorString = "Fetch operation canceled";
