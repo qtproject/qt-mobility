@@ -54,14 +54,11 @@ The Connectivity API provides a set of APIs for communicating with local devices
 
 \section1 Main Classes
 
-<<<<<<< HEAD
 \section2 NFC Classes
 
 \annotatedlist connectivity-nfc
-=======
 \section2 Bluetooth Classes
 
 \annotatedlist connectivity-bluetooth
->>>>>>> bluetooth
 
 */
