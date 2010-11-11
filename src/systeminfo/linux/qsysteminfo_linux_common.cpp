@@ -3212,8 +3212,8 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     int cTime = 0;
     int rEnergy = 0;
 
-    QSystemBatteryInfo::ChargingState cState;// = QSystemBatteryInfo::ChargingFailed;
-    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::Unknown;
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingFailed;
+    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     if (uPowerAvailable()) {
@@ -3226,9 +3226,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
             //chargerType;
             if (powerDevice.getType() == 1) {
-                cType = QSystemBatteryInfo::Wall;
+                cType = QSystemBatteryInfo::WallCharger;
             } else {
-                cType = QSystemBatteryInfo::None;
+                cType = QSystemBatteryInfo::NoCharger;
             }
 
             //charging state
@@ -3288,10 +3288,10 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
                     if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
-                        cType = QSystemBatteryInfo::Wall;
+                        cType = QSystemBatteryInfo::WallCharger;
                         break;
                     } else {
-                        cType = QSystemBatteryInfo::None;
+                        cType = QSystemBatteryInfo::NoCharger;
                         break;
                     }
                 }
