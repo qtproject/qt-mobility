@@ -1,11 +1,11 @@
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin static testplugin
 TARGET = $$qtLibraryTarget(qtgeoservices_statictiledgeomapplugin)
 PLUGIN_TYPE=geoservices
 
 include(../../../../common.pri)
 
-CONFIG += mobility static
+CONFIG += mobility
 MOBILITY = location
 
 HEADERS += qgeomappingmanagerengine_test.h \
@@ -27,6 +27,3 @@ symbian {
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep      
 }
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

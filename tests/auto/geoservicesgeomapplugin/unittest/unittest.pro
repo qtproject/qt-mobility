@@ -19,8 +19,7 @@ symbian {
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
     TARGET.CAPABILITY = ALL -TCB
     LIBS           += -lqtgeoservices_staticgeomapplugin.lib
-} win32 {
-    LIBS           += -L../staticgeomapplugin/release -lqtgeoservices_staticgeomapplugin
 } else {
-    LIBS           += -L../staticgeomapplugin -lqtgeoservices_staticgeomapplugin
+    LIBS           += -L../../../../build/tests/bin/plugins/geoservices -lqtgeoservices_staticgeomapplugin
+    TESTDLLS = $$mobilityDeployFilename(qtgeoservices_staticgeomapplugin)
 }
