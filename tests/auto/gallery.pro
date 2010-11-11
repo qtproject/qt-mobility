@@ -16,14 +16,13 @@ SUBDIRS += \
     qgallerytyperequest
 
 unix: contains(QT_CONFIG, dbus): {
-    maemo5: {
+    maemo6 {
+        SUBDIRS += \
+            qgallerytrackerschema_maemo6
+    } else {
         SUBDIRS += \
             qgallerytrackerresultset_maemo5 \
             qgallerytrackerschema_maemo5
-    }
-    maemo6: {
-        SUBDIRS += \
-            qgallerytrackerschema_maemo6
     }
 }
 

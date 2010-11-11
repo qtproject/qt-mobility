@@ -49,9 +49,12 @@ OTHER_FILES = \
 
 simulator: {
     include (simulator/simulator.pri)
+} else:maemo5 {
+    include (maemo5/maemo5.pri)
+} else:maemo6 {
+    include (maemo6/maemo6.pri)
 } else:unix:contains(QT_CONFIG, dbus) {
-    maemo5:include (maemo5/maemo5.pri)
-    maemo6:include (maemo6/maemo6.pri)
+    include (maemo5/maemo5.pri)
 } else:symbian:contains(mds_enabled, yes) {
      include (symbian/symbian.pri)
 } else {
