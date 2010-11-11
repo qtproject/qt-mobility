@@ -231,7 +231,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::getChangeNotifier( const QString &itemType )
 {
     QGalleryTrackerChangeNotifier * notifier = 0;
-qDebug() << "Getting notifier for:" << itemType;
 
     if ( itemType == QDocumentGallery::Audio.name() )
         notifier = audioChangeNotifier();

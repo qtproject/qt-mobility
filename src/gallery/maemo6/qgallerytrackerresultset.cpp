@@ -99,8 +99,6 @@ void QGalleryTrackerResultSetPrivate::query()
     QVariantList arguments( queryArguments );
     arguments.replace( 0, sparqlStatement );
 
-    qDebug() << "QUERY:" << arguments;
-
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
             queryMethod, arguments );
 
@@ -165,8 +163,6 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
     typedef QVector<QStringList>::const_iterator iterator;
 
     const QVector<QStringList> resultSet = reply.value();
-
-    qDebug() << "ResultSet (" << resultSet.size() << "):" << resultSet;
 
     QVector<QVariant> &values = iCache.values;
 

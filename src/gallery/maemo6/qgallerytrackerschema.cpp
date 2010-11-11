@@ -1046,7 +1046,6 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
     QString query;
 
     QString tmp( ( m_itemIndex >= 0  ? qt_galleryItemTypeList[m_itemIndex].itemType :  qt_galleryAggregateTypeList[m_aggregateIndex].itemType));
-    qDebug() << "QUERY PARAMETERS:" << "rootItem:" << rootItemId << "\nproperties:" << propertyNames << "\ntype:" <<  tmp;
 
     if (!rootItemId.isEmpty()
             || filter.isValid()

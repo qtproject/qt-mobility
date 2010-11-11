@@ -70,8 +70,6 @@ void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
 
 void QGalleryTrackerChangeNotifier::subjectsAddedOrRemoved(const QStringList &subjects)
 {
-    qDebug() << __func__ << ":" << subjects;
-
     emit itemsChanged( m_serviceId );
 }
 
