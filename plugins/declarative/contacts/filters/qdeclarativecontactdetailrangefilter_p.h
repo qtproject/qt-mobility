@@ -45,81 +45,123 @@
 #include "qdeclarativecontactfilter_p.h"
 #include "qcontactdetailrangefilter.h"
 #include "qdeclarativecontactdetail_p.h"
+#include <QDeclarativeParserStatus>
 
-class QDeclarativeContactDetailRangeFilter : public QDeclarativeContactFilter
+class QDeclarativeContactDetailRangeFilter : public QDeclarativeContactFilter, public QDeclarativeParserStatus
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY valueChanged)
-    Q_PROPERTY(int field READ field WRITE setField NOTIFY valueChanged)
-    Q_PROPERTY(QVariant min READ minValue WRITE setMinValue NOTIFY valueChanged)
-    Q_PROPERTY(QVariant max READ maxValue WRITE setMaxValue NOTIFY valueChanged)
-    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
-    Q_PROPERTY(RangeFlags rangeFlags READ rangeFlags WRITE setRangeFlags NOTIFY valueChanged)
+    Q_PROPERTY(QVariant detail READ detail WRITE setDetail NOTIFY valueChanged())
+    Q_PROPERTY(QVariant field READ field WRITE setField NOTIFY valueChanged())
+    Q_PROPERTY(QVariant min READ minValue WRITE setMinValue NOTIFY valueChanged())
+    Q_PROPERTY(QVariant max READ maxValue WRITE setMaxValue NOTIFY valueChanged())
+    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged())
+    Q_PROPERTY(RangeFlags rangeFlags READ rangeFlags WRITE setRangeFlags NOTIFY valueChanged())
     Q_FLAGS(RangeFlags)
 public:
     enum RangeFlag {
-        IncludeLower = 0, // [
-        IncludeUpper = 1, // ]
-        ExcludeLower = 2, // (
-        ExcludeUpper = 0  // ) - Default is [)
+        IncludeLower = QContactDetailRangeFilter::IncludeLower,
+        IncludeUpper = QContactDetailRangeFilter::IncludeUpper,
+        ExcludeLower = QContactDetailRangeFilter::ExcludeLower,
+        ExcludeUpper = QContactDetailRangeFilter::ExcludeUpper
     };
     Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
 
     QDeclarativeContactDetailRangeFilter(QObject* parent = 0)
         :QDeclarativeContactFilter(parent),
-          m_detailType(QDeclarativeContactDetail::Customized),
-          m_fieldType(-1)
+          m_componentCompleted(false)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
-    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType)
+    //from QDeclarativeParserStatus
+    void classBegin() {}
+    void componentComplete()
     {
-        m_detailType = detailType;
+        setDetailDefinitionName();
+        m_componentCompleted = true;
     }
 
-    QDeclarativeContactDetail::ContactDetailType detail() const
+    void setDetailDefinitionName()
     {
-        return m_detailType;
+        QString ddn;
+        if (m_detail.type() != QVariant::String) {
+            ddn = QDeclarativeContactDetail::definitionName(static_cast<QDeclarativeContactDetail::ContactDetailType>(m_detail.toInt()));
+        } else {
+            ddn = m_detail.toString();
+        }
+
+        QString dfn;
+        if (m_field.type() != QVariant::String) {
+           QDeclarativeContactDetail::ContactDetailType dt = static_cast<QDeclarativeContactDetail::ContactDetailType>(QDeclarativeContactDetail::detailType(ddn));
+           dfn = QDeclarativeContactDetail::fieldName(dt, m_field.toInt());
+        } else {
+            dfn = m_field.toString();
+        }
+        d.setDetailDefinitionName(ddn, dfn);
+        m_detail = ddn;
+        m_field = dfn;
     }
 
-    void setField(int fieldType)
+    void setDetail(const QVariant& detailType)
     {
-        m_fieldType = fieldType;
+        if (detailType != m_detail || m_componentCompleted) {
+            m_detail = detailType;
+            if (m_componentCompleted)
+                setDetailDefinitionName();
+            emit filterChanged();
+        }
     }
 
-    int field() const
+    QVariant detail() const
     {
-        return m_fieldType;
+        return m_detail;
+    }
+
+    void setField(const QVariant& fieldType)
+    {
+        if (fieldType != m_field || m_componentCompleted) {
+            m_field = fieldType;
+            if (m_componentCompleted)
+                setDetailDefinitionName();
+            emit filterChanged();
+        }
+    }
+
+    QVariant field() const
+    {
+        return m_field;
     }
 
     QDeclarativeContactFilter::MatchFlags matchFlags() const
     {
-        QDeclarativeContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)d.matchFlags();
-        return matchFlags;
+        QDeclarativeContactFilter::MatchFlags flags;
+        flags = ~flags & (int)d.matchFlags();
+        return flags;
     }
     void setMatchFlags(QDeclarativeContactFilter::MatchFlags flags)
     {
-        QContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)flags;
-        d.setMatchFlags(matchFlags);
+        QContactFilter::MatchFlags newFlags;
+        newFlags = ~newFlags & (int)flags;
+        if (newFlags != d.matchFlags()) {
+            d.setMatchFlags(newFlags);
+            emit valueChanged();
+        }
     }
 
     QDeclarativeContactDetailRangeFilter::RangeFlags rangeFlags() const
     {
         QDeclarativeContactDetailRangeFilter::RangeFlags flags;
-        flags &= 0xFFFFFFFF;
-        flags &= (int)d.rangeFlags();
+        flags = ~flags & (int)d.rangeFlags();
         return flags;
     }
     void setRangeFlags(QDeclarativeContactDetailRangeFilter::RangeFlags flags)
     {
-        QContactDetailRangeFilter::RangeFlags rangeFlags;
-        rangeFlags &= 0xFFFFFFFF;
-        rangeFlags &= (int)flags;
-        d.setRange(d.minValue(), d.maxValue(), rangeFlags);
+        QContactDetailRangeFilter::RangeFlags newFlags;
+        newFlags = ~newFlags & (int)flags;
+        if (newFlags != d.rangeFlags()) {
+            d.setRange(d.minValue(), d.maxValue(), newFlags);
+            emit valueChanged();
+        }
     }
 
     QVariant minValue() const
@@ -128,7 +170,10 @@ public:
     }
     void setMinValue(const QVariant& value)
     {
-        d.setRange(value, d.maxValue(), d.rangeFlags());
+        if (value != d.minValue()) {
+            d.setRange(value, d.maxValue(), d.rangeFlags());
+            emit valueChanged();
+        }
     }
 
     QVariant maxValue() const
@@ -137,24 +182,24 @@ public:
     }
     void setMaxValue(const QVariant& value)
     {
-        d.setRange(d.minValue(), value, d.rangeFlags());
+        if (value != d.maxValue()) {
+            d.setRange(d.minValue(), value, d.rangeFlags());
+            emit valueChanged();
+        }
     }
 
     QContactFilter filter() const
     {
-        QString detailName = QDeclarativeContactDetail::definitionName(m_detailType);
-        QString fieldName = QDeclarativeContactDetail::fieldName(m_detailType, m_fieldType);
-        QContactDetailRangeFilter filter(d);
-        filter.setDetailDefinitionName(detailName, fieldName);
-        return filter;
+        return d;
     }
 signals:
     void valueChanged();
 
 
 private:
-    QDeclarativeContactDetail::ContactDetailType m_detailType;
-    int m_fieldType;
+    bool m_componentCompleted;
+    QVariant m_field;
+    QVariant m_detail;
     QContactDetailRangeFilter d;
 };
 

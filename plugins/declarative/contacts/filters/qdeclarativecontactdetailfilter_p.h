@@ -49,51 +49,80 @@
 class QDeclarativeContactDetailFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY valueChanged)
-    Q_PROPERTY(int field READ field WRITE setField NOTIFY valueChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
+    Q_PROPERTY(QVariant detail READ detail WRITE setDetail NOTIFY valueChanged())
+    Q_PROPERTY(QVariant field READ field WRITE setField NOTIFY valueChanged())
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged())
+    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged())
 public:
 
     QDeclarativeContactDetailFilter(QObject* parent = 0)
-        :QDeclarativeContactFilter(parent),
-          m_detailType(QDeclarativeContactDetail::Customized),
-          m_fieldType(-1)
+        :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
-    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType)
+    void setDetail(const QVariant& detailType)
     {
-        m_detailType = detailType;
+        QString ddn;
+        if (detailType.type() != QVariant::String) {
+            ddn = QDeclarativeContactDetail::definitionName(static_cast<QDeclarativeContactDetail::ContactDetailType>(detailType.toInt()));
+        } else {
+            ddn = detailType.toString();
+        }
+
+        if (ddn != d.detailDefinitionName()) {
+            QString dfn;
+            if (m_fieldType.isValid()) {
+               QDeclarativeContactDetail::ContactDetailType dt = QDeclarativeContactDetail::detailType(ddn);
+               dfn = QDeclarativeContactDetail::fieldName(dt, m_fieldType.toInt());
+               m_fieldType.clear();
+            } else {
+                dfn = d.detailFieldName();
+            }
+            d.setDetailDefinitionName(ddn, dfn);
+            emit valueChanged();
+        }
     }
 
-    QDeclarativeContactDetail::ContactDetailType detail() const
+    QVariant detail() const
     {
-        return m_detailType;
+        return d.detailDefinitionName();
     }
 
-    void setField(int fieldType)
+    void setField(const QVariant& fieldType)
     {
-        m_fieldType = fieldType;
+        if (fieldType.type() != QVariant::String) {
+            m_fieldType = fieldType;
+            QDeclarativeContactDetail::ContactDetailType detailType = QDeclarativeContactDetail::detailType(d.detailDefinitionName());
+            QString dfn = QDeclarativeContactDetail::fieldName(detailType, fieldType.toInt());
+            if (!dfn.isEmpty()) {
+                d.setDetailDefinitionName(d.detailDefinitionName(), dfn);
+                emit valueChanged();
+            }
+        } else if (fieldType.toString() != d.detailFieldName()){
+            d.setDetailDefinitionName(d.detailDefinitionName(), fieldType.toString());
+            emit valueChanged();
+        }
     }
 
-    int field() const
+    QVariant field() const
     {
-        return m_fieldType;
+        return d.detailFieldName();
     }
 
     QDeclarativeContactFilter::MatchFlags matchFlags() const
     {
-        QDeclarativeContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)d.matchFlags();
-        return matchFlags;
+        QDeclarativeContactFilter::MatchFlags flags;
+        flags = ~flags & (int)d.matchFlags();
+        return flags;
     }
     void setMatchFlags(QDeclarativeContactFilter::MatchFlags flags)
     {
-        QContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)flags;
-        d.setMatchFlags(matchFlags);
+        QContactFilter::MatchFlags newFlags;
+        newFlags = ~newFlags & (int)flags;
+        if (newFlags != d.matchFlags()) {
+            d.setMatchFlags(newFlags);
+            emit valueChanged();
+        }
     }
 
     QVariant value() const
@@ -102,24 +131,22 @@ public:
     }
     void setValue(const QVariant& value)
     {
-        d.setValue(value);
+        if (value != d.value()) {
+            d.setValue(value);
+            emit valueChanged();
+        }
     }
 
     QContactFilter filter() const
     {
-        QString detailName = QDeclarativeContactDetail::definitionName(m_detailType);
-        QString fieldName = QDeclarativeContactDetail::fieldName(m_detailType, m_fieldType);
-        QContactDetailFilter filter(d);
-        filter.setDetailDefinitionName(detailName, fieldName);
-        return filter;
+        return d;
     }
 signals:
     void valueChanged();
 
 
 private:
-    QDeclarativeContactDetail::ContactDetailType m_detailType;
-    int m_fieldType;
+    QVariant m_fieldType;
     QContactDetailFilter d;
 };
 
