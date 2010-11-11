@@ -1587,7 +1587,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstract
             QDateTime startDate = r->startDate();
             QDateTime endDate = r->endDate();
 
-            QOrganizerManager::Error operationError;
+            QOrganizerManager::Error operationError = QOrganizerManager::NoError;
             QList<QOrganizerItem> requestedOrganizerItems = itemsForExport(startDate, endDate, filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.
