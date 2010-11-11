@@ -111,8 +111,8 @@ QVariant QMDEGalleryResultSet::itemId() const
 QUrl QMDEGalleryResultSet::itemUrl() const
 {
     if ( isValid()) {
-        const QUrl url =
-        QUrl(QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri()));
+        const QUrl url = QUrl::fromLocalFile(
+                QDocumentGalleryMDSUtility::s60DescToQString(m_itemArray[m_cursorPosition]->Uri()));
         return url;
     } else {
         return QUrl();

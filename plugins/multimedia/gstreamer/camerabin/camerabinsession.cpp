@@ -209,6 +209,16 @@ GstPhotography *CameraBinSession::photography()
     return 0;
 }
 
+CameraBinSession::CameraRole CameraBinSession::cameraRole() const
+{
+#ifdef Q_WS_MAEMO_5
+    return m_inputDevice == QLatin1String("/dev/video1") ?
+                FrontCamera : BackCamera;
+#endif
+
+    return BackCamera;
+}
+
 bool CameraBinSession::setupCameraBin()
 {
     if (m_captureMode == QCamera::CaptureStillImage) {
@@ -308,7 +318,7 @@ void CameraBinSession::setupCaptureResolution()
         //it's also necessary to setup video resolution,
         //which is used for viewfinder
 
-        if (m_inputDevice != QLatin1String("/dev/video1")) {
+        if (cameraRole() == BackCamera) {
             //this is necessary to set only for the mail camera,
             //not for face one.
 
@@ -1155,7 +1165,7 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
         QSize maxSize = res.last();
 
 #ifdef Q_WS_MAEMO_5
-        if (mode == QCamera::CaptureVideo)
+        if (mode == QCamera::CaptureVideo && cameraRole() == BackCamera)
             maxSize = QSize(848, 480);
         if (mode == QCamera::CaptureStillImage)
             minSize = QSize(640, 480);

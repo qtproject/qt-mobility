@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,6 +47,7 @@ QTM_USE_NAMESPACE
 //! [0]
 const QString filemanagerxml = "c:\\resource\\apps\\xmldata\\filemanagerservice.xml";
 const QString bluetoothxml = "c:\\resource\\apps\\xmldata\\bluetoothtransferservice.xml";
+const QString notemanagerxml = "c:\\resource\\apps\\xmldata\\notesmanagerservice.xml";
 
 int main(int argc, char *argv[])
 {
@@ -64,6 +65,12 @@ int main(int argc, char *argv[])
 		s.addService(bluetoothxml);
 	} else {
 		s.removeService("BluetoothTransferService");
+	}
+
+    if (QFile::exists(notemanagerxml)) {
+		s.addService(notemanagerxml);
+	} else {
+		s.removeService("NotesManagerService");
 	}
 }
 //! [0]

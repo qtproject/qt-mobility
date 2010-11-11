@@ -74,7 +74,7 @@
     \skipto ServiceBrowser::ServiceBrowser
     \printuntil }
 
-    The constructor registers the "FileManagerService" and "BluetoothTransferService" services that are provided by the \l{File Manager Plugin Example}{filemanagerplugin} and \l {Bluetooth Transfer Plugin Example}{bluetoothtransferplugin} projects in the \c examples/ directory. It also calls \c reloadServicesList() to show these two newly registered services in the top-left pane.
+    The constructor registers the "FileManagerService", "BluetoothTransferService" and "NotesManagerServices" services that are provided by the \l{File Manager Plugin Example}{filemanagerplugin} and \l {Bluetooth Transfer Plugin Example}{bluetoothtransferplugin} projects in the \c examples/ directory. It also calls \c reloadServicesList() to show these two newly registered services in the top-left pane.
 
     \quotefromfile servicebrowser/servicebrowser.cpp
     \skipto ServiceBrowser::reloadServicesList
