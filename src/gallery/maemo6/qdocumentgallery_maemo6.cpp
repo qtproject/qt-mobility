@@ -72,8 +72,6 @@ public:
 private:
     QGalleryDBusInterfacePointer daemonInterface();
     QGalleryDBusInterfacePointer metaDataInterface();
-    QGalleryDBusInterfacePointer searchInterface();
-    QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer statisticsInterface();
     QGalleryDBusInterfacePointer resourcesClassInterface(const QString &objectPath);
 
@@ -135,32 +133,6 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
     return metaDataService;
 }
 
-QGalleryDBusInterfacePointer QDocumentGalleryPrivate::searchInterface()
-{
-#if 0
-    if (!searchService) {
-        searchService = new QGalleryDBusInterface(
-                QLatin1String("org.freedesktop.Tracker"),
-                QLatin1String("/org/freedesktop/Tracker/Search"),
-                "org.freedesktop.Tracker.Search");
-    }
-#endif
-    return searchService;
-
-}
-
-QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
-{
-#if 0
-    if (!fileService) {
-        fileService = new QGalleryDBusInterface(
-                QLatin1String("org.freedesktop.Tracker"),
-                QLatin1String("/org/freedesktop/Tracker/Files"),
-                "org.freedesktop.Tracker.Files");
-    }
-#endif
-    return fileService;
-}
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::statisticsInterface()
 {
     if (!statisticsService) {

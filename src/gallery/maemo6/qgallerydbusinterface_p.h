@@ -101,8 +101,6 @@ public:
 
     virtual QGalleryDBusInterfacePointer daemonInterface() = 0;
     virtual QGalleryDBusInterfacePointer metaDataInterface() = 0;
-    virtual QGalleryDBusInterfacePointer searchInterface() = 0;
-    virtual QGalleryDBusInterfacePointer fileInterface() = 0;
     virtual QGalleryDBusInterfacePointer statisticsInterface() = 0;
     virtual QGalleryDBusInterfacePointer resourcesClassInterface(const QString& objectPath) = 0;
 };
