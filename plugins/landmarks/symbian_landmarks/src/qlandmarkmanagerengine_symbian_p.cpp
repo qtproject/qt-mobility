@@ -2541,15 +2541,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
 
         // check for existing landmark
         TPosLmItemId symbianLmId = LandmarkUtility::getSymbianLandmarkId(landmark);
-        while (ETrue) {
-            TRAPD(readErr, symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);)
-            if (readErr == KErrNone)
-                break;
-            if (readErr != KErrLocked)
-                User::Leave(readErr);
-            User::After(100);
-        }
-
+        symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
             LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
@@ -2738,15 +2730,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
             category->categoryId());
 
-        while (ETrue) {
-            TRAPD(err, symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);)
-            if (err == KErrNone)
-                break;
-            if (err != KErrLocked)
-                User::Leave(err);
-            User::After(100);
-        }
-
+        symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);
         if (symbiancat) {
             LandmarkUtility::setSymbianLandmarkCategoryL(*symbiancat, category);
 
