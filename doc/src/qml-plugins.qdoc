@@ -79,7 +79,7 @@
     it may seem natural that moving this working script to a Symbian platform
     should be uneventful. However, the version of 'qmlviewer' may not know
     about this capability. If that is the case then 'qmlviewer' should be
-    recompiled by the developer with the capability explicitly added. 
+    recompiled by the developer with the capability explicitly added.
 
     It should be noted that the use of a plugin, with capabilities outside
     of "NetworkServices ReadUserData", and viewed on a Symbian device via
