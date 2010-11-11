@@ -334,7 +334,7 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
 
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
-   return QSystemBatteryInfo::BatteryUnknown;
+   return d->batteryStatus();
 }
 
 #include "moc_qsystembatteryinfo.cpp"

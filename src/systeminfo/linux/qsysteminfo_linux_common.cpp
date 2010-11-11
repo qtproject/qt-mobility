@@ -3001,31 +3001,29 @@ QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObje
 #if !defined(QT_NO_DBUS)
     halIsAvailable = halAvailable();
     setConnection();
-//    currentPowerState();
 #endif
     getBatteryStats();
 }
 
 QSystemBatteryInfoLinuxCommonPrivate::~QSystemBatteryInfoLinuxCommonPrivate()
 {
-
 }
 
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoLinuxCommonPrivate::chargerType() const
 {
-    return QSystemBatteryInfo::Unknown;
+    return curChargeType;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::chargingState() const
 {
-    return QSystemBatteryInfo::NotCharging;
+    return curChargeState;
 }
 
 
 int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
 {
-    return 0;
+    return capacity;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
@@ -3035,7 +3033,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacitymAh() const
 {
-    return 0;
+    return remainingEnergy;
 }
 
 
@@ -3046,7 +3044,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
 {
-    return 0;
+    return timeToFull;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
@@ -3056,7 +3054,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
 
 int QSystemBatteryInfoLinuxCommonPrivate::cumulativeCurrentFlow() const
 {
-    return 0;
+    return dischargeRate;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
@@ -3067,6 +3065,11 @@ int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
 int QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
 {
     return 0;
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoLinuxCommonPrivate::batteryStatus() const
+{
+    return currentBatStatus;
 }
 
 void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
@@ -3203,86 +3206,15 @@ void QSystemBatteryInfoLinuxCommonPrivate::upowerDeviceChanged()
     getBatteryStats();
 }
 
-//QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::currentChargingState()
-//{
-//    QSystemBatteryInfo::ChargingState pState = QSystemBatteryInfo::ChargingFailed;
-
-//#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-//    if (uPowerAvailable()) {
-
-//        QUPowerInterface power(this);
-//        foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
-//            QUPowerDeviceInterface powerDevice(objpath.path(),this);
-//            if (!powerDevice.isPowerSupply())
-//                continue;
-
-//            //charging state
-//            if (powerDevice.getType() == 1
-//                    || powerDevice.getType() == 2) {
-//                switch(powerDevice.getState()) {
-//                case 1:// charging
-//                    pState = QSystemBatteryInfo::Charging;
-//                    break;
-//                case 2: //discharging
-//                case 3: //empty
-//                case 4: //fully charged
-//                case 5: //pending charge
-//                case 6: //pending discharge
-//                    pState = QSystemBatteryInfo::NotCharging;
-//                    break;
-//                default:
-//                    pState = QSystemBatteryInfo::ChargingFailed;
-//                };
-//            }
-//            //energy flow
-//            cVoltage = powerDevice.voltage();
-//            cEnergy = powerDevice.energyDischargeRate();
-//            cLevel = powerDevice.percentLeft();
-
-//        } //end enumerateDevices
-
-
-//#endif
-//#if !defined(QT_NO_DBUS)
-//    if (halIsAvailable) {
-//        QHalInterface iface;
-//        QStringList list = iface.findDeviceByCapability("battery");
-//        if (!list.isEmpty()) {
-//            foreach (const QString &dev, list) {
-//                QHalDeviceInterface ifaceDevice(dev);
-//                if (iface.isValid()) {
-//                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
-//                        pState = QSystemBatteryInfo::Charging;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//#endif
-//    if (curChargeState != pState) {
-//        curChargeState = pState;
-//        Q_EMIT chargingStateChanged(pState);
-//  }
-
-
-//   return pState;
-//}
-
-//QSystemBatteryInfo::ChargerType QSystemBatteryInfoLinuxCommonPrivate::currentChargerType()
-//{
-//   return cState;
-
-//}
-
 void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 {
-    qDebug() << Q_FUNC_INFO;
-
     int cLevel = 0;
     int cEnergy = 0;
     int cVoltage = 0;
-    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingFailed;
+    int cTime = 0;
+    int rEnergy = 0;
+
+    QSystemBatteryInfo::ChargingState cState;// = QSystemBatteryInfo::ChargingFailed;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::Unknown;
 
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
@@ -3302,29 +3234,37 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
             }
 
             //charging state
-            if (powerDevice.getType() == 1
-                    || powerDevice.getType() == 2) {
+            if (powerDevice.getType() == 2) {
                 switch(powerDevice.getState()) {
-                case 1:// charging
-                    cState = QSystemBatteryInfo::Charging;
+                case 1: // charging
+                    {
+                        cState = QSystemBatteryInfo::Charging;
+                    }
+                    break;
                 case 2: //discharging
                 case 3: //empty
                 case 4: //fully charged
                 case 5: //pending charge
                 case 6: //pending discharge
                     cState = QSystemBatteryInfo::NotCharging;
+                    break;
                 default:
                     cState = QSystemBatteryInfo::ChargingFailed;
+                    break;
                 };
+                //energy flow
+                cVoltage = powerDevice.voltage();
+                cEnergy = (powerDevice.energyDischargeRate() / cVoltage) * 1000;
+                cLevel = powerDevice.percentLeft();
+                capacity = (powerDevice.energyWhenFull() / cVoltage) * 1000;
+                cTime = powerDevice.timeToFull();
+                if (cState != QSystemBatteryInfo::Charging) {
+                    cTime = -1;
+                }
+                rEnergy = (powerDevice.currentEnergy() / cVoltage) * 1000;
+                cVoltage =  powerDevice.voltage() * 1000; // mV
+                break;
             }
-            //energy flow
-            cVoltage = powerDevice.voltage();
-            cEnergy = powerDevice.energyDischargeRate();
-            cLevel = powerDevice.percentLeft();
-
-            qDebug() << "Volts:" << cVoltage
-                    << "Ebergy:" << cEnergy
-                    << "Level:" << cLevel;
 
         } //end enumerateDevices
     }
@@ -3362,51 +3302,41 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
     }
 #endif
-#if !defined(QT_NO_DBUS)
-    if (halIsAvailable) {
-        QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("battery");
-        if (!list.isEmpty()) {
-            list = iface.findDeviceByCapability("ac_adapter");
-            if (!list.isEmpty()) {
-                foreach (const QString &dev, list) {
-                    QHalDeviceInterface ifaceDevice(dev);
-                    if (ifaceDevice.isValid()) {
-                        if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
-                            cType = QSystemBatteryInfo::Wall;
-                            break;
-                        } else {
-                            cType = QSystemBatteryInfo::None;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+
+    if ( currentVoltage != cVoltage) {
+        currentVoltage = cVoltage;
+        Q_EMIT voltageChanged(cVoltage);
     }
-#endif
 
     if (curChargeType != cType) {
         curChargeType = cType;
         Q_EMIT chargerTypeChanged(cType);
-  }
+    }
 
     if (curChargeState != cState) {
-        curChargeState = cState;
         Q_EMIT chargingStateChanged(cState);
-  }
+        curChargeState = cState;
+    }
     if (dischargeRate != cEnergy) {
-     dischargeRate = cEnergy;
-     currentFlowChanged(cEnergy);
+        dischargeRate = cEnergy;
+        currentFlowChanged(cEnergy);
     }
 
-    if (currentBatLevelPercent != 0 && currentBatLevelPercent != cLevel) {
+    if (currentBatLevelPercent != cLevel) {
+        currentBatLevelPercent = cLevel;
         Q_EMIT batteryLevelChanged(cLevel);
         Q_EMIT remainingCapacityPercentChanged(cLevel);
-        //Q_EMIT remainingCapacitymAhChanged
-        currentBatLevelPercent = cLevel;
     }
 
+    if (timeToFull != cTime) {
+        timeToFull = cTime;
+        Q_EMIT remainingChargingTimeChanged(cTime);
+    }
+
+    if (remainingEnergy != rEnergy) {
+        remainingEnergy = rEnergy;
+        Q_EMIT remainingCapacitymAhChanged(rEnergy);
+    }
     QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
     if (cLevel < 4) {
@@ -3420,12 +3350,19 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     } else if (cLevel == 100) {
          stat = QSystemBatteryInfo::BatteryFull;
     }
-        if (currentBatStatus != stat) {
-            if (currentBatStatus != QSystemBatteryInfo::BatteryUnknown) {
-                Q_EMIT batteryStatusChanged(stat);
-            }
-            currentBatStatus = stat;
-        }
+    if (currentBatStatus != stat) {
+        currentBatStatus = stat;
+        Q_EMIT batteryStatusChanged(stat);
+    }
+}
+
+int QSystemBatteryInfoLinuxCommonPrivate::getCumuloFlo()
+{
+
+}
+
+void QSystemBatteryInfoLinuxCommonPrivate::timeout()
+{
 
 }
 
