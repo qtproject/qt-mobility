@@ -156,8 +156,6 @@ bool QLlcpSocket::bind(quint8 port)
     Q_D(QLlcpSocket);
 
     return d->bind(port);
-
-    return false;
 }
 
 /*!
@@ -221,7 +219,7 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 
     \sa writeDatagram(), hasPendingDatagrams(), pendingDatagramSize()
 */
-qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *target,
+qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget **target,
                                  quint8 *port)
 {
     Q_D(QLlcpSocket);
