@@ -45,7 +45,7 @@
 
 // system includes
 #include <EPos_CPosLandmarkSearch.h>
-#include <Epos_Landmarks.h>
+#include <EPos_Landmarks.h>
 #include <f32file.h>  
 #include <qmobilityglobal.h>
 #include <qstring.h>

@@ -77,6 +77,9 @@ protected:
         if (!m_sensorInterface) {
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
+        if (!m_sensorInterface) {
+            return;
+        }
 
         initDone = true;
 

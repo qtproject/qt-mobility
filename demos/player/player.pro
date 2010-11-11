@@ -24,6 +24,3 @@ maemo* {
     DEFINES += PLAYER_NO_COLOROPTIONS
 }
 
-symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
- }

@@ -78,7 +78,7 @@ DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *servic
     , m_audio(0)
     , m_updateProperties(0)
     , m_state(QMediaPlayer::StoppedState)
-    , m_status(QMediaPlayer::UnknownMediaStatus)
+    , m_status(QMediaPlayer::NoMedia)
     , m_error(QMediaPlayer::NoError)
     , m_streamTypes(0)
     , m_muteVolume(-1)
@@ -244,12 +244,26 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
 
 void DirectShowPlayerControl::play()
 {
+    if (m_status == QMediaPlayer::NoMedia)
+        return;
+    if (m_status == QMediaPlayer::InvalidMedia) {
+        setMedia(m_media, m_stream);
+        if (m_error != QMediaPlayer::NoError)
+            return;
+    }
     m_service->play();
     emit stateChanged(m_state = QMediaPlayer::PlayingState);
 }
 
 void DirectShowPlayerControl::pause()
 {
+    if (m_status == QMediaPlayer::NoMedia)
+        return;
+    if (m_status == QMediaPlayer::InvalidMedia) {
+        setMedia(m_media, m_stream);
+        if (m_error != QMediaPlayer::NoError)
+            return;
+    }
     m_service->pause();
     emit stateChanged(m_state = QMediaPlayer::PausedState);
 }

@@ -38,6 +38,9 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomaptextobject_p.h \ 
            qdeclarativegeoserviceprovider_p.h \
            qdeclarativegraphicsgeomap_p.h \
+           qdeclarativegeosearchmodel_p.h \
+           qdeclarativegeocodemodel_p.h \
+           qdeclarativereversegeocodemodel_p.h \
 	   qdeclarativegeoplace_p.h \
 	   qdeclarativegeoaddress_p.h \
 	   qdeclarativegeoboundingbox_p.h
@@ -61,6 +64,9 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomaptextobject.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegraphicsgeomap.cpp \
+           qdeclarativegeosearchmodel.cpp \
+           qdeclarativegeocodemodel.cpp \
+           qdeclarativereversegeocodemodel.cpp \
 	   qdeclarativegeoplace.cpp \
 	   qdeclarativegeoaddress.cpp \
 	   qdeclarativegeoboundingbox.cpp
