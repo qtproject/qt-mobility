@@ -60,13 +60,6 @@ public:
 
     Type type() const { return NfcTagType3; }
 
-    enum PollRequestFlag {
-        RequestIdentification = 0x00,
-        RequestSystemCodeInformation = 0x01,
-        RequestAdvancedProtocolFeatures = 0x02
-    };
-    Q_DECLARE_FLAGS(PollRequestFlags, PollRequestFlag)
-
     quint16 systemCode(){};
     QList<quint16> services(){};
     int serviceMemorySize(quint16 serviceCode){};
@@ -74,7 +67,6 @@ public:
     QByteArray serviceData(quint16 serviceCode){};
     void writeServiceData(quint16 serviceCode, const QByteArray &data){};
 
-    virtual void poll(quint16 systemCode, PollRequestFlags requestFlags, quint8 timeSlots){};
     virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList){};
     virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
                         const QByteArray &data){};
