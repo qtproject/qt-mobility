@@ -90,17 +90,22 @@ void QGalleryTrackerResultSetPrivate::query()
     iCache.cutoff = 0;
 
     qSwap(rCache.values, iCache.values);
-    const int limit = queryLimit < 1 || queryLimit > TRACKER_QUERY_MAX_LIMIT ? TRACKER_QUERY_MAX_LIMIT : queryLimit;
+    const int limit = queryLimit < 1 || queryLimit > TRACKER_QUERY_MAX_LIMIT
+            ? TRACKER_QUERY_MAX_LIMIT
+            : queryLimit;
     QString sparqlStatement = queryArguments.at( 0 ).toString();
     sparqlStatement += " LIMIT " + QString::number(limit);
-    if ( queryOffset > 0 )
-        sparqlStatement += ( queryOffset > 0 ? " OFFSET " + QString::number(queryOffset) : "" );
+    if (queryOffset > 0) {
+        sparqlStatement += (queryOffset > 0
+                ? QLatin1String(" OFFSET ") + QString::number(queryOffset)
+                : QLatin1String(""));
+    }
 
-    QVariantList arguments( queryArguments );
-    arguments.replace( 0, sparqlStatement );
+    QVariantList arguments(queryArguments);
+    arguments.replace(0, sparqlStatement);
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, arguments );
+            queryMethod, arguments);
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -555,14 +560,14 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
                 : queryLimit - iCache.count;
 
         QString sparqlStatement = queryArguments.at( 0 ).toString();
-        sparqlStatement += " LIMIT " + QString::number(limit);
-        sparqlStatement += " OFFSET " + QString::number(offset);
+        sparqlStatement += QLatin1String(" LIMIT ") + QString::number(limit);
+        sparqlStatement += QLatin1String(" OFFSET ") + QString::number(offset);
 
         QVariantList arguments( queryArguments );
         arguments.replace( 0, sparqlStatement );
 
         QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-                queryMethod, arguments );
+                queryMethod, arguments);
 
         if (call.isFinished()) {
             queryFinished(call);

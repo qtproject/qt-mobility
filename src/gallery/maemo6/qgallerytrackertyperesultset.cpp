@@ -108,9 +108,9 @@ void QGalleryTrackerTypeResultSetPrivate::_q_queryFinished(QDBusPendingCallWatch
     }
 }
 
-class FindType {
+class QGalleryTrackerTypeResultSetFindType {
 public:
-    FindType( const QString& type ) : m_type( type ) {}
+    QGalleryTrackerTypeResultSetFindType( const QString& type ) : m_type(type) {}
     bool operator()(const QStringList& list)
     {
         return list.first() == m_type;
@@ -131,13 +131,10 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
     } else if (!accumulative) {
         QDBusPendingReply<QVector<QStringList> > reply(call);
 
-        if ( queryMethod == "SparqlQuery" )
-        {
+        if (queryMethod == QLatin1String("SparqlQuery")) {
             QVector<QStringList> v = reply.value();
             count = v[0].first().toInt();
-        }
-        else
-        {
+        } else {
             /*
              * Process reply to org.freedesktop.Tracker.Statistics.Get -method. Value is a list of list of two strings:
              * type1 count1
@@ -147,7 +144,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
              * Search through the list and find the requested service and extract the count from the second string.
              */
             std::vector<QStringList> v = reply.value().toStdVector();
-            std::vector<QStringList>::const_iterator pos = find_if( v.begin(), v.end(), FindType( service ));
+            std::vector<QStringList>::const_iterator pos = find_if( v.begin(), v.end(), QGalleryTrackerTypeResultSetFindType( service ));
             if ( pos != v.end() )
                 count = (*pos).last().toInt();
 

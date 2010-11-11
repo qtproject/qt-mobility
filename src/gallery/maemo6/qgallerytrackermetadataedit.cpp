@@ -68,7 +68,13 @@ static QString _qt_createSubUpdateStatement(
         const QString &predicate,
         const QString &object)
 {
-    return command + "{<" + subject + "> " + predicate + " \'"  + object + "\'}";
+    return command
+            + QLatin1String("{<")
+            + subject + QLatin1String("> ")
+            + predicate
+            + QLatin1String(" \'")
+            + object
+            + QLatin1String("\'}");
 }
 
 static QString _qt_createUpdateStatement(
@@ -77,15 +83,19 @@ static QString _qt_createUpdateStatement(
         const QMap<QString, QString> &m_oldValues)
 {
     QString statement;
-    for ( QMap<QString,QString>::const_iterator newIterator = m_values.constBegin(), oldIterator = m_oldValues.constBegin();
+    for (QMap<QString,QString>::const_iterator newIterator = m_values.constBegin(), oldIterator = m_oldValues.constBegin();
             newIterator != m_values.constEnd();
             ++newIterator, ++oldIterator
           ){
         // Delete old value (if it exists ) and insert new value ( if it exists )
-        if ( !oldIterator.value().isEmpty() )
-            statement += _qt_createSubUpdateStatement("DELETE", subject, newIterator.key(), oldIterator.value() );
-        if ( !newIterator.value().isEmpty() )
-            statement += _qt_createSubUpdateStatement("INSERT", subject, newIterator.key(), newIterator.value() );
+        if (!oldIterator.value().isEmpty()) {
+            statement += _qt_createSubUpdateStatement(
+                    QLatin1String("DELETE"), subject, newIterator.key(), oldIterator.value());
+        }
+        if (!newIterator.value().isEmpty()) {
+            statement += _qt_createSubUpdateStatement(
+                    QLatin1String("INSERT"), subject, newIterator.key(), newIterator.value());
+        }
     }
     return statement;
 }
@@ -97,8 +107,7 @@ void QGalleryTrackerMetaDataEdit::commit()
     } else {
         m_metaDataInterface->call(
                 QLatin1String("SparqlUpdate"),
-                _qt_createUpdateStatement( m_service, m_values, m_oldValues )
-                );
+                _qt_createUpdateStatement(m_service, m_values, m_oldValues));
         emit finished(this);
     }
 }

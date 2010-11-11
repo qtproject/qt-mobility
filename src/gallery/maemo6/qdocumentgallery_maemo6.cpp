@@ -146,8 +146,8 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::statisticsInterface()
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::resourcesClassInterface(const QString &objectPath)
 {
-    if ( resourcesClassServices.find( objectPath ) == resourcesClassServices.end() ) {
-        resourcesClassServices[ objectPath ] = new QGalleryDBusInterface(
+    if (resourcesClassServices.find(objectPath) == resourcesClassServices.end() ) {
+        resourcesClassServices[objectPath] = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker1"),
                 objectPath,
                 "org.freedesktop.Tracker1.Resources.Class");
@@ -158,52 +158,62 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::resourcesClassInterface(co
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::createChangeNotifier(
         QScopedPointer<QGalleryTrackerChangeNotifier> &notifier,  QString serviceId)
 {
-    if (!notifier)
+    if (!notifier) {
         notifier.reset(new QGalleryTrackerChangeNotifier(
-                QGalleryTrackerSchema::serviceUpdateId( serviceId),
-                resourcesClassInterface("/org/freedesktop/Tracker1/Resources/Classes/" + serviceId.replace(':','/') )
-                ));
+                QGalleryTrackerSchema::serviceUpdateId(serviceId),
+                resourcesClassInterface(
+                        QLatin1String("/org/freedesktop/Tracker1/Resources/Classes/")
+                        + serviceId.replace(QLatin1Char(':'),QLatin1Char('/')))));
+    }
     return notifier.data();
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::audioChangeNotifier()
 {
-    return createChangeNotifier( audioNotifier,  QGalleryTrackerSchema::serviceForType(QDocumentGallery::Audio) );
+    return createChangeNotifier(
+            audioNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Audio));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::artistChangeNotifier()
 {
-    return createChangeNotifier( artistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Artist) );
+    return createChangeNotifier(
+            artistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Artist));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::documentChangeNotifier()
 {
-    return createChangeNotifier( documentNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Document) );
+    return createChangeNotifier(
+            documentNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Document));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::videoChangeNotifier()
 {
-    return createChangeNotifier( videoNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Video) );
+    return createChangeNotifier(
+            videoNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Video));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::playlistChangeNotifier()
 {
-    return createChangeNotifier( playlistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Playlist) );
+    return createChangeNotifier(
+            playlistNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Playlist));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::musicAlbumChangeNotifier()
 {
-    return createChangeNotifier( musicAlbumNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Album) );
+    return createChangeNotifier(
+            musicAlbumNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Album));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::imageListChangeNotifier()
 {
-    return createChangeNotifier( imageListNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::PhotoAlbum) );
+    return createChangeNotifier(
+            imageListNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::PhotoAlbum));
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::imageChangeNotifier()
 {
-    return createChangeNotifier( imageNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Image) );
+    return createChangeNotifier(
+            imageNotifier, QGalleryTrackerSchema::serviceForType(QDocumentGallery::Image));
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
@@ -232,21 +242,21 @@ QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::getChangeNotifier( const
 {
     QGalleryTrackerChangeNotifier * notifier = 0;
 
-    if ( itemType == QDocumentGallery::Audio.name() )
+    if (itemType == QDocumentGallery::Audio.name())
         notifier = audioChangeNotifier();
-    else if ( itemType == QDocumentGallery::Artist.name() )
+    else if (itemType == QDocumentGallery::Artist.name())
         notifier = artistChangeNotifier();
-    else if ( itemType == QDocumentGallery::Document.name() )
+    else if (itemType == QDocumentGallery::Document.name())
         notifier = documentChangeNotifier();
-    else if ( itemType == QDocumentGallery::Video.name() )
+    else if (itemType == QDocumentGallery::Video.name())
         notifier = videoChangeNotifier();
-    else if ( itemType == QDocumentGallery::Playlist.name() )
+    else if (itemType == QDocumentGallery::Playlist.name())
         notifier = playlistChangeNotifier();
-    else if ( itemType == QDocumentGallery::Album.name() )
+    else if (itemType == QDocumentGallery::Album.name())
         notifier = musicAlbumChangeNotifier();
-    else if ( itemType == QDocumentGallery::PhotoAlbum.name() )
+    else if (itemType == QDocumentGallery::PhotoAlbum.name())
         notifier = imageListChangeNotifier();
-    else if ( itemType == QDocumentGallery::Image.name() )
+    else if (itemType == QDocumentGallery::Image.name())
         notifier = imageChangeNotifier();
 
     return notifier;
@@ -295,13 +305,15 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
     }
 
     if (autoUpdate) {
-        if ( notifier )
+        if (notifier) {
             QObject::connect(
-                notifier, SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)) );
+                notifier, SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
+        }
     }
-    if ( notifier )
+    if (notifier) {
         QObject::connect(
             response, SIGNAL(itemEdited(QString)), notifier, SLOT(itemsEdited(QString)));
+    }
 
     return response;
 }

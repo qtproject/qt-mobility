@@ -54,13 +54,13 @@ QGalleryTrackerChangeNotifier::QGalleryTrackerChangeNotifier(
     , m_serviceId(serviceId)
 
 {
-    Q_ASSERT( m_daemonInterface.data()->isValid());
+    Q_ASSERT(m_daemonInterface.data()->isValid());
     bool ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsAdded(const QStringList&)),
             this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
-    Q_ASSERT( ret );
+    Q_ASSERT(ret);
     ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsRemoved(const QStringList&)),
             this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
-    Q_ASSERT( ret );
+    Q_ASSERT(ret);
 }
 
 void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
@@ -70,7 +70,7 @@ void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
 
 void QGalleryTrackerChangeNotifier::subjectsAddedOrRemoved(const QStringList &subjects)
 {
-    emit itemsChanged( m_serviceId );
+    emit itemsChanged(m_serviceId);
 }
 
 #include "moc_qgallerytrackerchangenotifier_p.cpp"

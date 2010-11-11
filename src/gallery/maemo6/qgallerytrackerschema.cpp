@@ -1045,8 +1045,6 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
 
     QString query;
 
-    QString tmp( ( m_itemIndex >= 0  ? qt_galleryItemTypeList[m_itemIndex].itemType :  qt_galleryAggregateTypeList[m_aggregateIndex].itemType));
-
     if (!rootItemId.isEmpty()
             || filter.isValid()
             || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
@@ -1088,16 +1086,16 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         arguments->queryInterface = dbus->metaDataInterface();
         arguments->queryMethod = QLatin1String("SparqlQuery");
 
-        if (type.service == "nfo:Media")
-        {
+        if (type.service == "nfo:Media") {
             arguments->queryArguments = QVariantList()
-                << "SELECT COUNT(DISTINCT ?x) WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}";
-        }
-        else
-        { /* nmm:albumArtist */
+                    << QLatin1String(
+                            "SELECT COUNT(DISTINCT ?x) "
+                            "WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}");
+        } else { /* nmm:albumArtist */
             Q_ASSERT( type.service == "nmm:MusicAlbum" );
             arguments->queryArguments = QVariantList()
-                << "SELECT COUNT(DISTINCT ?x) WHERE { ?urn rdf:type nmm:MusicAlbum. ?urn nmm:albumArtist ?x }";
+                << QLatin1String("SELECT COUNT(DISTINCT ?x) "
+                                 "WHERE { ?urn rdf:type nmm:MusicAlbum. ?urn nmm:albumArtist ?x }");
         }
 
         return QDocumentGallery::NoError;
@@ -1123,24 +1121,31 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     Q_UNUSED(scope);
     if (!rootItemId.isEmpty()) {
         int index;
-        if ( (index = itemTypes.indexOfItemId(rootItemId) ) != -1) {
-            if (itemTypes[index].prefix == "Artist::")
-            {
-                rootItemStatement = "{?track nie:isLogicalPartOf ?x}";
-                filterStatement += "(nmm:performer(?track) = <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">)";
-                if ( filter.isValid() )
-                    filterStatement += "&&";
+        if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
+            if (itemTypes[index].prefix == QLatin1String("Artist::")) {
+                rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                filterStatement
+                        += QLatin1String("(nmm:performer(?track) = <")
+                        + itemTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String(">)");
+                if (filter.isValid())
+                    filterStatement += QLatin1String("&&");
             } else {
-                rootItemStatement = "{?x nie:isLogicalPartOf <" + itemTypes[index].prefix.strip(rootItemId).toString() + ">}";
+                rootItemStatement
+                        = QLatin1String("{?x nie:isLogicalPartOf <")
+                        + itemTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String(">}");
             }
         }
         else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
-            if (aggregateTypes[index].prefix == "audioGenre::")
-            {
-                rootItemStatement = "{?track nie:isLogicalPartOf ?x}";
-                filterStatement += "(nfo:genre(?track) = '" + aggregateTypes[index].prefix.strip(rootItemId).toString() + "' )";
-                if ( filter.isValid() )
-                    filterStatement += "&&";
+            if (aggregateTypes[index].prefix == QLatin1String("audioGenre::")) {
+                rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                filterStatement
+                        += QLatin1String("(nfo:genre(?track) = '")
+                        + aggregateTypes[index].prefix.strip(rootItemId).toString()
+                        + QLatin1String("' )");
+                if (filter.isValid())
+                    filterStatement += QLatin1String("&&");
             }
         } else {
             result = QDocumentGallery::ItemIdError;
@@ -1166,8 +1171,11 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
             result = QDocumentGallery::ItemTypeError;
         }
     }
-    if ( result == QDocumentGallery::NoError )
-        *query = rootItemStatement + ( filterStatement.isEmpty() ? "" : "FILTER(" + filterStatement + ")" );
+    if (result == QDocumentGallery::NoError) {
+        *query = rootItemStatement + (filterStatement.isEmpty()
+                ? QLatin1String("")
+                : QLatin1String("FILTER(") + filterStatement + QLatin1String(")"));
+    }
     return result;
 }
 
@@ -1204,22 +1212,24 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     return columns;
 }
 
-static QString qt_writeSorting( const QStringList &x, const QVector<QGalleryTrackerSortCriteria> &sortCriteria)
+static QString qt_writeSorting(
+        const QStringList &x, const QVector<QGalleryTrackerSortCriteria> &sortCriteria)
 {
     int count = x.size();
-    if ( count > 0 )
-    {
-        QString result(" ORDER BY ");
-        for ( int i = 0; i < count; ++i )
-        {
-            if ( sortCriteria[i].flags & QGalleryTrackerSortCriteria::Ascending )
-                result += qt_writePropertyFunctions( QStringList() << " ASC("+x[i], "x" );
-            else
-                result += qt_writePropertyFunctions( QStringList() << " DESC("+x[i], "x" );
+    if (count > 0) {
+        QString result(QLatin1String(" ORDER BY "));
+        for (int i = 0; i < count; ++i) {
+            if (sortCriteria[i].flags & QGalleryTrackerSortCriteria::Ascending ) {
+                result += qt_writePropertyFunctions(QStringList()
+                        << QLatin1String(" ASC(") + x[i], QLatin1String("x"));
+            } else {
+                result += qt_writePropertyFunctions(QStringList()
+                        << QLatin1String(" DESC(") +x[i], QLatin1String("x"));
+            }
         }
         return result;
     }
-    return "";
+    return QLatin1String("");
 }
 
 void QGalleryTrackerSchema::populateItemArguments(
@@ -1374,12 +1384,12 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
     arguments->queryArguments = QVariantList()
-                                << "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) " + qt_writePropertyFunctions(arguments->fieldNames, "x")
-                                + " WHERE {{ ?x rdf:type " + service + "}"
-                                + ( !query.isEmpty() ? query : "" )
-                                + "}"
-                                + qt_writeSorting( sortFieldNames, arguments->sortCriteria );
-                                ;
+            << QLatin1String("SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) ")
+            + qt_writePropertyFunctions(arguments->fieldNames, QLatin1String("x"))
+            + QLatin1String(" WHERE {{ ?x rdf:type ") + service + QLatin1String("}")
+            + (!query.isEmpty() ? query : QLatin1String(""))
+            + QLatin1String("}")
+            + qt_writeSorting(sortFieldNames, arguments->sortCriteria);
 
     arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
@@ -1553,11 +1563,11 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
     arguments->queryArguments = QVariantList()
-                            << "SELECT DISTINCT " + qt_writePropertyFunctions(identityFields, "x")
-                            + " WHERE{ ?x rdf:type " + type.service + " "
-                            + query
-                            + "}"
-                            ;
+            << QLatin1String("SELECT DISTINCT ")
+            + qt_writePropertyFunctions(identityFields, QLatin1String("x"))
+            + QLatin1String(" WHERE{ ?x rdf:type ") + type.service + QLatin1String(" ")
+            + query
+            + QLatin1String("}");
 
     if (type.identity.count == 1)
         arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0, type.prefix));
@@ -1577,14 +1587,14 @@ void QGalleryTrackerSchema::populateAggregateArguments(
 
 QString QGalleryTrackerSchema::serviceForType( const QString &galleryType )
 {
-    QGalleryTypeList<QGalleryItemType> typeList(qt_galleryItemTypeList );
-    int index = typeList.indexOfType( galleryType );
-    if ( index != -1 )
+    QGalleryTypeList<QGalleryItemType> typeList(qt_galleryItemTypeList);
+    int index = typeList.indexOfType(galleryType);
+    if (index != -1)
         return typeList[index].service;
 
-    QGalleryTypeList<QGalleryAggregateType> aggregateTypeList( qt_galleryAggregateTypeList );
-    index = aggregateTypeList.indexOfType( galleryType );
-    if ( index != -1 )
+    QGalleryTypeList<QGalleryAggregateType> aggregateTypeList(qt_galleryAggregateTypeList);
+    index = aggregateTypeList.indexOfType(galleryType);
+    if (index != -1)
         return aggregateTypeList[index].service;
 
     qWarning() << galleryType << " does not exists";
