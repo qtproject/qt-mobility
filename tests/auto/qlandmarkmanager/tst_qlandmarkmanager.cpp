@@ -829,7 +829,7 @@ private:
                 m_listener, SLOT(dataChanged()));
      }
 
-    void createDb() {        
+    void createDb() {
         if (m_manager != 0) {
             delete m_manager;
             m_manager =0;
@@ -8103,8 +8103,6 @@ void tst_QLandmarkManager::testViewport_data() {
 
 #ifdef EXPORT_URL
 void tst_QLandmarkManager::exportUrl() {
-    //This test function exists due to MOBILITY-1774
-
     QLandmark lm1;
     lm1.setName("LM1");
     lm1.setUrl(QUrl("http://lm1.com"));
