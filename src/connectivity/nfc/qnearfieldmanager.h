@@ -65,17 +65,17 @@ public:
     explicit QNearFieldManager(QNearFieldManagerPrivate *backend, QObject *parent = 0);
     ~QNearFieldManager();
 
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void startTargetDetection(QNearFieldTarget::Type targetType = QNearFieldTarget::AnyTarget);
+    void stopTargetDetection();
+
     template<typename T>
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QNdefRecord::TypeNameFormat typeNameFormat,
+    int registerTargetDetectedHandler(QObject *object, const char *method);
+    int registerTargetDetectedHandler(QObject *object, const char *method);
+    int registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
                                       const QByteArray &type,
                                       QObject *object, const char *method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
+    int registerTargetDetectedHandler(const QNdefFilter &filter,
                                       QObject *object, const char *method);
 
     bool unregisterTargetDetectedHandler(int handlerId);
@@ -90,12 +90,11 @@ private:
 };
 
 template<typename T>
-int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
 {
     T record;
 
-    return registerTargetDetectedHandler(targetType, record.userTypeNameFormat(), record.type(),
+    return registerTargetDetectedHandler(record.userTypeNameFormat(), record.type(),
                                          object, method);
 }
 

@@ -90,7 +90,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 }
 
 qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
-                                        QNearFieldTarget *target, quint8 *port)
+                                        QNearFieldTarget **target, quint8 *port)
 {
     Q_UNUSED(data);
     Q_UNUSED(maxSize);
