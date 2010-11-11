@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <algorithm>
+
 #include "qgallerytrackertyperesultset_p.h"
 
 #include "qgallerytrackerschema_p.h"
@@ -108,17 +108,16 @@ void QGalleryTrackerTypeResultSetPrivate::_q_queryFinished(QDBusPendingCallWatch
     }
 }
 
-class QGalleryTrackerTypeResultSetFindType {
+class QGalleryTrackerType : public QString
+{
 public:
-    QGalleryTrackerTypeResultSetFindType( const QString& type ) : m_type(type) {}
-    bool operator()(const QStringList& list)
-    {
-        return list.first() == m_type;
-    }
-
-private:
-    QString m_type;
+    QGalleryTrackerType(const QString& type ) : QString(type) {}
 };
+
+static bool operator ==(const QStringList &statistic, const QGalleryTrackerType &type)
+{
+    return statistic.first() == type;
+}
 
 void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &call)
 {
@@ -143,9 +142,10 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
              * where typeX corresponds to the service name ( i.e. ontology class name, e.g. "nfo:FileDataObject" ).
              * Search through the list and find the requested service and extract the count from the second string.
              */
-            std::vector<QStringList> v = reply.value().toStdVector();
-            std::vector<QStringList>::const_iterator pos = find_if( v.begin(), v.end(), QGalleryTrackerTypeResultSetFindType( service ));
-            if ( pos != v.end() )
+            QVector<QStringList> v = reply.value();
+            QVector<QStringList>::const_iterator pos = qFind(
+                    v, QGalleryTrackerType(service ));
+            if (pos != v.constEnd())
                 count = (*pos).last().toInt();
 
             // TODO Do we need this?
