@@ -89,7 +89,7 @@ private:
     VibeInt32 handleForActuator(const QFeedbackActuator &actuator);
     VibeInt32 handleForActuator(int actId);
     static VibeInt32 convertedDuration(int duration);
-    QFeedbackEffect::State updateImmState(VibeInt32 effectHandle, VibeInt32 state);
+    QFeedbackEffect::State updateImmState(const QFeedbackEffect *effect, VibeInt32 effectHandle, VibeInt32 state);
 
     void killTimerForHandle(VibeInt32 handle);
     void startTimerForHandle(VibeInt32 handle, const QFeedbackHapticsEffect* effect);
