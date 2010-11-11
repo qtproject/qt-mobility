@@ -320,6 +320,10 @@ The following table shows names of the default managers for each platform.
     \o Maemo5, WindowsXp/Vista,Linux
 \endtable
 
+For convenience, this documentations refers to the manager corresponding to com.nokia.qt.landmarks.engines.symbian as the symbian manager
+and the manager corresponding to com.nokia.qt.landmarks.engines.sqlite as the sqlite manager.
+
+
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -366,6 +370,10 @@ landmarks which have NaN latitude and longitude values.  If you try to export al
 are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
 of those landmarks have NaN latitude or longitude values.
 
+Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
+as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
+ignoring the url field during export if the URI is invalid while the sqlite manager will export the url
+and subsequently create an invalid lmx file.
 
 \section2 Landmark classes
 

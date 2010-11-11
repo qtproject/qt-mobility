@@ -902,8 +902,8 @@ private:
         file.remove();
     }
 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))    
-	void clearDb() {
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+        void clearDb() {
 
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i)
@@ -8097,22 +8097,21 @@ void tst_QLandmarkManager::testViewport_data() {
 #ifdef EXPORT_URL
 void tst_QLandmarkManager::exportUrl() {
     //This test function exists due to MOBILITY-1774
-    QFile exportUrlFile("exporturl.lmx");
-    if (exportUrlFile.exists())
-        exportUrlFile.remove();
+
     QLandmark lm1;
     lm1.setName("LM1");
-    lm1.setUrl(QUrl("LM1 url"));
+    lm1.setUrl(QUrl("http://lm1.com"));
+
     QVERIFY(m_manager->saveLandmark(&lm1));
-    QVERIFY(m_manager->exportLandmarks("exporturl.lmx", QLandmarkManager::Lmx));
+    QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
     QVERIFY(m_manager->removeLandmark(lm1));
-    QVERIFY(m_manager->importLandmarks("exporturl.lmx"));
+    QVERIFY(m_manager->importLandmarks(exportFile));
     QList<QLandmark> lms;
     lms = m_manager->landmarks();
     QCOMPARE(lms.count(), 1);
     qDebug() << "Url of imported landmark is: " << lms.at(0).url().toString();
     QCOMPARE(lms.at(0).url(), lm1.url());
-    QFileInfo fileInfo("exporturl.lmx");
+    QFileInfo fileInfo(exportFile);
     qDebug() << "export url file location=" << fileInfo.canonicalFilePath();
 }
 #endif
