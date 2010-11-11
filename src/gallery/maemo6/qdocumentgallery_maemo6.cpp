@@ -246,7 +246,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     if (error != QDocumentGallery::NoError) {
         return new QGalleryAbstractResponse(error);
     } else {
-        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->autoUpdate(), getChangeNotifier(request->itemType()) );
+        return createItemListResponse(
+                &arguments,
+                0,
+                1,
+                schema.isItemType(),
+                request->autoUpdate(),
+                getChangeNotifier(schema.itemType()));
     }
 }
 

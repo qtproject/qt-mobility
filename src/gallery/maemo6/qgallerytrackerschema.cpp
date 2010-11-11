@@ -167,6 +167,7 @@ namespace
     {
         QLatin1String itemType;
         QLatin1String service;
+        QLatin1String rdfSuffix;
         QGalleryTypePrefix prefix;
         QGalleryItemPropertyList itemProperties;
         QGalleryCompositePropertyList compositeProperties;
@@ -199,7 +200,7 @@ namespace
         int indexOfType(const QString &type) const;
         int indexOfItemId(const QString &itemId) const;
         int indexOfService(const QString &service) const;
-
+        int indexOfRdfTypes(const QStringList &rdfTypes) const;
         const T &operator [](int index) const { return items[index]; }
     };
 
@@ -246,6 +247,24 @@ namespace
         return -1;
     }
 
+    template <typename T>
+    int QGalleryTypeList<T>::indexOfRdfTypes(const QStringList &rdfTypes) const
+    {
+        int index = -1;
+        int rdfIndex = -1;
+        for (int i = 0; i < count; ++i) {
+            for (int j = rdfTypes.count() - 1; j >= 0; --j) {
+                if (rdfTypes.at(j).endsWith(items[i].rdfSuffix)) {
+                    if (j > rdfIndex) {
+                        index = i;
+                        rdfIndex = j;
+                    }
+                    break;
+                }
+            }
+        }
+        return index;
+    }
     // Re-declare to cut down on prefixes.
     enum
     {
@@ -354,20 +373,22 @@ namespace
     Type##Mask \
 }
 #else
-#define QT_GALLERY_ITEM_TYPE(Type, Service, Prefix, PropertyGroup) \
+#define QT_GALLERY_ITEM_TYPE(Type, RdfPrefix, RdfType, Prefix, PropertyGroup) \
 { \
     QLatin1String(#Type), \
-    QLatin1String(#Service), \
+    QLatin1String(#RdfPrefix":"#RdfType), \
+    QLatin1String("/"#RdfPrefix"#"#RdfType), \
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
     QGalleryCompositePropertyList(qt_gallery##PropertyGroup##CompositePropertyList), \
     Type##Id, \
     Type##Mask \
 }
-#define QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Type, Service, Prefix, PropertyGroup) \
+#define QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Type, RdfPrefix, RdfType, Prefix, PropertyGroup) \
 { \
     QLatin1String(#Type), \
-    QLatin1String(#Service), \
+    QLatin1String(#RdfPrefix":"#RdfType), \
+    QLatin1String("/"#RdfPrefix"#"#RdfType), \
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
     QGalleryCompositePropertyList(), \
@@ -376,10 +397,10 @@ namespace
 }
 #endif
 
-#define QT_GALLERY_AGGREGATE_TYPE(Type, Service, Prefix, UpdateMask) \
+#define QT_GALLERY_AGGREGATE_TYPE(Type, RdfPrefix, RdfType, Prefix, UpdateMask) \
 { \
     QLatin1String(#Type), \
-    QLatin1String(#Service), \
+    QLatin1String(#RdfPrefix":"#RdfType), \
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##Type##Identity), \
     QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
@@ -1095,17 +1116,17 @@ static const QGalleryItemProperty qt_galleryPhotoAlbumPropertyList[] =
 
 static const QGalleryItemType qt_galleryItemTypeList[] =
 {
-    QT_GALLERY_ITEM_TYPE(File      , nfo:FileDataObject, file      , File),
-    QT_GALLERY_ITEM_TYPE(Folder    , nfo:Folder        , folder    , File),
-    QT_GALLERY_ITEM_TYPE(Document  , nfo:Document      , document  , Document),
-    QT_GALLERY_ITEM_TYPE(Audio     , nfo:Audio         , audio     , Audio),
-    QT_GALLERY_ITEM_TYPE(Image     , nmm:Photo         , image     , Image),
-    QT_GALLERY_ITEM_TYPE(Video     , nfo:Video         , video     , Video),
-    QT_GALLERY_ITEM_TYPE(Playlist  , nmm:Playlist      , playlist  , Playlist),
-    QT_GALLERY_ITEM_TYPE(Text      , nfo:TextDocument  , text      , File),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Artist    , nmm:Artist        , Artist    , Artist),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm:MusicAlbum    , album     , Album),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm:ImageList     , photoAlbum, PhotoAlbum)
+    QT_GALLERY_ITEM_TYPE(File      , nfo, FileDataObject, file      , File),
+    QT_GALLERY_ITEM_TYPE(Folder    , nfo, Folder        , folder    , File),
+    QT_GALLERY_ITEM_TYPE(Document  , nfo, Document      , document  , Document),
+    QT_GALLERY_ITEM_TYPE(Audio     , nfo, Audio         , audio     , Audio),
+    QT_GALLERY_ITEM_TYPE(Image     , nmm, Photo         , image     , Image),
+    QT_GALLERY_ITEM_TYPE(Video     , nfo, Video         , video     , Video),
+    QT_GALLERY_ITEM_TYPE(Playlist  , nmm, Playlist      , playlist  , Playlist),
+    QT_GALLERY_ITEM_TYPE(Text      , nfo, TextDocument  , text      , File),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Artist    , nmm, Artist        , Artist    , Artist),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm, MusicAlbum    , album     , Album),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList     , photoAlbum, PhotoAlbum)
 };
 
 /////////
@@ -1238,8 +1259,8 @@ static void qt_writePhotoAlbumIdCondition(QDocumentGallery::Error *, QXmlStreamW
 
 static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
-    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, nmm:MusicAlbum, albumArtist, AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , nfo:Media     , audioGenre , AudioMask)
+    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, nmm, MusicAlbum, albumArtist, AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , nfo, Media     , audioGenre , AudioMask)
 };
 
 class QGalleryTrackerServicePrefixColumn : public QGalleryTrackerCompositeColumn
@@ -1262,7 +1283,7 @@ QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iter
 {
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-    const int index = itemTypes.indexOfService((row + 1)->toString());
+    const int index = itemTypes.indexOfRdfTypes((row + 2)->toString().split(QLatin1Char(',')));
 
     return index != -1
             ? QVariant(itemTypes[index].prefix + row->toString())
@@ -1271,10 +1292,9 @@ QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iter
 
 QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    Q_ASSERT(0);
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-    const int index = itemTypes.indexOfService((row + 1)->toString());
+    const int index = itemTypes.indexOfRdfTypes((row + 2)->toString().split(QLatin1Char(',')));
 
     return index != -1
             ? QVariant(itemTypes[index].itemType)
@@ -1831,22 +1851,22 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->service = qt_galleryItemTypeList[m_itemIndex].service;
     arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
     arguments->identityWidth = 1;
-    arguments->valueOffset = 2;  // urn + nie:url
+    arguments->valueOffset = 3;  // urn + nie:url + rdf:type
     arguments->tableWidth =  arguments->valueOffset + arguments->fieldNames.count();
     arguments->compositeOffset = arguments->valueOffset + valueNames.count();
     arguments->queryInterface = dbus->metaDataInterface();
     arguments->queryMethod = QLatin1String("SparqlQuery");
     arguments->queryArguments = QVariantList()
-                                << "SELECT DISTINCT ?x nie:url(?x) " + qt_writePropertyFunctions(arguments->fieldNames, "x")
+                                << "SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) " + qt_writePropertyFunctions(arguments->fieldNames, "x")
                                 + " WHERE {{ ?x rdf:type " + service + "}"
                                 + ( !query.isEmpty() ? query : "" )
                                 + "}"
                                 + qt_writeSorting( sortFieldNames, arguments->sortCriteria );
                                 ;
 
-    arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0,qt_galleryItemTypeList[m_itemIndex].prefix));
+    arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
-    arguments->typeColumn.reset(new QGalleryTrackerStaticColumn(QVariant(qt_galleryItemTypeList[m_itemIndex].itemType)));
+    arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
     arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
