@@ -23,9 +23,14 @@ contains(mobility_modules, sensors) {
 }
 
 contains(mobility_modules,location) {
-    contains(mobility_modules,bearer) {
-    	SUBDIRS += weatherinfo \
-		   lightmaps
+    equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS +=  weatherinfo \
+		                lightmaps
+        }
+    } else {
+    	SUBDIRS +=  weatherinfo \
+		            lightmaps
     }
 }
 

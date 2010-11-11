@@ -58,7 +58,7 @@
 #include "qgalleryqueryrequest.h"
 
 #include <QObject>
-#include <QEventloop>
+#include <QEventLoop>
 #include <mdesession.h>
 #include <mdequery.h>
 #include <e32std.h>

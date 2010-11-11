@@ -52,6 +52,7 @@ private slots: //test methods
     void testCompareColumnsFromMidleInOrder();
     void testGetSearchColumns();
     void testGetSearchPattern();
+    void testVariationRemoval();
     
 private:
  

@@ -4,4 +4,4 @@ CONFIG += ordered
 
 include(../../common.pri)
 
-SUBDIRS += backuphandler
+SUBDIRS += backuphandler vcardpreserver

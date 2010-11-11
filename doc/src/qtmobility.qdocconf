@@ -108,6 +108,7 @@ headerdirs = ../../src/global \
              ../../src/organizer \
              ../../src/versitorganizer \
              ../../plugins/declarative/serviceframework \
+             ../../src/connectivity \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
@@ -141,6 +142,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../src/connectivity \
              ../../src/versitorganizer \
              .
 

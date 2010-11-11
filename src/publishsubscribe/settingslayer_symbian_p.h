@@ -50,7 +50,7 @@
 #include <QByteArray>
 #include <QMultiMap>
 
-#ifdef __WINS__
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
     #include "pathmapper_symbian_p.h"
 #else
     #include "pathmapper_proxy_symbian_p.h"
