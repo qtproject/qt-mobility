@@ -69,6 +69,8 @@ public:
     TBool IsConnectionOpened();
 
     TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse,const TTimeIntervalMicroSeconds32& aTimeout);
+
+    MNfcConnection * TagConnection() { return iTagConnection;}
 private:
     // C++ constructor
     CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);

@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include <nfctag.h>
 #include "qnearfieldtagtype3_symbian_p.h"
+#include <nfctype3connection.h>
+#include <QtEndian>
 
 QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
@@ -97,12 +99,20 @@ void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByt
 {
 }
 
-void QNearFieldTagType3Symbian::poll(quint16 systemCode, PollRequestFlags requestFlags, quint8 timeSlots)
-{
-}
-
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
 {
+    quint8 numberOfBlocks;
+    QByteArray command;
+    command.append(0x06); // command code
+    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
+    if (command.count() > 1)
+    {
+        return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command, 100*1000, 12+16*numberOfBlocks)); 
+    }
+    else
+    {
+        return QMap<quint16, QByteArray>();
+    }
 }
 
 void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
@@ -110,4 +120,120 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
 {
 }
 
+const QByteArray& QNearFieldTagType3Symbian::getIDm()
+{
+    if (mIDm.isEmpty())
+    {
+    // this is the first time to get IDm
+        CNearFieldTag * tag = mTag->CastToTag();
+
+        if (tag)
+        {
+            CNfcType3Connection * connection = static_cast<CNfcType3Connection *>(tag->TagConnection());
+            TBuf8<8> IDm;
+            TInt error = connection->GetIDm(IDm);
+            if (KErrNone == error)
+            {
+                mIDm = QNFCNdefUtility::FromTDesCToQByteArray(IDm);  
+            }
+        }
+    }
+    return mIDm;
+}
+
+QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks)
+{
+    QByteArray command;
+    command.append(getIDm());
+    numberOfBlocks = 0;
+
+    if (command.isEmpty())
+    {
+        // can't get IDm
+        return command;
+    }
+
+    quint8 numberOfServices = serviceBlockList.keys().count();
+
+    if ((numberOfServices > 16) || (numberOfServices < 1))
+    {
+        // out of range of services number
+        return QByteArray();
+    }
+    else
+    {
+        command.append(numberOfServices);
+    } 
+
+    quint8 serviceCodeListOrder = 0;
+    QByteArray serviceCodeList;
+    QByteArray blockList;
+    foreach(const quint16 serviceCode, serviceBlockList.keys())
+    {
+        serviceCodeList.append(reinterpret_cast<const char *>(&serviceCode), sizeof(quint16));
+        
+        numberOfBlocks += serviceBlockList.value(serviceCode).count();
+        if (numberOfBlocks > 12)
+        {
+            // out of range of block number
+            return QByteArray();
+        }
+
+        foreach(const unsigned int blockNumber, serviceBlockList.value(serviceCode))
+        {
+            if (blockNumber > 255)
+            {
+                // 3 bytes format
+                blockList.append(0x00 | (serviceCodeListOrder & 0x0F));
+                quint16 blkNum = blockNumber;
+                blkNum = qToLittleEndian(blkNum);
+                blockList.append(reinterpret_cast<const char *>(&blkNum), sizeof(quint16));
+            }
+            else // 2 bytes format
+            {
+                blockList.append(0x80 | (serviceCodeListOrder & 0x0F));
+                quint8 blkNum = blockNumber; 
+                blockList.append(blkNum);
+            }
+        }
+
+        serviceCodeList.append(serviceCodeListOrder++);
+    }
+
+    if (numberOfBlocks < 1)
+    {
+        // out of range of block number
+        return QByteArray();
+    }        
+
+    command.append(serviceCodeList);
+    command.append(numberOfBlocks);
+    command.append(blockList);
+    return command;
+}
+
+QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response)
+{
+    QMap<quint16, QByteArray> result;
+    // at least, the response should contain resp code + IDM + status flags
+    if (response.count() < 11)
+    {
+        return result;
+    }
+    
+    if ((response.at(0) != 0x07) || (response.mid(1,8) != getIDm()) || (response.at(10) != 0))
+    {
+        return result;
+    }
+
+    quint32 index = 12;
+    foreach(const quint16 serviceCode, serviceBlockList.keys())
+    {
+        quint8 blockCount = serviceBlockList.value(serviceCode).count();
+        result.insert(serviceCode, response.mid(index, 16*blockCount));
+        index+=16*blockCount;
+    }
+    return result;
+}
+     
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"
