@@ -202,6 +202,11 @@ QString ThumbnailCache::thumbnailPath(const QUrl &url) const
             + QLatin1String("/.thumbnails/cropped/")
             + QCryptographicHash::hash(url.toString().toUtf8(), QCryptographicHash::Md5).toHex()
             + QLatin1String(".jpeg");
+#elif defined(Q_WS_MAEMO_6)
+    QString thumbnailPath = QDir::homePath()
+            + QLatin1String("/.thumbnails/grid/")
+            + QCryptographicHash::hash(url.toString().toUtf8(), QCryptographicHash::Md5).toHex()
+            + QLatin1String(".jpeg");
 #else
     QString thumbnailPath = QDir::homePath()
             + QLatin1String("/.thumbnails/normal/")
