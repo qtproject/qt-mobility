@@ -552,6 +552,7 @@ static bool qt_writeFilePathCondition(
 // These are repeated in a few lists.
 #define QT_GALLERY_FILE_PROPERTIES \
     QT_GALLERY_FILE_MIMETYPE_PROPERTY, \
+    QT_GALLERY_ITEM_PROPERTY("url"         , "nie:url"             , String  , CanRead | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("fileName"    , "nfo:fileName"        , String  , CanRead | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("fileSize"    , "nfo:fileSize"        , Int     , QGalleryProperty::Attributes()), \
     QT_GALLERY_ITEM_PROPERTY("copyright"   , "nie:copyright"       , String  , CanRead | CanWrite | CanSort | CanFilter), \
@@ -778,7 +779,8 @@ static const QGalleryItemProperty qt_galleryArtistPropertyList[] =
 static const QGalleryItemProperty qt_galleryPhotoAlbumPropertyList[] =
 {
     QT_GALLERY_ITEM_PROPERTY("title", "nie:title", String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("count", "nfo:entryCounter", String, CanRead | CanFilter | CanSort)
+    QT_GALLERY_ITEM_PROPERTY("count", "nfo:entryCounter", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("trackCount", "nfo:entryCounter", String, CanRead | CanFilter | CanSort)
 };
 
 /////////////
