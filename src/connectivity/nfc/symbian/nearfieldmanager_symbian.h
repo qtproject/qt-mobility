@@ -57,6 +57,8 @@
 #include <ndefdiscovery.h>
 
 #include "../qndefrecord.h"
+#include <QList>
+#include "../qnearfieldtarget.h"
 
 namespace QtMobility{
 class QNearFieldManagerPrivateImpl;
@@ -73,7 +75,8 @@ public:
     static CNearFieldManager* NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     virtual ~CNearFieldManager();
     
-    void StartTagDetectionL();
+    void StartTargetDetectionL(const QList<QtMobility::QNearFieldTarget::Type> &aTargetTypes);
+    void stopTargetDetection();
     //for registerTargetDetectedHandler ... api
     TInt AddNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf, 
                                        const QByteArray& aType );

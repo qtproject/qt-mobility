@@ -62,31 +62,94 @@
 void CNearFieldManager::ConstructL()
     {
     User::LeaveIfError(iServer.Open());
-    //create Tag discovery api
-    iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+    
     //create LLCP provider api
     iLlcpProvider = CLlcpProvider::NewL( iServer );
+    iLlcpProvider->AddLlcpLinkListenerL( *this );
     
-    StartTagDetectionL();
     }
 
 /*!
     Start listening all type tags.
 */
-void CNearFieldManager::StartTagDetectionL()
+void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type> &aTargetTypes)
 	{
-	User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
-	
-	iTagSubscription = CNfcTagSubscription::NewL();   
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
-	iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
-	
-	
-	iLlcpProvider->AddLlcpLinkListenerL( *this );
+	if (aTargetTypes.size() > 0)
+		{
+		if (!iNfcTagDiscovery)
+			{
+			iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+			}
+		else
+			{
+			iNfcTagDiscovery->RemoveTagConnectionListener();
+			}
+		User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
+		if (!iTagSubscription)
+			{
+			iTagSubscription = CNfcTagSubscription::NewL();
+			}
+		else
+			{
+			iTagSubscription->RemoveAllConnectionModes();
+			}
+		for (int i = 0; i < aTargetTypes.size(); ++i)
+			{
+			switch(aTargetTypes[i])
+				{
+				case QNearFieldTarget::NfcTagType1:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType1);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+					break;
+				case QNearFieldTarget::NfcTagType2:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType2);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+					break;
+				case QNearFieldTarget::NfcTagType3:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType3);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+					break;
+				case QNearFieldTarget::NfcTagType4:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfc14443P4);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+					break;
+				case QNearFieldTarget::MifareTag:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcMifareStd);					
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+					break;
+				case QNearFieldTarget::AnyTarget:
+					iTagSubscription->RemoveAllConnectionModes();
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+					break;
+				case QNearFieldTarget::ProprietaryTag:
+					break;
+				}
+			}
+		}
+		iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+	}
+
+/*!
+    Stop listening all type tags.
+*/
+void CNearFieldManager::stopTargetDetection()
+	{
+	if (iNfcTagDiscovery)
+		{
+		iNfcTagDiscovery->RemoveTagConnectionListener();
+		iNfcTagDiscovery->RemoveTagSubscription();
+		delete iNfcTagDiscovery;
+		iNfcTagDiscovery = NULL;
+		if (iTagSubscription)
+			{
+			delete iTagSubscription;
+			iTagSubscription = NULL;
+			}
+		}
 	}
 
 /*!
