@@ -1104,10 +1104,13 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QLandmarkIntersectionFilter intersectionFilter = filter;
             QList<QLandmarkFilter> filters = intersectionFilter.filters();
 
+            int subOffset = 0;
+            int subLimit = -1;
+
             if (filters.size() == 0) {
                 //do nothing
             } else if (filters.size() == 1) {
-                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), subLimit, subOffset, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1127,7 +1130,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
 
                 QSet<QLandmarkId> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(filters.at(0),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), subLimit, subOffset, error, errorString);
                 ids = firstResult.toSet();
 
                 for (int i = 1; i < filters.size(); ++i) {
@@ -1139,7 +1142,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
 
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), subLimit, subOffset, error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
                         result.clear();
@@ -1174,11 +1177,14 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QSet<QString> ids;
             QList<QLandmarkFilter> filters = unionFilter.filters();
 
+            int subOffset = 0;
+            int subLimit = -1;
+
             if (filters.size() == 0) {
                 //do nothing
             } else if (filters.size() == 1) {
                 result =  landmarkIds(filters.at(0),
-                                        QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                        QList<QLandmarkSortOrder>(), subLimit, subOffset, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1193,7 +1199,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
                                                                QList<QLandmarkSortOrder>(),
-                                                               limit, offset,
+                                                               subLimit, subOffset,
                                                                error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -1470,9 +1476,9 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     queryString.append("_:x a slo:GeoLocation ");
 
     if (!landmark->name().isEmpty()) {
-        queryString.append("; nie:title \'");
+        queryString.append("; nie:title \"");
         queryString.append(landmark->name());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     QGeoCoordinate geoCoord;
     geoCoord = landmark->coordinate();
