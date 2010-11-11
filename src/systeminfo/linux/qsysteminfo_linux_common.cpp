@@ -1230,7 +1230,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::initOfono()
     connect(ofonoManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
             this,SLOT(ofonoPropertyChangedContext(QString,QString,QDBusVariant)));
 
-    Q_foreach (const QDBusObjectPath &path, ofonoManager->getModems()) {
+    foreach (const QDBusObjectPath &path, ofonoManager->getModems()) {
         initModem(path.path());
     }
 }
@@ -1475,7 +1475,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
 
         if (modems.count() >  knownModems.count()) {
             //add a modem
-            Q_foreach (const QDBusObjectPath &path, modems) {
+            foreach (const QDBusObjectPath &path, modems) {
                 if (!knownModems.contains(path.path())) {
                     initModem(path.path());
                 }
@@ -1483,11 +1483,11 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
         }  else {
             //remove one
             QStringList newModemList;
-            Q_foreach (const QDBusObjectPath &path, modems) {
+            foreach (const QDBusObjectPath &path, modems) {
                 newModemList << path.path();
             }
 
-            Q_foreach (const QString &path, knownModems) {
+            foreach (const QString &path, knownModems) {
                 if (!newModemList.contains(path)) {
                     knownModems.removeAll(path);
                 }
