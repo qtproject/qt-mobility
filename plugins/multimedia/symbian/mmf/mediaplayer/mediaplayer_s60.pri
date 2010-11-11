@@ -79,7 +79,7 @@ contains(S60_VERSION, 3.1) {
         DEFINES += HAS_AUDIOROUTING_IN_VIDEOPLAYER
         DEFINES += HAS_AUDIOROUTING
         message("Audiorouting_s60 enabled for post 3.1 sdk")
-        LIBS += -laudiooutputrouting
+        LIBS += -lAudioOutputRouting
     }
 
 }
