@@ -64,6 +64,7 @@ set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+set PLATFORM_CONFIG=
 
 REM By default, all modules are requested.  Reset this later if -modules is supplied
 set ORGANIZER_REQUESTED=yes
@@ -102,7 +103,7 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
-
+if "%1" == "-staticconfig"     goto staticConfigTag
 
 echo Unknown option: "%1"
 goto usage
@@ -153,6 +154,12 @@ goto exitTag
 :qtTag
 shift
 set QT_PATH=%1\
+shift
+goto cmdline_parsing
+
+:staticConfigTag
+shift
+set PLATFORM_CONFIG=%1
 shift
 goto cmdline_parsing
 
@@ -523,6 +530,10 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
+
+REM No reason to do config tests if we got a platform configuration
+if not "%PLATFORM_CONFIG%" == "" goto platformconfig
+
 REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
@@ -573,10 +584,25 @@ call :compileTest EnhancedVideoRenderer evr
 echo End of compile tests
 echo.
 echo.
+goto processHeaders
 
+:platformconfig
+
+echo.
+echo Skipping configure tests
+echo Loading ... features\platformconfig\%PLATFORM_CONFIG%.pri
+
+if not exist "%SOURCE_PATH%\features\platformconfig\%PLATFORM_CONFIG%.pri" (
+    echo >&2Invalid platform configuration %PLATFORM_CONFIG%.pri
+    goto errorTag
+)
+echo include($${QT_MOBILITY_SOURCE_TREE}/features/platformconfig/%PLATFORM_CONFIG%.pri) >> %PROJECT_CONFIG%
+
+:processHeaders
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
-copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
+if not exist "%BUILD_PATH%\features\strict_flags.prf" copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
+
 echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
@@ -684,6 +710,7 @@ set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
+set PLATFORM_CONFIG=
 exit /b 1
 
 :exitTag
@@ -704,4 +731,5 @@ set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
+set PLATFORM_CONFIG=
 exit /b 0
