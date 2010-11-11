@@ -65,12 +65,14 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     m_geocodingTab = new GeocodingTab();
     m_reverseTab = new ReverseGeocodingTab();
     m_routingTab = new RouteTab();
+    m_directionsTab = new DirectionsTab();
 
     m_tabWidget = new QTabWidget(this);
     m_tabWidget->addTab(m_servicesTab, tr("Service Providers"));
     m_tabWidget->addTab(m_routingTab, tr("Route"));
     m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
     m_tabWidget->addTab(m_reverseTab, tr("Reverse Geocoding"));
+    m_tabWidget->addTab(m_directionsTab, tr("Directions"));
 
     setCentralWidget(m_tabWidget);
 
@@ -164,5 +166,6 @@ void TabbedWindow::setProvider(QString providerId)
     m_geocodingTab->initialize(m_serviceProvider->searchManager());
     m_reverseTab->initialize(m_serviceProvider->searchManager());
     m_routingTab->initialize(m_serviceProvider->routingManager());
+    m_directionsTab->initialize(m_serviceProvider->routingManager(), m_serviceProvider->searchManager());
 }
 

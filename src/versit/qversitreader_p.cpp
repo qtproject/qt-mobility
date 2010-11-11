@@ -85,10 +85,10 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec)
         static QTextCodec* utf16le = QTextCodec::codecForName("UTF-16LE");
         static QTextCodec* utf32be = QTextCodec::codecForName("UTF-32BE");
         static QTextCodec* utf32le = QTextCodec::codecForName("UTF-32LE");
-        static const QByteArray& beginUtf16be(VersitUtils::encode("BEGIN:", utf16be));
-        static const QByteArray& beginUtf16le(VersitUtils::encode("BEGIN:", utf16le));
-        static const QByteArray& beginUtf32be(VersitUtils::encode("BEGIN:", utf32be));
-        static const QByteArray& beginUtf32le(VersitUtils::encode("BEGIN:", utf32le));
+        static const QByteArray beginUtf16be(VersitUtils::encode("BEGIN:", utf16be));
+        static const QByteArray beginUtf16le(VersitUtils::encode("BEGIN:", utf16le));
+        static const QByteArray beginUtf32be(VersitUtils::encode("BEGIN:", utf32be));
+        static const QByteArray beginUtf32le(VersitUtils::encode("BEGIN:", utf32le));
 
         // Do some basic charset detection using the byte-order-mark (BOM)
         // We need 4 bytes to do BOM sniffing for UTF-32, UTF-16 and UTF-8

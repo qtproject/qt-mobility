@@ -61,14 +61,27 @@ private Q_SLOTS:
     void errorFinished();
     void errorCanceled();
     void immediateError();
+    void waitForFinishedImmediate();
+    void waitForFinishedTimeout();
+    void waitForFinishedNoTimeout();
+    void waitForCanceledImmediate();
+    void waitForCanceledNoTimeout();
+    void waitForErrorImmediate();
+    void waitForErrorNoTimeout();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
+    Q_OBJECT
 public:
     using QGalleryAbstractResponse::error;
     using QGalleryAbstractResponse::finish;
     using QGalleryAbstractResponse::resume;
+
+public Q_SLOTS:
+    void doFinish() { finish(); }
+    void doCancel() { cancel(); }
+    void doError(int error) { QGalleryAbstractResponse::error(error); }
 };
 
 void tst_QGalleryAbstractResponse::finish()
@@ -410,6 +423,81 @@ void tst_QGalleryAbstractResponse::immediateError()
     QCOMPARE(response.error(), 300);
     QCOMPARE(response.errorString(), QLatin1String("error"));
     QCOMPARE(response.waitForFinished(300), true);
+}
+
+void tst_QGalleryAbstractResponse::waitForFinishedImmediate()
+{
+    QtGalleryTestResponse response;
+
+    QMetaObject::invokeMethod(&response, "doFinish", Qt::QueuedConnection);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(0), true);
+    QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::waitForFinishedTimeout()
+{
+    QtGalleryTestResponse response;
+
+    QCOMPARE(response.waitForFinished(300), false);
+
+    QTimer::singleShot(250, &response, SLOT(doFinish()));
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(100), false);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(500), true);
+    QCOMPARE(response.isActive(), false);
+
+}
+
+void tst_QGalleryAbstractResponse::waitForFinishedNoTimeout()
+{
+    QtGalleryTestResponse response;
+
+    QTimer::singleShot(250, &response, SLOT(doFinish()));
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(-1), true);
+    QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::waitForCanceledImmediate()
+{
+    QtGalleryTestResponse response;
+
+    QMetaObject::invokeMethod(&response, "doCancel", Qt::QueuedConnection);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(0), true);
+    QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::waitForCanceledNoTimeout()
+{
+    QtGalleryTestResponse response;
+
+    QMetaObject::invokeMethod(&response, "doCancel", Qt::QueuedConnection);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(-1), true);
+    QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::waitForErrorImmediate()
+{
+    QtGalleryTestResponse response;
+
+    QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(0), true);
+    QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::waitForErrorNoTimeout()
+{
+    QtGalleryTestResponse response;
+
+    QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.waitForFinished(-1), true);
+    QCOMPARE(response.isActive(), false);
 }
 
 #include "tst_qgalleryabstractresponse.moc"

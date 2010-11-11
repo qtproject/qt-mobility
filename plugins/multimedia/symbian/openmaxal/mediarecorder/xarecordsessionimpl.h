@@ -43,7 +43,7 @@
 #define XARECORDSESSIONIMPL_H
 
 #include <OpenMAXAL.h>
-#include <BADESCA.H>
+#include <badesca.h>
 
 
 class XARecordObserver;

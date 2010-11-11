@@ -46,6 +46,7 @@
 #include "geocodingtab.h"
 #include "revgeocodingtab.h"
 #include "servicestab.h"
+#include "directionstab.h"
 
 #include <qnetworksession.h>
 
@@ -77,6 +78,7 @@ private:
     ReverseGeocodingTab* m_reverseTab;
     RouteTab* m_routingTab;
     ServicesTab* m_servicesTab;
+    DirectionsTab* m_directionsTab;
 };
 
 #endif /* TABBEDWINDOW_H_ */
