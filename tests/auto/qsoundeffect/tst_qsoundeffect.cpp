@@ -169,26 +169,19 @@ void tst_QSoundEffect::testStatus()
 {
     QUrl url = QUrl();
     sound->setSource(url);
-    QSignalSpy readSignal(sound, SIGNAL(statusChanged()));
     QCOMPARE(sound->status(), QSoundEffect::Null);
 
-    int signalCount = 1;
     //valid source
     url = QUrl::fromLocalFile(QString(QLatin1String("%1%2")).arg(QLatin1String(SRCDIR)).arg(QLatin1String("test.wav")));
     sound->setSource(url);
-    QCOMPARE(readSignal.count(), signalCount);
 
-    if (sound->status() == QSoundEffect::Loading) {
-        QTestEventLoop::instance().enterLoop(1);
-        QCOMPARE(readSignal.count(), ++signalCount);
-    }
+    QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(sound->status(), QSoundEffect::Ready);
 
     //empty source
     url = QUrl();
     sound->setSource(url);
     QTestEventLoop::instance().enterLoop(1);
-    QCOMPARE(readSignal.count(), ++signalCount);
     QCOMPARE(sound->status(), QSoundEffect::Null);
 
     //invalid source

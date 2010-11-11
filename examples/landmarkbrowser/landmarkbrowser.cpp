@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include <qlandmarkfilter.h>
+#include <qlandmarkcategoryremoverequest.h>
 #include <qlandmark.h>
 
 #include <QModelIndex>
@@ -250,14 +251,6 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    QList<QLandmark> newLandmarks = manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount());
-
-    updateTable(newLandmarks);
-    updateRowLabels();
-    landmarks.append(newLandmarks);
-
-    if (table->rowCount() < limit)
-        nextLandmarkButton->setEnabled(false);
 }
 
 void LandmarkBrowser::on_setFilterButton_clicked()
@@ -307,13 +300,12 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
     if (deleteIds.count() == 0)
         return;
 
-    for (int i =0;i < deleteIds.count(); ++i)
-        manager->removeCategory(deleteIds.at(i));
-
-    updateCategoryTable(manager->categories(deleteIds.count(), currentCategoryOffset+categoryTable->rowCount()));
-    updateCategoryRowLabels();
-    if (categoryTable->rowCount() < limit)
-        nextCategoryButton->setEnabled(false);
+    QLandmarkCategoryRemoveRequest catRemove(manager, this);
+    catRemove.setCategoryIds(deleteIds);
+    catRemove.start();
+#ifdef Q_OS_SYMBIAN
+    catRemove.waitForFinished(30);
+#endif
 }
 
 void LandmarkBrowser::on_addLandmark_clicked()
@@ -362,8 +354,10 @@ void LandmarkBrowser::on_addCategoryButton_clicked()
 
 void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
 {
+    qDebug() << "AMOS fetch handler called state =" << state;
     if (state == QLandmarkAbstractRequest::FinishedState)
     {
+
         QLandmarkAbstractRequest *request = qobject_cast<QLandmarkAbstractRequest*> (sender());
         if (!request)
             return;
@@ -426,6 +420,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                 break;
             }
         case QLandmarkAbstractRequest::CategoryFetchRequest: {
+                qDebug() << "AMOS CategoryFetchRequest finished";
                 if (categoryFetch->error() == QLandmarkManager::NoError) {
                     if (currentCategoryOffset < limit)
                         prevCategoryButton->setEnabled(false);
@@ -444,11 +439,14 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                         categoryTable->removeRow(i);
                     }
 
+                    qDebug() << "AMOS CategoryFetchRequest finished1";
+
                     QList<QLandmarkCategory> cats;
                     cats = categoryFetch->categories();
                     updateCategoryTable(cats);
 
                     categoryTable->setUpdatesEnabled(true);
+                    qDebug() << "AMOS CategoryFetchRequest finished2";
                 } else {
                     QMessageBox::warning(this, "Warning", "Category Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                 }
@@ -627,6 +625,7 @@ void LandmarkBrowser::reloadingLandmarks()
 }
 
 void LandmarkBrowser::reloadingCategories() {
+    qDebug() << "AMOS reloading categories called";
     categoryFetch->setOffset(currentLandmarkOffset);
     categoryFetch->start();
     if (tabWidget->currentIndex() == 1) {

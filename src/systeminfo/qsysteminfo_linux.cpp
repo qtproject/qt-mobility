@@ -108,7 +108,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << QLatin1String("qt_*.qm") ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(const QString localeName, localeList) {
+        foreach (const QString &localeName, localeList) {
             const QString lang = localeName.mid(3,2);
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help"))) {
                 langList <<lang;
@@ -184,7 +184,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
 {
     iface = new QNetworkManagerInterface(this);
 
-   foreach(const QDBusObjectPath path, iface->getDevices()) {
+   foreach (const QDBusObjectPath &path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path(), this);
 
         switch(devIface->deviceType()) {
@@ -251,12 +251,12 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
 
     const QList <QDBusObjectPath> connections = dbIface->activeConnections();
 
-    foreach(const QDBusObjectPath activeconpath, connections) {
+    foreach (const QDBusObjectPath &activeconpath, connections) {
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
         activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path(), this));
 
         const QList<QDBusObjectPath> devices = activeCon->devices();
-        foreach(const QDBusObjectPath device, devices) {
+        foreach (const QDBusObjectPath &device, devices) {
             activePaths.insert(activeconpath.path(),device.path());
         }
     }
@@ -533,7 +533,7 @@ QString QSystemDeviceInfoPrivate::productName()
         QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
                                                      QDir::Files | QDir::NoDotAndDotDot,
                                                      QDir::Name);
-        foreach(const QFileInfo fileInfo, localeList) {
+        foreach (const QFileInfo &fileInfo, localeList) {
             const QString filepath = fileInfo.filePath();
             QFile file(filepath);
             if (file.open(QIODevice::ReadOnly)) {
@@ -592,7 +592,7 @@ QString QSystemDeviceInfoPrivate::productName()
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
-         foreach(const QString iface, ifaceList) {
+         foreach (const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
@@ -637,7 +637,7 @@ QString QSystemDeviceInfoPrivate::productName()
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
-         foreach(const QString iface, ifaceList) {
+         foreach (const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
@@ -744,7 +744,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
         ifaceList << QLatin1String("org.gnome.ScreenSaver");
         QDBusInterface *connectionInterface;
-        foreach(const QString iface, ifaceList) {
+        foreach (const QString iface, ifaceList) {
             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                      QLatin1String("/ScreenSaver"),
                                                      QLatin1String(iface.toLatin1()),

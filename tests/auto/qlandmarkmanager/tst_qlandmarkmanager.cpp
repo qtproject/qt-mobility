@@ -132,6 +132,7 @@
 #define EXPORT_URL
 #define REMOVE_STRESS
 #define SAVE_STRESS
+#define SAVE_CATEGORY_STRESS
 #define SIMPLE_TEST
 
 //#define WORKAROUND
@@ -828,7 +829,7 @@ private:
                 m_listener, SLOT(dataChanged()));
      }
 
-    void createDb() {
+    void createDb() {        
         if (m_manager != 0) {
             delete m_manager;
             m_manager =0;
@@ -838,14 +839,15 @@ private:
             delete m_listener;
             m_listener =0;
         }
+
         QMap<QString, QString> map;
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         m_manager = new QLandmarkManager();
 #else
-
         map["filename"] = "test.db";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 #endif
+
         m_listener = new ManagerListener;
         connectNotifications();
     }
@@ -1143,6 +1145,11 @@ void testViewport_data();
 #ifdef SAVE_STRESS
  void saveStress();
  void saveStress_data();
+#endif
+
+#ifdef SAVE_CATEGORY_STRESS
+ void saveCategoryStress();
+ void saveCategoryStress_data();
 #endif
 
 #ifdef SIMPLE_TEST
@@ -8143,7 +8150,7 @@ void tst_QLandmarkManager::removeStress()
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QCOMPARE(m_manager->errorMap().count(), 0);
     } else {
-        QLandmarkSaveRequest lmRemoveRequest(m_manager);
+        QLandmarkRemoveRequest lmRemoveRequest(m_manager);
         QSignalSpy spy(&lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         lmRemoveRequest.setLandmarks(lms);
         lmRemoveRequest.start();
@@ -8172,26 +8179,42 @@ void tst_QLandmarkManager::removeStress_data()
 #ifdef SAVE_STRESS
 void tst_QLandmarkManager::saveStress()
 {
+
+    QLandmarkCategory cat1;
+    cat1.setName("cat1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("cat2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("cat3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+
     QFETCH(QString, type);
     QList<QLandmark> lms;
     for (int i=0; i < 100; ++i) {
         QLandmark lm;
-        lm.setName(QString("LM") + i);
+        lm.setName(QString("LM") + QString::number(i));
         QGeoAddress address;
-        address.setStreet(QString("LM") + i + " street");
-        address.setDistrict(QString("LM") + i +" district");
-        address.setCity(QString("LM") + i + " city");
-        address.setState(QString("LM") + i + " State");
-        address.setCountry(QString("LM") + i + " country");
-        address.setCountryCode(QString("LM") + i + "CountryCode");
-        address.setPostcode(QString("LM") + i + " post code");
+        address.setStreet(QString("LM") + QString::number(i) + " street");
+        address.setDistrict(QString("LM") + QString::number(i) +" district");
+        address.setCity(QString("LM") + QString::number(i) + " city");
+        address.setState(QString("LM") + QString::number(i) + " State");
+        address.setCountry(QString("LM") + QString::number(i) + " country");
+        address.setCountryCode(QString("LM") + QString::number(i) + "CountryCode");
+        address.setPostcode(QString("LM") + QString::number(i) + " post code");
         lm.setAddress(address);
         QGeoCoordinate coordinate(10,20);
         lm.setCoordinate(coordinate);
-        lm.setPhoneNumber(QString("LM") + i + " phone number");
-        lm.setIconUrl(QUrl(QString("LM") + i + " iconUrl"));
+        lm.setPhoneNumber(QString("LM") + QString::number(i) + " phone number");
+        lm.setIconUrl(QUrl(QString("LM") + QString::number(i) + " iconUrl"));
         lm.setRadius(2000);
-        lm.setUrl(QUrl(QString("LM") + i + " 2nd url"));
+        lm.setUrl(QUrl(QString("LM") + QString::number(i) + " 2nd url"));
+        lm.addCategoryId(cat1.categoryId());
+        lm.addCategoryId(cat2.categoryId());
+        lm.addCategoryId(cat3.categoryId());
         lms.append(lm);
     }
 
@@ -8204,6 +8227,9 @@ void tst_QLandmarkManager::saveStress()
         qDebug() << "ErrorMap size = " << m_manager->errorMap().count();
         if (m_manager->errorMap().count() > 0)
             qDebug() << "Error map keys= " << m_manager->errorMap().keys();
+        for ( int i=0; i < m_manager->errorMap().count(); ++i) {
+            qDebug() << "error at " << i <<  ": " << m_manager->errorMap().value(i);
+        }
         QVERIFY(saveResult);
     } else if (type == "async") {
         QLandmarkSaveRequest lmSaveRequest(m_manager);
@@ -8215,7 +8241,7 @@ void tst_QLandmarkManager::saveStress()
         qDebug() << "Async save error string=" << lmSaveRequest.errorString();
         qDebug() << "Async error map size = " << lmSaveRequest.errorMap().count();
         if (lmSaveRequest.errorMap().count() > 0) {
-            qDebug() << "Async error map keys =" << m_manager->errorMap().keys();
+            qDebug() << "Async error map keys =" << lmSaveRequest.errorMap().keys();
         }
         QCOMPARE(lmSaveRequest.error(), QLandmarkManager::NoError);
     }
@@ -8230,6 +8256,60 @@ void tst_QLandmarkManager::saveStress_data()
     QTest::newRow("async") << "async";
 }
 #endif
+
+void tst_QLandmarkManager::saveCategoryStress()
+{
+    QFETCH(QString, type);
+    int originalCategoryCount = m_manager->categoryIds().count();
+    qDebug() << "original category count = " << originalCategoryCount;
+    if (type == "sync") {
+        for (int i=0; i < 100; ++i) {
+            QLandmarkCategory cat;
+            cat.setName(QString("cat") + QString::number(i));
+            bool saveResult = m_manager->saveCategory(&cat);
+            qDebug() << "Result of category save " << saveResult;
+            qDebug() << "error = " << m_manager->error();
+            qDebug() << "errorstring=" << m_manager->errorString();
+            qDebug() << "errormap size=" << m_manager->errorMap().count();
+
+            if (m_manager->errorMap().count() > 0)
+                qDebug() << "Error map keys= " << m_manager->errorMap().keys();
+            for ( int i=0; i < m_manager->errorMap().count(); ++i) {
+                qDebug() << "error at " << i <<  ": " << m_manager->errorMap().value(i);
+            }
+        }
+    } else if (type == "async") {
+
+        QLandmarkCategorySaveRequest catSaveRequest(m_manager);
+        QList<QLandmarkCategory> cats;
+        for (int i=0; i < 100; ++i) {
+            QLandmarkCategory cat;
+            cat.setName(QString("cat") + QString::number(i));
+            cats.append(cat);
+        }
+
+        QSignalSpy spy(&catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catSaveRequest.setCategories(cats);
+        catSaveRequest.start();
+        waitForAsync(spy, &catSaveRequest,QLandmarkManager::NoError);
+        qDebug() << "Async cat save error=" << catSaveRequest.error();
+        qDebug() << "Async cat save errorstring= " << catSaveRequest.errorString();
+        qDebug() << "Async error map size =" << catSaveRequest.errorMap().count();
+        if (catSaveRequest.errorMap().count() > 0) {
+            qDebug() << "Async error map keys =" << catSaveRequest.errorMap().keys();
+        }
+        QCOMPARE(catSaveRequest.error(), QLandmarkManager::NoError);
+    }
+    QCOMPARE(m_manager->categoryIds().count(),100 + originalCategoryCount);
+}
+
+void tst_QLandmarkManager::saveCategoryStress_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
 
 #ifdef SIMPLE_TEST
 void tst_QLandmarkManager::simpleTest()
