@@ -70,6 +70,8 @@ public:
 
     TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse,const TTimeIntervalMicroSeconds32& aTimeout);
 
+    const TDesC8& Uid() const;
+
     MNfcConnection * TagConnection() { return iTagConnection;}
 private:
     // C++ constructor

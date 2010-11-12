@@ -73,9 +73,12 @@ public:
     template<int N>
     QByteArray _sendCommand(const QByteArray &command, int timeout);
 
+    QByteArray _uid() const;
+
 protected:
     MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
+    mutable QByteArray mUid;
 };
 
 template<int N>
