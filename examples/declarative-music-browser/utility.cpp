@@ -115,7 +115,7 @@ QUrl Utility::getAlbumArtThumbnailUrl(const QString &artist, const QString &titl
         if (QFile::exists(thumbnailPath))
             return QUrl::fromLocalFile(thumbnailPath);
     }
-    return QUrl();
+    return albumUrl;
 }
 
 QString Utility::hash(const QString &identifier) const
