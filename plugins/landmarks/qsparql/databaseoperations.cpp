@@ -993,7 +993,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QString regex;
             if (nameValue.isEmpty()) {
                 queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "OPTIONAL { ?g nie:title ?name }");
+                        "OPTIONAL { ?g nie:title ?name }}");
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
                     regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
