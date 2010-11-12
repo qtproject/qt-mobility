@@ -64,6 +64,12 @@ QOrganizerItemDetailDefinitionFetchRequest::QOrganizerItemDetailDefinitionFetchR
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemDetailDefinitionFetchRequest::~QOrganizerItemDetailDefinitionFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the name of the detail definition to retrieve to \a definitionName.
     Equivalent to calling
     \code
