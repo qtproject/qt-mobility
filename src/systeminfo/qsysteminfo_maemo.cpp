@@ -99,11 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
-#if !defined(Q_WS_MAEMO_6)
-    GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#if defined(Q_WS_MAEMO_6)
+    QDir langDir("/etc/meego-supported-languages");
+    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
 #else
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
-#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString &locale, locales) {
@@ -111,6 +111,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     }
     languages << currentLanguage();
     languages.removeDuplicates();
+#endif
 
     return languages;
 }
@@ -119,7 +120,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    return langItem.value().toString();
+    return langItem.value().toString().left(2);
 #else
     return QSystemInfoLinuxCommonPrivate::currentLanguage();
 #endif
