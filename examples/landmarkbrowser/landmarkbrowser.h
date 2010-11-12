@@ -51,6 +51,7 @@
 #include <qlandmarkremoverequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryremoverequest.h>
 
 #include "ui_landmarkbrowser.h"
 #include "landmarkfilterdialog.h"
@@ -109,6 +110,7 @@ private:
     QLandmarkRemoveRequest *landmarkRemove;
     QLandmarkSaveRequest *landmarkSave;
     QLandmarkCategoryFetchRequest *categoryFetch;
+    QLandmarkCategoryRemoveRequest *categoryRemove;
     QProgressDialog *progress;
     QLandmarkManager *manager;
     int currentLandmarkOffset;
