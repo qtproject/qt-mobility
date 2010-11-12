@@ -265,6 +265,16 @@ QLlcpSocket::Error QLlcpSocket::error() const
 }
 
 /*!
+    Returns the state of the socket.
+*/
+QLlcpSocket::State QLlcpSocket::state() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->state();
+}
+
+/*!
     \internal
 */
 qint64 QLlcpSocket::readData(char *data, qint64 maxlen)

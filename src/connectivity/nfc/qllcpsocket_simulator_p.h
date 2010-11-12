@@ -71,6 +71,7 @@ public:
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
     QLlcpSocket::Error error() const;
+    QLlcpSocket::State state() const;
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);

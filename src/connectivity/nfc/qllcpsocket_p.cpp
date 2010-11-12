@@ -126,6 +126,11 @@ QLlcpSocket::Error QLlcpSocketPrivate::error() const
     return QLlcpSocket::UnknownSocketError;
 }
 
+QLlcpSocket::State QLlcpSocketPrivate::state() const
+{
+    return QLlcpSocket::UnconnectedState;
+}
+
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
     Q_UNUSED(data);

@@ -68,7 +68,8 @@ public:
         UnconnectedState = QAbstractSocket::UnconnectedState,
         ConnectingState = QAbstractSocket::ConnectingState,
         ConnectedState = QAbstractSocket::ConnectedState,
-        ClosingState = QAbstractSocket::ClosingState
+        ClosingState = QAbstractSocket::ClosingState,
+        BoundState = QAbstractSocket::BoundState
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -92,6 +93,7 @@ public:
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
     Error error() const;
+    State state() const;
 
 signals:
     void connected();
