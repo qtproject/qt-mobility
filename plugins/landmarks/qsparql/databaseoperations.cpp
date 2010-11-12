@@ -345,7 +345,8 @@ QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 
 QString landmarkIdsDefaultQueryString()
 {
-    return "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+    return "select ?u ?latitude ?longitude ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g nie:title ?name } . "
         "OPTIONAL { ?g slo:latitude ?latitude } . "
         "OPTIONAL { ?g slo:longitude ?longitude }}";
  }
@@ -724,9 +725,9 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         }
                     }
                 }
-
                 if (selectAll) {
-                    queryString = QString("select ?u { ?u a slo:Landmark . }");
+                    queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+                            "OPTIONAL { ?g nie:title ?name }");
                     break;
                 } else {
                     if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
@@ -991,7 +992,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QString nameValue = nameFilter.name();
             QString regex;
             if (nameValue.isEmpty()) {
-                queryString = QString("select ?u { ?u a slo:Landmark . }");
+                queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+                        "OPTIONAL { ?g nie:title ?name }");
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
                     regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
@@ -1302,20 +1304,13 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     if (!idsFound) {
         if (sortOrders.length() == 1 && sortOrders.at(0).type() == QLandmarkSortOrder::NameSort) {
             QLandmarkNameSort nameSort = sortOrders.at(0);
-
-            queryString.append(" ORDER BY  ");
-
-            //if (nameSort.caseSensitivity() == Qt::CaseInsensitive)
-            //    queryString.append("COLLATE NOCASE ");
-
+            queryString.append(" ORDER BY ");
             if (nameSort.direction() == Qt::AscendingOrder)
                 queryString.append("ASC(?name)");
             else
                 queryString.append("DESC(?name)");
-             alreadySorted = true;
+            alreadySorted = true;
         }
-
-        //queryString.append(";");
         QSparqlResult* qsparqlResult = executeQuery(m_conn, queryString,bindValues,error,errorString);
 
         if (qsparqlResult->hasError()) {
