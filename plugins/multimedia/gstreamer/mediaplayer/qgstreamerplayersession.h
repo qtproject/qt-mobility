@@ -50,6 +50,9 @@
 #include <qmediastreamscontrol.h>
 
 #include <gst/gst.h>
+#ifdef Q_WS_MAEMO_6
+#include <policy/resource-set.h>
+#endif // Q_WS_MAEMO_6
 
 class QGstreamerBusHelper;
 class QGstreamerMessage;
@@ -118,6 +121,9 @@ signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
+#ifdef Q_WS_MAEMO_6
+    void resourceLost();
+#endif // Q_WS_MAEMO_6
     void volumeChanged(int volume);
     void mutedStateChanged(bool muted);
     void audioAvailableChanged(bool audioAvailable);
@@ -138,6 +144,16 @@ private slots:
     void finishVideoOutputChange();
     void updateVideoRenderer();
     void updateVideoResolutionTag();
+
+    bool doPlay();
+
+#ifdef Q_WS_MAEMO_6
+    // resource policy awareness
+    void acquireResources();
+    void resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>& /*grantedOptionalResList*/);
+    void resourceReleasedHandler();
+    void resourceLostHandler();
+#endif // Q_WS_MAEMO_6
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
@@ -177,6 +193,19 @@ private:
 
     qint64 m_lastPosition;
     qint64 m_duration;
+
+#ifdef Q_WS_MAEMO_6
+    // resource policy awareness
+    ResourcePolicy::ResourceSet *m_resourceSet;
+    ResourcePolicy::AudioResource *m_audioResource;
+
+    enum ResourceState {
+        NoResourceState = 0,
+        PendingResourceState,
+        HasResourceState
+    };
+    ResourceState m_resourceState;
+#endif // Q_WS_MAEMO_6
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H
