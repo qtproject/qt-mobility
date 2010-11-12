@@ -6170,8 +6170,10 @@ void tst_QLandmarkManager::importGpx() {
     QList<QLandmarkId> ids;
     QCOMPARE(spyAdd.count(), 0);
 
+#ifdef Q_OS_SYMBIAN
     if (type == "asyncAttachSingleCategory")
         QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
+#endif
     QCOMPARE(dataChanged.count(),1);
 
     spyAdd.clear();
