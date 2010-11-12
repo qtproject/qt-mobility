@@ -1,24 +1,54 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of QtUiTest.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 //TESTED_COMPONENT=src/location
 
 testcase = {
 
-    // Under construction
-
-    initTestCase: function()
-    {
-    },
-
-    init: {
-        // If qtmobility.version < 1.1 && currentTest() != [ current_position | location_is_updated ]
-            // skip("Test only for QtMobility 1.1 and greater");
-    },
-
     current_position: function()
     {
         prompt(twiki('---+++ Position is detected
-    1. Run the weatherinfo_with_location example (sources are in examples/weatherinfo).
-    1. Verify that weather information for your local area is displayed.
-        '));
+    | *Step* | *Verification* |
+    | Run the weatherinfo_with_location example | Verify that weather information for your local area is displayed |'
+        ));
     },
 
     location_is_updated: function()
@@ -28,10 +58,9 @@ testcase = {
     1. Note the initial position displayed in the example.
     1. Move to a different location.
     1. Note the updated position displayed in the example.
-    1. Verify that the new position in step 4 corresponds to the move in step 3 (i.e. if the device moved north, the new position should clearly indicate this).
-       '));
+    1. Verify that the new position in step 4 corresponds to the move in step 3 (i.e. if the device moved north, the new position should clearly indicate this).'
+       ));
     },
-
 
     // Landmarks
 
@@ -40,13 +69,14 @@ testcase = {
         landmark : ["landmark", "20", "120"]
     },
 
-    store_and_load_a_landmark: function(name, latitude, longitude) {
+    store_and_load_a_landmark: function(name, latitude, longitude)
+    {
         startApplication("landmarkbrowser");
-        click("Add Landmark");
+        select("Add Landmark");
         enter("Latitude", latitude);
         enter("Longitude", longitude);
         enter("Name", name);
-        click("Ok");
+        select("Ok");
         prompt("Verify that the landmark record is created");
     },
 
@@ -56,19 +86,72 @@ testcase = {
         bad_landmark_long : ["bad_landmark", "80", "300"]
     },
 
-    negative_store_and_load_a_landmark: function(name, latitude, longitude) {
+    negative_store_and_load_a_landmark: function(name, latitude, longitude)
+    {
         startApplication("landmarkbrowser");
-        click("Add Landmark");
+        select("Add Landmark");
         enter("Latitude", latitude);
         enter("Longitude", longitude);
         enter("Name", name);
-        expectMessageBox("Invalid"){
-            click("Ok");
-        }
-        click("Ok");
-        click("Cancel");
+        //expectMessageBox("Invalid");
+        prompt("Verify a message box is shown indicating the values are ouside the valid range")
+        select("Ok");
+        select("Cancel");
     },
+
+    // Maps and Navigation
+
+    select_service_provider: function()
+    {
+        startApplication("geoservicedemo");
+        select("Service Providers");
+        select("nokia");
+        select("Set Service Provider");
+        prompt("Verify selected service provider is indicated as current service provider");
+    },
+
+    request_route_from_one_GPS_location_to_another_data: {
+        route:["-27.575", "153.088", "-27.465", "153.023", "16050", "15989"]
+    },
+
+    request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
+    {
+        startApplication("geoservicedemo");
+        select("Service Providers");
+        select("nokia");
+        select("Set Service Provider");
+        select("Route");
+        select("Request Route");
+        enter(lat1);
+        enter(long1);
+        enter(lat2);
+        enter(long2);
+        select("Ok");
+        prompt(twiki("Wait until the route is calculated (should be less than 10 seconds)"));
+        prompt(twiki("Verify the instructions for segments 1 and 5 indicate to 'Head towards Logan rd' and 'Turn left on Logan rd'"));
+        select("routes/route");
+        compare(getText("distance"), distance1);
+        select("Request Route");
+        enter(lat2);
+        enter(long2);
+        enter(lat1);
+        enter(long1);
+        select("Ok");
+        prompt(twiki('Wait until the route is calculated (should be less than 10 seconds)'));
+        prompt(twiki('Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st'));
+        compare(getText("distance"), distance2);
+    },
+
+    request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
+    {
+        skip( "Nothing tested", SkipAll );
+    }
+}  // end of testcase
+
+
 /*
+----Landmarks use cases
+
     landmarks_within_range_of_a_position: function() {    },
 
     create_edit_and_delete_a_landmark: function() {    },
@@ -85,17 +168,11 @@ testcase = {
 
     notification_on_category_changes: function() {    },
 
-*/
-
-    // Maps and Navigation
-/*
-    request_route_from_one_GPS_location_to_another: function() {    },
+----Maps And Navigation use cases
 
     list_of_way_points: function() {    },
 
     distinguish_pedestrian_and_car_navigation: function() {    },
-
-    request_landmarks_for_given_coordinate_with_reverse_geocoding: function() {    },
 
     find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
 
@@ -108,5 +185,3 @@ testcase = {
     online_and_offline: function() {    }
 
 */
-}  // end of testcase
-
