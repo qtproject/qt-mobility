@@ -8040,16 +8040,39 @@ void tst_QLandmarkManager::testSignals()
 #ifdef TEST_DESTRUCTION
 void tst_QLandmarkManager::testDestruction()
 {
-    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
-    QVERIFY(m_manager->importLandmarks("data/places.gpx"));
+    QString prefix;
+#ifdef Q_OS_SYMBIAN
+    prefix = "";
+#else
+    prefix = ":";
+#endif
+
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
     qDebug() << "testDestruction(): Finished Importing";
     QLandmarkFetchRequest *fetchRequest = new QLandmarkFetchRequest(m_manager);
     fetchRequest->start();
     qDebug() << "testDestruction(): After fetchRequest->start()";
     delete fetchRequest;
     qDebug() << "testDestruction(): After Delete";
+
+    //test the order of destruction
+    QLandmarkManager * manager1 = new QLandmarkManager;
+    QLandmarkFetchRequest *req1 = new QLandmarkFetchRequest(manager1);
+
+    QLandmarkManager *manager2 = new QLandmarkManager;
+    QLandmarkFetchRequest *req2 = new QLandmarkFetchRequest(manager2);
+
+    delete manager1;
+    qDebug() << "No-op debug output for timing purposes only";
+    delete req1;
+    qDebug() << "No-op debug output for timing purposes only";
+    delete req2;
+    qDebug() << "No-op debug output for timing purposes only";
+    delete manager2;
+    qDebug() << "No-op debug output for timing purposes only";
 }
 #endif
 
