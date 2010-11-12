@@ -62,7 +62,7 @@ symbian {
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
 } else:contains(QT_CONFIG, dbus) {
-    QT += dbus
+    QT *= dbus
 
     include(bluez/bluez.pri)
 
