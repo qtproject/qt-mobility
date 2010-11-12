@@ -272,15 +272,15 @@ QString CntSqlKoreanItuT::variationRemoval(const QString &pattern)
     //remove vowels
     //double hits
     //33
-    fRef.replace(QString("339"), QString("3"));
-    fRef.replace(QString("33*9"), QString("3"));
+    fRef.replace(QString("339"), QString("33"));
+    fRef.replace(QString("33*9"), QString("33"));
     //3
     fRef.replace(QString("39"), QString("3"));
     fRef.replace(QString("3*9"), QString("3"));
     //66
-    fRef.replace(QString("663"), QString("6"));
-    fRef.replace(QString("6639"), QString("6"));
-    fRef.replace(QString("66399"), QString("6"));
+    fRef.replace(QString("663"), QString("66"));
+    fRef.replace(QString("6639"), QString("66"));
+    fRef.replace(QString("66399"), QString("66"));
     //6
     fRef.replace(QString("63"), QString("6"));
     fRef.replace(QString("639"), QString("6"));
