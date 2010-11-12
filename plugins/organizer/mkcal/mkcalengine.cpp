@@ -57,7 +57,7 @@ Q_DEFINE_LATIN1_CONSTANT(NotebookIsDefault, "IsDefault");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsShareable, "IsShareable");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsShared, "IsShared");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsMaster, "IsMaster");
-Q_DEFINE_LATIN1_CONSTANT(NotebookIsOviSync, "IsOviSync");
+Q_DEFINE_LATIN1_CONSTANT(NotebookIsSynchronized, "IsSynchronized");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsReadOnly, "IsReadOnly");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsVisible, "IsVisible");
 Q_DEFINE_LATIN1_CONSTANT(NotebookIsRunTimeOnly, "IsRunTimeOnly");
@@ -1358,7 +1358,7 @@ QOrganizerCollection MKCalEngine::convertNotebookToCollection(mKCal::Notebook::P
     retn.setMetaData(NotebookIsShareable, notebook->isShareable());
     retn.setMetaData(NotebookIsShared, notebook->isShared());
     retn.setMetaData(NotebookIsMaster, notebook->isMaster());
-    retn.setMetaData(NotebookIsOviSync, notebook->isOviSync());
+    retn.setMetaData(NotebookIsSynchronized, notebook->isSynchronized());
     retn.setMetaData(NotebookIsReadOnly, notebook->isReadOnly());
     retn.setMetaData(NotebookIsVisible, notebook->isVisible());
     retn.setMetaData(NotebookIsRunTimeOnly, notebook->isRunTimeOnly());
@@ -1413,8 +1413,8 @@ void MKCalEngine::convertCollectionToNotebook(const QOrganizerCollection& collec
         notebook->setIsShared(variant.toBool());
     if (!(variant = collection.metaData(NotebookIsMaster)).isNull())
         notebook->setIsMaster(variant.toBool());
-    if (!(variant = collection.metaData(NotebookIsOviSync)).isNull())
-        notebook->setIsOviSync(variant.toBool());
+    if (!(variant = collection.metaData(NotebookIsSynchronized)).isNull())
+        notebook->setIsSynchronized(variant.toBool());
     if (!(variant = collection.metaData(NotebookIsReadOnly)).isNull())
         notebook->setIsReadOnly(variant.toBool());
     if (!(variant = collection.metaData(NotebookIsVisible)).isNull())
