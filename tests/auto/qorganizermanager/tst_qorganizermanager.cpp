@@ -3268,6 +3268,13 @@ void tst_QOrganizerManager::itemFetch()
     QCOMPARE(eventCount, 1);
     QCOMPARE(eventOccurrenceCount, 1);
 
+    //make a parent filter and test item count
+    QOrganizerItemDetailFilter df;
+    df.setDetailDefinitionName(QOrganizerItemParent::DefinitionName, QOrganizerItemParent::FieldParentId);
+    df.setValue(QVariant::fromValue(recEvent.id()));
+    QCOMPARE(cm->items(df).count(), 3);
+    QCOMPARE(cm->itemsForExport(QDateTime(), QDateTime(), df).count(), 2);
+
     // third, have all occurrences persisted
     items = cm->items();
     QCOMPARE(items.size(), 3); // should be three occurrences

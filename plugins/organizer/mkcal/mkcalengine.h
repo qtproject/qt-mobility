@@ -186,6 +186,11 @@ public:
     void storageFinished(mKCal::ExtendedStorage* storage, bool error, const QString& info);
 
 private:
+    enum IncludedOccurrences {
+        OnlyGeneratedOccurrences,
+        GeneratedAndPersistentOccurrences
+    };
+
     MKCalEngine(const QString& managerUri = QString());
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     KCalCore::Incidence::Ptr incidence(const QOrganizerItemId& itemId) const;
@@ -217,9 +222,9 @@ private:
     QOrganizerCollection convertNotebookToCollection(mKCal::Notebook::Ptr notebook) const;
     void convertCollectionToNotebook(const QOrganizerCollection& collection, mKCal::Notebook::Ptr notebook) const;
 
-    QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool includeInstances) const;
+    QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, IncludedOccurrences includedOccurrences = OnlyGeneratedOccurrences) const;
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool expand) const;
-    bool itemHasRecurringChild(KCalCore::Incidence::Ptr incidence, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const;
+    bool itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incidence, QOrganizerItem generator, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const;
 
     MKCalEngineData* d;
 
