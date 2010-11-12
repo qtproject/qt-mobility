@@ -46,7 +46,7 @@
 
 #include <EPos_Landmarks.h>
 #include <EPos_CPosLandmark.h>
-#include <Epos_CposLandmarkDatabase.h>
+#include <EPos_CPosLandmarkDatabase.h>
 #include <EPos_CPosLmCategoryManager.h> 
 #include <EPos_CPosLandmarkCategory.h>
 #include <EPos_TPosLmDatabaseEvent.h>

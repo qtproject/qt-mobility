@@ -58,8 +58,8 @@
 #include <qlandmarkcategoryid.h>
 #include "databaseoperations_p.h"
 
-class QXmlStreamReader;
-class QXmlStreamWriter;
+#include <QXmlStreamReader>
+#include <QXmlStreamWriter>
 
 class QIODevice;
 

@@ -41,7 +41,7 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0x2002BFC8
     TARGET.CAPABILITY = ALL -TCB    
-    LIBS += -lSensrvClient
+    LIBS += -lsensrvclient
     LIBS += -lsensrvutil   
 
     pluginDep.sources = $${TARGET}.dll

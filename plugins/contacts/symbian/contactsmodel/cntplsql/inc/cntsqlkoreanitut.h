@@ -69,6 +69,8 @@ private:
     
     QStringList getSearchPattern(const QString &pattern);
     
+    QString variationRemoval(const QString &pattern);
+    
     SqlQueryType getSQLQueryType(const QString &pattern);
     
    

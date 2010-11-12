@@ -67,11 +67,7 @@ public:
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode mode);
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const
-    {
-        return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
-    }
-
+    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
     bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
 
 public slots:

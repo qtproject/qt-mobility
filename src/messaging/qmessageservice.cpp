@@ -117,7 +117,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
-    Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
+    Emits the messagesFound() signal providing \l{QMessageId}s of messages in the messaging
     store. If \a filter is not empty only identifiers for messages matching the parameters 
     set by \a filter will be emitted, otherwise identifiers for all messages will be emitted.
     If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
@@ -145,7 +145,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
-    Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
+    Emits the messagesFound() signal providing \l{QMessageId}s of messages in the messaging
     store. If \a filter is not empty only identifiers for messages matching the parameters 
     set by \a filter and with a body containing the string \a body will be emitted, 
     otherwise identifiers for all messages with a body containing \a body using 
@@ -349,7 +349,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageService::progressChanged(uint value, uint total)
 
-    This signal is emitted when the operation operation has progressed.
+    This signal is emitted when the operation has progressed.
 
     \a total is the total number of progress steps to perform, or zero if
     the number of progress steps is unknown.

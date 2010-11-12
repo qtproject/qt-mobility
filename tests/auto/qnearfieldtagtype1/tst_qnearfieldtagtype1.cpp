@@ -88,14 +88,6 @@ tst_QNearFieldTagType1::tst_QNearFieldTagType1()
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
 }
 
-class MessageListener : public QObject
-{
-    Q_OBJECT
-
-signals:
-    void matchedNdefMessage(const QNdefMessage &message, QNearFieldTarget *target);
-};
-
 void tst_QNearFieldTagType1::init()
 {
     emulatorBackend = new QNearFieldManagerPrivateImpl;
@@ -114,18 +106,16 @@ void tst_QNearFieldTagType1::cleanup()
 
 void tst_QNearFieldTagType1::waitForMatchingTarget()
 {
-    MessageListener listener;
-    QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    QSignalSpy targetDetectedSpy(manager, SIGNAL(targetDetected(QNearFieldTarget*)));
 
-    int id = manager->registerTargetDetectedHandler(QNearFieldTarget::NfcTagType1, &listener,
-                                                    SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+    manager->startTargetDetection(QNearFieldTarget::NfcTagType1);
 
-    QVERIFY(id != -1);
-
-    QTRY_VERIFY(!messageSpy.isEmpty());
+    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     target =
-        qobject_cast<QNearFieldTagType1 *>(messageSpy.first().at(1).value<QNearFieldTarget *>());
+        qobject_cast<QNearFieldTagType1 *>(targetDetectedSpy.first().at(0).value<QNearFieldTarget *>());
+
+    manager->stopTargetDetection();
 
     QVERIFY(target);
 

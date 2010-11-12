@@ -156,8 +156,6 @@ bool QLlcpSocket::bind(quint8 port)
     Q_D(QLlcpSocket);
 
     return d->bind(port);
-
-    return false;
 }
 
 /*!
@@ -221,7 +219,7 @@ qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 
     \sa writeDatagram(), hasPendingDatagrams(), pendingDatagramSize()
 */
-qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *target,
+qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget **target,
                                  quint8 *port)
 {
     Q_D(QLlcpSocket);
@@ -264,6 +262,64 @@ QLlcpSocket::Error QLlcpSocket::error() const
     Q_D(const QLlcpSocket);
 
     return d->error();
+}
+
+/*!
+    Returns the state of the socket.
+*/
+QLlcpSocket::State QLlcpSocket::state() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->state();
+}
+
+/*!
+    \reimp
+*/
+bool QLlcpSocket::waitForReadyRead(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForReadyRead(msecs);
+}
+
+/*!
+    \reimp
+*/
+bool QLlcpSocket::waitForBytesWritten(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForBytesWritten(msecs);
+}
+
+/*!
+    Waits until the socket is connected, up to msecs milliseconds. If the connection has been
+    established, this function returns true; otherwise it returns false. In the case where it
+    returns false, you can call error() to determine the cause of the error.
+
+    If msecs is -1, this function will not time out.
+*/
+bool QLlcpSocket::waitForConnected(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForConnected(msecs);
+}
+
+/*!
+    Waits until the socket is disconnected, up to msecs milliseconds. If the connection has been
+    disconnected, this function returns true; otherwise it returns false. In the case where it
+    returns false, you can call error() to determine the cause of the error.
+
+    If msecs is -1, this function will not time out.
+*/
+bool QLlcpSocket::waitForDisconnected(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForDisconnected(msecs);
 }
 
 /*!

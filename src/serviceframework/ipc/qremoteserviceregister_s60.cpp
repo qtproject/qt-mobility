@@ -465,11 +465,11 @@ static const TInt myRanges[myRangeCount] =
     };
 static const TUint8 myElementsIndex[myRangeCount] =
     {
-    CPolicyServer::EPass
+    CPolicyServer::EAlwaysPass
     };
 static const CPolicyServer::TPolicyElement myElements[] =
     {
-        {_INIT_SECURITY_POLICY_C1(ECapabilityDiskAdmin), CPolicyServer::EFailClient} // Dummy entry
+        {_INIT_SECURITY_POLICY_PASS } // Dummy entry
     };
 static const CPolicyServer::TPolicy myPolicy =
     {
