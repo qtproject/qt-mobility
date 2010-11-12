@@ -205,6 +205,11 @@ QLlcpSocket::Error QLlcpSocketPrivate::error() const
     return QLlcpSocket::UnknownSocketError;
 }
 
+QLlcpSocket::State QLlcpSocketPrivate::state() const
+{
+    return QLlcpSocket::UnconnectedState;
+}
+
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
     qint64 val = -1;
@@ -253,5 +258,33 @@ void QLlcpSocketPrivate::invokeReadyRead()
     emit readyRead();    
 }
 
+bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForConnected(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
 #include "moc_qllcpsocket_symbian_p.cpp"
+
 QTM_END_NAMESPACE

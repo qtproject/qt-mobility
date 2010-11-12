@@ -41,6 +41,9 @@
 
 #include "qgalleryabstractresponse_p.h"
 
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qtimer.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -192,9 +195,23 @@ QString QGalleryAbstractResponse::errorString() const
 
 bool QGalleryAbstractResponse::waitForFinished(int msecs)
 {
-    Q_UNUSED(msecs);
+    Q_D(QGalleryAbstractResponse);
 
-    return true;
+    if (d->state != QGalleryAbstractRequest::Active) {
+        return true;
+    } else if (d->waitLoop || msecs == 0) {
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, qMax(0, msecs));
+    } else {
+        QEventLoop waitLoop;
+
+        if (msecs > 0)
+            QTimer::singleShot(msecs, &waitLoop, SLOT(quit()));
+
+        d->waitLoop = &waitLoop;
+        waitLoop.exec(QEventLoop::ExcludeUserInputEvents);
+        d->waitLoop = 0;
+    }
+    return d->state != QGalleryAbstractRequest::Active;
 }
 
 /*!
@@ -212,6 +229,9 @@ void QGalleryAbstractResponse::cancel()
     if (d->state == QGalleryAbstractRequest::Active
             || d->state == QGalleryAbstractRequest::Idle) {
         d->state = QGalleryAbstractRequest::Canceled;
+
+        if (d->waitLoop)
+            d->waitLoop->exit();
 
         emit canceled();
     }
@@ -240,6 +260,9 @@ void QGalleryAbstractResponse::finish(bool idle)
         d->state = idle
                 ? QGalleryAbstractRequest::Idle
                 : QGalleryAbstractRequest::Finished;
+
+        if (d->waitLoop)
+            d->waitLoop->exit();
 
         emit finished();
     }
@@ -279,6 +302,9 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
 
         d->error = error;
         d->errorString = errorString;
+
+        if (d->waitLoop)
+            d->waitLoop->exit();
 
         emit finished();
     }

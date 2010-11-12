@@ -126,6 +126,8 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
                 }
             }
             finish(m_live);
+        } else if (aError == KErrCancel) {
+            QGalleryResultSet::cancel();
         } else {
             error(QDocumentGallery::ConnectionError);
         }
@@ -244,7 +246,7 @@ void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& aSessi
                 }
             }
         }
-    }   
+    }
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
@@ -302,6 +304,12 @@ void QMDEGalleryQueryResultSet::createQuery()
     } else {
         m_launchUpdateQuery = false;
     }
+}
+
+void QMDEGalleryQueryResultSet::cancel()
+{
+    if (m_query)
+        m_query->Cancel();
 }
 
 void QMDEGalleryQueryResultSet::handleUpdatedResults()

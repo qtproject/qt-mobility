@@ -80,6 +80,7 @@ public:
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
     QLlcpSocket::Error error() const;
+    QLlcpSocket::State state() const;
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
@@ -118,6 +119,10 @@ signals:
          void error(QLlcpSocket::Error socketError);
          void stateChanged(QLlcpSocket::State socketState);
      */
+    bool waitForReadyRead(int msecs);
+    bool waitForBytesWritten(int msecs);
+    bool waitForConnected(int msecs);
+    bool waitForDisconnected(int msecs);
 };
 
 QTM_END_NAMESPACE

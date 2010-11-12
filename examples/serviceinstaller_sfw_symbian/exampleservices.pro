@@ -4,11 +4,14 @@ SUBDIRS = exampleinstaller
 symbian {
     load(data_caging_paths)
     xmlFiles.sources = ../filemanagerplugin/filemanagerservice.xml \ 
-                       ../bluetoothtransferplugin/bluetoothtransferservice.xml 
+                       ../bluetoothtransferplugin/bluetoothtransferservice.xml \
+                       ../notesmanagerplugin/notesmanagerservice.xml
     xmlFiles.path = c:$$APP_RESOURCE_DIR/xmldata
 
     plugins.sources = serviceframework_filemanagerplugin.dll \ 
-                        serviceframework_bluetoothtransferplugin.dll
+                        serviceframework_bluetoothtransferplugin.dll \
+                        serviceframework_notesmanagerplugin.dll
+						
     plugins.path = $$QT_PLUGINS_BASE_DIR    
 	
     installer.pkg_postrules += "\"$${EPOCROOT}epoc32/release/$(PLATFORM)/$(TARGET)/exampleinstaller.exe\" \  
