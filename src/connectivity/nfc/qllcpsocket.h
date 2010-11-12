@@ -95,6 +95,11 @@ public:
     Error error() const;
     State state() const;
 
+    bool waitForReadyRead(int msecs = 30000);
+    bool waitForBytesWritten(int msecs = 30000);
+    virtual bool waitForConnected(int msecs = 30000);
+    virtual bool waitForDisconnected(int msecs = 30000);
+
 signals:
     void connected();
     void disconnected();

@@ -147,4 +147,32 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
     return -1;
 }
 
+bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForConnected(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
+bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
+{
+    Q_UNUSED(msecs);
+
+    return false;
+}
+
 QTM_END_NAMESPACE

@@ -275,6 +275,54 @@ QLlcpSocket::State QLlcpSocket::state() const
 }
 
 /*!
+    \reimp
+*/
+bool QLlcpSocket::waitForReadyRead(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForReadyRead(msecs);
+}
+
+/*!
+    \reimp
+*/
+bool QLlcpSocket::waitForBytesWritten(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForBytesWritten(msecs);
+}
+
+/*!
+    Waits until the socket is connected, up to msecs milliseconds. If the connection has been
+    established, this function returns true; otherwise it returns false. In the case where it
+    returns false, you can call error() to determine the cause of the error.
+
+    If msecs is -1, this function will not time out.
+*/
+bool QLlcpSocket::waitForConnected(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForConnected(msecs);
+}
+
+/*!
+    Waits until the socket is disconnected, up to msecs milliseconds. If the connection has been
+    disconnected, this function returns true; otherwise it returns false. In the case where it
+    returns false, you can call error() to determine the cause of the error.
+
+    If msecs is -1, this function will not time out.
+*/
+bool QLlcpSocket::waitForDisconnected(int msecs)
+{
+    Q_D(QLlcpSocket);
+
+    return d->waitForDisconnected(msecs);
+}
+
+/*!
     \internal
 */
 qint64 QLlcpSocket::readData(char *data, qint64 maxlen)

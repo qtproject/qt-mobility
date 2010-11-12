@@ -75,6 +75,11 @@ public:
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
+
+    bool waitForReadyRead(int msecs);
+    bool waitForBytesWritten(int msecs);
+    bool waitForConnected(int msecs);
+    bool waitForDisconnected(int msecs);
 };
 
 QTM_END_NAMESPACE
