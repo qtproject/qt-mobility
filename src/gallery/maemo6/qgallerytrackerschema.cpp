@@ -603,9 +603,9 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 ////////
 
 #define QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY \
-    QT_GALLERY_ITEM_PROPERTY("albumTitle"  , "nmm:albumTitle"      , String    , CanRead | CanWrite | CanSort | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("albumTitle", "nmm:albumTitle(nmm:musicAlbum", String, CanRead | CanWrite | CanSort | CanFilter)
 #define QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY \
-    QT_GALLERY_ITEM_PROPERTY("albumArtist" , "nmm:albumArtist", String    , CanRead | CanWrite | CanSort | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "nmm:artistName(nmm:albumArtist(nmm:musicAlbum", String, CanRead | CanWrite | CanSort | CanFilter)
 
 static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
 {
@@ -758,8 +758,8 @@ static const QGalleryItemProperty qt_galleryAlbumPropertyList[] =
 {
     QT_GALLERY_ITEM_PROPERTY("title"      , "nmm:albumTitle"     , String, CanRead | CanFilter | CanSort),
     QT_GALLERY_ITEM_PROPERTY("albumTitle" , "nmm:albumTitle"     , String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("artist"     , "nmm:albumArtist"    , String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("albumArtist", "nmm:albumArtist"    , String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("artist"     , "nmm:artistName(nmm:albumArtist", String, CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("albumArtist", "nmm:artistName(nmm:albumArtist", String, CanRead | CanFilter | CanSort),
     QT_GALLERY_ITEM_PROPERTY("trackCount" , "nmm:albumTrackCount", Int   , CanRead | CanFilter | CanSort),
     QT_GALLERY_ITEM_PROPERTY("duration"   , "nmm:albumDuration"  , Int   , CanRead | CanFilter | CanSort)
 };
