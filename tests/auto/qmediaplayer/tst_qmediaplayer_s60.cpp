@@ -44,6 +44,8 @@
 #include "tst_qmediaplayer_s60.h"
 #include <qmediastreamscontrol.h>
 
+static const QString TestFilePath = QLatin1String("f:/data/testfiles/");
+
 QT_USE_NAMESPACE
 
 void tst_QMediaPlayer_s60::initTestCase_data()
@@ -95,7 +97,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status LoadedMedia
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_3gp.3gp")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_3gp.3gp")) // mediaContent
     << qint64(46860) // duration
     << qint64(23430) // position (duration/2)
     << true // seekable
@@ -112,7 +114,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp4.mp4")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_mp4.mp4")) // mediaContent
     << qint64(2701) // duration
     << qint64(1351) // position (duration/2)
     << true // seekable
@@ -129,7 +131,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_wmv9.wmv")) // mediaContent
     << qint64(169389) // duration
     << qint64(84695) // position (duration/2)
     << true // seekable
@@ -146,7 +148,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_AAC.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_AAC.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
@@ -163,7 +165,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_amr.amr")) // mediaContent
     << qint64(14400) // duration
     << qint64(7200) // position
     << true // seekable
@@ -180,7 +182,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_mp3.mp3")) // mediaContent
     << qint64(102044) //qint64(102044)  duration
     << qint64(51022) // position
     << true // seekable
@@ -285,7 +287,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_3GPP.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_3GPP.dat")) // mediaContent
     << qint64(7200) // duration
     << qint64(3600) // position (duration/2)
     << true // seekable
@@ -302,7 +304,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_3gp.3gp")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_3gp.3gp")) // mediaContent
     << qint64(46860) // duration
     << qint64(23430) // position (duration/2)
     << true // seekable
@@ -319,7 +321,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp4.mp4")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_mp4.mp4")) // mediaContent
     << qint64(2701) // duration
     << qint64(1351) // position (duration/2)
     << true // seekable
@@ -336,7 +338,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_MP4.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_MP4.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
@@ -353,7 +355,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_wmv9.wmv")) // mediaContent
     << qint64(169389) // duration
     << qint64(84695) // position (duration/2)
     << true // seekable
@@ -370,7 +372,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_h264_qcif.264")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_h264_qcif.264")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
@@ -387,7 +389,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_RM.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_RM.dat")) // mediaContent
     << qint64(20245) // duration
     << qint64(10123) // position (duration/2)
     << true // seekable
@@ -404,7 +406,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_SWF.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_SWF.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
@@ -421,7 +423,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_WMV.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_WMV.dat")) // mediaContent
     << qint64(3098) // duration
     << qint64(1549) // position (duration/2)
     << true // seekable
@@ -438,7 +440,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_WMA.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_WMA.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
@@ -455,7 +457,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_flash_video.flv")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_flash_video.flv")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position
     << true // seekable
@@ -472,7 +474,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_MXMF.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_MXMF.dat")) // mediaContent
     << qint64(31980) // duration
     << qint64(15990) // position (duration/2)
     << true // seekable
@@ -489,7 +491,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_amr.amr")) // mediaContent
     << qint64(14402) // duration
     << qint64(7200) // position
     << true // seekable
@@ -506,7 +508,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_AMR.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_AMR.dat")) // mediaContent
     << qint64(38509) // duration
     << qint64(19255) // position
     << true // seekable
@@ -523,7 +525,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_mp3.mp3")) // mediaContent
     << qint64(-1) //qint64(102044)  duration
     << qint64(0) // position
     << true // seekable
@@ -540,7 +542,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_MP3.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_MP3.dat")) // mediaContent
     << qint64(-1) //qint64(102044)  duration
     << qint64(0) // position
     << true // seekable
@@ -557,7 +559,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_MIDI.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_MIDI.dat")) // mediaContent
     << qint64(32782) // duration
     << qint64(16391) // position
     << true // seekable
@@ -574,7 +576,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_ACC.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_ACC.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position
     << true // seekable
@@ -591,7 +593,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
-    << QMediaContent(QUrl("file:///C:/data/testfiles/test_WAV.dat")) // mediaContent
+    << QMediaContent(QUrl::fromLocalFile(TestFilePath + "test_WAV.dat")) // mediaContent
     << qint64(2864) // duration
     << qint64(1432) // position
     << true // seekable
@@ -1478,11 +1480,11 @@ void tst_QMediaPlayer_s60::testMediaStatus()
 void tst_QMediaPlayer_s60::testPlaylist()
 {
     if(!runonce) {
-        QMediaContent content0(QUrl(QLatin1String("file:///C:/data/testfiles/test_mp4.mp4")));
-        QMediaContent content1(QUrl(QLatin1String("file:///C:/data/testfiles/test_WAV.dat")));
-        QMediaContent content2(QUrl(QLatin1String("file:///C:/data/testfiles/test_mp4.mp4")));
-        QMediaContent content3(QUrl(QLatin1String("file:///C:/data/testfiles/test_WAV.dat")));
-        QMediaContent content4(QUrl(QLatin1String("file:///C:/data/testfiles/test_MIDI.dat")));
+        QMediaContent content0(QUrl::fromLocalFile(TestFilePath + "test_mp4.mp4"));
+        QMediaContent content1(QUrl::fromLocalFile(TestFilePath + "test_WAV.dat"));
+        QMediaContent content2(QUrl::fromLocalFile(TestFilePath + "test_mp4.mp4"));
+        QMediaContent content3(QUrl::fromLocalFile(TestFilePath + "test_WAV.dat"));
+        QMediaContent content4(QUrl::fromLocalFile(TestFilePath + "test_MIDI.dat"));
 
         QMediaPlaylist *playlist = new QMediaPlaylist(m_player);
         m_player->setPlaylist(playlist);
