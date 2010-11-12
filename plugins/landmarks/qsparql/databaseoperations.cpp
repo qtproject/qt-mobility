@@ -2776,10 +2776,10 @@ bool DatabaseOperations::isReadOnly(const QLandmarkCategoryId &categoryId, QLand
     QSparqlResult *queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
 
     if (queryResult->hasError()) {
-        return true;
+        return false;
     }
     if (!queryResult->next()) {
-        return true;
+        return false;
     }
     if((queryResult->value(0).toString().compare("true", Qt::CaseSensitive)) == 0) {
         return false;
