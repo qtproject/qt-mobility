@@ -317,13 +317,16 @@ The following table shows names of the default managers for each platform.
     \o S60 3.1,3.2,5.0, Symbian^3
 \row
     \o com.nokia.qt.landmarks.engines.sqlite
-    \o Maemo5, WindowsXp/Vista,Linux
+    \o Maemo5, Windows Xp/Vista,Linux, Mac OS X
+\row
+    \o com.nokia.qt.landmarks.engines.qsparql
+    \o Harmattan
 \endtable
 
-For convenience, this documentations refers to the manager corresponding to com.nokia.qt.landmarks.engines.symbian as the symbian manager
-and the manager corresponding to com.nokia.qt.landmarks.engines.sqlite as the sqlite manager.
-
-
+For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
+the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql
+as the \i {sparql manager}.  (Please note that there are several known issues with the sparql manager that are outlined in
+bug report for QTMOBILITY-744 at http://bugreports.qt.nokia.com)
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -372,8 +375,8 @@ of those landmarks have NaN latitude or longitude values.
 
 Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
 as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
-ignoring the url field during export if the URI is invalid while the sqlite manager will export the url
-and subsequently create an invalid lmx file.
+ignoring the url field during export if the URI is invalid while the sqlite and sparql manager will export the url
+and subsequently create an invalid lmx file (this issue is intended to be resolved in a future release).
 
 \section2 Landmark classes
 
