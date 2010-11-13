@@ -121,7 +121,10 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KAllLandmarks -1
 #define KDefaultIndex 0
 #define KExtrachars 3
+#define KMaxRetryWait 100 // micro-seconds
+#define KMaxRetry 10
 
+//
 QTM_BEGIN_NAMESPACE
 uint qHash(const QLandmarkId& key) {
     return qHash(key.localId());
@@ -323,8 +326,8 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         else
             maxMatches = limit + offset;
 
-        int err;
-
+        int err = KErrGeneral;
+        int retryCnt = 0;
         while (ETrue) {
 
             result.clear();
@@ -338,7 +341,10 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
                 break;
             if (err != KErrLocked)
                 break;
-            User::After(100);
+            retryCnt++;
+            if (retryCnt >= KMaxRetry)
+                break;
+            User::After(KMaxRetryWait);
         }
 
         handleSymbianError(err, error, errorString);
@@ -531,7 +537,21 @@ QLandmark LandmarkManagerEngineSymbianPrivate::landmark(const QLandmarkId &landm
     *errorString = "";
 
     QLandmark qtLm;
-    TRAPD( err, qtLm = fetchLandmarkL(landmarkId, error, errorString);)
+    int retryCnt = 0;
+    TInt err = KErrGeneral;
+
+    while (ETrue) {
+        TRAP( err, qtLm = fetchLandmarkL(landmarkId, error, errorString);)
+        if (err != KErrLocked)
+            break;
+
+        retryCnt++;
+        if (retryCnt >= KMaxRetry)
+            break;
+
+        User::After(KMaxRetryWait);
+    }
+
     if (err != KErrNone) {
         if (err == KErrNotFound) {
             *error = QLandmarkManager::LandmarkDoesNotExistError;
@@ -647,7 +667,22 @@ QLandmarkCategory LandmarkManagerEngineSymbianPrivate::category(
     *errorString = "";
 
     QLandmarkCategory qtCat;
-    TRAPD( err, qtCat = fetchCategoryL(categoryId, error, errorString);)
+
+    int retryCnt = 0;
+    TInt err = KErrGeneral;
+
+    while (ETrue) {
+        TRAP( err, qtCat = fetchCategoryL(categoryId, error, errorString);)
+        if (err != KErrLocked)
+            break;
+
+        retryCnt++;
+        if (retryCnt >= KMaxRetry)
+            break;
+
+        User::After(KMaxRetryWait);
+    }
+
     if (err != KErrNone) {
         if (err == KErrNotFound) {
             *error = QLandmarkManager::CategoryDoesNotExistError;
@@ -956,6 +991,10 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmark(const QLandmarkId &land
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
+    this->landmark(landmarkId, error, errorString);
+    if (*error != QLandmarkManager::NoError)
+        return false;
+
     bool removed = false;
     bool result = false;
     TRAPD( err,
@@ -1030,22 +1069,28 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
 
         bool removed = false;
         bool result = false;
-        TRAPD(err,
-            result = removeLandmarkInternalL(landmarkIds.at(i), &loopError, &loopErrorString, &removed);
-        )
-        if (err != KErrNone) {
-            // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
-            if (err == KErrNotFound) {
-                loopError = QLandmarkManager::LandmarkDoesNotExistError;
-                loopErrorString = "The specified landmark does not exist";
-            }
-            else {
-                handleSymbianError(err, &loopError, &loopErrorString);
-            }
-        }
 
-        if (removed) {
-            removedIds << landmarkIds.at(i);
+        //qDebug() << "removing landmark = " << landmarkIds.at(i).localId();
+
+        this->landmark(landmarkIds.at(i), &loopError, &loopErrorString);
+        if (loopError == QLandmarkManager::NoError) {
+            TRAPD(err,
+                result = removeLandmarkInternalL(landmarkIds.at(i), &loopError, &loopErrorString, &removed);
+            )
+            if (err != KErrNone) {
+                // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
+                if (err == KErrNotFound) {
+                    loopError = QLandmarkManager::LandmarkDoesNotExistError;
+                    loopErrorString = "The specified landmark does not exist";
+                }
+                else {
+                    handleSymbianError(err, &loopError, &loopErrorString);
+                }
+            }
+
+            if (removed) {
+                removedIds << landmarkIds.at(i);
+            }
         }
 
         if (!result) {
@@ -1070,6 +1115,10 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
     // handle to emit appropriate signal
     if (removedIds.size() > 0) {
         m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, removedIds);
+    }
+
+    if (!noErrors) {
+        //qDebug() << "Error " << *error << " = " << *errorString;
     }
 
     return noErrors;
@@ -1164,6 +1213,10 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategory(const QLandmarkCategory
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+
+    this->category(categoryId, error, errorString);
+    if (*error != QLandmarkManager::NoError)
+        return false;
 
     bool removed = false;
     bool result = false;
@@ -2509,6 +2562,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = LandmarkUtility::convertToSymbianLandmarkL(landmark);
         TPosLmItemId savedsymbianLmId = KPosLmNullItemId;
 
+        int retryCnt = 0;
         while (ETrue) {
             TRAPD(err, savedsymbianLmId = m_LandmarkDb->AddLandmarkL(*symbianLandmark);)
             if (err == KErrNone) {
@@ -2517,7 +2571,13 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
             }
             if (err != KErrLocked)
                 User::Leave(err);
-            User::After(100);
+
+            retryCnt++;
+            if (retryCnt >= KMaxRetry)
+                User::Leave(err);
+
+            User::After(KMaxRetryWait);
+            qDebug() << "retrying addition = " << retryCnt;
         }
 
         QLandmarkId savedQtLmId = LandmarkUtility::convertToQtLandmarkId(managerUri(),
@@ -2546,6 +2606,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
             // updating existing landmark
             LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
 
+            int retryCnt = 0;
             while (ETrue) {
                 TRAPD(err, m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);)
                 if (err == KErrNone) {
@@ -2554,7 +2615,10 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
                 }
                 if (err != KErrLocked)
                     User::Leave(err);
-                User::After(100);
+                retryCnt++;
+                if (retryCnt >= KMaxRetry)
+                    User::Leave(err);
+                User::After(KMaxRetryWait);
             }
 
             *changed = true;
@@ -2595,13 +2659,19 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
 
     TPosLmItemId symbianLmId = LandmarkUtility::convertToSymbianLandmarkId(landmarkId);
 
+    int retryCnt = 0;
     while (ETrue) {
         TRAPD(err, m_LandmarkDb->RemoveLandmarkL(symbianLmId);)
         if (err == KErrNone)
             break;
+        qDebug() << "Landmark remove err = " << err;
         if (err != KErrLocked)
             User::Leave(err);
-        User::After(100);
+        retryCnt++;
+        if (retryCnt >= KMaxRetry)
+            User::Leave(err);
+        User::After(KMaxRetryWait);
+        //qDebug() << "Retrying removal = " << retryCnt;
     }
 
     m_DeletedLmIds << landmarkId.localId();
@@ -2691,13 +2761,17 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         symbiancat = LandmarkUtility::convertToSymbianLandmarkCategoryL(category);
         TPosLmItemId savedsymbianLmCatId = KPosLmNullItemId;
 
+        int retryCnt = 0;
         while (ETrue) {
             TRAPD(err, savedsymbianLmCatId = m_LandmarkCatMgr->AddCategoryL(*symbiancat);)
             if (err == KErrNone)
                 break;
             if (err != KErrLocked)
                 User::Leave(err);
-            User::After(100);
+            retryCnt++;
+            if (retryCnt >= KMaxRetry)
+                User::Leave(err);
+            User::After(KMaxRetryWait);
         }
 
         QLandmarkCategoryId savedQtCategoryId = LandmarkUtility::convertToQtLandmarkCategoryId(
@@ -2734,13 +2808,17 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         if (symbiancat) {
             LandmarkUtility::setSymbianLandmarkCategoryL(*symbiancat, category);
 
+            int retryCnt = 0;
             while (ETrue) {
                 TRAPD(err,m_LandmarkCatMgr->UpdateCategoryL(*symbiancat);)
                 if (err == KErrNone)
                     break;
                 if (err != KErrLocked)
                     User::Leave(err);
-                User::After(100);
+                retryCnt++;
+                if (retryCnt >= KMaxRetry)
+                    User::Leave(err);
+                User::After(KMaxRetryWait);
             }
 
             //            qDebug() << "category " << category->name() << " updated successfully " << "cat Id ="
@@ -2793,13 +2871,17 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
         return result;
     }
 
+    int retryCnt = 0;
     while (ETrue) {
         TRAPD(err, ExecuteAndDeleteLD(m_LandmarkCatMgr->RemoveCategoryL(symbianCategoryId));)
         if (err == KErrNone)
             break;
         if (err != KErrLocked)
             User::Leave(err);
-        User::After(100);
+        retryCnt++;
+        if (retryCnt >= KMaxRetry)
+            User::Leave(err);
+        User::After(KMaxRetryWait);
     }
 
     m_DeletedCatIds << categoryId.localId();
@@ -4199,20 +4281,26 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
             bool removeResult = false;
 
             QLandmarkId qtLmId = (lmRemoveRequest->landmarkIds()).at(aData->iOpCount);
-            TRAPD(err,
-                removeResult = removeLandmarkInternalL(qtLmId, &error, &errorString, &removed);
-            )
-            if (err == KErrNone && removeResult) {
-                aData->iLandmarkIds.append(qtLmId);
-            }
-            else if (err != KErrNone) {
-                // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
-                if (err == KErrNotFound) {
-                    error = QLandmarkManager::LandmarkDoesNotExistError;
-                    errorString = "The specified landmark does not exist";
+            this->landmark(qtLmId, &error, &errorString);
+            if (error == QLandmarkManager::NoError) {
+                TRAPD(err,
+                    removeResult = removeLandmarkInternalL(qtLmId, &error, &errorString, &removed);
+                )
+
+                qDebug() << "async landmark removal error = " << err;
+
+                if (err == KErrNone && removeResult) {
+                    aData->iLandmarkIds.append(qtLmId);
                 }
-                else {
-                    handleSymbianError(err, &error, &errorString);
+                else if (err != KErrNone) {
+                    // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
+                    if (err == KErrNotFound) {
+                        error = QLandmarkManager::LandmarkDoesNotExistError;
+                        errorString = "The specified landmark does not exist";
+                    }
+                    else {
+                        handleSymbianError(err, &error, &errorString);
+                    }
                 }
             }
 
@@ -4295,23 +4383,25 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
             bool removeResult = false;
 
             QLandmarkCategoryId qtCatId = (catRemoveRequest->categoryIds()).at(aData->iOpCount);
-            TRAPD(err,
-                removeResult = removeCategoryInternalL(qtCatId, &error, &errorString, &removed);
-            )
-            if (err == KErrNone && removeResult) {
-                aData->iCategoryIds.append(qtCatId);
-            }
-            else if (err != KErrNone) {
-                if (err == KErrNotFound) {
-                    error = QLandmarkManager::CategoryDoesNotExistError;
-                    errorString = "The specified category does not exist";
+            this->category(qtCatId, &error, &errorString);
+            if (error == QLandmarkManager::NoError) {
+                TRAPD(err,
+                    removeResult = removeCategoryInternalL(qtCatId, &error, &errorString, &removed);
+                )
+                if (err == KErrNone && removeResult) {
+                    aData->iCategoryIds.append(qtCatId);
                 }
-                else {
-                    // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
-                    handleSymbianError(err, &error, &errorString);
+                else if (err != KErrNone) {
+                    if (err == KErrNotFound) {
+                        error = QLandmarkManager::CategoryDoesNotExistError;
+                        errorString = "The specified category does not exist";
+                    }
+                    else {
+                        // sets the appropriate QLandmarkManager Error code on Symbian Error codes.
+                        handleSymbianError(err, &error, &errorString);
+                    }
                 }
             }
-
             if (!removeResult) {
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
