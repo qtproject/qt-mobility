@@ -782,7 +782,7 @@ private:
         return true;
     }
 
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     void removeGlobalCategories(QList<QLandmarkCategory> *cats) {
         for (int i=cats->count() -1; i >=0; --i) {
             if (m_manager->isReadOnly(cats->at(i).categoryId())) {
@@ -1163,7 +1163,10 @@ void testViewport_data();
 #endif
 
 #ifndef Q_OS_SYMBIAN
+#ifndef Q_WS_MAEMO_6
+    //TODO: modify this test to work on maemo6
     void categoryLimitOffset();
+#endif
     void exportGpx();
     void exportGpx_data();
 
@@ -3572,7 +3575,7 @@ void tst_QLandmarkManager::categories()
         cats = fetchRequest.categories();
     }
 
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     removeGlobalCategories(&cats);
 #endif
     QCOMPARE(cats.count(), 5);
@@ -3586,7 +3589,7 @@ void tst_QLandmarkManager::categories()
     nameSort.setCaseSensitivity(Qt::CaseInsensitive);
     nameSort.setDirection(Qt::AscendingOrder);
     QVERIFY(doCategoryFetch(type, -1, 0, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     removeGlobalCategories(&cats);
 #endif
     QCOMPARE(cats.count(), 5);
@@ -3599,7 +3602,7 @@ void tst_QLandmarkManager::categories()
     //try descending order
     nameSort.setDirection(Qt::DescendingOrder);
     QVERIFY(doCategoryFetch(type, -1, 0, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     removeGlobalCategories(&cats);
 #endif
     QCOMPARE(cats.count(), 5);
@@ -3618,10 +3621,14 @@ void tst_QLandmarkManager::categories()
 
     //try a limit as large as the number of categories
     QVERIFY(doCategoryFetch(type, 5, 0, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(cats.count(),5);
     QCOMPARE(cats.at(0).name(), QString("Accommodation"));
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(cats.at(1).name(), QString("Business"));
+#else
     QCOMPARE(cats.at(1).name(), QString("Businesses"));
+#endif
     QCOMPARE(cats.at(2), catA);
     QCOMPARE(cats.at(3), catB);
     QCOMPARE(cats.at(4), catC);
@@ -3636,16 +3643,25 @@ void tst_QLandmarkManager::categories()
 
     //try a limit larger than the number of categories
 
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QVERIFY(doCategoryFetch(type, 50, 0, nameSort, &cats, QLandmarkManager::NoError));
     QCOMPARE(cats.count(),20);
 
     QCOMPARE(cats.at(0).name(), QString("Accommodation"));
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(cats.at(1).name(), QString("Business"));
+#else
     QCOMPARE(cats.at(1).name(), QString("Businesses"));
+#endif
+
     QCOMPARE(cats.at(2), catA);
     QCOMPARE(cats.at(3), catB);
     QCOMPARE(cats.at(4), catC);
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(cats.at(18).name(), QString("Sports"));
+#else
     QCOMPARE(cats.at(18).name(), QString("Telecommunications"));
+#endif
     QCOMPARE(cats.at(19).name(), QString("Transport"));
 #else
     QVERIFY(doCategoryFetch(type, 7, 0, nameSort, &cats, QLandmarkManager::NoError));
@@ -3660,7 +3676,7 @@ void tst_QLandmarkManager::categories()
     //try a negative offset
     QVERIFY(doCategoryFetch(type, -1,-1, nameSort, &cats, QLandmarkManager::NoError));
 
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     removeGlobalCategories(&cats);
 #endif
     QCOMPARE(cats.count(), 5);
@@ -3672,11 +3688,15 @@ void tst_QLandmarkManager::categories()
 
     //try a valid offset
     QVERIFY(doCategoryFetch(type, -1,3, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(cats.count(), 17);
     QCOMPARE(cats.at(0), catB);
     QCOMPARE(cats.at(1), catC);
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(cats.at(15).name(), QString("Sports"));
+#else
     QCOMPARE(cats.at(15).name(), QString("Telecommunications"));
+#endif
     QCOMPARE(cats.at(16).name(), QString("Transport"));
 #else
     QCOMPARE(cats.count(), 2);
@@ -3686,14 +3706,14 @@ void tst_QLandmarkManager::categories()
 
     //try an offset that's larger than the number of categories
     QVERIFY(doCategoryFetch(type, -1,10, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     removeGlobalCategories(&cats);
 #endif
     QCOMPARE(cats.count(), 0);
 
     //try a combination of non default limit and offset values
     QVERIFY(doCategoryFetch(type, 2,2, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(cats.count(), 2);
     QCOMPARE(cats.at(0), catA);
     QCOMPARE(cats.at(1), catB);
@@ -3705,10 +3725,16 @@ void tst_QLandmarkManager::categories()
 
     nameSort.setDirection(Qt::DescendingOrder);
     QVERIFY(doCategoryFetch(type, 2,2, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(cats.count(), 2);
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(cats.at(0).name(), QString("Sightseeing"));
+    QCOMPARE(cats.at(1).name(), QString(""));
+#else
     QCOMPARE(cats.at(0).name(), QString("Sports"));
     QCOMPARE(cats.at(1).name(), QString("Sightseeing"));
+#endif
+
 #else
     QCOMPARE(cats.count(), 2);
     QCOMPARE(cats.at(0), catC);
@@ -7668,6 +7694,7 @@ void tst_QLandmarkManager::exportGpx_data()
     QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
 }
 
+#ifndef Q_WS_MAEMO_6
 void tst_QLandmarkManager::categoryLimitOffset() {
     for (int i = 0; i < 50; ++i) {
         QLandmarkCategory cat;
@@ -7724,6 +7751,7 @@ void tst_QLandmarkManager::categoryLimitOffset() {
     cats = m_manager->categories( 100, 500, QLandmarkNameSort(Qt::AscendingOrder));
     QCOMPARE(cats.count(), 0);
 }
+#endif
 
 void tst_QLandmarkManager::testConvenienceFunctions()
 {

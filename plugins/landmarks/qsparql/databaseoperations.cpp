@@ -345,7 +345,8 @@ QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 
 QString landmarkIdsDefaultQueryString()
 {
-    return "select ?u ?latitude ?longitude {?g a slo:GeoLocation . ?u slo:location ?g . "
+    return "select ?u ?latitude ?longitude ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+        "OPTIONAL { ?g nie:title ?name } . "
         "OPTIONAL { ?g slo:latitude ?latitude } . "
         "OPTIONAL { ?g slo:longitude ?longitude }}";
  }
@@ -724,9 +725,9 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         }
                     }
                 }
-
                 if (selectAll) {
-                    queryString = QString("select ?u { ?u a slo:Landmark . }");
+                    queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+                            "OPTIONAL { ?g nie:title ?name }");
                     break;
                 } else {
                     if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
@@ -991,7 +992,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QString nameValue = nameFilter.name();
             QString regex;
             if (nameValue.isEmpty()) {
-                queryString = QString("select ?u { ?u a slo:Landmark . }");
+                queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
+                        "OPTIONAL { ?g nie:title ?name }}");
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
                     regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
@@ -1302,20 +1304,13 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     if (!idsFound) {
         if (sortOrders.length() == 1 && sortOrders.at(0).type() == QLandmarkSortOrder::NameSort) {
             QLandmarkNameSort nameSort = sortOrders.at(0);
-
-            queryString.append(" ORDER BY  ");
-
-            //if (nameSort.caseSensitivity() == Qt::CaseInsensitive)
-            //    queryString.append("COLLATE NOCASE ");
-
+            queryString.append(" ORDER BY ");
             if (nameSort.direction() == Qt::AscendingOrder)
                 queryString.append("ASC(?name)");
             else
                 queryString.append("DESC(?name)");
-             alreadySorted = true;
+            alreadySorted = true;
         }
-
-        //queryString.append(";");
         QSparqlResult* qsparqlResult = executeQuery(m_conn, queryString,bindValues,error,errorString);
 
         if (qsparqlResult->hasError()) {
@@ -1501,6 +1496,21 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
     }
+
+    QGeoCoordinate geoCoord;
+    geoCoord = landmark->coordinate();
+
+    //check if the coordinate is valid, either both lat and long are valid values
+    //or both lat and long are NaN
+    if (!((!qIsNaN(geoCoord.latitude()) && !qIsNaN(geoCoord.longitude())
+          && isValidLat(geoCoord.latitude()) && isValidLong(geoCoord.longitude()))
+          || (qIsNaN(geoCoord.latitude()) && qIsNaN(geoCoord.longitude())))) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Landmark coordinate is not valid, latitude must between -90 and 90 and longitude must be between -180 and 180, or both "
+                       "latitude and longitude are NaN";
+        return false;
+    }
+
     bool update = landmark->landmarkId().isValid();
 
     if (update) {
@@ -1544,8 +1554,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append(landmark->name());
         queryString.append("\" ");
     }
-    QGeoCoordinate geoCoord;
-    geoCoord = landmark->coordinate();
+
     if (!qIsNaN(geoCoord.latitude())) {
         queryString.append("; slo:latitude ");
         queryString.append(QString::number(geoCoord.latitude()));
@@ -2781,10 +2790,10 @@ bool DatabaseOperations::isReadOnly(const QLandmarkCategoryId &categoryId, QLand
     QSparqlResult *queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
 
     if (queryResult->hasError()) {
-        return true;
+        return false;
     }
     if (!queryResult->next()) {
-        return true;
+        return false;
     }
     if((queryResult->value(0).toString().compare("true", Qt::CaseSensitive)) == 0) {
         return false;
