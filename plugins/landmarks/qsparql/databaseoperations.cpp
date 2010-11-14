@@ -1496,6 +1496,21 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
     }
+
+    QGeoCoordinate geoCoord;
+    geoCoord = landmark->coordinate();
+
+    //check if the coordinate is valid, either both lat and long are valid values
+    //or both lat and long are NaN
+    if (!((!qIsNaN(geoCoord.latitude()) && !qIsNaN(geoCoord.longitude())
+          && isValidLat(geoCoord.latitude()) && isValidLong(geoCoord.longitude()))
+          || (qIsNaN(geoCoord.latitude()) && qIsNaN(geoCoord.longitude())))) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Landmark coordinate is not valid, latitude must between -90 and 90 and longitude must be between -180 and 180, or both "
+                       "latitude and longitude are NaN";
+        return false;
+    }
+
     bool update = landmark->landmarkId().isValid();
 
     if (update) {
@@ -1539,8 +1554,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append(landmark->name());
         queryString.append("\" ");
     }
-    QGeoCoordinate geoCoord;
-    geoCoord = landmark->coordinate();
+
     if (!qIsNaN(geoCoord.latitude())) {
         queryString.append("; slo:latitude ");
         queryString.append(QString::number(geoCoord.latitude()));
