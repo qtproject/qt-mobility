@@ -133,6 +133,7 @@
 #define REMOVE_STRESS
 #define SAVE_STRESS
 #define SAVE_CATEGORY_STRESS
+#define REMOVE_CATEGORY_STRESS
 #define SIMPLE_TEST
 
 //#define WORKAROUND
@@ -1150,6 +1151,11 @@ void testViewport_data();
 #ifdef SAVE_CATEGORY_STRESS
  void saveCategoryStress();
  void saveCategoryStress_data();
+#endif
+
+#ifdef REMOVE_CATEGORY_STRESS
+ void removeCategoryStress();
+ void removeCategoryStress_data();
 #endif
 
 #ifdef SIMPLE_TEST
@@ -7138,8 +7144,8 @@ void tst_QLandmarkManager::importWaitForFinished()
 void tst_QLandmarkManager::fetchWaitForFinished()
 {
 #ifdef Q_OS_SYMBIAN
-    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
-    //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QLandmarkFetchRequest fetchRequest(m_manager);
     QVERIFY(fetchRequest.start());
     qDebug() << "after first fetch request start";
@@ -8308,32 +8314,31 @@ void tst_QLandmarkManager::saveStress_data()
 }
 #endif
 
+#ifdef SAVE_CATEGORY_STRESS
 void tst_QLandmarkManager::saveCategoryStress()
 {
     QFETCH(QString, type);
+    int stressNum = 100;
     int originalCategoryCount = m_manager->categoryIds().count();
     qDebug() << "original category count = " << originalCategoryCount;
     if (type == "sync") {
-        for (int i=0; i < 100; ++i) {
+        for (int i=0; i < stressNum; ++i) {
             QLandmarkCategory cat;
             cat.setName(QString("cat") + QString::number(i));
             bool saveResult = m_manager->saveCategory(&cat);
-            qDebug() << "Result of category save " << saveResult;
-            qDebug() << "error = " << m_manager->error();
-            qDebug() << "errorstring=" << m_manager->errorString();
-            qDebug() << "errormap size=" << m_manager->errorMap().count();
-
-            if (m_manager->errorMap().count() > 0)
-                qDebug() << "Error map keys= " << m_manager->errorMap().keys();
-            for ( int i=0; i < m_manager->errorMap().count(); ++i) {
-                qDebug() << "error at " << i <<  ": " << m_manager->errorMap().value(i);
+            if (!saveResult) {
+                qDebug() << "iteration number : " << QString::number(i);
+                qDebug() << "Result of category save " << saveResult;
+                qDebug() << "error = " << m_manager->error();
+                qDebug() << "errorstring=" << m_manager->errorString();
             }
+            QVERIFY(saveResult);
         }
     } else if (type == "async") {
 
         QLandmarkCategorySaveRequest catSaveRequest(m_manager);
         QList<QLandmarkCategory> cats;
-        for (int i=0; i < 100; ++i) {
+        for (int i=0; i < stressNum; ++i) {
             QLandmarkCategory cat;
             cat.setName(QString("cat") + QString::number(i));
             cats.append(cat);
@@ -8351,7 +8356,11 @@ void tst_QLandmarkManager::saveCategoryStress()
         }
         QCOMPARE(catSaveRequest.error(), QLandmarkManager::NoError);
     }
-    QCOMPARE(m_manager->categoryIds().count(),100 + originalCategoryCount);
+    qDebug() << "Final category count by ids= " << m_manager->categoryIds().count();
+    qDebug() << "Error= " << m_manager->error() << " error string=" << m_manager->errorString();
+    qDebug() << "Final category count by cat objects= " << m_manager->categories().count();
+    qDebug() << "Error= " << m_manager->error() << " error string=" << m_manager->errorString();
+    QCOMPARE(m_manager->categoryIds().count(),stressNum + originalCategoryCount);
 }
 
 void tst_QLandmarkManager::saveCategoryStress_data()
@@ -8361,6 +8370,61 @@ void tst_QLandmarkManager::saveCategoryStress_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
+
+#ifdef REMOVE_CATEGORY_STRESS
+void tst_QLandmarkManager::removeCategoryStress()
+{
+    QFETCH(QString, type);
+    int originalCategoryCount = m_manager->categoryIds().count();
+    int stressNum = 100;
+    qDebug() << "original landmark count= " <<  m_manager->landmarkIds().count();
+    QList<QLandmarkCategory> cats;
+    for (int i=0; i < stressNum; ++i) {
+        QLandmarkCategory cat;
+        cat.setName(QString("CAT") + i);
+        QVERIFY(m_manager->saveCategory(&cat));
+        cats.append(cat);
+    }
+
+    qDebug() << "new category count=" << m_manager->categoryIds().count();
+    QCOMPARE(m_manager->categoryIds().count(), stressNum + originalCategoryCount);
+
+    if (type == "sync") {
+        for (int i=0; i < stressNum; ++i)  {
+        bool result = m_manager->removeCategory(cats.at(i));
+        //qDebug() << "Result of category removal = " << result;
+        //qDebug() << "Error =" << m_manager->error();
+        //qDebug() << "Errorstring=" << m_manager->errorString();
+        //qDebug() << "ErrorMap size = " << m_manager->errorMap().count()
+        QVERIFY(result);
+        }
+    } else {
+        QLandmarkCategoryRemoveRequest catRemoveRequest(m_manager);
+        QSignalSpy spy(&catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catRemoveRequest.setCategories(cats);
+        catRemoveRequest.start();
+        waitForAsync(spy, &catRemoveRequest, QLandmarkManager::NoError);
+        qDebug() << "Async remove error = " << catRemoveRequest.error();
+        qDebug() << "Async remove string=" << catRemoveRequest.errorString();
+        qDebug() << "Async remove Error map size =" << catRemoveRequest.errorMap().count();
+        if (catRemoveRequest.errorMap().count() > 0) {
+            qDebug() << "Async remove error map keys: " << catRemoveRequest.errorMap().keys();
+        }
+        QCOMPARE(catRemoveRequest.error(), QLandmarkManager::NoError);
+    }
+    qDebug() << "Final landmarak count= " << m_manager->categoryIds().count();
+    QCOMPARE(m_manager->categoryIds().count(), originalCategoryCount);
+}
+
+void tst_QLandmarkManager::removeCategoryStress_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
 
 #ifdef SIMPLE_TEST
 void tst_QLandmarkManager::simpleTest()
