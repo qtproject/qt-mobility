@@ -99,11 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
-#if !defined(Q_WS_MAEMO_6)
-    GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#if defined(Q_WS_MAEMO_6)
+    QDir langDir("/etc/meego-supported-languages");
+    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
 #else
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
-#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString &locale, locales) {
@@ -111,6 +111,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     }
     languages << currentLanguage();
     languages.removeDuplicates();
+#endif
 
     return languages;
 }
@@ -119,7 +120,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    return langItem.value().toString();
+    return langItem.value().toString().left(2);
 #else
     return QSystemInfoLinuxCommonPrivate::currentLanguage();
 #endif
@@ -226,8 +227,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
-    QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
-    QCoreApplication::processEvents();//this needs to be called otherwise this timer never fires
+    setupNetworkInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -1286,7 +1286,6 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
         foreach (const ProfileDataValue &value, values) {
@@ -1307,14 +1306,22 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    QString name;
-    if(productName()== "RX-51")
-        return "N900";
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
 
-    name = "Harmattan"; //fake this for now
-
-    return name;
-
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    return reply.value();
+#endif
+    return QString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
@@ -1331,9 +1338,10 @@ QString QSystemDeviceInfoPrivate::productName()
                                        "com.nokia.SystemInfo",
                                        QDBusConnection::systemBus());
 
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/productName");
     return reply.value();
 #endif
+    return QString();
 }
 
 #endif

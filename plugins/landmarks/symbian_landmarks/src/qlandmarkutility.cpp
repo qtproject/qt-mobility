@@ -167,7 +167,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
                 QString LandmarkUrl((QChar*) (lmkField->Ptr()), lmkField->Length());
                 CleanupStack::PopAndDestroy(lmkField);
 
-                qDebug() << "landmark url " << LandmarkUrl;
+                //qDebug() << "landmark url " << LandmarkUrl;
                 //TODO: tmp fix, need to know exact reason.
                 if (LandmarkUrl != "0")
                     qtLandmark->setUrl(LandmarkUrl);
@@ -890,8 +890,9 @@ bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandm
     bool result = false;
 
     QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
+    //qDebug() << "category list size = " << catList.size();
     if (catList.size() > 0) {
-        //qDebug() << "category list size = " << catList.size();
+
         for (int i = 0; i < catList.size(); ++i) {
             TPosLmItemId symbianCatId = convertToSymbianLandmarkCategoryId(catList.at(i));
             if (catList.at(i).managerUri() != mgrUri) {
@@ -899,8 +900,19 @@ bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandm
                 break;
             }
             CPosLandmarkCategory* symbiancat = NULL;
-            TRAPD(err, symbiancat = catMgr->ReadCategoryLC(symbianCatId);
-                if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
+            TInt err;
+            while (ETrue) {
+
+                err = KErrGeneral;
+                TRAP(err, symbiancat = catMgr->ReadCategoryLC(symbianCatId);
+                    if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
+                if (err == KErrNone)
+                    break;
+                //qDebug() << "valid cat err = " << err;
+                if (err != KErrLocked)
+                    break;
+                User::After(100);
+            }
 
             if (err != KErrNone) {
                 result = false;
@@ -995,7 +1007,16 @@ bool LandmarkUtility::isGlobalCategoryId(CPosLmCategoryManager* catMgr,
     for (int i = 0; i < globalCategories.size(); ++i) {
         TPosLmGlobalCategory gblCat = globalCategories.operator [](i).toUShort();
         TPosLmItemId gId = KPosLmNullItemId;
-        TRAPD(err, gId= catMgr->GetGlobalCategoryL(gblCat);)
+        TInt err = KErrNone;
+        while (ETrue) {
+
+            TRAP(err, gId= catMgr->GetGlobalCategoryL(gblCat);)
+            if (err == KErrNone)
+                break;
+            if (err != KErrLocked)
+                break;
+        }
+
         if (err == KErrNone) {
             //qDebug() << "GlobalId = " << gblCat << " catId = " << gId;
             if (gId != KPosLmNullItemId && glCatId == gId) {

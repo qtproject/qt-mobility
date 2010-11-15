@@ -288,11 +288,27 @@ bool QLandmarkManagerEngineQsparql::saveCategory(QLandmarkCategory* category,
     return m_databaseOperations.saveCategory(category, error, errorString);
 }
 
+bool QLandmarkManagerEngineQsparql::saveCategories(QList<QLandmarkCategory> * categories,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString);
+}
+
 bool QLandmarkManagerEngineQsparql::removeCategory(const QLandmarkCategoryId &categoryId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
     return m_databaseOperations.removeCategory(categoryId, error, errorString);
+}
+
+bool QLandmarkManagerEngineQsparql::removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString);
 }
 
 bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,

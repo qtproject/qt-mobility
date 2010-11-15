@@ -74,6 +74,7 @@ QOrganizerItemSaveRequest::QOrganizerItemSaveRequest(QObject* parent)
 void QOrganizerItemSaveRequest::setItem(const QOrganizerItem& organizeritem)
 {
     Q_D(QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritems.clear();
     d->m_organizeritems.append(organizeritem);
 }
@@ -82,6 +83,7 @@ void QOrganizerItemSaveRequest::setItem(const QOrganizerItem& organizeritem)
 void QOrganizerItemSaveRequest::setItems(const QList<QOrganizerItem>& organizeritems)
 {
     Q_D(QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritems = organizeritems;
 }
 
@@ -90,6 +92,7 @@ void QOrganizerItemSaveRequest::setItems(const QList<QOrganizerItem>& organizeri
 QList<QOrganizerItem> QOrganizerItemSaveRequest::items() const
 {
     Q_D(const QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 
@@ -97,6 +100,7 @@ QList<QOrganizerItem> QOrganizerItemSaveRequest::items() const
 QMap<int, QOrganizerManager::Error> QOrganizerItemSaveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

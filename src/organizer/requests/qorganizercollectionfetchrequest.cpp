@@ -67,6 +67,7 @@ QOrganizerCollectionFetchRequest::QOrganizerCollectionFetchRequest(QObject* pare
 QList<QOrganizerCollection> QOrganizerCollectionFetchRequest::collections() const
 {
     Q_D(const QOrganizerCollectionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_collections;
 }
 

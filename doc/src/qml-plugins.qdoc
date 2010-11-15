@@ -68,6 +68,9 @@
     \row
         \o \l {Messaging QML Plugin}{Messaging}
         \o A QML plugin for the Messaging API.
+    \row
+        \o \l {SystemInfo QML Plugin}{System Information}
+        \o A QML plugin for the SystemInfo API.
     \endtable
 
 

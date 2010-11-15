@@ -557,6 +557,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
     compileTest "Maemo5 organizer dependencies" maemo5-calendar
+    compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
     compileTest "Bluez" bluez
     compileTest "Gstreamer Photography" gstreamer-photography
     compileTest "Pulse Audio" pulseaudio

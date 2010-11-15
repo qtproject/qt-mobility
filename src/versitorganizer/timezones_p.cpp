@@ -45,7 +45,8 @@
 
 QOrganizerManager* TimeZone::getManager()
 {
-    static QOrganizerManager* manager(new QOrganizerManager());
+    // We use the memory engine to do time zone recurrence calculations
+    static QOrganizerManager* manager(new QOrganizerManager("memory"));
     return manager;
 }
 
