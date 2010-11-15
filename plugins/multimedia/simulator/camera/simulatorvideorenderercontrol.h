@@ -39,52 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef SIMULATORCAMERACAPTURESESSION_H
-#define SIMULATORCAMERACAPTURESESSION_H
+#ifndef QSIMULATORVIDEORENDERERCONTROL_H
+#define QSIMULATORVIDEORENDERERCONTROL_H
 
-#include <qmediarecordercontrol.h>
+#include <qvideorenderercontrol.h>
+#include <QtGui/QImage>
 
-#include <QtCore/qurl.h>
-#include <QtCore/qdir.h>
-
-#include "qcamera.h"
-
-class SimulatorCameraSession : public QObject
+/*
+ * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
+ * which is drawn to the display by the Qt Graphics Vide Framework.
+ */
+class QSimulatorVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
+
 public:
-    SimulatorCameraSession(QObject *parent);
-    ~SimulatorCameraSession();
+    QSimulatorVideoRendererControl(QObject *parent = 0);
+    virtual ~QSimulatorVideoRendererControl();
 
-    QCamera::CaptureMode captureMode();
-    void setCaptureMode(QCamera::CaptureMode mode);
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
-    QDir defaultDir(QCamera::CaptureMode mode) const;
-    QString generateFileName(const QString &prefix, const QDir &dir, const QString &ext) const;
+    void setImagePath(const QString &imagePath);
+    const QImage *image() const;
 
-    void setImage(const QImage *image);
-    QObject *viewfinder() const;
-    void setViewfinder(QObject *viewfinder);
-
-    int captureImage(const QString &fileName);
-
-signals:
-    void stateChanged(QCamera::State state);
-    void captureError(int id, int error, const QString &errorString);
-    void error(int error, const QString &errorString);
-    void imageExposed(int requestId);
-    void imageCaptured(int requestId, const QImage &img);
-    void imageSaved(int requestId, const QString &fileName);
-    void viewfinderChanged();
+public slots:
+    void start();
+    void stop();
 
 private:
-    QCamera::CaptureMode mCaptureMode;
-
-    QObject *mViewfinder;
-    const QImage *mImage;
-
-public:
-    int mRequestId;
+    QAbstractVideoSurface *mSurface;
+    QImage mImage;
+    bool mRunning;
 };
 
-#endif // SIMULATORCAMERACAPTURESESSION_H
+#endif // QSIMULATORVIDEORENDERERCONTROL_H

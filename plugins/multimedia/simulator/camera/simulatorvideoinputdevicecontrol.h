@@ -39,52 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef SIMULATORCAMERACAPTURESESSION_H
-#define SIMULATORCAMERACAPTURESESSION_H
+#ifndef QSIMULATORVIDEOINPUTDEVICECONTROL_H
+#define QSIMULATORVIDEOINPUTDEVICECONTROL_H
 
-#include <qmediarecordercontrol.h>
+#include <qvideodevicecontrol.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qhash.h>
 
-#include <QtCore/qurl.h>
-#include <QtCore/qdir.h>
+#include "../qsimulatormultimediaconnection_p.h"
 
-#include "qcamera.h"
+QT_USE_NAMESPACE
 
-class SimulatorCameraSession : public QObject
+class QSimulatorVideoInputDeviceControl : public QVideoDeviceControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    SimulatorCameraSession(QObject *parent);
-    ~SimulatorCameraSession();
+    QSimulatorVideoInputDeviceControl(QObject *parent);
+    ~QSimulatorVideoInputDeviceControl();
 
-    QCamera::CaptureMode captureMode();
-    void setCaptureMode(QCamera::CaptureMode mode);
+    int deviceCount() const;
 
-    QDir defaultDir(QCamera::CaptureMode mode) const;
-    QString generateFileName(const QString &prefix, const QDir &dir, const QString &ext) const;
+    QString deviceName(int index) const;
+    QString deviceDescription(int index) const;
+    QIcon deviceIcon(int index) const;
 
-    void setImage(const QImage *image);
-    QObject *viewfinder() const;
-    void setViewfinder(QObject *viewfinder);
+    int defaultDevice() const;
+    int selectedDevice() const;
 
-    int captureImage(const QString &fileName);
+    void updateDeviceList(const QtMobility::QCameraData &data);
 
-signals:
-    void stateChanged(QCamera::State state);
-    void captureError(int id, int error, const QString &errorString);
-    void error(int error, const QString &errorString);
-    void imageExposed(int requestId);
-    void imageCaptured(int requestId, const QImage &img);
-    void imageSaved(int requestId, const QString &fileName);
-    void viewfinderChanged();
+public Q_SLOTS:
+    void setSelectedDevice(int index);
+    void addDevice(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
+    void removeDevice(const QString &name);
+    void changeDevice(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
 
 private:
-    QCamera::CaptureMode mCaptureMode;
-
-    QObject *mViewfinder;
-    const QImage *mImage;
-
-public:
-    int mRequestId;
+    int mSelectedDevice;
+    QList<QString> mDevices;
+    QList<QString> mDescriptions;
 };
 
-#endif // SIMULATORCAMERACAPTURESESSION_H
+#endif // QSIMULATORVIDEOINPUTDEVICECONTROL_H
