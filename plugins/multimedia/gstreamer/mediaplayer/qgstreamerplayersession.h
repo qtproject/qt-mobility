@@ -177,6 +177,7 @@ private:
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
     GstSegment m_segment;
+    bool m_sendNewSegment;
 
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;

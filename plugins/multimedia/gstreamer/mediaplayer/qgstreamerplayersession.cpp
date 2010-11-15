@@ -99,6 +99,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
+     m_sendNewSegment(false),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
@@ -139,6 +140,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     m_colorSpace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-vo");
     m_videoScale = gst_element_factory_make("videoscale","videoscale-vo");
     m_nullVideoSink = gst_element_factory_make("fakesink", NULL);
+    g_object_set(G_OBJECT(m_nullVideoSink), "sync", true, NULL);
     gst_object_ref(GST_OBJECT(m_nullVideoSink));
     gst_bin_add_many(GST_BIN(m_videoOutputBin), m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
     gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
@@ -462,23 +464,6 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
         qDebug() << "Blocking the video output pad...";
 #endif
 
-        {
-#ifdef DEBUG_PLAYBIN
-            qDebug() << "send the last new segment event to the video output...";
-#endif
-            GstEvent *event = gst_event_new_new_segment(TRUE,
-                                                        m_segment.rate,
-                                                        m_segment.format,
-                                                        m_segment.last_stop, //start
-                                                        m_segment.stop,
-                                                        m_segment.last_stop);//position
-
-            GstPad *pad = gst_element_get_static_pad(videoSink, "sink");
-            //gst_pad_send_event(pad, m_lastSegmentEvent);
-            gst_pad_send_event(pad, event);
-            gst_object_unref(GST_OBJECT(pad));
-        }
-
         //block pads, async to avoid locking in paused state
         GstPad *srcPad = gst_element_get_static_pad(m_videoIdentity, "src");
         gst_pad_set_blocked_async(srcPad, true, &block_pad_cb, this);
@@ -557,6 +542,10 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     // change being pending
     gst_element_set_state(m_playbin, state);
 
+    //it's necessary to send a new segment event just before
+    //the first buffer pushed to the new sink
+    m_sendNewSegment = true;
+
     //don't have to wait here, it will unblock eventually
     if (gst_pad_is_blocked(srcPad))
         gst_pad_set_blocked_async(srcPad, false, &block_pad_cb, 0);
@@ -582,18 +571,44 @@ void QGstreamerPlayerSession::processNewSegment(GstEvent *event)
 
     gst_segment_set_newsegment_full(&m_segment, update,
               rate, arate, format, start, stop, time);
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Received new segment event:";
+    qDebug() << "rate:" << m_segment.rate << arate;
+    qDebug() << "start:" << m_segment.start*1e-9;
+    qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
+    qDebug() << "stop:" << m_segment.stop*1e-9;
+#endif
 }
 
 void QGstreamerPlayerSession::processNewBuffer(GstBuffer *buf)
 {
-    GstClockTime last_stop, duration;
-    last_stop = GST_BUFFER_TIMESTAMP (buf);
-    if (GST_CLOCK_TIME_IS_VALID (last_stop)) {
-        duration = GST_BUFFER_DURATION (buf);
-        if (GST_CLOCK_TIME_IS_VALID (duration)) {
-            last_stop += duration;
-        }
-        gst_segment_set_last_stop(&m_segment, m_segment.format, last_stop);
+    if (GST_BUFFER_TIMESTAMP_IS_VALID(buf)) {
+        GstClockTime last_stop = GST_BUFFER_TIMESTAMP(buf);
+        gst_segment_set_last_stop(&m_segment, GST_FORMAT_TIME, last_stop);
+        //qDebug() << "buffer timestamp:" << GST_BUFFER_TIMESTAMP(buf)*1e-9 << position()/1000.0;
+    }
+
+    if (m_sendNewSegment) {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "send the last new segment event to the video output...";
+        qDebug() << "rate:" << m_segment.rate;
+        qDebug() << "start:" << m_segment.start*1e-9;
+        qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
+        qDebug() << "stop:" << m_segment.stop*1e-9;
+#endif
+        GstEvent *event = gst_event_new_new_segment(TRUE,
+                                                    m_segment.rate,
+                                                    m_segment.format,
+                                                    m_segment.last_stop, //start
+                                                    m_segment.stop,
+                                                    m_segment.last_stop);//position
+
+        GstPad *pad = gst_element_get_static_pad(m_videoSink, "sink");
+        gst_pad_send_event(pad, event);
+        gst_object_unref(GST_OBJECT(pad));
+
+        m_sendNewSegment = false;
     }
 }
 
