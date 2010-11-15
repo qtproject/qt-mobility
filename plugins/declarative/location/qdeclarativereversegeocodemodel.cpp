@@ -80,8 +80,14 @@ void QDeclarativeReverseGeocodeModel::componentComplete()
 
 void QDeclarativeReverseGeocodeModel::update()
 {
-    if (searchManager() && coordinate_.coordinate().isValid())
+    if (searchManager() && coordinate_.coordinate().isValid()) {
+
+        setStatus(QDeclarativeGeoSearchModel::Loading);
+
         searchManager()->reverseGeocode(coordinate_.coordinate());
+
+        // TODO check for finished
+    }
 }
 
 QVariant QDeclarativeReverseGeocodeModel::data(const QModelIndex &index, int role) const
