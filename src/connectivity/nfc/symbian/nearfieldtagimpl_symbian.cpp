@@ -126,4 +126,15 @@ QByteArray QNearFieldTagImpl::_sendCommand(const QByteArray &command, int timeou
     return result;
 }
 
-
+QByteArray QNearFieldTagImpl::_uid() const
+{
+    if (mUid.isEmpty())
+    {
+        CNearFieldTag * tag = mTag->CastToTag();
+        if (tag)
+        {
+            mUid = QNFCNdefUtility::FromTDesCToQByteArray(tag->Uid());
+        }
+    }
+    return mUid;
+}

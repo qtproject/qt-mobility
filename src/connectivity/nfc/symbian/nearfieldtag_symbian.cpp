@@ -102,6 +102,11 @@ TBool CNearFieldTag::IsConnectionOpened()
     return iTagConnection->IsActivated();
     }
 
+const TDesC8& CNearFieldTag::Uid() const
+    {
+    return iNfcTag->Uid();
+    }
+
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
     return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(aCommand, aResponse, aTimeout)

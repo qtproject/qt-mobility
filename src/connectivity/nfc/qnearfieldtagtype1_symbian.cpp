@@ -72,6 +72,7 @@ QNearFieldTagType1Symbian::~QNearFieldTagType1Symbian()
 
 QByteArray QNearFieldTagType1Symbian::uid() const
 {
+    return _uid();
 }
 
 /*!
@@ -79,6 +80,7 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 */
 QByteArray QNearFieldTagType1Symbian::readIdentification()
 {
+    return _uid();
 }
 
 /*!

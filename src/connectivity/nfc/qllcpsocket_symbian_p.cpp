@@ -45,6 +45,15 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+#define Q_CHECK_VALID_LLCPTYPE(type)  { \
+if ((type) != m_socketType) \
+    { \
+    emit error(QLlcpSocket::UnknownSocketError); \
+    return; \
+    } \
+}
+
 QLlcpSocketPrivate::QLlcpSocketPrivate()
    : m_symbianSocketType1(NULL),
      m_symbianSocketType2(NULL),
@@ -56,36 +65,21 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
 }
 
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
-    {
+{
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
-    }
-
-
-void QLlcpSocketPrivate::socketType1Check() const
-    {
-    if (connectionType2 == m_socketType)
-        {
-        emit error(QLlcpSocket::UnknownSocketError);
-        return;
-        }     
-    }
-
-void QLlcpSocketPrivate::socketType2Check() const
-    {
-    if (connectionType1 == m_socketType)
-        {
-        emit error(QLlcpSocket::UnknownSocketError);
-        }     
-    }
+}
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
     Q_UNUSED(target);
     
-    socketType2Check();  
+    Q_CHECK_VALID_LLCPTYPE(connectionType2);  
     
-    QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+    if (!m_symbianSocketType2)
+        {
+        QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+        }
      
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
     m_symbianSocketType2->ConnectToServiceL(serviceName);
@@ -95,7 +89,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
 
 void QLlcpSocketPrivate::disconnectFromService()
 {
-    socketType2Check();  
+    Q_CHECK_VALID_LLCPTYPE(connectionType2); 
     if (m_symbianSocketType2)
         {
         m_symbianSocketType2->DisconnectFromService();
@@ -108,8 +102,12 @@ void QLlcpSocketPrivate::disconnectFromService()
 
 bool QLlcpSocketPrivate::bind(quint8 port)
 {
-    socketType1Check(); 
-    QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+    Q_CHECK_VALID_LLCPTYPE(connectionType1); 
+    
+    if (!m_symbianSocketType1)
+        {
+        QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+        }
     return m_symbianSocketType1->Bind(port);
 }
 
@@ -119,7 +117,7 @@ bool QLlcpSocketPrivate::bind(quint8 port)
 */
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
-    socketType1Check(); 
+    Q_CHECK_VALID_LLCPTYPE(connectionType1); 
     bool val = false;
     if (m_symbianSocketType1)
         {
@@ -134,7 +132,7 @@ bool QLlcpSocketPrivate::hasPendingDatagrams() const
 */
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
-    socketType1Check(); 
+    Q_CHECK_VALID_LLCPTYPE(connectionType1); 
     int val = -1;
     if (m_symbianSocketType1)
         {
@@ -145,7 +143,7 @@ qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
-    socketType2Check(); 
+    Q_CHECK_VALID_LLCPTYPE(connectionType2);
     Q_UNUSED(data);
     Q_UNUSED(size);
 
@@ -154,7 +152,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
-    socketType2Check(); 
+    Q_CHECK_VALID_LLCPTYPE(connectionType2);
     Q_UNUSED(datagram);
 
     return -1;
@@ -177,7 +175,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
 {
     Q_UNUSED(target);
     
-    socketType1Check();
+    Q_CHECK_VALID_LLCPTYPE(connectionType1);
     
     m_port = port;
     qint64 val = writeData(data,size);
@@ -189,7 +187,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
                                          QNearFieldTarget *target, quint8 port)
 {
     Q_UNUSED(target);
-    socketType1Check();
+    Q_CHECK_VALID_LLCPTYPE(connectionType1);
     if (m_symbianSocketType1 == NULL)
         {
         QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));

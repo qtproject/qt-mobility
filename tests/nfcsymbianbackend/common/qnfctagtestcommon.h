@@ -38,64 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QNFCTAGTESTCOMMON_H
+#define QNFCTAGTESTCOMMON_H
 
-#ifndef QNEARFIELDTAGIMPL_H
-#define QNEARFIELDTAGIMPL_H
-
+#include <qnearfieldmanager.h>
 #include <qnearfieldtarget.h>
-#include "nearfieldtag_symbian.h"
-#include "nearfieldndeftarget_symbian.h"
-#include "qnearfieldutility_symbian.h"
+#include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
-class MNearFieldTarget;
 
-class QNearFieldTagImpl
+class QNfcTagTestCommon : public QObject
 {
+    Q_OBJECT
 public:
-    QNearFieldTagImpl(MNearFieldTarget *tag);
-    bool _hasNdefMessage();
-    QList<QNdefMessage> _ndefMessages();
-    void _setNdefMessages(const QList<QNdefMessage> &messages);
+    QNfcTagTestCommon();
+    ~QNfcTagTestCommon();
+    QNearFieldTarget* touchTarget(QNearFieldTarget::Type targetType);
+    void removeTarget(); 
 
-    void _setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-    {
-        mAccessMethods = accessMethods;
-    }
+    void NdefCheck();
 
-    QNearFieldTarget::AccessMethods _accessMethods() const
-    {
-        return mAccessMethods;
-    }
-
-    QByteArray _sendCommand(const QByteArray &command, int timeout, int reponseSize);
-
-    template<int N>
-    QByteArray _sendCommand(const QByteArray &command, int timeout);
-
-    QByteArray _uid() const;
-
-protected:
-    MNearFieldTarget * mTag;
-    QNearFieldTarget::AccessMethods mAccessMethods;
-    mutable QByteArray mUid;
+    QNearFieldTarget* getTarget() { return target; }
+private:
+    QNearFieldManager manager;
+    QNearFieldTarget* target;
 };
 
-template<int N>
-QByteArray QNearFieldTagImpl::_sendCommand(const QByteArray &command, int timeout)
-{
-    CNearFieldTag * tag = mTag->CastToTag();
-    QByteArray result;
-    if (tag)
-    {
-        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
-        TBuf8<N> response;
-        if (KErrNone == tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)))
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-        }
-    }
-    return result;
-}
-
-#endif // QNEARFIELDTAGIMPL_H
+#endif // QNFCTAGTESTCOMMON_H
