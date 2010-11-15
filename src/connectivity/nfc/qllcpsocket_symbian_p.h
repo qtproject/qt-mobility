@@ -83,10 +83,6 @@ public:
 
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
-
-private:
-    void socketType1Check() const;
-    void socketType2Check() const;
     
 private:
     enum SocketType 
