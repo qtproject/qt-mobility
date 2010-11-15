@@ -39,48 +39,54 @@
 **
 ****************************************************************************/
 
-#include "mediasamplevideobuffer.h"
+#ifndef QAUDIODEVICEINFOPULSE_H
+#define QAUDIODEVICEINFOPULSE_H
 
-MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
-    : QAbstractVideoBuffer(NoHandle)
-    , m_sample(sample)
-    , m_bytesPerLine(bytesPerLine)
-    , m_mapMode(NotMapped)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/qbytearray.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qlist.h>
+
+#include "qaudio.h"
+#include "qaudiodeviceinfo.h"
+#include "qaudiosystem.h"
+
+QT_BEGIN_NAMESPACE
+
+class QPulseAudioDeviceInfo : public QAbstractAudioDeviceInfo
 {
-    m_sample->AddRef();
-}
+    Q_OBJECT
 
-MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
-{
-    m_sample->Release();
-}
+public:
+    QPulseAudioDeviceInfo(const QByteArray &device, QAudio::Mode mode);
+    ~QPulseAudioDeviceInfo() {}
 
-uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
-{
-    if (m_mapMode == NotMapped && mode != NotMapped) {
-        if (numBytes)
-            *numBytes = m_sample->GetActualDataLength();
+    QAudioFormat preferredFormat() const;
+    bool isFormatSupported(const QAudioFormat &format) const;
+    QString deviceName() const;
+    QStringList supportedCodecs();
+    QList<int> supportedSampleRates();
+    QList<int> supportedChannelCounts();
+    QList<int> supportedSampleSizes();
+    QList<QAudioFormat::Endian> supportedByteOrders();
+    QList<QAudioFormat::SampleType> supportedSampleTypes();
 
-        if (bytesPerLine)
-            *bytesPerLine = m_bytesPerLine;
+private:
+    QByteArray m_device;
+    QAudio::Mode m_mode;
+};
 
-        BYTE *bytes = 0;
+QT_END_NAMESPACE
 
-        if (m_sample->GetPointer(&bytes) == S_OK) {
-            m_mapMode = mode;
+#endif
 
-            return reinterpret_cast<uchar *>(bytes);
-        }
-    }
-    return 0;
-}
-
-void MediaSampleVideoBuffer::unmap()
-{
-    m_mapMode = NotMapped;
-}
-
-QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
-{
-    return m_mapMode;
-}

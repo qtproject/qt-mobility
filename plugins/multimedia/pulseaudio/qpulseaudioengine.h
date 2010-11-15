@@ -39,48 +39,62 @@
 **
 ****************************************************************************/
 
-#include "mediasamplevideobuffer.h"
+#ifndef QPULSEAUDIOENGINE_H
+#define QPULSEAUDIOENGINE_H
 
-MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
-    : QAbstractVideoBuffer(NoHandle)
-    , m_sample(sample)
-    , m_bytesPerLine(bytesPerLine)
-    , m_mapMode(NotMapped)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/qmap.h>
+#include <QtCore/qbytearray.h>
+#include <qaudiosystemplugin.h>
+#include <pulse/pulseaudio.h>
+#include "qpulsehelpers.h"
+#include <QAudioFormat>
+
+QT_BEGIN_NAMESPACE
+
+class QPulseAudioEngine : public QObject
 {
-    m_sample->AddRef();
-}
+    Q_OBJECT
 
-MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
-{
-    m_sample->Release();
-}
+public:
+    QPulseAudioEngine(QObject *parent = 0);
+    ~QPulseAudioEngine();
 
-uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
-{
-    if (m_mapMode == NotMapped && mode != NotMapped) {
-        if (numBytes)
-            *numBytes = m_sample->GetActualDataLength();
+    static QPulseAudioEngine *instance();
+    pa_threaded_mainloop *mainloop() { return m_mainLoop; }
+    pa_context *context() { return m_context; }
 
-        if (bytesPerLine)
-            *bytesPerLine = m_bytesPerLine;
+    QList<QByteArray> availableDevices(QAudio::Mode mode) const;
 
-        BYTE *bytes = 0;
+private:
+    void serverInfo();
+    void sinks();
+    void sources();
 
-        if (m_sample->GetPointer(&bytes) == S_OK) {
-            m_mapMode = mode;
+public:
+    QList<QByteArray> m_sinks;
+    QList<QByteArray> m_sources;
+    QMap<QByteArray, QAudioFormat> m_preferredFormats;
 
-            return reinterpret_cast<uchar *>(bytes);
-        }
-    }
-    return 0;
-}
+    QByteArray m_defaultSink;
+    QByteArray m_defaultSource;
 
-void MediaSampleVideoBuffer::unmap()
-{
-    m_mapMode = NotMapped;
-}
+private:
+    pa_mainloop_api *m_mainLoopApi;
+    pa_threaded_mainloop *m_mainLoop;
+    pa_context *m_context;
+ };
 
-QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
-{
-    return m_mapMode;
-}
+QT_END_NAMESPACE
+
+#endif

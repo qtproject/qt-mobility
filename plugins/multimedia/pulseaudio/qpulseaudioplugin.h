@@ -39,48 +39,33 @@
 **
 ****************************************************************************/
 
-#include "mediasamplevideobuffer.h"
+#ifndef QPULSEAUDIOPLUGIN_H
+#define QPULSEAUDIOPLUGIN_H
 
-MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
-    : QAbstractVideoBuffer(NoHandle)
-    , m_sample(sample)
-    , m_bytesPerLine(bytesPerLine)
-    , m_mapMode(NotMapped)
+#include <qaudiosystemplugin.h>
+
+QT_BEGIN_NAMESPACE
+
+class QPulseAudioEngine;
+
+class QPulseAudioPlugin : public QAudioSystemPlugin
 {
-    m_sample->AddRef();
-}
+    Q_OBJECT
 
-MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
-{
-    m_sample->Release();
-}
+public:
+    QPulseAudioPlugin(QObject *parent = 0);
+    ~QPulseAudioPlugin() {}
 
-uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
-{
-    if (m_mapMode == NotMapped && mode != NotMapped) {
-        if (numBytes)
-            *numBytes = m_sample->GetActualDataLength();
+    QStringList keys() const;
+    QList<QByteArray> availableDevices(QAudio::Mode mode) const;
+    QAbstractAudioInput *createInput(const QByteArray &device);
+    QAbstractAudioOutput *createOutput(const QByteArray &device);
+    QAbstractAudioDeviceInfo *createDeviceInfo(const QByteArray &device, QAudio::Mode mode);
 
-        if (bytesPerLine)
-            *bytesPerLine = m_bytesPerLine;
+private:
+    QPulseAudioEngine *m_pulseEngine;
+};
 
-        BYTE *bytes = 0;
+QT_BEGIN_NAMESPACE
 
-        if (m_sample->GetPointer(&bytes) == S_OK) {
-            m_mapMode = mode;
-
-            return reinterpret_cast<uchar *>(bytes);
-        }
-    }
-    return 0;
-}
-
-void MediaSampleVideoBuffer::unmap()
-{
-    m_mapMode = NotMapped;
-}
-
-QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
-{
-    return m_mapMode;
-}
+#endif

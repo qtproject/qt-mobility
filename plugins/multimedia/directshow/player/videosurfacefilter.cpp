@@ -308,6 +308,9 @@ HRESULT VideoSurfaceFilter::ReceiveConnection(IPin *pConnector, const AM_MEDIA_T
 
 HRESULT VideoSurfaceFilter::start()
 {
+    if (!m_surface->isFormatSupported(m_surfaceFormat)) {
+        return VFW_E_TYPE_NOT_ACCEPTED;
+    }
     if (!m_surface->start(m_surfaceFormat)) {
         return VFW_E_TYPE_NOT_ACCEPTED;
     } else {
