@@ -84,7 +84,7 @@ maemo5 {
 }
 
 maemo6 {
-    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo6
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=mkcal
 }
 
 symbian {

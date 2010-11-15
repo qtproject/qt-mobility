@@ -73,6 +73,7 @@ QOrganizerItemRemoveRequest::QOrganizerItemRemoveRequest(QObject* parent)
 void QOrganizerItemRemoveRequest::setItemId(const QOrganizerItemId& organizeritemId)
 {
     Q_D(QOrganizerItemRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemIds.clear();
     d->m_organizeritemIds.append(organizeritemId);
 }
@@ -81,6 +82,7 @@ void QOrganizerItemRemoveRequest::setItemId(const QOrganizerItemId& organizerite
 void QOrganizerItemRemoveRequest::setItemIds(const QList<QOrganizerItemId>& organizeritemIds)
 {
     Q_D(QOrganizerItemRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemIds = organizeritemIds;
 }
 
@@ -88,6 +90,7 @@ void QOrganizerItemRemoveRequest::setItemIds(const QList<QOrganizerItemId>& orga
 QList<QOrganizerItemId> QOrganizerItemRemoveRequest::itemIds() const
 {
     Q_D(const QOrganizerItemRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritemIds;
 }
 
@@ -95,6 +98,7 @@ QList<QOrganizerItemId> QOrganizerItemRemoveRequest::itemIds() const
 QMap<int, QOrganizerManager::Error> QOrganizerItemRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

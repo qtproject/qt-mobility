@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ITEMLOCALID_H
-#define MAEMO6ITEMLOCALID_H
+#ifndef QORGANIZERASYNCHMANAGER_H
+#define QORGANIZERASYNCHMANAGER_H
 
 //
 //  W A R N I N G
@@ -53,61 +53,48 @@
 // We mean it.
 //
 
-#include "qorganizeritemenginelocalid.h"
+#include "qtorganizer.h"
+#include <QtCore/qthread.h>
+#include <QtCore/qqueue.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/qmap.h>
+#include <QSharedPointer>
+#include <QWaitCondition>
 
 QTM_USE_NAMESPACE
 
-class Maemo6ItemLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemMKCalEngine;
+class AsyncWorker;
+
+class OrganizerAsynchManager
 {
 public:
-    Maemo6ItemLocalId() {}
-    Maemo6ItemLocalId(const QString& id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id == static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id < static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    uint engineLocalIdType() const
-    {
-        static uint t = qHash("maemo6");
-        return t;
-    }
-    QOrganizerItemEngineLocalId* clone() const
-    {
-        return new Maemo6ItemLocalId(m_id);
-    }
-#ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg)
-    {
-        return dbg << m_id;
-    }
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out)
-    {
-        return out << m_id;
-    }
-    QDataStream& dataStreamIn(QDataStream& in)
-    {
-        in >> m_id;
-        return in;
-    }
-#endif
-    uint hash() const
-    {
-        return qHash(m_id);
-    }
+    OrganizerAsynchManager(QOrganizerManagerEngine *engine, int maxWorkers = 1);
+    ~OrganizerAsynchManager();
 
-    QString toString() const
-    {
-        return m_id;
-    }
+    void requestDestroyed(QOrganizerAbstractRequest *req);
+    bool addRequest(QOrganizerAbstractRequest *req);
+    bool cancelRequest(QOrganizerAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest *req, int msecs = -1);
 
 private:
-    QString m_id;
+    QOrganizerManagerEngine* m_engine;
+
+    int m_maxWorkers;
+    QQueue<AsyncWorker *> m_idleWorkers;
+    QQueue<AsyncWorker *> m_activeWorkers;
+
+    QQueue<QOrganizerAbstractRequest *> m_queuedRequests;
+    QSet<QOrganizerAbstractRequest *> m_activeRequests;
+
+    QMap<QOrganizerAbstractRequest*, QSharedPointer<QWaitCondition> > m_waitMap;
+    QMutex m_mutexMap;
+
+    QMutex m_mutex;
+
+    void workerDone(AsyncWorker *worker, QOrganizerAbstractRequest *req);
+
+    friend class AsyncWorker;
 };
 
-#endif
+#endif // QORGANIZERASYNCHMANAGER_H
