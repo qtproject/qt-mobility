@@ -273,6 +273,11 @@ void S60VideoPlayerSession::doStop()
     m_player->Stop();
 }
 
+void S60VideoPlayerSession::doClose()
+{
+    m_player->Close();
+}
+
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
     return m_player->PositionL().Int64() / qint64(1000);

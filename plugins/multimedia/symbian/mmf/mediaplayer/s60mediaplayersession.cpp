@@ -200,6 +200,7 @@ void S60MediaPlayerSession::reset()
     stopProgressTimer();
     stopStalledTimer();
     doStop();
+    doClose();
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
 }

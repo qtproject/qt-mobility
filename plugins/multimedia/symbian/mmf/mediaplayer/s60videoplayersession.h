@@ -98,6 +98,7 @@ protected:
     void doLoadUrlL(const TDesC &path);
     void doPlay();
     void doStop();
+    void doClose();
     void doPauseL();
     void doSetVolumeL(int volume);
     qint64 doGetPositionL() const;

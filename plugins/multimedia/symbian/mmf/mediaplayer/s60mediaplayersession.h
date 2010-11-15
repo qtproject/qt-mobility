@@ -99,6 +99,7 @@ protected:
     virtual void doLoadUrlL(const TDesC &path) = 0;
     virtual void doPlay() = 0;
     virtual void doStop() = 0;
+    virtual void doClose() = 0;
     virtual void doPauseL() = 0;
     virtual void doSetVolumeL(int volume) = 0;
     virtual void doSetPositionL(qint64 microSeconds) = 0;
