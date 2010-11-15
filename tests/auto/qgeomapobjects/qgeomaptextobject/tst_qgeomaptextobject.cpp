@@ -4,6 +4,7 @@
 #include "qgeomaptextobject.h"
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
+#include "qgeoboundingbox.h"
 
 QTM_USE_NAMESPACE
 
@@ -41,6 +42,13 @@ private slots:
     void pen();
     void text_data();
     void text();
+    void zvalue_data();
+    void zvalue();
+    void boundingBox();
+    void contains_data();
+    void contains();
+    void isSelected();
+    void isVisible();
 
 private:
     TestHelper *m_helper;
@@ -94,9 +102,14 @@ void tst_QGeoMapTextObject::qgeomaptextobject()
     QCOMPARE(object->coordinate(), QGeoCoordinate());
     QCOMPARE(object->font(), QFont());
     QCOMPARE(object->offset(), QPoint());
-    QPen pen(QColor(Qt::black));
+    QPen pen(Qt::black);
     pen.setCosmetic(true);
     QCOMPARE(object->text(), QString());
+    QCOMPARE(object->zValue(), 0);
+    QCOMPARE(object->isSelected(),false);
+    QCOMPARE(object->isVisible(),true);
+    QCOMPARE(object->boundingBox(),QGeoBoundingBox());
+    QCOMPARE(object->contains(QGeoCoordinate()),false);
 
     //check if can be added to map
 
@@ -106,9 +119,15 @@ void tst_QGeoMapTextObject::qgeomaptextobject()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
+
+    QVERIFY2(object->info(),"info object not created");
+    QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
+
+    QVERIFY2(!object->info(),"info object not deleted");
+    QVERIFY2(!object->mapData(),"no map data still set");
 
     delete (object);
 
@@ -144,7 +163,7 @@ void tst_QGeoMapTextObject::alignment()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -233,7 +252,7 @@ void tst_QGeoMapTextObject::brush()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -286,7 +305,7 @@ void tst_QGeoMapTextObject::coordinate()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -362,7 +381,7 @@ void tst_QGeoMapTextObject::font()
 
     object->setText("AAAAA");
 
-    object->setBrush(QColor(Qt::black));
+    object->setBrush(Qt::black);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -370,7 +389,7 @@ void tst_QGeoMapTextObject::font()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -440,7 +459,7 @@ void tst_QGeoMapTextObject::offset()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -478,8 +497,8 @@ Q_DECLARE_METATYPE(QPen)
 void tst_QGeoMapTextObject::pen_data()
 {
     QTest::addColumn<QPen>("pen");
-    QTest::newRow("blue") << QPen(QColor(Qt::blue));
-    QTest::newRow("white") << QPen(QColor(Qt::white));
+    QTest::newRow("blue") << QPen(Qt::blue);
+    QTest::newRow("white") << QPen(Qt::white);
 }
 
 // public QPen pen() const
@@ -495,7 +514,7 @@ void tst_QGeoMapTextObject::pen()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -545,7 +564,7 @@ void tst_QGeoMapTextObject::text()
 
     object->setAlignment(Qt::AlignLeft);
 
-    object->setBrush(QColor(Qt::black));
+    object->setBrush(Qt::black);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -553,7 +572,7 @@ void tst_QGeoMapTextObject::text()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);;
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
     QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
@@ -590,6 +609,211 @@ void tst_QGeoMapTextObject::text()
     QCOMPARE(spy4.count(), 0);
     QCOMPARE(spy5.count(), 0);
     QCOMPARE(spy6.count(), 1);
+
+}
+
+
+void tst_QGeoMapTextObject::zvalue_data()
+{
+    QTest::addColumn<int>("zValue1");
+    QTest::addColumn<int>("zValue2");
+    QTest::addColumn<int>("zValue3");
+    QTest::newRow("1,2,3") << 1 << 2 << 3;
+    QTest::newRow("3,2,1") << 3 << 2 << 1;
+    QTest::newRow("2,1,3") << 2 << 1 << 3;
+}
+
+// public int zValue() const
+void tst_QGeoMapTextObject::zvalue()
+{
+
+    QFETCH(int, zValue1);
+    QFETCH(int, zValue2);
+    QFETCH(int, zValue3);
+
+    QGeoCoordinate center(1.0, 1.0, 0);
+
+    QGeoMapTextObject* object1 = new QGeoMapTextObject(center, "AAAAAA");
+    QGeoMapTextObject* object2 = new QGeoMapTextObject(center, "AAAAAA");
+    QGeoMapTextObject* object3 = new QGeoMapTextObject(center, "AAAAAA");
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object1);
+    map->addMapObject(object2);
+    map->addMapObject(object3);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QCOMPARE(list.count(),3);
+
+    QVERIFY(list.at(0)==object1);
+    QVERIFY(list.at(1)==object2);
+    QVERIFY(list.at(2)==object3);
+
+    QSignalSpy spy0(object1, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object1, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object1, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(center);
+
+    QPointF point = map->coordinateToScreenPosition(center);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
+
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==object1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==object3);
+
+    object1->setZValue(zValue1);
+    object2->setZValue(zValue2);
+    object3->setZValue(zValue3);
+
+    QCOMPARE(object1->zValue(), zValue1);
+    QCOMPARE(object2->zValue(), zValue2);
+    QCOMPARE(object3->zValue(), zValue3);
+    //check if object is there
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
+
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue1-1)==object1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue2-1)==object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue3-1)==object3);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 1);
+
+}
+
+// public bool isVisible() const
+void tst_QGeoMapTextObject::isVisible()
+{
+
+    QGeoCoordinate center(1.0, 1.0, 0);
+
+    QGeoMapTextObject* object = new QGeoMapTextObject(center, "AAAAAA");
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(center);
+
+    QPointF point = map->coordinateToScreenPosition(center);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    object->setVisible(false);
+
+    QCOMPARE(object->isVisible(), false);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
+
+    object->setVisible(true);
+
+    QCOMPARE(object->isVisible(), true);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 2);
+    QCOMPARE(spy2.count(), 0);
+
+}
+
+// public bool isSelected() const
+void tst_QGeoMapTextObject::isSelected()
+{
+#if 0
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    QCOMPARE(object->isSelected(), isSelected);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+#endif
+    QSKIP("Test is not implemented.", SkipAll);
+}
+
+void tst_QGeoMapTextObject::contains_data()
+{
+
+    QTest::addColumn<QGeoCoordinate>("coordinate");
+    QTest::newRow("5,5") << QGeoCoordinate(5, 5, 0);
+    QTest::newRow("1,1") << QGeoCoordinate(1, 1, 0);
+    QTest::newRow("0,0") << QGeoCoordinate(0, 0, 0);
+
+}
+
+// public bool contains(QGeoCoordinate const& coordinate) const
+void tst_QGeoMapTextObject::contains()
+{
+    QFETCH(QGeoCoordinate, coordinate);
+
+    QGeoCoordinate center(0, 0, 0);
+
+    QGeoMapTextObject* object = new QGeoMapTextObject(center, "AAAAAA");
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(center);
+
+    QPointF point = map->coordinateToScreenPosition(center);
+
+    bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
+
+    QCOMPARE(object->contains(coordinate), contains);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+
+}
+
+// public QGeoBoundingBox boundingBox() const
+void tst_QGeoMapTextObject::boundingBox()
+{
+
+    QGeoCoordinate center(0, 0, 0);
+
+    QGeoMapTextObject* object = new QGeoMapTextObject(center,"AAAAAA");
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
 
 }
 ADD_TO_TESTSUITE(tst_QGeoMapTextObject)

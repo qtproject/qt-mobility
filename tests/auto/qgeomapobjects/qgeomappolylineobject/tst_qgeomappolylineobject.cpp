@@ -5,10 +5,12 @@
 #include "qgeomappolylineobject.h"
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
+#include "qgeoboundingbox.h"
 
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QGeoCoordinate>)
+Q_DECLARE_METATYPE(QGeoCoordinate)
 Q_DECLARE_METATYPE(QPen)
 
 class tst_QGeoMapPolylineObject: public QObject
@@ -29,6 +31,13 @@ private slots:
     void path();
     void pen_data();
     void pen();
+    void zvalue_data();
+    void zvalue();
+    void boundingBox();
+    void contains_data();
+    void contains();
+    void isSelected();
+    void isVisible();
 
 private:
     TestHelper *m_helper;
@@ -76,9 +85,14 @@ void tst_QGeoMapPolylineObject::qgeomappolylineobject()
     QCOMPARE(object->type(), QGeoMapObject::PolylineType);
 
     QCOMPARE(object->path(), QList<QGeoCoordinate>());
-    QPen pen(QColor(Qt::black));
+    QPen pen(Qt::black);
     pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
+    QCOMPARE(object->zValue(), 0);
+    QCOMPARE(object->isSelected(),false);
+    QCOMPARE(object->isVisible(),true);
+    QCOMPARE(object->boundingBox(),QGeoBoundingBox());
+    QCOMPARE(object->contains(QGeoCoordinate()),false);
 
     //check if can be added to map
 
@@ -88,10 +102,14 @@ void tst_QGeoMapPolylineObject::qgeomappolylineobject()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
+    QVERIFY2(object->info(),"info object not created");
+    QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
 
+    QVERIFY2(!object->info(),"info object not deleted");
+    QVERIFY2(!object->mapData(),"no map data still set");
     delete (object);
 
 }
@@ -129,7 +147,7 @@ void tst_QGeoMapPolylineObject::path()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(pathChanged(QList<QGeoCoordinate> const&)));
     QSignalSpy spy1(object, SIGNAL(penChanged(QPen const&)));
@@ -160,7 +178,7 @@ void tst_QGeoMapPolylineObject::pen_data()
 
     QTest::addColumn<QPen>("pen");
 
-    QPen pen1(QColor(Qt::blue));
+    QPen pen1(Qt::blue);
 
     pen1.setWidth(5);
 
@@ -168,7 +186,7 @@ void tst_QGeoMapPolylineObject::pen_data()
 
     QTest::newRow("blue,5") << pen1;
 
-    QPen pen2(QColor(Qt::white));
+    QPen pen2(Qt::white);
 
     pen2.setWidth(10);
 
@@ -176,7 +194,7 @@ void tst_QGeoMapPolylineObject::pen_data()
 
     QTest::newRow("white,10") << pen2;
 
-    QPen pen3(QColor(Qt::black));
+    QPen pen3(Qt::black);
 
     pen3.setWidth(15);
 
@@ -203,7 +221,7 @@ void tst_QGeoMapPolylineObject::pen()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QVERIFY(list.at(0)==object);
 
     QSignalSpy spy0(object, SIGNAL(pathChanged(QList<QGeoCoordinate> const&)));
     QSignalSpy spy1(object, SIGNAL(penChanged(QPen const&)));
@@ -233,8 +251,235 @@ void tst_QGeoMapPolylineObject::pen()
 
 }
 
-ADD_TO_TESTSUITE(tst_QGeoMapPolylineObject)
+void tst_QGeoMapPolylineObject::zvalue_data()
+{
+    QTest::addColumn<int>("zValue1");
+    QTest::addColumn<int>("zValue2");
+    QTest::addColumn<int>("zValue3");
+    QTest::newRow("1,2,3") << 1 << 2 << 3;
+    QTest::newRow("3,2,1") << 3 << 2 << 1;
+    QTest::newRow("2,1,3") << 2 << 1 << 3;
+}
 
+// public int zValue() const
+void tst_QGeoMapPolylineObject::zvalue()
+{
+
+    QFETCH(int, zValue1);
+    QFETCH(int, zValue2);
+    QFETCH(int, zValue3);
+
+    QList<QGeoCoordinate> path;
+
+    path << QGeoCoordinate(2.0, -1.0, 0);
+    path << QGeoCoordinate(2.0, 1.0, 0);
+    path << QGeoCoordinate(2.0, 2.0, 0);
+
+    QGeoMapPolylineObject* object1 = new QGeoMapPolylineObject();
+    object1->setPath(path);
+    QGeoMapPolylineObject* object2 = new QGeoMapPolylineObject();
+    object2->setPath(path);
+    QGeoMapPolylineObject* object3 = new QGeoMapPolylineObject();
+    object3->setPath(path);
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object1);
+    map->addMapObject(object2);
+    map->addMapObject(object3);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QCOMPARE(list.count(),3);
+
+    QVERIFY(list.at(0)==object1);
+    QVERIFY(list.at(1)==object2);
+    QVERIFY(list.at(2)==object3);
+
+    QSignalSpy spy0(object1, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object1, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object1, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(path.at(1));
+
+    QPointF point = map->coordinateToScreenPosition(path.at(1));
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
+
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==object1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==object3);
+
+    object1->setZValue(zValue1);
+    object2->setZValue(zValue2);
+    object3->setZValue(zValue3);
+
+    QCOMPARE(object1->zValue(), zValue1);
+    QCOMPARE(object2->zValue(), zValue2);
+    QCOMPARE(object3->zValue(), zValue3);
+    //check if object is there
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
+
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue1-1)==object1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue2-1)==object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(zValue3-1)==object3);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 1);
+
+}
+
+// public bool isVisible() const
+void tst_QGeoMapPolylineObject::isVisible()
+{
+    QList<QGeoCoordinate> path;
+
+    path << QGeoCoordinate(2.0, -1.0, 0);
+    path << QGeoCoordinate(2.0, 1.0, 0);
+    path << QGeoCoordinate(2.0, 2.0, 0);
+
+    QGeoMapPolylineObject* object = new QGeoMapPolylineObject();
+    object->setPath(path);
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(path.at(1));
+
+    QPointF point = map->coordinateToScreenPosition(path.at(1));
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    object->setVisible(false);
+
+    QCOMPARE(object->isVisible(), false);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
+
+    object->setVisible(true);
+
+    QCOMPARE(object->isVisible(), true);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 2);
+    QCOMPARE(spy2.count(), 0);
+
+}
+
+// public bool isSelected() const
+void tst_QGeoMapPolylineObject::isSelected()
+{
+#if 0
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    QCOMPARE(object->isSelected(), isSelected);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+#endif
+    QSKIP("Test is not implemented.", SkipAll);
+}
+
+void tst_QGeoMapPolylineObject::contains_data()
+{
+
+    QTest::addColumn<QGeoCoordinate>("coordinate");
+    QTest::newRow("2.0,-1.0") << QGeoCoordinate(2.0, -1.0, 0);
+    QTest::newRow("2.0,0.0") << QGeoCoordinate(2.0, 0.0, 0);
+    QTest::newRow("2.0,1.0") << QGeoCoordinate(2.0, 1.0, 0);
+
+}
+
+// public bool contains(QGeoCoordinate const& coordinate) const
+void tst_QGeoMapPolylineObject::contains()
+{
+    QFETCH(QGeoCoordinate, coordinate);
+
+    QList<QGeoCoordinate> path;
+
+    path << QGeoCoordinate(2.0, -1.0, 0);
+    path << QGeoCoordinate(2.0, 1.0, 0);
+    path << QGeoCoordinate(2.0, 2.0, 0);
+
+    QGeoMapPolylineObject* object = new QGeoMapPolylineObject();
+
+    object->setPath(path);
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QCOMPARE(list.size(),1);
+    QVERIFY(list.at(0)==object);
+
+    QSignalSpy spy0(object, SIGNAL(selectedChanged(bool)));
+    QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
+    QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
+
+    map->setCenter(path.at(1));
+
+    QPointF point = map->coordinateToScreenPosition(path.at(1));
+
+    bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
+
+    QCOMPARE(object->contains(coordinate), contains);
+
+    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
+
+}
+
+// public QGeoBoundingBox boundingBox() const
+void tst_QGeoMapPolylineObject::boundingBox()
+{
+
+    QList<QGeoCoordinate> path;
+
+    path << QGeoCoordinate(2.0, -1.0, 0);
+    path << QGeoCoordinate(2.0, 1.0, 0);
+    path << QGeoCoordinate(-2.0, 1.0, 0);
+    path << QGeoCoordinate(-2.0, -1.0, 0);
+
+    QGeoMapPolylineObject* object = new QGeoMapPolylineObject();
+
+    object->setPath(path);
+
+    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+
+}
+ADD_TO_TESTSUITE(tst_QGeoMapPolylineObject)
 
 #include "tst_qgeomappolylineobject.moc"
 

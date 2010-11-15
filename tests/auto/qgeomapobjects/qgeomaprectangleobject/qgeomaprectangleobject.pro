@@ -1,5 +1,5 @@
 include(../common.pri)
 test = $$files(./tst*.cpp)
+name = $$replace(test,.cpp,)
 SOURCES += $$test
-TARGET = $$basename($$test)
-
+TARGET = $$name
