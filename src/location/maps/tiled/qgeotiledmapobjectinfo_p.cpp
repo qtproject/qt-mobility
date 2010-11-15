@@ -65,20 +65,19 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMa
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
+
+    tiledMapDataPrivate->removeObjectInfo(this);
+
     if (graphicsItem) {
-        tiledMapDataPrivate->scene->removeItem(graphicsItem);
-        tiledMapDataPrivate->itemMap.remove(graphicsItem);
         delete graphicsItem;
+        graphicsItem = 0;
     }
 }
 
 void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
-        if (!graphicsItem->scene())
-            tiledMapDataPrivate->scene->addItem(graphicsItem);
-
-        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
+        tiledMapDataPrivate->addObjectInfo(this);
         graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
@@ -148,11 +147,10 @@ bool QGeoTiledMapObjectInfo::valid() const
     return isValid;
 }
 
-void QGeoTiledMapObjectInfo::updateItem()
+void QGeoTiledMapObjectInfo::updateItem(const QRectF& target)
 {
-    // TODO use bounding rectangle of graphics items
     if (graphicsItem)
-        tiledMapData->geoMap()->update();
+        tiledMapData->triggerUpdateMapDisplay(target);
 }
 
 QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &path,

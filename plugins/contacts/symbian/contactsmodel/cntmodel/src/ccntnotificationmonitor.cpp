@@ -26,7 +26,7 @@
 #include "ccontactprivate.h"
 #include "ccntnotificationmonitor.h"
 #include "rcntmodel.h"
-
+#include "ccntpackager.h"
 
 extern void DebugLogNotification(const TDesC& aMethod, const TContactDbObserverEvent &aEvent);
 
@@ -65,11 +65,14 @@ void CCntDbNotifyMonitor::RunL()
 		return;
 		}
 	
-	
-
-	
 	TInt count = iObserverArray.Count();
 	TContactDbObserverEventV2& event = iEventMsg();
+	
+	CContactIdArray* idArray = NULL;
+	TRAP_IGNORE(idArray = iPackager->UnpackCntIdArrayLC();
+        CleanupStack::Pop(idArray);
+        );
+	event.iAdditionalContactIds = idArray;
 	
 #if defined(__VERBOSE_DEBUG__)	
 	DebugLogNotification(_L("[CNTMODEL] CCntDbNotifyMonitor::RunL"), event);	
@@ -108,6 +111,9 @@ void CCntDbNotifyMonitor::RunL()
             }
 	    }
 	
+	delete idArray;
+	idArray = NULL;
+	
 	// Request another event.
 	Start();
 	}
@@ -120,15 +126,29 @@ CCntDbNotifyMonitor::CCntDbNotifyMonitor(RCntModel& aSession)
 	: CCntNotificationMonitor(aSession), iCurrentProcessedObserver(KErrNotFound)
 	{}
 
-	
 /**
 Second phase constructor.
+*/
+void CCntDbNotifyMonitor::ConstructL()
+    {
+    iPackager = CCntPackager::NewL();
+    // Allocate big enough buffer for the array of contact ids for
+    // notification events. One contact id needs 4 bytes, so let's
+    // have a buffer for 10000 contacts.
+    iPackagerBuffer = &(iPackager->GetReceivingBufferL(40960));
+    }
+	
+/**
+Allocates and constructs new CCntDbNotifyMonitor.
 
 @param aSession Client-side session handle for Contacts Model Server.
 */
 CCntDbNotifyMonitor* CCntDbNotifyMonitor::NewL(RCntModel& aSession)
 	{
 	CCntDbNotifyMonitor* self = new (ELeave) CCntDbNotifyMonitor(aSession);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(self);
 	CActiveScheduler::Add(self);
 	return(self);
 	}
@@ -138,6 +158,7 @@ CCntDbNotifyMonitor::~CCntDbNotifyMonitor()
 	{
 	iObserverArray.Close();
 	iObserverV2Array.Close();
+	delete iPackager;
 	}
 
 	
@@ -148,14 +169,14 @@ Server completes the request.
 */
 void CCntDbNotifyMonitor::Start()
 	{
-	// Check if a request for a Contacts database event from the Server has
+    // Check if a request for a Contacts database event from the Server has
 	// already been issued.
 	if (IsActive())
 		{
 		return;
 		}
 	iStatus=KRequestPending;
-	iSession.StartNotificationTransfer(iStatus, iEventMsg);	
+	iSession.StartNotificationTransfer(iStatus, iEventMsg, *iPackagerBuffer);	
 	SetActive();
 	}
 

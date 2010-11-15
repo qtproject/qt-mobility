@@ -52,19 +52,19 @@
 #include <hbinputkeymapfactory.h>
 #include <hbinputlanguage.h>
 #else
-#include <ptiengine.h>
+#include <PtiEngine.h>
 #endif // HB_SUPPORTED
 #include <featdiscovery.h>
 #ifndef KFeatureIdMmc
 #include <featureinfo.h>
 #endif
 #include <hwrmvibra.h>
-#include <aknutils.h>
+#include <AknUtils.h>
 #include <w32std.h>
 #include <centralrepository.h>
-#include <mproengengine.h>
-#include <proengfactory.h>
-#include <mproengnotifyhandler.h>
+#include <MProEngEngine.h>
+#include <ProEngFactory.h>
+#include <MProEngNotifyHandler.h>
 #include <btserversdkcrkeys.h>
 #include <bt_subscribe.h>
 #include <bttypes.h>
@@ -634,8 +634,11 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 
 void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 {
-    emit networkNameChanged(QSystemNetworkInfo::WlanMode,
-        DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+		if (status)
+			emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+		else
+			networkNameChanged();//Restore default network name, as WLAN will leave name as blank
 }
 
 void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()

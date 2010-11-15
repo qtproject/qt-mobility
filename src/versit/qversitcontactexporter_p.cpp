@@ -78,7 +78,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& profile) :
+QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QStringList& profiles) :
     mDetailHandler(NULL),
     mDetailHandler2(NULL),
     mDetailHandlerVersion(0),
@@ -111,7 +111,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
 
-    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
+    mPluginDetailHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profiles);
 }
 
 /*!
@@ -120,6 +120,9 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginDetailHandlers) {
+        delete pluginHandler;
+    }
 }
 
 
@@ -132,10 +135,6 @@ bool QVersitContactExporterPrivate::exportContact(
     QVersitContactExporter::Error* error)
 {
     QList<QContactDetail> allDetails = contact.details();
-    if (allDetails.isEmpty()) {
-        *error = QVersitContactExporter::EmptyContactError;
-        return false;
-    }
     foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler
@@ -272,6 +271,8 @@ void QVersitContactExporterPrivate::encodeName(
     QList<QVersitProperty>* generatedProperties,
     QSet<QString>* processedFields)
 {
+    Q_UNUSED(document);
+    Q_UNUSED(removedProperties);
     QContactName contactName = static_cast<QContactName>(detail);
     if (!contactName.lastName().isEmpty()
         || !contactName.firstName().isEmpty()
@@ -601,13 +602,15 @@ void QVersitContactExporterPrivate::encodeAvatar(
     QUrl imageUrl(contactAvatar.imageUrl());
     // XXX: fix up this mess: checking the scheme here and in encodeContentFromFile,
     // organisation logo and ringtone are QStrings but avatar is a QUrl
-    if (!imageUrl.scheme().isEmpty() && !imageUrl.host().isEmpty()) {
+    if (!imageUrl.scheme().isEmpty()
+            && !imageUrl.host().isEmpty()
+            && imageUrl.scheme() != QLatin1String("file")) {
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
         property.setValue(imageUrl.toString());
         *generatedProperties << property;
         *processedFields << QContactAvatar::FieldImageUrl;
     } else {
-        if (encodeContentFromFile(contactAvatar.imageUrl().toString(), property)) {
+        if (encodeContentFromFile(contactAvatar.imageUrl().toLocalFile(), property)) {
             *generatedProperties << property;
             *processedFields << QContactAvatar::FieldImageUrl;
         }

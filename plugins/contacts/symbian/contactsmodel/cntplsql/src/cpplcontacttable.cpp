@@ -19,7 +19,15 @@
 #include "pltables.h"
 #include "dbsqlconstants.h"
 #include "cntpersistenceutility.h"
+#include "cntdbconsts_internal.h"
+
 #include <cntdef.h>
+#include <pathinfo.h>
+#include <driveinfo.h>
+#include <bautils.h>
+
+//max amount of contacts deleted in one go 
+const TInt KDeleteBatchSize = 400;
 
 // forward declaration to allow this to compile. 
 // Which header file is this declared in and do we actually still need the properties here?
@@ -63,6 +71,8 @@ Set up the CCntSqlStatement objects held by the class.
 */
 void CPplContactTable::ConstructL()
 	{
+    User::LeaveIfError(iFs.Connect());
+    
 	_LIT(KOwnCardInvariant, "((((%S>>%d==%d)*%d) | ((NOT(%S>>%d==%d))*%S))<<%d)| %S");
 	
 	iCardTemplateIds = CContactIdArray::NewL();
@@ -196,7 +206,46 @@ void CPplContactTable::ConstructL()
 	iFieldMap.InsertL(KUidContactFieldCompanyNamePronunciationValue, KContactCompanyNamePrnParam() );
 
 	CleanupStack::PopAndDestroy(2, whereIdClause); //whereIdClause, typeFlagsParameter
+	
+	SetImagesDirL();
+	
 	}
+
+/**
+Find the images folder exists. If it exists set the path in a local variable
+*/
+void CPplContactTable::SetImagesDirL()
+    {    
+    TInt drive;
+    
+#ifdef __WINS__
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive);
+#else
+    TInt err = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);
+#endif
+    
+    // Do not leave with this error. The phone does not have to have this support
+    if (err == KErrNotSupported)
+        {
+        return;
+        }
+    else
+        {
+        User::LeaveIfError(err);
+        }
+    
+    // Get the root path in this drive to create
+    // to create the images directory
+    iImagesDirPath = TPath();
+    User::LeaveIfError(PathInfo::GetRootPath(iImagesDirPath, drive));
+    iImagesDirPath.Append(KImagesFolder);
+    
+    // Check if images directory exists
+    if (!BaflUtils::FolderExists(iFs, iImagesDirPath))
+        {
+        iImagesDirPath.Zero();
+        }
+    }
 
 /**
 Destructor
@@ -213,6 +262,7 @@ CPplContactTable::~CPplContactTable()
 	delete iDeleteStmnt;
 	iFieldMap.Close();
 	delete iCardTemplateIds;
+	iFs.Close();
 	}
 
 
@@ -457,12 +507,48 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 				User::LeaveIfError(stmnt.BindText(KParamIndex, textToSet));
 			    }
 			}
-        else if (field.StorageType() == KStorageTypeText &&  // the field is textual
-             field.TextStorage()->Text().Length() &&     // ignore empty fields
-             custFiltFields != NULL)
+		else if (field.StorageType() == KStorageTypeText &&  // the field is textual
+				 field.TextStorage()->Text().Length() &&     // ignore empty fields
+				 custFiltFields != NULL)
+			{
+			// the field is not stored in contact table but potentially maps to a hint
+			hint.UpdateHintL(field, *custFiltFields);
+			}
+		}
+
+	// Rename the image file to contain the guid
+	if (aType == EInsert && iImagesDirPath.Length())
+	    {
+        CContactItemFieldSet& fieldSet = aItem.CardFields();
+        
+        // Find the image field
+        TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+        if (index != KErrNotFound)
             {
-            // the field is not stored in contact table but potentially maps to a hint
-            hint.UpdateHintL(field, *custFiltFields);
+            // Image path field from list of contact fields
+            CContactItemField& field = fieldSet[index];
+            TPtrC oldImagePath = field.TextStorage()->Text();
+            
+            // Append the guid in the filename if it resides in the images folder
+            if (oldImagePath.Find(iImagesDirPath) != KErrNotFound)
+                {
+                // Image file type
+                TParse p;
+                p.Set(oldImagePath, NULL, NULL);
+                
+                // Generate the image path
+                // Format <path>guid_timestamp_filename.ext
+                TPath newImagePath;
+                newImagePath.Append(iImagesDirPath);
+                newImagePath.Append(const_cast<CContactItem&>(aItem).Guid());
+                newImagePath.Append(p.NameAndExt());
+                
+                TInt err = BaflUtils::RenameFile(iFs, oldImagePath, newImagePath); // Rename the file
+                if (err == KErrNone)
+                    {
+                    field.TextStorage()->SetTextL(newImagePath);
+                    }
+                }
             }
 		}
 	
@@ -649,6 +735,17 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 	item->SetAccessCount(accessCount);
 	item->SetTemplateRefId(templateId);
 	
+    // Create a view def to filter the image field only
+    CContactItemViewDef* imageViewDef = CContactItemViewDef::NewLC(CContactItemViewDef::EIncludeFields,CContactItemViewDef::EMaskHiddenFields);
+    imageViewDef->AddL(KUidContactFieldCodImage);
+    
+    // System template is needed unless we are creating a template.
+    const CContactTemplate* sysTemplate = &iProperties.SystemTemplateL();
+    
+	// Read the image field into the contact from the BLOB
+    TCntPersistenceUtility::ReadTextBlobL(*item, *imageViewDef, sysTemplate, iDatabase);
+    CleanupStack::PopAndDestroy(imageViewDef);  // imageViewDef
+	
 	if (item->IsDeletable() )
 		{
 		// delete it here
@@ -667,6 +764,27 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 			{
 			User::LeaveIfError(err);
 			}
+		
+		// Remove contact image from file system
+		if (iImagesDirPath.Length())
+		    {
+		    CContactItemFieldSet& fieldSet = item->CardFields();
+		    
+		    // Find the image field
+		    TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+		    if (index != KErrNotFound)
+		        {
+		        // Image path field from list of contact fields
+		        CContactItemField& field = fieldSet[index];
+		        TPtrC imagePath = field.TextStorage()->Text();
+		        
+		        // Remove image file if it is stored in private folder
+		        if (imagePath.Find(iImagesDirPath) != KErrNotFound)
+		            {
+		            TInt err = BaflUtils::DeleteFile(iFs, imagePath); // Error value not necessary
+		            }
+		        }
+		    }
 		}
 	else // Not deletable because of access count > 0.
 		{
@@ -699,6 +817,95 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 	return item;
 	}
 
+/**
+Delete multiple contact items from the contact table
+
+@param aIdArray contact items ids
+*/
+void CPplContactTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
+    {
+    // You can't delete the system template, because you couldn't read any cards otherwise.
+    __ASSERT_ALWAYS(aIdArray->Find(KGoldenTemplateId) == KErrNotFound, User::Leave(KErrNotSupported) );
+
+    // Check access_count for all to be deleted contacts. If some access count is not 0,
+    // fail the whole contacts removing operation with KErrInUse.
+    _LIT(KAccessCountQuery, "SELECT contact_id FROM contact WHERE access_count > 0");
+    RSqlStatement selectStmnt;
+    CleanupClosePushL(selectStmnt);
+    selectStmnt.PrepareL(iDatabase, KAccessCountQuery);
+
+    TInt columnCount = selectStmnt.ColumnCount();
+    TInt err;
+    CContactIdArray* lockedContacts = CContactIdArray::NewLC(); 
+    while ((err = selectStmnt.Next()) == KSqlAtRow)
+        {
+        lockedContacts->AddL(selectStmnt.ColumnInt(0));
+        }    
+    if (err != KSqlAtEnd)
+        {
+        User::Leave(err);
+        }
+    for (TInt i = 0; i < lockedContacts->Count(); i++)
+        {
+        if (aIdArray->Find(lockedContacts->operator[](i)) != KErrNotFound)
+            {
+            User::Leave(KErrInUse);
+            }
+        }
+    CleanupStack::PopAndDestroy(lockedContacts);
+    CleanupStack::PopAndDestroy(&selectStmnt);
+        
+    // Delete contacts in batches since RSqlStatement doesn't allow
+    // very long sql queries.
+    _LIT(KDeleteQuery, "DELETE FROM contact WHERE contact_id IN (");
+    TInt count = aIdArray->Count();
+    bool allContactsProcessed = false;
+    TInt round = 0;
+    while (!allContactsProcessed) 
+        {
+        RBuf deleteQuery;
+        deleteQuery.CreateL(KDeleteQuery().Length());
+        CleanupClosePushL(deleteQuery);
+        deleteQuery.Copy(KDeleteQuery);
+        TInt startValue = round*KDeleteBatchSize;
+        TInt endValue = (round+1)*KDeleteBatchSize < count ? (round+1)*KDeleteBatchSize : count;
+        for (TInt j = startValue; j < endValue; j++)
+            {
+            //add all contact ids to the delete query
+            TContactItemId id = aIdArray->operator[](j);
+            TBuf<16> number;
+            number.Num(id);
+            deleteQuery.ReAllocL(deleteQuery.Length() + number.Length() + 1); //1 is for comma or
+                                                                              //closing bracket
+            deleteQuery.Append(number);
+            if (j < endValue - 1)
+                {
+                //last id doesn't need a comma afterwards
+                deleteQuery.Append(',');
+                }
+            else
+                {
+                deleteQuery.Append(')');
+                }
+            }
+        
+        err = iDatabase.Exec(deleteQuery);
+        User::LeaveIfError(err);
+        CleanupStack::PopAndDestroy(&deleteQuery);
+        
+        round++;
+        if (endValue == count)
+            {
+            allContactsProcessed = true;
+            }
+        }
+    
+    // The contact assigned to own card is being deleted, so set cached own card id to "not found"
+    if (aIdArray->Find(iOwnCardId) > 0)
+        {
+        iOwnCardId = KErrNotFound;
+        }
+    }
 
 /**
 Create the contact table in the database.

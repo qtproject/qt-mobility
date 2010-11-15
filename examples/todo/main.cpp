@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,7 +47,6 @@ int main(int argv, char **args)
     QApplication app(argv, args);
 
     Window window;
-    qDebug() << "About to show";
     window.show();
 
     return app.exec();

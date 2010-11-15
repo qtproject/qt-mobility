@@ -65,13 +65,13 @@ QMDEGalleryQueryResultSet::QMDEGalleryQueryResultSet(QMdeSession *session, QObje
 QMDEGalleryQueryResultSet::~QMDEGalleryQueryResultSet()
 {
     if (m_query) {
-        m_query->RemoveObserver( *this );
         m_query->Cancel();
+        m_query->RemoveObserver( *this );
     }
     delete m_query;
     m_query = NULL;
-
-    m_session->RemoveObjectObserver( *this );
+    if (m_session)
+        m_session->RemoveObjectObserver( *this );
 }
 
 void QMDEGalleryQueryResultSet::HandleQueryNewResults( CMdEQuery &aQuery,
@@ -118,14 +118,16 @@ void QMDEGalleryQueryResultSet::HandleQueryCompleted( CMdEQuery &aQuery, TInt aE
         if (aError == KErrNone) {
             if (m_live) {
                 TRAPD( err,
-                    m_session->AddItemAddedObserverL( *this, m_queryConditions );
-                    m_session->AddItemChangedObserverL( *this, m_currentObjectIDs );
+                    m_session->AddItemAddedObserverL(*this, aQuery.Conditions());
+                    m_session->AddItemChangedObserverL(*this, m_currentObjectIDs);
                 );
                 if (err) {
                     m_live = false;
                 }
             }
             finish(m_live);
+        } else if (aError == KErrCancel) {
+            QGalleryResultSet::cancel();
         } else {
             error(QDocumentGallery::ConnectionError);
         }
@@ -244,7 +246,7 @@ void QMDEGalleryQueryResultSet::doHandleObjectNotificationL( CMdESession& aSessi
                 }
             }
         }
-    }   
+    }
 }
 
 void QMDEGalleryQueryResultSet::createQuery()
@@ -285,7 +287,6 @@ void QMDEGalleryQueryResultSet::createQuery()
 
     // NewObjectQuery will return NULL if object type is not supported
     if (m_query) {
-        m_queryConditions = &m_query->Conditions();
         m_query_running = true;
         TRAP( err, m_query->FindL() );
         if (err) {
@@ -303,6 +304,12 @@ void QMDEGalleryQueryResultSet::createQuery()
     } else {
         m_launchUpdateQuery = false;
     }
+}
+
+void QMDEGalleryQueryResultSet::cancel()
+{
+    if (m_query)
+        m_query->Cancel();
 }
 
 void QMDEGalleryQueryResultSet::handleUpdatedResults()

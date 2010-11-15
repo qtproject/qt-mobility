@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new detail definition save request whose parent is the specified \a parent */
 QOrganizerItemDetailDefinitionSaveRequest::QOrganizerItemDetailDefinitionSaveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemDetailDefinitionSaveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionSaveRequestPrivate, parent)
 {
 }
 
@@ -109,7 +109,7 @@ QString QOrganizerItemDetailDefinitionSaveRequest::itemType() const
 }
 
 /*! Returns the map of input definition list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionSaveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionSaveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
     return d->m_errors;

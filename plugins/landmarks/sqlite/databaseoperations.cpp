@@ -198,8 +198,8 @@ QVariant getLandmarkAttribute(QLandmark *landmark, const QString &key) {
         return landmark->address().district();
     } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
         return landmark->address().street();
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
-        return landmark->address().postCode();
+    } else if (key.compare("postcode", Qt::CaseSensitive) ==0 ){
+        return landmark->address().postcode();
     }
     Q_ASSERT(false);//It shouldn't be possible to get here
     return QVariant();
@@ -275,9 +275,9 @@ void setLandmarkAttribute(QLandmark *landmark, const QString &key, const QVarian
         address.setStreet(value.toString());
         landmark->setAddress(address);
         return;
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
+    } else if (key.compare("postcode", Qt::CaseSensitive) ==0 ){
         QGeoAddress address = landmark->address();
-        address.setPostCode(value.toString());
+        address.setPostcode(value.toString());
         landmark->setAddress(address);
         return;
     }
@@ -590,7 +590,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
 
     if (landmarkId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::LandmarkDoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
@@ -602,7 +602,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
     QSqlQuery query(q0, db);
     if (!query.next()) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::LandmarkDoesNotExistError;
          if (errorString)
             *errorString = QString("Landmark with local id, %1, does not exist in database").arg(landmarkId.localId());
         return false;
@@ -671,14 +671,14 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
     QString uri = managerUri;
     if (landmarkId.managerUri() != uri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::LandmarkDoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
         return QLandmark();
     }
 
     if (landmarkId.localId().isEmpty()) {
-        *error = QLandmarkManager::DoesNotExistError;
+        *error = QLandmarkManager::LandmarkDoesNotExistError;
         *errorString = "Landmark local id is empty";
         return QLandmark();
     }
@@ -815,7 +815,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
     } else {
         Q_ASSERT(error);
         Q_ASSERT(errorString);
-        *error = QLandmarkManager::DoesNotExistError;
+        *error = QLandmarkManager::LandmarkDoesNotExistError;
         *errorString = QString("Landmark with id, %1, does not exist.").arg(landmarkId.localId());
     }
 
@@ -835,6 +835,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
 
     QList<QLandmarkId> result;
     bool alreadySorted = false;
+
+    for (int i=0; i < sortOrders.count(); ++i) {
+        if (sortOrders.at(i).type() == QLandmarkSortOrder::NameSort) {
+            QLandmarkNameSort nameSort = sortOrders.at(i);
+            if (nameSort.caseSensitivity() == Qt::CaseSensitive) {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "Case sensitive sorting is not supported";
+                return QList<QLandmarkId>();
+            }
+
+        }
+    }
 
     QSqlDatabase db = QSqlDatabase::database(connectionName, false);
     if (!db.isValid()) {
@@ -1133,12 +1145,12 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
 
         if (categoryId.managerUri() != managerUri) {
-            *error = QLandmarkManager::DoesNotExistError;
-            *errorString = "The category does not exist in the manager because the managers do not match";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         } else if (categoryId.localId().isEmpty()) {
-            *error = QLandmarkManager::DoesNotExistError;
-            *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
         bindValues.clear();
@@ -1148,9 +1160,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
 
         if (!query.next()) {
-            *error = QLandmarkManager::DoesNotExistError;
-            *errorString = QString("Category with local id %1, does not exist in database")
-                            .arg(categoryId.localId());
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
 
@@ -1272,7 +1283,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             if (filters.size() == 0) {
                 //do nothing
             } else if (filters.size() == 1) {
-                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                result = landmarkIds( filters.at(0), QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1292,7 +1303,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
 
                 QSet<QLandmarkId> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(filters.at(0),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 ids = firstResult.toSet();
 
                 for (int i = 1; i < filters.size(); ++i) {
@@ -1304,7 +1315,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
 
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
-                                                QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                                QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
                         result.clear();
@@ -1345,7 +1356,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 //do nothing
             } else if (filters.size() == 1) {
                 result =  landmarkIds(filters.at(0),
-                                        QList<QLandmarkSortOrder>(), limit, offset, error, errorString);
+                                        QList<QLandmarkSortOrder>(), -1, 0, error, errorString);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -1360,7 +1371,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     QList<QLandmarkId> subResult = landmarkIds(filters.at(i),
                                                                QList<QLandmarkSortOrder>(),
-                                                               limit, offset,
+                                                               -1, 0,
                                                                error, errorString);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -1605,7 +1616,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 
     if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::LandmarkDoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
@@ -1624,7 +1635,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
             if (error)
-                *error = QLandmarkManager::DoesNotExistError;
+                *error = QLandmarkManager::LandmarkDoesNotExistError;
             if (errorString)
                 *errorString = "Landmark id does not exist in this landmark manager.";
 
@@ -1704,7 +1715,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         if (id.managerUri() == managerUri)
             lmCats << id.localId();
         else {
-            *error = QLandmarkManager::BadArgumentError;
+            *error = QLandmarkManager::CategoryDoesNotExistError;
             *errorString = "Landmark contains category that belongs to another manager";
             return false;
         }
@@ -1724,7 +1735,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 
         if (!catQuery.next()) {
             if (error)
-                *error = QLandmarkManager::BadArgumentError;
+                *error = QLandmarkManager::CategoryDoesNotExistError;
             if (errorString)
                 *errorString = "Landmark contains a category id that does not exist";
             return false;
@@ -2054,7 +2065,7 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
 {
     if (!landmarkCategoryId.isValid() || landmarkCategoryId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::CategoryDoesNotExistError;
         if (errorString)
             *errorString = "Category id is not valid for this manager";
         return QLandmarkCategory();
@@ -2096,7 +2107,7 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
     }
 
     if (!found) {
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::CategoryDoesNotExistError;
             *errorString = "None of the existing categories match the given category id.";
     } else {
         query.finish();
@@ -2228,7 +2239,7 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
 
     if (!category->categoryId().managerUri().isEmpty() && category->categoryId().managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::CategoryDoesNotExistError;
         if (errorString)
             *errorString = "Category id comes from different landmark manager.";
         return false;
@@ -2250,7 +2261,7 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
 
         if (!query.next()) {
             if (error)
-                *error = QLandmarkManager::DoesNotExistError;
+                *error = QLandmarkManager::CategoryDoesNotExistError;
             if (errorString)
                 *errorString = "Category id does not exist in this landmark manager.";
 
@@ -2455,7 +2466,7 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     Q_ASSERT(errorString);
     if (categoryId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::DoesNotExistError;
+            *error = QLandmarkManager::CategoryDoesNotExistError;
         if (errorString)
             *errorString = "Category id comes from different landmark manager.";
         return false;
@@ -2472,28 +2483,10 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     }
 
     if (!query.next()) {
-        *error = QLandmarkManager::DoesNotExistError;
+        *error = QLandmarkManager::CategoryDoesNotExistError;
         *errorString = QString("Category with local id %1, does not exist in database")
                         .arg(categoryId.localId());
         return false;
-    }
-
-    if (!executeQuery(&query,"SELECT landmarkId FROM landmark_category WHERE categoryId = :catId",bindValues,error,errorString)) {
-        return false;
-    }
-
-    QSqlQuery query2(db);
-    QMap<QString,QVariant> bindValues2;
-
-    QString queryString2 = QString("INSERT INTO landmark_notification(timestamp, action, landmarkId) "
-                                   "VALUES((strftime(\"%f\", \"now\") - strftime(\"%S\", \"now\") + strftime(\"%s\"))*1000,'CHANGE', :lmId );");
-
-    while(query.next()) {
-        bindValues2.clear();
-        bindValues2.insert("lmId", query.value(0));
-        if (!executeQuery(&query2,queryString2, bindValues2,error,errorString)) {
-            return false;
-        }
     }
 
     QStringList queryStrings;
@@ -2709,7 +2702,7 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
 
 bool DatabaseOperations::exportLandmarks( QIODevice *device,
                      const QString &format,
-                     QList<QLandmarkId> landmarkIds,
+                     const QList<QLandmarkId> &landmarkIds,
                      QLandmarkManager::TransferOption option,
                      QLandmarkManager::Error *error,
                      QString *errorString) const
@@ -2909,7 +2902,7 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::TransferOption option,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
@@ -2925,12 +2918,8 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
         lms = landmarks(filter, sortOrders, -1, 0, error, errorString);
     }
 
-    if (error && *error != QLandmarkManager::NoError)
-    {
-        if (*error == QLandmarkManager::CancelError)
-            *errorString = "Export of lmx file was canceled";
-            return false;
-    }
+    if (*error != QLandmarkManager::NoError)
+        return false;
 
     QList<QLandmarkCategory> categories = this->categories(QList<QLandmarkCategoryId>(),QLandmarkNameSort(),-1,0,error,errorString,true);
     if (*error != QLandmarkManager::NoError) {
@@ -2963,7 +2952,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
 {
@@ -3090,19 +3079,23 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
     return QLandmarkManager::NoSupport;
 }
 
-QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const
+QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
-    foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
-        switch(sortOrder.type()) {
-            case (QLandmarkSortOrder::DefaultSort):
-                continue;
-            case (QLandmarkSortOrder::NameSort):
-                continue;
-            default:
-                currentLevel = QLandmarkManager::NoSupport;
-        }
+
+    switch(sortOrder.type()) {
+    case (QLandmarkSortOrder::NoSort):
+        break;
+    case (QLandmarkSortOrder::NameSort): {
+        QLandmarkNameSort  nameSort = sortOrder;
+        if (nameSort.caseSensitivity() == Qt::CaseSensitive)
+            currentLevel = QLandmarkManager::NoSupport;
+        break;
     }
+    default:
+        currentLevel = QLandmarkManager::NoSupport;
+    }
+
     return currentLevel;
 }
 
@@ -3617,7 +3610,7 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                               << "city"
                                                               << "district"
                                                               << "street"
-                                                              << "postCode"
+                                                              << "postcode"
                                                               << "phoneNumber"
                                                               << "url";
 
@@ -3630,7 +3623,7 @@ const QStringList DatabaseOperations::supportedSearchableAttributes = QStringLis
                                                          << "city"
                                                          << "district"
                                                          << "street"
-                                                         << "postCode"
+                                                         << "postcode"
                                                          << "phoneNumber";
 
 const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()

@@ -43,9 +43,9 @@
 #define QORGANIZERCOLLECTIONFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizercollection.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 #include <QList>
 #include <QMap>
@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerCollectionFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerCollectionFetchRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerCollectionFetchRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -61,16 +61,14 @@ public:
     QOrganizerCollectionFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
-    void setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    QList<QOrganizerCollectionLocalId> collectionIds() const;
+    // none.  you get all collections from the manager.
 
     /* Results */
     QList<QOrganizerCollection> collections() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerCollectionFetchRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionFetchRequest)
 };
 

@@ -54,13 +54,10 @@ class Q_LOCATION_EXPORT QGeoMapGroupObject : public QGeoMapObject
 {
     Q_OBJECT
 public:
-    QGeoMapGroupObject(QGeoMapData *data = 0);
+    QGeoMapGroupObject();
     ~QGeoMapGroupObject();
 
     QGeoMapObject::Type type() const;
-
-    void setVisible(bool visible);
-    void setSelected(bool selected);
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coordinate) const;

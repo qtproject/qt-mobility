@@ -87,6 +87,59 @@ public:
     \brief The QGalleryQueryRequest class provides a request for a set of
     items from a gallery.
 
+    QGalleryItemRequest executes a query which returns information about a set
+    gallery item of gallery items matching some query criteria. For each item
+    matching the query criteria the request will return an \l itemUrl, an
+    \l itemType,  \l resources and \l {metaData()}{meta-data} values for the
+    properties listed in \l propertyNames.
+
+    The \l rootType property identifies the type of gallery item the request
+    should return, if the root type has derivative types (i.e. an audio file is
+    just a special case of a regular file) these will also be included in the
+    result set.
+
+    The \l rootItem property takes the ID of an item the query should only
+    return the children of.  Depending on the \l scope of the query this may
+    be {AllDescendents}{all descendents} or just the {DirectDescendents}
+    {direct descendents} of the root item.
+
+    The results of a query can be further limited by setting a \l filter on the
+    request.  The request will evaluate the QGalleryFilter and only include
+    items with meta-data matching the expression.
+
+    The order the results are returned in can be specified in the
+    sortPropertyNames property which takes an ordered list of property names.
+    By default properties are sorted in ascending order, but this can be
+    specified explicitly be prefixing the property name with a '+' character
+    for ascending order and a '-' character for descending order.
+
+    If the \l autoUpdate property is true when the request is executed it will
+    enter an \l Idle state on finishing and will refresh the queried
+    information if the items matching the query change.  If the gallery can't
+    provide updates it will instead go immediately to the \l Finished state.
+    Automatic updates can be canceled by calling cancel() on a idle request.
+
+    Only one item in a query can be accessed at a time, so before
+    information about an item can be accessed it must be selected using one of
+    the fetch() functions.  When a new index is selected the result set will
+    emit the currentIndexChanged() signal, and when the currently selected item
+    changes the currentItemChanged() signal will be emitted.  If the
+    currentIndex() contains a gallery item isValid() will return true, otherwise
+    it will return false. Information identifying the current item in the
+    request can be accessed using the itemId(), itemUrl() and itemType()
+    functions.
+
+    For each meta-data property returned by a query a unique key will be
+    provided, this cab be queried by passing the property's name to the
+    propertyKey() function.  Passing this key to the metaData() function will
+    return the current item's value for that property.  Some queries may return
+    items with editable meta-data values which can be changed using the
+    setMetaData() function.  The attributes of a meta-data property such as
+    whether it's writable can be queried from propertyAttributes() and the
+    type of value that will returned by metaData() can be queried using
+    propertyType().
+
+    \sa QDocumentGallery, QGalleryQueryModel
 */
 
 /*!
@@ -143,8 +196,18 @@ QStringList QGalleryQueryRequest::propertyNames() const
 
 void QGalleryQueryRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::propertyNamesChanged();
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::sortPropertyNames
@@ -164,8 +227,18 @@ QStringList QGalleryQueryRequest::sortPropertyNames() const
 
 void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 {
-    d_func()->sortPropertyNames = names;
+    if (d_func()->sortPropertyNames != names) {
+        d_func()->sortPropertyNames = names;
+
+        emit sortPropertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::sortPropertyNamesChanged()
+
+    Signals that the value of \l sortPropertyNames has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::autoUpdate
@@ -185,8 +258,18 @@ bool QGalleryQueryRequest::autoUpdate() const
 
 void QGalleryQueryRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::offset
@@ -201,8 +284,19 @@ int QGalleryQueryRequest::offset() const
 
 void QGalleryQueryRequest::setOffset(int offset)
 {
-    d_func()->offset = qMax(0, offset);
+    const int boundedOffset = qMax(0, offset);
+    if (d_func()->offset != boundedOffset) {
+        d_func()->offset = boundedOffset;
+
+        emit offsetChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::offsetChanged()
+
+    Signals that the value of offset has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::limit
@@ -217,9 +311,19 @@ int QGalleryQueryRequest::limit() const
 
 void QGalleryQueryRequest::setLimit(int limit)
 {
-    d_func()->limit = qMax(0, limit);
+    const int boundedLimit = qMax(0, limit);
+    if (d_func()->limit != boundedLimit) {
+        d_func()->limit = boundedLimit;
+
+        emit limitChanged();
+    }
 }
 
+/*!
+    \fn QGalleryQueryRequest::limitChanged()
+
+    Signals that the value of \l limit has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::rootType
@@ -235,8 +339,18 @@ QString QGalleryQueryRequest::rootType() const
 
 void QGalleryQueryRequest::setRootType(const QString &itemType)
 {
-    d_func()->rootType = itemType;
+    if (d_func()->rootType != itemType) {
+        d_func()->rootType = itemType;
+
+        emit rootTypeChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::rootTypeChanged()
+
+    Signals that the value of \l rootType has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::rootItem
@@ -251,9 +365,18 @@ QVariant QGalleryQueryRequest::rootItem() const
 
 void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
 {
-    d_func()->rootItem = itemId;
+    if (d_func()->rootItem != itemId) {
+        d_func()->rootItem = itemId;
+
+        emit rootItemChanged();
+    }
 }
 
+/*!
+    \fn QGalleryQueryRequest::rootItemChanged()
+
+    Signals that the value of \l rootItem has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::scope
@@ -269,8 +392,18 @@ QGalleryQueryRequest::Scope QGalleryQueryRequest::scope() const
 
 void QGalleryQueryRequest::setScope(QGalleryQueryRequest::Scope scope)
 {
-    d_func()->scope = scope;
+    if (d_func()->scope != scope) {
+        d_func()->scope = scope;
+
+        emit scopeChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::scopeChanged()
+
+    Signals that the value of \l scope has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::filter
@@ -288,8 +421,19 @@ QGalleryFilter QGalleryQueryRequest::filter() const
 
 void QGalleryQueryRequest::setFilter(const QGalleryFilter &filter)
 {
-    d_func()->filter = filter;
+    if (d_func()->filter != filter) {
+        d_func()->filter = filter;
+
+        emit filterChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::filterChanged()
+
+    Signals that the value of \l filter has changed.
+*/
+
 
 /*!
     Returns the result set containing the results of a query.

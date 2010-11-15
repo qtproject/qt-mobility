@@ -75,11 +75,13 @@ public:
     QLandmarkManagerEngine *engine;
     mutable QLandmarkManager::Error errorCode;
     mutable QString errorString;
+    mutable QMap<int, QLandmarkManager::Error> errorMap;
     static QLandmarkManagerEngine *getEngine(const QLandmarkManager* manager);
     static void loadFactories();
     static QHash<QString, QLandmarkManagerEngineFactory*> factories(bool reload = false);
     static  void loadDynamicFactories (QHash<QString, QLandmarkManagerEngineFactory*> *factories);
     static  void loadStaticFactories (QHash<QString, QLandmarkManagerEngineFactory*> *factories);
+    bool isConnected;//identifies whether connections have been made to the notification signals
 
     QLandmarkManager *q_ptr;
     Q_DECLARE_PUBLIC(QLandmarkManager)

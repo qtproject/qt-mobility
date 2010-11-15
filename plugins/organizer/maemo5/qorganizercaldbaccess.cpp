@@ -119,7 +119,7 @@ void OrganizerCalendarDatabaseAccess::close()
     m_db.close();
 }
 
-int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
+int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemId id)
 {
     quint32 convertedId = readItemLocalId(id);
     if (m_dbCache->containsCalId(convertedId)) {
@@ -142,7 +142,7 @@ int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
     }
 }
 
-int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
+int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemId id)
 {
     quint32 convertedId = readItemLocalId(id);
     if (m_dbCache->containsTypeId(convertedId)) {

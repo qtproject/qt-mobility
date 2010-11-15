@@ -432,7 +432,7 @@ void CCntDbManager::SetCurrentItemL(TContactItemId aContactId, TUint aConnection
 	event.iContactId = aContactId;
 	event.iConnectionId = aConnectionId;
     event.iTypeV2 = EContactDbObserverEventV2Null;
-    event.iAdditionalContactId = 0;
+    event.iAdditionalContactIds = NULL;
 	// Save the changes to the contacts model ini file
 	iIniManager.ScheduleSaveIniFileSettings(CIniFileManager::ESaveCurrentItem);
 	NotifyObserversL(event);
@@ -447,7 +447,7 @@ void CCntDbManager::RemoveCurrentItemL(TUint aConnectionId)
 	event.iContactId = KNullContactId;
 	event.iConnectionId = aConnectionId;
     event.iTypeV2 = EContactDbObserverEventV2Null;
-    event.iAdditionalContactId = 0;
+    event.iAdditionalContactIds = NULL;
 	// Save the changes to the contacts model ini file
 	iIniManager.ScheduleSaveIniFileSettings(CIniFileManager::ESaveCurrentItem);
 	NotifyObserversL(event);
@@ -511,7 +511,7 @@ TContactItemId CCntDbManager::SetSpeedDialIdForPositionL(const TInt aSpeedDialIn
 		event.iContactId = contactIdToBroadcast;
 		event.iConnectionId = aConnectionId;
 	    event.iTypeV2 = EContactDbObserverEventV2Null;
-	    event.iAdditionalContactId = 0;
+	    event.iAdditionalContactIds = NULL;
 		NotifyObserversL(event);
 		}
 	return contactIdToBroadcast;	
@@ -540,7 +540,7 @@ void CCntDbManager::SetCardTemplatePrefIdL(TContactItemId aCardTemplatePrefId, T
 	event.iContactId = aCardTemplatePrefId;
 	event.iConnectionId = aConnectionId;
     event.iTypeV2 = EContactDbObserverEventV2Null;
-    event.iAdditionalContactId = 0;
+    event.iAdditionalContactIds = NULL;
 	NotifyObserversL(event);	
 	}
 

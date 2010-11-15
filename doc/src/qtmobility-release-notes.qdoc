@@ -4,37 +4,23 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,50 +42,58 @@
     
 
 
-    <p>These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.1.0 beta release. An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com"> Qt Bug Tracker</a>  which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
+    <p>These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.1.0 final release. An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com"> Qt Bug Tracker</a>  which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
 
     <a name="What's New in QtMobility 1.1.0"></a>
     <h2>What's New in QtMobility 1.1.0</h2>
-    <p>Qt Mobility 1.1.0 beta is part of our ongoing program providing new Qt APIs for mobile application development. This release contains a number of new APIs and also improvements and bug fixes since the Qt Mobility 1.0.2 release. For more details, please refer to the <a href="http://qt.nokia.com/doc/qtmobility-1.1.0-beta"> online documentation </a> included in this distribution and the change log file.</p>
+    <p>Qt Mobility 1.1.0 final is part of our ongoing program providing new Qt APIs for mobile application development. This release contains a number of new APIs and also improvements and bug fixes since the Qt Mobility 1.0.2 release. For more details, please refer to the <a href="http://qt.nokia.com/doc/qtmobility-1.1.0"> online documentation </a> included in this distribution and the change log file.</p>
 
     <a name="contacts-api"></a>
   
     <h2>Downloading and Installing</h2>
     <h3>System Requirements</h3>
-    <p><b>Symbian S60 and Maemo platforms:</b> </p>
-    <p>Qt 4.7.0 final should be used.</p>
-    <p><b>Symbian^3 platform:</b></p>
-    <p>Qt 4.6.3 should be used.</p>  
+    <p>Qt 4.7.0 should be used.</p>
     <p><a href="http://qt.nokia.com/downloads"> http://qt.nokia.com/downloads</a></p>
     <p>Latest QtMobility packages can be found here: </p>
-    <a href="http://qt.nokia.com/products/appdev/add-on-products/catalog/4/new-qt-apis/mobility"> http://qt.nokia.com/products/appdev/add-on-products/catalog/4/new-qt-apis/mobility </a></p>
+    <a href="http://qt.nokia.com/developer/new-qt-apis"> http://qt.nokia.com/developer/new-qt-apis </a></p>
 
     <p>Please follow the <a href="installation.html">installation procedure</a>.</p>
-    <h2>Known issues with this beta package:</h2>
+    <h2>Known issues with this final package:</h2>
     <h3>Camera</h3>
     <ul>
-    <li>Camera API is not yet fully supported on Symbian (S60 and S^3) and Harmattan.</li>
+    <li>Maemo5: Unable to save images other than in default resolution.</li>
     </ul>
-    <h3>Service Framework OOP</h3>
+    <h3>Landmarks</h3>
     <ul>
-    <li>Symbian S60 3.x: unable to register services </li>
+    <li>Maemo5: Unable to write data/export to /opt </li>
     </ul>
     <h3>Organizer</h3>
     <ul>
-    <li>Only single calendar is suppored </li>
+    <li> There is no QML example for organizer </li>
     </ul>
     <h3>Document Gallery</h3>
     <ul>
-    <li>API is not yet supported on Symbian (S60 and S^3) and Harmattan </li>
+    <li> - The document gallery backend for Symbian S60 is disabled in pre-built packages due to limited deployment of a dependent library on 3.1 and 3.2 devices, and library version conflict between 5.0 devices.</li>
+    <li> - Document gallery items of type Album, Artist, AlbumArtist, and Genre cannot be queried on Symbian platforms. </li>
+    <li> - Symbian: mediabrowser example application does not display items in panels other than Songs. </li>
+    <li> - Symbian: documentproperties example application not usable, crashes on exit. </li>
     </ul>
     <h3>Maps and Navigation</h3>
     <ul>
-    <li>Symbain 3.x: Mapviewer: unable to find access point </li>
+    <li>At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and will be improved in the next patch release. Therefore the QML API will be subject to potentially incompatible changes. </li>
     </ul>
     <h3>Feedback</h3>
     <ul>
-    <li>Not yet supported on Maemo platforms </li>
+    <li> - Not all vibration settings may result in distinct vibration patterns due to limitations in individual vibration actuators.</li>
+    <li> - Feedback example applications are not functioning on S60. </li>
+    <li> - Maemo5: Hapticsquare and hapticsplayer example applications have no haptic feedback. </li>
     </ul>
+
+    <h3>Messaging</h3>
+    <ul>
+    <li>Maemo5: keepintouch example application displays a list of same contacts and emails. </li>
+    </ul>
+
 
     \endraw
 

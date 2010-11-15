@@ -302,7 +302,7 @@ void QSystemInfoPrivate::setAvailableLanguages(const QStringList &v)
 {
     if (data.availableLanguages != v) {
         data.availableLanguages.clear();
-        foreach (QString language, v)
+        foreach (const QString &language, v)
             data.availableLanguages.append(language.toLower());
     }
 }

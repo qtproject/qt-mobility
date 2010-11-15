@@ -45,18 +45,19 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactglobalpresence.h"
+#include "qdeclarativecontactpresence_p.h"
 
 class QDeclarativeContactGlobalPresence : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY fieldsChanged)
     Q_PROPERTY(QString nickname READ nickname WRITE setNickname NOTIFY fieldsChanged)
-    Q_PROPERTY(QString state READ presenceState WRITE setPresenceState NOTIFY fieldsChanged)
+    Q_PROPERTY(QDeclarativeContactPresence::PresenceStateType state READ presenceState WRITE setPresenceState NOTIFY fieldsChanged)
     Q_PROPERTY(QString stateText READ presenceStateText WRITE setPresenceStateText NOTIFY fieldsChanged)
     Q_PROPERTY(QUrl imageUrl READ presenceStateImageUrl WRITE setPresenceStateImageUrl NOTIFY fieldsChanged)
     Q_PROPERTY(QString customMessage READ customMessage WRITE setCustomMessage NOTIFY fieldsChanged)
     Q_CLASSINFO("DefaultProperty", "state")
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Timestamp = 0,
@@ -71,59 +72,85 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGlobalPresence());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
         return QDeclarativeContactDetail::GlobalPresence;
     }
-
-    void setTimestamp(const QDateTime& timestamp) {detail().setValue(QContactGlobalPresence::FieldTimestamp, timestamp);}
-    QDateTime timestamp() const {return detail().value<QDateTime>(QContactGlobalPresence::FieldTimestamp);}
-    void setNickname(const QString& nickname) {detail().setValue(QContactGlobalPresence::FieldNickname, nickname);}
-    QString nickname() const {return detail().value(QContactGlobalPresence::FieldNickname);}
-    void setPresenceState(QString presenceState) {
-        int state = QContactPresence::PresenceUnknown;
-
-        if (presenceState == "Available")
-            state = QContactPresence::PresenceAvailable;
-        else if (presenceState == "Hidden")
-            state = QContactPresence::PresenceHidden;
-        else if (presenceState == "Busy")
-            state = QContactPresence::PresenceBusy;
-        else if (presenceState == "Away")
-            state = QContactPresence::PresenceAway;
-        else if (presenceState == "ExtendedAway")
-            state = QContactPresence::PresenceExtendedAway;
-        else if (presenceState == "Offline")
-            state = QContactPresence::PresenceOffline;
-
-        detail().setValue(QContactGlobalPresence::FieldPresenceState, state);
-    }
-
-    QString presenceState() const {
-        int state = detail().value<int>(QContactGlobalPresence::FieldPresenceState);
-        switch (state) {
-        case QContactPresence::PresenceAvailable:
-            return QString::fromLatin1("Available");
-        case QContactPresence::PresenceHidden:
-            return QString::fromLatin1("Hidden");
-        case QContactPresence::PresenceBusy:
-            return QString::fromLatin1("Busy");
-        case QContactPresence::PresenceAway:
-            return QString::fromLatin1("Away");
-        case QContactPresence::PresenceExtendedAway:
-            return QString::fromLatin1("ExtendedAway");
-        case QContactPresence::PresenceOffline:
-            return QString::fromLatin1("Offline");
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Timestamp:
+            return QContactGlobalPresence::FieldTimestamp;
+        case Nickname:
+            return QContactGlobalPresence::FieldNickname;
+        case State:
+            return QContactGlobalPresence::FieldPresenceState;
+        case StateText:
+            return QContactGlobalPresence::FieldPresenceStateText;
+        case ImageUrl:
+            return QContactGlobalPresence::FieldPresenceStateImageUrl;
+        case CustomMessage:
+            return QContactGlobalPresence::FieldCustomMessage;
+        default:
+            break;
         }
-
-        return QString::fromLatin1("Unknown");
+        //qWarning
+        return QString();
     }
-    void setPresenceStateText(const QString& presenceStateText) {detail().setValue(QContactGlobalPresence::FieldPresenceStateText, presenceStateText);}
+    void setTimestamp(const QDateTime& v)
+    {
+        if (!readOnly() && v != timestamp()) {
+            detail().setValue(QContactGlobalPresence::FieldTimestamp, v);
+            emit fieldsChanged();
+        }
+    }
+    QDateTime timestamp() const {return detail().value<QDateTime>(QContactGlobalPresence::FieldTimestamp);}
+    void setNickname(const QString& v)
+    {
+        if (!readOnly() && v != nickname()) {
+            detail().setValue(QContactGlobalPresence::FieldNickname, v);
+            emit fieldsChanged();
+        }
+    }
+    QString nickname() const {return detail().value(QContactGlobalPresence::FieldNickname);}
+    void setPresenceState(QDeclarativeContactPresence::PresenceStateType v)
+    {
+        if (!readOnly() && v != presenceState()) {
+            detail().setValue(QContactGlobalPresence::FieldPresenceState, static_cast<int>(v));
+            emit fieldsChanged();
+        }
+    }
+
+    QDeclarativeContactPresence::PresenceStateType presenceState() const
+    {
+        return static_cast<QDeclarativeContactPresence::PresenceStateType>(detail().value<int>(QContactGlobalPresence::FieldPresenceState));
+
+    }
+    void setPresenceStateText(const QString& v)
+    {
+        if (!readOnly() && v != presenceStateText()) {
+            detail().setValue(QContactGlobalPresence::FieldPresenceStateText, v);
+            emit fieldsChanged();
+        }
+    }
     QString presenceStateText() const {return detail().value(QContactGlobalPresence::FieldPresenceStateText);}
-    void setPresenceStateImageUrl(const QUrl& presenceStateImageUrl) {detail().setValue(QContactGlobalPresence::FieldPresenceStateImageUrl, presenceStateImageUrl);}
+    void setPresenceStateImageUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != presenceStateImageUrl())  {
+            detail().setValue(QContactGlobalPresence::FieldPresenceStateImageUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl presenceStateImageUrl() const {return detail().value<QUrl>(QContactGlobalPresence::FieldPresenceStateImageUrl);}
-    void setCustomMessage(const QString& customMessage) {detail().setValue(QContactGlobalPresence::FieldCustomMessage, customMessage);}
+    void setCustomMessage(const QString& v)
+    {
+        if (!readOnly() && v != customMessage()) {
+            detail().setValue(QContactGlobalPresence::FieldCustomMessage, v);
+            emit fieldsChanged();
+        }
+    }
     QString customMessage() const {return detail().value(QContactGlobalPresence::FieldCustomMessage);}
 signals:
     void fieldsChanged();

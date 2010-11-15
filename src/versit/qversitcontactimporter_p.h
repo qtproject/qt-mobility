@@ -55,12 +55,14 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
+#include "qvcardrestorehandler_p.h"
 
 #include <QList>
 #include <QDateTime>
 #include <QHash>
 #include <QPair>
 #include <QMap>
+#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 class QContact;
@@ -73,7 +75,7 @@ class QVersitContactHandler;
 class QM_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
-    QVersitContactImporterPrivate(const QString& profile = QString());
+    QVersitContactImporterPrivate(const QStringList& profiles = QStringList());
     ~QVersitContactImporterPrivate();
 
     bool importContact(const QVersitDocument& versitDocument, int contactIndex,
@@ -118,6 +120,7 @@ public: // Data
     int mPropertyHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
+    QVCardRestoreHandler mRestoreHandler;
 
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;

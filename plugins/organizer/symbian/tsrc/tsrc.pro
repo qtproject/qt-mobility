@@ -10,4 +10,5 @@ SUBDIRS += tst_symbianom \
            tst_itemlocation \
            tst_todooccurrence \
            tst_symbianomcollections \
-           tst_itemsortfilter
+           tst_itemsortfilter \
+           tst_symbianperformance

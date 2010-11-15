@@ -848,6 +848,7 @@ public:
 	IMPORT_C void CommitContactL(const CContactItem& aContact);
 	IMPORT_C void DeleteContactL(TContactItemId aContactId);
 	IMPORT_C void DeleteContactsL(const CContactIdArray& aContactIds);
+	IMPORT_C void DeleteContactsV2L(const CContactIdArray& aContactIds);
   	IMPORT_C CArrayPtr<CContactItem>* ImportContactsL(const TUid& aFormat,RReadStream& aReadStream,TBool& aImportSuccessful,TInt aOption);
   	IMPORT_C void ExportSelectedContactsL(const TUid& aFormat,const CContactIdArray& aSelectedContactIds,RWriteStream& aWriteStream,TInt aOption,TBool aExportPrivateFields=ETrue);
   	IMPORT_C void ExportSelectedContactsL(const TUid& aFormat,const CContactIdArray& aSelectedContactIds,RWriteStream& aWriteStream,TInt aOption,const Versit::TVersitCharSet aCharSet, TBool aExportPrivateFields=ETrue);

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include <QtCore>
-#include <QDebug>
 
 #include "notesmanager.h"
 
@@ -51,7 +50,7 @@ NotesManager::NotesManager(QObject *parent)
 bool NotesManager::init()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("notesmanager.db");
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/notesmanager.db");
     if (!db.open())
         db.setDatabaseName(QDir::homePath() + "/notesmanager.db");
 

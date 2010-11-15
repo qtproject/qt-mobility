@@ -80,7 +80,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& profile) :
+QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QStringList& profiles) :
     mPropertyHandler(NULL),
     mPropertyHandler2(NULL),
     mPropertyHandlerVersion(0),
@@ -117,7 +117,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& prof
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
 
-    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profile);
+    mPluginPropertyHandlers = QVersitContactPluginLoader::instance()->createContactHandlers(profiles);
 }
 
 /*!
@@ -138,7 +138,8 @@ bool QVersitContactImporterPrivate::importContact(
         const QVersitDocument& document, int contactIndex, QContact* contact,
         QVersitContactImporter::Error* error)
 {
-    if (document.type() != QVersitDocument::VCard21Type
+    if (document.componentType() != QLatin1String("VCARD")
+        && document.type() != QVersitDocument::VCard21Type
         && document.type() != QVersitDocument::VCard30Type) {
         *error = QVersitContactImporter::InvalidDocumentError;
         return false;
@@ -165,6 +166,7 @@ bool QVersitContactImporterPrivate::importContact(
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
 
+    mRestoreHandler.documentProcessed();
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
         handler->documentProcessed(document, contact);
@@ -229,6 +231,9 @@ void QVersitContactImporterPrivate::importProperty(
         // Look up mDetailMappings for a simple mapping from property to detail.
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
+
+    if (mRestoreHandler.propertyProcessed(property, &updatedDetails))
+        success = true;
 
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {

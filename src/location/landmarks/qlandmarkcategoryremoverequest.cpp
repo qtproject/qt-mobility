@@ -57,6 +57,8 @@ QTM_BEGIN_NAMESPACE
     by calling errorMap()) or an  overall operation error occurs(which may be
     retrieved by calling QLandmarkAbstractRequest::error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -101,7 +103,9 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 }
 
 /*!
-    Convenience function to set the \a categoryId of a sisngle category to be removed.
+    Convenience function to set the \a categoryId of a single category to be removed.
+    It is the equivalent of calling setCategoryIds() with a single \a categoryId
+    in the ID list.
 
     \sa setCategory(), setCategoryIds()
 */
@@ -114,7 +118,9 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
 }
 
 /*!
-    Sets the list of \a categories which will be removed.
+    Convenience function to set the list of \a categories which will be removed.
+    This function effectively calls setCategoryIds() with the IDs of the
+    \a categories.
 
     \sa setCategory(), setCategoryIds()
 */
@@ -128,9 +134,10 @@ void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory
 }
 
 /*!
-    Sets a single \a category to be removed.
+    Convenience function that sets a single \a category to be removed.
+    This function effectively calls setCategoryIds() with the ID of \a category.
 
-    \sa setCategories, setCategoryId()
+    \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &category)
 {
@@ -141,7 +148,7 @@ void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &catego
 }
 
 /*!
-    Returns the mapping of input category id list indices
+    Returns the mapping of input category ID list indices
     to the errors which occurred.
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const

@@ -103,11 +103,12 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
-ORGANIZER_REQUESTED=
+# By default, all modules are requested.  Reset this later if -modules is supplied
+ORGANIZER_REQUESTED=yes
 
 usage() 
 {
@@ -145,7 +146,7 @@ usage()
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework"
-    echo "                    sensors versit organizer feedback"
+    echo "                    sensors versit organizer feedback connectivity"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a selected module depends on other modules"
     echo "                    those modules (and their dependencies) will automatically be enabled."
@@ -245,11 +246,12 @@ while [ "$#" -gt 0 ]; do
             ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
+            ORGANIZER_REQUESTED=
             #reset default selection
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback|connectivity)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     organizer)
@@ -284,8 +286,6 @@ checkostype()
     match="Darwin"
     if [ `uname -s` = "${match}" ]; then
         OS="darwin"
-        QMKSPEC="-spec macx-g++"
-        echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
     fi
 }
 
@@ -295,7 +295,7 @@ findframeworks()
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`$QMAKE_EXEC -spec macx-g++ 1.pro 2>&1`
+    SOMETHING=`$QMAKE_EXEC 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -313,7 +313,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
@@ -641,6 +641,11 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/requests
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/filters
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/details
+            ;;
+        connectivity)
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/nfc
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/bluetooth
             ;;
         *)
             echo "Cannot generate headers for $module"

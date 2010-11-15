@@ -58,7 +58,7 @@ public:
     const char* FieldAttachments;
     const char* FieldRecipients;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemEmailReminder, "EmailReminder", QOrganizerItemReminder::EmailReminder)
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemEmailReminder, "EmailReminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldSubject, "Subject");
     Q_DECLARE_LATIN1_CONSTANT(FieldBody, "Body");
     Q_DECLARE_LATIN1_CONSTANT(FieldAttachments, "Attachments");
@@ -69,7 +69,7 @@ public:
     void setContents(const QString& subject, const QString& body, const QVariantList& attachments) {setValue(FieldSubject, subject); setValue(FieldBody, body); setValue(FieldAttachments, attachments);}
     QString subject() const {return value(FieldSubject);}
     QString body() const {return value(FieldBody);}
-    QVariantList attachments() {return value<QVariantList>(FieldAttachments);} // mime data type?
+    QVariantList attachments() const {return value<QVariantList>(FieldAttachments);} // mime data type?
     void setRecipients(const QStringList& recipients) {setValue(FieldRecipients, recipients);}
     QStringList recipients() const {return value<QStringList>(FieldRecipients);}
 };

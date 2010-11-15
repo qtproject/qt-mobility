@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
 QOrganizerCollectionSaveRequest::QOrganizerCollectionSaveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionSaveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerCollectionSaveRequestPrivate, parent)
 {
 }
 
@@ -87,7 +87,7 @@ QList<QOrganizerCollection> QOrganizerCollectionSaveRequest::collections() const
 }
 
 /*! Returns any errors which occurred during the request */
-QMap<int, QOrganizerItemManager::Error> QOrganizerCollectionSaveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerCollectionSaveRequest::errorMap() const
 {
     Q_D(const QOrganizerCollectionSaveRequest);
     return d->m_errors;

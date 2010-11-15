@@ -184,6 +184,9 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();
+    QString model();
+    QString productName();
+
 
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2

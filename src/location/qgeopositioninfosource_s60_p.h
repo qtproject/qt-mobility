@@ -204,7 +204,7 @@ private:
      */
     void ConstructL();
 
-    void updateStatus(TPositionModuleInfo aModInfo, TInt aStatus);
+    void updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus);
 
     void updateAvailableTypes(void);
 

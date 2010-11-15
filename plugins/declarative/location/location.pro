@@ -3,7 +3,7 @@ TEMPLATE = lib
 CONFIG += qt plugin mobility
 MOBILITY += location
 PLUGIN_TYPE = declarative
-QT += declarative
+QT += declarative network
 
 include(../../../common.pri)
 
@@ -29,13 +29,18 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
            qdeclarativegeomapobject_p.h \
+           qdeclarativegeomapobjectborder_p.h \
            qdeclarativegeomapcircleobject_p.h \
            qdeclarativegeomappixmapobject_p.h \
            qdeclarativegeomappolygonobject_p.h \
            qdeclarativegeomappolylineobject_p.h \
            qdeclarativegeomaprectangleobject_p.h \
-           qdeclarativegeomaptextobject_p.h \
+           qdeclarativegeomaptextobject_p.h \ 
+           qdeclarativegeoserviceprovider_p.h \
            qdeclarativegraphicsgeomap_p.h \
+           qdeclarativegeosearchmodel_p.h \
+           qdeclarativegeocodemodel_p.h \
+           qdeclarativereversegeocodemodel_p.h \
 	   qdeclarativegeoplace_p.h \
 	   qdeclarativegeoaddress_p.h \
 	   qdeclarativegeoboundingbox_p.h
@@ -50,13 +55,18 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \
            qdeclarativegeomapobject.cpp \
+           qdeclarativegeomapobjectborder.cpp \
            qdeclarativegeomapcircleobject.cpp \
            qdeclarativegeomappixmapobject.cpp \
            qdeclarativegeomappolygonobject.cpp \
            qdeclarativegeomappolylineobject.cpp \
            qdeclarativegeomaprectangleobject.cpp \
            qdeclarativegeomaptextobject.cpp \
+           qdeclarativegeoserviceprovider.cpp \
            qdeclarativegraphicsgeomap.cpp \
+           qdeclarativegeosearchmodel.cpp \
+           qdeclarativegeocodemodel.cpp \
+           qdeclarativereversegeocodemodel.cpp \
 	   qdeclarativegeoplace.cpp \
 	   qdeclarativegeoaddress.cpp \
 	   qdeclarativegeoboundingbox.cpp

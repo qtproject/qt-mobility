@@ -51,12 +51,12 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 #endif
 
 // device
- /*!
+        /*!
         \class QSystemDeviceInfo
         \ingroup systeminfo
         \inmodule QtSystemInfo
-
- */
+        \brief The QSystemDeviceInfo class provides access to device information from the system.
+        */
 
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
@@ -118,6 +118,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value VibProfile              Vibrate profile.
             \value OfflineProfile          Offline profile.
             \value PowersaveProfile        Powersave profile.
+            \value BeepProfile             Beep profile.
             \value CustomProfile           Custom profile.
 
           */
@@ -140,7 +141,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value Keypad             Device has keypad (1,2,3, etc).
             \value Keyboard           Device has qwerty keyboard.
             \value SingleTouch        Device has single touch screen.
-            \value MultiTouch         Device has muti touch screen.
+            \value MultiTouch         Device has multi-point touch screen.
             \value Mouse              Device has a mouse.
         */
 
