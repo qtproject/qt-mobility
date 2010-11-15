@@ -68,23 +68,6 @@ class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerSchema;
 
-struct QGalleryTrackerSortCriteria
-{
-    enum Flag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x02,
-        Ascending     = 0x04,
-        Descending    = 0x08
-    };
-
-    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
-    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
-
-    short column;
-    short flags;
-};
-
 class QGalleryTrackerResultSetPrivate;
 
 struct QGalleryTrackerResultSetArguments
@@ -131,7 +114,6 @@ struct QGalleryTrackerResultSetArguments
     QVector<QGalleryTrackerValueColumn *> valueColumns;
     QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     QVector<int> aliasColumns;
-    QVector<QGalleryTrackerSortCriteria> sortCriteria;
     QVector<int> resourceKeys;
     QString service;
 };

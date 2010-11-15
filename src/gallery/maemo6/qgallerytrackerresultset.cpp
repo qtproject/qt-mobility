@@ -193,70 +193,11 @@ bool QGalleryTrackerResultSetPrivate::parseRows(
     }
 
     if (resultSet.count() <= limit) {
-        if (!values.isEmpty() && !sortCriteria.isEmpty()) {
-            correctRows(
-                    row_iterator(values.begin(), tableWidth),
-                    row_iterator(values.end(), tableWidth),
-                    sortCriteria.constBegin(),
-                    sortCriteria.constEnd());
-        }
-
         synchronize();
 
         return true;
     } else {
         return false;
-    }
-}
-
-void QGalleryTrackerResultSetPrivate::correctRows(
-        row_iterator begin,
-        row_iterator end,
-        sort_iterator sortCriteria,
-        sort_iterator sortEnd,
-        bool reversed) const
-{
-    int column = sortCriteria->column;
-
-    const int sortFlags = sortCriteria->flags;
-
-    if (sortFlags & QGalleryTrackerSortCriteria::Sorted) {
-        if (reversed) {
-            QAlgorithmsPrivate::qReverse(begin, end);
-
-            reversed = false;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } else do {
-            column = sortCriteria->column;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } while(sortCriteria->flags & QGalleryTrackerSortCriteria::Sorted);
-    } else if (sortFlags & QGalleryTrackerSortCriteria::ReverseSorted) {
-        if (!reversed) {
-            QAlgorithmsPrivate::qReverse(begin, end);
-
-            reversed = true;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } else do {
-            column = sortCriteria->column;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } while(sortCriteria->flags & QGalleryTrackerSortCriteria::ReverseSorted);
-    }
-
-    for (row_iterator upper, lower = begin; lower != end; lower = upper) {
-        int count = 1;
-
-        for (upper = lower + 1; upper != end && lower[column] == upper[column]; ++upper, ++count) {}
-
-        if (count > 1)
-            correctRows(lower, upper, sortCriteria, sortEnd, reversed);
     }
 }
 

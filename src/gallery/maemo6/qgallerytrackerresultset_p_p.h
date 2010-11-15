@@ -236,8 +236,6 @@ public:
         QVector<QVariant> values;
     };
 
-    typedef QVector<QGalleryTrackerSortCriteria>::const_iterator sort_iterator;
-
     enum Flag
     {
         Cancelled       = 0x01,
@@ -282,7 +280,6 @@ public:
         , valueColumns(arguments->valueColumns)
         , compositeColumns(arguments->compositeColumns)
         , aliasColumns(arguments->aliasColumns)
-        , sortCriteria(arguments->sortCriteria)
         , resourceKeys(arguments->resourceKeys)
     {
         arguments->clear();
@@ -327,7 +324,6 @@ public:
     const QVector<QGalleryTrackerValueColumn *> valueColumns;
     const QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     const QVector<int> aliasColumns;
-    const QVector<QGalleryTrackerSortCriteria> sortCriteria;
     const QVector<int> resourceKeys;
     Cache rCache;   // Remove cache.
     Cache iCache;   // Insert cache.
@@ -356,12 +352,6 @@ public:
 
     void queryFinished(const QDBusPendingCall &call);
     bool parseRows(const QDBusPendingCall &call, int limit, bool reset);
-    void correctRows(
-            row_iterator begin,
-            row_iterator end,
-            const sort_iterator sortBegin,
-            const sort_iterator sortEnd,
-            bool reversed = false) const;
 
     void synchronize();
 

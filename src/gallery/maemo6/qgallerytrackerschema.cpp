@@ -279,28 +279,6 @@ namespace
         IsResource      = 0x100,
         PropertyMask    = 0xFF
     };
-
-    class QGalleryReorderLessThan
-    {
-    public:
-        QGalleryReorderLessThan(const QStringList &sortOrder)
-            : m_sortOrder(QStringList(sortOrder)
-                    .replaceInStrings(QLatin1String("+"), QString())
-                    .replaceInStrings(QLatin1String("-"), QString()))
-        {
-        }
-
-        bool operator ()(const QString &property1, const QString &property2) const
-        {
-            uint index1 = m_sortOrder.indexOf(property1);
-            uint index2 = m_sortOrder.indexOf(property2);
-
-            return index1 < index2;
-        }
-
-    private:
-        QStringList m_sortOrder;
-    };
 }
 
 #define QT_GALLERY_ITEM_PROPERTY(PropertyName, Field, Type, Attr) \
@@ -1340,23 +1318,37 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
 }
 
 static QString qt_writeSorting(
-        const QStringList &x, const QVector<QGalleryTrackerSortCriteria> &sortCriteria)
+        const QStringList &propertyNames, const QGalleryItemPropertyList &properties)
 {
-    int count = x.size();
-    if (count > 0) {
-        QString result(QLatin1String(" ORDER BY "));
-        for (int i = 0; i < count; ++i) {
-            if (sortCriteria[i].flags & QGalleryTrackerSortCriteria::Ascending ) {
-                result += qt_writePropertyFunctions(QStringList()
-                        << QLatin1String(" ASC(") + x[i], QLatin1String("x"));
-            } else {
-                result += qt_writePropertyFunctions(QStringList()
-                        << QLatin1String(" DESC(") +x[i], QLatin1String("x"));
+    QString sortExpression;
+
+    for (QStringList::const_iterator it = propertyNames.constBegin();
+            it != propertyNames.constEnd();
+            ++it) {
+        if (it->startsWith(QLatin1Char('-'))) {
+            const int propertyIndex = properties.indexOfProperty(it->mid(1));
+
+            if (propertyIndex != -1) {
+                sortExpression += qt_writePropertyFunctions(
+                        QStringList() << QLatin1String(" DESC(") + properties[propertyIndex].field,
+                        QLatin1String("x"));
+            }
+        } else {
+            const int propertyIndex = it->startsWith(QLatin1Char('+'))
+                    ? properties.indexOfProperty(it->mid(1))
+                    : properties.indexOfProperty(*it);
+
+            if (propertyIndex != -1) {
+                sortExpression += qt_writePropertyFunctions(
+                        QStringList() << QLatin1String(" ASC(") + properties[propertyIndex].field,
+                        QLatin1String("x"));
             }
         }
-        return result;
     }
-    return QLatin1String("");
+
+    return !sortExpression.isEmpty()
+            ? QLatin1String(" ORDER BY ") + sortExpression
+            : sortExpression;
 }
 
 void QGalleryTrackerSchema::populateItemArguments(
@@ -1367,14 +1359,10 @@ void QGalleryTrackerSchema::populateItemArguments(
         const QStringList &sortPropertyNames) const
 {
     const QString service = qt_galleryItemTypeList[m_itemIndex].service;
-    const QString searchText;
-    const QStringList keywords;
-    const bool sortByService = false;
 
     QStringList valueNames;
     QStringList aliasNames;
     QStringList compositeNames;
-    QStringList sortFieldNames;
     QVector<QGalleryProperty::Attributes> valueAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QGalleryProperty::Attributes> compositeAttributes;
@@ -1451,57 +1439,6 @@ void QGalleryTrackerSchema::populateItemArguments(
         }
     }
 
-    bool descending = false;
-
-    for (QStringList::const_iterator it = sortPropertyNames.constBegin();
-            it != sortPropertyNames.constEnd();
-            ++it) {
-        int sortFlags = QGalleryTrackerSortCriteria::Ascending;
-
-        QString propertyName = *it;
-
-        if (propertyName.startsWith(QLatin1Char('-'))) {
-            propertyName = propertyName.mid(1);
-            sortFlags = QGalleryTrackerSortCriteria::Descending;
-
-            if (arguments->sortCriteria.isEmpty())
-                descending = true;
-
-            sortFlags |= descending
-                    ? QGalleryTrackerSortCriteria::Sorted
-                    : QGalleryTrackerSortCriteria::ReverseSorted;
-        } else {
-            if (propertyName.startsWith(QLatin1Char('+')))
-                propertyName = propertyName.mid(1);
-
-            if (arguments->sortCriteria.isEmpty())
-                descending = false;
-
-            sortFlags |= descending
-                    ? QGalleryTrackerSortCriteria::ReverseSorted
-                    : QGalleryTrackerSortCriteria::Sorted;
-        }
-
-        const int propertyIndex = itemProperties.indexOfProperty(propertyName);
-
-        if (propertyIndex >= 0
-                && itemProperties[propertyIndex].attributes & QGalleryProperty::CanSort) {
-            const QString field = itemProperties[propertyIndex].field;
-
-            int fieldIndex = arguments->fieldNames.indexOf(field);
-
-            if (fieldIndex < 0) {
-                fieldIndex = arguments->fieldNames.count();
-                arguments->fieldNames.append(field);
-                extendedValueTypes.append(itemProperties[propertyIndex].type);
-            }
-
-            sortFieldNames.append(field);
-            arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex + 2, sortFlags));
-        }
-    }
-
-    Q_UNUSED( sortByService );
     arguments->service = qt_galleryItemTypeList[m_itemIndex].service;
     arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
     arguments->identityWidth = 1;
@@ -1517,7 +1454,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             + qt_galleryItemTypeList[m_itemIndex].typeFragment
             + query
             + QLatin1String("}")
-            + qt_writeSorting(sortFieldNames, arguments->sortCriteria);
+            + qt_writeSorting(sortPropertyNames, itemProperties);
 
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
     if (qt_galleryItemTypeList[m_itemIndex].updateId & FileMask) {
@@ -1572,8 +1509,6 @@ void QGalleryTrackerSchema::populateAggregateArguments(
 
     for (int i = 0; i < type.identity.count; ++i)
         identityNames.append(type.identity[i].name);
-
-    qSort(identityNames.begin(), identityNames.end(), QGalleryReorderLessThan(sortPropertyNames));
 
     for (int i = 0; i < type.identity.count; ++i)
         identityColumns.append(identityNames.indexOf(type.identity[i].name));
@@ -1646,49 +1581,6 @@ void QGalleryTrackerSchema::populateAggregateArguments(
         }
     }
 
-    bool descending = false;
-
-    for (QStringList::const_iterator it = sortPropertyNames.begin();
-            it != sortPropertyNames.end();
-            ++it) {
-        int sortFlags = QGalleryTrackerSortCriteria::Ascending;
-
-        QString propertyName = *it;
-
-        if (propertyName.startsWith(QLatin1Char('-'))) {
-            propertyName = propertyName.mid(1);
-            sortFlags = QGalleryTrackerSortCriteria::Descending;
-
-            if (arguments->sortCriteria.isEmpty())
-                descending = true;
-
-            sortFlags |= descending
-                    ? QGalleryTrackerSortCriteria::Sorted
-                    : QGalleryTrackerSortCriteria::ReverseSorted;
-        } else {
-            if (propertyName.startsWith(QLatin1Char('+')))
-                propertyName = propertyName.mid(1);
-
-            if (arguments->sortCriteria.isEmpty())
-                descending = false;
-
-            sortFlags |= descending
-                    ? QGalleryTrackerSortCriteria::ReverseSorted
-                    : QGalleryTrackerSortCriteria::Sorted;
-        }
-
-        const int propertyIndex = properties.indexOfProperty(propertyName);
-        if (propertyIndex >= 0) {
-            const QString field = properties[propertyIndex].field;
-
-            const int fieldIndex = identityFields.indexOf(field);
-            Q_ASSERT(fieldIndex != -1);
-
-            arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
-        }
-    }
-
-    Q_UNUSED( query );
     arguments->service = type.service;
     arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
     arguments->identityWidth = identityColumns.count();
@@ -1702,7 +1594,8 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             + qt_writePropertyFunctions(identityFields, QLatin1String("x"))
             + QLatin1String(" WHERE{ ?x rdf:type ") + type.service + QLatin1String(" ")
             + query
-            + QLatin1String("}");
+            + QLatin1String("}")
+            + qt_writeSorting(sortPropertyNames, properties);
 
     if (type.identity.count == 1)
         arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0, type.prefix));
