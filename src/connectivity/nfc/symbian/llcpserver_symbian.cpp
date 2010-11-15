@@ -59,7 +59,7 @@ CLlcpServer::CLlcpServer(QtMobility::QLlcpServerPrivate& aCallback)
 */
 void CLlcpServer::ConstructL()
     {  
-    iNfcServer.Open();
+    User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
 
@@ -68,11 +68,8 @@ void CLlcpServer::ConstructL()
 */
 CLlcpServer::~CLlcpServer()
     { 
-    if ( iLlcp )
-        {
-        delete iLlcp;
-        iLlcp = NULL;
-        }
+    delete iLlcp;
+    iLlcpSocketArray.ResetAndDestroy();
     iLlcpSocketArray.Close();  
     iServiceName.Close();
     iNfcServer.Close();
@@ -96,23 +93,23 @@ CLlcpSocketType2* CLlcpServer::nextPendingConnection()
         llcpSocket = iLlcpSocketArray[0];
         iLlcpSocketArray.Remove(0);
         }
-       return llcpSocket;
+    return llcpSocket;
     }
 
-bool CLlcpServer::hasPendingConnections() const
+TBool CLlcpServer::hasPendingConnections() const
     {
     return iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
     }
 
 const TDesC8&  CLlcpServer::serviceUri() const
     {
-       return iServiceName;
+    return iServiceName;
     }
 
 /*!
     Listen to the LLCP Socket by the URI \a serviceUri .
 */
-bool CLlcpServer::Listen( const TDesC8& aServiceName)
+TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     TInt error = KErrNone; 
 
@@ -133,11 +130,11 @@ void CLlcpServer::StopListening( )
     //TRAP(error,iLlcp->StopListeningConnOrientedRequest(iServiceName)); 
     iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
     
-    iSocketListening = false;
+    iSocketListening = EFalse;
     }
 
 
-bool CLlcpServer::isListening() const
+TBool CLlcpServer::isListening() const
     {
     return iSocketListening;
     }
@@ -156,29 +153,19 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
     aConnection->AcceptConnectRequest();
 
     CLlcpSocketType2 *llcpSocket = NULL;
-    TRAP(error,llcpSocket = CLlcpSocketType2::NewL());
+    TRAP(error,llcpSocket = CLlcpSocketType2::NewL(aConnection));
     // Creating wrapper for connection. 
     if (KErrNone == error)
         {
-        error = llcpSocket->CreateLocalConnection(iServiceName);
-        if (KErrNone != error)
-            {
-            //TODO emit error
-            //iCallback.error();
-            }
-        error = llcpSocket->CreateRemoteConnection(aConnection);
-        if (KErrNone != error)
-            {
-            //TODO emit error
-            }
+ 
         iLlcpSocketArray.Append(llcpSocket);
+        //TODO  The newConnection() signal is then emitted each time a client connects to the server.
+        iCallback.invokeNewConnection();
         }
     else
         {
         //TODO emit errors
         }
-    //TODO  The newConnection() signal is then emitted each time a client connects to the server.
-    iCallback.invokeNewConnection();
+
     }
-
-
+//EOF

@@ -17,7 +17,7 @@ class CLlcpSocketType2;
  *  CLASS DECLARATION for CLlcpSocketPrivate.
  */
 class CLlcpServer : public CBase,
-                           public MLlcpConnOrientedListener
+                    public MLlcpConnOrientedListener
    {
 public:
    /*!
@@ -36,11 +36,11 @@ public:
    ~CLlcpServer();
    
 public:    
-   bool Listen( const TDesC8& aServiceName);
+   TBool Listen( const TDesC8& aServiceName);
    void StopListening();
-   bool isListening() const;
+   TBool isListening() const;
    CLlcpSocketType2 *nextPendingConnection();
-   bool hasPendingConnections() const;
+   TBool hasPendingConnections() const;
    const TDesC8& serviceUri() const;
     
 private: // From MLlcpConnOrientedListener   
@@ -56,7 +56,6 @@ private:
 private:
    
     RPointerArray<CLlcpSocketType2>  iLlcpSocketArray;
-    //CLlcpSocketType2 *iLlcpSocket;
     
    /*!
     * Handle to NFC-server.
