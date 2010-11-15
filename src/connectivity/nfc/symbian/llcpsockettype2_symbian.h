@@ -15,10 +15,13 @@
 /*!
  *   FORWARD DECLARATIONS
  */
-class COwnLlcpConnOriented;
+class CLlcpConnecterAO;
+class CLlcpSenderAO;
+class CLlcpReceiverAO;
 
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
+#include "../qllcpsocket.h"
 
 /*!
  *  CLASS DECLARATION for CLlcpSocketType2 (ConnectOriented Transportation).
@@ -31,36 +34,32 @@ public:
     */
    static CLlcpSocketType2* NewL(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
    
-   /*!
-    * Creates a new CLlcpSocketType2 object.
-    */
-   static CLlcpSocketType2* NewLC(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
-   
+   static CLlcpSocketType2* NewL(MLlcpConnOrientedTransporter* aTransporter, QtMobility::QLlcpSocketPrivate* aCallback = NULL);
+    
    /*!
     * Destructor
     */
    ~CLlcpSocketType2();
    
 public:    
-   void ConnectToService( const TDesC8& aServiceName);
+   void ConnectToServiceL( const TDesC8& aServiceName);
    void DisconnectFromService();
-   TInt StartWriteDatagram(const TDesC8& aData);
-   TInt StartReadDatagram(TInt64 aMaxSize);
-   bool TransferCompleted();
-   bool ReceiveCompleted();
-   bool ReceiveData(TDesC8& aData);
    
+   TInt StartWriteDatagramL(const TDesC8& aData);
+   bool ReceiveData(TDesC8& aData);
+
+   //for qt signals
+   void Error(QtMobility::QLlcpSocket::Error socketError);
+   void StateChanged(QtMobility::QLlcpSocket::State socketState);
+   void ReadyRead();
+   void BytesWritten(qint64 bytes);
 private:
     // Constructor
-    CLlcpSocketType2(QtMobility::QLlcpSocketPrivate* aCallback = NULL);
+    CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
     // Second phase constructor
     void ConstructL();   
     void Cleanup();
  
-public:
-   TInt CreateRemoteConnection(MLlcpConnOrientedTransporter* aConnection);
-   TInt CreateLocalConnection(const TDesC8& aServiceName);
-
 private:
    /*!
     * Handle to NFC-server.
@@ -74,50 +73,30 @@ private:
     */
    CLlcpProvider* iLlcp;
    
-   /*!
-    * Pointer to MLlcpConnLessTransporter object.
-    * Own.
-    *
-    * This is used to send data to local device.
-    */ 
-   COwnLlcpConnOriented* iLocalConnection;
+   MLlcpConnOrientedTransporter* iTransporter;
    
-   /*!
-    * Pointer to MLlcpConnLessTransporter object.
-    * Own.
-    *
-    * This is used to send data to local device.
-    */
-   COwnLlcpConnOriented* iRemoteConnection;   
+   CLlcpConnecterAO* iConnecter;
+   CLlcpSenderAO* iSender;
+   CLlcpReceiverAO* iReceiver;
    
    QtMobility::QLlcpSocketPrivate*  iCallback; // not own 
    
    };
- 
 
-/*!
- *  CLASS DECLARATION for COwnLlcpConnOriented.
- *
- */    
-class COwnLlcpConnOriented : public CActive
-    {
+class CLlcpConnecterAO : public CActive
+	{
 public:
-
    /*!
-    * Creates a new COwnLlcpConnection object.
-    */
-   static COwnLlcpConnOriented* NewL( MLlcpConnOrientedTransporter* aConnection );
+	* Creates a new CLlcpConnectAO object.
+	*/
+   static CLlcpConnecterAO* NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
    
+	 
    /*!
-    * Creates a new COwnLlcpConnection object.
-    */
-   static COwnLlcpConnOriented* NewLC( MLlcpConnOrientedTransporter* aConnection );
+	* Destructor.
+	*/
+   ~CLlcpConnecterAO();
    
-   /*!
-    * Destructor.
-    */
-   ~COwnLlcpConnOriented();
-
 public: 
    /*!
     * Disonnect with remote peer .
@@ -129,40 +108,15 @@ public:
     */
    void Connect(const TDesC8& aServiceName);
    
-   /*!
-        Transfer given data to remote device.
-    */
-   TInt Transfer( const TDesC8& aData );
-   
-   /*!
-        Cancels COwnLlcpConnOriented::Tranfer() request.
-    */ 
-   void TransferCancel();
-   
-   /*!
-        Transfer given data to remote device.
-    */
-   TInt Receive(TInt64 aMaxSize); 
-   
-   /*!
-        Cancels COwnLlcpConnection::Tranfer() request.
-    */ 
-   void ReceiveCancel();
-   
-   bool ReceiveCompeleted();
-   bool TransferCompleted();
-   
-   const TDesC8& ReceiveData() const;
-   
 public: // From CActive
 
     void RunL(); 
     void DoCancel();
-   
+    
 private:
 
     // Constructor
-    COwnLlcpConnOriented( MLlcpConnOrientedTransporter* aConnection );
+    CLlcpConnecterAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
     
     // Second phase constructor
     void ConstructL();
@@ -175,46 +129,110 @@ private:
         EConnecting,
         EConnected
         };
-    
-    enum TActionState
-        {
-        EIdle,
-        EReceiving,
-        ETransmitting
-        };
-    
     /*!
           Pointer to MLlcpConnOrientedTransporter object.
      */ 
-    MLlcpConnOrientedTransporter* iConnection;
+    MLlcpConnOrientedTransporter& iConnection;//Not Own
     
-    
-    /*!
-     * Pointer to TRequestStatus object.
-     * Not own.
-     */
-    TRequestStatus* iClientStatus;
-    
-    /*!
-     * Buffered data for transmitting data.
-     */ 
-    RBuf8 iTransmitBuf;
-    
-    /*!
-          Buffered data for receiving data
-     */
-    RBuf8 iReceiveBuf;
+    CLlcpSocketType2& iSocket;
     
     /*!
           State of LLCP connection object.
      */
     TConnectionState iConnState;
     
-    TActionState iActionState;
-    };
- 
+	};
+class CLlcpSenderAO : public CActive
+	{
+public:
+   /*!
+	* Creates a new CLlcpSenderAO object.
+	*/
+   static CLlcpSenderAO* NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
+   
+	 
+   /*!
+	* Destructor.
+	*/
+   ~CLlcpSenderAO();
+   
+public:
+   /*!
+        Transfer given data to remote device.
+    */
+   TInt Send( const TDesC8& aData );
+   
+public: // From CActive
 
+    void RunL(); 
+    void DoCancel();
+    
+private:
 
+    // Constructor
+   CLlcpSenderAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
+    
+    // Second phase constructor
+    void ConstructL();
+    
+private:
+   
+   /*!
+         Pointer to MLlcpConnOrientedTransporter object.
+    */ 
+   MLlcpConnOrientedTransporter& iConnection; //Not Own
+   
+   CLlcpSocketType2& iSocket;
+   /*!
+    * Buffered data for sending data.
+    */ 
+   RBuf8 iSendBuf;
+	};
+class CLlcpReceiverAO : public CActive
+	{
+public:
+   /*!
+	* Creates a new CLlcpReceiverAO object.
+	*/
+   static CLlcpReceiverAO* NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
+   
+	 
+   /*!
+	* Destructor.
+	*/
+   ~CLlcpReceiverAO();
+   
+public:
+   /*!
+        Receive data from remote device.
+    */
+   
+   TInt StartReceiveDatagram(TInt64 aMaxSize);
 
+public: // From CActive
+
+    void RunL(); 
+    void DoCancel();
+   
+private:
+
+    // Constructor
+   CLlcpReceiverAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket );
+    
+    // Second phase constructor
+    void ConstructL();
+private:
+   
+   /*!
+    * Pointer to MLlcpConnOrientedTransporter object.
+    */ 
+   MLlcpConnOrientedTransporter& iConnection; //Not Own
+   
+   CLlcpSocketType2& iSocket;
+   /*!
+    * Buffered data for receiving data.
+    */ 
+   RBuf8 iReceiveBuf;	
+	};
 
 #endif /* LLCPSOCKETTYPE2_SYMBIAN_H_ */

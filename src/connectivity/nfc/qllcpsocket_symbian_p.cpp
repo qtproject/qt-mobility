@@ -88,7 +88,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
      
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
-    m_symbianSocketType2->ConnectToService(serviceName);
+    m_symbianSocketType2->ConnectToServiceL(serviceName);
     m_socketType = connectionType2;
 }
 
