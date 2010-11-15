@@ -125,6 +125,7 @@ namespace
         TextId          = 0x0080,
         ArtistId = 0x0100,
         AlbumId = 0x0200,
+        AlbumArtistId = ArtistId,
         PhotoAlbumId = 0x0400
 
     };
@@ -148,6 +149,7 @@ namespace
         TextMask        = TextId,
         ArtistMask = ArtistId,
         AlbumMask = AlbumId,
+        AlbumArtistMask = AlbumArtistId,
         PhotoAlbumMask = PhotoAlbumId
 
     };
@@ -168,6 +170,8 @@ namespace
         QLatin1String itemType;
         QLatin1String service;
         QLatin1String rdfSuffix;
+        QLatin1String typeFragment;
+        const char *filterFragment;
         QGalleryTypePrefix prefix;
         QGalleryItemPropertyList itemProperties;
         QGalleryCompositePropertyList compositeProperties;
@@ -316,17 +320,36 @@ namespace
     QLatin1String(#Type), \
     QLatin1String(#RdfPrefix":"#RdfType), \
     QLatin1String("/"#RdfPrefix"#"#RdfType), \
+    QLatin1String("{?x rdf:type "#RdfPrefix":"#RdfType"}"), \
+    0, \
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
     QGalleryCompositePropertyList(qt_gallery##PropertyGroup##CompositePropertyList), \
     Type##Id, \
     Type##Mask \
 }
+
 #define QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Type, RdfPrefix, RdfType, Prefix, PropertyGroup) \
 { \
     QLatin1String(#Type), \
     QLatin1String(#RdfPrefix":"#RdfType), \
     QLatin1String("/"#RdfPrefix"#"#RdfType), \
+    QLatin1String("{?x rdf:type "#RdfPrefix":"#RdfType"}"), \
+    0, \
+    QGalleryTypePrefix(#Prefix"::"), \
+    QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
+    QGalleryCompositePropertyList(), \
+    Type##Id, \
+    Type##Mask \
+}
+
+#define QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(Type, RdfPrefix, RdfType, FilterType, FilterProperty, Prefix, PropertyGroup) \
+{ \
+    QLatin1String(#Type), \
+    QLatin1String(#RdfPrefix":"#RdfType), \
+    QLatin1String("/"#RdfPrefix"#"#RdfType), \
+    QLatin1String("{?x rdf:type "#RdfPrefix":"#RdfType"}{?y rdf:type "#FilterType"}"), \
+    #FilterProperty"(?y)=?x", \
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(qt_gallery##PropertyGroup##PropertyList), \
     QGalleryCompositePropertyList(), \
@@ -797,7 +820,8 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE(Video     , nfo, Video         , video     , Video),
     QT_GALLERY_ITEM_TYPE(Playlist  , nmm, Playlist      , playlist  , Playlist),
     QT_GALLERY_ITEM_TYPE(Text      , nfo, TextDocument  , text      , File),
-    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Artist    , nmm, Artist        , Artist    , Artist),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(Artist     , nmm, Artist, nmm:MusicPiece, nmm:performer  , artist     , Artist),
+    QT_GALLERY_ITEM_TYPE_NO_COMPOSITE_FILTERED(AlbumArtist, nmm, Artist, nmm:MusicAlbum, nmm:albumArtist, albumArtist, Artist),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(Album     , nmm, MusicAlbum    , album     , Album),
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList     , photoAlbum, PhotoAlbum)
 };
@@ -854,7 +878,6 @@ static const QGalleryAggregateProperty qt_galleryAudioGenreAggregateList[] =
 
 static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
-    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, nmm, MusicAlbum, albumArtist, AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(AudioGenre , nfo, Media     , audioGenre , AudioMask)
 };
 
@@ -1043,15 +1066,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
 {
-    QDocumentGallery::Error error = QDocumentGallery::NoError;
-
     QString query;
 
-    if (!rootItemId.isEmpty()
-            || filter.isValid()
-            || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
-        error = buildFilterQuery(&query, scope, rootItemId, filter);
-    }
+    QDocumentGallery::Error error = buildFilterQuery(&query, scope, rootItemId, filter);
 
     if (error != QDocumentGallery::NoError) {
         return error;
@@ -1075,9 +1092,21 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         arguments->service = qt_galleryItemTypeList[m_itemIndex].service;
         arguments->accumulative = false;
         arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
-        arguments->queryInterface = dbus->statisticsInterface();
-        arguments->queryMethod = QLatin1String("Get");
-        arguments->queryArguments = QVariantList();
+
+        if (qt_galleryItemTypeList[m_itemIndex].filterFragment) {
+            arguments->queryInterface = dbus->metaDataInterface();
+            arguments->queryMethod = QLatin1String("SparqlQuery");
+            arguments->queryArguments = QVariantList()
+                    << QLatin1String("SELECT COUNT(DISTINCT ?x) WHERE {")
+                    + qt_galleryItemTypeList[m_itemIndex].typeFragment
+                    + QLatin1String("FILTER(")
+                    + QLatin1String(qt_galleryItemTypeList[m_itemIndex].filterFragment)
+                    + QLatin1String(")}");
+        } else {
+            arguments->queryInterface = dbus->statisticsInterface();
+            arguments->queryMethod = QLatin1String("Get");
+            arguments->queryArguments = QVariantList();
+        }
 
         return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
@@ -1093,11 +1122,6 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
                     << QLatin1String(
                             "SELECT COUNT(DISTINCT ?x) "
                             "WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}");
-        } else { /* nmm:albumArtist */
-            Q_ASSERT( type.service == "nmm:MusicAlbum" );
-            arguments->queryArguments = QVariantList()
-                << QLatin1String("SELECT COUNT(DISTINCT ?x) "
-                                 "WHERE { ?urn rdf:type nmm:MusicAlbum. ?urn nmm:albumArtist ?x }");
         }
 
         return QDocumentGallery::NoError;
@@ -1120,18 +1144,21 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     QString rootItemStatement;
     QString filterStatement;
 
+    if (m_itemIndex != -1 && itemTypes[m_itemIndex].filterFragment)
+        filterStatement = QLatin1String(itemTypes[m_itemIndex].filterFragment);
+
     Q_UNUSED(scope);
     if (!rootItemId.isEmpty()) {
         int index;
         if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
-            if (itemTypes[index].prefix == QLatin1String("Artist::")) {
+            if (itemTypes[index].prefix == QLatin1String("artist::")) {
                 rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                if (!filterStatement.isEmpty())
+                    filterStatement += QLatin1String(" && ");
                 filterStatement
                         += QLatin1String("(nmm:performer(?track) = <")
                         + itemTypes[index].prefix.strip(rootItemId).toString()
                         + QLatin1String(">)");
-                if (filter.isValid())
-                    filterStatement += QLatin1String("&&");
             } else {
                 rootItemStatement
                         = QLatin1String("{?x nie:isLogicalPartOf <")
@@ -1142,12 +1169,12 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
         else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
             if (aggregateTypes[index].prefix == QLatin1String("audioGenre::")) {
                 rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                if (!filterStatement.isEmpty())
+                    filterStatement += QLatin1String(" && ");
                 filterStatement
                         += QLatin1String("(nfo:genre(?track) = '")
                         + aggregateTypes[index].prefix.strip(rootItemId).toString()
                         + QLatin1String("' )");
-                if (filter.isValid())
-                    filterStatement += QLatin1String("&&");
             }
         } else {
             result = QDocumentGallery::ItemIdError;
@@ -1155,6 +1182,8 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     }
 
     if (filter.isValid()) {
+        if (!filterStatement.isEmpty())
+            filterStatement += QLatin1String(" && ");
         if (m_itemIndex != -1) {
             qt_writeCondition(
                     &result,
@@ -1388,8 +1417,9 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->queryArguments = QVariantList()
             << QLatin1String("SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) ")
             + qt_writePropertyFunctions(arguments->fieldNames, QLatin1String("x"))
-            + QLatin1String(" WHERE {{ ?x rdf:type ") + service + QLatin1String("}")
-            + (!query.isEmpty() ? query : QLatin1String(""))
+            + QLatin1String(" WHERE {")
+            + qt_galleryItemTypeList[m_itemIndex].typeFragment
+            + query
             + QLatin1String("}")
             + qt_writeSorting(sortFieldNames, arguments->sortCriteria);
 
