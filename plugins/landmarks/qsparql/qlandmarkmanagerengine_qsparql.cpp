@@ -263,7 +263,9 @@ bool QLandmarkManagerEngineQsparql::saveLandmarks(QList<QLandmark> * landmarks,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString);
+    QList <QLandmarkId> addedIds;
+    QList <QLandmarkId> changedIds;
+    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString, &addedIds, &changedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::removeLandmark(const QLandmarkId &landmarkId,
@@ -278,7 +280,8 @@ bool QLandmarkManagerEngineQsparql::removeLandmarks(const QList<QLandmarkId> &la
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString);
+    QList <QLandmarkId> removedIds;
+    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString, &removedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::saveCategory(QLandmarkCategory* category,
@@ -293,7 +296,9 @@ bool QLandmarkManagerEngineQsparql::saveCategories(QList<QLandmarkCategory> * ca
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString);
+    QList<QLandmarkCategoryId> addedIds;
+    QList<QLandmarkCategoryId> changedIds;
+    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString, &addedIds, &changedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::removeCategory(const QLandmarkCategoryId &categoryId,
@@ -308,7 +313,8 @@ bool QLandmarkManagerEngineQsparql::removeCategories(const QList<QLandmarkCatego
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString);
+    QList<QLandmarkCategoryId> removedIds;
+    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString, &removedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
