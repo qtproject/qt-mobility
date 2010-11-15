@@ -62,6 +62,9 @@
         \o \l {Organizer QML Plugin}{Organizer}
         \o A QML plugin for the Organizer API.
     \row
+        \o \l {Publish and Subscribe QML Plugin}{Publish and Subscribe}
+        \o A QML plugin for the Publish and Subscribe API.
+    \row
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for 
            discovering and connecting to services.
