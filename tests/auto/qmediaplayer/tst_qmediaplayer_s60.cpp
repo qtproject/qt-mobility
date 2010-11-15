@@ -855,7 +855,10 @@ void tst_QMediaPlayer_s60::testPosition()
         QCOMPARE(spy.at(0).at(0).toLongLong(),  duration);}
 
     } else {
-        WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+        if (valid)
+            WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia)
+        else
+            WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia))
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(m_player->isSeekable(), seekable);
         QCOMPARE(m_player->mediaStatus(), status);
