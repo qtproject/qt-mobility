@@ -37,28 +37,59 @@
  **
  ** $QT_END_LICENSE$
  **
+ ** This file is part of the Ovi services plugin for the Maps and
+ ** Navigation API.  The use of these services, whether by use of the
+ ** plugin or by other means, is governed by the terms and conditions
+ ** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+ ** this package, located in the directory containing the Ovi services
+ ** plugin source code.
+ **
  ****************************************************************************/
 #ifndef QGEOMAPDATA_NOKIA_H
 #define QGEOMAPDATA_NOKIA_H
 
 #include <qgeotiledmapdata.h>
 #include <QPixmap>
+#include <QNetworkReply>
 
 QTM_USE_NAMESPACE
+
+class QGeoMappingManagerEngineNokia;
+
+struct CopyrightDescriptor
+{
+    qreal maxLevel;
+    QString alt;
+    QString label;
+    qreal minLevel;
+    QList<QGeoBoundingBox> boxes;
+};
 
 class QGeoTiledMapDataNokia: public QGeoTiledMapData
 {
 Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoMappingManagerEngine *engine);
+    QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine);
     virtual ~QGeoTiledMapDataNokia();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
+    QString getViewCopyright();
 
 private:
     Q_DISABLE_COPY(QGeoTiledMapDataNokia)
 
     QPixmap watermark;
 
+    QPixmap lastCopyright;
+    QString lastCopyrightText;
+    QRect lastViewport;
+    QRect lastCopyrightRect;
+    QNetworkAccessManager *m_networkManager;
+
+    QHash<QString, QList<CopyrightDescriptor> > copyrights;
+
+private slots:
+    void copyrightReplyFinished(QNetworkReply*);
 };
 
 #endif // QGEOMAPDATA_NOKIA_H

@@ -91,6 +91,9 @@ public:
 
     static bool preFilter(QMessageFilter &filter, QMessage::Type type);
 
+    static void extractMIMEHeaderParts(const QByteArray &mimeHeaderString, QByteArray &mimeType,
+                                       QByteArray &mimeSubType, QByteArray &charset);
+
 private:
    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
    static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);
@@ -113,6 +116,7 @@ public:
     bool insert(const QMessage &message);
     bool update(const QMessage &message);
     bool remove(const QMessageId &id);
+    bool contains(const QMessageId &id);
     QMessage message(const QMessageId &id);
 
     QMessageIdList messageIds();
@@ -124,6 +128,8 @@ public:
     QMessage* messageObject(const QMessageId &id);
     void lock();
     void unlock();
+
+    void clear();
 
 private:
     QCache<QString, QMessage> m_messageCache;

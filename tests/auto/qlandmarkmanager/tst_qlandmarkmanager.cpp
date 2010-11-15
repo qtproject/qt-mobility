@@ -123,7 +123,7 @@
 #define IMPORT_LMX
 #define IMPORT_FILE
 #define EXPORT_LMX
-//#define WAIT_FOR_FINISHED
+#define WAIT_FOR_FINISHED
 #define MISC
 #define TEST_SIGNALS
 #define TEST_DESTRUCTION
@@ -7146,6 +7146,8 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 #ifdef Q_OS_SYMBIAN
     //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
     QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QLandmarkFetchRequest fetchRequest(m_manager);
     QVERIFY(fetchRequest.start());
     qDebug() << "after first fetch request start";
@@ -7346,6 +7348,10 @@ void tst_QLandmarkManager::filterSupportLevel() {
     attributeFilter.setAttribute("description", "desc");
     attributeFilter.setAttribute("street", "abydos", QLandmarkFilter::MatchStartsWith);
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
