@@ -136,6 +136,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
              ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
