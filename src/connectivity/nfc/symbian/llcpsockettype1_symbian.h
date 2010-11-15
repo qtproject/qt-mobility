@@ -17,6 +17,8 @@
  */
 
 class COwnLlcpConnLess;
+class CLlcpSenderType1;
+class CLlcpReceiverType1;
 
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
@@ -33,8 +35,8 @@ public:
     /**
      * Called 
      */
-    virtual void ReceiveComplete() = 0;
-    virtual void WriteComplete( TInt) = 0;
+    virtual void ReceiveComplete(TInt aError) = 0;
+    virtual void WriteComplete( TInt aError, TInt aSize) = 0;
         
     };      
 
@@ -63,10 +65,8 @@ public:
    
 public:    
    TInt StartWriteDatagram(const TDesC8& aData,TInt8 portNum);
-   TInt StartReadDatagram(TInt64 aMaxSize);
+   TInt ReadDatagram(TPtr8 &aTPtr);
    bool Bind(TInt8 portNum);
-   
-   TInt64 ReceiveData(TPtr8 &aTPtr);
    
    /*!
        Returns true if at least one datagram is waiting to be read;
@@ -76,8 +76,8 @@ public:
    TInt64 PendingDatagramSize() const;
     
 private:  // from  MLlcpReadWriteCb
-     void ReceiveComplete( );
-     void WriteComplete( TInt );
+     void ReceiveComplete(TInt aError );
+     void WriteComplete( TInt aError, TInt aSize);
      
 private: // From MLlcpConnLessListener
     void FrameReceived( MLlcpConnLessTransporter* aConnection );
@@ -90,8 +90,8 @@ private:
     void ConstructL();  
     void Cleanup();   
     
-    TInt CreateLocalConnection(TInt8 portNum);
-    void CreateRemoteConnection(MLlcpConnLessTransporter* aConnection);
+    TInt CreateConnection(TInt8 portNum);
+    TInt CreateConnection(MLlcpConnLessTransporter* aConnection);
     
 private:
    /*!
@@ -112,15 +112,8 @@ private:
     *
     * This is used to send data to local device.
     */ 
-   COwnLlcpConnLess* iLocalConnection;
-   
-   /*!
-    * Pointer to MLlcpConnLessTransporter object.
-    * Own.
-    *
-    * This is used to send data to local device.
-    */
-   COwnLlcpConnLess* iRemoteConnection;   
+   COwnLlcpConnLess* iConnection;
+  
    
    bool iConnLessStarted;
    
@@ -130,8 +123,10 @@ private:
 /*!
  *  CLASS DECLARATION for COwnLlcpConnLess.
  *
- */    
-class COwnLlcpConnLess : public CActive
+ */   
+
+
+class COwnLlcpConnLess : public CBase
     {
 public:
 
@@ -171,52 +166,87 @@ public:
     */ 
    void ReceiveCancel();
     
-   void ReceiveDataFromBuf(TPtr8&);
-   
+   void ReceiveDataFromBuf(TPtr8&);  
    bool HasPendingDatagrams() const;
-   
    TInt64 PendingDatagramSize() const;
-   
-public: // From CActive
-    void RunL();
-    void DoCancel();
 
 private:
 
     // Constructor
-    COwnLlcpConnLess( MLlcpConnLessTransporter*);
-    
+    COwnLlcpConnLess( MLlcpConnLessTransporter*);   
     // Second phase constructor
     void ConstructL();
-    
+  
 private:
+    MLlcpConnLessTransporter* iConnection;  
+    CLlcpSenderType1*      iSenderAO;
+    CLlcpReceiverType1*    iReceiverAO;  
+    };
+
     
-    enum TActionState
-        {
-        EIdle,
-        EReceiving,
-        ETransmitting
-        };
+class CLlcpSenderType1 : public CActive
+    {
+public:
+     static CLlcpSenderType1* NewL(MLlcpConnLessTransporter* aConnection);
+    ~CLlcpSenderType1();
+
+public:    
+    /*!
+     * Transfer given data to remote device.
+     */
+    void Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
     
     /*!
-         Pointer to MLlcpConnLessTransporter object.
+     * Cancels COwnLlcpConnection::Tranfer() request.
      */ 
-    MLlcpConnLessTransporter* iConnection;
-
+    void TransferCancel();   
+ 
+public: // From CActive
+    void RunL();
+    void DoCancel();
+ 
+private:
+    CLlcpSenderType1(MLlcpConnLessTransporter* aConnection);
+private: 
     /*!
          Buffered data for transmitting data.
      */ 
     RBuf8 iTransmitBuf;
-    
-    /*!
-     * Buffered data for receiving data
-     */
-    RBuf8 iReceiveBuf;
-    
-    TActionState iActionState;
-    
-    MLlcpReadWriteCb* iLlcpReadWriteCb; // not own
-    
+    MLlcpReadWriteCb* iSendObserver; // not own
+    MLlcpConnLessTransporter* iConnection; // not own
     };
 
+class CLlcpReceiverType1 : public CActive
+    {
+public:
+    static CLlcpReceiverType1* NewL(MLlcpConnLessTransporter* aConnection);  
+    ~CLlcpReceiverType1();
+        
+public:   
+    /*!
+     * Starts receive data from ConnLess.
+     */
+    void Receive(MLlcpReadWriteCb&,TInt64 aMaxSize);
+    
+    /*!
+     * Cancels COwnLlcpConnection::Receive() request.
+     */ 
+    void ReceiveCancel();
+    void ReceiveDataFromBuf(TPtr8 &aTPtr);
+    
+    bool HasPendingDatagrams() const;
+    TInt64 PendingDatagramSize() const;    
+    
+public: // From CActive
+    void RunL();
+    void DoCancel();      
+    
+private:
+     CLlcpReceiverType1(MLlcpConnLessTransporter* aConnection);    
+    
+private:
+    RBuf8 iReceiveBuf;
+    MLlcpReadWriteCb* iReceiveObserver; // not own
+    MLlcpConnLessTransporter* iConnection; // not own
+    };
 #endif /* LLCPSOCKETTYPE1_SYMBIAN_H_ */
