@@ -91,7 +91,11 @@ contains(build_docs, yes) {
     SUBDIRS += doc
     include(doc/doc.pri)
 
-    OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
+    OTHER_FILES += \
+        doc/src/*.qdoc \
+        doc/src/legal/*.qdoc \
+        doc/src/examples/*.qdoc \
+        doc/src/plugins/*.qdoc
 }
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
