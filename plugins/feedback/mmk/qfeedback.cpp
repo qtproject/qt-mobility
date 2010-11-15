@@ -80,7 +80,7 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
             } else {
                 // New sound effect!
                 fi.soundEffect = new QSoundEffect(this);
-                connect(fi.soundEffect, SIGNAL(loadedChanged()), this, SLOT(soundEffectLoaded()));
+                connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectLoaded()));
                 connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
                 fi.soundEffect->setSource(effect->source());
                 mEffects.insert(effect, fi);
@@ -157,12 +157,12 @@ QStringList QFeedbackMMK::supportedMimeTypes()
 void QFeedbackMMK::soundEffectLoaded()
 {
     QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
-    if (se) {
+    if (se && se->status() == QSoundEffect::Error) {
         // Hmm, now look up the right sound effect
         QFeedbackFileEffect* fe = mEffectMap.value(se);
 
-        if (fe) {
-            reportLoadFinished(fe, se->isLoaded());
+        if (fe && fe->state() == QFeedbackEffect::Loading) {
+            reportLoadFinished(fe, false);
         }
     }
 }
