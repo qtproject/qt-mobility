@@ -256,10 +256,10 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
     QContactManager::Error error = qcfr->error();
 
     // Build an index into the results
-    QHash<QContactLocalId, QContact> idMap;
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
     if (error == QContactManager::NoError) {
-        foreach (const QContact& contact, contacts) {
-            idMap.insert(contact.localId(), contact);
+        for (int i = 0; i < contacts.size(); i++) {
+            idMap.insert(contacts[i].localId(), i);
         }
     }
 
@@ -276,8 +276,10 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
             errorMap.insert(i, QContactManager::DoesNotExistError);
             if (error == QContactManager::NoError)
                 error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(contacts[idMap[id]]);
         }
-        results.append(idMap.value(id));
     }
 
     // Update the request object
