@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,52 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef SIMULATORCAMERACAPTURESESSION_H
-#define SIMULATORCAMERACAPTURESESSION_H
+#ifndef SIMULATORCAMERAIMAGECAPTURECONTROL_H
+#define SIMULATORCAMERAIMAGECAPTURECONTROL_H
 
-#include <qmediarecordercontrol.h>
+#include "qcameraimagecapturecontrol.h"
 
-#include <QtCore/qurl.h>
-#include <QtCore/qdir.h>
+QT_USE_NAMESPACE
 
-#include "qcamera.h"
+class SimulatorCameraService;
+class SimulatorCameraSession;
+class SimulatorCameraControl;
 
-class SimulatorCameraSession : public QObject
+/*
+ * Control for image capture operations.
+ */
+class SimulatorCameraImageCaptureControl : public QCameraImageCaptureControl
 {
     Q_OBJECT
-public:
-    SimulatorCameraSession(QObject *parent);
-    ~SimulatorCameraSession();
 
-    QCamera::CaptureMode captureMode();
-    void setCaptureMode(QCamera::CaptureMode mode);
+public: // Contructors & Destrcutor
 
-    QDir defaultDir(QCamera::CaptureMode mode) const;
-    QString generateFileName(const QString &prefix, const QDir &dir, const QString &ext) const;
+    SimulatorCameraImageCaptureControl(SimulatorCameraSession *session, SimulatorCameraService *service);
+    ~SimulatorCameraImageCaptureControl();
 
-    void setImage(const QImage *image);
-    QObject *viewfinder() const;
-    void setViewfinder(QObject *viewfinder);
+public: // QCameraImageCaptureControl
 
-    int captureImage(const QString &fileName);
+    bool isReadyForCapture() const;
 
-signals:
-    void stateChanged(QCamera::State state);
-    void captureError(int id, int error, const QString &errorString);
-    void error(int error, const QString &errorString);
-    void imageExposed(int requestId);
-    void imageCaptured(int requestId, const QImage &img);
-    void imageSaved(int requestId, const QString &fileName);
-    void viewfinderChanged();
+    // Drive Mode
+    QCameraImageCapture::DriveMode driveMode() const;
+    void setDriveMode(QCameraImageCapture::DriveMode mode);
+
+    // Capture
+    int capture(const QString &fileName);
+    void cancelCapture();
 
 private:
-    QCamera::CaptureMode mCaptureMode;
+    void updateReadyForCapture(bool ready);
 
-    QObject *mViewfinder;
-    const QImage *mImage;
-
-public:
-    int mRequestId;
+    bool mReadyForCapture;
+    SimulatorCameraSession *m_session;
+    SimulatorCameraService *m_service;
+    SimulatorCameraControl *m_cameraControl;
+    QCameraImageCapture::DriveMode m_driveMode;
 };
 
-#endif // SIMULATORCAMERACAPTURESESSION_H
+#endif // SIMULATORCAMERAIMAGECAPTURECONTROL_H
