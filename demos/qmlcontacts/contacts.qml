@@ -56,7 +56,7 @@ Item {
             id: contactModel
             Component.onCompleted : {
                 if (manager == "memory")
-                    contactModel.importContacts("contents/example.vcf");
+                    contactModel.importContacts(Qt.resolvedUrl("contents/example.vcf"));
             }
         }
         TitleBar { id: titleBar; width: parent.width; height: 40; opacity: 0.9
@@ -131,11 +131,11 @@ Item {
                                 anchors.margins: 2;
 
                                 Image {
-                                    id: avatar
+                                    id: thumbnail
                                     anchors.fill: parent;
                                     anchors.margins: 2;
 
-                                    source: model.avatar;
+                                    source: model.contact.thumbnail;
                                     fillMode: Image.PreserveAspectFit
                                     smooth:true
                                 }
@@ -143,7 +143,7 @@ Item {
                                     anchors.fill: parent;
                                     anchors.margins: 2;
                                     source: "contents/images/default.svg";
-                                    opacity: avatar.status == Image.Ready ? 0 : 1;
+                                    opacity: thumbnail.status == Image.Ready ? 0 : 1;
                                 }
                             }
                         }
@@ -156,7 +156,8 @@ Item {
                                 Text {
                                     id: nameTxt
                                     y: 8;
-                                    text: model.display
+                                    //text: model.contact.displayLabel
+                                    text: model.contact.name.firstName
                                     color: "white"
                                 }
                             }
@@ -170,11 +171,11 @@ Item {
 
                                 Column {
                                     Text {
-                                        text: model.interestLabel + ": " + model.interest
+                                        text: model.contact.displayLabel
                                         color: details.textColor;
                                     }
                                     Text {
-                                        text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
+                                        text: "State:" + (model.contact.presence.state == Presence.Unknown ? "Unknown" : model.contact.presence.stateText)
                                         color: details.textColor;
                                     }
                                 }
@@ -393,6 +394,7 @@ Item {
             width: 20
             height: mainList.height
             anchors.right: views.right
+            anchors.top: titleBar.bottom
             fgColor: "white"
             // Only show the scrollbar when the view is moving.
             states: [

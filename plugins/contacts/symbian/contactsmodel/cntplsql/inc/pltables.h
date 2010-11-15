@@ -34,6 +34,8 @@
 #include <cntdef.h>
 #include <cntitem.h>
 #include <cntfldst.h>
+#include <f32file.h>
+#include <e32std.h>
 
 #include <sqldb.h>
 #include <e32hashtab.h>
@@ -124,6 +126,7 @@ public:
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
 	CContactItem* DeleteLC(TContactItemId  aItemId, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 
 	void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
@@ -145,6 +148,7 @@ private:
 	void GetTypeFlagFields(TInt aTypeFlags, TUid& aType, TUint& aAttributes, TUint& aHintFields);
 	TInt GenerateTypeFlags(TUid aType, TUint aAttributes, TUint aHintFields);
 	TUint NumDigits(TInt aNum);
+	void SetImagesDirL();
 	
 private:
 	CLplContactProperties& iProperties;
@@ -156,6 +160,8 @@ private:
 	CCntSqlStatement* iDeleteStmnt;
 	RHashMap<TInt, TPtrC> iFieldMap;
 	RSqlDatabase&  iDatabase;
+	RFs iFs;
+	TPath iImagesDirPath;
 	
 	CContactIdArray* iCardTemplateIds;
 	TContactItemId iOwnCardId;
@@ -238,6 +244,7 @@ public:
 	void CreateInDbL(CContactItem& aItem);
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 
 	CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
@@ -298,6 +305,7 @@ public:
 	void ReadL(CContactItem& aItem);
 	void UpdateL(const CContactItem& aItem);
 	void DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOccurred);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray);
 	void CreateTableL();
 	~CPplGroupsTable();
 

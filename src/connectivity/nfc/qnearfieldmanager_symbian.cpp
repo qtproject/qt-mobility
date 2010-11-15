@@ -47,11 +47,11 @@
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 
-#include <QTimer>
-
 #include <QtCore/QDebug>
 
 #include "symbian/nearfieldmanager_symbian.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QNearFieldManagerPrivateImpl
@@ -177,6 +177,16 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
     return true;
 }
 
+void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+	{
+	QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
+	}
+
+void QNearFieldManagerPrivateImpl::stopTargetDetection()
+	{
+	m_symbianbackend->stopTargetDetection();
+	}
+
 struct VerifyRecord
 {
     QNdefFilter::Record filterRecord;
@@ -197,78 +207,68 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 	}
 	m_target = target;
     emit targetDetected(target);
-    
-    //a bit of time-consuming, so give event loop some chances to handle critical event
-    QTimer::singleShot(0, this, SLOT(invokeTargetDetectedHandler()));
 }
 
 /*!
     Helper function to invoke the filtered TargetDetectedHandler for a found \a target.
 */
-void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler()
+
+void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(QNdefMessage msg)
 	{
-		if (m_target && m_target->hasNdefMessage()) {
-			for (int i = 0; i < m_registeredHandlers.count(); ++i) {
-				if (m_freeIds.contains(i))
-					continue;
+		for (int i = 0; i < m_registeredHandlers.count(); ++i) {
+			if (m_freeIds.contains(i))
+				continue;
 	
-				Callback &callback = m_registeredHandlers[i];
+			Callback &callback = m_registeredHandlers[i];
 	
-				if (callback.targetType != QNearFieldTarget::AnyTarget &&
-					m_target->type() != callback.targetType) {
-					continue;
-				}
 	
-				QList<QNdefMessage> messages = m_target->ndefMessages();
-				foreach (const QNdefMessage &message, messages) {
-					bool matched = true;
+			bool matched = true;
 	
-					QList<VerifyRecord> filterRecords;
-					for (int j = 0; j < callback.filter.recordCount(); ++j) {
-						VerifyRecord vr;
-						vr.count = 0;
-						vr.filterRecord = callback.filter.recordAt(j);
+			QList<VerifyRecord> filterRecords;
+			for (int j = 0; j < callback.filter.recordCount(); ++j) {
+				VerifyRecord vr;
+				vr.count = 0;
+				vr.filterRecord = callback.filter.recordAt(j);
 	
-						filterRecords.append(vr);
-					}
+				filterRecords.append(vr);
+			}
 	
-					foreach (const QNdefRecord &record, message) {
-						for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-							VerifyRecord &vr = filterRecords[j];
+			foreach (const QNdefRecord &record, msg) {
+				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+					VerifyRecord &vr = filterRecords[j];
 	
-							if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
-								vr.filterRecord.type == record.type()) {
-								++vr.count;
-								break;
+					if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
+						vr.filterRecord.type == record.type()) {
+						++vr.count;
+						break;
+					} else {
+						if (callback.filter.orderMatch()) {
+							if (vr.filterRecord.minimum <= vr.count &&
+								vr.count <= vr.filterRecord.maximum) {
+								continue;
 							} else {
-								if (callback.filter.orderMatch()) {
-									if (vr.filterRecord.minimum <= vr.count &&
-										vr.count <= vr.filterRecord.maximum) {
-										continue;
-									} else {
-										matched = false;
-									}
-								}
+								matched = false;
 							}
 						}
 					}
+				}
 	
-					for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-						const VerifyRecord &vr = filterRecords.at(j);
 	
-						if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
-							continue;
-						else
-							matched = false;
-					}
+				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+					const VerifyRecord &vr = filterRecords.at(j);
 	
-					if (matched) {
-						callback.method.invoke(callback.object, Q_ARG(QNdefMessage, message),
-																Q_ARG(QNearFieldTarget *, m_target));
-					}
+					if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
+						continue;
+					else
+						matched = false;
+				}
+	
+				if (matched) {
+					callback.method.invoke(callback.object, Q_ARG(QNdefMessage, msg),
+															Q_ARG(QNearFieldTarget *, NULL));
 				}
 			}
-		}	
+		}
 	}
 
 /*!
@@ -283,4 +283,6 @@ void QNearFieldManagerPrivateImpl::targetDisconnected()
 		}
 	}
 
-//#include "qnearfieldmanager_symbian.moc"
+#include "moc_qnearfieldmanager_symbian_p.cpp"
+
+QTM_END_NAMESPACE

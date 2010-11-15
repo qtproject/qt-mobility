@@ -40,33 +40,16 @@
  ****************************************************************************/
 
 #include "nearfieldtarget_symbian.h"
-#include "nearfieldtagtype1_symbian.h"
+#include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagtype2_symbian.h"
-#include "nearfieldtagtype3_symbian.h"
-#include "nearfieldtagtype4_symbian.h"
 
 MNearFieldTarget::~MNearFieldTarget()
     {
     }
 
-CNearFieldTagType1 * MNearFieldTarget::CastToTagType1()
+CNearFieldTag* MNearFieldTarget::CastToTag()
     {
-    return reinterpret_cast<CNearFieldTagType1 *>(0);
-    }
-CNearFieldTagType2 * MNearFieldTarget::CastToTagType2()
-    {
-    return reinterpret_cast<CNearFieldTagType2 *>(0);
-    }
-
-CNearFieldTagType3 * MNearFieldTarget::CastToTagType3()
-    {
-    return reinterpret_cast<CNearFieldTagType3 *>(0);
-    }
-
-CNearFieldTagType4 * MNearFieldTarget::CastToTagType4()
-    {
-    return reinterpret_cast<CNearFieldTagType4 *>(0);
+    return reinterpret_cast<CNearFieldTag *>(0);
     }
 
 CNearFieldNdefTarget * MNearFieldTarget::CastToNdefTarget()

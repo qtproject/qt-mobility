@@ -51,12 +51,6 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
 
-    QVariant v = sensor->property("returnDoubleTapEvents");
-    if (!(v.isValid()))
-        sensor->setProperty("returnDoubleTapEvents", true); //by default doubles
-
-    m_isDoubleTapSensor =  v.toBool();
-
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
                                this, SLOT(slotDataAvailable(const Tap&)))))
@@ -70,6 +64,12 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
 
 
 void maemo6tapsensor::start(){
+    QVariant v = sensor()->property("returnDoubleTapEvents");
+    if (!(v.isValid())){
+        sensor()->setProperty("returnDoubleTapEvents", true); //by default doubles
+        m_isDoubleTapSensor=true;
+    }
+    else m_isDoubleTapSensor =  v.toBool();
 
     maemo6sensorbase::start();
     // Set tap type (single/double)

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,6 +47,7 @@
 #include <qlandmark.h>
 #include <qlandmarkfilter.h>
 #include <qlandmarkfetchrequest.h>
+#include <qlandmarkmanager.h>
 
 #include "ui_landmarkfilterdialog.h"
 
@@ -56,7 +57,7 @@ class LandmarkFilterDialog : public QDialog, public Ui_LandmarkFilterDialog
 {
 Q_OBJECT
 public:
-    LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QWidget *parent =0, Qt::WindowFlags flags =0);
+    LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QLandmarkManager * manager, QWidget *parent =0, Qt::WindowFlags flags =0);
     ~LandmarkFilterDialog();
 
 signals:
@@ -79,7 +80,7 @@ private:
     bool isValidLongitude(const QString &longitude);
     QLandmarkCategoryId oldCategoryId;
     QLandmarkFetchRequest *fetchRequest;
-    QLandmarkManager manager;
+    QLandmarkManager *manager;
 };
 
 #endif

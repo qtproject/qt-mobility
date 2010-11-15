@@ -1,9 +1,9 @@
-Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of API
-improvements and bug fixes since the Qt Mobility 1.0.0-tp2 release. For
+Qt Mobility 1.1.0-beta1 is a beta release. It contains a number of API
+improvements and bug fixes since the Qt Mobility 1.1.0-tp release. For
 more details, please refer to the online documentation included in this
 distribution. The documentation is also available online:
 
-  http://qt.nokia.com/doc/qtmobility-1.0
+  http://qt.nokia.com/doc/qtmobility-1.1
 
 Some of the changes listed in this file include issue tracking numbers
 corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
@@ -20,14 +20,21 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
-
-Optimizations
-------
-
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
+ - Qt Organizer module
+    * Classes for calendar entries, todo tasks, journal entries and notes
+ - Qt Feedback module
+    * Classes for feedback (haptic/tactile feedback, general multimedia
+      feedback)
+    * Initial release has limited multimedia support
+ - Qt Gallery module
+    * Classes for searching for documents, and viewing document meta-data.
+ - Qt Maps and Navigation API
+    * Part of the Location module
+    * Class for routing, geocoding and reverse geocoding, and for
+      displaying and interacting with maps.
+ - Qt Landmarks module
+    * Part of the Location module
+    * Classes for saving, retrieving and deleting landmarks
 
 
 ****************************************************************************
@@ -44,111 +51,43 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - No changes
 
 QtContacts
 ------
 
- - foo
-    * bar
-
-QtGallery
-------
-
- - Added a QGalleryTypeRequest class.
- - Replaced the QGalleryItemList class with QGalleryResultSet.
- - Replaced the QGalleryItemListModel class with QGalleryQueryModel
- - Removed the QGalleryCountRequest and QGalleryRemoveRequest classes.
- - QGalleryAbstractRequest
-    * Replaced the result property with error and errorString properties.
-    * Added Cancelled, Finished, and Error to the Status enum.
-    * Moved the Scope enum to QGalleryQueryRequest.
- - QDocumentGallery
-    * Removed the iconImage, iconPixmap, thumbnailImage, thumbnailPixmap,
-      previewImage, previewPixmap, and photoAlbum property definitions.
-    * Added Error enum.
- - QGalleryQueryRequest
-    * Added meta-data accessor functions.
-    * Renamed the live property to autoUpdate.
- - QGalleryItemRequest
-    * Added meta-data accessor functions.
-    * Renamed the live property to autoUpdate.
- - QGalleryMetaDataFilter
-    * Removed the caseSensitivity property.
-    * Renamed the isInverted property to isNegated.
- - QGalleryProperty
-    * Added contains(), startsWith(), endsWith(), wildcard(), and regExp()
-      functions for constructing meta-data filters.
- - QML Elements
-    * Renamed GalleryQueryModel element to DocumentGalleryModel.
-    * Renamed GalleryItem to DocumentGalleryItem.
-    * Added a DocumentGalleryType element.
-    * Removed the gallery property from elements.
-    * Removed the DocumentGallery element.
-    * Removed the GalleryQueryCount element.
-    * Added Cancelled, Finished, and Error status values to
-      DocumentGalleryModel and DocumentGalleryItem.
-    * Spilt the GalleryFilter element into separate elements for each
-      filter comparator.
-    * Renamed the inverted filter property to negated.
-    * Removed the caseSensitivity filter property.
-
-QtLandmarks
-------
- - Import and export landmarks atomically for sqlite backend
- - Add format constants for importing and exporting
- - Add options to control how categories are treated
-   for importing and exporting operations
- - Change QGeoAddress::thoroughfareName to street
- - Add ability to report support levels for sort orders
- - Landmark name filter now uses match flags
- - Expand the API to now include the concept
-   of extended and custom attributes.  Modify
-   the QLandmarkAttributeFilter accordingly,
-   and also use match flags in the attribute filter.
- - Common core filed such as name, street etc
-   are now available through the QLandmark::attributes() 
-   function
- - Replace the QLandmarkFetchHint with limit and offset
- - Remove QLandmarkDistanceSort
- - QLandmark::phone renamed to QLandmark::phoneNumber
- - QGeoAddress::postOfficeBox removed
- - Add QLandmarkFetchById and QLandmarkCategoryFetchById
-   classes
- - Refactoring of sqlite backend, in particular the
-   database schema to be more extensible
- - Add symbian backend plugin
- - Add in mutexes to improve thread safety
-   for the asynchronous request classes
- - Implement signal notificiations in sqlite backend
- - Implement auto detection of file formats in sqlite backend.
- - Started adding in basic QML support for landmarks
+ - Added support for actions on contacts
+    * Provides a Qt Service FrameWork based way of invoking methods (call,
+      text etc) on contacts
+ - Extended the QContactManagerEngine interface to allow new features:
+    * Saving partial contacts
+    * Fetching a list of contacts by a list of ids
+ - Improved support for Symbian^3/^4
 
 QtLocation
 ------
 
- - Maemo 5 backend now respects preferred positioning methods
-
-QtMapsAndNavigation
-------
-
- - Added circle and text objects
- - Made objects work across the dateline and in other edge cases
- - Preliminary support for map overlays
- - Various performance improvements for the map
- - POI searching improved
-    * added optional limit and offset parameters for paging
-    * added code to combine results from plugin and landmark managers
- - Added basic QML support for mapping functionality
- - Improved the examples
-    * Cleaned up the UI
-    * Fixed some bugs which resulted in crashes
+ - Symbian, correct timespec now used in position times
+ - Symbian, position sources now selected correctly
+ - Symbian, more types of error detected and dealt with properly
+ - Maemo 5, backend now respects preferred positioning methods set by user
+ - Maemo 6, time to first fix sped up significantly
 
 QtMessaging
 ------
 
  - Harmattan backend implemented
+    * Provides unified support of SMS and E-mail messaging under maemo6 (Harmattan) platform
+    * Full support of E-mail messages based on QMF and xdg-email utility for GUI functions
+    * Full support of SMS messages
+      * sending based on libtelepathy-qt4
+      * account management based on libtelepathy-qt4
+      * storage based on libcommhistory
+      * GUI functions are based on libmessagingif
+    * no support for case-sensitive filtering for E-Mails
+    * no support of QMessageDataComparator::MatchFullWord flag in SMS and E-mail search
+    * xdg-email: if do not specify "cc" list and "bcc" list, mail composer fill these fields by the "to" list
+
  - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
  - Fix failure to compile with Qt 4.7, QTMOBILITY-390
  - Fix ORing with an empty filter results in empty filter MOBILITY-1241
@@ -158,30 +97,50 @@ QtMessaging
  - Fremantle, fix simultaneous SMS queries not possible, MOBILITY-1363
  - Fremantle, Message caching, prefilter functionality and related tests implemented
  - Fremantle, Modified and removed signals added for SMS messages
- - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
- - Symbian, fix MMS message size limit not documented, MOBILITY-1224
- - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
- - Symbian, MTM, send status signaling improved, MOBILITY-1148
+ - Symbian S60, fix keepintouch searching doesn't stop, MOBILITY-1418
+ - Symbian S60, fix MMS message size limit not documented, MOBILITY-1224
+ - Symbian S60, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian S60, fix hardcoded paths to moc files, MOBILITY-1510
+ - Symbian S60, MTM, send status signaling improved, MOBILITY-1148
  - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
  - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
+ - Symbian^3, queryMessage crashes fixed, MOBILITY-1479, QTMOBILITY-535
 
 QtMultimediaKit
 ------
 
+ - Added QCamera API
+    * Includes Linux, maemo and symbian backends.
+ - QAbstractVideoSurface
+    * Fixed assert when run against a different version of Qt to the one it was
+      compiled with.
  - QAudioOutput
     * Fix crash on Windows when initialized with an invalid format
       [QTMOBILITY-438]
+    * Fixed audio glitches in the audiooutput example [QTBUG-13751]
  - QMediaImageViewer
     * Added setVideoOutput functions.
  - QVideoWidget
     * Fixed flickering when resizing a video widget on Windows.
       [QTMOBILITY-407]
+    * Fixed sizeHint() not always being updated with gstreamer.
+      [QTMOBILITY-548]
+ - QML Elements
+    * Finalized Audio, Video and SoundEffect elements.
+
+QtOrganizer
+------
+
+ - API support for multiple collections (e.g. work calendar, home calendar etc)
+ - Other API polish and changes
 
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Documentation improvements
+ - Fix layer matching based on filters [QTMOBILITY-443]
+ - Fix QValueSpacePublisher::resetValue on Maemo5 [QTMOBILITY-400]
+ - Fix setting of empty key on Maemo5 [MOBILITY-1356]
 
 QtSensors
 ------
@@ -191,22 +150,33 @@ QtSensors
  - Document Sensors.conf [QTMOBILITY-441]
  - Document output range meta-data [QTMOBILITY-469]
  - Use prefixed includes from public headers [QTMOBILITY-476]
-
-Note that the above fixes are also in 1.0.3.
-
  - Don't allow setting invalid values for enum types [QTMOBILITY-277]
+ - Clarify the purpose of the orientation sensor [QTMOBILITY-537]
 
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - API improvements for Out-of-process component
+     * QRemoteServiceClassRegister replaced by QRemoteServiceRegister
+     * QRemoteServiceRegister::Entry has been introduced
+ - Documentation improvements
+ - Various bug fixes related to received feedback and API maturation
 
 QtSystemInfo
 ------
 
- - foo
-    * bar
+ - Provide means of detecting the Mobility version at runtime.
+ - Implement storageAdded and storageRemoved signals.
+ - Implement backend for harmattan.
+
+ - Initialization optimizations.
+ - Change QFileSystemWatcher to inotify.
+ - Various bug fixes.
+
+ - qsysinfo example
+    * make the batterystatus messagebox less annoying.
+    * new UI easiler to navigate on handsets.
+
 
 QtVersit
 -----
@@ -239,8 +209,9 @@ QtVersit
 Qt Mobility Plugins
 ------
 
- - foo
-    * bar
+ - QtMultimediaKit Media Services
+    * Disabled building the Windows Media Player plug-in by default.
+      [QTMOBILITY-554]
 
 
 ****************************************************************************
@@ -279,10 +250,3 @@ Qt Mobility for Windows CE
 
  -
 
-
-****************************************************************************
-*                          Tools                                           *
-****************************************************************************
-
- - tool
-    * foo

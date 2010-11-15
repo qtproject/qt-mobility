@@ -55,22 +55,99 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 
 QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {
+    QByteArray command;
+    command.append(char(0x30));         // READ
+    command.append(char(blockAddress)); // Block address
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return QByteArray();
+
+    quint8 acknack = response.at(0);
+
+    if (acknack != 0x0a)
+        return QByteArray();
+
+    return response;
 }
 
 bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
 {
+    if (data.length() != 4)
+        return false;
+
+    QByteArray command;
+    command.append(char(0xa2));         // WRITE
+    command.append(char(blockAddress)); // Block address
+    command.append(data);               // Data
+
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    const QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 acknack = response.at(0);
+
+    return acknack == 0x0a;
 }
 
 bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 {
+    QByteArray command;
+    command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
+    command.append(char(0xff));
+
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    QByteArray response = sendCommand(command);
+
+    if (response.isEmpty())
+        return false;
+
+    quint8 acknack = response.at(0);
+
+    if (acknack != 0x0a)
+        return false;
+
+    command.clear();
+    command.append(char(sector));               // Sector number
+    command.append(QByteArray(3, char(0x00)));  // RFU
+
+    response = sendCommand(command);
+
+    // passive ack, empty response is ack
+    return response.isEmpty();
 }
 
 QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
+    int timeout = 100 * 1000; //100ms
+    QByteArray result;
+
+    result = _sendCommand<18>(command, timeout);
+    return result;
 }
 
 QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    QList<QByteArray> result;
+    foreach(const QByteArray cmd, commands)
+    {
+        result.append(sendCommand(cmd));
+    }
 }
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
@@ -90,6 +167,7 @@ void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 
 QByteArray QNearFieldTagType2Symbian::uid() const
 {
+    return _uid();
 }
 
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"

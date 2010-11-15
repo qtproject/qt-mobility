@@ -61,16 +61,13 @@ class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 public:
 
     enum InstanceType {
-        // SharedInstance -> GlobalInstance
-        // UniqueInstance -> PrivateInstance
-        GlobalInstance = 0,  //every new request for service gets same service instance
-        PrivateInstance       //every new request for service gets new service instance
+        GlobalInstance = 0,
+        PrivateInstance
     };
 
     typedef QObject *(*CreateServiceFunc)();
     
     class Q_SERVICEFW_EXPORT Entry {
-        //TODO docs for Entry class
     public:
         Entry();
         Entry(const Entry &);
@@ -87,9 +84,8 @@ public:
         QString serviceName() const;
         QString version() const;
 
-        void setInstantiationType(QRemoteServiceRegister::InstanceType t);
+        void setInstantiationType(QRemoteServiceRegister::InstanceType type);
         QRemoteServiceRegister::InstanceType instantiationType() const;
-
 
     private:
         QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> d;
@@ -104,7 +100,6 @@ public:
         friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QRemoteServiceRegister::Entry &);
 #endif
     };
-
 
     QRemoteServiceRegister(QObject* parent = 0);
     ~QRemoteServiceRegister();
@@ -123,7 +118,7 @@ public:
 
 Q_SIGNALS:
     void allInstancesClosed();
-    void instanceClosed(const QRemoteServiceRegister::Entry&);
+    void instanceClosed(const QRemoteServiceRegister::Entry& entry);
 
 private:
 
@@ -134,10 +129,7 @@ private:
     QRemoteServiceRegisterPrivate* d;
 };
 
-//TODO rename (pending DBUS sec authentication investigation
 struct QRemoteServiceRegisterCredentials {
-    //d pointer for future additions
-    //subclassing?
     int fd;
     int pid;
     int uid;
@@ -148,7 +140,6 @@ inline uint qHash(const QRemoteServiceRegister::Entry& e) {
     //Only consider version, iface and service name -> needs to sync with operator==
     return ( qHash(e.serviceName()) + qHash(e.interfaceName()) + qHash(e.version()) );
 }
-
 
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry);

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -124,7 +124,7 @@ void EditCalendarsPage::deleteClicked()
 
     if (ret == QMessageBox::Yes) {
         m_collection = m_calendarList->currentItem()->data(ORGANIZER_CALENDAR_ROLE).value<QOrganizerCollection>();
-        if(!m_manager->removeCollection(m_collection.id().localId()))
+        if(!m_manager->removeCollection(m_collection.id()))
             QMessageBox::information(this, "Failed!", QString("Failed to remove calendar!\n(error code %1)").arg(m_manager->error()));
         showPage(m_manager);
     }
@@ -144,7 +144,7 @@ void EditCalendarsPage::itemDoubleClicked(QListWidgetItem *listItem)
     emit showAddCalendarPage(m_manager, &m_collection);
 }
 
-void EditCalendarsPage::showPage(QOrganizerItemManager *manager)
+void EditCalendarsPage::showPage(QOrganizerManager *manager)
 {
     m_manager = manager;
     m_calendarList->clear();

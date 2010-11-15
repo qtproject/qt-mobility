@@ -69,18 +69,29 @@ public:
         return _accessMethods();
     }
 
-    Type type() const { return NfcTagType3; }
-
     bool hasNdefMessage();
     QList<QNdefMessage> ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
+    quint16 systemCode();
+    QList<quint16> services();
+    int serviceMemorySize(quint16 serviceCode);
+
+    QByteArray serviceData(quint16 serviceCode);
+    void writeServiceData(quint16 serviceCode, const QByteArray &data);
+
+    virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList);
+    virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
+                        const QByteArray &data);  
+
     virtual QByteArray sendCommand(const QByteArray &command);
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
-    virtual bool selectSector(quint8 sector);
+private:
+    const QByteArray& getIDm();
+    QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks);
+    QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response);
+private:
+    QByteArray mIDm;
 };
     
 QTM_END_NAMESPACE

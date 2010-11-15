@@ -1,11 +1,6 @@
-TEMPLATE = app
-TARGET =
-DEPENDPATH += .
-INCLUDEPATH += .
-
-# Input
-SOURCES += main.cpp
-
+SOURCES = pulseaudio.cpp
+CONFIG -= qt
+LIBS +=
 CONFIG += link_pkgconfig
 
 PKGCONFIG += \

@@ -51,11 +51,13 @@
 #include <QtCore/QMetaMethod>
 #include <QPointer>
 
-QTM_USE_NAMESPACE
-
 class CNearFieldManager;
 
-class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
+
+class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 {
     Q_OBJECT
 
@@ -70,14 +72,18 @@ public:
                                       QObject *object, const QMetaMethod &method);
 
     bool unregisterTargetDetectedHandler(int id);
+    
+    void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
+    void stopTargetDetection();
 
-private://call back function by symbian backend implementation
+public://call back function by symbian backend implementation
 	void targetFound(QNearFieldTarget* target);
 	void targetDisconnected();
+
+public://call back function by symbian backend implementation
+	void invokeTargetDetectedHandler(QNdefMessage msg);
 	
-private slots:
-	void invokeTargetDetectedHandler();
-	
+
 private:
     struct Callback {
         QNearFieldTarget::Type targetType;
@@ -93,9 +99,11 @@ private:
     QList<int> m_freeIds;
     
     CNearFieldManager* m_symbianbackend;
-    friend class CNearFieldManager;
     
     QPointer<QNearFieldTarget> m_target;
 };
 
+QTM_END_NAMESPACE
+
+QT_END_HEADER
 #endif /* QNEARFIELDMANAGER_SYMBIAN_P_H_ */

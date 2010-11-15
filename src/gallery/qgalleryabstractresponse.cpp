@@ -41,6 +41,9 @@
 
 #include "qgalleryabstractresponse_p.h"
 
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qtimer.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -52,6 +55,38 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QGalleryAbstractResponse class provides a base class for
     responses to gallery requests.
+
+    QGalleryAbstractResponse is the interface through which a QAbstractGallery
+    returns a response to a QGalleryAbstractRequest.  The interface provides
+    functions to communicate the state of a response to a request, additional
+    classes derived from QGalleryAbstractRequest such as QGalleryResultSet are
+    used to communicate actual results.
+
+    New responses start in an active state indicating they have not yet
+    finished.  When a response has finished; implementers should call the
+    finish function which will put the response into an inactive state and
+    emit the finished signal.  If the idle argument of finish is true then
+    isIdle() will be true on return indicating that the response may return to
+    an active state in order to refresh its results in the future.  The resume
+    function will return the response to an active state and emit the resumed
+    signal.
+
+    If a response cannot finish successfully then implementers should call the
+    error() function and supply an error code and description.  This will finish
+    the request and set values for error() and errorString().
+
+    If a request is cancelled it will call cancel() on its response.  The
+    base implementation wsets isActive() and isIdle() to false and emits
+    the canceled signal, so implementers will need to override the default
+    implementation to actually cancel any ongoing task or suspend updates before
+    calling the base implementation.  If the response can't be canceled
+    synchronously then calling the base implementation should be deferred until
+    the cancelation has completed.  Canceling a response should not discard any
+    intermediate results already made available by the response.
+
+    Unless a response finishes synchronously and calls finish() or error()
+    from its constructor it must implement the waitForFinished() function
+    to allow clients to block while waiting for the response to finish.
 */
 
 /*!
@@ -113,7 +148,7 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 
 bool QGalleryAbstractResponse::isActive() const
 {
-    return d_func()->status == QGalleryAbstractRequest::Active;
+    return d_func()->state == QGalleryAbstractRequest::Active;
 }
 
 /*!
@@ -125,7 +160,7 @@ bool QGalleryAbstractResponse::isActive() const
 
 bool QGalleryAbstractResponse::isIdle() const
 {
-    return d_func()->status == QGalleryAbstractRequest::Idle;
+    return d_func()->state == QGalleryAbstractRequest::Idle;
 }
 
 /*!
@@ -160,16 +195,30 @@ QString QGalleryAbstractResponse::errorString() const
 
 bool QGalleryAbstractResponse::waitForFinished(int msecs)
 {
-    Q_UNUSED(msecs);
+    Q_D(QGalleryAbstractResponse);
 
-    return true;
+    if (d->state != QGalleryAbstractRequest::Active) {
+        return true;
+    } else if (d->waitLoop || msecs == 0) {
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, qMax(0, msecs));
+    } else {
+        QEventLoop waitLoop;
+
+        if (msecs > 0)
+            QTimer::singleShot(msecs, &waitLoop, SLOT(quit()));
+
+        d->waitLoop = &waitLoop;
+        waitLoop.exec(QEventLoop::ExcludeUserInputEvents);
+        d->waitLoop = 0;
+    }
+    return d->state != QGalleryAbstractRequest::Active;
 }
 
 /*!
     Cancels an active or idle gallery response.
 
     The default implementation finishes the an active response with the
-    \l QGalleryAbstractRequest::Cancelled result.  If the reponse is idle the
+    \l QGalleryAbstractRequest::Canceled result.  If the reponse is idle the
     \l finished() signal will be re-emitted with idle
 */
 
@@ -177,11 +226,14 @@ void QGalleryAbstractResponse::cancel()
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->status == QGalleryAbstractRequest::Active
-            || d->status == QGalleryAbstractRequest::Idle) {
-        d->status = QGalleryAbstractRequest::Cancelled;
+    if (d->state == QGalleryAbstractRequest::Active
+            || d->state == QGalleryAbstractRequest::Idle) {
+        d->state = QGalleryAbstractRequest::Canceled;
 
-        emit cancelled();
+        if (d->waitLoop)
+            d->waitLoop->exit();
+
+        emit canceled();
     }
 }
 
@@ -203,11 +255,14 @@ void QGalleryAbstractResponse::finish(bool idle)
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->status == QGalleryAbstractRequest::Active
-            || (d->status == QGalleryAbstractRequest::Idle && !idle)) {
-        d->status = idle
+    if (d->state == QGalleryAbstractRequest::Active
+            || (d->state == QGalleryAbstractRequest::Idle && !idle)) {
+        d->state = idle
                 ? QGalleryAbstractRequest::Idle
                 : QGalleryAbstractRequest::Finished;
+
+        if (d->waitLoop)
+            d->waitLoop->exit();
 
         emit finished();
     }
@@ -224,8 +279,8 @@ void QGalleryAbstractResponse::resume()
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->status == QGalleryAbstractRequest::Idle) {
-        d->status = QGalleryAbstractRequest::Active;
+    if (d->state == QGalleryAbstractRequest::Idle) {
+        d->state = QGalleryAbstractRequest::Active;
 
         emit resumed();
     }
@@ -241,12 +296,15 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->status == QGalleryAbstractRequest::Active
-            || d->status == QGalleryAbstractRequest::Idle) {
-        d->status = QGalleryAbstractRequest::Finished;
+    if (d->state == QGalleryAbstractRequest::Active
+            || d->state == QGalleryAbstractRequest::Idle) {
+        d->state = QGalleryAbstractRequest::Finished;
 
         d->error = error;
         d->errorString = errorString;
+
+        if (d->waitLoop)
+            d->waitLoop->exit();
 
         emit finished();
     }
@@ -265,9 +323,9 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
 */
 
 /*!
-    \fn QGalleryAbstractResponse::cancelled()
+    \fn QGalleryAbstractResponse::canceled()
 
-    Signals that a response was cancelled.
+    Signals that a response was canceled.
 */
 
 #include "moc_qgalleryabstractresponse.cpp"

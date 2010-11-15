@@ -54,7 +54,7 @@ class PathMapper;
 class CPSPathMapperServerSession : public CSession2
 {
 public:
-    CPSPathMapperServerSession(const PathMapper &aPathMapper);
+    CPSPathMapperServerSession(const PathMapper &aPathMapper, CPSPathMapperServer& aServer);
     virtual ~CPSPathMapperServerSession();
 
     void ServiceL(const RMessage2 &aMessage);
@@ -73,6 +73,7 @@ protected:
 private:
     const PathMapper &iPathMapper;
     QByteArray iResultByteArray;
+    CPSPathMapperServer& iServer;
 };
 
 QTM_END_NAMESPACE

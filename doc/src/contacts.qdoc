@@ -269,25 +269,18 @@ Clients can perform \l{QContactAction}{actions} on contacts which support
 them.  Actions are things like "Send Email" or "Dial", and can be provided
 from various sources including Qt Plugins or the Qt Mobility Service
 Framework. Every action implementation is uniquely identified by a
-combination of its name, the name of the vendor which provided the
-implementation, and the version of the implementation according to the
-vendor.  These pieces of data may be encapsulated in a
-\l{QContactActionDescriptor} which can be used to retrieve an instance of the
-implementation from a \l{QContactActionFactory}.
+combination of its name, the name of the service which provided the
+implementation, and the version of the implementation.  These pieces of data
+may be encapsulated in a \l{QContactActionDescriptor} which can be used to
+retrieve an instance of the implementation from a \l{QContactActionFactory}.
 
-The QContactAction API is still under development, and is subject to change.
-In particular, it is possible that an action will no longer report a vendor
-name (as this cannot be enforced) but instead report the Qt Mobility Service
-Framework service name which identifies it.  Also, it is possible that actions
-will be extended to be invokable on either a contact, a contact plus detail
-pair, contact plus list of details pair, or list of any of the above, and that
-parameters to invocation (for example, an attachment) may be supplied by
-clients.
+Different actions will allow (or require) different parameters to invocation.
+For example, an action which allows clients to send emails to a contact may
+be able to accept attachments as a parameter to invocation.  Each action must
+be invoked on an \l{QContactActionTarget}{action target} or list of targets,
+where a target may be a contact or a specific detail of a particular contact.
 
-Once the API has solidified, it is possible that some standard actions may be
-defined so that clients can perform certain tasks (e.g., open the default
-contact editor UI) with cross-platform code which is guaranteed to have native
-look and feel.
+See the \l{Qt Contacts Action API} documentation for more information on this topic.
 
 \section1 Non-Client-Facing API
 
@@ -317,8 +310,6 @@ Some examples of common usage of the API may be found
 \l{Contacts API Usage}{here}.
 
 \section1 Building and compiling
-
-This library requires Qt 4.6 to be installed.
 
 To build the library, see the Qt Mobility installation instructions.
 
@@ -395,4 +386,7 @@ The following sample applications show examples of API usage:
 \endlist
 See also: \l{Contacts API Usage}
 
+\section1 QML support
+
+For details on the QML support provided for the Contacts API see the documentation for the \l {Contacts QML Plugin}.
 */

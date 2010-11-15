@@ -43,19 +43,19 @@
 #include <QtGui/qwidget.h>
 #include <QtCore/qlist.h>
 
-#include "S60cameraservice.h"
-#include "S60cameracontrol.h"
-#include "S60videodevicecontrol.h"
-#include "S60camerafocuscontrol.h"
-#include "S60cameraexposurecontrol.h"
-#include "S60cameraflashcontrol.h"
-#include "S60cameraimageprocessingcontrol.h"
+#include "s60cameraservice.h"
+#include "s60cameracontrol.h"
+#include "s60videodevicecontrol.h"
+#include "s60camerafocuscontrol.h"
+#include "s60cameraexposurecontrol.h"
+#include "s60cameraflashcontrol.h"
+#include "s60cameraimageprocessingcontrol.h"
 #include "s60cameraimagecapturecontrol.h"
-#include "S60mediarecordercontrol.h"
-#include "S60videocapturesession.h"
-#include "S60imagecapturesession.h"
-#include "S60videowidgetcontrol.h"
-#include "S60mediacontainercontrol.h"
+#include "s60mediarecordercontrol.h"
+#include "s60videocapturesession.h"
+#include "s60imagecapturesession.h"
+#include "s60videowidgetcontrol.h"
+#include "s60mediacontainercontrol.h"
 #include "s60videoencodercontrol.h"
 #include "s60audioencodercontrol.h"
 #include "s60imageencodercontrol.h"
@@ -86,11 +86,6 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
         m_locksControl = new S60CameraLocksControl(m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
-
-        // TODO: To be implemented later
-        // QVideoWindowControl (for QVideoWindow)
-        // QMetaDataWriterControl
-        // QMetaDataReaderControl
 
     }
 }
@@ -123,19 +118,9 @@ S60CameraService::~S60CameraService()
     if (m_locksControl)
         delete m_locksControl;
 
-    // Delete sessions
-    if (m_videosession)
-        delete m_videosession;
-    // ImageSession deletes:
-    //    * S60CameraSettings
-    if (m_imagesession)
-        delete m_imagesession;
-
-    // Delete CameraControl to get CCamera destructed after
-    // CCameraAdvancedSettings (destroyed by ImageSession)
-    // CameraControl deletes:
-    //    * CCameraEngine
-    //    * S60CameraViewfinderEngine
+    // CameraControl destroys:
+    // * ViewfinderEngine
+    // * CameraEngine
     if (m_control)
         delete m_control;
 
@@ -145,6 +130,12 @@ S60CameraService::~S60CameraService()
         delete m_viewFinderWidget;
     if (m_rendererControl)
         delete m_rendererControl;
+
+    // Delete sessions
+    if (m_videosession)
+        delete m_videosession;
+    if (m_imagesession)
+        delete m_imagesession;
 }
 
 QMediaControl *S60CameraService::requestControl(const char *name)

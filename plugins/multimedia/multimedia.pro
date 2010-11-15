@@ -16,8 +16,9 @@ win32 {
 
 win32:!wince*:!simulator {
     contains(directshow_enabled, yes): SUBDIRS += directshow
-    contains(wmp_enabled, yes): SUBDIRS += wmp
 }
+
+simulator: SUBDIRS += simulator
 
 unix:!mac:!symbian {
     TMP_GST_LIBS = \
@@ -32,10 +33,10 @@ unix:!mac:!symbian {
     } else {
         SUBDIRS += audiocapture
     }
-    SUBDIRS += v4l
+    !maemo*:SUBDIRS += v4l
 }
 
-mac {
+mac:!simulator {
     SUBDIRS += audiocapture qt7
 }
 

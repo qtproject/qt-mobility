@@ -49,6 +49,8 @@
 #ifndef QGEOMAPPINGMANAGERENGINE_NOKIA_H
 #define QGEOMAPPINGMANAGERENGINE_NOKIA_H
 
+#include "qgeoserviceproviderplugin_nokia.h"
+
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
 
@@ -66,7 +68,7 @@ public:
                                   QString *errorString);
     ~QGeoMappingManagerEngineNokia();
 
-    QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
+    QGeoMapData* createMapData();
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
 private:
@@ -77,11 +79,11 @@ private:
     static QString sizeToStr(const QSize &size);
     static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
 
-    QNetworkAccessManager *m_nam;
+    QNetworkAccessManager *m_networkManager;
     QNetworkDiskCache *m_cache;
     QString m_host;
     QString m_token;
-    QString m_referrer;
+    QString m_referer;
 };
 
 #endif

@@ -44,23 +44,37 @@
 
 #include <qnearfieldtarget.h>
 
+#include <QtCore/QList>
+#include <QtCore/QMap>
+
 QT_BEGIN_HEADER
+
 QTM_BEGIN_NAMESPACE
-    
-class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
+
+class QNearFieldTagType3 : public QNearFieldTarget
 {
     Q_OBJECT
+
 public:
     explicit QNearFieldTagType3(QObject *parent = 0);
 
     Type type() const { return NfcTagType3; }
-    
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data);
-    virtual bool selectSector(quint8 sector);
+
+    quint16 systemCode(){};
+    QList<quint16> services(){};
+    int serviceMemorySize(quint16 serviceCode){};
+
+    QByteArray serviceData(quint16 serviceCode){};
+    void writeServiceData(quint16 serviceCode, const QByteArray &data){};
+
+    virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList){};
+    virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
+                        const QByteArray &data){};
 };
 
 QTM_END_NAMESPACE
+
 QT_END_HEADER
+
 #endif // QNEARFIELDTAGTYPE3_H
 

@@ -47,17 +47,6 @@ QNearFieldTagType3::QNearFieldTagType3(QObject *parent) : QNearFieldTarget(paren
 {
 }
 
-QByteArray QNearFieldTagType3::readBlock(quint8 blockAddress)
-{
-}
-
-bool QNearFieldTagType3::writeBlock(quint8 blockAddress, const QByteArray &data)
-{
-}
-
-bool QNearFieldTagType3::selectSector(quint8 sector)
-{
-}
 
 #include "moc_qnearfieldtagtype3.cpp"
 

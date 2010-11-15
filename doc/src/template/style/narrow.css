@@ -6,7 +6,7 @@
     }
 
     .narrow a {
-      color: #44a51c;
+      color: #00732f;
     }
 
     .narrow .header, .narrow .header .content, .narrow .footer, .narrow .wrapper {
@@ -45,12 +45,11 @@
     {
       width: auto;
       height: auto;
-      color: #363534;
+      color: #00732f;
       position: static;
       float: left;
       margin-left: 25px;
       font: bold 18px/1 Arial;
-	  width: 100%
     }
 
     .narrow .header .qtref a
@@ -62,7 +61,7 @@
     {
       background-image: none;
       text-indent: 0;
-	  width: 100%
+        width: 260px;
     }
 
     .narrow .header #nav-topright
@@ -165,7 +164,7 @@
     }
 
     .narrow .wrap .breadcrumb ul li a {
-      color: #44a51c;
+      color: #00732f;
     }
 
     .narrow .wrap .breadcrumb ul li.last a {
@@ -206,7 +205,6 @@
       *height: 17px;
       _height: 18px;
     }
-
     .narrow .indexbox .indexIcon {
       display: none;
     }
@@ -267,3 +265,6 @@
     }
 
     /* end narrow mode */
+	.creator #narrowsearch, .creator #narrowmenu{
+		display:none;
+	}

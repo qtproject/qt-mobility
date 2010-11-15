@@ -42,6 +42,7 @@
 #include "nearfieldmanager_symbian.h"
 #include "nearfieldtargetfactory_symbian.h"
 #include "../qnearfieldmanager_symbian_p.h"
+#include "qnearfieldutility_symbian.h"
 
 #include <ndefmessage.h>
 
@@ -61,29 +62,94 @@
 void CNearFieldManager::ConstructL()
     {
     User::LeaveIfError(iServer.Open());
-    //create Tag discovery api
-    iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+    
     //create LLCP provider api
     iLlcpProvider = CLlcpProvider::NewL( iServer );
+    iLlcpProvider->AddLlcpLinkListenerL( *this );
     
-    StartTagDetectionL();
     }
 
 /*!
     Start listening all type tags.
 */
-void CNearFieldManager::StartTagDetectionL()
+void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type> &aTargetTypes)
 	{
-	iTagSubscription = CNfcTagSubscription::NewL();   
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
-	iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
-	iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
-	
-	iNfcTagDiscovery->AddTagConnectionListener( *this );
-	iLlcpProvider->AddLlcpLinkListenerL( *this );
+	if (aTargetTypes.size() > 0)
+		{
+		if (!iNfcTagDiscovery)
+			{
+			iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+			}
+		else
+			{
+			iNfcTagDiscovery->RemoveTagConnectionListener();
+			}
+		User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
+		if (!iTagSubscription)
+			{
+			iTagSubscription = CNfcTagSubscription::NewL();
+			}
+		else
+			{
+			iTagSubscription->RemoveAllConnectionModes();
+			}
+		for (int i = 0; i < aTargetTypes.size(); ++i)
+			{
+			switch(aTargetTypes[i])
+				{
+				case QNearFieldTarget::NfcTagType1:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType1);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+					break;
+				case QNearFieldTarget::NfcTagType2:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType2);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+					break;
+				case QNearFieldTarget::NfcTagType3:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType3);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+					break;
+				case QNearFieldTarget::NfcTagType4:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfc14443P4);
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+					break;
+				case QNearFieldTarget::MifareTag:
+					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcMifareStd);					
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+					break;
+				case QNearFieldTarget::AnyTarget:
+					iTagSubscription->RemoveAllConnectionModes();
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+					break;
+				case QNearFieldTarget::ProprietaryTag:
+					break;
+				}
+			}
+		}
+		iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+	}
+
+/*!
+    Stop listening all type tags.
+*/
+void CNearFieldManager::stopTargetDetection()
+	{
+	if (iNfcTagDiscovery)
+		{
+		iNfcTagDiscovery->RemoveTagConnectionListener();
+		iNfcTagDiscovery->RemoveTagSubscription();
+		delete iNfcTagDiscovery;
+		iNfcTagDiscovery = NULL;
+		if (iTagSubscription)
+			{
+			delete iTagSubscription;
+			iTagSubscription = NULL;
+			}
+		}
 	}
 
 /*!
@@ -97,7 +163,7 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
 		iNdefDiscovery = CNdefDiscovery::NewL( iServer );
 		iNdefDiscovery->AddNdefMessageListener( *this );		
 		}
-	TPtrC8 type(reinterpret_cast<const TUint8*>(aType.constData()), aType.size());
+	TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
 	return iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
 	}
 
@@ -109,7 +175,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
 	{
 	if ( iNdefDiscovery )
 		{
-		TPtrC8 type(reinterpret_cast<const TUint8*>(aType.constData()), aType.size());
+		TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
 		iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
 		}
 	}
@@ -170,15 +236,18 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     {
     if ( aMessage )
         {
-        //Just omit the message, logic will handle in QNearFieldManagerPrivateImpl::targetFound()
-        delete aMessage;  
+		TRAP_IGNORE(
+			QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+			QT_TRYCATCH_LEAVING(iCallback.invokeTargetDetectedHandler(msg));
+			delete aMessage;
+		);
         }
     }
 
 /*!
     New a CNearFieldManager instance.
 */
-CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
 	: iCallback(aCallback)
     {    
     }
@@ -186,7 +255,7 @@ CNearFieldManager::CNearFieldManager(QNearFieldManagerPrivateImpl& aCallback)
 /*!
     Create a new instance of this class.
 */
-CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = NewLC(aCallback);
     CleanupStack::Pop( self );  
@@ -196,7 +265,7 @@ CNearFieldManager* CNearFieldManager::NewL(QNearFieldManagerPrivateImpl& aCallba
 /*!
     Create a new instance of this class and push to cleanup stack.
 */
-CNearFieldManager* CNearFieldManager::NewLC(QNearFieldManagerPrivateImpl& aCallback)
+CNearFieldManager* CNearFieldManager::NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = new (ELeave) CNearFieldManager(aCallback);
     CleanupStack::PushL( self );

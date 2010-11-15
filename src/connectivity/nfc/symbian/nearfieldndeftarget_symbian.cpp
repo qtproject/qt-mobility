@@ -44,10 +44,7 @@
 #include <iso14443connection.h>
 #include <ndefconnection.h>
 #include <nfctag.h>
-#include "nearfieldtagtype1_symbian.h"
-#include "nearfieldtagtype2_symbian.h"
-#include "nearfieldtagtype3_symbian.h"
-#include "nearfieldtagtype4_symbian.h"
+#include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 
 /*!
@@ -108,27 +105,13 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         }
     }
 
-CNearFieldTagType1 * CNearFieldNdefTarget::CastToTagType1()
+CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {
     if (IsConnectionOpened())
         {
         CloseConnection();
         }
-    return iTagConnection ? iTagConnection->CastToTagType1() : reinterpret_cast<CNearFieldTagType1 *>(0);
-    }
-
-CNearFieldTagType2 * CNearFieldNdefTarget::CastToTagType2()
-    {
-    return iTagConnection ? iTagConnection->CastToTagType2() : reinterpret_cast<CNearFieldTagType2 *>(0);
-    }
-CNearFieldTagType3 * CNearFieldNdefTarget::CastToTagType3()
-    {
-    return iTagConnection ? iTagConnection->CastToTagType3() : reinterpret_cast<CNearFieldTagType3 *>(0);
-    }
-
-CNearFieldTagType4 * CNearFieldNdefTarget::CastToTagType4()
-    {
-    return iTagConnection ? iTagConnection->CastToTagType4() : reinterpret_cast<CNearFieldTagType4 *>(0);
+    return iTagConnection ? iTagConnection->CastToTag() : reinterpret_cast<CNearFieldTag *>(0);
     }
 
 CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
@@ -262,4 +245,9 @@ void CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
             error = KErrInUse;
             }
         }
+    }
+
+TInt CNearFieldNdefTarget::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
+    {
+    return KErrNotSupported;
     }

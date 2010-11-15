@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -150,11 +150,11 @@ void AddCalendarPage::saveClicked()
         emit showPreviousPage();
 }
 
-void AddCalendarPage::calendarChanged(QOrganizerItemManager *manager, QOrganizerCollection& calendar)
+void AddCalendarPage::calendarChanged(QOrganizerManager *manager, QOrganizerCollection& calendar)
 {
     m_manager = manager;
     m_collection = calendar;
-    window()->setWindowTitle(!calendar.id().localId().isNull() ? "Edit calendar" : "Add calendar");
+    window()->setWindowTitle(!calendar.id().isNull() ? "Edit calendar" : "Add calendar");
 
 #if defined(Q_WS_MAEMO_5)
     // Maemo5 calendar features

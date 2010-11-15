@@ -47,7 +47,7 @@
 
 #include "qtorganizerglobal.h"                        // global exports
 
-#include "qorganizeritemabstractrequest.h"            // asynchronous request
+#include "qorganizerabstractrequest.h"                // asynchronous request
 #include "qorganizeritemdetail.h"                     // organizer item detail
 #include "qorganizeritemdetaildefinition.h"           // detail definition
 #include "qorganizeritemdetailfielddefinition.h"      // field in a detail definition
@@ -55,10 +55,10 @@
 #include "qorganizeritemfilter.h"                     // organizer item filter
 #include "qorganizeritem.h"                           // organizer item
 #include "qorganizeritemid.h"                         // organizer item identifier
-#include "qorganizeritemmanager.h"                    // manager
-#include "qorganizeritemmanagerengine.h"              // manager backend
-#include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
-#include "qorganizeritemrecurrencerule.h"             // a single recurrence rule
+#include "qorganizermanager.h"                        // manager
+#include "qorganizermanagerengine.h"                  // manager backend
+#include "qorganizermanagerenginefactory.h"           // manage backend instantiator
+#include "qorganizerrecurrencerule.h"                 // a single recurrence rule
 #include "qorganizeritemsortorder.h"                  // organizer item sorting
 
 #include "qorganizercollection.h"                     // collection of items
@@ -66,8 +66,8 @@
 
 #include "qorganizercollectionchangeset.h"            // engine-specific collection changeset
 #include "qorganizeritemchangeset.h"                  // engine-specific item changeset
-#include "qorganizercollectionenginelocalid.h"        // engine-specific collection id
-#include "qorganizeritemenginelocalid.h"              // engine specific item id
+#include "qorganizercollectionengineid.h"             // engine-specific collection id
+#include "qorganizeritemengineid.h"                   // engine specific item id
 
 #include "qorganizeritems.h"                          // item derived classes
 #include "qorganizeritemdetails.h"                    // detail derived classes

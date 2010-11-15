@@ -25,7 +25,7 @@ PUBLIC_HEADERS +=  \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
     qversitcontacthandler.h \
-    qversitresourcehandler.h \
+    qversitresourcehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -36,6 +36,7 @@ PRIVATE_HEADERS += \
     qversitwriter_p.h \
     qvcard21writer_p.h \
     qvcard30writer_p.h \
+    qvcardrestorehandler_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
     qversitdefs_p.h \
@@ -55,6 +56,7 @@ SOURCES += \
     qversitwriter_p.cpp \
     qvcard21writer.cpp \
     qvcard30writer.cpp \
+    qvcardrestorehandler_p.cpp \
     qversitcontactexporter.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \

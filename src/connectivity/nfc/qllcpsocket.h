@@ -68,7 +68,8 @@ public:
         UnconnectedState = QAbstractSocket::UnconnectedState,
         ConnectingState = QAbstractSocket::ConnectingState,
         ConnectedState = QAbstractSocket::ConnectedState,
-        ClosingState = QAbstractSocket::ClosingState
+        ClosingState = QAbstractSocket::ClosingState,
+        BoundState = QAbstractSocket::BoundState
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -86,12 +87,18 @@ public:
     qint64 writeDatagram(const QByteArray &datagram);
 
     qint64 readDatagram(char *data, qint64 maxSize,
-                        QNearFieldTarget *target = 0, quint8 *port = 0);
+                        QNearFieldTarget **target = 0, quint8 *port = 0);
     qint64 writeDatagram(const char *data, qint64 size,
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);
 
     Error error() const;
+    State state() const;
+
+    bool waitForReadyRead(int msecs = 30000);
+    bool waitForBytesWritten(int msecs = 30000);
+    virtual bool waitForConnected(int msecs = 30000);
+    virtual bool waitForDisconnected(int msecs = 30000);
 
 signals:
     void connected();

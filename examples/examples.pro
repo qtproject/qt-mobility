@@ -33,22 +33,18 @@ contains(mobility_modules,location) {
         SUBDIRS += landmarkbrowser
     }
 
-#    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
-#    	SUBDIRS += geoservicedemo \
-#                    mapviewer
-#
-#    } else {
-#        contains(mobility_modules,bearer) {
-#    	    SUBDIRS += geoservicedemo \
-#                       mapviewer
-#        }
-#    }
-
-    contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo \
+    equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS +=  flickrdemo \
+                        geoservicedemo \
+                        mapviewer
+        }
+    } else {
+        SUBDIRS +=  flickrdemo \
                     geoservicedemo \
                     mapviewer
-      }  
+    }
+
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-location
     }
@@ -134,8 +130,13 @@ contains(mobility_modules,gallery) {
 
 # Organizer API examples
 contains(mobility_modules, organizer) {
-    SUBDIRS += calendardemo
-	SUBDIRS += todo
+    SUBDIRS += calendardemo \
+	       todo
+#disable qmlorganizer, as it is not completed
+#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+#        SUBDIRS += \
+#               qmlorganizer
+#    }
 }
 
 # Feedback API examples
@@ -146,6 +147,11 @@ contains(mobility_modules, feedback) {
 # Connectivity
 contains(mobility_modules,connectivity) {
     SUBDIRS += connectivity
+}
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    !win32:SUBDIRS += btscanner btchat
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -357,6 +357,7 @@ void ContactListPage::importClicked()
                 QVersitContactImporter importer;
                 if (importer.importDocuments(reader.results())) {
                     QList<QContact> contacts = importer.contacts();
+                    qDebug() << "Contacts imported: " << contacts;
                     QMap<int, QContactManager::Error> errorMap;
                     QList<QContact>::iterator it = contacts.begin();
                     while (it != contacts.end()) {
@@ -384,6 +385,7 @@ void ContactListPage::exportClicked()
         qWarning() << "No manager selected; cannot export";
         return;
     }
+    qDebug() << "Exporting contacts: " << m_contacts;
     QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     if (docPath.isEmpty())
         docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);

@@ -4,6 +4,7 @@ include(deployment.pri)
 QT += declarative network script
 SOURCES += qmldialer.cpp
 TARGET = qmldialer
+RESOURCES += declarative-sfw-dialer.qrc
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData

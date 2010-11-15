@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>content/ProgressBar.qml</file>
+     <file>storage.qml</file>
+     <file>content/background.png</file> 
+ </qresource>
+ </RCC>

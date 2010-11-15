@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -114,7 +114,6 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
 
     setWindowTitle(tr("Flickr Demo"));
 
-    connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
 
     // QGeoPositionInfoSource
     m_location = QGeoPositionInfoSource::createDefaultSource(this);
@@ -193,7 +192,7 @@ void FlickrDemo::delayedInit()
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
 #endif
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
-        return;
+        qApp->quit();
     }
 
     m_session = new QNetworkSession(cfg, this);
@@ -206,6 +205,8 @@ void FlickrDemo::delayedInit()
 
 void FlickrDemo::networkSessionOpened()
 {
+    connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
+
     // Start listening GPS position updates
     m_location->startUpdates();
 

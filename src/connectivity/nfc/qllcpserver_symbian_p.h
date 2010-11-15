@@ -65,8 +65,8 @@ public:
 
     void close();
 
-    quint8 serverPort() const;
     QString serviceUri() const;
+    quint8 serverPort() const;
 
     bool hasPendingConnections() const;
     QLlcpSocket *nextPendingConnection();

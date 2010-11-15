@@ -29,4 +29,4 @@ SOURCES += xqsettingskey.cpp \
     xqpublishandsubscribesecuritypolicy.cpp \
 
 symbian:LIBS += -lcentralrepository \
-    -lcommonengine
+    -lCommonEngine

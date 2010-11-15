@@ -73,9 +73,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new group object.
 */
-QGeoMapGroupObject::QGeoMapGroupObject(QGeoMapData *data)
-    : QGeoMapObject(data),
-      d_ptr(new QGeoMapGroupObjectPrivate()) {}
+QGeoMapGroupObject::QGeoMapGroupObject()
+    : d_ptr(new QGeoMapGroupObjectPrivate()) {}
 
 /*!
     Destroys this group object.
@@ -197,12 +196,29 @@ void QGeoMapGroupObject::clearChildObjects()
 */
 void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 {
-    QGeoMapObject::setMapData(mapData);
+
     for (int i = 0; i < d_ptr->children.size(); ++i) {
         d_ptr->children[i]->setMapData(mapData);
-        emit childAdded(d_ptr->children[i]);
+        if (mapData)
+            emit childAdded(d_ptr->children[i]);
     }
+
+    QGeoMapObject::setMapData(mapData);
 }
+
+/*!
+\fn void QGeoMapGroupObject::childAdded(QGeoMapObject *childObject)
+
+    This signal will be emitted when the map object \a childObject
+    is added to the group.
+*/
+
+/*!
+\fn void QGeoMapGroupObject::childRemoved(QGeoMapObject *childObject)
+
+    This signal will be emitted when the map object \a childObject
+    is removed from the group.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

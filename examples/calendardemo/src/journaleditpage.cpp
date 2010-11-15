@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -128,7 +128,7 @@ JournalEditPage::~JournalEditPage()
 
 }
 
-void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal)
+void JournalEditPage::journalChanged(QOrganizerManager *manager, const QOrganizerJournal &journal)
 {
     m_manager = manager;
     m_organizerJournal = journal;
@@ -162,7 +162,7 @@ void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrga
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 
         m_calendarComboBox->addItem(visibleName);
-        if (collection.id().localId() == journal.collectionId().localId())
+        if (collection.id() == journal.collectionId())
             journalCalendarIndex = index;
         ++index;
     }
@@ -189,10 +189,10 @@ void JournalEditPage::saveClicked()
     m_organizerJournal.setDateTime(m_timeEdit->dateTime());
 
     // Save
-    if (m_calendarComboBox->currentIndex() > -1)
-        m_manager->saveItem(&m_organizerJournal, m_collections[m_calendarComboBox->currentIndex()].localId());
-    else
-        m_manager->saveItem(&m_organizerJournal);
+    if (m_calendarComboBox->currentIndex() > -1) {
+        m_organizerJournal.setCollectionId(m_collections[m_calendarComboBox->currentIndex()].id());
+    }
+    m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else
@@ -215,19 +215,15 @@ void JournalEditPage::handleAlarmIndexChanged(const QString time)
          m_organizerJournal.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setDateTime(m_timeEdit->dateTime());
+        reminder.setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(5*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(15*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(30*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(60*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(60*60);
     }
 
     m_organizerJournal.saveDetail(&reminder);

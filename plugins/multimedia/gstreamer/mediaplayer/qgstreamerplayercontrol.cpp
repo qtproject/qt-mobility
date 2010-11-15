@@ -92,6 +92,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(seekableChanged(bool)));
     connect(m_session, SIGNAL(error(int,QString)),
             this, SIGNAL(error(int,QString)));
+    connect(m_session, SIGNAL(invalidMedia()),
+            this, SLOT(handleInvalidMedia()));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -190,6 +192,9 @@ void QGstreamerPlayerControl::pause()
 
 void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
 {
+    if (m_mediaStatus == QMediaPlayer::NoMedia)
+        return;
+
     QMediaPlayer::State oldState = m_state;
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
@@ -214,6 +219,9 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
 
     if (!ok)
         return;
+
+    if (m_mediaStatus == QMediaPlayer::InvalidMedia)
+        m_mediaStatus = QMediaPlayer::LoadingMedia;
 
     m_state = newState;
 
@@ -493,4 +501,19 @@ void QGstreamerPlayerControl::closeFifo()
         m_bufferSize = 0;
         m_bufferOffset = 0;
     }
+}
+
+void QGstreamerPlayerControl::handleInvalidMedia()
+{
+    bool emitMediaStateChanged = false;
+    if (m_mediaStatus != QMediaPlayer::InvalidMedia) {
+        m_mediaStatus = QMediaPlayer::InvalidMedia;
+        emitMediaStateChanged = true;
+    }
+    if (m_state != m_session->state()) {
+        m_state = m_session->state();
+        emit stateChanged(m_state);
+    }
+    if (emitMediaStateChanged)
+        emit mediaStatusChanged(m_mediaStatus);
 }
