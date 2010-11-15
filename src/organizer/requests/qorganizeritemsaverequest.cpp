@@ -64,6 +64,12 @@ QOrganizerItemSaveRequest::QOrganizerItemSaveRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemSaveRequest::~QOrganizerItemSaveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the organizer item to be saved to \a organizeritem.
   Equivalent to calling:

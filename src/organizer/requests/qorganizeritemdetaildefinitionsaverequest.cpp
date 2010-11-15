@@ -65,6 +65,12 @@ QOrganizerItemDetailDefinitionSaveRequest::QOrganizerItemDetailDefinitionSaveReq
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemDetailDefinitionSaveRequest::~QOrganizerItemDetailDefinitionSaveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the definition to save to be the given \a definition.
   Equivalent to calling:

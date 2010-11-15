@@ -63,6 +63,12 @@ QOrganizerItemRemoveRequest::QOrganizerItemRemoveRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemRemoveRequest::~QOrganizerItemRemoveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the id of the organizer item which will be removed to \a organizeritemId.
   Equivalent to calling:
