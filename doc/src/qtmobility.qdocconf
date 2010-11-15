@@ -99,6 +99,7 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
+             ../../plugins/declarative/systeminfo \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -134,6 +135,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/systeminfo \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
