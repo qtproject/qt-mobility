@@ -601,6 +601,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     d.setUnique(false);
     retn.insert(d.name(), d);
 
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeNote, retn);
 
     // and then again for EVENTs =============================
@@ -795,6 +805,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     d.setUnique(false);
     retn.insert(d.name(), d);
 
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
 
     // and then again for EVENTOCCURRENCEs =============================
@@ -983,6 +1003,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
@@ -1180,6 +1210,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     d.setUnique(false);
     retn.insert(d.name(), d);
 
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodo, retn);
 
     // and then again for TODOOCCURRENCEs =============================
@@ -1371,6 +1411,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     d.setUnique(false);
     retn.insert(d.name(), d);
 
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn);
 
     // and then again for JOURNALs =============================
@@ -1449,6 +1499,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // tag
+    d.setName(QOrganizerItemTag::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTag::FieldTag, f);
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
