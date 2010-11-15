@@ -45,6 +45,7 @@
 #include <QtCore/QList>
 #include <QtCore/QVector>
 #include <QtCore/QHash>
+#include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
 #include <QtCore/QTimer>
@@ -96,7 +97,8 @@ private:
     // Our hacky state
     QFeedbackEffect::State mHapticState;
     QFeedbackEffect::State mFileState;
-    QTimer mHapticTimer;
+    QMap<QTimer*, const QFeedbackHapticsEffect*> mHapticEffects;
+    QTimer* ensureTimer(const QFeedbackHapticsEffect* effect);
 };
 
 

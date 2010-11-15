@@ -81,6 +81,7 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
                 // New sound effect!
                 fi.soundEffect = new QSoundEffect(this);
                 connect(fi.soundEffect, SIGNAL(loadedChanged()), this, SLOT(soundEffectLoaded()));
+                connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
                 fi.soundEffect->setSource(effect->source());
                 mEffects.insert(effect, fi);
                 mEffectMap.insert(fi.soundEffect, effect);
@@ -162,6 +163,25 @@ void QFeedbackMMK::soundEffectLoaded()
 
         if (fe) {
             reportLoadFinished(fe, se->isLoaded());
+        }
+    }
+}
+
+void QFeedbackMMK::soundEffectPlayingChanged()
+{
+    QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
+    if (se) {
+        QFeedbackFileEffect* fileEffect = mEffectMap.value(se);
+        FeedbackInfo fi = mEffects.value(fileEffect);
+
+        if (fi.soundEffect == se) {
+            fi.playing = se->isPlaying();
+
+            QFeedbackFileEffect* fe = mEffectMap.value(se);
+            // Emit the stateChanged() signal
+            if (fe) {
+                QMetaObject::invokeMethod(fe, "stateChanged");
+            }
         }
     }
 }

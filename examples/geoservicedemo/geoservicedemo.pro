@@ -13,6 +13,7 @@ SOURCES += main.cpp\
         routetab.cpp \
         geocodingtab.cpp \
         revgeocodingtab.cpp \
+        directionstab.cpp \
         servicestab.cpp 
 
 HEADERS  += routepresenter.h \
@@ -21,7 +22,10 @@ HEADERS  += routepresenter.h \
         routetab.h \
         geocodingtab.h \
         revgeocodingtab.h \
+        directionstab.h \
         servicestab.h
+
+RESOURCES += geoservicedemo.qrc
 
 include(../examples.pri)
 
