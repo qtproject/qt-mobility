@@ -46,6 +46,10 @@
 
 static const QString TestFilePath = QLatin1String("f:/data/testfiles/");
 
+// Comment out the following line if the test device does not have network
+// access.
+#define TEST_DEVICE_HAS_NETWORK_ACCESS
+
 QT_USE_NAMESPACE
 
 void tst_QMediaPlayer_s60::initTestCase_data()
@@ -194,6 +198,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << QMediaPlayer::NoError // error
     << QString(); // errorString
 
+#ifdef TEST_DEVICE_HAS_NETWORK_ACCESS
     QTest::newRow("test_stream 3gp")
     << false // valid
     << true //streamable
@@ -244,7 +249,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
     << qreal(0) // playbackRate
     << QMediaPlayer::NoError // error
     << QString(); // errorString
-
+#endif // TEST_DEVICE_HAS_NETWORK_ACCESS
 }
 
 void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
@@ -605,6 +610,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << QMediaPlayer::NoError // error
     << QString(); // errorString
 
+#ifdef TEST_DEVICE_HAS_NETWORK_ACCESS
     QTest::newRow("test_stream")
     << false // valid
     << true //streamable
@@ -621,6 +627,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
     << qreal(0) // playbackRate
     << QMediaPlayer::AccessDeniedError // error
     << QString(); // errorString
+#endif
 }
 
 void tst_QMediaPlayer_s60::initTestCase()
