@@ -210,7 +210,7 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
 */
 void CLlcpSocketType1::ReceiveComplete()
     {
-    iCallback.invokeReadyRead();
+    //iCallback.invokeReadyRead();
     }
 
 /*!
