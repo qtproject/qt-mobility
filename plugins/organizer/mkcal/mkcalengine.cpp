@@ -144,6 +144,7 @@ int MKCalEngine::managerVersion() const
 
 QList<QOrganizerItem> MKCalEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
     return internalItemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, error, GeneratedAndPersistentOccurrences);
 }
 
@@ -306,6 +307,8 @@ QList<QOrganizerItem> MKCalEngine::internalItemOccurrences(const QOrganizerItem&
 
 QList<QOrganizerItemId> MKCalEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     //small optimization for the default case when startDate, endDate, filter, sortOrders are the default values
     if (startDate.isNull() && endDate.isNull() && filter == QOrganizerItemFilter() && sortOrders.count() == 0) {
         QList<QOrganizerItemId> ids;
@@ -325,11 +328,15 @@ QList<QOrganizerItemId> MKCalEngine::itemIds(const QDateTime& startDate, const Q
 
 QList<QOrganizerItem> MKCalEngine::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     return internalItems(startDate, endDate, filter, sortOrders, fetchHint, error, false);
 }
 
 QList<QOrganizerItem> MKCalEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     return internalItems(startDate, endDate, filter, sortOrders, fetchHint, error, true);
 }
 
@@ -438,6 +445,9 @@ bool MKCalEngine::itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incid
 QOrganizerItem MKCalEngine::item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
+
+    QMutexLocker locker(&d->m_operationMutex);
+
     KCalCore::Incidence::Ptr theIncidence = incidence(itemId);
     if (!theIncidence) {
         *error = QOrganizerManager::DoesNotExistError;
@@ -454,6 +464,8 @@ QOrganizerItem MKCalEngine::item(const QOrganizerItemId& itemId, const QOrganize
 
 bool MKCalEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     if (!items) {
         *error = QOrganizerManager::BadArgumentError;
         return false;
@@ -502,6 +514,8 @@ bool MKCalEngine::internalSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem*
 
 bool MKCalEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     QOrganizerItemChangeSet ics;
     *error = QOrganizerManager::NoError;
     for (int i = 0; i < itemIds.size(); i++) {
@@ -568,6 +582,8 @@ bool MKCalEngine::removeDetailDefinition(const QString& definitionId, const QStr
 
 QOrganizerCollection MKCalEngine::defaultCollection(QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     *error = QOrganizerManager::NoError;
     mKCal::Notebook::Ptr defaultNotebook = d->m_storagePtr->defaultNotebook();
     if (defaultNotebook) {
@@ -580,6 +596,8 @@ QOrganizerCollection MKCalEngine::defaultCollection(QOrganizerManager::Error* er
 
 QOrganizerCollection MKCalEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     QString notebookUid = MKCalCollectionId::id_cast(collectionId)->uid();
     mKCal::Notebook::Ptr notebookPtr;
     if (notebookUid.isEmpty() || !(notebookPtr = d->m_storagePtr->notebook(notebookUid))) {
@@ -592,6 +610,8 @@ QOrganizerCollection MKCalEngine::collection(const QOrganizerCollectionId& colle
 
 QList<QOrganizerCollection> MKCalEngine::collections(QOrganizerManager::Error* error) const
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     QList<QOrganizerCollection> retn;
     mKCal::Notebook::List allNotebooks(d->m_storagePtr->notebooks());
     foreach(mKCal::Notebook::Ptr currNotebook, allNotebooks) {
@@ -604,6 +624,8 @@ QList<QOrganizerCollection> MKCalEngine::collections(QOrganizerManager::Error* e
 
 bool MKCalEngine::saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error)
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     *error = QOrganizerManager::NoError;
     bool retn = false;
     QOrganizerCollectionId colId = collection->id();
@@ -644,6 +666,8 @@ bool MKCalEngine::saveCollection(QOrganizerCollection* collection, QOrganizerMan
 
 bool MKCalEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
+    QMutexLocker locker(&d->m_operationMutex);
+
     // first, check to see if it's the default collection.
     if (defaultCollection(error).id() == collectionId) {
         *error = QOrganizerManager::PermissionsError;
@@ -1358,7 +1382,7 @@ QOrganizerCollection MKCalEngine::convertNotebookToCollection(mKCal::Notebook::P
     retn.setMetaData(NotebookIsShareable, notebook->isShareable());
     retn.setMetaData(NotebookIsShared, notebook->isShared());
     retn.setMetaData(NotebookIsMaster, notebook->isMaster());
-    retn.setMetaData(NotebookIsSynchronized, notebook->isSynchronized());
+//    retn.setMetaData(NotebookIsSynchronized, notebook->isSynchronized());
     retn.setMetaData(NotebookIsReadOnly, notebook->isReadOnly());
     retn.setMetaData(NotebookIsVisible, notebook->isVisible());
     retn.setMetaData(NotebookIsRunTimeOnly, notebook->isRunTimeOnly());
@@ -1413,8 +1437,8 @@ void MKCalEngine::convertCollectionToNotebook(const QOrganizerCollection& collec
         notebook->setIsShared(variant.toBool());
     if (!(variant = collection.metaData(NotebookIsMaster)).isNull())
         notebook->setIsMaster(variant.toBool());
-    if (!(variant = collection.metaData(NotebookIsSynchronized)).isNull())
-        notebook->setIsSynchronized(variant.toBool());
+/*    if (!(variant = collection.metaData(NotebookIsSynchronized)).isNull())
+        notebook->setIsSynchronized(variant.toBool());*/
     if (!(variant = collection.metaData(NotebookIsReadOnly)).isNull())
         notebook->setIsReadOnly(variant.toBool());
     if (!(variant = collection.metaData(NotebookIsVisible)).isNull())
