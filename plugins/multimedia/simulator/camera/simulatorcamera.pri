@@ -9,7 +9,9 @@ HEADERS += \
     $$PWD/simulatorcameracontrol.h \
     $$PWD/simulatorvideorenderercontrol.h \
     $$PWD/simulatorvideoinputdevicecontrol.h \
-    $$PWD/simulatorcameraimagecapturecontrol.h
+    $$PWD/simulatorcameraimagecapturecontrol.h \
+    $$PWD/simulatorcameraexposurecontrol.h \
+    $$PWD/simulatorcamerasettings.h
 
 SOURCES += \
     $$PWD/simulatorcameraservice.cpp \
@@ -17,5 +19,7 @@ SOURCES += \
     $$PWD/simulatorcameracontrol.cpp \
     $$PWD/simulatorvideorenderercontrol.cpp \
     $$PWD/simulatorvideoinputdevicecontrol.cpp \
-    $$PWD/simulatorcameraimagecapturecontrol.cpp
+    $$PWD/simulatorcameraimagecapturecontrol.cpp \
+    $$PWD/simulatorcameraexposurecontrol.cpp \
+    $$PWD/simulatorcamerasettings.cpp
 

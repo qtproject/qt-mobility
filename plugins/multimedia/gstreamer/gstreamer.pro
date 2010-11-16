@@ -38,6 +38,10 @@ maemo* {
   QT += dbus
 }
 
+maemo6 {
+    PKGCONFIG += libresourceqt1
+}
+
 # Input
 HEADERS += \
     qgstreamermessage.h \

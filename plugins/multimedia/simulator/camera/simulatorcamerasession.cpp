@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "simulatorcamerasession.h"
+#include "simulatorcamerasettings.h"
 #include "../qsimulatormultimediaconnection_p.h"
 #include <qmediarecorder.h>
 #include <qcameraimagecapture.h>
@@ -57,6 +58,7 @@ SimulatorCameraSession::SimulatorCameraSession(QObject *parent)
       mImage(0),
       mRequestId(0)
 {
+    mSettings = new SimulatorCameraSettings(this);
 }
 
 SimulatorCameraSession::~SimulatorCameraSession()
@@ -134,7 +136,12 @@ void SimulatorCameraSession::setImage(const QImage *image)
     mImage = image;
 }
 
-QObject * SimulatorCameraSession::viewfinder() const
+QObject *SimulatorCameraSession::viewfinder() const
 {
     return mViewfinder;
+}
+
+SimulatorCameraSettings *SimulatorCameraSession::settings() const
+{
+    return mSettings;
 }
