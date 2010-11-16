@@ -75,10 +75,17 @@ void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 
 QByteArray QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
 {
+    // TODO: should handle according to different command
+    _sendCommand(command, 100*1000, 512);
 }
 
 QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    QList<QByteArray> result;
+    foreach(const QByteArray cmd, commands)
+    {
+        result.append(sendCommand(cmd));
+    }
 }
 
 quint16 QNearFieldTagType3Symbian::systemCode()

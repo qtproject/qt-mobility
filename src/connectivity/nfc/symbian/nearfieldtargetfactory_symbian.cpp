@@ -45,12 +45,14 @@
 #include <nfctype2connection.h>
 #include <nfctype3connection.h>
 #include <iso14443connection.h>
+#include <mifareclassicconnection.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "qnearfieldtagtype2_symbian_p.h"
 #include "qnearfieldtagtype3_symbian_p.h"
 #include "qnearfieldtagtype4_symbian_p.h"
+#include "qnearfieldtagmifare_symbian_p.h"
 #include "qnearfieldllcpdevice_symbian_p.h"
 /*!
     \class TNearFieldTargetFactory
@@ -82,6 +84,10 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfc14443P4))
         {
         tag = CreateTagTypeL<CIso14443Connection, QNearFieldTagType4Symbian>(aNfcTag, aNfcServer, aParent);
+        }
+    else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcMifareStd))
+        {
+        tag = CreateTagTypeL<CMifareClassicConnection, QNearFieldTagMifareSymbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (!aNfcTag)
         {
