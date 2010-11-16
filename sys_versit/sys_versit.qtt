@@ -117,8 +117,10 @@ testcase = {
             }
 
             prompt(twiki('---+++ Verify Can Import vCard Contacts
-    1. If =Import Contacts...= menu is missing skip this test
-    1. Select the =Import Contacts...= menu
+
+    1. Launch application *samplephonebook*
+    1. If =Import Contacts...= menu entry is missing skip this test
+    1. Select the =Import Contacts...= menu entry
     1. Enter the vCard file name of : *' + vCardFile + '*
     1. Accept the value for vCard file (close file selection dialog)
     1. Verify that no errors are present on screen
@@ -159,8 +161,10 @@ testcase = {
             deletePath(vCardFile);
         }else{
             prompt(twiki('---+++ Verify Exported vCard Contacts
-    1. If =Export Contacts...= menu is missing skip this test
-    1. Select the =Export Contacts...= menu
+
+    1. Launch application *samplephonebook*
+    1. If =Export Contacts...= menu entry is missing skip this test
+    1. Select the =Export Contacts...= menu entry
     1. Enter name of contacts vCard as *' + vCardFile + '*
     1. Verify that *' + vCardFile + '* contains *' + name1 + '* and *' + name2 + '*
                 '));
