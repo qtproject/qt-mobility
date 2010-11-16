@@ -39,48 +39,35 @@
 **
 ****************************************************************************/
 
-#include "mediasamplevideobuffer.h"
+#ifndef QPULSEHELPER_H
+#define QPULSEHELPER_H
 
-MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
-    : QAbstractVideoBuffer(NoHandle)
-    , m_sample(sample)
-    , m_bytesPerLine(bytesPerLine)
-    , m_mapMode(NotMapped)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qaudiodeviceinfo.h"
+#include <qaudioformat.h>
+#include <pulse/pulseaudio.h>
+
+QT_BEGIN_NAMESPACE
+
+namespace QPulseAudioInternal
 {
-    m_sample->AddRef();
+pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format);
+QString stateToQString(pa_stream_state_t state);
+QString stateToQString(pa_context_state_t state);
+QString sampleFormatToQString(pa_sample_format format);
+QAudioFormat sampleSpecToAudioFormat(pa_sample_spec spec);
 }
 
-MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
-{
-    m_sample->Release();
-}
+QT_END_NAMESPACE
 
-uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
-{
-    if (m_mapMode == NotMapped && mode != NotMapped) {
-        if (numBytes)
-            *numBytes = m_sample->GetActualDataLength();
-
-        if (bytesPerLine)
-            *bytesPerLine = m_bytesPerLine;
-
-        BYTE *bytes = 0;
-
-        if (m_sample->GetPointer(&bytes) == S_OK) {
-            m_mapMode = mode;
-
-            return reinterpret_cast<uchar *>(bytes);
-        }
-    }
-    return 0;
-}
-
-void MediaSampleVideoBuffer::unmap()
-{
-    m_mapMode = NotMapped;
-}
-
-QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
-{
-    return m_mapMode;
-}
+#endif

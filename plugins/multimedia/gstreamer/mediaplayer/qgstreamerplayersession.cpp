@@ -99,6 +99,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
+     m_sendNewSegment(false),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
@@ -107,6 +108,12 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_seekable(false),
      m_lastPosition(0),
      m_duration(-1)
+#ifdef Q_WS_MAEMO_6
+     ,
+     m_resourceSet(0),
+     m_audioResource(0),
+     m_resourceState(NoResourceState)
+#endif // Q_WS_MAEMO_6
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -133,6 +140,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     m_colorSpace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-vo");
     m_videoScale = gst_element_factory_make("videoscale","videoscale-vo");
     m_nullVideoSink = gst_element_factory_make("fakesink", NULL);
+    g_object_set(G_OBJECT(m_nullVideoSink), "sync", true, NULL);
     gst_object_ref(GST_OBJECT(m_nullVideoSink));
     gst_bin_add_many(GST_BIN(m_videoOutputBin), m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
     gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
@@ -171,6 +179,22 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
         m_volume = int(volume*100);
     }
+
+#ifdef Q_WS_MAEMO_6
+    // resource policy awareness
+    m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
+    m_resourceSet->setAlwaysReply();
+
+    m_audioResource = new ResourcePolicy::AudioResource("player");
+    m_audioResource->setProcessID(QCoreApplication::applicationPid());
+    m_audioResource->setStreamTag("media.name", "*");
+    m_resourceSet->addResourceObject(m_audioResource);
+
+    connect(m_resourceSet, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)),
+            this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
+    connect(m_resourceSet, SIGNAL(lostResources()), this, SLOT(resourceLostHandler()));
+    connect(m_resourceSet, SIGNAL(resourcesReleased()), this, SLOT(resourceReleasedHandler()));
+#endif // Q_WS_MAEMO_6
 }
 
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
@@ -372,7 +396,10 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
                                   QString("playbin_%1_set").arg(dumpNum).toAscii().constData());
 #endif
 
-    GstElement *videoSink = m_renderer ? m_renderer->videoSink() : m_nullVideoSink;
+    GstElement *videoSink = 0;
+    if (m_renderer && m_renderer->isReady())
+        videoSink = m_renderer->videoSink();
+
     if (!videoSink)
         videoSink = m_nullVideoSink;
 
@@ -436,23 +463,6 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 #ifdef DEBUG_PLAYBIN
         qDebug() << "Blocking the video output pad...";
 #endif
-
-        {
-#ifdef DEBUG_PLAYBIN
-            qDebug() << "send the last new segment event to the video output...";
-#endif
-            GstEvent *event = gst_event_new_new_segment(TRUE,
-                                                        m_segment.rate,
-                                                        m_segment.format,
-                                                        m_segment.last_stop, //start
-                                                        m_segment.stop,
-                                                        m_segment.last_stop);//position
-
-            GstPad *pad = gst_element_get_static_pad(videoSink, "sink");
-            //gst_pad_send_event(pad, m_lastSegmentEvent);
-            gst_pad_send_event(pad, event);
-            gst_object_unref(GST_OBJECT(pad));
-        }
 
         //block pads, async to avoid locking in paused state
         GstPad *srcPad = gst_element_get_static_pad(m_videoIdentity, "src");
@@ -532,6 +542,10 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     // change being pending
     gst_element_set_state(m_playbin, state);
 
+    //it's necessary to send a new segment event just before
+    //the first buffer pushed to the new sink
+    m_sendNewSegment = true;
+
     //don't have to wait here, it will unblock eventually
     if (gst_pad_is_blocked(srcPad))
         gst_pad_set_blocked_async(srcPad, false, &block_pad_cb, 0);
@@ -557,18 +571,44 @@ void QGstreamerPlayerSession::processNewSegment(GstEvent *event)
 
     gst_segment_set_newsegment_full(&m_segment, update,
               rate, arate, format, start, stop, time);
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Received new segment event:";
+    qDebug() << "rate:" << m_segment.rate << arate;
+    qDebug() << "start:" << m_segment.start*1e-9;
+    qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
+    qDebug() << "stop:" << m_segment.stop*1e-9;
+#endif
 }
 
 void QGstreamerPlayerSession::processNewBuffer(GstBuffer *buf)
 {
-    GstClockTime last_stop, duration;
-    last_stop = GST_BUFFER_TIMESTAMP (buf);
-    if (GST_CLOCK_TIME_IS_VALID (last_stop)) {
-        duration = GST_BUFFER_DURATION (buf);
-        if (GST_CLOCK_TIME_IS_VALID (duration)) {
-            last_stop += duration;
-        }
-        gst_segment_set_last_stop(&m_segment, m_segment.format, last_stop);
+    if (GST_BUFFER_TIMESTAMP_IS_VALID(buf)) {
+        GstClockTime last_stop = GST_BUFFER_TIMESTAMP(buf);
+        gst_segment_set_last_stop(&m_segment, GST_FORMAT_TIME, last_stop);
+        //qDebug() << "buffer timestamp:" << GST_BUFFER_TIMESTAMP(buf)*1e-9 << position()/1000.0;
+    }
+
+    if (m_sendNewSegment) {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "send the last new segment event to the video output...";
+        qDebug() << "rate:" << m_segment.rate;
+        qDebug() << "start:" << m_segment.start*1e-9;
+        qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
+        qDebug() << "stop:" << m_segment.stop*1e-9;
+#endif
+        GstEvent *event = gst_event_new_new_segment(TRUE,
+                                                    m_segment.rate,
+                                                    m_segment.format,
+                                                    m_segment.last_stop, //start
+                                                    m_segment.stop,
+                                                    m_segment.last_stop);//position
+
+        GstPad *pad = gst_element_get_static_pad(m_videoSink, "sink");
+        gst_pad_send_event(pad, event);
+        gst_object_unref(GST_OBJECT(pad));
+
+        m_sendNewSegment = false;
     }
 }
 
@@ -584,34 +624,48 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
+#ifdef Q_WS_MAEMO_6
     if (m_playbin) {
-        m_pendingState = QMediaPlayer::PlayingState;
-        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
-            m_pendingState = m_state = QMediaPlayer::StoppedState;
-
-            emit stateChanged(m_state);
-        } else
+        if (m_resourceState == NoResourceState) {
+            m_resourceState = PendingResourceState;
+            acquireResources();
             return true;
+        }
+        else if (m_resourceState == HasResourceState) {
+            return doPlay();
+        }
     }
 
     return false;
+#else
+    return doPlay();
+#endif // Q_WS_MAEMO_6
 }
 
 bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
-        if (m_pendingVideoSink != 0)
+        if (m_pendingVideoSink != 0) {
+#ifdef Q_WS_MAEMO_6
+            if (m_resourceState == HasResourceState)
+                m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
             return true;
+        }
 
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to pause -" << m_request.url().toString();
             m_pendingState = m_state = QMediaPlayer::StoppedState;
 
             emit stateChanged(m_state);
-        } else
+        } else {
+#ifdef Q_WS_MAEMO_6
+            if (m_resourceState == HasResourceState)
+                m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
             return true;
+        }
     }
 
     return false;
@@ -630,6 +684,12 @@ void QGstreamerPlayerSession::stop()
         //we have to do it here, since gstreamer will not emit bus messages any more
         if (oldState != m_state)
             emit stateChanged(m_state);
+
+#ifdef Q_WS_MAEMO_6
+        // release the resource
+        if (m_resourceState != NoResourceState)
+            m_resourceSet->release();
+#endif // Q_WS_MAEMO_6
     }
 }
 
@@ -867,8 +927,16 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             }
                         }
 
-                        if (m_state != prevState)
+                        if (m_state != prevState) {
+#ifdef Q_WS_MAEMO_6
+                            if (m_resourceState == PendingResourceState)
+                                emit resourceLost();
+                            else
+                                emit stateChanged(m_state);
+#else
                             emit stateChanged(m_state);
+#endif //Q_WS_MAEMO_6
+                        }
 
                         break;
                     }
@@ -1222,6 +1290,57 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
     }
 }
 
+bool QGstreamerPlayerSession::doPlay()
+{
+#ifdef Q_WS_MAEMO_6
+    if (m_playbin && m_resourceState == HasResourceState) {
+#else
+    if (m_playbin) {
+#endif // Q_WS_MAEMO_6
+        m_pendingState = QMediaPlayer::PlayingState;
+        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
+            m_pendingState = m_state = QMediaPlayer::StoppedState;
+
+            emit stateChanged(m_state);
+        } else
+            return true;
+    }
+
+    return false;
+}
+
+#ifdef Q_WS_MAEMO_6
+void QGstreamerPlayerSession::acquireResources()
+{
+    m_resourceSet->addResource(ResourcePolicy::VideoPlaybackType);
+    // TODO: The video resource should be acquired only when necessary. We might play only audio...
+    m_resourceSet->update();
+    m_resourceSet->acquire();
+}
+
+void QGstreamerPlayerSession::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
+                                                      /*grantedOptionalResList*/)
+{
+    if (m_resourceState == PendingResourceState) {
+        m_resourceState = HasResourceState;
+        doPlay();
+    }
+}
+
+void QGstreamerPlayerSession::resourceReleasedHandler()
+{
+    m_resourceState = NoResourceState;
+}
+
+void QGstreamerPlayerSession::resourceLostHandler()
+{
+    if (m_resourceState == HasResourceState) {
+        m_resourceState = PendingResourceState;
+        pause();
+    }
+}
+#endif // Q_WS_MAEMO_6
 
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {

@@ -39,48 +39,51 @@
 **
 ****************************************************************************/
 
-#include "mediasamplevideobuffer.h"
+#include <qaudiodeviceinfo.h>
 
-MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
-    : QAbstractVideoBuffer(NoHandle)
-    , m_sample(sample)
-    , m_bytesPerLine(bytesPerLine)
-    , m_mapMode(NotMapped)
+#include "qpulseaudioplugin.h"
+#include "qaudiodeviceinfo_pulse.h"
+#include "qaudiooutput_pulse.h"
+#include "qaudioinput_pulse.h"
+#include "qpulseaudioengine.h"
+
+QT_BEGIN_NAMESPACE
+
+QPulseAudioPlugin::QPulseAudioPlugin(QObject *parent)
+    : QAudioSystemPlugin(parent)
+    , m_pulseEngine(QPulseAudioEngine::instance())
 {
-    m_sample->AddRef();
 }
 
-MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
+QStringList QPulseAudioPlugin::keys() const
 {
-    m_sample->Release();
+    return QStringList() << "default";
 }
 
-uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
+QList<QByteArray> QPulseAudioPlugin::availableDevices(QAudio::Mode mode) const
 {
-    if (m_mapMode == NotMapped && mode != NotMapped) {
-        if (numBytes)
-            *numBytes = m_sample->GetActualDataLength();
-
-        if (bytesPerLine)
-            *bytesPerLine = m_bytesPerLine;
-
-        BYTE *bytes = 0;
-
-        if (m_sample->GetPointer(&bytes) == S_OK) {
-            m_mapMode = mode;
-
-            return reinterpret_cast<uchar *>(bytes);
-        }
-    }
-    return 0;
+    return m_pulseEngine->availableDevices(mode);
 }
 
-void MediaSampleVideoBuffer::unmap()
+QAbstractAudioInput *QPulseAudioPlugin::createInput(const QByteArray &device)
 {
-    m_mapMode = NotMapped;
+    QPulseAudioInput *input = new QPulseAudioInput(device);
+    return input;
 }
 
-QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
+QAbstractAudioOutput *QPulseAudioPlugin::createOutput(const QByteArray &device)
 {
-    return m_mapMode;
+
+    QPulseAudioOutput *output = new QPulseAudioOutput(device);
+    return output;
 }
+
+QAbstractAudioDeviceInfo *QPulseAudioPlugin::createDeviceInfo(const QByteArray &device, QAudio::Mode mode)
+{
+    QPulseAudioDeviceInfo *deviceInfo = new QPulseAudioDeviceInfo(device, mode);
+    return deviceInfo;
+}
+
+Q_EXPORT_PLUGIN2(qtmedia_pulse, QPulseAudioPlugin);
+
+QT_END_NAMESPACE
