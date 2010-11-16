@@ -13,8 +13,7 @@ public:
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
-    void testCase1();
-    void testCase1_data();
+    void testNdefAccess();
 private:
     QNfcTagTestCommon tester;
     // Not own
@@ -35,16 +34,11 @@ void tst_qnearfieldtagtype4::cleanupTestCase()
     tester.removeTarget();
 }
 
-void tst_qnearfieldtagtype4::testCase1()
+void tst_qnearfieldtagtype4::testNdefAccess()
 {
-    QFETCH(QString, data);
-    QVERIFY2(true, "Failure");
-}
+    QCOMPARE(tagType4->type(), QNearFieldTarget::NfcTagType4);
 
-void tst_qnearfieldtagtype4::testCase1_data()
-{
-    QTest::addColumn<QString>("data");
-    QTest::newRow("0") << QString();
+    tester.NdefCheck();
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype4);

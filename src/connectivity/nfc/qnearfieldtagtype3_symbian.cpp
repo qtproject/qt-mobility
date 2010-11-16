@@ -43,6 +43,8 @@
 #include <nfctype3connection.h>
 #include <QtEndian>
 
+QTM_BEGIN_NAMESPACE
+
 QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
 {
@@ -237,3 +239,4 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
 }
      
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"
+QTM_END_NAMESPACE

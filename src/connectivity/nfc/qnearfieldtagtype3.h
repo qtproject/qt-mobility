@@ -51,7 +51,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType3 : public QNearFieldTarget
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
 {
     Q_OBJECT
 

@@ -106,7 +106,7 @@ void tst_QNearFieldManager::targetDetected()
         QCOMPARE(target->type(), type);
     }
 
-    QNfcTestUtil::ShowMessage("please remove the tag");
+    QNfcTestUtil::ShowMessage("please remove the target");
 
     QTRY_VERIFY(!targetLostSpy.isEmpty());
     
@@ -123,7 +123,7 @@ void tst_QNearFieldManager::targetDetected_data()
 {
     QTest::addColumn<QNearFieldTarget::Type>("type");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("Any tag type") << QNearFieldTarget::AnyTarget << "Please touch any tag";
+    QTest::newRow("llcp device") << QNearFieldTarget::AnyTarget << "Please touch llcp device";
     QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << "Please touch tag type1";
     QTest::newRow("NfcTagType2") << QNearFieldTarget::NfcTagType1 << "Please touch tag type2";
     QTest::newRow("NfcTagType3") << QNearFieldTarget::NfcTagType1 << "Please touch tag type3";

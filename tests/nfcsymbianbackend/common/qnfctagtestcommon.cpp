@@ -1,13 +1,19 @@
 #include "qnfctagtestcommon.h"
 #include "qnfctestcommon.h"
 #include "qnfctestutil.h"
+#include <qndefmessage.h>
+#include <qndefnfctextrecord.h>
+#include <qndefnfcurirecord.h>
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 Q_DECLARE_METATYPE(QNearFieldTarget::Type)
+Q_DECLARE_METATYPE(QNearFieldTarget::AccessMethod)
 
 QNfcTagTestCommon::QNfcTagTestCommon()
 {
     target = 0;
+    qRegisterMetaType<QNdefMessage>("QNdefMessage");
+    qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*"); 
 }
 
 QNfcTagTestCommon::~QNfcTagTestCommon()
@@ -52,9 +58,9 @@ QNearFieldTarget * QNfcTagTestCommon::touchTarget(QNearFieldTarget::Type targetT
             break;
         } 
     }
+    hint += " with NDef Message inside";
     QNfcTestUtil::ShowMessage(hint);
-    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
-
+    QTRY_VERIFY(!targetDetectedSpy.isEmpty()); 
     target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
     QVERIFY(target);
 
@@ -86,3 +92,38 @@ void QNfcTagTestCommon::removeTarget()
     manager.stopTargetDetection(); 
 }    
 
+void QNfcTagTestCommon::NdefCheck()
+{
+    // tag is already in near field
+    QCOMPARE(target->accessMethods(), QNearFieldTarget::NdefAccess|QNearFieldTarget::TagTypeSpecificAccess);
+    QVERIFY(target->hasNdefMessage());
+
+    QList<QNdefMessage> ndefMessages = target->ndefMessages();
+
+    QList<QNdefMessage> messages;
+    
+    QNdefNfcTextRecord textRecord;
+    textRecord.setText(QLatin1String("nfc tag test"));
+    QNdefMessage message;
+    message.append(textRecord);
+
+    QNdefNfcUriRecord uriRecord;
+    uriRecord.setUri(QUrl("http://qt.nokia.com"));
+    message.append(uriRecord);
+
+    QNdefRecord record;
+    record.setTypeNameFormat(QNdefRecord::ExternalRtd);
+    record.setType("com.nokia.qt:test");
+    record.setPayload(QByteArray(2, quint8(0x55)));
+    message.append(record);
+
+    messages.append(message);
+
+    target->setNdefMessages(messages);
+
+    QVERIFY(target->hasNdefMessage());
+
+    QList<QNdefMessage> storedMessages = target->ndefMessages();
+
+    QVERIFY(messages == storedMessages);
+}
