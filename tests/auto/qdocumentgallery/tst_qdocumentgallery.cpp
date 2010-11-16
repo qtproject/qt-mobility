@@ -153,6 +153,11 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::sampleRate
             << QDocumentGallery::title
             << QDocumentGallery::trackNumber
+#if !defined(Q_WS_MAEMO_6)
+            << QDocumentGallery::discNumber
+            << QDocumentGallery::lastPlayed
+            << QDocumentGallery::performer
+#endif
 #elif defined (Q_OS_SYMBIAN)
             << QDocumentGallery::duration
             << QDocumentGallery::performer
