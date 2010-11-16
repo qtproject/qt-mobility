@@ -150,11 +150,12 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void MapWidget::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
-    QPointF scenePos = event->scenePos();
-    QList<QGeoMapObject*> objectsAtCursor = mapObjectsAtScreenPosition(scenePos);
     QGeoMapObject* objectAtCursor = 0;
-    if (!objectsAtCursor.isEmpty())
-        objectAtCursor = objectsAtCursor.last();
+    if (event) {
+        QList<QGeoMapObject*> objectsAtCursor = mapObjectsAtScreenPosition(event->scenePos());
+        if (!objectsAtCursor.isEmpty())
+            objectAtCursor = objectsAtCursor.last();
+    }
 
     if (m_lastHoveredMapObject == objectAtCursor)
         return;
@@ -183,6 +184,11 @@ void MapWidget::hoveredMapObjectDestroyed()
 {
     m_lastHoveredMapObject = 0;
 }
+void MapWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+    hoverMoveEvent(0);
+}
+
 
 void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
