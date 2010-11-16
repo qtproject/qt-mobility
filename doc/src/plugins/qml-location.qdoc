@@ -57,9 +57,16 @@
 
     \section2 PositionSource
 
-    We have a Position element, a Coordinate element but where do we get the data from? It is a good idea to be able to indicate alternative sources. Perhaps instead of directly picking up GPS satellites you want to do some testing using a datafile. We may also need to manage our interaction with the source.
+    We have a Position element, a Coordinate element but where do we get the
+    data from? It is a good idea to be able to indicate alternative sources.
+    Perhaps instead of directly picking up GPS satellites you want to do
+    some testing using a datafile. We may also need to manage our
+    interaction with the source.
 
-    The \l PositionSource element provides the developer with control, within the limits allowed by the platform, of the source of the geographical data. The positional data can be sourced from a logfile which is in NMEA format.
+    The \l PositionSource element provides the developer with control,
+    within the limits allowed by the platform, of the source of the
+    geographical data. The positional data can be sourced from a logfile
+    which is in NMEA format.
 
     \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
 
