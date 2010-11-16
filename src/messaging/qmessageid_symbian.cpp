@@ -101,18 +101,28 @@ bool QMessageId::operator==(const QMessageId& other) const
 
 bool QMessageId::operator<(const QMessageId& other) const
 {
+#ifdef FREESTYLEMAILUSED
+    if (isValid() && other.isValid())
+        return (d_ptr->_id < other.d_ptr->_id);
+
+    if (isValid()) {
+        return false; // other is invalid, valid > invalid
+    } else if (other.isValid()) {
+        return true; // invalid < valid
+    }
+    return false; // both invalid
+#else
     long left = 0;
     long right = 0;
     if (d_ptr) {
         left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
-        //left = d_ptr->_id.toLong();
     }
     if (other.d_ptr) {
         right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
-        //right = other.d_ptr->_id.toLong();
     }
 
     return (left < right);
+#endif
 }
 
 QString QMessageId::toString() const

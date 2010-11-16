@@ -39,75 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ITEMLOCALID_H
-#define MAEMO6ITEMLOCALID_H
+#ifndef QSIMULATORVIDEOINPUTDEVICECONTROL_H
+#define QSIMULATORVIDEOINPUTDEVICECONTROL_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qvideodevicecontrol.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qhash.h>
 
-#include "qorganizeritemenginelocalid.h"
+#include "../qsimulatormultimediaconnection_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-class Maemo6ItemLocalId : public QOrganizerItemEngineLocalId
+class QSimulatorVideoInputDeviceControl : public QVideoDeviceControl
 {
+Q_OBJECT
 public:
-    Maemo6ItemLocalId() {}
-    Maemo6ItemLocalId(const QString& id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id == static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id < static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    uint engineLocalIdType() const
-    {
-        static uint t = qHash("maemo6");
-        return t;
-    }
-    QOrganizerItemEngineLocalId* clone() const
-    {
-        return new Maemo6ItemLocalId(m_id);
-    }
-#ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg)
-    {
-        return dbg << m_id;
-    }
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out)
-    {
-        return out << m_id;
-    }
-    QDataStream& dataStreamIn(QDataStream& in)
-    {
-        in >> m_id;
-        return in;
-    }
-#endif
-    uint hash() const
-    {
-        return qHash(m_id);
-    }
+    QSimulatorVideoInputDeviceControl(QObject *parent);
+    ~QSimulatorVideoInputDeviceControl();
 
-    QString toString() const
-    {
-        return m_id;
-    }
+    int deviceCount() const;
+
+    QString deviceName(int index) const;
+    QString deviceDescription(int index) const;
+    QIcon deviceIcon(int index) const;
+
+    int defaultDevice() const;
+    int selectedDevice() const;
+
+    void updateDeviceList(const QtMobility::QCameraData &data);
+
+public Q_SLOTS:
+    void setSelectedDevice(int index);
+    void addDevice(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
+    void removeDevice(const QString &name);
+    void changeDevice(const QString &name, const QtMobility::QCameraData::QCameraDetails &details);
 
 private:
-    QString m_id;
+    int mSelectedDevice;
+    QList<QString> mDevices;
+    QList<QString> mDescriptions;
 };
 
-#endif
+#endif // QSIMULATORVIDEOINPUTDEVICECONTROL_H

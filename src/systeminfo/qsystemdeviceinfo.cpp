@@ -381,6 +381,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 }
 
 /*!
+  \property QSystemDeviceInfo::currentPowerState
   \property QSystemDeviceInfo::powerState
   \brief the power state.
 
