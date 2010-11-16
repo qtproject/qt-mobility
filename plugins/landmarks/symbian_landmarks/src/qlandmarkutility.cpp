@@ -66,12 +66,11 @@ _LIT(KHttp, "http://");
  * convert symbian landmar to qt landmark
  * 
  */
-QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark)
+void LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark,
+    QLandmark* qtLandmark)
 {
-    QLandmark* qtLandmark = new QLandmark();
-
     if (!symbianLandmark || managerUri.size() <= 0)
-        return qtLandmark;
+        return;
 
     TBuf<KPosLmMaxTextFieldLength> lmBuf;
 
@@ -268,9 +267,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
 
         // set QGeoAddress with above info
         qtLandmark->setAddress(address);
-
     }
-    return qtLandmark;
 }
 
 /*
@@ -472,12 +469,12 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
 
 }
 
-CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
+void LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark,
+    CPosLandmark* symbianLandmark)
 {
     if (!qtLandmark)
-        return 0;
+        return;
 
-    CPosLandmark* symbianLandmark = CPosLandmark::NewL();
     CleanupStack::PushL(symbianLandmark);
 
     // set landmark name
@@ -617,7 +614,6 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     CleanupStack::Pop(symbianLandmark);
-    return symbianLandmark;
 }
 
 /*
@@ -688,13 +684,11 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
  * convert symbian category to qt category
  * 
  */
-QLandmarkCategory* LandmarkUtility::convertToQtLandmarkCategory(QString managerUri,
-    CPosLandmarkCategory* symbianLandmarkCategory)
+void LandmarkUtility::convertToQtLandmarkCategory(QString managerUri,
+    CPosLandmarkCategory* symbianLandmarkCategory, QLandmarkCategory* qtLmCategory)
 {
-    QLandmarkCategory* qtLmCategory = new QLandmarkCategory();
-
     if (!symbianLandmarkCategory || managerUri.size() <= 0)
-        return qtLmCategory;
+        return;
 
     TBuf<KPosLmMaxCategoryNameLength> lmBuf;
 
@@ -722,21 +716,18 @@ QLandmarkCategory* LandmarkUtility::convertToQtLandmarkCategory(QString managerU
         QString landmarkIcon((QChar*) (lmBuf.Ptr()), lmBuf.Length());
         qtLmCategory->setIconUrl(landmarkIcon);
     }
-
-    return qtLmCategory;
 }
 
 /*
  * convert qt category to symbian category 
  * 
  */
-CPosLandmarkCategory* LandmarkUtility::convertToSymbianLandmarkCategoryL(
-    QLandmarkCategory* qtLandmarkCategory)
+void LandmarkUtility::convertToSymbianLandmarkCategoryL(QLandmarkCategory* qtLandmarkCategory,
+    CPosLandmarkCategory* symbianLmCategory)
 {
     if (!qtLandmarkCategory)
-        return 0;
+        return;
 
-    CPosLandmarkCategory* symbianLmCategory = CPosLandmarkCategory::NewL();
     CleanupStack::PushL(symbianLmCategory);
 
     // set category name
@@ -756,9 +747,7 @@ CPosLandmarkCategory* LandmarkUtility::convertToSymbianLandmarkCategoryL(
         int iconMaskIdx = 0;
         symbianLmCategory->SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
     }
-
     CleanupStack::Pop(symbianLmCategory);
-    return symbianLmCategory;
 }
 
 /*
@@ -966,13 +955,13 @@ QList<QLandmarkCategory> LandmarkUtility::getCategoriesL(CPosLmCategoryManager* 
         TRAPD(err, symbianCat = catMgr->ReadCategoryLC(symbianCatId);
             if (symbianCat!=NULL) CleanupStack::Pop( symbianCat );)
         if (err == KErrNone) {
-            QLandmarkCategory* qtCat = convertToQtLandmarkCategory(managerUri, symbianCat);
-            qtCategoryList.append(*qtCat);
+            QLandmarkCategory qtCat;
+            convertToQtLandmarkCategory(managerUri, symbianCat, &qtCat);
+            qtCategoryList.append(qtCat);
             delete symbianCat;
             symbianCat = NULL;
         }
     }
-
     return qtCategoryList;
 }
 
