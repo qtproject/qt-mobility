@@ -42,7 +42,7 @@
 #include "nearfieldmanager_symbian.h"
 #include "nearfieldtargetfactory_symbian.h"
 #include "../qnearfieldmanager_symbian_p.h"
-#include "qnearfieldutility_symbian.h"
+#include "nearfieldutility_symbian.h"
 
 #include <ndefmessage.h>
 

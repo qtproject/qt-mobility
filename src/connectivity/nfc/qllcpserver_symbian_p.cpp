@@ -41,7 +41,7 @@
 
 #include "qllcpserver_symbian_p.h"
 #include "symbian/llcpserver_symbian.h"
-#include "symbian/qnearfieldutility_symbian.h"
+#include "symbian/nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 

@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 #include <nfctag.h>
-#include "qnearfieldutility_symbian.h"
+#include "nearfieldutility_symbian.h"
 #include "qnearfieldtagtype4_symbian_p.h"
-#include "qnearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 

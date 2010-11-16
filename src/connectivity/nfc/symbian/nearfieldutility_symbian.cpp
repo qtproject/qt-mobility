@@ -42,7 +42,7 @@
 #include <QtCore/QList>
 #include <e32base.h>
 #include "../qndefmessage.h"
-#include "qnearfieldutility_symbian.h"
+#include "nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
