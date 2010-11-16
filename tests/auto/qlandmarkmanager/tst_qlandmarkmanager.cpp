@@ -8191,7 +8191,7 @@ void tst_QLandmarkManager::removeStress()
 {
     QFETCH(QString, type);
     QList<QLandmark> lms;
-    int stressNum;
+    int stressNum = 100;
     for (int i=0; i < stressNum; ++i) {
         QLandmark lm;
         lm.setName(QString("LM") + QString::number(i));
