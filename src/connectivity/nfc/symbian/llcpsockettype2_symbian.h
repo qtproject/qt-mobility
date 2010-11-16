@@ -1,3 +1,43 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 
 #ifndef LLCPSOCKETTYPE2_SYMBIAN_H_
@@ -18,6 +58,7 @@
 class CLlcpConnecterAO;
 class CLlcpSenderAO;
 class CLlcpReceiverAO;
+class CLlcpTimer;
 
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
@@ -46,20 +87,39 @@ public:
    void DisconnectFromService();
    
    TInt StartWriteDatagramL(const TDesC8& aData);
-   bool ReceiveData(TDesC8& aData);
+   TBool ReceiveData(TDes8& aData);
+   
+   TInt64 BytesAvailable();
 
    //for qt signals
    void Error(QtMobility::QLlcpSocket::Error socketError);
-   void StateChanged(QtMobility::QLlcpSocket::State socketState);
+   void StateChangedL(QtMobility::QLlcpSocket::State socketState);
    void ReadyRead();
    void BytesWritten(qint64 bytes);
+   
+   TBool WaitForReadyRead(TInt aMilliSeconds);
+   TBool WaitForBytesWritten(TInt aMilliSeconds);
+   TBool WaitForConnected(TInt aMilliSeconds);
+   TBool WaitForDisconnected(TInt aMilliSeconds);
+   
+   RPointerArray<HBufC8>& GetAndLockBuffer();
+   void UnlockBuffer();
 private:
     // Constructor
     CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
     // Second phase constructor
     void ConstructL();   
     void Cleanup();
- 
+    enum TWaitStatus
+        {
+    	ENone,
+        EWaitForReadyRead,
+        EWaitForBytesWritten,
+        EWaitForConnected,
+        EWaitForDisconnected
+        };
+    TBool WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aSeconds);
+    void StopWaitNow(TWaitStatus aWaitStatus);
 private:
    /*!
     * Handle to NFC-server.
@@ -79,9 +139,39 @@ private:
    CLlcpSenderAO* iSender;
    CLlcpReceiverAO* iReceiver;
    
+   RPointerArray<HBufC8> iReceiveBufArray;
+   TInt iBufferOffset;
+
+   CActiveSchedulerWait * iWait;
+   TWaitStatus iWaitStatus;
+   CLlcpTimer * iTimer;
+   
    QtMobility::QLlcpSocketPrivate*  iCallback; // not own 
    
    };
+
+class CLlcpTimer : public CTimer
+    {
+public:
+
+    static CLlcpTimer* NewL(CActiveSchedulerWait & aWait); 
+    virtual ~CLlcpTimer();
+      
+    void Start(TInt aMSecs);
+    
+private: // From CTimer
+
+    void RunL();
+    
+private:
+
+    CLlcpTimer(CActiveSchedulerWait & aWait);
+    void ConstructL();    
+
+private:
+    
+    CActiveSchedulerWait& iWait; //not own
+    };
 
 class CLlcpConnecterAO : public CActive
 	{
@@ -101,12 +191,12 @@ public:
    /*!
     * Disonnect with remote peer .
     */    
-   void Disconnect();
+   void DisconnectL();
    
    /*!
     * Connect to remote peer as given service uri.
     */
-   void Connect(const TDesC8& aServiceName);
+   void ConnectL(const TDesC8& aServiceName);
    
 public: // From CActive
 
@@ -207,7 +297,7 @@ public:
         Receive data from remote device.
     */
    
-   TInt StartReceiveDatagram(TInt64 aMaxSize);
+   TInt StartReceiveDatagram();
 
 public: // From CActive
 

@@ -52,6 +52,14 @@ void CLlcpSocketType2::ConstructL()
     {
 	User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
+    
+    iWait = new (ELeave) CActiveSchedulerWait;
+    
+    if (iTransporter && iTransporter->IsConnected())//has connected llcp transporter
+    	{
+		iReceiver = CLlcpReceiverAO::NewL( *iTransporter, *this );
+		User::LeaveIfError( iReceiver->StartReceiveDatagram() );
+    	}
     }
 
 /*!
@@ -60,7 +68,8 @@ void CLlcpSocketType2::ConstructL()
 CLlcpSocketType2::CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter, QtMobility::QLlcpSocketPrivate* aCallback)
     : iLlcp( NULL ),
       iTransporter(aTransporter),
-    iCallback(aCallback)
+    iCallback(aCallback),
+    iWaitStatus(ENone)
     {
     }
 
@@ -68,14 +77,18 @@ CLlcpSocketType2::CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter, Q
 CLlcpSocketType2* CLlcpSocketType2::NewL(QtMobility::QLlcpSocketPrivate* aCallback)
     {
     CLlcpSocketType2* self = new (ELeave) CLlcpSocketType2(NULL,aCallback);
+    CleanupStack::PushL(self);
     self->ConstructL();
+    CleanupStack::Pop(self);
     return self;
     }
 
 CLlcpSocketType2* CLlcpSocketType2::NewL(MLlcpConnOrientedTransporter* aTransporter, QtMobility::QLlcpSocketPrivate* aCallback)
 	{
     CLlcpSocketType2* self = new (ELeave) CLlcpSocketType2(aTransporter,aCallback);
+    CleanupStack::PushL(self);
     self->ConstructL();
+    CleanupStack::Pop(self);
     return self;	
 	}
 
@@ -88,6 +101,10 @@ CLlcpSocketType2::~CLlcpSocketType2()
     
     delete iLlcp;
     iNfcServer.Close();
+    delete iWait;
+    delete iTimer;
+    
+    iReceiveBufArray.ResetAndDestroy();
     }
 
 /*!
@@ -99,7 +116,7 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
 		{
 		iTransporter = iLlcp->CreateConnOrientedTransporterL( KInterestingSsap );
 		iConnecter = CLlcpConnecterAO::NewL( *iTransporter, *this );
-		iConnecter->Connect( aServiceName );
+		iConnecter->ConnectL( aServiceName );
 		}
     }
 
@@ -110,7 +127,7 @@ void CLlcpSocketType2::DisconnectFromService()
     {
     if (iConnecter)
         {
-		iConnecter->Disconnect();
+		iConnecter->DisconnectL();
         }
     Cleanup();
     }
@@ -142,13 +159,132 @@ TInt CLlcpSocketType2::StartWriteDatagramL(const TDesC8& aData)
     return val; 
     }
 
-bool CLlcpSocketType2::ReceiveData(TDesC8& aData)
+TBool CLlcpSocketType2::ReceiveData(TDes8& aData)
     {
-	//TODO fetch data from cache pool
-      return EFalse;
+	//fetch data from internal buffer
+	//TODO lock the buffer
+	TBool ret = EFalse;
+    HBufC8* buf = NULL;
+    TInt extBufferLength = aData.Length();
+    TInt extBufferMaxLength = aData.MaxLength();
+    while ( iReceiveBufArray.Count() > 0 )
+    	{
+		buf = iReceiveBufArray[ 0 ];
+		if (buf->Length() - iBufferOffset <=  extBufferMaxLength - extBufferLength )
+			{
+			TPtrC8 ptr(buf->Ptr() + iBufferOffset, buf->Length() - iBufferOffset);
+			aData.Append( ptr );
+			iReceiveBufArray.Remove( 0 );
+			extBufferLength += buf->Length() - iBufferOffset;
+			delete buf;
+			buf = NULL;
+			iBufferOffset = 0;
+			}
+		else
+			{
+			TPtrC8 ptr(buf->Ptr(), extBufferMaxLength - extBufferLength);
+			aData.Append( ptr );
+			iBufferOffset = extBufferMaxLength - extBufferLength;
+			break;
+			}
+		ret = ETrue;
+    	}
+    //TODO unlock the buffer
+      return ret;
     }
 
+TInt64 CLlcpSocketType2::BytesAvailable()
+	{
+	//TODO lock the buffer
+	TInt64 ret = 0;
+	for (TInt i = 0; i < iReceiveBufArray.Count(); ++i)
+		{
+		HBufC8* buf = iReceiveBufArray[ i ];
+		if ( i == 0)
+			{
+			ret += buf->Length() - iBufferOffset;
+			}
+		else
+			{
+			ret += buf->Length();
+			}
+		}
+	//TODO unlock the buffer
+	return ret;
+	}
 
+TBool CLlcpSocketType2::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMilliSeconds)
+	{
+	TBool ret = EFalse;
+	if (iWaitStatus != ENone || iWait->IsStarted())
+		{
+		return ret;
+		}
+	iWaitStatus = aWaitStatus;
+	
+	if (iTimer)
+		{
+		delete iTimer;
+		iTimer = NULL;
+		}
+	if (aMilliSeconds > 0)
+		{
+		iTimer = CLlcpTimer::NewL(*iWait);
+		iTimer->Start(aMilliSeconds);
+		}
+	iWait->Start();
+	//control is back here when iWait->AsyncStop() is called by the timer or the callback function
+	iWaitStatus = ENone;
+	
+	if (!iTimer)
+		{
+		//iTimer == NULL means this CActiveSchedulerWait
+		//AsyncStop is fired by the call back of ReadyRead
+		ret = ETrue;
+		}
+	else
+		{
+		delete iTimer;
+		iTimer = NULL;
+		}
+	return ret;	
+	}
+
+/**
+ * Blocks until data is available for reading and the readyRead()
+ * signal has been emitted, or until msecs milliseconds have 
+ * passed. If msecs is -1, this function will not time out.
+ * Returns true if data is available for reading; otherwise
+ * returns false (if the operation timed out or if an error
+ * occurred).
+ */
+TBool CLlcpSocketType2::WaitForReadyRead(TInt aMilliSeconds)
+	{
+	return WaitForOperationReadyL(EWaitForReadyRead, aMilliSeconds);
+	}
+
+TBool CLlcpSocketType2::WaitForBytesWritten(TInt aMilliSeconds)
+	{
+	return WaitForOperationReadyL(EWaitForBytesWritten, aMilliSeconds);
+	}
+TBool CLlcpSocketType2::WaitForConnected(TInt aMilliSeconds)
+	{
+	return WaitForOperationReadyL(EWaitForConnected, aMilliSeconds);
+	}
+TBool CLlcpSocketType2::WaitForDisconnected(TInt aMilliSeconds)
+	{
+	return WaitForOperationReadyL(EWaitForDisconnected, aMilliSeconds);
+	}
+
+RPointerArray<HBufC8>& CLlcpSocketType2::GetAndLockBuffer()
+	{
+	//TODO lock the buffer
+	return iReceiveBufArray;
+	}
+void CLlcpSocketType2::UnlockBuffer()
+	{
+	//TODO unlock buffer
+	}
 /*!
     Cancel the Receive/Transfer and destroy the local/remote connection.
 */
@@ -175,27 +311,127 @@ void CLlcpSocketType2::Cleanup()
 		iTransporter = NULL;
 		}
     }
-void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error socketError)
+void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error aSocketError)
 	{
 	//TODO emit error
 	}
-void CLlcpSocketType2::StateChanged(QtMobility::QLlcpSocket::State socketState)
+void CLlcpSocketType2::StateChangedL(QtMobility::QLlcpSocket::State aSocketState)
 	{
+	if (aSocketState == QtMobility::QLlcpSocket::ConnectedState && iWaitStatus == EWaitForConnected)
+		{
+		StopWaitNow(EWaitForConnected);
+		}
+	if (aSocketState == QtMobility::QLlcpSocket::ClosingState && iWaitStatus == EWaitForDisconnected)
+		{
+		StopWaitNow(EWaitForDisconnected);
+		}
+	
+	if (aSocketState == QtMobility::QLlcpSocket::ConnectedState)
+		{
+		if (!iReceiver)
+			{
+			iReceiver = CLlcpReceiverAO::NewL( *iTransporter, *this );
+			}
+		User::LeaveIfError(iReceiver->StartReceiveDatagram());
+		}
 	//TODO emit stateChange
+	}
+
+void CLlcpSocketType2::StopWaitNow(TWaitStatus aWaitStatus)
+	{
+	if ( iWaitStatus == aWaitStatus )
+		{
+		if (iWait->IsStarted())
+			{
+			iWait->AsyncStop();
+			}
+		if (iTimer)//stop the timer
+			{
+			delete iTimer;
+			iTimer = NULL;
+			}
+		}	
 	}
 void CLlcpSocketType2::ReadyRead()
 	{
+	if (iWaitStatus == EWaitForReadyRead)
+		{
+		StopWaitNow(EWaitForReadyRead);
+		}
 	//TODO emit readyRead()
 	}
 void CLlcpSocketType2::BytesWritten(qint64 bytes)
 	{
+	if (iWaitStatus == EWaitForBytesWritten)
+		{
+		StopWaitNow(EWaitForBytesWritten);
+		}
 	//TODO emit bytesWritten();
 	}
+
+
+// timer implementation
+
+CLlcpTimer* CLlcpTimer::NewL(CActiveSchedulerWait & aWait)
+    {
+	CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
+    return self;
+    }
+    
+/**
+Destructor.
+*/
+CLlcpTimer::~CLlcpTimer()
+    {
+    Cancel();
+    }
+    
+/**
+Starts the shutdown timer.
+*/   
+void CLlcpTimer::Start(TInt aMSecs)
+    {
+    const TUint KDelay = (1000 * aMSecs);
+    After(KDelay);
+    }
+    
+void CLlcpTimer::RunL()
+    {
+    if (iWait.IsStarted())
+        {
+        iWait.AsyncStop();
+        }
+    }
+    
+/** 
+Constructor
+*/
+CLlcpTimer::CLlcpTimer(CActiveSchedulerWait & aWait) : 
+    CTimer(EPriorityNormal),
+    iWait(aWait)
+    {
+    
+    }    
+
+/**
+Second phase constructor.
+*/    
+void CLlcpTimer::ConstructL()
+    {
+    CTimer::ConstructL();
+    CActiveScheduler::Add(this);
+    }
+
 // connecter implementation
 CLlcpConnecterAO* CLlcpConnecterAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )
 	{
 	CLlcpConnecterAO* self = new (ELeave) CLlcpConnecterAO( aConnection, aSocket );
+	CleanupStack::PushL(self);
 	self->ConstructL();
+	CleanupStack::Pop(self);
     return self;
 	}
 
@@ -228,7 +464,7 @@ CLlcpConnecterAO::~CLlcpConnecterAO()
 /*!
  * Connect to remote peer as given service uri.
  */
-void CLlcpConnecterAO::Connect(const TDesC8& /*aServiceName*/)
+void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
     {
     if ( iConnState == ENotConnected )
         {
@@ -237,21 +473,21 @@ void CLlcpConnecterAO::Connect(const TDesC8& /*aServiceName*/)
         SetActive();
         iConnState = EConnecting;
         //emit connecting signal
-        iSocket.StateChanged(QtMobility::QLlcpSocket::ConnectingState);
+        iSocket.StateChangedL(QtMobility::QLlcpSocket::ConnectingState);
         }
     }
 
 /*!
  * Disonnect with remote peer.
  */
-void CLlcpConnecterAO::Disconnect()
+void CLlcpConnecterAO::DisconnectL()
     {     
     if ( iConnState != ENotConnected )
         {
         iConnection.Disconnect();
         iConnState = ENotConnected;
         //TODO emit QAbstractSocket::ClosingState;
-        iSocket.StateChanged(QtMobility::QLlcpSocket::ClosingState);
+        iSocket.StateChangedL(QtMobility::QLlcpSocket::ClosingState);
         }    
     }
 void CLlcpConnecterAO::RunL()
@@ -268,7 +504,7 @@ void CLlcpConnecterAO::RunL()
 				// Updating state
 				iConnState = EConnected;
 				//TODO emit connected signal
-				iSocket.StateChanged(QtMobility::QLlcpSocket::ConnectedState);
+				iSocket.StateChangedL(QtMobility::QLlcpSocket::ConnectedState);
 		        // Starting listening disconnect event
 		        iConnection.WaitForDisconnection( iStatus );
 		        SetActive();
@@ -290,7 +526,7 @@ void CLlcpConnecterAO::RunL()
 				// Updating state
 				iConnState = ENotConnected;
 				//TODO emit disconnected signal
-				iSocket.StateChanged(QtMobility::QLlcpSocket::ClosingState);
+				iSocket.StateChangedL(QtMobility::QLlcpSocket::ClosingState);
 				}
 			else
 				{
@@ -337,7 +573,9 @@ void CLlcpConnecterAO::DoCancel()
 CLlcpSenderAO* CLlcpSenderAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )
 	{
 	CLlcpSenderAO* self = new (ELeave) CLlcpSenderAO( aConnection, aSocket );
+	CleanupStack::PushL(self);
 	self->ConstructL();
+	CleanupStack::Pop(self);
     return self;
 	}
 
@@ -420,7 +658,9 @@ void CLlcpSenderAO::DoCancel()
 CLlcpReceiverAO* CLlcpReceiverAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )
 	{
 	CLlcpReceiverAO* self = new (ELeave) CLlcpReceiverAO( aConnection, aSocket );
+	CleanupStack::PushL(self);
 	self->ConstructL();
+	CleanupStack::Pop(self);
     return self;
 	}
 
@@ -451,7 +691,7 @@ CLlcpReceiverAO::~CLlcpReceiverAO()
     iReceiveBuf.Close();
     }
 
-TInt CLlcpReceiverAO::StartReceiveDatagram(TInt64 aMaxSize)
+TInt CLlcpReceiverAO::StartReceiveDatagram()
 	{
 	if (IsActive())
 		{
@@ -460,10 +700,6 @@ TInt CLlcpReceiverAO::StartReceiveDatagram(TInt64 aMaxSize)
     TInt length = 0;
     TInt error = KErrNone;
     length = iConnection.SupportedDataLength();
-    if (length > aMaxSize)
-         {
-         length = aMaxSize;
-         }         
      
      if ( length > 0 )
          {
@@ -489,9 +725,23 @@ void CLlcpReceiverAO::RunL()
 	TInt error = iStatus.Int();
 	if ( error == KErrNone )
 		{
-		//TODO append to buffer pool
+		//append to buffer
+		HBufC8* buf = NULL;
+		buf = HBufC8::NewLC( iReceiveBuf.Length() );
+		
+		buf->Des().Copy( iReceiveBuf );
+		
+		iSocket.GetAndLockBuffer().AppendL( buf );
+		iSocket.UnlockBuffer();
+		
+		CleanupStack::Pop( buf );
 		//TODO emit readyRead() signal
 		iSocket.ReadyRead();
+		//resend the Receive request to NFC server
+		if (StartReceiveDatagram() != KErrNone)
+			{
+			iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+			}
 		}
 	else
 		{
@@ -506,3 +756,4 @@ void CLlcpReceiverAO::DoCancel()
 		iConnection.ReceiveCancel();
 		}
 	}
+//EOF
