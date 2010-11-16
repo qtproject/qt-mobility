@@ -555,18 +555,15 @@ if "%BUILDSYSTEM%" == "symbian-sbsv2" (
     echo ARM compiler found: %armccline%
     rem get the version number e.g. 4.0
     FOR /F "tokens=1 delims=RVCT" %%G IN ("%armccline%") DO (
-	  echo inloop %%G
       set version=%%G
       goto rvctversioncheck
     )
   )
   
   :rvctversioncheck
-  echo version %version%
   if "%version%" GEQ "4.0" (
     if not "%QT_RVCT_VERSION%"=="%version%" (
       echo please set QT_RVCT_VERSION to %version%
-      goto errorTag
 	)
   )
   goto symbianTests
