@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "simulatorvideorenderercontrol.h"
+#include "simulatorcamerasettings.h"
+#include "simulatorcamerasession.h"
 #include <qabstractvideosurface.h>
 #include <qvideoframe.h>
 #include <qvideosurfaceformat.h>
@@ -47,28 +49,29 @@
 #include <QColor>
 #include <QPainter>
 
-QSimulatorVideoRendererControl::QSimulatorVideoRendererControl(QObject *parent) :
+SimulatorVideoRendererControl::SimulatorVideoRendererControl(SimulatorCameraSession *session, QObject *parent) :
     QVideoRendererControl(parent)
-        , mSurface(0)
-        , mRunning(false)
+  , mSession(session)
+  , mSurface(0)
+  , mRunning(false)
 {
 }
 
-QSimulatorVideoRendererControl::~QSimulatorVideoRendererControl()
+SimulatorVideoRendererControl::~SimulatorVideoRendererControl()
 {
 }
 
-QAbstractVideoSurface *QSimulatorVideoRendererControl::surface() const
+QAbstractVideoSurface *SimulatorVideoRendererControl::surface() const
 {
     return mSurface;
 }
 
-void QSimulatorVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
+void SimulatorVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
 {
     mSurface = surface;
 }
 
-void QSimulatorVideoRendererControl::setImagePath(const QString &imagePath)
+void SimulatorVideoRendererControl::setImagePath(const QString &imagePath)
 {
     if (QFile::exists(imagePath)) {
         mImage = QImage(imagePath);
@@ -79,26 +82,39 @@ void QSimulatorVideoRendererControl::setImagePath(const QString &imagePath)
         painter.drawText(0, 0, 800, 600, Qt::AlignCenter, imagePath);
     }
     if (mRunning)
-        start();
+        showImage();
 }
 
-void QSimulatorVideoRendererControl::start()
+void SimulatorVideoRendererControl::showImage()
 {
     if (!mSurface)
         return;
     stop();
-    QVideoFrame::PixelFormat pixelFormat = QVideoFrame::pixelFormatFromImageFormat(mImage.format());
+    mShownImage = mImage;
+    SimulatorCameraSettings *settings = mSession->settings();
+    qreal colorDiff = .0;
+    colorDiff += settings->aperture() - settings->defaultAperture();
+    colorDiff += (settings->shutterSpeed() - settings->defaultShutterSpeed()) * 400;
+    colorDiff += ((qreal)settings->isoSensitivity() - settings->defaultIsoSensitivity()) / 100;
+    colorDiff += settings->exposureCompensation();
+    int diffToApply = qAbs(colorDiff * 20);
+    QPainter painter(&mShownImage);
+    if (colorDiff < 0)
+        painter.fillRect(mShownImage.rect(), QColor(0, 0, 0, qMin(diffToApply, 255)));
+    else
+        painter.fillRect(mShownImage.rect(), QColor(255, 255, 255, qMin(diffToApply, 255)));
+    QVideoFrame::PixelFormat pixelFormat = QVideoFrame::pixelFormatFromImageFormat(mShownImage.format());
     if (pixelFormat == QVideoFrame::Format_Invalid) {
-        mImage = mImage.convertToFormat(QImage::Format_RGB32);
+        mShownImage = mShownImage.convertToFormat(QImage::Format_RGB32);
         pixelFormat = QVideoFrame::Format_RGB32;
     }
-    QVideoSurfaceFormat format(mImage.size(), pixelFormat);
+    QVideoSurfaceFormat format(mShownImage.size(), pixelFormat);
     mSurface->start(format);
-    mSurface->present(mImage);
+    mSurface->present(mShownImage);
     mRunning = true;
 }
 
-void QSimulatorVideoRendererControl::stop()
+void SimulatorVideoRendererControl::stop()
 {
     if (!mSurface)
         return;
@@ -108,7 +124,7 @@ void QSimulatorVideoRendererControl::stop()
     mRunning = false;
 }
 
-const QImage * QSimulatorVideoRendererControl::image() const
+const QImage * SimulatorVideoRendererControl::image() const
 {
-    return &mImage;
+    return &mShownImage;
 }

@@ -43,6 +43,7 @@
 #include "simulatorcamerasession.h"
 #include "simulatorcameracontrol.h"
 #include "simulatorcameraimagecapturecontrol.h"
+#include "simulatorcameraexposurecontrol.h"
 
 #include "simulatorvideoinputdevicecontrol.h"
 #include "simulatorvideorenderercontrol.h"
@@ -58,12 +59,14 @@ SimulatorCameraService::SimulatorCameraService(const QString &service, Multimedi
                              QObject *parent):
     QMediaService(parent)
 {
+    Q_UNUSED(service)
     mCaptureSession = new SimulatorCameraSession(this);
     mCameraControl = new SimulatorCameraControl(mCaptureSession);
     mVideoInputDeviceControl = new QSimulatorVideoInputDeviceControl(mCaptureSession);
     mVideoInputDeviceControl->updateDeviceList(get_qtCameraData());
-    mVideoRendererControl = new QSimulatorVideoRendererControl(this);
+    mVideoRendererControl = new SimulatorVideoRendererControl(mCaptureSession, this);
     mImageCaptureControl = new SimulatorCameraImageCaptureControl(mCaptureSession, this);
+    mExposureControl = new SimulatorCameraExposureControl(mCaptureSession, this);
 
     connect(multimediaConnection, SIGNAL(cameraDataChanged(QtMobility::QCameraData)),
             SLOT(updateCameraData(QtMobility::QCameraData)));
@@ -76,11 +79,15 @@ SimulatorCameraService::SimulatorCameraService(const QString &service, Multimedi
     connect(multimediaConnection, SIGNAL(cameraChanged(QString,QtMobility::QCameraData::QCameraDetails)),
             SLOT(changeCamera(QString,QtMobility::QCameraData::QCameraDetails)));
     connect(mCameraControl, SIGNAL(startCamera()),
-            mVideoRendererControl, SLOT(start()));
+            mVideoRendererControl, SLOT(showImage()));
     connect(mCameraControl, SIGNAL(stopCamera()),
             mVideoRendererControl, SLOT(stop()));
     connect(mVideoInputDeviceControl, SIGNAL(selectedDeviceChanged(QString)),
             SLOT(updateCameraPicture(QString)));
+    connect(mCaptureSession->settings(), SIGNAL(isoSensitivityChanged()), mVideoRendererControl, SLOT(showImage()));
+    connect(mCaptureSession->settings(), SIGNAL(apertureChanged()), mVideoRendererControl, SLOT(showImage()));
+    connect(mCaptureSession->settings(), SIGNAL(shutterSpeedChanged()), mVideoRendererControl, SLOT(showImage()));
+    connect(mCaptureSession->settings(), SIGNAL(exposureCompensationChanged()), mVideoRendererControl, SLOT(showImage()));
 }
 
 SimulatorCameraService::~SimulatorCameraService()
@@ -103,6 +110,9 @@ QMediaControl *SimulatorCameraService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraImageCaptureControl_iid) == 0)
         return mImageCaptureControl;
+
+    if (qstrcmp(name, QCameraExposureControl_iid) == 0)
+        return mExposureControl;
 
     return 0;
 }

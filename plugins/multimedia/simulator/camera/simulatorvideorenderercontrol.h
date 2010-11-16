@@ -45,17 +45,19 @@
 #include <qvideorenderercontrol.h>
 #include <QtGui/QImage>
 
+
+class SimulatorCameraSession;
 /*
  * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
  * which is drawn to the display by the Qt Graphics Vide Framework.
  */
-class QSimulatorVideoRendererControl : public QVideoRendererControl
+class SimulatorVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
 
 public:
-    QSimulatorVideoRendererControl(QObject *parent = 0);
-    virtual ~QSimulatorVideoRendererControl();
+    SimulatorVideoRendererControl(SimulatorCameraSession *session, QObject *parent = 0);
+    virtual ~SimulatorVideoRendererControl();
 
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
@@ -64,12 +66,16 @@ public:
     const QImage *image() const;
 
 public slots:
-    void start();
+    void showImage();
+
+private slots:
     void stop();
 
 private:
+    SimulatorCameraSession *mSession;
     QAbstractVideoSurface *mSurface;
     QImage mImage;
+    QImage mShownImage;
     bool mRunning;
 };
 
