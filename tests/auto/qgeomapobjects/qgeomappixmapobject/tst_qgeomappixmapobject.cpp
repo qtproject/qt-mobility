@@ -494,9 +494,9 @@ void tst_QGeoMapPixmapObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(center);
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(center);
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 

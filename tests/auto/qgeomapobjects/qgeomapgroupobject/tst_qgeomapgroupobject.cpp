@@ -435,9 +435,9 @@ void tst_QGeoMapGroupObject::zvalue()
 
     QCOMPARE(list.count(),3);
 
-    //QVERIFY(list.at(0)==object1);
-    //QVERIFY(list.at(1)==object2);
-    //QVERIFY(list.at(2)==object3);
+    QVERIFY(list.at(0)==object1);
+    QVERIFY(list.at(1)==object2);
+    QVERIFY(list.at(2)==object3);
 
     QSignalSpy spy0(object1, SIGNAL(selectedChanged(bool)));
     QSignalSpy spy1(object1, SIGNAL(visibleChanged(bool)));
