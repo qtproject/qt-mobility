@@ -102,6 +102,7 @@ QMAKE_EXEC=qmake
 LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
+PLATFORM_CONFIG=
 MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback"
 MOBILITY_MODULES_UNPARSED=
@@ -156,6 +157,9 @@ usage()
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+#    echo "-staticconfig <name>"
+#    echo "                    Avoids running of configuration tests. The default"
+#    echo "                    values are sourced from features/platformconfig/<name>.pri"
     echo
     
     rm -f "$CONFIG_IN"
@@ -267,6 +271,10 @@ while [ "$#" -gt 0 ]; do
                 echo 
                 usage
             fi
+            shift
+            ;;
+        -staticconfig)
+            PLATFORM_CONFIG=$2
             shift
             ;;
         *)
@@ -539,23 +547,34 @@ compileTest()
     cd "$CURRENT_PWD"
 }
 
+if [ -z "$PLATFORM_CONFIG" ]; then
 #compile tests
-compileTest QMF qmf
-compileTest NetworkManager networkmanager
-compileTest "CoreWLAN (MacOS 10.6)" corewlan
-compileTest Immersion immersion
-compileTest "Maemo ICD" maemo-icd
-compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
-compileTest "Maemo5 contacts dependencies" maemo5-contacts
-compileTest "Maemo5 organizer dependencies" maemo5-calendar
-compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
-compileTest "Bluez" bluez
-compileTest "Gstreamer Photography" gstreamer-photography
-compileTest "Pulse Audio" pulseaudio
-if [ "$LINUX_TARGET" = maemo6 ]; then
-    compileTest sensord sensord
+    compileTest QMF qmf
+    compileTest NetworkManager networkmanager
+    compileTest "CoreWLAN (MacOS 10.6)" corewlan
+    compileTest Immersion immersion
+    compileTest "Maemo ICD" maemo-icd
+    compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+    compileTest "Maemo5 contacts dependencies" maemo5-contacts
+    compileTest "Maemo5 organizer dependencies" maemo5-calendar
+    compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
+    compileTest "Bluez" bluez
+    compileTest "Gstreamer Photography" gstreamer-photography
+    compileTest "Pulse Audio" pulseaudio
+    if [ "$LINUX_TARGET" = maemo6 ]; then
+        compileTest sensord sensord
+    else
+        echo "sensord_enabled = no" >> "$CONFIG_IN"
+    fi
 else
-    echo "sensord_enabled = no" >> "$CONFIG_IN"
+    echo "Skipping configure tests"
+    echo "Loading ... features/platformconfig/$PLATFORM_CONFIG.pri"
+    if [ ! -f "$relpath/features/platformconfig/$PLATFORM_CONFIG.pri" ]; then
+        echo "Invalid platform configuration $PLATFORM_CONFIG.pri"
+        exit 1;
+    else
+        echo "include(\$\${QT_MOBILITY_SOURCE_TREE}/features/platformconfig/$PLATFORM_CONFIG.pri)" >> "$CONFIG_IN"
+    fi
 fi
 
 # It's a lot easier to make qmake do the dependency checking...
