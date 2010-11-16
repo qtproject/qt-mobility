@@ -540,7 +540,37 @@ echo Start of compile tests
 REM compile tests go here.
 for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
-if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
+if "%BUILDSYSTEM%" == "symbian-sbsv2" (
+  rem check which compiler version is set and check against QT_RVCT_VERSION only if sbsv2 is used
+  set armccline=
+  rem get the 4 th. <space> token RVCTX.X
+  set version="2.2"
+  FOR /F "tokens=4 delims= " %%G IN ('armcc') DO (
+    set armccline=%%G
+    goto parsearmcc
+  )
+
+  :parsearmcc
+  if not "%armccline%"=="" (
+    echo ARM compiler found: %armccline%
+    rem get the version number e.g. 4.0
+    FOR /F "tokens=1 delims=RVCT" %%G IN ("%armccline%") DO (
+	  echo inloop %%G
+      set version=%%G
+      goto rvctversioncheck
+    )
+  )
+  
+  :rvctversioncheck
+  echo version %version%
+  if "%version%" GEQ "4.0" (
+    if not "%QT_RVCT_VERSION%"=="%version%" (
+      echo please set QT_RVCT_VERSION to %version%
+      goto errorTag
+	)
+  )
+  goto symbianTests
+)
 goto windowsTests
 
 :symbianTests
