@@ -1,4 +1,4 @@
-SOURCES=sys_calendar.qtt
+SOURCES=sys_organizer.qtt
 CONFIG+=systemtest
 
 unix:!symbian {

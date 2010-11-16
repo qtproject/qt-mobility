@@ -41,39 +41,107 @@
 
 //TESTED_COMPONENT=src/versitorganizer
 
+// Note for test cases relating to  functionality such as add event see test relating to src/organizer
 testcase = {
 
-    importICalendarItems: function()
-    {
-        prompt(twiki('*Import iCalendar Items*
+        import_ical: function()
+        {
+            prompt(twiki('---++ Import iCalendar items
 
-    1. save sample iCalendar (eg testdata/exampleEvents.ics) into users \"Home\" directory on target
-    1. start application *calendardemo*
-    1. using menu entries select *Import Items...*
-    1. select iCalendar to load as saves in step 1.
-    1. verify that the expected events are seen. In the case of the exampleEvents.ics there should be the following events
-    |  *Bastille Day Party* | event which occurs July 14, 1997 17:00 (UTC) through July 15, 1997 03:59:59 (UTC) |
-    |  *Submit Income Taxes* | todo which occurs on April 15, 1998 |
-    |  *Project Report* | journal entry which occurs on March 24, 1997 |
-        '));
+        1. Launch the *calendardemo* application
+        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
+        1. As required transfer exampleEvents.ics onto a location on the target
+        1. On app menu, select \'Import items\' menu entry
+        1. In file dialog that presents select the exampleEvents.ics that was transfer to the target
+        1. Click \'Open\'
+        1. In the case of the importing exampleEvents.ics:
+            1. Verify there is now the following event:
+                | Subject       | \'Bastille Day Party\'        |
+                | Start time    | July 14, 1997 17:00 (UTC)     |
+                | End time      | July 15, 1997 03:59:59 (UTC)  |
+            1. Verify there is the following Todo:
+                | Subject   | \'Submit Income Taxes\'   |
+                | Time      | April 15, 1998 |
+            1. if the platform(backend) supports journal entries:
+                | Subject   | \'Project Report\' |
+                | Time      | March 24, 1997 |
+           * *Hint:* Possibly using the target system\'s Todo, Calendar and Journal applications will be easiest to verify above details
+        1. On app menu, select \'Delete all items\'
+        1. Close the *calendardemo* application
+            '));
+        },
 
-    },
+        export_ical: function()
+        {
+             prompt(twiki('---++ Export iCalendar items
 
-    exportICalendarItems: function()
-    {
-        prompt(twiki('*Export iCalendar Items*
-
-    1. start application *calendardemo*
-    1. Enter at least one of each support iCalendar item types: event, joural and todo using the the *Add Event*, *Add Journal* and *Add Todo* menu entry
-    1. Using the *Add Event* menu item add at least one event, eg using yesterdays date
-    1. Using the *Add Journal* menu item add at least one Journal entry, eg using todays date
-    1. Using the *Add Todo* menu item add at least one Todo entry, eg using tomorrows date
-    1. Using the "Export Items..* menu item export these events and save to exportTest.ics
-    1. Using the "Remove* menu item, delete entered events
-    1. Verify that no event are present
-    1. Using the "Import Items..* menu item import events in exportTest.ics
-    1. Verify that the entered events are now restored.
-        '));
-
-    }
+        1. Launch the *calendardemo* application
+        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
+        1. Verify that the current backend is the best to suit device
+        1. Add *valid* events
+            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject      | \'Event 1\' |
+                | Start time   | today\'s date, 08:00 AM |
+                | End time     | today\'s date, 01:00 PM |
+                | Alarm        | \'30 minutes before\' |
+                | Repeat       | \'None\' |
+            1. Click \'Save\' button
+            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject      | \'Event 2\' |
+                | Start time   | tomorrow\'s date, 02:00 PM |
+                | End time     | tomorrow\'s date, 01:00 PM |
+                | Alarm        | \'15 minutes before\' |
+                | Repeat       | \'None\' |
+            1. Click \'Save\' button
+        1. Add a *valid* Todos:
+            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter Todo detail:
+                | Subject       | \'Todo 1\'                    |
+                | Start time    | today\'s date 08:00 AM        |
+                | End time      | today\'s date 04:00 PM        |
+                | Priority      | \'High\'                      |
+                | Status        | default                       |
+                | Alarm option  | \'30 minutes before\'         |
+            1. Click \'Save\' button
+            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter Todo detail:
+                | Subject       | \'Todo 2\'                    |
+                | Start time    | tomorrow\'s date 03:00 PM     |
+                | End time      | tomorrow\'s date 04:00 PM     |
+                | Priority      | \'Low\'                       |
+                | Status        | default                       |
+                | Alarm option  | \'5   minutes before\'        |
+            1. Click \'Save\' button
+        1. If platform(backend) supports Journal entries then add a Journal entry:
+            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject    | \'Journal 1\' |
+                | Time       | today\'s date, 08:00 AM |
+                | Alarm      | \'30 minutes before\' |
+            1. Click \'Save\' button
+        1. If platform(backend) supports Journal entries then add a journal entry for later today:
+            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject    | \'Journal 2\' |
+                | Time       | today\'s date at 02:00 PM |
+                | Alarm      | \'15 minutes before\' |
+            1. Click \'Save\' button
+        1. On app menu, select \'Export items\' menu entry
+        1  Enter/select suitable location saving as testcalendar.ics
+        1. Click on \'Save\'
+        1. Ideally the testcalendar.ics be opened on a separate system and its contents validated, if that is not possible then ..
+            1. On app menu, select \'Delete all items\' to remove all calendar items
+            1. Close the *calendardemo* application
+            1. Launch the *calendardemo* application
+            1. On app menu, select menu entry \'Import items\'
+            1. Select location for testcalendar.ics entered earlier
+            1. Click \'Select\' button
+            1. Verify that calendar items \'Event 1\', \'Event 2\', \'Todo 1\' and \'Todo 2\' are present and have expected details
+            1. If platform(backend) supports Journal entries then Verify that calendar items \'Journal 1\' and \'Journal 2\' are present and have expected details
+        1. Delete events \'Event 1\', \'Event 2\', \'Todo 1\', \'Todo 2\', \'Journal 1\' and \'Journal 2\' (using native calendar application if neccessary)
+        1. Close the *calendardemo* application
+             '));
+        },
 }
