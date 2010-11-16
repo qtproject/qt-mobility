@@ -58,7 +58,7 @@
 #include <qaudiosystemplugin.h>
 #include <pulse/pulseaudio.h>
 #include "qpulsehelpers.h"
-#include <QAudioFormat>
+#include <qaudioformat.h>
 
 QT_BEGIN_NAMESPACE
 
