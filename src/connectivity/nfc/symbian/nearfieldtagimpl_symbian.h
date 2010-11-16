@@ -45,7 +45,7 @@
 #include <qnearfieldtarget.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
-#include "qnearfieldutility_symbian.h"
+#include "nearfieldutility_symbian.h"
 
 QTM_USE_NAMESPACE
 class MNearFieldTarget;
