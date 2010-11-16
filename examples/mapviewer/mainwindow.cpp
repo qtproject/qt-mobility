@@ -102,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_qgv->setVisible(true);
     m_qgv->setInteractive(true);
+    m_qgv->setMouseTracking(true);
+    m_qgv->viewport()->setMouseTracking(true);
 
     // setup slider control
 
@@ -574,6 +576,20 @@ void MainWindow::createMenus()
     QAction* menuItem;
     QMenu* subMenuItem;
     m_popupMenu = new QMenu(this);
+    m_popupMenuMapObject = new QMenu(this);
+
+    //**************************************************************
+
+    // MapObject-specific context menu. The map object is in m_lastClickedMapObject.
+    subMenuItem = new QMenu(tr("MapObject"), this);
+    m_popupMenuMapObject->addMenu(subMenuItem);
+
+    menuItem = new QAction(tr("Remove"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(removeMapObject()));
+
+    //**************************************************************
 
     /*
 
@@ -585,6 +601,7 @@ void MainWindow::createMenus()
 
     subMenuItem = new QMenu(tr("Spawn stuff"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Items near the dateline"), this);
     subMenuItem->addAction(menuItem);
@@ -606,6 +623,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Set marker"), this);
     subMenuItem->addAction(menuItem);
@@ -625,6 +643,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Draw"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Rectangle"), this);
     subMenuItem->addAction(menuItem);
@@ -654,6 +673,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Route"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Calculate route"), this);
     subMenuItem->addAction(menuItem);
@@ -835,6 +855,13 @@ void MainWindow::removePixmaps()
         marker->deleteLater();
     }
 }
+void MainWindow::removeMapObject()
+{
+    m_mapWidget->removeMapObject(m_lastClickedMapObject);
+    if (m_lastClickedMapObject->type() == QGeoMapObject::PixmapType)
+        m_markerObjects.removeAll(static_cast<QGeoMapPixmapObject*>(m_lastClickedMapObject));
+    m_lastClickedMapObject->deleteLater();
+}
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
@@ -850,7 +877,18 @@ void MainWindow::customContextMenuRequest(const QPoint& point)
         if (!m_popupMenu)
             createMenus();
 
-        m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
+        QList<QGeoMapObject*> objectsAtCursor = m_mapWidget->mapObjectsAtScreenPosition(m_lastClicked);
+        if (objectsAtCursor.isEmpty()) {
+            // No objects, display the default context menu
+            m_lastClickedMapObject = 0;
+            m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
+        }
+        else {
+            // There is an object here, store it and open the appropriate context menu
+            m_lastClickedMapObject = objectsAtCursor.last();
+            m_popupMenuMapObject->popup(m_qgv->mapToGlobal(m_lastClicked));
+        }
+
     }
 }
 

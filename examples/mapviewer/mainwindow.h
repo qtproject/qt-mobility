@@ -105,6 +105,7 @@ private slots:
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
     void removePixmaps();
+    void removeMapObject();
     void selectObjects();
 
     void searchClicked();
@@ -131,9 +132,11 @@ private:
     MapWidget *m_mapWidget;
     QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
+    QMenu* m_popupMenuMapObject;
     QPixmap m_markerIcon;
     QPoint m_markerOffset;
     QPoint m_lastClicked;
+    QGeoMapObject* m_lastClickedMapObject;
     QList<QGeoMapPixmapObject*> m_markerObjects;
 
     QGraphicsView* m_qgv;
