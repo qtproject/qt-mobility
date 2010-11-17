@@ -63,6 +63,12 @@ QOrganizerItemOccurrenceFetchRequest::QOrganizerItemOccurrenceFetchRequest(QObje
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemOccurrenceFetchRequest::~QOrganizerItemOccurrenceFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the parent item, whose occurrences are to be fetched to \a item. */
 void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &item)
 {

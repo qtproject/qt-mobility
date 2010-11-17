@@ -64,6 +64,12 @@ QOrganizerItemFetchForExportRequest::QOrganizerItemFetchForExportRequest(QObject
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemFetchForExportRequest::~QOrganizerItemFetchForExportRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
 void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& filter)
 {
