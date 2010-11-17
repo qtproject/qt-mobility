@@ -142,6 +142,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/sensors \
              ../../plugins/declarative/publishsubscribe \
              ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \

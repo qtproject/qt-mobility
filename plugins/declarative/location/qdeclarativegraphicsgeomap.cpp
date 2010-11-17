@@ -71,8 +71,12 @@ QTM_BEGIN_NAMESPACE
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
+    plugin_(0),
     serviceProvider_(0),
-    mapData_(0)
+    mappingManager_(0),
+    mapData_(0),
+    mapType_(NoMap),
+    connectivityMode_(NoConnectivity)
 {
     setFlag(QGraphicsItem::ItemHasNoContents, false);
 

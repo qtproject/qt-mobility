@@ -143,7 +143,6 @@ QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountF
     idList << _mtmEngine->queryAccounts(filter, sortOrder, 0, 0);
 
 #ifdef FREESTYLEMAILUSED    
-    CFSEngine::instance()->setMtmAccountIdList(idList);
     idList << CFSEngine::instance()->queryAccounts(filter, sortOrder, 0, 0);
 #endif
 
@@ -192,17 +191,15 @@ int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
 QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->folder(id);
+        return CFSEngine::instance()->folder(id);
 #else
-            return QMessageFolder();
+        return QMessageFolder();
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return _mtmEngine->folder(id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->folder(id);
     }
 }
 
@@ -214,13 +211,11 @@ bool QMessageStorePrivate::addMessage(QMessage *m)
 #ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->addMessage(m);
 #else
-            return false;
+        return false;
 #endif
-        break;
     case EngineTypeMTM:
     default:
         return _mtmEngine->addMessage(m);
-        break;
     }
 }
 
@@ -233,11 +228,9 @@ bool QMessageStorePrivate::updateMessage(QMessage *m)
 #else
         return false;
 #endif
-        break;
     case EngineTypeMTM:
     default:
         return _mtmEngine->updateMessage(m);
-        break;
     }
 }
 
@@ -250,11 +243,9 @@ bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageManager::
 #else
         return false;
 #endif
-        break;
     case EngineTypeMTM:
     default:
         return _mtmEngine->removeMessage(id, option);
-        break;
     }
 }
 
@@ -274,22 +265,22 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
         
         for (int i=0; i < ids.count(); i++) {
             switch (idType(ids[i])) {
-                case EngineTypeFreestyle:
+            case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-                    if (!CFSEngine::instance()->removeMessage(ids[i], option)) {
-                        retVal = false;
-                    }
+                if (!CFSEngine::instance()->removeMessage(ids[i], option)) {
+                    retVal = false;
+                }
+                break;
 #else
                 return false;
 #endif
-                    break;  
-                case EngineTypeMTM:
-                    if (!_mtmEngine->removeMessage(ids[i], option)) {
-                        retVal = false;
-                    }
-                    break;
-                default:
-                    return false;
+            case EngineTypeMTM:
+                if (!_mtmEngine->removeMessage(ids[i], option)) {
+                    retVal = false;
+                }
+                break;
+            default:
+                return false;
             }
         }
     } else {
@@ -302,35 +293,31 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->message(id);
+        return CFSEngine::instance()->message(id);
 #else
         return QMessage();
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return _mtmEngine->message(id);
-            break;
-        }
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->message(id);
+    }
 }
 
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->account(id);
+        return CFSEngine::instance()->account(id);
 #else
         return QMessageAccount();
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return _mtmEngine->account(id);
-            break;
-        }
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->account(id);
+    }
 }
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
@@ -356,16 +343,15 @@ void QMessageStorePrivate::messageNotification(QMessageStorePrivate::Notificatio
                                                const QMessageManager::NotificationFilterIdSet &matchingFilters)
 {
     switch (type) {
-        case Added:
-            qDebug() << "messageAdded notification" << id.toString();
-            emit q_ptr->messageAdded(id, matchingFilters);
-            break;
-        case Updated:
-            emit q_ptr->messageUpdated(id, matchingFilters);
-            break;
-        case Removed:
-            emit q_ptr->messageRemoved(id, matchingFilters);
-            break;
+    case Added:
+        emit q_ptr->messageAdded(id, matchingFilters);
+        break;
+    case Updated:
+        emit q_ptr->messageUpdated(id, matchingFilters);
+        break;
+    case Removed:
+        emit q_ptr->messageRemoved(id, matchingFilters);
+        break;
     }
 }
 

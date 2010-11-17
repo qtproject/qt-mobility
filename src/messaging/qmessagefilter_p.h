@@ -120,9 +120,26 @@ public:
     static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow);
     bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const;
 #else
-    static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter) { return true; }
-    static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow) { return true; }
-    bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const { return true; }
+    static bool preFilter(QMessage::Type type, const QString &idPrefix, const QMessageFilterPrivate &privateFilter)
+    {
+        Q_UNUSED(type)
+        Q_UNUSED(idPrefix)
+        Q_UNUSED(privateFilter)
+        return true;
+    }
+    static bool preFilterRow(QMessage::Type type, const QString &idPrefix, const SortedMessageFilterList &filterRow)
+    {
+        Q_UNUSED(type)
+        Q_UNUSED(idPrefix)
+        Q_UNUSED(filterRow)
+        return true;
+    }
+    bool preFilter(QMessage::Type type, const QString idPrefix = QString()) const
+    {
+        Q_UNUSED(type)
+        Q_UNUSED(idPrefix)
+        return true;
+    }
 #endif
     
     static void changeComparatorValuesToOpposite(QMessageFilter& filter);

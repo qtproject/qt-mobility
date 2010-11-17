@@ -27,19 +27,24 @@
 
 /*!
     \group qml-publishsubscribe
-    \title QML Publish-Subscribe API Plugin
-    QML Support for the QtMobility Project Publish-Subscribe API.
+    \title QML Publish and Subscribe API Plugin
+    QML Support for the QtMobility Project Publish and Subscribe API.
 */
 
 /*!
     \page qml-publishsubscribe.html
-
-    \title Publish-Subscribe API QML Plugin
-
-    \brief A QML plugin for the QtMobility Project Publish-Subscribe API.
+    \title Publish and Subscribe API QML Plugin
+    \brief A QML plugin for the QtMobility Project Publish and Subscribe API.
 
     \section1 Overview
 
+    The Publish and Subscribe QML API enables QML applications to access values stored in the Value
+    Space from QML.
+
+    \section1 Examples
+    \list
+        \o \l {battery-charge}{Accessing Publish and Subscribe from QML}
+    \endlist
 
     \section1 QML Elements
     \annotatedlist qml-publishsubscribe

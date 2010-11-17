@@ -139,6 +139,9 @@ QVersitReader::~QVersitReader()
  * Sets the device used for reading the input to be the given \a device.
  * Does not take ownership of the device.  This overrides any byte array input source set with
  * setData().
+ *
+ * The caller must ensure that \a device remains valid for the lifetime of
+ * this QVersitReader object.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {

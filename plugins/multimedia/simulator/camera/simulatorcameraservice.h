@@ -54,7 +54,8 @@ QTM_END_NAMESPACE
 class SimulatorCameraSession;
 class SimulatorCameraControl;
 class SimulatorCameraImageCaptureControl;
-class QSimulatorVideoRendererControl;
+class SimulatorCameraExposureControl;
+class SimulatorVideoRendererControl;
 class QSimulatorVideoInputDeviceControl;
 
 class SimulatorCameraService : public QMediaService
@@ -79,12 +80,13 @@ private:
     SimulatorCameraSession *mCaptureSession;
     SimulatorCameraControl *mCameraControl;
     SimulatorCameraImageCaptureControl *mImageCaptureControl;
+    SimulatorCameraExposureControl *mExposureControl;
 
     QSimulatorVideoInputDeviceControl *mVideoInputDeviceControl;
 
     QMediaControl *mVideoOutput;
 
-    QSimulatorVideoRendererControl *mVideoRendererControl;
+    SimulatorVideoRendererControl *mVideoRendererControl;
 };
 
 #endif // CAMERACAPTURESERVICE_H

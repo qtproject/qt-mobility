@@ -62,12 +62,21 @@
         \o \l {Organizer QML Plugin}{Organizer}
         \o A QML plugin for the Organizer API.
     \row
+        \o \l {Publish and Subscribe QML Plugin}{Publish and Subscribe}
+        \o A QML plugin for the Publish and Subscribe API.
+    \row
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for 
            discovering and connecting to services.
     \row
         \o \l {Messaging QML Plugin}{Messaging}
         \o A QML plugin for the Messaging API.
+    \row
+        \o \l {SystemInfo QML Plugin}{System Information}
+        \o A QML plugin for the SystemInfo API.
+    \row
+        \o \l {Sensors QML Plugin}{Sensors}
+        \o A QML plugin for the Sensors API.
     \endtable
 
 
