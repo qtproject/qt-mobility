@@ -42,15 +42,15 @@
 #ifndef S60VIDEOOVERLAY_H
 #define S60VIDEOOVERLAY_H
 
+#include "s60videooutputinterface.h"
 #include <QtCore/qobject.h>
+#include <qmediaplayer.h>
 #include <qvideowindowcontrol.h>
 
 QT_USE_NAMESPACE
 
-class QAbstractVideoSurface;
-class S60VideoSurface;
-
 class S60VideoOverlay : public QVideoWindowControl
+                      , public S60VideoOutputInterface
 {
     Q_OBJECT
 
@@ -89,15 +89,21 @@ public:
     int saturation() const;
     void setSaturation(int saturation);
 
-    QAbstractVideoSurface *surface() const;
+    // S60VideoOutputInterface
+    WId videoWinId() const;
+    QRect videoDisplayRect() const;
+    Qt::AspectRatioMode videoAspectRatio() const;
 
-private slots:
-    void surfaceFormatChanged();
+public slots:
+    void videoStateChanged(QMediaPlayer::State state);
+
+signals:
+    void windowHandleChanged();
+    void displayRectChanged();
+    void aspectRatioChanged();
 
 private:
-    void setScaledDisplayRect();
-
-    S60VideoSurface *m_surface;
+    WId m_winId;
     Qt::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
     QSize m_aspectRatio;

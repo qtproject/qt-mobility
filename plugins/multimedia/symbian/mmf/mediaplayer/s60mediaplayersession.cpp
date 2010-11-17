@@ -200,6 +200,7 @@ void S60MediaPlayerSession::reset()
     stopProgressTimer();
     stopStalledTimer();
     doStop();
+    doClose();
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
 }
@@ -488,6 +489,11 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         default:
             return QMediaPlayer::NoError;
     }
+}
+
+int S60MediaPlayerSession::error() const
+{
+    return m_error;
 }
 
 void S60MediaPlayerSession::setError(int error, const QString &errorString, bool forceReset)
