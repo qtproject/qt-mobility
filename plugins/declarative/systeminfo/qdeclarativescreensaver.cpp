@@ -46,19 +46,19 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass ScreenSaver QDeclarativeScreenSaver
-    \brief The ScreenSaver element allows you to temporarily suppress the screensaver
-    from turning on or blanking the screen.
 
-    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    \brief The ScreenSaver element allows you to temporarily suppress the screensaver
+        from turning on or blanking the screen.
+
+    \inherits QObject
+
+    \ingroup qml-systeminfo
+
+    This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
 
 */
 
-/*!
-    \internal
-    \class QDeclarativeScreenSaver
-    \brief The QDeclarativeScreenSaver class provides an ScreenSaver item that you can add to a QDeclarativeView.
-*/
 QDeclarativeScreenSaver::QDeclarativeScreenSaver(QObject *parent) :
     QObject(parent),screensaverInfo(0),screenSaverDelay(0)
 {

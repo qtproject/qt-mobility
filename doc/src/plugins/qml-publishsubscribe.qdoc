@@ -27,14 +27,14 @@
 
 /*!
     \group qml-publishsubscribe
-    \title QML Publish and Subscribe
-    QML Support for the Mobility Project Publish and Subscribe API.
+    \title QML Publish and Subscribe API Plugin
+    QML Support for the QtMobility Project Publish and Subscribe API.
 */
 
 /*!
     \page qml-publishsubscribe.html
-    \title Publish and Subscribe QML Plugin
-    \brief A QML plugin for the Mobility Publish and Subscribe API.
+    \title Publish and Subscribe API QML Plugin
+    \brief A QML plugin for the QtMobility Project Publish and Subscribe API.
 
     \section1 Overview
 

@@ -44,7 +44,7 @@
 MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
     : QAbstractVideoBuffer(NoHandle)
     , m_sample(sample)
-    , m_bytesPerLine(m_bytesPerLine)
+    , m_bytesPerLine(bytesPerLine)
     , m_mapMode(NotMapped)
 {
     m_sample->AddRef();

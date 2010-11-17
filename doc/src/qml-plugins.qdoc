@@ -71,8 +71,31 @@
     \row
         \o \l {Messaging QML Plugin}{Messaging}
         \o A QML plugin for the Messaging API.
+    \row
+        \o \l {SystemInfo QML Plugin}{System Information}
+        \o A QML plugin for the SystemInfo API.
     \endtable
 
+
+    \section1 Platform Issues
+    \section2 Symbian
+
+    The program 'qmlviewer' has certain default capabilities. When a developer
+    writes a QML script that uses some special capabilities, for example Location,
+    it may seem natural that moving this working script to a Symbian platform
+    should be uneventful. However, the version of 'qmlviewer' may not know
+    about this capability. If that is the case then 'qmlviewer' should be
+    recompiled by the developer with the capability explicitly added.
+
+    It should be noted that the use of a plugin, with capabilities outside
+    of "NetworkServices ReadUserData", and viewed on a Symbian device via
+    qmlviewer.exe will either fail to work or cause qmlviewer to be terminated.
+
+    In the above example, qmlviewer needs to be recompiled with
+    \code
+    TARGET.CAPABILITY = NetworkServices ReadUserData Location
+    \endcode
+    and installed.
 
 
 */

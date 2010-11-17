@@ -87,17 +87,8 @@ void QDeclarativeAudio::_q_error(int errorCode, const QString &errorString)
     m_error = QMediaPlayer::Error(errorCode);
     m_errorString = errorString;
 
-    bool emitPlayingChanged = false;
-    if (m_playing && m_state != QMediaPlayer::PlayingState) {
-        m_playing = false;
-        emitPlayingChanged = true;
-    }
-
     emit error(Error(errorCode), errorString);
     emit errorChanged();
-
-    if (emitPlayingChanged)
-        emit playingChanged();
 }
 
 
