@@ -285,7 +285,6 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
       id(other.id),
       request(other.request),
       bounds(other.bounds),
-      //routeSegments(other.routeSegments),
       travelTime(other.travelTime),
       distance(other.distance),
       travelMode(other.travelMode),
@@ -313,7 +312,6 @@ bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
     return ((id == other.id)
             && (request == other.request)
             && (bounds == other.bounds)
-            //&& (routeSegments == other.routeSegments)
             && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (travelMode == other.travelMode)

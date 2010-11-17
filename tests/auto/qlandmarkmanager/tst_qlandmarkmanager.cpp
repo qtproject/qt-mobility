@@ -8191,14 +8191,15 @@ void tst_QLandmarkManager::removeStress()
 {
     QFETCH(QString, type);
     QList<QLandmark> lms;
-    for (int i=0; i < 100; ++i) {
+    int stressNum = 100;
+    for (int i=0; i < stressNum; ++i) {
         QLandmark lm;
-        lm.setName(QString("LM") + i);
+        lm.setName(QString("LM") + QString::number(i));
         lms.append(lm);
     }
 
     QVERIFY(m_manager->saveLandmarks(&lms));
-    QCOMPARE(m_manager->landmarkIds().count(), 100);
+    QCOMPARE(m_manager->landmarkIds().count(), stressNum);
     qDebug() << "original landmark count= " <<  m_manager->landmarkIds().count();
 
     if (type == "sync") {
@@ -8388,7 +8389,7 @@ void tst_QLandmarkManager::removeCategoryStress()
     QList<QLandmarkCategory> cats;
     for (int i=0; i < stressNum; ++i) {
         QLandmarkCategory cat;
-        cat.setName(QString("CAT") + i);
+        cat.setName(QString("CAT") + QString::number(i));
         QVERIFY(m_manager->saveCategory(&cat));
         cats.append(cat);
     }
