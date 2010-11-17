@@ -166,7 +166,7 @@ void LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark* symb
                 QString LandmarkUrl((QChar*) (lmkField->Ptr()), lmkField->Length());
                 CleanupStack::PopAndDestroy(lmkField);
 
-                //qDebug() << "landmark url " << LandmarkUrl;
+                qDebug() << "landmark url " << LandmarkUrl;
                 //TODO: tmp fix, need to know exact reason.
                 if (LandmarkUrl != "0")
                     qtLandmark->setUrl(LandmarkUrl);
