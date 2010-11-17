@@ -74,6 +74,9 @@
     \row
         \o \l {SystemInfo QML Plugin}{System Information}
         \o A QML plugin for the SystemInfo API.
+    \row
+        \o \l {Sensors QML Plugin}{Sensors}
+        \o A QML plugin for the Sensors API.
     \endtable
 
 
