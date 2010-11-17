@@ -142,7 +142,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
 
     m_databaseOperations.managerUri = managerUri();
 
-    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SLOT(dataChanging()));
 
     connect(&m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
             this, SLOT(landmarksAdding(QList<QLandmarkId>)));
@@ -324,7 +324,9 @@ bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString);
+    QList<QLandmarkId> addedLandmarkIds;
+    QList<QLandmarkCategoryId> addedCategoryIds;
+    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString, &addedLandmarkIds, &addedCategoryIds);
 }
 
 bool QLandmarkManagerEngineQsparql::exportLandmarks(QIODevice *device,
@@ -524,6 +526,10 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 
 void QLandmarkManagerEngineQsparql::databaseChanged()
 {
+}
+
+void QLandmarkManagerEngineQsparql::dataChanging() {
+       emit dataChanged();
 }
 
 void QLandmarkManagerEngineQsparql::landmarksAdding(QList<QLandmarkId> ids) {

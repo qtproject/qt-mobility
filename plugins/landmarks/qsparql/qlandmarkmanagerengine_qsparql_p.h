@@ -207,6 +207,7 @@ public slots:
 
 private slots:
     void databaseChanged();
+    void dataChanging();
     void landmarksAdding(QList<QLandmarkId> ids);
     void landmarksChanging(QList<QLandmarkId> ids);
     void landmarksRemoving(QList<QLandmarkId> ids);
