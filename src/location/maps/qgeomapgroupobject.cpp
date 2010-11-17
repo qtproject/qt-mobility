@@ -105,7 +105,9 @@ QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
     if (d_ptr->children.size() == 0)
         return bounds;
 
-    for (int i = 0; i < d_ptr->children.size(); ++i)
+    bounds = d_ptr->children.at(0)->boundingBox();
+
+    for (int i = 1; i < d_ptr->children.size(); ++i)
         bounds = bounds.united(d_ptr->children.at(i)->boundingBox());
 
     return bounds;
