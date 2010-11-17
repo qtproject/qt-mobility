@@ -2186,7 +2186,7 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-    return QSystemBatteryInfo::Unknown;
+    return QSystemBatteryInfo::UnknownCharger;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
@@ -2205,7 +2205,7 @@ int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
     return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
     return 0;
 }
@@ -2258,8 +2258,7 @@ qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-    return QSystemBatteryInfo::UnitUnknown
-
+   return QSystemBatteryInfo::UnitUnknown;
 }
 
 #include "moc_qsysteminfo_win_p.cpp"
