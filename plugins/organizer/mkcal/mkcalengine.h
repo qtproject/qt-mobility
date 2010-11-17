@@ -64,6 +64,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QObject>
+#include <QMutex>
 
 #include <extendedcalendar.h>
 #include <extendedstorage.h>
@@ -107,7 +108,8 @@ public:
     MKCalEngineData()
         : QSharedData(),
         m_calendarBackendPtr(new mKCal::ExtendedCalendar(KDateTime::Spec::LocalZone())),
-        m_storagePtr(mKCal::ExtendedCalendar::defaultStorage(m_calendarBackendPtr))
+        m_storagePtr(mKCal::ExtendedCalendar::defaultStorage(m_calendarBackendPtr)),
+        m_operationMutex(QMutex::Recursive)
     {
         m_storagePtr->open();
         m_storagePtr->load();
@@ -130,7 +132,8 @@ public:
     OrganizerAsynchManager *m_asynchProcess;
 
     QString m_managerUri;
-    QOrganizerItem m_converted;
+
+    mutable QMutex m_operationMutex;
 };
 
 class MKCalEngine : public QOrganizerManagerEngine, public mKCal::ExtendedStorageObserver
