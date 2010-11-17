@@ -313,7 +313,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 void QBluetoothServiceDiscoveryAgentPrivate::startServiceDiscovery()
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
-    qDebug() <<"starting service discovert" << discoveredDevices.count();
 
     setDiscoveryState(ServiceDiscovery);
 

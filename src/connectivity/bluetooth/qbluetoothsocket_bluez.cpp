@@ -62,12 +62,26 @@ QTM_BEGIN_NAMESPACE
 
 void QBluetoothSocket::abort()
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
+    // TODO: what else?
+    // We don't transition through Closing for abort, so
+    // we don't call disconnectFromService or
+    // QBluetoothSocket::close
+    int ret = ::close(d->socket);
+
+    delete d->readNotifier;
+    d->readNotifier = 0;
+    delete d->connectWriteNotifier;
+    d->connectWriteNotifier = 0;
+
+    emit disconnected();
+    setSocketState(QBluetoothSocket::UnconnectedState);
 }
 
 void QBluetoothSocket::disconnectFromService()
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
+    // TODO: is this all we need to do?
+    close();
+    emit disconnected();
 }
 
 QString QBluetoothSocket::localName() const
@@ -267,7 +281,13 @@ qint64 QBluetoothSocket::writeData(const char *data, qint64 maxSize)
 
 qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
 {
-    return ::read(d->socket, data, maxSize);
+    if(!d->buffer.isEmpty()){
+        int i = d->buffer.read(data, maxSize);
+        return i;
+
+    }
+    return 0;
+//    return ::read(d->socket, data, maxSize);
 }
 
 void QBluetoothSocket::close()
@@ -277,6 +297,11 @@ void QBluetoothSocket::close()
     ::close(d->socket);
 
     setSocketState(UnconnectedState);
+
+    delete d->readNotifier;
+    d->readNotifier = 0;
+    delete d->connectWriteNotifier;
+    d->connectWriteNotifier = 0;
 }
 
 bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,

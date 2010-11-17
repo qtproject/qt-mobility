@@ -10,6 +10,8 @@ contains(mobility_modules,bearer) {
 
 contains(mobility_modules,systeminfo): SUBDIRS += sysinfo-tester
 
+linux*:contains(mobility_modules,connectivity): SUBDIRS += btclient
+
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
     contains(mobility_modules,publishsubscribe): SUBDIRS += publishsubscribeex

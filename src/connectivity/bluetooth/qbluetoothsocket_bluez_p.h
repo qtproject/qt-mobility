@@ -63,6 +63,14 @@ public:
     void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
 
     bool ensureNativeSocket(QBluetoothSocket::SocketType type);    
+
+public:
+    QSocketNotifier *connectNotifier;
+
+    bool connecting;
+
+public Q_SLOTS:
+    void writeNotify();
     
 };
 

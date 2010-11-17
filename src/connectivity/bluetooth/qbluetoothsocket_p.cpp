@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
 :socketType(QBluetoothSocket::UnknownSocketType), state(QBluetoothSocket::UnconnectedState),
- socketError(QBluetoothSocket::UnknownSocketError), rxOffset(0), socket(-1),
+ socketError(QBluetoothSocket::UnknownSocketError),socket(-1),
  readNotifier(0), q(parent)
 {
     connect(this, SIGNAL(readyRead()), q, SIGNAL(readyRead()));
@@ -75,6 +75,7 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
 QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
 {
     delete readNotifier;
+    readNotifier = 0;
 }
 
 bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
@@ -83,13 +84,34 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     return false;
 }
 
+// TODO: move to private backend?
+
 void QBluetoothSocketPrivate::_q_readNotify()
 {
     char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
-    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : int(readFromDevice)));
+//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    if(readFromDevice < 0){
+        int errsv = errno;
+        // TODO: Something seems wrong here
+        // Will return constant errors is enabled
+        // where should (if it can be?) we enable it again
+        readNotifier->setEnabled(false);
+        errorString = QString::fromLocal8Bit(strerror(errsv));
+        qDebug() << Q_FUNC_INFO << "error:" << errorString;
+        if(errsv == EHOSTDOWN)
+            emit error(QBluetoothSocket::HostNotFoundError);
+        else
+            emit error(QBluetoothSocket::UnknownSocketError);
 
-    emit readyRead();
+        q->setSocketState(QBluetoothSocket::UnconnectedState);
+
+    }
+    else {
+        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+
+        emit readyRead();
+    }
 }
 
 void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)

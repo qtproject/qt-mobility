@@ -198,8 +198,6 @@ public:
 
     virtual bool ensureNativeSocket(QBluetoothSocket::SocketType type);
 
-    virtual void _q_readNotify();
-
     static QBluetoothSocketPrivate *constructPrivate(QBluetoothSocket *parent);
     
 public:
@@ -211,13 +209,16 @@ public:
     QString localName;
     QString peerName;
     QSocketNotifier *readNotifier;
+    QSocketNotifier *connectWriteNotifier;
 
 
-    QByteArray rxBuffer;
-    qint64 rxOffset;
+//    QByteArray rxBuffer;
+//    qint64 rxOffset;
     QByteArray txBuffer;
 
     QBluetoothSocket *q;
+
+    QString errorString;
 
 Q_SIGNALS:
     void readyRead();
@@ -225,6 +226,9 @@ Q_SIGNALS:
     void disconnected();
     void error(QBluetoothSocket::SocketError error);
     void stateChanged(QBluetoothSocket::SocketState state);
+
+public Q_SLOTS:
+    void _q_readNotify();
 
 };
 

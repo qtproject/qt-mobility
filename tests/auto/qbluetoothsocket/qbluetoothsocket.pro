@@ -7,6 +7,9 @@ QT = core network
 INCLUDEPATH += ../../../src/connectivity/bluetooth
 DEPENDPATH += ../../../src/connectivity/bluetooth
 
+INCLUDEPATH += ../../../tests/btclient
+DEPENDPATH += ../../../tests/btclient
+
 include(../../../common.pri)
 
 CONFIG += mobility

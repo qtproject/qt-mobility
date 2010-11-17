@@ -55,19 +55,21 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <QtCore/QSocketNotifier>
 
 QTM_BEGIN_NAMESPACE
 
 QBluetoothSocketBluezPrivate::QBluetoothSocketBluezPrivate(QBluetoothSocket *parent)
-    : QBluetoothSocketPrivate(parent)
+    : QBluetoothSocketPrivate(parent), connecting(false)
 {
 }
 
 QBluetoothSocketBluezPrivate::~QBluetoothSocketBluezPrivate()
 {
     delete readNotifier;
+    readNotifier = 0;
 }
 
 bool QBluetoothSocketBluezPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
@@ -101,7 +103,7 @@ bool QBluetoothSocketBluezPrivate::ensureNativeSocket(QBluetoothSocket::SocketTy
     fcntl(socket, F_SETFL, flags | O_NONBLOCK);
 
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);    
-    QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
+    QObject::connect(readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 
     return true;
 }
@@ -130,19 +132,50 @@ void QBluetoothSocketBluezPrivate::connectToService(const QBluetoothAddress &add
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     }
 
-    if (result >= 0) {
-        state = QBluetoothSocket::ConnectingState;
-        emit stateChanged(state);
+    if (result >= 0 || (result == -1 && errno == EINPROGRESS)) {
+        connecting = true;
+        q->setSocketState(QBluetoothSocket::ConnectingState);
+        connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, this);
+        connect(connectWriteNotifier, SIGNAL(activated(int)), this, SLOT(writeNotify()));
     } else {
-        qDebug() << errno << strerror(errno);
-        socketError = QBluetoothSocket::UnknownSocketError;
-        emit error(socketError);
+        errorString = QString::fromLocal8Bit(strerror(errno));
+        q->setSocketError(QBluetoothSocket::UnknownSocketError);
     }
 }
 
 QBluetoothSocketPrivate *QBluetoothSocketPrivate::constructPrivate(QBluetoothSocket *parent)
 {
     return new QBluetoothSocketBluezPrivate(parent);
+}
+
+void QBluetoothSocketBluezPrivate::writeNotify()
+{
+    if(connecting && q->state() == QBluetoothSocket::ConnectingState){
+        int errorno, len;
+        len = sizeof(errorno);
+        ::getsockopt(socket, SOL_SOCKET, SO_ERROR, &errorno, (socklen_t*)&len);
+        if(errorno) {
+            errorString = QString::fromLocal8Bit(strerror(errorno));
+            emit error(QBluetoothSocket::UnknownSocketError);
+            return;
+        }
+        // TODO: is this right? set socket state, then emit connected?
+        q->setSocketState(QBluetoothSocket::ConnectedState);
+        emit connected();
+
+        // TODO: implement write buffering and enable this
+        // this CAN NOT BE DELETE.  NON BLOCKING SOCKET
+        // means writes silently will fail without this!!!!!!!!
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+
+    }
+    else {
+        // error at this time
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+    }
+    connecting = false;
 }
 
 #include "moc_qbluetoothsocket_bluez_p.cpp"

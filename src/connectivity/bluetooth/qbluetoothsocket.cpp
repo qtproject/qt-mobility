@@ -257,10 +257,7 @@ bool QBluetoothSocket::isSequential() const
 */
 qint64 QBluetoothSocket::bytesAvailable() const
 {
-    if (d->rxOffset == -1)
-        return QIODevice::bytesAvailable();
-    else
-        return QIODevice::bytesAvailable() + d->rxBuffer.length() - d->rxOffset;
+    return QIODevice::bytesAvailable() + d->buffer.size();
 }
 
 /*!
@@ -339,12 +336,9 @@ void QBluetoothSocket::connectToService(const QBluetoothAddress &address, const 
 */
 void QBluetoothSocket::connectToService(const QBluetoothAddress &address, quint16 port, OpenMode openMode)
 {
-    qDebug() << "set open mode";
     setOpenMode(openMode);
 
-    qDebug() << "connectToServevice: " << address.toString() << port;
     d->connectToService(address, port, openMode);
-    qDebug() << "done";
 }
 
 /*!
@@ -372,19 +366,36 @@ QBluetoothSocket::SocketError QBluetoothSocket::error() const
 }
 
 /*!
+    Returns a user displayable text string for the error.
+ */
+QString QBluetoothSocket::errorString() const
+{
+    return d->errorString;
+}
+
+/*!
     Sets the socket state to \a state.
 */
 void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
 {
+    SocketState old = d->state;
     d->state = state;
+    if(old != d->state)
+        emit stateChanged(state);
+}
+
+bool QBluetoothSocket::canReadLine() const
+{
+    return d->buffer.canReadLine() || QIODevice::canReadLine();
 }
 
 /*!
     Sets the type of error that last occurred to \a error.
 */
-void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error)
+void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
 {
-    d->socketError = error;
+    d->socketError = error_;
+    emit error(error_);
 }
 
 #ifndef QT_NO_DEBUG_STREAM

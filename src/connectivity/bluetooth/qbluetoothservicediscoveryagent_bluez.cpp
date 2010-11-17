@@ -115,16 +115,17 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     foreach (const QBluetoothUuid &uuid, uuidFilter)
         pattern += uuid.toString().remove(QChar('{')).remove(QChar('}')) + QLatin1Char(' ');
 
-    qDebug() << "Discover: " << pattern.trimmed();
+//    qDebug() << "Discover: " << pattern.trimmed();
     QDBusPendingReply<ServiceMap> discoverReply = device->DiscoverServices(pattern.trimmed());
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(discoverReply, q);
     QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
                      q, SLOT(_q_discoveredServices(QDBusPendingCallWatcher*)));
-    qDebug() << "Working: " << address.toString();
+//    qDebug() << "Working: " << address.toString();
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::stop()
 {
+    qDebug() << Q_FUNC_INFO << "XXXXXXXXXX stop is not implemenetd";
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingCallWatcher *watcher)
@@ -144,7 +145,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
     foreach (const QString &record, reply.value()) {
         QXmlStreamReader xml(record);
 
-        qDebug() << "Service xml" << record;
+//        qDebug() << "Service xml" << record;
 
         QBluetoothServiceInfo serviceInfo;
         serviceInfo.setDevice(discoveredDevices.at(0));
@@ -171,7 +172,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         Q_Q(QBluetoothServiceDiscoveryAgent);
 
         discoveredServices.append(serviceInfo);
-        qDebug() << "Discovered service" << serviceInfo;
+//        qDebug() << "Discovered service" << serviceInfo;
         emit q->serviceDiscovered(serviceInfo);
     }
 
