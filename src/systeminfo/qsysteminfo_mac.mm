@@ -2337,7 +2337,7 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-return QSystemBatteryInfo::Unknown;
+return QSystemBatteryInfo::UnknownCharger;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
@@ -2373,11 +2373,6 @@ return 0;
 }
 
 qint32 QSystemBatteryInfoPrivate::currentFlow() const
-{
-return 0;
-}
-
-qint32 QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
 {
 return 0;
 }
