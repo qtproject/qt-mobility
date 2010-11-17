@@ -484,22 +484,22 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->cellId();
+    return DeviceInfo::instance()->cellNetworkInfo()->cellId();
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
@@ -508,7 +508,7 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
     if (imsi.length() >= 3) {
         return imsi.left(3);
     }
-	return QString();
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
@@ -635,10 +635,10 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 {
     bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
-		if (status)
-			emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
-		else
-			networkNameChanged();//Restore default network name, as WLAN will leave name as blank
+        if (status)
+            emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+        else
+            networkNameChanged();//Restore default network name, as WLAN will leave name as blank
 }
 
 void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()
@@ -1092,7 +1092,7 @@ QString QSystemDeviceInfoPrivate::productName()
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
     if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
-		productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
+        productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
     }
     return productname.split("\n").at(2);
 }
@@ -1329,11 +1329,6 @@ int QSystemBatteryInfoPrivate::currentFlow() const
     return 0;
 }
 
-int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
-{
-    return 0;
-}
-
 int QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
     return 0;
@@ -1359,6 +1354,16 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 
 }
 
+qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+{
+    return QSystemBatteryInfo::UnitUnknown;
+
+}
 #include "moc_qsysteminfo_s60_p.cpp"
 
 QTM_END_NAMESPACE

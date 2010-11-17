@@ -389,36 +389,37 @@ public:
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
 
-    int nominalCapacity() const;
-    int remainingCapacityPercent() const;
-    int remainingCapacitymAh() const;
+    qint32 nominalCapacity() const;
+    qint32 remainingCapacityPercent() const;
+    qint32 remainingCapacity() const;
 
-    int voltage() const;
-    int remainingChargingTime() const;
-    int currentFlow() const;
-    int cumulativeCurrentFlow() const;
-    int remainingCapacityBars() const;
-    int maxBars() const;
+    qint32 voltage() const;
+    qint32 remainingChargingTime() const;
+    qint32 currentFlow() const;
+    qint32 remainingCapacityBars() const;
+    qint32 maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
+    qint32 startCurrentMeasurement(qint32 rate);
 
 Q_SIGNALS:
-    void batteryLevelChanged(int level);
+    void batteryLevelChanged(qint32 level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
 
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void nominalCapacityChanged(int);
-    void remainingCapacityPercentChanged(int);
-    void remainingCapacitymAhChanged(int);
-    void batteryCurrentFlowChanged(int);
-    void voltageChanged(int);
+    void nominalCapacityChanged(qint32);
+    void remainingCapacityPercentChanged(qint32);
+    void remainingCapacityChanged(qint32);
+    void batteryCurrentFlowChanged(qint32);
+    void voltageChanged(qint32);
 
-    void currentFlowChanged(int);
-    void cumulativeCurrentFlowChanged(int);
-    void remainingCapacityBarsChanged(int);
-    void remainingChargingTimeChanged(int);
+    void currentFlowChanged(qint32);
+    void cumulativeCurrentFlowChanged(qint32);
+    void remainingCapacityBarsChanged(qint32);
+    void remainingChargingTimeChanged(qint32);
 
 protected:
     void connectNotify(const char *signal);
@@ -444,12 +445,12 @@ private:
     QSystemBatteryInfo::ChargingState curChargeState;
     QSystemBatteryInfo::ChargerType curChargeType;
 
-    int currentBatLevelPercent;
-    int currentVoltage;
-    int dischargeRate;
-    int capacity;
-    int timeToFull;
-    int remainingEnergy;
+    qint32 currentBatLevelPercent;
+    qint32 currentVoltage;
+    qint32 dischargeRate;
+    qint32 capacity;
+    qint32 timeToFull;
+    qint32 remainingEnergy;
 
 
 };

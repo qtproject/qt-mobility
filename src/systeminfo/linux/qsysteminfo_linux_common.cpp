@@ -3019,48 +3019,43 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::charging
 }
 
 
-int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
 {
     return capacity;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
 {
     return currentBatLevelPercent;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacitymAh() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacity() const
 {
     return remainingEnergy;
 }
 
 
-int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::voltage() const
 {
     return currentVoltage;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
 {
     return timeToFull;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
 {
     return dischargeRate;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::cumulativeCurrentFlow() const
-{
-    return dischargeRate;
-}
-
-int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
 {
     return 0;
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
+qint32 QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
 {
     return 0;
 }
@@ -3212,7 +3207,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     int cTime = 0;
     int rEnergy = 0;
 
-    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingFailed;
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
@@ -3247,7 +3242,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                     cState = QSystemBatteryInfo::NotCharging;
                     break;
                 default:
-                    cState = QSystemBatteryInfo::ChargingFailed;
+                    cState = QSystemBatteryInfo::ChargingError;
                     break;
                 };
                 //energy flow
@@ -3333,7 +3328,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
     if (remainingEnergy != rEnergy) {
         remainingEnergy = rEnergy;
-        Q_EMIT remainingCapacitymAhChanged(rEnergy);
+        Q_EMIT remainingCapacityChanged(rEnergy);
     }
     QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
@@ -3354,14 +3349,21 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
 }
 
-int QSystemBatteryInfoLinuxCommonPrivate::getCumuloFlo()
-{
-
-}
 
 void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 {
 
+}
+
+
+qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
+{
+    return QSystemBatteryInfo::UnitUnknown;
 }
 
 #include "moc_qsysteminfo_linux_common_p.cpp"

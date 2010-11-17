@@ -338,14 +338,14 @@ static void test_systembatteryinfo(void)
     X(batInfo.chargingState() );
     X(batInfo.nominalCapacity());
     X(batInfo.remainingCapacityPercent());
-    X(batInfo.remainingCapacitymAh());
+    X(batInfo.remainingCapacity());
     X(batInfo.voltage());
     X(batInfo.remainingChargingTime());
     X(batInfo.currentFlow());
-    X(batInfo.cumulativeCurrentFlow());
     X(batInfo.remainingCapacityBars());
     X(batInfo.maxBars());
     X(batInfo.batteryStatus());
+    X(batInfo.energyMeasurementUnit());
 }
 
 struct dummy_t

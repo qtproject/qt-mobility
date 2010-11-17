@@ -2346,48 +2346,48 @@ return QSystemBatteryInfo::NotCharging;
 }
 
 
-int QSystemBatteryInfoPrivate::nominalCapacity() const
+qint32 QSystemBatteryInfoPrivate::nominalCapacity() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+qint32 QSystemBatteryInfoPrivate::remainingCapacityPercent() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+qint32 QSystemBatteryInfoPrivate::remainingCapacity() const
 {
 return 0;
 }
 
 
-int QSystemBatteryInfoPrivate::voltage() const
+qint32 QSystemBatteryInfoPrivate::voltage() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingChargingTime() const
+qint32 QSystemBatteryInfoPrivate::remainingChargingTime() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::currentFlow() const
+qint32 QSystemBatteryInfoPrivate::currentFlow() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
+qint32 QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacityBars() const
+qint32 QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
 return 0;
 }
 
-int QSystemBatteryInfoPrivate::maxBars() const
+qint32 QSystemBatteryInfoPrivate::maxBars() const
 {
 return 0;
 }
@@ -2399,6 +2399,22 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
+
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
+{
+      return QSystemBatteryInfo::BatteryUnknown;
+}
+
+ qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+{
+  return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+{
+     return QSystemBatteryInfo::UnitUnknown;
 
 }
 

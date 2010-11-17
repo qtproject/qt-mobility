@@ -57,13 +57,11 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
 
     Q_PROPERTY(int nominalCapacity READ nominalCapacity NOTIFY nominalCapacityChanged)
     Q_PROPERTY(int remainingCapacityPercent READ remainingCapacityPercent NOTIFY remainingCapacityPercentChanged)
-    Q_PROPERTY(int remainingCapacitymAh READ remainingCapacitymAh NOTIFY remainingCapacitymAhChanged)
-   // Q_PROPERTY(int batteryCurrentFlow READ batteryCurrentFlow NOTIFY batteryCurrentFlowChanged)
-    Q_PROPERTY(int voltage READ voltage NOTIFY voltageChanged)
+    Q_PROPERTY(int remainingCapacity READ remainingCapacity NOTIFY remainingCapacityChanged)
+    Q_PROPERTY(int voltage READ voltage)
     Q_PROPERTY(int remainingChargingTime READ remainingChargingTime NOTIFY remainingChargingTimeChanged)
 
     Q_PROPERTY(int currentFlow READ currentFlow  NOTIFY currentFlowChanged)
-    Q_PROPERTY(int cumulativeCurrentFlow READ cumulativeCurrentFlow  NOTIFY cumulativeCurrentFlowChanged)
     Q_PROPERTY(int remainingCapacityBars READ remainingCapacityBars NOTIFY remainingCapacityBarsChanged)
     Q_PROPERTY(int maxBars READ maxBars CONSTANT)
 
@@ -73,6 +71,8 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(ChargerType)
     Q_ENUMS(ChargingState)
+    Q_ENUMS(EnergyUnit)
+
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
 
 public:
@@ -81,6 +81,7 @@ public:
 
     enum BatteryStatus {
         BatteryUnknown = 0,
+        BatteryEmpty,
         BatteryCritical,
         BatteryVeryLow,
         BatteryLow,
@@ -89,7 +90,7 @@ public:
     };
 
     enum ChargingState {
-        ChargingFailed = -1,
+        ChargingError = -1,
         NotCharging,
         Charging
     };
@@ -98,45 +99,51 @@ public:
         UnknownCharger = -1,
         NoCharger,
         WallCharger,
+        USBCharger,
         USB_500mACharger,
-        USB_100mACharger
+        USB_100mACharger,
+        VariableCurrentCharger
+    };
+
+    enum EnergyUnit {
+        UnitUnknown,
+        UnitmAh,
+        UnitmWh,
     };
 
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
 
 
-    int nominalCapacity() const;// The battery nominal (maximum) capacity(mAh)
-    int remainingCapacityPercent() const;
-    int remainingCapacitymAh() const;
+    qint32 nominalCapacity() const;
+    qint32 remainingCapacityPercent() const;
+    qint32 remainingCapacity() const;
 
-    int voltage() const;// The battery voltage (mV)
-    int remainingChargingTime() const;// the charging time in seconds if charging or -1 if not charging
+    qint32 voltage() const;
+    qint32 remainingChargingTime() const;
+    qint32 currentFlow() const;
+    qint32 startCurrentMeasurement(qint32 rate);
 
-    int currentFlow() const;// The short term averge battery current (mA)
-    int cumulativeCurrentFlow() const; // cumulative amount of current flowing out from the battery (the coulomb counter). mAs
-
-    int remainingCapacityBars() const;
-    int maxBars() const;
+    qint32 remainingCapacityBars() const;
+    qint32 maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-    void batteryLevelChanged(int level);
+    void batteryLevelChanged(qint32 level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
 
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void nominalCapacityChanged(int);
-    void remainingCapacityPercentChanged(int);
-    void remainingCapacitymAhChanged(int);
-    void voltageChanged(int);
+    void nominalCapacityChanged(qint32);
+    void remainingCapacityPercentChanged(qint32);
+    void remainingCapacityChanged(qint32);
 
-    void currentFlowChanged(int);
-    void cumulativeCurrentFlowChanged(int);
-    void remainingCapacityBarsChanged(int);
-    void remainingChargingTimeChanged(int);
+    void currentFlowChanged(qint32);
+    void remainingCapacityBarsChanged(qint32);
+    void remainingChargingTimeChanged(qint32);
 
 private:
     QSystemBatteryInfoPrivate *d;

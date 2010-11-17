@@ -2226,11 +2226,6 @@ int QSystemBatteryInfoPrivate::currentFlow() const
     return 0;
 }
 
-int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
-{
-    return 0;
-}
-
 int QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
     return 0;
@@ -2253,6 +2248,17 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
+
+}
+
+qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+{
+    return QSystemBatteryInfo::UnitUnknown
 
 }
 

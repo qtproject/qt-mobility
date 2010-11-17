@@ -63,6 +63,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
     This enum describes the status of the main battery.
 
     \value BatteryStatus           Battery level undetermined.
+    \value BatteryEmpty            Battery level reported as 0, system will shutdown.
     \value BatteryCritical         Battery level is critical 3% or less.
     \value BatteryVeryLow          Battery level is very low, 10% or less.
     \value BatteryLow              Battery level is low 40% or less.
@@ -75,20 +76,31 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return d; }
 
      \value NotCharging           Battery is not charging.
      \value Charging              Battery is charging.
-     \value ChargingFailed        Error.
+     \value ChargingError         Error.
   */
 /*!
     \enum QSystemBatteryInfo::ChargerType
     This enum describes the type of charger used.
 
-    \value Unknown                Charger type unknown, or error.
-    \value None                   No charger.
-    \value Wall                   Using wall (mains) charger.
-    \value USB_500mA              Using USB charger at 500 mA.
-    \value USB_100mA              Using USB charger at 100 mA.
+    \value UnknownCharger           Charger type unknown, or error.
+    \value NoCharger                No charger.
+    \value WallCharger              Using wall (mains) charger.
+    \value USBCharger               Using USB charger when the system cannot differentiate the current.
+    \value USB_500mACharger         Using USB charger at 500 mA.
+    \value USB_100mACharger         Using USB charger at 100 mA.
+    \value VariableCurrentCharger   Using variable current charger such as bicycle or solar.
+
   */
 
 /*!
+      \enum QSystemBatteryInfo::EnergyUnit
+      This enum describes the energy unit used by the system.
+
+      \value UnitmAh                Energy described in milli Amp hours (mAh)
+      \value UnitmWh                Energy described in milli watt hours (mWh)
+*/
+/*!
+
   \fn void QSystemBatteryInfo::batteryLevelChanged(int level)
 
   This signal is emitted when battery level has changed.
@@ -119,9 +131,9 @@ This signal is emitted when the charger type has changed, such as when a phone g
   \a level is the new level.
  */
 /*!
-  \fn void QSystemBatteryInfo::remainingCapacitymAhChanged(int level)
+  \fn void QSystemBatteryInfo::remainingCapacityChanged(int level)
 
-  This signal is emitted when battery capacity in mAh (milliampere-hour) has changed.
+  This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
   \a level is the new level.
  */
 
@@ -140,15 +152,13 @@ This signal is emitted when the charger type has changed, such as when a phone g
 /*!
   \fn void QSystemBatteryInfo::currentFlowChanged(int level)
 
-  This signal is emitted when battery level has changed.
-  \a level is the new level.
- */
-/*!
-  \fn void QSystemBatteryInfo::cumulativeCurrentFlowChanged(int level)
+  This signal is emitted when the short term averge battery current has changed.
+  Sent at desired interval when battery current measurement is enabled .
+\sa QSystemBatteryInfo::startCurrentMeasurement
 
-  This signal is emitted when battery level has changed.
   \a level is the new level.
  */
+
 /*!
   \fn void QSystemBatteryInfo::remainingCapacityBarsChanged(int level)
 
@@ -166,6 +176,7 @@ QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent) :
     qRegisterMetaType<QSystemBatteryInfo::BatteryStatus>("QSystemBatteryInfo::BatteryStatus");
     qRegisterMetaType<QSystemBatteryInfo::ChargingState>("QSystemBatteryInfo::ChargingState");
     qRegisterMetaType<QSystemBatteryInfo::ChargerType>("QSystemBatteryInfo::ChargerType");
+    qRegisterMetaType<QSystemBatteryInfo::EnergyUnit>("QSystemBatteryInfo::EnergyUnit");
 
 #if defined(Q_OS_LINUX) && !defined(QT_SIMULATOR)
     d = new QSystemBatteryInfoPrivate(static_cast<QSystemBatteryInfoLinuxCommonPrivate*>(parent));
@@ -204,7 +215,7 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
 
     Returns the nominal (maximum) capacity of the battery, in milliampere-hours (mAh).
 */
-int QSystemBatteryInfo::nominalCapacity() const
+qint32 QSystemBatteryInfo::nominalCapacity() const
 {
     return d->nominalCapacity();
 }
@@ -215,20 +226,22 @@ int QSystemBatteryInfo::nominalCapacity() const
 
     Returns the remaining battery level of the battery in percent.
   */
-int QSystemBatteryInfo::remainingCapacityPercent() const
+qint32 QSystemBatteryInfo::remainingCapacityPercent() const
 {
     return d->remainingCapacityPercent();
 }
 
 /*!
-  \property QSystemBatteryInfo::remainingCapacitymAh
-  \brief The battery level in milliampere-hour (mAh).
+  \property QSystemBatteryInfo::remainingCapacity
+  \brief The battery level in QSystemBatteryInfo::EnergyUnit
 
-    Returns the remaining battery level of the battery in milliampere-hours (mAh).
+    Returns the remaining battery level of the battery in QSystemBatteryInfo::EnergyUnit.
+
+    \sa QSystemBatteryInfo::energyMeasurementUnit()
   */
-int QSystemBatteryInfo::remainingCapacitymAh() const
+qint32 QSystemBatteryInfo::remainingCapacity() const
 {
-    return d->remainingCapacitymAh();
+    return d->remainingCapacity();
 }
 
 /*!
@@ -237,7 +250,7 @@ int QSystemBatteryInfo::remainingCapacitymAh() const
 
     Returns the voltage of the battery, in millivolts (mV).
   */
-int QSystemBatteryInfo::voltage() const
+qint32 QSystemBatteryInfo::voltage() const
 {
     return d->voltage();
 }
@@ -249,7 +262,7 @@ int QSystemBatteryInfo::voltage() const
     Returns the remaining time of charging in seconds if charging,
     or -1 if not charging.
 */
-int QSystemBatteryInfo::remainingChargingTime() const
+qint32 QSystemBatteryInfo::remainingChargingTime() const
 {
     return d->remainingChargingTime();
 }
@@ -261,30 +274,11 @@ int QSystemBatteryInfo::remainingChargingTime() const
     Returns the amount of current flowing out from the battery (a short term averge), milliapmeres (mA).
     Positive current means discharging and negative current means charging.
   */
-int QSystemBatteryInfo::currentFlow() const
+qint32 QSystemBatteryInfo::currentFlow() const
 {
     return d->currentFlow();
 }
 
-/*!
-  \property QSystemBatteryInfo::cumulativeCurrentFlow
-  \brief The cumulative current flow.
-
-    Returns the cumulative amount of current flowing out from the battery (the coulomb counter),
-    in milliampere-seconds (mAs).
-
-
-    The reference point of the cumulative battery current is undefined and only differences
-    of the returned values are meaningful.
-
-    This function needs to be called twice and the time between calls needs to be known to be able
-    to measure the delta of the inflow/outflow. If the delta is positive, it means that battery
-    has discharged that much. If it is negative, it has charged by that much.
-*/
-int QSystemBatteryInfo::cumulativeCurrentFlow() const
-{
-    return d->cumulativeCurrentFlow();
-}
 
 /*!
   \property QSystemBatteryInfo::remainingCapacityBars
@@ -293,7 +287,7 @@ int QSystemBatteryInfo::cumulativeCurrentFlow() const
    Returns the remaining capacity in number of bars.
    The bar count will not necessarily always reflect one to one on the remaining capacity percentage.
    */
-int QSystemBatteryInfo::remainingCapacityBars() const
+qint32 QSystemBatteryInfo::remainingCapacityBars() const
 {
     return d->remainingCapacityBars();
 }
@@ -304,7 +298,7 @@ int QSystemBatteryInfo::remainingCapacityBars() const
 
    Returns the Maximum number of bars the system uses.
   */
-int QSystemBatteryInfo::maxBars() const
+qint32 QSystemBatteryInfo::maxBars() const
 {
     return d->maxBars();
 }
@@ -316,7 +310,7 @@ int QSystemBatteryInfo::maxBars() const
   \sa connectNotify()
 */
 
-void QSystemBatteryInfo::connectNotify(const char *signal)
+void QSystemBatteryInfo::connectNotify(const char */*signal*/)
 {
 }
 
@@ -327,14 +321,40 @@ void QSystemBatteryInfo::connectNotify(const char *signal)
  \sa connectNotify()
 */
 
-void QSystemBatteryInfo::disconnectNotify(const char *signal)
+void QSystemBatteryInfo::disconnectNotify(const char */*signal*/)
 {
 
 }
 
+/*!
+    \property QSystemDeviceInfo::batteryStatus
+    \brief The battery status.
+
+    Returns the battery charge status.
+  */
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
    return d->batteryStatus();
+}
+
+/*!
+  Starts battery current measurement with given \a rate.
+  Return value is actual rate used by the system.
+  */
+qint32 QSystemBatteryInfo::startCurrentMeasurement(qint32 rate)
+{
+    return d->startCurrentMeasurement(rate);
+
+}
+
+/*!
+  Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
+  */
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
+{
+    return d->energyMeasurementUnit();
+
 }
 
 #include "moc_qsystembatteryinfo.cpp"
