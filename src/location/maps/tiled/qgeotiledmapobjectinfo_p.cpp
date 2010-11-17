@@ -160,6 +160,9 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
 {
     QPolygonF points;
 
+    if (path.isEmpty())
+        return points;
+
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = tiledMapData->coordinateToWorldReferencePosition(lastCoord);
 
