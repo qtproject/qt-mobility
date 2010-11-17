@@ -1579,10 +1579,10 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     } else if (!qIsNaN(geoCoord.latitude()) && !qIsNaN(geoCoord.longitude())
         && isValidLat(geoCoord.latitude()) && isValidLong(geoCoord.longitude())) {
         queryString.append("; slo:latitude ");
-        queryString.append(QString::number(geoCoord.latitude()));
+        queryString.append(QString::number(geoCoord.latitude(),'g',8));
         queryString.append(" ");
         queryString.append("; slo:longitude ");
-        queryString.append(QString::number(geoCoord.longitude()));
+        queryString.append(QString::number(geoCoord.longitude(),'g',8));
         queryString.append(" ");
     } else {
         *error = QLandmarkManager::BadArgumentError;
@@ -1592,7 +1592,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     }
     if (!qIsNaN(geoCoord.altitude())) {
         queryString.append("; slo:altitude ");
-        queryString.append(QString::number(geoCoord.altitude()));
+        queryString.append(QString::number(geoCoord.altitude(),'g',8));
         queryString.append(" ");
     }
     if (!qIsNaN(landmark->radius())) {
