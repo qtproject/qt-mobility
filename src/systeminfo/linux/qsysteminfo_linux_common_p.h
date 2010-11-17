@@ -451,6 +451,8 @@ private:
     qint32 capacity;
     qint32 timeToFull;
     qint32 remainingEnergy;
+    int  batteryLevel() const ;
+
 
 
 };

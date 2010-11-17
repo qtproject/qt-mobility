@@ -3210,7 +3210,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     if (uPowerAvailable()) {
 
         QUPowerInterface power(this);
@@ -3264,6 +3264,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 #endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
+
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("battery");
         if (!list.isEmpty()) {
@@ -3277,6 +3278,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 }
             }
         }
+
         list = iface.findDeviceByCapability("ac_adapter");
         if (!list.isEmpty()) {
             foreach (const QString &dev, list) {
@@ -3292,8 +3294,8 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 }
             }
         }
-
     }
+    cLevel = batteryLevel();
 #endif
 
     if ( currentVoltage != cVoltage) {
@@ -3366,6 +3368,87 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasu
     return QSystemBatteryInfo::UnitUnknown;
 }
 
+int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
+{
+    float levelWhenFull = 0.0;
+    float level = 0.0;
+#if !defined(QT_NO_DBUS)
+    if (halAvailable()) {
+        QHalInterface iface;
+        const QStringList list = iface.findDeviceByCapability("battery");
+        if (!list.isEmpty()) {
+            foreach (const QString &dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (ifaceDevice.isValid()) {
+                    if (!ifaceDevice.getPropertyBool("battery.present")
+                        && (ifaceDevice.getPropertyString("battery.type") != "pda"
+                             || ifaceDevice.getPropertyString("battery.type") != "primary")) {
+                        return 0;
+                    } else {
+                        level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                        return level;
+                    }
+                }
+            }
+        }
+    }
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+    if (uPowerAvailable()) {
+        QUPowerInterface power;
+        foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
+            QUPowerDeviceInterface powerDevice(objpath.path());
+            if (powerDevice.getType() == 2) {
+                return powerDevice.percentLeft();
+            }
+        }
+    }
+#endif
+#endif
+    QFile infofile("/proc/acpi/battery/BAT0/info");
+    if (!infofile.open(QIODevice::ReadOnly)) {
+        return QSystemDeviceInfo::NoBatteryLevel;
+    } else {
+        QTextStream batinfo(&infofile);
+        QString line = batinfo.readLine();
+        while (!line.isNull()) {
+            if (line.contains("last full capacity")) {
+                bool ok;
+                line = line.simplified();
+                QString levels = line.section(" ", 3,3);
+                levelWhenFull = levels.toFloat(&ok);
+                infofile.close();
+                break;
+            }
+
+            line = batinfo.readLine();
+        }
+        infofile.close();
+    }
+
+    QFile statefile("/proc/acpi/battery/BAT0/state");
+    if (!statefile.open(QIODevice::ReadOnly)) {
+        return QSystemDeviceInfo::NoBatteryLevel;
+    } else {
+        QTextStream batstate(&statefile);
+        QString line = batstate.readLine();
+        while (!line.isNull()) {
+            if (line.contains("remaining capacity")) {
+                bool ok;
+                line = line.simplified();
+                QString levels = line.section(" ", 2,2);
+                level = levels.toFloat(&ok);
+                statefile.close();
+                break;
+            }
+            line = batstate.readLine();
+        }
+    }
+    if (level != 0 && levelWhenFull != 0) {
+        level = level / levelWhenFull * 100;
+        return level;
+    }
+    return 0;
+}
 #include "moc_qsysteminfo_linux_common_p.cpp"
 
 QTM_END_NAMESPACE
