@@ -128,6 +128,11 @@ bool QGeoMapGroupObject::contains(const QGeoCoordinate &coordinate) const
     return false;
 }
 
+bool mapObjectLessThan(const QGeoMapObject* op1, const QGeoMapObject* op2)
+{
+    return op1->operator <(*op2);
+}
+
 /*!
     Adds \a childObject to the list of children of this map object.
 
@@ -145,7 +150,10 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     childObject->setMapData(mapData());
 
     //binary search
-    QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(), d_ptr->children.end(), childObject);
+    QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(),
+                                                    d_ptr->children.end(),
+                                                    childObject,
+                                                    mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
 
     emit childAdded(childObject);
