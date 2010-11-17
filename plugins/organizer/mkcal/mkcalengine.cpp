@@ -153,8 +153,12 @@ QList<QOrganizerItem> MKCalEngine::internalItemOccurrences(const QOrganizerItem&
     Q_UNUSED(fetchHint); // XXX TODO: why do we not use this?
 
     //for the moment we support generating of 1000 occurrences. 1000 is a random value
-    if (maxCount < 0)
+    if (maxCount < 0) {
         maxCount = 1000;
+    } else if (!maxCount) {
+        // if maxCount is 0 return empty list
+        return QList<QOrganizerItem>();
+    }
 
     //find the generator incidence
     QOrganizerItemId generatorId = parentItem.id();
@@ -180,8 +184,7 @@ QList<QOrganizerItem> MKCalEngine::internalItemOccurrences(const QOrganizerItem&
                 if (persistentExceptions.count() > maxCount)
                     break;
                 QOrganizerItem instance;
-                if (convertIncidenceToItem(ev, &instance) &&
-                        QOrganizerManagerEngine::isItemBetweenDates(instance, periodStart, periodEnd)) {
+                if (isIncidenceInInterval(ev, periodStart, periodEnd) && convertIncidenceToItem(ev, &instance)) {
                     persistentExceptions.append(QPair<QDateTime, QOrganizerItem>(ev->dtStart().dateTime(), instance));
                 }
             }
@@ -193,8 +196,7 @@ QList<QOrganizerItem> MKCalEngine::internalItemOccurrences(const QOrganizerItem&
                 if (persistentExceptions.count() > maxCount)
                     break;
                 QOrganizerItem instance;
-                if (convertIncidenceToItem(t, &instance) &&
-                        QOrganizerManagerEngine::isItemBetweenDates(instance, periodStart, periodEnd)) {
+                if (isIncidenceInInterval(t, periodStart, periodEnd) && convertIncidenceToItem(t, &instance)) {
                     persistentExceptions.append(QPair<QDateTime, QOrganizerItem>(t->dtStart().dateTime(), instance));
                 }
             }
@@ -353,17 +355,18 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
     QList<QOrganizerItem> ret;
 
     // Convert them all to QOrganizerItems
-    foreach (KCalCore::Incidence::Ptr incidence, incidences) {
+    foreach (const KCalCore::Incidence::Ptr& incidence, incidences) {
         QOrganizerItem item;
-        if (convertIncidenceToItem(incidence, &item)) {
-            if (incidence->recurs()) {
+        if (incidence->recurs()) {
+            if (convertIncidenceToItem(incidence, &item)) {
                 if (expand) {
                     partiallyFilteredItems << internalItemOccurrences(item, startDate, endDate, 100, fetchHint, error, OnlyGeneratedOccurrences);
-                } else {
-                    if (itemHasRecurringChildInInterval(incidence, item, startDate, endDate, filter))
-                        QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
+                } else if (itemHasRecurringChildInInterval(incidence, item, startDate, endDate, filter)) {
+                    QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
                 }
-            } else {
+            }
+        } else {
+            if (isIncidenceInInterval(incidence, startDate, endDate) && convertIncidenceToItem(incidence, &item)) {
                 partiallyFilteredItems << item;
             }
         }
@@ -371,8 +374,7 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
 
     // Now filter them
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) &&
-                QOrganizerManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerManagerEngine::testFilter(filter, item)) {
             QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
@@ -417,18 +419,6 @@ bool MKCalEngine::itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incid
     if (startDate.isNull())
         return incidence->dtStart().dateTime() <= endDate;
 
-    //calculate incidence duration
-    int duration = 0;
-    if (incidence->type() == KCalCore::Incidence::TypeEvent) {
-        KCalCore::Event::Ptr ev = incidence.staticCast<KCalCore::Event>();
-        if (!ev->dtEnd().isNull())
-            duration = ev->dtStart().secsTo(ev->dtEnd());
-    } else if (incidence->type() == KCalCore::Incidence::TypeTodo) {
-        KCalCore::Todo::Ptr todo = incidence.staticCast<KCalCore::Todo>();
-        if (!todo->dtDue().isNull())
-            duration = todo->dtStart().secsTo(todo->dtDue());
-    }
-
     QDateTime next(incidence->recurrence()->getNextDateTime(KDateTime(startDate)).dateTime());
     //fail if there are no recurrences after the start date
     if (next.isNull())
@@ -436,7 +426,7 @@ bool MKCalEngine::itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incid
 
     //if end date is empty, check if the calculated recurrence + duration of the event is after the start date
     if (endDate.isNull())
-        return next.addSecs(duration) >= startDate;
+        return next.addSecs(incidenceDuration(incidence)) >= startDate;
 
     //in last case just check if a recurrence is before the interval end
     return next <= endDate;
@@ -457,9 +447,24 @@ QOrganizerItem MKCalEngine::item(const QOrganizerItemId& itemId, const QOrganize
     if (convertIncidenceToItem(theIncidence, &item)) {
         return item;
     } else {
-        *error = QOrganizerManager::DoesNotExistError;
+        *error = QOrganizerManager::UnspecifiedError;
         return QOrganizerItem();
     }
+}
+
+bool MKCalEngine::saveStorage(QOrganizerItemChangeSet* ics, QOrganizerManager::Error* error)
+{
+// TODO: because a bug in mkCal save() can fail sometimes (for the same testcase) by saying "constraint failed for incidence ..."
+// even if in the memory everything is ok. We will not check the result of the save. Remove the comment when is fixed in mkCal.
+/*    if (d->m_storagePtr->save()) { // commit all changes to the database.
+        ics->emitSignals(this);
+    } else {
+        *error = QOrganizerManager::UnspecifiedError;
+    }*/
+    d->m_storagePtr->save();
+    ics->emitSignals(this);
+
+    return *error == QOrganizerManager::NoError;
 }
 
 bool MKCalEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
@@ -474,9 +479,11 @@ bool MKCalEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerMa
     QOrganizerItemChangeSet ics;
     QOrganizerManager::Error tempError = QOrganizerManager::NoError;
     *error = QOrganizerManager::NoError;
+
     for (int i = 0; i < items->size(); i++) {
         QOrganizerItem item = items->at(i);
-        if (internalSaveItem(&ics, &item, &tempError)) {
+
+        if (softSaveItem(&ics, &item, &tempError)) {
             items->replace(i, item);
         } else {
             *error = tempError;
@@ -484,32 +491,14 @@ bool MKCalEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerMa
         }
     }
 
-    d->m_storagePtr->save(); // commit all changes to the database.
-    ics.emitSignals(this);
-    return *error == QOrganizerManager::NoError;
+    return saveStorage(&ics, error);
 }
 
 bool MKCalEngine::saveItem(QOrganizerItem* item,  QOrganizerManager::Error* error)
 {
     QOrganizerItemChangeSet ics;
-    bool retn = internalSaveItem(&ics, item, error);
-    if (retn) {
-        d->m_storagePtr->save(); // commit all changes to the database.
-        ics.emitSignals(this);
-    }
 
-    return retn;
-}
-
-bool MKCalEngine::internalSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item,  QOrganizerManager::Error* error)
-{
-    // ensure that the organizeritem's details conform to their definitions
-    if (!validateItem(*item, error)) {
-        return false;
-    }
-
-    KCalCore::Incidence::Ptr theIncidence = softSaveItem(ics, item, error);
-    return (!theIncidence.isNull());
+    return softSaveItem(&ics, item, error) && saveStorage(&ics, error);
 }
 
 bool MKCalEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
@@ -518,16 +507,20 @@ bool MKCalEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, 
 
     QOrganizerItemChangeSet ics;
     *error = QOrganizerManager::NoError;
+
     for (int i = 0; i < itemIds.size(); i++) {
-        QOrganizerItemId id = itemIds[i];
+        const QOrganizerItemId& id = itemIds[i];
         KCalCore::Incidence::Ptr theIncidence = incidence(id);
+
         if (!theIncidence) {
             *error = QOrganizerManager::DoesNotExistError;
             errorMap->insert(i, QOrganizerManager::DoesNotExistError);
             continue;
         }
+
         //if the item recurs remove its persistent exceptions
         if (theIncidence->recurs()) {
+            // kcalcore calendar::deleteIncidenceInstances doesn't work
             if (theIncidence->type() == KCalCore::IncidenceBase::TypeEvent) {
                 if (!d->m_calendarBackendPtr->deleteEventInstances(
                             theIncidence.staticCast<KCalCore::Event>())) {
@@ -542,6 +535,7 @@ bool MKCalEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, 
                 }
             }
         }
+
         //delete the item from the calendar
         if (!d->m_calendarBackendPtr->deleteIncidence(theIncidence)) {
             *error = QOrganizerManager::UnspecifiedError;
@@ -551,9 +545,7 @@ bool MKCalEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, 
         }
     }
 
-    d->m_storagePtr->save();
-    ics.emitSignals(this);
-    return *error == QOrganizerManager::NoError;
+    return saveStorage(&ics, error);
 }
 
 QMap<QString, QOrganizerItemDetailDefinition> MKCalEngine::detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const
@@ -614,7 +606,7 @@ QList<QOrganizerCollection> MKCalEngine::collections(QOrganizerManager::Error* e
 
     QList<QOrganizerCollection> retn;
     mKCal::Notebook::List allNotebooks(d->m_storagePtr->notebooks());
-    foreach(mKCal::Notebook::Ptr currNotebook, allNotebooks) {
+    foreach(const mKCal::Notebook::Ptr& currNotebook, allNotebooks) {
         retn.append(convertNotebookToCollection(currNotebook));
     }
 
@@ -875,9 +867,20 @@ KCalCore::Incidence::Ptr MKCalEngine::detachedIncidenceFromItem(const QOrganizer
  * Saves \a item to the manager, but doesn't persist the change to disk.
  * Sets \a error appropriately if if couldn't be saved.
  */
-KCalCore::Incidence::Ptr MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error)
+bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error)
 {
-    bool itemIsNew = item->id().isNull() || d->m_managerUri != item->id().managerUri();
+    bool itemIsNew = item->id().isNull();
+
+    // check manager uri if is the same with the engine uri
+    if (!itemIsNew && (d->m_managerUri != item->id().managerUri())) {
+        *error = QOrganizerManager::DetailAccessError;
+        return false;
+    }
+
+    // ensure that the organizeritem's details conform to their definitions
+    if (!validateItem(*item, error))
+        return false;
+
     bool itemIsOccurrence = (item->type() == QOrganizerItemType::TypeEventOccurrence) ||
                             (item->type() == QOrganizerItemType::TypeTodoOccurrence);
     KCalCore::Incidence::Ptr newIncidence(0);
@@ -906,14 +909,13 @@ KCalCore::Incidence::Ptr MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics,
         // if item collection id and parent id are not null, then item collection id must be equal with parent collection id
         if (!destinationNotebookUid.isEmpty() && !parentUid.isEmpty() && d->m_calendarBackendPtr->notebook(parentUid) != destinationNotebookUid) {
             *error = QOrganizerManager::InvalidCollectionError;
-            return KCalCore::Incidence::Ptr();
+            return false;
         }
     } else if (!(d->m_calendarBackendPtr->hasValidNotebook(destinationNotebookUid))) {
         // fail if destination notebook does not exist in the storage
         *error = QOrganizerManager::InvalidCollectionError;
-        return KCalCore::Incidence::Ptr();
+        return false;
     }
-
 
     // First, either create the incidence or get the correct existing one
     if (itemIsNew) {
@@ -921,7 +923,7 @@ KCalCore::Incidence::Ptr MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics,
             newIncidence = detachedIncidenceFromItem(*item);
             if (newIncidence.isNull()) {
                 *error = QOrganizerManager::InvalidOccurrenceError;
-                return KCalCore::Incidence::Ptr(0);
+                return false;
             }
         } else {
             if (item->type() == QOrganizerItemType::TypeEvent) {
@@ -933,14 +935,14 @@ KCalCore::Incidence::Ptr MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics,
                 newIncidence = KCalCore::Journal::Ptr(new KCalCore::Journal);
             } else {
                 *error = QOrganizerManager::InvalidItemTypeError;
-                return KCalCore::Incidence::Ptr(0);
+                return false;
             }
         }
     } else {
         newIncidence = incidence(item->id());
         if (!newIncidence) {
             *error = QOrganizerManager::DoesNotExistError;
-            return KCalCore::Incidence::Ptr(0);
+            return false;
         }
     }
 
@@ -989,7 +991,7 @@ KCalCore::Incidence::Ptr MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics,
         ics->insertChangedItem(item->id());
     }
 
-    return newIncidence;
+    return *error == QOrganizerManager::NoError;
 }
 
 /*!
@@ -1052,8 +1054,14 @@ void MKCalEngine::convertQNoteToKNote(const QOrganizerItem& item, KCalCore::Inci
 void MKCalEngine::convertCommonDetailsToIncidenceFields(
         const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence)
 {
-    if (item.id().isNull() && !item.guid().isEmpty())
+    // only set the id from guid if is not an occurrence because in the case of an occurrence
+    // it will be handled in dissociateSingleOccurrence
+    if (item.id().isNull() && !item.guid().isEmpty() &&
+        item.type() != QOrganizerItemType::TypeEventOccurrence &&
+        item.type() != QOrganizerItemType::TypeTodoOccurrence) {
         incidence->setUid(item.guid());
+    }
+
     incidence->setDescription(item.description());
     incidence->setSummary(item.displayLabel());
     QOrganizerItemLocation loc = static_cast<QOrganizerItemLocation>(item.detail(QOrganizerItemLocation::DefinitionName));
@@ -1451,4 +1459,50 @@ void MKCalEngine::convertCollectionToNotebook(const QOrganizerCollection& collec
         notebook->setJournalsAllowed(variant.toBool());
     if (!(variant = collection.metaData(NotebookTodosAllowed)).isNull())
         notebook->setTodosAllowed(variant.toBool());
+}
+
+bool MKCalEngine::isIncidenceInInterval(KCalCore::Incidence::Ptr incidence, QDateTime startPeriod, QDateTime endPeriod) const
+{
+    if (startPeriod.isNull() && endPeriod.isNull())
+        return true;
+
+    QDateTime iStartDate = incidence->dtStart().dateTime();
+    QDateTime iEndDate = iStartDate.addSecs(incidenceDuration(incidence));
+
+    // if start period is not given, return true is the incidence start date is before the end period
+    if (startPeriod.isNull())
+        return iStartDate < endPeriod;
+
+    // if end period is missing, return true is the incidence end date is after the start period
+    if (endPeriod.isNull())
+        return iEndDate > startPeriod;
+
+    // if the incidence is starting before the period check that it's end date is after the period start
+    if (startPeriod > iStartDate)
+        return iEndDate >= startPeriod;
+
+    // if the incidence is ending after the period check that it's start date is before the period end
+    if (endPeriod < iEndDate)
+        return iStartDate <= endPeriod;
+
+    // incidence should be in the given interval, always true
+    return true;
+}
+
+int MKCalEngine::incidenceDuration(KCalCore::Incidence::Ptr incidence) const
+{
+    // incidence->hasDuration() is not working so we do it manually
+    int duration = 0;
+
+    if (incidence->type() == KCalCore::Incidence::TypeEvent) {
+        KCalCore::Event::Ptr ev = incidence.staticCast<KCalCore::Event>();
+        if (!ev->dtEnd().isNull())
+            duration = ev->dtStart().secsTo(ev->dtEnd());
+    } else if (incidence->type() == KCalCore::Incidence::TypeTodo) {
+        KCalCore::Todo::Ptr todo = incidence.staticCast<KCalCore::Todo>();
+        if (!todo->dtDue().isNull())
+            duration = todo->dtStart().secsTo(todo->dtDue());
+    }
+
+    return duration;
 }

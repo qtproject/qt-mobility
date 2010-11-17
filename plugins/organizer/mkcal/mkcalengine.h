@@ -198,8 +198,8 @@ private:
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     KCalCore::Incidence::Ptr incidence(const QOrganizerItemId& itemId) const;
     KCalCore::Incidence::Ptr detachedIncidenceFromItem(const QOrganizerItem& item) const;
-    bool internalSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
-    KCalCore::Incidence::Ptr softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
+    bool softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
+    bool saveStorage(QOrganizerItemChangeSet* ics, QOrganizerManager::Error* error);
     void convertQEventToKEvent(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
     void convertQTodoToKTodo(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
     void convertQJournalToKJournal(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
@@ -228,6 +228,8 @@ private:
     QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, IncludedOccurrences includedOccurrences = OnlyGeneratedOccurrences) const;
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool expand) const;
     bool itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incidence, QOrganizerItem generator, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const;
+    bool isIncidenceInInterval(KCalCore::Incidence::Ptr incidence, QDateTime startPeriod, QDateTime endPeriod) const;
+    int incidenceDuration(KCalCore::Incidence::Ptr incidence) const;
 
     MKCalEngineData* d;
 
