@@ -59,6 +59,7 @@
 #include <QtCore/qdebug.h>
 #include <QCoreApplication>
 #include <QtCore/qmetaobject.h>
+#include <QtGui/qdesktopservices.h>
 
 #include <QtGui/qimage.h>
 
@@ -433,9 +434,11 @@ QDir CameraBinSession::defaultDir(QCamera::CaptureMode mode) const
 #endif
 
     if (mode == QCamera::CaptureVideo) {
+        dirCandidates << QDesktopServices::storageLocation(QDesktopServices::MoviesLocation);
         dirCandidates << QDir::home().filePath("Documents/Video");
         dirCandidates << QDir::home().filePath("Documents/Videos");
     } else {
+        dirCandidates << QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
         dirCandidates << QDir::home().filePath("Documents/Photo");
         dirCandidates << QDir::home().filePath("Documents/Photos");
         dirCandidates << QDir::home().filePath("Documents/photo");

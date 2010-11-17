@@ -68,6 +68,7 @@ QOrganizerItemIdFetchRequest::QOrganizerItemIdFetchRequest(QObject* parent)
 void QOrganizerItemIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -76,6 +77,7 @@ void QOrganizerItemIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 void QOrganizerItemIdFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -88,6 +90,7 @@ void QOrganizerItemIdFetchRequest::setSorting(const QList<QOrganizerItemSortOrde
 void QOrganizerItemIdFetchRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -100,6 +103,7 @@ void QOrganizerItemIdFetchRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemIdFetchRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
 }
 
@@ -107,6 +111,7 @@ void QOrganizerItemIdFetchRequest::setEndDate(const QDateTime &date)
 QOrganizerItemFilter QOrganizerItemIdFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -114,6 +119,7 @@ QOrganizerItemFilter QOrganizerItemIdFetchRequest::filter() const
 QList<QOrganizerItemSortOrder> QOrganizerItemIdFetchRequest::sorting() const
 {
     Q_D(const QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -126,6 +132,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemIdFetchRequest::sorting() const
 QDateTime QOrganizerItemIdFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -138,6 +145,7 @@ QDateTime QOrganizerItemIdFetchRequest::startDate() const
 QDateTime QOrganizerItemIdFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
 }
 
@@ -145,6 +153,7 @@ QDateTime QOrganizerItemIdFetchRequest::endDate() const
 QList<QOrganizerItemId> QOrganizerItemIdFetchRequest::itemIds() const
 {
     Q_D(const QOrganizerItemIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_ids;
 }
 

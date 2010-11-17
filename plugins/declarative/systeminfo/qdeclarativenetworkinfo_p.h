@@ -49,12 +49,12 @@ QTM_USE_NAMESPACE
 class QDeclarativeNetworkInfo : public QSystemNetworkInfo
 {
     Q_OBJECT
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode useMode  WRITE useMode )
     Q_PROPERTY(QString networkStatus READ networkStatus NOTIFY statusChanged)
     Q_PROPERTY(QString networkName READ networkName NOTIFY nameChanged)
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(QString macAddress READ macAddress CONSTANT)
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode mode READ mode WRITE useMode)
+    Q_PROPERTY(QList<QSystemNetworkInfo::NetworkMode> availableModes READ availableModes)
 
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);

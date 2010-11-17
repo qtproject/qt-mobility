@@ -2640,8 +2640,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
 
     // adding new landmark
     if (landmarkId.localId().isEmpty()) {
-
-        symbianLandmark = LandmarkUtility::convertToSymbianLandmarkL(landmark);
+        symbianLandmark = CPosLandmark::NewL();
+        LandmarkUtility::convertToSymbianLandmarkL(landmark, symbianLandmark);
         TPosLmItemId savedsymbianLmId = KPosLmNullItemId;
 
         int retryCnt = 0;
@@ -2791,9 +2791,10 @@ QLandmark LandmarkManagerEngineSymbianPrivate::fetchLandmarkL(const QLandmarkId 
     TPosLmItemId symbianLmId = LandmarkUtility::convertToSymbianLandmarkId(landmarkId);
     CPosLandmark* symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
     if (symbianLandmark) {
-        QLandmark* qtLandmark = LandmarkUtility::convertToQtLandmark(managerUri(), symbianLandmark);
+        QLandmark qtLandmark;
+        LandmarkUtility::convertToQtLandmark(managerUri(), symbianLandmark, &qtLandmark);
         CleanupStack::PopAndDestroy(symbianLandmark);
-        return *qtLandmark;
+        return qtLandmark;
     }
     else {
         return QLandmark();
@@ -2840,7 +2841,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
     QLandmarkCategoryId categoryId = category->categoryId();
 
     if (categoryId.localId().isEmpty()) {
-        symbiancat = LandmarkUtility::convertToSymbianLandmarkCategoryL(category);
+        symbiancat = CPosLandmarkCategory::NewL();
+        LandmarkUtility::convertToSymbianLandmarkCategoryL(category, symbiancat);
         TPosLmItemId savedsymbianLmCatId = KPosLmNullItemId;
 
         int retryCnt = 0;
@@ -3008,10 +3010,10 @@ QLandmarkCategory LandmarkManagerEngineSymbianPrivate::fetchCategoryL(
         landmarkCategoryId);
     CPosLandmarkCategory* symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCategoryId);
     if (symbiancat) {
-        QLandmarkCategory* qtCat = LandmarkUtility::convertToQtLandmarkCategory(managerUri(),
-            symbiancat);
+        QLandmarkCategory qtCat;
+        LandmarkUtility::convertToQtLandmarkCategory(managerUri(), symbiancat, &qtCat);
         CleanupStack::PopAndDestroy(symbiancat);
-        return *qtCat;
+        return qtCat;
     }
 
     return QLandmarkCategory();
@@ -4027,23 +4029,16 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
 
             if (aData->iLandmarkIds.size() > 0) {
 
-                // get all landmark data
-                QMap<int, QLandmarkManager::Error> errorMap;
-                aData->iLandmarks = this->landmarks(aData->iLandmarkIds, &errorMap, &error,
-                    &errorString);
-
-                /*
-                 QLandmark qtLandmark;
-                 aData->iLandmarks.clear();
-                 foreach (const QLandmarkId& lmId,aData->iLandmarkIds)
-                 {
-                 // use landmark fetch method to get landmark from landmark id
-                 qtLandmark = landmark(lmId, &error, &errorString);
-                 if (error == QLandmarkManager::NoError) {
-                 aData->iLandmarks.append(qtLandmark);
-                 }
-                 }
-                 */
+                QLandmark qtLandmark;
+                aData->iLandmarks.clear();
+                foreach (const QLandmarkId& lmId,aData->iLandmarkIds)
+                    {
+                        // use landmark fetch method to get landmark from landmark id
+                        qtLandmark = landmark(lmId, &error, &errorString);
+                        if (error == QLandmarkManager::NoError) {
+                            aData->iLandmarks.append(qtLandmark);
+                        }
+                    }
 
                 error = QLandmarkManager::NoError;
                 errorString.clear();

@@ -139,7 +139,8 @@ class DatabaseOperations : public QObject  {
 
     bool saveLandmarks(QList<QLandmark> * landmark,
                        QMap<int, QLandmarkManager::Error> *errorMap,
-                       QLandmarkManager::Error *error, QString *errorString);
+                       QLandmarkManager::Error *error, QString *errorString,
+                       QList<QLandmarkId> *addedIds, QList<QLandmarkId> *changedIds);
 
     bool removeLandmarkHelper(const QLandmarkId &landmarkId,
                         QLandmarkManager::Error *error,
@@ -151,7 +152,7 @@ class DatabaseOperations : public QObject  {
     bool removeLandmarks(const QList<QLandmarkId> &landmarkIds,
                          QMap<int, QLandmarkManager::Error> *errorMap,
                          QLandmarkManager::Error *error,
-                         QString *errorString);
+                         QString *errorString, QList<QLandmarkId> *removedIds);
 
     QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort,
                                            int limit, int offet,
@@ -179,7 +180,9 @@ class DatabaseOperations : public QObject  {
 
     bool saveCategories(QList<QLandmarkCategory> * categories,
                         QMap<int, QLandmarkManager::Error> *errorMap,
-                        QLandmarkManager::Error *error, QString *errorString);
+                        QLandmarkManager::Error *error, QString *errorString,
+                        QList<QLandmarkCategoryId> *addedIds,
+                        QList<QLandmarkCategoryId> *changedIds);
 
     bool removeCategoryHelper(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
@@ -192,7 +195,7 @@ class DatabaseOperations : public QObject  {
     bool removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
                           QMap<int, QLandmarkManager::Error> *errorMap,
                           QLandmarkManager::Error *error,
-                          QString *errorString);
+                          QString *errorString, QList<QLandmarkCategoryId> *removedIds);
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,

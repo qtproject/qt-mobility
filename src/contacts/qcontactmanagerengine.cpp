@@ -2868,21 +2868,35 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
  */
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
 {
-    // Default implementation is to fetch one by one
-    QList<QContact> ret;
+    QContactLocalIdFilter lif;
+    lif.setIds(localIds);
 
-    for (int i = 0; i < localIds.count(); i++) {
-        QContactManager::Error localError = QContactManager::NoError;
-        ret.append(contact(localIds.at(i), fetchHint, &localError));
+    QList<QContact> unsorted = contacts(lif, QContactSortOrder(), fetchHint, error);
 
-        if (localError != QContactManager::NoError) {
-            *error = localError;
-            if (errorMap)
-                errorMap->insert(i, localError);
+    // Build an index into the results
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
+    if (*error == QContactManager::NoError) {
+        for (int i = 0; i < unsorted.size(); i++) {
+            idMap.insert(unsorted[i].localId(), i);
         }
     }
 
-    return ret;
+    // Build up the results and errors
+    QList<QContact> results;
+    for (int i = 0; i < localIds.count(); i++) {
+        QContactLocalId id(localIds[i]);
+        if (!idMap.contains(id)) {
+            if (errorMap)
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            if (*error == QContactManager::NoError)
+                *error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(unsorted[idMap[id]]);
+        }
+    }
+
+    return results;
 }
 
 /*!
