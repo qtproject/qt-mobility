@@ -50,7 +50,6 @@
  */
 QLandmarkManagerEngineSymbian::QLandmarkManagerEngineSymbian(const QString &filename)
 {
-    qDebug() << "AMOS constructing QLandmarkManagerEngine Symbian";
     d_ptr = new LandmarkManagerEngineSymbianPrivate(*this, filename);
 }
 

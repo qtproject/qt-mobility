@@ -37,9 +37,23 @@
  **
  ** $QT_END_LICENSE$
  **
+ ** This file is part of the Ovi services plugin for the Maps and
+ ** Navigation API.  The use of these services, whether by use of the
+ ** plugin or by other means, is governed by the terms and conditions
+ ** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+ ** this package, located in the directory containing the Ovi services
+ ** plugin source code.
+ **
  ****************************************************************************/
 
 #include "qgeotiledmapdata_nokia.h"
+#include "jsonparser.h"
+#include "qgeomappingmanagerengine_nokia.h"
+#include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
+
+#include <QNetworkAccessManager>
+#include <QNetworkProxy>
 
 QTM_USE_NAMESPACE
 
@@ -47,14 +61,119 @@ QTM_USE_NAMESPACE
  Constructs a new tiled map data object, which stores the map data required by
  \a geoMap and makes use of the functionality provided by \a engine.
  */
-QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngine *engine) :
+QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine) :
     QGeoTiledMapData(engine),
     watermark(":/images/watermark.png")
 {
+    m_networkManager = new QNetworkAccessManager(this);
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
+
+    m_networkManager->get(QNetworkRequest(QUrl("http://maptile.maps.svc.ovi.com/maptiler/v2/copyright/newest")));
 }
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia()
 {
+}
+
+static QGeoBoundingBox variantListToBoundingBox(const QVariantList & list) {
+    if (list.size() < 4) return QGeoBoundingBox();
+
+    qreal latTop = list[0].toReal();
+    qreal latBottom = list[2].toReal();
+    if (latTop < latBottom)
+        qSwap(latTop, latBottom);
+
+    return QGeoBoundingBox(QGeoCoordinate(latTop, list[1].toReal()), QGeoCoordinate(latBottom, list[3].toReal()));
+}
+
+void QGeoTiledMapDataNokia::copyrightReplyFinished(QNetworkReply * reply)
+{
+    JSONParser jp(reply->readAll());
+    QVariant root = jp.parse();
+
+    copyrights.clear();
+
+    QVariantHash rootHash = root.toHash();
+
+    foreach (QString key, rootHash.keys()) {
+        QList<CopyrightDescriptor> copyrightDescriptorList;
+        foreach (QVariant copyrightSource, rootHash[key].toList()) {
+            QVariantHash copyrightSourceHash = copyrightSource.toHash();
+            CopyrightDescriptor copyrightDescriptor;
+            copyrightDescriptor.minLevel = copyrightSourceHash["minLevel"].toReal();
+            copyrightDescriptor.maxLevel = copyrightSourceHash["maxLevel"].toReal();
+            copyrightDescriptor.label    = copyrightSourceHash["label"].toString();
+            copyrightDescriptor.alt      = copyrightSourceHash["alt"].toString();
+
+            foreach (QVariant box, copyrightSourceHash["boxes"].toList()) {
+                copyrightDescriptor.boxes << variantListToBoundingBox(box.toList());
+            }
+
+            copyrightDescriptorList << copyrightDescriptor;
+        }
+
+        copyrights[key] = copyrightDescriptorList;
+    }
+}
+
+QString QGeoTiledMapDataNokia::getViewCopyright()
+{
+    QGeoBoundingBox viewport = this->viewport();
+
+    QString terraintype;
+
+    switch (mapType()) {
+        case QGraphicsGeoMap::StreetMap:
+            terraintype = "normal";
+            break;
+
+        case QGraphicsGeoMap::SatelliteMapDay:
+        case QGraphicsGeoMap::SatelliteMapNight:
+            terraintype = "hybrid";
+            break;
+
+        case QGraphicsGeoMap::TerrainMap:
+            terraintype = "terrain";
+            break;
+
+        default:
+            terraintype = "normal";
+    }
+
+    CopyrightDescriptor fallback;
+
+    QStringList copyrightStrings;
+    bool contained = false;
+    foreach (CopyrightDescriptor copyrightDescriptor, copyrights[terraintype]) {
+        if (zoomLevel() < copyrightDescriptor.minLevel) continue;
+        if (zoomLevel() > copyrightDescriptor.maxLevel) continue;
+
+        if (copyrightDescriptor.boxes.isEmpty()) {
+            fallback = copyrightDescriptor;
+        }
+        else {
+            foreach (QGeoBoundingBox box, copyrightDescriptor.boxes) {
+                if (box.intersects(viewport)) {
+                    copyrightStrings << copyrightDescriptor.label;
+                    if (box.contains(viewport)) {
+                        contained = true;
+                        break;
+                    }
+                    // TODO: consider the case where the viewport is fully contained by the combined bounding boxes, but not by one individual bounding box
+                }
+            }
+        }
+    }
+
+    if (copyrightStrings.isEmpty() || !contained) {
+        if (!fallback.label.isEmpty()) copyrightStrings << fallback.label;
+    }
+
+    copyrightStrings.removeDuplicates();
+
+    QString ret = copyrightStrings.join(", ");
+
+    return ret;
 }
 
 /*!
@@ -64,8 +183,50 @@ void QGeoTiledMapDataNokia::paint(QPainter *painter, const QStyleOptionGraphicsI
 {
     QGeoTiledMapData::paint(painter, option);
 
+    QRect viewport = painter->viewport();
+
     painter->drawPixmap(
-        painter->viewport().bottomLeft()+QPoint(5,-5-watermark.height()),
+        viewport.bottomLeft()+QPoint(5,-5-watermark.height()),
         watermark
+    );
+
+    QString copyrightText = getViewCopyright();
+
+    if (copyrightText != lastCopyrightText || lastViewport != viewport) {
+        lastCopyrightText = copyrightText;
+        lastViewport = viewport;
+
+        QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-5, viewport.bottom()-5));
+
+        QRect textBoundingRect = painter->boundingRect(maxBoundingRect, Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap, copyrightText);
+        lastCopyrightRect = textBoundingRect.adjusted(-1, -1, 1, 1);
+
+        lastCopyright = QPixmap(lastCopyrightRect.size());
+        lastCopyright.fill(QColor(Qt::transparent));
+
+        {
+            QPainter painter2(&lastCopyright);
+
+            painter2.drawText(
+                QRect(QPoint(1, 2), textBoundingRect.size()),
+                Qt::TextWordWrap,
+                copyrightText
+            );
+
+            painter2.drawPixmap(QRect(QPoint(-1, -1), lastCopyrightRect.size()), lastCopyright);
+            painter2.drawPixmap(QRect(QPoint(1, -1), lastCopyrightRect.size()), lastCopyright);
+
+            painter2.setPen(QColor(Qt::white));
+            painter2.drawText(
+                QRect(QPoint(1, 1), textBoundingRect.size()),
+                Qt::TextWordWrap,
+                copyrightText
+            );
+        }
+    }
+
+    painter->drawPixmap(
+        lastCopyrightRect,
+        lastCopyright
     );
 }
