@@ -78,6 +78,7 @@ void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
         tiledMapDataPrivate->addObjectInfo(this);
+        graphicsItem->setZValue(mapObject()->zValue());
         graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
