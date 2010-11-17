@@ -56,6 +56,24 @@ function selectContactList()
     }
 }
 
+function addContactData()
+{
+    return Array(
+                {name:"Name1", phone:"111111", email:"Email1@com", address:"Address1", avatar:"testdata/avatar1.png"},
+                {name:"Name2", phone:"222222", email:"Email2@com", address:"Address2", avatar:"testdata/avatar2.png"},
+                {name:"Name3", phone:"333333", email:"Email3@com", address:"Address3", avatar:"testdata/avatar3.png"}
+    );
+}
+
+function updateContactData()
+{
+    return Array(
+                {name:"Name1", phone:"111111", email:"Email1@com", address:"Address1", avatar:"testdata/avatar1.png"},
+                {name:"Name2", phone:"222222", email:"Email2@com", address:"Address2", avatar:"testdata/avatar2.png"},
+                {name:"Name3", phone:"333333", email:"Email3@com", address:"Address3", avatar:"testdata/avatar3.png"}
+    );
+}
+
 function createFilter(contactName)
 {
 
@@ -282,40 +300,40 @@ testcase = {
         }
     },
 
-    addContact_data : {
-        Name1 : ["Name1", "111111", "Email1@com", "Address1", "testdata/avatar1.png"],
-        Name2 : ["Name2", "222222", "Email2@com", "Address2", "testdata/avatar2.png"],
-        Name3 : ["Name3", "333333", "Email3@com", "Address3", "testdata/avatar3.png"]
-    },
 
     /* Requirement: Add some contacts */
-    addContact: function(name, phone, email, address, avatar)
+    addContact: function()
     {
         startTestApp();
-        updateContact(name, phone, email, address, avatar, "");
-        checkContactDetails(name, phone, email, address, avatar);
-    },
-
-    updateContactDetails_data : {
-        Name1 : ["Name1", "111111", "Email1@com", "Address1", "testdata/avatar1.png"],
-        Name2 : ["Name2", "222222", "Email2@com", "Address2", "testdata/avatar2.png"],
-        Name3 : ["Name3", "333333", "Email3@com", "Address3", "testdata/avatar3.png"]
+        // use a function to retrieve data since this complex data can't be retrieve as test data parameter
+        var contactSet = addContactData();
+        for (var index = 0; index < contactSet.length; index++){
+            var contact = contactSet[index];
+            // create new contact
+            updateContact(contact.name, contact.phone,contact.email, contact.avatar, "");
+            checkContactDetails(contact.name, contact.phone,contact.email, contact.avatar);
+        }
     },
 
     /* Requirement: Verify the contact details and confirm that it can be updated */
     /* verify added contact details and update contact name */
-    updateContactDetails : function (name, phone, email, address, avatar)
+    updateContactDetails : function()
     {
         startTestApp();
-        var newname = name + '9';
-        var newphone = phone + '9';
-        var newaddress = address + '9';
-        var newemail = email + '9';
-        // create new contact
-        updateContact(name, phone, email, address, avatar, "");
-        // edit its values and verify correctness
-        updateContact(newname, newphone, newemail, newaddress, avatar, name);
-        checkContactDetails(newname, newphone, newemail, newaddress, avatar);
+        // use a function to retrieve data since this complex data can't be retrieve as test data parameter
+        var contactSet = updateContactData();
+        for (var index = 0; index < contactSet.length; index++){
+            var contact = contactSet[index];
+            var newname = contact.name + '9';
+            var newphone = contact.phone + '9';
+            var newaddress = contact.address + '9';
+            var newemail = contact.email + '9';
+            // create new contact
+            updateContact(contact.name, contact.phone, contact.email, contact.address, contact.avatar, "");
+            // edit its values and verify correctness
+            updateContact(newname, newphone, newemail, newaddress, contact.avatar, contact.name);
+            checkContactDetails(newname, newphone, newemail, newaddress, contact.avatar);
+        }
     },
 
     filterCheck_data : {
