@@ -2921,7 +2921,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn()
+bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
     return false;
 }

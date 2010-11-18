@@ -277,10 +277,14 @@ void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
 }
 
 void tst_QSystemDeviceInfo::tst_keypadLightOn()
+
 {
     QSystemDeviceInfo di;
-    bool on = di.keypadLightOn();
+    bool on = di.keypadLightOn(QSystemDeviceInfo::PrimaryKeypad);
     QVERIFY(on || !on);
+    on = di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
+    QVERIFY(on || !on);
+
 }
 
 void tst_QSystemDeviceInfo::tst_backLightOn()
