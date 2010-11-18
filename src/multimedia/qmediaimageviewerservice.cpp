@@ -111,13 +111,8 @@ void QMediaImageViewerRenderer::setSurface(QAbstractVideoSurface *surface)
 
     m_surface = surface;
 
-    if (m_surface && !m_image.isNull()) {
-        QVideoSurfaceFormat format(
-                m_image.size(), QVideoFrame::pixelFormatFromImageFormat(m_image.format()));
-
-        if (surface->start(format))
-            surface->present(QVideoFrame(m_image));
-    }
+    if (m_surface && !m_image.isNull())
+        showImage(m_image);
 }
 
 void QMediaImageViewerRenderer::showImage(const QImage &image)
@@ -131,8 +126,26 @@ void QMediaImageViewerRenderer::showImage(const QImage &image)
             QVideoSurfaceFormat format(
                     image.size(), QVideoFrame::pixelFormatFromImageFormat(image.format()));
 
-            if (m_surface->start(format))
+            if (!m_surface->isFormatSupported(format)) {
+                foreach (QVideoFrame::PixelFormat pixelFormat, m_surface->supportedPixelFormats()) {
+                    const QImage::Format imageFormat
+                            = QVideoFrame::imageFormatFromPixelFormat(pixelFormat);
+
+                    if (imageFormat != QImage::Format_Invalid) {
+                        format = QVideoSurfaceFormat(image.size(), pixelFormat);
+
+                        if (m_surface->isFormatSupported(format) && m_surface->start(format)) {
+                            m_image = image.convertToFormat(imageFormat);
+
+                            m_surface->present(QVideoFrame(m_image));
+
+                            return;
+                        }
+                    }
+                }
+            } else if (m_surface->start(format)) {
                 m_surface->present(QVideoFrame(image));
+            }
         }
     }
 }
