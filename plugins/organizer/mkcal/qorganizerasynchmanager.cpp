@@ -50,6 +50,7 @@ class AsyncWorker: public QThread
 {
 public:
     AsyncWorker(OrganizerAsynchManager* manager): m_manager(manager), m_req(0), m_kill(false) {};
+    ~AsyncWorker() {kill();}
 
     void assignRequest(QOrganizerAbstractRequest* r);
     void kill();
@@ -93,9 +94,13 @@ void AsyncWorker::assignRequest(QOrganizerAbstractRequest* r)
 
 void AsyncWorker::kill()
 {
-    //mark the exit flag and wake up the thread if is sleeping
-    m_kill = true;
-    m_wait.wakeAll();
+    {
+        QMutexLocker locker(&m_lock);
+
+        //mark the exit flag and wake up the thread if is sleeping
+        m_kill = true;
+        m_wait.wakeAll();
+    }
 
     //wait the thread to finish
     wait();
@@ -112,9 +117,9 @@ void AsyncWorker::run()
         m_req = 0;
 
         //if there are no requests sleep
-        if (!r)
+        if (!r) {
             m_wait.wait(&m_lock);
-        else {
+        } else {
             locker.unlock();
             //process the request
             processRequest(r);
@@ -328,7 +333,7 @@ void AsyncWorker::handleCollectionSaveRequest(QOrganizerCollectionSaveRequest *r
 }
 
 OrganizerAsynchManager::OrganizerAsynchManager(QOrganizerManagerEngine* engine, int maxWorkers)
-    : m_engine(engine), m_maxWorkers(maxWorkers)
+    : m_engine(engine), m_maxWorkers(maxWorkers), m_destroying(false)
 {
 }
 
@@ -336,13 +341,9 @@ OrganizerAsynchManager::~OrganizerAsynchManager()
 {
     QMutexLocker locker(&m_mutex);
 
-    //kill all idle workers
-    foreach(AsyncWorker* worker, m_idleWorkers)
-        worker->kill();
-
-    //kill all active workers
-    foreach(AsyncWorker* worker, m_activeWorkers)
-        worker->kill();
+    m_destroying = true;
+    while (!m_activeWorkers.isEmpty())
+        m_destroyWait.wait(&m_mutex);
 
     //delete all workers
     foreach(AsyncWorker* worker, m_idleWorkers) {
@@ -475,7 +476,7 @@ void OrganizerAsynchManager::workerDone(AsyncWorker *worker, QOrganizerAbstractR
         m_activeRequests.remove(req);
 
         //check if there is more job for this worker
-        if (m_queuedRequests.count() > 0) {
+        if (!m_destroying && m_queuedRequests.count() > 0) {
             req = m_queuedRequests.dequeue();
             m_activeRequests.insert(req);
             worker->assignRequest(req);
@@ -483,6 +484,9 @@ void OrganizerAsynchManager::workerDone(AsyncWorker *worker, QOrganizerAbstractR
             //remove from the active workers list and add it to the idle one
             m_activeWorkers.removeOne(worker);
             m_idleWorkers.enqueue(worker);
+
+            if (m_destroying)
+                m_destroyWait.wakeAll();
         }
     }
 
