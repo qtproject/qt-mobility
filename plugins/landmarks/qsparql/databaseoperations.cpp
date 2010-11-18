@@ -519,7 +519,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         QGeoCoordinate coord;
 
         if (!qsparqlResult->value(2).toString().isEmpty()) {
-            coord.setLatitude(qsparqlResult->value(2).toDouble(&ok));
+            coord.setLatitude(qsparqlResult->value(2).toString().toDouble(&ok));
             if (!ok) {
                 *error = QLandmarkManager::UnknownError;
                 *errorString = QString("Landmark database is corrupted. Latitude is not a double for landmark id: %1")
@@ -528,7 +528,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
             }
         }
         if (!qsparqlResult->value(3).toString().isEmpty()) {
-            coord.setLongitude(qsparqlResult->value(3).toDouble(&ok));
+            coord.setLongitude(qsparqlResult->value(3).toString().toDouble(&ok));
             if (!ok) {
                 *error = QLandmarkManager::UnknownError;
                 *errorString = QString("Landmark database is corrupted. Longitude is not a double for landmark id: %1")
@@ -537,7 +537,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
             }
         }
         if (!qsparqlResult->value(4).toString().isEmpty()) {
-            coord.setAltitude(qsparqlResult->value(4).toDouble(&ok));
+            coord.setAltitude(qsparqlResult->value(4).toString().toDouble(&ok));
             if (!ok) {
                 *error = QLandmarkManager::UnknownError;
                 *errorString = QString("Landmark database is corrupted. Altitude is not a double for landmark id: %1")
@@ -578,7 +578,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         QSparqlResult* queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
         if(!queryResult->hasError()) {
             queryResult->next();
-            if (!queryResult->value(0).isNull())
+            if (!queryResult->value(0).toString().isEmpty())
                 lm.setIconUrl(QUrl(queryResult->value(0).toString()));
         }
         q0 = QString("select ?r { ?u a slo:Landmark ; slo:hasContact ?c . ?c a nco:PersonContact ; nco:url ?r"
@@ -586,24 +586,38 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
         if(!queryResult->hasError()) {
             queryResult->next();
-            if (!queryResult->value(0).isNull())
+            if (!queryResult->value(0).toString().isEmpty())
                 lm.setUrl(QUrl(queryResult->value(0).toString()));
         }
         q0 = QString("select ?a {?u a slo:Landmark ; nie:description ?a . FILTER regex( ?u, '^%1$') }").arg(landmarkId.localId());
         queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
         if(!queryResult->hasError()) {
-            queryResult->next();
-            if (!queryResult->value(0).isNull())
-                lm.setDescription(queryResult->value(0).toString());
+            if (queryResult->next()) {
+                if (!queryResult->value(0).toString().isEmpty())
+                    lm.setDescription(queryResult->value(0).toString());
+                else
+                    lm.setDescription("");
+            } else {
+                lm.setDescription("");
+            }
         }
         q0 = QString("select ?a {?g a slo:GeoLocation ; "
                      "slo:radius ?a . "
                      "?u slo:location ?g . FILTER regex( ?u, '^%1$') }").arg(landmarkId.localId());
         queryResult = executeQuery(m_conn, q0,bindValues,error,errorString);
         if(!queryResult->hasError()) {
-            queryResult->next();
-            if (!queryResult->value(0).isNull())
-            lm.setRadius(queryResult->value(0).toDouble());
+            if (queryResult->next()) {
+                if (!queryResult->value(0).toString().isEmpty()) {
+                    if (queryResult->value(0).toString().toFloat() != 0)
+                        lm.setRadius(queryResult->value(0).toString().toFloat());
+                    else
+                        lm.setRadius(0.0);
+                } else {
+                    lm.setRadius(0.0);
+                }
+            } else {
+                lm.setRadius(0.0);
+            }
         }     
         q0 = QString("select ?country ?region ?city ?street ?postcode {?g a slo:GeoLocation . "
                      "?u slo:location ?g . ?g slo:postalAddress ?pa . "
@@ -1528,9 +1542,9 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             return false;
         }
         if (catId.managerUri() == managerUri) {
-            queryString.append("; slo:belongsToCategory \'");
+            queryString.append("; slo:belongsToCategory \"");
             queryString.append(catId.localId());
-            queryString.append("\' ");
+            queryString.append("\" ");
         } else {
             *error = QLandmarkManager::CategoryDoesNotExistError;
             *errorString = "Landmark contains category that belongs to another manager";
@@ -1538,14 +1552,14 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         }
     }
     if (!landmark->description().isEmpty()) {
-        queryString.append("; nie:description \'");
+        queryString.append("; nie:description \"");
         queryString.append(landmark->description());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     if (!landmark->iconUrl().toString().isEmpty()) {
-        queryString.append("; slo:iconUrl \'");
+        queryString.append("; slo:iconUrl \"");
         queryString.append(landmark->iconUrl().toString());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     queryString.append("; slo:hasContact _:c ");
 
@@ -1565,10 +1579,10 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     } else if (!qIsNaN(geoCoord.latitude()) && !qIsNaN(geoCoord.longitude())
         && isValidLat(geoCoord.latitude()) && isValidLong(geoCoord.longitude())) {
         queryString.append("; slo:latitude ");
-        queryString.append(QString::number(geoCoord.latitude()));
+        queryString.append(QString::number(geoCoord.latitude(),'g',8));
         queryString.append(" ");
         queryString.append("; slo:longitude ");
-        queryString.append(QString::number(geoCoord.longitude()));
+        queryString.append(QString::number(geoCoord.longitude(),'g',8));
         queryString.append(" ");
     } else {
         *error = QLandmarkManager::BadArgumentError;
@@ -1578,7 +1592,7 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     }
     if (!qIsNaN(geoCoord.altitude())) {
         queryString.append("; slo:altitude ");
-        queryString.append(QString::number(geoCoord.altitude()));
+        queryString.append(QString::number(geoCoord.altitude(),'g',8));
         queryString.append(" ");
     }
     if (!qIsNaN(landmark->radius())) {
@@ -1590,46 +1604,48 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     queryString.append("_:pa a nco:PostalAddress ");
 
     if (!landmark->address().country().isEmpty()) {
-        queryString.append("; nco:country \'");
+        queryString.append("; nco:country \"");
         queryString.append(landmark->address().country());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
+    /*
     if (!landmark->address().state().isEmpty()) {
-        queryString.append("; nco:region \'");
+        queryString.append("; nco:region \"");
         queryString.append(landmark->address().state());
-        queryString.append("\' ");
+        queryString.append("\" ");
     } else if (!landmark->address().county().isEmpty()) {
         queryString.append("; nco:region \'");
         queryString.append(landmark->address().county());
         queryString.append("\' ");
     }
+    */
     if (!landmark->address().city().isEmpty()) {
-        queryString.append("; nco:locality \'");
+        queryString.append("; nco:locality \"");
         queryString.append(landmark->address().city());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     if (!landmark->address().street().isEmpty()) {
-        queryString.append("; nco:streetAddress \'");
+        queryString.append("; nco:streetAddress \"");
         queryString.append(landmark->address().street());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     if (!landmark->address().postcode().isEmpty()) {
-        queryString.append("; nco:postalcode \'");
+        queryString.append("; nco:postalcode \"");
         queryString.append(landmark->address().postcode());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     queryString.append(". _:c a nco:PersonContact ");
     if (!landmark->url().toString().isEmpty()) {
-        queryString.append(" ; nco:url \'");
+        queryString.append(" ; nco:url \"");
         queryString.append(landmark->url().toString());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     if (!landmark->phoneNumber().isEmpty()) {
         queryString.append("; nco:hasPhoneNumber _:pn . ");
         queryString.append("_:pn a nco:PhoneNumber ; ");
-        queryString.append("nco:phoneNumber \'");
+        queryString.append("nco:phoneNumber \"");
         queryString.append(landmark->phoneNumber());
-        queryString.append("\' ");
+        queryString.append("\" ");
     }
     queryString.append(". }");
 
@@ -1802,6 +1818,8 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
             "?:landmark_uri slo:location ?g . }"
             "delete { ?g a slo:GeoLocation . }"
             "WHERE { ?:landmark_uri slo:location ?g . } "
+            "delete { ?:landmark_uri nie:description ?des . }"
+            "WHERE { ?:landmark_uri nie:description ?des . }"
             "delete { ?:landmark_uri a slo:Landmark . }",
             QSparqlQuery::DeleteStatement);
 
@@ -2411,6 +2429,8 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
                      const QLandmarkCategoryId &categoryId,
                      QLandmarkManager::Error *error,
                      QString *errorString,
+                     QList<QLandmarkId> *addedLandmarkIds,
+                     QList<QLandmarkCategoryId> *addedCategoryIds,
                      QueryRun *queryRun,
                      QList<QLandmarkId> *landmarkIds)
 {
@@ -2474,12 +2494,28 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
 
     bool result = false;
     if (detectedFormat ==  QLandmarkManager::Lmx) {
-        result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
+        result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
+                                    addedLandmarkIds, addedCategoryIds);
         device->close();
+        if (addedLandmarkIds->size() + addedCategoryIds->size() > 50) {
+            emit dataChanged();
+        } else {
+            if (addedLandmarkIds->size() != 0)
+                emit landmarksAdded(*addedLandmarkIds);
+            if (addedCategoryIds->size() != 0)
+                emit categoriesAdded(*addedCategoryIds);
+        }
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
-        result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
+        result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
+                                    addedLandmarkIds);
         device->close();
+        if (addedLandmarkIds->size() > 50) {
+            emit dataChanged();
+        } else {
+            if (addedLandmarkIds->size() != 0)
+                emit landmarksAdded(*addedLandmarkIds);
+        }
         return result;
     } else {
         if (error)
@@ -2556,7 +2592,9 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         QueryRun *queryRun,
-                        QList<QLandmarkId>  *landmarkIds)
+                        QList<QLandmarkId>  *landmarkIds,
+                        QList<QLandmarkId> *addedLandmarkIds,
+                        QList<QLandmarkCategoryId> *addedCategoryIds)
 {
     QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
@@ -2608,6 +2646,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                         if (landmarkIds)
                             landmarkIds->clear();
                         return false;
+                    } else {
+                        addedCategoryIds->append(category.categoryId());
                     }
                     catIdLookup.insert(category.name(), category.categoryId());
                 }
@@ -2630,7 +2670,10 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
             if(landmarkIds)
                 landmarkIds->clear();
             return false;
+        } else {
+            addedLandmarkIds->append(landmarks[i].landmarkId());
         }
+
         if (landmarkIds)
             landmarkIds->append(landmarks[i].landmarkId());
     }
@@ -2646,7 +2689,8 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         QueryRun *queryRun,
-                        QList<QLandmarkId> *landmarkIds)
+                        QList<QLandmarkId> *landmarkIds,
+                        QList<QLandmarkId> *addedLandmarkIds)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2682,7 +2726,10 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
             if (landmarkIds)
                 landmarkIds->clear();
             return false;
+        } else {
+            addedLandmarkIds->append(landmarks[i].landmarkId());
         }
+
         if (landmarkIds)
             landmarkIds->append(landmarks[i].landmarkId());
     }
@@ -3086,10 +3133,14 @@ void QueryRun::run()
                     QList<QLandmarkId> addedIds;
                     QList<QLandmarkId> changedIds;
                     databaseOperations.saveLandmarks(&lms, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                    if (addedIds.size() != 0)
-                        engine->landmarksAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->landmarksChanging(changedIds);
+                    if (addedIds.size() + changedIds.size() > 50) {
+                        engine->dataChanging();
+                    } else {
+                        if (addedIds.size() != 0)
+                            engine->landmarksAdding(addedIds);
+                        if (changedIds.size() != 0)
+                            engine->landmarksChanging(changedIds);
+                    }
                 }
                 ml.unlock();
             }
@@ -3124,8 +3175,13 @@ void QueryRun::run()
                     ml.unlock();
                     QList<QLandmarkId> removedIds;
                     databaseOperations.removeLandmarks(lmIds, &errorMap, &error, &errorString, &removedIds);
-                    if (removedIds.size() != 0)
-                        engine->landmarksRemoving(removedIds);
+                    if (removedIds.size() != 0) {
+                        if (removedIds.size() > 50) {
+                            engine->dataChanging();
+                        } else {
+                            engine->landmarksRemoving(removedIds);
+                        }
+                    }
                 }
                 ml.unlock();
             }
@@ -3271,10 +3327,14 @@ void QueryRun::run()
                     QList<QLandmarkCategoryId> addedIds;
                     QList<QLandmarkCategoryId> changedIds;
                     databaseOperations.saveCategories( &categories, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                    if (addedIds.size() != 0)
-                        engine->categoriesAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->categoriesChanging(changedIds);
+                    if (addedIds.size() + changedIds.size() > 50) {
+                        engine->dataChanging();
+                    } else {
+                        if (addedIds.size() != 0)
+                            engine->categoriesAdding(addedIds);
+                        if (changedIds.size() != 0)
+                            engine->categoriesChanging(changedIds);
+                    }
                 }
                 ml.unlock();
             }
@@ -3316,8 +3376,13 @@ void QueryRun::run()
                         databaseOperations.removeCategories(categoryIds,
                                                             &errorMap, &error,
                                                             &errorString, &removedIds);
-                        if (removedIds.size() != 0)
-                            engine->categoriesRemoving(removedIds);
+                        if (removedIds.size() != 0) {
+                            if (removedIds.size() > 50) {
+                                engine->dataChanging();
+                            } else {
+                                engine->categoriesRemoving(removedIds);
+                            }
+                        }
                     }
                     ml.unlock();
                 }
@@ -3356,10 +3421,22 @@ void QueryRun::run()
                        QLandmarkManager::TransferOption transferOption = importRequest->transferOption();
                        QLandmarkCategoryId categoryId = importRequest->categoryId();
                        ml.unlock();
+                       QList<QLandmarkId> addedLandmarkIds;
+                       QList<QLandmarkCategoryId> addedCategoryIds;
                        databaseOperations.importLandmarks(device,
                                                           format, transferOption,
                                                           categoryId,
-                                                          &error, &errorString, this, &landmarkIds);
+                                                          &error, &errorString,
+                                                          &addedLandmarkIds, &addedCategoryIds,
+                                                          this, &landmarkIds);
+                       if (addedLandmarkIds.size() + addedCategoryIds.size()  > 50) {
+                           engine->dataChanging();
+                       } else {
+                           if (addedLandmarkIds.size() != 0)
+                               engine->landmarksAdding(addedLandmarkIds);
+                           if (addedCategoryIds.size() != 0)
+                               engine->categoriesAdding(addedCategoryIds);
+                       }
                    }
                    ml.unlock();
                }

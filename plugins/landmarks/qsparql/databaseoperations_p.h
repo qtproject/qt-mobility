@@ -203,6 +203,8 @@ class DatabaseOperations : public QObject  {
                          const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString,
+                         QList<QLandmarkId> *addedLandmarkIds,
+                         QList<QLandmarkCategoryId> *addedCategoryIds,
                          QueryRun *queryRun =0,
                          QList<QLandmarkId> *landmarkIds = 0);
 
@@ -219,7 +221,9 @@ class DatabaseOperations : public QObject  {
                             QLandmarkManager::Error *error,
                             QString *errorString,
                             QueryRun *queryRun=0,
-                            QList<QLandmarkId> *landmarkIds = 0);
+                            QList<QLandmarkId> *landmarkIds = 0,
+                            QList<QLandmarkId> *addedLandmarkIds = 0,
+                            QList<QLandmarkCategoryId> *addedCategoryIds = 0);
 
     bool importLandmarksGpx(QIODevice *device,
                             QLandmarkManager::TransferOption option,
@@ -227,7 +231,8 @@ class DatabaseOperations : public QObject  {
                             QLandmarkManager::Error *error,
                             QString *errorString,
                             QueryRun *queryRun =0,
-                            QList<QLandmarkId> *landmarkIds = 0);
+                            QList<QLandmarkId> *landmarkIds = 0,
+                            QList<QLandmarkId> *addedLandmarkIds = 0);
 
     bool exportLandmarksLmx(QIODevice *device,
                             const QList<QLandmarkId> &landmarkIds,

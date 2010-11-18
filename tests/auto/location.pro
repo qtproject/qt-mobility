@@ -26,6 +26,7 @@ wince* {
     SUBDIRS += qgeoinfosources_wince
 }
 
+!symbian{
 SUBDIRS +=  qlandmarkfilehandler_gpx \
             qlandmarkfilehandler_lmx
-
+}
