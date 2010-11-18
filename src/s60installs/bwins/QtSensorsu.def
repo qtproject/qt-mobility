@@ -353,6 +353,71 @@ EXPORTS
 	?type@QAmbientLightSensor@QtMobility@@2QBDB @ 352 NONAME ; char const * const QtMobility::QAmbientLightSensor::type
 	?type@QProximitySensor@QtMobility@@2QBDB @ 353 NONAME ; char const * const QtMobility::QProximitySensor::type
 	?type@QOrientationSensor@QtMobility@@2QBDB @ 354 NONAME ; char const * const QtMobility::QOrientationSensor::type
-	?activeChanged@QSensor@QtMobility@@IAEXXZ @ 355 NONAME ; void QtMobility::QSensor::activeChanged(void)
-	?setActive@QSensor@QtMobility@@QAEX_N@Z @ 356 NONAME ; void QtMobility::QSensor::setActive(bool)
+	?sensors_unit_test_hook@QtMobility@@YAXH@Z @ 355 NONAME ; void QtMobility::sensors_unit_test_hook(int)
+	?activeChanged@QSensor@QtMobility@@IAEXXZ @ 356 NONAME ; void QtMobility::QSensor::activeChanged(void)
+	?setActive@QSensor@QtMobility@@QAEX_N@Z @ 357 NONAME ; void QtMobility::QSensor::setActive(bool)
+	??0QGyroscope@QtMobility@@QAE@PAVQObject@@@Z @ 358 NONAME ; QtMobility::QGyroscope::QGyroscope(class QObject *)
+	??0QGyroscopeReading@QtMobility@@QAE@PAVQObject@@@Z @ 359 NONAME ; QtMobility::QGyroscopeReading::QGyroscopeReading(class QObject *)
+	??0QLightReading@QtMobility@@QAE@PAVQObject@@@Z @ 360 NONAME ; QtMobility::QLightReading::QLightReading(class QObject *)
+	??0QLightSensor@QtMobility@@QAE@PAVQObject@@@Z @ 361 NONAME ; QtMobility::QLightSensor::QLightSensor(class QObject *)
+	??1QGyroscope@QtMobility@@UAE@XZ @ 362 NONAME ; QtMobility::QGyroscope::~QGyroscope(void)
+	??1QGyroscopeReading@QtMobility@@UAE@XZ @ 363 NONAME ; QtMobility::QGyroscopeReading::~QGyroscopeReading(void)
+	??1QLightReading@QtMobility@@UAE@XZ @ 364 NONAME ; QtMobility::QLightReading::~QLightReading(void)
+	??1QLightSensor@QtMobility@@UAE@XZ @ 365 NONAME ; QtMobility::QLightSensor::~QLightSensor(void)
+	??_EQGyroscope@QtMobility@@UAE@I@Z @ 366 NONAME ; QtMobility::QGyroscope::~QGyroscope(unsigned int)
+	??_EQGyroscopeReading@QtMobility@@UAE@I@Z @ 367 NONAME ; QtMobility::QGyroscopeReading::~QGyroscopeReading(unsigned int)
+	??_EQLightReading@QtMobility@@UAE@I@Z @ 368 NONAME ; QtMobility::QLightReading::~QLightReading(unsigned int)
+	??_EQLightSensor@QtMobility@@UAE@I@Z @ 369 NONAME ; QtMobility::QLightSensor::~QLightSensor(unsigned int)
+	?copyValuesFrom@QGyroscopeReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 370 NONAME ; void QtMobility::QGyroscopeReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?copyValuesFrom@QLightReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 371 NONAME ; void QtMobility::QLightReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?filter@QGyroscopeFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 372 NONAME ; bool QtMobility::QGyroscopeFilter::filter(class QtMobility::QSensorReading *)
+	?filter@QLightFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 373 NONAME ; bool QtMobility::QLightFilter::filter(class QtMobility::QSensorReading *)
+	?getStaticMetaObject@QGyroscope@QtMobility@@SAABUQMetaObject@@XZ @ 374 NONAME ; struct QMetaObject const & QtMobility::QGyroscope::getStaticMetaObject(void)
+	?getStaticMetaObject@QGyroscopeReading@QtMobility@@SAABUQMetaObject@@XZ @ 375 NONAME ; struct QMetaObject const & QtMobility::QGyroscopeReading::getStaticMetaObject(void)
+	?getStaticMetaObject@QLightReading@QtMobility@@SAABUQMetaObject@@XZ @ 376 NONAME ; struct QMetaObject const & QtMobility::QLightReading::getStaticMetaObject(void)
+	?getStaticMetaObject@QLightSensor@QtMobility@@SAABUQMetaObject@@XZ @ 377 NONAME ; struct QMetaObject const & QtMobility::QLightSensor::getStaticMetaObject(void)
+	?lux@QLightReading@QtMobility@@QBEMXZ @ 378 NONAME ; float QtMobility::QLightReading::lux(void) const
+	?metaObject@QGyroscope@QtMobility@@UBEPBUQMetaObject@@XZ @ 379 NONAME ; struct QMetaObject const * QtMobility::QGyroscope::metaObject(void) const
+	?metaObject@QGyroscopeReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 380 NONAME ; struct QMetaObject const * QtMobility::QGyroscopeReading::metaObject(void) const
+	?metaObject@QLightReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 381 NONAME ; struct QMetaObject const * QtMobility::QLightReading::metaObject(void) const
+	?metaObject@QLightSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 382 NONAME ; struct QMetaObject const * QtMobility::QLightSensor::metaObject(void) const
+	?qt_metacall@QGyroscope@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 383 NONAME ; int QtMobility::QGyroscope::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGyroscopeReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 384 NONAME ; int QtMobility::QGyroscopeReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLightReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 385 NONAME ; int QtMobility::QLightReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLightSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 386 NONAME ; int QtMobility::QLightSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QGyroscope@QtMobility@@UAEPAXPBD@Z @ 387 NONAME ; void * QtMobility::QGyroscope::qt_metacast(char const *)
+	?qt_metacast@QGyroscopeReading@QtMobility@@UAEPAXPBD@Z @ 388 NONAME ; void * QtMobility::QGyroscopeReading::qt_metacast(char const *)
+	?qt_metacast@QLightReading@QtMobility@@UAEPAXPBD@Z @ 389 NONAME ; void * QtMobility::QLightReading::qt_metacast(char const *)
+	?qt_metacast@QLightSensor@QtMobility@@UAEPAXPBD@Z @ 390 NONAME ; void * QtMobility::QLightSensor::qt_metacast(char const *)
+	?reading@QGyroscope@QtMobility@@QBEPAVQGyroscopeReading@2@XZ @ 391 NONAME ; class QtMobility::QGyroscopeReading * QtMobility::QGyroscope::reading(void) const
+	?reading@QLightSensor@QtMobility@@QBEPAVQLightReading@2@XZ @ 392 NONAME ; class QtMobility::QLightReading * QtMobility::QLightSensor::reading(void) const
+	?setLux@QLightReading@QtMobility@@QAEXM@Z @ 393 NONAME ; void QtMobility::QLightReading::setLux(float)
+	?setX@QGyroscopeReading@QtMobility@@QAEXM@Z @ 394 NONAME ; void QtMobility::QGyroscopeReading::setX(float)
+	?setY@QGyroscopeReading@QtMobility@@QAEXM@Z @ 395 NONAME ; void QtMobility::QGyroscopeReading::setY(float)
+	?setZ@QGyroscopeReading@QtMobility@@QAEXM@Z @ 396 NONAME ; void QtMobility::QGyroscopeReading::setZ(float)
+	?tr@QGyroscope@QtMobility@@SA?AVQString@@PBD0@Z @ 397 NONAME ; class QString QtMobility::QGyroscope::tr(char const *, char const *)
+	?tr@QGyroscope@QtMobility@@SA?AVQString@@PBD0H@Z @ 398 NONAME ; class QString QtMobility::QGyroscope::tr(char const *, char const *, int)
+	?tr@QGyroscopeReading@QtMobility@@SA?AVQString@@PBD0@Z @ 399 NONAME ; class QString QtMobility::QGyroscopeReading::tr(char const *, char const *)
+	?tr@QGyroscopeReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 400 NONAME ; class QString QtMobility::QGyroscopeReading::tr(char const *, char const *, int)
+	?tr@QLightReading@QtMobility@@SA?AVQString@@PBD0@Z @ 401 NONAME ; class QString QtMobility::QLightReading::tr(char const *, char const *)
+	?tr@QLightReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 402 NONAME ; class QString QtMobility::QLightReading::tr(char const *, char const *, int)
+	?tr@QLightSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 403 NONAME ; class QString QtMobility::QLightSensor::tr(char const *, char const *)
+	?tr@QLightSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 404 NONAME ; class QString QtMobility::QLightSensor::tr(char const *, char const *, int)
+	?trUtf8@QGyroscope@QtMobility@@SA?AVQString@@PBD0@Z @ 405 NONAME ; class QString QtMobility::QGyroscope::trUtf8(char const *, char const *)
+	?trUtf8@QGyroscope@QtMobility@@SA?AVQString@@PBD0H@Z @ 406 NONAME ; class QString QtMobility::QGyroscope::trUtf8(char const *, char const *, int)
+	?trUtf8@QGyroscopeReading@QtMobility@@SA?AVQString@@PBD0@Z @ 407 NONAME ; class QString QtMobility::QGyroscopeReading::trUtf8(char const *, char const *)
+	?trUtf8@QGyroscopeReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 408 NONAME ; class QString QtMobility::QGyroscopeReading::trUtf8(char const *, char const *, int)
+	?trUtf8@QLightReading@QtMobility@@SA?AVQString@@PBD0@Z @ 409 NONAME ; class QString QtMobility::QLightReading::trUtf8(char const *, char const *)
+	?trUtf8@QLightReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 410 NONAME ; class QString QtMobility::QLightReading::trUtf8(char const *, char const *, int)
+	?trUtf8@QLightSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 411 NONAME ; class QString QtMobility::QLightSensor::trUtf8(char const *, char const *)
+	?trUtf8@QLightSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 412 NONAME ; class QString QtMobility::QLightSensor::trUtf8(char const *, char const *, int)
+	?x@QGyroscopeReading@QtMobility@@QBEMXZ @ 413 NONAME ; float QtMobility::QGyroscopeReading::x(void) const
+	?y@QGyroscopeReading@QtMobility@@QBEMXZ @ 414 NONAME ; float QtMobility::QGyroscopeReading::y(void) const
+	?z@QGyroscopeReading@QtMobility@@QBEMXZ @ 415 NONAME ; float QtMobility::QGyroscopeReading::z(void) const
+	?staticMetaObject@QGyroscopeReading@QtMobility@@2UQMetaObject@@B @ 416 NONAME ; struct QMetaObject const QtMobility::QGyroscopeReading::staticMetaObject
+	?staticMetaObject@QGyroscope@QtMobility@@2UQMetaObject@@B @ 417 NONAME ; struct QMetaObject const QtMobility::QGyroscope::staticMetaObject
+	?type@QGyroscope@QtMobility@@2QBDB @ 418 NONAME ; char const * const QtMobility::QGyroscope::type
+	?staticMetaObject@QLightSensor@QtMobility@@2UQMetaObject@@B @ 419 NONAME ; struct QMetaObject const QtMobility::QLightSensor::staticMetaObject
+	?staticMetaObject@QLightReading@QtMobility@@2UQMetaObject@@B @ 420 NONAME ; struct QMetaObject const QtMobility::QLightReading::staticMetaObject
+	?type@QLightSensor@QtMobility@@2QBDB @ 421 NONAME ; char const * const QtMobility::QLightSensor::type
 

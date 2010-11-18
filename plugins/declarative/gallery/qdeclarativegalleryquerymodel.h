@@ -64,7 +64,6 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(Scope)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
@@ -79,10 +78,10 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Finished    = QGalleryAbstractRequest::Finished,
+        Canceling   = QGalleryAbstractRequest::Canceling,
+        Canceled    = QGalleryAbstractRequest::Canceled,
         Idle        = QGalleryAbstractRequest::Idle,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
     };
 
@@ -104,8 +103,6 @@ public:
     Status status() const { return m_status; }
 
     qreal progress() const;
-
-    QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names);
@@ -156,7 +153,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
@@ -171,24 +167,30 @@ protected Q_SLOTS:
     void deferredExecute();
 
 protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CanceledUpdate
+    };
+
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
     virtual QVariant itemType(const QString &type) const = 0;
 
-    void timerEvent(QTimerEvent *event);
+    bool event(QEvent *event);
 
     QGalleryQueryRequest m_request;
     QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
-    QString m_errorMessage;
-    QBasicTimer m_executeTimer;
     Status m_status;
     int m_rowCount;
-    bool m_complete;
+    UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
-    void _q_statusChanged();
+    void _q_stateChanged();
     void _q_setResultSet(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);

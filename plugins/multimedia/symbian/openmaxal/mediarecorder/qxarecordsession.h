@@ -124,11 +124,13 @@ private:
     void initCodecsList();
     void initContainersList();
     bool setEncoderSettingsToImpl();
+    bool setURIToImpl();
 
 private:
     /* Own */
     XARecordSessionImpl *m_impl;
     QUrl m_outputLocation;
+    bool m_URItoImplSet;
     QMediaRecorder::State m_state;
     QMediaRecorder::State m_previousState;
     QStringList m_codecs;

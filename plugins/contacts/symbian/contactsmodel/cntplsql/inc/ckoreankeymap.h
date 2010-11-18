@@ -20,6 +20,7 @@
 #define __CKOREANKEYMAP_H__
 
 // INCLUDES
+#include "mlanguagespecifickeymap.h"
 #include <QList>
 #include <QMap.h>
 #include <QChar>
@@ -28,10 +29,11 @@
 // FORWARD DECLARATIONS
 class QString;
 class QTextCodec;
+class KoreanInput;
 
 
 // CLASS DECLARATION
-NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase
+NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase, public MLanguageSpecificKeymap
 	{
     public: // Constructors and destructor
 		static CKoreanKeyMap* NewL();
@@ -41,19 +43,14 @@ NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase
          */
 		virtual ~CKoreanKeyMap();
 
+	public: // From MLanguageSpecificKeymap
+		QString GetMappedString(QString aSource) const;
+
     public: // New functions
 		/**
          * Returns ETrue if aSource contains one or more Korean characters.
          */
-		TBool IsKoreanString(QString aSource) const;
-
-// TODO: might append space between boxed-chars (if needed)
-		/**
-		 * Maps the given string using a built-in Korean key map.
-		 * aSource String to be converted
-		 * returns Conversion result
-		 */
-		QString GetMappedString(QString aSource) const;
+		TBool IsLanguageSupported(QString aSource) const;
 
 	protected: // Constructors
 		/**
@@ -92,11 +89,10 @@ NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase
 		// the keypresses used to produce the character.
 		QMap<QChar, QString> iKeyPressMap;
 
+		QTextCodec* iLatinCodec;  // Not owned
+		QTextCodec* iKoreanCodec; // Not owned
 
-		// Not owned
-		QTextCodec* iLatinCodec;
-		QTextCodec* iKoreanCodec;
-
+		KoreanInput* iTokenizer; // Owned
 
 		// For unit testing
 		friend class UT_CKoreanKeyMap;

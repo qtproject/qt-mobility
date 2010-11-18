@@ -69,13 +69,14 @@ class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
     void updateValidity();
 
     QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem;
+    QGraphicsSimpleTextItem *textItem1;
+    QGraphicsSimpleTextItem *textItem2;
 
 public slots:
     void coordinateChanged(const QGeoCoordinate &coordinate);

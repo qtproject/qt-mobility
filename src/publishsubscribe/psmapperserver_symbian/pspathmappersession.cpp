@@ -40,9 +40,10 @@
 ****************************************************************************/
 
 #include "clientservercommon.h"
-#include "pspathmappersession.h"
+#include "pspathmappersession_p.h"
 #include "pspathmapperserver.pan"
 #include "pathmapper_symbian_p.h"
+#include "pspathmapperserver_p.h"
 #include <QDataStream>
 #include <QSet>
 
@@ -50,13 +51,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-CPSPathMapperServerSession::CPSPathMapperServerSession(const PathMapper &aPathMapper) :
-    iPathMapper(aPathMapper)
+CPSPathMapperServerSession::CPSPathMapperServerSession(const PathMapper &aPathMapper, CPSPathMapperServer& aServer) :
+    iPathMapper(aPathMapper), iServer(aServer)
 {
+    iServer.IncreaseSessions();
 }
 
 CPSPathMapperServerSession::~CPSPathMapperServerSession()
 {
+    iServer.DecreaseSessions();
 }
 
 void CPSPathMapperServerSession::ServiceL(const RMessage2 &aMessage)

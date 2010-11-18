@@ -2559,8 +2559,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file."), QGalleryFilter::StartsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.startsWith(QLatin1String("file."));
 
         QTest::newRow("File.fileName.startsWith(file.)")
                 << QString::fromLatin1("File")
@@ -2577,8 +2576,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:startsWith>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".ext"), QGalleryFilter::EndsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.endsWith(QLatin1String(".ext"));
 
         QTest::newRow("File.fileName.endsWith(.ext)")
                 << QString::fromLatin1("File")
@@ -2595,8 +2593,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("ext"), QGalleryFilter::Contains);
+        QGalleryFilter filter = QDocumentGallery::fileName.contains(QLatin1String("ext"));
 
         QTest::newRow("File.fileName.contains(ext)")
                 << QString::fromLatin1("File")
@@ -2613,8 +2610,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:contains>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file*ext"), QGalleryFilter::Wildcard);
+        QGalleryFilter filter = QDocumentGallery::fileName.wildcard(QLatin1String("file*ext"));
 
         QTest::newRow("File.fileName.wildcard(file*ext")
                 << QString::fromLatin1("File")
@@ -2631,12 +2627,10 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName,
-                QLatin1String("(file|document).ext"),
-                QGalleryFilter::RegExp);
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QLatin1String("(file|document).ext"));
 
-        QTest::newRow("File.fileName.regExp((file|document).ext")
+        QTest::newRow("File.fileName.regExp((file|document).ext)")
                 << QString::fromLatin1("File")
                 << QString()
                 << QGalleryQueryRequest::AllDescendants
@@ -2651,7 +2645,26 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:regex>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QRegExp(QLatin1String("(file|document).ext")));
+
+        QTest::newRow("File.fileName.regExp(QRegExp((file|document).ext))")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:regex>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>(file|document).ext</rdf:String>"
+                            "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
 
         QTest::newRow("Image.description == http://example.com/index.html")
                 << QString::fromLatin1("Image")

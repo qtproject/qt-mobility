@@ -1,49 +1,49 @@
 /****************************************************************************
- **
- ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- ** All rights reserved.
- ** Contact: Nokia Corporation (qt-info@nokia.com)
- **
- ** This file is part of the Qt Mobility Components.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
- ** No Commercial Usage
- ** This file contains pre-release code and may not be distributed.
- ** You may use this file in accordance with the terms and conditions
- ** contained in the Technology Preview License Agreement accompanying
- ** this package.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
- ** General Public License version 2.1 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU Lesser General Public License version 2.1 requirements
- ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
- **
- ** In addition, as a special exception, Nokia gives you certain additional
- ** rights.  These rights are described in the Nokia Qt LGPL Exception
- ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
- **
- ** If you have questions regarding the use of this file, please contact
- ** Nokia at qt-info@nokia.com.
- **
- **
- **
- **
- **
- **
- **
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 #include "qgalleryresource.h"
 //Backend
-#include "qmdegalleryresultset.h"
-#include "qgallerymdsutility.h"
-#include "qmdesession.h"
+#include "qmdegalleryresultset_p.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdesession_p.h"
 //Symbian
 #include <mdeproperty.h>
 #include <mdeobject.h>
@@ -73,11 +73,13 @@ int QMDEGalleryResultSet::propertyKey(const QString &property) const
 
 QGalleryProperty::Attributes QMDEGalleryResultSet::propertyAttributes(int key) const
 {
-    if (key == QDocumentGalleryMDSUtility::EUri) {
+    if (key == QDocumentGalleryMDSUtility::EUri || key == QDocumentGalleryMDSUtility::EFileName ||
+        key == QDocumentGalleryMDSUtility::EFilePath)
         return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    } else {
+    else if (key >= QDocumentGalleryMDSUtility::EPropertyKeysLength)
+        return QGalleryProperty::Attributes();
+    else
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    }
 }
 
 QVariant::Type QMDEGalleryResultSet::propertyType(int key) const
@@ -93,10 +95,7 @@ int QMDEGalleryResultSet::itemCount() const
 bool QMDEGalleryResultSet::isValid() const
 {
     // Index based check
-    if ( itemCount() != 0 && itemCount() >= currentIndex() )
-        return true;
-    else
-        return false;
+    return m_cursorPosition >= 0 && m_cursorPosition < m_itemArray.Count();
 }
 
 QVariant QMDEGalleryResultSet::itemId() const
@@ -112,8 +111,8 @@ QVariant QMDEGalleryResultSet::itemId() const
 QUrl QMDEGalleryResultSet::itemUrl() const
 {
     if ( isValid()) {
-        const QUrl url =
-        QUrl(QDocumentGalleryMDSUtility::s60DescToQString( m_itemArray[m_cursorPosition]->Uri()));
+        const QUrl url = QUrl::fromLocalFile(
+                QDocumentGalleryMDSUtility::s60DescToQString(m_itemArray[m_cursorPosition]->Uri()));
         return url;
     } else {
         return QUrl();
@@ -204,62 +203,21 @@ int QMDEGalleryResultSet::currentIndex() const
 
 bool QMDEGalleryResultSet::fetch(int index)
 {
-    if (m_itemArray.Count() <= 0 || index < 0 || index > m_itemArray.Count()) {
-        return false;
-    } else {
+    const bool isValid = index >= 0 && index < m_itemArray.Count();
+
+    if (index != m_cursorPosition) {
+        const bool wasValid = m_isValid;
+        m_isValid = isValid;
+
         m_cursorPosition = index;
-        m_isValid = true;
-        return true;
+
+        if (isValid || wasValid)
+            emit currentItemChanged();
+
+        emit currentIndexChanged(m_cursorPosition);
     }
+    return isValid;
 }
 
-bool QMDEGalleryResultSet::fetchNext()
-{
-    int newIndex = m_cursorPosition + 1;
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
-
-bool QMDEGalleryResultSet::fetchPrevious()
-{
-    int newIndex = m_cursorPosition - 1;
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
-
-bool QMDEGalleryResultSet::fetchFirst()
-{
-    int newIndex = 0; // first item
-    if (m_itemArray.Count() <= 0) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
-
-bool QMDEGalleryResultSet::fetchLast()
-{
-    int newIndex = m_itemArray.Count() - 1; // last item
-    if (m_itemArray.Count() <= 0 || newIndex < 0 || newIndex > m_itemArray.Count()) {
-        return false;
-    } else {
-        m_cursorPosition = newIndex;
-        m_isValid = true;
-        return true;
-    }
-}
-
-#include "moc_qmdegalleryresultset.cpp"
+#include "moc_qmdegalleryresultset_p.cpp"
 QTM_END_NAMESPACE

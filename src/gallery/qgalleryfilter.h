@@ -149,6 +149,10 @@ public:
     void append(const QGalleryUnionFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
 
+    void prepend(const QGalleryMetaDataFilter &filter);
+    void prepend(const QGalleryUnionFilter &filter);
+    void prepend(const QGalleryIntersectionFilter &filter);
+
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryUnionFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
@@ -156,8 +160,10 @@ public:
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryUnionFilter &filter);
 
-    void removeAt(int index);
+    void remove(int index);
     void clear();
+
+    QGalleryIntersectionFilter &operator <<(const QGalleryIntersectionFilter &filter);
 
 private:
     explicit inline QGalleryIntersectionFilter(QGalleryFilterPrivate *d);
@@ -195,6 +201,10 @@ public:
     void append(const QGalleryIntersectionFilter &filter);
     void append(const QGalleryUnionFilter &filter);
 
+    void prepend(const QGalleryMetaDataFilter &filter);
+    void prepend(const QGalleryIntersectionFilter &filter);
+    void prepend(const QGalleryUnionFilter &filter);
+
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
     void insert(int index, const QGalleryUnionFilter &filter);
@@ -202,8 +212,10 @@ public:
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryIntersectionFilter &filter);
 
-    void removeAt(int index);
+    void remove(int index);
     void clear();
+
+    QGalleryUnionFilter &operator <<(const QGalleryUnionFilter &filter);
 
 private:
     explicit inline QGalleryUnionFilter(QGalleryFilterPrivate *d);
@@ -243,8 +255,8 @@ public:
     QGalleryFilter::Comparator comparator() const;
     void setComparator(QGalleryFilter::Comparator comparator);
 
-    bool isInverted() const;
-    void setInverted(bool inverted);
+    bool isNegated() const;
+    void setNegated(bool inverted);
 
     QGalleryMetaDataFilter operator !() const;
 

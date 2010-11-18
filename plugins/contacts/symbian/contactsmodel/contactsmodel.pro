@@ -23,7 +23,10 @@ TEMPLATE = subdirs
 BLD_INF_RULES.prj_mmpfiles = "./groupsql/cntmodel.mmp"\
                              "./group/cntview.mmp"\
                              "./group/template.mmp"\
-                             "./groupsql/cntsrv.mmp"
+                             "./groupsql/cntsrv.mmp"\
+                             "./cntmatchlog/group/cntmatchlog.mmp"\
+                             "./cntvcard/cntvcard.mmp"\
+                             "./cntphone/cntphone.mmp"
 
 # Exports
 deploy.path = /
@@ -55,7 +58,7 @@ publicincheaders = cntdef.h cntdb.h cntdbobs.h cntfield.h cntfldst.h cntfilt.h c
 
 # these headers come from ./inc and go to APP_LAYER_PLATFORM_EXPORT_PATH
 platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntviewstore.h \
-    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h
+    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h cntconvertercallback.h cntdb_internal.h
 
 # these headers come from ./cntvcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
 publiccntvcardheaders = cntvcard.h

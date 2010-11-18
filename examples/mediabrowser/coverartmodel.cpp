@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -58,9 +58,8 @@ CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
 {
 }
 
-#ifndef QT_NO_QFUTURE
 #if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
-QString CoverArtModel::imagePath(const QModelIndex &index) const
+QUrl CoverArtModel::imageUrl(const QModelIndex &index) const
 {
     QString title = index.data(Qt::DisplayRole).toString();
     QString artist = index.data(AlbumDelegate::Artist).toString();
@@ -72,7 +71,7 @@ QString CoverArtModel::imagePath(const QModelIndex &index) const
             + hash(title)
             + QLatin1String(".jpeg");
 
-    return thumbnailPath(QUrl::fromLocalFile(fileName));
+    return QUrl::fromLocalFile(fileName);
 }
 
 QString CoverArtModel::hash(const QString &identifier) const
@@ -85,5 +84,4 @@ QString CoverArtModel::hash(const QString &identifier) const
                 QCryptographicHash::Md5).toHex();
     }
 }
-#endif
 #endif

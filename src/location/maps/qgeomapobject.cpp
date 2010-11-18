@@ -68,8 +68,10 @@ QTM_BEGIN_NAMESPACE
 
     Describes the type of a map object.
 
-    \value ContainerType
-        A basic QGeoMapObject.
+    \value NullType
+        An empty QGeoMapObject.
+    \value GroupType
+        A QGeoMapObject used to organize other map objects into groups.
     \value RectangleType
         A QGeoMapObject used to display a rectangular region.
     \value CircleType
@@ -87,10 +89,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new root map object associated with \a mapData.
+    Constructs a new map object associated with \a mapData.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
-        : d_ptr(new QGeoMapObjectPrivate())
+    : d_ptr(new QGeoMapObjectPrivate())
 {
     setMapData(mapData);
 }
@@ -200,7 +202,6 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 */
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 {
-    Q_D(const QGeoMapObject);
     return d_ptr->zValue < other.d_ptr->zValue;
 }
 
@@ -212,6 +213,13 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
     return d_ptr->zValue > other.d_ptr->zValue;
 }
 
+/*!
+    Associates the QGeoMapData instance \a mapData with this map object.
+
+    This will create an appropriate QGeoMapObjectInfo instance for
+    this QGeoMapObject and will connect the appropriate signals to it
+    so that it can be kept up to date.
+*/
 void QGeoMapObject::setMapData(QGeoMapData *mapData)
 {
     if (d_ptr->mapData == mapData)
@@ -257,24 +265,68 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
             d_ptr->info,
             SLOT(selectedChanged(bool)));
 
-    d_ptr->info->setup();
+    d_ptr->info->init();
 
 }
 
+/*!
+    Returns the QGeoMapData instance associated with this object.
+
+    Will return 0 if not QGeoMapData instance has been set.
+*/
 QGeoMapData* QGeoMapObject::mapData() const
 {
     return d_ptr->mapData;
 }
 
+/*!
+    Returns the QGeoMapObjectInfo instance which implements the
+    QGeoMapData specific behaviours of this map object.
+
+    This will mostly be useful when implementing custom QGeoMapData
+    subclasses.
+*/
+QGeoMapObjectInfo* QGeoMapObject::info() const
+{
+    return d_ptr->info;
+}
+
+/*!
+\fn void QGeoMapObject::zValueChanged(int zValue)
+
+    This signal is emitted when the z value of the map object 
+    has changed.
+
+    The new value is \a zValue.
+*/
+
+/*!
+\fn void QGeoMapObject::visibleChanged(bool visible)
+
+    This signal is emitted when the visible state of the map object 
+    has changed.
+
+    The new value is \a visible.
+*/
+
+/*!
+\fn void QGeoMapObject::selectedChanged(bool selected)
+
+    This signal is emitted when the selected state of the map object
+    has changed.
+
+    The new vlaue is \a selected.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate()
-        : zValue(0),
-        isVisible(true),
-        isSelected(false),
-        mapData(0),
-        info(0){}
+    : zValue(0),
+      isVisible(true),
+      isSelected(false),
+      mapData(0),
+      info(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {

@@ -42,7 +42,12 @@
 #ifndef QMESSAGINGMAEMOHELPERPRIVATE_H
 #define QMESSAGINGMAEMOHELPERPRIVATE_H
 
+#include <QString>
+#include <QMutex>
+#include <QCache>
+
 #include <qmessageglobal.h>
+#include <qmessage.h>
 #include <qmessageid.h>
 #include <qmessagesortorder.h>
 #include <qmessageaccountid.h>
@@ -51,6 +56,8 @@
 #include <qmessagefoldersortorder.h>
 
 QTM_BEGIN_NAMESPACE
+
+static const int maxMessageCacheSize = 100000;
 
 class QMessageAccountFilter;
 class QMessageAccountSortOrder;
@@ -82,6 +89,8 @@ public:
     static void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter);
     static void handleNestedFiltersFromMessageFilter(QMessageFilter &filter);
 
+    static bool preFilter(QMessageFilter &filter, QMessage::Type type);
+
 private:
    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
    static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);
@@ -92,6 +101,35 @@ private:
     QMessageFolderSortOrder* m_FolderSortOrder;
     QMessageSortOrder* m_MessageSortOrder;
 };
+
+class MessageCache
+{
+public:
+    static MessageCache* instance();
+
+    MessageCache();
+    ~MessageCache();
+
+    bool insert(const QMessage &message);
+    bool update(const QMessage &message);
+    bool remove(const QMessageId &id);
+    QMessage message(const QMessageId &id);
+
+    QMessageIdList messageIds();
+
+    bool isFull() const;
+    int count() const;
+
+    bool insertObject(QMessage *message);
+    QMessage* messageObject(const QMessageId &id);
+    void lock();
+    void unlock();
+
+private:
+    QCache<QString, QMessage> m_messageCache;
+    QMutex m_mutex;
+};
+
 
 QTM_END_NAMESPACE
 

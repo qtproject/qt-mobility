@@ -12,4 +12,4 @@ SOURCES += tst_qdeclarativedocumentgallerymodel.cpp
 CONFIG += mobility
 MOBILITY = gallery
 
-QT += declarative
+QT += declarative script

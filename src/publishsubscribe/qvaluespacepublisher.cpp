@@ -144,7 +144,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     path = qAddSimulatorPrefix(path);
 #endif
 
-
+    // check filter for mutually exclusive options
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
@@ -155,8 +155,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {
-        if (filter == QValueSpace::UnspecifiedLayer ||
-            layers.at(ii)->layerOptions() & filter) {
+        if ((layers.at(ii)->layerOptions() & filter) == filter) {
             QAbstractValueSpaceLayer::Handle h =
                     layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 
@@ -204,11 +203,11 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
     \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.
 
-    The constructed Value Space publisher will access the \l {QAbstractValueSpaceLayer}{layer} with
-    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
+    The constructed Value Space publisher will access the QAbstractValueSpaceLayer layer with
+    the highest order (QAbstractValueSpaceLayer::order()) that matches \a filter and for which
     \a path is a valid path.
 
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
+    If no suitable QAbstractValueSpaceLayer layer is found, the constructed
     QValueSpacePublisher will be unconnected.
 
     \sa isConnected()

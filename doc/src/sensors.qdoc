@@ -31,8 +31,6 @@
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
-The Sensors API provides access to sensors.
-
 This covers both high-level sensors such as screen orientation (portrait, landscape)
 and low-level, real-time sensors such as accelerometer data.
 

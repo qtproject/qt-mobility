@@ -42,49 +42,86 @@
 #ifndef S60CAMERACONSTANTS_H
 #define S60CAMERACONSTANTS_H
 
+//=============================================================================
+
 // GENERAL SETTINGS
 
-const TInt KDefaultCameraDevice = 0;
-const int KSymbianImageQualityCoefficient = 25;
+#define KDefaultCameraDevice            0
+#define KECamCameraPriority             0
+#define KInactivityTimerTimeout         20000   // msec
+#define KSymbianFineResolutionFactor    100.0
+#define KDefaultOpticalZoom             1.0
+#define KDefaultDigitalZoom             1.0
+#define KSmoothZoomStep                 1
+#define KDefaultFocusMode               QCameraFocus::AutoFocus
+
+#define KDefaultViewfinderSize          QSize(320,240)
+#define KViewfinderFrameRate            30
+#define KMaxVFErrorsSignalled           3
+
+//=============================================================================
 
 // IMAGE SETTINGS
 
-const QString KDefaultImagePath = "c:\\Data\\Images";
-const QString KDefaultImageFileName = "image.jpg";
-#define KDefaultImageFormatPrimaryCam CCamera::EFormatExif
+#define KDefaultImagePath               QString("c:\\Data\\Images")
+#define KDefaultImageFileName           QString("image.jpg")
+#define KDefaultImageCodec              QString("image/jpg")
+#define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatFbsBitmapColor64K
+#define KSymbianImageQualityCoefficient 25
+// This must be divisible by 4 and creater or equal to 8
+#define KSnapshotDownScaleFactor        8
+#define KSnapshotMinWidth               640
+#define KSnapshotMinHeight              360
+#define KJpegQualityVeryLow             40
+#define KJpegQualityLow                 50
+#define KJpegQualityNormal              75
+#define KJpegQualityHigh                85
+#define KJpegQualityVeryHigh            95
+#define KDefaultImageQuality            KJpegQualityHigh
+
+//=============================================================================
 
 // VIDEO SETTINGS
 
-// These are used for Initialization of the Video Capture
-// Dummy file name to execute OpenFileL without knowing the proper outputLocation
-// This is needed to be able to query supported video settings
+// ================
+// General settings
+// ================
+
+// Dummy file name to execute CVideoRecorderUtility::OpenFileL() without
+// knowing the actual outputLocation. This is needed to be able to query/set
+// supported video settings.
 _LIT(KDummyVideoFile, "c:\\data\\temp");
-// TODO: Check these and start using
-const TInt TCamCControllerCustomCommands = 0;
-const TInt ECamCControllerCCNewFilename = 0;
-
-// Default audio codec MIME type
-const QString KMimeTypeDefaultAudioCodec = "audio/aac";
-
-// Default video codec MIME type
-#ifdef SYMBIAN_3_PLATFORM
-//const QString KMimeTypeDefaultVideoCodec = "video/H264; profile-level-id=64401F"; // High Profile, Level 3.1, Max resolution: 1280x720
-const QString KMimeTypeDefaultVideoCodec = "video/H264; profile-level-id=42801F";
-#else
-const QString KMimeTypeDefaultVideoCodec = "video/mp4v-es; profile-level-id=4"; // Simple Profile, Level 4, Max resolution: 640x480
-#endif
 
 // Default container MIME type
-const QString KMimeTypeDefaultContainer = "video/mp4";
+#define KMimeTypeDefaultContainer   QString("video/mp4")
+#define KDefaultVideoPath           QString("c:\\Data\\Videos")
+#define KDefaultVideoFileName       QString("video.mp4")
 
-const QString KDefaultVideoPath = "c:\\Data\\Videos";
-const QString KDefaultVideoFileName = "video.mp4";
+// ==============
+// Audio Settings
+// ==============
+
+// Default audio codec MIME type
+#define KMimeTypeDefaultAudioCodec  QString("audio/aac")
 
 // Default audio settings for video recording
 #define KDefaultChannelCount  2
 #define KDefaultBitRate       32000 // 32kbps
 #define KDefaultSampleRate    16000 // 16000 Hz
+
+// ==============
+// Video Settings
+// ==============
+
+// Default video codec MIME type
+#ifdef SYMBIAN_3_PLATFORM
+    // H.264: BaselineProfile Level 3.1, Max resolution: 1280x720
+    #define KMimeTypeDefaultVideoCodec QString("video/H264; profile-level-id=42801F")
+#else
+    // MPEG-4: Simple Profile, Level 4, Max resolution: 640x480
+    #define KMimeTypeDefaultVideoCodec QString("video/mp4v-es; profile-level-id=4")
+#endif
 
 // Maximum resolutions for encoder MIME Types
 // H.263
@@ -198,9 +235,5 @@ const QString KDefaultVideoFileName = "video.mp4";
 #define KBiR_H264_PLID_42801F   int(14000000);
 #define KBiR_H264_PLID_428020   int(20000000);
 #define KBiR_H264_PLID_428028   int(20000000);
-
-#ifdef Q_CC_NOKIAX86 // Emulator
-    _LIT8(KCameraTemp,"test data");
-#endif
 
 #endif // S60CAMERACONSTANTS_H

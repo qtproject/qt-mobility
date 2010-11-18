@@ -177,10 +177,7 @@ TInt CQwertyKeyMap::ReadExtraCharacters(const HbInputLanguage& aLanguage)
 					}
 				else
 					{
-					if (!IsCharAlreadyMapped(mappedChar[0]))
-						{
-						AddNewKeyToMap(keyForSpecialChars, mappedChar, count);
-						}
+					AddNewKeyToMap(keyForSpecialChars, mappedChar, count);
 					}
 				}
 			mappedKey = keymap->keyForIndex(HbKeyboardSctLandscape, ++i);

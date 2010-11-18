@@ -71,8 +71,8 @@ public:
     ~S60VideoPlayerSession();
 
     //From S60MediaPlayerSession
-    bool isVideoAvailable() const;
-    bool isAudioAvailable() const;
+    bool isVideoAvailable();
+    bool isAudioAvailable();
     void setVideoRenderer(QObject *renderer);
 
     //From MVideoLoadingObserver

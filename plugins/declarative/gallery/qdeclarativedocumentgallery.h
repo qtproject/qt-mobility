@@ -44,6 +44,8 @@
 
 #include <qdocumentgallery.h>
 
+#include <QtCore/qcoreevent.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeDocumentGallery : public QObject
@@ -68,9 +70,6 @@ public:
         Album,
         AudioGenre,
         PhotoAlbum,
-#ifndef Q_MOC_RUN
-        NItemTypes
-#endif
     };
 
     static QString toString(ItemType type);

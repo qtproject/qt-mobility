@@ -133,11 +133,6 @@ public:
 private slots:
     void routeCalculated(QGeoRouteReply *reply)
     {
-        if (reply->error() != QGeoRouteReply::NoError) {
-            reply->deleteLater();
-            return;
-        }
-
         // A route request can ask for several alternative routes ...
         if (reply->routes().size() != 0) {
 
@@ -153,6 +148,7 @@ private slots:
     void routeError(QGeoRouteReply *reply, QGeoRouteReply:Error error, const QString &errorString)
     {
         // ... inform the user that an error has occurred ...
+        reply->deleteLater();
     }
 };
     \endcode
@@ -167,8 +163,8 @@ private slots:
     QGeoServiceProvider::routingManager();
 */
 QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoRoutingManagerPrivate())
+    : QObject(parent),
+      d_ptr(new QGeoRoutingManagerPrivate())
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -205,9 +201,6 @@ QGeoRoutingManager::~QGeoRoutingManager()
 */
 QString QGeoRoutingManager::managerName() const
 {
-//    if (!d_ptr->engine)
-//        return QString();
-
     return d_ptr->engine->managerName();
 }
 
@@ -220,9 +213,6 @@ QString QGeoRoutingManager::managerName() const
 */
 int QGeoRoutingManager::managerVersion() const
 {
-//    if (!d_ptr->engine)
-//        return -1;
-
     return d_ptr->engine->managerVersion();
 }
 
@@ -249,9 +239,6 @@ int QGeoRoutingManager::managerVersion() const
 */
 QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->calculateRoute(request);
 }
 
@@ -284,9 +271,6 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
 */
 QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->updateRoute(route, position);
 }
 
@@ -295,9 +279,6 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsRouteUpdates();
 }
 
@@ -306,9 +287,6 @@ bool QGeoRoutingManager::supportsRouteUpdates() const
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsAlternativeRoutes();
 }
 
@@ -317,9 +295,6 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 */
 bool QGeoRoutingManager::supportsExcludeAreas() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsExcludeAreas();
 }
 
@@ -328,21 +303,25 @@ bool QGeoRoutingManager::supportsExcludeAreas() const
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::TravelModes();
-
     return d_ptr->engine->supportedTravelModes();
 }
 
 /*!
-    Returns the types of features that this manager can avoid during route planning.
+    Returns the types of features that this manager can take into account
+    during route planning.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
+QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::AvoidFeatureTypes();
+    return d_ptr->engine->supportedFeatureTypes();
+}
 
-    return d_ptr->engine->supportedAvoidFeatureTypes();
+/*!
+    Returns the weightings which this manager can apply to different features
+    during route planning.
+*/
+QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() const
+{
+    return d_ptr->engine->supportedFeatureWeights();
 }
 
 /*!
@@ -350,9 +329,6 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTyp
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::RouteOptimizations();
-
     return d_ptr->engine->supportedRouteOptimizations();
 }
 
@@ -362,22 +338,16 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::SegmentDetails();
-
     return d_ptr->engine->supportedSegmentDetails();
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this manager.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::InstructionDetails();
-
-    return d_ptr->engine->supportedInstructionDetails();
+    return d_ptr->engine->supportedManeuverDetails();
 }
 
 /*!
@@ -435,7 +405,7 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {

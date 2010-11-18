@@ -6,7 +6,7 @@ INCLUDEPATH += ../../../src/global
 TARGET  = $$qtLibraryTarget(declarative_multimedia)
 TEMPLATE = lib
 CONFIG += plugin
-TARGETPATH = Qt/multimedia
+TARGETPATH = QtMultimediaKit
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
@@ -15,10 +15,10 @@ QT += declarative
 HEADERS += \
         qdeclarativeaudio_p.h \
         qdeclarativemediabase_p.h \
+        qdeclarativemediametadata_p.h \
         qdeclarativevideo_p.h \
         qdeclarativecamera_p.h \
-        qdeclarativecamerapreviewprovider_p.h \
-        qmetadatacontrolmetaobject_p.h \
+        qdeclarativecamerapreviewprovider_p.h
 
 SOURCES += \
         multimedia.cpp \
@@ -26,8 +26,7 @@ SOURCES += \
         qdeclarativemediabase.cpp \
         qdeclarativevideo.cpp \
         qdeclarativecamera.cpp \
-        qdeclarativecamerapreviewprovider.cpp \
-        qmetadatacontrolmetaobject.cpp
+        qdeclarativecamerapreviewprovider.cpp
 
 CONFIG += mobility
 MOBILITY += multimedia

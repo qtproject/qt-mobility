@@ -316,7 +316,7 @@ int QMediaPlaylist::mediaCount() const
 /*!
   Returns true if the playlist contains no items; otherwise returns false.
 
-  \sa size()
+  \sa mediaCount()
   */
 bool QMediaPlaylist::isEmpty() const
 {
@@ -326,7 +326,7 @@ bool QMediaPlaylist::isEmpty() const
 /*!
   Returns true if the playlist can be modified; otherwise returns false.
 
-  \sa size()
+  \sa mediaCount()
   */
 bool QMediaPlaylist::isReadOnly() const
 {

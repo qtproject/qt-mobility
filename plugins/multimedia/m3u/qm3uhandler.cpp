@@ -100,7 +100,10 @@ public:
             if (line.isEmpty() || line[0] == '#')
                 continue;
 
-            nextResource = QMediaContent(QUrl(line));
+            if (QFile::exists(line))
+                nextResource = QMediaContent(QUrl::fromLocalFile(line));
+            else
+                nextResource = QMediaContent(QUrl(line));
             break;
         }
 

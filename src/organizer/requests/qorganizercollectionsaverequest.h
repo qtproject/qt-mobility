@@ -43,8 +43,9 @@
 #define QORGANIZERCOLLECTIONSAVEREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizercollection.h"
+#include "qorganizermanager.h"
 
 #include <QList>
 #include <QStringList>
@@ -52,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerCollectionSaveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerCollectionSaveRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerCollectionSaveRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -65,11 +66,11 @@ public:
 
     /* Results */
     QList<QOrganizerCollection> collections() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerCollectionSaveRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionSaveRequest)
 };
 

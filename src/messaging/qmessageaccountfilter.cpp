@@ -58,8 +58,8 @@ QTM_BEGIN_NAMESPACE
     QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
     which meet the criteria defined by the filter.
 
-    QMessageAccountFilters can be combined using the logical operators (&), (|) and (~) to
-    create more refined queries.
+    QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
+    operators to create more refined queries.
 
     \sa QMessageManager, QMessageAccount
 */
@@ -116,8 +116,11 @@ QTM_BEGIN_NAMESPACE
 
     An empty filter matches all accounts.
 
-    The result of combining an empty filter with a non-empty filter is the original non-empty filter. 
-    This is true regardless of whether the combination is formed by an AND or an OR operation.
+    The result of combining an empty filter with a non-empty filter using an AND operation is the
+    original non-empty filter.
+
+    The result of combining an empty filter with a non-empty filter using an OR operation is the
+    empty filter.
 
     The result of combining two empty filters is an empty filter.
 */

@@ -128,11 +128,11 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
 void S60VideoWidgetControl::initializeVideoOutput()
 {
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
-    m_widget = new QBlackSurface();
+    m_widget.reset(new QBlackSurface());
 #else
-    m_widget = new QBlackWidget();
-    connect(m_widget, SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
-    connect(m_widget, SIGNAL(endVideoWindowNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
+    m_widget.reset(new QBlackWidget());
+    connect(m_widget.data(), SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
+    connect(m_widget.data(), SIGNAL(endVideoWindowNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
 #endif
     m_widget->installEventFilter(this);
 }
@@ -143,7 +143,7 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 
 QWidget *S60VideoWidgetControl::videoWidget()
 {
-    return m_widget;
+    return m_widget.data();
 }
 
 Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
@@ -222,9 +222,12 @@ void S60VideoWidgetControl::setSaturation(int saturation)
 
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
-    if (object == m_widget) {
-        if (e->type() == QEvent::WinIdChange
-            || e->type() == QEvent::ParentChange 
+    if (object == m_widget.data()) {
+        if (e->type() == QEvent::ParentChange) {
+            if (QWidget *parent = m_widget->parentWidget())
+                parent->setProperty("_q_DummyWindowSurface", true);
+            emit widgetUpdated();
+        } else if (e->type() == QEvent::WinIdChange
             || e->type() == QEvent::Show) {
             emit widgetUpdated();
         } else if (e->type() == QEvent::Resize
@@ -271,7 +274,7 @@ void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 #ifdef USE_PRIVATE_QWIDGET_METHODS
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::StoppedState";
-        qt_widget_private(m_widget)->extraData()->disableBlit = false;
+        qt_widget_private(m_widget.data())->extraData()->disableBlit = false;
 #endif        
 #endif
         m_widget->repaint();
@@ -279,7 +282,7 @@ void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 #ifdef USE_PRIVATE_QWIDGET_METHODS
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)       
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::PlayingState";
-        qt_widget_private(m_widget)->extraData()->disableBlit = true;
+        qt_widget_private(m_widget.data())->extraData()->disableBlit = true;
 #endif  
 #endif
     }

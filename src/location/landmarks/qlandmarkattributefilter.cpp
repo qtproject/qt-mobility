@@ -49,6 +49,8 @@ class QLandmarkAttributeFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
     QLandmarkAttributeFilterPrivate();
+    QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other);
+
     virtual ~QLandmarkAttributeFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate *other) const
@@ -77,23 +79,56 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     type = QLandmarkFilter::AttributeFilter;
 }
 
+QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+    attributes(other.attributes),
+    flags(other.flags)
+{
+}
+
 QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 {
 }
 
 /*!
     \class QLandmarkAttributeFilter
-    \brief The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes.
+    \brief The QLandmarkAttributeFilter class provides filtering on various landmark attributes.
 
     \inmodule QtLocation
 
     \ingroup landmarks-filter
 
-    The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values.
-    If an invalid QVariant is provided as the value for an attribute, then any landmark that has that attribute is
-    considered a match, regardless of its value.  More than one attribute may be set in the filter and may be
-    combined using an AND or OR operation.  The filter may only be used to search through either manager attributes
-    (ie. common cross platform attributes and extended attributes specific to a manager) or custom attributes.
+    You can provide various keys which describe the attribute(s) to search.
+    Precisely which keys may be used depends on the manager
+    and these can be retrieved by using QLandmarkManager::searchableLandmarkAttributeKeys().
+    The table below outlines some keys that may be used with the default managers on the
+    currently supported platforms.  The match flags may be used for attributes which are
+    of string type (typically most, if not all searchable attributes are string types).
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "country
+        \o "countryCode"
+    \row
+        \o "county"
+        \o "description"
+        \o "district"
+    \row
+        \o "name"
+        \o "state"
+        \o "phoneNumber"
+    \row
+        \o "postcode"
+        \o "street"
+        \o
+    \endtable
+
+        Please note that different platforms support different capabilites with the attribute filter.
+        The S60 3.1, 3.2 and 5.0 platforms do not support an OR type attribute filter.
+        These platforms are also not able to use the MatchContains flags.
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 
@@ -138,12 +173,10 @@ QVariant QLandmarkAttributeFilter::attribute(const QString &key) const
 /*!
     Sets the \a value of the attribute corresponding to \a key.
 
-    Setting an invalid QVariant to an attribute means that the filter
-    will match any landmark that has that attribute, regardless of its value.
-    Setting a valid QVariant means that the filter will match only landmarks
-    whose values match that of \a value.  For string based attributes a
-    set of matching \a flags can be provided to define how the string values should be matched.
+    For string based attributes a set of matching \a flags can be provided
+    to define how the string values should be matched.
     For non-string based attributes the \a flags are ignored.
+    The beahviour of the filter is undefined if an invalid QVariant is used as a \a value
 */
 void QLandmarkAttributeFilter::setAttribute(const QString &key, const QVariant &value, QLandmarkFilter::MatchFlags flags)
 {
@@ -155,12 +188,10 @@ void QLandmarkAttributeFilter::setAttribute(const QString &key, const QVariant &
 /*!
     Sets the \a value of all the attributes correponding to those in \a keys.
 
-    Setting an invalid QVariant to an attribute means that the filter
-    will match any landmark that has that attribute, regardless of its value.
-    Setting a valid QVariant means that the filter will match only landmarks
-    whose values match that of \a value.  For string based attributes a
+    For string based attributes a
     set of matching \a flags can be provided to define how the string values should be matched.
     For non-string based attributes the \a flags are ignored.
+    The behaviour of the filter is undefined if an invalid QVariant is used as \a value.
 */
 void QLandmarkAttributeFilter::setAttributes(const QStringList &keys, const QVariant &value, QLandmarkFilter::MatchFlags flags)
 {

@@ -48,7 +48,7 @@
 #include "qorganizeritem.h"
 #include "qorganizeritem_p.h"
 #include "qorganizeritemdetail_p.h"
-#include "qorganizeritemmanager_p.h"
+#include "qorganizermanager_p.h"
 
 #include "qorganizeritemdetails.h"
 
@@ -77,28 +77,31 @@ QTM_BEGIN_NAMESPACE
 
   \ingroup organizer-main
 
-  A QOrganizerItem object has an id and a collection of details (like a start date and location).  Each detail
-  (which can have multiple fields) is stored in an appropriate subclass of QOrganizerItemDetail, and
-  the QOrganizerItem allows retrieving these details in various ways.
+  A QOrganizerItem object has an id and a collection of details (like a start date and location), as
+  well as a collection id which identifies which QOrganizerCollection the item is part of in a manager.
+  Each detail (which can have multiple fields) is stored in an appropriate subclass of QOrganizerItemDetail,
+  and the QOrganizerItem allows retrieving these details in various ways.
 
-  A QOrganizerItem instance represents the in-memory version of a calendar organizer item,
-  and has no tie to a specific QOrganizerItemManager.  It is possible for the contents
-  of a QOrganizerItem to change independently of the contents that are stored persistently
-  in a QOrganizerItemManager.  A QOrganizerItem has an ID associated with it when it is first
-  retrieved from a QOrganizerItemManager, or after it has been first saved, and this allows
-  clients to track changes using the signals in QOrganizerItemManager.
+  Most clients will want to use the convenient subclasses of QOrganizerItem (i.e., QOrganizerEvent
+  (and QOrganizerEventOccurence), QOrganizerTodo (and QOrganizerTodoOccurence), QOrganizerJournal and
+  QOrganizerNote) instead of manipulating instances of QOrganizerItem directly.
 
-  A QOrganizerItem has a number of mandatory details:
-  \list
-   \o A QOrganizerItemType, with the type of the organizer item (individual event, todo, journal etc)
-   \o A QOrganizerItemDescription, which describes the item
-   \o A QOrganizerItemDisplayLabel, which is the default label of the item
-  \endlist
+  A QOrganizerItem instance represents the in-memory version of a calendar organizer item.
+  It is possible for the contents of a QOrganizerItem to change independently of the contents
+  that are stored persistently in a QOrganizerManager.  A QOrganizerItem has an id associated
+  with it when it is first retrieved from a QOrganizerManager, or after it has been first saved,
+  and this allows clients to track changes using the signals in QOrganizerManager.  When saved
+  in a manager, every item is placed into a QOrganizerCollection in that manager, according
+  to the collection id set in the item prior to save (or the default collection if no
+  collection id was set in the item).
 
-  Different subclasses of QOrganizerItem (i.e., QOrganizerEvent, QOrganizerTodo, QOrganizerJournal
-  and QOrganizerNote) may have more mandatory details.
+  Different QOrganizerManagers may require an item to have certain details saved in it before
+  it can be stored in that manager.  By default, every item must have a QOrganizerItemType
+  detail which identifies the type of the item.  Different subclasses of QOrganizerItem
+  (i.e., QOrganizerEvent (and QOrganizerEventOccurence), QOrganizerTodo (and QOrganizerTodoOccurence),
+  QOrganizerJournal and QOrganizerNote) may have other mandatory details, depending on the manager.
 
-  \sa QOrganizerItemManager, QOrganizerItemDetail
+  \sa QOrganizerManager, QOrganizerItemDetail
  */
 
 /*!
@@ -253,11 +256,9 @@ QOrganizerItem::~QOrganizerItem()
 
     This may have been set when the organizer item was retrieved from
     a particular manager, or when the organizer item was first saved
-    in a manager.  The QOrganizerItemId is only valid with a specific
-    manager.  See \l QOrganizerItemManager::saveItem() for more
+    in a manager.  The QOrganizerItemId is only valid within a specific
+    manager.  See \l QOrganizerManager::saveItem() for more
     information.
-
-    \sa localId()
  */
 QOrganizerItemId QOrganizerItem::id() const
 {
@@ -265,27 +266,21 @@ QOrganizerItemId QOrganizerItem::id() const
 }
 
 /*!
-    Returns the QOrganizerItemLocalId that identifies this organizer item within its manager
+  Returns the id of the collection which this item is part of, in the manager
+  in which the item has been saved, if the item has previously been saved in
+  a manager.  If the item has not previously been saved in a manager, this function
+  will return the id of the collection into which the client wishes the item to be
+  saved when \l QOrganizerManager::saveItem() is called, which is set by calling
+  \l setId(); otherwise, returns a null id.
 
-    This may have been set when the organizer item was retrieved from
-    a particular manager, or when the organizer item was first saved
-    in a manager.  The QOrganizerItemLocalId is associated with a specific
-    manager, but other organizer items with the same local id might exist in
-    different managers.
-
-    See \l QOrganizerItemManager::saveItem() for more
-    information.
-
-   \sa id()
-*/
-QOrganizerItemLocalId QOrganizerItem::localId() const
-{
-    return d->m_id.localId();
-}
-
-/*!
-  Note: only returns meaningful id if it has been saved in a manager.
-      An item always belongs to exactly one collection (default, if not set).
+  An item always belongs to exactly one collection in a particular manager after it
+  has been saved in the manager.  If the item has previously been saved in the manager,
+  in a particular collection, and the client sets the collection id of the item to
+  the id of a different collection within that manager and then resaves the item,
+  the item will be moved from its original collection into the specified collection
+  if the move operation is supported by the manager; otherwise, the
+  \l QOrganizerManager::saveItem() operation will fail and calling
+  \l QOrganizerManager::error() will return \c QOrganizerManager::NotSupportedError.
  */
 QOrganizerCollectionId QOrganizerItem::collectionId() const
 {
@@ -293,17 +288,40 @@ QOrganizerCollectionId QOrganizerItem::collectionId() const
 }
 
 /*!
+  Sets the id of the collection into which the client wishes the item to be saved
+  to the given \a collectionId.
+
+  If the given \a collectionId is the null collection id, the client is specifying
+  that the item should be saved into the collection in which the item is already
+  saved (if the item has previously been saved in the manager, without having been
+  removed since), or into the default collection of the manager (if the item has
+  not previously been saved in the manager, or has been removed since the last time
+  it was saved).
+
+  If the item has previously been saved in a particular manager, and the given
+  \a collectionId is the id of a different collection than the one which the
+  item is currently a part of in that manager, saving the item with
+  \l QOrganizerManager::saveItem() will move the item from its original
+  collection to the collection whose id is \a collectionId, if \a collectionId
+  identifies a valid collection and the operation is supported by the manager.
+ */
+void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
+{
+    d->m_collectionId = collectionId;
+}
+
+/*!
  * Sets the id of this organizer item to \a id.
  *
  * Note that this only affects this object, not any corresponding structures stored
- * by a QOrganizerItemManager.
+ * by a QOrganizerManager.
  *
  * If you change the id of a organizer item and save the organizer item
  * in a manager, the previously existing organizer item will still
  * exist.  You can do this to create copies (possibly modified)
  * of an existing organizer item, or to save a organizer item in a different manager.
  *
- * \sa QOrganizerItemManager::saveItem()
+ * \sa QOrganizerManager::saveItem()
  */
 void QOrganizerItem::setId(const QOrganizerItemId& id)
 {
@@ -366,7 +384,7 @@ QOrganizerItemDetail QOrganizerItem::detail(const QString& definitionName) const
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QOrganizerItemPhoneNumber::DefinitionName) or by
     requesting a list of all the definition names using
-    \l {QOrganizerItemManager::detailDefinitions()}{detailDefinitions()} or the
+    \l {QOrganizerManager::detailDefinitions()}{detailDefinitions()} or the
     asynchronous \l
     {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionName) const
@@ -394,7 +412,7 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionNam
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QOrganizerItemPhoneNumber::DefinitionName) or by
     requesting a list of all the definition names using
-    \l {QOrganizerItemManager::detailDefinitions()}{detailDefinitions()} or the
+    \l {QOrganizerManager::detailDefinitions()}{detailDefinitions()} or the
     asynchronous \l
     {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionName, const QString& fieldName, const QString& value) const
@@ -624,10 +642,11 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
     return true;
 }
 
-/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id or stored details are not the same */
+/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id, collection id or stored details are not the same */
 bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 {
     return other.d->m_id == d->m_id &&
+        other.d->m_collectionId == d->m_collectionId &&
         other.d->m_details == d->m_details;
 }
 
@@ -638,6 +657,7 @@ bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 uint qHash(const QOrganizerItem &key)
 {
     uint hash = qHash(key.id());
+    hash += qHash(key.collectionId());
     foreach (const QOrganizerItemDetail& detail, key.details()) {
         hash += qHash(detail);
     }
@@ -645,9 +665,12 @@ uint qHash(const QOrganizerItem &key)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*!
+  Streams the \a organizeritem to the given debug stream \a dbg, and returns the stream.
+ */
 QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
-    dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ")";
+    dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ") in collection(" << organizeritem.collectionId() << ")";
     foreach (const QOrganizerItemDetail& detail, organizeritem.details()) {
         dbg.space() << '\n' << detail;
     }
@@ -662,7 +685,11 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
-    return out << formatVersion << item.id() << item.details();
+    out << formatVersion
+        << item.id().toString()
+        << item.collectionId().toString()
+        << item.details();
+    return out;
 }
 
 /*!
@@ -674,10 +701,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
     in >> formatVersion;
     if (formatVersion == 1) {
         item = QOrganizerItem();
-        QOrganizerItemId id;
+        QString itemIdString;
+        QString collectionIdString;
         QList<QOrganizerItemDetail> details;
-        in >> id >> details;
-        item.setId(id);
+        in >> itemIdString >> collectionIdString >> details;
+        item.setId(QOrganizerItemId::fromString(itemIdString));
+        item.setCollectionId(QOrganizerCollectionId::fromString(collectionIdString));
         item.d->m_details = details;
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

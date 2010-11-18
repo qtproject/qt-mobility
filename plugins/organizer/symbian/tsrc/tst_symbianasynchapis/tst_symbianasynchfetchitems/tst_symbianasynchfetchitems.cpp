@@ -50,7 +50,8 @@ QTM_USE_NAMESPACE
 
 // Constants
 const QString managerNameSymbian("symbian");
-const int KNumberOfEntries = 5; 
+const int KNumberOfEntries = 5;
+const int KNumberOfOccurrences = 5;
 
 // We need to be able to pass QOrganizerItem as parameter from
 // test data functions
@@ -61,47 +62,46 @@ class TestFetchItems : public QObject
    Q_OBJECT
    
 private slots:
-   void init();
-   void cleanup();
+   void initTestCase();
+   void cleanupTestCase();
    
 private slots:
    void saveItems(); // Start the test case by saving items into Agenda DB
-   // fetchItems would be called as and when the results for saveItems are
-   // available
+   void fetchItems(); // Start the test case for fetching item instances
+
    
 public slots:
    void fetchRequestStateChanged(
-           QOrganizerItemAbstractRequest::State currentState);
+           QOrganizerAbstractRequest::State currentState);
    void fetchRequestResultsAvailable();
    void saveRequestStateChanged(
-           QOrganizerItemAbstractRequest::State currentState);
+           QOrganizerAbstractRequest::State currentState);
    void saveRequestResultsAvailable();
 
    
 private:
    QList<QOrganizerItem> createItems(int noOfItems);
-   void fetchItems();
-   
+   //void fetchItems();
 private:
-    QOrganizerItemManager*              m_om;
+    QOrganizerManager*              m_om;
     QOrganizerItemFetchRequest*         m_fetchItemRequest;
     QOrganizerItemSaveRequest*          m_saveItemRequest;
 };
 
-void TestFetchItems::init()
+void TestFetchItems::initTestCase()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerNameSymbian);
+    m_om = new QOrganizerManager(managerNameSymbian);
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     
     // Create an item save request before fetching an item
     // Create asynchronous request to save an item
     m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     // Connect for the state change signal 
     connect(m_saveItemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
-            SLOT(saveRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, 
+            SLOT(saveRequestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(saveRequestResultsAvailable()));
 
@@ -109,14 +109,14 @@ void TestFetchItems::init()
     m_fetchItemRequest = new QOrganizerItemFetchRequest(this);
     // Connect for the state change signal 
     connect(m_fetchItemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
             this, 
-            SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SLOT(fetchRequestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(fetchRequestResultsAvailable()));
 }
 
-void TestFetchItems::cleanup()
+void TestFetchItems::cleanupTestCase()
 {
     if (m_om) {
         delete m_om;
@@ -156,13 +156,24 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
         organizerItem.setDisplayLabel(desplaylabel);
         
         // Set current time
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         QDateTime startTime;
         startTime.currentDateTime();
         timeRange.setStartDateTime(startTime.currentDateTime());
         
         QVERIFY(organizerItem.saveDetail(&timeRange));
         
+        QOrganizerRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+        rrule.setLimit(KNumberOfOccurrences);
+ 
+        // Add recurrence rules to the item
+        QSet<QOrganizerRecurrenceRule> rrules;
+        rrules.insert(rrule);
+        QOrganizerItemRecurrence recurrence;
+        recurrence.setRecurrenceRules(rrules);
+        QVERIFY(organizerItem.saveDetail(&recurrence));
+
         itemsList.append(organizerItem);
     }
     
@@ -171,24 +182,24 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
 
 // request status changed for save request
 void TestFetchItems::saveRequestStateChanged(
-        QOrganizerItemAbstractRequest::State currentState)
+        QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-        case QOrganizerItemAbstractRequest::InactiveState: { 
+        case QOrganizerAbstractRequest::InactiveState: { 
             // Operation not yet started start the operation
             saveItems();
             break;
         }
-        case QOrganizerItemAbstractRequest::ActiveState: { 
+        case QOrganizerAbstractRequest::ActiveState: { 
             // Operation started, not yet finished operation already started
         break;
         }
-        case QOrganizerItemAbstractRequest::CanceledState: { 
+        case QOrganizerAbstractRequest::CanceledState: { 
             // Operation is finished due to cancellation test not completed, 
             // failed
         break;
         }
-        case QOrganizerItemAbstractRequest::FinishedState: { 
+        case QOrganizerAbstractRequest::FinishedState: { 
             // Operation either completed successfully or failed.  
             // No further results will be available.
             // test completed, compare the results when results available 
@@ -206,21 +217,17 @@ void TestFetchItems::saveRequestResultsAvailable()
     QList<QOrganizerItem> items = m_saveItemRequest->items();
     // Compate the number of items saved
     QCOMPARE(KNumberOfEntries, items.count());
-    
-    // Start fetchItems test now
-    fetchItems();
 }
-
 
 void TestFetchItems::fetchItems()
 {
-    QOrganizerItemLocalIdFilter localIdFilter;
-    QList<QOrganizerItemLocalId> lUids;
+    QOrganizerItemIdFilter idFilter;
+    QList<QOrganizerItemId> lUids;
     // TODO: Disabled because of API change. REFACTOR!
     //lUids.append(3);
     //lUids.append(4);
-    localIdFilter.setIds(lUids);
-    //m_fetchItemRequest->setFilter(localIdFilter);
+    idFilter.setIds(lUids);
+    //m_fetchItemRequest->setFilter(idFilter);
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
     detailsFilter.setDetailDefinitionName(
@@ -252,28 +259,30 @@ void TestFetchItems::fetchItems()
     m_fetchItemRequest->setManager(m_om);
     // Start the request
     m_fetchItemRequest->start();
+    // Wait for request to complete
+    m_fetchItemRequest->waitForFinished(500);
 }
 
 // Fetch request state changed
 void TestFetchItems::fetchRequestStateChanged(
-        QOrganizerItemAbstractRequest::State currentState)
+        QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-        case QOrganizerItemAbstractRequest::InactiveState: { 
+        case QOrganizerAbstractRequest::InactiveState: { 
             // Operation not yet started start the operation
             fetchItems();
             break;
         }
-        case QOrganizerItemAbstractRequest::ActiveState: { 
+        case QOrganizerAbstractRequest::ActiveState: { 
             // Operation started, not yet finished operation already started
         break;
         }
-        case QOrganizerItemAbstractRequest::CanceledState: { 
+        case QOrganizerAbstractRequest::CanceledState: { 
             // Operation is finished due to cancellation test not completed, 
             // failed
         break;
         }
-        case QOrganizerItemAbstractRequest::FinishedState: { 
+        case QOrganizerAbstractRequest::FinishedState: { 
             // Operation either completed successfully or failed.  
             // No further results will be available.
             // test completed, compate the results while available
@@ -289,7 +298,7 @@ void TestFetchItems::fetchRequestResultsAvailable()
 {
     QList<QOrganizerItem> items = m_fetchItemRequest->items();
     int count(items.count());
-    QCOMPARE(KNumberOfEntries, items.count());
+    QCOMPARE(KNumberOfEntries*KNumberOfOccurrences, items.count());
 }
 
 QTEST_MAIN(TestFetchItems);

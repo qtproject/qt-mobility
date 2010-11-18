@@ -95,13 +95,18 @@ private slots:  // Test cases
     void testDefaultFilterWithPredictiveSearch9();
     void testFilterSupported();
     void testCreateSelectQuery();
+    void testFavoriteDetailFilter();
+    void testMatchFlags();
+    void testContactTypeFilter();
 private:
     void  testIntersectionFilter_1();
     void  testIntersectionFilter_2();
     void  testIntersectionFilter_3();
+    void  testIntersectionFilter_4();
     void  testUnionFilter_1();
     void  testUnionFilter_2();
     void  testUnionFilter_3();
+    void  testUnionFilter_4();
     void  testContactDetailFilter_1();
     void  testContactDetailFilter_2();
     void  testContactDetailFilter_3();

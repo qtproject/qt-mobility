@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -89,12 +89,12 @@ QString contactDisplayName(const QMessageAddress &address)
     QContactDetailFilter filter;
     if (address.type() == QMessageAddress::Email) {
         // Match contacts on email address data
-        filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName);
+        filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
         filter.setValue(addressOnly);
         filter.setMatchFlags(QContactFilter::MatchContains);
     } else if (address.type() == QMessageAddress::Phone) {
         // Match contacts on phone number data
-        filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+        filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
         filter.setValue(addressOnly);
         filter.setMatchFlags(QContactFilter::MatchPhoneNumber);
     }
@@ -157,9 +157,18 @@ void AddressFinder::excludePeriodEnabled(int state)
 }
 
 //! [address-selected]
-void AddressFinder::addressSelected(const QString &address)
+void AddressFinder::addressSelected(int index)
 {
     messageCombo->clear();
+
+    if (index == -1)
+        return;
+
+#ifdef USE_CONTACTS_COMBOBOX
+    QString address = contactList->itemData(index).toString();
+#else
+    QString address = contactList->item(index)->data(Qt::UserRole).toString();
+#endif
 
     QString addressOnly(simpleAddress(address));
 
@@ -260,28 +269,30 @@ void AddressFinder::searchMessages()
 //! [handle-search-result]
 void AddressFinder::stateChanged(QMessageService::State newState)
 {
-    if (newState == QMessageService::FinishedState) {
-        if (service.error() == QMessageManager::NoError) {
-            if (!inclusionFilter.isEmpty()) {
-                // Now find the included messages
-                service.queryMessages(inclusionFilter);
+    if (searchAction->isEnabled() == false) {
+        if (newState == QMessageService::FinishedState) {
+            if (service.error() == QMessageManager::NoError) {
+                if (!inclusionFilter.isEmpty()) {
+                    // Now find the included messages
+                    service.queryMessages(inclusionFilter);
 
-                // Clear the inclusion filter to indicate that we have searched for it
-                inclusionFilter = QMessageFilter();
-            } else {
-                // We have found the exclusion and inclusion message sets
-                if (!inclusionMessages.isEmpty()) {
-                    // Begin processing the message sets
-                    QTimer::singleShot(0, this, SLOT(continueSearch()));
-//! [handle-search-result]
+                    // Clear the inclusion filter to indicate that we have searched for it
+                    inclusionFilter = QMessageFilter();
                 } else {
-                    QMessageBox::information(0, tr("Empty"), tr("No messages found"));
-                    setSearchActionEnabled(true);
+                    // We have found the exclusion and inclusion message sets
+                    if (!inclusionMessages.isEmpty()) {
+                        // Begin processing the message sets
+                        QTimer::singleShot(0, this, SLOT(continueSearch()));
+//! [handle-search-result]
+                    } else {
+                        QMessageBox::information(0, tr("Empty"), tr("No messages found"));
+                        setSearchActionEnabled(true);
+                    }
                 }
+            } else {
+                QMessageBox::warning(0, tr("Failed"), tr("Unable to perform search"));
+                setSearchActionEnabled(true);
             }
-        } else {
-            QMessageBox::warning(0, tr("Failed"), tr("Unable to perform search"));
-            setSearchActionEnabled(true);
         }
     }
 }
@@ -329,7 +340,13 @@ void AddressFinder::continueSearch()
                     addressList.append(addressOnly);
 
                     // Add the recipient to our visible list of contacts to keep in touch with
-                    contactList->addItem(contactDisplayName(address));
+#ifdef USE_CONTACTS_COMBOBOX
+                    contactList->addItem(contactDisplayName(address), addressOnly);
+#else
+                    QListWidgetItem* newListWidgetItem = new QListWidgetItem(contactDisplayName(address));
+                    newListWidgetItem->setData(Qt::UserRole, addressOnly);
+                    contactList->addItem(newListWidgetItem);
+#endif
                 }
 
                 if (details.isEmpty()) {
@@ -351,22 +368,11 @@ void AddressFinder::continueSearch()
         tabChanged(1);
 #endif
 
-        if (
 #ifdef USE_CONTACTS_COMBOBOX
-                contactList->currentIndex() != -1
+        addressSelected(contactList->currentIndex());
 #else
-                contactList->currentItem()
+        addressSelected(contactList->currentRow());
 #endif
-                ) {
-            // Select the first address automatically
-            addressSelected(
-#ifdef USE_CONTACTS_COMBOBOX
-                    contactList->currentText()
-#else
-                    contactList->currentItem()->text()
-#endif
-                    );
-        }
     }
 }
 //! [continue-search]
@@ -454,10 +460,10 @@ void AddressFinder::setupUi()
 
 #ifdef USE_CONTACTS_COMBOBOX
     contactList = new QComboBox(this);
-    connect(contactList, SIGNAL(currentIndexChanged(QString)), this, SLOT(addressSelected(QString)));
+    connect(contactList, SIGNAL(currentIndexChanged(int)), this, SLOT(addressSelected(int)));
 #else
     contactList = new QListWidget(this);
-    connect(contactList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
+    connect(contactList, SIGNAL(currentRowChanged(int)), this, SLOT(addressSelected(int)));
 #endif
 
 #ifndef USE_SEARCH_BUTTON
@@ -536,7 +542,7 @@ void AddressFinder::setupUi()
   foreach(QWidget* w, focusableWidgets)
        w->setContextMenuPolicy(Qt::NoContextMenu);
 
-    excludePeriod->setFocus();
+    includePeriod->setFocus();
 }
 
 void AddressFinder::setSearchActionEnabled(bool val)

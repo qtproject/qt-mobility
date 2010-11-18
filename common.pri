@@ -87,13 +87,13 @@ contains(build_unit_tests, yes) {
 
 
 #test whether we have a unit test
-!testcase {
+!testcase:!testhelper {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
-            VERSION = 1.1.0
+            VERSION = 1.2.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
@@ -117,7 +117,7 @@ contains(build_unit_tests, yes) {
     QMAKE_RPATHDIR += $$QT_MOBILITY_LIB
 } else {
     # Unit test code (no plugins! test plugins are just normal plugins installed elsewhere)
-    QT *= testlib
+    testcase:QT *= testlib
     CONFIG += console
     CONFIG -= app_bundle
     OBJECTS_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET
@@ -138,6 +138,9 @@ maemo6 {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
+}
+meego {
+    DEFINES+= Q_WS_MEEGO
 }
 
 wince* {

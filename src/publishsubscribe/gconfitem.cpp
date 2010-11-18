@@ -317,6 +317,23 @@ void GConfItem::unset() {
     set(QVariant());
 }
 
+void GConfItem::recursiveUnset() {
+    withClient(client) {
+        QByteArray k = convertKey(priv->key);
+        GError *error = NULL;
+
+        GConfUnsetFlags flags;
+        gconf_client_recursive_unset(client, k.data(), flags, &error);
+
+        if (error) {
+            qWarning() << error->message;
+            g_error_free(error);
+        } else {
+            priv->value = QVariant();
+            emit valueChanged();
+        }
+    }
+}
 QList<QString> GConfItem::listDirs() const
 {
     QList<QString> children;

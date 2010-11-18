@@ -89,10 +89,6 @@ public:
     qreal radius() const;
     void setRadius(qreal radius);
 
-    QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributeKeys() const;
-
     QString phoneNumber() const;
     void setPhoneNumber(const QString &phoneNumber);
 
@@ -109,6 +105,10 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QLandmark));
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmark), Q_MOVABLE_TYPE);
 
 QT_END_HEADER
 

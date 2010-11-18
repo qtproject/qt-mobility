@@ -107,6 +107,42 @@ void QLandmarkBoxFilter::setBoundingBox(const QGeoBoundingBox &boundingBox)
     d->boundingBox = boundingBox;
 }
 
+/*!
+    Returns the top left coordinate of the box filter.
+*/
+QGeoCoordinate QLandmarkBoxFilter::topLeft()
+{
+    Q_D(const QLandmarkBoxFilter);
+    return d->boundingBox.topLeft();
+}
+
+/*!
+  Sets the \a topLeft coordinate of the box filter.
+*/
+void QLandmarkBoxFilter::setTopLeft(const QGeoCoordinate &topLeft)
+{
+    Q_D(QLandmarkBoxFilter);
+    d->boundingBox.setTopLeft(topLeft);
+}
+
+
+/*!
+    Returns the bottom right coordinate of the box filter.
+*/
+QGeoCoordinate QLandmarkBoxFilter::bottomRight()
+{
+    Q_D(const QLandmarkBoxFilter);
+    return d->boundingBox.bottomRight();
+}
+
+/*!
+    Sets the \a bottomRight coordinate of the box filter.
+*/
+void QLandmarkBoxFilter::setBottomRight(const QGeoCoordinate &bottomRight)
+{
+    Q_D(QLandmarkBoxFilter);
+    return d->boundingBox.setBottomRight(bottomRight);
+}
 
 /*******************************************************************************
 *******************************************************************************/

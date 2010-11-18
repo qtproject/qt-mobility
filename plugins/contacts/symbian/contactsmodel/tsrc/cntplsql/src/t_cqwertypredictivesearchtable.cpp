@@ -243,14 +243,15 @@ void UT_CQwertyPredictiveSearchTable::UT_DeleteLL()
 void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
     {
     // All names and mail addresses begin with unmapped characters, so contact
-    // is not stored to QWERTY tables at all.
+    // is not stored to QWERTY tables at all. Since it can't be searched with
+	// predictive search.
     _LIT(KUnmappedName, "¨unknownCharAtStart");
     _LIT(KUnmappedName2, "¨nameAfterUnk");
     _LIT(KUnmappedMail, "mailto:¨user@domain");
     _LIT(KUnmappedMail2, "¨addr@call.id");
     _LIT(KUnmappedMail3, "¨begins@by.unk.char");
-    AddContactL(KTestContactId, KUnmappedName, KUnmappedName2, KUnmappedMail,
-    			KUnmappedMail2, KUnmappedMail3); 
+    AddContactL(KTestContactId, KUnmappedName, KUnmappedName2,
+			    KUnmappedMail, KUnmappedMail2, KUnmappedMail3); 
     // Check tables are empty
     CheckItemCountL(InitTableVector());
     
@@ -267,14 +268,29 @@ void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
     // All mail addresses begin with unmapped characters, but contact can be
     // searched by first name. Contact is stored to QWERTY tables.
     _LIT(KNameWithUnmappedChars, "E¨¨");
-    _LIT(KMailWithUnmappedChars, "(¨&)");
     AddContactL(KTestContactId3, KNameWithUnmappedChars, KNullDesC, 
-                KUnmappedMail, KUnmappedMail2, KMailWithUnmappedChars);
+                KUnmappedMail, KUnmappedMail2);
     
     result[2] = 1; // KNameWithUnmappedChars
-    result[32] = 1; // KMailWithUnmappedChars
     CheckItemCountL(result);
     }
+
+// -----------------------------------------------------------------------------
+// UT_CQwertyPredictiveSearchTable::UT_MailAddressWithUnknownCharactersL
+// -----------------------------------------------------------------------------
+//
+void UT_CQwertyPredictiveSearchTable::UT_MailAddressWithUnknownCharactersL()
+    {
+	// Contact has only mail address, and it contains (but does not begin by)
+	// unknown characters. It should be stored to tables.
+	_LIT(KMailWithUnmappedChars, "(¨&)");
+	AddContactL(KTestContactId3, KNullDesC, KNullDesC,
+                KMailWithUnmappedChars);
+    
+	QVector<TInt> result = InitTableVector();
+    result[32] = 1; // KMailWithUnmappedChars
+    CheckItemCountL(result);
+	}
 
 // -----------------------------------------------------------------------------
 // UT_CQwertyPredictiveSearchTable::UT_BeginByNumberL
@@ -297,7 +313,8 @@ void UT_CQwertyPredictiveSearchTable::UT_BeginByNumberL()
     result[41] = 2; // begins by 0
     CheckItemCountL(result);
     }
-    
+
+
 // -----------------------------------------------------------------------------
 // UT_CQwertyPredictiveSearchTable::InitTableVector
 // -----------------------------------------------------------------------------
@@ -470,6 +487,13 @@ EUNIT_TEST(
     "FUNCTIONALITY",
     SetupL, UT_UnmappedMailAddressL, Teardown )
 
+EUNIT_TEST(
+    "CreateInDbL - mail address contains unmapped chars",
+    "UT_CQwertyPredictiveSearchTable",
+    "CreateInDbL",
+    "FUNCTIONALITY",
+    SetupL, UT_MailAddressWithUnknownCharactersL, Teardown )
+	
 EUNIT_END_TEST_TABLE
 
 //  END OF FILE

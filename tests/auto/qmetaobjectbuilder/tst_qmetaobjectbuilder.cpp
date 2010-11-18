@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,6 @@
 #include <QtCore/qlocale.h>
 #include <qmetaobjectbuilder_p.h>
 
-
 QTM_USE_NAMESPACE
 
 class tst_QMetaObjectBuilder : public QObject
@@ -81,11 +80,11 @@ private:
          QMetaObjectBuilder::AddMembers members);
     static bool sameMetaObject
         (const QMetaObject *meta1, const QMetaObject *meta2);
-    
-#ifdef Q_NO_DATA_RELOCATION    
-    const QMetaObject &tst_QMetaObjectBuilder::getStaticl();
-#endif    
 };
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject *meta;
+#endif
 
 // Dummy class that has something of every type of thing moc can generate.
 class SomethingOfEverything : public QObject
@@ -148,8 +147,10 @@ void tst_QMetaObjectBuilder::mocVersionCheck()
     // It is intended as a reminder to also update QMetaObjectBuilder
     // whenenver moc changes.  Once QMetaObjectBuilder has been
     // updated, this test can be changed to check for the next version.
-    QCOMPARE(int(QObject::staticMetaObject.d.data[0]), 4);
-    QCOMPARE(int(staticMetaObject.d.data[0]), 4);
+    int version = int(QObject::staticMetaObject.d.data[0]);
+    QVERIFY(version == 4 || version == 5);
+    version = int(staticMetaObject.d.data[0]);
+    QVERIFY(version == 4 || version == 5);
 }
 
 void tst_QMetaObjectBuilder::create()
@@ -565,7 +566,7 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(prop1.isWritable());
     QVERIFY(!prop1.isResettable());
     QVERIFY(!prop1.isDesignable());
-    QVERIFY(!prop1.isScriptable());
+    QVERIFY(prop1.isScriptable());
     QVERIFY(!prop1.isStored());
     QVERIFY(!prop1.isEditable());
     QVERIFY(!prop1.isUser());
@@ -584,7 +585,7 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(prop2.isWritable());
     QVERIFY(!prop2.isResettable());
     QVERIFY(!prop2.isDesignable());
-    QVERIFY(!prop2.isScriptable());
+    QVERIFY(prop2.isScriptable());
     QVERIFY(!prop2.isStored());
     QVERIFY(!prop2.isEditable());
     QVERIFY(!prop2.isUser());
@@ -606,7 +607,7 @@ void tst_QMetaObjectBuilder::property()
     prop1.setWritable(false);
     prop1.setResettable(true);
     prop1.setDesignable(true);
-    prop1.setScriptable(true);
+    prop1.setScriptable(false);
     prop1.setStored(true);
     prop1.setEditable(true);
     prop1.setUser(true);
@@ -621,7 +622,7 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!prop1.isWritable());
     QVERIFY(prop1.isResettable());
     QVERIFY(prop1.isDesignable());
-    QVERIFY(prop1.isScriptable());
+    QVERIFY(!prop1.isScriptable());
     QVERIFY(prop1.isStored());
     QVERIFY(prop1.isEditable());
     QVERIFY(prop1.isUser());
@@ -634,7 +635,7 @@ void tst_QMetaObjectBuilder::property()
     QCOMPARE(prop2.type(), QByteArray("int"));
     QVERIFY(!prop2.isResettable());
     QVERIFY(!prop2.isDesignable());
-    QVERIFY(!prop2.isScriptable());
+    QVERIFY(prop2.isScriptable());
     QVERIFY(!prop2.isStored());
     QVERIFY(!prop2.isEditable());
     QVERIFY(!prop2.isUser());
@@ -650,7 +651,7 @@ void tst_QMetaObjectBuilder::property()
     QCOMPARE(prop2.type(), QByteArray("int"));
     QVERIFY(!prop2.isResettable());
     QVERIFY(!prop2.isDesignable());
-    QVERIFY(!prop2.isScriptable());
+    QVERIFY(prop2.isScriptable());
     QVERIFY(!prop2.isStored());
     QVERIFY(!prop2.isEditable());
     QVERIFY(!prop2.isUser());
@@ -917,21 +918,32 @@ void tst_QMetaObjectBuilder::classInfo()
     QVERIFY(checkForSideEffects(builder, QMetaObjectBuilder::ClassInfos));
 }
 
-//#ifdef Q_NO_DATA_RELOCATION
-//const QMetaObject &getStatic(){ return QObject::staticMetaObject; }
-//const QMetaObject &tst_QMetaObjectBuilder::getStaticl(){ return staticMetaObject; }
-//#endif
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject& staticMetaObjectGlobal() 
+{
+  return QObject::staticMetaObject;
+}
+
+const QMetaObject& staticMetaObjectLocal() 
+{
+  return *meta;
+}
+#endif
+
 
 void tst_QMetaObjectBuilder::relatedMetaObject()
 {
     QMetaObjectBuilder builder;
-
+    
     // Add two related meta objects and check their attributes.
 #ifdef Q_NO_DATA_RELOCATION
-    QSKIP("No Data reloaction enabled, and QMetaObjectAccessor makes this hard, FIX ME", SkipSingle);
+    meta = &staticMetaObject;
+    QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectGlobal), 0);    
+    QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectLocal), 1);
 #else
     QCOMPARE(builder.addRelatedMetaObject(&QObject::staticMetaObject), 0);
     QCOMPARE(builder.addRelatedMetaObject(&staticMetaObject), 1);
+#endif
     QVERIFY(builder.relatedMetaObject(0) == &QObject::staticMetaObject);
     QVERIFY(builder.relatedMetaObject(1) == &staticMetaObject);
     QCOMPARE(builder.relatedMetaObjectCount(), 2);
@@ -943,7 +955,6 @@ void tst_QMetaObjectBuilder::relatedMetaObject()
 
     // Check that nothing else changed.
     QVERIFY(checkForSideEffects(builder, QMetaObjectBuilder::RelatedMetaObjects));
-#endif
 }
 
 static int smetacall(QMetaObject::Call, int, void **)
@@ -978,33 +989,6 @@ void tst_QMetaObjectBuilder::copyMetaObject()
     meta = builder3.toMetaObject();
     QVERIFY(sameMetaObject(meta, &SomethingOfEverything::staticMetaObject));
     qFree(meta);
-
-
-    //copy via stream
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly | QIODevice::Append);
-    builder3.serialize(stream);
-
-    QMetaObjectBuilder builder4;
-    QDataStream stream2(data);
-    QMap<QByteArray, const QMetaObject *> references;
-    references.insert(QByteArray("QLocale"), &QLocale::staticMetaObject);
-    builder4.deserialize(stream2, references);
-    builder4.setStaticMetacallFunction(builder.staticMetacallFunction());
-    QMetaObject *streamedMeta = builder4.toMetaObject();
-
-    QVERIFY(sameMetaObject(streamedMeta, &SomethingOfEverything::staticMetaObject));
-
-    qFree(streamedMeta);
-
-    bool ok = false;
-    QByteArray array = builder3.toRelocatableData(&ok);
-    QVERIFY(ok);
-    QMetaObject* meta1 = new QMetaObject();
-    QMetaObjectBuilder::fromRelocatableData(meta1, 0, array);
-    QVERIFY(sameMetaObject(meta1, &SomethingOfEverything::staticMetaObject));
-
-    delete meta1;
 }
 
 // Serialize and deserialize a meta object and check that
@@ -1261,13 +1245,8 @@ bool tst_QMetaObjectBuilder::sameMetaObject
             return false;
     }
 
-#ifdef Q_NO_DATA_RELOCATION
-    const QMetaObjectAccessor *objects1 = 0;
-    const QMetaObjectAccessor *objects2 = 0;
-#else
     const QMetaObject **objects1 = 0;
     const QMetaObject **objects2 = 0;
-#endif
     if (meta1->d.data[0] == meta2->d.data[0] && meta1->d.data[0] >= 2) {
         QMetaObjectExtraData *extra1 = (QMetaObjectExtraData *)(meta1->d.extradata);
         QMetaObjectExtraData *extra2 = (QMetaObjectExtraData *)(meta2->d.extradata);
@@ -1277,18 +1256,13 @@ bool tst_QMetaObjectBuilder::sameMetaObject
             return false;
         if (extra1 && extra2) {
             if (extra1->static_metacall != extra2->static_metacall)
-                return false;            
-            objects1 = extra1->objects;
-            objects2 = extra1->objects;
+                return false;
+            //objects1 = extra1->objects;
+            //objects2 = extra1->objects;
         }
     } else if (meta1->d.data[0] == meta2->d.data[0] && meta1->d.data[0] == 1) {
-#ifdef Q_NO_DATA_RELOCATION
-      objects1 = (const QMetaObjectAccessor *)(meta1->d.extradata);
-      objects2 = (const QMetaObjectAccessor *)(meta2->d.extradata);
-#else
         objects1 = (const QMetaObject **)(meta1->d.extradata);
         objects2 = (const QMetaObject **)(meta2->d.extradata);
-#endif        
     }
     if (objects1 && !objects2)
         return false;

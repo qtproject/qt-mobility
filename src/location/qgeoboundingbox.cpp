@@ -473,7 +473,7 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
 
     The return value is undefined if this bounding box is invalid.
 */
-double QGeoBoundingBox::height()
+double QGeoBoundingBox::height() const
 {
     if (!isValid())
         return qQNaN();

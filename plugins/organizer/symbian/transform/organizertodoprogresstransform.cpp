@@ -41,6 +41,20 @@
 #include "organizertodoprogresstransform.h"
 #include "qorganizertodoprogress.h"
 
+void OrganizerTodoProgressTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Find Todo progress details
+    foreach (QString itemTypeName, schemaDefs.keys()) {
+        QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
+        if (details.contains(QOrganizerTodoProgress::DefinitionName)) {
+            // Remove not supported details and replace the original detail definition
+            QOrganizerItemDetailDefinition d = details.value(QOrganizerTodoProgress::DefinitionName);
+            d.removeField(QOrganizerTodoProgress::FieldPercentageComplete);
+            schemaDefs[itemTypeName].insert(d.name(), d);
+        }
+    }
+}
+
 void OrganizerTodoProgressTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence)

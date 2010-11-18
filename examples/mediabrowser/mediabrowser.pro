@@ -19,6 +19,7 @@ HEADERS = \
     photodelegate.h \
     photoview.h \
     songview.h \
+    thumbnailcache.h \
     thumbnailmodel.h
 
 SOURCES = \
@@ -33,9 +34,10 @@ SOURCES = \
     photodelegate.cpp \
     photoview.cpp \
     songview.cpp \
+    thumbnailcache.cpp \
     thumbnailmodel.cpp
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
 }

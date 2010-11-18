@@ -46,6 +46,7 @@
 
 #include <QObject>
 #include <QSize>
+#include <QRectF>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
@@ -69,10 +70,10 @@ class Q_LOCATION_EXPORT QGeoMapData : public QObject
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
 
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
+    QGeoMapData(QGeoMappingManagerEngine *engine);
     virtual ~QGeoMapData();
 
-    virtual void setup();
+    virtual void init();
 
     virtual void setWindowSize(const QSizeF &size);
     virtual QSizeF windowSize() const;
@@ -95,7 +96,7 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
-    
+
     virtual QGeoBoundingBox viewport() const = 0;
     virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 
@@ -116,7 +117,6 @@ public:
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
 
-    QGraphicsGeoMap* geoMap() const;
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 
@@ -136,6 +136,7 @@ Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+    void updateMapDisplay(const QRectF &target = QRectF());
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)

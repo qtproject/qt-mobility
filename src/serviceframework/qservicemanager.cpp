@@ -43,15 +43,8 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-#include "qremoteservicecontrol_p.h"
-
-#if defined(Q_OS_SYMBIAN)
-    #include "qremoteservicecontrol_s60_p.h"
-#elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_ls_p.h"
-#else
-    #include "qremoteservicecontrol_dbus_p.h"
-#endif
+#include "qremoteserviceregister_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_symbian_p.h"
@@ -117,7 +110,7 @@ public:
     ~QServicePluginCleanup()
     {
         if (m_loader) {
-            m_loader->unload();
+            //m_loader->unload();
             delete m_loader;
         }
     }
@@ -209,6 +202,7 @@ private slots:
 /*!
     \class QServiceManager
     \ingroup servicefw
+    \inmodule QtServiceFramework
     \brief The QServiceManager class enables the loading of service plugins
     and the (de)registration of services.
 
@@ -409,10 +403,15 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                                 == QService::InterProcess);
     if (isInterProcess) {
         //ipc service
-        const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
-                                                   .arg(descriptor.minorVersion()).toLatin1();
-        const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
-        QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
+        const int majorversion = descriptor.majorVersion();
+        const int minorversion = descriptor.minorVersion();
+        QString version = QString::number(majorversion) + "." + QString::number(minorversion);
+
+        QRemoteServiceRegister::Entry serviceEntry;
+        serviceEntry.d->iface = descriptor.interfaceName();
+        serviceEntry.d->service = descriptor.serviceName();
+        serviceEntry.d->ifaceVersion = version;
+        QObject* service = QRemoteServiceRegisterPrivate::proxyForService(serviceEntry, location);
         if (!service)
             d->setError(InvalidServiceLocation);
 
@@ -465,7 +464,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         }
     }
 
-    loader->unload();
+    //loader->unload();
     delete loader;
     d->setError(PluginLoadingFailed);
 
@@ -595,7 +594,7 @@ bool QServiceManager::addService(QIODevice *device)
             result = false;
             d->dbManager->unregisterService(data.name, scope);
         }
-        loader->unload();
+        //loader->unload();
         delete loader;
     } else {
         d->setError();
@@ -651,7 +650,7 @@ bool QServiceManager::removeService(const QString& serviceName)
             pluginIFace->uninstallService();
         else
             qWarning() << "QServiceManager: unable to invoke uninstallService() on removed service";
-        loader->unload();
+        //loader->unload();
         delete loader;
     }
 
@@ -659,7 +658,7 @@ bool QServiceManager::removeService(const QString& serviceName)
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {
         d->setError();
         return false;
-    }
+    }    
     return true;
 }
 

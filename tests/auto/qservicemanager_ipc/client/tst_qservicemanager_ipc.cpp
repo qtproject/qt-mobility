@@ -49,6 +49,7 @@
 #include <QMetaMethod>
 #include <QtTest/QtTest>
 #include <qservice.h>
+#include <qremoteserviceregister.h>
 
 #define QTRY_VERIFY(a)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -66,7 +67,6 @@ class tst_QServiceManager_IPC: public QObject
 {
     Q_OBJECT
 public:
-    bool requiresLackey();
 
 protected slots:
     void ipcError(QService::UnrecoverableIPCError error);
@@ -102,43 +102,36 @@ private slots:
     void testInvokableFunctions();
     void testSlotInvokation();
     void testSignalling();
+
+    void verifyServiceClass();
+    void verifyFailures();
+
+
     void testIpcFailure();
+
 
 private:
     QObject* serviceUnique;
     QObject* serviceUniqueOther;
     QObject* serviceShared;
     QObject* serviceSharedOther;
+    QObject* miscTest;
     QServiceManager* manager;
     bool verbose;
-    QProcess* lackey;
     bool ipcfailure;
 };
-
-/*
-    TODO:
-    -Test service with multiple inheritance hierarchy
-*/
-bool tst_QServiceManager_IPC::requiresLackey()
-{
-    //return false;
-
-// Temporarily commented out for initial development on Symbian
-#ifdef Q_OS_SYMBIAN
-    return false; //service is started when requested
-#else
-    return true;
-#endif
-}
 
 void tst_QServiceManager_IPC::initTestCase()
 {
     //verbose = true;
     ipcfailure = false;
     verbose = false;
-    lackey = 0;
     serviceUnique = 0;
+    serviceUniqueOther = 0;
+    serviceSharedOther = 0;
     serviceShared = 0;
+    serviceSharedOther = 0;
+    miscTest = 0;
     qRegisterMetaType<QServiceFilter>("QServiceFilter");
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     qRegisterMetaType<QList<QString> >("QList<QString>");
@@ -146,47 +139,71 @@ void tst_QServiceManager_IPC::initTestCase()
 
     QServiceManager* manager = new QServiceManager(this);
 
-    //start lackey that represents the service
-    if (requiresLackey()) {
-        lackey = new QProcess(this);
-        if (verbose)
-            lackey->setProcessChannelMode(QProcess::ForwardedChannels);
-        lackey->start("./qservicemanager_ipc_service");
-        qDebug() << lackey->error() << lackey->errorString();
-        QVERIFY(lackey->waitForStarted());
-        //Give the lackey some time to come up;
-        QTest::qWait(700);
+    // Symbian has auto registration
+#ifndef Q_OS_SYMBIAN
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";    
+    bool r = manager->addService(path);
+    if (!r)
+        qWarning() << "Cannot register IPCExampleService" << path;
+#endif
+
+    // D-Bus auto registration
+#ifndef QT_NO_DBUS
+    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" +
+                                             "com.nokia.qt.ipcunittest.service";
+    QFile data(file);
+    if (data.open(QFile::WriteOnly)) {
+        QTextStream out(&data);
+        out << "[D-BUS Service]\n"
+            << "Name=com.nokia.qtmobility.sfw.IPCExampleService" << '\n'
+            << "Exec=" << QFileInfo("./qt_sfw_example_ipc_unittest").absoluteFilePath();
+        data.close();
     }
+#endif
 
     //test that the service is installed
     QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
-    QVERIFY2(list.count() == 2,"unit test specific IPCExampleService not registered/found" );
-    serviceUnique = manager->loadInterface(list[0]);
-    serviceUniqueOther = manager->loadInterface(list[0]);
-    serviceShared = manager->loadInterface(list[1]);
-    serviceSharedOther = manager->loadInterface(list[1]);
-  
+    QVERIFY2(list.count() == 5,"unit test specific IPCExampleService not registered/found" );
+    QServiceInterfaceDescriptor d;
+    foreach(d, list){
+        if(d.majorVersion() == 3 && d.minorVersion() == 5){
+            serviceUnique = manager->loadInterface(d);
+            serviceUniqueOther = manager->loadInterface(d);
+        }
+        if(d.majorVersion() == 3 && d.minorVersion() == 4){
+            serviceShared = manager->loadInterface(d);
+            serviceSharedOther = manager->loadInterface(d);
+        }
+        if(d.majorVersion() == 3 && d.minorVersion() == 8){
+            miscTest = manager->loadInterface(d);
+        }
+
+    }
+
     QString errorCode = "Cannot find service. Error: %1";
     errorCode = errorCode.arg(manager->error());
     QVERIFY2(serviceUnique,errorCode.toLatin1());
     QVERIFY2(serviceUniqueOther,errorCode.toLatin1());
     QVERIFY2(serviceShared,errorCode.toLatin1());
     QVERIFY2(serviceSharedOther,errorCode.toLatin1());
-    
-    connect(serviceUnique, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
-    connect(serviceUniqueOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
-    connect(serviceShared, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+
+    // all objects come from the same service, just need to connect to 1 signal
     connect(serviceSharedOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
 }
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
-{
-  qDebug() << "Received error from IPC: " << err;
-  ipcfailure = true;  
+{  
+    ipcfailure = true;  
 }
 
 void tst_QServiceManager_IPC::cleanupTestCase()
 {
+#ifndef QT_NO_DBUS
+    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" +
+                                             "com.nokia.qt.ipcunittest.service";
+    QFile::remove(file);
+#endif
+
     if (serviceUnique) {
         delete serviceUnique;
     }
@@ -194,7 +211,7 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     if (serviceUniqueOther) {
         delete serviceUniqueOther;
     }
-    
+
     if (serviceShared) {
         delete serviceShared;
     }
@@ -202,23 +219,10 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     if (serviceSharedOther) {
         delete serviceSharedOther;
     }
-    
-    if (requiresLackey()) {
-        lackey->terminate();
-       
-        // terminate didnt cause process to exit
-        if (!lackey->waitForFinished(10000))
-            lackey->kill();
 
-        switch(lackey->exitCode()) {
-        case 0:
-            qDebug("Lackey returned exit success(0)");
-            break; 
-        default:
-            qDebug("Lackey failed.");
-            break;
-        }
-    }
+    // clean up the unit, don't leave it registered
+    QServiceManager m;
+    m.removeService("IPCExampleService");
 }
 
 void tst_QServiceManager_IPC::init()
@@ -967,25 +971,71 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QCOMPARE(hash, expectedHash);
 }
 
+void tst_QServiceManager_IPC::verifyServiceClass()
+{
+    QRemoteServiceRegister *registerObject = new QRemoteServiceRegister();
+
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == true, "should default to true, default is to shutdown");
+    registerObject->setQuitOnLastInstanceClosed(false);
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == false, "must transition to false");
+    registerObject->setQuitOnLastInstanceClosed(true);
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == true, "must transition back to true");
+
+    delete registerObject;
+}
+
 void tst_QServiceManager_IPC::testIpcFailure()
     {
+
+    // test deleting an object doesn't trigger an IPC fault
+    ipcfailure = false;
+    delete serviceShared;
+    QVERIFY2(!ipcfailure, "Deleting an object should not cause an IPC failure message");
+    serviceShared = 0;
+
+    ipcfailure = false;   
     QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
     int i = 0;
     while (!ipcfailure && i++ < 50)
         QTest::qWait(50);
     
-#ifndef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "Serviceframework IPC Failure failed", Abort);
-#endif
     QVERIFY(ipcfailure);
   
-// TODO restart the connection
-//  service = manager->loadInterface("com.nokia.qt.ipcunittest");
-//  QString errorCode = "Cannot find service. Error: %1";
-//  errorCode = errorCode.arg(manager->error());
-//  QVERIFY2(service,errorCode.toLatin1());
-//  connect(service, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));  
+    // TODO restart the connection
+    //initTestCase();
 }
+
+void tst_QServiceManager_IPC::verifyFailures()
+{
+    bool result;
+
+    QServiceManager* manager = new QServiceManager(this);
+    QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
+    QServiceInterfaceDescriptor d;
+    foreach(d, list){
+        if(d.majorVersion() == 3 && d.minorVersion() == 6){
+            QObject *o = manager->loadInterface(d);
+            QVERIFY2(o == 0, "Failure to allocate remote object returns null");
+        }
+        if(d.majorVersion() == 3 && d.minorVersion() == 7){
+            QObject *o = manager->loadInterface(d);
+            QVERIFY2(o == 0, "Failure to allocate remote object returns null");
+        }
+    }
+
+    QMetaObject::invokeMethod(miscTest, "addTwice",
+                              Q_RETURN_ARG(bool, result));
+    QVERIFY2(result, "Added the same service twice, returned different entries");
+
+    QMetaObject::invokeMethod(miscTest, "getInvalidEntry",
+                              Q_RETURN_ARG(bool, result));
+    QVERIFY2(result, "Invalid entry returns invalid meta data");
+
+    delete manager;
+
+}
+
+
 
 QTEST_MAIN(tst_QServiceManager_IPC);
 #include "tst_qservicemanager_ipc.moc"

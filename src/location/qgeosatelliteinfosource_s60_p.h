@@ -60,7 +60,7 @@
 #include "qgeosatelliteinfosource.h"
 #include "notificationsatellitecallback_s60_p.h"
 
-#define MAX_SIZE 5
+#define MAX_SIZE 25
 
 QTM_BEGIN_NAMESPACE
 
@@ -123,7 +123,7 @@ public:
     /**
      * Update the position info
      */
-    void updatePosition(TPositionSatelliteInfo aPosSatInfo, int aError , bool isStartUpdate);
+    void updatePosition(TPositionSatelliteInfo &aPosSatInfo, int aError , bool isStartUpdate);
 
 
     /**
@@ -165,8 +165,8 @@ public slots :
 
 
 private:
-
-    /**
+	
+	    /**
      * Constructor for performing 1st stage construction
      */
     CQGeoSatelliteInfoSourceS60(QObject* aParent = 0);
@@ -176,7 +176,7 @@ private:
      */
     void ConstructL();
 
-    void updateStatus(TPositionModuleInfo aModInfo, TInt aStatus);
+    void updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus);
 
     //get the index of the module in the List array
     TInt checkModule(TPositionModuleId aId) const;
@@ -187,7 +187,7 @@ private:
     //get the more accuarte method with time to first fix < than timeout
     TInt getMoreAccurateMethod(TInt aTimeout, TUint8 aBits);
 
-    void TPositionSatelliteInfo2QGeoSatelliteInfo(TPositionSatelliteInfo aSatInfo,
+    void TPositionSatelliteInfo2QGeoSatelliteInfo(TPositionSatelliteInfo &aSatInfo,
             QList<QGeoSatelliteInfo> &qListSatInView,
             QList<QGeoSatelliteInfo> &qListSatInUse);
 

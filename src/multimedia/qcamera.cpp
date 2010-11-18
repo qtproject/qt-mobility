@@ -738,8 +738,6 @@ void QCamera::searchAndLock(QCamera::LockTypes locks)
 
 /*!
     Lock all the supported camera settings.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::searchAndLock()
 {
@@ -748,8 +746,6 @@ void QCamera::searchAndLock()
 
 /*!
     Unlocks the camera settings specified with \a locks or cancel the current locking if one is active.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::unlock(QCamera::LockTypes locks)
 {
@@ -773,8 +769,6 @@ void QCamera::unlock(QCamera::LockTypes locks)
 
 /*!
     Unlock all the requested camera locks.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::unlock()
 {
@@ -961,5 +955,29 @@ void QCamera::unlock()
 
     Signal emitted when error state changes to \a value.
 */
+
+/*!
+    \fn void QCamera::captureModeChanged(QCamera::CaptureMode mode)
+
+    Signals the capture \a mode has changed.
+*/
+
+/*!
+  \fn QCamera::stateChanged(QCamera::State state)
+
+  Signals the camera \a state has changed.
+
+  Usually the state changes is caused by calling
+  load(), unload(), start() and stop(),
+  but the state can also be changed change as a result of camera error.
+*/
+
+/*!
+  \fn QCamera::statusChanged(QCamera::Status status)
+
+  Signals the camera \a status has changed.
+
+*/
+
 
 #include "moc_qcamera.cpp"

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -59,6 +59,7 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     m_timeEdit = new QDateTimeEdit(this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     m_alarmComboBox = new QComboBox(this);
+    QLabel *calendarLabel = new QLabel("Calendar:", this);
 
     QStringList alarmList;
     alarmList  << "None"
@@ -70,6 +71,9 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     m_alarmComboBox->addItems(alarmList);
     connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
                         SLOT(handleAlarmIndexChanged(const QString)));
+
+    m_calendarComboBox = new QComboBox(this);
+    // the calendar names are not know here, fill the combo box later...
 
 #ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
@@ -89,6 +93,8 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_timeEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addWidget(calendarLabel);
+    scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
 
 #ifndef Q_OS_SYMBIAN
@@ -122,12 +128,52 @@ JournalEditPage::~JournalEditPage()
 
 }
 
-void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal)
+void JournalEditPage::journalChanged(QOrganizerManager *manager, const QOrganizerJournal &journal)
 {
     m_manager = manager;
     m_organizerJournal = journal;
     m_subjectEdit->setText(journal.displayLabel());
     m_timeEdit->setDateTime(journal.dateTime());
+
+    // set calendar selection
+    m_calendarComboBox->clear();
+
+    // resolve metadata field that contains calendar name (if any)
+    QString calendarNameMetadataKey;
+    m_collections = m_manager->collections();
+    if (!m_collections.isEmpty()) {
+        QOrganizerCollection firstCollection = m_collections[0];
+        QVariantMap metadata = firstCollection.metaData();
+        QList<QString> metaDataKeys = metadata.keys();
+        foreach(QString key, metaDataKeys) {
+            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+                calendarNameMetadataKey = key;
+                break;
+            }
+        }
+    }
+    int index = 0;
+    int journalCalendarIndex = -1;
+    foreach(QOrganizerCollection collection, m_collections) {
+        // We currently have no way of stringifying ids
+        // QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "Calendar " + QString::number(index);
+        if (!calendarNameMetadataKey.isNull())
+            visibleName = collection.metaData(calendarNameMetadataKey).toString();
+
+        m_calendarComboBox->addItem(visibleName);
+        if (collection.id() == journal.collectionId())
+            journalCalendarIndex = index;
+        ++index;
+    }
+
+    if (journalCalendarIndex > -1) {
+        m_calendarComboBox->setCurrentIndex(journalCalendarIndex);
+        m_calendarComboBox->setEnabled(false); // when modifying existing events, the calendar can't be changed anymore
+    }
+    else {
+        m_calendarComboBox->setEnabled(true);
+    }
 }
 
 
@@ -143,6 +189,9 @@ void JournalEditPage::saveClicked()
     m_organizerJournal.setDateTime(m_timeEdit->dateTime());
 
     // Save
+    if (m_calendarComboBox->currentIndex() > -1) {
+        m_organizerJournal.setCollectionId(m_collections[m_calendarComboBox->currentIndex()].id());
+    }
     m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
@@ -166,19 +215,15 @@ void JournalEditPage::handleAlarmIndexChanged(const QString time)
          m_organizerJournal.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setDateTime(m_timeEdit->dateTime());
+        reminder.setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(5*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(15*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(30*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        QDateTime reminderTime = m_timeEdit->dateTime().addSecs(-(60*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(60*60);
     }
 
     m_organizerJournal.saveDetail(&reminder);

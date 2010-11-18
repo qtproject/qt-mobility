@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,7 +47,7 @@
 #include <qorganizertodo.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
@@ -68,7 +68,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void todoChanged(QOrganizerItemManager *manager, const QOrganizerTodo &todo);
+    void todoChanged(QOrganizerManager *manager, const QOrganizerTodo &todo);
     void handleAlarmIndexChanged(const QString);
 
 
@@ -79,7 +79,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerTodo m_organizerTodo;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;
@@ -87,6 +87,8 @@ private:
     QComboBox *m_priorityEdit;
     QComboBox *m_statusEdit;
     QComboBox *m_alarmComboBox;
+    QComboBox *m_calendarComboBox;
+    QList<QOrganizerCollection> m_collections;
 };
 
 #endif // TODOEDITPAGE_H_

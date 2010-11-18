@@ -43,46 +43,29 @@
 
 #include <qgalleryabstractrequest.h>
 
+#include <QtCore/qmetaobject.h>
 #include <QtDeclarative/qdeclarativecontext.h>
 #include <QtDeclarative/qdeclarativeengine.h>
 
 QTM_BEGIN_NAMESPACE
 
-static const char *qt_documentGalleryTypes[] =
-{
-    "File",
-    "Folder",
-    "Document",
-    "Text",
-    "Audio",
-    "Image",
-    "Video",
-    "Playlist",
-    "Artist",
-    "AlbumArtist",
-    "Album",
-    "AudioGenre",
-    "PhotoAlbum"
-};
-
 Q_GLOBAL_STATIC(QDocumentGallery, qt_declarativeDocumentGalleryInstance);
 
 QString QDeclarativeDocumentGallery::toString(ItemType type)
 {
-    return type > InvalidType && type < NItemTypes
-            ? QLatin1String(qt_documentGalleryTypes[type - File])
+    return type != InvalidType
+            ? QString::fromLatin1(staticMetaObject.enumerator(0).valueToKey(type))
             : QString();
 }
 
 QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromString(
         const QString &string)
 {
-    for (int i = InvalidType; i < NItemTypes; ++i) {
-        if (string == QLatin1String(qt_documentGalleryTypes[i]))
-            return ItemType(i + File);
-    }
+    const int key = staticMetaObject.enumerator(0).keyToValue(string.toLatin1().constData());
 
-    return QDeclarativeDocumentGallery::InvalidType;
+    return key != -1
+            ? ItemType(key)
+            : InvalidType;
 }
 
 QAbstractGallery *QDeclarativeDocumentGallery::gallery(QObject *object)

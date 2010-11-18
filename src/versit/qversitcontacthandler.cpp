@@ -45,12 +45,18 @@ QTM_USE_NAMESPACE
 
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
+//Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfilePreserve, "Preserve");
 
 /*!
   \class QVersitContactHandler
   \brief The QVersitContactHandler class is a union of the
   QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces.
   \ingroup versit-extension
+ */
+
+/*!
+  \fn QVersitContactHandler::~QVersitContactHandler()
+  This frees any memory used by the QVersitContactHandler.
  */
 
 /*!
@@ -67,14 +73,26 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
 
    The constant string signifying a plugin that is relevant to import and export in a
    synchronization context.
-   \sa QVersitContactHandlerFactory::profiles(), QVersitContactImporter(), QVersitContactExporter()
+   \sa profiles(),
+   QVersitContactImporter::QVersitContactImporter(),
+   QVersitContactExporter::QVersitContactExporter()
  */
 
 /*!
    \variable QVersitContactHandlerFactory::ProfileBackup
 
-   The constant string signifying a plugin that is relevant to import and export in a backup/restore
-   context.
+   The constant string signifying a plugin that will backup a QContact to vCard, so that exporting,
+   then importing a contact will not lose any data.
+   \sa profiles(),
+   QVersitContactImporter::QVersitContactImporter(),
+   QVersitContactExporter::QVersitContactExporter()
+ */
+
+/* TODO: make this a qdoc comment in 1.2
+   \variable QVersitContactHandlerFactory::ProfilePreserve
+
+   The constant string signifying a plugin that will preserve a vCard within a QContact, so that
+   importing, then exporting a vCard will not lose any data.
    \sa profiles(),
    QVersitContactImporter::QVersitContactImporter(),
    QVersitContactExporter::QVersitContactExporter()
@@ -101,7 +119,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
  */
 
 /*!
-  \fn int index() const
+  \fn int QVersitContactHandlerFactory::index() const
   This function should return an index that helps with determining the order in which to run the
   plugins.  Plugins are run in the following order:
   \list

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -49,12 +49,13 @@
 class QProgressDialog;
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 #define ORGANIZER_ITEM_ROLE Qt::UserRole+1
+#define ORGANIZER_CALENDAR_ROLE Qt::UserRole+2
 
 class QStackedWidget;
 class MonthPage;
@@ -63,6 +64,8 @@ class EventEditPage;
 class TodoEditPage;
 class JournalEditPage;
 class EventOccurrenceEditPage;
+class AddCalendarPage;
+class EditCalendarsPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -76,10 +79,11 @@ public Q_SLOTS:
     void activateMonthPage();
     void activateDayPage();
     void activateEditPage(const QOrganizerItem &item);
+    void activatePreviousPage();
     void addNewEvent();
     void addNewTodo();
     void addNewJournal();
-    void changeManager(QOrganizerItemManager *manager);
+    void changeManager(QOrganizerManager *manager);
     void updateSelectedDay(const QDate& date);
 
 private Q_SLOTS:
@@ -90,14 +94,17 @@ private Q_SLOTS:
     void importItems();
     void exportItems();
     void deleteAllEntries();
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void addCalendar();
+    void editCalendar();
+    void editExistingCalendar(QOrganizerManager *manager, QOrganizerCollection* calendar);
+    void saveReqStateChanged(QOrganizerAbstractRequest::State);
+    void removeReqStateChanged(QOrganizerAbstractRequest::State);
 
 private:
     void buildMenu();
 
     QDate m_currentDate;
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;
     DayPage *m_dayPage;
@@ -105,6 +112,11 @@ private:
     TodoEditPage *m_todoEditPage;
     JournalEditPage *m_journalEditPage;
     EventOccurrenceEditPage *m_eventOccurrenceEditPage;
+    AddCalendarPage *m_addCalendarPage;
+    EditCalendarsPage *m_editCalendarsPage;
+
+    int m_previousPage;
+    QOrganizerItem m_previousItem;
 
     QAction *m_switchViewAction;
 

@@ -4,37 +4,36 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -43,7 +42,7 @@
 
 #include <QStringBuilder>
 #include <qgeoboundingbox.h>
-#include <qgeoinstruction.h>
+#include <qgeomaneuver.h>
 
 RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), m_routeReply(routeReply)
@@ -59,8 +58,7 @@ void RoutePresenter::show()
 
     QTreeWidgetItem* modesItem = new QTreeWidgetItem(requestTop);
     modesItem->setText(0, "modes");
-    showModes(modesItem, m_routeReply->request().routeOptimization(), m_routeReply->request().travelModes(),
-        m_routeReply->request().avoidFeatureTypes());
+    showModes(modesItem, m_routeReply->request(), m_routeReply->request().travelModes());
 
     QTreeWidgetItem* waypointsItem = new QTreeWidgetItem(requestTop);
     waypointsItem->setText(0, "waypoints");
@@ -109,7 +107,7 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 
     QTreeWidgetItem* modeItem = new QTreeWidgetItem(routeItem);
     modeItem->setText(0, "mode");
-    showModes(modeItem, route.request().routeOptimization(), route.travelMode(), route.request().avoidFeatureTypes());
+    showModes(modeItem, route.request(), route.travelMode());
 
     QTreeWidgetItem* distanceItem = new QTreeWidgetItem(routeItem);
     distanceItem->setText(0, "distance");
@@ -124,7 +122,13 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     wayPointsItem->setText(0, overviewLabel);
     showPoints(wayPointsItem, route.path());
 
-    QList<QGeoRouteSegment> segments = route.routeSegments();
+    QList<QGeoRouteSegment> segments;
+    QGeoRouteSegment segment = route.firstRouteSegment();
+    while (segment.isValid()) {
+        segments << segment;
+        segment = segment.nextRouteSegment();
+    }
+
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
     QString segmentsLabel = "segments";
     if (segments.length() > 100)
@@ -201,19 +205,19 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
     pathItem->setText(0, "path");
     showPoints(pathItem, segment.path());
 
-    if (!segment.instruction().instructionText().isEmpty()) {
+    if (!segment.maneuver().instructionText().isEmpty()) {
         QTreeWidgetItem* instructionItem = new QTreeWidgetItem(segmentItem);
         instructionItem->setText(0, "instruction");
 
         QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
         positionItem->setText(0, "position");
         QList<QGeoCoordinate> points;
-        points.append(segment.instruction().position());
+        points.append(segment.maneuver().position());
         showPoints(positionItem, points);
 
         QTreeWidgetItem* instructionTextItem = new QTreeWidgetItem(instructionItem);
         instructionTextItem->setText(0, "text");
-        instructionTextItem->setText(1, segment.instruction().instructionText());
+        instructionTextItem->setText(1, segment.maneuver().instructionText());
     }
 }
 
@@ -248,12 +252,14 @@ QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)
            QString().setNum(coord.longitude());
 }
 
-void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
-                               QGeoRouteRequest::TravelModes travelModes,
-                               QGeoRouteRequest::AvoidFeatureTypes avoid)
+void RoutePresenter::showModes(QTreeWidgetItem* top,
+                               const QGeoRouteRequest &request,
+                               QGeoRouteRequest::TravelModes travelModes)
 {
     QTreeWidgetItem* optimizationItem = new QTreeWidgetItem(top);
     optimizationItem->setText(0, "optimization");
+
+    QGeoRouteRequest::RouteOptimizations optimization = request.routeOptimization();
 
     if (optimization.testFlag(QGeoRouteRequest::ShortestRoute)) {
         QTreeWidgetItem* shortestRouteItem = new QTreeWidgetItem(optimizationItem);
@@ -296,44 +302,72 @@ void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOpti
         truckTravelItem->setText(1, "TruckTravel");
     }
 
-    QTreeWidgetItem* avoidItem = new QTreeWidgetItem(top);
-    avoidItem->setText(0, "avoid");
+    QTreeWidgetItem* featuresItem = new QTreeWidgetItem(top);
+    featuresItem->setText(0, "features");
 
-    if (avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
-        QTreeWidgetItem* nothingAvoidItem = new QTreeWidgetItem(avoidItem);
-        nothingAvoidItem->setText(1, "AvoidNothing");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidTolls)) {
-        QTreeWidgetItem* tollsAvoidItem = new QTreeWidgetItem(avoidItem);
-        tollsAvoidItem->setText(1, "AvoidTolls");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidHighways)) {
-        QTreeWidgetItem* highwaysAvoidItem = new QTreeWidgetItem(avoidItem);
-        highwaysAvoidItem->setText(1, "AvoidHighways");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidFerries)) {
-        QTreeWidgetItem* ferriesAvoidItem = new QTreeWidgetItem(avoidItem);
-        ferriesAvoidItem->setText(1, "AvoidFerries");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels)) {
-        QTreeWidgetItem* tunnelsAvoidItem = new QTreeWidgetItem(avoidItem);
-        tunnelsAvoidItem->setText(1, "AvoidTunnels");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads)) {
-        QTreeWidgetItem* dirtRoadsAvoidItem = new QTreeWidgetItem(avoidItem);
-        dirtRoadsAvoidItem->setText(1, "AvoidDirtRoads");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidPublicTransit)) {
-        QTreeWidgetItem* publicTransitAvoidItem = new QTreeWidgetItem(avoidItem);
-        publicTransitAvoidItem->setText(1, "AvoidPublicTransit");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
-        QTreeWidgetItem* parkAvoidItem = new QTreeWidgetItem(avoidItem);
-        parkAvoidItem->setText(1, "AvoidPark");
-    }
-    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
-        QTreeWidgetItem* motorPoolLanesAvoidItem = new QTreeWidgetItem(avoidItem);
-        motorPoolLanesAvoidItem->setText(1, "AvoidMotorPoolLanes");
+    QList<QGeoRouteRequest::FeatureType> featureTypeList
+    = request.featureTypes();
+
+    for (int i = 0; i < featureTypeList.size(); ++i) {
+        QGeoRouteRequest::FeatureWeight weight
+        = request.featureWeight(featureTypeList.at(i));
+
+        if (weight == QGeoRouteRequest::NeutralFeatureWeight)
+            continue;
+
+        QString labelString = "";
+        switch (weight) {
+            case QGeoRouteRequest::PreferFeatureWeight:
+                labelString = "Prefer";
+                break;
+            case QGeoRouteRequest::AvoidFeatureWeight:
+                labelString = "Avoid";
+                break;
+            case QGeoRouteRequest::DisallowFeatureWeight:
+                labelString = "Disallow";
+                break;
+        }
+
+        if (labelString.isEmpty())
+            continue;
+
+        labelString += " ";
+
+        switch (featureTypeList.at(i)) {
+            case QGeoRouteRequest::TollFeature:
+                labelString += "tolls";
+                break;
+            case QGeoRouteRequest::HighwayFeature:
+                labelString += "highways";
+                break;
+            case QGeoRouteRequest::PublicTransitFeature:
+                labelString += "public transit";
+                break;
+            case QGeoRouteRequest::FerryFeature:
+                labelString += "ferries";
+                break;
+            case QGeoRouteRequest::TunnelFeature:
+                labelString += "tunnels";
+                break;
+            case QGeoRouteRequest::DirtRoadFeature:
+                labelString += "dirt roads";
+                break;
+            case QGeoRouteRequest::ParksFeature:
+                labelString += "parks";
+                break;
+            case QGeoRouteRequest::MotorPoolLaneFeature:
+                labelString += "motor pool lanes";
+                break;
+            default:
+                labelString = "";
+                break;
+        }
+
+        if (labelString.isEmpty())
+            continue;
+
+        QTreeWidgetItem* item = new QTreeWidgetItem(featuresItem);
+        item->setText(1, labelString);
     }
 }
 

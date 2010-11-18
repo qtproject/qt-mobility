@@ -86,11 +86,20 @@ public:
     }
 };
 
+/*!
+    Constructs a new camera viewfinder widget.
+
+    The \a parent is passed to QVideoWidget.
+*/
+
 QCameraViewfinder::QCameraViewfinder(QWidget *parent)
     :QVideoWidget(*new QCameraViewfinderPrivate, parent)
 {
 }
 
+/*!
+    Destroys a camera viewfinder widget.
+*/
 QCameraViewfinder::~QCameraViewfinder()
 {
 }

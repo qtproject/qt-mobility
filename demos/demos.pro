@@ -9,7 +9,7 @@ contains(mobility_modules,multimedia) {
 }
 
 #Messaging demos
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo* {
     contains(mobility_modules,messaging) {
         !win32-g++ {
 	    SUBDIRS += \
@@ -23,16 +23,21 @@ contains(mobility_modules, sensors) {
 }
 
 contains(mobility_modules,location) {
-    contains(mobility_modules,bearer) {
-    	SUBDIRS += weatherinfo \
-		   lightmaps
+    equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+        contains(mobility_modules,bearer) {
+    	    SUBDIRS +=  weatherinfo \
+		                lightmaps
+        }
+    } else {
+    	SUBDIRS +=  weatherinfo \
+		            lightmaps
     }
 }
 
 #Contacts demos
 contains(mobility_modules,contacts) {
     contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        sources.files += qmlcontacts
+	SUBDIRS += qmlcontacts
     }
 }
 

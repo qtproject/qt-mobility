@@ -45,14 +45,16 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObjectInfo
-    \brief The QGeoMapObjectInfo class is the base class for QGeoMapData
-    subclass specific implementations of QGeoMapObject subclass behaviours.
+    \brief The QGeoMapObjectInfo class is the base class used to define the
+    parts of QGeoMapObject and its subclasses that are specific to a
+    particular QGeoMapData subclass.
 
     \inmodule QtLocation
 
@@ -80,8 +82,8 @@ QTM_BEGIN_NAMESPACE
     \a mapObject which are specific to \a mapData.
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QObject(mapObject),
-          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+    : QObject(mapObject),
+      d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.
@@ -92,27 +94,15 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
 }
 
 /*!
-    Returns the QGeoMapObjectInfo instance associated with the parent of
-    this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
-    instance asssoicated with the parent object.
-*/
-//QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
-//{
-//    if (!d_ptr->mapData)
-//        return 0;
-
-//    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
-//}
-
-/*!
     This function is run after the constructor.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::setup() {}
+void QGeoMapObjectInfo::init() {}
 
 /*!
-    This function is called when the window size of the map changes.
+    This function is called when the window size of the map changes to 
+    \a windowSize.
 
     The default implementation does nothing.
 */
@@ -122,7 +112,8 @@ void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
 }
 
 /*!
-    This function is called when the zoom level of the map changes.
+    This function is called when the zoom level of the map changes to 
+    \a zoomLevel.
 
     The default implementation does nothing.
 */
@@ -132,7 +123,8 @@ void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
 }
 
 /*!
-    This function is called when the center of the map changes.
+    This function is called when the center of the map changes to 
+    \a coordinate.
 
     The default implementation does nothing.
 */
@@ -142,7 +134,7 @@ void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    This function is run when the z value of the object changes.
+    This function is run when the z value of the object changes to \a zValue.
 
     The default implementation does nothing.
 */
@@ -152,7 +144,8 @@ void QGeoMapObjectInfo::zValueChanged(int zValue)
 }
 
 /*!
-    This function is run when the visible state of the object changes.
+    This function is run when the visible state of the object changes to 
+    \a visible.
 
     The default implementation does nothing.
 */
@@ -162,7 +155,8 @@ void QGeoMapObjectInfo::visibleChanged(bool visible)
 }
 
 /*!
-    This function is run when the selected state of the object changes.
+    This function is run when the selected state of the object changes to 
+    \a selected.
 
     The default implementation does nothing.
 */
@@ -213,8 +207,8 @@ QGeoMapObject* QGeoMapObjectInfo::mapObject()
 *******************************************************************************/
 
 QGeoMapObjectInfoPrivate::QGeoMapObjectInfoPrivate(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : mapData(mapData),
-        mapObject(mapObject) {}
+    : mapData(mapData),
+      mapObject(mapObject) {}
 
 QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 

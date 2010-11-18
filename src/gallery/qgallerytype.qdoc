@@ -1,0 +1,64 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \class QGalleryType
+
+    \ingroup gallery
+
+    \inmodule QtGallery
+
+    \brief The QGalleryType class provides a string constant identifying a
+    gallery item type.
+
+    QAbstractGallery implementations use to QGalleryType to define the
+    names of item types in their schemas.
+
+    \sa QGalleryProperty
+*/
+
+/*!
+    \fn QGalleryType::name() const
+
+    Returns the name of an item type.
+*/
+
+/*!
+    \fn QGalleryType::operator QString() const
+
+    Returns the string name of an item type.
+*/
+
+/*!
+    \macro Q_DEFINE_GALLERY_TYPE(scope, name)
+
+    Macro for defining the \a name of a gallery item type within the \a scope of
+    a class or namespace.
+
+    \relates QGalleryType
+*/
+

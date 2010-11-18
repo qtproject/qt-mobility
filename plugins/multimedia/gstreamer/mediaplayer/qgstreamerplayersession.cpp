@@ -528,6 +528,10 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     gst_element_set_state(m_videoScale, state);
     gst_element_set_state(m_videoSink, state);    
 
+    // Set state change that was deferred due the video output
+    // change being pending
+    gst_element_set_state(m_playbin, state);
+
     //don't have to wait here, it will unblock eventually
     if (gst_pad_is_blocked(srcPad))
         gst_pad_set_blocked_async(srcPad, false, &block_pad_cb, 0);
@@ -587,7 +591,6 @@ bool QGstreamerPlayerSession::play()
             m_pendingState = m_state = QMediaPlayer::StoppedState;
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }
@@ -599,12 +602,14 @@ bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
+        if (m_pendingVideoSink != 0)
+            return true;
+
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
+            qWarning() << "GStreamer; Unable to pause -" << m_request.url().toString();
             m_pendingState = m_state = QMediaPlayer::StoppedState;
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }
@@ -617,7 +622,7 @@ void QGstreamerPlayerSession::stop()
     if (m_playbin) {
         gst_element_set_state(m_playbin, GST_STATE_NULL);
 
-        QMediaPlayer::State oldState = QMediaPlayer::StoppedState;
+        QMediaPlayer::State oldState = m_state;
         m_pendingState = m_state = QMediaPlayer::StoppedState;
 
         finishVideoOutputChange();
@@ -782,6 +787,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
         }
 
     } else {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "Object:" << GST_OBJECT_NAME((GST_MESSAGE_SRC(gm))) << "has sent Message:" << gst_message_type_get_name(GST_MESSAGE_TYPE(gm));
+#endif
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
@@ -857,10 +865,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                                 m_playbackRate = 1.0;
                                 setPlaybackRate(rate);
                             }
-
-                            if (m_renderer)
-                                m_renderer->precessNewStream();
-
                         }
 
                         if (m_state != prevState)
@@ -885,15 +889,20 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_STREAM_STATUS:
             case GST_MESSAGE_UNKNOWN:
                 break;
-            case GST_MESSAGE_ERROR:
-                {
+            case GST_MESSAGE_ERROR: {
+                    emit invalidMedia();
+                    stop();
                     GError *err;
                     gchar *debug;
-                    gst_message_parse_error (gm, &err, &debug);
-                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                    gst_message_parse_error(gm, &err, &debug);
+                    if (err->domain == GST_STREAM_ERROR && err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND)
+                        emit error(int(QMediaPlayer::FormatError), tr("Cannot play stream of type: <unknown>"));
+                    else
+                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
                     qWarning() << "Error:" << QString::fromUtf8(err->message);
-                    g_error_free (err);
-                    g_free (debug);
+                    g_error_free(err);
+                    g_free(debug);
+                    stop();
                 }
                 break;
             case GST_MESSAGE_WARNING:
@@ -971,6 +980,50 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 break;
             default:
                 break;
+            }
+        } else if (m_videoSink
+                   && m_renderer
+                   && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_videoSink)
+                   && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_STATE_CHANGED) {
+            GstState oldState;
+            GstState newState;
+            gst_message_parse_state_changed(gm, &oldState, &newState, 0);
+
+            if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
+                m_renderer->precessNewStream();
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
+                // If the source has given up, so do we.
+                emit invalidMedia();
+                stop();
+                GError *err;
+                gchar *debug;
+                gst_message_parse_error(gm, &err, &debug);
+                emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                qWarning() << "Error:" << QString::fromUtf8(err->message);
+                g_error_free(err);
+                g_free(debug);
+        } else if (m_usePlaybin2) {
+            if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
+                GError *err;
+                gchar *debug;
+                gst_message_parse_warning(gm, &err, &debug);
+                if (err->domain == GST_STREAM_ERROR && err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND)
+                    emit error(int(QMediaPlayer::FormatError), tr("Cannot play stream of type: <unknown>"));
+                qWarning() << "Warning:" << QString::fromUtf8(err->message);
+                g_error_free(err);
+                g_free(debug);
+            } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR
+                       && (QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("decodebin2"))
+                           || QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("uridecodebin")))) {
+                emit invalidMedia();
+                stop();
+                GError *err;
+                gchar *debug;
+                gst_message_parse_error(gm, &err, &debug);
+                emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                qWarning() << "Error:" << QString::fromUtf8(err->message);
+                g_error_free(err);
+                g_free(debug);
             }
         }
     }
@@ -1062,20 +1115,17 @@ void QGstreamerPlayerSession::getStreamsInfo()
             GST_STREAM_TYPE_ELEMENT
         };
 
-        GList*      streamInfo;
-        g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
+        GList*      streamInfoList;
+        g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfoList, NULL);
 
-        for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
+        for (; streamInfoList != 0; streamInfoList = g_list_next(streamInfoList)) {
             gint        type;
             gchar *languageCode = 0;
 
-            GObject*    obj = G_OBJECT(streamInfo->data);
+            GObject*    streamInfo = G_OBJECT(streamInfoList->data);
 
-            g_object_get(obj, "type", &type, NULL);
-            g_object_get(obj, "language-code", &languageCode, NULL);
-
-            if (type == GST_STREAM_TYPE_VIDEO)
-                haveVideo = true;
+            g_object_get(streamInfo, "type", &type, NULL);
+            g_object_get(streamInfo, "language-code", &languageCode, NULL);
 
             QMediaStreamsControl::StreamType streamType = QMediaStreamsControl::UnknownStream;
 
@@ -1091,6 +1141,17 @@ void QGstreamerPlayerSession::getStreamsInfo()
             case GST_STREAM_TYPE_SUBPICTURE:
                 streamType = QMediaStreamsControl::SubPictureStream;
                 break;
+            case GST_STREAM_TYPE_UNKNOWN: {
+                GstCaps *caps = 0;
+                g_object_get(streamInfo, "caps", &caps, NULL);
+                const GstStructure *structure = gst_caps_get_structure(caps, 0);
+                const gchar *media_type = gst_structure_get_name(structure);
+                emit error(int(QMediaPlayer::FormatError), QString::fromLatin1("Cannot play stream of type: %1").arg(QString::fromUtf8(media_type)));
+#ifdef DEBUG_PLAYBIN
+                qDebug() << "Encountered unknown stream type";
+#endif
+                gst_caps_unref(caps);
+            }
             default:
                 streamType = QMediaStreamsControl::UnknownStream;
                 break;

@@ -24,9 +24,9 @@
 const TInt KInitialValue = -1;
 const TInt KNumOfTables = 16;
 const TInt KNumColInPrefTable = 6;
-const TInt KNumColInContactTable = 16;
+const TInt KNumColInContactTable = 17;
 const TInt KNumColInGroupTable = 3;
-const TInt KNumColInCommTable = 5;
+const TInt KNumColInCommTable = 6;
 const TInt KNumColInPredSearchTable = 7;
 const TInt KNumColInPresenceTable = 5;
 // TODO: qwerty-mail tables are not yet added here
@@ -88,6 +88,7 @@ _LIT(KContactCompanyName, "company_name");
 _LIT(KContactFirstNamePrn, "firstname_prn");
 _LIT(KContactLastNamePrn, "lastname_prn");
 _LIT(KContactCompanyNamePrn, "companyname_prn");
+_LIT(KContactFavoriteIndex, "favorite_index");
 _LIT(KContactTextFieldHeader, "text_fields_header");
 _LIT(KContactBinaryFieldHeader, "binary_fields_header");
 _LIT(KContactTextFields, "text_fields");
@@ -110,6 +111,7 @@ _LIT(KContactCompanyNameParam, ":company_name");
 _LIT(KContactFirstNamePrnParam, ":firstname_prn");
 _LIT(KContactLastNamePrnParam, ":lastname_prn");
 _LIT(KContactCompanyNamePrnParam, ":companyname_prn");
+_LIT(KContactFavoriteIndexParam, ":favorite_index");
 _LIT(KContactTextFieldHeaderParam, ":text_fields_header");
 _LIT(KContactBinaryFieldHeaderParam, ":binary_fields_header");
 _LIT(KContactTextFieldsParam, ":text_fields");
@@ -117,7 +119,7 @@ _LIT(KContactBinaryFieldsParam, ":binary_fields");
 //end parameters for contact table
 
 // create statements
-_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NOT NULL DEFAULT \"\", last_name VARCHAR(255) NOT NULL DEFAULT \"\", company_name VARCHAR(255) NOT NULL DEFAULT \"\", firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
+_LIT(KContactCreateStmnt, "CREATE TABLE contact (contact_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, template_id INTEGER, type_flags INTEGER, access_count INTEGER, creation_date , last_modified , guid_string VARCHAR(255) NULL, first_name VARCHAR(255) NOT NULL DEFAULT \"\", last_name VARCHAR(255) NOT NULL DEFAULT \"\", company_name VARCHAR(255) NOT NULL DEFAULT \"\", firstname_prn VARCHAR(255) NULL, lastname_prn VARCHAR(255) NULL, companyname_prn VARCHAR(255) NULL, favorite_index INTEGER NULL, text_fields_header BLOB, binary_fields_header BLOB, text_fields TEXT, binary_fields BLOB); CREATE INDEX contact_guid_string_idx  ON contact (guid_string);");
 // end contact table
 
 // comm-address table

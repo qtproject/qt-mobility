@@ -4,5 +4,5 @@ qmlnetworkinfo_src = $$PWD
 symbian {
     load(data_caging_paths)
 }
-qmlnetworkinfo_files.sources = qmlnetworkinfo_src/wifi.qml qmlnetworkinfo_src/images
+qmlnetworkinfo_files.sources = $$qmlnetworkinfo_src/wifi.qml $$qmlnetworkinfo_src/images
 DEPLOYMENT += qmlnetworkinfo_files

@@ -66,7 +66,6 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicecontext
 ./tst_icheck
 ./tst_qmetaobjectbuilder
-./tst_qremoteserviceclassregister
 ./tst_qservicemanager_ipc
 
 #BearerManagement
@@ -161,7 +160,7 @@ cd $shell_path/../build/tests/bin
 ./tst_qmessagestorekeys
 
 #QOrganizer
-./tst_qorganizeritemmanager
+./tst_qorganizermanager
 ./tst_qorganizercollection
 ./tst_qorganizeritem
 ./tst_qorganizeritemasync

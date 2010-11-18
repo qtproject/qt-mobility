@@ -41,7 +41,7 @@
 #define QDECLARATIVENETWORKINFO_H
 
 #include <QObject>
-#include <qsystemnetworkinfo.h>
+#include "qsystemnetworkinfo.h"
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
@@ -54,6 +54,7 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(QString networkName READ networkName NOTIFY nameChanged)
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(QString macAddress READ macAddress CONSTANT)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode mode READ mode WRITE useMode)
 
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);
@@ -63,7 +64,7 @@ public:
     QString macAddress();
     QString networkStatus();
     void useMode(QSystemNetworkInfo::NetworkMode curmode);
-
+    QSystemNetworkInfo::NetworkMode mode();
 public slots:
 
     QNetworkInterface interfaceForMode();

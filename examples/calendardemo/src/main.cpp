@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,6 +47,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     CalendarDemo w;
+#ifdef Q_OS_SYMBIAN
+    w.showMaximized();
+#else
     w.show();
+#endif
     return a.exec();
 }

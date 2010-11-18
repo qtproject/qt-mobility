@@ -13,10 +13,17 @@ QT += network svg
 include(../demos.pri)
 
 CONFIG += mobility
-MOBILITY = location bearer
+MOBILITY = location
+
+equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7) {
+    MOBILITY += bearer
+    INCLUDEPATH += ../../src/bearer
+} else {
+    # use Bearer Management classes in QtNetwork module
+    DEFINES += BEARER_IN_QTNETWORK
+}
 
 INCLUDEPATH += ../../src/global \
-                ../../src/bearer \
                 ../../src/location \
                 ../../examples/satellitedialog \
                 ../../examples/flickrdemo

@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeoroutexmlparser.h"
@@ -91,12 +98,11 @@ bool QGeoRouteXmlParser::parseRootElement()
         return false;
     }
 
-    bool updateroute=false;
+    bool updateroute = false;
     if (m_reader->name() != "CalculateRoute" && m_reader->name() != "GetRoute")  {
         m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
         return false;
-    }
-    else if (m_reader->name() == "GetRoute") {
+    } else if (m_reader->name() == "GetRoute") {
         updateroute = true;
     }
 
@@ -113,7 +119,7 @@ bool QGeoRouteXmlParser::parseRootElement()
         } else if (m_reader->name() == "Route") {
             QGeoRoute route;
             route.setRequest(m_request);
-            if(updateroute)
+            if (updateroute)
                 route.setTravelMode(QGeoRouteRequest::TravelMode(int(m_request.travelModes())));
             if (!parseRoute(&route))
                 continue; //route parsing failed move on to the next
@@ -134,7 +140,7 @@ bool QGeoRouteXmlParser::parseRootElement()
 bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
 {
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "Route");
-    instructions.clear();
+    maneuvers.clear();
     segments.clear();
 
     m_reader->readNext();
@@ -200,47 +206,96 @@ bool QGeoRouteXmlParser::parseLeg()
 
 bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
-    QList<QGeoRouteSegment> routesegments;
+    QList<QGeoRouteSegment> routeSegments;
 
-    //Add the first instruction as starting point
-    if(instructions.count()>0) {
-        QGeoRouteSegment segment;
-        segment.setInstruction(instructions[0].instruction);
-        QList<QGeoCoordinate> path; // use instruction position as one point segment path
-        path.append(instructions[0].instruction.position());
-        segment.setPath(path);
-        routesegments.append(segment);
-        instructions.removeAt(0);
+    int maneuverIndex = 0;
+    for (int i = 0; i < segments.count(); ++i) {
+        while ((maneuverIndex < maneuvers.size()) && maneuvers.at(maneuverIndex).toId.isEmpty()) {
+            QGeoRouteSegment segment;
+            segment.setManeuver(maneuvers.at(maneuverIndex).maneuver);
+            QList<QGeoCoordinate> path; // use instruction position as one point segment path
+            path.append(maneuvers.at(maneuverIndex).maneuver.position());
+            segment.setPath(path);
+            routeSegments.append(segment);
+            ++maneuverIndex;
+        }
+        QGeoRouteSegment segment = segments.at(i).segment;
+        if ((maneuverIndex < maneuvers.size()) && segments.at(i).id == maneuvers.at(maneuverIndex).toId) {
+            segment.setManeuver(maneuvers.at(maneuverIndex).maneuver);
+            ++maneuverIndex;
+        }
+        routeSegments.append(segment);
     }
 
-    for (int i = 0; i < segments.count(); ++i) {
-        if(segments[i].instructionId.isEmpty()) {
-            routesegments.append(segments[i].segment);
-        } else {
-            for (int j = 0; j < instructions.count(); ++j) {
-                if (instructions[j].id == segments[i].instructionId
-                    && segments[i].segment.instruction().instructionText().isEmpty()) {
-                    segments[i].segment.setInstruction(instructions[j].instruction);
-                    routesegments.append(segments[i].segment);
-                    instructions.removeAt(j);
-                    break;
-                } else {
-                    //Add orphan instruction into new empty segment
-                    QGeoRouteSegment segment;
-                    segment.setInstruction(instructions[j].instruction);
-                    QList<QGeoCoordinate> path; // use instruction position as one point segment path
-                    path.append(instructions[j].instruction.position());
-                    segment.setPath(path);
-                    routesegments.append(segment);
-                    instructions.removeAt(j);
-                    --j;
-                }
-            }
+
+    QList<QGeoRouteSegment> compactedRouteSegments;
+    compactedRouteSegments.append(routeSegments.first());
+    routeSegments.removeFirst();
+
+    while (routeSegments.size() > 0) {
+        QGeoRouteSegment segment = routeSegments.first();
+        routeSegments.removeFirst();
+
+        QGeoRouteSegment lastSegment = compactedRouteSegments.last();
+
+        if (lastSegment.maneuver().isValid())
+            compactedRouteSegments.append(segment);
+        else {
+            compactedRouteSegments.removeLast();
+            lastSegment.setDistance(lastSegment.distance() + segment.distance());
+            lastSegment.setTravelTime(lastSegment.travelTime() + segment.travelTime());
+            QList<QGeoCoordinate> path = lastSegment.path();
+            path.append(segment.path());
+            lastSegment.setPath(path);
+            lastSegment.setManeuver(segment.maneuver());
+            compactedRouteSegments.append(lastSegment);
         }
     }
-    route->setRouteSegments(routesegments);
 
-    instructions.clear();
+//    //Add the first instruction as starting point
+//    if (maneuvers.count() > 0) {
+//        QGeoRouteSegment segment;
+//        segment.setManeuver(maneuvers[0].maneuver);
+//        QList<QGeoCoordinate> path; // use instruction position as one point segment path
+//        path.append(maneuvers[0].maneuver.position());
+//        segment.setPath(path);
+//        routesegments.append(segment);
+//        maneuvers.removeAt(0);
+//    }
+
+//    for (int i = 0; i < segments.count(); ++i) {
+//        if (segments[i].maneuverId.isEmpty()) {
+//            routesegments.append(segments[i].segment);
+//        } else {
+//            for (int j = 0; j < maneuvers.count(); ++j) {
+//                if (maneuvers[j].id == segments[i].maneuverId
+//                        && segments[i].segment.maneuver().instructionText().isEmpty()) {
+//                    segments[i].segment.setManeuver(maneuvers[j].maneuver);
+//                    routesegments.append(segments[i].segment);
+//                    maneuvers.removeAt(j);
+//                    break;
+//                } else {
+//                    //Add orphan instruction into new empty segment
+//                    QGeoRouteSegment segment;
+//                    segment.setManeuver(maneuvers[j].maneuver);
+//                    QList<QGeoCoordinate> path; // use instruction position as one point segment path
+//                    path.append(maneuvers[j].maneuver.position());
+//                    segment.setPath(path);
+//                    routesegments.append(segment);
+//                    maneuvers.removeAt(j);
+//                    --j;
+//                }
+//            }
+//        }
+//    }
+
+    if (compactedRouteSegments.size() > 0) {
+        route->setFirstRouteSegment(compactedRouteSegments.at(0));
+        for (int i = 0; i < compactedRouteSegments.size() - 1; ++i)
+            compactedRouteSegments[i].setNextRouteSegment(compactedRouteSegments.at(i + 1));
+    }
+
+    maneuvers.clear();
     segments.clear();
     return true;
 }
@@ -350,8 +405,8 @@ bool QGeoRouteXmlParser::parseManeuver()
         m_reader->raiseError("The element \"Maneuver\" did not have the required attribute \"id\".");
         return false;
     }
-    QGeoInstructionContainer instructionContainer;
-    instructionContainer.id = m_reader->attributes().value("id").toString();
+    QGeoManeuverContainer maneuverContainter;
+    maneuverContainter.id = m_reader->attributes().value("id").toString();
 
     m_reader->readNext();
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Maneuver")) {
@@ -359,41 +414,41 @@ bool QGeoRouteXmlParser::parseManeuver()
             if (m_reader->name() == "Position") {
                 QGeoCoordinate coordinates;
                 if (parseCoordinates(coordinates))
-                    instructionContainer.instruction.setPosition(coordinates);
+                    maneuverContainter.maneuver.setPosition(coordinates);
             } else if (m_reader->name() == "Instruction") {
-                instructionContainer.instruction.setInstructionText(m_reader->readElementText());
+                maneuverContainter.maneuver.setInstructionText(m_reader->readElementText());
             } else if (m_reader->name() == "ToLink") {
-                instructionContainer.toId = m_reader->readElementText();
+                maneuverContainter.toId = m_reader->readElementText();
             } else if (m_reader->name() == "TravelTime") {
-                instructionContainer.instruction.setTimeToNextInstruction(m_reader->readElementText().toInt());
+                maneuverContainter.maneuver.setTimeToNextInstruction(m_reader->readElementText().toInt());
             } else if (m_reader->name() == "Length") {
-                instructionContainer.instruction.setDistanceToNextInstruction(m_reader->readElementText().toDouble());
+                maneuverContainter.maneuver.setDistanceToNextInstruction(m_reader->readElementText().toDouble());
             } else if (m_reader->name() == "Direction") {
                 QString value = m_reader->readElementText();
                 if (value == "forward")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionForward);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionForward);
                 else if (value == "bearRight")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionBearRight);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionBearRight);
                 else if (value == "lightRight")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLightRight);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionLightRight);
                 else if (value == "right")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionRight);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionRight);
                 else if (value == "hardRight")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionHardRight);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionHardRight);
                 else if (value == "uTurnRight")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionUTurnRight);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionUTurnRight);
                 else if (value == "uTurnLeft")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionUTurnLeft);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionUTurnLeft);
                 else if (value == "hardLeft")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionHardLeft);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionHardLeft);
                 else if (value == "left")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLeft);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionLeft);
                 else if (value == "lightLeft")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionLightLeft);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionLightLeft);
                 else if (value == "bearLeft")
-                    instructionContainer.instruction.setDirection(QGeoInstruction::DirectionBearLeft);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::DirectionBearLeft);
                 else
-                    instructionContainer.instruction.setDirection(QGeoInstruction::NoDirection);
+                    maneuverContainter.maneuver.setDirection(QGeoManeuver::NoDirection);
             } else {
                 m_reader->skipCurrentElement();
             }
@@ -401,7 +456,7 @@ bool QGeoRouteXmlParser::parseManeuver()
         m_reader->readNext();
     }
 
-    instructions.append(instructionContainer);
+    maneuvers.append(maneuverContainter);
     return true;
 }
 
@@ -424,7 +479,7 @@ bool QGeoRouteXmlParser::parseLink()
             } else if (m_reader->name() == "Length") {
                 segmentContainer.segment.setDistance(m_reader->readElementText().toDouble());
             } else if (m_reader->name() == "Maneuver") {
-                segmentContainer.instructionId = m_reader->readElementText();
+                segmentContainer.maneuverId = m_reader->readElementText();
             } else {
                 m_reader->skipCurrentElement();
             }

@@ -4,37 +4,36 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -44,10 +43,10 @@
 
 #include <qgeomappingmanager.h>
 #include <qgeoroutingmanager.h>
-#include <qgraphicsgeomap.h>
+#include <qgeosearchmanager.h>
+#include <qgeosearchreply.h>
 #include <qgeoserviceprovider.h>
 #include <qgeomappixmapobject.h>
-#include <qgeomapcircleobject.h>
 
 #include <QMainWindow>
 #include <QGraphicsView>
@@ -58,67 +57,16 @@
 #include <QTime>
 #include <qnetworksession.h>
 
-
-class QResizeEvent;
-class QShowEvent;
-
 class QSlider;
 class QRadioButton;
 class QLineEdit;
 class QPushButton;
 class QToolButton;
+class QResizeEvent;
+class QShowEvent;
 
 QTM_USE_NAMESPACE
-
-class MapWidget : public QGraphicsGeoMap
-{
-    Q_OBJECT
-public:
-    MapWidget(QGeoMappingManager *manager);
-    ~MapWidget();
-
-public slots:
-    void setMouseClickCoordQuery(bool state);
-
-signals:
-    void coordQueryResult(const QGeoCoordinate &coord);
-
-private slots:
-    void kineticTimerEvent();
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent* event);
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
-
-private:
-    bool coordQueryState;
-    bool panActive;
-    bool panDecellerate;
-
-    // Fractional pan, used by panFloatWrapper
-    QPointF remainingPan;
-
-    // current kinetic panning speed, in pixel/msec
-    QPointF kineticPanSpeed;
-    QPoint panDir;
-    QTimer *kineticTimer;
-    QTime lastMoveTime;
-
-    // An entry in the mouse history. first=speed, second=time
-    typedef QPair<QPointF, QTime> MouseHistoryEntry;
-    // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
-    QList<MouseHistoryEntry> mouseHistory;
-
-    void panFloatWrapper(const QPointF& delta);
-    void applyPan(const Qt::KeyboardModifiers& modifiers);
-public:
-    QGeoMapCircleObject *lastCircle;
-};
+class MapWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -158,9 +106,13 @@ private slots:
     void removePixmaps();
     void selectObjects();
 
+    void searchClicked();
+    void searchReplyFinished();
+    void resultsError(QGeoSearchReply::Error errorCode, QString errorString);
+
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
-    void mapTypeToggled(bool checked);
+    void mapTypeToggled(int type);
     void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
@@ -173,22 +125,27 @@ private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
     QGeoRoutingManager *m_routingManager;
+    QGeoSearchManager *m_searchManager;
 
     MapWidget *m_mapWidget;
     QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
+    QPoint m_markerOffset;
     QPoint m_lastClicked;
     QList<QGeoMapPixmapObject*> m_markerObjects;
 
     QGraphicsView* m_qgv;
     QSlider* m_slider;
-    QList<QRadioButton*> m_mapControlButtons;
+    QList<QAction*> m_mapControlActions;
     QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
     QLineEdit *m_latitudeEdit;
     QLineEdit *m_longitudeEdit;
-    QToolButton *m_captureCoordsButton;
+    QAction *m_captureCoordsAction;
+    QDialog *m_coordControlDialog;
     QPushButton *m_setCoordsButton;
+    QLineEdit *m_searchEdit;
+    QPushButton *m_searchButton;
 
     QLayout *m_layout;
     bool m_controlsVisible;

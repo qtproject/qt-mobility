@@ -76,11 +76,11 @@
 #include <Winuser.h>
 #include <Pm.h>
 #endif
-
+#include <HighLevelMonitorConfigurationAPI.h>
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
-#include "qwmihelper_win_p.h"
+#include "windows/qwmihelper_win_p.h"
 
 
 
@@ -398,11 +398,11 @@ static void resolveLibrary()
 
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, qsystemNetworkInfoPrivate)
 
-// typedef struct _DISPLAY_BRIGHTNESS {
-//     UCHAR ucDisplayPolicy;
-//     UCHAR ucACBrightness;
-//     UCHAR ucDCBrightness;
-// } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
+typedef struct _DISPLAY_BRIGHTNESS {
+    UCHAR ucDisplayPolicy;
+    UCHAR ucACBrightness;
+    UCHAR ucDCBrightness;
+} DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
@@ -692,7 +692,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::HapticsFeature:
         break;
-    default:
+     case QSystemInfo::FmTransmitterFeature:
+     default:
         featureSupported = false;
         break;
     };
@@ -1296,12 +1297,13 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent),deviceContextHandle(0)
 {
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
+    ReleaseDC(NULL, deviceContextHandle);
 }
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
@@ -1343,87 +1345,127 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     return -1;
 }
 
+int QSystemDisplayInfoPrivate::getMonitorCaps(int caps, int screen)
+{
+    if(deviceContextHandle == 0) {
+        QDesktopWidget wid;
+        HWND hWnd = wid.screen(screen)->winId();
+        deviceContextHandle = GetDC(hWnd);
+    }
+    int out = GetDeviceCaps(deviceContextHandle ,caps);
+    return out;
+}
+
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    QDesktopWidget wid;
-    HWND hWnd = wid.screen(screen)->winId();
-    HDC deviceContextHandle = GetDC(hWnd);
-    int bpp = GetDeviceCaps(deviceContextHandle ,BITSPIXEL);
-    int planes = GetDeviceCaps(deviceContextHandle, PLANES);
+    int bpp = getMonitorCaps(BITSPIXEL, screen);
+    int planes = getMonitorCaps(PLANES, screen);
     if(planes > 1) {
         bpp = 1 << planes;
     }
-    ReleaseDC(NULL, deviceContextHandle);
-
     return bpp;
 }
 
-// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-// {
-//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-//     if(screen < 16 && screen > -1) {
-//         int rotation = 0;
-//         switch(rotation) {
-//         case 0:
-//         case 360:
-//             orientation = QSystemDisplayInfo::Landscape;
-//             break;
-//         case 90:
-//             orientation = QSystemDisplayInfo::Portrait;
-//             break;
-//         case 180:
-//             orientation = QSystemDisplayInfo::InvertedLandscape;
-//             break;
-//         case 270:
-//             orientation = QSystemDisplayInfo::InvertedPortrait;
-//             break;
-//         };
-//     }
-//     return orientation;
-// }
-
-
-// float QSystemDisplayInfoPrivate::contrast(int screen)
-// {
-//     Q_UNUSED(screen);
-
-//     return 0.0;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-
-//         }
-//     return dpi;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-
-//     }
-//     return dpi;
-// }
+    if(screen < 16 && screen > -1) {
+        if(physicalWidth(screen) > physicalHeight(screen)) {
+            orientation = QSystemDisplayInfo::Landscape;
+        } else {
+            orientation = QSystemDisplayInfo::Portrait;
+        }
+//        int rotation = 0;
+//        switch(rotation) {
+//        case 0:
+//        case 360:
+//            break;
+//        case 90:
+//            break;
+//        case 180:
+//            orientation = QSystemDisplayInfo::InvertedLandscape;
+//            break;
+//        case 270:
+//            orientation = QSystemDisplayInfo::InvertedPortrait;
+//            break;
+//        };
+    }
+    return orientation;
+}
 
 
-// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-// {
-//     int height=0;
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    DWORD current = 0;
+    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA) {
 
-//     return height;
-// }
+        HMONITOR monHandle = NULL;
+        QDesktopWidget wid;
+        HWND hWnd = wid.screen(screen)->winId();
 
-// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-// {
-//     int width=0;
+        monHandle = MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY);
+        LPPHYSICAL_MONITOR physMon = 0;
+        DWORD numMonitors;
 
-//     return width;
-// }
+        if(GetNumberOfPhysicalMonitorsFromHMONITOR(monHandle, &numMonitors)) {
 
+            physMon = (LPPHYSICAL_MONITOR)malloc( numMonitors* sizeof(PHYSICAL_MONITOR));
+
+            GetPhysicalMonitorsFromHMONITOR(monHandle, numMonitors, physMon);
+
+
+            DWORD caps, colorTemp;
+            GetMonitorCapabilities(monHandle, &caps, &colorTemp);
+            if (caps & MC_CAPS_CONTRAST ) {
+                DWORD min=0;
+                DWORD max = 0;
+                GetMonitorContrast(monHandle, &min, &current, &max);
+            }
+            DestroyPhysicalMonitors(numMonitors,physMon);
+            free(physMon);
+        }
+    }
+    return (float)current;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi = getMonitorCaps(LOGPIXELSX,screen);
+    if(screen < 16 && screen > -1) {
+//
+        }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi = getMonitorCaps(LOGPIXELSY,screen);
+    if(screen < 16 && screen > -1) {
+//Win32_VideoController
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height = getMonitorCaps(VERTSIZE,screen);
+    // root/wmi
+// WmiMonitorBasicDisplayParams MaxHorizontalImageSize MaxVerticalImageSize
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width = getMonitorCaps(HORZSIZE,screen);
+    return width;
+}
+
+bool QSystemDisplayInfoPrivate::backLightOn()
+{
+    return false;
+}
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -1513,6 +1555,7 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
+    uriForDrive(driveVolume);
 #if !defined( Q_OS_WINCE)
     uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
@@ -1558,6 +1601,23 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 void QSystemStorageInfoPrivate::mountEntries()
 {
     logicalDrives();
+}
+
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    WCHAR volume[MAX_PATH];
+    if (GetVolumeNameForVolumeMountPoint(reinterpret_cast<const wchar_t *>(driveVolume.utf16()), volume, MAX_PATH)) {
+        QString returnStr(QString::fromUtf16(reinterpret_cast<const unsigned short *>(volume)));
+        qDebug() << returnStr;
+        return returnStr;
+    }
+    return QString();
+}
+
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
+   return state;
 }
 
 #if defined(Q_OS_WINCE)
@@ -2016,6 +2076,58 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 #endif
     return false;
+}
+
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+{
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+  }
+    if(isWirelessKeyboardConnected()) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+    }
+// how to check softkeys on desktop?
+    return keyboardFlags;
+}
+
+bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
+{
+    return hasWirelessKeyboardConnected;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
+void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::backLightOn()
+{
+    return false;
+}
+
+QUuid QSystemDeviceInfoPrivate::hostId()
+{
+    return 0;//gethostid();
+}
+
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

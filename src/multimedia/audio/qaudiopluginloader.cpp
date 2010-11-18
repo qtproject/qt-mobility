@@ -101,7 +101,11 @@ QStringList QAudioPluginLoader::pluginList() const
             qDebug()<<"Looking for plugins in "<<pluginsDir.path()<<files;
 #endif
         for (int j=0; j < files.count(); j++) {
-            plugins <<  pluginsDir.absoluteFilePath(files.at(j));
+            const QString &file = files.at(j);
+#if defined(Q_WS_MAEMO_5)
+            if (!file.contains(QLatin1String("n900audio")))
+#endif
+            plugins <<  pluginsDir.absoluteFilePath(file);
         }
     }
     return  plugins;
@@ -109,7 +113,7 @@ QStringList QAudioPluginLoader::pluginList() const
 
 QStringList QAudioPluginLoader::keys() const
 {
-    QMutexLocker(m_mutex());
+    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     QStringList list;
     for (int i = 0; i < m_plugins.count(); i++) {
@@ -122,7 +126,7 @@ QStringList QAudioPluginLoader::keys() const
 
 QObject* QAudioPluginLoader::instance(QString const &key)
 {
-    QMutexLocker(mutex());
+    QMutexLocker locker(&m_mutex);
 
     for (int i = 0; i < m_plugins.count(); i++) {
         QAudioSystemPlugin* p = qobject_cast<QAudioSystemPlugin*>(m_plugins.at(i)->instance());
@@ -134,7 +138,7 @@ QObject* QAudioPluginLoader::instance(QString const &key)
 
 QList<QObject*> QAudioPluginLoader::instances(QString const &key)
 {
-    QMutexLocker(mutex());
+    QMutexLocker locker(&m_mutex);
 
     QList<QObject*> list;
     for (int i = 0; i < m_plugins.count(); i++) {

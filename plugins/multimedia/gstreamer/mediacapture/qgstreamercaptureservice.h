@@ -43,6 +43,7 @@
 #define QGSTREAMERCAPTURESERVICE_H
 
 #include <qmediaservice.h>
+#include <qmediacontrol.h>
 
 #include <gst/gst.h>
 QT_BEGIN_NAMESPACE
@@ -87,11 +88,8 @@ private:
     QMediaControl *m_videoOutput;
 
     QGstreamerVideoRenderer *m_videoRenderer;
-    QGstreamerElementFactory *m_videoRendererFactory;
     QMediaControl *m_videoWindow;
-    QGstreamerElementFactory *m_videoWindowFactory;
     QMediaControl *m_videoWidgetControl;
-    QGstreamerElementFactory *m_videoWidgetFactory;
     QGstreamerImageCaptureControl *m_imageCaptureControl;
 };
 

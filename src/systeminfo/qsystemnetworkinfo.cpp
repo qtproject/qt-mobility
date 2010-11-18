@@ -55,11 +55,6 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
    \ingroup systeminfo
    \inmodule QtSystemInfo
 
-   \brief The QSystemNetworkInfo class provides access to network information.
-
-    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-
-        Constructs a QSystemNetworkInfo object with the given \a parent.
 */
 
 
@@ -72,7 +67,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EmergencyOnly          Emergency calls only.
             \value Searching              Searching for or connecting with the network.
             \value Busy                   Network is busy.
-            \value Connected              Connected to newtwork.
+            \value Connected              Connected to network.
             \value HomeNetwork            On Home Network.
             \value Denied                 Network access denied.
             \value Roaming                On Roaming network.
@@ -90,7 +85,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
-
+            \value GprsMode                GPRS mode
+            \value EdgeMode                Edge mode
+            \value HspaMode                HSPA mode
+            \value  LteMode                 LTE mode
           */
 
 
@@ -132,6 +130,9 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
           This signal is emitted whenever the network mode changes, specified by \a mode.
         */
 
+/*!
+    Constructs a QSystemNetworkInfo with the given \a parent.
+*/
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())
 {
@@ -163,13 +164,18 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-   return netInfoPrivate()->networkSignalStrength(mode);
+    QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
+    if(info  == QSystemNetworkInfo::UndefinedStatus
+            || info == QSystemNetworkInfo::NoNetworkAvailable) {
+        return 0;
+    }
+    return netInfoPrivate()->networkSignalStrength(mode);
 }
 
 /*!
  \property QSystemNetworkInfo::cellId
  \brief The devices Cell ID
-   Returns the Cell ID of the connected tower or based station.
+   Returns the Cell ID of the connected tower or based station, or 0 if not connected.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -180,7 +186,7 @@ int QSystemNetworkInfo::cellId()
  \property QSystemNetworkInfo::locationAreaCode
  \brief The LAC.
 
-   Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
+   Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -191,7 +197,7 @@ int QSystemNetworkInfo::locationAreaCode()
   \property QSystemNetworkInfo::currentMobileCountryCode
   \brief The current MCC.
 
-   Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
+   Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
@@ -202,7 +208,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
  \property QSystemNetworkInfo::currentMobileNetworkCode
  \brief The current MNC.
 
-   Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
+   Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -213,7 +219,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
  \property QSystemNetworkInfo::homeMobileCountryCode
  \brief The home MNC.
 
-   Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+   Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -224,7 +230,7 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
  \property QSystemNetworkInfo::homeMobileNetworkCode
  \brief The home MCC.
 
-   Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+   Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
    Note: Some platforms don't support retrieving this info. In this case the Network Code is
    returned only when the device is registered on home network.
 */
@@ -235,7 +241,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 
 /*!
  Returns the name of the operator for the network \a mode.  For wlan this returns the network's current SSID.
-In the case of no network such as a desktop, an empty string.
+In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -251,7 +257,7 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 }
 
 /*!
- Returns the first found QNetworkInterface for type \a mode.
+ Returns the first found QNetworkInterface for type \a mode, or an invalid QNetworkInterface, if none is found.
 
  */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
@@ -260,6 +266,8 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 }
 
 /*!
+ \property QSystemNetworkInfo::currentMode
+
     Returns the current active mode. If more than one mode is active, returns the
      default or preferred mode. If no modes are active, returns UnknownMode.
 
@@ -315,6 +323,11 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
             networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
         connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        connect(d,SIGNAL(cellIdChanged(int)),
+                this,SIGNAL(cellIdChanged(int)));
     }
 }
 

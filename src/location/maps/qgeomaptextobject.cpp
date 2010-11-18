@@ -57,28 +57,27 @@ QTM_BEGIN_NAMESPACE
 
     The text object is drawn such that the rendered size of the text object is
     independent of the zoom level of the map.
-
-    \note Anchor and/or alignment options didn't make it into the beta release
-    but will be present in the final 1.1 release.
 */
 
 /*!
     Constructs a new text object.
 */
 QGeoMapTextObject::QGeoMapTextObject()
-        : d_ptr(new QGeoMapTextObjectPrivate()) {}
+    : d_ptr(new QGeoMapTextObjectPrivate()) {}
 
 /*!
     Constructs a new text object which will display the text \a text with font
-    \a font at the coordinate \a coordinate on the map, with the parent \a
-    parent.
+    \a font at the coordinate \a coordinate on the map.
+
+    The text will be displayed at an on-screen offset from the coordinate of \a 
+    offset pixels, and will be aligned according to \a alignment.
 */
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,
                                      const QFont &font,
                                      const QPoint &offset,
                                      Qt::Alignment alignment)
-        : d_ptr(new QGeoMapTextObjectPrivate())
+    : d_ptr(new QGeoMapTextObjectPrivate())
 {
     d_ptr->coordinate = coordinate;
     d_ptr->text = text;
@@ -269,6 +268,67 @@ void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
     }
 }
 
+/*!
+\fn void QGeoMapTextObject::coordinateChanged(const QGeoCoordinate &coordinate)
+
+    This signal is emitted when the coordinate at which this text 
+    object will be drawn has changed.
+
+    The new value is \a coordinate.
+*/
+
+/*!
+\fn void QGeoMapTextObject::textChanged(const QString &text)
+
+    This signal is emitted when the text to be drawn by this text object 
+    has changed.
+
+    The new value is \a text.
+*/
+
+/*!
+\fn void QGeoMapTextObject::fontChanged(const QFont &font)
+
+    This signal is emitted when the font use to draw this text object 
+    has changed.
+
+    The new value is \a font.
+*/
+
+/*!
+\fn void QGeoMapTextObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the outline of the 
+    letters for this text object has changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapTextObject::brushChanged(const QBrush &brush)
+
+    This signal is emitted when the brush used to fill the inside of the
+    letters for this text object has changed.
+
+    The new value is \a brush.
+*/
+
+/*!
+\fn void QGeoMapTextObject::offsetChanged(const QPoint &offset)
+
+    This signal is emitted when the on screen offset from the coordinate at 
+    which this text object will be drawn has changed.
+
+    The new value is \a offset.
+*/
+
+/*!
+\fn void QGeoMapTextObject::alignmentChanged(Qt::Alignment alignment)
+
+    This signal is emitted when the alignment of this text object has changed.
+
+    The new value is \a alignment.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

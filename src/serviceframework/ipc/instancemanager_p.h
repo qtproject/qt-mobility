@@ -43,7 +43,8 @@
 #define QSERVICE_INSTANCE_MANAGER
 
 #include <qmobilityglobal.h>
-#include "qremoteserviceclassregister.h"
+#include "qremoteserviceregister.h"
+#include "qremoteserviceregisterentry_p.h"
 #include <QHash>
 #include <QMutexLocker>
 #include <QMetaObject>
@@ -55,40 +56,45 @@ QTM_BEGIN_NAMESPACE
 
 struct ServiceIdentDescriptor
 {
-    ServiceIdentDescriptor() : sharedInstance(0), sharedRefCount(0)
+    ServiceIdentDescriptor() : globalInstance(0), globalRefCount(0)
     {
     }
 
-    const QMetaObject* meta;
-    QRemoteServiceClassRegister::CreateServiceFunc create;
-    QRemoteServiceClassRegister::InstanceType instanceType;
+    QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> entryData;
+
     QHash<QUuid, QObject*> individualInstances;
-    QObject* sharedInstance;
-    QUuid sharedId;
-    int sharedRefCount;
+    QObject* globalInstance;
+    QUuid globalId;
+    int globalRefCount;
 };
 
-class QM_AUTOTEST_EXPORT InstanceManager
+class QM_AUTOTEST_EXPORT InstanceManager : public QObject
 {
+    Q_OBJECT
 public:
-    InstanceManager();
+    InstanceManager(QObject *parent = 0);
     ~InstanceManager();
 
-    bool addType(const QMetaObject* meta,
-            QRemoteServiceClassRegister::CreateServiceFunc func,
-            QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
-            QRemoteServiceClassRegister::InstanceType type);
-    const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
-    QList<QRemoteServiceIdentifier> allIdents() const;
+    bool addType(const QRemoteServiceRegister::Entry& entry);
 
-    QObject* createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId);
+    const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
+    QList<QRemoteServiceRegister::Entry> allEntries() const;
+
+    int totalInstances() const;
+
+    QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
+    void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
 
     static InstanceManager* instance();
 
+Q_SIGNALS:
+    void allInstancesClosed();
+    void instanceClosed(const QRemoteServiceRegister::Entry&);
+    void instanceClosed(const QRemoteServiceRegister::Entry&, const QUuid&);
+
 private:
     mutable QMutex lock;
-    QHash<QRemoteServiceIdentifier, ServiceIdentDescriptor> metaMap;
+    QHash<QRemoteServiceRegister::Entry, ServiceIdentDescriptor> metaMap;
 };
 
 

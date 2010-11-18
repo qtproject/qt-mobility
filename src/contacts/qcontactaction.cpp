@@ -87,45 +87,18 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::actionDescriptors(const QString& actionName) const
-  Returns the descriptor which uniquely identifies this action implementation.  A descriptor
-  consists of an action name, a vendor name and an implementation version.
-  The name of the action identifies the action provided; different implementations of an action
-  with the same name must provide the same functionality, but may differ in implementation semantics.
-  Hence, the action name includes the major version of the interface definition implemented.
-  The vendor name is the identification string of the vendor which has provided this implementation.
-  The implementation version is the (minor) version of the implementation, and is vendor-specific.
-
-  \sa QContactActionDescriptor
- */
-
-/*!
   \fn QContactAction::state() const
   Returns the current state of the action.
   \sa stateChanged()
  */
 
-/*!
-  \fn QContactAction::contactFilter() const
-  Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
- */
 
 /*!
-  \fn QContactAction::isTargetSupported(const QContactActionTarget& target) const
-  Returns true if the provided \a target contains the information required for this action to be
-  performed on it; otherwise, returns false.
-  Some actions may require no details to be specified (e.g., serialize entire contact), some may require
-  exactly one detail (e.g., email this specific email account of the given contact), some may require
-  zero or one detail (e.g., email exactly on email account of the given contact, but the action can choose
-  which email account to email), some may require multiple details (e.g., email all specified email accounts
-  of the given contact).  In all cases, it is the action which decides how much information it needs.
-  If the target contains the required information, the function will return true; otherwise, returns false.
- */
+  \fn QContactAction::invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap())
+  \overload
 
-/*!
-  \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
-  Initiates the implemented action on the specified \a detail of the given \a contact, or on the first
-  eligible detail saved in the contact if the given \a detail is empty, with the given \a parameters specified.
+  Initiates the action on the specified list of \a targets with the optional supplied \a parameters.
+
   At some point after invocation, one or more \l resultsAvailable() signals will be emitted by the action instance.
   The results of the action (if any) may be retrieved by calling \l results().
   When the state of the action changes, the \l stateChanged() signal will be emitted.
@@ -135,6 +108,29 @@ QContactAction::~QContactAction()
   the request for it to be initiated was sent successfully (e.g., if the action is implemented as a one-way
   RPC call).
 
+  \sa results(), stateChanged()
+ */
+
+
+/*!
+  \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
+  \overload
+
+  This is a convenience function.
+
+  Initiates the action on the specified \a detail of the given \a contact, or on the first
+  eligible detail saved in the contact if the given \a detail is empty, with the given \a parameters specified.
+
+  \sa results(), stateChanged()
+ */
+
+/*!
+  \fn QContactAction::invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap())
+  \overload
+
+  This is a convenience function,
+
+  Initiates the action on the specified \a target with the given \a parameters specified.
   \sa results(), stateChanged()
  */
 
@@ -179,7 +175,6 @@ QStringList QContactAction::availableActions(const QString& serviceName)
 {
     // SLOW naive implementation...
     QSet<QString> ret;
-    QContactManagerData::loadFactories();
     QList<QContactActionDescriptor> actionDescriptors = QContactActionManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);

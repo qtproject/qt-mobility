@@ -73,10 +73,11 @@ public:
     bool supportsAlternativeRoutes;
     bool supportsExcludeAreas;
     QGeoRouteRequest::TravelModes supportedTravelModes;
-    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
+    QGeoRouteRequest::FeatureTypes supportedFeatureTypes;
+    QGeoRouteRequest::FeatureWeights supportedFeatureWeights;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
+    QGeoRouteRequest::ManeuverDetails supportedManeuverDetails;
 
     QLocale locale;
 

@@ -255,10 +255,12 @@ void CQwertyPredictiveSearchTable::FillKeyboardSpecificFieldsL(
 * Fetch up to 3 mail addresses
 */
 QStringList CQwertyPredictiveSearchTable::GetTableSpecificFields(
-	const CContactItem& aItem) const
+	const CContactItem& aItem,
+	bool& aRequiredFieldsExist) const
 	{
 	PRINT(_L("CQwertyPredictiveSearchTable::GetTableSpecificFields"));
 
+	aRequiredFieldsExist = false;
 	QStringList mailAddresses;
 	
 	// Check the contact item is a card, own card or ICC entry.
@@ -280,6 +282,9 @@ QStringList CQwertyPredictiveSearchTable::GetTableSpecificFields(
 			field.StorageType() == KStorageTypeText &&
 			field.TextStorage()->IsFull()) // IsFull() returns true if field not empty
 			{
+			// It does not matter if the mail address is stored to mailAddresses.
+			// If at least one mail address exists, mail can be sent to the contact.
+			aRequiredFieldsExist = true;
 			TPtrC mailAddress = field.TextStorage()->Text();
 			PRINT2(_L("contact id=%d has mail='%S'"), aItem.Id(), &mailAddress);
 

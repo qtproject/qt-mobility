@@ -56,7 +56,7 @@ public:
     {
         qDebug() << "loaded the N900 plugin";
         QSensorManager::registerBackend(QAccelerometer::type, n900accelerometer::id, this);
-        QSensorManager::registerBackend(QAmbientLightSensor::type, n900lightsensor::id, this);
+        QSensorManager::registerBackend(QLightSensor::type, n900lightsensor::id, this);
         QSensorManager::registerBackend(QProximitySensor::type, n900proximitysensor::id, this);
     }
 

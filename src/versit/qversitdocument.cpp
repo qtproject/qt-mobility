@@ -150,6 +150,7 @@ uint qHash(const QVersitDocument &key)
 {
     int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
     hash += QT_PREPEND_NAMESPACE(qHash)(key.componentType());
+    hash += key.properties().length() + key.subDocuments().length();
     foreach (const QVersitProperty& property, key.properties()) {
         hash += qHash(property);
     }
@@ -236,14 +237,21 @@ void QVersitDocument::removeProperties(const QString& name)
 }
 
 /*!
- * Clears the document, removing all properties and metadata
- * and resetting the codec to the default.
+ * Sets the list of properties to \a properties.  Logically, all of the existing properties are
+ * removed and all of the supplied \a properties are added.
  */
-void QVersitDocument::clear()
+void QVersitDocument::setProperties(const QList<QVersitProperty>& properties)
 {
-    d->mProperties.clear();
-    d->mSubDocuments.clear();
-    d->mVersitType = QVersitDocument::InvalidType;
+    d->mProperties = properties;
+}
+
+/*!
+ * Gets the list of the contained versit properties.
+ * Note that the actual properties cannot be modified using the copy.
+ */
+QList<QVersitProperty> QVersitDocument::properties() const
+{
+    return d->mProperties;
 }
 
 /*!
@@ -252,6 +260,14 @@ void QVersitDocument::clear()
 void QVersitDocument::addSubDocument(const QVersitDocument& subdocument)
 {
     d->mSubDocuments.append(subdocument);
+}
+
+/*!
+ * Removes the \a subdocument from the versit document.
+ */
+void QVersitDocument::removeSubDocument(const QVersitDocument& subdocument)
+{
+    d->mSubDocuments.removeAll(subdocument);
 }
 
 /*!
@@ -271,15 +287,6 @@ QList<QVersitDocument> QVersitDocument::subDocuments() const
 }
 
 /*!
- * Gets the list of the contained versit properties.
- * Note that the actual properties cannot be modified using the copy.
- */
-QList<QVersitProperty> QVersitDocument::properties() const
-{
-    return d->mProperties;
-}
-
-/*!
  * Returns true if the document is empty.
  */
 bool QVersitDocument::isEmpty() const
@@ -287,6 +294,17 @@ bool QVersitDocument::isEmpty() const
     return d->mProperties.isEmpty()
         && d->mSubDocuments.isEmpty()
         && d->mVersitType == QVersitDocument::InvalidType;
+}
+
+/*!
+ * Clears the document, removing all properties, sub-documents and metadata.
+ */
+void QVersitDocument::clear()
+{
+    d->mProperties.clear();
+    d->mSubDocuments.clear();
+    d->mVersitType = QVersitDocument::InvalidType;
+    d->mComponentType.clear();
 }
 
 QTM_END_NAMESPACE

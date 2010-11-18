@@ -263,15 +263,25 @@ void UT_CPcsKeyMap::UT_GetMappedStringWithNumbersL()
 // -----------------------------------------------------------------------------
 // UT_CPcsKeyMap::UT_GetMappedStringWithSpecialCharactersL
 // Source string contains numbers
+// Note: this test case is likely to pass only when language is english.
 // -----------------------------------------------------------------------------
 //
 void UT_CPcsKeyMap::UT_GetMappedStringWithSpecialCharactersL()
     {
 	_LIT( KAlpha, " +g-*[#5]?t" );
-	_LIT( KNumeric, " a41afb5f18" );
+	_LIT( KNumeric, " a41aab5a18" );
     HBufC* numericBuf = iKeyMap->GetMappedStringL( KAlpha );
     CleanupStack::PushL( numericBuf );
     EUNIT_ASSERT_EQUALS( *numericBuf, KNumeric );
+    CleanupStack::PopAndDestroy(numericBuf);
+    numericBuf = NULL;
+
+
+	_LIT( KAlpha2, "и#5и*8+0@иг2ии" );
+	_LIT( KNumeric2, "fb5fa8a01f52ff" );
+    numericBuf = iKeyMap->GetMappedStringL( KAlpha2 );
+    CleanupStack::PushL( numericBuf );
+    EUNIT_ASSERT_EQUALS( *numericBuf, KNumeric2 );
     CleanupStack::PopAndDestroy(numericBuf);
     }
 

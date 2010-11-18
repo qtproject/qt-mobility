@@ -60,10 +60,9 @@ class S60VideoPlayerSession;
 class S60AudioPlayerSession;
 class S60MediaPlayerControl;
 class S60MediaMetaDataProvider;
-class S60VideoWidgetControl;
+class S60MediaStreamControl;
 class S60MediaRecognizer;
-class S60VideoRenderer;
-class S60VideoOverlay;
+
 class QMediaPlaylistNavigator;
 
 class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
@@ -89,9 +88,7 @@ private:
     S60AudioPlayerSession *m_audioPlayerSession;
     S60MediaMetaDataProvider *m_metaData;
     S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    QMediaControl *m_videoWidget;
-    QMediaControl *m_videoWindow;
-    QMediaControl *m_videoRenderer;
+    S60MediaStreamControl *m_streamControl;
     QMediaControl *m_videoOutput;
 };
 

@@ -47,24 +47,26 @@
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
+#include <QtCore/QTimer>
 
 #include <qfeedbackplugininterfaces.h>
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackTestPlugin : public QObject, public QFeedbackHapticsInterface, public QFeedbackFileInterface
+class QFeedbackTestPlugin : public QObject, public QFeedbackHapticsInterface, public QFeedbackFileInterface, public QFeedbackThemeInterface
 {
     Q_OBJECT
     Q_INTERFACES(QTM_NAMESPACE::QFeedbackHapticsInterface)
     Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackThemeInterface)
 public:
     QFeedbackTestPlugin();
     virtual ~QFeedbackTestPlugin();
 
     virtual PluginPriority pluginPriority();
 
-    virtual QList<QFeedbackActuator> actuators();
+    virtual QList<QFeedbackActuator*> actuators();
 
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
@@ -81,6 +83,20 @@ public:
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect *);
     virtual QStringList supportedMimeTypes();
+
+    // For themes
+    virtual bool play(QFeedbackEffect::ThemeEffect);
+
+private slots:
+    void timerExpired();
+
+private:
+    QList<QFeedbackActuator*> actuators_;
+
+    // Our hacky state
+    QFeedbackEffect::State mHapticState;
+    QFeedbackEffect::State mFileState;
+    QTimer mHapticTimer;
 };
 
 

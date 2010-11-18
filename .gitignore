@@ -53,14 +53,27 @@ examples/bearercloud/bearercloud
 examples/bearermonitor/bearermonitor
 examples/calendardemo/calendardemo
 examples/camera/camera
+examples/declarative-camera/qml_camera
+examples/declarative-location/flickr/qml_location_flickr
+examples/declarative-location/landmarkmap/qml_landmarkmap
+examples/declarative-location/mapviewer/qml_mapviewer
+examples/declarative-music-browser/declarative-music-browser
+examples/declarative-sfw-dialer/declarative-sfw-dialer/qmldialer
+examples/declarative-sfw-dialer/remotedialer/dialer_service
+examples/declarative-sfw-notes/qmlnotes
+examples/declarative-systeminfo/battery/qml_battery
+examples/declarative-systeminfo/network/qml_networkinfo
+examples/declarative-systeminfo/storage/qml_storageinfo
+examples/documentproperties/documentproperties
 examples/documentshare/documentshare
 examples/fetchgooglemaps/fetchgooglemaps
 examples/flickrdemo/flickrdemo
+examples/geoservicedemo/GeoServiceDemo
 examples/hapticsplayer/hapticsplayer
 examples/hapticsquare/hapticsquare
 examples/landmarkbrowser/landmarkbrowser
 examples/logfilepositionsource/logfilepositionsource
-examples/mapviewer/mapviewer
+examples/mapviewer/MapViewer
 examples/mediabrowser/mediabrowser
 examples/publish-subscribe/publish-subscribe
 examples/qgeoapiui/geoapiui
@@ -72,6 +85,7 @@ examples/sensors/arrowkeys/arrowkeys
 examples/sensors/cubehouse/cubehouse
 examples/sensors/grueapp/grueapp
 examples/sensors/metadata/metadata
+examples/sensors/metadata2/metadata2
 examples/sensors/orientation/orientation
 examples/sensors/reading_perf/reading_perf
 examples/sensors/sensor_explorer/sensor_explorer
@@ -91,6 +105,7 @@ examples/slideshow/slideshow
 examples/sysinfo/qsysinfo
 examples/telephony/callmonitor/callmonitor
 examples/telephony/dialer/dialer
+examples/todo/todo
 examples/videographicsitem/videographicsitem
 examples/videowidget/videowidget
 *.app
@@ -99,6 +114,7 @@ config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
 config.tests/bluez/bluez
 .qmake.cache
+translations/qtmobility_untranslated.ts
 translations/qtmobility_*.qm
 
 #Symbian specific

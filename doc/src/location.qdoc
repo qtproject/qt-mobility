@@ -32,7 +32,7 @@
     \group location
     \title Location API
 
-    The Location API provides a library for location positioning, landmark 
+    The Location API provides a library for location positioning, landmark
     management, and mapping and navigation.
 */
 
@@ -268,21 +268,21 @@ the current location.
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 
-A landmark is a location of some significance, also known as a point of interest 
+A landmark is a location of some significance, also known as a point of interest
 and are represented as QLandmark objects.  Related landmarks may be grouped into
 categories(QLandmarkCategory) such as restaurants or accommodation and each landmark can belong to more
-than one category. 
+than one category.
 
 A landmark datastore is represented by a QLandmarkManager. The QLandmarkManager
 may be used to save, fetch and remove both landmarks and categories.  When fetching
 landmarks we can provide various filters and sort orders to define the searching
-criteria and the order in which landmarks are returned.  The QLandmarkManager also 
+criteria and the order in which landmarks are returned.  The QLandmarkManager also
 provides functionality to import and export landmarks as well as provide notifications
 whenever changes are detected.  It should be noted that the Landmarks API provides
-both synchronous and asynchronous mechanisms to perform the above operations.  
+both synchronous and asynchronous mechanisms to perform the above operations.
 Synchronous operations are provided the QLandmarkManager itself while the asynchronous
 operations are provided by various  \l {Asynchronous Landmark Requests} {request classes}.
-It is generally recommended that the asynchronous \l {Asynchronous Landmark Requests} {request classes} classes be used as they are not subject to blocking which can be an issue if 
+It is generally recommended that the asynchronous \l {Asynchronous Landmark Requests} {request classes} classes be used as they are not subject to blocking which can be an issue if
 a datastore contains a significantly large number of landmarks or if the datastore is being accessed over a network.
 
 
@@ -297,181 +297,56 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page for:
     \o \l {Exporting landmarks}
 \endlist
 
-\section2 Landmark Attributes
+\section3 Managers and plugins.
+Landmark managers are identified by their manager name.  Each manager name corresponds to a specific plugin/backend
+that implements the manager functionality.  The manager name is typically a reverse domain  string such as
+"com.nokia.qt.landmarks.engines.symbian".  Typically a developer does not need to deal with the manager name
+as the default manager will be used when instantiating a QLandmarkManager without construction parameters.
 
-    The attribute system for landmarks is intended to be expose advanced
-    functionality provided a particular manager supports them.
-    Each landmark consists of a number of attributes such as name, coordinates,
-    description etc. These attributes can be divided into 3 distinct types.
+To implment your own plugin, you need to subclass QLandmarkManagerEngine and provide the implmementations
+for the virtual functions, and then create a QLandmarkMangerEngineFactory subclass that will instantiate
+your particular engine implementation.
 
-    \list
-    \o Core attributes:  These are core properties common to all managers.
-    These are accessible through standard member functions.  They are also available through
-    the generic attributes() function via a key name.  e.g. A landmark name is retrievable
-    through landmark.name() or landmark.attribute("name").  The return type of the attributes() function
-    is a QVariant.
-    The following tables provides the member functions and their equivalent attribute keys.
+The following table shows names of the default managers for each platform.
+\table
+\header
+    \o Manager name
+    \o Platform
+\row
+    \o com.nokia.qt.landmarks.engines.symbian
+    \o S60 3.1,3.2,5.0, Symbian^3
+\row
+    \o com.nokia.qt.landmarks.engines.sqlite
+    \o Maemo5, WindowsXp/Vista,Linux
+\endtable
 
-    \endlist
-
-    Landmark Attributes
-    \table
-    \header
-        \o Member function
-        \o Attribute key
-        \o Member function
-        \o Attribute key
-    \row
-        \o address().country()
-        \o "country"
-        \o address().countryCode()
-        \o "countryCode"
-    \row
-        \o address().county()
-        \o "county"
-        \o address().district()
-        \o "district"
-    \row
-        \o address().postCode()
-        \o "postCode"
-        \o address().state()
-        \o "state"
-    \row
-        \o address().street()
-        \o "street"
-        \o address().streetNumber()
-        \o "streetNumber"
-    \row
-        \o coordinate().latitude()
-        \o "latitude"
-        \o coordinate().longitude()
-        \o "longitude"
-    \row
-        \o description()
-        \o "description"
-        \o iconUrl()
-        \o "iconUrl"
-    \row
-        \o name()
-        \o "name"
-        \o phoneNumber()
-        \o "phoneNumber"
-    \row
-        \o radius()
-        \o "radius"
-        \o url()
-        \o "url"
-    \endtable
-
-    Category Attributes
-    \table
-    \header
-        \o Member function
-        \o AttributeKey
-        \o Member function
-        \o AttributeKey
-    \row
-        \o iconUrl()
-        \o "iconUrl"
-        \o name()
-        \o "name"
-    \endtable
-
-    \list
-    \o Extended attributes:  These are attributes that a particular manager provides
-    above those of the core attributes.  The keys to be used are dependent upon the manager.
-    The extended attributes may be accessed using the attribute() and setAttribute() functions,
-    just as the core attributes are.  (As of the Qt Mobility 1.1 beta, none of the supported
-    platforms have extended attributes).
-    \o Custom attributes:  These are attributes that a client application can use to associate
-    its own domain specific data with a landmark.  These are accessible through the customAttribute() and
-    setCustomAttribute() functions.  (Only the sqlite backend which is used
-    on Maemo5, Windows and Linux platforms support custom attributes).
-\endlist
-
-    The combination of core and extended attributes are regarded as \c manager
-    attributes. These are accessible through the attribute() and setAttribute()
-    functions. Custom attributes are conceptually separate from the manager
-    attributes since they are not predefined and thus are accessed using the
-    customAttribute() and setCustomAttribute() functions instead. There is an
-    important semantic difference between manager and custom attributes in that
-    setting an invalid QVariant to a manager attribute will set the attribute
-    value to a default value, e.g setAttribute("name", QVariant()) will assign
-    an empty string to name. Setting an invalid QVariant on a custom attribute
-    will remove that attribute from the landmark, eg
-    setCustomAttribute("price", QVariant()) will remove the price attribute
-    from the landmark. The concept of attributes also applies to categories.
-
-    A QLandmarkManager can be queried as to whether it supports extended or
-    custom attributes by using the QLandmarkManager::isFeatureSupported()
-    function. Extended and custom attributes may also be enabled and disabled
-    by using the QLandmarkManager::setExtendedAttributesEnabled() and
-    QLandmarkManager::setCustomAttributesEnabled() function.  When fetching
-    a set of landmarks, the landmark object will contain extended or custom attributes
-    attributes depending upon whether these are enabled in the manager.
-
-    The manager attribute keys that are available for use can be retrieved by using
-    the QLandmarkManager::landmarkAttributeKeys() function.  Only the core attribute keys
-    are returned if extended attributes are disabled.  In similar fashion, attribute keys
-    for categories can be retrieved by using QLandmarkManager::categoryAttributeKeys().
-    Custom attributes are added on landmark by landmark basis so the manager
-    cannot provide a set of custom attribute keys.
-
-    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
-    The attribute filter be used to search for a set of attributes by ANDing them all together
-    or by ORing them.  The attribute filter may only be used to search one type of attributes,
-    i.e. either manager attributes or custom attributes.  Not all attributes are searchable,
-    and the ones that can be searched are backend specific.  The following set of attributes
-    are currently searchable.
-
-
-    \table
-    \header
-        \o {3,1} Searchable attributes
-    \row
-        \o "city"
-        \o "country"
-        \o "county"
-    \row
-        \o "countryCode"
-        \o "description"
-        \o "district"
-    \row
-        \o "name"
-        \o "state"
-        \o "street"
-    \row
-        \o "phoneNumber"
-        \o "postCode"
-        \o
-    \endtable
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
-The following table outline the formats that may be used for each manager.  You may also query the supported formats through the
+The following table outline the formats that may be used for the default manager on each platform.  You may also query the supported formats through the
 QLandmarkManager::supportedFormats() function.
 
 \table
 \header
-    \o Manager
     \o Platform
     \o Import formats
     \o Export formats
 \row
-    \o  com.nokia.qt.landmarks.engines.symbian
-    \o  Symbian 3rd Edition
+    \o  S60 3.1,3.2
     \o  Lmx
     \o  Lmx
 \row
-    \o  com.nokia.qt.landmarks.engines.symbian
-    \o  Symbian 5th Edition
+    \o  S60 5.0
+    \o  Gpx, Lmx
+    \o  Lmx
+\row
+    \o  Symbian ^3
     \o  Gpx, Lmx, Kml, Kmz
     \o  Lmx
 \row
-    \o com.nokia.qt.landmarks.engines.sqlite
     \o Maemo 5, windows, linux
     \o Lmx, Gpx(version 1.1 only)
-    \o Lmx, Gpx(vesion 1.1)
+    \o Lmx, Gpx(vesion 1.1 only)
 \endtable
 
 During an import operation, every landmark from the import source will result in the creation of a new landmark, however any categories
@@ -502,7 +377,10 @@ of those landmarks have NaN latitude or longitude values.
 
 Landmark selection is facilitated by filter and sort order classes.  The filter classes
 define what criteria that landmarks must match and the sort order classes specify how
-the returned landmarks are sorted.  The filter and sort order classes are used with either
+the returned landmarks are sorted.  Please note that sorting by
+distance is facilitated by the QLandmarkProximity class.  Providing a QLandmarkProximity
+filter in an intersection filter will sort results in order of ascending distance
+(on the condition only a default sort order class is used in conjunction). The filter and sort order classes are used with either
 the QLandmarkManager class (for synchronous landmark selection) or the request classes
 for (asynchronous landmark selection)
 
@@ -532,20 +410,20 @@ a QLandmarkManagerEngineFactory which can instantiate it when required.
 
 The Maps and Navigation API is based on plugins.
 
-Since most providers of mapping, geocoding and routing information offer 
-no guarantees that their data is interoperable with the data provided by 
-other services, the plugins are used to group the functionality per 
+Since most providers of mapping, geocoding and routing information offer
+no guarantees that their data is interoperable with the data provided by
+other services, the plugins are used to group the functionality per
 service provider.
 
-The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin 
-is part of Qt Mobility.
+The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin
+is part of Qt Mobility.  See the section \l{The Nokia plugin} for more details.
 
 \code
     QGeoMappingManager *mappingManager = 0;
     QGeoRoutingManager *routingManager = 0;
     QGeoSearchManager *searchManager = 0;
 
-    QGeoServiceProvider serviceProvider("nokia");
+    QGeoServiceProvider serviceProvider("plugin name");
 
     if (serviceProvider.error() == QGeoServiceProvider::NoError) {
         mappingManager = serviceProvider.mappingManager();
@@ -587,58 +465,58 @@ compound objects and managing groups of objects.
 
 QGeoRoutingManager handles requests for routing information.
 
-The requests are created as QGeoRouteRequest instances, which are 
-passed to QGeoRoutingManager::calculateRoute().  The returned 
-QGeoRouteReply instance will contain the result of the request when 
+The requests are created as QGeoRouteRequest instances, which are
+passed to QGeoRoutingManager::calculateRoute().  The returned
+QGeoRouteReply instance will contain the result of the request when
 it is completed.
 
-The QGeoRoute class describes the resulting route.  Each route is 
-broken up into a number of QGeoRouteSegment instances, with the division 
-usually occurring at either user specified waypoints or at changes in the 
+The QGeoRoute class describes the resulting route.  Each route is
+broken up into a number of QGeoRouteSegment instances, with the division
+usually occurring at either user specified waypoints or at changes in the
 mode of transport, like when changing from a train to a bus.
 
-Each QGeoRouteSegment has a QGeoNavigationInstruction instance which 
-describes the instructions that would be issued to a user attempting 
-to follow a route.  These instructions a location, which is typically 
-somewhere near the end of the associated QGeoRouteSegment, and 
+Each QGeoRouteSegment has a QGeoNavigationInstruction instance which
+describes the instructions that would be issued to a user attempting
+to follow a route.  These instructions a location, which is typically
+somewhere near the end of the associated QGeoRouteSegment, and
 instruction text describing how the next QGeoRouteSegment should be reached.
 
 \annotatedlist maps-routing
 
 \section2 Geocoding and searching for places
 
-QGeoSearchManager handles geocoding, reverse geocoding and free-text 
-search for places.  
+QGeoSearchManager handles geocoding, reverse geocoding and free-text
+search for places.
 
-The free-text search will attempt to geocode text that looks like an 
+The free-text search will attempt to geocode text that looks like an
 address while simultaneously searching any landmark databases that the
 service pro.
-It is even possibly to add additional QLandmarkManager instances to 
-the soures of data, so that users can search online databases alongside 
+It is even possibly to add additional QLandmarkManager instances to
+the soures of data, so that users can search online databases alongside
 their personal offline landmarks store.
 
 \annotatedlist maps-places
 
 \section2 The Nokia plugin
 
-Qt Mobility comes with a plugin which makes use of the Nokia services 
-relevant to the Maps and Navigation API.
+Qt Mobility ships with a Maps and Navigation API plugin which accesses
+the relevant Ovi services provided Nokia.  The use of these services
+is governed by the terms and conditions available in the file
+plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
-The latest version has the plugin name "nokia" and has plugin version 1.
+The Ovi services plugin can be loaded by using the plugin key "nokia".
 
-From the beta release onwards, the use of this plugin will be subject 
-to terms and conditions that will be contained within or linked from this 
-documentation.
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the Qt Mobility package.
 
 \section2 Implementing plugins
 
-A plugin implementer needs to subclass QGeoServiceProviderFactory and as 
+A plugin implementer needs to subclass QGeoServiceProviderFactory and as
 many of the ManagerEngine classes as they want to provide implementations for.
 
-Subclassing QGeoServiceProviderFactory will only involve exposing a name and 
-a version by overriding QGeoServiceProviderFactory::providerName() and 
-QGeoServiceProviderFactory::providerVersion(), and overriding 
-QGeoServiceProviderFactory::createSearchManagerEngine(), 
+Subclassing QGeoServiceProviderFactory will only involve exposing a name and
+a version by overriding QGeoServiceProviderFactory::providerName() and
+QGeoServiceProviderFactory::providerVersion(), and overriding
+QGeoServiceProviderFactory::createSearchManagerEngine(),
 QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
@@ -646,13 +524,18 @@ QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
 \section3 Tile-based map convenience classes
 
-Most of the current tile based mapping APIs are very similar, and so we 
-provide a number of classes intended to make writing tile based mapping 
-plugins much simpler.  
+Most of the current tile based mapping APIs are very similar, and so we
+provide a number of classes intended to make writing tile based mapping
+plugins much simpler.
 
 If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
 
 \annotatedlist maps-impl-tiled
 
+\section1 QML support
+
+For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
+
+\note At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
 */
 

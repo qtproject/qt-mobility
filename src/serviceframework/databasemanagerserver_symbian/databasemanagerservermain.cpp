@@ -43,7 +43,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QTextStream>
-#include "databasemanagerserver.h"
+#include "databasemanagerserver_p.h"
 #include "clientservercommon.h"
 
 QTM_USE_NAMESPACE

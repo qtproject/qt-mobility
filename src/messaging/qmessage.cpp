@@ -502,7 +502,7 @@ QList<QByteArray> charsets;
     Sets the ordered-by-preference list of names of charsets to use when encoding 
     unicode QString data to a serialized form to \a charsetNames.
 
-    The set of valid charset names is returned by QTextCodec::availableCharsets().
+    The set of valid charset names is returned by QTextCodec::availableCodecs().
 
     \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */

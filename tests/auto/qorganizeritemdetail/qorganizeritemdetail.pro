@@ -2,6 +2,7 @@ QT += testlib
 TEMPLATE=app
 TARGET=tst_qorganizeritemdetail
 CONFIG+=testcase
+CONFIG+=parallel_test
 
 include(../../../common.pri)
 

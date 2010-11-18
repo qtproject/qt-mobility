@@ -42,46 +42,113 @@
 #ifndef QDECLARATIVEGRAPHICSGEOMAP_H
 #define QDECLARATIVEGRAPHICSGEOMAP_H
 
-#include "qdeclarativecoordinate_p.h"
-#include "qgraphicsgeomap.h"
-#include "qgeomapobject.h"
-
-class QGraphicsItem;
+#include <qgraphicsgeomap.h>
+#include <QtDeclarative/qdeclarativeitem.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
+class QGeoMapObject;
+class QGeoMapData;
+class QGeoServiceProvider;
+class QDeclarativeCoordinate;
+class QDeclarativeGeoServiceProvider;
 
-class QDeclarativeGraphicsGeoMap : public QGraphicsGeoMap
+class QDeclarativeGraphicsGeoMap : public QDeclarativeItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+    Q_ENUMS(MapType)
+    Q_ENUMS(ConnectivityMode)
+
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
+    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY declarativeCenterChanged)
+    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> objects READ objects)
 
     Q_CLASSINFO("DefaultProperty", "objects")
 
 public:
-    QDeclarativeGraphicsGeoMap(QGraphicsItem *parent = 0);
+    enum MapType {
+        NoMap = QGraphicsGeoMap::NoMap,
+        StreetMap = QGraphicsGeoMap::StreetMap,
+        SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
+        SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
+        TerrainMap = QGraphicsGeoMap::TerrainMap
+    };
+
+    enum ConnectivityMode {
+        NoConnectivity = QGraphicsGeoMap::NoConnectivity,
+        OfflineMode = QGraphicsGeoMap::OfflineMode,
+        OnlineMode = QGraphicsGeoMap::OnlineMode,
+        HybridMode = QGraphicsGeoMap::HybridMode
+    };
+
+public:
+    QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent = 0);
     ~QDeclarativeGraphicsGeoMap();
+
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
+
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
+
+    // TODO make these more QML like
+    //QList<MapType> supportedMapTypes() const;
+    //QList<ConnectivityMode> supportedConnectivityModes() const;
+
+    void setSize(const QSizeF &size);
+    QSizeF size() const;
+
+    void setZoomLevel(qreal zoomLevel);
+    qreal zoomLevel() const;
+
+    void setCenter(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* center();
+
+    void setMapType(MapType mapType);
+    MapType mapType() const;
+
+    void setConnectivityMode(ConnectivityMode connectivityMode);
+    ConnectivityMode connectivityMode() const;
 
     QDeclarativeListProperty<QGeoMapObject> objects();
 
-    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
-    QDeclarativeCoordinate* declarativeCenter() const;
+    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
+public Q_SLOTS:
+    void pan(int dx, int dy);
 
-    // TODO: the types need to be changed back to QDeclarativeCoordinate*
-    // when fix to QML is available
-    Q_INVOKABLE QObject* toCoordinate(QPointF screenPosition) const;
-    Q_INVOKABLE QPointF toScreenPosition(QObject *coordinate) const;
-    //Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
+protected:
+    void geometryChanged(const QRectF &newGeometry,
+                         const QRectF &oldGeometry);
 
-private slots:
-    void memberCenterChanged(const QGeoCoordinate &coordinate);
-
-signals:
+Q_SIGNALS:
+    void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
+    void sizeChanged(const QSizeF &size);
+    void zoomLevelChanged(qreal zoomLevel);
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
+    void mapTypeChanged(QDeclarativeGraphicsGeoMap::MapType mapType);
+    void connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode);
+
+private Q_SLOTS:
+    void updateMapDisplay(const QRectF& target);
+    void internalCenterChanged(const QGeoCoordinate &coordinate);
+    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
+    void internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+    void centerLatitudeChanged(double latitude);
+    void centerLongitudeChanged(double longitude);
+    void centerAltitudeChanged(double altitude);
 
 private:
     static void object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
@@ -89,7 +156,18 @@ private:
     static QGeoMapObject* object_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
     static void object_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
 
-    QDeclarativeCoordinate* m_center;
+    QDeclarativeGeoServiceProvider* plugin_;
+    QGeoServiceProvider* serviceProvider_;
+    QGeoMappingManager* mappingManager_;
+    QGeoMapData* mapData_;
+
+    qreal zoomLevel_;
+    QDeclarativeCoordinate* center_;
+    QDeclarativeGraphicsGeoMap::MapType mapType_;
+    QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
+    QSizeF size_;
+    QList<QGeoMapObject*> objects_;
+
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 

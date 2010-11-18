@@ -44,8 +44,8 @@ userinclude ../src //for cntstd.h
 userinclude ../cntsrv/inc //for persistencelayer.h 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-userinclude 	../cntplsql/inc 
-userinclude 	../inc			//for ccontactprivate.h
+userinclude 	../cntplsql/inc
+userinclude 	../inc			//for ccontactprivate.h, cntdbconsts_internal.h
 
 // Qt Macros
 MACRO		UNICODE
@@ -95,7 +95,11 @@ source		cqwertykeymap.cpp
 source		ckoreankeymap.cpp
 //source		cntmetadataoperation.cpp
 source		cpplpresencetable.cpp
-source    cntsqlsearch.cpp
+source    	cntsqlsearch.cpp
+source 		cntsqlkoreanitut.cpp
+source		cntsqlsearchbase.cpp
+source		cntsqlfactory.cpp
+source		koreaninput.cpp
 
 LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 
@@ -109,12 +113,12 @@ LIBRARY			qtcore.lib
 LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
+LIBRARY     	xqsettingsmanager
+LIBRARY      	platformenv.lib
+LIBRARY         charconv.lib
 
 OPTION ARMCC --visibility_inlines_hidden
-
 
 EPOCALLOWDLLDATA
 STDCPP
 SMPSAFE
-
-

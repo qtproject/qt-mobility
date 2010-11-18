@@ -45,12 +45,10 @@
 
 #include "qgalleryitemrequest.h"
 #include "qgalleryqueryrequest.h"
-#include "qgalleryremoverequest.h"
 #include "qgallerytyperequest.h"
 
 #include "qgallerytrackerchangenotifier_p.h"
 #include "qgallerytrackereditableresultset_p.h"
-#include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackertyperesultset_p.h"
 
@@ -67,7 +65,6 @@ public:
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
     QGalleryAbstractResponse *createTypeResponse(QGalleryTypeRequest *request);
     QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
-    QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
 private:
     QGalleryDBusInterfacePointer daemonInterface();
@@ -235,23 +232,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     }
 }
 
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
-        QGalleryRemoveRequest *request)
-{
-    QDocumentGallery::Error error = QDocumentGallery::NoError;
-
-    QString fileName = QGalleryTrackerSchema::uriFromItemId(&error, request->itemId());
-
-    if (fileName.isNull()) {
-        if (error == QDocumentGallery::NoError)
-            error = QDocumentGallery::ItemIdError;
-
-        return new QGalleryAbstractResponse(error);
-    } else {
-        return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
-    }
-}
-
 QDocumentGallery::QDocumentGallery(QObject *parent)
     : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
@@ -268,7 +248,6 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType t
     case QGalleryAbstractRequest::QueryRequest:
     case QGalleryAbstractRequest::ItemRequest:
     case QGalleryAbstractRequest::TypeRequest:
-    case QGalleryAbstractRequest::RemoveRequest:
         return true;
     default:
         return false;
@@ -297,8 +276,6 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::TypeRequest:
         return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
-    case QGalleryAbstractRequest::RemoveRequest:
-        return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:
         return 0;
     }

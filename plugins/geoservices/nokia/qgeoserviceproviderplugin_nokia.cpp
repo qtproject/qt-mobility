@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeoserviceproviderplugin_nokia.h"
@@ -82,5 +89,8 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerE
 {
     return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
 }
+
+const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");
+const QString QGeoServiceProviderFactoryNokia::defaultReferer("qtlocationapi");
 
 Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderFactoryNokia)

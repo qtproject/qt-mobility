@@ -63,7 +63,7 @@ the same level of review and testing as the rest of the APIs.
 The API exposed by the classes in this component are not stable, and will
 undergo modification or removal prior to the final release of Qt Mobility.
 
-    \sa QMediaService::control(), QCamera
+    \sa QCamera
 */
 
 /*!
@@ -133,6 +133,8 @@ Set the metering mode to \a mode.
 
 /*!
   \enum QCameraExposureControl::ExposureParameter
+  \value InvalidParameter
+         Parameter is invalid.
   \value ISO
          Camera ISO sensitivity, specified as integer value.
   \value Aperture
@@ -157,6 +159,16 @@ Set the metering mode to \a mode.
 */
 
 /*!
+  \enum QCameraExposureControl::ParameterFlag
+  \value AutomaticValue
+         Use the automatic values for parameters.
+  \value ReadOnly
+         Parameters are read only.
+  \value ContinuousRange
+         Parameters are continous in their range.
+*/
+
+/*!
   \fn QCameraExposureControl::isParameterSupported(ExposureParameter parameter) const
 
   Returns true is exposure \a parameter is supported by backend.
@@ -168,16 +180,17 @@ Set the metering mode to \a mode.
   Returns the exposure \a parameter value, or invalid QVariant() if the value is unknown or not supported.
 */
 
+/*!
+  \fn QCameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
+
+  Returns the properties of exposure \a parameter.
+*/
+
 
 /*!
-  \fn QCameraExposureControl::supportedParameterRange(ExposureParameter parameter, bool *continuous) const
+  \fn QCameraExposureControl::supportedParameterRange(ExposureParameter parameter) const
 
   Returns the list of supported \a parameter values;
-
-  If the camera supports arbitrary values within the supported range,
-  *\a continuous is set to true, otherwise *\a continuous is set to false.
-  In this case at least the minimum and maximim values should be returned in the list.
-  Backend still can return more than two values if some of them are preffered intended to be displayed to user.
 */
 
 /*!
@@ -205,7 +218,7 @@ Set the metering mode to \a mode.
 /*!
     \fn void QCameraExposureControl::exposureParameterChanged(int parameter)
 
-    Signal emitted when the exposure \a parameter has changed to \a value.
+    Signal emitted when the exposure \a parameter has changed.
 */
 
 /*!

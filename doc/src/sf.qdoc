@@ -304,7 +304,8 @@ The elements and attributes have the following meanings:
         \o "
         \o ipcaddress
         \o The socket name or path that the inter-process service will be published
-           on that will provide clients with remote access.
+           on that will provide clients with remote access. Should be the same name
+           as the executable for the service without any suffix such as ".exe" etc.
     \row
         \o "
         \o name
@@ -464,10 +465,12 @@ way for the new service implementation.
 Qt Service Framework provides a mechanism for out of process services
 so that clients can remotely load interfaces.  These inter-process 
 services are deployed similarly to local services, using the IPC address
-tag for the XMl description and calling QRemoteServiceClassRegister::registerType()
-to add the service to the remote services manager.  Clients access services
-via the metaobject similarly to in-process services.  The \l{Echo Client Example}
-demonstrates how remote services can be instantiated and used.
+tag from the XML description and calling QRemoteServiceRegister::publishEntries()
+to add the service to the remote services manager. Clients access services
+via the metaobject similarly to in-process services and each remote service 
+is represented as a QRemoteServiceRegister::Entry by using 
+QRemoteServiceRegister::createEntry(). The \l{Echo Client Example} demonstrates 
+how remote services can be instantiated and used.
 
 Inter-process services are deployed using a variety of different IPC mechanisms
 available on the current platform and as such may inherit several limitations.  For
@@ -476,25 +479,224 @@ environments services are published using QtDBus if it is available otherwise
 falls back on QLocalSocket for inter-process communication.
 
 \section2 D-Bus Services
+
 The QtDBus module is used to provide IPC in correspondance to the Qt Service 
 Framework architecture and provides access to signals, slots, invokable methods
-and properties.  A current known limitation for Qt Service Framework using QtDBus
-for IPC is that enumerators cannot be read due to lack of support on D-Bus.  This
-will be added in future versions once the QtDBus module enables enumerator support.
+and properties.
+
+The D-Bus protocol requires concept identifiers that represent D-Bus objects: 
+service names, object paths, and interfaces. D-Bus objects are registered using 
+a combination of the service description supplied in the service XML file. An
+example of this, using the previous sample XML description, is provided below.
+
+\table 90%
+\header \o D-Bus Concept  \o Derived Name
+\row    \o Service Name   \o "com.qtmobility.sfw.TestService"
+\row    \o Object Path    \o "/com/nokia/qt/ILocation/1/4/"
+\row    \o Interface      \o ""
+\endtable
+
+\section3 Limitations
+
+A current known limitation for Qt Service Framework using QtDBus for IPC is
+that enumerators cannot be read due to lack of support on D-Bus.  This will be
+added in future versions once the QtDBus module enables enumerator support. A
+current known workaround is to manually define and use integers as demonstrated
+in the \l{Service Framework using QML Example}{Declarative Serviceframework
+Dialer} example. Furthermore, due to the nature of IPC, pointers to objects
+cannot be passed between services and clients.  Unfortunately, this also means
+that anything wrapped in a typedef macro cannot be communicated effectively
+between processes.
+
+\section3 Service Autostart
+D-Bus services inherit automatic start support by providing .service files to the
+D-Bus daemon search paths. Aside from producing these files manually, the 
+servicefw tool provides an option to generate the corresponding files inside
+the local user D-Bus folder for convenience. This will allow all client
+requests to automatically startup the service if it isn't already running. 
+Consequently, once every client has closed its service instance the service will
+be automatically terminated after invoking any slots connected to notification signals.
+
+Running the following command will enable rendezvous for D-Bus IPC.
+
+\code
+./servicefw dbusservice <service-xml-file> <service-file>
+\endcode
+
+The .service files will typically be generated in the $home/.local/share/dbus-1/services
+directory unless the $$XDG_DATA_HOME environment variable is set. If the --system 
+option is used the tool will generate the file inside /usr/share/dbus-1/services if 
+the user permissions are met.
+
+Note that in order for the autostart feature to function correctly, the service 
+needs to be either pre-registered or registered at run-time so that clients can use
+a QServiceManager to discover the IPC interfaces that invoke the D-Bus service files. 
+This is usually done on deployment by adding services through the servicefw tool. 
+
 
 \section2 Symbian Client-Server Framework
-Symbian IPC services are automatically instantiated if the service is not already 
-running.  Rendezvous support allows server-side processes to be created upon
-client request and every service has a server of its own.
 
-\section2 Local Socket Services
+\section3 Limitations
+Pointers to objects, and anything wrapped in a typedef cannot be passed
+between services and clients.  It's recommended that IPC messages
+be kept small on Symbian when possible.  Symbian Client-Server IPC mandates
+a fixed buffer size, currently set at 255 bytes. Messages that are large
+will cause a large number of context switches. This may cause a system
+performance pentalty if a lot of very large messages are transfered frequently.
+
+\section3 Service Autostart
+Symbian IPC will automatically start the server process if required when the client
+calls loadInterface.  The executable name must be the same as the name provided
+<ipcaddress> tag in the xml registration file.  For example <ipcaddress>xyzabc</ipcaddress>
+should have the executable for the service called xyzabc.exe.
+
+\section3 Service registration
+All services must be registered for clients to be able to locate and use them.
+Symbian provides 3 different methods to register services.
+
+\list
+\o \l{Automatic registration}
+\o \l{Secure registration}
+\o \l{ROM build registration}
+\endlist
+
+\section4 Automatic Registration
+Automatic registration is the prefered method for services that are not
+Symbian Signed and don't require high levels of security.  The XML
+file is copied into the import directory of the IPC backend.  In Qt
+project files this can be done by:
+
+\code
+xmlautoimport.path = /private/2002AC7F/import/
+xmlautoimport.sources = <service xml file>.xml
+DEPLOYMENT += xmlautoimport
+\endcode
+
+Or in a symbian .pkg file by:
+
+\code
+"/epoc32/data/z/private/2002AC7F/import/<service xml file>.xml" - "c:\private\2002AC7F\import\<service xml file>.xml"
+\endcode
+
+\section4 Secure Registration
+For services that are Symbian Signed and require a higher level of security they
+may chose to use a post install program.  The authenticity check of the service is done during
+registration using the VID/SID.  If the installer defines the VID it is stored in the
+registration database, and only the same VID maybe used to remove the service or reinstall it.
+If the VID is undefined then the SID is used.  The VID/SID remain in the registration
+database after unregistration locking the name to the VID/SID.  Only installers using the
+same VID/SID may register a service of the same name.
+
+An example project can be found at \c {examples/serviceinstaller_sfw_symbian}.
+
+More info about VID and SID can be found from:
+\list
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+\endlist
+
+\section4 ROM build registration
+For Symbian application built into the rom image registration must be done at
+build time using the host tool servicedbgen. To register a service run
+the command:
+
+\code
+servicedbgen -tall add <service xml file>
+\endcode
+
+Appropriate iby files, and settings are required for including the service executable
+and related files in the rom image.
+
+\section3 Service Security Filters
+Services can install a filter function to check the credentials
+of a client on initial connection and then terminate connections if desired.
+The filter is a function:
+
+\code
+bool securityFilter(const void *p)
+{
+    const RMessage2 *aMessage = reinterpret_cast<const RMessage2*>(p);
+    if(check_security) {
+        return true; // accept connection
+    }
+    else {
+        retun false; // reject connection
+    }
+}
+\endcode
+
+Returning true returns CPolicyServer::EPass and false returns CPolicyServer::EFail
+to the Client-Server secuity check.  Registration of the filter is done by
+calling QRemoteServiceRegister::setSecurityFilter().  The Symbian Policy Server
+API can be used to work with the RMessage2 to extract security policy details, such
+as RMessage2::HasCapability or RMessage2::VendorId().
+
+\section3 Error handling
+IPC errors can occur. QObjects returned by the service manager have an additional
+signal created, errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
+client must connect to.  If an error occurs the object must be
+destroyed; no further calls can be made.  The error recovery is left up to
+the client application.
+
+\section2 Local Socket
+
 On platforms that do not provide D-Bus or the Symbian Client-Server Framework, the
-underlying IPC mechanism utilized is a local socket based protocol.  This mechanism
-doesn't currently support rendezvous and requires service processes to be started
-manually.
+underlying IPC mechanism utilized is a local socket based protocol.  
+
+\section3 Limitations
+Similar to the other IPC mechanisms, passing object pointers or typedefs will not
+work on local socket. Local socket also requires the executable for the service to
+be installed somewhere in your PATH for autostart to work.  Not all platforms support
+all fields on the QRemoteServiceResgiterCredentials and will return -1 in unsupported
+fields.
+
+\section3 Service Autostart
+This mechanism provides automatic service startup. The <ipcaddress> tag
+must be set to the executable filename.  For example
+<ipcaddress>xyzabc</ipcaddress> must be used if the executable is xyzabc,
+or xyzabc.exe on windows systems.  The PATH is searched for the executable.
+If the executable is not found, or the service does not start, then
+the error is reported to the client.
+
+\section3 Service Registration
+All services must be registered.  The 'servicefw' tool registers xml
+files.  It must be run before a service can be used. For example:
+
+\code
+servicefw add <service xml file>
+\endcode
+
+\section3 Service Security Filters
+The service can install a security filter to reject connections from
+some clients. This applies to D-Bus and local socket implementations of IPC.
+
+\code
+bool securityFilter(const void *p)
+{
+    const QRemoteServiceRegisterCredentials *cr = (const struct QRemoteServiceRegisterCredentials *)p;
+    if(cr->uid == 0) {
+        return true; // accept connection
+    }
+    else {
+        retun false; // reject connection
+    }
+}
+
+struct QRemoteServiceRegisterCredentials {
+    int fd;
+    int pid;
+    int uid;
+    int gid;
+};
+\endcode
+
+Returning true accepts the connect, false terminates it.  Certain
+platforms do not provide all the results, and undefined values are
+set to -1. Registration of the filter is done by
+calling QRemoteServiceRegister::setSecurityFilter().  Only 1 filter maybe installed
+at one time.
 
 \section2 Error handling
-
 Out of process services behave similarly to local services, with one
 exception.  There can be IPC errors, or the remote service can
 terminate unexpectedly.  QObjects returned by the service manager for
@@ -504,8 +706,20 @@ client must connect to.  If an error occurs the object must be
 destroyed; no further calls can be made.  The error recovery is left up to
 the client application.
 
-\section1 Examples
 
+\section1 Main Classes
+\annotatedlist servicefw
+
+
+\section1 QML Classes
+The Qt Service Framework offers discovery and selection of services through declarative
+UI by providing service and service list elements. Detailed information can be found 
+at \l{QML Service Framework Plugin}.
+
+\annotatedlist qml-serviceframework
+
+
+\section1 Examples
 \list
     \o \l{Service Browser Example}
     \o \l{File Manager Plugin Example}
@@ -513,10 +727,8 @@ the client application.
     \o \l{Notes Manager Plugin Example}
     \o \l{Notes Manager Example}
     \o \l{Echo Client Example}
+    \o \l{declarative-sfw-notes}{Declarative Notes Manager} 
+    \o \l{declarative-sfw-dialer}{Declarative Serviceframework Dialer} 
 \endlist
-
-
-\section1 Main Classes
-\annotatedlist servicefw
 
 */

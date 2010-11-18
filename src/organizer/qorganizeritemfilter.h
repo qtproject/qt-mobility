@@ -81,12 +81,11 @@ public:
         InvalidFilter,
         OrganizerItemDetailFilter,
         OrganizerItemDetailRangeFilter,
-        OrganizerItemDateTimePeriodFilter,
         ChangeLogFilter,
         ActionFilter,
         IntersectionFilter,
         UnionFilter,
-        LocalIdFilter,
+        IdFilter,
         CollectionFilter,
         DefaultFilter
     };
@@ -113,8 +112,8 @@ protected:
 protected:
     friend class QOrganizerItemFilterPrivate;
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
 #endif
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };

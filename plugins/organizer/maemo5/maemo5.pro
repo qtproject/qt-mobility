@@ -8,6 +8,7 @@ MOBILITY = organizer
 
 CONFIG += link_pkgconfig
 PKGCONFIG += calendar-backend
+PKGCONFIG += alarm
 
 QT += sql
 
@@ -22,9 +23,13 @@ HEADERS += qorganizermaemo5_p.h \
     qorganizerrecurrencetransform.h \
     qorganizeritemtransform.h \
     qorganizerasynchprocess.h \
-    qorganizercaldbaccess.h
+    qorganizercaldbaccess.h \
+    qorganizerdbcache.h \
+    qorganizerdbcachewrappers.h
 SOURCES += qorganizermaemo5.cpp \
     qorganizerrecurrencetransform.cpp \
     qorganizeritemtransform.cpp \
     qorganizerasynchprocess.cpp \
-    qorganizercaldbaccess.cpp
+    qorganizercaldbaccess.cpp \
+    qorganizerdbcache.cpp \
+    qorganizerdbcachewrappers.cpp

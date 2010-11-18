@@ -48,16 +48,38 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QFeedbackActuator
-    \brief The QFeedbackActuator class is describing actuators for tactile feedback.
+    \brief The QFeedbackActuator class describes actuators for tactile feedback.
     \inmodule QtFeedback
 
-    The class gives access to a specified actuator for tactile feedback.
-    It allows the program to know its state and can be used
-    in combination with QFeedbackHapticsEffect.
+    An actuator knows how to play a \l{QFeedbackEffect}{tactile
+    effect}. The class gives access to a specified actuator.
 
-    You can query the actuators available on your system.
+    An actuator can be used to play \l{QFeedbackHapticsEffect}s using
+    \l{QFeedbackHapticsEffect::}{setActuator()}. Usually, you will not
+    have to set an actuator directly on a QFeedbackHapticsEffect.
+    QFeedbackHapticsEffect and QFeedbackFileEffect uses an appropriate
+    actuator by default. However, you can query which actuators
+    are available with actuators().
 
-    \sa QFeedbackHapticsEffect
+    \code
+     QFeedbackActuator actuator; // default system actuator
+     QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
+     foreach (const QFeedbackActuator& temp, actuators) {
+         if (temp.name() == "ExampleActuatorName") {
+             actuator = temp;
+         }
+     }
+    \endcode
+
+    The QFeedbackActuator class gives access to information about the
+    actuator it represents. You can query if the actuator \l{isEnabled()}{is enabled}
+    and if it \l{isValid()}{is valid }. Whether an actuator is ready to play an
+    effect can be queried by checking the actuator's state(). The
+    \l{QFeedbackActuator::}{State} enum describes the states and
+    actuator can have. You can also get a human readable name for the actuator with the
+    name() function.
+
+    \sa QFeedbackHapticsEffect QFeedbackFileEffect QFeedbackEffect
 */
 
 /*!
@@ -72,40 +94,45 @@ QTM_BEGIN_NAMESPACE
 
     \value Busy    The actuator is busy.
     \value Ready   The actuator is ready to play an effect.
-    \value Unknown The actuator is in an anknown state.
+    \value Unknown The actuator is in an unknown state.
 */
 
 
 /*!
-    Constructs a QFeedbackActuator. It will represent the default actuator on the system.
+    Constructs a QFeedbackActuator, passing \a parent to the QObject constructor.
 
+    The object will represent the default actuator on the system.
     If there are no actuators attached to the system, isValid() will return false.
 
     \sa isValid()
 */
-QFeedbackActuator::QFeedbackActuator() : m_id(-1)
+QFeedbackActuator::QFeedbackActuator(QObject *parent) : QObject(parent), m_id(-1)
 {
-    QList<QFeedbackActuator> list = actuators();
-    if  (!list.isEmpty())
-        *this = list.first();
+    QList<QFeedbackActuator*> list = actuators();
+    if  (!list.isEmpty()) {
+        QFeedbackActuator* defaultActuator = list.first();
+        m_id = defaultActuator->id();
+    }
 }
 
 /*!
-    Constructs a QFeedbackActuator with id id.
+    Constructs a QFeedbackActuator with id \a id, passing \a parent to the QObject constructor.
 
-    This will be used by plugins to represents their actuators.
+    This is used by plugins to represents their actuators.
 
     \sa isValid()
 */
-QFeedbackActuator::QFeedbackActuator(int id) : m_id(id)
+QFeedbackActuator::QFeedbackActuator(QObject *parent, int id) : QObject(parent), m_id(id)
 {
 }
 
+/*!
+    \property QFeedbackActuator::id
+    \brief id of the feedback actuator.
+*/
 
 /*!
-    \fn QFeedbackActuator::id() const
-
-    returns the id of the actuator
+    Returns the id of the actuator.
 */
 int QFeedbackActuator::id() const
 {
@@ -113,9 +140,12 @@ int QFeedbackActuator::id() const
 }
 
 /*!
-    \fn QFeedbackActuator::isValid() const
+    \property QFeedbackActuator::valid
+    \brief validity of the feedback actuator
+*/
 
-    returns true if the actuator is valid.
+/*!
+    Returns true if the actuator is valid.
 */
 bool QFeedbackActuator::isValid() const
 {
@@ -123,9 +153,12 @@ bool QFeedbackActuator::isValid() const
 }
 
 /*!
-    \fn QFeedbackActuator::name() const
+    \property QFeedbackActuator::name
+    \brief name of the feedback actuator
+*/
 
-    returns the name of the actuator.
+/*!
+    Returns the name of the actuator.
 */
 QString QFeedbackActuator::name() const
 {
@@ -133,9 +166,12 @@ QString QFeedbackActuator::name() const
 }
 
 /*!
-    \fn QFeedbackActuator::state() const
+    \property QFeedbackActuator::state
+    \brief state of the feedback actuator
+*/
 
-    returns the state of the actuator.
+/*!
+    Returns the state of the actuator.
 */
 QFeedbackActuator::State QFeedbackActuator::state() const
 {
@@ -143,9 +179,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 }
 
 /*!
-    \fn QFeedbackActuator::isCapabilitySupported(Capability capability) const
-
-    returns if the actuator supports the capability capability.
+    Returns if the actuator supports the supplied \a capability.
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
@@ -153,9 +187,12 @@ bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 }
 
 /*!
-    \fn  QFeedbackActuator::isEnabled() const
+    \property QFeedbackActuator::enabled
+    \brief whether the feedback actuator is enabled
+*/
 
-    returns true if you can use this actuator to start effects.
+/*!
+    Returns true if you can use this actuator to start effects.
 */
 bool QFeedbackActuator::isEnabled() const
 {
@@ -163,21 +200,33 @@ bool QFeedbackActuator::isEnabled() const
 }
 
 /*!
-    \fn  QFeedbackActuator::setEnabled(bool enabled)
+    Allows you to enable or disable a actuator.  If \a enabled is true, the actuator will be enabled,
+    and otherwise it will be disabled.
 
-    Allows to enable or disable a actuator to \a enabled.
+    \note Some systems may not allow you to change whether an actuator is enabled.
 */
 void QFeedbackActuator::setEnabled(bool enabled)
 {
-    QFeedbackHapticsInterface::instance()->setActuatorProperty(*this, QFeedbackHapticsInterface::Enabled, enabled);
+    if (isEnabled() != enabled) {
+        QFeedbackHapticsInterface::instance()->setActuatorProperty(*this, QFeedbackHapticsInterface::Enabled, enabled);
+        emit enabledChanged();
+    }
 }
+
+/*!
+    \fn void QFeedbackActuator::enabledChanged()
+
+    This signal is emitted when the actuator is requested to enable or disable itself.
+
+    \sa isEnabled()
+*/
 
 /*!
     \fn QFeedbackActuator::actuators()
 
-    returns the list of actuators available on the system.
+    Returns the list of actuators available on the system.
 */
-QList<QFeedbackActuator> QFeedbackActuator::actuators()
+QList<QFeedbackActuator*> QFeedbackActuator::actuators()
 {
     return QFeedbackHapticsInterface::instance()->actuators();
 }
@@ -185,7 +234,7 @@ QList<QFeedbackActuator> QFeedbackActuator::actuators()
 /*!
     \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 
-    returns true if the actuators are the same
+    Returns true if this actuator is equal to \a other.
 */
 bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 {

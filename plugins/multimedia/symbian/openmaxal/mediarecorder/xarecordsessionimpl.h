@@ -43,7 +43,7 @@
 #define XARECORDSESSIONIMPL_H
 
 #include <OpenMAXAL.h>
-#include <BADESCA.H>
+#include <badesca.h>
 
 
 class XARecordObserver;
@@ -102,9 +102,12 @@ public:
     void resetEncoderAttributes();
     void setContainerType(const TDesC &aURI);
     TBool setCodec(const TDesC &aURI);
+    TUint32 getBitRate();
     void setBitRate(TUint32 aBitRate);
+    TUint32 getChannels();
     void setChannels(TUint32 aChannels);
     void setOptimalChannelCount();
+    TUint32 getSampleRate();
     void setSampleRate(TUint32 aSampleRate);
     void setOptimalSampleRate();
     TInt32 setCBRMode();

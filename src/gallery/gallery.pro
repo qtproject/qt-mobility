@@ -25,7 +25,6 @@ PUBLIC_HEADERS = \
         qgalleryproperty.h \
         qgalleryquerymodel.h \
         qgalleryqueryrequest.h \
-        qgalleryremoverequest.h \
         qgalleryresource.h \
         qgalleryresultset.h \
         qgallerytype.h \
@@ -38,17 +37,19 @@ SOURCES = \
         qgalleryabstractresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryitemrequest.cpp \
-        qgalleryproperty.cpp \
         qgalleryquerymodel.cpp \
         qgalleryqueryrequest.cpp \
-        qgalleryremoverequest.cpp \
         qgalleryresource.cpp \
         qgalleryresultset.cpp \
-        qgallerytype.cpp \
         qgallerytyperequest.cpp
 
+OTHER_FILES = \
+        qgalleryproperty.qdoc \
+        qgallerytype.qdoc
 
-unix:contains(QT_CONFIG, dbus) {
+simulator: {
+    include (simulator/simulator.pri)
+} else:unix:contains(QT_CONFIG, dbus) {
     include (maemo5/maemo5.pri)
 } else:symbian:contains(mds_enabled, yes) {
      include (symbian/symbian.pri)

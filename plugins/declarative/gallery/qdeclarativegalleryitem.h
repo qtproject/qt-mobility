@@ -60,7 +60,6 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_ENUMS(Status)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
@@ -72,10 +71,10 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Finished    = QGalleryAbstractRequest::Finished,
+        Canceling   = QGalleryAbstractRequest::Canceling,
+        Canceled    = QGalleryAbstractRequest::Canceled,
         Idle        = QGalleryAbstractRequest::Idle,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
     };
 
@@ -84,8 +83,6 @@ public:
     Status status() const { return m_status; }
 
     qreal progress() const;
-
-    QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names);
@@ -105,14 +102,13 @@ public:
     void componentComplete();
 
 public Q_SLOTS:
-    void reload() { m_request.execute(); }
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void reload();
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void availableChanged();
     void metaDataChanged();
 
@@ -122,17 +118,28 @@ Q_SIGNALS:
     void itemIdChanged();
 
 protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CanceledUpdate
+    };
+
     explicit QDeclarativeGalleryItem(QObject *parent = 0);
+
+    void deferredExecute();
+
+    bool event(QEvent *event);
 
     QGalleryItemRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
-    QString m_errorMessage;
     Status m_status;
-    bool m_complete;
+    UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
-    void _q_statusChanged();
+    void _q_stateChanged();
     void _q_itemChanged();
     void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {

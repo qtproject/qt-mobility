@@ -68,14 +68,14 @@ class QVersitContactHandler;
 class QM_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
 public:
-    QVersitContactExporterPrivate(const QString& profile = QString());
+    QVersitContactExporterPrivate(const QStringList& profiles = QStringList());
     ~QVersitContactExporterPrivate();
 
     bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
                        QVersitContactExporter::Error* error);
 
 protected:
-    static bool documentContainsName(const QVersitDocument& document);
+    static void ensureDocumentContainsName(const QContact& contact, QVersitDocument* document);
     void encodeName(
             const QContactDetail& detail,
             const QVersitDocument& document,

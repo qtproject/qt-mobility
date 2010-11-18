@@ -67,7 +67,8 @@ public:
 	TContactItemId CreateL(CContactItem& aItem, TUint aSessionId);
 	CContactItem* ReadLC(TContactItemId aItemId, const CContactItemViewDef& aView, TInt aInfoToRead, TUint aSessionId, TBool aIccOpenCheck = EFalse) const;
 	void UpdateL(CContactItem& aItem, TUint aSessionId, TBool aSpeeDailUpdate = EFalse);
-	CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType);	
+	CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType);
+	void DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType);
 	void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
 	void SetConnectionId(TInt aConnectionId);
 	void CreateTablesL();
@@ -100,6 +101,8 @@ private:
 	TInt NameFieldIndex(const CContactItemField& aNameField) const;
 	void DeleteInLowDiskConditionL(CPplTableBase* aTable, CContactItem* aContactItem);
 
+	bool CheckPredictiveSearchSetting() const;
+
 private:
 	RSqlDatabase&				  iDatabase; // CPplContactItemManager does not own the RSqlDatabase object
 	MLplTransactionManager& 	  iTransactionManager;
@@ -117,6 +120,8 @@ private:
 	RPplIccContactStore&          iIccContactStore;
 	//RColumboSession             iColSession;
 	CPredictiveSearchSynchronizer* iPredictiveSearchSynchronizer; // Owned
+	// If false, then predictive search can't used.
+	bool						  iPredictiveSearchInUse;
 
 	// For unit testing
 	friend class UT_CPplPredictiveSearchTable;

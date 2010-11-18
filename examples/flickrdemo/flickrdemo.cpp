@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -114,7 +114,6 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
 
     setWindowTitle(tr("Flickr Demo"));
 
-    connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
 
     // QGeoPositionInfoSource
     m_location = QGeoPositionInfoSource::createDefaultSource(this);
@@ -179,13 +178,21 @@ void FlickrDemo::delayedInit()
                                  tr("No GPS support detected, using GPS data from a sample log file instead."));
     }
 
+#ifdef BEARER_IN_QTNETWORK
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+#else
     QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager) manager;
     const bool canStartIAP = (manager.capabilities()
                               & QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
     QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
+#endif
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
-        return;
+        qApp->quit();
     }
 
     m_session = new QNetworkSession(cfg, this);
@@ -198,6 +205,8 @@ void FlickrDemo::delayedInit()
 
 void FlickrDemo::networkSessionOpened()
 {
+    connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
+
     // Start listening GPS position updates
     m_location->startUpdates();
 

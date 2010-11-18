@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -49,7 +49,7 @@ Dialog::Dialog() :
     setupUi(this);
     setupGeneral();
 
-    connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+    connect(comboBox,SIGNAL(activated(int)),this,SLOT(tabChanged(int)));
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
     updateDeviceLockedState();
@@ -81,7 +81,6 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
-#ifdef QTM_EXAMPLES_SMALL_SCREEN
     switch(index) {
     case 0:
         setupGeneral();
@@ -117,28 +116,7 @@ void Dialog::tabChanged(int index)
         setupSaver();
         break;
     };
-#else
-    switch(index) {
-    case 0:
-        setupGeneral();
-        break;
-    case 1:
-        setupDevice();
-        break;
-    case 2:
-        setupDisplay();
-        break;
-    case 3:
-        setupStorage();
-        break;
-    case 4:
-        setupNetwork();
-        break;
-    case 5:
-        setupSaver();
-        break;
-    };
-#endif
+
 }
 
 void Dialog::setupGeneral()
@@ -148,8 +126,8 @@ void Dialog::setupGeneral()
     systemInfo = new QSystemInfo(this);
     curLanguageLineEdit->setText( systemInfo->currentLanguage());
 //! [lang]
-    languagesComboBox->clear();
-    languagesComboBox->insertItems(0,systemInfo->availableLanguages());
+    languagesListWidget->clear();
+    languagesListWidget->insertItems(0,systemInfo->availableLanguages());
     countryCodeLabel->setText(systemInfo->currentCountryCode());
 }
 
@@ -160,7 +138,9 @@ void Dialog::setupDevice()
     di = new QSystemDeviceInfo(this);
 //! [createdi]
 //! [batteryLevel]
-    batteryLevelBar->setValue(di->batteryLevel());
+    int level = di->batteryLevel();
+    batteryLevelBar->setValue(level);
+    lcdNumber->display(level);
 //! [batteryLevel]
 
 //! [sig batteryLevelChanged]
@@ -173,6 +153,8 @@ void Dialog::setupDevice()
 
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
+
+    currentBatStat = di->batteryStatus();
 
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
@@ -192,11 +174,12 @@ void Dialog::setupDevice()
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
-    if(di->currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+    currentPowerState = di->currentPowerState();
+    if(currentPowerState == QSystemDeviceInfo::BatteryPower) {
         radioButton_2->setChecked(true);
-    } else  if(di->currentPowerState() == QSystemDeviceInfo::WallPower) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPower) {
         radioButton_3->setChecked(true);
-    } else if(di->currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+    } else if(currentPowerState == QSystemDeviceInfo::WallPowerChargingBattery) {
         radioButton_4->setChecked(true);
     } else {
         radioButton->setChecked(true);
@@ -250,35 +233,35 @@ void Dialog::setupDisplay()
     brightnessLabel->setText(QString::number(di.displayBrightness(0)));
     colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
-    // QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
-    // QString orientStr;
-    // switch(orientation) {
-    // case QSystemDisplayInfo::Landscape:
-    //     orientStr="Landscape";
-    //     break;
-    // case QSystemDisplayInfo::Portrait:
-    //     orientStr="Portrait";
-    //     break;
-    // case QSystemDisplayInfo::InvertedLandscape:
-    //     orientStr="Inverted Landscape";
-    //     break;
-    // case QSystemDisplayInfo::InvertedPortrait:
-    //     orientStr="Inverted Portrait";
-    //     break;
-    // default:
-    //     orientStr="Orientation unknown";
-    //     break;
-    // }
+    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
 
-    // orientationLabel->setText(orientStr);
+    orientationLabel->setText(orientStr);
 
-    // contrastLabel->setText(QString::number(di.contrast((0))));
+    contrastLabel->setText(QString::number(di.contrast((0))));
 
-    // dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
-    // dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
 
-    // physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
-    // physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
+    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
@@ -350,16 +333,19 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
-    cellIdLabel->setText(QString::number(ni->cellId()));
-    locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
-    currentMMCLabel->setText(ni->currentMobileCountryCode());
-    currentMNCLabel->setText(ni->currentMobileNetworkCode());
-
-    homeMMCLabel->setText(ni->homeMobileCountryCode());
-    homeMNCLabel->setText(ni->homeMobileNetworkCode());
 
     networkModeChanged(ni->currentMode());
+    netStatusComboBox->setCurrentIndex((int)ni->currentMode());
+    netStatusComboActivated((int)ni->currentMode());
 
+    cellIdLabel->setText(QString::number(ni->cellId()));
+    locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+    currentMCCLabel->setText(ni->currentMobileCountryCode());
+    currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+    homeMCCLabel->setText(ni->homeMobileCountryCode());
+
+    homeMNCLabel->setText(ni->homeMobileNetworkCode());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -378,6 +364,26 @@ void Dialog::netStatusComboActivated(int index)
     InterfaceLabel->setText(ni->interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 
     operatorNameLabel->setText(ni->networkName((QSystemNetworkInfo::NetworkMode)reIndex));
+
+    if((index == 1 || index == 2 || index == 3)
+        && ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)
+                             != QSystemNetworkInfo::UndefinedStatus) {
+
+        cellIdLabel->setText(QString::number(ni->cellId()));
+        locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+        currentMCCLabel->setText(ni->currentMobileCountryCode());
+        currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+        homeMCCLabel->setText(ni->homeMobileCountryCode());
+        homeMNCLabel->setText(ni->homeMobileNetworkCode());
+    } else {
+        cellIdLabel->setText("");
+        locationAreaCodeLabel->setText("");
+        currentMCCLabel->setText("");
+        currentMNCLabel->setText("");
+        homeMCCLabel->setText("");
+        homeMNCLabel->setText("");
+    }
 }
 
 void Dialog::getVersion(int index)
@@ -502,11 +508,12 @@ void Dialog::setSaverEnabled(bool b)
 void Dialog::updateBatteryStatus(int level)
 {
     batteryLevelBar->setValue(level);
+    lcdNumber->display(level);
 }
 
 void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 {
-
+    currentPowerState = newState;
     switch (newState) {
     case QSystemDeviceInfo::BatteryPower:
         {
@@ -533,13 +540,13 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 {
-    // this wont annoy users will it?
+    if(currentBatStat == status || currentPowerState != QSystemDeviceInfo::BatteryPower)
+        return;
     QString msg;
-//    if(di->isBatteryCharging()) {
         switch(status) {
         case QSystemDeviceInfo::BatteryCritical:
             {
-                msg = " Battery is Critical (4% or less), please save your work or plug in the charger.";
+                msg = "Battery is Critical (4% or less), please save your work or plug in the charger.";
                 QMessageBox::critical(this,"QSystemInfo",msg);
             }
             break;
@@ -553,7 +560,6 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             {
                 msg = "Battery is Low (40% or less)";
                 QMessageBox::information(this,"QSystemInfo",msg);
-
             }
             break;
         case QSystemDeviceInfo::BatteryNormal:
@@ -568,12 +574,15 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             }
             break;
         };
-  //  }
-
+        currentBatStat = status;
 }
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
 {
+    if (strength < 0) {
+        strength = 0;
+    }
+
     if(mode == QSystemNetworkInfo::WlanMode) {
         if(netStatusComboBox->currentText() == "Wlan") {
             signalLevelProgressBar->setValue(strength);
@@ -738,17 +747,19 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
 
 void Dialog::updateProfile()
 {
+
     if(di) {
         QString profilestring;
+        qDebug() << di->currentProfile();
         switch(di->currentProfile()) {
-            case QSystemDeviceInfo::UnknownProfile:
-            {
-                profilestring = "Unknown";
-            }
-            break;
             case QSystemDeviceInfo::SilentProfile:
             {
                 profilestring = "Silent";
+            }
+            break;
+            case QSystemDeviceInfo::BeepProfile:
+            {
+                profilestring = "Beep";
             }
             break;
             case QSystemDeviceInfo::NormalProfile:
@@ -777,10 +788,14 @@ void Dialog::updateProfile()
             }
             break;
             case QSystemDeviceInfo::CustomProfile:
-                {
-                    profilestring = "custom";
-                }
-                break;
+            {
+                profilestring = "custom";
+            }
+            break;
+            default:
+            {
+                profilestring = "Unknown";
+            }
         };
         profileLabel->setText(profilestring);
     }

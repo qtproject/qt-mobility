@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -223,10 +223,25 @@ void BearerMonitor::updateConfigurations()
         itemMap.insert(item->data(0, Qt::UserRole).toString(), item);
     }
 
+    QNetworkConfiguration defaultConfiguration = manager.defaultConfiguration();
+    QTreeWidgetItem *defaultItem = itemMap.take(defaultConfiguration.identifier());
+
+    if (defaultItem) {
+        updateItem(defaultItem, defaultConfiguration);
+
+        if (defaultConfiguration.type() == QNetworkConfiguration::ServiceNetwork)
+            updateSnapConfiguration(defaultItem, defaultConfiguration);
+    } else {
+        configurationAdded(defaultConfiguration);
+    }
+
     QList<QNetworkConfiguration> allConfigurations = manager.allConfigurations();
 
     while (!allConfigurations.isEmpty()) {
         QNetworkConfiguration config = allConfigurations.takeFirst();
+
+        if (config.identifier() == defaultConfiguration.identifier())
+            continue;
 
         QTreeWidgetItem *item = itemMap.take(config.identifier());
         if (item) {
@@ -237,15 +252,6 @@ void BearerMonitor::updateConfigurations()
         } else {
             configurationAdded(config);
         }
-    }
-
-    QNetworkConfiguration defaultConfiguration = manager.defaultConfiguration();
-    if (defaultConfiguration.type() == QNetworkConfiguration::UserChoice) {
-        QTreeWidgetItem *item = itemMap.take(defaultConfiguration.identifier());
-        if (item)
-            updateItem(item, defaultConfiguration);
-        else
-            configurationAdded(defaultConfiguration);
     }
 
     foreach (const QString &id, itemMap.keys())

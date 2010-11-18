@@ -74,7 +74,6 @@ public:
 
     QString name;
     QUrl iconUrl;
-    QString description;
     QLandmarkCategoryId id;
     static QStringList commonKeys;
 };

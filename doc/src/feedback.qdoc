@@ -30,13 +30,14 @@
 \page feedback.html
 \title Feedback
 
-\brief An API enabling a client to control the vibration of the device (when a vibrator is used)
- or the piezo feedback from the screen.
+\brief An API enabling a client to provide tactile and audio feedback to user actions.
 
 \ingroup mobility
 
-The Feedback API enables a client to control the vibration of the device
-(when a vibrator is used) or the piezo feedback from the screen.
+The Feedback API enables a client to provide feedback (both tactile and audio) to the
+user in response to their actions (for example, touching an onscreen button), and to
+control the vibration of the device (when a vibrator is used) or the piezo feedback
+from the screen.
 
 This is part of the Qt Mobility Project.
 
@@ -51,25 +52,26 @@ namespace impacts on application development.
 
 \section1 Overview
 
-The Feedback API allows application developers to implement tactile feedback
+The Feedback API allows application developers to implement feedback and programmatic vibration
 in their applications.  The API provides abstractions for various types of
-tactile feedback, and allows custom implementations of these types of feedback.
+feedback, and allows custom implementations of these types of feedback.
 
 The QFeedbackEffect class provides a simple interface to allow developers to
 start, stop or pause the playback of an effect.  It is an abstract class which
 is implemented by QFeedbackHapticsEffect and QFeedbackFileEffect.  In addition,
-it allows the instantaneous playback of tactile effects which match the system
+it allows the instantaneous playback of feedback effects which match the system
 theme.
 
 A QFeedbackHapticsEffect is a custom effect which allows a program to play a
 haptic effect on an actuator.  Such an effect might have a duration, intensity,
 and envelope of playback (including attack time and intensity, and fade time
-and intensity), as well as a period if it is a periodic effect.
+and intensity), as well as a period if it is a periodic (repeating) effect.
 
-A QFeedbackFileEffect is a haptic tune saved in a file which may be played
-back.  These tunes must be created by a third-party application which can
-create tune files which are understood by the QFeedbackFileInterface plugin
-which is used to play back the file effect on the device.
+A QFeedbackFileEffect is a haptic tune or audio file saved in a file which may be played
+back.  These effects must be created by third-party applications, and a plugin
+which supports the specific file format must be installed.  In particular, note that
+audio effects are generally limited to simple formats, to reduce latency.  You can
+check what formats are supported by the system by calling QFeedbackFileEffect::supportedMimeTypes().
 
 For the vast majority of use cases, the QFeedbackEffect, QFeedbackHapticsEffect
 and QFeedbackFileEffect classes are the only classes which developers will use
@@ -93,10 +95,9 @@ Generally, the device platform will provide an implementation of each of the
 three different interfaces, which will be the default plugins used for the
 various QFeedbackEffects.
 
-Please note that the plugin API is under active development and subject to
-change.
-
 \section1 Usage
+
+\note On Symbian vibration feature needs to be enabled in user profile for the API to work.
 
 The most common use of the API is to play system theme effects for user
 interface interaction notifications (e.g., button clicks, etc).  These types
@@ -132,7 +133,7 @@ Certain operations cannot be performed on an effect if it is in a certain
 state.  The current state of the effect may be queried via the base-class API:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Query the state of a custom haptic effect
 
-All custom effects are played using a particular
+All custom effects are played using a specific
 \l{QFeedbackActuator}{device actuator}.  By default, the effect is played via
 the actuator which the current haptic effect provider plugin considers to be
 the system default actuator, and so most application developers will not need
@@ -142,13 +143,14 @@ knowledge of either the name or the id of the actuator on which the developer
 wishes the effect to be played:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Set the actuator which should play the custom effect
 
-Finally, there is software available which allows haptic tunes to be saved to
+Finally, there is software available which allows "haptic tunes" to be saved to
 file, for later playback.  If the haptic file effect provider plugin on the
 system understands that file format, the file can be played on device:
 \snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play a haptic effect from a file
+In addition, small audio effects can be played as feedback.
 
 If you wish to see a simple example application which demonstrates some of
-the above code in use, please see the \l{hapticsquare}{Hapticsquare} example
+the above code in use, please see the \l{hapticsquare}{Haptic Square} example
 application.
 
 \section1 Main Classes
@@ -162,7 +164,15 @@ application.
 
 \section1 Examples
 \list
-    \o \l{hapticsquare}{Hapticsquare}
-    \o \l{hapticsplayer}{HapticsPlayer}
+    \o \l{hapticsquare}{Haptic Square}
+    \o \l{hapticsplayer}{Haptics Player}
 \endlist
+
+\section1 QML support
+
+For details on the QML support provided for the Feedback API see the documentation for the \l {Feedback QML Plugin}.
+
+\note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined and improved in the next patch release.
+
+
 */

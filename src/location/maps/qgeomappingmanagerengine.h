@@ -71,13 +71,10 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeoMapData* createMapData(QGraphicsGeoMap *geoMap) = 0;
+    virtual QGeoMapData* createMapData() = 0;
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
     QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
-
-    QSize minimumImageSize() const;
-    QSize maximumImageSize() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
@@ -93,9 +90,6 @@ protected:
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);
-
-    void setMinimumImageSize(const QSize &minimumSize);
-    void setMaximumImageSize(const QSize &maximumSize);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 

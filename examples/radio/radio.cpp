@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,6 +47,7 @@ Radio::Radio()
     radio = new QRadioTuner;
     connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
     connect(radio,SIGNAL(signalStrengthChanged(int)),this,SLOT(signalChanged(int)));
+    connect(radio, SIGNAL(error(QRadioTuner::Error)), this, SLOT(error(QRadioTuner::Error)));
 
     if(radio->isBandSupported(QRadioTuner::FM))
         radio->setBand(QRadioTuner::FM);
@@ -167,5 +168,12 @@ void Radio::signalChanged(int)
 void Radio::updateVolume(int v)
 {
     radio->setVolume(v);
+}
+
+void Radio::error(QRadioTuner::Error error)
+{
+    const QMetaObject* metaObj = radio->metaObject();
+    QMetaEnum errorEnum = metaObj->enumerator(metaObj->indexOfEnumerator("Error"));
+    qWarning().nospace() << "Warning: Example application received error QRadioTuner::" << errorEnum.valueToKey(error);
 }
 

@@ -88,7 +88,6 @@ public:
     void setCoordinate(QGeoCoordinate coordinate);
 
 Q_SIGNALS:
-
     void latitudeValidChanged();
     void longitudeValidChanged();
     void altitudeValidChanged();

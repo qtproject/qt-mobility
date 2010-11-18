@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -46,7 +46,7 @@
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -85,7 +85,7 @@ public Q_SLOTS:
     void refresh();
 
 Q_SIGNALS:
-    void managerChanged(QOrganizerItemManager *manager);
+    void managerChanged(QOrganizerManager *manager);
     void currentDayChanged(QDate date);
     void showDayPage(QDate date);
     void showEditPage(const QOrganizerItem &item);
@@ -97,10 +97,11 @@ protected: // from QWidget
 
 private:
     QComboBox* m_managerComboBox;
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QCalendarWidget *m_calendarWidget;
     QLabel *m_dateLabel;
     QListWidget *m_itemList;
+    bool m_ignoreShowDayPageOnceFlag;
 };
 
 #endif // MONTHPAGE_H_

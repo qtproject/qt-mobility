@@ -74,8 +74,8 @@ public:
     void setVolume(int volume);
     bool isMuted() const;
     void setMuted(bool muted);
-    virtual bool isVideoAvailable() const = 0;
-    virtual bool isAudioAvailable() const = 0;
+    virtual bool isVideoAvailable() = 0;
+    virtual bool isAudioAvailable() = 0;
     bool isSeekable() const;
     void play();
     void pause();
@@ -83,7 +83,10 @@ public:
     void reset();
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
-    QMap<QString, QVariant> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
+    QStringList availableExtendedMetaData() const;
+    QString metaDataKeyAsString(QtMultimediaKit::MetaData key) const;
     void load(QUrl url);
     int bufferStatus();
     virtual void setVideoRenderer(QObject *renderer);
@@ -129,7 +132,6 @@ protected:
 	QRect TRect2QRect(const TRect& tr);
 	TRect QRect2TRect(const QRect& qr);
 
-
 protected slots:
     void tick();
     void stalled();
@@ -147,6 +149,7 @@ signals:
     void metaDataChanged();
     void error(int error, const QString &errorString);
     void activeEndpointChanged(const QString &name);
+    void mediaChanged();
     
 private:
     qreal m_playbackRate;

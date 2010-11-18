@@ -16,6 +16,11 @@ symbian {
     } else {
         HEADERS += tst_qmediaplayer_s60.h
         SOURCES += tst_qmediaplayer_s60.cpp
+        TARGET.CAPABILITY = ALL -TCB
+
+        testFiles.sources = testfiles/*
+        testFiles.path = /Data/testfiles
+        DEPLOYMENT += testFiles
     }
 }
 

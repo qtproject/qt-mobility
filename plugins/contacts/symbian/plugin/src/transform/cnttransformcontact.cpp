@@ -63,6 +63,7 @@
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
 #include "cnttransformempty.h"
+#include "cnttransformfavorite.h"
 #include "cntsymbiantransformerror.h"
 #include "cntbackendsdefs.h"
 
@@ -131,6 +132,7 @@ void CntTransformContact::initializeCntTransformContactData()
     
     // not supported on pre-10.1
     m_transformContactData.insert(Presence, new CntTransformPresence);
+    m_transformContactData.insert(Favorite, new CntTransformFavorite);
 
 #else
     // Empty transform class for removing unsupported detail definitions
@@ -234,6 +236,33 @@ void CntTransformContact::transformPostSaveDetailsL(
         delete detailTimestamp;
         detailTimestamp = 0;
     }
+    
+#ifdef SYMBIAN_BACKEND_USE_SQLITE    
+    // In 10.1 onwards, copies of contact images are created after a contact
+	// is saved. The path of the image field is updated and needs to be updated
+	// in the QContact avatar detail
+    CContactItemFieldSet& fieldSet = contactItem.CardFields();
+    
+    // Find image field
+    TInt index = fieldSet.Find(KUidContactFieldCodImage, KUidContactFieldVCardMapUnknown);
+    if (index != KErrNotFound)
+    {
+        // Image path field from list of contact fields
+        CContactItemField& field = fieldSet[index];
+        
+        QContactDetail *detail = transformItemField( field, contact );
+
+        if(detail)
+        {
+            // Update avatar detail
+            QContactAvatar avatar = contact.detail<QContactAvatar>();
+            avatar.setImageUrl(static_cast<QContactAvatar*>(detail)->imageUrl());
+            contact.saveDetail(&avatar);
+            delete detail;
+            detail = 0;
+        }
+    }
+#endif
 }
 
 /*! CntTransform a QContact into a Symbian CContactItem.

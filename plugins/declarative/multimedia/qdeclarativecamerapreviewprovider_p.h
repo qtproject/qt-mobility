@@ -65,7 +65,7 @@ public:
     QDeclarativeCameraPreviewProvider();
     ~QDeclarativeCameraPreviewProvider();
 
-    virtual QImage request(const QString &id, QSize *size, const QSize& requestedSize);
+    virtual QImage requestImage(const QString &id, QSize *size, const QSize& requestedSize);
     static void registerPreview(const QString &id, const QImage &preview);
 };
 

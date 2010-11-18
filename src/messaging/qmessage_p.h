@@ -137,6 +137,8 @@ public:
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QString _url;
+    bool _mimeInformationRetrieved;
+
     static QMessagePrivate* implementation(const QMessage &message);
     static QMessageContentContainerPrivate* containerImplementation(const QMessage &message);
 #endif

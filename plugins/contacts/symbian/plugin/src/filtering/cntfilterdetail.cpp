@@ -43,7 +43,6 @@
 #include <cntfldst.h>
 
 #include "cntfilterdetail.h"
-#include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
 #include "cntsymbianengine.h"
 #include "cnttransformphonenumber.h"
 
@@ -85,18 +84,10 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     QContactDetailFilter detailFilter(filter);
     QString sqlQuery;
     //Check for phonenumber. Special handling needed
-    if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
-            (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes)) {
+    if ( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) ) {
         //Handle phonenumber ...
-		if(detailFilter.detailFieldName().isEmpty()){
-            fetchAllPhoneNumbers(sqlQuery);    
-        }
-        else if(bestMatchingEnabled()) {
-            bestMatchPhoneNumberQuery(filter,sqlQuery,error);
-        }
-        else {
-            createMatchPhoneNumberQuery(filter,sqlQuery,error);
-        }
+        createPhoneNumberQuery(filter,sqlQuery,error);
+		
         if (*error == QContactManager::NoError) {
             //fetch the contacts
             idList =  m_srvConnection.searchContacts(sqlQuery,error);
@@ -130,9 +121,28 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
-            detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-            //cpecial case - phone number matching 
+        else if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
+            //special case - phone number matching 
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName &&
+            detailFilter.detailFieldName().isEmpty()) {
+            //filtering contacts having email address
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName &&
+            detailFilter.detailFieldName().isEmpty()) {
+            //filtering contacts having online account
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName &&
+            detailFilter.detailFieldName() == QContactType::FieldType) {
+            //filtering by contact type is supported
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactGuid::DefinitionName &&
+            detailFilter.detailFieldName() == QContactGuid::FieldGuid) {
+            //filtering by global Uid is supported
             result = true;
         }
     }
@@ -149,15 +159,10 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
       return;
     }
     QContactDetailFilter detailFilter(filter);
-    //display label
-    if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName) {
-      CntFilterDetailDisplayLabel displayLabelFilter;
-      displayLabelFilter.createSelectQuery(filter, sqlQuery, error);
-    }
     //type
-    else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
+    if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
        if (detailFilter.value().toString() == QContactType::TypeContact)
-           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
+           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)<=1";
        else if (detailFilter.value().toString() == QContactType::TypeGroup)
            sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
     }
@@ -231,7 +236,11 @@ void CntFilterDetail::updateForMatchFlag(const QContactDetailFilter& filter,
             break;
         }
         case QContactFilter::MatchFixedString: {
-            *error = QContactManager::NotSupportedError;
+            // Pattern for MatchFixedString:
+            // " ='xyz' COLLATE NOCASE"
+            fieldToUpdate = " ='"
+                       + filter.value().toString() + '\'' + " COLLATE NOCASE";
+            *error = QContactManager::NoError;
             break;
         }
         case QContactFilter::MatchCaseSensitive: {
@@ -271,6 +280,22 @@ void CntFilterDetail::getTableNameWhereClause(const QContactDetailFilter& detail
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
     }
+    else if (detailfilter.detailDefinitionName() == QContactFavorite::DefinitionName) {
+        bool favoritesSearch = true;
+        if (detailfilter.value().canConvert(QVariant::Bool)) {
+            if (!detailfilter.value().toBool()) {
+                //filter to fetch non-favorite contacts
+                favoritesSearch = false;    
+            }
+        }
+        sqlWhereClause += columnName;
+        if (favoritesSearch) {
+            sqlWhereClause += " NOT NULL ";   
+        }
+        else {
+            sqlWhereClause += " IS NULL ";
+        }
+    }
     else {
         sqlWhereClause += ' ' + columnName + ' ';
         QString fieldToUpdate;
@@ -302,6 +327,39 @@ QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QCon
     return QList<QContactLocalId>();
 }
 
+void CntFilterDetail::createPhoneNumberQuery(
+                                      const QContactFilter& filter,
+                                      QString& sqlQuery,
+                                      QContactManager::Error* error)
+{
+    QContactDetailFilter detailFilter(filter);
+    
+    if (detailFilter.detailDefinitionName() != QContactPhoneNumber::DefinitionName) {
+        *error = QContactManager::NotSupportedError;
+        return;
+    }
+    
+    if (detailFilter.detailFieldName().isEmpty()) {
+        fetchAllPhoneNumbers(sqlQuery);
+    }
+    else if (detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
+        // Matches phonenumbers
+        // Phonenumber matching algorithm used
+        if (bestMatchingEnabled()) {
+            bestMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
+        else {
+            createMatchPhoneNumberQuery(filter,sqlQuery,error);
+        }
+    }
+    else if (detailFilter.detailFieldName() == QContactPhoneNumber::FieldSubTypes) {
+        // Finds all mobile numbers. other subtypes not supported
+        createSelectQuery(filter,sqlQuery,error);
+    }
+    else {
+        *error = QContactManager::NotSupportedError; 
+    }
+}
 
 /*
  * Creates an sql query to fetch contact item IDs for all the contact items

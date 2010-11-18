@@ -199,7 +199,8 @@ QCameraControl::~QCameraControl()
 
   \value CaptureMode Indicates the capture mode is changed.
   \value ImageEncodingSettings Image encoder settings are changed, including resolution.
-  \value VideoEncodingSettings Video encoder settings are changed.
+  \value VideoEncodingSettings
+        Video encoder settings are changed, including audio, video and container settings.
   \value Viewfinder Viewfinder is changed.
 */
 

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/test.gpx</file>
+        <file>data/convert-collection-in.xml</file>
+        <file>data/file.omg</file>
+        <file>data/garbage.xml</file>
+        <file>data/AUS-PublicToilet-NewSouthWales.lmx</file>
+        <file>data/AUS-PublicToilet-NewSouthWales.gpx</file>
+        <file>data/AUS-PublicToilet-AustralianCapitalTerritory.gpx</file>
+        <file>data/moreplaces.lmx</file>
+        <file>data/places.gpx</file>
+    </qresource>
+</RCC>

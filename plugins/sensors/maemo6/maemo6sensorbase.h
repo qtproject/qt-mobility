@@ -77,12 +77,17 @@ protected:
         if (!m_sensorInterface) {
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
+        if (!m_sensorInterface) {
+            return;
+        }
 
         initDone = true;
 
 
         //metadata
         int l = m_sensorInterface->getAvailableIntervals().size();
+
+
         for (int i=0; i<l; i++){
             qreal intervalMax = ((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).max;
             qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
@@ -115,6 +120,8 @@ protected:
         if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
 
         setDescription(m_sensorInterface->property("description").toString());
+
+        if (sensorName=="tapsensor") return;
         setRanges();
     };
 

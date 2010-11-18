@@ -48,13 +48,21 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkCategoryFetchByIdRequest
     \brief The QLandmarkCategoryFetchByIdRequest class allows a client to asynchronously
-    request a list of categories by id from a landmark manager.
+    request a list of categories by ID from a landmark manager.
+
+    The categories fetched by the manager should have a one-to-one correspondence to the
+    IDs passed into this class.  That is, the nth category in the returned list should
+    have an ID which is equal to the nth ID in the list of IDs.  Any invalid ID should
+    correspond to an empty QLandmarkCategory.
 
     For a QLandmarkCategoryFetchByIdRequest, the resultsAvailable() signal will be emitted
-    as resultant categories are found (these are retrievable via the callings categories()),
+    as resultant categories are found (these are retrievable by calling categories()),
     whenever individual items error out(individual errors may be retrieved by calling errorMap()),
-     as well as if an overall operation error occurred(which may be retrieved by calling
-     QLandmarkAbstractRequest::error()).
+    as well as if an overall operation error occurred(which may be retrieved by calling
+    QLandmarkAbstractRequest::error()).
+
+     Please see the class documentation for QLandmarkAbstractRequest for more information
+     about he usage of request classes and ownership semantics.
 
 
     \inmodule QtLocation
@@ -78,7 +86,7 @@ QLandmarkCategoryFetchByIdRequest::~QLandmarkCategoryFetchByIdRequest()
 }
 
 /*!
-    Returns a list of identifiers of categories which are to be retrieed by this request.
+    Returns a list of identifiers of categories which are to be retrieved by this request.
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() const
 {
@@ -88,7 +96,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() cons
 }
 
 /*!
-    Sets the \a categoryIds which are to be retrieved by this request.
+    Sets this request to retrieve a list of categories identified by \a categoryIds.
 */
 void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
@@ -98,7 +106,8 @@ void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCate
 }
 
 /*!
-    Sets a single \a categoryId which is to be retrieved by this request.
+    Convenience function that sets a single category, specified by \a categoryId,
+    to be retrieved by this request.
 */
 void QLandmarkCategoryFetchByIdRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -119,7 +128,7 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchByIdRequest::categories() const
 }
 
 /*!
-    Returns the mapping of input landmark id list indices
+    Returns the mapping of input category id list indices
     to the errors which occurred.
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryFetchByIdRequest::errorMap() const

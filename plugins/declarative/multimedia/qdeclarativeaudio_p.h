@@ -71,6 +71,7 @@ class QDeclarativeAudio : public QObject, public QDeclarativeMediaBase, public Q
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(bool autoLoad READ isAutoLoad WRITE setAutoLoad NOTIFY autoLoadChanged)
     Q_PROPERTY(bool playing READ isPlaying WRITE setPlaying NOTIFY playingChanged)
+    Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
     Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
@@ -82,8 +83,10 @@ class QDeclarativeAudio : public QObject, public QDeclarativeMediaBase, public Q
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
+    Q_PROPERTY(QDeclarativeMediaMetaData *metaData READ metaData CONSTANT)
     Q_ENUMS(Status)
     Q_ENUMS(Error)
+    Q_ENUMS(Loop)
     Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum Status
@@ -109,13 +112,18 @@ public:
         ServiceMissing = QMediaPlayer::ServiceMissingError
     };
 
+    enum Loop
+    {
+        Infinite = QDeclarativeMediaBase::INFINITE
+    };
+
     QDeclarativeAudio(QObject *parent = 0);
     ~QDeclarativeAudio();
 
     Status status() const;
     Error error() const;
 
-    void classBegin() {};
+    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
@@ -128,6 +136,7 @@ Q_SIGNALS:
     void autoLoadChanged();
     void playingChanged();
     void pausedChanged();
+    void loopCountChanged();
 
     void started();
     void resumed();
@@ -135,12 +144,6 @@ Q_SIGNALS:
     void stopped();
 
     void statusChanged();
-
-    void loaded();
-    void buffering();
-    void stalled();
-    void buffered();
-    void endOfMedia();
 
     void durationChanged();
     void positionChanged();
@@ -161,9 +164,7 @@ private Q_SLOTS:
 
 private:
     Q_DISABLE_COPY(QDeclarativeAudio)
-    Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
+    Q_PRIVATE_SLOT(mediaBase(), void _q_statusChanged())
 
     inline QDeclarativeMediaBase *mediaBase() { return this; }
 };

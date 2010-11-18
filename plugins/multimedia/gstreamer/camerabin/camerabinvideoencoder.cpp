@@ -117,7 +117,7 @@ QList<QSize> CameraBinVideoEncoder::supportedResolutions(const QVideoEncoderSett
 
     //select the closest supported rational rate to settings.frameRate()
 
-    return m_session->supportedResolutions(rate, continuous);
+    return m_session->supportedResolutions(rate, continuous, QCamera::CaptureVideo);
 }
 
 QList< qreal > CameraBinVideoEncoder::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const

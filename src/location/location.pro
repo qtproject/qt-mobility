@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql svg
+QT = core gui network sql
 
 include(../../common.pri)
 
@@ -87,6 +87,10 @@ maemo6 {
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
     CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_NAME = libQtLocation
+    QMAKE_PKGCONFIG_DESCRIPTION = libQtLocation library
+    QMAKE_PKGCONFIG_INCDIR = $${QT_MOBILITY_INCLUDE}/QtLocation
+    QMAKE_PKGCONFIG_CFLAGS += -I$${QT_MOBILITY_INCLUDE}/QtMobility
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }

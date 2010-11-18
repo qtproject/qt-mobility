@@ -79,14 +79,21 @@ class CameraBinSession : public QObject, public QGstreamerSyncEventFilter
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 public:
+    enum CameraRole {
+       FrontCamera, // Secondary camera
+       BackCamera // Main photo camera
+    };
+
     CameraBinSession(QObject *parent);
     ~CameraBinSession();
 
     GstPhotography *photography();
     GstElement *cameraBin() { return m_pipeline; }
 
+    CameraRole cameraRole() const;
+
     QList< QPair<int,int> > supportedFrameRates(const QSize &frameSize, bool *continuous) const;
-    QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
+    QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous, QCamera::CaptureMode mode) const;
 
     QCamera::CaptureMode captureMode() { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode);
@@ -156,6 +163,7 @@ public slots:
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
+    void handleViewfinderChange();
 
 private:
     bool setupCameraBin();

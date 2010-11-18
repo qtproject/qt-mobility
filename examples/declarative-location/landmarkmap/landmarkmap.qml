@@ -4,37 +4,36 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the examples of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -53,8 +52,8 @@ Item {
     PositionSource {
         id: myPositionSource
         active: true
-        updateInterval: 1000
-        onPositionChanged: console.log("Position changed")
+        updateInterval: 2000
+        onPositionChanged: console.log("Position changed in PositionSource")
     }
     LandmarkBoxFilter {
         id: boxFilter
@@ -64,14 +63,17 @@ Item {
     LandmarkModel {
         id: landmarkModel
         autoUpdate: true
-        onModelChanged: console.log("Landmark model changed, landmark count: " + count)
+        onModelChanged: {
+            console.log("Landmark model changed, landmark count: " + count)
+            pinpointViewContainer.opacity = 1.0
+        }
         filter: boxFilter
         limit: 50
     }
     Component {
         id: landmarkListDelegate
         Item {
-            width: 200; height: 50
+            width: 200; height: 80
             Text {
                 color: "white"; font.bold: true; style: Text.Raised; styleColor: "black"
                 id: nameField; text: landmark.name
@@ -145,9 +147,48 @@ Item {
         color: "#343434"
         //height: toolbar1.y - titleBar.height
         Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
+
         MouseArea {
             anchors.fill: parent
-            onDoubleClicked: map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            onPressed : {
+                mouseDown = true
+                // While panning, its better not to actively udpate the model
+                // as it results in poor performance. Instead set opacity to make
+                // it more obvious that the landmark positions are not valid.
+                landmarkModel.autoUpdate = false
+                pinpointViewContainer.opacity = 0.3
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+            onReleased : {
+                mouseDown = false
+                //pinpointViewContainer.opacity = 1.0
+		landmarkModel.autoUpdate = true
+                landmarkModel.update()
+                lastX = -1
+                lastY = -1
+            }
+            onPositionChanged: {
+                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    page.state = "NoFollowing"
+                    lastX = mouse.x
+                    lastY = mouse.y
+                }
+            }
+            onDoubleClicked: {
+                page.state = "NoFollowing"
+                map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+                if (map.zoomLevel < map.maximumZoomLevel)
+                    map.zoomLevel += 1
+            }
         }
 
         ListView {
@@ -175,11 +216,15 @@ Item {
         //![Category model]
         Map {
             id: map
+            plugin : Plugin {
+                        name : "nokia"
+                    }
             anchors.fill: parent
             size.width: parent.width
             size.height: parent.height
             zoomLevel: 1
             center: Coordinate {latitude: -27; longitude: 153}
+            //center: myPositionSource.position.coordinate
             onZoomLevelChanged: {
                 console.log("Zoom changed")
                 updateFilters();
@@ -198,6 +243,7 @@ Item {
                 boxFilter.bottomRight = bottomRightCoordinate;
             }
         } // map
+
 
         Item {
             id: pinpointViewContainer
@@ -264,7 +310,7 @@ Item {
         height: 40; width: parent.width
         anchors.bottom: parent.bottom
         z: 6
-        button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "show me"
+        button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "follow me"
         button3FontColor: "pink"
         onButton1Clicked: {
             console.log("Clicked, setting nmea log as source");
@@ -276,8 +322,10 @@ Item {
             landmarkModel.importFile = "mylm.lmx"
         }
         onButton3Clicked: {
-            console.log("Clicked, setting map center to current location");
-            map.center = myPositionSource.position.coordinate
+            console.log("Clicked, setting map center to follow (rebind map center to myPosition");
+            //if (page.state == "" || page.state == "Following")
+                page.state = "Following"
+                //map.center = myPositionSource.position.coordinate
         }
     }
     // states of page
@@ -294,6 +342,15 @@ Item {
             PropertyChanges { target: sliderContainer; x: -dataArea.width}
             PropertyChanges { target: pinpointViewContainer; x: -dataArea.width - 20;}
             PropertyChanges { target: landmarkListView; x: 0 }
+        }, State {
+            name:  "Following"
+            PropertyChanges { target:  map; center: myPositionSource.position.coordinate}
+            PropertyChanges { target: toolbar2; button3FontColor: 'grey'}
+            PropertyChanges { target: toolbar2; button3Label: '(following)'}
+        }, State {
+            name : "NoFollowing"
+            PropertyChanges { target: toolbar2; button3FontColor: 'pink'}
+            PropertyChanges { target: toolbar2; button3Label: 'follow me'}
         }]
     // state-transition animations for page
     transitions: Transition {

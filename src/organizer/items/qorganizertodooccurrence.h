@@ -50,7 +50,12 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerTodoOccurrence : public QOrganizerItem
 {
 public:
+
+#ifdef Q_QDOC
+    static const QLatin1Constant QOrganizerTodoOccurrence;
+#else
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence)
+#endif
 
     // XXX TODO: see discussion in qorganizertodo.h
     void setStartDateTime(const QDateTime& startDateTime);
@@ -58,8 +63,8 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setParentLocalId(const QOrganizerItemLocalId& parentId);
-    QOrganizerItemLocalId parentLocalId() const;
+    void setParentId(const QOrganizerItemId& parentId);
+    QOrganizerItemId parentId() const;
     void setOriginalDate(const QDate& date);
     QDate originalDate() const;
 

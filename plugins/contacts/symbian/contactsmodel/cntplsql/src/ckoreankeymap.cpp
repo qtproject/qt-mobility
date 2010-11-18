@@ -23,21 +23,26 @@
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
+#include "koreaninput.h"
 
 
 const int KMibKorean = 36;
 
 // These constants are from Hangul and Jamo unicode specifications
+// UD7A4..UD7AF are unspecific
 const int KHangulSyllableLowerLimit = 0xAC00;
-const int KHangulSyllableUpperLimit = 0xD7AF;
+const int KHangulSyllableUpperLimit = 0xD7A3;
 
-const int KChoCount  = 19;
+const int KJamoLowerLimit = 0x1100;
+const int KJamoUpperLimit = 0x11FF;
+
 const int KJungCount = 21;
 const int KJongCount = 28;
 
-const int KChoBase  = 0x1100;
+const int KChoBase  = KJamoLowerLimit;
 const int KJungBase = 0x1161;
 const int KJongBase = 0x11A7;
+
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -59,18 +64,35 @@ CKoreanKeyMap* CKoreanKeyMap::NewL()
 // ----------------------------------------------------------------------------
 CKoreanKeyMap::~CKoreanKeyMap()
     {
+	delete iTokenizer;
     }
 
 // ----------------------------------------------------------------------------
-// CKoreanKeyMap::IsKoreanString
-// TODO: how to handle strings with both latin and Korean chars?
+// CKoreanKeyMap::IsLanguageSupported
+// Korean QTextCodec recognizes Hangul and Hangul compatibility Jamo characters,
+// but not the Hangul Jamo characters (U1100+). Hence the Jamo are handled here
+// and treated as Korean text.
 // ----------------------------------------------------------------------------
-TBool CKoreanKeyMap::IsKoreanString(QString aSource) const
+TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 	{
 	if (iLatinCodec && iLatinCodec->canEncode(aSource))
 		{
 		return EFalse;
 		}
+
+	int len = aSource.length();
+	for (int i = 0; i < len; ++i)
+		{
+		int unicode = aSource[i].unicode();
+		if (unicode >= KJamoLowerLimit && unicode <= KJamoUpperLimit)
+			{
+			// Replace the character in aSource local to this function, with (any)
+			// Hangul syllable that QTextCodec recognizes are Korean text.
+			// Does not modify the caller's version of aSource.
+			aSource[i] = KHangulSyllableLowerLimit;
+			}
+		}
+
     return iKoreanCodec && iKoreanCodec->canEncode(aSource);
 	}
 
@@ -83,8 +105,6 @@ TBool CKoreanKeyMap::IsKoreanString(QString aSource) const
 // ----------------------------------------------------------------------------
 QString CKoreanKeyMap::GetMappedString(QString aSource) const
 	{
-	// TODO: in a later sprint: put a KSeparatorChar between syllables
-	
 	QString destination;
 	TInt length = aSource.length();
 
@@ -95,6 +115,7 @@ QString CKoreanKeyMap::GetMappedString(QString aSource) const
 			{
 			QString jamos = ExtractJamos(ch);
 			destination.append(GetMappedString(jamos));
+			destination.append(KSeparatorChar); // Syllable is one token
 			}
 		else
 			{
@@ -107,6 +128,12 @@ QString CKoreanKeyMap::GetMappedString(QString aSource) const
 				QString keySequence = MapJamoToKeySequence(ch); // searches iKeyPressMap
 				destination.append(keySequence);
 				}
+
+			// TODO: detect the syllable limits within stream of Jamos in this way:
+			// syllable begins by C + V pair, which is never in the middle of a syllable.
+			// Currently assumes aSource only contains grammatically valid Jamo stream
+
+			// To tokenize Jamos, map them to keysequences, and split them with iTokenizer->Tokenize()
 			}
 		}
 #if defined(WRITE_PRED_SEARCH_LOGS)
@@ -144,6 +171,8 @@ void CKoreanKeyMap::ConstructL()
         User::Leave(err);
         }
 
+	iTokenizer = new (ELeave) KoreanInput;
+
 	PRINT(_L("End CKoreanKeyMap::ConstructL"));
 	}
 
@@ -162,8 +191,10 @@ void CKoreanKeyMap::GetTextCodecs()
 // Key presses are identified like this:
 //   key 1 -> "1"
 //   key 2 -> "2" etc.
-//   key * -> "a"
-//   key # -> "b"
+// Any keypresses of * and # are skipped, and also the 9 after 3, 3 and 39
+// after 6 and 9 after 0 are skipped. This means that every character is mapped
+// to one of the following sequences:
+// 1, 2, 4, 5, 7, 8, 3, 33, 6, 66, 9 or 0.
 //
 // Note: multiple Korean chars can map to same key sequence
 // e.g. U1100 and U3131 are the same char
@@ -175,73 +206,73 @@ void CKoreanKeyMap::FillKeyPressMap()
 	// but is there a need for this reverse search at all?
 
 	MapCharacters("1", 0x1100, 0x3131, 0x11a8);
-	MapCharacters("1a", 0x110f, 0x314b, 0x11bf);
-	MapCharacters("1b", 0x1101, 0x3132, 0x11a9);
+	MapCharacters("1", 0x110f, 0x314b, 0x11bf);
+	MapCharacters("1", 0x1101, 0x3132, 0x11a9);
 
 	MapCharacters("2", 0x1102, 0x3134, 0x11ab);
-	MapCharacters("2a", 0x1103, 0x3137, 0x11ae);
-	MapCharacters("2aa", 0x1110, 0x314c, 0x11c0);
-	MapCharacters("2ab", 0x1104, 0x3138);
+	MapCharacters("2", 0x1103, 0x3137, 0x11ae);
+	MapCharacters("2", 0x1110, 0x314c, 0x11c0);
+	MapCharacters("2", 0x1104, 0x3138);
 
 	MapCharacters("3", 0x1161, 0x314f);
-	MapCharacters("39", 0x1162, 0x3150);
-	MapCharacters("3a", 0x1163, 0x3151);
-	MapCharacters("3a9", 0x1164, 0x3152);
+	MapCharacters("3", 0x1162, 0x3150);
+	MapCharacters("3", 0x1163, 0x3151);
+	MapCharacters("3", 0x1164, 0x3152);
 
 	// Double-3 tap is stored as 33
 	MapCharacters("33", 0x1165, 0x3153);
-	MapCharacters("339", 0x1166, 0x3154);
-	MapCharacters("33a", 0x1167, 0x3155);
-	MapCharacters("33a9", 0x1168, 0x3156);
+	MapCharacters("33", 0x1166, 0x3154);
+	MapCharacters("33", 0x1167, 0x3155);
+	MapCharacters("33", 0x1168, 0x3156);
 
 	MapCharacters("4", 0x1105, 0x3139, 0x11af);
 
 	MapCharacters("5", 0x1106, 0x3141, 0x11b7);
-	MapCharacters("5a", 0x1107, 0x3142, 0x11b8);
-	MapCharacters("5aa", 0x1111, 0x314d, 0x11c1);
-	MapCharacters("5ab", 0x1108, 0x3143);
+	MapCharacters("5", 0x1107, 0x3142, 0x11b8);
+	MapCharacters("5", 0x1111, 0x314d, 0x11c1);
+	MapCharacters("5", 0x1108, 0x3143);
 
 	MapCharacters("6", 0x1169, 0x3157);
-	MapCharacters("63", 0x116a, 0x3158);
-	MapCharacters("639", 0x116b, 0x3159);
-	MapCharacters("69", 0x116c, 0x315a);
-	MapCharacters("6a", 0x116d, 0x315b);
+	MapCharacters("6", 0x116a, 0x3158);
+	MapCharacters("6", 0x116b, 0x3159);
+	MapCharacters("6", 0x116c, 0x315a);
+	MapCharacters("6", 0x116d, 0x315b);
 
 	// Double-6 tap is stored as 66
 	MapCharacters("66", 0x116e, 0x315c);
-	MapCharacters("663", 0x116f, 0x315d);
-	MapCharacters("6639", 0x1170, 0x315e);
-	MapCharacters("669", 0x1171, 0x315f);
-	MapCharacters("66a", 0x1172, 0x3160);
+	MapCharacters("66", 0x116f, 0x315d);
+	MapCharacters("66", 0x1170, 0x315e);
+	MapCharacters("66", 0x1171, 0x315f);
+	MapCharacters("66", 0x1172, 0x3160);
 
 	MapCharacters("7", 0x1109, 0x3145, 0x11ba);
-	MapCharacters("7a", 0x110c, 0x3148, 0x11bd);
-	MapCharacters("7aa", 0x110e, 0x314a, 0x11be);
-	MapCharacters("7ab", 0x110d, 0x3149);
-	MapCharacters("7b", 0x110a, 0x3146, 0x11bb);
+	MapCharacters("7", 0x110c, 0x3148, 0x11bd);
+	MapCharacters("7", 0x110e, 0x314a, 0x11be);
+	MapCharacters("7", 0x110d, 0x3149);
+	MapCharacters("7", 0x110a, 0x3146, 0x11bb);
 
 	MapCharacters("8", 0x110b, 0x3147, 0x11bc);
-	MapCharacters("8a", 0x1112, 0x314e, 0x11c2);
+	MapCharacters("8", 0x1112, 0x314e, 0x11c2);
 
 	MapCharacters("9", 0x1175, 0x3163);
 
 	MapCharacters("0", 0x1173, 0x3161);
-	MapCharacters("09", 0x1174, 0x3162);
+	MapCharacters("0", 0x1174, 0x3162);
 
 
 	// The 11 jong characters that consist of two consonants.
-	// Map them to key sequence that produces the two consonants (TODO: chk if this is the correct way)
+	// Map them to key sequence that produces the two consonants.
 	MapCharacters("17", 0x11aa);
-	MapCharacters("27a", 0x11ac);
-	MapCharacters("28a", 0x11ad);
+	MapCharacters("27", 0x11ac);
+	MapCharacters("28", 0x11ad);
 	MapCharacters("41", 0x11b0);
 	MapCharacters("45", 0x11b1);
-	MapCharacters("45a", 0x11b2);
+	MapCharacters("45", 0x11b2);
 	MapCharacters("47", 0x11b3);
-	MapCharacters("42aa", 0x11b4);
-	MapCharacters("45aa", 0x11b5);
-	MapCharacters("48a", 0x11b6);
-	MapCharacters("5a7", 0x11b9);
+	MapCharacters("42", 0x11b4);
+	MapCharacters("45", 0x11b5);
+	MapCharacters("48", 0x11b6);
+	MapCharacters("57", 0x11b9);
 	}
 
 // ----------------------------------------------------------------------------
@@ -294,7 +325,6 @@ const QString CKoreanKeyMap::ExtractJamos(QChar aChar) const
 	QChar jung = KJungBase + jungValue;
 	QChar cho  = KChoBase + choValue;
 
-	//QString result = cho + jung + jong; // won't compile
 	QString result = cho;
 	result += jung;
 	// If jong is zero, it is missing. Such hangul has just cho and jung.

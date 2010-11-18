@@ -101,15 +101,15 @@ QTM_BEGIN_NAMESPACE
     Constructs a search reply with the specified \a parent.
 */
 QGeoSearchReply::QGeoSearchReply(QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoSearchReplyPrivate()) {}
+    : QObject(parent),
+      d_ptr(new QGeoSearchReplyPrivate()) {}
 
 /*!
     Constructs a search reply with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoSearchReply::QGeoSearchReply(Error error, const QString &errorString, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoSearchReplyPrivate(error, errorString)) {}
+    : QObject(parent),
+      d_ptr(new QGeoSearchReplyPrivate(error, errorString)) {}
 
 /*!
     Destroys this search reply object.
@@ -260,7 +260,8 @@ int QGeoSearchReply::limit() const
 }
 
 /*!
-    Returns the offset
+    Returns the offset into the entire result set at which to start 
+    fetching results.
 */
 int QGeoSearchReply::offset() const
 {
@@ -278,6 +279,8 @@ void QGeoSearchReply::setLimit(int limit)
 }
 
 /*!
+    Sets the offset in the entire result set at which to start 
+    fetching result to \a offset.
 */
 void QGeoSearchReply::setOffset(int offset)
 {
@@ -317,18 +320,18 @@ void QGeoSearchReply::setOffset(int offset)
 *******************************************************************************/
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
-        : error(QGeoSearchReply::NoError),
-        errorString(""),
-        isFinished(false),
-        limit(-1),
-        offset(0) {}
+    : error(QGeoSearchReply::NoError),
+      errorString(""),
+      isFinished(false),
+      limit(-1),
+      offset(0) {}
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
-        : error(error),
-        errorString(errorString),
-        isFinished(true),
-        limit(-1),
-        offset(0) {}
+    : error(error),
+      errorString(errorString),
+      isFinished(true),
+      limit(-1),
+      offset(0) {}
 
 QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 

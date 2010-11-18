@@ -53,6 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QOrganizerManagerEngine;
 class QOrganizerCollectionData;
 class Q_ORGANIZER_EXPORT QOrganizerCollection
 {
@@ -70,20 +71,29 @@ public:
     /* Every collection has an id */
     QOrganizerCollectionId id() const;
     void setId(const QOrganizerCollectionId& id);
-    QOrganizerCollectionLocalId localId() const;
 
-    /* Metadata?  Colour?  Icon?  Haptic Feel?  etc */
-    // DEFINE_LATIN1_CONSTANT(FieldName, "Name");
-    // DEFINE_LATIN1_CONSTANT(FieldDescription, "Description");
-    // DEFINE_LATIN1_CONSTANT(FieldColor, "Color");
-    // DEFINE_LATIN1_CONSTANT(FieldImage, "Image"); etc.
     void setMetaData(const QVariantMap& metaData);
     QVariantMap metaData() const;
 
     void setMetaData(const QString& key, const QVariant& value);
-    QVariant metaData(const QString& key);
+    QVariant metaData(const QString& key) const;
+
+    /* Default meta data keys */
+#ifdef Q_QDOC
+    static const QLatin1Constant KeyName;
+    static const QLatin1Constant KeyDescription;
+    static const QLatin1Constant KeyColor;
+    static const QLatin1Constant KeyImage;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(KeyName, "Name");
+    Q_DECLARE_LATIN1_CONSTANT(KeyDescription, "Description");
+    Q_DECLARE_LATIN1_CONSTANT(KeyColor, "Color");
+    Q_DECLARE_LATIN1_CONSTANT(KeyImage, "Image");
+#endif
+
 
 private:
+    friend class QOrganizerManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;
 };
 

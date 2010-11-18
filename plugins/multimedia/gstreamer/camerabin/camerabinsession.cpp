@@ -63,6 +63,7 @@
 #include <QtGui/qimage.h>
 
 //#define CAMERABIN_DEBUG 1
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 
 #ifdef Q_WS_MAEMO_5
 #define FILENAME_PROPERTY "filename"
@@ -122,8 +123,14 @@
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
-#define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) [640, 848], height = (int) [320, 480]"
+#define PREVIEW_CAPS_4_3 \
+    "video/x-raw-rgb, width = (int) 640, height = (int) 480"
+
+//using GST_STATE_READY for QCamera::LoadedState
+//doesn't work reliably at least with some webcams.
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_5)
+#define USE_READY_STATE_ON_LOADED
+#endif
 
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
@@ -137,10 +144,11 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_audioInputFactory(0),
      m_videoInputFactory(0),
      m_viewfinder(0),
+     m_viewfinderInterface(0),
      m_pipeline(0),
      m_videoSrc(0),
-     m_viewfinderHasChanged(false),
-     m_videoInputHasChanged(false),
+     m_viewfinderHasChanged(true),
+     m_videoInputHasChanged(true),
      m_sourceCaps(0),
      m_audioSrc(0),
      m_audioConvert(0),
@@ -201,6 +209,16 @@ GstPhotography *CameraBinSession::photography()
     return 0;
 }
 
+CameraBinSession::CameraRole CameraBinSession::cameraRole() const
+{
+#ifdef Q_WS_MAEMO_5
+    return m_inputDevice == QLatin1String("/dev/video1") ?
+                FrontCamera : BackCamera;
+#endif
+
+    return BackCamera;
+}
+
 bool CameraBinSession::setupCameraBin()
 {
     if (m_captureMode == QCamera::CaptureStillImage) {
@@ -221,21 +239,33 @@ bool CameraBinSession::setupCameraBin()
 
     if (m_videoInputHasChanged) {
         m_videoSrc = buildVideoSrc();
-        g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
+
+        if (m_videoSrc)
+            g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
+        else
+            g_object_get(m_pipeline, VIDEO_SOURCE_PROPERTY, &m_videoSrc, NULL);
+
         updateVideoSourceCaps();
         m_videoInputHasChanged = false;
     }
 
     if (m_viewfinderInterface) {
-        GstElement *preview = m_viewfinderInterface->videoSink();
-        if (!preview) {
-            qWarning() << "Staring camera without viewfinder available";
-            preview = gst_element_factory_make("fakesink", NULL);
+        if (m_viewfinderHasChanged) {
+            GstElement *preview = m_viewfinderInterface->videoSink();
+#if CAMERABIN_DEBUG
+            qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
+#endif
+            m_viewfinderHasChanged = false;
+            if (!preview) {
+                qWarning() << "Staring camera without viewfinder available";
+                preview = gst_element_factory_make("fakesink", NULL);
+            }
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
+            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
         }
-        g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
-    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
+    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
     g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
     gst_caps_unref(previewCaps);
 
@@ -256,12 +286,58 @@ void CameraBinSession::setupCaptureResolution()
 {
     if (m_captureMode == QCamera::CaptureStillImage) {
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
+
+        //by default select the maximum supported resolution
+        if (resolution.isEmpty()) {
+            updateVideoSourceCaps();
+            bool continuous = false;
+            QList<QSize> resolutions = supportedResolutions(qMakePair<int,int>(0,0),
+                                                            &continuous,
+                                                            QCamera::CaptureStillImage);
+            if (!resolutions.isEmpty())
+                resolution = resolutions.last();
+        }
+
+        QString previewCapsString = PREVIEW_CAPS_4_3;
+
         if (!resolution.isEmpty()) {
 #if CAMERABIN_DEBUG
-            qDebug() << "image resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set image resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
+
+            previewCapsString = QString("video/x-raw-rgb, width = (int) %1, height = (int) 480")
+                    .arg(resolution.width()*480/resolution.height());
         }
+
+        GstCaps *previewCaps = gst_caps_from_string(previewCapsString.toLatin1());
+        g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
+        gst_caps_unref(previewCaps);
+
+#ifdef Q_WS_MAEMO_5
+        //it's also necessary to setup video resolution,
+        //which is used for viewfinder
+
+        if (cameraRole() == BackCamera) {
+            //this is necessary to set only for the mail camera,
+            //not for face one.
+
+            QSize viewfinderResolution(640, 480);
+            int viewfinderRate = 2993;
+            if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
+                viewfinderResolution = QSize(800, 450);
+                viewfinderRate = 2988;
+            }
+
+            g_signal_emit_by_name(G_OBJECT(m_pipeline),
+                                  SET_VIDEO_RESOLUTION_FPS,
+                                  viewfinderResolution.width(),
+                                  viewfinderResolution.height(),
+                                  viewfinderRate,
+                                  100, // framerate denom
+                                  NULL);
+        }
+#endif
     }
 
     if (m_captureMode == QCamera::CaptureVideo) {
@@ -269,7 +345,7 @@ void CameraBinSession::setupCaptureResolution()
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
         if (!resolution.isEmpty() || framerate > 0) {
 #if CAMERABIN_DEBUG
-            qDebug() << "video resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set video resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline),
                                   SET_VIDEO_RESOLUTION_FPS,
@@ -288,7 +364,10 @@ GstElement *CameraBinSession::buildVideoSrc()
     if (m_videoInputFactory) {
         videoSrc = m_videoInputFactory->buildElement();
     } else {
-        videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
+        videoSrc = gst_element_factory_make("subdevsrc", "camera_source");
+
+        if (!videoSrc)
+            videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
 
         if (!videoSrc)
             videoSrc = gst_element_factory_make("v4l2src", "camera_source");
@@ -306,20 +385,10 @@ GstElement *CameraBinSession::buildVideoSrc()
 void CameraBinSession::captureImage(int requestId, const QString &fileName)
 {
     QString actualFileName = fileName;
-    if (actualFileName.isEmpty()) {
+    if (actualFileName.isEmpty())
         actualFileName = generateFileName("img_", defaultDir(QCamera::CaptureStillImage), "jpg");
-    }
 
     m_requestId = requestId;
-
-    QSize resolution = m_imageEncodeControl->imageSettings().resolution();
-    if (!resolution.isEmpty()) {
-
-#if CAMERABIN_DEBUG
-        qDebug() << "Set image resolution" << resolution;
-#endif
-        g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
-    }
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, actualFileName.toLocal8Bit().constData(), NULL);
 
@@ -441,7 +510,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             disconnect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             disconnect(m_viewfinder, SIGNAL(readyChanged(bool)),
                        this, SIGNAL(readyChanged(bool)));
         }
@@ -451,7 +520,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             connect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             connect(m_viewfinder, SIGNAL(readyChanged(bool)),
                     this, SIGNAL(readyChanged(bool)));
         }
@@ -460,6 +529,14 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
         if (oldReady != isReady())
             emit readyChanged(isReady());
     }
+}
+
+void CameraBinSession::handleViewfinderChange()
+{
+    //the viewfinder will be reloaded
+    //shortly when the pipeline is started
+    m_viewfinderHasChanged = true;
+    emit viewfinderChanged();
 }
 
 QCamera::State CameraBinSession::state() const
@@ -475,30 +552,53 @@ void CameraBinSession::setState(QCamera::State newState)
     m_pendingState = newState;
 
 #if CAMERABIN_DEBUG
-    qDebug() << Q_FUNC_INFO << newState;
+    qDebug() << Q_FUNC_INFO << ENUM_NAME(QCamera, "State", newState);
 #endif
 
     switch (newState) {
     case QCamera::UnloadedState:
-    case QCamera::LoadedState:
         //focus is lost at least on n900 when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
-        if (m_state == QCamera::LoadedState && m_videoInputHasChanged) {
+        emit stateChanged(m_state);
+        break;
+    case QCamera::LoadedState:
+        //focus is lost at least on n900 when the state is changed from Active to Idle
+        if (m_state == QCamera::ActiveState)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
+        if (m_videoInputHasChanged) {
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
             m_videoSrc = buildVideoSrc();
             g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
             updateVideoSourceCaps();
             m_videoInputHasChanged = false;
         }
+#ifdef USE_READY_STATE_ON_LOADED
+        gst_element_set_state(m_pipeline, GST_STATE_READY);
+#else
+        m_state = QCamera::LoadedState;
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
         emit stateChanged(m_state);
+#endif
         break;
     case QCamera::ActiveState:
         if (setupCameraBin()) {
-            m_pendingResolutionUpdate = true;
-            gst_element_set_state(m_pipeline, GST_STATE_READY);
+            GstState binState = GST_STATE_NULL;
+            GstState pending = GST_STATE_NULL;
+            gst_element_get_state(m_pipeline, &binState, &pending, 0);
+
+            if (pending == GST_STATE_VOID_PENDING && binState == GST_STATE_READY) {
+                m_pendingResolutionUpdate = false;
+                setupCaptureResolution();
+                gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+            } else {
+                m_pendingResolutionUpdate = true;
+                gst_element_set_state(m_pipeline, GST_STATE_READY);
+            }
         }
     }
 }
@@ -626,7 +726,10 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                         }
                         gst_caps_unref(caps);
 
-                        emit imageExposed(m_requestId);
+                        static int exposedSignalIndex = metaObject()->indexOfSignal("imageExposed(int)");
+                        metaObject()->method(exposedSignalIndex).invoke(this,
+                                                                 Qt::QueuedConnection,
+                                                                 Q_ARG(int,m_requestId));
 
                         static int signalIndex = metaObject()->indexOfSignal("imageCaptured(int,QImage)");
                         metaObject()->method(signalIndex).invoke(this,
@@ -681,9 +784,38 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
             GError *err;
             gchar *debug;
             gst_message_parse_error (gm, &err, &debug);
-            emit error(int(QMediaRecorder::ResourceError),QString::fromUtf8(err->message));
-            g_error_free (err);
-            g_free (debug);
+
+            QString message;
+
+            if (err && err->message) {
+                message = QString::fromUtf8(err->message);
+                qWarning() << "CameraBin error:" << message;
+            }
+
+            if (message.isEmpty())
+                message = tr("Camera error");
+
+            emit error(int(QMediaRecorder::ResourceError), message);
+
+            if (err)
+                g_error_free (err);
+
+            if (debug)
+                g_free (debug);
+        }
+
+        if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
+            GError *err;
+            gchar *debug;
+            gst_message_parse_warning (gm, &err, &debug);
+
+            if (err && err->message)
+                qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
+
+            if (err)
+                g_error_free (err);
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
@@ -892,6 +1024,35 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
     return res;
 }
 
+//internal, only used by CameraBinSession::supportedResolutions
+//recursively find the supported resolutions range.
+static QPair<int,int> valueRange(const GValue *value, bool *continuous)
+{
+    int minValue = 0;
+    int maxValue = 0;
+
+    if (g_value_type_compatible(G_VALUE_TYPE(value), G_TYPE_INT)) {
+        minValue = maxValue = g_value_get_int(value);
+    } else if (GST_VALUE_HOLDS_INT_RANGE(value)) {
+        minValue = gst_value_get_int_range_min(value);
+        maxValue = gst_value_get_int_range_max(value);
+        *continuous = true;
+    } else if (GST_VALUE_HOLDS_LIST(value)) {
+        for (uint i=0; i<gst_value_list_get_size(value); i++) {
+            QPair<int,int> res = valueRange(gst_value_list_get_value(value, i), continuous);
+
+            if (res.first > 0 && minValue > 0)
+                minValue = qMin(minValue, res.first);
+            else //select non 0 valid value
+                minValue = qMax(minValue, res.first);
+
+            maxValue = qMax(maxValue, res.second);
+        }
+    }
+
+    return QPair<int,int>(minValue, maxValue);
+}
+
 static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 {
      return r1.width() < r2.width() ||
@@ -899,7 +1060,9 @@ static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 }
 
 
-QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *continuous) const
+QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
+                                                    bool *continuous,
+                                                    QCamera::CaptureMode mode) const
 {
     QList<QSize> res;
 
@@ -961,24 +1124,19 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
         const GValue *wValue = gst_structure_get_value(structure, "width");
         const GValue *hValue = gst_structure_get_value(structure, "height");
 
-        if (g_value_type_compatible(G_VALUE_TYPE(wValue), G_TYPE_INT) &&
-            g_value_type_compatible(G_VALUE_TYPE(hValue), G_TYPE_INT)) {
-            int w = g_value_get_int(wValue);
-            int h = g_value_get_int(hValue);
-            res << QSize(w,h);
-        } else if (GST_VALUE_HOLDS_INT_RANGE(wValue)) {
-            int wMin = gst_value_get_int_range_min(wValue);
-            int wMax = gst_value_get_int_range_max(wValue);
-            int hMin = gst_value_get_int_range_min(hValue);
-            int hMax = gst_value_get_int_range_max(hValue);
+        QPair<int,int> wRange = valueRange(wValue, &isContinuous);
+        QPair<int,int> hRange = valueRange(hValue, &isContinuous);
 
-            isContinuous = true;
+        QSize minSize(wRange.first, hRange.first);
+        QSize maxSize(wRange.second, hRange.second);
 
-            res << QSize(wMin,hMin);
-            res << QSize(wMax,hMax);
-        } else if (GST_VALUE_HOLDS_LIST(wValue)) {
-        }
+        if (!minSize.isEmpty())
+            res << minSize;
+
+        if (minSize != maxSize && !maxSize.isEmpty())
+            res << maxSize;
     }
+
 
     qSort(res.begin(), res.end(), resolutionLessThan);
 
@@ -1003,12 +1161,19 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
                                << QSize(2048, 1536)
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
-        const QSize minSize = res.first();
+        QSize minSize = res.first();
+        QSize maxSize = res.last();
 
 #ifdef Q_WS_MAEMO_5
-        const QSize maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureVideo && cameraRole() == BackCamera)
+            maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureStillImage)
+            minSize = QSize(640, 480);
+#elif defined(Q_WS_MAEMO_6)
+        if (mode == QCamera::CaptureStillImage)
+            maxSize = QSize(4000, 3000);
 #else
-        const QSize maxSize = res.last();
+        Q_UNUSED(mode);
 #endif
 
         res.clear();

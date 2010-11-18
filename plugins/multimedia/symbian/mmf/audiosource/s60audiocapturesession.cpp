@@ -44,12 +44,12 @@
 #include <QtCore/qurl.h>
 #include <QDir>
 
-#include <Mda\Client\Utility.h>
-#include <MdaAudioSampleEditor.h>
-#include <mmf\common\mmfcontrollerpluginresolver.h>
-#include <mmf\common\mmfcontroller.h>
-#include <BADESCA.H>
-#include <BAUTILS.H>
+#include <mda/client/utility.h>
+#include <mdaaudiosampleeditor.h>
+#include <mmf/common/mmfcontrollerpluginresolver.h>
+#include <mmf/common/mmfcontroller.h>
+#include <badesca.h>
+#include <bautils.h>
 #include <f32file.h>
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
@@ -222,6 +222,21 @@ qint64 S60AudioCaptureSession::position() const
 
 void S60AudioCaptureSession::prepareSinkL()
 {
+    /* If m_outputLocation is null, set a default location */
+    if (m_sink.isEmpty()) {
+        QDir outputDir(QDir::rootPath());
+        int lastImage = 0;
+        int fileCount = 0;
+        foreach(QString fileName, outputDir.entryList(QStringList() << "recordclip_*")) {
+            int imgNumber = fileName.mid(5, fileName.size() - 9).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+            if (outputDir.exists(fileName))
+                fileCount += 1;
+        }
+        lastImage += fileCount;
+        m_sink = QUrl(QDir::toNativeSeparators(outputDir.canonicalPath() + QString("/recordclip_%1").arg(lastImage + 1, 4, 10, QLatin1Char('0'))));
+    }
+
     QString sink = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(sink.utf16()));
     if (BaflUtils::FileExists(m_fsSession, path))

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -44,15 +44,7 @@
 #include <QWidget>
 #include <qsysteminfo.h>
 
-#ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
-#include "ui_dialog_landscape.h"
-#else //QTM_EXAMPLES_PREFER_LANDSCAPE
-#ifdef Q_OS_SYMBIAN
-#include "ui_dialog_s60.h"
-#else //Q_OS_SYMBIAN
-#include "ui_dialog.h"
-#endif //Q_OS_SYMBIAN
-#endif //QTM_EXAMPLES_PREFER_LANDSCAPE
+#include "ui_dialog_small_landscape.h"
 QTM_USE_NAMESPACE
 
 class Dialog : public QWidget, public Ui_Dialog
@@ -79,6 +71,8 @@ private:
     QSystemNetworkInfo *ni;
     QSystemStorageInfo *sti;
     void updateStorage();
+    QSystemDeviceInfo::BatteryStatus currentBatStat;
+    QSystemDeviceInfo::PowerState currentPowerState;
     
 private slots:
     void tabChanged(int index);

@@ -52,7 +52,7 @@
 
 S60ViewFinderWidget::S60ViewFinderWidget(QWidget *parent):
     QLabel(parent),
-    m_isDirect(false)
+    m_isDirect(false) // Bitmap as default
 {
 }
 
@@ -62,7 +62,7 @@ S60ViewFinderWidget::~S60ViewFinderWidget()
 
 void S60ViewFinderWidget::reconfigureWidget(const bool isVFDirect)
 {
-    if (isVFDirect) {
+    if (isVFDirect) { // DirectScreen ViewFinder
         m_isDirect = true;
         // Enable drawing of the ViewFinder
 #ifndef USING_NGA // Pre-Symbian^3 Platforms
@@ -81,7 +81,8 @@ void S60ViewFinderWidget::reconfigureWidget(const bool isVFDirect)
         qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
 #endif // USING_NGA
 #endif // USE_PRIVATE_QWIDGET_METHODS
-    } else {
+
+    } else { // Bitmap ViewFinder
         m_isDirect = false;
         setAlignment(Qt::AlignCenter);
         setAttribute(Qt::WA_NoSystemBackground, true);
@@ -96,7 +97,7 @@ void S60ViewFinderWidget::beginNativePaintEvent(const QRect& /*controlRect*/)
 {
     emit beginVideoWindowNativePaint();
 }
-    
+
 void S60ViewFinderWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 {
     CCoeEnv::Static()->WsSession().Flush();
@@ -105,12 +106,12 @@ void S60ViewFinderWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 
 void S60ViewFinderWidget::paintEvent(QPaintEvent *event)
 {
-    if (!m_isDirect) {
+    // Disable drawing only in case of DirectScreen ViewFinder
+    if (!m_isDirect)
         QLabel::paintEvent(event);
-    }
 }
 
-//#############################################################################
+//=============================================================================
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent):
     QVideoWidgetControl(parent),
@@ -126,21 +127,24 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent):
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
 {
-    if (m_widget)
+    if (m_widget) {
         delete m_widget;
+        m_widget = NULL;
+    }
 }
 
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        
+
         switch (e->type()) {
             case QEvent::ParentChange:
             case QEvent::WinIdChange:
+                emit widgetUpdated();
+                break;
             case QEvent::Show:
                 emit widgetUpdated();
-                if (e->type() == QEvent::Show)
-                    emit widgetVisible(true);
+                emit widgetVisible(true);
                 break;
             case QEvent::Resize:
                 emit widgetResized(m_widget->size());
@@ -148,20 +152,22 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             case QEvent::Hide:
                 emit widgetVisible(false);
                 break;
-            
+
             default:
                 // Do nothing
                 break;
         }
     }
-    return false;
+
+    return false; // Forward Event
 }
 
+/*
+ * This reconfigures the VideoWidgetControl and ViewFinderWidget either for
+ * Bitmap or DirectScreen ViewFinder.
+ */
 void S60VideoWidgetControl::reconfigureWidget(const bool directVF)
 {
-    if (m_isViewFinderDirect == directVF)
-        return;
-
     if (directVF) { // DirectScreen ViewFinder
         m_isViewFinderDirect = true;
 
@@ -170,6 +176,7 @@ void S60VideoWidgetControl::reconfigureWidget(const bool directVF)
 
         // Create a native window
         m_windowId = m_widget->winId();
+
     } else { // Bitmap ViewFinder
         m_isViewFinderDirect = false;
 
@@ -185,13 +192,11 @@ QWidget *S60VideoWidgetControl::videoWidget()
 
 WId S60VideoWidgetControl::windowId()
 {
-    if (m_isViewFinderDirect) {
-        m_windowId = m_widget->winId();
+    if (m_widget->internalWinId()) {
+        // Returns NativeWindow WindowID or NULL
+        m_windowId = m_widget->internalWinId();
     } else {
-        if (m_widget->internalWinId())
-            m_windowId = m_widget->internalWinId();
-        else
-            m_windowId = m_widget->effectiveWinId();
+        m_windowId = m_widget->effectiveWinId();
     }
     return m_windowId;
 }
@@ -203,7 +208,7 @@ Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 
 void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    if (m_aspectRatioMode==ratio) {
+    if (m_aspectRatioMode == ratio) {
         return;
     }
     m_aspectRatioMode = ratio;
@@ -212,6 +217,7 @@ void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
         if (m_aspectRatioMode == Qt::KeepAspectRatio)
             m_widget->setScaledContents(false);
         else {
+            // Scaling is very heavy operation and not recommended
             m_widget->setScaledContents(true);
         }
     }
@@ -224,15 +230,16 @@ bool S60VideoWidgetControl::isFullScreen() const
 
 void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (m_widget && !fullScreen && m_fullScreen) {
+    if (m_widget && !fullScreen && m_fullScreen) { // FullScreen ==> Normal
         m_widget->showMaximized();
         m_fullScreen = false;
-    } else if (m_widget && fullScreen) {
+        emit fullScreenChanged(m_fullScreen);
+
+    } else if (m_widget && fullScreen) { // Normal ==> FullScreen
         m_widget->showFullScreen();
         m_fullScreen = true;
+        emit fullScreenChanged(m_fullScreen);
     }
-
-    emit fullScreenChanged(fullScreen);
 }
 
 int S60VideoWidgetControl::brightness() const

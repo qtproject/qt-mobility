@@ -39,30 +39,33 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
     system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
 
-    unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
-    win32 {
-        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
-        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
-    }
-    symbian {
-        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
-        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    sourcePath = $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template
+    contains(QMAKE_HOST.os,Windows) {
+        sourcePath=$$replace(sourcePath,/,\\)
+        system(type $${sourcePath} >> $$PRF_OUTPUT)
+    } else {
+        system(cat $${sourcePath} >> $$PRF_OUTPUT)
     }
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.1.0 >> $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.2.0 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
-    system(echo MOBILITY_MINOR_VERSION = 1 >> $$PRF_CONFIG)
+    system(echo MOBILITY_MINOR_VERSION = 2 >> $$PRF_CONFIG)
     system(echo MOBILITY_PATCH_VERSION = 0 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
-        nativePath=$$replace(QT_MOBILITY_BUILD_TREE,/,\\)
-        FORMATDIR=$$[QT_INSTALL_DATA]\\mkspecs\\features
-        FORMATDIR=$$replace(FORMATDIR,/,\\)
-        system(copy "$${nativePath}\\features\\mobility.prf $$FORMATDIR")
-        system(copy "$${nativePath}\\features\\mobilityconfig.prf $$FORMATDIR")
+        sourcePath=$$QT_MOBILITY_BUILD_TREE/features/
+        destPath=$$[QT_INSTALL_DATA]/mkspecs/features
+
+        contains(QMAKE_HOST.os,Windows) {
+            sourcePath=$$replace(sourcePath,/,\\)
+            destPath=$$replace(destPath,/,\\)
+        }
+
+        system($$QMAKE_COPY "$${sourcePath}mobility.prf" "$$destPath")
+        system($$QMAKE_COPY "$${sourcePath}mobilityconfig.prf" "$$destPath")
     }
 
     # install config file
@@ -233,7 +236,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):
@@ -251,7 +254,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):

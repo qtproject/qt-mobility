@@ -23,9 +23,9 @@ HEADERS +=  servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \
             qservicefilter.h \
             dberror_p.h \
-            databasemanagerserver.h \
-            databasemanagersession.h \
-            databasemanagersignalhandler.h
+            databasemanagerserver_p.h \
+            databasemanagersession_p.h \
+            databasemanagersignalhandler_p.h
 
 SOURCES +=  servicemetadata.cpp \
             servicedatabase.cpp \

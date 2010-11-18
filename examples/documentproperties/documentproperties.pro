@@ -10,9 +10,16 @@ DEPENDPATH += ../../src/gallery
 
 HEADERS = \
         documentpropertieswidget.h \
-        filebrowser.h
+        filebrowser.h \
+        metadatabinding.h
 
 SOURCES = \
         documentpropertieswidget.cpp \
         filebrowser.cpp \
-        main.cpp
+        main.cpp \
+        metadatabinding.cpp
+
+symbian: {
+    load(data_caging_paths)
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+    }

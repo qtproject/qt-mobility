@@ -57,6 +57,8 @@ QTM_BEGIN_NAMESPACE
     by calling errorMap()) or an  overall operation error occurs(which may be
     retrieved by calling QLandmarkAbstractRequest::error()).
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -91,7 +93,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 /*!
     Sets the list of \a categoryIds of categories which will be removed.
 
-    \sa setCategoryId()
+    \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
@@ -101,9 +103,11 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 }
 
 /*!
-    Convenience function to set the \a categoryId of a sisngle category to be removed.
+    Convenience function to set the \a categoryId of a single category to be removed.
+    It is the equivalent of calling setCategoryIds() with a single \a categoryId
+    in the ID list.
 
-    \sa setCategoryIds()
+    \sa setCategory(), setCategoryIds()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -114,7 +118,37 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
 }
 
 /*!
-    Returns the mapping of input category id list indices
+    Convenience function to set the list of \a categories which will be removed.
+    This function effectively calls setCategoryIds() with the IDs of the
+    \a categories.
+
+    \sa setCategory(), setCategoryIds()
+*/
+void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory> &categories)
+{
+    Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->categoryIds.clear();
+    for (int i=0; i < categories.count(); ++i)
+        d->categoryIds.append(categories.at(i).categoryId());
+}
+
+/*!
+    Convenience function that sets a single \a category to be removed.
+    This function effectively calls setCategoryIds() with the ID of \a category.
+
+    \sa setCategories(), setCategoryId()
+*/
+void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &category)
+{
+    Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->categoryIds.clear();
+    d->categoryIds.append(category.categoryId());
+}
+
+/*!
+    Returns the mapping of input category ID list indices
     to the errors which occurred.
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const

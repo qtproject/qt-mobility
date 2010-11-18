@@ -5,12 +5,10 @@ DEFINES += QMEDIA_SYMBIAN_CAMERA
 
 #3.1 Platform
 contains(S60_VERSION, 3.1) {
-    message("S60 3.1 Platform")
     DEFINES += S60_31_PLATFORM
 }
 # S60 3.2 Platform:
 contains(S60_VERSION, 3.2) {
-    message("S60 3.2 Platform")
     DEFINES += S60_32_PLATFORM
 }
 
@@ -31,7 +29,7 @@ exists($${EPOCROOT}epoc32\\include\\platform\\graphics\\surface.h) {
 # AutoFocusing (CamAutoFocus) from ForumNokia example
 contains(symbian_camera_camautofocus_enabled, yes) {
     exists($${EPOCROOT}epoc32\\include\\CCamAutoFocus.h) {
-        message ("Using S60 3.1 autofocusing")
+        message ("CameraBE: Using S60 3.1 autofocusing")
         MMP_RULES += \
             "$${LITERAL_HASH}ifdef WINSCW" \
             "LIBRARY camautofocus.lib" \
@@ -50,12 +48,12 @@ contains(symbian_camera_ecamadvsettings_enabled, yes) {
             "LIBRARY ecamadvsettings.lib" \
             "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
             "$${LITERAL_HASH}endif"
-        message("Using from S60 3.2 CCameraAdvancedSettings header")
+        message("CameraBE: Using from S60 3.2 CCameraAdvancedSettings header")
     }
     exists($${EPOCROOT}epoc32\\include\\ecamadvsettings.h) {
         symbian:LIBS += -lecamadvsettings
         DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
-        message("Using CCameraAdvancedSettings header from S60 5.0 or later")
+        message("CameraBE: Using CCameraAdvancedSettings header from S60 5.0 or later")
     }
 }
 
@@ -70,7 +68,7 @@ contains(symbian_camera_devvideorecord_enabled, yes) {
             exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideoconstants.h) {
                 symbian:LIBS += -ldevvideo
                 DEFINES += S60_DEVVIDEO_RECORDING_SUPPORTED
-                message("Devvideo API supported")
+                message("CameraBE: Devvideo API supported")
             }
         }
     }
@@ -85,7 +83,7 @@ contains(DEFINES, S60_32_PLATFORM) | \
 contains(DEFINES, S60_50_PLATFORM) | \
 contains(DEFINES, SYMBIAN_3_PLATFORM){
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
-    message("Using private QWidget methods")
+    message("CameraBE: Using private QWidget methods")
 }
 
 # Libraries:
@@ -103,7 +101,8 @@ symbian:LIBS += -lfbscli \
         -lfbscli \
         -lefsrv \
         -lcone \
-        -lws32
+        -lws32 \
+        -limageconversion
 
 # Source:
 HEADERS += $$PWD/s60cameraconstants.h \

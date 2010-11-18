@@ -48,9 +48,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_GALLERY_EXPORT QGalleryProperty
+struct Q_GALLERY_EXPORT QGalleryProperty
 {
-public:
     enum Attribute
     {
         CanRead  = 0x01,
@@ -61,29 +60,39 @@ public:
 
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
-#ifndef Q_QDOC
-    template <int N>
-    explicit QGalleryProperty(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
-#else
-    explicit QGalleryProperty(const char *name);
-#endif
+    QString name() const { return QString::fromLatin1(m_name, m_length); }
 
-    QString name() const;
+    inline operator QString() const { return QString::fromLatin1(m_name, m_length); }
 
-    inline operator QString() const { return name(); }
+    QGalleryMetaDataFilter operator <(const QVariant &value) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), value, QGalleryFilter::LessThan); }
+    QGalleryMetaDataFilter operator <=(const QVariant &value) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), value, QGalleryFilter::LessThanEquals); }
 
-    QGalleryMetaDataFilter operator <(const QVariant &value) const;
-    QGalleryMetaDataFilter operator <=(const QVariant &value) const;
+    QGalleryMetaDataFilter operator ==(const QVariant &value) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), value, QGalleryFilter::Equals); }
 
-    QGalleryMetaDataFilter operator ==(const QVariant &value) const;
+    QGalleryMetaDataFilter operator >=(const QVariant &value) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), value, QGalleryFilter::GreaterThanEquals); }
+    QGalleryMetaDataFilter operator >(const QVariant &value) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), value, QGalleryFilter::GreaterThan); }
 
-    QGalleryMetaDataFilter operator >=(const QVariant &value) const;
-    QGalleryMetaDataFilter operator >(const QVariant &value) const;
+    QGalleryMetaDataFilter contains(const QString &string) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), string, QGalleryFilter::Contains); }
+    QGalleryMetaDataFilter startsWith(const QString &string) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), string, QGalleryFilter::StartsWith); }
+    QGalleryMetaDataFilter endsWith(const QString &string) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), string, QGalleryFilter::EndsWith); }
+    QGalleryMetaDataFilter wildcard(const QString &string) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), string, QGalleryFilter::Wildcard); }
+    QGalleryMetaDataFilter regExp(const QString &regExp) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), regExp, QGalleryFilter::RegExp); }
+    QGalleryMetaDataFilter regExp(const QRegExp &regExp) const {
+        return QGalleryMetaDataFilter(QLatin1String(m_name), regExp, QGalleryFilter::RegExp); }
 
-    QString ascending() const;
-    QString descending() const;
+    QString ascending() const { return QLatin1Char('+') + QLatin1String(m_name); }
+    QString descending() const { return QLatin1Char('-') + QLatin1String(m_name); }
 
-private:
     const char * const m_name;
     const int m_length;
 };
@@ -91,5 +100,7 @@ private:
 QTM_END_NAMESPACE
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryProperty::Attributes));
+
+#define Q_DEFINE_GALLERY_PROPERTY(scope, name) const QGalleryProperty scope::name = {#name, sizeof(#name) - 1};
 
 #endif

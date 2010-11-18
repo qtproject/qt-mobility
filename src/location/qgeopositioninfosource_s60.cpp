@@ -47,6 +47,7 @@
 #include "qmlbackendao_s60_p.h"
 
 
+
 QTM_BEGIN_NAMESPACE
 
 // constructor
@@ -307,7 +308,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
 
     for (TInt i = 0 ; i < mListSize; i++) {
         if (mList[i].mIsAvailable
-                //&& posMethods.testFlag(mList[i].mPosMethod)
+                && posMethods.testFlag(mList[i].mPosMethod)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))
@@ -328,7 +329,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
 
     for (TInt i = 0 ; i < mListSize; i++) {
         if (mList[i].mIsAvailable
-                //&& posMethods.testFlag(mList[i].mPosMethod)
+                && posMethods.testFlag(mList[i].mPosMethod)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))) {
@@ -344,7 +345,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
 }
 
 //private function : to update the mList array
-void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt aStatus)
+void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus)
 {
 
     TInt i, index;
@@ -730,8 +731,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         }
         //if the selected module for request update is same as the previous one reuse the request
         if (mList[index].mUid == mReqModuleId) {
-            mReqUpdateAO->requestUpdate(aTimeout);
-            return;
+            if (mReqUpdateAO) {
+                mReqUpdateAO->requestUpdate(aTimeout);
+                return;
+            }
         }
 
         TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));
@@ -834,7 +837,8 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
 
         index = checkModule(mCurrentModuleId);
 
-        mCurrentMethod = mList[index].mPosMethod ;
+        if (index >= 0 && index < mListSize)
+            mCurrentMethod = mList[index].mPosMethod ;
 
 
         if (updateInterval) {

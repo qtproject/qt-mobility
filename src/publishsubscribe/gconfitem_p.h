@@ -135,6 +135,10 @@ class GConfItem : public QObject
      */
     void unset();
 
+    /*! Unset this item's all sub items recursively.
+    */
+    void recursiveUnset();
+
     /*! Return a list of the directories below this item.  The
         returned strings are absolute key names like
         "/myapp/settings".

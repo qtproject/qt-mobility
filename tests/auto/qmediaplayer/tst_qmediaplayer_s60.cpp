@@ -42,45 +42,23 @@
 //TESTED_COMPONENT=src/multimedia
 
 #include "tst_qmediaplayer_s60.h"
+#include <qmediastreamscontrol.h>
 
 QT_USE_NAMESPACE
 
 void tst_QMediaPlayer_s60::initTestCase_data()
 {
 #ifdef __WINSCW__
-    if(QSysInfo::s60Version() == QSysInfo::SV_S60_3_1)
-        initTestCase_data_31_winscw();
-    else if(QSysInfo::s60Version() == QSysInfo::SV_S60_3_2)
-        initTestCase_data_32_winscw();
-    else if(QSysInfo::s60Version() == QSysInfo::SV_S60_5_0)
-        initTestCase_data_50_winscw();
-    else
-        initTestCase_data_default_winscw();
+    initTestCase_data_default_winscw();
 #else
-    if(QSysInfo::s60Version() == QSysInfo::SV_S60_3_1)
-        initTestCase_data_31_armv5();
-    else if(QSysInfo::s60Version() == QSysInfo::SV_S60_3_2)
-        initTestCase_data_32_armv5();
-    else if(QSysInfo::s60Version() == QSysInfo::SV_S60_5_0)
-        initTestCase_data_50_armv5();
-    else
-        initTestCase_data_default_armv5();
+    initTestCase_data_default_armv5();
 #endif
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
-{
-    //TODO: add data
 }
 
 void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
 {
-    //TODO: add data
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
-{
     QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("streamable");
     QTest::addColumn<QMediaPlayer::State>("state");
     QTest::addColumn<QMediaPlayer::MediaStatus>("status");
     QTest::addColumn<QMediaContent>("mediaContent");
@@ -97,6 +75,197 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("TestDataNull")
     << false //valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::NoMedia // status
+    << QMediaContent() // mediaContent
+    << qint64(-1) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << false //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_3gp.3gp")
+    << true //valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status LoadedMedia
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_3gp.3gp")) // mediaContent
+    << qint64(46860) // duration
+    << qint64(23430) // position (duration/2)
+    << true // seekable
+    << true // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_mp4.mp4")
+    << true //valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp4.mp4")) // mediaContent
+    << qint64(2701) // duration
+    << qint64(1351) // position (duration/2)
+    << true // seekable
+    << true // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_wmv9.wmv")
+    << true //valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
+    << qint64(169389) // duration
+    << qint64(84695) // position (duration/2)
+    << true // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_AAC.dat")
+    << false //valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::InvalidMedia // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_AAC.dat")) // mediaContent
+    << qint64(-1) // duration
+    << qint64(0) // position (duration/2)
+    << true // seekable
+    << true // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << false //audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::ResourceError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_amr.amr")
+    << true // valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
+    << qint64(14400) // duration
+    << qint64(7200) // position
+    << true // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << true // audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_mp3.mp3")
+    << true // valid
+    << false //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
+    << qint64(102044) //qint64(102044)  duration
+    << qint64(51022) // position
+    << true // seekable
+    << true // seekableWhilePlaying
+    << 50 // volume
+    << false // videoAvailable
+    << true // audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("test_stream 3gp")
+    << false // valid
+    << true //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("rtsp://v3.cache4.c.youtube.com/CkgLENy73wIaPwlU2rm7yu8PFhMYESARFEIJbXYtZ29vZ2xlSARSB3JlbGF0ZWRaDkNsaWNrVGh1bWJuYWlsYPi6_IXT2rvpSgw=/0/0/0/video.3gp")) // mediaContent
+    << qint64(103000) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true // audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("RTSP link to H.263/AMR")
+    << false // valid
+    << true //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("rtsp://v7.cache8.c.youtube.com/CiILENy73wIaGQnNUH6lxLd0MRMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp")) // mediaContent
+    << qint64(249000) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true // audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+    QTest::newRow("RTSP link to MPEG-4/AAC")
+    << false // valid
+    << true //streamable
+    << QMediaPlayer::StoppedState // state
+    << QMediaPlayer::LoadedMedia // status
+    << QMediaContent(QUrl("rtsp://v8.cache1.c.youtube.com/CiILENy73wIaGQnNUH6lxLd0MRMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp")) // mediaContent
+    << qint64(249000) // duration
+    << qint64(0) // position
+    << false // seekable
+    << false // seekableWhilePlaying
+    << 50 // volume
+    << true // videoAvailable
+    << true // audioAvailable
+    << qreal(0) // playbackRate
+    << QMediaPlayer::NoError // error
+    << QString(); // errorString
+
+}
+
+void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
+{
+    QTest::addColumn<bool>("valid");
+    QTest::addColumn<bool>("streamable");
+    QTest::addColumn<QMediaPlayer::State>("state");
+    QTest::addColumn<QMediaPlayer::MediaStatus>("status");
+    QTest::addColumn<QMediaContent>("mediaContent");
+    QTest::addColumn<qint64>("duration");
+    QTest::addColumn<qint64>("position");
+    QTest::addColumn<bool>("seekable");
+    QTest::addColumn<bool>("seekableWhilePlaying");
+    QTest::addColumn<int>("volume");
+    QTest::addColumn<bool>("videoAvailable");
+    QTest::addColumn<bool>("audioAvailable");
+    QTest::addColumn<qreal>("playbackRate");
+    QTest::addColumn<QMediaPlayer::Error>("error");
+    QTest::addColumn<QString>("errorString");
+
+    QTest::newRow("TestDataNull")
+    << false //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::NoMedia // status
     << QMediaContent() // mediaContent
@@ -113,13 +282,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_3GPP.dat")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_3GPP.dat")) // mediaContent
     << qint64(7200) // duration
     << qint64(3600) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << true // videoAvailable
     << true //audioAvailable
@@ -129,6 +299,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_3gp.3gp")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_3gp.3gp")) // mediaContent
@@ -145,6 +316,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_mp4.mp4")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp4.mp4")) // mediaContent
@@ -161,13 +333,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_MP4.dat")
     << false //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_MP4.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << true // videoAvailable
     << false //audioAvailable
@@ -177,13 +350,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_wmv9.wmv")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
     << qint64(169389) // duration
     << qint64(84695) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << true // videoAvailable
     << false //audioAvailable
@@ -193,13 +367,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_h264_qcif.264")
     << false //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_h264_qcif.264")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false //audioAvailable
@@ -209,13 +384,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_RM.dat")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_RM.dat")) // mediaContent
     << qint64(20245) // duration
     << qint64(10123) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << true // videoAvailable
     << true //audioAvailable
@@ -225,13 +401,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_SWF.dat")
     << false //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_SWF.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false //audioAvailable
@@ -241,13 +418,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_WMV.dat")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_WMV.dat")) // mediaContent
     << qint64(3098) // duration
     << qint64(1549) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying, on emulator codec leaks memory and causes alloc panic on dtor
+    << true // seekableWhilePlaying, on emulator codec leaks memory and causes alloc panic on dtor
     << 50 // volume
     << true // videoAvailable
     << false //audioAvailable
@@ -257,13 +435,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_WMA.dat")
     << false //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_WMA.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position (duration/2)
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << true // videoAvailable
     << false //audioAvailable
@@ -273,13 +452,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_flash_video.flv")
     << false // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_flash_video.flv")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false //audioAvailable
@@ -289,6 +469,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_MXMF.dat")
     << true //valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_MXMF.dat")) // mediaContent
@@ -305,13 +486,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_amr.amr")
     << true // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
     << qint64(14402) // duration
     << qint64(7200) // position
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << true // audioAvailable
@@ -321,13 +503,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_AMR.dat")
     << true // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_AMR.dat")) // mediaContent
     << qint64(38509) // duration
     << qint64(19255) // position
     << true // seekable
-    << false // seekableWhilePlaying
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << true // audioAvailable
@@ -337,13 +520,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_mp3.mp3")
     << false // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
-    << QMediaPlayer::InvalidMedia // status
+    << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
     << qint64(-1) //qint64(102044)  duration
     << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false // audioAvailable
@@ -353,13 +537,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_MP3.dat")
     << false // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_MP3.dat")) // mediaContent
     << qint64(-1) //qint64(102044)  duration
     << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false // audioAvailable
@@ -369,6 +554,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_MIDI.dat")
     << true // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_MIDI.dat")) // mediaContent
@@ -385,13 +571,14 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_ACC.dat")
     << false // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::InvalidMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_ACC.dat")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
+    << true // seekable
+    << true // seekableWhilePlaying
     << 50 // volume
     << false // videoAvailable
     << false // audioAvailable
@@ -401,6 +588,7 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_WAV.dat")
     << true // valid
+    << false //streamable
     << QMediaPlayer::StoppedState // state
     << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("file:///C:/data/testfiles/test_WAV.dat")) // mediaContent
@@ -417,8 +605,9 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 
     QTest::newRow("test_stream")
     << false // valid
+    << true //streamable
     << QMediaPlayer::StoppedState // state
-    << QMediaPlayer::InvalidMedia // status
+    << QMediaPlayer::LoadedMedia // status
     << QMediaContent(QUrl("rtsp://v3.cache4.c.youtube.com/CkgLENy73wIaPwlU2rm7yu8PFhMYESARFEIJbXYtZ29vZ2xlSARSB3JlbGF0ZWRaDkNsaWNrVGh1bWJuYWlsYPi6_IXT2rvpSgw=/0/0/0/video.3gp")) // mediaContent
     << qint64(-1) // duration
     << qint64(0) // position
@@ -430,89 +619,6 @@ void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
     << qreal(0) // playbackRate
     << QMediaPlayer::AccessDeniedError // error
     << QString(); // errorString
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_50_armv5()
-{
-    //TODO: add data
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_32_winscw()
-{
-    QTest::addColumn<bool>("valid");
-    QTest::addColumn<QMediaPlayer::State>("state");
-    QTest::addColumn<QMediaPlayer::MediaStatus>("status");
-    QTest::addColumn<QMediaContent>("mediaContent");
-    QTest::addColumn<qint64>("duration");
-    QTest::addColumn<qint64>("position");
-    QTest::addColumn<bool>("seekable");
-    QTest::addColumn<bool>("seekableWhilePlaying");
-    QTest::addColumn<int>("volume");
-    QTest::addColumn<bool>("videoAvailable");
-    QTest::addColumn<bool>("audioAvailable");
-    QTest::addColumn<qreal>("playbackRate");
-    QTest::addColumn<QMediaPlayer::Error>("error");
-    QTest::addColumn<QString>("errorString");
-
-    QTest::newRow("TestDataNull")
-    << false //valid
-    << QMediaPlayer::StoppedState // state
-    << QMediaPlayer::NoMedia // status
-    << QMediaContent() // mediaContent
-    << qint64(-1) // duration
-    << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
-    << 50 // volume
-    << false // videoAvailable
-    << false //audioAvailable
-    << qreal(0) // playbackRate
-    << QMediaPlayer::NoError // error
-    << QString(); // errorString
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_32_armv5()
-{
-    QTest::addColumn<bool>("valid");
-    QTest::addColumn<QMediaPlayer::State>("state");
-    QTest::addColumn<QMediaPlayer::MediaStatus>("status");
-    QTest::addColumn<QMediaContent>("mediaContent");
-    QTest::addColumn<qint64>("duration");
-    QTest::addColumn<qint64>("position");
-    QTest::addColumn<bool>("seekable");
-    QTest::addColumn<bool>("seekableWhilePlaying");
-    QTest::addColumn<int>("volume");
-    QTest::addColumn<bool>("videoAvailable");
-    QTest::addColumn<bool>("audioAvailable");
-    QTest::addColumn<qreal>("playbackRate");
-    QTest::addColumn<QMediaPlayer::Error>("error");
-    QTest::addColumn<QString>("errorString");
-
-    QTest::newRow("TestDataNull")
-    << false //valid
-    << QMediaPlayer::StoppedState // state
-    << QMediaPlayer::NoMedia // status
-    << QMediaContent() // mediaContent
-    << qint64(-1) // duration
-    << qint64(0) // position
-    << false // seekable
-    << false // seekableWhilePlaying
-    << 50 // volume
-    << false // videoAvailable
-    << false //audioAvailable
-    << qreal(0) // playbackRate
-    << QMediaPlayer::NoError // error
-    << QString(); // errorString
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_31_winscw()
-{
-    //backend does not compile on winscw due missing libs.
-}
-
-void tst_QMediaPlayer_s60::initTestCase_data_31_armv5()
-{
-    //TODO: add data
 }
 
 void tst_QMediaPlayer_s60::initTestCase()
@@ -677,7 +783,6 @@ void tst_QMediaPlayer_s60::testDuration()
     }
 
     QVERIFY(m_player->duration() == duration);
-    //qDebug()<<m_player->duration()<<m_player->error();;
 }
 
 void tst_QMediaPlayer_s60::testPosition()
@@ -696,7 +801,8 @@ void tst_QMediaPlayer_s60::testPosition()
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 
         QCOMPARE(m_player->isSeekable(), seekable);
-        QCOMPARE(m_player->mediaStatus(), status);
+        //QCOMPARE(m_player->mediaStatus(), status);
+        QVERIFY(m_player->mediaStatus() == status);
 
         // preset position
         { QSignalSpy spy(m_player, SIGNAL(positionChanged(qint64)));
@@ -740,7 +846,7 @@ void tst_QMediaPlayer_s60::testPosition()
         QCOMPARE(spy.at(0).at(0).toLongLong(),  duration);}
 
     } else {
-        WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia));
+        WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(m_player->isSeekable(), seekable);
         QCOMPARE(m_player->mediaStatus(), status);
@@ -755,17 +861,23 @@ void tst_QMediaPlayer_s60::testPositionWhilePlaying()
     QFETCH_GLOBAL(bool, seekable);
     QFETCH_GLOBAL(qint64, position);
     QFETCH_GLOBAL(bool, valid);
+    QFETCH_GLOBAL(bool, streamable);
     QFETCH_GLOBAL(QMediaPlayer::MediaStatus, status);
 
     m_player->setMedia(mediaContent);
-    WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+
+    if (streamable) {
+        WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+    } else {
+        WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+    }
 
     //qDebug()<<"";
     QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
     QCOMPARE(m_player->isSeekable(), seekable);
     QCOMPARE(m_player->mediaStatus(), status);
 
-    if (seekableWhilePlaying) {
+    if (seekableWhilePlaying && valid) {
         QCOMPARE(m_player->isSeekable(), seekableWhilePlaying);
 
         // preset position
@@ -777,7 +889,9 @@ void tst_QMediaPlayer_s60::testPositionWhilePlaying()
         m_player->setPosition(position);
         WAIT_FOR_CONDITION(spy.count(), 2);
         QVERIFY(m_player->mediaStatus() == QMediaPlayer::BufferingMedia ||
-                m_player->mediaStatus() == QMediaPlayer::BufferedMedia);
+                m_player->mediaStatus() == QMediaPlayer::BufferedMedia ||
+                m_player->mediaStatus() == QMediaPlayer::EndOfMedia ||
+                m_player->mediaStatus() == QMediaPlayer::LoadedMedia);
 
         QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
         QVERIFY(m_player->position()>=position);
@@ -797,7 +911,9 @@ void tst_QMediaPlayer_s60::testPositionWhilePlaying()
         m_player->setPosition(0);
         WAIT_FOR_CONDITION(spy.count(), 2);
         QVERIFY(m_player->mediaStatus() == QMediaPlayer::BufferingMedia ||
-                m_player->mediaStatus() == QMediaPlayer::BufferedMedia);
+                m_player->mediaStatus() == QMediaPlayer::BufferedMedia ||
+                m_player->mediaStatus() == QMediaPlayer::EndOfMedia ||
+                m_player->mediaStatus() == QMediaPlayer::LoadedMedia);
         QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
         QVERIFY(m_player->position() >= qint64(0));
         QVERIFY(spy.count()!=0);}
@@ -834,7 +950,9 @@ void tst_QMediaPlayer_s60::testPositionWhilePlaying()
         m_player->setPosition(qint64(-1));
         WAIT_FOR_CONDITION(spy.count(), 2);
         QVERIFY(m_player->mediaStatus() == QMediaPlayer::BufferingMedia ||
-                m_player->mediaStatus() == QMediaPlayer::BufferedMedia);
+                m_player->mediaStatus() == QMediaPlayer::BufferedMedia ||
+                m_player->mediaStatus() == QMediaPlayer::EndOfMedia ||
+                m_player->mediaStatus() == QMediaPlayer::LoadedMedia);
         QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
         QVERIFY(m_player->position() >= qint64(0));
         QVERIFY(spy.count()!=0);}
@@ -853,10 +971,13 @@ void tst_QMediaPlayer_s60::testPositionWhilePlaying()
         m_player->setPosition(duration+1);
         WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
         QCOMPARE(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
-        QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
-        QCOMPARE(m_player->position(), qint64(0));
-        QVERIFY(spy.count()!=0);}
-
+        // s60 MP3 controller has a weard feature to reduce position by ~200 when position
+        // is set over the duration, therefore we skip it here
+        if (!mediaContent.canonicalUrl().path().endsWith("mp3")) {
+            QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+            QCOMPARE(m_player->position(), qint64(0));
+            QVERIFY(spy.count()!=0);}
+        }
     } else
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 
@@ -1108,8 +1229,6 @@ void tst_QMediaPlayer_s60::testError()
     QVERIFY(m_player->mediaStatus() == status);
     QVERIFY(m_player->state() == state);
     QVERIFY(m_player->error() == error);
-    QVERIFY(m_player->isVideoAvailable() == videoAvailable);
-    QVERIFY(m_player->isAudioAvailable() == audioAvailable);
     if (error != QMediaPlayer::NoError) {
         QVERIFY(errorSpy.count()!=0);
     }
@@ -1118,6 +1237,7 @@ void tst_QMediaPlayer_s60::testError()
 void tst_QMediaPlayer_s60::testPlay()
 {
     QFETCH_GLOBAL(bool, valid);
+    QFETCH_GLOBAL(bool, streamable);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(QMediaPlayer::State, state);
 
@@ -1130,7 +1250,6 @@ void tst_QMediaPlayer_s60::testPlay()
 
     if(valid) {
         WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
-
         QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
         QCOMPARE(spy.count(), state == QMediaPlayer::PlayingState ? 0 : 1);
 
@@ -1151,12 +1270,20 @@ void tst_QMediaPlayer_s60::testPlay()
         //Play->Stop
         {m_player->play();
         WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
-        QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
-        QSignalSpy stateSpy(m_player, SIGNAL(stateChanged(QMediaPlayer::State)));
+        if (m_player->mediaStatus() != QMediaPlayer::EndOfMedia) {
+            QCOMPARE(m_player->state(), QMediaPlayer::PlayingState);
+            QSignalSpy stateSpy(m_player, SIGNAL(stateChanged(QMediaPlayer::State)));
+            m_player->stop();
+            QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+            QCOMPARE(stateSpy.count(), 1);
+        } else {
+            QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+            QCOMPARE(spy.count(), 4);
+        }}
+    } else if (streamable) {
         m_player->stop();
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
-        QCOMPARE(stateSpy.count(), 1);}
-
+        QCOMPARE(spy.count(), 2);
     } else {
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(spy.count(), 0);
@@ -1169,6 +1296,7 @@ void tst_QMediaPlayer_s60::testPlay()
 void tst_QMediaPlayer_s60::testPause()
 {
     QFETCH_GLOBAL(bool, valid);
+    QFETCH_GLOBAL(bool, streamable);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(QMediaPlayer::State, state);
 
@@ -1204,12 +1332,14 @@ void tst_QMediaPlayer_s60::testPause()
         m_player->stop();
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(stateSpy.count(), 1);}
+    } else if (streamable) {
+        m_player->stop();
+        QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
+        QCOMPARE(spy.count(), 2);
     } else {
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(spy.count(), 0);
     }
-    m_player->stop();
-    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
 void tst_QMediaPlayer_s60::testStop()
@@ -1256,14 +1386,13 @@ void tst_QMediaPlayer_s60::testStop()
         QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
         QCOMPARE(spy.count(), 0);
     }
-
-    m_player->stop();
-    QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
 void tst_QMediaPlayer_s60::testMediaStatus()
 {
+    QFETCH_GLOBAL(bool, videoAvailable);
     QFETCH_GLOBAL(bool, valid);
+    QFETCH_GLOBAL(bool, streamable);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
 
     QSignalSpy statusSpy(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -1272,26 +1401,42 @@ void tst_QMediaPlayer_s60::testMediaStatus()
     WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
 
     if(valid) {
-        QCOMPARE(statusSpy.count(), 3);
-        QCOMPARE(list.count(), 3);
-        QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
-        QCOMPARE(list.at(1), QMediaPlayer::LoadingMedia);
-        QCOMPARE(list.at(2), QMediaPlayer::LoadedMedia);
-        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+        if (videoAvailable) {
+            QCOMPARE(statusSpy.count(), 3);
+            QCOMPARE(list.count(), 3);
+            QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
+            QCOMPARE(list.at(1), QMediaPlayer::LoadingMedia);
+            QCOMPARE(list.at(2), QMediaPlayer::LoadedMedia);
+            QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
 
-        m_player->play();
-        {WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);}
-        QCOMPARE(statusSpy.count(), 5);
-        QCOMPARE(list.count(), 5);
-        QCOMPARE(list.at(3), QMediaPlayer::BufferingMedia);
-        QCOMPARE(list.at(4), QMediaPlayer::BufferedMedia);
-        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
+            m_player->play();
+            {WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);}
+            QCOMPARE(statusSpy.count(), 5);
+            QCOMPARE(list.count(), 5);
+            QCOMPARE(list.at(3), QMediaPlayer::BufferingMedia);
+            QCOMPARE(list.at(4), QMediaPlayer::BufferedMedia);
+            QCOMPARE(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
 
-        {WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);}
-        QVERIFY(statusSpy.count() > 4);
-        QVERIFY(list.count() > 4);
-        QCOMPARE(list.last(), QMediaPlayer::EndOfMedia);
-        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+            {WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);}
+            QVERIFY(statusSpy.count() == 6);
+            QVERIFY(list.count() == 6);
+            QCOMPARE(list.last(), QMediaPlayer::EndOfMedia);
+            QCOMPARE(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+        }else {
+            QCOMPARE(statusSpy.count(), 3);
+            QCOMPARE(list.count(), 3);
+            QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
+            QCOMPARE(list.at(1), QMediaPlayer::LoadingMedia);
+            QCOMPARE(list.at(2), QMediaPlayer::LoadedMedia);
+            QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+
+            m_player->play();
+            {WAIT_LONG_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);}
+            QVERIFY(statusSpy.count() == 4);
+            QVERIFY(list.count() == 4);
+            QCOMPARE(list.last(), QMediaPlayer::EndOfMedia);
+            QCOMPARE(m_player->mediaStatus(), QMediaPlayer::EndOfMedia);
+        }
     } else if (mediaContent.isNull()) {
         QCOMPARE(statusSpy.count(), 2);
         QCOMPARE(list.count(), 2);
@@ -1302,7 +1447,18 @@ void tst_QMediaPlayer_s60::testMediaStatus()
         QCOMPARE(statusSpy.count(), 2);
         QCOMPARE(list.count(), 2);
         QCOMPARE(m_player->mediaStatus(), QMediaPlayer::NoMedia);
-    } else if(statusSpy.count() > 2) {
+    } else if (streamable) {
+        QCOMPARE(statusSpy.count(), 3);
+        QCOMPARE(list.count(), 3);
+        QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
+        QCOMPARE(list.at(1), QMediaPlayer::LoadingMedia);
+        QCOMPARE(list.at(2), QMediaPlayer::LoadedMedia);
+        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+        m_player->play();
+        QCOMPARE(statusSpy.count(), 3);
+        QCOMPARE(list.count(), 3);
+        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::LoadedMedia);
+    } else {
         QCOMPARE(statusSpy.count(), 3);
         QCOMPARE(list.count(), 3);
         QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
@@ -1312,16 +1468,6 @@ void tst_QMediaPlayer_s60::testMediaStatus()
         m_player->play();
         QCOMPARE(statusSpy.count(), 3);
         QCOMPARE(list.count(), 3);
-        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::InvalidMedia);
-    } else {
-        QCOMPARE(statusSpy.count(), 2);
-        QCOMPARE(list.count(), 2);
-        QCOMPARE(list.at(0), QMediaPlayer::UnknownMediaStatus);
-        QCOMPARE(list.at(1), QMediaPlayer::InvalidMedia);
-        QCOMPARE(m_player->mediaStatus(), QMediaPlayer::InvalidMedia);
-        m_player->play();
-        QCOMPARE(statusSpy.count(), 2);
-        QCOMPARE(list.count(), 2);
         QCOMPARE(m_player->mediaStatus(), QMediaPlayer::InvalidMedia);
     }
 
@@ -1502,45 +1648,49 @@ void tst_QMediaPlayer_s60::testPlaylist()
     }
 }
 
-void tst_QMediaPlayer_s60::testPlaybackRate()
+void tst_QMediaPlayer_s60::testStreamControl()
 {
     QFETCH_GLOBAL(bool, valid);
-    QFETCH_GLOBAL(qreal, playbackRate);
+    QFETCH_GLOBAL(bool, streamable);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
+    QFETCH_GLOBAL(QMediaPlayer::State, state);
+    QFETCH_GLOBAL(bool, videoAvailable);
+    QFETCH_GLOBAL(bool, audioAvailable);
 
-    m_player->setMedia(mediaContent);
-    WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+    QMediaStreamsControl* m_streamControl = (QMediaStreamsControl*)(m_player->service()->requestControl(QMediaStreamsControl_iid));
+    if(m_streamControl) {
+        if (valid || streamable) {
+            if (audioAvailable && !videoAvailable) {
+                QSignalSpy streamInfoSpy(m_streamControl, SIGNAL(streamsChanged()));
+                m_player->setMedia(mediaContent);
+                WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+                QVERIFY(m_streamControl->streamCount() == 1);
+                QVERIFY(m_streamControl->streamType(1) == QMediaStreamsControl::AudioStream);
+                QVERIFY(m_streamControl->isActive(1) == true);
+                QCOMPARE(streamInfoSpy.count(), 1);
+            }else if (audioAvailable && videoAvailable){
+                QSignalSpy streamInfoSpy(m_streamControl, SIGNAL(streamsChanged()));
+                m_player->setMedia(mediaContent);
+                WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+                QVERIFY(m_streamControl->streamCount() == 2);
+                QVERIFY(m_streamControl->streamType(1) == QMediaStreamsControl::VideoStream);
+                QVERIFY(m_streamControl->isActive(2) == true);
+                QCOMPARE(streamInfoSpy.count(), 1);
+            }else if (!audioAvailable && videoAvailable) {
+                QSignalSpy streamInfoSpy(m_streamControl, SIGNAL(streamsChanged()));
+                m_player->setMedia(mediaContent);
+                WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+                QVERIFY(m_streamControl->streamCount() == 1);
+                QVERIFY(m_streamControl->streamType(1) == QMediaStreamsControl::VideoStream);
+                QVERIFY(m_streamControl->isActive(2) == true);
+                QCOMPARE(streamInfoSpy.count(), 1);
+            }
 
-    if (valid) {
-        m_player->setPlaybackRate(playbackRate);
-        QVERIFY(m_player->playbackRate() == playbackRate);
-
-        QSignalSpy spy(m_player, SIGNAL(playbackRateChanged(qreal)));
-        m_player->setPlaybackRate(playbackRate + 0.5f);
-        QCOMPARE(m_player->playbackRate(), playbackRate + 0.5f);
-        QCOMPARE(spy.count(), 1);
-    }
-}
-
-void tst_QMediaPlayer_s60::testPlaybackRateWhilePlaying()
-{
-    QFETCH_GLOBAL(bool, valid);
-    QFETCH_GLOBAL(qreal, playbackRate);
-    QFETCH_GLOBAL(QMediaContent, mediaContent);
-
-    m_player->setMedia(mediaContent);
-    WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
-
-    if (valid) {
-        m_player->play();
-        WAIT_FOR_CONDITION(m_player->mediaStatus(), QMediaPlayer::BufferedMedia);
-
-        m_player->setPlaybackRate(playbackRate);
-        QVERIFY(m_player->playbackRate() == playbackRate);
-
-        QSignalSpy spy(m_player, SIGNAL(playbackRateChanged(qreal)));
-        m_player->setPlaybackRate(playbackRate + 0.5f);
-        QCOMPARE(m_player->playbackRate(), playbackRate + 0.5f);
-        QCOMPARE(spy.count(), 1);
+        // Test that streamsChanged signal do not get emitted when adding same media
+        QSignalSpy streamInfoSpy(m_streamControl, SIGNAL(streamsChanged()));
+        m_player->setMedia(mediaContent);
+        WAIT_FOR_CONDITION(m_player->mediaStatus(), (QMediaPlayer::NoMedia || QMediaPlayer::InvalidMedia || QMediaPlayer::LoadedMedia));
+        QCOMPARE(streamInfoSpy.count(), 0);
+        }
     }
 }

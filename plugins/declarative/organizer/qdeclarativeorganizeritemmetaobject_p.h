@@ -53,6 +53,7 @@ QTM_USE_NAMESPACE
 
 struct OrganizerItemDetailNameMap
 {
+    QDeclarativeOrganizerItemDetail::ItemDetailType type;
     const char* name;
     const char* definitionName;
     bool group;
@@ -64,7 +65,7 @@ class QDeclarativeOrganizerItemMetaObject : public QDeclarativeOpenMetaObject
 public:
     QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item);
 
-    ~QDeclarativeContactMetaObject();
+    ~QDeclarativeOrganizerItemMetaObject();
 
     virtual void getValue(int id, void **a);
     virtual void setValue(int id, void **a);
@@ -72,18 +73,26 @@ public:
 
     QVariant detail(const QString& name);
     QVariant details(const QString& name);
+
+    QVariant detail(QDeclarativeOrganizerItemDetail::ItemDetailType type);
+    QVariant details(QDeclarativeOrganizerItemDetail::ItemDetailType type);
+
     void setItem(const QOrganizerItem& item);
     QOrganizerItem item();
-    int localId() const;
+    uint itemId() const;
 
-
-private:
     static void detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
     static QDeclarativeOrganizerItemDetail * detail_at(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, int idx);
     static void  detail_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
 
+    static QDeclarativeOrganizerItemDetail* createItemDetail(QDeclarativeOrganizerItemDetail::ItemDetailType type, QObject* parent = 0);
 
+    static OrganizerItemDetailNameMap* detailMetaDataByDetailName(const char * name);
+    static OrganizerItemDetailNameMap* detailMetaDataByDefinitionName(const char * name);
+    static OrganizerItemDetailNameMap* detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::ItemDetailType type);
+
+    bool m_modified;
     QOrganizerItem m_item;
     QMap<QString, QOrganizerItemDetailDefinition> m_defs;
     QList<QDeclarativeOrganizerItemDetail*> m_details;

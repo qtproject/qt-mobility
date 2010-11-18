@@ -72,11 +72,12 @@ QTM_BEGIN_NAMESPACE
 class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
+class QGeoTiledMapObjectInfo;
 
 class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
 {
 public:
-    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine);
     ~QGeoTiledMapDataPrivate();
 
     void updateMapImage();
@@ -96,14 +97,18 @@ public:
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
 
+    void removeObjectInfo(QGeoTiledMapObjectInfo* object);
+
+    void addObjectInfo(QGeoTiledMapObjectInfo* object);
+
     int zoomFactor;
 
-    QPoint maxZoomCenter;
-    QSize maxZoomSize;
-    QRect maxZoomScreenRect;
+    QPoint worldReferenceViewportCenter;
+    QSize worldReferenceSize;
+    QRect worldReferenceViewportRect;
 
-    QRect maxZoomScreenRectClippedLeft;
-    QRect maxZoomScreenRectClippedRight;
+    QRect worldReferenceViewportRectLeft;
+    QRect worldReferenceViewportRectRight;
 
     QSet<QRect> requestRects;
     QSet<QRect> replyRects;
@@ -111,15 +116,16 @@ public:
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
 
-    QCache<QGeoTiledMapRequest, QPixmap> cache;
+    QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
+
+    Q_DECLARE_PUBLIC(QGeoTiledMapData)
+private:
     QGraphicsScene *scene;
 
     QHash<QGraphicsItem*, QGeoMapObject*> itemMap;
 
-    Q_DECLARE_PUBLIC(QGeoTiledMapData)
-private:
     Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 

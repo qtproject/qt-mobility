@@ -75,11 +75,10 @@ public:
     }
 };
 
-Q_DECLARE_METATYPE(QLandmarkCategoryId);
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
-class tst_QLandmarkLmxHandler : public QObject
+class tst_QLandmarkFileHandler_Lmx : public QObject
 {
     Q_OBJECT
 
@@ -212,7 +211,9 @@ private slots:
             lm.setName(QString("LM%1").arg(i));
             lm.setUrl(QUrl("url"));
             lm.setCoordinate(QGeoCoordinate(54,23));
-            lm.setAttribute("street", "main street");
+            QGeoAddress address;
+            address.setStreet("main street");
+            lm.setAddress(address);
             lms.append(lm);
         }
 
@@ -276,7 +277,7 @@ private slots:
         << "The element \"landmarkCollection\" did not expect a child element named \"invalid\" at this point (unknown child element or child element out of order).";
         QTest::newRow("Non-double radius element")
         << "landmark/nondoubleradius.xml"
-        << "The element \"coverageRadius\" expected a value convertable to type double (value was \"twenty three\").";
+        << "The element \"coverageRadius\" expected a value convertable to type real (value was \"twenty three\").";
         QTest::newRow("Negative radius element")
         << "landmark/negativeradius.xml"
         << "The element \"coverageRadius\" is expected to have a non-negative value (value was \"-23.0\").";
@@ -507,7 +508,7 @@ private:
         a0.setCity("Brisbane");
         a0.setState("Queensland");
         a0.setCountry("Australia");
-        a0.setPostCode("4000");
+        a0.setPostcode("4000");
         w0.setAddress(a0);
         w0.setPhoneNumber("123456789");
         w0.setUrl(QUrl("http://example.com/testUrl"));
@@ -577,7 +578,7 @@ private:
 
         QLandmark w11;
         QGeoAddress a11;
-        a11.setPostCode("4000");
+        a11.setPostcode("4000");
         w11.setAddress(a11);
         w << w11;
 
@@ -591,7 +592,7 @@ private:
         a13.setCity("Brisbane");
         a13.setState("Queensland");
         a13.setCountry("Australia");
-        a13.setPostCode("4000");
+        a13.setPostcode("4000");
         w13.setAddress(a13);
         w13.setPhoneNumber("123456789");
         w << w13;
@@ -613,5 +614,5 @@ private:
     }
 };
 
-QTEST_MAIN(tst_QLandmarkLmxHandler)
+QTEST_MAIN(tst_QLandmarkFileHandler_Lmx)
 #include "tst_qlandmarkfilehandler_lmx.moc"

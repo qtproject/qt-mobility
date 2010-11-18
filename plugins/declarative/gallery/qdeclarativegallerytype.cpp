@@ -44,6 +44,8 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtCore/qcoreapplication.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -52,10 +54,10 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     : QObject(parent)
     , m_metaData(0)
     , m_status(Null)
-    , m_complete(false)
+    , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+            this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(typeChanged()),
@@ -81,7 +83,7 @@ qreal QDeclarativeGalleryType::progress() const
 
 void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -90,30 +92,104 @@ void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
 
 void QDeclarativeGalleryType::setAutoUpdate(bool enabled)
 {
-    m_request.setAutoUpdate(enabled);
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-    emit autoUpdateChanged();
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
+
+        emit autoUpdateChanged();
+    }
 }
 
 void QDeclarativeGalleryType::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (!m_request.itemType().isEmpty())
         m_request.execute();
 }
 
-void QDeclarativeGalleryType::_q_statusChanged()
+void QDeclarativeGalleryType::reload()
 {
-    QString message = m_request.errorString();
-    qSwap(message, m_errorMessage);
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
 
-    m_status = Status(m_request.status());
+    m_request.execute();
+}
 
-    emit statusChanged();
+void QDeclarativeGalleryType::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryType::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CanceledUpdate;
+
+    m_request.clear();
+}
+
+void QDeclarativeGalleryType::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CanceledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryType::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate)
+            m_request.execute();
+
+        return true;
+    } else {
+        return QObject::event(event);
+    }
+}
+
+void QDeclarativeGalleryType::_q_stateChanged()
+{
+    m_status = Status(m_request.state());
+
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
+
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << tr("DocumentGallery.%1 is not a supported item type")
+                        .arg(m_request.itemType());
+                break;
+            default:
+                break;
+            }
+        }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
+    }
 }
 
 void QDeclarativeGalleryType::_q_typeChanged()
@@ -203,9 +279,9 @@ void QDeclarativeDocumentGalleryType::classBegin()
     \o Finished Information about an \l itemType is available.
     \o Idle Information about an \l itemType which will be automatically
     updated is available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
+    \o Canceling The query was canceled but hasn't yet reached the
+    canceled status.
+    \o Canceled The query was canceled.
     \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */
@@ -215,12 +291,6 @@ void QDeclarativeDocumentGalleryType::classBegin()
 
     This property holds the current progress of the request, from 0.0 (started)
     to 1.0 (finished).
-*/
-
-/*!
-    \qmlproperty int DocumentGalleryType::maximumProgress
-
-    This property holds the maximum progress value.
 */
 
 /*!
@@ -267,12 +337,20 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryType::itemType(
 
 void QDeclarativeDocumentGalleryType::setItemType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    m_request.setItemType(QDeclarativeDocumentGallery::toString(itemType));
+    const QString type = QDeclarativeDocumentGallery::toString(itemType);
 
-    if (m_complete)
-        m_request.execute();
+    if (type != m_request.itemType()) {
+        m_request.setItemType(type);
 
-    emit itemTypeChanged();
+        if (m_updateStatus != Incomplete) {
+            if (!type.isEmpty())
+                m_request.execute();
+            else
+                m_request.clear();
+        }
+
+        emit itemTypeChanged();
+    }
 }
 
 /*!

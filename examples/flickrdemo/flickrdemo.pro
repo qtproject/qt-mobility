@@ -14,13 +14,20 @@ SOURCES += flickrdemo.cpp \
            connectivityhelper.cpp
 
 INCLUDEPATH += . ../../src/global \
-                ../../src/bearer \
                 ../../src/location
 
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location bearer
+MOBILITY = location
+
+equals(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 7){
+    MOBILITY += bearer
+    INCLUDEPATH += ../../src/bearer
+} else {
+    # use Bearer Management classes in QtNetwork module
+    DEFINES += BEARER_IN_QTNETWORK
+}
 
 ICON = flickr_icon.svg
 

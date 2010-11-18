@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtDeclarative module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include <QString>
 #include <QDebug>
 
@@ -7,12 +48,47 @@
 #include "qdeclarativeorganizeritemmetaobject_p.h"
 
 QTM_USE_NAMESPACE
+#define Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(detailtype, classname) \
+{QDeclarativeOrganizerItemDetail::detailtype, QDeclarativeOrganizer##classname::DetailName.latin1(), QOrganizer##classname::DefinitionName.latin1(), false}
+
+#define Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(detailtype, classname) \
+    {QDeclarativeOrganizerItemDetail::detailtype, QDeclarativeOrganizer##classname::DetailGroupName.latin1(), QOrganizer##classname::DefinitionName.latin1(), true}
+
 static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
-   {"",               "",                false}
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(EventTime, EventTime),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Comment, ItemComment),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(Comment, ItemComment),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Description, ItemDescription),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(DisplayLabel, ItemDisplayLabel),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Guid, ItemGuid),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Parent, ItemParent),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Location, ItemLocation),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Priority, ItemPriority),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Recurrence, ItemRecurrence),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Reminder, ItemReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(Reminder, ItemReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(AudibleReminder, ItemAudibleReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(AudibleReminder, ItemAudibleReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(VisualReminder, ItemVisualReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(VisualReminder, ItemVisualReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(EmailReminder, ItemEmailReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(EmailReminder, ItemEmailReminder),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Timestamp, ItemTimestamp),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(Type, ItemType),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(JournalTime, JournalTime),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoProgress, TodoProgress),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoTime, TodoTime)
 };
 
+/*!
+    \class QDeclarativeOrganizerItemMetaObject
+    \internal
+    \brief open organizer item meta object for accessing organizer item detail dynamic properties in qml
+*/
+
 QDeclarativeOrganizerItemMetaObject::QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item)
-    :QDeclarativeOpenMetaObject(obj)
+    :QDeclarativeOpenMetaObject(obj),
+      m_modified(false)
 {
     setItem(item);
 }
@@ -24,18 +100,17 @@ QDeclarativeOrganizerItemMetaObject::~QDeclarativeOrganizerItemMetaObject()
 
 void QDeclarativeOrganizerItemMetaObject::getValue(int propId, void **a)
 {
-    qDebug() << "value for propId:" << propId;
     OrganizerItemDetailNameMap* detailMetaData = m_properties.value(propId);
     if (detailMetaData) {
         if (detailMetaData->group) {
-            qDebug() << "name:" << detailMetaData->name;
             *reinterpret_cast< QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>* >(a[0]) =
                     QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>(object(), detailMetaData, detail_append, detail_count, detail_at, detail_clear);
 
         } else {
-            foreach(QDeclarativeOrganizerItemDetail* cd, m_details) {
-                if (cd->detail().definitionName() == detailMetaData->definitionName) {
-                    *reinterpret_cast<QVariant *>(a[0]) = QVariant::fromValue(cd);
+            foreach(QDeclarativeOrganizerItemDetail* itemDetail, m_details) {
+                //TODO: compare by type
+                if (itemDetail->detail().definitionName() == detailMetaData->definitionName) {
+                    *reinterpret_cast<QVariant *>(a[0]) = QVariant::fromValue(itemDetail);
                 }
             }
         }
@@ -45,63 +120,91 @@ void QDeclarativeOrganizerItemMetaObject::getValue(int propId, void **a)
 
 void QDeclarativeOrganizerItemMetaObject::setValue(int propId, void **a)
 {
-    OrganizerItemDetailNameMap* detailMetaData = m_properties.value(propId);
-    if (detailMetaData) {
-        if (!detailMetaData->group) {
-            QVariant& v = *reinterpret_cast<QVariant *>(a[0]);
-            QDeclarativeOrganizerItemDetail* detail = v.value<QDeclarativeOrganizerItemDetail*>();
-
-            foreach(const QDeclarativeOrganizerItemDetail* cd, m_details) {
-                if (cd->detail().definitionName() == detailMetaData->definitionName) {
-                    delete cd;
-                    cd = detail;
-                }
-            }
-        }
-    }
+    Q_UNUSED(propId);
+    Q_UNUSED(a);
 }
 
-int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  const char *)
-{
 
-    const int detailCount = sizeof(qt_OrganizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
+OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataByDetailName(const char * name)
+{
+    static const int detailCount = sizeof(qt_organizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
     OrganizerItemDetailNameMap* detailMetaData = 0;
 
     for (int i = 0; i < detailCount; i++) {
-        if (QString::fromLocal8Bit(qt_OrganizerItemDetailNameMap[i].name) == QString::fromLocal8Bit(name)) {
-            detailMetaData = &qt_OrganizerItemDetailNameMap[i];
+        if (QString::fromLatin1(qt_organizerItemDetailNameMap[i].name) == QString::fromLatin1(name)) {
+            detailMetaData = &qt_organizerItemDetailNameMap[i];
             break;
         }
     }
+    return detailMetaData;
+}
+
+OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataByDefinitionName(const char * name)
+{
+    return detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::detailType(name));
+}
+
+OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::ItemDetailType type)
+{
+    static const int detailCount = sizeof(qt_organizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
+    OrganizerItemDetailNameMap* detailMetaData = 0;
+
+    for (int i = 0; i < detailCount; i++) {
+        if (qt_organizerItemDetailNameMap[i].type == type && qt_organizerItemDetailNameMap[i].group) {
+            detailMetaData = &qt_organizerItemDetailNameMap[i];
+            break;
+        }
+    }
+    return detailMetaData;
+}
+
+
+
+int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  const char *)
+{
+    OrganizerItemDetailNameMap* detailMetaData = detailMetaDataByDetailName(name);;
 
     if (detailMetaData) {
         int propId = -1;
-        if (detailMetaData->group)
-            propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>");
-        else
+        if (detailMetaData->group) {
+            QOrganizerItemDetailDefinition def = m_defs.value(detailMetaData->definitionName);
+
+            //do not allow multiple details property for non unique details
+            if (m_defs.isEmpty() || (!def.isEmpty() && !def.isUnique()))
+                propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>");
+        }
+        else {
             propId = QDeclarativeOpenMetaObject::createProperty(name, "QVariant");
+        }
         m_properties.insert(propId, detailMetaData);
-        qDebug() << "createProperty:" << name << "propId:" << propId;
         return propId;
     }
     return -1;
 }
 
 
-QVariant QDeclarativeOrganizerItemMetaObject::detail(const QString& name)
+QVariant QDeclarativeOrganizerItemMetaObject::detail(QDeclarativeOrganizerItemDetail::ItemDetailType type)
 {
-    int propId = indexOfProperty(name.toLatin1());
-
-    if (propId > 0)
-        return property(propId).read(object());
-
-    //Assume it's a detail definition name
-    foreach(QDeclarativeOrganizerItemDetail* cd, m_details) {
-        if (cd->detail().definitionName() == name) {
-            return QVariant::fromValue(cd);
+    foreach(QDeclarativeOrganizerItemDetail* itemDetail, m_details) {
+        if (itemDetail->type() == type) {
+            return QVariant::fromValue(itemDetail);
         }
     }
+
+    //Check should we create a new detail for this type
+    //XXX:TODO check mutable detail definition feature in manager?
+    if (m_defs.isEmpty() || !m_defs.value(QDeclarativeOrganizerItemDetail::definitionName(type)).isEmpty()) {
+        QDeclarativeOrganizerItemDetail* itemDetail = createItemDetail(type, object());
+        m_details.append(itemDetail);
+        return QVariant::fromValue(itemDetail);
+    }
+
     return QVariant();
+}
+
+QVariant QDeclarativeOrganizerItemMetaObject::detail(const QString& name)
+{
+    return detail(QDeclarativeOrganizerItemDetail::detailType(name));
 }
 
 QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
@@ -111,57 +214,61 @@ QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
         return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail>(object(), m_details));
     } else {
         int propId = indexOfProperty(name.toLatin1());
+        if (propId <= 0) {
+            OrganizerItemDetailNameMap* metaData  = detailMetaDataByDefinitionName(name.toLatin1());
+            if (metaData) {
+               propId = indexOfProperty(metaData->name);
+            }
+        }
         if (propId > 0)
             return property(propId).read(object());
-
-        //Assume it's a detail definition name
-        //TODO::customized details
-        for (QHash<int, OrganizerItemDetailNameMap*>::ConstIterator iter = m_properties.constBegin(); iter != m_properties.constEnd(); iter++) {
-            if (iter.value()->group && iter.value()->definitionName == name)
-                return property(iter.key()).read(object());
-        }
     }
     return QVariant();
 }
 
-void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& contact)
+QVariant QDeclarativeOrganizerItemMetaObject::details(QDeclarativeOrganizerItemDetail::ItemDetailType type)
 {
-    m_item = contact;
+    return details(QDeclarativeOrganizerItemDetail::definitionName(type));
+}
+
+void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
+{
+    m_item = item;
     QList<QOrganizerItemDetail> details = m_item.details();
     m_details.clear();
     foreach (const QOrganizerItemDetail& detail, details) {
-      QDeclarativeOrganizerItemDetail* cd = new QDeclarativeOrganizerItemDetail(object());
+      QDeclarativeOrganizerItemDetail* itemDetail = new QDeclarativeOrganizerItemDetail(object());
 
-      cd->connect(cd, SIGNAL(fieldsChanged()), object(), SIGNAL(detailsChanged()));
+      itemDetail->setDetail(detail);
+      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(detailsChanged()));
 
-      cd->setDetail(detail);
-      m_details.append(cd);
+      m_details.append(itemDetail);
     }
 }
 
-QOrganizerItem QDeclarativeOrganizerItemMetaObject::contact()
+QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
 {
-    m_item.clearDetails();
-    foreach (const QDeclarativeOrganizerItemDetail* cd, m_details) {
+    foreach ( QDeclarativeOrganizerItemDetail* cd, m_details) {
        QOrganizerItemDetail detail = cd->detail();
        m_item.saveDetail(&detail);
     }
     return m_item;
 }
 
-int QDeclarativeOrganizerItemMetaObject::localId() const
+uint QDeclarativeOrganizerItemMetaObject::itemId() const
 {
-    return m_item.localId();
+    return qHash(m_item.id());
 }
+
 
 void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail)
 {
     OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     if (data) {
-        QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-        if (dc && detail->detail().definitionName() == data->definitionName) {
-            detail->connect(detail, SIGNAL(fieldsChanged()), dc, SIGNAL(detailsChanged()));
-            dc->d->m_details.append(detail);
+        QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
+        if (item && detail->detail().definitionName() == data->definitionName) {
+            detail->connect(detail, SIGNAL(valueChanged()), item, SIGNAL(valueChanged()));
+            item->d->m_details.append(detail);
         }
     }
 }
@@ -170,9 +277,9 @@ int  QDeclarativeOrganizerItemMetaObject::detail_count(QDeclarativeListProperty<
 {
     OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     int count = 0;
-    QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (dc && data) {
-        foreach(const QDeclarativeOrganizerItemDetail* detail, dc->d->m_details) {
+    QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
+    if (item && data) {
+        foreach(QDeclarativeOrganizerItemDetail* detail, item->d->m_details) {
             if (detail->detail().definitionName() == data->definitionName)
                 count++;
         }
@@ -184,13 +291,13 @@ QDeclarativeOrganizerItemDetail * QDeclarativeOrganizerItemMetaObject::detail_at
 {
     OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
     QDeclarativeOrganizerItemDetail* detail = 0;
-    QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (dc && data) {
+    QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
+    if (item && data) {
         int i = 0;
-        foreach(QDeclarativeOrganizerItemDetail* cd,dc->d->m_details) {
-            if (cd->detail().definitionName() == data->definitionName) {
+        foreach(QDeclarativeOrganizerItemDetail* itemDetail,item->d->m_details) {
+            if (itemDetail->detail().definitionName() == data->definitionName) {
                 if (i == idx) {
-                    detail = cd;
+                    detail = itemDetail;
                     break;
                 } else {
                     i++;
@@ -204,12 +311,59 @@ QDeclarativeOrganizerItemDetail * QDeclarativeOrganizerItemMetaObject::detail_at
 void  QDeclarativeOrganizerItemMetaObject::detail_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p)
 {
     OrganizerItemDetailNameMap* data = (OrganizerItemDetailNameMap*)(p->data);
-    QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
-    if (dc && data) {
-        foreach(QDeclarativeOrganizerItemDetail* cd, dc->d->m_details) {
-            if (cd->detail().definitionName() == data->definitionName) {
-                dc->d->m_details.removeAll(cd);
+    QDeclarativeOrganizerItem* item = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
+    if (item && data) {
+        foreach(QDeclarativeOrganizerItemDetail* itemDetail, item->d->m_details) {
+            if (itemDetail->detail().definitionName() == data->definitionName) {
+                item->d->m_details.removeAll(itemDetail);
             }
         }
     }
+}
+
+
+QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItemMetaObject::createItemDetail(QDeclarativeOrganizerItemDetail::ItemDetailType type, QObject* parent)
+{
+    switch (type) {
+    case QDeclarativeOrganizerItemDetail::EventTime:
+        return new QDeclarativeOrganizerEventTime(parent);
+    case QDeclarativeOrganizerItemDetail::JournalTime:
+        return new QDeclarativeOrganizerJournalTime(parent);
+    case QDeclarativeOrganizerItemDetail::TodoTime:
+        return new QDeclarativeOrganizerTodoTime(parent);
+    case QDeclarativeOrganizerItemDetail::TodoProgress:
+        return new QDeclarativeOrganizerTodoProgress(parent);
+    case QDeclarativeOrganizerItemDetail::Reminder:
+        return new QDeclarativeOrganizerItemReminder(parent);
+    case QDeclarativeOrganizerItemDetail::AudibleReminder:
+        return new QDeclarativeOrganizerItemAudibleReminder(parent);
+    case QDeclarativeOrganizerItemDetail::VisualReminder:
+        return new QDeclarativeOrganizerItemVisualReminder(parent);
+    case QDeclarativeOrganizerItemDetail::EmailReminder:
+        return new QDeclarativeOrganizerItemEmailReminder(parent);
+    case QDeclarativeOrganizerItemDetail::Comment:
+        return new QDeclarativeOrganizerItemComment(parent);
+    case QDeclarativeOrganizerItemDetail::Description:
+        return new QDeclarativeOrganizerItemDescription(parent);
+    case QDeclarativeOrganizerItemDetail::DisplayLabel:
+        return new QDeclarativeOrganizerItemDisplayLabel(parent);
+    case QDeclarativeOrganizerItemDetail::Guid:
+        return new QDeclarativeOrganizerItemGuid(parent);
+    case QDeclarativeOrganizerItemDetail::Location:
+        return new QDeclarativeOrganizerItemLocation(parent);
+    case QDeclarativeOrganizerItemDetail::Parent:
+        return new QDeclarativeOrganizerItemParent(parent);
+    case QDeclarativeOrganizerItemDetail::Priority:
+        return new QDeclarativeOrganizerItemPriority(parent);
+    case QDeclarativeOrganizerItemDetail::Recurrence:
+        return new QDeclarativeOrganizerItemRecurrence(parent);
+    case QDeclarativeOrganizerItemDetail::Timestamp:
+        return new QDeclarativeOrganizerItemTimestamp(parent);
+    case QDeclarativeOrganizerItemDetail::Type:
+        return new QDeclarativeOrganizerItemType(parent);
+    default:
+        break;
+    }
+    //customized
+    return new QDeclarativeOrganizerItemDetail(parent);
 }

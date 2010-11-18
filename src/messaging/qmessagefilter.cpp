@@ -126,10 +126,13 @@ QTM_BEGIN_NAMESPACE
 
     An empty filter matches all messages.
 
-    The result of combining an empty filter with a non-empty filter is the original non-empty filter. 
-    This is true regardless of whether the combination is formed by an AND or an OR operation.
+    The result of combining an empty filter with a non-empty filter using an AND operation is the
+    original non-empty filter.
 
-    The result of combining two empty filters is an empty filter.
+    The result of combining an empty filter with a non-empty filter using an OR operation is the
+    empty filter.
+
+    The result of combining two empty filters using either an AND or OR operation is an empty filter.
 */
 
 /*!

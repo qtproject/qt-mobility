@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -41,7 +41,7 @@
 #ifndef SLIDESHOW_H
 #define SLIDESHOW_H
 
-#include <QWidget>
+#include <QMainWindow>
 #include <qmediaimageviewer.h>
 
 QT_BEGIN_NAMESPACE
@@ -54,14 +54,11 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-class SlideShow : public QWidget
+class SlideShow : public QMainWindow
 {
     Q_OBJECT
 public:
     SlideShow(QWidget *parent = 0);
-
-signals:
-    void enableButtons(bool enable);
 
 private slots:
     void openPlaylist();
@@ -81,9 +78,10 @@ private:
     QMediaImageViewer *imageViewer;
     QMediaPlaylist *playlist;
     QLabel *statusLabel;
-    QLabel *countdownLabel;
-    QAbstractButton *playButton;
-    QAbstractButton *stopButton;
+    QAction *countdownAction;
+    QAction *playAction;
+    QAction *stopAction;
+    QToolBar *toolBar;
     QStackedLayout *viewerLayout;
 };
 

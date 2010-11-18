@@ -69,6 +69,7 @@ private slots:
     void cleanup();
 
     void testConvertContact();
+    void testEmptyContact();
     void testContactDetailHandler();
     void testContactDetailHandlerV2();
     void testEncodeName();
@@ -93,7 +94,6 @@ private slots:
     void testEncodeFamily();
     void testEncodeAvatar();
     void testEncodeThumbnail();
-    void testEncodeDisplayLabel();
     void testDefaultResourceHandler();
 
 private:

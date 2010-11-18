@@ -35,8 +35,14 @@
     \section2 Bearer Management
 
     \list
-    \o \l{bearercloud}{Bearer Cloud}\raisedaster
+    \o \l{bearercloud}{Bearer Cloud}
     \o \l{bearermonitor}{Bearer Monitor}
+    \endlist
+
+    \section2 Connectivity
+
+    \list
+    \o \l{btchat}{Bluetooth Chat}
     \endlist
 
     \section2 Contacts
@@ -70,6 +76,9 @@
     \o \l{landmarkbrowser}{Landmark Browser}
     \o \l{mapviewer}{Map Viewer}
     \o \l{geoservicedemo}{Geo Service Demo}
+    \o \l{declarative-location/landmarkmap}{Landmark Map}
+    \o \l{declarative-location/flickr}{Declarative Location Flickr}
+    \o \l{declarative-location/mapviewer}{Declarative Map Viewer}
     \endlist
 
     \section2 Messaging
@@ -83,29 +92,32 @@
 
     \list
     \o \l{audiorecorder}{Audio Recorder}
+    \o \l{audiodevices}{Audio Devices}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
     \o \l{slideshow}{Slideshow}
+    \o \l{declarative-camera}{Declarative Camera}
     \endlist
 
     \section2 Organizer
 
     \list
     \o \l{calendardemo}{Calendar Demo}
-    \o \l{timescape}{QML Time Scape Demo}
+    \omit \o \l{qmlorganizer}{QML Organizer} \endomit
+    \o \l{todo}{ToDo Example}
     \endlist
 
     \section2 Publish and Subscribe
 
     \list
-    \o \l{publish-subscribe}{Publish and Subscribe}\raisedaster
-    \o \l{battery-charge}{Accessing Publish and Subscribe from QML}\raisedaster
+    \o \l{publish-subscribe}{Publish and Subscribe}
+    \o \l{battery-charge}{Accessing Publish and Subscribe from QML}
     \endlist
 
     \section2 Service Framework
 
     \list
-    \o \l{servicebrowser}{Service Browser}\raisedaster
+    \o \l{servicebrowser}{Service Browser}
     \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
     \o \l{filemanagerplugin}{File Manager Plugin}
     \o \l{notesmanagerplugin}{Notes Manager Plugin}
@@ -125,7 +137,7 @@
 
     \list
     \o \l{sensors/grueplugin}{Grue Plugin}
-    \o \l{sensors/grueapp}{Grue Application}
+    \omit \o \l{sensors/grueapp}{Grue Application} \endomit
     \endlist
 */
 

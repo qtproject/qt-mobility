@@ -45,7 +45,7 @@
 
 // system includes
 #include <EPos_CPosLandmarkSearch.h>
-#include <Epos_Landmarks.h>
+#include <EPos_Landmarks.h>
 #include <f32file.h>  
 #include <qmobilityglobal.h>
 #include <qstring.h>
@@ -181,6 +181,8 @@ private:
     TBool iCancelRequest;
     TReal32 iProgress;
     TBool iIsComplete;
+    TBool iIsRequestRunning;
+    TBool iIsDestructing;
 };
 
 /**

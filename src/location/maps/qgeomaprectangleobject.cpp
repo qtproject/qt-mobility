@@ -65,13 +65,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a new rectangle object.
 */
 QGeoMapRectangleObject::QGeoMapRectangleObject()
-        : d_ptr(new QGeoMapRectangleObjectPrivate()) {}
+    : d_ptr(new QGeoMapRectangleObjectPrivate()) {}
 
 /*!
     Constructs a new rectangle object based on the bounding box \a boundingBox.
 */
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox)
-        : d_ptr(new QGeoMapRectangleObjectPrivate())
+    : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     d_ptr->bounds = boundingBox;
 }
@@ -81,7 +81,7 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBo
     topLeft and the bottom right coordinate at \a bottomRight.
 */
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-        : d_ptr(new QGeoMapRectangleObjectPrivate())
+    : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
 }
@@ -237,6 +237,42 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
         emit brushChanged(d_ptr->brush);
     }
 }
+
+/*!
+\fn void QGeoMapRectangleObject::topLeftChanged(const QGeoCoordinate &topLeft)
+
+    This signal is emitted when the top left coordinate of this rectangle 
+    object has changed.
+
+    The new value is \a topLeft.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::bottomRightChanged(const QGeoCoordinate &bottomRight)
+
+    This signal is emitted when the bottom right coordinate of this rectangle 
+    object has changed.
+
+    The new value is \a bottomRight.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the perimeter of this 
+    rectangle object has changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapRectangleObject::brushChanged(const QBrush &brush)
+
+    This signal is emitted when the brush used to fill in the interior of 
+    this rectangle object has changed.
+
+    The new value is \a brush.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

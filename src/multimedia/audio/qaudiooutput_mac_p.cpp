@@ -60,11 +60,11 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
 
-#include <qaudiodeviceinfo.h>
 #include <qaudiooutput.h>
 
 #include "qaudio_mac_p.h"
 #include "qaudiooutput_mac_p.h"
+#include "qaudiodeviceinfo_mac_p.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -157,6 +157,7 @@ public:
     void reset()
     {
         m_buffer->reset();
+        m_device = 0;
         m_deviceError = false;
     }
 
@@ -277,6 +278,7 @@ QAudioOutputPrivate::QAudioOutputPrivate(const QByteArray& device)
     if (QAudio::Mode(mode) == QAudio::AudioInput)
         errorCode = QAudio::OpenError;
     else {
+        audioDeviceInfo = new QAudioDeviceInfoInternal(device, QAudio::AudioOutput);
         isOpen = false;
         audioDeviceId = AudioDeviceID(did);
         audioUnit = 0;
@@ -298,6 +300,7 @@ QAudioOutputPrivate::QAudioOutputPrivate(const QByteArray& device)
 
 QAudioOutputPrivate::~QAudioOutputPrivate()
 {
+    delete audioDeviceInfo;
     close();
 }
 
@@ -429,7 +432,7 @@ void QAudioOutputPrivate::start(QIODevice* device)
 {
     QIODevice*  op = device;
 
-    if (!audioFormat.isValid() || !open()) {
+    if (!audioDeviceInfo->isFormatSupported(audioFormat) || !open()) {
         stateCode = QAudio::StoppedState;
         errorCode = QAudio::OpenError;
     }
@@ -458,9 +461,7 @@ void QAudioOutputPrivate::start(QIODevice* device)
 
 QIODevice* QAudioOutputPrivate::start()
 {
-    QIODevice*  op = 0;
-
-    if (!audioFormat.isValid() || !open()) {
+    if (!audioDeviceInfo->isFormatSupported(audioFormat) || !open()) {
         stateCode = QAudio::StoppedState;
         errorCode = QAudio::OpenError;
         return audioIO;
@@ -468,26 +469,18 @@ QIODevice* QAudioOutputPrivate::start()
 
     reset();
     audioBuffer->reset();
-    audioBuffer->setPrefetchDevice(op);
+    audioBuffer->setPrefetchDevice(0);
 
-    if (op == 0) {
-        op = audioIO;
-        stateCode = QAudio::IdleState;
-    }
-    else
-        stateCode = QAudio::ActiveState;
+    stateCode = QAudio::IdleState;
 
     // Start
     errorCode = QAudio::NoError;
     totalFrames = 0;
     startTime = AudioGetCurrentHostTime();
 
-    if (stateCode == QAudio::ActiveState)
-        audioThreadStart();
-
     emit stateChanged(stateCode);
 
-    return op;
+    return audioIO;
 }
 
 void QAudioOutputPrivate::stop()

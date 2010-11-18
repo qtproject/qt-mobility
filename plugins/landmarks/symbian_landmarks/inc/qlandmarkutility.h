@@ -46,7 +46,7 @@
 
 #include <EPos_Landmarks.h>
 #include <EPos_CPosLandmark.h>
-#include <Epos_CposLandmarkDatabase.h>
+#include <EPos_CPosLandmarkDatabase.h>
 #include <EPos_CPosLmCategoryManager.h> 
 #include <EPos_CPosLandmarkCategory.h>
 #include <EPos_TPosLmDatabaseEvent.h>
@@ -181,7 +181,8 @@ public:
      * returns false, if invalid categories are associated with landmark object.
      * returns true, if no any category ids are associated with landmark object. 
      */
-    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark);
+    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark,
+        QString mgrUri);
 
     /*
      * checks the valid local id
@@ -259,7 +260,7 @@ public:
      * or even be removed.
      *
      */
-    static QStringList serachableLandmarkAttributeKeys();
+    static QStringList searchableLandmarkAttributeKeys();
 
     /**
      * converts the attribute key string to symbian position field value. 
@@ -275,6 +276,11 @@ public:
      * Prepares the path for the file
      */
     static QString preparePath(QString filename);
+    
+    /**
+     * Prepares default protocol for landmark url
+     */
+    static void RemoveDefaultProtocolL(TPtr& landmarkUrl);
 
 };
 

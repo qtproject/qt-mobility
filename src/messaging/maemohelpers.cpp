@@ -49,6 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC(MessageCache, messageCache);
 Q_GLOBAL_STATIC(MessagingHelper, messagingHelper);
 
 MessagingHelper* MessagingHelper::instance()
@@ -209,22 +210,33 @@ void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageF
             (pf->_filterList.count() == 0)) {
             if (pf->_notFilter) {
                 // There is only one filter: empty ~QMessageFilter()
-                // => accountIds must be cleared
+                // => messageIds must be cleared
                 messageIds.clear();
                 return;
             } else {
                 // There is only one filter: empty QMessageFilter()
-                // => accountIds list can remain intact
+                // => messageIds list can remain intact
                 return;
             }
         }
 
         if (pf->_valid) {
+            MessageCache* cache = MessageCache::instance();
             QMessageStore* store = QMessageStore::instance();
+            QMessage* msg;
             for (int i=messageIds.count()-1; i >= 0; i--) {
-                QMessage message = store->message(messageIds[i]);
-                if (!pf->filter(message)) {
-                    messageIds.removeAt(i);
+                cache->lock();
+                msg = cache->messageObject(messageIds[i]);
+                if (msg) {
+                    if (!pf->filter(*msg)) {
+                        messageIds.removeAt(i);
+                    }
+                    cache->unlock();
+                } else {
+                    cache->unlock();
+                    if (!pf->filter(store->message(messageIds[i]))) {
+                        messageIds.removeAt(i);
+                    }
                 }
             }
         }
@@ -233,10 +245,34 @@ void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageF
 
 bool MessagingHelper::messageLessThan(const QMessageId messageId1, const QMessageId messageId2)
 {
-    QMessageStore* store = QMessageStore::instance();
-    return QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
-                                              store->message(messageId1),
-                                              store->message(messageId2));
+    bool retVal = false;
+
+    MessageCache* cache = MessageCache::instance();
+    cache->lock();
+    QMessage *msg1 = cache->messageObject(messageId1);
+    QMessage *msg2 = cache->messageObject(messageId2);
+
+    if (msg1 == 0 || msg2 == 0) {
+        QMessageStore* store = QMessageStore::instance();
+        if (msg1 != 0) {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                        *msg1,
+                                                        store->message(messageId2));
+        } else if (msg2 != 0) {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                        store->message(messageId1),
+                                                        *msg2);
+        } else {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                      store->message(messageId1),
+                                                      store->message(messageId2));
+        }
+    } else {
+        retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder, *msg1, *msg2);
+    }
+    cache->unlock();
+
+    return retVal;
 }
 
 void MessagingHelper::orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder)
@@ -503,5 +539,141 @@ void MessagingHelper::handleNestedFiltersFromMessageFilter(QMessageFilter &filte
         }
     }
 }
+
+bool MessagingHelper::preFilter(QMessageFilter &filter, QMessage::Type type)
+{
+    QMessageFilterPrivate* pMFFilter = QMessageFilterPrivate::implementation(filter);
+
+    QString prefix;
+    if (type == QMessage::Email) {
+        prefix = "MO_";
+    } else if (type == QMessage::Sms) {
+        prefix = "el";
+    }
+
+    return pMFFilter->preFilter(type, prefix);
+}
+
+MessageCache* MessageCache::instance()
+{
+    return messageCache();
+}
+
+MessageCache::MessageCache()
+{
+    m_messageCache.setMaxCost(maxMessageCacheSize);
+}
+
+MessageCache::~MessageCache()
+{
+}
+
+bool MessageCache::insert(const QMessage &message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    QMessage *msg = new QMessage(message);
+    retVal = m_messageCache.insert(message.id().toString(), msg);
+    if (retVal == false) {
+        delete msg;
+    }
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+bool MessageCache::update(const QMessage &message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.remove(message.id().toString());
+    if (retVal) {
+        QMessage *msg = new QMessage(message);
+        m_messageCache.insert(message.id().toString(), msg);
+    }
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+bool MessageCache::remove(const QMessageId &id)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.remove(id.toString());
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+QMessage MessageCache::message(const QMessageId &id)
+{
+    QMessage message;
+
+    m_mutex.lock();
+    QMessage *msg = m_messageCache.object(id.toString());
+    if (msg) {
+        message = *msg;
+    }
+    m_mutex.unlock();
+
+    return message;
+}
+
+bool MessageCache::isFull() const
+{
+    if (m_messageCache.size() >= maxMessageCacheSize) {
+        return true;
+    }
+
+    return false;
+}
+
+bool MessageCache::insertObject(QMessage *message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.insert(message->id().toString(), message);
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+QMessage* MessageCache::messageObject(const QMessageId &id)
+{
+    return m_messageCache.object(id.toString());
+}
+
+QMessageIdList MessageCache::messageIds()
+{
+    QMessageIdList ids;
+
+    QStringList keys = m_messageCache.keys();
+    for (int i=0; i < keys.count(); i++) {
+        ids.append(QMessageId(keys[i]));
+    }
+
+    return ids;
+}
+
+int MessageCache::count() const
+{
+    return m_messageCache.count();
+}
+
+void MessageCache::lock()
+{
+    m_mutex.lock();
+}
+
+void MessageCache::unlock()
+{
+    m_mutex.unlock();
+}
+
 
 QTM_END_NAMESPACE

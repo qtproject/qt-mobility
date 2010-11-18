@@ -70,8 +70,8 @@ public: // Conversion from QRecurrence to CRecurrence
     void beginTransformToCrecurrence();
 
     // set rules and dates
-    void addQOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule &rule);
-    void addQOrganizerItemExceptionRule(const QOrganizerItemRecurrenceRule &rule);
+    void addQOrganizerRecurrenceRule(const QOrganizerRecurrenceRule &rule);
+    void addQOrganizerItemExceptionRule(const QOrganizerRecurrenceRule &rule);
     void addQOrganizerItemRecurrenceDate(const QDate &date);
     void addQOrganizerItemExceptionDate(const QDate &date);
 
@@ -83,43 +83,37 @@ public: // Conversion from CRecurrence to QRecurrence
     void transformToQrecurrence(CRecurrence *crecurrence);
 
     // get rules and dates
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
-    QList<QDate> recurrenceDates() const;
-    QList<QDate> exceptionDates() const;
-
+    QSet<QOrganizerRecurrenceRule> recurrenceRules() const;
+    QSet<QOrganizerRecurrenceRule> exceptionRules() const;
+    QSet<QDate> recurrenceDates() const;
+    QSet<QDate> exceptionDates() const;
 
 private:
     // qrule -> crule conversions
-    QString qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerItemRecurrenceRule &rule) const;
-    QString qfrequencyToIcalFrequency(QOrganizerItemRecurrenceRule::Frequency frequency) const;
+    QString qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerRecurrenceRule &rule) const;
+    QString qfrequencyToIcalFrequency(QOrganizerRecurrenceRule::Frequency frequency) const;
     QString qcountToIcalCount(int count) const;
     QString qintervalToIcalInterval(int interval) const;
     QString qendDateToIcalUntil(QDate endDate) const;
-    QString qdaysOfWeekToIcalByDay(const QList<Qt::DayOfWeek> &daysOfWeek) const;
+    QString qdaysOfWeekToIcalByDay(const QSet<Qt::DayOfWeek> &daysOfWeek) const;
     QString qweekStartToIcalWkst(Qt::DayOfWeek dayOfWeek) const;
     QString qweekdayToIcalWeekday(Qt::DayOfWeek dayOfWeek) const;
-    QString qdaysOfMonthToIcalByMonthDay(const QList<int> &daysOfMonth) const;
-    QString qdaysOfYearToIcalByYearDay(const QList<int> &daysOfYear) const;
-    QString qmonthsToIcalByMonth(const QList<QOrganizerItemRecurrenceRule::Month> &months) const;
-    QString qweeksOfYearToIcalByWeekNo(const QList<int> &weeksOfYear) const;
-    QString qpositionsToIcalBySetPos(const QList<int> &positions) const;
-    QString listOfNumbers(const QList<int> &list) const;
-    int qfrequencyToRtype(QOrganizerItemRecurrenceRule::Frequency frequency) const;
-
-    QString qrecurrenceDateToIcalRecurrenceDate(const QDate &date) const;
+    QString qdaysOfMonthToIcalByMonthDay(const QSet<int> &daysOfMonth) const;
+    QString qdaysOfYearToIcalByYearDay(const QSet<int> &daysOfYear) const;
+    QString qmonthsToIcalByMonth(const QSet<QOrganizerRecurrenceRule::Month> &months) const;
+    QString qweeksOfYearToIcalByWeekNo(const QSet<int> &weeksOfYear) const;
+    QString qpositionsToIcalBySetPos(const QSet<int> &positions) const;
+    QString listOfNumbers(const QSet<int> &list) const;
+    int qfrequencyToRtype(QOrganizerRecurrenceRule::Frequency frequency) const;
 
     // crule -> qrule conversions
-    QOrganizerItemRecurrenceRule icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule) const;
-    QOrganizerItemRecurrenceRule::Frequency icalFrequencyToQfrequency(FREQUENCY frequency) const;
+    QOrganizerRecurrenceRule icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule) const;
+    QOrganizerRecurrenceRule::Frequency icalFrequencyToQfrequency(FREQUENCY frequency) const;
     Qt::DayOfWeek icalWeekdayToQdayOfWeek(short weekday, bool *status = 0) const;
     Qt::DayOfWeek icalRecurrenceTypeWeekdayToQdayOfWeek(const QString& weekday) const;
 
     // common methods
     QMap<QString, Qt::DayOfWeek> icalRecurrenceWeekDayQdayOfWeekMapping() const;
-    QString createSingleDayRuleFor(const QDate& date) const;
-    QList<QDate> convertRDate(const QString &rdate) const;
-    QDate convertString(const QString &rdate) const;
 
 private:
     // QRecurrence -> CRecurrence
@@ -129,10 +123,10 @@ private:
     std::vector< std::string > m_vExceptionDateList; // exception dates
 
     // CRecurrence -> QRecurrence
-    QList<QOrganizerItemRecurrenceRule> m_lRecurrenceRules;
-    QList<QOrganizerItemRecurrenceRule> m_lExceptionRules;
-    mutable QList<QDate> m_lRecurrenceDates;
-    QList<QDate> m_lExceptionDates;
+    QSet<QOrganizerRecurrenceRule> m_lRecurrenceRules;
+    QSet<QOrganizerRecurrenceRule> m_lExceptionRules;
+    QSet<QDate> m_lRecurrenceDates;
+    QSet<QDate> m_lExceptionDates;
 };
 
 #endif // QORGANIZERRECURRENCETRANSFORM_H

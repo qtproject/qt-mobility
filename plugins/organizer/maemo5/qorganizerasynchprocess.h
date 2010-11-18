@@ -69,10 +69,10 @@ class OrganizerRequestTimeoutTimer : public QObject
     Q_OBJECT
 
 public:
-    OrganizerRequestTimeoutTimer(QOrganizerItemAbstractRequest *req, int msecs);
+    OrganizerRequestTimeoutTimer(QOrganizerAbstractRequest *req, int msecs);
     ~OrganizerRequestTimeoutTimer();
 
-    QOrganizerItemAbstractRequest *request() const;
+    QOrganizerAbstractRequest *request() const;
 
 private Q_SLOTS:
     void internalTimeout();
@@ -82,8 +82,9 @@ Q_SIGNALS:
 
 private:
     QTimer* m_timeoutTimer;
-    QOrganizerItemAbstractRequest *m_req;
+    QOrganizerAbstractRequest *m_req;
 };
+
 
 class OrganizerAsynchProcess : public QThread
 {
@@ -93,37 +94,42 @@ public:
     OrganizerAsynchProcess(QOrganizerItemMaemo5Engine *engine);
     ~OrganizerAsynchProcess();
 
-    void requestDestroyed(QOrganizerItemAbstractRequest *req);
-    bool addRequest(QOrganizerItemAbstractRequest *req);
-    bool cancelRequest(QOrganizerItemAbstractRequest *req);
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
+    void requestDestroyed(QOrganizerAbstractRequest *req);
+    bool addRequest(QOrganizerAbstractRequest *req);
+    bool cancelRequest(QOrganizerAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest *req, int msecs);
 
-public Q_SLOTS:
+protected:
     void processRequest();
-    void doStart();
+    void run();
 
 private:
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest *req);
 
-    void handleItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest *req);
     void handleItemFetchRequest(QOrganizerItemFetchRequest *req);
-    void handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req);
+    void handleItemFetchForExportRequest(QOrganizerItemFetchForExportRequest *req);
+    void handleItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest *req);
+    void handleIdFetchRequest(QOrganizerItemIdFetchRequest *req);
     void handleItemRemoveRequest(QOrganizerItemRemoveRequest *req);
     void handleSaveRequest(QOrganizerItemSaveRequest *req);
     void handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest *req);
     void handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req);
     void handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req);
+    void handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req);
+    void handleCollectionRemoveRequest(QOrganizerCollectionRemoveRequest *req);
+    void handleCollectionSaveRequest(QOrganizerCollectionSaveRequest *req);
 
 private Q_SLOTS:
     void timeout(OrganizerRequestTimeoutTimer* timer);
 
 private:
     QOrganizerItemMaemo5Engine* m_engine;
-    QQueue<QOrganizerItemAbstractRequest *> m_requestQueue;
+    QQueue<QOrganizerAbstractRequest *> m_requestQueue;
     QList<OrganizerRequestTimeoutTimer *> m_timers;
-    QSet<QOrganizerItemAbstractRequest *> m_activeRequests;
+    QSet<QOrganizerAbstractRequest *> m_activeRequests;
     QMutex m_mainMutex;
     QMutex m_timeoutMutex;
+    bool m_quitNow;
 };
 
 #endif // QORGANIZERASYNCHPROCESS_H

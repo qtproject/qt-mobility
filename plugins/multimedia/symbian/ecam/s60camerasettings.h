@@ -42,74 +42,86 @@
 #ifndef S60CAMERASETTINGS_H
 #define S60CAMERASETTINGS_H
 
-#include <QtCore/qobject.h>
 #include "qcamera.h"
 
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 
+#include <e32base.h>
+
 QT_USE_NAMESPACE
 
-class S60CameraSettings : public QObject, public MAdvancedSettingsObserver
+/*
+ * Class handling CCamera AdvancedSettings and ImageProcessing operations.
+ */
+class S60CameraSettings : public QObject,
+                          public MAdvancedSettingsObserver
 {
     Q_OBJECT
- 
-public: // Contructor & Destructor
-    
-    S60CameraSettings(QObject *parent = 0, CCameraEngine *engine = 0);
+
+public: // Static Contructor & Destructor
+
+    static S60CameraSettings* New(int &error, QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
-    
+
 public: // Methods
-    
+
     // Focus
     QCameraFocus::FocusMode focusMode();
     void setFocusMode(QCameraFocus::FocusMode mode);
     QCameraFocus::FocusModes supportedFocusModes();
     void cancelFocusing();
-    
+
+    // Zoom
+    qreal opticalZoomFactorL() const;
+    void setOpticalZoomFactorL(const qreal zoomFactor);
+    QList<qreal> *supportedDigitalZoomFactors();
+    qreal digitalZoomFactorL() const;
+    void setDigitalZoomFactorL(const qreal zoomFactor);
+
     // Flash
     bool isFlashReady();
-    
+
     // Exposure
     void setExposureMode(QCameraExposure::ExposureMode mode);
     void lockExposure(bool lock);
-    bool isExposureLocked(); 
-    
+    bool isExposureLocked();
+
     // Metering Mode
     QCameraExposure::MeteringMode meteringMode();
     void setMeteringMode(QCameraExposure::MeteringMode mode);
     bool isMeteringModeSupported(QCameraExposure::MeteringMode mode);
-    
+
     // ISO Sensitivity
     int isoSensitivity();
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
     QList<int> supportedIsoSensitivities();
-    
+
     // Aperture
     qreal aperture();
     void setManualAperture(qreal aperture);
     QList<qreal> supportedApertures();
-    
+
     // Shutter Speed
     TInt shutterSpeed();
     void setManualShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds();
-    
+
     // ExposureCompensation
     qreal exposureCompensation();
     void setExposureCompensation(qreal ev);
     QList<qreal> supportedExposureCompensationValues();
-    
+
     // Sharpening Level
     int sharpeningLevel() const;
     void setSharpeningLevel(int value);
     bool isSharpeningSupported() const;
-    
+
     // Saturation
-    int saturation() const;
+    int saturation();
     void setSaturation(int value);
-    
+
 Q_SIGNALS: // Notifications
 
     // For QCameraExposureControl
@@ -118,28 +130,45 @@ Q_SIGNALS: // Notifications
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
-    
+
     // For QCameraLocksControl
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
-    
-    void error(QCamera::Error);
-    
+
+    // Errors
+    void error(int, const QString&);
+
+protected: // Protected constructors
+
+    S60CameraSettings(QObject *parent, CCameraEngine *engine);
+    void ConstructL();
+
 protected: // MAdvancedSettingsObserver
-    
+
     void HandleAdvancedEvent(const TECAMEvent& aEvent);
 
-private:
-    
+private: // Internal
+
     bool queryAdvancedSettingsInfo();
 
+private: // Enums
+
+    enum EcamErrors {
+        KErrECamCameraDisabled =        -12100, // The camera has been disabled, hence calls do not succeed
+        KErrECamSettingDisabled =       -12101, // This parameter or operation is supported, but presently is disabled.
+        KErrECamParameterNotInRange =   -12102, // This value is out of range.
+        KErrECamSettingNotSupported =   -12103, // This parameter or operation is not supported.
+        KErrECamNotOptimalFocus =       -12104  // The optimum focus is lost
+    };
+
 private: // Data
-    
-#ifndef S60_CAM_AUTOFOCUS_SUPPORT // Post S60 3.1 Platforms
+
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platforms
     CCamera::CCameraAdvancedSettings    *m_advancedSettings;
     CCamera::CCameraImageProcessing     *m_imageProcessingSettings;
-#endif // S60_CAM_AUTOFOCUS_SUPPORT
+#endif // S60_31_PLATFORM
     CCameraEngine                       *m_cameraEngine;
+    QList<qreal>                        m_supportedDigitalZoomFactors;
 };
 
 #endif // S60CAMERASETTINGS_H

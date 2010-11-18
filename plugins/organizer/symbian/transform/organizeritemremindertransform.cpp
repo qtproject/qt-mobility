@@ -45,9 +45,11 @@
 #include "qorganizeritemaudiblereminder.h"
 #include "qorganizeritemvisualreminder.h"
 #include "qorganizeritememailreminder.h"
-#include "qorganizereventtimerange.h"
-#include "qorganizertodotimerange.h"
+#include "qorganizereventtime.h"
+#include "qorganizertodotime.h"
 #include "organizeritemremindertransform.h"
+
+const int secondsInOneMinute = 60;
 
 void OrganizerItemReminderTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
 {
@@ -75,12 +77,9 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
     if (alarm) {
         CleanupStack::PushL(alarm);
         QOrganizerItemReminder reminder;
-        int offsetSeconds = alarm->TimeOffset().Int() * 60;
+        int offsetSeconds = alarm->TimeOffset().Int() * secondsInOneMinute;
         // Set both the offset and dateTime values for the reminder detail
-        reminder.setTimeDelta(offsetSeconds);
-        QDateTime startTime = toQDateTimeL(entry.StartTimeL());
-        QDateTime reminderTime = startTime.addSecs(-offsetSeconds);
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(offsetSeconds);
         item->saveDetail(&reminder);
         CleanupStack::PopAndDestroy(alarm);
     }
@@ -99,41 +98,13 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
         return;
 	}
 
-    QDateTime reminderDateTime = reminder.dateTime();
-    int timeOffset(0);
-
-    // If the reminder detail has a valid startDateTime, use it
-    if (!reminderDateTime.isNull()) {
-        QDateTime startDateTime;
-        if(item.type() == QOrganizerItemType::TypeEvent ||
-           item.type() == QOrganizerItemType::TypeEventOccurrence) {
-            QOrganizerEventTimeRange timeRange = item.detail<QOrganizerEventTimeRange>();
-            startDateTime = timeRange.startDateTime();
-        } else if (item.type() == QOrganizerItemType::TypeTodo ||
-                   item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-            QOrganizerTodoTimeRange timeRange = item.detail<QOrganizerTodoTimeRange>();
-            startDateTime = timeRange.startDateTime();
-        }
-        if (reminderDateTime > startDateTime) {
-            // Reminder time must be less than or equal to the start time
-            User::Leave(KErrArgument);
-        }
-        // Get the time offset in minutes
-        timeOffset = reminderDateTime.secsTo(startDateTime) / 60;
+    if (reminder.secondsBeforeStart() < 0) {
+        // Reminder time must be earlier than or equal to the start time
+        User::Leave(KErrArgument);
     }
 
-    // If there is a valid reminder delta, use it
-    if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta)) {
-
-        if (timeOffset) {
-            // If both startDateTime and delta are defined, they must match
-            if (timeOffset != reminder.timeDelta() / 60)
-                User::Leave(KErrArgument);
-        } else {
-            // Convert delta to minutes
-            timeOffset = reminder.timeDelta() / 60;
-        }
-    }
+    // Get the time offset in minutes
+    int timeOffset = reminder.secondsBeforeStart() / secondsInOneMinute;
 
     // Now add the alarm details in the entry
     CCalAlarm *alarm = CCalAlarm::NewL();
