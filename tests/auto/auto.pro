@@ -15,6 +15,7 @@ contains(mobility_modules,sensors):         SUBDIRS+=sensors.pro
 contains(mobility_modules,serviceframework):SUBDIRS+=serviceframework.pro
 contains(mobility_modules,systeminfo):      SUBDIRS+=systeminfo.pro
 contains(mobility_modules,versit):          SUBDIRS+=versit.pro
+contains(mobility_modules,connectivity):    SUBDIRS+=connectivity.pro
 
 # These autotests consist of things such as static code checks
 # which require that the autotest is run on the same machine

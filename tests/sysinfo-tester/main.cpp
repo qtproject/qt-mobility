@@ -188,7 +188,7 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
-  X(deviceinfo.typeOfLock());
+  X(deviceinfo.lockStatus());
 }
 
 /* ------------------------------------------------------------------------- *

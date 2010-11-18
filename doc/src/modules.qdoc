@@ -51,6 +51,7 @@
     \row \o \l{QtFeedback} \o Classes to allow tactile feedback and vibration.
     \row \o \l{QtGallery} \o Classes for managing document galleries.
     \row \o \l{QtVersit}  \o Classes for managing Versit documents.
+    \row \o \l{QtConnectivity} \o Classes for working with local devices.
 
     \endtable
 
@@ -208,4 +209,8 @@ to change notifications.
     including as vCards.
 */
 
-
+/*!
+    \module QtConnectivity
+    \title QtConnectivity Module
+    \brief The QtConnectivity module provides APIs for working with local devices.
+*/

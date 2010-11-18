@@ -166,6 +166,7 @@ bool QVersitContactImporterPrivate::importContact(
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
 
+    mRestoreHandler.documentProcessed();
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
         handler->documentProcessed(document, contact);
@@ -230,6 +231,9 @@ void QVersitContactImporterPrivate::importProperty(
         // Look up mDetailMappings for a simple mapping from property to detail.
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
+
+    if (mRestoreHandler.propertyProcessed(property, &updatedDetails))
+        success = true;
 
     // run plugin handlers
     foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {

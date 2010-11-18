@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -64,6 +63,9 @@
 #include "qdeclarativegeomaprectangleobject_p.h"
 #include "qdeclarativegeomaptextobject_p.h"
 
+#include "qdeclarativegeocodemodel_p.h"
+#include "qdeclarativereversegeocodemodel_p.h"
+
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
@@ -109,6 +111,9 @@ public:
         qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangle");
         qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 1, "MapText");
         qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapImage");
+
+        qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
+        qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");
     }
 };
 

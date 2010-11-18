@@ -2257,7 +2257,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn()
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
     return false;
 }
@@ -2281,7 +2281,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }

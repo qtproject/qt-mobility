@@ -29,7 +29,7 @@
 #include <QString>
 #include <QStringList>
 #include <QRegExp>
-
+#include <QDebug>
 
 
 const int KMinimumSearchPatternLength = 1;
@@ -125,6 +125,7 @@ QString CntSqlKoreanItuT::compareColumnsInOrder(QStringList &tokens) const
 
 QString CntSqlKoreanItuT::compareColumnsFromMidleInOrder( QStringList &tokens) const
     {
+    //Add vowel check.
     int count = tokens.count();
     int andSatement = 0;
     int i = 0;
@@ -219,52 +220,77 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
 
 QStringList CntSqlKoreanItuT::getSearchPattern(const QString &pattern)
     {
-    QRegExp syllable("([1245780]{1,2}[369]{1,2}[1245780]{0,2})(?![369])");
-    QRegExp consonants("[1245780]");
-    
-    QString &fRef = const_cast<QString&>(pattern);
-    fRef.remove(QRegExp("\\*|\\#"));//remove * and #
-    QStringList list;
+    QRegExp consonants("[124578]{1,1}(?![3690])");
+    QRegExp syllable("([124578]{1,2}[3690]{1,2}[124578]{0,2})(?![3690])");
+    //QRegExp consonants("[124578]");
     int pos = 0;
+    int pos1 = 0;
+    int pos2 = 0;
     int count = 0;
-    int length = fRef.length();
+    int const_delta = 0;
+    QStringList list;
     
-    while ((pos = consonants.indexIn(fRef, pos)) != -1) {
-         list << consonants.cap(0);
-         pos += consonants.matchedLength();
-        }
-    if ( length == list.count() )
-        {
-        return list;
-        }
-    else 
-        {
-        pos = 0;
-        list.clear();
-        while ((pos = syllable.indexIn(fRef, pos)) != -1) {
-             list << syllable.cap(0);
-             pos += syllable.matchedLength();
-             if(pos != -1 )
-                 {
-                 count = pos;
-                 }
+    QString newPattern = variationRemoval(pattern);
+    int length = newPattern.length();
+    
+    while (pos >= 0) {
+        pos1 = pos;
+        pos2 = pos;       
+        pos = consonants.indexIn(newPattern, pos1);
+        const_delta = count - consonants.pos();
+        if (pos != -1 && consonants.matchedLength() == 1 &&
+                (const_delta == 0 || const_delta == count + 1 )) 
+            {
+            //First consonant is taken into list
+            list << consonants.cap(0);
+            //Reduce second consonant a way from list counter
+            pos += consonants.matchedLength(); 
+            count++;
             }
-        pos = syllable.indexIn(fRef);
-        if (count == length && syllable.pos(0) == 0)
-               {
-               return list;
-               }
-           else
-               {
-               list.clear();
-               list = QStringList(pattern);
-               return list;
-               }
+        else 
+            {
+            pos = syllable.indexIn(newPattern, pos2);
+            if (pos != -1)
+                {
+                list << syllable.cap(0);
+                pos += syllable.matchedLength(); 
+                count += syllable.cap(0).length();
+                }
+            }
+    }
+    if(length != count)
+        {
+        list.clear();
+        list = QStringList(pattern);
         }
-   
+    return list;
     /*return mKoreaninput->Tokenize(pattern);*/
     }
-
+QString CntSqlKoreanItuT::variationRemoval(const QString &pattern)
+    {
+    QString &fRef = const_cast<QString&>(pattern);
+    //remove vowels
+    //double hits
+    //33
+    fRef.replace(QString("339"), QString("33"));
+    fRef.replace(QString("33*9"), QString("33"));
+    //3
+    fRef.replace(QString("39"), QString("3"));
+    fRef.replace(QString("3*9"), QString("3"));
+    //66
+    fRef.replace(QString("663"), QString("66"));
+    fRef.replace(QString("6639"), QString("66"));
+    fRef.replace(QString("66399"), QString("66"));
+    //6
+    fRef.replace(QString("63"), QString("6"));
+    fRef.replace(QString("639"), QString("6"));
+    fRef.replace(QString("6399"), QString("6"));
+    //double hits
+    //0
+    fRef.replace(QString("09"), QString("0"));  
+    fRef.remove(QRegExp("\\*|\\#"));//remove * and #
+    return fRef;
+    }
 CntSqlKoreanItuT::SqlQueryType CntSqlKoreanItuT::getSQLQueryType(const QString &pattern)
     {
     if (pattern.length() == KMinimumSearchPatternLength )
@@ -276,7 +302,7 @@ CntSqlKoreanItuT::SqlQueryType CntSqlKoreanItuT::getSQLQueryType(const QString &
         return ExactMatchFromOneTable;
         }
     //TODO: Change this after Korean tokens are working
-    else if (pattern.length() > KMinimumSearchPatternLength && getSearchPattern(pattern).count() > 1) //TODO: Change this after tokens are detected!!!
+    else if (pattern.length() > KMinimumSearchPatternLength && getSearchPattern(pattern).count() >= 1) //TODO: Change this after tokens are detected!!!
         {
         return KoreanBasicSearch;
         }

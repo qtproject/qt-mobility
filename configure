@@ -103,11 +103,12 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
-ORGANIZER_REQUESTED=
+# By default, all modules are requested.  Reset this later if -modules is supplied
+ORGANIZER_REQUESTED=yes
 
 usage() 
 {
@@ -145,7 +146,7 @@ usage()
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework"
-    echo "                    sensors versit organizer feedback"
+    echo "                    sensors versit organizer feedback connectivity"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a selected module depends on other modules"
     echo "                    those modules (and their dependencies) will automatically be enabled."
@@ -245,11 +246,12 @@ while [ "$#" -gt 0 ]; do
             ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
+            ORGANIZER_REQUESTED=
             #reset default selection
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback|connectivity)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     organizer)
@@ -639,6 +641,11 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/requests
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/filters
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/details
+            ;;
+        connectivity)
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/nfc
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/bluetooth
             ;;
         *)
             echo "Cannot generate headers for $module"

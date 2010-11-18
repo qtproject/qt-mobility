@@ -14,4 +14,5 @@ Cpp.ignoretokens        +=  \
                             Q_FEEDBACK_EXPORT \
                             Q_GALLERY_EXPORT \
                             Q_ORGANIZER_EXPORT
-Cpp.ignoredirectives    +=
+Cpp.ignoredirectives    +=  \
+                            Q_DECLARE_NDEF_RECORD

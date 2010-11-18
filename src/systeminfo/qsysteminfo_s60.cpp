@@ -52,19 +52,19 @@
 #include <hbinputkeymapfactory.h>
 #include <hbinputlanguage.h>
 #else
-#include <ptiengine.h>
+#include <PtiEngine.h>
 #endif // HB_SUPPORTED
 #include <featdiscovery.h>
 #ifndef KFeatureIdMmc
 #include <featureinfo.h>
 #endif
 #include <hwrmvibra.h>
-#include <aknutils.h>
+#include <AknUtils.h>
 #include <w32std.h>
 #include <centralrepository.h>
-#include <mproengengine.h>
-#include <proengfactory.h>
-#include <mproengnotifyhandler.h>
+#include <MProEngEngine.h>
+#include <ProEngFactory.h>
+#include <MProEngNotifyHandler.h>
 #include <btserversdkcrkeys.h>
 #include <bt_subscribe.h>
 #include <bttypes.h>
@@ -1222,7 +1222,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn()
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
     return false;
 }
@@ -1237,7 +1237,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return 0;//gethostid();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
