@@ -39,53 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERREQUEST_H
-#define QBLUETOOTHTRANSFERREQUEST_H
+#ifndef QBLUETOOTHTRANSFERREQUESTPRIVATE_H
+#define QBLUETOOTHTRANSFERREQUESTPRIVATE_H
 
 #include <qmobilityglobal.h>
-
-#include <QtCore/QtGlobal>
-#include <QtCore/QVariant>
+#include "qbluetoothtransferrequest.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
-class QBluetoothTransferRequestPrivate;
 
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferRequest
+class QBluetoothTransferRequestPrivate
 {
 public:
-    enum Attribute {
-        DescriptionAttribute,
-        TimeAttribute,
-        TypeAttribute,
-        LengthAttribute,
-        NameAttribute
-    };
+    QBluetoothTransferRequestPrivate();
 
-    QBluetoothTransferRequest(const QBluetoothAddress &address);
-    QBluetoothTransferRequest(const QBluetoothTransferRequest &other);
-    ~QBluetoothTransferRequest();
-
-    QVariant attribute(Attribute code, const QVariant &defaultValue = QVariant()) const;
-    void setAttribute(Attribute code, const QVariant &value);
-
-    bool operator!=(const QBluetoothTransferRequest &other) const;
-    QBluetoothTransferRequest &operator=(const QBluetoothTransferRequest &other);
-    bool operator==(const QBluetoothTransferRequest &other) const;
-
-protected:
-    QBluetoothTransferRequestPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QBluetoothTransferRequest)
-
+    QBluetoothAddress m_address;
+    QMap<int, QVariant> m_parameters;
 };
 
 QT_END_HEADER
 
 QTM_END_NAMESPACE
 
-#endif // QBLUETOOTHTRANSFERREQUEST_H
+#endif // QBLUETOOTHTRANSFERREQUESTPRIVATE_H
