@@ -109,8 +109,8 @@ void QLlcpServerPrivate::invokeNewConnection()
 
 QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
 {
-    QLlcpSocket* qSocket = new QLlcpSocket();
-    Q_D(QLlcpSocket);
+    //QLlcpSocket* qSocket = new QLlcpSocket();
+    //Q_D(QLlcpSocket);
 
 }
 

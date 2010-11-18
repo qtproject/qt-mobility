@@ -140,7 +140,7 @@ qint64 QLLCPConnected::WriteDatagram(const char *data, qint64 size)
     if (socketHandler != NULL)
     {
         TPtrC8 myDescriptor((const TUint8*)data, size);
-        val = socketHandler->StartWriteDatagramL(myDescriptor);
+        val = socketHandler->StartWriteDatagram(myDescriptor);
     }
 
     return val;
