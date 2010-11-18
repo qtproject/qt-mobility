@@ -49,7 +49,6 @@ QTM_USE_NAMESPACE
 class QDeclarativeNetworkInfo : public QSystemNetworkInfo
 {
     Q_OBJECT
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode useMode  WRITE useMode )
     Q_PROPERTY(QString networkStatus READ networkStatus NOTIFY statusChanged)
     Q_PROPERTY(QString networkName READ networkName NOTIFY nameChanged)
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
@@ -63,10 +62,10 @@ public:
     QString networkName();
     QString macAddress();
     QString networkStatus();
-    void useMode(QSystemNetworkInfo::NetworkMode curmode);
     QSystemNetworkInfo::NetworkMode mode();
 public slots:
 
+    Q_INVOKABLE void useMode(QSystemNetworkInfo::NetworkMode curmode);
     QNetworkInterface interfaceForMode();
     void startStatusChanged();
     void startSignalStrengthChanged();
