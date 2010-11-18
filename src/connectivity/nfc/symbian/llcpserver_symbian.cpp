@@ -120,11 +120,6 @@ CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     return llcpSocket;
     }
 
-QLlcpServerPrivate* CLlcpServer::llcpSocketAdaptor()
-    {
-       return NULL;
-    }
-
 TBool CLlcpServer::hasPendingConnections() const
     {
     return iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;

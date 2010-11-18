@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-	A Qt-Symbian wrapper implementation class to support symbian NFC backend.
+  A Qt-Symbian wrapper implementation class to support symbian NFC backend.
 */
 
 /*!
@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
 */
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
-	QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
+  QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
 }
 
 /*!
@@ -76,9 +76,8 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 */
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
-	delete m_target;
-	delete m_symbianbackend;
-	
+  delete m_target;
+  delete m_symbianbackend;
 }
 
 /*!
@@ -142,11 +141,11 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
     callback.method = method;
 
     for( int i = 0; i < filter.recordCount(); ++i)
-    	{
-		QNdefRecord::TypeNameFormat tnf = filter.recordAt(i).typeNameFormat;
-		QByteArray type = filter.recordAt(i).type;
-		m_symbianbackend->AddNdefSubscription( tnf, type );
-    	}
+      {
+    QNdefRecord::TypeNameFormat tnf = filter.recordAt(i).typeNameFormat;
+    QByteArray type = filter.recordAt(i).type;
+    m_symbianbackend->AddNdefSubscription( tnf, type );
+      }
     return id;
 }
 
@@ -163,11 +162,11 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
     m_freeIds.append(id);
     
     for ( int i = 0; i < m_registeredHandlers[id].filter.recordCount(); ++i)
-    	{
-		QNdefRecord::TypeNameFormat tnf = m_registeredHandlers[id].filter.recordAt(i).typeNameFormat;
-		QByteArray type = m_registeredHandlers[id].filter.recordAt(i).type;
-		m_symbianbackend->RemoveNdefSubscription( tnf, type );		
-    	}
+      {
+    QNdefRecord::TypeNameFormat tnf = m_registeredHandlers[id].filter.recordAt(i).typeNameFormat;
+    QByteArray type = m_registeredHandlers[id].filter.recordAt(i).type;
+    m_symbianbackend->RemoveNdefSubscription( tnf, type );
+      }
 
     while (m_freeIds.contains(m_registeredHandlers.count() - 1)) {
         m_freeIds.removeAll(m_registeredHandlers.count() - 1);
@@ -178,14 +177,14 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 }
 
 void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
-	{
-	QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
-	}
+  {
+  QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
+  }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
-	{
-	m_symbianbackend->stopTargetDetection();
-	}
+  {
+  m_symbianbackend->stopTargetDetection();
+  }
 
 struct VerifyRecord
 {
@@ -198,14 +197,14 @@ struct VerifyRecord
 */
 void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 {
-	if (!target){
-		return;
-	}
-	if (m_target){
-		delete m_target;
-		m_target = NULL;
-	}
-	m_target = target;
+  if (!target){
+    return;
+  }
+  if (m_target){
+    delete m_target;
+    m_target = NULL;
+  }
+  m_target = target;
     emit targetDetected(target);
 }
 
@@ -214,74 +213,69 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 */
 
 void QNearFieldManagerPrivateImpl::invokeTargetDetectedHandler(QNdefMessage msg)
-	{
-		for (int i = 0; i < m_registeredHandlers.count(); ++i) {
-			if (m_freeIds.contains(i))
-				continue;
-	
-			Callback &callback = m_registeredHandlers[i];
-	
-	
-			bool matched = true;
-	
-			QList<VerifyRecord> filterRecords;
-			for (int j = 0; j < callback.filter.recordCount(); ++j) {
-				VerifyRecord vr;
-				vr.count = 0;
-				vr.filterRecord = callback.filter.recordAt(j);
-	
-				filterRecords.append(vr);
-			}
-	
-			foreach (const QNdefRecord &record, msg) {
-				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-					VerifyRecord &vr = filterRecords[j];
-	
-					if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
-						vr.filterRecord.type == record.type()) {
-						++vr.count;
-						break;
-					} else {
-						if (callback.filter.orderMatch()) {
-							if (vr.filterRecord.minimum <= vr.count &&
-								vr.count <= vr.filterRecord.maximum) {
-								continue;
-							} else {
-								matched = false;
-							}
-						}
-					}
-				}
-	
-	
-				for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-					const VerifyRecord &vr = filterRecords.at(j);
-	
-					if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
-						continue;
-					else
-						matched = false;
-				}
-	
-				if (matched) {
-					callback.method.invoke(callback.object, Q_ARG(QNdefMessage, msg),
-															Q_ARG(QNearFieldTarget *, NULL));
-				}
-			}
-		}
-	}
+  {
+    for (int i = 0; i < m_registeredHandlers.count(); ++i) {
+      if (m_freeIds.contains(i))
+        continue;
+      Callback &callback = m_registeredHandlers[i];
+      bool matched = true;
+      QList<VerifyRecord> filterRecords;
+      for (int j = 0; j < callback.filter.recordCount(); ++j) {
+        VerifyRecord vr;
+        vr.count = 0;
+        vr.filterRecord = callback.filter.recordAt(j);
+        filterRecords.append(vr);
+      }
+
+      foreach (const QNdefRecord &record, msg) {
+        for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+          VerifyRecord &vr = filterRecords[j];
+
+          if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
+            vr.filterRecord.type == record.type()) {
+            ++vr.count;
+            break;
+          } else {
+            if (callback.filter.orderMatch()) {
+              if (vr.filterRecord.minimum <= vr.count &&
+                vr.count <= vr.filterRecord.maximum) {
+                continue;
+              } else {
+                matched = false;
+              }
+            }
+          }
+        }
+            }//end of foreach (const QNdefRecord &record, msg) {
+
+        for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+          const VerifyRecord &vr = filterRecords.at(j);
+
+          if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
+            continue;
+          else
+            matched = false;
+        }
+
+        if (matched) {
+          callback.method.invoke(callback.object, Q_ARG(QNdefMessage, msg),
+                              Q_ARG(QNearFieldTarget *, NULL));
+        }
+
+    }
+  }
 
 /*!
     Callback function when symbian NFC backend lost the NFC \a target.
 */
 void QNearFieldManagerPrivateImpl::targetDisconnected()
-	{
-	if (m_target)
-		{
-		emit targetLost(m_target);
-		QMetaObject::invokeMethod(m_target, "disconnected");
-		}
-	}
+  {
+  if (m_target)
+    {
+    emit targetLost(m_target);
+    QMetaObject::invokeMethod(m_target, "disconnected");
+    }
+  }
 
 #include "moc_qnearfieldmanager_symbian_p.cpp"
 
