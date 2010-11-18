@@ -115,35 +115,35 @@ public:
     QSystemBatteryInfo::ChargingState chargingState() const;
 
 
-    qint32 nominalCapacity() const;
-    qint32 remainingCapacityPercent() const;
-    qint32 remainingCapacity() const;
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
 
-    qint32 voltage() const;
-    qint32 remainingChargingTime() const;
-    qint32 currentFlow() const;
-    qint32 startCurrentMeasurement(qint32 rate);
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int startCurrentMeasurement(int rate);
 
-    qint32 remainingCapacityBars() const;
-    qint32 maxBars() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-    void batteryLevelChanged(qint32 level);
+//    void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
-
 
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void nominalCapacityChanged(qint32);
-    void remainingCapacityPercentChanged(qint32);
-    void remainingCapacityChanged(qint32);
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
 
-    void currentFlowChanged(qint32);
-    void remainingCapacityBarsChanged(qint32);
-    void remainingChargingTimeChanged(qint32);
+    void currentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+    void voltageChanged(int);
 
 private:
     QSystemBatteryInfoPrivate *d;

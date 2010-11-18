@@ -88,7 +88,7 @@ private slots:
     void updateDeviceLockedState();
 
     void netStatusComboActivated(int);
-    void updateBatteryStatus(qint32);
+    void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
     void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);

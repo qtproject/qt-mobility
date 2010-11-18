@@ -478,13 +478,13 @@ void Dialog::setSaverEnabled(bool b)
 }
 
 
-void Dialog::updateBatteryStatus(qint32 level)
+void Dialog::updateBatteryStatus(int level)
 {
     batteryLevelBar->setValue(level);
     lcdNumber->display(level);
 }
 
-void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
+void Dialog::updatePowerState(QSystemDeviceInfo::PowerState /*newState*/)
 {
 //    currentPowerState = newState;
 //    switch (newState) {
@@ -544,6 +544,12 @@ void Dialog::displayBatteryStatus(QSystemBatteryInfo::BatteryStatus status)
         case QSystemBatteryInfo::BatteryOk:
             {
                 msg = "Battery is Normal (greater than 40%)";
+                QMessageBox::information(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemBatteryInfo::BatteryFull:
+            {
+                msg = "Battery is Full (100%)";
                 QMessageBox::information(this,"QSystemInfo",msg);
             }
             break;
@@ -729,7 +735,6 @@ void Dialog::updateProfile()
 
     if(di) {
         QString profilestring;
-        qDebug() << di->currentProfile();
         switch(di->currentProfile()) {
             case QSystemDeviceInfo::SilentProfile:
             {
@@ -833,14 +838,11 @@ void Dialog::setupBattery()
     delete bi;
     bi = new QSystemBatteryInfo(this);
 
-    connect(bi,SIGNAL(remainingCapacityPercentChanged(qint32)),
-            this,SLOT(updateBatteryStatus(qint32)));
+    connect(bi,SIGNAL(remainingCapacityPercentChanged(int)),
+            this,SLOT(updateBatteryStatus(int)));
 
     connect(bi,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
             this,SLOT(displayBatteryStatus(QSystemBatteryInfo::BatteryStatus)));
-
-//    connect(bi,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-//            this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
     connect(bi,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
              this,SLOT(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
@@ -851,6 +853,18 @@ void Dialog::setupBattery()
     connect(startMeasurementPushButton,SIGNAL(clicked()),
             this,SLOT(startCurrentPushed()));
 
+    connect(bi,SIGNAL(nominalCapacityChanged(int)),
+            NominalCaplcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingCapacityChanged(int)),
+            remainCaplcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(voltageChanged(int)),
+            voltagelcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(currentFlowChanged(int)),
+            currentFLowlcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
+            remainingCapBarslcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingChargingTimeChanged(int)),
+            chargeTimelcdNumber,SLOT(display(int)));
 
     chargerTypeChanged(bi->chargerType());
 
@@ -885,8 +899,8 @@ void Dialog::setupBattery()
 
 void Dialog::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
 {
-    if(chargingState == QSystemBatteryInfo::NotCharging) {
-        chargingCheckBox->setChecked(false);
+    if(chargingState == QSystemBatteryInfo::Charging) {
+        chargingCheckBox->setChecked(true);
     } else {
         chargingCheckBox->setChecked(false);
     }
@@ -896,7 +910,7 @@ void Dialog::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingStat
 
 void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
 {
-    if(chargerType == QSystemBatteryInfo::BatteryEmpty) {
+    if(chargerType == QSystemBatteryInfo::NoCharger) {
         radioButton_2->setChecked(true);
     } else if(chargerType == QSystemBatteryInfo::WallCharger) {
         radioButton_3->setChecked(true);
