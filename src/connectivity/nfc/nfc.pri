@@ -46,6 +46,7 @@ simulator:SOURCES += \
     nfc/qllcpsocket_simulator_p.cpp \
     nfc/qllcpserver_simulator_p.cpp
 
+simulator:QT *= gui
 !simulator:!symbian:PRIVATE_HEADERS += \
     nfc/qllcpsocket_p.h \
     nfc/qllcpserver_p.h
