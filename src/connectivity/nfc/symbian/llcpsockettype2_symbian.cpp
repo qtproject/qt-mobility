@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
+#include "nearfieldutility_symbian.h"
 #include "llcpsockettype2_symbian.h"
 
 // TODO
@@ -370,61 +370,6 @@ void CLlcpSocketType2::BytesWritten(qint64 bytes)
     }
   //TODO emit bytesWritten();
   }
-
-
-// timer implementation
-CLlcpTimer* CLlcpTimer::NewL(CActiveSchedulerWait & aWait)
-    {
-  CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    CleanupStack::Pop(self);
-    return self;
-    }
-
-/**
-Destructor.
-*/
-CLlcpTimer::~CLlcpTimer()
-    {
-    Cancel();
-    }
-
-/**
-Starts the shutdown timer.
-*/
-void CLlcpTimer::Start(TInt aMSecs)
-    {
-    const TUint KDelay = (1000 * aMSecs);
-    After(KDelay);
-    }
-
-void CLlcpTimer::RunL()
-    {
-    if (iWait.IsStarted())
-        {
-        iWait.AsyncStop();
-        }
-    }
-
-/**
-Constructor
-*/
-CLlcpTimer::CLlcpTimer(CActiveSchedulerWait & aWait) :
-    CTimer(EPriorityNormal),
-    iWait(aWait)
-    {
-    }
-
-/**
-Second phase constructor.
-*/
-void CLlcpTimer::ConstructL()
-    {
-    CTimer::ConstructL();
-    CActiveScheduler::Add(this);
-    }
-
 
 // connecter implementation
 CLlcpConnecterAO* CLlcpConnecterAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )

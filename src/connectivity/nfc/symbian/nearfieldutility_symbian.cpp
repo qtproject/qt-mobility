@@ -119,17 +119,18 @@ QString QNFCNdefUtility::FromDesC8ToQString(const TDesC8& aDescriptor)
             aDescriptor.Length());
     }
 
-// timer implementation
+QTM_END_NAMESPACE
 
+// timer implementation
 CLlcpTimer* CLlcpTimer::NewL(CActiveSchedulerWait & aWait)
     {
-    CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
+  CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop(self);
     return self;
     }
-    
+
 /**
 Destructor.
 */
@@ -137,16 +138,16 @@ CLlcpTimer::~CLlcpTimer()
     {
     Cancel();
     }
-    
+
 /**
 Starts the shutdown timer.
-*/   
+*/
 void CLlcpTimer::Start(TInt aMSecs)
     {
     const TUint KDelay = (1000 * aMSecs);
     After(KDelay);
     }
-    
+
 void CLlcpTimer::RunL()
     {
     if (iWait.IsStarted())
@@ -154,23 +155,23 @@ void CLlcpTimer::RunL()
         iWait.AsyncStop();
         }
     }
-    
-/** 
+
+/**
 Constructor
 */
-CLlcpTimer::CLlcpTimer(CActiveSchedulerWait & aWait) : 
+CLlcpTimer::CLlcpTimer(CActiveSchedulerWait & aWait) :
     CTimer(EPriorityNormal),
     iWait(aWait)
     {
-    }    
+    }
 
 /**
 Second phase constructor.
-*/    
+*/
 void CLlcpTimer::ConstructL()
     {
     CTimer::ConstructL();
     CActiveScheduler::Add(this);
     }
 
-QTM_END_NAMESPACE
+

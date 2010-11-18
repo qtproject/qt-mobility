@@ -91,7 +91,6 @@ signals:
     
 private:
     CLlcpServer* m_symbianbackend;
-    QList<QLlcpSocket *> m_pendingConnections;
     ServerState m_state;
 };
 

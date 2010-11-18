@@ -286,9 +286,8 @@ TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         }
     if (aMilliSeconds > 0)
         {
-        //TODO roll back when max is ready to push
-        //iTimer = CLlcpTimer::NewL(*iWait);
-        //iTimer->Start(aMilliSeconds);
+        iTimer = CLlcpTimer::NewL(*iWait);
+        iTimer->Start(aMilliSeconds);
         }
     iWait->Start();
     //control is back here when iWait->AsyncStop() is called by the timer or the callback function
@@ -307,7 +306,6 @@ TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         }
     return ret; 
     }
-
   
 /*!
     Construct a new wrapper for connectionLess transport.

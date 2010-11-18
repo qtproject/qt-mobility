@@ -62,6 +62,7 @@ class QLlcpSocketPrivate : public QObject
     
 public:
     QLlcpSocketPrivate();
+    QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian);
     ~QLlcpSocketPrivate();
 
 public: //Implementation of QLlcpSocket API
@@ -116,8 +117,6 @@ private:
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
     SocketType m_socketType;
-   
-    int m_port;
 
 public:
     void invokeReadyRead() { emit readyRead(); }

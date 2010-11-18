@@ -143,26 +143,6 @@ private:
 
 };
 
-class CLlcpTimer : public CTimer
-{
-public:
-    static CLlcpTimer* NewL(CActiveSchedulerWait & aWait);
-    virtual ~CLlcpTimer();
-    void Start(TInt aMSecs);
-
-private: // From CTimer
-    void RunL();
-
-private:
-
-    CLlcpTimer(CActiveSchedulerWait & aWait);
-    void ConstructL();
-
-private:
-
-    CActiveSchedulerWait& iWait; //not own
-};
-
 class CLlcpConnecterAO : public CActive
 {
 public:

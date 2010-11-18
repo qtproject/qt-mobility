@@ -77,8 +77,6 @@ void QLlcpServerPrivate::close()
 {
     m_state = QLlcpServerPrivate::UnconnectedState;
     m_symbianbackend->StopListening();
-    qDeleteAll(m_pendingConnections);
-    m_pendingConnections.clear();
 }
 
 QString QLlcpServerPrivate::serviceUri() const
@@ -99,29 +97,30 @@ bool QLlcpServerPrivate::hasPendingConnections() const
 }
 
 void QLlcpServerPrivate::invokeNewConnection()
-    {
-    //QLlcpSocket *socket = new QLlcpSocket(this);
-    //m_pendingConnections.append(socket);
-    
+{
     emit newConnection();
-    }
-
+}
 
 QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
 {
-    //QLlcpSocket* qSocket = new QLlcpSocket();
-    //Q_D(QLlcpSocket);
+    QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
+    //TODO
+    //active the following line when Aaron fix it.
+    QLlcpSocket* qSocket = NULL;
+    //QLlcpSocket* qSocket = new QLlcpSocket(qSocket_p);
 
+    return qSocket;
 }
-
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
-    if (m_pendingConnections.isEmpty())
-        return 0;
-    return m_pendingConnections.takeFirst();
+    CLlcpSocketType2* socket_s = m_symbianbackend->nextPendingConnection();
+    if (socket_s)
+    {
+       return qllcpsocket(socket_s);
+    }
+    return 0;
 }
-
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {

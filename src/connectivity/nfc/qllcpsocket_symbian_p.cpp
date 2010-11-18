@@ -82,8 +82,7 @@ if (m_symbianSocketType2 == NULL) \
 QLlcpSocketPrivate::QLlcpSocketPrivate()
    : m_symbianSocketType1(NULL),
      m_symbianSocketType2(NULL),
-     m_socketType(connectionUnknown),
-     m_port(-1)
+     m_socketType(connectionUnknown)
 {
     m_state = QLLCPUnconnected::Instance(this);
 }
@@ -96,9 +95,12 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     delete m_state;
 }
 
-QLlcpSocket* QLlcpSocketPrivate::qllcpsocket(CLlcpSocketType2*)
+QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
+    : m_symbianSocketType1(NULL),
+      m_symbianSocketType2(socketType2_symbian),
+      m_socketType(connectionUnknown)
 {
-
+    m_state = QLLCPUnconnected::Instance(this);
 }
 
 
