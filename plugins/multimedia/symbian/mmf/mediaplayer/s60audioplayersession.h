@@ -99,6 +99,7 @@ protected:
     void doLoadUrlL(const TDesC &path){Q_UNUSED(path)/*empty implementation*/}
     void doPlay();
     void doStop();
+    void doClose();
     void doPauseL();
     void doSetVolumeL(int volume);
     qint64 doGetPositionL() const;
