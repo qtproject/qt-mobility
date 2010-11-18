@@ -20,7 +20,6 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - Qt Gallery module
  - Qt Maps and Navigation module
  - Qt Landmarks module
 
@@ -52,6 +51,20 @@ QtContacts
    * QTMOBILITY-644 - crash with malformed vcard data
    * Possible crash with malformed address data
 
+QtGallery
+------
+ - Harmattan backend added.
+ - Fixes for symbian backend.
+   * Fixed deployment to 3.2 and 5.0 devices. [MOBILITY-1794]
+   * Added support for Album, AlbumArtist, Album and Genre types
+     [MOBILITY-1796]
+   * Added support for count property to QGalleryTypeRequest [MOBILITY-1852]
+   * Fixed meta-data access from QGalleryItemRequest [MOBILITY-1854]
+   * Fixed implementation of QGalleryQueryRequest::cancel() [MOBILITY-1858]
+   * Corrected values of fileName, path, and url properties [MOBILITY-1881]
+ - QGalleryAbstractResponse
+   * Added default implementation of waitForFinished() [MOBILITY-1861]
+
 QtLocation
 ------
 
@@ -64,8 +77,14 @@ QtMessaging
 
 QtMultimediaKit
 ------
-
- -
+ - Fixes for DirectShow backend
+   * Return duration and position values in milliseconds instead of
+     microseconds [QTMOBILITY-585]
+   * Fixed video buffer size initialization [QTMOBILITY-583]
+   * Improved verification of video format before initializing a video surface
+     [QTMOBILITY-579]
+ - QAudioInput
+   * Fixed potential buffer overrun in Windows and ALSA backends.
 
 QtOrganizer
 ------
