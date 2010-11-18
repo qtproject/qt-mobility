@@ -64,12 +64,12 @@ public:
     tst_QNearFieldManager();
 
 private slots:
+    void targetDetected_data();
     void targetDetected();
 
     void unregisterTargetDetectedHandler();
 
-    void registerTargetDetectedHandler1_data();
-    void registerTargetDetectedHandler1();
+    void registerTargetDetectedHandler();
 
     void registerTargetDetectedHandler_filter_data();
     void registerTargetDetectedHandler_filter();
@@ -83,13 +83,25 @@ tst_QNearFieldManager::tst_QNearFieldManager()
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
 }
 
+void tst_QNearFieldManager::targetDetected_data()
+{
+    QTest::addColumn<QNearFieldTarget::Type>("type");
+
+    QTest::newRow("AnyTarget") << QNearFieldTarget::AnyTarget;
+    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1;
+}
+
 void tst_QNearFieldManager::targetDetected()
 {
+    QFETCH(QNearFieldTarget::Type, type);
+
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
 
     QSignalSpy targetDetectedSpy(&manager, SIGNAL(targetDetected(QNearFieldTarget*)));
     QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
+
+    manager.startTargetDetection(type);
 
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
@@ -110,6 +122,8 @@ void tst_QNearFieldManager::targetDetected()
     QCOMPARE(target, lostTarget);
 
     QVERIFY(!disconnectedSpy.isEmpty());
+
+    manager.stopTargetDetection();
 }
 
 void tst_QNearFieldManager::unregisterTargetDetectedHandler()
@@ -121,14 +135,6 @@ void tst_QNearFieldManager::unregisterTargetDetectedHandler()
     QVERIFY(!manager.unregisterTargetDetectedHandler(0));
 }
 
-void tst_QNearFieldManager::registerTargetDetectedHandler1_data()
-{
-    QTest::addColumn<QNearFieldTarget::Type>("type");
-
-    QTest::newRow("AnyTarget") << QNearFieldTarget::AnyTarget;
-    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1;
-}
-
 class MessageListener : public QObject
 {
     Q_OBJECT
@@ -137,17 +143,15 @@ signals:
     void matchedNdefMessage(const QNdefMessage &message, QNearFieldTarget *target);
 };
 
-void tst_QNearFieldManager::registerTargetDetectedHandler1()
+void tst_QNearFieldManager::registerTargetDetectedHandler()
 {
-    QFETCH(QNearFieldTarget::Type, type);
-
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
     QNearFieldManager manager(emulatorBackend, 0);
 
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(type, &listener,
+    int id = manager.registerTargetDetectedHandler(&listener,
                                                    SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
@@ -159,38 +163,33 @@ void tst_QNearFieldManager::registerTargetDetectedHandler1()
 
     QVERIFY(target);
 
-    if (type != QNearFieldTarget::AnyTarget)
-        QCOMPARE(target->type(), type);
-
     QVERIFY(manager.unregisterTargetDetectedHandler(id));
 }
 
 void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 {
-    QTest::addColumn<QNearFieldTarget::Type>("type");
     QTest::addColumn<QNdefFilter>("filter");
 
     QNdefFilter filter;
 
-    QTest::newRow("NfcTagType1") << QNearFieldTarget::NfcTagType1 << filter;
+    QTest::newRow("Empty") << filter;
 
     filter.clear();
     filter.setOrderMatch(true);
     filter.appendRecord(QNdefRecord::Mime, "image/png");
     filter.appendRecord<QNdefNfcTextRecord>(2, 10);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
-    QTest::newRow("Image + Multiple Text + URI") << QNearFieldTarget::NfcTagType1 << filter;
+    QTest::newRow("Image + Multiple Text + URI") << filter;
 
     filter.clear();
     filter.setOrderMatch(true);
     filter.appendRecord<QNdefNfcTextRecord>(1, 1);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
-    QTest::newRow("Text + URI") << QNearFieldTarget::AnyTarget << filter;
+    QTest::newRow("Text + URI") << filter;
 }
 
 void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
 {
-    QFETCH(QNearFieldTarget::Type, type);
     QFETCH(QNdefFilter, filter);
 
     QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
@@ -199,8 +198,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     MessageListener listener;
     QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
-    int id = manager.registerTargetDetectedHandler(type, filter,
-                                                   &listener,
+    int id = manager.registerTargetDetectedHandler(filter, &listener,
                                                    SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
 
     QVERIFY(id != -1);
@@ -212,9 +210,6 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
     QNearFieldTarget *target = messageSpy.first().at(1).value<QNearFieldTarget *>();
 
     QVERIFY(target);
-
-    if (type != QNearFieldTarget::AnyTarget)
-        QCOMPARE(target->type(), type);
 }
 
 QTEST_MAIN(tst_QNearFieldManager);

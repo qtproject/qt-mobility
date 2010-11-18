@@ -86,7 +86,7 @@ public:
     qint64 writeDatagram(const QByteArray &datagram);
 
     qint64 readDatagram(char *data, qint64 maxSize,
-                        QNearFieldTarget *target = 0, quint8 *port = 0);
+                        QNearFieldTarget **target = 0, quint8 *port = 0);
     qint64 writeDatagram(const char *data, qint64 size,
                          QNearFieldTarget *target, quint8 port);
     qint64 writeDatagram(const QByteArray &datagram, QNearFieldTarget *target, quint8 port);

@@ -125,16 +125,17 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                             QObject *object, const char *method)
+    \fn int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
 
-    Registers \a object to receive notifications on \a method when a tag with a tag type of
-    \a targetType has been detected and has an NDEF record that matches template argument.  The
-    \a method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
+    Registers \a object to receive notifications on \a method when a tag has been detected and has
+    an NDEF record that matches template argument.  The \a method on \a object should have the
+    prototype 'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
+
+    \note The \i target parameter of \a method may not be available on all platforms, in which case
+    \i target will be 0.
 */
 
 /*!
@@ -174,6 +175,42 @@ QNearFieldManager::~QNearFieldManager()
     delete d_ptr;
 }
 
+/*!
+    Starts detecting targets of type \a targetTypes.  Causes the targetDetected() signal to be
+    emitted when a target with a type in \a targetTypes is within proximity.  If \a targetTypes is
+    empty targets of all types will be detected.
+
+    \sa stopTargetDetection()
+*/
+void QNearFieldManager::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
+{
+    Q_D(QNearFieldManager);
+
+    if (targetTypes.isEmpty())
+        d->startTargetDetection(QList<QNearFieldTarget::Type>() << QNearFieldTarget::AnyTarget);
+    else
+        d->startTargetDetection(targetTypes);
+}
+
+/*!
+    \overload
+*/
+void QNearFieldManager::startTargetDetection(QNearFieldTarget::Type targetType)
+{
+    startTargetDetection(QList<QNearFieldTarget::Type>() << targetType);
+}
+
+/*!
+    Stops detecting targets.  The targetDetected() signal will no longer be emitted until another
+    call to startTargetDetection() is made.
+*/
+void QNearFieldManager::stopTargetDetection()
+{
+    Q_D(QNearFieldManager);
+
+    d->stopTargetDetection();
+}
+
 static QMetaMethod methodForSignature(QObject *object, const char *method)
 {
     QByteArray normalizedMethod = QMetaObject::normalizedSignature(method);
@@ -209,17 +246,19 @@ static QMetaMethod methodForSignature(QObject *object, const char *method)
 }
 
 /*!
-    Registers \a object to receive notifications on \a method when a tag with a tag type of
-    \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
-    \a type.  The \a method on \a object should have the prototype
+    Registers \a object to receive notifications on \a method when a tag has been detected and has
+    an NDEF record that matchings \a typeNameFormat and \a type.  The \a method on \a object should
+    have the prototype
     'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
+
+    \note The \i target parameter of \a method may not be available on all platforms, in which case
+    \i target will be 0.
 */
 
-int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     QNdefRecord::TypeNameFormat typeNameFormat,
+int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat typeNameFormat,
                                                      const QByteArray &type,
                                                      QObject *object, const char *method)
 {
@@ -227,7 +266,6 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
     if (!metaMethod.enclosingMetaObject())
         return -1;
 
-    Q_UNUSED(targetType);
     Q_UNUSED(typeNameFormat);
     Q_UNUSED(type);
 
@@ -235,16 +273,17 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
 }
 
 /*!
-    Registers \a object to receive notifications on \a method when a tag with a tag type of
-    \a targetType has been detected and has an NDEF message.  The \a method on \a object
-    should have the prototype
+    Registers \a object to receive notifications on \a method when a tag has been detected and has
+    an NDEF message.  The \a method on \a object should have the prototype
     'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
+
+    \note The \i target parameter of \a method may not be available on all platforms, in which case
+    \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     QObject *object, const char *method)
+int QNearFieldManager::registerTargetDetectedHandler(QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
     if (!metaMethod.enclosingMetaObject())
@@ -252,20 +291,21 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(targetType, object, metaMethod);
+    return d->registerTargetDetectedHandler(object, metaMethod);
 }
 
 /*!
-    Registers \a object to receive notifications on \a method when a tag with a tag type of
-    \a targetType has been detected and has an NDEF message that matches \a filter is detected. The
-    \a method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
+    Registers \a object to receive notifications on \a method when a tag has been detected and has
+    an NDEF message that matches \a filter is detected. The \a method on \a object should have the
+    prototype 'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
+
+    \note The \i target parameter of \a method may not be available on all platforms, in which case
+    \i target will be 0.
 */
-int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                     const QNdefFilter &filter,
+int QNearFieldManager::registerTargetDetectedHandler(const QNdefFilter &filter,
                                                      QObject *object, const char *method)
 {
     QMetaMethod metaMethod = methodForSignature(object, method);
@@ -274,7 +314,7 @@ int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targ
 
     Q_D(QNearFieldManager);
 
-    return d->registerTargetDetectedHandler(targetType, filter, object, metaMethod);
+    return d->registerTargetDetectedHandler(filter, object, metaMethod);
 }
 
 /*!
