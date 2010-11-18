@@ -267,6 +267,10 @@ public:
         , headReply(0)
         , status(QMediaImageViewer::NoMedia)
     {
+        foreach (const QByteArray &format, QImageReader::supportedImageFormats()) {
+            supportedExtensions.append(
+                    QLatin1Char('.') + QString::fromLatin1(format.data(), format.size()));
+        }
     }
 
     bool isImageType(const QUrl &url, const QString &mimeType) const;
@@ -284,6 +288,7 @@ public:
     QMediaContent media;
     QMediaResource currentMedia;
     QList<QMediaResource> possibleResources;
+    QStringList supportedExtensions;
 };
 
 bool QMediaImageViewerControlPrivate::isImageType(const QUrl &url, const QString &mimeType) const
@@ -294,15 +299,12 @@ bool QMediaImageViewerControlPrivate::isImageType(const QUrl &url, const QString
     } else if (url.scheme() == QLatin1String("file")) {
         QString path = url.path();
 
-        return path.endsWith(QLatin1String(".jpeg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".jpg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".png"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".bmp"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".svg"), Qt::CaseInsensitive)
-                || path.endsWith(QLatin1String(".tiff"), Qt::CaseInsensitive);
-    } else {
-        return false;
+        foreach (const QString &extension, supportedExtensions) {
+            if (path.endsWith(extension, Qt::CaseInsensitive))
+                return true;
+        }
     }
+    return false;
 }
 
 void QMediaImageViewerControlPrivate::loadImage()
