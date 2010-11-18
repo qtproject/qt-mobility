@@ -19,6 +19,7 @@
 class COwnLlcpConnLess;
 class CLlcpSenderType1;
 class CLlcpReceiverType1;
+class CLlcpTimer;
 
 #include <qmobilityglobal.h>
 #include "../qllcpsocket_symbian_p.h"
@@ -74,7 +75,23 @@ public:
    */
    bool HasPendingDatagrams() const;  
    TInt64 PendingDatagramSize() const;
+   TBool WaitForBytesWritten(TInt aMilliSeconds);
+ 
+private:
+   enum TWaitStatus
+       {
+       ENone,
+       EWaitForBytesWritten
+       };
     
+   CActiveSchedulerWait * iWait;
+   TWaitStatus iWaitStatus;
+   CLlcpTimer * iTimer;
+   
+private:
+   TBool WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMilliSeconds);  
+   void StopWaitNow(TWaitStatus aWaitStatus);
+
 private:  // from  MLlcpReadWriteCb
      void ReceiveComplete(TInt aError );
      void WriteComplete( TInt aError, TInt aSize);

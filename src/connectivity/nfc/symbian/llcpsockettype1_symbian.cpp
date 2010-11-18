@@ -15,8 +15,9 @@
 * Description: 
 *
 */
-
+#include "nearfieldutility_symbian.h"
 #include "llcpsockettype1_symbian.h"
+
 
 // TODO
 // will obslete with API updated
@@ -78,7 +79,6 @@ CLlcpSocketType1::~CLlcpSocketType1()
     iNfcServer.Close();
     }
 
-
 /*!
     Cancel the Receive/Transfer and destroy the local/remote connection.
 */
@@ -93,7 +93,6 @@ void CLlcpSocketType1::Cleanup()
         iConnection = NULL;
         }  
     }
-
 
 bool CLlcpSocketType1::Bind(TInt8 portNum)
     {
@@ -190,7 +189,7 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     Call back from MLlcpReadWriteCb
 */
 void CLlcpSocketType1::ReceiveComplete(TInt aError)
-    {
+    {  
     KErrNone == aError ? iCallback.invokeReadyRead(): iCallback.invokeError();
     }
 
@@ -199,8 +198,29 @@ void CLlcpSocketType1::ReceiveComplete(TInt aError)
 */
 void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
     {
+    if (iWaitStatus == EWaitForBytesWritten)
+        {
+        StopWaitNow(EWaitForBytesWritten);
+        }
     KErrNone == aError ? iCallback.invokeBytesWritten(aSize): iCallback.invokeError();
     }
+
+void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
+    {
+    if ( iWaitStatus == aWaitStatus )
+        {
+        if (iWait->IsStarted())
+            {
+            iWait->AsyncStop();
+            }
+        if (iTimer)//stop the timer
+            {
+            delete iTimer;
+            iTimer = NULL;
+            }
+        }   
+    }
+
 /*!
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
@@ -243,6 +263,51 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
      
      return error;  
     }
+
+
+TBool CLlcpSocketType1::WaitForBytesWritten(TInt aMilliSeconds)
+    {
+    return WaitForOperationReadyL(EWaitForBytesWritten, aMilliSeconds);
+    }
+
+TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMilliSeconds)
+    {
+    TBool ret = EFalse;
+    if (iWaitStatus != ENone || iWait->IsStarted())
+        {
+        return ret;
+        }
+    iWaitStatus = aWaitStatus;
+    
+    if (iTimer)
+        {
+        delete iTimer;
+        iTimer = NULL;
+        }
+    if (aMilliSeconds > 0)
+        {
+        //TODO roll back when max is ready to push
+        //iTimer = CLlcpTimer::NewL(*iWait);
+        //iTimer->Start(aMilliSeconds);
+        }
+    iWait->Start();
+    //control is back here when iWait->AsyncStop() is called by the timer or the callback function
+    iWaitStatus = ENone;
+    
+    if (!iTimer)
+        {
+        //iTimer == NULL means this CActiveSchedulerWait
+        //AsyncStop is fired by the call back of ReadyRead
+        ret = ETrue;
+        }
+    else
+        {
+        delete iTimer;
+        iTimer = NULL;
+        }
+    return ret; 
+    }
+
   
 /*!
     Construct a new wrapper for connectionLess transport.
@@ -359,6 +424,8 @@ TInt64 COwnLlcpConnLess::PendingDatagramSize() const
     {
     return iReceiverAO->PendingDatagramSize();
     }
+
+
 
 ///////////////////////////////////////////////////////////////
 

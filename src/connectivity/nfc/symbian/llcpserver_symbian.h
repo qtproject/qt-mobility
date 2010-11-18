@@ -52,6 +52,8 @@ class CLlcpSocketType2;
 #include <qmobilityglobal.h>
 #include "../qllcpserver_symbian_p.h"
 
+class QLlcpServerPrivate;
+
 /*!
  *  CLASS DECLARATION for CLlcpSocketPrivate.
  */
@@ -91,6 +93,9 @@ private:
     
     // Second phase constructor
     void ConstructL();
+    
+private:
+    QLlcpServerPrivate* CLlcpServer::llcpSocketAdaptor();
     
 private:
    

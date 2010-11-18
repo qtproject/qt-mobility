@@ -41,22 +41,26 @@
 
 #include "qllcpserver_symbian_p.h"
 #include "symbian/llcpserver_symbian.h"
+#include "symbian/llcpsockettype2_symbian.h"
 #include "symbian/nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate()
+    :m_state(QLlcpServerPrivate::UnconnectedState)
 {
     QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
 }
 
+
 QLlcpServerPrivate::~QLlcpServerPrivate()
-    {
+{
     delete m_symbianbackend;
-    }
+}
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
+    m_state = QLlcpServerPrivate::ListeningState;
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
     return m_symbianbackend->Listen(serviceName);
 }
@@ -71,6 +75,7 @@ bool QLlcpServerPrivate::isListening() const
 */
 void QLlcpServerPrivate::close()
 {
+    m_state = QLlcpServerPrivate::UnconnectedState;
     m_symbianbackend->StopListening();
     qDeleteAll(m_pendingConnections);
     m_pendingConnections.clear();
@@ -100,6 +105,14 @@ void QLlcpServerPrivate::invokeNewConnection()
     
     emit newConnection();
     }
+
+
+QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
+{
+    QLlcpSocket* qSocket = new QLlcpSocket();
+    Q_D(QLlcpSocket);
+
+}
 
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()

@@ -371,7 +371,6 @@ void CLlcpSocketType2::BytesWritten(qint64 bytes)
 
 
 // timer implementation
-
 CLlcpTimer* CLlcpTimer::NewL(CActiveSchedulerWait & aWait)
     {
 	CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
@@ -424,6 +423,7 @@ void CLlcpTimer::ConstructL()
     CTimer::ConstructL();
     CActiveScheduler::Add(this);
     }
+
 
 // connecter implementation
 CLlcpConnecterAO* CLlcpConnecterAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )

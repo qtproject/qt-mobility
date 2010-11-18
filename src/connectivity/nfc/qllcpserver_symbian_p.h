@@ -48,6 +48,7 @@
 #include <QList>
 
 class CLlcpServer;
+class CLlcpSocketType2;
 class QLlcpSocket;
 
 QTM_BEGIN_NAMESPACE
@@ -74,13 +75,24 @@ public:
     QLlcpServer::Error serverError() const;
 
 public:
+    typedef enum State {
+        UnconnectedState = QAbstractSocket::UnconnectedState,
+        ListeningState = QAbstractSocket::ListeningState
+    }ServerState;
+
+public:
     void invokeNewConnection();
+
+private:
+    QLlcpSocket* qllcpsocket(CLlcpSocketType2*);
+
 signals:
     void newConnection();
     
 private:
     CLlcpServer* m_symbianbackend;
     QList<QLlcpSocket *> m_pendingConnections;
+    ServerState m_state;
 };
 
 QTM_END_NAMESPACE

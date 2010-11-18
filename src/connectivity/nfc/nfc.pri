@@ -63,6 +63,7 @@ symbian {
         nfc/qnearfieldtagtype2_symbian_p.h \
         nfc/qllcpsocket_symbian_p.h \
         nfc/qllcpserver_symbian_p.h \
+        nfc/qllcpstate_symbian_p.h \
         nfc/qnearfieldtagtype3_symbian_p.h \
         nfc/qnearfieldtagtype4_symbian_p.h \
         nfc/qnearfieldtagmifare_symbian_p.h \
@@ -84,6 +85,7 @@ symbian {
         nfc/qnearfieldtagtype2_symbian.cpp \
         nfc/qllcpsocket_symbian_p.cpp \
         nfc/qllcpserver_symbian_p.cpp \
+        nfc/qllcpstate_symbian_p.cpp \
         nfc/qnearfieldtagtype3_symbian.cpp \
         nfc/qnearfieldtagtype4_symbian.cpp \
         nfc/qnearfieldtagmifare_symbian.cpp \

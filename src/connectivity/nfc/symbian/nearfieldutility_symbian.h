@@ -43,7 +43,10 @@
 #ifndef QNFCNDEFUTILITY_SYMBIAN_H_
 #define QNFCNDEFUTILITY_SYMBIAN_H_
 #include <qndefmessage.h>
+#include <e32base.h>
+
 class CNdefMessage;
+
 
 QTM_BEGIN_NAMESPACE
 class QNdefMessage;
@@ -70,6 +73,30 @@ public:
     static QString FromDesC8ToQString(const TDesC8&);
     
 };
+
+
+class CLlcpTimer : public CTimer
+    {
+public:
+
+    static CLlcpTimer* NewL(CActiveSchedulerWait & aWait); 
+    virtual ~CLlcpTimer();
+      
+    void Start(TInt aMSecs);
+    
+private: // From CTimer
+
+    void RunL();
+    
+private:
+
+    CLlcpTimer(CActiveSchedulerWait & aWait);
+    void ConstructL();    
+
+private:
+    
+    CActiveSchedulerWait& iWait; //not own
+    };
 
 QTM_END_NAMESPACE
 #endif /* QNFCNDEFUTILITY_SYMBIAN_H_ */
