@@ -85,6 +85,8 @@ QString MKCalEngineFactory::managerName() const
 QOrganizerItemEngineId* MKCalEngineFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters);
+
+    // format of engineIdString is "uid(string):rid(time_t):managerUri(string)"
     int col1 = engineIdString.indexOf(QChar(':'));
     int col2 = engineIdString.indexOf(QChar(':'), col1+1);
     if (col1 < 0 || col2 < 0)
@@ -101,6 +103,8 @@ QOrganizerItemEngineId* MKCalEngineFactory::createItemEngineId(const QMap<QStrin
 QOrganizerCollectionEngineId* MKCalEngineFactory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters);
+
+    // format of engineIdString is "uid(string):managerUri(string)"
     int col1 = engineIdString.indexOf(QChar(':'));
     return  col1 < 0 ? NULL : new MKCalCollectionId(engineIdString.mid(0, col1));
 }
@@ -457,12 +461,15 @@ bool MKCalEngine::saveStorage(QOrganizerItemChangeSet* ics, QOrganizerManager::E
 // TODO: because a bug in mkCal save() can fail sometimes (for the same testcase) by saying "constraint failed for incidence ..."
 // even if in the memory everything is ok. We will not check the result of the save. Remove the comment when is fixed in mkCal.
 /*    if (d->m_storagePtr->save()) { // commit all changes to the database.
-        ics->emitSignals(this);
+        if (ics)
+            ics->emitSignals(this);
     } else {
         *error = QOrganizerManager::UnspecifiedError;
     }*/
     d->m_storagePtr->save();
-    ics->emitSignals(this);
+
+    if (ics)
+        ics->emitSignals(this);
 
     return *error == QOrganizerManager::NoError;
 }
@@ -556,19 +563,16 @@ QMap<QString, QOrganizerItemDetailDefinition> MKCalEngine::detailDefinitions(con
 
 QOrganizerItemDetailDefinition MKCalEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error) const
 {
-    /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
     return QOrganizerManagerEngine::detailDefinition(definitionId, itemType, error);
 }
 
 bool MKCalEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerManager::Error* error)
 {
-    /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
     return QOrganizerManagerEngine::saveDetailDefinition(def, itemType, error);
 }
 
 bool MKCalEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error)
 {
-    /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
     return QOrganizerManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
@@ -618,24 +622,23 @@ bool MKCalEngine::saveCollection(QOrganizerCollection* collection, QOrganizerMan
 {
     QMutexLocker locker(&d->m_operationMutex);
 
-    *error = QOrganizerManager::NoError;
-    bool retn = false;
     QOrganizerCollectionId colId = collection->id();
 
     if (colId.isNull()) {
         // new collection.
         mKCal::Notebook::Ptr notebookPtr(new mKCal::Notebook);
         convertCollectionToNotebook(*collection, notebookPtr);
-        retn = d->m_storagePtr->addNotebook(notebookPtr);
-        if (!retn) {
-            *error = QOrganizerManager::UnspecifiedError;
+
+        if (!d->m_storagePtr->addNotebook(notebookPtr)) {
+            *error = QOrganizerManager::InvalidCollectionError;
+            return false;
         } else {
             // update the collection with its id.
             QOrganizerCollectionId newId(new MKCalCollectionId(notebookPtr->uid()));
             collection->setId(newId);
         }
 
-        return retn;
+        return saveStorage(NULL, error);
     }
 
     // retrieve the uid from the collection id
@@ -647,13 +650,15 @@ bool MKCalEngine::saveCollection(QOrganizerCollection* collection, QOrganizerMan
         *error = QOrganizerManager::DoesNotExistError;
         return false;
     }
+
     convertCollectionToNotebook(*collection, notebookPtr);
-    retn = d->m_storagePtr->updateNotebook(notebookPtr);
-    if (!retn) {
+
+    if (!d->m_storagePtr->updateNotebook(notebookPtr)) {
         *error = QOrganizerManager::UnspecifiedError;
+        return false;
     }
 
-    return retn;
+    return saveStorage(NULL, error);
 }
 
 bool MKCalEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
@@ -670,18 +675,16 @@ bool MKCalEngine::removeCollection(const QOrganizerCollectionId& collectionId, Q
     QString notebookUid = MKCalCollectionId::id_cast(collectionId)->uid();
     mKCal::Notebook::Ptr notebookPtr;
     if (!notebookUid.isEmpty() && (notebookPtr = d->m_storagePtr->notebook(notebookUid))) {
-        if (!d->m_storagePtr->deleteNotebook(notebookPtr)) {
-            *error = QOrganizerManager::UnspecifiedError;
-            return false;
-        } else {
+        if (d->m_storagePtr->deleteNotebook(notebookPtr)) {
             // success.
-            *error = QOrganizerManager::NoError;
-            d->m_storagePtr->save(); // commit all changes to the database.
-            return true;
+            return saveStorage(NULL, error);
+        } else {
+            *error = QOrganizerManager::UnspecifiedError;
         }
+    } else {
+        *error = QOrganizerManager::DoesNotExistError;
     }
 
-    *error = QOrganizerManager::DoesNotExistError;
     return false;
 }
 
@@ -708,19 +711,13 @@ void MKCalEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 
 bool MKCalEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const
 {
-    // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
         case QOrganizerManager::MutableDefinitions:
-            // TODO If you support save/remove detail definition, return true
             return false;
-
         case QOrganizerManager::Anonymous:
-            // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
-            // (mostly for an in memory engine)
             return false;
         case QOrganizerManager::ChangeLogs:
-            // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
             return false;
     }
     return false;
@@ -728,54 +725,44 @@ bool MKCalEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QS
 
 bool MKCalEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {
-    // TODO if you engine can natively support the filter, return true.  Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
     return false;
 }
 
-QList<int> MKCalEngine::supportedDataTypes() const
-{
-    QList<int> ret;
-    // TODO - tweak which data types this engine understands
-    ret << QVariant::String;
-    ret << QVariant::Date;
-    ret << QVariant::DateTime;
-    ret << QVariant::Time;
-
-    return ret;
-}
-
-QStringList MKCalEngine::supportedItemTypes() const
-{
-    // TODO - return which [predefined] types this engine supports
-    QStringList ret;
-
-    ret << QOrganizerItemType::TypeEvent;
-    ret << QOrganizerItemType::TypeEventOccurrence;
-    ret << QOrganizerItemType::TypeJournal;
-    ret << QOrganizerItemType::TypeNote;
-    ret << QOrganizerItemType::TypeTodo;
-    ret << QOrganizerItemType::TypeTodoOccurrence;
-
-    return ret;
-}
-
 QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > MKCalEngine::schemaDefinitions() const {
     // lazy initialisation of schema definitions.
-    if (d->m_definitions.isEmpty()) {
+    static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > defs;
+
+    if (defs.isEmpty()) {
+        //supported item types
+        QSet<QString> itemTypes = QSet<QString>()
+            << QOrganizerItemType::TypeEvent
+            << QOrganizerItemType::TypeEventOccurrence
+            << QOrganizerItemType::TypeTodo
+            << QOrganizerItemType::TypeTodoOccurrence
+            << QOrganizerItemType::TypeJournal
+            << QOrganizerItemType::TypeNote;
+
+        //supported definitions
+        QSet<QString> definitions = QSet<QString>()
+            << QOrganizerItemType::DefinitionName
+            << QOrganizerItemDescription::DefinitionName
+            << QOrganizerItemDisplayLabel::DefinitionName
+            << QOrganizerItemRecurrence::DefinitionName
+            << QOrganizerEventTime::DefinitionName
+            << QOrganizerItemGuid::DefinitionName
+            << QOrganizerItemParent::DefinitionName
+            << QOrganizerTodoTime::DefinitionName
+            << QOrganizerItemLocation::DefinitionName;
+
         // Loop through default schema definitions
         QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schema
-                = QOrganizerManagerEngine::schemaDefinitions();
+            = QOrganizerManagerEngine::schemaDefinitions();
         foreach (const QString& itemType, schema.keys()) {
             // Only add the item types that we support
-            if (itemType == QOrganizerItemType::TypeEvent ||
-                itemType == QOrganizerItemType::TypeEventOccurrence ||
-                itemType == QOrganizerItemType::TypeTodo ||
-                itemType == QOrganizerItemType::TypeTodoOccurrence ||
-                itemType == QOrganizerItemType::TypeJournal ||
-                itemType == QOrganizerItemType::TypeNote) {
+            if (itemTypes.contains(itemType)) {
                 QMap<QString, QOrganizerItemDetailDefinition> definitions
-                        = schema.value(itemType);
+                    = schema.value(itemType);
 
                 QMap<QString, QOrganizerItemDetailDefinition> supportedDefinitions;
 
@@ -783,23 +770,17 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > MKCalEngine::schem
                 while (it.hasNext()) {
                     it.next();
                     // Only add the definitions that we support
-                    if (it.key() == QOrganizerItemType::DefinitionName ||
-                        it.key() == QOrganizerItemDescription::DefinitionName ||
-                        it.key() == QOrganizerItemDisplayLabel::DefinitionName ||
-                        it.key() == QOrganizerItemRecurrence::DefinitionName ||
-                        it.key() == QOrganizerEventTime::DefinitionName ||
-                        it.key() == QOrganizerItemGuid::DefinitionName ||
-                        it.key() == QOrganizerItemParent::DefinitionName ||
-                        it.key() == QOrganizerTodoTime::DefinitionName ||
-                        it.key() == QOrganizerItemLocation::DefinitionName) {
+                    if (definitions.contains(it.key())) {
                         supportedDefinitions.insert(it.key(), it.value());
                     }
                 }
-                d->m_definitions.insert(itemType, supportedDefinitions);
+
+                defs.insert(itemType, supportedDefinitions);
             }
         }
     }
-    return d->m_definitions;
+
+    return defs;
 }
 
 // observer for changes from mKCal.
@@ -841,24 +822,36 @@ KCalCore::Incidence::Ptr MKCalEngine::incidence(const QOrganizerItemId& itemId) 
     return id->id().isEmpty() ? KCalCore::Incidence::Ptr() : d->m_calendarBackendPtr->incidence(id->id(), id->rid());
 }
 
-KCalCore::Incidence::Ptr MKCalEngine::detachedIncidenceFromItem(const QOrganizerItem& item) const
+KCalCore::Incidence::Ptr MKCalEngine::createPersistentException(const QOrganizerItem& item) const
 {
+    // dissociate a single occurrence from the parent item to be able to save it later as a persistent exception
     QOrganizerItemParent parentDetail(item.detail<QOrganizerItemParent>());
     QOrganizerItemId parentId(parentDetail.parentId());
     QDate originalDate(parentDetail.originalDate());
     QString guid(item.guid());
 
     KCalCore::Incidence::Ptr parentIncidence;
+    // check that parentId is not null
     if (!parentId.isNull()) {
+        // get the engine id
         QString parentUid(MKCalItemId::id_cast(parentId)->id());
+        // if is null then it is incompatible with this engine
+        // also check that guid is equal with the engine id
         if (!guid.isEmpty() && guid != parentUid)
             return KCalCore::Incidence::Ptr();
+
+        // retrieve the parent based on the engine id
         parentIncidence = incidence(parentId);
     } else if (!guid.isEmpty()) {
+        // if parentId was null, but guid is not null, use that to find the parent
         parentIncidence = d->m_calendarBackendPtr->incidence(guid);
     }
+
+    // if the parent coult not be retrieved or the original date is not valid return empty incidence
     if (parentIncidence.isNull() || !originalDate.isValid())
         return KCalCore::Incidence::Ptr();
+
+    // call the backend to create the persistent exception
     return d->m_calendarBackendPtr->dissociateSingleOccurrence(
             parentIncidence, KDateTime(originalDate), KDateTime::LocalZone);
 }
@@ -873,7 +866,7 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
 
     // check manager uri if is the same with the engine uri
     if (!itemIsNew && (d->m_managerUri != item->id().managerUri())) {
-        *error = QOrganizerManager::DetailAccessError;
+        *error = QOrganizerManager::BadArgumentError;
         return false;
     }
 
@@ -898,6 +891,12 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
         destinationNotebookUid = MKCalCollectionId::id_cast(destinationCollectionId)->uid();
     }
 
+    // if destination notebook uid is null it means that the id belonged to a different uri or the default notebook does not have a valid id
+    if (destinationNotebookUid.isEmpty()) {
+        *error = QOrganizerManager::InvalidCollectionError;
+        return false;
+    }
+
     // mkCal backend does not support setting of notebooks for item occurrences, because of this the item collection id either should be null
     // or equal with it's parent collection id
     if (itemIsOccurrence && !destinationCollectionId.isNull()) {
@@ -905,12 +904,17 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
         QOrganizerItemParent parentDetail(item->detail<QOrganizerItemParent>());
         QOrganizerItemId parentId(parentDetail.parentId());
         QString parentUid = parentId.isNull() ?  item->guid() : MKCalItemId::id_cast(parentId)->id();
+        QString parentNotebookUid = parentUid.isEmpty() ? QLatin1String("") : d->m_calendarBackendPtr->notebook(parentUid);
 
         // if item collection id and parent id are not null, then item collection id must be equal with parent collection id
-        if (!destinationNotebookUid.isEmpty() && !parentUid.isEmpty() && d->m_calendarBackendPtr->notebook(parentUid) != destinationNotebookUid) {
+        if (!destinationNotebookUid.isEmpty() && parentNotebookUid != destinationNotebookUid) {
             *error = QOrganizerManager::InvalidCollectionError;
             return false;
         }
+
+        // if the collection id was null update the destinationNotebookUid to the parent notebook id
+        if (destinationNotebookUid.isEmpty())
+            destinationNotebookUid = parentNotebookUid;
     } else if (!(d->m_calendarBackendPtr->hasValidNotebook(destinationNotebookUid))) {
         // fail if destination notebook does not exist in the storage
         *error = QOrganizerManager::InvalidCollectionError;
@@ -920,12 +924,14 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
     // First, either create the incidence or get the correct existing one
     if (itemIsNew) {
         if (itemIsOccurrence) {
-            newIncidence = detachedIncidenceFromItem(*item);
+            // if it is an occurrence create a persistent exception
+            newIncidence = createPersistentException(*item);
             if (newIncidence.isNull()) {
                 *error = QOrganizerManager::InvalidOccurrenceError;
                 return false;
             }
         } else {
+            // create a new incifence based on item type
             if (item->type() == QOrganizerItemType::TypeEvent) {
                 newIncidence = KCalCore::Event::Ptr(new KCalCore::Event);
             } else if (item->type() == QOrganizerItemType::TypeTodo) {
@@ -939,6 +945,7 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
             }
         }
     } else {
+        // if is an existing occurrence try to retrieve it based on its id
         newIncidence = incidence(item->id());
         if (!newIncidence) {
             *error = QOrganizerManager::DoesNotExistError;
@@ -949,19 +956,7 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
     Q_ASSERT(!newIncidence.isNull());
 
     // second, populate the incidence with the item's details
-    if (item->type() == QOrganizerItemType::TypeEvent) {
-        convertQEventToKEvent(*item, newIncidence, true);
-    } else if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
-        convertQEventToKEvent(*item, newIncidence, false);
-    } else if (item->type() == QOrganizerItemType::TypeTodo) {
-        convertQTodoToKTodo(*item, newIncidence, true);
-    } else if (item->type() == QOrganizerItemType::TypeTodoOccurrence) {
-        convertQTodoToKTodo(*item, newIncidence, false);
-    } else if (item->type() == QOrganizerItemType::TypeNote) {
-        convertQNoteToKNote(*item, newIncidence);
-    } else if (item->type() == QOrganizerItemType::TypeJournal) {
-        convertQJournalToKJournal(*item, newIncidence);
-    }
+    updateIncidenceFromItem(*item, newIncidence);
 
     // third, add it if it is new
     if (itemIsNew) {
@@ -983,6 +978,10 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
                 kId,
                 newIncidence->hasRecurrenceId() ? newIncidence->recurrenceId() : KDateTime())));
     item->setGuid(kId);
+    // if the initial collection id was null, set it to the destinationNotbookUid
+    if (destinationCollectionId.isNull()) {
+        item->setCollectionId(QOrganizerCollectionId(new MKCalCollectionId(destinationNotebookUid)));
+    }
 
     // modify the changeset as required.
     if (itemIsNew) {
@@ -994,100 +993,76 @@ bool MKCalEngine::softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* ite
     return *error == QOrganizerManager::NoError;
 }
 
-/*!
- * Converts \a qEvent into an Incidence which is of subclass Event.  The caller is responsible
- * for deleting the object.
- */
-void MKCalEngine::convertQEventToKEvent(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs)
+void MKCalEngine::updateIncidenceFromItem(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence)
 {
-    KCalCore::Event::Ptr kEvent(incidence.staticCast<KCalCore::Event>());
-    convertCommonDetailsToIncidenceFields(item, kEvent);
-    QOrganizerEventTime eventTime(item.detail<QOrganizerEventTime>());
-    kEvent->setDtStart(KDateTime(eventTime.startDateTime()));
-    kEvent->setDtEnd(KDateTime(eventTime.endDateTime()));
-    if (recurs)
-        convertQRecurrenceToKRecurrence(item.detail<QOrganizerItemRecurrence>(),
-                                        eventTime.startDateTime().date(),
-                                        kEvent->recurrence());
-}
 
-/*!
- * Converts \a qTodo into an Incidence which is of subclass Todo.  The caller is responsible
- * for deleting the object.
- */
-void MKCalEngine::convertQTodoToKTodo(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs)
-{
-    KCalCore::Todo::Ptr kTodo(incidence.staticCast<KCalCore::Todo>());
-    convertCommonDetailsToIncidenceFields(item, kTodo);
-    QOrganizerTodoTime todoTime(item.detail<QOrganizerTodoTime>());
-    kTodo->setDtStart(KDateTime(todoTime.startDateTime()));
-    kTodo->setDtDue(KDateTime(todoTime.dueDateTime()));
-    if (recurs)
-        convertQRecurrenceToKRecurrence(item.detail<QOrganizerItemRecurrence>(),
-                                        todoTime.startDateTime().date(),
-                                        kTodo->recurrence());
-}
-
-/*!
- * Converts \a qJournal into an Incidence which is of subclass Journal.  The caller is responsible
- * for deleting the object.
- */
-void MKCalEngine::convertQJournalToKJournal(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence)
-{
-    KCalCore::Journal::Ptr kJournal(incidence.staticCast<KCalCore::Journal>());
-    convertCommonDetailsToIncidenceFields(item, kJournal);
-}
-
-/*!
- * Converts \a qNote into an Incidence which is of subclass Journal.  The caller is responsible
- * for deleting the object.
- */
-void MKCalEngine::convertQNoteToKNote(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence)
-{
-    KCalCore::Journal::Ptr kJournal(incidence.staticCast<KCalCore::Journal>());
-    convertCommonDetailsToIncidenceFields(item, kJournal);
-}
-
-/*!
- * Converts the item-common details of \a item to fields to set in \a incidence.
- */
-void MKCalEngine::convertCommonDetailsToIncidenceFields(
-        const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence)
-{
     // only set the id from guid if is not an occurrence because in the case of an occurrence
     // it will be handled in dissociateSingleOccurrence
     if (item.id().isNull() && !item.guid().isEmpty() &&
-        item.type() != QOrganizerItemType::TypeEventOccurrence &&
-        item.type() != QOrganizerItemType::TypeTodoOccurrence) {
+            (item.type() != QOrganizerItemType::TypeEventOccurrence) &&
+            (item.type() != QOrganizerItemType::TypeTodoOccurrence)) {
         incidence->setUid(item.guid());
     }
 
     incidence->setDescription(item.description());
     incidence->setSummary(item.displayLabel());
-    QOrganizerItemLocation loc = static_cast<QOrganizerItemLocation>(item.detail(QOrganizerItemLocation::DefinitionName));
+    QOrganizerItemLocation loc =  item.detail<QOrganizerItemLocation>();
     incidence->setLocation(loc.label());
+
+    if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence) {
+        updateIncidenceFromEvent(item, incidence.staticCast<KCalCore::Event>());
+    } else if (item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        updateIncidenceFromTodo(item, incidence.staticCast<KCalCore::Todo>());
+    } else if (item.type() == QOrganizerItemType::TypeJournal) {
+        updateIncidenceFromJournal(item, incidence.staticCast<KCalCore::Journal>());
+    }
+}
+
+void MKCalEngine::updateIncidenceFromEvent(const QOrganizerItem& item, KCalCore::Event::Ptr event)
+{
+    QOrganizerEventTime eventTime(item.detail<QOrganizerEventTime>());
+    event->setDtStart(KDateTime(eventTime.startDateTime()));
+    event->setDtEnd(KDateTime(eventTime.endDateTime()));
+    if (item.type() == QOrganizerItemType::TypeEvent)
+        convertQRecurrenceToKRecurrence(item.detail<QOrganizerItemRecurrence>(),
+                                        eventTime.startDateTime().date(),
+                                        event->recurrence());
+}
+
+void MKCalEngine::updateIncidenceFromTodo(const QOrganizerItem& item, KCalCore::Todo::Ptr todo)
+{
+    QOrganizerTodoTime todoTime(item.detail<QOrganizerTodoTime>());
+    todo->setDtStart(KDateTime(todoTime.startDateTime()));
+    todo->setDtDue(KDateTime(todoTime.dueDateTime()));
+    if (item.type() == QOrganizerItemType::TypeTodo)
+        convertQRecurrenceToKRecurrence(item.detail<QOrganizerItemRecurrence>(),
+                                        todoTime.startDateTime().date(),
+                                        todo->recurrence());
+}
+
+void MKCalEngine::updateIncidenceFromJournal(const QOrganizerItem& item, KCalCore::Journal::Ptr journal)
+{
+    QOrganizerJournalTime dt = item.detail<QOrganizerJournalTime>();
+    journal->setDtStart(KDateTime(dt.entryDateTime()));
 }
 
 /*! Converts \a qRecurrence into the libkcal equivalent, stored in \a kRecurrence.  kRecurrence must
  * point to an initialized Recurrence.
  */
-void MKCalEngine::convertQRecurrenceToKRecurrence(
-        const QOrganizerItemRecurrence& qRecurrence, const QDate& startDate,
+void MKCalEngine::convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence, const QDate& startDate,
         KCalCore::Recurrence* kRecurrence)
 {
     kRecurrence->clear();
 
     foreach (const QOrganizerRecurrenceRule& rrule, qRecurrence.recurrenceRules()) {
         if (rrule.frequency() != QOrganizerRecurrenceRule::Invalid) {
-            KCalCore::RecurrenceRule* krrule = createKRecurrenceRule(kRecurrence, startDate, rrule);
-            kRecurrence->addRRule(krrule);
+            kRecurrence->addRRule(createKRecurrenceRule(startDate, rrule));
         }
     }
 
     foreach (const QOrganizerRecurrenceRule& exrule, qRecurrence.exceptionRules()) {
         if (exrule.frequency() != QOrganizerRecurrenceRule::Invalid) {
-            KCalCore::RecurrenceRule* kexrule = createKRecurrenceRule(kRecurrence, startDate, exrule);
-            kRecurrence->addExRule(kexrule);
+            kRecurrence->addExRule(createKRecurrenceRule(startDate, exrule));
         }
     }
 
@@ -1098,16 +1073,10 @@ void MKCalEngine::convertQRecurrenceToKRecurrence(
         kRecurrence->addExDate(exdate);
 }
 
-KCalCore::RecurrenceRule* MKCalEngine::createKRecurrenceRule(
-        KCalCore::Recurrence* kRecurrence,
-        const QDate& startDate,
-        const QOrganizerRecurrenceRule& qRRule)
+KCalCore::RecurrenceRule* MKCalEngine::createKRecurrenceRule(const QDate& startDate, const QOrganizerRecurrenceRule& qRRule)
 {
-    Q_UNUSED(kRecurrence);
     KCalCore::RecurrenceRule* kRRule = new KCalCore::RecurrenceRule();
     switch (qRRule.frequency()) {
-        case QOrganizerRecurrenceRule::Invalid:
-            break;
         case QOrganizerRecurrenceRule::Daily:
             kRRule->setRecurrenceType(KCalCore::RecurrenceRule::rDaily);
             break;
@@ -1131,9 +1100,9 @@ KCalCore::RecurrenceRule* MKCalEngine::createKRecurrenceRule(
         kRRule->setEndDt(KDateTime(endDate));
     }
 
-    //QOrganizerRecurrenceRule does not support position associated with dayOfWeek so we will always
+    //TODO: QOrganizerRecurrenceRule does not support position associated with dayOfWeek so we will always
     //take the first position. When this will be implemented in the future please fix the code below.
-    int pos = qRRule.positions().size() ? *qRRule.positions().begin() : 0;
+    int pos = qRRule.positions().isEmpty() ? 0 : *qRRule.positions().begin();
 
     QList<KCalCore::RecurrenceRule::WDayPos> daysOfWeek;
     foreach (Qt::DayOfWeek dayOfWeek, qRRule.daysOfWeek()) {
@@ -1166,7 +1135,26 @@ KCalCore::RecurrenceRule* MKCalEngine::createKRecurrenceRule(
 bool MKCalEngine::convertIncidenceToItem(
         KCalCore::Incidence::Ptr incidence, QOrganizerItem* item) const
 {
-    convertCommonIncidenceFieldsToDetails(incidence, item);
+    // convert common details first
+    item->setId(QOrganizerItemId(new MKCalItemId(
+                    incidence->uid(),
+                    incidence->hasRecurrenceId() ? incidence->recurrenceId() : KDateTime())));
+    item->setCollectionId(QOrganizerCollectionId(new MKCalCollectionId(
+                    d->m_calendarBackendPtr->notebook(incidence))));
+
+    if (!incidence->summary().isEmpty())
+        item->setDisplayLabel(incidence->summary());
+    if (!incidence->description().isEmpty())
+        item->setDescription(incidence->description());
+    if (!incidence->location().isEmpty()) {
+        QOrganizerItemLocation location;
+        location.setLabel(incidence->location());
+        item->saveDetail(&location);
+    }
+
+    item->setGuid(incidence->uid());
+
+    // convert individual details based on type
     if (incidence->type() == KCalCore::IncidenceBase::TypeEvent) {
         convertKEventToQEvent(incidence.staticCast<KCalCore::Event>(), item);
     } else if (incidence->type() == KCalCore::IncidenceBase::TypeTodo) {
@@ -1239,32 +1227,6 @@ void MKCalEngine::convertKJournalToQJournal(KCalCore::Journal::Ptr j, QOrganizer
     } else {
         item->setType(QOrganizerItemType::TypeNote);
     }
-}
-
-/*!
- * Adds details to \a item based on fields found in \a incidence.
- */
-void MKCalEngine::convertCommonIncidenceFieldsToDetails(
-        KCalCore::Incidence::Ptr incidence, QOrganizerItem* item) const
-{
-    item->setId(QOrganizerItemId(new MKCalItemId(
-                    incidence->uid(),
-                    incidence->hasRecurrenceId() ? incidence->recurrenceId() : KDateTime())));
-    item->setCollectionId(QOrganizerCollectionId(new MKCalCollectionId(
-                    d->m_calendarBackendPtr->notebook(incidence))));
-
-    if (!incidence->summary().isEmpty())
-        item->setDisplayLabel(incidence->summary());
-    if (!incidence->description().isEmpty())
-        item->setDescription(incidence->description());
-
-    if (!incidence->location().isEmpty()) {
-        QOrganizerItemLocation location;
-        location.setLabel(incidence->location());
-        item->saveDetail(&location);
-    }
-
-    item->setGuid(incidence->uid());
 }
 
 void MKCalEngine::convertKRecurrenceToQRecurrence(const KCalCore::Recurrence* kRecurrence, QOrganizerItem* item) const

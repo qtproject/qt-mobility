@@ -122,9 +122,6 @@ public:
     {
     }
 
-    // map of organizeritem type to map of definition name to definitions:
-    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
-
     mKCal::ExtendedCalendar::Ptr m_calendarBackendPtr;
     mKCal::ExtendedStorage::Ptr m_storagePtr;
 
@@ -174,8 +171,6 @@ public:
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<int> supportedDataTypes() const;
-    QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QOrganizerAbstractRequest* req);
@@ -197,22 +192,16 @@ private:
     MKCalEngine(const QString& managerUri = QString());
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     KCalCore::Incidence::Ptr incidence(const QOrganizerItemId& itemId) const;
-    KCalCore::Incidence::Ptr detachedIncidenceFromItem(const QOrganizerItem& item) const;
+    KCalCore::Incidence::Ptr createPersistentException(const QOrganizerItem& item) const;
     bool softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
     bool saveStorage(QOrganizerItemChangeSet* ics, QOrganizerManager::Error* error);
-    void convertQEventToKEvent(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
-    void convertQTodoToKTodo(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
-    void convertQJournalToKJournal(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertQNoteToKNote(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertCommonDetailsToIncidenceFields(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertQRecurrenceToKRecurrence(
-            const QOrganizerItemRecurrence& qRecurrence,
-            const QDate& startDate,
-            KCalCore::Recurrence* kRecurrence);
-    KCalCore::RecurrenceRule* createKRecurrenceRule(
-            KCalCore::Recurrence* kRecurrence,
-            const QDate& startDate,
-            const QOrganizerRecurrenceRule& qRRule);
+
+    void updateIncidenceFromItem(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
+    void updateIncidenceFromEvent(const QOrganizerItem& item, KCalCore::Event::Ptr event);
+    void updateIncidenceFromTodo(const QOrganizerItem& item, KCalCore::Todo::Ptr todo);
+    void updateIncidenceFromJournal(const QOrganizerItem& item, KCalCore::Journal::Ptr journal);
+    void convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence, const QDate& startDate, KCalCore::Recurrence* kRecurrence);
+    KCalCore::RecurrenceRule* createKRecurrenceRule(const QDate& startDate, const QOrganizerRecurrenceRule& qRRule);
 
     bool convertIncidenceToItem(KCalCore::Incidence::Ptr i, QOrganizerItem* item) const;
     void convertKEventToQEvent(KCalCore::Event::Ptr e, QOrganizerItem* item) const;
