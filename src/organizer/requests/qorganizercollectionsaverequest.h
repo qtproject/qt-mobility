@@ -59,6 +59,7 @@ class Q_ORGANIZER_EXPORT QOrganizerCollectionSaveRequest : public QOrganizerAbst
 
 public:
     QOrganizerCollectionSaveRequest(QObject* parent = 0);
+    ~QOrganizerCollectionSaveRequest();
 
     /* Selection */
     void setCollection(const QOrganizerCollection& collection);
