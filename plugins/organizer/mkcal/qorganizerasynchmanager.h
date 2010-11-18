@@ -92,6 +92,9 @@ private:
 
     QMutex m_mutex;
 
+    bool m_destroying;
+    QWaitCondition m_destroyWait;
+
     void workerDone(AsyncWorker *worker, QOrganizerAbstractRequest *req);
 
     friend class AsyncWorker;
