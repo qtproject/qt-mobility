@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <QStringBuilder>
+
 #include "mkcalengine.h"
 #include "qtorganizer.h"
 #include "mkcalid.h"
@@ -66,6 +68,19 @@ Q_DEFINE_LATIN1_CONSTANT(NotebookJournalsAllowed, "JournalsAllowed");
 Q_DEFINE_LATIN1_CONSTANT(NotebookTodosAllowed, "TodosAllowed");
 
 //QTM_USE_NAMESPACE
+
+QString MKCalItemId::toString() const
+{
+    QString d;
+    if (!m_rid.isNull())
+        d = QString("%1").arg(m_rid.toTime_t());
+    return m_id % ':' % d % ':' % managerUri();
+}
+
+QString MKCalCollectionId::toString() const
+{
+    return m_uid % QLatin1String(":") % managerUri();
+}
 
 QOrganizerManagerEngine* MKCalEngineFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
@@ -819,7 +834,7 @@ void MKCalEngine::storageFinished(mKCal::ExtendedStorage* storage, bool error, c
 KCalCore::Incidence::Ptr MKCalEngine::incidence(const QOrganizerItemId& itemId) const
 {
     const MKCalItemId *id = MKCalItemId::id_cast(itemId);
-    return id->id().isEmpty() ? KCalCore::Incidence::Ptr() : d->m_calendarBackendPtr->incidence(id->id(), id->rid());
+    return id->id().isEmpty() ? KCalCore::Incidence::Ptr() : d->m_calendarBackendPtr->incidence(id->id(), id->recurrenceID());
 }
 
 KCalCore::Incidence::Ptr MKCalEngine::createPersistentException(const QOrganizerItem& item) const
@@ -1088,6 +1103,9 @@ KCalCore::RecurrenceRule* MKCalEngine::createKRecurrenceRule(const QDate& startD
             break;
         case QOrganizerRecurrenceRule::Yearly:
             kRRule->setRecurrenceType(KCalCore::RecurrenceRule::rYearly);
+            break;
+        case QOrganizerRecurrenceRule::Invalid:
+            //just to handle the compiler warning, it will never reach this point
             break;
     }
     kRRule->setFrequency(qRRule.interval());

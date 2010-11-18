@@ -63,11 +63,12 @@ class MKCalItemId : public QOrganizerItemEngineId
 {
 public:
     MKCalItemId() {}
-    MKCalItemId(const QString& id, const KDateTime& rid) : m_id(id), m_rid(rid) {}
+    MKCalItemId(const QString& id, const KDateTime& rid) : m_id(id), m_rid(rid), m_hash(0) {}
+
     bool isEqualTo(const QOrganizerItemEngineId* other) const
     {
         const MKCalItemId* otherid = static_cast<const MKCalItemId*>(other);
-        if (managerUri() != otherid->managerUri())
+        if (hash() != otherid->hash())
             return false;
         if (m_id != otherid->m_id)
             return false;
@@ -86,7 +87,7 @@ public:
     }
     QOrganizerItemEngineId* clone() const
     {
-        return new MKCalItemId(m_id, m_rid);
+        return new MKCalItemId(m_id, m_rid, m_hash);
     }
     QString managerUri() const
     {
@@ -101,26 +102,18 @@ public:
 #endif
     uint hash() const
     {
-        return qHash(m_id);
+        if (!m_hash)
+            m_hash = (qHash(m_id) << 4) + m_rid.toTime_t();
+        return m_hash;
     }
 
-    QString toString() const
-    {
-        QString retn;
-        retn += m_id;
-        if (m_rid.isNull()) {
-            retn += QLatin1String("::");
-        } else {
-            retn += QString(":%1:").arg(m_rid.toTime_t());
-        }
-        retn += managerUri();
-        return retn;
-    }
+    QString toString() const;
+
     QString id() const
     {
         return m_id;
     }
-    KDateTime rid() const
+    KDateTime recurrenceID() const
     {
         return m_rid;
     }
@@ -136,6 +129,9 @@ public:
 private:
     QString m_id;
     KDateTime m_rid;
+    mutable int m_hash;
+
+    MKCalItemId(const QString& id, const KDateTime& rid, int hash) : m_id(id), m_rid(rid), m_hash(hash) {}
 };
 
 
@@ -143,10 +139,12 @@ class MKCalCollectionId : public QOrganizerCollectionEngineId
 {
 public:
     MKCalCollectionId() {}
-    MKCalCollectionId(const QString& uid) : m_uid(uid) {}
+    MKCalCollectionId(const QString& uid) : m_uid(uid), m_hash(0) {}
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const
     {
         const MKCalCollectionId* otherid = static_cast<const MKCalCollectionId*>(other);
+        if (hash() != otherid->hash())
+            return false;
         if (m_uid != otherid->m_uid)
             return false;
         return true;
@@ -162,7 +160,7 @@ public:
     }
     QOrganizerCollectionEngineId* clone() const
     {
-        return new MKCalCollectionId(m_uid);
+        return new MKCalCollectionId(m_uid, m_hash);
     }
     QString managerUri() const
     {
@@ -177,13 +175,12 @@ public:
 #endif
     uint hash() const
     {
-        return qHash(m_uid);
+        if (!m_hash)
+            m_hash = qHash(m_uid);
+        return m_hash;
     }
 
-    QString toString() const
-    {
-        return m_uid + QLatin1String(":") + managerUri();
-    }
+    QString toString() const;
 
     static const MKCalCollectionId* id_cast(const QOrganizerCollectionId& collId)
     {
@@ -200,6 +197,9 @@ public:
 
 private:
     QString m_uid;
+    mutable int m_hash;
+
+    MKCalCollectionId(const QString& uid, int hash) : m_uid(uid), m_hash(hash) {}
 };
 
 #endif
