@@ -284,7 +284,7 @@ public:
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

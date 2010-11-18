@@ -161,7 +161,8 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value DeviceLocked                   Device lock.
+          \value DeviceUnlocked                 Device is unlocked.
+          \value DeviceLocked                   Device is locked.
           \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
 
           */
@@ -527,14 +528,14 @@ QUuid QSystemDeviceInfo::hostId()
 }
 
 /*!
-  \property QSystemDeviceInfo::typeOfLock
+  \property QSystemDeviceInfo::lockStatus
  \brief Type of lock.
 
  Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
  */
-QSystemDeviceInfo::LockType QSystemDeviceInfo::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
 {
-    return deviceInfoPrivate()->typeOfLock();
+    return deviceInfoPrivate()->lockStatus();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"

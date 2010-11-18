@@ -293,7 +293,7 @@ public:
     bool backLightOn(); //1.2
     void deviceLocked(bool isLocked); // 1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 
 Q_SIGNALS:

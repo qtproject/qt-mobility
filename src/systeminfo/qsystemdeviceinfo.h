@@ -72,7 +72,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(KeyboardTypeFlags keyboardType READ keyboardType)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlipOpen READ isKeyboardFlipOpen NOTIFY keyboardFlip)//1.2
-    Q_PROPERTY(QSystemDeviceInfo::LockType typeOfLock READ typeOfLock NOTIFY lockChanged)
+    Q_PROPERTY(QSystemDeviceInfo::LockType lockStatus READ lockStatus NOTIFY lockChanged)
     Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
 
     Q_ENUMS(BatteryStatus)
@@ -147,6 +147,7 @@ public:
 
     enum LockType {
         UnknownLock = 0,
+        DeviceUnlocked,
         DeviceLocked,
         TouchAndKeyboardLocked
     }; //1.2
@@ -175,7 +176,7 @@ public:
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -187,7 +188,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 
 private:
