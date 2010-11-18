@@ -7375,8 +7375,7 @@ void tst_QLandmarkManager::filterSupportLevel() {
 
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);
-    qWarning() << "Tassa: " << m_manager->filterSupportLevel(attributeFilter);
-    //QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
