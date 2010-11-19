@@ -37,8 +37,7 @@ public:
      * Called 
      */
     virtual void ReceiveComplete(TInt aError) = 0;
-    virtual void WriteComplete( TInt aError, TInt aSize) = 0;
-        
+    virtual void WriteComplete( TInt aError, TInt aSize) = 0;   
     };      
 
 /*!
@@ -211,7 +210,7 @@ public:
     /*!
      * Transfer given data to remote device.
      */
-    void Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
+    TInt Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
     
     /*!
      * Cancels COwnLlcpConnection::Tranfer() request.

@@ -318,7 +318,7 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
 {
-    return true;
+    return m_state->WaitForReadyRead(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
@@ -342,6 +342,10 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 
 void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
 {
+    if (m_state)
+    {
+       delete m_state;
+    }
     m_state = state;
 }
 

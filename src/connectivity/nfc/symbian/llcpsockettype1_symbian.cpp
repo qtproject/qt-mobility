@@ -263,11 +263,11 @@ TInt CLlcpSocketType1::CreateConnection(TInt8 portNum)
 
 TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
     {
-    if (NULL == aConnection)
-        return;
-    
     TInt error = KErrNone;
-     
+    
+    if (NULL == aConnection)
+        return KErrNotFound;
+
      // Only accepting one incoming remote connection
      if ( !iConnection )
          { 
@@ -387,11 +387,13 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
 */
 TInt COwnLlcpConnLess::Transfer(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
     {  
+    TInt error = KErrNone;
     // Pass message on to transmit AO
     if (!iSenderAO->IsActive())
         {
-        iSenderAO->Transfer(aLlcpSendCb, aData);
+        error = iSenderAO->Transfer(aLlcpSendCb, aData);
         }
+    return error;
     }
 
 /*!
@@ -462,16 +464,14 @@ CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter* iConnection)
 CLlcpSenderType1::~CLlcpSenderType1()
     {
     Cancel();   // cancel ANY outstanding request at time of destruction
-    
     iTransmitBuf.Close();
     }
 
-void CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
+TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
     {
+    TInt error = KErrNone;
     if (!IsActive())
-        {      
-        TInt error = KErrNone;
-          
+        {           
           // Copying data to internal buffer. 
           iTransmitBuf.Zero();
           error = iTransmitBuf.ReAlloc( aData.Length() );
@@ -490,6 +490,7 @@ void CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
         // as having an outstanding request.
         SetActive();
         }
+    return error;
     }
 
 void CLlcpSenderType1::RunL(void)

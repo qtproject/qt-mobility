@@ -87,9 +87,10 @@ public:
     virtual void DisconnectFromService();
     virtual void ConnectToServiceComplete();
     virtual bool WaitForBytesWritten(int); 
+    virtual bool WaitForReadyRead(int);
     
 protected:
-    QLlcpSocketPrivate *m_socket;
+    QLlcpSocketPrivate *m_socket;  // not own
 };
 
 /*!
@@ -162,6 +163,7 @@ public: // from base class
     void DisconnectFromService();
    qint64 WriteDatagram(const char *data, qint64 size);
    bool WaitForBytesWritten(int msecs);
+   bool WaitForReadyRead(int msecs);
     
 private:
     QLLCPConnected(QLlcpSocketPrivate*);

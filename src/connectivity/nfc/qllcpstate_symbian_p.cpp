@@ -46,11 +46,17 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    Constructor
+*/
 QLLCPSocketState::QLLCPSocketState(QLlcpSocketPrivate* aSocket)
       :m_socket(aSocket)
 {
 }
 
+/*!
+    Transit from the current state to the next state s.
+*/
 void QLLCPSocketState::ChangeState(QLlcpSocketPrivate*t,QLLCPSocketState *s )
 {
     t->changeState(s);
@@ -107,7 +113,6 @@ bool QLLCPBind::WaitForBytesWritten(int msecs)
    }
    return isOK;
 }
-
 
 /*!
     Connection-Less Mode  
@@ -174,6 +179,20 @@ bool QLLCPConnected::WaitForBytesWritten(int msecs)
        isOK = socketHandler->WaitForBytesWritten(msecs);
    }
    return isOK;
+}
+
+/*!
+    Connection-Oriented Mode
+*/
+bool QLLCPConnected::WaitForReadyRead(int msecs)
+{
+    bool isOK = false;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        isOK = socketHandler->WaitForReadyRead(msecs);
+    }
+    return isOK;
 }
 
 /*!
@@ -254,7 +273,6 @@ void QLLCPConnecting::DisconnectFromService()
    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
    if (socketHandler)
    {
-       // Symbian backend will cancel the previous trying to connect.
        m_socket->disconnectFromService();
        ChangeState(m_socket, QLLCPUnconnected::Instance(m_socket));
        m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
@@ -336,7 +354,9 @@ void QLLCPClosing::ConnectToService(QNearFieldTarget *target, const QString &ser
     return;
     }
 
-// Constructors
+/*!
+    Constructors
+*/
 QLLCPUnconnected::QLLCPUnconnected(QLlcpSocketPrivate* aSocket)
     :QLLCPSocketState(aSocket)
 {}
@@ -365,6 +385,9 @@ qint64 QLLCPSocketState::ReadDatagram(char *data, qint64 maxSize,
     return -1;
 }
 
+/*!
+    State base class default implementation
+*/
 qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
 {
@@ -389,6 +412,11 @@ bool QLLCPSocketState::Bind(quint8 port)
     return false;
  }
 
+ bool QLLCPSocketState::WaitForReadyRead(int msecs)
+ {
+    return false;
+ }
+
 void QLLCPSocketState::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
    m_socket->invokeError();
@@ -404,6 +432,10 @@ void QLLCPSocketState::DisconnectFromService()
    m_socket->invokeError();
 }
 
+
+/*!
+    Various state single intance intialization
+*/
 QLLCPSocketState* QLLCPUnconnected::m_instance = NULL;
 QLLCPSocketState* QLLCPBind::m_instance = NULL;
 QLLCPSocketState* QLLCPConnecting::m_instance = NULL;
