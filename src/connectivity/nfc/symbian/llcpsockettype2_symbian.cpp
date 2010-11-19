@@ -362,7 +362,7 @@ void CLlcpSocketType2::StateChangedL(QtMobility::QLlcpSocket::State aSocketState
 
     if (aSocketState == QtMobility::QLlcpSocket::ClosingState && iCallback)
         {
-        QT_TRYCATCH_LEAVING(iCallback->invokeConnected());
+        QT_TRYCATCH_LEAVING(iCallback->invokeDisconnected());
         }
 
     //emit stateChange

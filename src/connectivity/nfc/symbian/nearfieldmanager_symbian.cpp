@@ -53,7 +53,7 @@
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-	A Symbian implementation class to support symbian NFC backend.
+    A Symbian implementation class to support symbian NFC backend.
 */
 
 /*!
@@ -62,138 +62,142 @@
 void CNearFieldManager::ConstructL()
     {
     User::LeaveIfError(iServer.Open());
-    
+
     //create LLCP provider api
     iLlcpProvider = CLlcpProvider::NewL( iServer );
     iLlcpProvider->AddLlcpLinkListenerL( *this );
-    
+
     }
 
 /*!
     Start listening all type tags.
 */
 void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type> &aTargetTypes)
-	{
-	if (aTargetTypes.size() > 0)
-		{
-		if (!iNfcTagDiscovery)
-			{
-			iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
-			}
-		else
-			{
-			iNfcTagDiscovery->RemoveTagConnectionListener();
-			}
-		User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
-		if (!iTagSubscription)
-			{
-			iTagSubscription = CNfcTagSubscription::NewL();
-			}
-		else
-			{
-			iTagSubscription->RemoveAllConnectionModes();
-			}
-		for (int i = 0; i < aTargetTypes.size(); ++i)
-			{
-			switch(aTargetTypes[i])
-				{
-				case QNearFieldTarget::NfcTagType1:
-					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType1);
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
-					break;
-				case QNearFieldTarget::NfcTagType2:
-					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType2);
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
-					break;
-				case QNearFieldTarget::NfcTagType3:
-					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType3);
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
-					break;
-				case QNearFieldTarget::NfcTagType4:
-					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfc14443P4);
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
-					break;
-				case QNearFieldTarget::MifareTag:
-					iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcMifareStd);					
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
-					break;
-				case QNearFieldTarget::AnyTarget:
-					iTagSubscription->RemoveAllConnectionModes();
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
-					iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
-					break;
-				case QNearFieldTarget::ProprietaryTag:
-					break;
-				}
-			}
-		}
-		iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
-	}
+    {
+    if (aTargetTypes.size() > 0)
+        {
+        if (!iNfcTagDiscovery)
+            {
+            iNfcTagDiscovery = CNfcTagDiscovery::NewL( iServer );
+            }
+        else
+            {
+            iNfcTagDiscovery->RemoveTagConnectionListener();
+            }
+        User::LeaveIfError(iNfcTagDiscovery->AddTagConnectionListener( *this ));
+        if (!iTagSubscription)
+            {
+            iTagSubscription = CNfcTagSubscription::NewL();
+            }
+        else
+            {
+            iTagSubscription->RemoveAllConnectionModes();
+            }
+        for (int i = 0; i < aTargetTypes.size(); ++i)
+            {
+            switch(aTargetTypes[i])
+                {
+                case QNearFieldTarget::NfcTagType1:
+                    iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType1);
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+                    break;
+                case QNearFieldTarget::NfcTagType2:
+                    iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType2);
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+                    break;
+                case QNearFieldTarget::NfcTagType3:
+                    iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcType3);
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+                    break;
+                case QNearFieldTarget::NfcTagType4:
+                    iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfc14443P4);
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+                    break;
+                case QNearFieldTarget::MifareTag:
+                    iTagSubscription->RemoveConnectionMode(TNfcConnectionInfo::ENfcMifareStd);
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+                    break;
+                case QNearFieldTarget::AnyTarget:
+                    iTagSubscription->RemoveAllConnectionModes();
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType1 );
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType2 );
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcType3 );
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfc14443P4 );
+                    iTagSubscription->AddConnectionModeL( TNfcConnectionInfo::ENfcMifareStd );
+                    break;
+                case QNearFieldTarget::ProprietaryTag:
+                    break;
+                }
+            }
+        }
+        iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+    }
 
 /*!
     Stop listening all type tags.
 */
 void CNearFieldManager::stopTargetDetection()
-	{
-	if (iNfcTagDiscovery)
-		{
-		iNfcTagDiscovery->RemoveTagConnectionListener();
-		iNfcTagDiscovery->RemoveTagSubscription();
-		delete iNfcTagDiscovery;
-		iNfcTagDiscovery = NULL;
-		if (iTagSubscription)
-			{
-			delete iTagSubscription;
-			iTagSubscription = NULL;
-			}
-		}
-	}
+    {
+    if (iNfcTagDiscovery)
+        {
+        iNfcTagDiscovery->RemoveTagConnectionListener();
+        iNfcTagDiscovery->RemoveTagSubscription();
+        delete iNfcTagDiscovery;
+        iNfcTagDiscovery = NULL;
+        if (iTagSubscription)
+            {
+            delete iTagSubscription;
+            iTagSubscription = NULL;
+            }
+        }
+    }
 
 /*!
     Register interested TNF NDEF message to NFC server.
 */
-TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat aTnf, 
+TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
                                        const QByteArray& aType )
-	{
-	if ( !iNdefDiscovery )
-		{
-		iNdefDiscovery = CNdefDiscovery::NewL( iServer );
-		iNdefDiscovery->AddNdefMessageListener( *this );		
-		}
-	TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
-	return iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
-	}
+    {
+    if ( !iNdefDiscovery )
+        {
+        TRAPD(err, iNdefDiscovery = CNdefDiscovery::NewL( iServer ));
+        if (err != KErrNone)
+            {
+            return err;
+            }
+        iNdefDiscovery->AddNdefMessageListener( *this );
+        }
+    TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
+    return iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+    }
 
 /*!
     Unregister interested TNF NDEF message to NFC server.
 */
-void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameFormat aTnf, 
+void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
                                           const QByteArray& aType )
-	{
-	if ( iNdefDiscovery )
-		{
-		TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
-		iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
-		}
-	}
+    {
+    if ( iNdefDiscovery )
+        {
+        TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
+        iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+        }
+    }
 
 /*!
     Callback function when the tag found by NFC symbain services.
 */
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     {
-	TRAP_IGNORE(
-		if (aNfcTag)
-			{
-			QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
-			CleanupStack::PushL(tag);
-			QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
-			CleanupStack::Pop(tag);
-			}
-			);
+    TRAP_IGNORE(
+        if (aNfcTag)
+            {
+            QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
+            CleanupStack::PushL(tag);
+            QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
+            CleanupStack::Pop(tag);
+            }
+            );
     }
 
 /*!
@@ -201,33 +205,33 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
 */
 void CNearFieldManager::TagLost()
     {
-	TRAP_IGNORE(
-			QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
-		);
+    TRAP_IGNORE(
+            QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
+        );
     }
 
 /*!
     Callback function when the LLCP peer found by NFC symbain services.
 */
 void CNearFieldManager::LlcpRemoteFound()
-	{
-	TRAP_IGNORE(
-		QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
-		CleanupStack::Pop(tag);
-		QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
-		CleanupStack::Pop(tag);
-		);
-	}
+    {
+    TRAP_IGNORE(
+        QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
+        CleanupStack::Pop(tag);
+        QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
+        CleanupStack::Pop(tag);
+        );
+    }
 
 /*!
     Callback function when the LLCP peer lost event found by NFC symbain services.
 */
 void CNearFieldManager::LlcpRemoteLost()
-	{
-	TRAP_IGNORE(
-			QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
-		);
-	}
+    {
+    TRAP_IGNORE(
+            QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
+        );
+    }
 
 /*!
     Callback function when the registerd NDEF message found by NFC symbain services.
@@ -236,11 +240,11 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     {
     if ( aMessage )
         {
-		TRAP_IGNORE(
-			QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
-			QT_TRYCATCH_LEAVING(iCallback.invokeTargetDetectedHandler(msg));
-			delete aMessage;
-		);
+        TRAP_IGNORE(
+                QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+           QT_TRYCATCH_LEAVING(iCallback.invokeTargetDetectedHandler(msg));
+           delete aMessage;
+        );
         }
     }
 
@@ -248,8 +252,8 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     New a CNearFieldManager instance.
 */
 CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
-	: iCallback(aCallback)
-    {    
+    : iCallback(aCallback)
+    {
     }
 
 /*!
@@ -258,7 +262,7 @@ CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& 
 CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
     CNearFieldManager* self = NewLC(aCallback);
-    CleanupStack::Pop( self );  
+    CleanupStack::Pop( self );
     return self;
     }
 
@@ -286,18 +290,18 @@ CNearFieldManager::~CNearFieldManager()
 
     delete iTagSubscription;
     delete iNfcTagDiscovery;
-    
+
     if (iLlcpProvider)
-    	{
-		iLlcpProvider->RemoveLlcpLinkListener();
-    	}
+        {
+        iLlcpProvider->RemoveLlcpLinkListener();
+        }
     delete iLlcpProvider;
-    
+
     if (iNdefDiscovery)
-    	{
-		iNdefDiscovery->RemoveAllNdefSubscription();
-    	}
+        {
+        iNdefDiscovery->RemoveAllNdefSubscription();
+        }
     delete iNdefDiscovery;
-    
+
     iServer.Close();
     }
