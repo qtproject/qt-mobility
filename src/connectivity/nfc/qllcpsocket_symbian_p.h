@@ -119,11 +119,11 @@ private:
     SocketType m_socketType;
 
 public:
-    void invokeReadyRead() { emit readyRead(); }
-    void invokeBytesWritten(qint64 bytes) { emit bytesWritten(bytes);}
-    void invokeStateChanged(QLlcpSocket::State socketState) {emit stateChanged(socketState);}
-    void invokeError() const {emit error(QLlcpSocket::UnknownSocketError);}
-    void invokeDisconnected() {emit disconnected();}
+    void invokeReadyRead();
+    void invokeBytesWritten(qint64 bytes) ;
+    void invokeStateChanged(QLlcpSocket::State socketState);
+    void invokeError() const ;
+    void invokeDisconnected();
     void invokeConnected();
 signals:
      /*  From QIODevice
