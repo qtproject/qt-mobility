@@ -48,6 +48,8 @@ SOURCES += \
     bluetooth/qbluetoothtransferreply.cpp
 
 symbian {
+    QT *= network
+
     PRIVATE_HEADERS += \
         bluetooth/utils_symbian_p.h\
 		bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h        
