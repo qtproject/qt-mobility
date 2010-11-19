@@ -156,9 +156,6 @@ void QLlcpSocketPrivate::invokeDisconnected()
     emit disconnected();
 }
 
-
-
-
 /*!
     Only used at connectless mode, create type1 socket if necessary.
 */
@@ -224,7 +221,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
     Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::writeDatagram(),connectionType2, val);
     val = m_state->WriteDatagram(data,size);
 
-    return -1;
+    return val;
 }
 
 /*!
@@ -242,9 +239,8 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
                                         QNearFieldTarget **target, quint8 *port)
 {
-    Q_UNUSED(target);
     qint64 val = -1;
-    if ( *target != NULL || port != 0){
+    if ( (target != NULL && *target != NULL) || port != 0){
        Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::writeDatagram(),connectionType1, val);
     }
 
@@ -258,9 +254,7 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
-{
-    Q_UNUSED(target);
-    
+{ 
     if( connectionType2 == m_socketType){
        return -1;
     }
@@ -328,16 +322,12 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
 
 bool QLlcpSocketPrivate::waitForConnected(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    return m_state->WaitForConnected(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 {
-    Q_UNUSED(msecs);
-
-    return false;
+    return m_state->WaitForDisconnected(msecs);
 }
 
 void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)

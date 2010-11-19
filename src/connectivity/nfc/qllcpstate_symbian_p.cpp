@@ -196,6 +196,22 @@ bool QLLCPConnected::WaitForReadyRead(int msecs)
 }
 
 /*!
+    Connection-Oriented Mode
+*/
+bool QLLCPConnected::WaitForDisconnected(int msecs)
+{
+    bool isOK = false;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        isOK = socketHandler->WaitForDisconnected(msecs);
+        ChangeState(m_socket, QLLCPUnconnected::Instance(m_socket));
+        m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
+    }
+    return isOK;
+}
+
+/*!
     Connection-Less Mode
 */
 qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
@@ -245,18 +261,16 @@ void QLLCPConnected::DisconnectFromService()
    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
    if (socketHandler)
    {
-      // If there is pending data waiting to be written,
-      // QLlcp Socket will enter ClosingState and wait until all data has been written
-      if (m_socket->waitForBytesWritten(-1))
-      {
-          ChangeState(m_socket, QLLCPClosing::Instance(m_socket));
-          m_socket->invokeStateChanged(QLlcpSocket::ClosingState);
-          m_socket->disconnectFromService();
-      }
-      else
-      {
-         m_socket->invokeError();
-      }
+       ChangeState(m_socket, QLLCPClosing::Instance(m_socket));
+       m_socket->invokeStateChanged(QLlcpSocket::ClosingState);
+       // If there is pending data waiting to be written,
+       // Symbian backend Socket will wait until all data has been written
+       if (socketHandler->DisconnectFromService() < 0)
+       {
+          m_socket->invokeError();
+       }
+       ChangeState(m_socket, QLLCPUnconnected::Instance(m_socket));
+       m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
    }
    else
    {
@@ -273,7 +287,10 @@ void QLLCPConnecting::DisconnectFromService()
    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
    if (socketHandler)
    {
-       m_socket->disconnectFromService();
+       if (socketHandler->DisconnectFromService() < 0)
+       {
+          m_socket->invokeError();
+       }
        ChangeState(m_socket, QLLCPUnconnected::Instance(m_socket));
        m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
    }
@@ -305,6 +322,20 @@ void QLLCPConnecting::ConnectToServiceComplete()
 /*!
     Connection-Oriented Mode
 */
+bool QLLCPConnecting::WaitForConnected(int msecs)
+{
+    bool isOK = false;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        isOK = socketHandler->WaitForConnected(msecs);
+    }
+    return isOK;
+}
+
+/*!
+    Connection-Oriented Mode
+*/
 void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
     CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
@@ -317,7 +348,7 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
     TInt err = KErrNone;
 
     // Convert symbian leave to a symbian error code.
-    QT_TRYCATCH_ERROR(err, QT_TRAP_THROWING(socketHandler->ConnectToServiceL(serviceName)));
+    socketHandler->ConnectToService(serviceName);
 
     if (KErrNone == err)
     {
@@ -332,6 +363,8 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
 */
 void QLLCPConnecting::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
     {
+    Q_UNUSED(target);
+    Q_UNUSED(serviceUri);
     qWarning("QLlcpSocket::connectToService() called when already connecting");
     return;
     }
@@ -341,6 +374,8 @@ void QLLCPConnecting::ConnectToService(QNearFieldTarget *target, const QString &
 */
 void QLLCPConnected::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
     {
+    Q_UNUSED(target);
+    Q_UNUSED(serviceUri);
     qWarning("QLlcpSocket::connectToService() called when already connected");
     return;
     }
@@ -350,6 +385,8 @@ void QLLCPConnected::ConnectToService(QNearFieldTarget *target, const QString &s
 */
 void QLLCPClosing::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
     {
+    Q_UNUSED(target);
+    Q_UNUSED(serviceUri);
     qWarning("QLlcpSocket::connectToService() called when already connected");
     return;
     }
@@ -381,6 +418,10 @@ QLLCPClosing::QLLCPClosing(QLlcpSocketPrivate* aSocket)
 qint64 QLLCPSocketState::ReadDatagram(char *data, qint64 maxSize,
         QNearFieldTarget **target, quint8 *port) 
 {
+    Q_UNUSED(data);
+    Q_UNUSED(maxSize);
+    Q_UNUSED(target);
+    Q_UNUSED(port);
     m_socket->invokeError();
     return -1;
 }
@@ -391,12 +432,18 @@ qint64 QLLCPSocketState::ReadDatagram(char *data, qint64 maxSize,
 qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
 {
+    Q_UNUSED(data);
+    Q_UNUSED(size);
+    Q_UNUSED(target);
+    Q_UNUSED(port);
     m_socket->invokeError();
     return -1;
 }
 
 qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size)
 {
+    Q_UNUSED(data);
+    Q_UNUSED(size);
     m_socket->invokeError();
     return -1;
 }
@@ -409,16 +456,32 @@ bool QLLCPSocketState::Bind(quint8 port)
 
  bool QLLCPSocketState::WaitForBytesWritten(int msecs)
  {
+    Q_UNUSED(msecs);
     return false;
  }
 
  bool QLLCPSocketState::WaitForReadyRead(int msecs)
  {
+    Q_UNUSED(msecs);
     return false;
  }
 
+bool QLLCPSocketState::WaitForConnected(int msecs)
+{
+    Q_UNUSED(msecs);
+    return false;
+}
+
+bool QLLCPSocketState::WaitForDisconnected(int msecs)
+{
+    Q_UNUSED(msecs);
+    return false;
+}
+
 void QLLCPSocketState::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
+   Q_UNUSED(target);
+   Q_UNUSED(serviceUri);
    m_socket->invokeError();
 }
 

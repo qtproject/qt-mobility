@@ -103,7 +103,7 @@ void QLlcpServerPrivate::invokeNewConnection()
 
 void QLlcpServerPrivate::invokeError() const
 {
-    emit error(QLlcpSocket::UnknownSocketError);
+    emit error(QLlcpServer::UnknownSocketError);
 }
 
 QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)

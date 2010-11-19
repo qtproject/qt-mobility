@@ -88,7 +88,10 @@ public:
     virtual void ConnectToServiceComplete();
     virtual bool WaitForBytesWritten(int); 
     virtual bool WaitForReadyRead(int);
-    
+    virtual bool WaitForConnected(int);
+    virtual bool WaitForDisconnected(int);
+
+    //
 protected:
     QLlcpSocketPrivate *m_socket;  // not own
 };
@@ -137,6 +140,7 @@ public: // from base class
     void DisconnectFromHost() {};
     void DisconnectFromService();
     void ConnectToServiceComplete();
+    bool WaitForConnected(int);
     
 private:
     QLLCPConnecting(QLlcpSocketPrivate*);
@@ -164,6 +168,7 @@ public: // from base class
    qint64 WriteDatagram(const char *data, qint64 size);
    bool WaitForBytesWritten(int msecs);
    bool WaitForReadyRead(int msecs);
+   bool WaitForDisconnected(int);
     
 private:
     QLLCPConnected(QLlcpSocketPrivate*);
@@ -186,7 +191,6 @@ public:
 
 public: // from base class
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    void DisconnectFromHost() {}
     void DisconnectFromService();
     
 private:

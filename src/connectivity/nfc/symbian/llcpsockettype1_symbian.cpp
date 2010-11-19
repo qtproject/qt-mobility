@@ -1,27 +1,46 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-/*
-* Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
-* All rights reserved.
-* This component and the accompanying materials are made available
-* under the terms of "Eclipse Public License v1.0"
-* which accompanies this distribution, and is available
-* at the URL "http://www.eclipse.org/legal/epl-v10.html".
-*
-* Initial Contributors:
-* Nokia Corporation - initial contribution.
-*
-* Contributors:
-*
-* Description: 
-*
-*/
 #include "nearfieldutility_symbian.h"
 #include "llcpsockettype1_symbian.h"
-
-
-// TODO
-// will obslete with API updated
-const TInt KInterestingSsap = 35;
 
 /*!
     CLlcpSocketType1::NewL()
@@ -60,7 +79,7 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
 */
 void CLlcpSocketType1::ConstructL()
     {  
-    iNfcServer.Open();
+    User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     }
 
@@ -286,10 +305,10 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
 
 TBool CLlcpSocketType1::WaitForBytesWritten(TInt aMilliSeconds)
     {
-    return WaitForOperationReadyL(EWaitForBytesWritten, aMilliSeconds);
+    return WaitForOperationReady(EWaitForBytesWritten, aMilliSeconds);
     }
 
-TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMilliSeconds)
+TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds)
     {
     TBool ret = EFalse;
     if (iWaitStatus != ENone || iWait->IsStarted())
@@ -297,7 +316,7 @@ TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         return ret;
         }
     iWaitStatus = aWaitStatus;
-    
+
     if (iTimer)
         {
         delete iTimer;
@@ -305,13 +324,17 @@ TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         }
     if (aMilliSeconds > 0)
         {
-        iTimer = CLlcpTimer::NewL(*iWait);
+        TRAPD(err, iTimer = CLlcpTimer::NewL(*iWait));
+        if (err != KErrNone)
+            {
+            return ret;
+            }
         iTimer->Start(aMilliSeconds);
         }
     iWait->Start();
     //control is back here when iWait->AsyncStop() is called by the timer or the callback function
     iWaitStatus = ENone;
-    
+
     if (!iTimer)
         {
         //iTimer == NULL means this CActiveSchedulerWait
@@ -323,8 +346,9 @@ TBool CLlcpSocketType1::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         delete iTimer;
         iTimer = NULL;
         }
-    return ret; 
+    return ret;
     }
+
   
 /*!
     Construct a new wrapper for connectionLess transport.
@@ -353,11 +377,6 @@ COwnLlcpConnLess* COwnLlcpConnLess::NewLC(MLlcpConnLessTransporter* aConnection 
 COwnLlcpConnLess::COwnLlcpConnLess(  MLlcpConnLessTransporter* aConnection )
     :  iConnection( aConnection )
     {
-    // Create the receiver AO
-    iSenderAO = CLlcpSenderType1::NewL(iConnection);
-
-    // Create the transmitter AO
-    iReceiverAO = CLlcpReceiverType1::NewL(iConnection);
     }
     
 /*!
@@ -365,6 +384,10 @@ COwnLlcpConnLess::COwnLlcpConnLess(  MLlcpConnLessTransporter* aConnection )
 */
 void COwnLlcpConnLess::ConstructL()
     {
+    // Create the receiver AO
+    iSenderAO = CLlcpSenderType1::NewL(iConnection);
+    // Create the transmitter AO
+    iReceiverAO = CLlcpReceiverType1::NewL(iConnection);
     }
     
 /*!
@@ -423,10 +446,14 @@ void COwnLlcpConnLess::ReceiveCancel()
 */
 TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb, TInt64 aMaxSize)
     {
+    TInt error = KErrNone;
+    // Pass message on to transmit AO
     if (!iReceiverAO->IsActive())
         {
-        iReceiverAO->Receive(aLlcpReceiveCb, aMaxSize);
-        }    
+        error = iReceiverAO->Receive(aLlcpReceiveCb, aMaxSize);
+        }
+    return error;
+    
     }
 
 void COwnLlcpConnLess::ReceiveDataFromBuf(TPtr8 &aTPtr) 
@@ -490,6 +517,10 @@ TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
         // as having an outstanding request.
         SetActive();
         }
+    else
+         {
+         error = KErrInUse;
+         }    
     return error;
     }
 
@@ -532,12 +563,11 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* iConnecti
     return self;
     }
 
-void CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
+TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
     {
+    TInt error = KErrNone;
     if (!IsActive())
-        {
-        TInt error = KErrNone;
-        
+        {     
         TInt length = 0;
         length = iConnection->SupportedDataLength();
         if (length > aMaxSize)
@@ -559,11 +589,10 @@ void CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
           }
      else
           {
-          // if length is 0 or negative, LLCP link is destroyed.
-          error = KErrNotReady;
+          error = KErrInUse;
           }
         }
-    return;
+    return error;
     }
     
 void CLlcpReceiverType1::RunL(void)

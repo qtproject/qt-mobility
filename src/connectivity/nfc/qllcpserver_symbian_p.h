@@ -89,7 +89,7 @@ private:
 
 signals:
     void newConnection();
-    void error(QLlcpSocket::Error socketError) const;
+    void error(QLlcpServer::Error socketError) const;
 
 private:
     CLlcpServer* m_symbianbackend;

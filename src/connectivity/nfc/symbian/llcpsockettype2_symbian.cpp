@@ -129,7 +129,7 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
 TInt CLlcpSocketType2::DisconnectFromService()
     {
     TInt err = KErrNone;
-    TRAPD( err, DisconnectFromServiceL() );
+    TRAP( err, DisconnectFromServiceL() );
     return err;
     }
 
