@@ -1692,10 +1692,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), false);
 
         id2 = lm2.landmarkId();
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implement all fields of landmark", Continue);
-#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), true);
@@ -1703,10 +1700,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         //ensure consecutive calls clears the error
         QCOMPARE(m_manager->landmark(id1), QLandmark());
         QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "async") {
@@ -1773,10 +1767,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     if (type == "sync") {
         //check that we can retrieve a landmark a single catergory
         QLandmark lm3Retrieved = m_manager->landmark(id3);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(lm3Retrieved.name(), lm3.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(lm3Retrieved, lm3);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QList<QLandmarkCategoryId> lm3RetrievedCatIds;
@@ -1786,10 +1777,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
 
         //check that we can retrieve a landmark with multiple categories
         QLandmark lm4Retrieved = m_manager->landmark(id4);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(lm4Retrieved.name(), lm4.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(lm4Retrieved, lm4);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -2270,6 +2258,9 @@ void tst_QLandmarkManager::simpleSaveLandmark() {
 #ifdef SAVE_LANDMARK
 void tst_QLandmarkManager::saveLandmark() {
     QFETCH(QString, type);
+    QLandmarkManager* otherManager = new QLandmarkManager();
+    connect(otherManager, SIGNAL(dataChanged()),m_listener, SLOT(dataChanged()));
+
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
     QSignalSpy spyChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
     QSignalSpy spyRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
@@ -2277,6 +2268,8 @@ void tst_QLandmarkManager::saveLandmark() {
     QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
     QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     QSignalSpy spyDataChanged(m_manager, SIGNAL(dataChanged()));
+
+    QSignalSpy spyOtherDataChanged(otherManager, SIGNAL(dataChanged()));
 
     int originalLandmarkCount = m_manager->landmarks().count();
     QLandmark emptyLandmark;
@@ -2295,10 +2288,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+    QCOMPARE(spyOtherDataChanged.count(), 1);
 
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), emptyLandmark.landmarkId());
     spyAdd.clear();
-
+    spyOtherDataChanged.clear();
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -2361,6 +2355,7 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+    QCOMPARE(spyOtherDataChanged.count(), 4);
     spyAdd.clear();
     spyCatAdd.clear();
 
@@ -7375,8 +7370,11 @@ void tst_QLandmarkManager::filterSupportLevel() {
 
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);
+#ifdef Q_WS_MAEMO_6
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
+#else
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
-
+#endif
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
     QCOMPARE(m_manager->filterSupportLevel(idFilter), QLandmarkManager::NativeSupport);
