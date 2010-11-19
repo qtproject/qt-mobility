@@ -46,7 +46,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 QLLCPSocketState::QLLCPSocketState(QLlcpSocketPrivate* aSocket)
       :m_socket(aSocket)
 {
