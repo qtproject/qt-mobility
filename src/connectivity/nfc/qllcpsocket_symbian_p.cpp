@@ -55,7 +55,7 @@ if ((type) != m_socketType) \
     return; \
     } } while (0)
 
-#define Q_CHECK_LLCPTYPE_2(function, type, returnValue)  do { \
+#define Q_CHECK_LLCPTYPE_PARA_3(function, type, returnValue)  do { \
 if ((type) != m_socketType) \
     { \
     qWarning(#function" was called by a" \
@@ -95,6 +95,9 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     delete m_state;
 }
 
+/*!
+    Constructed from llcap server side
+*/
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_symbianSocketType1(NULL),
       m_symbianSocketType2(socketType2_symbian),
@@ -178,7 +181,7 @@ bool QLlcpSocketPrivate::bind(quint8 port)
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
     bool val = false;
-    Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::hasPendingDatagrams(),connectionType1,val); 
+    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::hasPendingDatagrams(),connectionType1,val);
     if (m_symbianSocketType1) {
         val = m_symbianSocketType1->HasPendingDatagrams();
     }
@@ -192,7 +195,7 @@ bool QLlcpSocketPrivate::hasPendingDatagrams() const
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {   
     int val = -1;
-    Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::pendingDatagramSize(), connectionType1, val); 
+    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::pendingDatagramSize(), connectionType1, val);
     if (m_symbianSocketType1)
     {
         val = m_symbianSocketType1->PendingDatagramSize();
@@ -218,7 +221,7 @@ CLlcpSocketType2* QLlcpSocketPrivate::newSocketType2()
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
     qint64 val = -1;
-    Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::writeDatagram(),connectionType2, val);
+    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::writeDatagram(),connectionType2, val);
     val = m_state->WriteDatagram(data,size);
 
     return val;
@@ -241,7 +244,7 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
 {
     qint64 val = -1;
     if ( (target != NULL && *target != NULL) || port != 0){
-       Q_CHECK_LLCPTYPE_2(QLlcpSocketPrivate::writeDatagram(),connectionType1, val);
+       Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::writeDatagram(),connectionType1, val);
     }
 
     val = m_state->ReadDatagram(data,maxSize,target,port);

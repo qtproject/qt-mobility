@@ -152,7 +152,23 @@ qint64 QLLCPBind::WriteDatagram(const char *data, qint64 size,
 }
 
 /*!
-    Connection-Oriented Mode
+    Connection-Oriented Mode - - Server side socket write
+*/
+qint64 QLLCPListen::WriteDatagram(const char *data, qint64 size)
+{
+    qint64 val = -1;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        TPtrC8 myDescriptor((const TUint8*)data, size);
+        val = socketHandler->StartWriteDatagram(myDescriptor);
+    }
+
+    return val;
+}
+
+/*!
+    Connection-Oriented Mode - Client side socket write
 */
 qint64 QLLCPConnected::WriteDatagram(const char *data, qint64 size)
 {
@@ -222,7 +238,40 @@ qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
     if (socketHandler != NULL)
     {
         TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize );
+        //TODO double check this
         val = socketHandler->ReadDatagram(ptr);
+    }
+
+    return val;
+}
+
+/*!
+    Connection-Oriented Mode - Server side socket read
+*/
+qint64 QLLCPListen::ReadDatagram(char *data, qint64 maxSize)
+{
+    qint64 val = -1;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize);
+        val = socketHandler->ReceiveData(ptr);
+    }
+
+    return val;
+}
+
+/*!
+    Connection-Oriented Mode - Client side socket read
+*/
+qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize)
+{
+    qint64 val = -1;
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (socketHandler != NULL)
+    {
+        TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize);
+        val = socketHandler->ReceiveData(ptr);
     }
 
     return val;
@@ -403,6 +452,10 @@ QLLCPBind::QLLCPBind(QLlcpSocketPrivate* aSocket)
     :QLLCPSocketState(aSocket)
 {}
 
+QLLCPListen::QLLCPListen(QLlcpSocketPrivate* aSocket)
+    :QLLCPSocketState(aSocket)
+{}
+
 QLLCPConnecting::QLLCPConnecting(QLlcpSocketPrivate* aSocket)
     :QLLCPSocketState(aSocket)
 {}
@@ -501,6 +554,7 @@ void QLLCPSocketState::DisconnectFromService()
 */
 QLLCPSocketState* QLLCPUnconnected::m_instance = NULL;
 QLLCPSocketState* QLLCPBind::m_instance = NULL;
+QLLCPSocketState* QLLCPListen::m_instance = NULL;
 QLLCPSocketState* QLLCPConnecting::m_instance = NULL;
 QLLCPSocketState* QLLCPConnected::m_instance = NULL;
 QLLCPSocketState* QLLCPClosing::m_instance = NULL;
@@ -519,6 +573,15 @@ QLLCPSocketState* QLLCPBind::Instance(QLlcpSocketPrivate* aSocket)
    if (m_instance == NULL)
    {
        m_instance = new QLLCPBind(aSocket);
+   }
+   return m_instance;
+}
+
+QLLCPSocketState* QLLCPListen::Instance(QLlcpSocketPrivate* aSocket)
+{
+   if (m_instance == NULL)
+   {
+       m_instance = new QLLCPListen(aSocket);
    }
    return m_instance;
 }

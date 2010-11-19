@@ -68,9 +68,11 @@ CLlcpSocketType1* CLlcpSocketType1::NewLC(QtMobility::QLlcpSocketPrivate& aCallb
 */
 CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
     : iLlcp( NULL ),
-    iConnection(NULL),
-    iConnLessStarted(EFalse),
-    iCallback(aCallback)
+      iWait(NULL),
+      iTimer(NULL),
+      iConnection(NULL),
+      iConnLessStarted(EFalse),
+      iCallback(aCallback)
     {
     }
 
@@ -78,9 +80,10 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
     CLlcpSocketPrivate::ContructL()
 */
 void CLlcpSocketType1::ConstructL()
-    {  
+    {
     User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
+    iWait = new (ELeave) CActiveSchedulerWait;
     }
 
 /*!
@@ -96,6 +99,9 @@ CLlcpSocketType1::~CLlcpSocketType1()
         iLlcp = NULL;
         }
     iNfcServer.Close();
+   
+    delete iWait;
+    delete iTimer;
     }
 
 /*!
@@ -158,21 +164,21 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
 
 TInt CLlcpSocketType1::ReadDatagram(TPtr8 &aTPtr)
     {
-    TInt val = -1;
+    TInt readSize = -1;
     if (NULL == iConnection)
         {
-        iConnection->ReceiveDataFromBuf(aTPtr);
+        readSize = iConnection->ReceiveDataFromBuf(aTPtr);
         
         // Start receiving data again      
         TInt error = KErrNone;
         error = iConnection->Receive(*this, aTPtr.Length());
-        if (KErrNone == error)
+        if (KErrNone != error)
             {
-            val =  0;
+            readSize =  -1;
             }        
         }
 
-    return val;    
+    return readSize;
     }
 
 
@@ -456,9 +462,9 @@ TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb, TInt64 aMaxSize
     
     }
 
-void COwnLlcpConnLess::ReceiveDataFromBuf(TPtr8 &aTPtr) 
+TInt COwnLlcpConnLess::ReceiveDataFromBuf(TPtr8 &aTPtr)
     {   
-    iReceiverAO->ReceiveDataFromBuf(aTPtr);
+    return iReceiverAO->ReceiveDataFromBuf(aTPtr);
     }
 
 bool COwnLlcpConnLess::HasPendingDatagrams() const
@@ -618,34 +624,23 @@ CLlcpReceiverType1::~CLlcpReceiverType1()
 
 
 
-void CLlcpReceiverType1::ReceiveDataFromBuf(TPtr8 &aTPtr) 
+TInt CLlcpReceiverType1::ReceiveDataFromBuf(TPtr8 &aTPtr)
     {
- 
     if (iReceiveBuf.Size() == 0)
         return;
     
-    TInt readLength = aTPtr.Length();
+    TInt requiredLength = aTPtr.Length();
     TInt bufLength =  iReceiveBuf.Length();  
   
-    if (readLength >= bufLength)
+    TInt readLength = requiredLength < bufLength ? requiredLength : bufLength;
+    for (TInt i=0; i < readLength; i++)
         {
-        // swallow all the data from iReceiveBuf
-        for (TInt i=0; i < bufLength; i++)
-            {
-            aTPtr[i] = iReceiveBuf[i];
-            }
-        }
-    else
-        {
-        TInt i = 0;
-        for (; i < readLength; i++)
-            {
-            aTPtr[i] = iReceiveBuf[i];
-            }   
-        //iReceiveBuf.Delete(0,readLength);
-        }
+        aTPtr[i] = iReceiveBuf[i];
+        }   
     //Empty the buffer.
     iReceiveBuf.Zero(); 
+
+    return readLength;
     }
 
 bool CLlcpReceiverType1::HasPendingDatagrams() const

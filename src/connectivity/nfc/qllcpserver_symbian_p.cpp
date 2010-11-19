@@ -108,6 +108,8 @@ void QLlcpServerPrivate::invokeError() const
 
 QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
 {
+    //TODO
+    // mignt need to pass in listen when the listening state is defined
     QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
     //TODO
     //active the following line when Aaron fix it.
@@ -124,7 +126,7 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     {
        return qllcpsocket(socket_s);
     }
-    return 0;
+    return NULL;
 }
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const

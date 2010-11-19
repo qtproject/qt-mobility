@@ -91,7 +91,6 @@ public:
     virtual bool WaitForConnected(int);
     virtual bool WaitForDisconnected(int);
 
-    //
 protected:
     QLlcpSocketPrivate *m_socket;  // not own
 };
@@ -166,6 +165,7 @@ public: // from base class
     void DisconnectFromHost();
     void DisconnectFromService();
    qint64 WriteDatagram(const char *data, qint64 size);
+   qint64 ReadDatagram(char *data, qint64 maxSize);
    bool WaitForBytesWritten(int msecs);
    bool WaitForReadyRead(int msecs);
    bool WaitForDisconnected(int);
@@ -216,6 +216,25 @@ public://from base class
     
 private:
     QLLCPBind(QLlcpSocketPrivate* aSocket);
+    static QLLCPSocketState* m_instance;
+    };
+
+
+/*!
+    \QLLCPListen
+*/
+class QLLCPListen: public QLLCPSocketState
+    {
+public:
+    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
+    ~QLLCPListen() {delete m_instance;}
+
+public://from base class
+    qint64 WriteDatagram(const char *data, qint64 size);
+    qint64 ReadDatagram(char *data, qint64 maxSize);
+
+private:
+    QLLCPListen(QLlcpSocketPrivate* aSocket);
     static QLLCPSocketState* m_instance;
     };
 

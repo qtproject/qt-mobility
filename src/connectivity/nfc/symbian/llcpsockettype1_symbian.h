@@ -221,7 +221,7 @@ public:
     */ 
    void ReceiveCancel();
     
-   void ReceiveDataFromBuf(TPtr8&);  
+   TInt ReceiveDataFromBuf(TPtr8&);
    bool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
 
@@ -287,7 +287,7 @@ public:
      * Cancels COwnLlcpConnection::Receive() request.
      */ 
     void ReceiveCancel();
-    void ReceiveDataFromBuf(TPtr8 &aTPtr);
+    TInt ReceiveDataFromBuf(TPtr8 &aTPtr);
     
     bool HasPendingDatagrams() const;
     TInt64 PendingDatagramSize() const;    
