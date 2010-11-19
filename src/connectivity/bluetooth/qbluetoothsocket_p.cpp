@@ -41,17 +41,13 @@
 
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
+#ifdef Q_OS_SYMBIAN
+#include "qbluetoothsocket_symbian_p.h"
+#else
 #include "qbluetoothsocket_bluez_p.h"
-
-#include "bluez/manager_p.h"
-#include "bluez/adapter_p.h"
-#include "bluez/device_p.h"
+#endif
 
 #include <qplatformdefs.h>
-
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/rfcomm.h>
-#include <bluetooth/l2cap.h>
 
 #include <errno.h>
 #include <unistd.h>
@@ -82,36 +78,6 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
 {
     qDebug() << "ensureNativeSocket: NOT IMPLEMENTED";
     return false;
-}
-
-// TODO: move to private backend?
-
-void QBluetoothSocketPrivate::_q_readNotify()
-{
-    char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
-//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    if(readFromDevice < 0){
-        int errsv = errno;
-        // TODO: Something seems wrong here
-        // Will return constant errors is enabled
-        // where should (if it can be?) we enable it again
-        readNotifier->setEnabled(false);
-        errorString = QString::fromLocal8Bit(strerror(errsv));
-        qDebug() << Q_FUNC_INFO << "error:" << errorString;
-        if(errsv == EHOSTDOWN)
-            emit error(QBluetoothSocket::HostNotFoundError);
-        else
-            emit error(QBluetoothSocket::UnknownSocketError);
-
-        q->setSocketState(QBluetoothSocket::UnconnectedState);
-
-    }
-    else {
-        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
-
-        emit readyRead();
-    }
 }
 
 void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)

@@ -178,6 +178,37 @@ void QBluetoothSocketBluezPrivate::writeNotify()
     connecting = false;
 }
 
+// TODO: move to private backend?
+
+void QBluetoothSocketPrivate::_q_readNotify()
+{
+    char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
+//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    if(readFromDevice < 0){
+        int errsv = errno;
+        // TODO: Something seems wrong here
+        // Will return constant errors is enabled
+        // where should (if it can be?) we enable it again
+        readNotifier->setEnabled(false);
+        errorString = QString::fromLocal8Bit(strerror(errsv));
+        qDebug() << Q_FUNC_INFO << "error:" << errorString;
+        if(errsv == EHOSTDOWN)
+            emit error(QBluetoothSocket::HostNotFoundError);
+        else
+            emit error(QBluetoothSocket::UnknownSocketError);
+
+        q->setSocketState(QBluetoothSocket::UnconnectedState);
+
+    }
+    else {
+        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+
+        emit readyRead();
+    }
+}
+
+
 #include "moc_qbluetoothsocket_bluez_p.cpp"
 
 QTM_END_NAMESPACE

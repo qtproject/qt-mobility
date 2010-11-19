@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qbluetoothsocket_p.h"
+#include "qbluetoothsocket_symbian_p.h"
 #include "qbluetoothsocket.h"
 #include "utils_symbian_p.h"
 
@@ -53,51 +54,22 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QSocketServerPrivate
-{
-public:
-    QSocketServerPrivate();
-    ~QSocketServerPrivate();
-
-    RSocketServ socketServer;
-};
-
 Q_GLOBAL_STATIC(QSocketServerPrivate, getSocketServer)
 
-QSocketServerPrivate::QSocketServerPrivate()
-{
-    /* connect to socket server */
-    TInt result = socketServer.Connect();
-    if (result != KErrNone) {
-        qWarning("%s: RSocketServ.Connect() failed with error %d", __PRETTY_FUNCTION__, result);
-        return;
-    }
-}
-
-QSocketServerPrivate::~QSocketServerPrivate()
-{
-    if (socketServer.Handle() != 0)
-        socketServer.Close();
-}
-
-QBluetoothSocketPrivate::QBluetoothSocketPrivate()
-:   rxOffset(0), rxDescriptor(0, 0),
-    socketType(QBluetoothSocket::UnknownSocketType),
-    state(QBluetoothSocket::UnconnectedState),
-    socketError(QBluetoothSocket::UnknownSocketError),
-    socket(0)
+QBluetoothSocketSymbianPrivate::QBluetoothSocketSymbianPrivate(QBluetoothSocket *parent)
+:   QBluetoothSocketPrivate(parent),
+    socket(0),
+    rxDescriptor(0, 0)    
 {
 }
 
-QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
+QBluetoothSocketSymbianPrivate::~QBluetoothSocketSymbianPrivate()
 {
     delete socket;
 }
 
-void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
+void QBluetoothSocketSymbianPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
 {
-    Q_Q(QBluetoothSocket);
-
     TBTSockAddr a;
 
     a.SetBTAddr(TBTDevAddr(address.toUInt64()));
@@ -112,7 +84,7 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
     }
 }
 
-bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
+bool QBluetoothSocketSymbianPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
 {
     if (socket) {
         if (socketType == type)
@@ -138,7 +110,7 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     return true;
 }
 
-void QBluetoothSocketPrivate::ensureBlankNativeSocket()
+void QBluetoothSocketSymbianPrivate::ensureBlankNativeSocket()
 {
     if (socket)
         delete socket;
@@ -146,156 +118,27 @@ void QBluetoothSocketPrivate::ensureBlankNativeSocket()
     socket = CBluetoothSocket::NewL(*this, getSocketServer()->socketServer);
 }
 
-void QBluetoothSocket::disconnectFromService()
-{
-    Q_D(QBluetoothSocket);
-
-    if (d->state != QBluetoothSocket::ConnectedState)
-        return;
-
-    d->state = QBluetoothSocket::ClosingState;
-    emit stateChanged(d->state);
-
-    d->socket->Shutdown(RSocket::EStopInput);
-}
-
-QString QBluetoothSocket::localName() const
-{
-    return localAddress().toString();
-}
-
-QBluetoothAddress QBluetoothSocket::localAddress() const
-{
-    Q_D(const QBluetoothSocket);
-
-    TBTSockAddr address;
-
-    d->socket->LocalName(address);
-
-    return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
-}
-
-quint16 QBluetoothSocket::localPort() const
-{
-    Q_D(const QBluetoothSocket);
-
-    return d->socket->LocalPort();
-}
-
-QString QBluetoothSocket::peerName() const
-{
-    return peerAddress().toString();
-}
-
-QBluetoothAddress QBluetoothSocket::peerAddress() const
-{
-    Q_D(const QBluetoothSocket);
-
-    TBTSockAddr address;
-
-    d->socket->RemoteName(address);
-
-    return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
-}
-
-quint16 QBluetoothSocket::peerPort() const
-{
-    Q_D(const QBluetoothSocket);
-
-    TBTSockAddr address;
-
-    d->socket->RemoteName(address);
-
-    return address.Port();
-}
-
-void QBluetoothSocket::close()
-{
-    Q_D(QBluetoothSocket);
-
-    if (d->state != QBluetoothSocket::ConnectedState && d->state != QBluetoothSocket::ListeningState)
-        return;
-
-    d->state = QBluetoothSocket::ClosingState;
-    emit stateChanged(d->state);
-
-    d->socket->Shutdown(RSocket::ENormal);
-}
-
-void QBluetoothSocket::abort()
-{
-    Q_D(QBluetoothSocket);
-
-    d->socket->CancelWrite();
-
-    d->socket->Shutdown(RSocket::EImmediate);
-
-    // force active object to run and shutdown socket.
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
-{
-    Q_D(QBluetoothSocket);
-
-    if (d->rxLength() == 0 || d->rxOffset == -1)
-        return 0;
-
-    qint64 readSize = qMin(maxSize, d->rxBuffer.length() - d->rxOffset);
-
-    memcpy(data, d->rxBuffer.constData() + d->rxOffset, readSize);
-
-    d->rxOffset += readSize;
-    if (d->rxOffset >= d->rxBuffer.length())
-        d->startReceive();
-
-    return readSize;
-}
-
-qint64 QBluetoothSocket::writeData(const char *data, qint64 maxSize)
-{
-    Q_D(QBluetoothSocket);
-
-    if (!d->txBuffer.isEmpty())
-        return 0;
-
-    d->txBuffer = QByteArray(data, maxSize);
-
-    if (d->socket->Send(TPtrC8(reinterpret_cast<const unsigned char *>(d->txBuffer.constData()), d->txBuffer.length()), 0) != KErrNone) {
-        d->socketError = QBluetoothSocket::UnknownSocketError;
-        emit error(d->socketError);
-    }
-
-    return maxSize;
-}
-
-void QBluetoothSocketPrivate::startReceive()
-{
-    Q_Q(QBluetoothSocket);
-
-    rxOffset = -1;
-    rxBuffer.resize(4096);
-    rxDescriptor.Set(reinterpret_cast<unsigned char *>(rxBuffer.data()), 0, rxBuffer.length());
+void QBluetoothSocketSymbianPrivate::startReceive()
+{    
+    rxDescriptor.Set(reinterpret_cast<unsigned char *>(buffer.reserve(4096)), 0,  4096);
     if (socket->RecvOneOrMore(rxDescriptor, 0, rxLength) != KErrNone) {
         socketError = QBluetoothSocket::UnknownSocketError;
         emit q->error(socketError);
     }
 }
 
-void QBluetoothSocketPrivate::HandleAcceptCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleAcceptCompleteL(TInt aErr)
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
-void QBluetoothSocketPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification)
+void QBluetoothSocketSymbianPrivate::HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification)
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
-void QBluetoothSocketPrivate::HandleConnectCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleConnectCompleteL(TInt aErr)
 {
-    Q_Q(QBluetoothSocket);
-
     if (aErr == KErrNone) {
         state = QBluetoothSocket::ConnectedState;
         emit q->stateChanged(state);
@@ -319,15 +162,13 @@ void QBluetoothSocketPrivate::HandleConnectCompleteL(TInt aErr)
     }
 }
 
-void QBluetoothSocketPrivate::HandleIoctlCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleIoctlCompleteL(TInt aErr)
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
-void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleReceiveCompleteL(TInt aErr)
 {
-    Q_Q(QBluetoothSocket);
-
     if (aErr == KErrNone) {
         if (rxLength() == 0) {
             emit q->readChannelFinished();
@@ -335,10 +176,8 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
             return;
         }
 
-        rxBuffer.resize(rxLength());
-
-        rxOffset = 0;
-
+        buffer.chop(rxLength());
+        
         emit q->readyRead();
     } else {
         socketError = QBluetoothSocket::UnknownSocketError;
@@ -346,10 +185,8 @@ void QBluetoothSocketPrivate::HandleReceiveCompleteL(TInt aErr)
     }
 }
 
-void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleSendCompleteL(TInt aErr)
 {
-    Q_Q(QBluetoothSocket);
-
     if (aErr == KErrNone) {
         qint64 writeSize = txBuffer.length();
         txBuffer.clear();
@@ -363,10 +200,8 @@ void QBluetoothSocketPrivate::HandleSendCompleteL(TInt aErr)
     }
 }
 
-void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
+void QBluetoothSocketSymbianPrivate::HandleShutdownCompleteL(TInt aErr)
 {
-    Q_Q(QBluetoothSocket);
-
     if (aErr == KErrNone) {
         state = QBluetoothSocket::UnconnectedState;
         emit q->stateChanged(state);
@@ -377,9 +212,6 @@ void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
     }
 }
 
-void QBluetoothSocketPrivate::_q_readNotify()
-{
-
-}
+#include "moc_qbluetoothsocket_symbian_p.cpp"
 
 QTM_END_NAMESPACE

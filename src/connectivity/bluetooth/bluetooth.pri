@@ -86,4 +86,5 @@ symbian {
 }
 
 INCLUDEPATH += $$PWD
+INCLUDEPATH += ..
 INCLUDEPATH += $${QMAKE_INCDIR_QT}/QtNetwork
