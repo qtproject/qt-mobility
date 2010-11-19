@@ -98,9 +98,8 @@ contains(mobility_modules,multimedia) {
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++ {
-	    SUBDIRS += \
-                querymessages \
-                writemessage
+            SUBDIRS += writemessage
+            !symbian:SUBDIRS += querymessages
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
