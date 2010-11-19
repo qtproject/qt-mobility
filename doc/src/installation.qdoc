@@ -266,8 +266,9 @@ mobility libraries into $PWD/install.
 \section2 Building For Symbian On Windows
     Building Qt Mobility for Symbian is not necessary as the
     package contains pre-built binaries for the SDK and
-    SIS file for the device.  See the \c {symbian\install.txt}
-    file on how to deploy these.
+    SIS file for the device.  See the \c {INSTALL.symbian}
+    file on how to deploy these. The file is located in the root directory
+    of the package.
 
     If you wish to build QtMobility yourself,
     run configure in the package directory. (-prefix
