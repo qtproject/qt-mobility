@@ -39,79 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QRFCOMMSERVER_P_H
-#define QRFCOMMSERVER_P_H
+#ifndef QBLUETOOTHSOCKET_BLUEZ_P_H
+#define QBLUETOOTHSOCKET_BLUEZ_P_H
+
+#include "qbluetoothsocket.h"
 
 #include <QtGlobal>
-#include <QList>
 
-#ifdef Q_OS_SYMBIAN
-#include <es_sock.h>
-#include <bt_sock.h>
-#endif
-
-#ifndef QT_NO_DBUS
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
-#endif
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddress;
-class QBluetoothSocket;
-
-#ifdef Q_OS_SYMBIAN
-class QBluetoothSocketSymbianPrivate;
-#endif
-
-class QRfcommServer;
-
-class QRfcommServerPrivate
-#ifdef Q_OS_SYMBIAN
-: public MBluetoothSocketNotifier
-#endif
-{
-    Q_DECLARE_PUBLIC(QRfcommServer)
+class QBluetoothSocketBluezPrivate : public QBluetoothSocketPrivate
+{    
+    Q_OBJECT
 
 public:
-    QRfcommServerPrivate();
-    ~QRfcommServerPrivate();
+    QBluetoothSocketBluezPrivate(QBluetoothSocket *parent);
+    ~QBluetoothSocketBluezPrivate();
 
-#ifdef Q_OS_SYMBIAN
-    /* MBluetoothSocketNotifier virtual functions */
-    void HandleAcceptCompleteL(TInt aErr);
-    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
-    void HandleConnectCompleteL(TInt aErr);
-    void HandleIoctlCompleteL(TInt aErr);
-    void HandleReceiveCompleteL(TInt aErr);
-    void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
-#endif
+    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
 
-#ifndef QT_NO_DBUS
-    void _q_newConnection();
-#endif
+    bool ensureNativeSocket(QBluetoothSocket::SocketType type);    
 
 public:
-    QBluetoothSocket *socket;
+    QSocketNotifier *connectNotifier;
 
-#ifdef Q_OS_SYMBIAN
-    QBluetoothSocket *pendingSocket;
-    mutable QList<QBluetoothSocket *> activeSockets;
-    QBluetoothSocketSymbianPrivate *ds;
-#endif
+    bool connecting;
 
-    int maxPendingConnections;
-
-protected:
-    QRfcommServer *q_ptr;
-
-private:
-#ifndef QT_NO_DBUS
-    QSocketNotifier *socketNotifier;
-#endif
+public Q_SLOTS:
+    void writeNotify();
+    
 };
+
+static inline void convertAddress(quint64 from, quint8 (&to)[6])
+{
+    to[0] = (from >> 0) & 0xff;
+    to[1] = (from >> 8) & 0xff;
+    to[2] = (from >> 16) & 0xff;
+    to[3] = (from >> 24) & 0xff;
+    to[4] = (from >> 32) & 0xff;
+    to[5] = (from >> 40) & 0xff;
+}
+
+static inline void convertAddress(quint8 (&from)[6], quint64 &to)
+{
+    to = (quint64(from[0]) << 0) |
+         (quint64(from[1]) << 8) |
+         (quint64(from[2]) << 16) |
+         (quint64(from[3]) << 24) |
+         (quint64(from[4]) << 32) |
+         (quint64(from[5]) << 40);
+}
 
 QTM_END_NAMESPACE
 

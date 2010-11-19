@@ -45,7 +45,7 @@
 #include "qndefmessage.h"
 
 #include <mobilityconnection_p.h>
-#include <private/qsimulatordata_p.h>
+#include <QtGui/private/qsimulatordata_p.h>
 
 QTM_BEGIN_NAMESPACE
 

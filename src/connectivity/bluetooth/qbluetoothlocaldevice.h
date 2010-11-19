@@ -84,6 +84,7 @@ public:
     void setPairing(const QBluetoothAddress &address, Pairing pairing);
     Pairing pairing(const QBluetoothAddress &address) const;
 
+    // TODO should this emit a signal when complete?
     void setPowerState(PowerState powerState);
     PowerState powerState() const;
 

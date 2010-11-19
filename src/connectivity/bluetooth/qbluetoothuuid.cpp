@@ -55,6 +55,7 @@
 QTM_BEGIN_NAMESPACE
 
 // Bluetooth base UUID 00000000-0000-1000-8000-00805F9B34FB
+// TODO: make more efficient
 Q_GLOBAL_STATIC_WITH_ARGS(QUuid, baseUuid, ("{00000000-0000-1000-8000-00805F9B34FB}"))
 
 /*!
@@ -106,7 +107,8 @@ QBluetoothUuid::QBluetoothUuid()
     Constructs a new Bluetooth UUID from the protocol UUID \a uuid.
 */
 QBluetoothUuid::QBluetoothUuid(ProtocolUuid uuid)
-:   QUuid(uuid, baseUuid()->data2, baseUuid()->data3, baseUuid()->data4[0], baseUuid()->data4[1],
+:   QUuid(uuid, baseUuid()->data2,
+          baseUuid()->data3, baseUuid()->data4[0], baseUuid()->data4[1],
           baseUuid()->data4[2], baseUuid()->data4[3], baseUuid()->data4[4], baseUuid()->data4[5],
           baseUuid()->data4[6], baseUuid()->data4[7])
 {
