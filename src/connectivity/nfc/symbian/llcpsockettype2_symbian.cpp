@@ -106,6 +106,13 @@ CLlcpSocketType2::~CLlcpSocketType2()
 /*!
     Connects to the service identified by the URI \a serviceUri (on \a target).
 */
+TInt CLlcpSocketType2::ConnectToService( const TDesC8& aServiceName)
+    {
+    TInt err = KErrNone;
+    TRAP( err, ConnectToServiceL(aServiceName) );
+    return err;
+    }
+
 void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
     {
   if ( !iConnecter && !iTransporter)
@@ -119,7 +126,14 @@ void CLlcpSocketType2::ConnectToServiceL( const TDesC8& aServiceName)
 /*!
     Disconnects the socket.
 */
-void CLlcpSocketType2::DisconnectFromService()
+TInt CLlcpSocketType2::DisconnectFromService()
+    {
+    TInt err = KErrNone;
+    TRAPD( err, DisconnectFromServiceL() );
+    return err;
+    }
+
+void CLlcpSocketType2::DisconnectFromServiceL()
     {
     if (iSender && iSender->IsActive())
         {
@@ -169,29 +183,29 @@ TBool CLlcpSocketType2::ReceiveData(TDes8& aData)
     TInt extBufferLength = aData.Length();
     TInt extBufferMaxLength = aData.MaxLength();
     while ( iReceiveBufArray.Count() > 0 )
-      {
-    buf = iReceiveBufArray[ 0 ];
-    if (buf->Length() - iBufferOffset <=  extBufferMaxLength - extBufferLength )
-      {
-      TPtrC8 ptr(buf->Ptr() + iBufferOffset, buf->Length() - iBufferOffset);
-      aData.Append( ptr );
-      iReceiveBufArray.Remove( 0 );
-      extBufferLength += buf->Length() - iBufferOffset;
-      delete buf;
-      buf = NULL;
-      iBufferOffset = 0;
-      }
-    else
-      {
-      TPtrC8 ptr(buf->Ptr(), extBufferMaxLength - extBufferLength);
-      aData.Append( ptr );
-      iBufferOffset = extBufferMaxLength - extBufferLength;
-      break;
-      }
-    ret = ETrue;
-      }
+        {
+        buf = iReceiveBufArray[ 0 ];
+        if (buf->Length() - iBufferOffset <=  extBufferMaxLength - extBufferLength )
+            {
+            TPtrC8 ptr(buf->Ptr() + iBufferOffset, buf->Length() - iBufferOffset);
+            aData.Append( ptr );
+            iReceiveBufArray.Remove( 0 );
+            extBufferLength += buf->Length() - iBufferOffset;
+            delete buf;
+            buf = NULL;
+            iBufferOffset = 0;
+            }
+        else
+            {
+            TPtrC8 ptr(buf->Ptr(), extBufferMaxLength - extBufferLength);
+            aData.Append( ptr );
+            iBufferOffset = extBufferMaxLength - extBufferLength;
+            break;
+            }
+        ret = ETrue;
+        }
     //TODO unlock the buffer
-      return ret;
+    return ret;
     }
 
 TInt64 CLlcpSocketType2::BytesAvailable()
@@ -214,7 +228,7 @@ TInt64 CLlcpSocketType2::BytesAvailable()
     return ret;
     }
 
-TBool CLlcpSocketType2::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMilliSeconds)
+TBool CLlcpSocketType2::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds)
     {
     TBool ret = EFalse;
     if (iWaitStatus != ENone || iWait->IsStarted())
@@ -230,7 +244,11 @@ TBool CLlcpSocketType2::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
         }
     if (aMilliSeconds > 0)
         {
-        iTimer = CLlcpTimer::NewL(*iWait);
+        TRAPD(err, iTimer = CLlcpTimer::NewL(*iWait));
+        if (err != KErrNone)
+            {
+            return ret;
+            }
         iTimer->Start(aMilliSeconds);
         }
     iWait->Start();
@@ -261,16 +279,16 @@ TBool CLlcpSocketType2::WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aMil
  */
 TBool CLlcpSocketType2::WaitForReadyRead(TInt aMilliSeconds)
     {
-    return WaitForOperationReadyL(EWaitForReadyRead, aMilliSeconds);
+    return WaitForOperationReady(EWaitForReadyRead, aMilliSeconds);
     }
 
 TBool CLlcpSocketType2::WaitForBytesWritten(TInt aMilliSeconds)
     {
-    return WaitForOperationReadyL(EWaitForBytesWritten, aMilliSeconds);
+    return WaitForOperationReady(EWaitForBytesWritten, aMilliSeconds);
     }
 TBool CLlcpSocketType2::WaitForConnected(TInt aMilliSeconds)
     {
-    return WaitForOperationReadyL(EWaitForConnected, aMilliSeconds);
+    return WaitForOperationReady(EWaitForConnected, aMilliSeconds);
     }
 TBool CLlcpSocketType2::WaitForDisconnected(TInt aMilliSeconds)
     {
@@ -389,7 +407,7 @@ void CLlcpSocketType2::BytesWritten(qint64 aBytes)
         {
         StopWaitNow(EWaitForBytesWritten);
         }
-    //emit bytesWritten();
+    //emit bytesWritten signal;
     if ( iCallback )
         {
         TRAP_IGNORE(
@@ -619,35 +637,35 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     }
 
 void CLlcpSenderAO::RunL()
-  {
-  TInt error = iStatus.Int();
-  if ( error == KErrNone )
     {
-    //emit bytesWritten(qint64 bytes) signal
-    iSocket.BytesWritten(iSendBuf.Length());
+    TInt error = iStatus.Int();
+    if ( error == KErrNone )
+        {
+        //emit bytesWritten(qint64 bytes) signal
+        iSocket.BytesWritten(iSendBuf.Length());
+        }
+    else
+        {
+        //emit error() signal
+        iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
+        }
     }
-  else
-    {
-    //emit error() signal
-    iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
-    }
-  }
 void CLlcpSenderAO::DoCancel()
-  {
-  if (IsActive())
     {
-    iConnection.TransmitCancel();
+    if (IsActive())
+        {
+        iConnection.TransmitCancel();
+        }
     }
-  }
 //receiver implementation
 CLlcpReceiverAO* CLlcpReceiverAO::NewL( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )
-  {
-  CLlcpReceiverAO* self = new (ELeave) CLlcpReceiverAO( aConnection, aSocket );
-  CleanupStack::PushL(self);
-  self->ConstructL();
-  CleanupStack::Pop(self);
+    {
+    CLlcpReceiverAO* self = new (ELeave) CLlcpReceiverAO( aConnection, aSocket );
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    CleanupStack::Pop(self);
     return self;
-  }
+    }
 
 CLlcpReceiverAO::CLlcpReceiverAO( MLlcpConnOrientedTransporter& aConnection, CLlcpSocketType2& aSocket )
     : CActive( EPriorityStandard ),

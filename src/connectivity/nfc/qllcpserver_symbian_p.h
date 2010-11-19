@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 class QLlcpServerPrivate : public QObject
 {
     Q_OBJECT
-    
+
 public:
     QLlcpServerPrivate();
     ~QLlcpServerPrivate();
@@ -82,13 +82,15 @@ public:
 
 public:
     void invokeNewConnection();
+    void invokeError() const ;
 
 private:
     QLlcpSocket* qllcpsocket(CLlcpSocketType2*);
 
 signals:
     void newConnection();
-    
+    void error(QLlcpSocket::Error socketError) const;
+
 private:
     CLlcpServer* m_symbianbackend;
     ServerState m_state;

@@ -101,6 +101,11 @@ void QLlcpServerPrivate::invokeNewConnection()
     emit newConnection();
 }
 
+void QLlcpServerPrivate::invokeError() const
+{
+    emit error(QLlcpSocket::UnknownSocketError);
+}
+
 QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
 {
     QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);

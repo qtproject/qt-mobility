@@ -76,8 +76,8 @@ public:
     ~CLlcpSocketType2();
 
 public:
-    void ConnectToServiceL( const TDesC8& aServiceName);
-    void DisconnectFromService();
+    TInt ConnectToService( const TDesC8& aServiceName);
+    TInt DisconnectFromService();
 
     TInt StartWriteDatagram(const TDesC8& aData);
     TBool ReceiveData(TDes8& aData);
@@ -103,6 +103,8 @@ private:
     // Second phase constructor
     void ConstructL();
     void Cleanup();
+    void ConnectToServiceL( const TDesC8& aServiceName);
+    void DisconnectFromServiceL();
     enum TWaitStatus
         {
         ENone,
@@ -111,7 +113,7 @@ private:
         EWaitForConnected,
         EWaitForDisconnected
         };
-    TBool WaitForOperationReadyL(TWaitStatus aWaitStatus,TInt aSeconds);
+    TBool WaitForOperationReady(TWaitStatus aWaitStatus,TInt aSeconds);
     void StopWaitNow(TWaitStatus aWaitStatus);
 private:
     /*!
