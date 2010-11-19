@@ -65,46 +65,46 @@ class QNearFieldManagerPrivateImpl;
 }
 
 class CNearFieldManager : public CBase,
-						  public MNfcTagConnectionListener,
-						  public MLlcpLinkListener,
-						  public MNdefMessageListener
+                          public MNfcTagConnectionListener,
+                          public MLlcpLinkListener,
+                          public MNdefMessageListener
   {
 public:
-    
+
     static CNearFieldManager* NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     static CNearFieldManager* NewLC( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     virtual ~CNearFieldManager();
-    
+
     void StartTargetDetectionL(const QList<QtMobility::QNearFieldTarget::Type> &aTargetTypes);
     void stopTargetDetection();
     //for registerTargetDetectedHandler ... api
-    TInt AddNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf, 
+    TInt AddNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf,
                                        const QByteArray& aType );
-    void RemoveNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf, 
+    void RemoveNdefSubscription( const QtMobility::QNdefRecord::TypeNameFormat aTnf,
                                               const QByteArray& aType );
-    
+
 public: // From MNfcTagConnectionListener
-    
-    void TagDetected( MNfcTag* aNfcTag );  
+
+    void TagDetected( MNfcTag* aNfcTag );
     void TagLost();
-    
+
 public: // From MLlcpLinkListener
-   
+
     void LlcpRemoteFound();
     void LlcpRemoteLost();
 
 public: // From MNdefMessageListener
-    
+
     void MessageDetected( CNdefMessage* aMessage );
-    
+
 private:
-    
+
     CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& aCallback);
     void ConstructL();
     //own
     RNfcServer iServer;
     //for Tag discovery
-    CNfcTagDiscovery* iNfcTagDiscovery;    
+    CNfcTagDiscovery* iNfcTagDiscovery;
     CNfcTagSubscription* iTagSubscription;
     //for LLCP discovery
     CLlcpProvider* iLlcpProvider;

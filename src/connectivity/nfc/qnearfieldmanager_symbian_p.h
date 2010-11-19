@@ -72,17 +72,17 @@ public:
                                       QObject *object, const QMetaMethod &method);
 
     bool unregisterTargetDetectedHandler(int id);
-    
+
     void startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes);
     void stopTargetDetection();
 
 public://call back function by symbian backend implementation
-	void targetFound(QNearFieldTarget* target);
-	void targetDisconnected();
+    void targetFound(QNearFieldTarget* target);
+    void targetDisconnected();
 
 public://call back function by symbian backend implementation
-	void invokeTargetDetectedHandler(QNdefMessage msg);
-	
+    void invokeTargetDetectedHandler(QNdefMessage msg);
+
 
 private:
     struct Callback {
@@ -97,9 +97,9 @@ private:
 
     QList<Callback> m_registeredHandlers;
     QList<int> m_freeIds;
-    
+
     CNearFieldManager* m_symbianbackend;
-    
+
     QPointer<QNearFieldTarget> m_target;
 };
 

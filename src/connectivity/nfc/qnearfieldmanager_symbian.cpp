@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
 */
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
-  QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
+    QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
 }
 
 /*!
@@ -76,8 +76,8 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 */
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 {
-  delete m_target;
-  delete m_symbianbackend;
+    delete m_target;
+    delete m_symbianbackend;
 }
 
 /*!
@@ -160,7 +160,7 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
         return false;
 
     m_freeIds.append(id);
-    
+
     for ( int i = 0; i < m_registeredHandlers[id].filter.recordCount(); ++i)
       {
     QNdefRecord::TypeNameFormat tnf = m_registeredHandlers[id].filter.recordAt(i).typeNameFormat;
@@ -197,14 +197,14 @@ struct VerifyRecord
 */
 void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
 {
-  if (!target){
-    return;
-  }
-  if (m_target){
-    delete m_target;
-    m_target = NULL;
-  }
-  m_target = target;
+    if (!target){
+       return;
+    }
+    if (m_target){
+        delete m_target;
+        m_target = NULL;
+    }
+    m_target = target;
     emit targetDetected(target);
 }
 
