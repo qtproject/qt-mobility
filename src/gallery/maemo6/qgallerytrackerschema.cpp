@@ -826,31 +826,6 @@ static const QGalleryItemType qt_galleryItemTypeList[] =
     QT_GALLERY_ITEM_TYPE_NO_COMPOSITE(PhotoAlbum, nmm, ImageList     , photoAlbum, PhotoAlbum)
 };
 
-/////////
-// Artist
-/////////
-
-///////////////
-// Album Artist
-///////////////
-
-static const QGalleryItemProperty qt_galleryAlbumArtistIdentity[] =
-{
-    QT_GALLERY_ITEM_PROPERTY("title", "nmm:albumArtist", String, CanRead | CanFilter | CanSort)
-};
-
-static const QGalleryItemProperty qt_galleryAlbumArtistPropertyList[] =
-{
-    QT_GALLERY_ITEM_PROPERTY("artist", "nmm:albumArtist", String, CanRead | CanFilter | CanSort),
-    QT_GALLERY_ITEM_PROPERTY("title" , "nmm:albumArtist", String, CanRead | CanFilter | CanSort),
-};
-
-static const QGalleryAggregateProperty qt_galleryAlbumArtistAggregateList[] =
-{
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", "SUM"  , Int),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
-};
-
 //////////////
 // Music Genre
 //////////////
@@ -1151,30 +1126,151 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
     if (!rootItemId.isEmpty()) {
         int index;
         if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
-            if (itemTypes[index].prefix == QLatin1String("artist::")) {
-                rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
-                if (!filterStatement.isEmpty())
-                    filterStatement += QLatin1String(" && ");
-                filterStatement
-                        += QLatin1String("(nmm:performer(?track) = <")
+            if (itemTypes[index].itemType == QDocumentGallery::Artist) {
+                if (m_itemIndex >= 0) {
+                    QString property;
+                    QString variable;
+                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
+                        rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                        property = QLatin1String("nmm:performer");
+                        variable = QLatin1String("track");
+                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                        property = QLatin1String("nmm:performer");
+                        variable = QLatin1String("x");
+                    }
+                    if (!property.isEmpty()) {
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                            += qt_writePropertyFunctions(QStringList(property),variable)
+                            + QLatin1String("=<")
+                            + itemTypes[index].prefix.strip(rootItemId).toString()
+                            + QLatin1String(">");
+                    } else {
+                        result = QDocumentGallery::ItemIdError;
+                    }
+                }
+            } else if (itemTypes[index].itemType == QDocumentGallery::AlbumArtist) {
+                QString property;
+                if (m_itemIndex >= 0) {
+                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio)
+                        property = QLatin1String("nmm:albumArtist(nmm:musicAlbum");
+                    else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album)
+                        property = QLatin1String("nmm:albumArtist");
+                }
+                if (!property.isEmpty()) {
+                    if (!filterStatement.isEmpty())
+                        filterStatement += QLatin1String(" && ");
+                    filterStatement
+                        += qt_writePropertyFunctions( QStringList(property), QLatin1String("x"))
+                        + QLatin1String("=<")
                         + itemTypes[index].prefix.strip(rootItemId).toString()
-                        + QLatin1String(">)");
+                        + QLatin1String(">");
+                } else {
+                    return QDocumentGallery::ItemIdError;
+                }
+            } else if (itemTypes[index].itemType == QDocumentGallery::Folder) {
+                if (m_itemIndex >= 0) {
+                    const QString rootUrn = itemTypes[index].prefix.strip(rootItemId).toString();
+                    QString property;
+                    if (qt_galleryItemTypeList[m_itemIndex].updateMask & FileMask) {
+                        if (scope == QGalleryQueryRequest::DirectDescendants) {
+                            property = QLatin1String("nfo:belongsToContainer");
+                            if (!filterStatement.isEmpty())
+                                filterStatement += QLatin1String(" && ");
+                            filterStatement
+                                    += qt_writePropertyFunctions( QStringList(property), QLatin1String("x"))
+                                    + QLatin1String("=<")
+                                    + rootUrn
+                                    +QLatin1String(">");
+                        } else {
+                            if (!filterStatement.isEmpty())
+                                filterStatement += QLatin1String(" && ");
+                            filterStatement
+                                    += QLatin1String("nie:url(?x) > fn:concat(nie:url(<")
+                                    + rootUrn
+                                    + QLatin1String(">),'/') && ")
+                                    + QLatin1String("nie:url(?x) < fn:concat(nie:url(<")
+                                    + rootUrn
+                                    + QLatin1String(">),'0')");
+                        }
+                    } else {
+                        result = QDocumentGallery::ItemIdError;
+                    }
+                }
+                else {
+                    result = QDocumentGallery::ItemIdError;
+                }
+            } else if (itemTypes[index].itemType == QDocumentGallery::Album) {
+                if (m_itemIndex) {
+                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio)
+                    {
+                        QString property = QLatin1String("nie:isLogicalPartOf");
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                                += qt_writePropertyFunctions( QStringList(property), QLatin1String("x"))
+                                + QLatin1String("=\"")
+                                + itemTypes[index].prefix.strip(rootItemId).toString()
+                                +QLatin1String("\"");
+                    } else {
+                        result = QDocumentGallery::ItemIdError;
+                    }
+                } else {
+                    result = QDocumentGallery::ItemIdError;
+                }
+            } else if (itemTypes[index].itemType == QDocumentGallery::PhotoAlbum) {
+                if (m_itemIndex) {
+                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Image) {
+                        QString property = QLatin1String("nie:isLogicalPartOf");
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                                += qt_writePropertyFunctions( QStringList(property), QLatin1String("x"))
+                                + QLatin1String("=\"")
+                                + itemTypes[index].prefix.strip(rootItemId).toString()
+                                +QLatin1String("\"");
+                    }
+                }
             } else {
-                rootItemStatement
-                        = QLatin1String("{?x nie:isLogicalPartOf <")
-                        + itemTypes[index].prefix.strip(rootItemId).toString()
-                        + QLatin1String(">}");
+                result = QDocumentGallery::ItemIdError;
             }
-        }
-        else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
-            if (aggregateTypes[index].prefix == QLatin1String("audioGenre::")) {
-                rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
-                if (!filterStatement.isEmpty())
-                    filterStatement += QLatin1String(" && ");
-                filterStatement
-                        += QLatin1String("(nfo:genre(?track) = '")
-                        + aggregateTypes[index].prefix.strip(rootItemId).toString()
-                        + QLatin1String("' )");
+        } else if ((index = aggregateTypes.indexOfItemId(rootItemId)) != -1) {
+            if (aggregateTypes[index].itemType == QDocumentGallery::AudioGenre) {
+                if (m_itemIndex >= 0) {
+                    QString property;
+                    if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio) {
+                        property = QLatin1String("nfo:genre");
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                                += qt_writePropertyFunctions(QStringList(property),"x")
+                                + QLatin1String("=\"")
+                                + aggregateTypes[index].prefix.strip(rootItemId).toString()
+                                + QLatin1String("\"");
+                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Album) {
+                        rootItemStatement = QLatin1String("{?track nie:isLogicalPartOf ?x}");
+                        property = QLatin1String("nfo:genre");
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                                += qt_writePropertyFunctions(QStringList(property),"track")
+                                + QLatin1String("=\"")
+                                + aggregateTypes[index].prefix.strip(rootItemId).toString()
+                                + QLatin1String("\"");
+                    } else if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Artist) {
+                        property = QLatin1String("nfo:genre");
+                        if (!filterStatement.isEmpty())
+                            filterStatement += QLatin1String(" && ");
+                        filterStatement
+                                += qt_writePropertyFunctions(QStringList(property),"y")
+                                + QLatin1String("=\"")
+                                + aggregateTypes[index].prefix.strip(rootItemId).toString()
+                                + QLatin1String("\"");
+                    } else {
+                        result = QDocumentGallery::ItemIdError;
+                    }
+                }
             }
         } else {
             result = QDocumentGallery::ItemIdError;
@@ -1423,9 +1519,16 @@ void QGalleryTrackerSchema::populateItemArguments(
             + QLatin1String("}")
             + qt_writeSorting(sortFieldNames, arguments->sortCriteria);
 
-    arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
-    arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
+    if (qt_galleryItemTypeList[m_itemIndex].updateId & FileMask) {
+        arguments->idColumn.reset(new QGalleryTrackerServicePrefixColumn);
+        arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
+    } else {
+        arguments->idColumn.reset(
+                new QGalleryTrackerPrefixColumn(0, qt_galleryItemTypeList[m_itemIndex].prefix));
+        arguments->typeColumn.reset(
+                new QGalleryTrackerStaticColumn(qt_galleryItemTypeList[m_itemIndex].itemType));
+    }
     arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
