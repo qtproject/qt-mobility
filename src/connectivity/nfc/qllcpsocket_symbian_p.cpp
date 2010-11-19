@@ -131,6 +131,34 @@ void QLlcpSocketPrivate::invokeConnected()
     emit connected();
 }
 
+void QLlcpSocketPrivate::invokeReadyRead()
+{
+    emit readyRead();
+}
+
+void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
+{
+    emit bytesWritten(bytes);
+}
+
+void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
+{
+    emit stateChanged(socketState);
+}
+
+void QLlcpSocketPrivate::invokeError() const
+{
+    emit error(QLlcpSocket::UnknownSocketError);
+}
+
+void QLlcpSocketPrivate::invokeDisconnected()
+{
+    emit disconnected();
+}
+
+
+
+
 /*!
     Only used at connectless mode, create type1 socket if necessary.
 */

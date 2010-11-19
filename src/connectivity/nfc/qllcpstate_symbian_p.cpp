@@ -61,12 +61,18 @@ void QLLCPSocketState::ChangeState(QLlcpSocketPrivate*t,QLLCPSocketState *s )
 */
 bool QLLCPUnconnected::Bind(quint8 port)
 {
-    CLlcpSocketType1* socketHandler = m_socket->newSocketType1();
-    bool OK = socketHandler->Bind(port);
-    ChangeState(m_socket, QLLCPBind::Instance(m_socket));
-    emit m_socket->invokeStateChanged(QLlcpSocket::BoundState);
-
-    return OK;
+    CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
+    if (socketHandler == NULL)
+    {
+        socketHandler = m_socket->newSocketType1();
+    }
+    bool isOK = socketHandler->Bind(port);
+    if (isOK)
+    {
+        ChangeState(m_socket, QLLCPBind::Instance(m_socket));
+        emit m_socket->invokeStateChanged(QLlcpSocket::BoundState);
+    }
+    return isOK;
 }
 
 /*!
@@ -74,13 +80,18 @@ bool QLLCPUnconnected::Bind(quint8 port)
 */
 bool QLLCPUnconnected::WaitForBytesWritten(int msecs)
 {
-   bool ok = false;
+   bool isOK = false;
+
    CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
+   if (socketHandler == NULL)
+   {
+       socketHandler = m_socket->newSocketType1();
+   }
    if (socketHandler != NULL)
    {
-       ok = socketHandler->WaitForBytesWritten(msecs);
+       isOK = socketHandler->WaitForBytesWritten(msecs);
    }
-   return ok;
+   return isOK;
 }
 
 /*!
@@ -88,13 +99,13 @@ bool QLLCPUnconnected::WaitForBytesWritten(int msecs)
 */
 bool QLLCPBind::WaitForBytesWritten(int msecs)
 {
-   bool ok = false;
+   bool isOK = false;
    CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
    if (socketHandler != NULL)
    {
-       ok = socketHandler->WaitForBytesWritten(msecs);
+       isOK = socketHandler->WaitForBytesWritten(msecs);
    }
-   return ok;
+   return isOK;
 }
 
 
@@ -105,7 +116,13 @@ qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
                                        QNearFieldTarget *target, quint8 port)
 {
     qint64 val = -1;
-    CLlcpSocketType1* socketHandler = m_socket->newSocketType1();
+
+    CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
+    if (socketHandler == NULL)
+    {
+        socketHandler = m_socket->newSocketType1();
+    }
+
     TPtrC8 myDescriptor((const TUint8*)data, size);
     val = socketHandler->StartWriteDatagram(myDescriptor, port);
 
@@ -150,15 +167,14 @@ qint64 QLLCPConnected::WriteDatagram(const char *data, qint64 size)
 */
 bool QLLCPConnected::WaitForBytesWritten(int msecs)
 {
-   bool ok = false;
+   bool isOK = false;
    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
    if (socketHandler != NULL)
    {
-       ok = socketHandler->WaitForBytesWritten(msecs);
+       isOK = socketHandler->WaitForBytesWritten(msecs);
    }
-   return ok;
+   return isOK;
 }
-
 
 /*!
     Connection-Less Mode
@@ -238,8 +254,8 @@ void QLLCPConnecting::DisconnectFromService()
    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
    if (socketHandler)
    {
-       //TODO
-       //Cancel the previous trying to connect.
+       // Symbian backend will cancel the previous trying to connect.
+       m_socket->disconnectFromService();
        ChangeState(m_socket, QLLCPUnconnected::Instance(m_socket));
        m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
    }

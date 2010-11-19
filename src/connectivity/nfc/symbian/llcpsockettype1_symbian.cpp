@@ -190,7 +190,16 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
 */
 void CLlcpSocketType1::ReceiveComplete(TInt aError)
     {  
-    KErrNone == aError ? iCallback.invokeReadyRead(): iCallback.invokeError();
+    TRAP_IGNORE(
+        if (KErrNone == aError)
+            {
+            QT_TRYCATCH_LEAVING(iCallback.invokeReadyRead());
+            }
+        else
+            {
+            QT_TRYCATCH_LEAVING(iCallback.invokeError());
+            }
+    );
     }
 
 /*!
@@ -202,7 +211,17 @@ void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
         {
         StopWaitNow(EWaitForBytesWritten);
         }
-    KErrNone == aError ? iCallback.invokeBytesWritten(aSize): iCallback.invokeError();
+    
+    TRAP_IGNORE(
+        if (KErrNone == aError)
+            {
+            QT_TRYCATCH_LEAVING(iCallback.invokeBytesWritten(aSize));
+            }
+        else
+            {
+            QT_TRYCATCH_LEAVING(iCallback.invokeError());
+            }
+    );
     }
 
 void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
