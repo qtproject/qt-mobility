@@ -54,7 +54,8 @@ HEADERS += \
     qgstreamervideorenderer.h \
     qgstvideobuffer.h \
     qvideosurfacegstsink.h \
-    qgstreamervideoinputdevicecontrol.h
+    qgstreamervideoinputdevicecontrol.h \
+    gstvideoconnector.h
 
 SOURCES += \
     qgstreamermessage.cpp \
@@ -65,7 +66,8 @@ SOURCES += \
     qgstreamervideorenderer.cpp \
     qgstvideobuffer.cpp \
     qvideosurfacegstsink.cpp \
-    qgstreamervideoinputdevicecontrol.cpp
+    qgstreamervideoinputdevicecontrol.cpp \
+    gstvideoconnector.c
 
 
 !win32:!embedded:!mac:!symbian:!simulator {
