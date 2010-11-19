@@ -46,6 +46,7 @@
 #include "smsmodel_maemo6_p.h"
 
 using namespace CommHistory;
+using namespace SopranoLive;
 
 class SMSModelPrivate : public EventModelPrivate {
 public:
@@ -102,7 +103,7 @@ bool SMSModel::getEvents()
     query.addColumn("date", date);
     query.orderBy(date, false);
 
-    TrackerIO::instance()->prepareMessageQuery(query, message, d->propertyMask);
+    TrackerIO::prepareMessageQuery(query, message, d->propertyMask);
 
     return d->executeQuery(query);
 }
