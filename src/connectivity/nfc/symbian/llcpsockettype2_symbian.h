@@ -85,10 +85,10 @@ public:
     TInt64 BytesAvailable();
 
     //for qt signals
-    void Error(QtMobility::QLlcpSocket::Error socketError);
-    void StateChangedL(QtMobility::QLlcpSocket::State socketState);
+    void Error(QtMobility::QLlcpSocket::Error aSocketError);
+    void StateChangedL(QtMobility::QLlcpSocket::State aSocketState);
     void ReadyRead();
-    void BytesWritten(qint64 bytes);
+    void BytesWritten(qint64 aBytes);
 
     TBool WaitForReadyRead(TInt aMilliSeconds);
     TBool WaitForBytesWritten(TInt aMilliSeconds);
