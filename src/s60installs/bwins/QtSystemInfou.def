@@ -143,4 +143,11 @@ EXPORTS
 	?storageStateChanged@QSystemStorageInfo@QtMobility@@IAEXABVQString@@W4StorageState@12@@Z @ 142 NONAME ; void QtMobility::QSystemStorageInfo::storageStateChanged(class QString const &, enum QtMobility::QSystemStorageInfo::StorageState)
 	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 143 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
 	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 144 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
+	?hostId@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 145 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::hostId(void)
+	?backLightOn@QSystemDisplayInfo@QtMobility@@QAE_NXZ @ 146 NONAME ; bool QtMobility::QSystemDisplayInfo::backLightOn(void)
+	?keypadLightOn@QSystemDeviceInfo@QtMobility@@QAE_NW4keypadType@12@@Z @ 147 NONAME ; bool QtMobility::QSystemDeviceInfo::keypadLightOn(enum QtMobility::QSystemDeviceInfo::keypadType)
+	?lockStatus@QSystemDeviceInfo@QtMobility@@QAE?AW4LockType@12@XZ @ 148 NONAME ; enum QtMobility::QSystemDeviceInfo::LockType QtMobility::QSystemDeviceInfo::lockStatus(void)
+	?lockStatusChanged@QSystemDeviceInfo@QtMobility@@IAEXW4LockType@12@@Z @ 149 NONAME ; void QtMobility::QSystemDeviceInfo::lockStatusChanged(enum QtMobility::QSystemDeviceInfo::LockType)
+	?deviceLocked@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 150 NONAME ; void QtMobility::QSystemDeviceInfo::deviceLocked(bool)
+	?backLightOn@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 151 NONAME ; bool QtMobility::QSystemDeviceInfo::backLightOn(void)
 

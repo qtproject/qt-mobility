@@ -245,3 +245,4 @@ simulator {
 HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
+

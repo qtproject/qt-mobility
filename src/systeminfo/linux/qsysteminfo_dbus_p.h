@@ -113,8 +113,6 @@ static bool uPowerAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.UPower");
         if (reply.isValid() && reply.value()) {
             return reply.value();
-        } else {
-            qDebug() << "upower not available";
         }
     }
 #endif

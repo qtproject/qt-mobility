@@ -86,7 +86,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
 {
