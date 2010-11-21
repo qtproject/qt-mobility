@@ -1287,12 +1287,12 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 }
 
 
-QSystemBatteryInfoPrivate::ChargerType QSystemBatteryInfoPrivate::chargerType() const
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-    return QSystemBatteryInfo::Unknown;
+    return QSystemBatteryInfo::UnknownCharger;
 }
 
-QSystemBatteryInfoPrivate::ChargingState QSystemBatteryInfoPrivate::chargingState() const
+QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
 {
     return QSystemBatteryInfo::NotCharging;
 }
@@ -1339,12 +1339,12 @@ int QSystemBatteryInfoPrivate::maxBars() const
     return 0;
 }
 
-QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivatePrivate::batteryStatus() const
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
 {
    return QSystemBatteryInfo::BatteryUnknown;
 }
 
-void QSystemBatteryInfo::connectNotify(const char *signal)
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {
 
 }
@@ -1359,7 +1359,7 @@ qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
  return 0;
 }
 
-QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
 {
     return QSystemBatteryInfo::UnitUnknown;
 
