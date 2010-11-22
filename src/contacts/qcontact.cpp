@@ -219,6 +219,24 @@ QContactId QContact::id() const
 }
 
 /*!
+ * Sets the id of this contact to \a id.
+ *
+ * Note that this only affects this object, not any corresponding structures stored
+ * by a QContactManager.
+ *
+ * If you change the id of a contact and save the contact
+ * in a manager, the previously existing contact will still
+ * exist.  You can do this to create copies (possibly modified)
+ * of an existing contact, or to save a contact in a different manager.
+ *
+ * \sa QContactManager::saveContact()
+ */
+void QContact::setId(const QContactId& id)
+{
+    d->m_id = id;
+}
+
+/*!
     Returns the QContactLocalId that identifies this contact within its manager
 
     This may have been set when the contact was retrieved from
@@ -298,21 +316,52 @@ QString QContact::displayLabel() const
 }
 
 /*!
- * Sets the id of this contact to \a id.
+ * Returns the list of tags for this contact.  Tags are used for non-exclusive categorization.
  *
- * Note that this only affects this object, not any corresponding structures stored
- * by a QContactManager.
- *
- * If you change the id of a contact and save the contact
- * in a manager, the previously existing contact will still
- * exist.  You can do this to create copies (possibly modified)
- * of an existing contact, or to save a contact in a different manager.
- *
- * \sa QContactManager::saveContact()
+ * \sa QContactTag
  */
-void QContact::setId(const QContactId& id)
+QStringList QContact::tags() const
 {
-    d->m_id = id;
+    QStringList tags;
+    foreach (const QContactTag& tagDetail, details<QContactTag>()) {
+        tags.append(tagDetail.tag());
+    }
+    return tags;
+}
+
+/*!
+ * Removes all tags associated with the contact.
+ *
+ * \sa QContactTag
+ */
+void QContact::clearTags()
+{
+    d->removeOnly(QContactTag::DefinitionName);
+}
+
+/*!
+ * Adds the \a tag to this contact.
+ *
+ * \sa QContactTag
+ */
+void QContact::addTag(const QString& tag)
+{
+    QContactTag tagDetail;
+    tagDetail.setTag(tag);
+    saveDetail(&tagDetail);
+}
+
+/*!
+ * Sets the list of tags associated with the contact to \a tags.
+ *
+ * \sa QContactTag
+ */
+void QContact::setTags(const QStringList& tags)
+{
+    d->removeOnly(QContactTag::DefinitionName);
+    foreach (const QString& tag, tags) {
+        addTag(tag);
+    }
 }
 
 /*!
@@ -904,12 +953,24 @@ QMap<QString, QContactDetail> QContact::preferredDetails() const
 
 
 /* Helper functions for QContactData */
-void QContactData::removeOnly(const QSet<QString> &detailMask)
+void QContactData::removeOnly(const QString& definitionName)
 {
     QList<QContactDetail>::iterator dit = m_details.begin();
     while (dit != m_details.end()) {
         // XXX this doesn't check type or display label
-        if (detailMask.contains(dit->definitionName()))
+        if (dit->definitionName() == definitionName)
+            dit = m_details.erase(dit);
+        else
+            ++dit;
+    }
+}
+
+void QContactData::removeOnly(const QSet<QString> &definitionNames)
+{
+    QList<QContactDetail>::iterator dit = m_details.begin();
+    while (dit != m_details.end()) {
+        // XXX this doesn't check type or display label
+        if (definitionNames.contains(dit->definitionName()))
             dit = m_details.erase(dit);
         else
             ++dit;
