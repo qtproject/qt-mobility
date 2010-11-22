@@ -139,15 +139,15 @@ EXPORTS
 	_ZN10QtMobility17QSystemDeviceInfo18isKeyboardFlipOpenEv @ 138 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo25wirelessKeyboardConnectedEb @ 139 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo27isWirelessKeyboardConnectedEv @ 140 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo10typeOfLockEv @ 141 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo10lockStatusEv @ 141 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo11backLightOnEv @ 142 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo11lockChangedENS0_8LockTypeEb @ 143 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo12deviceLockedEb @ 144 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo13keypadLightOnEv @ 145 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo12deviceLockedEb @ 143 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo13keypadLightOnENS0_10keypadTypeE @ 144 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo17lockStatusChangedENS0_8LockTypeE @ 145 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo6hostIdEv @ 146 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 147 NONAME
-	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 148 NONAME
-	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 149 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 150 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11backLightOnEv @ 151 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11backLightOnEv @ 147 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 148 NONAME
+	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 149 NONAME
+	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 150 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 151 NONAME
 

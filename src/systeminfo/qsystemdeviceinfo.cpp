@@ -156,12 +156,21 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value FullQwertyKeyboard          Standard qwerty type keyboard.
             \value WirelessKeyboard            Bluetooth or other wireless keyboard.
         */
+/*!
+          \enum QSystemDeviceInfo::keypadType
+          This enum describe the type of keypad/keyboard.
+
+          \value PrimaryKeypad                 Primary keypad or keyboard used.
+          \value SecondaryKeypad               Secondary keypad or keyboard used.
+          */
+
         /*!
           \enum QSystemDeviceInfo::LockType
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value DeviceLocked                   Device lock.
+          \value DeviceUnlocked                 Device is unlocked.
+          \value DeviceLocked                   Device is locked.
           \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
 
           */
@@ -212,6 +221,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
     qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+    qRegisterMetaType<QSystemDeviceInfo::keypadType>("QSystemDeviceInfo::keypadType");
     }
 
 /*!
@@ -257,6 +267,30 @@ void QSystemDeviceInfo::connectNotify(const char *signal)
         connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
     }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            wirelessKeyboardConnected(bool))))) {
+        connect(d,SIGNAL(wirelessKeyboardConnected(bool)),
+                this,SIGNAL(wirelessKeyboardConnected(bool)),Qt::UniqueConnection);
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            keyboardFlip(bool))))) {
+        connect(d,SIGNAL(keyboardFlip(bool)),
+                this,SIGNAL(keyboardFlip(bool)),Qt::UniqueConnection);
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            deviceLocked(bool))))) {
+        connect(d,SIGNAL(deviceLocked(bool)),
+                this,SIGNAL(deviceLocked(bool)),Qt::UniqueConnection);
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
+        connect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),Qt::UniqueConnection);
+    }
 }
 
 /*!
@@ -298,8 +332,28 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
         disconnect(d,SIGNAL(wirelessKeyboardConnected(bool)),
                 this,SIGNAL(wirelessKeyboardConnected(bool)));
     }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            wirelessKeyboardConnected(bool))))) {
+        disconnect(d,SIGNAL(wirelessKeyboardConnected(bool)),
+                this,SIGNAL(wirelessKeyboardConnected(bool)));
+    }
 
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            keyboardFlip(bool))))) {
+        disconnect(d,SIGNAL(keyboardFlip(bool)),
+                this,SIGNAL(keyboardFlip(bool)));
+    }
 
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            deviceLocked(bool))))) {
+        disconnect(d,SIGNAL(deviceLocked(bool)),
+                this,SIGNAL(deviceLocked(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            lockStatusChanged(QSystemDeviceInfo::LockType))))) {
+        disconnect(d,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
+                this,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+    }
 }
 
 
@@ -494,11 +548,11 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
   \property QSystemDeviceInfo::keypadLightOn
   \brief Keypad light on.
 
-  Returns true if the key pad, or keyboard lights are on, otherwise false;
+  Returns true if the key pad, indicated by \a type, light is on, otherwise false;
   */
-bool QSystemDeviceInfo::keypadLightOn()
+bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
-    return deviceInfoPrivate()->keypadLightOn();
+    return deviceInfoPrivate()->keypadLightOn(type);
 }
 
 /*!
@@ -527,14 +581,14 @@ QUuid QSystemDeviceInfo::hostId()
 }
 
 /*!
-  \property QSystemDeviceInfo::typeOfLock
+  \property QSystemDeviceInfo::lockStatus
  \brief Type of lock.
 
  Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
  */
-QSystemDeviceInfo::LockType QSystemDeviceInfo::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
 {
-    return deviceInfoPrivate()->typeOfLock();
+    return deviceInfoPrivate()->lockStatus();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"
