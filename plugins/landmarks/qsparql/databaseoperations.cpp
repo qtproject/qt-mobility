@@ -1885,26 +1885,52 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
         return false;
     }
     QSparqlConnection conn("QTRACKER");
-    QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(
-            "delete { ?pn a rdfs:Resource . }"
-            "WHERE { ?c nco:hasPhoneNumber ?pn . "
-            "?c a nco:PersonContact . "
-            "?:landmark_uri slo:hasContact ?c . }"
-            "delete { ?c a nco:PersonContact . }"
-            "WHERE { ?:landmark_uri slo:hasContact ?c . } "
-            "delete { ?pa a nco:PostalAddress . }"
-            "WHERE { ?g slo:postalAddress ?pa . "
-            "?:landmark_uri slo:location ?g . }"
-            "delete { ?g a slo:GeoLocation . }"
-            "WHERE { ?:landmark_uri slo:location ?g . } "
-            "delete { ?:landmark_uri nie:description ?des . }"
-            "WHERE { ?:landmark_uri nie:description ?des . }"
-            "delete { ?:landmark_uri a slo:Landmark . }",
+    bool otherContactHasSameNumber = false;
+    QString phoneQueryString = QString("select ?c { ?u a slo:Landmark ; slo:hasContact ?pc . "
+        "?pc a nco:PersonContact ; nco:hasPhoneNumber ?pn"
+        " . ?pn a nco:PhoneNumber ; nco:phoneNumber ?p"
+        " . ?c a nco:Contact ; nco:hasPhoneNumber ?pn"
+        " . FILTER regex( ?u, '^%1$') }").arg(landmarkId.localId());
+
+    QSparqlQuery qsparqlPhoneQuery = QSparqlQuery(phoneQueryString, QSparqlQuery::SelectStatement);
+    QSparqlResult* phoneResult = conn.exec(qsparqlPhoneQuery);
+    phoneResult->waitForFinished();
+    if (!(phoneResult->hasError())) {
+        phoneResult->next();
+        if (!phoneResult->value(0).toString().isEmpty()) {
+            phoneResult->next();
+            if (!phoneResult->value(0).toString().isEmpty()) {
+                otherContactHasSameNumber = true;
+            }
+        }
+    }
+    QString deleteQuery = QString( "delete { ?c a nco:PersonContact . } "
+               "WHERE { ?:landmark_uri slo:hasContact ?c . } "
+               "delete { ?pa a nco:PostalAddress . } "
+               "WHERE { ?g slo:postalAddress ?pa . "
+               "?:landmark_uri slo:location ?g . } "
+               "delete { ?g a slo:GeoLocation . } "
+               "WHERE { ?:landmark_uri slo:location ?g . } "
+               "delete { ?:landmark_uri nie:description ?des . } "
+               "WHERE { ?:landmark_uri nie:description ?des . } "
+               "delete { ?:landmark_uri a slo:Landmark . }");
+
+    if (!otherContactHasSameNumber) {
+        deleteQuery.prepend(QString("delete { ?pn a rdfs:Resource . } "
+                  "WHERE { ?c nco:hasPhoneNumber ?pn . "
+                  "?c a nco:PersonContact . "
+                  "?:landmark_uri slo:hasContact ?c . } "));
+    } else {
+        deleteQuery.prepend(QString("delete { ?c nco:hasPhoneNumber ?pn . } "
+                  "WHERE { ?c a nco:PersonContact . ?pn a nco:PhoneNumber . "
+                  "?:landmark_uri slo:hasContact ?c . } "));
+    }
+
+    QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(deleteQuery,
             QSparqlQuery::DeleteStatement);
 
     qsparqlDeleteQuery.unbindValues();
     qsparqlDeleteQuery.bindValue("landmark_uri", QUrl(landmarkId.localId()));
-
     QSparqlResult* deleteResult = conn.exec(qsparqlDeleteQuery);
     deleteResult->waitForFinished();
     if (deleteResult->hasError()) {

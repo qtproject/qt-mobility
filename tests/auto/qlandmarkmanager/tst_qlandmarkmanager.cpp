@@ -3188,12 +3188,15 @@ void tst_QLandmarkManager::removeLandmark()
 
     QLandmark lm2;
     lm2.setName("LM2");
+    QString lm2PhoneNumber("Identical phoneNumber");
+    lm2.setPhoneNumber(lm2PhoneNumber);
     QVERIFY(m_manager->saveLandmark(&lm2));
 
     QLandmark lm3;
     lm3.setName("LM3");
+    QString lm3PhoneNumber("Identical phoneNumber");
+    lm3.setPhoneNumber(lm3PhoneNumber);
     QVERIFY(m_manager->saveLandmark(&lm3));
-
     QLandmark lm4;
     lm4.setName("LM4");
     QVERIFY(m_manager->saveLandmark(&lm4));
