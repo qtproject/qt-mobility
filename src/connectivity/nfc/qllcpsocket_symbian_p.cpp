@@ -277,20 +277,6 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
                                          QNearFieldTarget *target, quint8 port)
 {
     return writeDatagram(datagram.constData(),datagram.size(),target,port);
-    /*
-    Q_UNUSED(target);
-    Q_CHECK_LLCPTYPE(QLlcpSocketPrivate::writeDatagram(),connectionType1);
-    
-    if (m_symbianSocketType1 == NULL)
-        {
-        QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
-        }    
-    
-    const TDesC8& myDescriptor = QNFCNdefUtility::FromQByteArrayToTPtrC8(datagram);
-    qint64 val = m_symbianSocketType1->StartWriteDatagram(myDescriptor, port);
-
-    return val;
-     */
 }
 
 QLlcpSocket::Error QLlcpSocketPrivate::error() const
