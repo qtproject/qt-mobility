@@ -105,7 +105,9 @@ QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
     if (d_ptr->children.size() == 0)
         return bounds;
 
-    for (int i = 0; i < d_ptr->children.size(); ++i)
+    bounds = d_ptr->children.at(0)->boundingBox();
+
+    for (int i = 1; i < d_ptr->children.size(); ++i)
         bounds = bounds.united(d_ptr->children.at(i)->boundingBox());
 
     return bounds;
@@ -128,6 +130,11 @@ bool QGeoMapGroupObject::contains(const QGeoCoordinate &coordinate) const
     return false;
 }
 
+bool mapObjectLessThan(const QGeoMapObject* op1, const QGeoMapObject* op2)
+{
+    return op1->operator <(*op2);
+}
+
 /*!
     Adds \a childObject to the list of children of this map object.
 
@@ -145,7 +152,10 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     childObject->setMapData(mapData());
 
     //binary search
-    QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(), d_ptr->children.end(), childObject);
+    QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(),
+                                                    d_ptr->children.end(),
+                                                    childObject,
+                                                    mapObjectLessThan);
     d_ptr->children.insert(i, childObject);
 
     emit childAdded(childObject);

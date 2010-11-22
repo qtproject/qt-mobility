@@ -130,9 +130,17 @@ public:
     bool saveCategory(QLandmarkCategory* category,
                       QLandmarkManager::Error *error,
                       QString *errorString);
+    bool saveCategories(QList<QLandmarkCategory> * category,
+                       QMap<int, QLandmarkManager::Error> *errorMap,
+                       QLandmarkManager::Error *error,
+                       QString *errorString);
     bool removeCategory(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString);
+    bool removeCategories(const QList<QLandmarkCategoryId> &categoryId,
+                         QMap<int, QLandmarkManager::Error> *errorMap,
+                         QLandmarkManager::Error *error,
+                         QString *errorString);
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
@@ -199,6 +207,7 @@ public slots:
 
 private slots:
     void databaseChanged();
+    void dataChanging();
     void landmarksAdding(QList<QLandmarkId> ids);
     void landmarksChanging(QList<QLandmarkId> ids);
     void landmarksRemoving(QList<QLandmarkId> ids);

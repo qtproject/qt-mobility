@@ -68,6 +68,7 @@ QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
 void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -75,6 +76,7 @@ void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -89,6 +91,7 @@ void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>
 void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = fetchHint;
 }
 
@@ -96,6 +99,7 @@ void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fet
 void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -103,6 +107,7 @@ void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
 }
 
@@ -110,6 +115,7 @@ void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -117,6 +123,7 @@ QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -131,6 +138,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
 }
 
@@ -149,6 +157,7 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 QDateTime QOrganizerItemFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -167,6 +176,7 @@ QDateTime QOrganizerItemFetchRequest::startDate() const
 QDateTime QOrganizerItemFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
 }
 
@@ -174,6 +184,7 @@ QDateTime QOrganizerItemFetchRequest::endDate() const
 QList<QOrganizerItem> QOrganizerItemFetchRequest::items() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 

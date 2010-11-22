@@ -171,7 +171,6 @@ protected:
     QDeclarativeMediaBaseAnimation *m_animation;
     QScopedPointer<QDeclarativeMediaMetaData> m_metaData;
 
-    QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
     QMediaPlayer::Error m_error;
     QString m_errorString;

@@ -400,6 +400,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QVariantList allowableValues;
     allowableValues << QContactPhoneNumber::SubTypeMobile;
     allowableValues << QContactPhoneNumber::SubTypeVoice;
+    allowableValues << QContactPhoneNumber::SubTypeFax;
     phoneSubtype.setAllowableValues(allowableValues);
     fields.insert(QContactPhoneNumber::FieldSubTypes, phoneSubtype);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);

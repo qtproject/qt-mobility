@@ -57,8 +57,8 @@
     The \l Service element provides QML with functionality reflecting the 
     QServiceInterfaceDescriptor class which represents the details of a single service 
     registered on the service framework system. This element also allows the service to
-    be loaded so that it will return a QObject reference of the instatiated service 
-    object. If this element is used on it's own and not in conjunction to the ServiceList
+    be loaded so that it will return a QObject reference of the instantiated service 
+    object. If this element is used on its own and not in conjunction to the ServiceList
     element below, it will represent the default interface at the specified interface 
     name, which is the most convenient use-case of the QML plugin. The code snippet below
     demonstrates a typical way to load an interface in QML.
@@ -130,11 +130,11 @@
     If the ServiceList::serviceName is not supplied the filter will search with a default
     empty string as the service name, meaning all interfaces will be returned regardless
     of the service name. Similarly if no ServiceList::versionMatch is provided the filter
-    will seach with a minimum version match rule.
+    will search with a minimum version match rule.
    
     The actual QDeclarativeListProperty of \l Service elements can be obtained by reading
-    the ServiceList::services property which searches based on the filter values. This list
-    model can then be used in a list view element.
+    the ServiceList::services property which searches based on the filter values. This
+    list model can then be used in a list view element.
 
     \code
     ListView {

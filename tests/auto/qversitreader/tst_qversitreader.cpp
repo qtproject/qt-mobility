@@ -128,6 +128,26 @@ void tst_QVersitReader::testDevice()
     QVERIFY(mReader->device() == mInputDevice);
 }
 
+void tst_QVersitReader::testNullDevice()
+{
+    QVersitReader vr;
+    QVERIFY(vr.device() == NULL);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+    vr.setDevice(NULL);
+    QVERIFY(vr.device() == NULL);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+    QFile f("does not exist or else");
+    vr.setDevice(&f);
+    QVERIFY(vr.device() == &f);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+}
+
 void tst_QVersitReader::testDefaultCodec()
 {
     QVERIFY(mReader->defaultCodec() == 0);

@@ -142,7 +142,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
 
     m_databaseOperations.managerUri = managerUri();
 
-    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SLOT(dataChanging()));
 
     connect(&m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
             this, SLOT(landmarksAdding(QList<QLandmarkId>)));
@@ -263,7 +263,9 @@ bool QLandmarkManagerEngineQsparql::saveLandmarks(QList<QLandmark> * landmarks,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString);
+    QList <QLandmarkId> addedIds;
+    QList <QLandmarkId> changedIds;
+    return m_databaseOperations.saveLandmarks(landmarks, errorMap, error, errorString, &addedIds, &changedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::removeLandmark(const QLandmarkId &landmarkId,
@@ -278,7 +280,8 @@ bool QLandmarkManagerEngineQsparql::removeLandmarks(const QList<QLandmarkId> &la
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString);
+    QList <QLandmarkId> removedIds;
+    return  m_databaseOperations.removeLandmarks(landmarkIds , errorMap, error, errorString, &removedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::saveCategory(QLandmarkCategory* category,
@@ -288,11 +291,30 @@ bool QLandmarkManagerEngineQsparql::saveCategory(QLandmarkCategory* category,
     return m_databaseOperations.saveCategory(category, error, errorString);
 }
 
+bool QLandmarkManagerEngineQsparql::saveCategories(QList<QLandmarkCategory> * categories,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    QList<QLandmarkCategoryId> addedIds;
+    QList<QLandmarkCategoryId> changedIds;
+    return m_databaseOperations.saveCategories(categories, errorMap, error, errorString, &addedIds, &changedIds);
+}
+
 bool QLandmarkManagerEngineQsparql::removeCategory(const QLandmarkCategoryId &categoryId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
     return m_databaseOperations.removeCategory(categoryId, error, errorString);
+}
+
+bool QLandmarkManagerEngineQsparql::removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
+        QMap<int, QLandmarkManager::Error> *errorMap,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    QList<QLandmarkCategoryId> removedIds;
+    return  m_databaseOperations.removeCategories(categoryIds , errorMap, error, errorString, &removedIds);
 }
 
 bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
@@ -302,7 +324,9 @@ bool QLandmarkManagerEngineQsparql::importLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString);
+    QList<QLandmarkId> addedLandmarkIds;
+    QList<QLandmarkCategoryId> addedCategoryIds;
+    return m_databaseOperations.importLandmarks(device, format, option, categoryId, error, errorString, &addedLandmarkIds, &addedCategoryIds);
 }
 
 bool QLandmarkManagerEngineQsparql::exportLandmarks(QIODevice *device,
@@ -502,6 +526,10 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 
 void QLandmarkManagerEngineQsparql::databaseChanged()
 {
+}
+
+void QLandmarkManagerEngineQsparql::dataChanging() {
+       emit dataChanged();
 }
 
 void QLandmarkManagerEngineQsparql::landmarksAdding(QList<QLandmarkId> ids) {

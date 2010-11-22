@@ -75,6 +75,7 @@ QOrganizerItemDetailDefinitionSaveRequest::QOrganizerItemDetailDefinitionSaveReq
 void QOrganizerItemDetailDefinitionSaveRequest::setDefinition(const QOrganizerItemDetailDefinition& definition)
 {
     Q_D(QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_definitions.clear();
     d->m_definitions.append(definition);
 }
@@ -83,6 +84,7 @@ void QOrganizerItemDetailDefinitionSaveRequest::setDefinition(const QOrganizerIt
 void QOrganizerItemDetailDefinitionSaveRequest::setDefinitions(const QList<QOrganizerItemDetailDefinition>& definitions)
 {
     Q_D(QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_definitions = definitions;
 }
 
@@ -91,6 +93,7 @@ void QOrganizerItemDetailDefinitionSaveRequest::setDefinitions(const QList<QOrga
 QList<QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_definitions;
 }
 
@@ -98,6 +101,7 @@ QList<QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionSaveRequest:
 void QOrganizerItemDetailDefinitionSaveRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemType = organizeritemType;
 }
 
@@ -105,6 +109,7 @@ void QOrganizerItemDetailDefinitionSaveRequest::setItemType(const QString& organ
 QString QOrganizerItemDetailDefinitionSaveRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritemType;
 }
 
@@ -112,6 +117,7 @@ QString QOrganizerItemDetailDefinitionSaveRequest::itemType() const
 QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionSaveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 
