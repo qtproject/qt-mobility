@@ -64,6 +64,12 @@ QOrganizerItemIdFetchRequest::QOrganizerItemIdFetchRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemIdFetchRequest::~QOrganizerItemIdFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the filter which will be used to select the organizer items whose ids will be returned to \a filter */
 void QOrganizerItemIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
