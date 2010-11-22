@@ -61,7 +61,7 @@ WId S60VideoSurface::winId() const
 
 void S60VideoSurface::setWinId(WId id)
 {
-    Q_UNUSED(id);
+    m_winId = id;
 }
 
 QRect S60VideoSurface::displayRect() const

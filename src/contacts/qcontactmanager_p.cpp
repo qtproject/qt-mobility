@@ -76,6 +76,7 @@ QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QSet<QContactManager*> QContactManagerData::m_aliveEngines;
 QList<QContactActionManagerPlugin*> QContactManagerData::m_actionManagers;
 
 bool QContactManagerData::m_discoveredStatic;
@@ -83,6 +84,15 @@ QStringList QContactManagerData::m_pluginPaths;
 
 static void qContactsCleanEngines()
 {
+    // This is complicated by needing to remove any engines before we unload factories
+    foreach(QContactManager* manager, QContactManagerData::m_aliveEngines) {
+        // We don't delete the managers here, we just kill their engines
+        // and replace it with an invalid engine (for safety :/)
+        QContactManagerData* d = QContactManagerData::managerData(manager);
+        delete d->m_engine;
+        d->m_engine = new QContactInvalidEngine();
+    }
+
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
 
     for (int i=0; i < factories.count(); i++) {
@@ -90,6 +100,7 @@ static void qContactsCleanEngines()
     }
     QContactManagerData::m_engines.clear();
     QContactManagerData::m_actionManagers.clear();
+    QContactManagerData::m_aliveEngines.clear();
 }
 
 static int parameterValue(const QMap<QString, QString>& parameters, const char* key, int defaultValue)

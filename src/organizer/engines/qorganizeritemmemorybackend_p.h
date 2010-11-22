@@ -153,8 +153,9 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QList<QOrganizerItem> m_organizeritems;                      // list of organizer items
-    QList<QOrganizerItemId> m_organizeritemIds;             // list of organizer item Id's
+    QHash<QOrganizerItemId, QOrganizerItem> m_idToItemHash; // hash of id to the item identified by that id
+    QMultiHash<QOrganizerItemId, QOrganizerItemId> m_parentIdToChildIdHash; // hash of id to that item's children's ids
+
     QList<QOrganizerCollection> m_organizerCollections;          // list of collections
     QList<QOrganizerCollectionId> m_organizerCollectionIds; // list of collection ids
     QMultiMap<QOrganizerCollectionId, QOrganizerItemId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.

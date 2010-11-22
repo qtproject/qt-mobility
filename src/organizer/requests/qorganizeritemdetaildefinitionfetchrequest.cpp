@@ -73,6 +73,7 @@ QOrganizerItemDetailDefinitionFetchRequest::QOrganizerItemDetailDefinitionFetchR
 void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names.clear();
     d->m_names.append(definitionName);
 }
@@ -81,6 +82,7 @@ void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionName(const QString
 void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -88,6 +90,7 @@ void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionNames(const QStrin
 QStringList QOrganizerItemDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -95,6 +98,7 @@ QStringList QOrganizerItemDetailDefinitionFetchRequest::definitionNames() const
 void QOrganizerItemDetailDefinitionFetchRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemType = organizeritemType;
 }
 
@@ -102,6 +106,7 @@ void QOrganizerItemDetailDefinitionFetchRequest::setItemType(const QString& orga
 QString QOrganizerItemDetailDefinitionFetchRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritemType;
 }
 
@@ -111,6 +116,7 @@ QString QOrganizerItemDetailDefinitionFetchRequest::itemType() const
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_definitions;
 }
 
@@ -118,6 +124,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetc
 QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionFetchRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 
