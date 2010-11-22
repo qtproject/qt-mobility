@@ -43,6 +43,7 @@
 #include "qgstreamerbushelper.h"
 
 #include "qgstreamervideorendererinterface.h"
+#include "gstvideoconnector.h"
 
 #include <gst/gstvalue.h>
 
@@ -57,22 +58,6 @@
 
 //#define DEBUG_PLAYBIN
 //#define DEBUG_VO_BIN_DUMP
-
-static gboolean new_segment_probe(GstObject *pad, GstEvent *event, guint * session)
-{
-    Q_UNUSED(pad);
-    if (GST_EVENT_TYPE(event) == GST_EVENT_NEWSEGMENT)
-        reinterpret_cast<QGstreamerPlayerSession*>(session)->processNewSegment(event);
-    return TRUE;
-}
-
-static gboolean new_buffer_probe(GstObject *pad, GstBuffer *buffer, guint * session)
-{
-    Q_UNUSED(pad);
-    reinterpret_cast<QGstreamerPlayerSession*>(session)->processNewBuffer(buffer);
-    return TRUE;
-}
-
 
 typedef enum {
     GST_PLAY_FLAG_VIDEO         = 0x00000001,
@@ -99,7 +84,6 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
-     m_sendNewSegment(false),
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
@@ -136,7 +120,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     m_videoOutputBin = gst_bin_new("video-output-bin");
     gst_object_ref(GST_OBJECT(m_videoOutputBin));
 
-    m_videoIdentity = gst_element_factory_make("identity", "identity-vo");
+    m_videoIdentity = GST_ELEMENT(g_object_new(gst_video_connector_get_type(), 0));
     m_colorSpace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-vo");
     m_videoScale = gst_element_factory_make("videoscale","videoscale-vo");
     m_nullVideoSink = gst_element_factory_make("fakesink", NULL);
@@ -144,17 +128,6 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     gst_object_ref(GST_OBJECT(m_nullVideoSink));
     gst_bin_add_many(GST_BIN(m_videoOutputBin), m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
     gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
-
-    //add an event probe before video output to save and repost segment events
-    {
-        gst_segment_init (&m_segment, GST_FORMAT_TIME);
-
-        GstPad *srcPad = gst_element_get_static_pad(m_videoIdentity, "src");
-        gst_pad_add_event_probe(srcPad, G_CALLBACK(new_segment_probe), this);
-        gst_pad_add_buffer_probe(srcPad, G_CALLBACK(new_buffer_probe), this);
-        gst_object_unref(GST_OBJECT(srcPad));
-    }
-
 
     m_videoSink = m_nullVideoSink;
 
@@ -468,6 +441,16 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
         GstPad *srcPad = gst_element_get_static_pad(m_videoIdentity, "src");
         gst_pad_set_blocked_async(srcPad, true, &block_pad_cb, this);
         gst_object_unref(GST_OBJECT(srcPad));
+
+        //Unpause the sink to avoid waiting until the buffer is processed
+        //while the sink is paused. The pad will be blocked as soon as the current
+        //buffer is processed.
+        if (m_state == QMediaPlayer::PausedState) {
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "Starting video output to avoid blocking in paused state...";
+#endif
+            gst_element_set_state(m_videoSink, GST_STATE_PLAYING);
+        }
     }
 }
 
@@ -491,7 +474,6 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
             gst_object_unref(GST_OBJECT(srcPad));
             return; //can't change vo yet, received async call from the previous change
         }
-
     }
 
     if (m_pendingVideoSink == m_videoSink) {
@@ -520,6 +502,12 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     if (!gst_element_link(m_videoScale, m_videoSink))
         qWarning() << "Linking video output element failed";
 
+
+    qDebug() << "notify the video connector it has to emit a new segment message...";
+    //it's necessary to send a new segment event just before
+    //the first buffer pushed to the new sink
+    GST_VIDEO_CONNECTOR(m_videoIdentity)->relinked = true;
+
     GstState state;
 
     switch (m_pendingState) {
@@ -542,10 +530,6 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     // change being pending
     gst_element_set_state(m_playbin, state);
 
-    //it's necessary to send a new segment event just before
-    //the first buffer pushed to the new sink
-    m_sendNewSegment = true;
-
     //don't have to wait here, it will unblock eventually
     if (gst_pad_is_blocked(srcPad))
         gst_pad_set_blocked_async(srcPad, false, &block_pad_cb, 0);
@@ -559,58 +543,6 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
 #endif
 }
 
-void QGstreamerPlayerSession::processNewSegment(GstEvent *event)
-{
-    gboolean update;
-    GstFormat format;
-    gdouble rate, arate;
-    gint64 start, stop, time;
-
-    gst_event_parse_new_segment_full(event, &update, &rate, &arate, &format,
-                                      &start, &stop, &time);
-
-    gst_segment_set_newsegment_full(&m_segment, update,
-              rate, arate, format, start, stop, time);
-
-#ifdef DEBUG_PLAYBIN
-    qDebug() << "Received new segment event:";
-    qDebug() << "rate:" << m_segment.rate << arate;
-    qDebug() << "start:" << m_segment.start*1e-9;
-    qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
-    qDebug() << "stop:" << m_segment.stop*1e-9;
-#endif
-}
-
-void QGstreamerPlayerSession::processNewBuffer(GstBuffer *buf)
-{
-    if (GST_BUFFER_TIMESTAMP_IS_VALID(buf)) {
-        GstClockTime last_stop = GST_BUFFER_TIMESTAMP(buf);
-        gst_segment_set_last_stop(&m_segment, GST_FORMAT_TIME, last_stop);
-        //qDebug() << "buffer timestamp:" << GST_BUFFER_TIMESTAMP(buf)*1e-9 << position()/1000.0;
-    }
-
-    if (m_sendNewSegment) {
-#ifdef DEBUG_PLAYBIN
-        qDebug() << "send the last new segment event to the video output...";
-        qDebug() << "rate:" << m_segment.rate;
-        qDebug() << "start:" << m_segment.start*1e-9;
-        qDebug() << "last_stop:" << m_segment.last_stop*1e-9;
-        qDebug() << "stop:" << m_segment.stop*1e-9;
-#endif
-        GstEvent *event = gst_event_new_new_segment(TRUE,
-                                                    m_segment.rate,
-                                                    m_segment.format,
-                                                    m_segment.last_stop, //start
-                                                    m_segment.stop,
-                                                    m_segment.last_stop);//position
-
-        GstPad *pad = gst_element_get_static_pad(m_videoSink, "sink");
-        gst_pad_send_event(pad, event);
-        gst_object_unref(GST_OBJECT(pad));
-
-        m_sendNewSegment = false;
-    }
-}
 
 bool QGstreamerPlayerSession::isVideoAvailable() const
 {
@@ -847,9 +779,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
         }
 
     } else {
-#ifdef DEBUG_PLAYBIN
-        qDebug() << "Object:" << GST_OBJECT_NAME((GST_MESSAGE_SRC(gm))) << "has sent Message:" << gst_message_type_get_name(GST_MESSAGE_TYPE(gm));
-#endif
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
