@@ -93,6 +93,10 @@ void tst_QBluetoothDeviceInfo::tst_construction_data()
     QTest::addColumn<QBluetoothDeviceInfo::MajorDeviceClass>("majorDeviceClass");
     QTest::addColumn<quint8>("minorDeviceClass");
 
+    // bits 12-8 Major
+    // bits 7-2 Minor
+    // bits 1-0 0
+
     QTest::newRow("0x000000 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
         << quint32(0x000000)
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
@@ -166,11 +170,11 @@ void tst_QBluetoothDeviceInfo::tst_construction_data()
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
         << QBluetoothDeviceInfo::ImagingDevice
         << quint8(QBluetoothDeviceInfo::UncategorizedImagingDevice);
-    QTest::newRow("0x0006F0 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
-        << quint32(0x0006F0)
+    QTest::newRow("0x000680 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
+        << quint32(0x000680)
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
         << QBluetoothDeviceInfo::ImagingDevice
-        << quint8(QBluetoothDeviceInfo::ImagePrinter8);
+        << quint8(QBluetoothDeviceInfo::ImagePrinter);
     QTest::newRow("0x000700 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
         << quint32(0x000700)
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
@@ -191,8 +195,8 @@ void tst_QBluetoothDeviceInfo::tst_construction_data()
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
         << QBluetoothDeviceInfo::ToyDevice
         << quint8(QBluetoothDeviceInfo::ToyGame);
-    QTest::newRow("0x000900 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
-        << quint32(0x000900)
+    QTest::newRow("0x001f00 COD") << QBluetoothAddress("000000000000") << "My Bluetooth Device"
+        << quint32(0x001f00)
         << QBluetoothDeviceInfo::ServiceClasses(QBluetoothDeviceInfo::NoService)
         << QBluetoothDeviceInfo::UncategorizedDevice
         << quint8(0);
@@ -227,7 +231,7 @@ void tst_QBluetoothDeviceInfo::tst_construction()
         QFETCH(quint32, classOfDevice);
         QFETCH(QBluetoothDeviceInfo::ServiceClasses, serviceClasses);
         QFETCH(QBluetoothDeviceInfo::MajorDeviceClass, majorDeviceClass);
-        QFETCH(quint8, minorDeviceClass);
+        QFETCH(quint8, minorDeviceClass);              
 
         QBluetoothDeviceInfo deviceInfo(address, name, classOfDevice);
 

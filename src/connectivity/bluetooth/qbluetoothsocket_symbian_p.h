@@ -39,78 +39,75 @@
 **
 ****************************************************************************/
 
-#ifndef QRFCOMMSERVER_P_H
-#define QRFCOMMSERVER_P_H
+#ifndef QBLUETOOTHSYMBIANSOCKET_P_H
+#define QBLUETOOTHSYMBIANSOCKET_P_H
+
+#include "qbluetoothsocket.h"
+#include "qbluetoothsocket_p.h"
 
 #include <QtGlobal>
-#include <QList>
+//#include <private/qiodevice_p.h>
+//#include "qiodevice_p.h"
+//#include <private/qobject_p.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <es_sock.h>
 #include <bt_sock.h>
 #endif
 
-#ifndef QT_NO_DBUS
-QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+#ifndef QBLUETOOTHDEVICE_BUFFERSIZE
+#define QBLUETOOTHDEVICE_BUFFERSIZE Q_INT64_C(16384)
 #endif
+
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddress;
 class QBluetoothSocket;
 
-#ifdef Q_OS_SYMBIAN
-class QBluetoothSocketSymbianPrivate;
-#endif
-
-class QRfcommServer;
-
-class QRfcommServerPrivate
-#ifdef Q_OS_SYMBIAN
-: public MBluetoothSocketNotifier
-#endif
+class QSocketServerPrivate
 {
-    Q_DECLARE_PUBLIC(QRfcommServer)
+public:
+    QSocketServerPrivate();
+    ~QSocketServerPrivate();
+
+    RSocketServ socketServer;
+};
+
+class QBluetoothSocketSymbianPrivate : public QBluetoothSocketPrivate
+                                     , public MBluetoothSocketNotifier
+{
+    Q_OBJECT
 
 public:
-    QRfcommServerPrivate();
-    ~QRfcommServerPrivate();
+    QBluetoothSocketSymbianPrivate(QBluetoothSocket *parent);
+    ~QBluetoothSocketSymbianPrivate();
 
-#ifdef Q_OS_SYMBIAN
+    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
+
+    bool ensureNativeSocket(QBluetoothSocket::SocketType type);
+
+    void startReceive();
+    void ensureBlankNativeSocket();
+
     /* MBluetoothSocketNotifier virtual functions */
-    void HandleAcceptCompleteL(TInt aErr);
     void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
+    void HandleAcceptCompleteL(TInt aErr);
     void HandleConnectCompleteL(TInt aErr);
     void HandleIoctlCompleteL(TInt aErr);
     void HandleReceiveCompleteL(TInt aErr);
     void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
-#endif
+    void HandleShutdownCompleteL(TInt aErr);  
 
-#ifndef QT_NO_DBUS
-    void _q_newConnection();
-#endif
-
+       
 public:
-    QBluetoothSocket *socket;
 
-#ifdef Q_OS_SYMBIAN
-    QBluetoothSocket *pendingSocket;
-    mutable QList<QBluetoothSocket *> activeSockets;
-    QBluetoothSocketSymbianPrivate *ds;
-#endif
+    CBluetoothSocket *socket;
 
-    int maxPendingConnections;
-
-protected:
-    QRfcommServer *q_ptr;
-
-private:
-#ifndef QT_NO_DBUS
-    QSocketNotifier *socketNotifier;
-#endif
+    TPtr8 rxDescriptor;
+    TSockXfrLength rxLength;
 };
 
 QTM_END_NAMESPACE
