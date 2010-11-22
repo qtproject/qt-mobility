@@ -782,6 +782,18 @@ private:
         return true;
     }
 
+    bool compareLandmarksLists(const QList<QLandmark> &lms1, const QList<QLandmark> &lms2) {
+        for (int i = 0; i < lms1.count(); ++i) {
+            if (!lms2.contains(lms1.at(i)))
+                return false;
+        }
+        for (int i=0; i < lms2.count(); ++i) {
+            if (!lms1.contains(lms2.at(i)))
+                return false;
+        }
+        return true;
+    }
+
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     void removeGlobalCategories(QList<QLandmarkCategory> *cats) {
         for (int i=cats->count() -1; i >=0; --i) {
@@ -5315,11 +5327,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm2));
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm5));
-#ifdef Q_OS_SYMBIAN
-    if (type == "async")
-        QEXPECT_FAIL("", "Fix for MOBILITY-1949 causing regression", Continue);
-#endif
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+    QVERIFY(compareLandmarksLists(lms,m_manager->landmarks(boxFilter1)));
 
     intersectionFilter.clear();
     intersectionFilter << boxFilter2;
@@ -5404,11 +5412,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm2));
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm5));
-#ifdef Q_OS_SYMBIAN
-    if (type == "async")
-        QEXPECT_FAIL("", "Fix for MOBILITY-1949 causing regression", Continue);
-#endif
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+    QVERIFY(this->compareLandmarksLists(lms, m_manager->landmarks(boxFilter1)));
 
     unionFilter.clear();
     unionFilter.append(boxFilter2);
