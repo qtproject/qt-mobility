@@ -135,7 +135,8 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         QDir dir = fi.dir();
         dir.mkpath(dir.path());
         m_dbWatcherFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".txt");
-    } 
+    }
+
     if (filename == ":memory:")
         return;
 
@@ -394,11 +395,11 @@ bool QLandmarkManagerEngineQsparql::isFeatureSupported(QLandmarkManager::Manager
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::NotificationsFeature):
-        case (QLandmarkManager::ImportExportFeature):
-            return true;
-        default:
-            return false;
+    case (QLandmarkManager::NotificationsFeature):
+    case (QLandmarkManager::ImportExportFeature):
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -408,7 +409,6 @@ QStringList QLandmarkManagerEngineQsparql::landmarkAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::coreAttributes +
                              DatabaseOperations::coreGenericAttributes;
     commonKeys.sort();
@@ -423,7 +423,6 @@ QStringList QLandmarkManagerEngineQsparql::categoryAttributeKeys(QLandmarkManage
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
                              DatabaseOperations::coreGenericCategoryAttributes;
     commonKeys.clear();
@@ -436,7 +435,6 @@ QStringList QLandmarkManagerEngineQsparql::searchableLandmarkAttributeKeys(QLand
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString ="";
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::supportedSearchableAttributes;
     commonKeys.sort();
     return commonKeys;
