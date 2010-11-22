@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(WMIHelper, wmihelper)
 
 WMIHelper::WMIHelper(QObject * parent)
-        : QObject(parent)
+        : QObject(parent),initialized(0)
 {
    m_conditional = QString();
 }
@@ -72,6 +72,8 @@ WMIHelper *WMIHelper::instance()
 
 QVariant WMIHelper::getWMIData()
 {
+    qDebug() << Q_FUNC_INFO << m_wmiNamespace << m_className << m_classProperties;
+
    if (!m_wmiNamespace.isEmpty() && !m_className.isEmpty() && !m_classProperties.isEmpty()) {
       return getWMIData(m_wmiNamespace, m_className, m_classProperties);
    }
@@ -80,6 +82,9 @@ QVariant WMIHelper::getWMIData()
 
 void WMIHelper::initializeWMI(const QString &wmiNamespace)
 {
+    if(initialized) {
+        wbemLocator = 0;
+    }
     HRESULT hres;
     wbemLocator = 0;
 
@@ -114,6 +119,7 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
        qWarning() << "Could not set proxy blanket" << hres;
         return ;
     }
+    initialized = true;
 }
 
 QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &className, const QStringList &classProperty)

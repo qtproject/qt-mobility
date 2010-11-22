@@ -45,7 +45,10 @@ win32:!simulator {
             -lGdi32 \
             -lIphlpapi \
             -lOleaut32 \
-            -lDxva2
+            -lDxva2 \
+            -lPowrProf \
+            -lSetupapi
+
     }
 
     win32-g++ : {

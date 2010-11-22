@@ -372,6 +372,23 @@ Q_SIGNALS:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
+private:
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+   // QVariantMap pMap;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int batteryLevel() const ;
+
+    void getBatteryStatus();
 };
 
 QTM_END_NAMESPACE
