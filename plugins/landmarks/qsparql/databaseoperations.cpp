@@ -1641,11 +1641,27 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append("\" ");
     }
     if (!landmark->phoneNumber().isEmpty()) {
-        queryString.append("; nco:hasPhoneNumber _:pn . ");
-        queryString.append("_:pn a nco:PhoneNumber ; ");
-        queryString.append("nco:phoneNumber \"");
-        queryString.append(landmark->phoneNumber());
-        queryString.append("\" ");
+
+        QString phoneQueryString = QString("select ?pn { ?u a slo:Landmark ; slo:hasContact ?c . "
+            "?c a nco:PersonContact ; nco:hasPhoneNumber ?pn"
+            " . ?pn a nco:PhoneNumber ; nco:phoneNumber ?p . FILTER regex( ?p, '^%1$') }").arg(landmark->phoneNumber());
+        QSparqlQuery qsparqlPhoneQuery = QSparqlQuery(phoneQueryString, QSparqlQuery::SelectStatement);
+        QSparqlResult* phoneResult = conn.exec(qsparqlPhoneQuery);
+        phoneResult->waitForFinished();
+        if (!(phoneResult->hasError())) {
+            phoneResult->next();
+            if (phoneResult->value(0).toString().isEmpty()) {
+                queryString.append("; nco:hasPhoneNumber _:pn . ");
+                queryString.append("_:pn a nco:PhoneNumber ; ");
+                queryString.append("nco:phoneNumber \"");
+                queryString.append(landmark->phoneNumber());
+                queryString.append("\" ");
+            } else {
+                queryString.append("; nco:hasPhoneNumber \"");
+                queryString.append(phoneResult->value(0).toString());
+                queryString.append("\" ");
+            }
+        }
     }
     queryString.append(". }");
 
