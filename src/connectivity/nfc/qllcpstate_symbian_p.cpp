@@ -237,8 +237,7 @@ qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
     CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
     if (socketHandler != NULL)
     {
-        TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize );
-        //TODO double check this
+        TPtr8 ptr((TUint8*)data, (TInt)maxSize);
         val = socketHandler->ReadDatagram(ptr);
     }
 
@@ -254,7 +253,7 @@ qint64 QLLCPListen::ReadDatagram(char *data, qint64 maxSize)
     CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
     if (socketHandler != NULL)
     {
-        TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize);
+        TPtr8 ptr((TUint8*)data, (TInt)maxSize);
         val = socketHandler->ReceiveData(ptr);
     }
 
@@ -270,7 +269,9 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize)
     CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
     if (socketHandler != NULL)
     {
-        TPtr8 ptr((TUint8*)data, (TInt)maxSize, (TInt)maxSize);
+        // The length of the descriptor is set to zero
+        // and its maximum length is set to maxSize
+        TPtr8 ptr((TUint8*)data, (TInt)maxSize);
         val = socketHandler->ReceiveData(ptr);
     }
 

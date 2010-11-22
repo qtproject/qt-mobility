@@ -104,7 +104,7 @@ public:
    
 public:    
    TInt StartWriteDatagram(const TDesC8& aData,TInt8 portNum);
-   TInt ReadDatagram(TPtr8 &aTPtr);
+   TInt ReadDatagram(TDes8& aData);
    bool Bind(TInt8 portNum);
    
    /*!
@@ -121,10 +121,6 @@ private:
        ENone,
        EWaitForBytesWritten
        };
-    
-   CActiveSchedulerWait * iWait;
-   TWaitStatus iWaitStatus;
-   CLlcpTimer * iTimer;
    
 private:
    TBool WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds);  
@@ -159,7 +155,7 @@ private:
     * Pointer to CLlcpProvider object.
     * Own.
     */
-   CLlcpProvider* iLlcp;
+   CLlcpProvider* iLlcp;   // Own
    
    /*!
     * Pointer to MLlcpConnLessTransporter object.
@@ -167,9 +163,12 @@ private:
     *
     * This is used to send data to local device.
     */ 
-   COwnLlcpConnLess* iConnection;
+   COwnLlcpConnLess* iConnection;  // Own
   
-   
+   CActiveSchedulerWait * iWait;  //Own
+   CLlcpTimer * iTimer;  // Own
+   TWaitStatus iWaitStatus;
+
    bool iConnLessStarted;
    
    QtMobility::QLlcpSocketPrivate& iCallback;
@@ -221,7 +220,7 @@ public:
     */ 
    void ReceiveCancel();
     
-   TInt ReceiveDataFromBuf(TPtr8&);
+   TInt ReceiveDataFromBuf(TDes8& aData);
    bool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
 
@@ -287,7 +286,7 @@ public:
      * Cancels COwnLlcpConnection::Receive() request.
      */ 
     void ReceiveCancel();
-    TInt ReceiveDataFromBuf(TPtr8 &aTPtr);
+    TInt ReceiveDataFromBuf(TDes8& aData);
     
     bool HasPendingDatagrams() const;
     TInt64 PendingDatagramSize() const;    

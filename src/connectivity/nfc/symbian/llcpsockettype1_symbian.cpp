@@ -68,9 +68,9 @@ CLlcpSocketType1* CLlcpSocketType1::NewLC(QtMobility::QLlcpSocketPrivate& aCallb
 */
 CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
     : iLlcp( NULL ),
+      iConnection(NULL),
       iWait(NULL),
       iTimer(NULL),
-      iConnection(NULL),
       iConnLessStarted(EFalse),
       iCallback(aCallback)
     {
@@ -91,6 +91,8 @@ void CLlcpSocketType1::ConstructL()
 */
 CLlcpSocketType1::~CLlcpSocketType1()
     {
+
+    // Destroy connection
     Cleanup();
     
     if ( iLlcp )
@@ -161,26 +163,24 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     return val; 
     }
 
-
-TInt CLlcpSocketType1::ReadDatagram(TPtr8 &aTPtr)
+TInt CLlcpSocketType1::ReadDatagram(TDes8& aData)
     {
     TInt readSize = -1;
     if (NULL == iConnection)
         {
-        readSize = iConnection->ReceiveDataFromBuf(aTPtr);
-        
-        // Start receiving data again      
+        readSize = iConnection->ReceiveDataFromBuf(aData);
+
+        // Start receiving data again
         TInt error = KErrNone;
-        error = iConnection->Receive(*this, aTPtr.Length());
+        error = iConnection->Receive(*this, aData.Length());
         if (KErrNone != error)
             {
             readSize =  -1;
-            }        
+            }
         }
 
     return readSize;
     }
-
 
 bool CLlcpSocketType1::HasPendingDatagrams() const
     {
@@ -224,7 +224,7 @@ void CLlcpSocketType1::ReceiveComplete(TInt aError)
             {
             QT_TRYCATCH_LEAVING(iCallback.invokeError());
             }
-    );
+    ); // End of TRAP_IGNORE
     }
 
 /*!
@@ -357,7 +357,7 @@ TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
 
   
 /*!
-    Construct a new wrapper for connectionLess transport.
+    Construct the wrapper for connectionLess transport.
 */
 COwnLlcpConnLess* COwnLlcpConnLess::NewL( MLlcpConnLessTransporter* aConnection )
     {
@@ -367,7 +367,7 @@ COwnLlcpConnLess* COwnLlcpConnLess::NewL( MLlcpConnLessTransporter* aConnection 
     }
    
 /*!
-    Construct a new wrapper for connectionLess transport.
+    Construct the new wrapper for connectionLess transport.
 */
 COwnLlcpConnLess* COwnLlcpConnLess::NewLC(MLlcpConnLessTransporter* aConnection )
     {
@@ -459,12 +459,14 @@ TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb, TInt64 aMaxSize
         error = iReceiverAO->Receive(aLlcpReceiveCb, aMaxSize);
         }
     return error;
-    
     }
 
-TInt COwnLlcpConnLess::ReceiveDataFromBuf(TPtr8 &aTPtr)
-    {   
-    return iReceiverAO->ReceiveDataFromBuf(aTPtr);
+/*!
+    Retrieve data from the buffer of the connection less socket
+*/
+TInt COwnLlcpConnLess::ReceiveDataFromBuf(TDes8& aData)
+    {
+    return iReceiverAO->ReceiveDataFromBuf(aData);
     }
 
 bool COwnLlcpConnLess::HasPendingDatagrams() const
@@ -478,15 +480,21 @@ TInt64 COwnLlcpConnLess::PendingDatagramSize() const
     }
 
 
+/*!
+    Start of implementation of Sender AO for connection less mode (type1) - CLlcpSenderType1
+*/
 
-///////////////////////////////////////////////////////////////
-
-// Sender AO implementation (class CLlcpSenderType1)
+/*!
+    Constructor
+*/
 CLlcpSenderType1::CLlcpSenderType1(MLlcpConnLessTransporter* aConnection) 
                        : CActive(CActive::EPriorityStandard), iConnection(aConnection)
     {
     }
 
+/*!
+    Constructor
+*/
 CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter* iConnection)
     {
     CLlcpSenderType1* self = new(ELeave) CLlcpSenderType1(iConnection);
@@ -494,6 +502,9 @@ CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter* iConnection)
     return self;
     }
 
+/*!
+    Destructor
+*/
 CLlcpSenderType1::~CLlcpSenderType1()
     {
     Cancel();   // cancel ANY outstanding request at time of destruction
@@ -538,7 +549,8 @@ void CLlcpSenderType1::RunL(void)
        {
        iSendObserver = NULL;           
        }  
-    //emit bytesWritten signals
+
+    // Call back functions of notifying the llcp sender completed.
     if (cb)
        {
        cb->WriteComplete(error,iTransmitBuf.Length());
@@ -552,16 +564,21 @@ void CLlcpSenderType1::DoCancel(void)
     }
 
 
-///////////////////////////////////////////////////////////////
+/*!
+    Start of implementation of Receiver AO for connection less mode (type1) - CLlcpReceiverType1
+*/
 
-// Receiver AO implementation (class CLlcpSenderType1)
-// Sender AO implementation (class CLlcpSenderType1)
+/*!
+    Constructor
+*/
 CLlcpReceiverType1::CLlcpReceiverType1(MLlcpConnLessTransporter* aConnection) 
                        : CActive(CActive::EPriorityStandard), iConnection(aConnection)
     {
     }
 
-
+/*!
+    Constructor
+*/
 CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* iConnection)
     {
     CLlcpReceiverType1* self = new(ELeave) CLlcpReceiverType1(iConnection);
@@ -569,6 +586,11 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* iConnecti
     return self;
     }
 
+
+/*!
+    Set active for the receiver AO as given maximum read size "aMaxSize" requested
+    Receive complete callback function "cb" registed
+*/
 TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
     {
     TInt error = KErrNone;
@@ -590,6 +612,7 @@ TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
               {
               iConnection->Receive( iStatus, iReceiveBuf );
               SetActive();
+              // Register the call back function which will complete in RunL
               iReceiveObserver = &cb;
               }
           }
@@ -609,7 +632,7 @@ void CLlcpReceiverType1::RunL(void)
        {
         iReceiveObserver = NULL;           
        }  
-    //emit bytesWritten signals
+     // Call back functions of notifying the llcp receiver completed.
     if (cb)
        {
        cb->ReceiveComplete(error);
@@ -618,27 +641,26 @@ void CLlcpReceiverType1::RunL(void)
 
 CLlcpReceiverType1::~CLlcpReceiverType1()
     {
-    Cancel();   // cancel ANY outstanding request at time of destruction
+    // cancel ANY outstanding request at time of destruction
+    Cancel();
     iReceiveBuf.Close();
     }
 
-
-
-TInt CLlcpReceiverType1::ReceiveDataFromBuf(TPtr8 &aTPtr)
+TInt CLlcpReceiverType1::ReceiveDataFromBuf(TDes8& aData)
     {
     if (iReceiveBuf.Size() == 0)
         return;
-    
-    TInt requiredLength = aTPtr.Length();
-    TInt bufLength =  iReceiveBuf.Length();  
-  
+
+    TInt requiredLength = aData.Length();
+    TInt bufLength =  iReceiveBuf.Length();
+
     TInt readLength = requiredLength < bufLength ? requiredLength : bufLength;
-    for (TInt i=0; i < readLength; i++)
-        {
-        aTPtr[i] = iReceiveBuf[i];
-        }   
-    //Empty the buffer.
-    iReceiveBuf.Zero(); 
+
+    TPtrC8 ptr(iReceiveBuf.Ptr(),readLength);
+    aData.Append(ptr);
+
+    //Empty the buffer as long as receive data request issued.
+    iReceiveBuf.Zero();
 
     return readLength;
     }
