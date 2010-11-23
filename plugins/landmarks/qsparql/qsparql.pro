@@ -14,6 +14,7 @@ LIBS += -lQtSparql
 
 HEADERS += qlandmarkmanagerengine_qsparql_p.h \
            qlandmarkmanagerenginefactory_qsparql_p.h \
+           databasefilewatcher_p.h \
            databaseoperations_p.h \
            qlandmarkfilehandler_lmx_p.h \
            qlandmarkfilehandler_gpx_p.h \
@@ -21,6 +22,7 @@ HEADERS += qlandmarkmanagerengine_qsparql_p.h \
 
 SOURCES += qlandmarkmanagerengine_qsparql.cpp \
            qlandmarkmanagerenginefactory_qsparql.cpp \
+           databasefilewatcher.cpp \
            databaseoperations.cpp \
            qlandmarkfilehandler_lmx.cpp \
            qlandmarkfilehandler_gpx.cpp
