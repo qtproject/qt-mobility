@@ -540,9 +540,9 @@ void tst_QGeoMapCircleObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(center);
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(center);
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 
@@ -561,9 +561,6 @@ void tst_QGeoMapCircleObject::boundingBox()
     QGeoCoordinate center(0, 0, 0);
 
     QGeoMapCircleObject* object = new QGeoMapCircleObject(center, 1000);
-
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
     QGraphicsGeoMap* map = m_helper->map();
 

@@ -249,7 +249,7 @@ void tst_QGeoMapGroupObject::childObjects()
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
 
     foreach (QGeoMapObject* child, childObjects) {
-        map->addMapObject(child);
+        object->addChildObject(child);
     }
 
     QCOMPARE(object->childObjects().count(), childObjects.count());
@@ -340,11 +340,12 @@ void tst_QGeoMapGroupObject::removeChildObject()
     QSignalSpy spy1(object, SIGNAL(childRemoved(QGeoMapObject*)));
 
     for (int i = 0; i < childObjectCount; i++) {
-        QGeoMapObject* childObject = new QGeoMapObject();
+        QGeoMapObject* childObject = object->childObjects().first();
         object->removeChildObject(childObject);
+        delete childObject;
     }
 
-    QCOMPARE(object->childObjects().size(),childObjectCount );
+    QCOMPARE(object->childObjects().size(),0 );
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), childObjectCount);
@@ -360,20 +361,37 @@ void tst_QGeoMapGroupObject::setMapData_data()
 // public void setMapData(QGeoMapData* mapData)
 void tst_QGeoMapGroupObject::setMapData()
 {
-#if 0
-    QFETCH(int, mapDataCount);
 
-    SubQGeoMapGroupObject m_object;
+    QGeoCoordinate center(1.0, 1.0, 0);
 
-    QSignalSpy spy0(&m_object, SIGNAL(childAdded(QGeoMapObject*)));
-    QSignalSpy spy1(&m_object, SIGNAL(childRemoved(QGeoMapObject*)));
+    QGeoMapCircleObject* circle1 = new QGeoMapCircleObject(center, 1000);
+    QGeoMapCircleObject* circle2 = new QGeoMapCircleObject(center, 1000);
+    QGeoMapCircleObject* circle3 = new QGeoMapCircleObject(center, 1000);
 
-    m_object.setMapData(mapData);
+    QGeoMapGroupObject* object = new QGeoMapGroupObject();
 
-    QCOMPARE(spy0.count(), 0);
-    QCOMPARE(spy1.count(), 0);
-#endif
-    QSKIP("Test is not implemented.", SkipAll);
+    object->addChildObject(circle1);
+    object->addChildObject(circle2);
+    object->addChildObject(circle3);
+
+    QGraphicsGeoMap* map = m_helper->map();
+
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QCOMPARE(list.count(),1);
+
+    foreach (QGeoMapObject* o, object->childObjects()) {
+        QVERIFY2(o->info()!=0,"missing info object");
+    }
+
+    object->setMapData(0);
+
+    foreach (QGeoMapObject* o, object->childObjects()) {
+        QVERIFY2(o->info()==0,"info object not deleted");
+    }
+
 }
 
 void tst_QGeoMapGroupObject::zvalue_data()
@@ -397,11 +415,8 @@ void tst_QGeoMapGroupObject::zvalue()
     QGeoCoordinate center(1.0, 1.0, 0);
 
     QGeoMapCircleObject* circle1 = new QGeoMapCircleObject(center, 1000);
-    circle1->setZValue(1);
     QGeoMapCircleObject* circle2 = new QGeoMapCircleObject(center, 1000);
-    circle2->setZValue(2);
     QGeoMapCircleObject* circle3 = new QGeoMapCircleObject(center, 1000);
-    circle3->setZValue(3);
 
     QGeoMapGroupObject* object1 = new QGeoMapGroupObject();
     object1->addChildObject(circle1);
@@ -437,6 +452,18 @@ void tst_QGeoMapGroupObject::zvalue()
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==circle1);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==circle2);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==circle3);
+
+    circle1->setZValue(1);
+    circle2->setZValue(2);
+    circle3->setZValue(3);
+
+    QCOMPARE(circle1->zValue(), 1);
+    QCOMPARE(circle2->zValue(), 2);
+    QCOMPARE(circle3->zValue(), 3);
+
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==circle1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==circle2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==circle3);
 
     object1->setZValue(zValue1);
     object2->setZValue(zValue2);
@@ -559,9 +586,9 @@ void tst_QGeoMapGroupObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(center);
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(center);
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 
@@ -592,18 +619,20 @@ void tst_QGeoMapGroupObject::boundingBox()
 
     QGeoMapGroupObject* object = new QGeoMapGroupObject();
     object->addChildObject(circle);
+    QVERIFY(object->childObjects().at(0)==circle);
 
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
     QGraphicsGeoMap* map = m_helper->map();
 
+    map->setCenter(center);
     map->addMapObject(object);
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
     QVERIFY(list.at(0)==object);
 
+    QVERIFY2(circle->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(circle->boundingBox().height()>0,"no bounding box");
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
