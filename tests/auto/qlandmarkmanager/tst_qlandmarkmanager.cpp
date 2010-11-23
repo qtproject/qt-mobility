@@ -348,7 +348,18 @@ private:
             bool checkIdsResult = checkIds(*lms,lmIds);
             if (!checkIdsResult)
                 qWarning("sync landmark id fetch failed to match sync landmark fetch");
-            result = syncResult && syncIdResult && checkIdsResult;
+
+            //try fetch ids using a sort order list rather than a single sort order
+            lmIds = m_manager->landmarkIds(filter, limit, offset, QList<QLandmarkSortOrder>() << sortOrder);
+            bool syncIdResultWithSortOrderList = (m_manager->error() == error);
+            if (!syncIdResultWithSortOrderList)
+                qWarning() << "sync landmark id fetch (with sorder order list) error code did not match expected error = " << error << "Actual =" << m_manager->error();
+
+            bool checkIdsResultWithSortOrderList = checkIds(*lms,lmIds);
+            if (!checkIdsResultWithSortOrderList)
+                qWarning("sync landmark id fetch failed to match sync landmark fetch(with sort order list)");
+
+            result = syncResult && syncIdResult && checkIdsResult && syncIdResultWithSortOrderList && checkIdsResultWithSortOrderList;
         } else if (type == "async") {
             QLandmarkFetchRequest fetchRequest(m_manager);
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -1189,6 +1200,7 @@ void testViewport_data();
     //TODO: void categoryLimitOffsetAsync()
 
     void testConvenienceFunctions();
+    void filterSortComparison();
 #endif
 };
 
@@ -5048,8 +5060,7 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
 
     //try proximity and a different category
     intersectionFilter.clear();
-    intersectionFilter.append(proximityFilter);
-    intersectionFilter.append(cat2Filter);
+    intersectionFilter = proximityFilter & cat2Filter;
     QVERIFY(doFetch(type,intersectionFilter, &lms));
     QCOMPARE(lms.count(),3);
     QCOMPARE(lms.at(0), lm5);
@@ -5379,9 +5390,16 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
 
+    for (int i =0; i < 2; ++i) {
     unionFilter.clear();
-    unionFilter.append(boxFilter2);
-    unionFilter.append(boxFilter3);
+
+    if (i==0) {
+        unionFilter.append(boxFilter2);
+        unionFilter.append(boxFilter3);
+    } else { //i==1
+        unionFilter = boxFilter2 | boxFilter3;
+    }
+
     QVERIFY(doFetch(type,unionFilter, &lms));
     QCOMPARE(lms.count(), 6);
     QVERIFY(lms.contains(lm2));
@@ -5390,6 +5408,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
     QVERIFY(lms.contains(lm8));
+    }
 
     unionFilter.clear();
     unionFilter.append(boxFilter1);
@@ -7974,6 +7993,128 @@ void tst_QLandmarkManager::testConvenienceFunctions()
     QCOMPARE(m_manager->landmark(lmGamma.landmarkId()), lmGamma);
 
 }
+
+void tst_QLandmarkManager::filterSortComparison() {
+    QLandmarkFilter filter1;
+    QLandmarkFilter filter2;
+    QVERIFY(filter1 == filter2);
+
+    //compare name filters
+    QLandmarkCategoryFilter categoryFilter1;
+    QLandmarkCategoryFilter categoryFilter2;
+
+    QLandmarkCategoryId catId1;
+    catId1.setLocalId("catId-1");
+    catId1.setManagerUri("manager");
+
+    QLandmarkCategoryId catId2;
+    catId2.setLocalId("catId-2");
+    catId2.setManagerUri("manager");
+
+    categoryFilter1.setCategoryId(catId1);
+    categoryFilter2.setCategoryId(catId1);
+
+    QVERIFY(categoryFilter1 == categoryFilter2);
+    categoryFilter2.setCategoryId(catId2);
+    QVERIFY(categoryFilter1 != categoryFilter2);
+
+    QLandmarkNameFilter nameFilter1;
+    QLandmarkNameFilter nameFilter2;
+
+    nameFilter1.setName("name");
+    nameFilter2.setName("name");
+    QVERIFY(nameFilter1 == nameFilter2);
+    nameFilter2.setName("namediff");
+    QVERIFY(nameFilter1 != nameFilter2);
+
+    nameFilter2.setName("name");
+    QVERIFY(nameFilter1 == nameFilter2);
+    nameFilter2.setMatchFlags(QLandmarkFilter::MatchContains);
+    QVERIFY(nameFilter1 != nameFilter2);
+    nameFilter2 = nameFilter1;
+    QCOMPARE(nameFilter1, nameFilter2);
+
+    //try compare an intersection filter
+    categoryFilter1.setCategoryId(catId1);
+    categoryFilter2.setCategoryId(catId1);
+    nameFilter1.setName("name");
+    nameFilter1.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+    nameFilter2.setName("name");
+    nameFilter2.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+    QLandmarkIntersectionFilter intersectionFilter1;
+    QLandmarkIntersectionFilter intersectionFilter2;
+    intersectionFilter1 << nameFilter1 << categoryFilter1;
+    intersectionFilter2.append(nameFilter2);
+    intersectionFilter2.append(categoryFilter2);
+
+    QCOMPARE(nameFilter1, nameFilter2);
+    QCOMPARE(categoryFilter1, categoryFilter2);
+    QVERIFY(intersectionFilter1 == intersectionFilter2);
+
+    intersectionFilter2.clear();
+    nameFilter2.setName("name different");
+    intersectionFilter2 << nameFilter2 << categoryFilter2;
+    QVERIFY(intersectionFilter1 != intersectionFilter2);
+
+    //Note that it is a known issue that the intersection filter
+    //will need to match the exact order.
+
+    QLandmarkBoxFilter boxFilter1(QGeoCoordinate(10,10), QGeoCoordinate(0,20));
+    QLandmarkBoxFilter boxFilter2(QGeoCoordinate(10,10), QGeoCoordinate(0,20));
+
+    QVERIFY(boxFilter1 == boxFilter2);
+    boxFilter2.setBottomRight(QGeoCoordinate(0,21));
+    QVERIFY(boxFilter1 != boxFilter2);
+
+    QLandmarkProximityFilter proximityFilter1;
+    proximityFilter1.setCenter(QGeoCoordinate(10,10));
+    proximityFilter1.setRadius(10.0);
+
+    QLandmarkProximityFilter proximityFilter2;
+    proximityFilter2.setCenter(QGeoCoordinate(10,10));
+    proximityFilter2.setRadius(10.0);
+
+    QVERIFY(proximityFilter1 == proximityFilter2);
+    proximityFilter2.setCenter(QGeoCoordinate(11,11));
+
+    QVERIFY(proximityFilter1 != proximityFilter2);
+
+    //try using a union filter with box and proximity filters
+    boxFilter1.setTopLeft(QGeoCoordinate(10,10));
+    boxFilter1.setBottomRight(QGeoCoordinate(20,20));
+    boxFilter2.setTopLeft(QGeoCoordinate(10,10));
+    boxFilter2.setBottomRight(QGeoCoordinate(20,20));
+
+    proximityFilter1.setCenter(QGeoCoordinate(10,10));
+    proximityFilter1.setRadius(10.0);
+    proximityFilter2.setCenter(QGeoCoordinate(10,10));
+    proximityFilter2.setRadius(10.0);
+
+    QLandmarkUnionFilter unionFilter1;
+    QLandmarkUnionFilter unionFilter2;
+    unionFilter1  = boxFilter1 | proximityFilter1;
+    unionFilter2 << boxFilter2 << proximityFilter2;
+
+    QCOMPARE(boxFilter1, boxFilter2);
+    QCOMPARE(proximityFilter1, proximityFilter2);
+    QCOMPARE(unionFilter1, unionFilter2);
+
+    unionFilter2.clear();
+    proximityFilter2.setRadius(12);
+    unionFilter2 << boxFilter2 << proximityFilter2;
+    QVERIFY(unionFilter1 != unionFilter2);
+
+    QLandmarkNameSort nameSort;
+    QLandmarkNameSort nameSort2;
+
+    QVERIFY(nameSort == nameSort2);
+    nameSort2.setDirection(Qt::DescendingOrder);
+    QVERIFY(nameSort != nameSort2);
+
+    QLandmarkSortOrder sortOrder;
+    QVERIFY(sortOrder != nameSort);
+}
+
 #endif
 
 #ifdef TEST_SIGNALS
