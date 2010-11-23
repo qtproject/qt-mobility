@@ -69,7 +69,8 @@ public:
         ConnectingState = QAbstractSocket::ConnectingState,
         ConnectedState = QAbstractSocket::ConnectedState,
         ClosingState = QAbstractSocket::ClosingState,
-        BoundState = QAbstractSocket::BoundState
+        BoundState = QAbstractSocket::BoundState,
+        ListeningState = QAbstractSocket::ListeningState
     };
 
     explicit QLlcpSocket(QObject *parent = 0);

@@ -80,6 +80,8 @@ QTM_BEGIN_NAMESPACE
     \value ConnectingState  The socket has started establishing a connection.
     \value ConnectedState   A connection is established.
     \value ClosingState     The socket is about to close.
+    \value BoundState       The socket is bound to a local port (for servers).
+    \value ListeningState   The socket is listening for incoming connections (for internal use).
 */
 
 /*!
