@@ -42,13 +42,6 @@
 #include "qnearfieldmanager_symbian_p.h"
 #include "qndefmessage.h"
 
-#include <QtCore/QDirIterator>
-#include <QtCore/QSettings>
-#include <QtCore/QMutex>
-#include <QtCore/QMutexLocker>
-
-#include <QtCore/QDebug>
-
 #include "symbian/nearfieldmanager_symbian.h"
 
 QTM_BEGIN_NAMESPACE
@@ -104,15 +97,8 @@ int QNearFieldManagerPrivateImpl::getFreeId()
 int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
                                                                 const QMetaMethod &method)
 {
-    int id = getFreeId();
-
-    Callback &callback = m_registeredHandlers[id];
-
-    callback.filter = QNdefFilter();
-    callback.object = object;
-    callback.method = method;
-
-    return id;
+    //Symbian side does not support register ndef handler without TNF and type.
+    return -1;
 }
 
 /*!
