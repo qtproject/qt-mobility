@@ -39,47 +39,27 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect_p.h"
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativemediametadata_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+#ifndef CAMERABUTTONLISTENER_MEEGO_H
+#define CAMERABUTTONLISTENER_MEEGO_H
 
-QML_DECLARE_TYPE(QSoundEffect)
+#include <QtCore/qobject.h>
+#include <qmsystem2/qmkeys.h>
 
-QT_BEGIN_NAMESPACE
-
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
+class CameraButtonListener : public QObject
 {
     Q_OBJECT
 public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
+    CameraButtonListener(QObject *parent = 0);
+    ~CameraButtonListener();
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-        qmlRegisterType<QDeclarativeMediaMetaData>();
-    }
+private slots:
+    void handleQmKeyEvent(MeeGo::QmKeys::Key key, MeeGo::QmKeys::State state);
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
-    }
+private:
+    MeeGo::QmKeys *m_keys;
+    bool m_focusPressed;
+    bool m_shutterPressed;
 };
 
-QT_END_NAMESPACE
-
-#include "multimedia.moc"
-
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
-
+#endif // CAMERABUTTONLISTENER_MEEGO_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,45 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect_p.h"
+#ifndef QGSTVIDEOCONNECTOR_H
+#define QGSTVIDEOCONNECTOR_H
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativemediametadata_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+#include <gst/gst.h>
 
-QML_DECLARE_TYPE(QSoundEffect)
+G_BEGIN_DECLS
 
-QT_BEGIN_NAMESPACE
+#define GST_TYPE_VIDEO_CONNECTOR \
+  (gst_video_connector_get_type())
+#define GST_VIDEO_CONNECTOR(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GST_TYPE_VIDEO_CONNECTOR, GstVideoConnector))
+#define GST_VIDEO_CONNECTOR_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_VIDEO_CONNECTOR, GstVideoConnectorClass))
+#define GST_IS_VIDEO_CONNECTOR(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GST_TYPE_VIDEO_CONNECTOR))
+#define GST_IS_VIDEO_CONNECTOR_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), GST_TYPE_VIDEO_CONNECTOR))
 
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
-{
-    Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
+typedef struct _GstVideoConnector GstVideoConnector;
+typedef struct _GstVideoConnectorClass GstVideoConnectorClass;
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-        qmlRegisterType<QDeclarativeMediaMetaData>();
-    }
+struct _GstVideoConnector {
+  GstElement element;
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
-    }
+  GstPad *srcpad;
+  GstPad *sinkpad;
+
+  gboolean relinked;
+  GstSegment segment;
+  GstBuffer *latest_buffer;
 };
 
-QT_END_NAMESPACE
+struct _GstVideoConnectorClass {
+  GstElementClass parent_class;
+};
 
-#include "multimedia.moc"
+GType gst_video_connector_get_type (void);
 
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
+G_END_DECLS
+
+#endif
 

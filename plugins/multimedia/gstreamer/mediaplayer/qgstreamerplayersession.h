@@ -102,8 +102,6 @@ public:
     void setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber);
 
     bool processSyncMessage(const QGstreamerMessage &message);
-    void processNewSegment(GstEvent *event);
-    void processNewBuffer(GstBuffer *buffer);
 
 public slots:
     void load(const QNetworkRequest &url);
@@ -176,8 +174,6 @@ private:
     GstBus* m_bus;
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
-    GstSegment m_segment;
-    bool m_sendNewSegment;
 
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;

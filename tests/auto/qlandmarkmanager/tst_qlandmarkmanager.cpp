@@ -782,6 +782,18 @@ private:
         return true;
     }
 
+    bool compareLandmarksLists(const QList<QLandmark> &lms1, const QList<QLandmark> &lms2) {
+        for (int i = 0; i < lms1.count(); ++i) {
+            if (!lms2.contains(lms1.at(i)))
+                return false;
+        }
+        for (int i=0; i < lms2.count(); ++i) {
+            if (!lms1.contains(lms2.at(i)))
+                return false;
+        }
+        return true;
+    }
+
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     void removeGlobalCategories(QList<QLandmarkCategory> *cats) {
         for (int i=cats->count() -1; i >=0; --i) {
@@ -5315,11 +5327,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm2));
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm5));
-#ifdef Q_OS_SYMBIAN
-    if (type == "async")
-        QEXPECT_FAIL("", "Fix for MOBILITY-1949 causing regression", Continue);
-#endif
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+    QVERIFY(compareLandmarksLists(lms,m_manager->landmarks(boxFilter1)));
 
     intersectionFilter.clear();
     intersectionFilter << boxFilter2;
@@ -5404,11 +5412,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm2));
     QVERIFY(lms.contains(lm4));
     QVERIFY(lms.contains(lm5));
-#ifdef Q_OS_SYMBIAN
-    if (type == "async")
-        QEXPECT_FAIL("", "Fix for MOBILITY-1949 causing regression", Continue);
-#endif
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+    QVERIFY(this->compareLandmarksLists(lms, m_manager->landmarks(boxFilter1)));
 
     unionFilter.clear();
     unionFilter.append(boxFilter2);
@@ -7113,16 +7117,22 @@ void tst_QLandmarkManager::exportLmx() {
             lm.setName(QString("LM%1").arg(0));
             lms.append(lm);
         }
-
         QVERIFY(m_manager->saveLandmarks(&lms));
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
-        exportRequest.setFileName(exportFile);
-        exportRequest.setLandmarkIds(QList<QLandmarkId>());
-        exportRequest.start();
-        QTest::qWait(50);
-        exportRequest.cancel();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
+
+        bool result = false;
+        for (int tryNum=0; tryNum < 5; ++tryNum) {
+            exportRequest.setFormat(QLandmarkManager::Lmx);
+            exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+            exportRequest.setFileName(exportFile);
+            exportRequest.setLandmarkIds(QList<QLandmarkId>());
+            exportRequest.start();
+            QTest::qWait(50);
+            exportRequest.cancel();
+            result = waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500);
+            if (result)
+                break;
+        }
+        QVERIFY(result);
     }
 #endif
     QFile::remove(exportFile);
@@ -7366,7 +7376,10 @@ void tst_QLandmarkManager::filterSupportLevel() {
 
     attributeFilter.clearAttributes();
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#endif
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
@@ -8147,7 +8160,9 @@ void tst_QLandmarkManager::testProximityRadius()
     proximityFilter.setRadius(lm1.coordinate().distanceTo(QGeoCoordinate(0,0)));
     QList<QLandmark> lms;
     QVERIFY(doFetch(type,proximityFilter,&lms,QLandmarkManager::NoError));
+#ifdef Q_OS_SYMBIAN
     QEXPECT_FAIL("", "MOBILITY-1735: symbian backend does not return landmark right on edge of radius of proximity filter", Continue);
+#endif
     QCOMPARE(lms.count(), 1);
 }
 
@@ -8461,8 +8476,8 @@ void tst_QLandmarkManager::simpleTest()
 
     QList<QLandmarkId> lm_ids = m_manager->landmarkIds();
     m_manager->removeLandmarks(lm_ids);
-    qDebug() << "Remove  error =" << m_manager->error();
-    qDebug() << "Remove error string=" << m_manager->errorString();
+    //qDebug() << "Remove  error =" << m_manager->error();
+    //qDebug() << "Remove error string=" << m_manager->errorString();
     m_manager->importLandmarks(prefix + "data/places.gpx");
     lm_ids = m_manager->landmarkIds();
     QList<QLandmark> lms;
@@ -8471,9 +8486,9 @@ void tst_QLandmarkManager::simpleTest()
         lm.setAddress(address);
         lms.append(lm);
         bool isOk = m_manager->saveLandmark(&lm);
-        qDebug() << "saving was ok? =" << isOk;
-        qDebug() << "saving error= " << m_manager->error();
-        qDebug() << "saving eror string = " << m_manager->errorString();
+        //qDebug() << "saving was ok? =" << isOk;
+        //qDebug() << "saving error= " << m_manager->error();
+        //qDebug() << "saving eror string = " << m_manager->errorString();
         QVERIFY(isOk);
     }
 }
