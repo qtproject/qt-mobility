@@ -1,0 +1,187 @@
+
+//TESTED_COMPONENT=src/contacts
+
+// create a re-usable contact set
+function exampleContactSet()
+{
+    return [
+          {name:'Mr. Andy Clark',
+          firstName:'Andy',
+          title:'Engineer',
+          organization:'Example',
+          department:'',
+          phone:'07-2342322',
+          email:'andy@example.com',
+          address:'',
+          birthday:'1/01/4500',
+          avatar:'http://qt.nokia.com/logo.png'},
+          {name:'Mr. Bob Green',
+          firstName:'Bob',
+          title:'Engineer',
+          organization:'Example',
+          phone:'07-3242325',
+          email:'bob@example.com',
+          address:'',
+          birthday:'1/01/4500',
+          },
+          {
+          name:'Mr. Charles Brows',
+          firstName:'Charles',
+          title:'Engineer',
+          organization:'Example',
+          department:'',
+          phone:'32324534233',
+          email:'charles@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Mr. David Edie',
+          firstName:'David',
+          title:'Manager',
+          organization:'Example',
+          department:'',
+          phone:'(07) 3245-2323',
+          email:'david@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Mrs. Carol Eden',
+          firstName:'Carol',
+          title:'Manager',
+          organization:'Example',
+          department:'',
+          phone:'2323242',
+          email:'carol@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Mr. Bill Chilton',
+          firstName:'Bill',
+          title:'Manager',
+          organization:'Example',
+          department:'',
+          phone:'564412232',
+          email:'bill@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Ms. Aaron Gates',
+          firstName:'Aaron',
+          title:'Engineer',
+          organization:'Example',
+          department:'',
+          phone:'33333',
+          email:'aaron@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Mr. Jason Black',
+          firstName:'Jason',
+          title:'Engineer',
+          organization:'Example',
+          department:'',
+          phone:'33333333333',
+          email:'jason@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          },
+          {
+          name:'Mr. Alexander Mcdonald',
+          firstName:'Alexander',
+          title:'Engineer',
+          organization:'Example',
+          department:'',
+          phone:'111111111',
+          email:'alex@example.com',
+          address:'',
+          birthday:'1/01/4500'
+          }
+      ]
+}
+
+// given a contact object check its details
+function checkContact(contact)
+{
+    select(contact.firstName);
+    select('More..');
+    compare('Contact', getText('Type'));
+    compare(contact.name, getText('DisplayLabel'));
+    compare(contact.email, getText('EmailAddress'));
+    compare(contact.name, getText('Name'));
+    compare(contact.department, getText('Department'));
+    compare(contact.phone, getText('PhoneNumber'));
+    compare(contact.avatar, getText('Avatar'));
+    select('Back');
+}
+
+testcase = {
+
+        Check_Contact_List_data : {
+            ContactSet : [ exampleContactSet() ]
+        },
+
+        // verify that overview of contact names is correct
+        Check_Contact_List: function(contactSet)
+        {
+            startApplication('qmlcontacts');
+            for (var index=0; index < contactSet.length; index++){
+                // note the contact list should be the focus widget
+                select(contactSet[index].firstName);
+            }
+        },
+
+
+        Expand_A_Contact_data : {
+            ContactSet : [ exampleContactSet() ]
+        },
+
+        // verify that when selecting a contact its summary is shown
+        Expand_A_Contact: function(contactSet)
+        {
+            startApplication('qmlcontacts');
+            for (var index = 0; index < 3; index++){
+                prompt("Verify that no details for " + contactSet[index].firstName  +' is seen');
+                select(contactSet[index].firstName);
+                verify(getValue().contains(contactSet[index].name), 'Verify contact summary for ' + contactSet[index].name);
+                verify(getLabels().contains('More...'), 'Verify \'More..\' button is present');
+            }
+        },
+
+
+        Show_All_Contact_Detail_data : {
+            ContactSet : [ exampleContactSet() ]
+        },
+
+        // verify that the details page for contacts can be seen
+        Show_All_Contact_Detail : function(contactSet)
+        {
+            startApplication('qmlcontacts');
+            for (var index = 0; index < 3; index++){
+                select(contactSet[index].firstName);
+                select('More..')
+                verify(getLabels().contains('DisplayLabel'), 'Verify contact details are shown for ' + contactSet[index].name);
+                select('Back');
+            }
+        },
+
+
+        Check_Contact_Details_data :{
+            ContactSet : [ exampleContactSet() ]
+        },
+
+        // check that each contact has the details expected
+        Check_Contact_Details: function(contactSet)
+        {
+            startApplication('qmlcontacts');
+            for (var index=0; index < contactSet.length; index++){
+                checkContact(contactSet[index]);
+            }
+        }
+
+}  // end of testcase
+
