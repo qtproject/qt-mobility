@@ -158,17 +158,24 @@ void CNearFieldManager::stopTargetDetection()
 TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
                                        const QByteArray& aType )
     {
+    TInt err = KErrNone;
     if ( !iNdefDiscovery )
         {
-        TRAPD(err, iNdefDiscovery = CNdefDiscovery::NewL( iServer ));
+        TRAP(err, iNdefDiscovery = CNdefDiscovery::NewL( iServer ));
         if (err != KErrNone)
             {
             return err;
             }
-        iNdefDiscovery->AddNdefMessageListener( *this );
+        err = iNdefDiscovery->AddNdefMessageListener( *this );
+        if (err != KErrNone)
+            {
+            return err;
+            }
+
         }
     TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
-    return iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+    err = iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+    return err;
     }
 
 /*!

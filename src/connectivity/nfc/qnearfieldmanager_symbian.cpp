@@ -140,7 +140,10 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
       {
       QNdefRecord::TypeNameFormat tnf = filter.recordAt(i).typeNameFormat;
       QByteArray type = filter.recordAt(i).type;
-      m_symbianbackend->AddNdefSubscription( tnf, type );
+      if (m_symbianbackend->AddNdefSubscription( tnf, type ) < 0)
+          {
+          return -1;
+          }
       }
     return id;
 }
