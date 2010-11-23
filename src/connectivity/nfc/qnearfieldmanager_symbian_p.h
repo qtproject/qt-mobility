@@ -65,10 +65,8 @@ public:
     QNearFieldManagerPrivateImpl();
     ~QNearFieldManagerPrivateImpl();
 
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      QObject *object, const QMetaMethod &method);
-    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                      const QNdefFilter &filter,
+    int registerTargetDetectedHandler(QObject *object, const QMetaMethod &method);
+    int registerTargetDetectedHandler(const QNdefFilter &filter,
                                       QObject *object, const QMetaMethod &method);
 
     bool unregisterTargetDetectedHandler(int id);
@@ -86,9 +84,7 @@ public://call back function by symbian backend implementation
 
 private:
     struct Callback {
-        QNearFieldTarget::Type targetType;
         QNdefFilter filter;
-
         QObject *object;
         QMetaMethod method;
     };

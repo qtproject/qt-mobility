@@ -101,15 +101,13 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                                QObject *object,
+int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
                                                                 const QMetaMethod &method)
 {
     int id = getFreeId();
 
     Callback &callback = m_registeredHandlers[id];
 
-    callback.targetType = targetType;
     callback.filter = QNdefFilter();
     callback.object = object;
     callback.method = method;
@@ -126,8 +124,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
-                                                                const QNdefFilter &filter,
+int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilter &filter,
                                                                 QObject *object,
                                                                 const QMetaMethod &method)
 {
@@ -135,16 +132,15 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QNearFieldTarget
 
     Callback &callback = m_registeredHandlers[id];
 
-    callback.targetType = targetType;
     callback.filter = filter;
     callback.object = object;
     callback.method = method;
 
     for( int i = 0; i < filter.recordCount(); ++i)
       {
-    QNdefRecord::TypeNameFormat tnf = filter.recordAt(i).typeNameFormat;
-    QByteArray type = filter.recordAt(i).type;
-    m_symbianbackend->AddNdefSubscription( tnf, type );
+      QNdefRecord::TypeNameFormat tnf = filter.recordAt(i).typeNameFormat;
+      QByteArray type = filter.recordAt(i).type;
+      m_symbianbackend->AddNdefSubscription( tnf, type );
       }
     return id;
 }
@@ -177,14 +173,14 @@ bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 }
 
 void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
-  {
-  QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
-  }
+    {
+    QT_TRAP_THROWING(m_symbianbackend->StartTargetDetectionL(targetTypes));
+    }
 
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
-  {
-  m_symbianbackend->stopTargetDetection();
-  }
+    {
+    m_symbianbackend->stopTargetDetection();
+    }
 
 struct VerifyRecord
 {
