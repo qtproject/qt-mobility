@@ -80,6 +80,14 @@ void tst_QNearFieldManager::cleanupTestCase()
 {
 }
 
+/**
+ * Description: Unit test for NFC target detected and lost
+ *
+ * TestScenario: 1. Touch and remove llcp device/Type1/Type2/Type3/Type4 tag one by one
+ *
+ * TestExpectedResults: 1. llcp device/Type1/Type2/Type3/Type4 tag detected/lost signal can be received
+ */
+
 void tst_QNearFieldManager::targetDetected()
 {
     QFETCH(QNearFieldTarget::Type, type);
