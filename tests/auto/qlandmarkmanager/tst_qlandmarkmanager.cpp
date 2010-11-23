@@ -8242,7 +8242,7 @@ void tst_QLandmarkManager::saveStress()
         qDebug() << "Async save error string=" << lmSaveRequest.errorString();
         qDebug() << "Async error map size = " << lmSaveRequest.errorMap().count();
         if (lmSaveRequest.errorMap().count() > 0) {
-            qDebug() << "Async error map keys =" << lmSaveRequest->errorMap().keys();
+            qDebug() << "Async error map keys =" << lmSaveRequest.errorMap().keys();
         }
         QCOMPARE(lmSaveRequest.error(), QLandmarkManager::NoError);
     }
