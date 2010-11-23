@@ -2303,8 +2303,9 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+#if (defined(Q_WS_MAEMO_6))
     QCOMPARE(spyOtherDataChanged.count(), 1);
-
+#endif
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), emptyLandmark.landmarkId());
     spyAdd.clear();
     spyOtherDataChanged.clear();
@@ -2370,7 +2371,9 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+#if (defined(Q_WS_MAEMO_6))
     QCOMPARE(spyOtherDataChanged.count(), 4);
+#endif
     spyAdd.clear();
     spyCatAdd.clear();
 
@@ -7400,6 +7403,8 @@ void tst_QLandmarkManager::filterSupportLevel() {
     attributeFilter.setAttribute("street", "e", QLandmarkFilter::MatchContains);
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NoSupport);
+#else
+    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 #endif
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
