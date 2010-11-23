@@ -112,6 +112,8 @@ protected:
     qint64 writeData(const char *data, qint64 len);
 
 private:
+    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
+
     QLlcpSocketPrivate *d_ptr;
 };
 

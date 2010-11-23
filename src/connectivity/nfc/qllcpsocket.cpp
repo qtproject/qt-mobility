@@ -123,6 +123,14 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 }
 
 /*!
+    \internal
+*/
+QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
+:   QIODevice(parent), d_ptr(d)
+{
+}
+
+/*!
     Destroys the LLCP socket.
 */
 QLlcpSocket::~QLlcpSocket()
