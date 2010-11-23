@@ -405,16 +405,6 @@ public slots:
 };
 
 
-//class QHiddenWindow : public QWidget
-//{
-//    Q_OBJECT
-//public:
-//    QHiddenWindow(QWidget *parent = 0);
-// //   ~QHiddenWindow(){};
-//};
-
-// Q_DECLARE_METATYPE(QHiddenWindow);
-
 QTM_END_NAMESPACE
 
 QT_END_HEADER
