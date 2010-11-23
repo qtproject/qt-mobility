@@ -395,15 +395,16 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
     }
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
 
-    TInt err = KErrNone;
-
-    // Convert symbian leave to a symbian error code.
-    socketHandler->ConnectToService(serviceName);
+    TInt err =  socketHandler->ConnectToService(serviceName);
 
     if (KErrNone == err)
     {
         ChangeState(m_socket, QLLCPConnecting::Instance(m_socket));
         m_socket->invokeStateChanged(QLlcpSocket::ConnectingState);
+    }
+    else
+    {
+        m_socket->invokeError();
     }
     //QIODevice::open(QIODevice::ReadWrite);
 }

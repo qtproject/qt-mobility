@@ -135,7 +135,6 @@ public:
   
 public: // from base class
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    // pending close? do sth
     void DisconnectFromHost() {};
     void DisconnectFromService();
     void ConnectToServiceComplete();
