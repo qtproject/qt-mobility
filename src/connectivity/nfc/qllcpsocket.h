@@ -69,7 +69,8 @@ public:
         ConnectingState = QAbstractSocket::ConnectingState,
         ConnectedState = QAbstractSocket::ConnectedState,
         ClosingState = QAbstractSocket::ClosingState,
-        BoundState = QAbstractSocket::BoundState
+        BoundState = QAbstractSocket::BoundState,
+        ListeningState = QAbstractSocket::ListeningState
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
@@ -111,6 +112,8 @@ protected:
     qint64 writeData(const char *data, qint64 len);
 
 private:
+    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
+
     QLlcpSocketPrivate *d_ptr;
 };
 
