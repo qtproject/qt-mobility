@@ -297,7 +297,7 @@ bool QLlcpSocket::waitForBytesWritten(int msecs)
 }
 
 /*!
-    Waits until the socket is connected, up to msecs milliseconds. If the connection has been
+    Waits until the socket is connected, up to \a msecs milliseconds. If the connection has been
     established, this function returns true; otherwise it returns false. In the case where it
     returns false, you can call error() to determine the cause of the error.
 
@@ -311,7 +311,7 @@ bool QLlcpSocket::waitForConnected(int msecs)
 }
 
 /*!
-    Waits until the socket is disconnected, up to msecs milliseconds. If the connection has been
+    Waits until the socket is disconnected, up to \a msecs milliseconds. If the connection has been
     disconnected, this function returns true; otherwise it returns false. In the case where it
     returns false, you can call error() to determine the cause of the error.
 
