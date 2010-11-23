@@ -165,7 +165,7 @@ void QDeclarativeMediaBase::_q_statusChanged()
     else if (state == QMediaPlayer::PlayingState)
         m_paused = false;
 
-    if (m_status != status) {
+    if (m_status != oldStatus) {
         if (m_status == QMediaPlayer::EndOfMedia && m_runningCount != 0) {
             m_playerControl->play();
             return;
@@ -419,7 +419,7 @@ void QDeclarativeMediaBase::setPlaying(bool playing)
                 m_loaded = true;
             }
 
-            m_runningCount = m_loopCount - 1
+            m_runningCount = m_loopCount - 1;
 
             if (!m_paused)
                 m_playerControl->play();
