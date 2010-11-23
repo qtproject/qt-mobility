@@ -241,25 +241,27 @@ void AsyncWorker::handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFet
     QMap<int, QOrganizerManager::Error> errorMap;
     QStringList keys = req->definitionNames();
     if (keys.isEmpty())
-        keys = definitions.keys();
-    int definitionsCount = keys.count();
-    for (int i = 0; i < definitionsCount; ++i) {
-        if (definitions.contains(keys.at(i)))
-            retn.insert(keys.at(i), definitions[keys.at(i)]);
-        else
-            errorMap.insert(i, QOrganizerManager::DoesNotExistError);
+        retn = definitions;
+    else {
+        int definitionsCount = keys.count();
+        for (int i = 0; i < definitionsCount; ++i) {
+            if (definitions.contains(keys.at(i)))
+                retn.insert(keys.at(i), definitions[keys.at(i)]);
+            else
+                errorMap.insert(i, QOrganizerManager::DoesNotExistError);
+        }
     }
     QOrganizerManagerEngine::updateDefinitionFetchRequest(req, retn, err, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void AsyncWorker::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req)
 {
-    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
     QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     QStringList definitionNames = req->definitionNames();
     int nameCount = definitionNames.count();
     for(int i = 0; i < nameCount; ++i) {
+        QOrganizerManager::Error tempError = QOrganizerManager::NoError;
         m_manager->m_engine->removeDetailDefinition(definitionNames.at(i), req->itemType(), &tempError);
         if (tempError != QOrganizerManager::NoError) {
             errorMap.insert(i, tempError);
@@ -271,12 +273,12 @@ void AsyncWorker::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRe
 
 void AsyncWorker::handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req)
 {
-    QOrganizerManager::Error tempError = QOrganizerManager::NoError;
     QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     QList<QOrganizerItemDetailDefinition> definitions = req->definitions();
     int definitionCount = definitions.count();
     for (int i = 0; i < definitionCount; ++i) {
+        QOrganizerManager::Error tempError = QOrganizerManager::NoError;
         m_manager->m_engine->saveDetailDefinition(definitions.at(i), req->itemType(), &tempError);
         if (tempError != QOrganizerManager::NoError) {
             errorMap.insert(i, tempError);
@@ -298,11 +300,10 @@ void AsyncWorker::handleCollectionRemoveRequest(QOrganizerCollectionRemoveReques
     QOrganizerManager::Error tempError = QOrganizerManager::NoError;
     QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
-    QOrganizerCollectionId currentId;
-    QList<QOrganizerCollectionId> colsToRemove = req->collectionIds();
+    const QList<QOrganizerCollectionId>& colsToRemove(req->collectionIds());
     int collectionsCount = colsToRemove.count();
     for (int i = 0; i < collectionsCount; ++i) {
-        currentId = colsToRemove.at(i);
+        const QOrganizerCollectionId& currentId(colsToRemove.at(i));
         m_manager->m_engine->removeCollection(currentId, &tempError);
         if (tempError != QOrganizerManager::NoError) {
             errorMap.insert(i, tempError);
@@ -317,11 +318,11 @@ void AsyncWorker::handleCollectionSaveRequest(QOrganizerCollectionSaveRequest *r
     QOrganizerManager::Error tempError = QOrganizerManager::NoError;
     QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
-    QList<QOrganizerCollection> collections = req->collections();
+    QList<QOrganizerCollection> collections(req->collections());
     QList<QOrganizerCollection> retn;
     int collectionsCount = collections.count();
     for (int i = 0; i < collectionsCount; ++i) {
-        QOrganizerCollection collection = collections.at(i);
+        QOrganizerCollection collection(collections.at(i));
         m_manager->m_engine->saveCollection(&collection, &tempError);
         retn << collection;
         if (tempError != QOrganizerManager::NoError) {
@@ -367,7 +368,7 @@ void OrganizerAsynchManager::requestDestroyed(QOrganizerAbstractRequest *req)
     }
 }
 
-bool OrganizerAsynchManager::addRequest(QOrganizerAbstractRequest *req)
+bool OrganizerAsynchManager::startRequest(QOrganizerAbstractRequest *req)
 {
     QMutexLocker locker(&m_mutex);
 

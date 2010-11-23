@@ -705,7 +705,7 @@ bool MKCalEngine::removeCollection(const QOrganizerCollectionId& collectionId, Q
 
 bool MKCalEngine::startRequest(QOrganizerAbstractRequest* req)
 {
-    d->m_asynchProcess->addRequest(req);
+    d->m_asynchProcess->startRequest(req);
     return true;
 }
 
