@@ -39,47 +39,43 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect_p.h"
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativemediametadata_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+#ifndef DATABASEWATCHER_P_H
+#define DATABASEwATCHER_P_H
 
-QML_DECLARE_TYPE(QSoundEffect)
+#include <QObject>
 
-QT_BEGIN_NAMESPACE
+#include <QStringList>
+#include <QString>
+#include <QFileSystemWatcher>
 
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+class DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
 public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
+    DatabaseFileWatcher(const QString &databaseWatcherPath, QObject *parent = 0);
+    void setEnabled(bool enabled);
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-        qmlRegisterType<QDeclarativeMediaMetaData>();
-    }
+signals:
+    void notifyChange();
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
-    }
+private slots:
+    void databaseChanged(const QString &path);
+
+private:
+    QFileSystemWatcher *m_watcher;
+    QString m_databaseWatcherPath;
 };
 
-QT_END_NAMESPACE
-
-#include "multimedia.moc"
-
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
-
+#endif

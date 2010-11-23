@@ -54,6 +54,7 @@
 //
 
 #include  <qlandmarkmanagerengine.h>
+#include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
@@ -226,13 +227,13 @@ protected:
 
 private:
     bool m_changeNotificationsEnabled;
+    void touchWatcherFile();
     void setChangeNotificationsEnabled(bool enabled);
-    QString m_dbFilename;
+    QString m_dbWatcherFilename;
     QString m_dbConnectionName;
+    DatabaseFileWatcher *m_dbWatcher;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
-    qint64 m_latestLandmarkTimestamp;
-    qint64 m_latestCategoryTimestamp;
     bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;

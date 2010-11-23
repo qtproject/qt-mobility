@@ -73,7 +73,7 @@ public:
     ~OrganizerAsynchManager();
 
     void requestDestroyed(QOrganizerAbstractRequest *req);
-    bool addRequest(QOrganizerAbstractRequest *req);
+    bool startRequest(QOrganizerAbstractRequest *req);
     bool cancelRequest(QOrganizerAbstractRequest *req);
     bool waitForRequestFinished(QOrganizerAbstractRequest *req, int msecs = -1);
 
@@ -91,6 +91,9 @@ private:
     QMutex m_mutexMap;
 
     QMutex m_mutex;
+
+    volatile bool m_destroying;
+    QWaitCondition m_destroyWait;
 
     void workerDone(AsyncWorker *worker, QOrganizerAbstractRequest *req);
 

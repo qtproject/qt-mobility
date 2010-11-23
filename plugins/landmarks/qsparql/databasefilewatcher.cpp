@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,37 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect_p.h"
+#include <QDir>
+#include <QFile>
+#include <QDebug>
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativemediametadata_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+#include "databasefilewatcher_p.h"
 
-QML_DECLARE_TYPE(QSoundEffect)
-
-QT_BEGIN_NAMESPACE
-
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
+DatabaseFileWatcher::DatabaseFileWatcher(const QString &databaseWatcherPath, QObject *parent)
+    : QObject(parent),
+      m_watcher(0),
+      m_databaseWatcherPath(databaseWatcherPath)
 {
-    Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
+}
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-        qmlRegisterType<QDeclarativeMediaMetaData>();
+void DatabaseFileWatcher::setEnabled(bool enabled)
+{
+    if (!m_watcher) {
+        m_watcher = new QFileSystemWatcher(this);
+        connect(m_watcher, SIGNAL(fileChanged(QString)),
+           SLOT(databaseChanged(QString)));
     }
-
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
+    if (enabled) {
+        if (QFile::exists(m_databaseWatcherPath)) {
+            if (!m_watcher->files().contains(m_databaseWatcherPath))
+                    m_watcher->addPath(m_databaseWatcherPath);
+        }
+    } else {
+        m_watcher->removePath(m_databaseWatcherPath);
     }
-};
+}
 
-QT_END_NAMESPACE
-
-#include "multimedia.moc"
-
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
-
+void DatabaseFileWatcher::databaseChanged(const QString &)
+{
+     emit notifyChange();
+}
