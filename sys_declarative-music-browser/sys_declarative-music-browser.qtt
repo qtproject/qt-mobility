@@ -41,13 +41,31 @@
 
 //TESTED_COMPONENT=src/gallery
 
+function startTestApp()
+{
+    prompt('Start application \'declarative-music-browser\'
+    Verify test application started and closed without issue');
+}
+
+
 testcase = {
+
+    // prove that the test application starts before anything else is tested.
+    Run_Test_Application: function()
+    {
+        startTestApp();
+        if (!runAsManualTest()){
+            // ensure we have a widget to work with, dump its details
+            // TODO when run this test case 'automaticly' then enable this following code
+            //print('Focus widget is' + focusWidget());
+        }
+    },
 
     List_Albums: function()
     {
         prompt(twiki('*List Albums*
 
-    1 Start application *examples/declarative-music-browser*
+    1 Start application *declarative-music-browser*
     1 Click Albums icon
     1 Verify that the albums listed match what is seen via the native music/document browser
     1 Verify that albums have the expected cover thumbnail above the album title
@@ -63,7 +81,7 @@ testcase = {
     {
         prompt(twiki('*List Artists*
 
-    1 Start application *examples/declarative-music-browser*
+    1 Start application *declarative-music-browser*
     1 Click Artists icon
     1 Verify that the artists listed match what is seen via the native music/document browser
     1 Click on an artist in view
@@ -79,7 +97,7 @@ testcase = {
     {
         prompt(twiki('*List Genres*
 
-    1 Start application *examples/declarative-music-browser*
+    1 Start application *declarative-music-browser*
     1 Click Genres icon
     1 Verify that the genres listed match what is seen via the native music/document browser
     1 Click on an genre in view
@@ -95,7 +113,7 @@ testcase = {
     {
         prompt(twiki('*List Songs*
 
-    1 Start application *examples/declarative-music-browser*
+    1 Start application *declarative-music-browser*
     1 Click Songs icon
     1 Verify that the song listed match what is seen via the native music/document browser
     1 Verify that two of the listed songs have the correct song length mentioned on right
