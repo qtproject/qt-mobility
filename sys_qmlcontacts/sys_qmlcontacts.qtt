@@ -1,6 +1,12 @@
 
 //TESTED_COMPONENT=src/contacts
 
+// make it simple to change the name of test application later on
+function startTestApp()
+{
+    startApplication('qmlcontacts');
+}
+
 // create a re-usable contact set
 function exampleContactSet()
 {
@@ -121,6 +127,19 @@ function checkContact(contact)
 
 testcase = {
 
+        // prove that the test application starts before anything else is tested.
+        Run_Test_Application: function()
+        {
+            startTestApp();
+            if (!runAsManualTest()){
+                // ensure we have a widget to work with, dump its details
+                print('Focus widget is' + focusWidget());
+            }else{
+                prompt('Verify test application started and closed without issue');
+            }
+        },
+
+
         Check_Contact_List_data : {
             ContactSet : [ exampleContactSet() ]
         },
@@ -128,7 +147,7 @@ testcase = {
         // verify that overview of contact names is correct
         Check_Contact_List: function(contactSet)
         {
-            startApplication('qmlcontacts');
+            startTestApp();
             for (var index=0; index < contactSet.length; index++){
                 // note the contact list should be the focus widget
                 select(contactSet[index].firstName);
@@ -143,7 +162,7 @@ testcase = {
         // verify that when selecting a contact its summary is shown
         Expand_A_Contact: function(contactSet)
         {
-            startApplication('qmlcontacts');
+            startTestApp();
             for (var index = 0; index < 3; index++){
                 prompt("Verify that no details for " + contactSet[index].firstName  +' is seen');
                 select(contactSet[index].firstName);
@@ -160,7 +179,7 @@ testcase = {
         // verify that the details page for contacts can be seen
         Show_All_Contact_Detail : function(contactSet)
         {
-            startApplication('qmlcontacts');
+            startTestApp();
             for (var index = 0; index < 3; index++){
                 select(contactSet[index].firstName);
                 select('More..')
@@ -177,7 +196,7 @@ testcase = {
         // check that each contact has the details expected
         Check_Contact_Details: function(contactSet)
         {
-            startApplication('qmlcontacts');
+            startTestApp();
             for (var index=0; index < contactSet.length; index++){
                 checkContact(contactSet[index]);
             }
