@@ -64,6 +64,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QObject>
+#include <QMutex>
 
 #include <extendedcalendar.h>
 #include <extendedstorage.h>
@@ -107,7 +108,8 @@ public:
     MKCalEngineData()
         : QSharedData(),
         m_calendarBackendPtr(new mKCal::ExtendedCalendar(KDateTime::Spec::LocalZone())),
-        m_storagePtr(mKCal::ExtendedCalendar::defaultStorage(m_calendarBackendPtr))
+        m_storagePtr(mKCal::ExtendedCalendar::defaultStorage(m_calendarBackendPtr)),
+        m_operationMutex(QMutex::Recursive)
     {
         m_storagePtr->open();
         m_storagePtr->load();
@@ -120,9 +122,6 @@ public:
     {
     }
 
-    // map of organizeritem type to map of definition name to definitions:
-    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
-
     mKCal::ExtendedCalendar::Ptr m_calendarBackendPtr;
     mKCal::ExtendedStorage::Ptr m_storagePtr;
 
@@ -130,7 +129,8 @@ public:
     OrganizerAsynchManager *m_asynchProcess;
 
     QString m_managerUri;
-    QOrganizerItem m_converted;
+
+    mutable QMutex m_operationMutex;
 };
 
 class MKCalEngine : public QOrganizerManagerEngine, public mKCal::ExtendedStorageObserver
@@ -171,8 +171,6 @@ public:
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<int> supportedDataTypes() const;
-    QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QOrganizerAbstractRequest* req);
@@ -194,22 +192,16 @@ private:
     MKCalEngine(const QString& managerUri = QString());
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     KCalCore::Incidence::Ptr incidence(const QOrganizerItemId& itemId) const;
-    KCalCore::Incidence::Ptr detachedIncidenceFromItem(const QOrganizerItem& item) const;
-    bool internalSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
-    KCalCore::Incidence::Ptr softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
-    void convertQEventToKEvent(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
-    void convertQTodoToKTodo(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence, bool recurs);
-    void convertQJournalToKJournal(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertQNoteToKNote(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertCommonDetailsToIncidenceFields(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
-    void convertQRecurrenceToKRecurrence(
-            const QOrganizerItemRecurrence& qRecurrence,
-            const QDate& startDate,
-            KCalCore::Recurrence* kRecurrence);
-    KCalCore::RecurrenceRule* createKRecurrenceRule(
-            KCalCore::Recurrence* kRecurrence,
-            const QDate& startDate,
-            const QOrganizerRecurrenceRule& qRRule);
+    KCalCore::Incidence::Ptr createPersistentException(const QOrganizerItem& item) const;
+    bool softSaveItem(QOrganizerItemChangeSet* ics, QOrganizerItem* item, QOrganizerManager::Error* error);
+    bool saveStorage(QOrganizerItemChangeSet* ics, QOrganizerManager::Error* error);
+
+    void updateIncidenceFromItem(const QOrganizerItem& item, KCalCore::Incidence::Ptr incidence);
+    void updateIncidenceFromEvent(const QOrganizerItem& item, KCalCore::Event::Ptr event);
+    void updateIncidenceFromTodo(const QOrganizerItem& item, KCalCore::Todo::Ptr todo);
+    void updateIncidenceFromJournal(const QOrganizerItem& item, KCalCore::Journal::Ptr journal);
+    void convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence, const QDate& startDate, KCalCore::Recurrence* kRecurrence);
+    KCalCore::RecurrenceRule* createKRecurrenceRule(const QDate& startDate, const QOrganizerRecurrenceRule& qRRule);
 
     bool convertIncidenceToItem(KCalCore::Incidence::Ptr i, QOrganizerItem* item) const;
     void convertKEventToQEvent(KCalCore::Event::Ptr e, QOrganizerItem* item) const;
@@ -225,6 +217,8 @@ private:
     QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, IncludedOccurrences includedOccurrences = OnlyGeneratedOccurrences) const;
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool expand) const;
     bool itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incidence, QOrganizerItem generator, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const;
+    bool isIncidenceInInterval(KCalCore::Incidence::Ptr incidence, QDateTime startPeriod, QDateTime endPeriod) const;
+    int incidenceDuration(KCalCore::Incidence::Ptr incidence) const;
 
     MKCalEngineData* d;
 
