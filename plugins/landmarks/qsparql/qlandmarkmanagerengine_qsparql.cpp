@@ -97,10 +97,9 @@ Q_DECLARE_METATYPE(ERROR_MAP)
 
 QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &filename, QLandmarkManager::Error * error,
                                                            QString *errorString)
-        : m_dbFilename(filename),
+        : m_dbWatcherFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
-        m_latestLandmarkTimestamp(0),
-        m_latestCategoryTimestamp(0),
+        m_dbWatcher(NULL),
         m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
@@ -129,16 +128,28 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     qRegisterMetaType<QLandmarkExportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
-    if (m_dbFilename.isEmpty()) {
+    if (m_dbWatcherFilename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                            QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
         QFileInfo fi(settings.fileName());
         QDir dir = fi.dir();
         dir.mkpath(dir.path());
-        m_dbFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+        m_dbWatcherFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".txt");
     }
+
     if (filename == ":memory:")
         return;
+
+    QFileInfo fileInfo(m_dbWatcherFilename);
+    if (!fileInfo.exists()) {
+        QFile file;
+        file.setFileName(m_dbWatcherFilename);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+                 out << "This file is needed by the database changes watcher of the Landmarks API.";
+        }
+        file.close();
+    }
 
     m_databaseOperations.managerUri = managerUri();
 
@@ -163,6 +174,8 @@ QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
 {
     QThreadPool *threadPool = QThreadPool::globalInstance();
     threadPool->waitForDone();
+    if (m_dbWatcher !=0)
+        delete m_dbWatcher;
 }
 
 /* URI reporting */
@@ -175,7 +188,7 @@ QMap<QString, QString> QLandmarkManagerEngineQsparql::managerParameters() const
 {
     QMap<QString, QString> parameters;
 
-    parameters["filename"] = m_dbFilename;
+    parameters["filename"] = m_dbWatcherFilename;
 
     return parameters;
 }
@@ -382,11 +395,11 @@ bool QLandmarkManagerEngineQsparql::isFeatureSupported(QLandmarkManager::Manager
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::NotificationsFeature):
-        case (QLandmarkManager::ImportExportFeature):
-            return true;
-        default:
-            return false;
+    case (QLandmarkManager::NotificationsFeature):
+    case (QLandmarkManager::ImportExportFeature):
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -396,7 +409,6 @@ QStringList QLandmarkManagerEngineQsparql::landmarkAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::coreAttributes +
                              DatabaseOperations::coreGenericAttributes;
     commonKeys.sort();
@@ -411,7 +423,6 @@ QStringList QLandmarkManagerEngineQsparql::categoryAttributeKeys(QLandmarkManage
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
                              DatabaseOperations::coreGenericCategoryAttributes;
     commonKeys.clear();
@@ -424,7 +435,6 @@ QStringList QLandmarkManagerEngineQsparql::searchableLandmarkAttributeKeys(QLand
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString ="";
-    //TODO: optimize
     QStringList commonKeys = DatabaseOperations::supportedSearchableAttributes;
     commonKeys.sort();
     return commonKeys;
@@ -526,46 +536,73 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
 
 void QLandmarkManagerEngineQsparql::databaseChanged()
 {
+    emit dataChanged();
 }
 
 void QLandmarkManagerEngineQsparql::dataChanging() {
-       emit dataChanged();
+    emit dataChanged();
+    touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::landmarksAdding(QList<QLandmarkId> ids) {
    if (m_changeNotificationsEnabled)
        emit landmarksAdded(ids);
+   touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::landmarksChanging(QList<QLandmarkId> ids) {
     if (m_changeNotificationsEnabled)
        emit landmarksChanged(ids);
+    touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::landmarksRemoving(QList<QLandmarkId> ids) {
     if  (m_changeNotificationsEnabled)
         emit landmarksRemoved(ids);
+    touchWatcherFile();
 }
 
  void QLandmarkManagerEngineQsparql::categoriesAdding(QList<QLandmarkCategoryId> ids) {
     if (m_changeNotificationsEnabled)
         emit categoriesAdded(ids);
+    touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::categoriesChanging(QList<QLandmarkCategoryId> ids) {
      if (m_changeNotificationsEnabled)
         emit categoriesChanged(ids);
+     touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::categoriesRemoving(QList<QLandmarkCategoryId> ids) {
      if  (m_changeNotificationsEnabled)
          emit categoriesRemoved(ids);
+     touchWatcherFile();
 }
 
 void QLandmarkManagerEngineQsparql::setChangeNotificationsEnabled(bool enabled)
 {
+    if (!m_dbWatcher) {
+        m_dbWatcher = new DatabaseFileWatcher(m_dbWatcherFilename);
+        connect(m_dbWatcher, SIGNAL(notifyChange()),this,SLOT(databaseChanged()));
+    }
+    m_dbWatcher->setEnabled(enabled);
     m_changeNotificationsEnabled = enabled;
 }
+
+void QLandmarkManagerEngineQsparql::touchWatcherFile()
+{
+    if (m_changeNotificationsEnabled) {
+        // dbWatcher should not react to touches by its own manager
+        m_dbWatcher->setEnabled(false);
+        QFile file;
+        file.setFileName(m_dbWatcherFilename );
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        file.close();
+        m_dbWatcher->setEnabled(true);
+    }
+}
+
 
 void QLandmarkManagerEngineQsparql::connectNotify(const char *signal)
 {

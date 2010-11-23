@@ -1679,12 +1679,14 @@ void tst_QLandmarkManager::retrieveLandmark() {
     lm2.setName("LM2");
     QGeoAddress address;
     address.setStreet("LM2 street");
-    address.setDistrict("LM2 district");
     address.setCity("LM2 city");
-    address.setState("LM2 State");
     address.setCountry("LM2 Country");
-    address.setCountryCode("LM2CountryCode");
     address.setPostcode("LM2 post code");
+#if (!defined(Q_WS_MAEMO_6))
+    address.setDistrict("LM2 district");
+    address.setState("LM2 State");
+    address.setCountryCode("LM2CountryCode");
+#endif
     lm2.setAddress(address);
     QGeoCoordinate coordinate(10,20);
     lm2.setCoordinate(coordinate);
@@ -1705,10 +1707,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), false);
 
         id2 = lm2.landmarkId();
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implement all fields of landmark", Continue);
-#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QCOMPARE(m_manager->landmark(id2).landmarkId().isValid(), true);
@@ -1716,10 +1715,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         //ensure consecutive calls clears the error
         QCOMPARE(m_manager->landmark(id1), QLandmark());
         QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(m_manager->landmark(id2).name(), lm2.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(m_manager->landmark(id2), lm2);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "async") {
@@ -1786,10 +1782,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     if (type == "sync") {
         //check that we can retrieve a landmark a single catergory
         QLandmark lm3Retrieved = m_manager->landmark(id3);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(lm3Retrieved.name(), lm3.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(lm3Retrieved, lm3);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QList<QLandmarkCategoryId> lm3RetrievedCatIds;
@@ -1799,10 +1792,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
 
         //check that we can retrieve a landmark with multiple categories
         QLandmark lm4Retrieved = m_manager->landmark(id4);
-#ifdef Q_WS_MAEMO_6
         QCOMPARE(lm4Retrieved.name(), lm4.name());
-        QEXPECT_FAIL("", "TODO: Maemo6: need to implment all fields of landmark", Continue);
-#endif
         QCOMPARE(lm4Retrieved, lm4);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -1850,12 +1840,14 @@ void tst_QLandmarkManager::retrieveLandmark() {
     lmA.setName("LMA");
     address.clear();
     address.setStreet("LMA street");
-    address.setDistrict("LMA district");
     address.setCity("LMA city");
-    address.setState("LMA State");
     address.setCountry("LMA Country");
-    address.setCountryCode("LMACountryCode");
     address.setPostcode("LMA post code");
+#if (!defined(Q_WS_MAEMO_6))
+    address.setDistrict("LMA district");
+    address.setState("LMA State");
+    address.setCountryCode("LMACountryCode");
+#endif
     lmA.setAddress(address);
     coordinate.setLatitude(50);
     coordinate.setLongitude(24);
@@ -1870,12 +1862,14 @@ void tst_QLandmarkManager::retrieveLandmark() {
     lmB.setName("LMB");
     address.clear();
     address.setStreet("LMB street");
-    address.setDistrict("LMB district");
     address.setCity("LMB city");
-    address.setState("LMB State");
     address.setCountry("LMB Country");
-    address.setCountryCode("LMBCountryCode");
     address.setPostcode("LMB post code");
+#if (!defined(Q_WS_MAEMO_6))
+    address.setDistrict("LMB district");
+    address.setState("LMB State");
+    address.setCountryCode("LMBCountryCode");
+#endif
     lmB.setAddress(address);
     coordinate.setLatitude(-43);
     coordinate.setLongitude(-10);
@@ -2279,6 +2273,9 @@ void tst_QLandmarkManager::simpleSaveLandmark() {
 #ifdef SAVE_LANDMARK
 void tst_QLandmarkManager::saveLandmark() {
     QFETCH(QString, type);
+    QLandmarkManager* otherManager = new QLandmarkManager();
+    connect(otherManager, SIGNAL(dataChanged()),m_listener, SLOT(dataChanged()));
+
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
     QSignalSpy spyChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
     QSignalSpy spyRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
@@ -2286,6 +2283,8 @@ void tst_QLandmarkManager::saveLandmark() {
     QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
     QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     QSignalSpy spyDataChanged(m_manager, SIGNAL(dataChanged()));
+
+    QSignalSpy spyOtherDataChanged(otherManager, SIGNAL(dataChanged()));
 
     int originalLandmarkCount = m_manager->landmarks().count();
     QLandmark emptyLandmark;
@@ -2304,10 +2303,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+    QCOMPARE(spyOtherDataChanged.count(), 1);
 
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), emptyLandmark.landmarkId());
     spyAdd.clear();
-
+    spyOtherDataChanged.clear();
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -2324,11 +2324,13 @@ void tst_QLandmarkManager::saveLandmark() {
     QLandmark lm1;
     lm1.setName("LM1");
     address.setStreet("LM1 street");
-    address.setDistrict("LM1 district");
     address.setCity("LM1 city");
-    address.setState("LM1 State");
     address.setCountry("LM1 Country");
+#if (!defined(Q_WS_MAEMO_6))
+    address.setDistrict("LM1 district");
+    address.setState("LM1 State");
     address.setCountryCode("LM1CountryCode");
+#endif
     address.setPostcode("LM1 post code");
     lm1.setAddress(address);
     lm1.setCoordinate(coordinate);
@@ -2354,7 +2356,7 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyRemove.count(),0);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyCatAdd.count(), 1);
     QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
     QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(1), cat2.categoryId());
@@ -2368,6 +2370,7 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
+    QCOMPARE(spyOtherDataChanged.count(), 4);
     spyAdd.clear();
     spyCatAdd.clear();
 
@@ -2375,12 +2378,14 @@ void tst_QLandmarkManager::saveLandmark() {
     QLandmark lm1Changed = lm1;
     lm1Changed.setName("LM1Changed");
     address.setStreet("LM1Changed street");
-    address.setDistrict("LM1Changed district");
     address.setCity("LM1Changed city");
-    address.setState("LM1Changed State");
     address.setCountry("LM1Changed Country");
-    address.setCountryCode("LM1Changed CountryCode");
     address.setPostcode("LM1Changed Post code");
+#if (!defined(Q_WS_MAEMO_6))
+    address.setDistrict("LM1Changed district");
+    address.setState("LM1Changed State");
+    address.setCountryCode("LM1Changed CountryCode");
+#endif
     lm1Changed.setAddress(address);
     coordinate.setLatitude(11);
     coordinate.setLongitude(21);
@@ -2517,7 +2522,7 @@ void tst_QLandmarkManager::saveLandmark() {
 
     QTest::qWait(10);
     if (type == "sync") {
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         QCOMPARE(spyAdd.count(), 2);
         QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lmOutOfRange.landmarkId()));
         QVERIFY(spyAdd.at(1).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
@@ -2915,7 +2920,7 @@ void tst_QLandmarkManager::removeCategory() {
 
     QVERIFY(doSingleCategoryRemove(type, cat2.categoryId(),QLandmarkManager::NoError));
     QTest::qWait(10);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyLmAdd.count(), 2);
 #else
     QCOMPARE(spyLmAdd.count(), 1);
@@ -2925,7 +2930,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 1);
     QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
     QCOMPARE(spyLmRemove.count(), 0);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -2967,7 +2972,7 @@ void tst_QLandmarkManager::removeCategory() {
     //Disable custom attributes cat6.setCustomAttribute("six", 6);
     QVERIFY(m_manager->saveCategory(&cat6));
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","testing");
     db.setDatabaseName("test.db");
@@ -2989,7 +2994,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(cat6.categoryId()),cat6);
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat4.categoryId().localId()));
     QVERIFY(query.next());
     query.exec(QString("SELECT * FROM category_attribute WHERE categoryId=%1").arg(cat5.categoryId().localId()));
@@ -3004,7 +3009,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3063,7 +3068,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3095,7 +3100,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyCatAdd.count(), 2);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3195,18 +3200,21 @@ void tst_QLandmarkManager::removeLandmark()
 
     QLandmark lm2;
     lm2.setName("LM2");
+    QString lm2PhoneNumber("Identical phoneNumber");
+    lm2.setPhoneNumber(lm2PhoneNumber);
     QVERIFY(m_manager->saveLandmark(&lm2));
 
     QLandmark lm3;
     lm3.setName("LM3");
+    QString lm3PhoneNumber("Identical phoneNumber");
+    lm3.setPhoneNumber(lm3PhoneNumber);
     QVERIFY(m_manager->saveLandmark(&lm3));
-
     QLandmark lm4;
     lm4.setName("LM4");
     QVERIFY(m_manager->saveLandmark(&lm4));
 
     QTest::qWait(10);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyLmAdd.count(), 4);
 #else
     QCOMPARE(spyLmAdd.count(), 1);
@@ -3279,7 +3287,7 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(errorMap.value(3), QLandmarkManager::LandmarkDoesNotExistError);
 
         QTest::qWait(10);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         QCOMPARE(spyLmAdd.count(), 3);
         QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         QCOMPARE(spyLmAdd.at(1).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
@@ -3744,7 +3752,7 @@ void tst_QLandmarkManager::categories()
     QCOMPARE(cats.count(), 2);
 #ifdef Q_WS_MAEMO_6
     QCOMPARE(cats.at(0).name(), QString("Sightseeing"));
-    QCOMPARE(cats.at(1).name(), QString(""));
+    QCOMPARE(cats.at(1).name(), QString("Shopping"));
 #else
     QCOMPARE(cats.at(0).name(), QString("Sports"));
     QCOMPARE(cats.at(1).name(), QString("Sightseeing"));
@@ -3950,7 +3958,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     nameFilter.setName("Adel");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     //on symbian MatchExactly has the same semantics and MatchFixedString
     QCOMPARE(lms.count(), 2);
     QCOMPARE(lms.at(0), lm2);
@@ -3991,7 +3999,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(lms.count(), 11); //backend specifc behaviour of returning all results if
                                //empty name is used
 #else
@@ -6524,7 +6532,7 @@ void tst_QLandmarkManager::importLmx() {
     }
 
     QTest::qWait(10);
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN))
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 0);
@@ -6544,10 +6552,17 @@ void tst_QLandmarkManager::importLmx() {
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 1);
+#if defined(Q_WS_MAEMO_6)
+    if (type == "async" || type == "sync" ||type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory" )
+        QCOMPARE(spyCatAdd.count(), 2);
+    else
+        QCOMPARE(spyCatAdd.count(), 1);
+#else
     if (type == "async")
         QCOMPARE(spyCatAdd.count(), 2);
     else
         QCOMPARE(spyCatAdd.count(), 1);
+#endif
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
@@ -6761,12 +6776,14 @@ void tst_QLandmarkManager::exportLmx() {
     QGeoCoordinate lm1Coordinate(1,2,3);
     QGeoAddress lm1Address;
     lm1Address.setCountry("lm1 country");
-    lm1Address.setState("lm1 state");
-    lm1Address.setCounty("lm1 county");
     lm1Address.setCity("lm1 city");
-    lm1Address.setDistrict("lm1 district");
     lm1Address.setStreet("lm1 street");
     lm1Address.setPostcode("lm1 postCode");
+#ifndef Q_WS_MAEMO_6
+    lm1Address.setState("lm1 state");
+    lm1Address.setCounty("lm1 county");
+    lm1Address.setDistrict("lm1 district");
+#endif
     QLandmark lm1;
     lm1.setName(lm1Name);
     lm1.setDescription(lm1Description);
@@ -6784,12 +6801,14 @@ void tst_QLandmarkManager::exportLmx() {
     QGeoCoordinate lm2Coordinate(4,5,6);
     QGeoAddress lm2Address;
     lm2Address.setCountry("lm2 country");
-    lm2Address.setState("lm2 state");
-    lm2Address.setCounty("lm2 county");
     lm2Address.setCity("lm2 city");
-    lm2Address.setDistrict("lm2 district");
     lm2Address.setStreet("lm2 street");
     lm2Address.setPostcode("lm2 postCode");
+#ifndef Q_WS_MAEMO_6
+    lm2Address.setState("lm2 state");
+    lm2Address.setCounty("lm2 county");
+    lm2Address.setDistrict("lm2 district");
+#endif
     QLandmark lm2;
     lm2.setName(lm2Name);
     lm2.setDescription(lm2Description);
@@ -6807,12 +6826,14 @@ void tst_QLandmarkManager::exportLmx() {
     QGeoCoordinate lm3Coordinate(4,5,6);
     QGeoAddress lm3Address;
     lm3Address.setCountry("lm3 country");
-    lm3Address.setState("lm3 state");
-    lm3Address.setCounty("lm3 county");
     lm3Address.setCity("lm3 city");
-    lm3Address.setDistrict("lm3 district");
     lm3Address.setStreet("lm3 street");
     lm3Address.setPostcode("lm3 postCode");
+#ifndef Q_WS_MAEMO_6
+    lm3Address.setState("lm3 state");
+    lm3Address.setCounty("lm3 county");
+    lm3Address.setDistrict("lm3 district");
+#endif
     QLandmark lm3;
     lm3.setName(lm3Name);
     lm3.setDescription(lm3Description);
@@ -7029,13 +7050,14 @@ void tst_QLandmarkManager::exportLmx() {
     QCOMPARE(lm1New.phoneNumber(), lm1PhoneNumber);
     QCOMPARE(lm1New.coordinate(),lm1Coordinate);
     QCOMPARE(lm1New.address().country(), lm1Address.country());
-    QCOMPARE(lm1New.address().state(),lm1Address.state());
-    QCOMPARE(lm1New.address().county(), lm1Address.county());
     QCOMPARE(lm1New.address().city(), lm1Address.city());
-    QCOMPARE(lm1New.address().district(), lm1Address.district());
     QCOMPARE(lm1New.address().street(), lm1Address.street());
     QCOMPARE(lm1New.address().postcode(), lm1Address.postcode());
-
+#if (!defined(Q_WS_MAEMO_6))
+    QCOMPARE(lm1New.address().state(),lm1Address.state());
+    QCOMPARE(lm1New.address().county(), lm1Address.county());
+    QCOMPARE(lm1New.address().district(), lm1Address.district());
+#endif
     if (includeCategoryData) {
         QCOMPARE(lm1.categoryIds().count(),3);
         QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
@@ -7043,7 +7065,7 @@ void tst_QLandmarkManager::exportLmx() {
         QLandmarkCategory cat1New = cats.at(0);
         QLandmarkCategory cat2New = cats.at(1);
         QLandmarkCategory cat3New = cats.at(2);
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
         //REMOVE WORKAROUND
         QCOMPARE(cat1New.name(), cat1.name());
         QCOMPARE(cat2New.name(), cat2.name());
@@ -7469,7 +7491,7 @@ void tst_QLandmarkManager::notificationCheck()
     QCOMPARE(spyCatAdd.count(),0);
     QCOMPARE(spyLmAdd.count(),1);
     delete m_manager;
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     m_manager = new QLandmarkManager();
 #else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", parameters);
