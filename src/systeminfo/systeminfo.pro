@@ -34,6 +34,7 @@ win32:!simulator {
     }
     SOURCES += qsysteminfo_win.cpp 
     HEADERS += qsysteminfo_win_p.h 
+#QT+= gui
 
     win32-msvc*: {
         SOURCES += windows/qwmihelper_win.cpp

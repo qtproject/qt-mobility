@@ -305,67 +305,67 @@ int QSystemBatteryInfo::maxBars() const
 
 void QSystemBatteryInfo::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            batteryLevelChanged(int))))) {
-        connect(d,SIGNAL(batteryLevelChanged(int)),
-                this,SIGNAL(batteryLevelChanged(int)));
-    }
+//    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+//            batteryLevelChanged(int))))) {
+//        connect(d,SIGNAL(batteryLevelChanged(int)),
+//                this,SIGNAL(batteryLevelChanged(int)),Qt::UniqueConnection);
+//    }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
         connect(d,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
-                this,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
+                this,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
         connect(d,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
-                this,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
+                this,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
         connect(d,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
-                this,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
+                this,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             nominalCapacityChanged(int))))) {
         connect(d,SIGNAL(nominalCapacityChanged(int)),
-                this,SIGNAL(nominalCapacityChanged(int)));
+                this,SIGNAL(nominalCapacityChanged(int)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingCapacityPercentChanged(int))))) {
         connect(d,SIGNAL(remainingCapacityPercentChanged(int)),
-                this,SIGNAL(remainingCapacityPercentChanged(int)));
+                this,SIGNAL(remainingCapacityPercentChanged(int)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingCapacityChanged(int))))) {
         connect(d,SIGNAL(remainingCapacityChanged(int)),
-                this,SIGNAL(remainingCapacityChanged(int)));
+                this,SIGNAL(remainingCapacityChanged(int)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             currentFlowChanged(int))))) {
         connect(d,SIGNAL(currentFlowChanged(int)),
-                this,SIGNAL(currentFlowChanged(int)));
+                this,SIGNAL(currentFlowChanged(int)),Qt::UniqueConnection);
     }
 
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingCapacityBarsChanged(int))))) {
         connect(d,SIGNAL(remainingCapacityBarsChanged(int)),
-                this,SIGNAL(remainingCapacityBarsChanged(int)));
+                this,SIGNAL(remainingCapacityBarsChanged(int)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
         connect(d,SIGNAL(remainingChargingTimeChanged(int)),
-                this,SIGNAL(remainingChargingTimeChanged(int)));
+                this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
     }
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             voltageChanged(int))))) {
         connect(d,SIGNAL(voltageChanged(int)),
-                this,SIGNAL(voltageChanged(int)));
+                this,SIGNAL(voltageChanged(int)),Qt::UniqueConnection);
     }
 }
 

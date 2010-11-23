@@ -340,34 +340,39 @@ public:
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
 
-    qint32 nominalCapacity() const;
-    qint32 remainingCapacityPercent() const;
-    qint32 remainingCapacity() const;
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
 
-    qint32 voltage() const;
-    qint32 remainingChargingTime() const;
-    qint32 currentFlow() const;
-    qint32 remainingCapacityBars() const;
-    qint32 maxBars() const;
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
-    qint32 startCurrentMeasurement(qint32 rate);
+    int startCurrentMeasurement(int rate);
+
+    void getBatteryStatus();
+    static QSystemBatteryInfoPrivate *instance() {return batself;}
+
 
 Q_SIGNALS:
-    void batteryLevelChanged(qint32 level);
+//    void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
-
     void chargingStateChanged(QSystemBatteryInfo::ChargingState);
-    void nominalCapacityChanged(qint32);
-    void remainingCapacityPercentChanged(qint32);
-    void remainingCapacitymAhChanged(qint32);
-    void batteryCurrentFlowChanged(qint32);
-    void voltageChanged(qint32);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void currentFlowChanged(qint32);
-    void cumulativeCurrentFlowChanged(qint32);
-    void remainingCapacityBarsChanged(qint32);
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+
+    void currentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+    void voltageChanged(int);
+
 
 protected:
     void connectNotify(const char *signal);
@@ -388,8 +393,27 @@ private:
     int remainingEnergy;
     int batteryLevel() const ;
 
-    void getBatteryStatus();
+    void setConnection();
+    static QSystemBatteryInfoPrivate *batself;
+#if defined(Q_OS_WINCE)
+    QPowerNotificationThread *powerNotificationThread;
+#endif
+
+public slots:
+    void notificationArrived();
+
 };
+
+
+//class QHiddenWindow : public QWidget
+//{
+//    Q_OBJECT
+//public:
+//    QHiddenWindow(QWidget *parent = 0);
+// //   ~QHiddenWindow(){};
+//};
+
+// Q_DECLARE_METATYPE(QHiddenWindow);
 
 QTM_END_NAMESPACE
 

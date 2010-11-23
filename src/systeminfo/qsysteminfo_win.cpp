@@ -1482,7 +1482,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     wHelper =  WMIHelper::instance();
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_VolumeChangeEvent");
-    wHelper->setupNotfication("root/cimv2","",QStringList());
+    QString aString = "SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE (TargetInstance ISA 'Win32_LogicalDisk') AND (TargetInstance.DriveType = 5 OR TargetInstance.DriveType = 2)";
+
+    wHelper->setupNotfication("root/cimv2",aString,QStringList());
 
     connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
 #endif
@@ -1630,7 +1632,7 @@ QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *par
     : parent(parent),
     done(false)
 {
-    wakeUpEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    wakeUpEvent = CreateEvent(NULL, FA      LSE, FALSE, NULL);
 }
 
 QPowerNotificationThread::~QPowerNotificationThread() {
@@ -1646,7 +1648,8 @@ QPowerNotificationThread::~QPowerNotificationThread() {
     CloseHandle(wakeUpEvent);
 }
 
-void QPowerNotificationThread::run() {
+void QPowerNotificationThread::run()
+{
 
     const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO)
         + MAX_PATH;
@@ -1663,9 +1666,7 @@ void QPowerNotificationThread::run() {
     if (messageQueue == NULL)
         return;
 
-    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION
-            | PBT_POWERINFOCHANGE);
-
+    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION|PBT_POWERINFOCHANGE);
     if (messageQueue == NULL)
         return;
 
@@ -1696,10 +1697,10 @@ void QPowerNotificationThread::run() {
             }
 
             POWER_BROADCAST *broadcast = (POWER_BROADCAST*) (buffer);
-
             if (broadcast->Message == PBT_POWERINFOCHANGE) {
                 POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;
-                parent->batteryLevel();
+                parent->notificationArrived();
+                qDebug() << "CHANGED!";
             }
 
             parent->currentPowerState();
@@ -1723,17 +1724,28 @@ void QPowerNotificationThread::run() {
 #endif
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
+QSystemBatteryInfoPrivate *QSystemBatteryInfoPrivate::batself = 0;
 
 #if !defined(Q_OS_WINCE)
 bool qax_winEventFilter(void *message)
 {
     MSG *pMsg = (MSG*)message;
     if( pMsg->message == WM_POWERBROADCAST) {
+
+        qDebug() << Q_FUNC_INFO;
+        POWERBROADCAST_SETTING* pps = (POWERBROADCAST_SETTING*) pMsg->lParam;
+        if ( sizeof(int) == pps->DataLength &&
+                pps->PowerSetting == GUID_BATTERY_PERCENTAGE_REMAINING ) {
+            int nPercentLeft = *(int*)(DWORD_PTR) pps->Data;
+
+            qDebug() <<Q_FUNC_INFO << nPercentLeft;
+        }
         switch (pMsg->wParam) {
         case PBT_APMPOWERSTATUSCHANGE:
-            QSystemDeviceInfoPrivate::instance()->batteryLevel();
-            QSystemDeviceInfoPrivate::instance()->currentPowerState();
-            break;
+        {
+//            QSystemDeviceInfoPrivate::instance()->batteryLevel();
+//            QSystemDeviceInfoPrivate::instance()->currentPowerState();
+        }
             break;
         default:
             break;
@@ -1751,7 +1763,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
 #if !defined(Q_OS_WINCE)
-    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+//    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
 #else
     powerNotificationThread = new QPowerNotificationThread(this);
     powerNotificationThread->start();
@@ -2180,7 +2192,11 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 : QObject(parent)
 {
-  getBatteryStatus();
+    if(!batself)
+        batself = this;
+    setConnection();
+    getBatteryStatus();
+
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -2248,7 +2264,76 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {
+   if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
 
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            nominalCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityPercentChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityBarsChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingChargingTimeChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            voltageChanged(int))))) {
+    }
+
+}
+
+void QSystemBatteryInfoPrivate::setConnection()
+{
+#if !defined(Q_OS_WINCE)
+    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+#else
+    powerNotificationThread = new QPowerNotificationThread(this);
+    powerNotificationThread->start();
+#endif
+
+    QTimer *timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),this,SLOT(notificationArrived()));
+    timer->start(1000);
+
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
+//    WMIHelper *wHelper;
+//    wHelper =  WMIHelper::instance();
+//    wHelper->setWmiNamespace("root/cimv2");
+//    wHelper->setClassName("Win32_PowerManagementEvent");
+//    QString aString = "SELECT * FROM Win32_PowerManagementEvent";
+//    wHelper->setupNotfication("root/cimv2",aString,QStringList());
+
+//    connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
+#endif
+#endif
+}
+
+void QSystemBatteryInfoPrivate::notificationArrived()
+{
+    getBatteryStatus();
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
@@ -2268,51 +2353,94 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit(
 
 void QSystemBatteryInfoPrivate::getBatteryStatus()
 {
+    int cLevel = 0;
+    int cEnergy = 0;
+    int cVoltage = 0;
+    int cTime = 0;
+    int rEnergy = 0;
+
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
+    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
+    QSystemBatteryInfo::BatteryStatus batStatus = QSystemBatteryInfo::BatteryUnknown;
+
     NTSTATUS powerStatus;
     SYSTEM_BATTERY_STATE systemBatteryState;
     powerStatus = CallNtPowerInformation(SystemBatteryState,NULL,0,&systemBatteryState,sizeof(systemBatteryState));
 
     if(systemBatteryState.Charging) {
-        curChargeState = QSystemBatteryInfo::Charging;
+        cState = QSystemBatteryInfo::Charging;
     } else {
-        curChargeState = QSystemBatteryInfo::NotCharging;
+        cState = QSystemBatteryInfo::NotCharging;
     }
+
+    if(cState != curChargeState ) {
+        curChargeState = cState;
+        emit chargingStateChanged(curChargeState);
+    }
+
 
     capacity = systemBatteryState.MaxCapacity;
-    remainingEnergy = systemBatteryState.RemainingCapacity;
-    dischargeRate = systemBatteryState.Rate;
 
-    if(systemBatteryState.AcOnLine) {
-       curChargeType = QSystemBatteryInfo::WallCharger;
-    } else {
-        curChargeType = QSystemBatteryInfo::NoCharger;
+    rEnergy = systemBatteryState.RemainingCapacity;
+    if(rEnergy != remainingEnergy) {
+        remainingEnergy = rEnergy;
+        emit remainingCapacityChanged(remainingEnergy);
     }
 
-    timeToFull = systemBatteryState.EstimatedTime;
+    cEnergy = systemBatteryState.Rate;
+    if (cEnergy != dischargeRate) {
+        dischargeRate = cEnergy;
+        emit currentFlowChanged(dischargeRate);
+    }
+
+    if (systemBatteryState.AcOnLine) {
+        cType = QSystemBatteryInfo::WallCharger;
+    } else {
+        cType = QSystemBatteryInfo::NoCharger;
+    }
+    if (cType != curChargeType) {
+        curChargeType = cType;
+        emit chargerTypeChanged(curChargeType);
+    }
+
+    cTime = systemBatteryState.EstimatedTime;
+    if(cTime != timeToFull) {
+        timeToFull = cTime;
+        emit remainingChargingTimeChanged(timeToFull);
+    }
 
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        currentBatLevelPercent = status.BatteryLifePercent;
 
+        cLevel = status.BatteryLifePercent;
+        if(cLevel != currentBatLevelPercent) {
+            currentBatLevelPercent = cLevel;
+            emit remainingCapacityPercentChanged(currentBatLevelPercent);
+        }
         switch(status.BatteryFlag) {
         case (1):
-            currentBatStatus = QSystemBatteryInfo::BatteryOk;
+            batStatus = QSystemBatteryInfo::BatteryOk;
             break;
         case (2):
-            currentBatStatus = QSystemBatteryInfo::BatteryLow;
+            batStatus = QSystemBatteryInfo::BatteryLow;
             break;
         case (3):
-            currentBatStatus = QSystemBatteryInfo::BatteryVeryLow;
+            batStatus = QSystemBatteryInfo::BatteryVeryLow;
             break;
         case (4):
-            currentBatStatus = QSystemBatteryInfo::BatteryCritical;
+            batStatus = QSystemBatteryInfo::BatteryCritical;
             break;
         case (128):
         case (255):
-            currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
+            batStatus = QSystemBatteryInfo::BatteryUnknown;
             break;
         }
     }
+    if(batStatus != currentBatStatus) {
+        currentBatStatus = batStatus;
+        emit batteryStatusChanged(currentBatStatus);
+    }
+
 
 #define HASBATTERY 0x1
 #define ONBATTERY  0x2
@@ -2367,12 +2495,11 @@ void QSystemBatteryInfoPrivate::getBatteryStatus()
                                                 if (batteryStatus.PowerState & BATTERY_POWER_ON_LINE) {
                                                     dwResult &= ~ONBATTERY;
                                                 }
-
-//                                                qDebug() << "Voltage" << batteryStatus.Voltage
-//                                                         <<"Capacity" << batteryStatus.Capacity
-//                                                         <<"Rate" << batteryStatus.Rate;//mW
-                                                currentVoltage = batteryStatus.Voltage;
-
+                                                cVoltage = batteryStatus.Voltage;
+                                                if(cVoltage != currentVoltage) {
+                                                    currentVoltage= cVoltage;
+                                                    emit voltageChanged(currentVoltage);
+                                                }
                                             }
                                         }
                                     }
@@ -2390,75 +2517,8 @@ void QSystemBatteryInfoPrivate::getBatteryStatus()
         }
         SetupDiDestroyDeviceInfoList(hdevInfo);
     }
-
-    //  Final cleanup:  If no battery is found, then presume that
-    //  AC power is being used.
-
     if (!(dwResult & HASBATTERY))
         dwResult &= ~ONBATTERY;
-
-
-    //battery status
-    //    switch(v.toUInt()) {
-    //    case(3):
-    //        currentBatStatus = QSystemBatteryInfo::BatteryFull;
-    //        break;
-    //    case(4):
-//        currentBatStatus = QSystemBatteryInfo::BatteryLow;
-//        break;
-//    case(5):
-//        currentBatStatus = QSystemBatteryInfo::BatteryCritical;
-//        break;
-//    case(7):
-//        currentBatStatus = QSystemBatteryInfo::BatteryOk;
-//        break;
-//    case(8):
-//        currentBatStatus = QSystemBatteryInfo::BatteryLow;
-//        break;
-//    case(9):
-//        currentBatStatus = QSystemBatteryInfo::BatteryCritical;
-//        break;
-//    default:
-//        currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
-//        break;
-//    };
-
-////    wHelper->setClassProperty(QStringList() << "DesignVoltage");
-////    v = wHelper->getWMIData();
-////    currentVoltage = v.toUInt();
-
-
-//    wHelper->setClassProperty(QStringList() << "EstimatedChargeRemaining");//%
-//    v = wHelper->getWMIData();
-//    currentBatLevelPercent = v.toUInt();
-
-//    wHelper->setClassProperty(QStringList() << "FullChargeCapacity");
-//    v = wHelper->getWMIData();
-//    capacity = v.toUInt();
-//qDebug() << "Capacity" << capacity;
-
-//    wHelper->setClassProperty(QStringList() << "TimeToFullCharge");
-//    v = wHelper->getWMIData();
-//    timeToFull = v.toUInt();
-
-
-
-//    wHelper->setClassName("Win32_VoltageProbe");
-
-//    wHelper->setClassProperty(QStringList() << "CurrentReading");
-//    v = wHelper->getWMIData();
-//    currentVoltage = v.toUInt();
-//qDebug() << "voltage" << currentVoltage;
-
-//    wHelper->setClassName("Win32_CurrentProbe");
-
-//    wHelper->setClassProperty(QStringList() << "CurrentReading");
-//    v = wHelper->getWMIData();
-
-
-//    delete wHelper;
-
-//#endif
 }
 
 

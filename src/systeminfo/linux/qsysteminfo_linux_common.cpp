@@ -1651,7 +1651,8 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
 }
 
 
-QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -3060,6 +3061,46 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoLinuxCommonPrivate::batteryS
 
 void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            nominalCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityPercentChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityBarsChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingChargingTimeChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            voltageChanged(int))))) {
+    }
 
 }
 

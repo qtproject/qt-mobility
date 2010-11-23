@@ -248,7 +248,7 @@ void WMIHelper::setConditional(const QString &conditional)
    m_conditional = conditional;
 }
 
-void WMIHelper::setupNotfication(const QString &wmiNamespace,const QString &/*className*/, const QStringList &/*classProperties*/)
+void WMIHelper::setupNotfication(const QString &wmiNamespace,const QString &className, const QStringList &/*classProperties*/)
 {
     initializeWMI(wmiNamespace);
     HRESULT hres;
@@ -286,7 +286,7 @@ void WMIHelper::setupNotfication(const QString &wmiNamespace,const QString &/*cl
 
      pStubUnk->QueryInterface(iidWbemObjectSink,(void **) &pStubSink);
 
-     QString aString = "SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE (TargetInstance ISA 'Win32_LogicalDisk') AND (TargetInstance.DriveType = 5 OR TargetInstance.DriveType = 2)";
+     QString aString = className;//"SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE (TargetInstance ISA 'Win32_LogicalDisk') AND (TargetInstance.DriveType = 5 OR TargetInstance.DriveType = 2)";
 
      BSTR bstrQuery;
      bstrQuery = ::SysAllocString(aString.utf16());
