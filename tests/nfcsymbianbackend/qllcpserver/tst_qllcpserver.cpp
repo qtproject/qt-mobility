@@ -60,6 +60,8 @@ private Q_SLOTS:
     void cleanupTestCase();
     void newConnection();
     void newConnection_data();
+    void newConnection_wait();
+    void newConnection_wait_data();
 };
 
 tst_QLlcpServer::tst_QLlcpServer()
@@ -143,6 +145,80 @@ void tst_QLlcpServer::newConnection()
     server.close();
 }
 
+void tst_QLlcpServer::newConnection_wait()
+    {
+    QFETCH(QString, uri);
+    QFETCH(QString, hint);
+
+    QLlcpServer server;
+    bool ret = server.listen(uri);
+    QVERIFY(ret);
+
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
+
+    QNfcTestUtil::ShowMessage(hint);
+
+    QTRY_VERIFY(!connectionSpy.isEmpty());
+
+    QLlcpSocket *socket = server.nextPendingConnection();
+    QVERIFY(socket != NULL);
+
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    //Get data from client
+    const int Timeout = 10 * 1000;
+
+    quint16 blockSize = 0;
+    QDataStream in(socket);
+    in.setVersion(QDataStream::Qt_4_6);
+    while (socket->bytesAvailable() < (int)sizeof(quint16)) {
+        bool ret = socket->waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+
+    in >> blockSize;
+
+    while (socket ->bytesAvailable() < blockSize){
+        bool ret = socket->waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+    QString echo;
+    in >> echo;
+    //Send data to client
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)echo.length();
+    out << echo;
+
+    socket->write(block);
+    ret = socket->waitForBytesWritten(Timeout);
+    QVERIFY(ret);
+
+    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+
+    while (written < echo.length())
+        {
+        QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+        bool ret = socket->waitForBytesWritten(Timeout);
+        QVERIFY(ret);
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        }
+    //Now data has been sent,check the if existing error
+    QVERIFY(errorSpy.isEmpty());
+
+    server.close();
+    }
+
+void tst_QLlcpServer::newConnection_wait_data()
+    {
+    QTest::addColumn<QString>("uri");
+    QTest::addColumn<QString>("hint");
+    QTest::newRow("0") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
+    }
 QTEST_MAIN(tst_QLlcpServer);
 
 #include "tst_qllcpserver.moc"

@@ -65,6 +65,8 @@ private Q_SLOTS:
     void cleanupTestCase();
     void echo();
     void echo_data();
+    void echo_wait();
+    void echo_wait_data();
 };
 
 tst_qllcpsockettype2::tst_qllcpsockettype2()
@@ -159,6 +161,94 @@ void tst_qllcpsockettype2::echo_data()
             << "Please touch a NFC device with llcp client enabled: uri = "
             << "echo";
 
+}
+
+void tst_qllcpsockettype2::echo_wait()
+    {
+    QFETCH(QString, uri);
+    QFETCH(QString, hint);
+    QFETCH(QString, echo);
+    QNearFieldManager nfcManager;
+    QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
+    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
+
+    QNfcTestUtil::ShowMessage(hint);
+    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
+
+    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    QVERIFY(target!=NULL);
+    QVERIFY(target->accessMethods() & QNearFieldTarget::LlcpAccess);
+
+    QLlcpSocket socket(this);
+
+    const int Timeout = 10 * 1000;
+
+    socket.connectToService(target, uri);
+
+    bool ret = socket.waitForConnected(Timeout);
+    QVERIFY(ret);
+
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+
+    //Send data to server
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)echo.length();
+    out << echo;
+
+    socket.write(block);
+
+    ret = socket.waitForBytesWritten(Timeout);
+    QVERIFY(ret);
+
+    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+
+    while (written < echo.length())
+        {
+        QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+        ret = socket.waitForBytesWritten(Timeout);
+        QVERIFY(ret);
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        }
+
+    //Get the echoed data from server
+    quint16 blockSize = 0;
+    QDataStream in(&socket);
+    in.setVersion(QDataStream::Qt_4_6);
+    while (socket.bytesAvailable() < (int)sizeof(quint16)){
+        ret = socket.waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+    in >> blockSize;
+
+    while (socket.bytesAvailable() < blockSize){
+        ret = socket.waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+    QString echoed;
+    in >> echoed;
+
+    //test the echoed string is same as the original string
+    QVERIFY(echo == echoed);
+
+    //Now data has been sent,check the if existing error
+    QVERIFY(errorSpy.isEmpty());
+
+    }
+
+void tst_qllcpsockettype2::echo_wait_data()
+{
+    QTest::addColumn<QString>("uri");
+    QTest::addColumn<QString>("hint");
+    QTest::addColumn<QString>("echo");
+    QTest::newRow("0") << "uri"
+            << "Please touch a NFC device with llcp client enabled: uri = "
+            << "echo";
 }
 
 QTEST_MAIN(tst_qllcpsockettype2);
