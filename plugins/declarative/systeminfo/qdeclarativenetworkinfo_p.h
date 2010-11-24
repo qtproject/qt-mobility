@@ -54,6 +54,7 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(QString macAddress READ macAddress CONSTANT)
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode mode READ mode WRITE useMode)
+    Q_PROPERTY(QList<QSystemNetworkInfo::NetworkMode> availableModes READ availableModes)
 
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);

@@ -274,3 +274,33 @@ If Sensors.conf specifies an identifier that is not registered then the system w
 the first registered identifier as the default.
 
 */
+
+/*!
+\page qml-sensors.html
+\title Sensors QML Plugin
+\brief A QML plugin for the Mobility Project Sensors API.
+
+\section1 Overview
+
+The identifying string for this component is \i {"QtMobility.sensors"}.
+Use this in the QML \i {import} statement.
+
+The Sensors QML Plugin registers the C++ Sensors classes directly to the QML environment.
+
+See \l Sensors for more information about the Sensors API.
+
+\section1 Sensor Elements
+
+These elements represent specific types of sensors.
+
+\annotatedlist qml-sensors_type
+
+\section1 Reading Elements
+
+The data from a sensor comes through a reading class.
+
+\annotatedlist qml-sensors_reading
+
+*/
+
+

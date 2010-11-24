@@ -137,7 +137,7 @@ void LandmarkAddDialog::accept()
     lm.setUrl(QUrl(urlLineEdit->text()));
     lm.setPhoneNumber(phoneLineEdit->text());
     lm.setRadius(radiusLineEdit->text().toDouble());
-
+    lm.setCategoryIds(QList<QLandmarkCategoryId>());
     for (int i=0; i < categoryList->count(); ++i) {
         if (categoryList->item(i)->checkState() == Qt::Checked) {
             lm.addCategoryId(categoryList->item(i)->data(Qt::UserRole).value<QLandmarkCategoryId>());

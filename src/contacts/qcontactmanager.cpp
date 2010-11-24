@@ -279,7 +279,7 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
     d(new QContactManagerData)
 {
     createEngine(managerName, parameters); 
-} 
+}
 
 void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters) 
 { 
@@ -291,6 +291,8 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+    QContactManagerData::m_aliveEngines.insert(this);
 }
 
 /*!
@@ -314,6 +316,7 @@ QContactManager::QContactManager(const QString& managerName, int implementationV
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
+    QContactManagerData::m_aliveEngines.remove(this);
     delete d;
 }
 

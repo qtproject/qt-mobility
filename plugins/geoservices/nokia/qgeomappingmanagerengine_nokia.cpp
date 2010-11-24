@@ -48,6 +48,7 @@
 
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
+#include "qgeotiledmapdata_nokia.h"
 
 #include <qgeotiledmaprequest.h>
 
@@ -157,7 +158,7 @@ QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
 QGeoMapData* QGeoMappingManagerEngineNokia::createMapData()
 {
-    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData();
+    QGeoMapData *data = new QGeoTiledMapDataNokia(this);
     if (!data)
         return 0;
 

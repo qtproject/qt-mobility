@@ -54,6 +54,7 @@
 //
 
 #include  <qlandmarkmanagerengine.h>
+#include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
@@ -130,9 +131,17 @@ public:
     bool saveCategory(QLandmarkCategory* category,
                       QLandmarkManager::Error *error,
                       QString *errorString);
+    bool saveCategories(QList<QLandmarkCategory> * category,
+                       QMap<int, QLandmarkManager::Error> *errorMap,
+                       QLandmarkManager::Error *error,
+                       QString *errorString);
     bool removeCategory(const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString);
+    bool removeCategories(const QList<QLandmarkCategoryId> &categoryId,
+                         QMap<int, QLandmarkManager::Error> *errorMap,
+                         QLandmarkManager::Error *error,
+                         QString *errorString);
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
@@ -199,6 +208,7 @@ public slots:
 
 private slots:
     void databaseChanged();
+    void dataChanging();
     void landmarksAdding(QList<QLandmarkId> ids);
     void landmarksChanging(QList<QLandmarkId> ids);
     void landmarksRemoving(QList<QLandmarkId> ids);
@@ -217,13 +227,13 @@ protected:
 
 private:
     bool m_changeNotificationsEnabled;
+    void touchWatcherFile();
     void setChangeNotificationsEnabled(bool enabled);
-    QString m_dbFilename;
+    QString m_dbWatcherFilename;
     QString m_dbConnectionName;
+    DatabaseFileWatcher *m_dbWatcher;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
-    qint64 m_latestLandmarkTimestamp;
-    qint64 m_latestCategoryTimestamp;
     bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;

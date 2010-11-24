@@ -33,7 +33,12 @@ unix:!mac:!symbian {
     } else {
         SUBDIRS += audiocapture
     }
+
     !maemo*:SUBDIRS += v4l
+
+    contains(pulseaudio_enabled, yes) {
+        SUBDIRS += pulseaudio
+    }
 }
 
 mac:!simulator {
