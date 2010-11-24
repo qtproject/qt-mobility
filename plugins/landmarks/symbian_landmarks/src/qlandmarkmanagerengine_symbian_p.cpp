@@ -1200,7 +1200,7 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategory(const QLandmarkCategory
  The \a option can be used to control whether categories in the imported
  file will be added during the import.  If the \c AttachSingleCategory option is used, then
  all the landmarks in the import file are assigned to the category identified by
- \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+ \a categoryId, in all other circumstances \a categoryId is ignored.  If \a categoryId
  doesn't exist when using \c AttachSingleCategory, QLandmarkManager::DoesNotExist error is returned.  Note that
  some file formats may not support categories at all.
 
@@ -1288,7 +1288,7 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
 
     filter.setLandmarkIds(landmarkIds);
 
-    // Using QLandmarkIdFilter to determine wether all the told landmarks exists
+    // Using QLandmarkIdFilter to determine whether all the told landmarks exists
     QList<QLandmarkId> fetchedLandmarkId;
 
     if (landmarkIds.isEmpty())
@@ -2270,7 +2270,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             filter.setLandmarkIds(exportRequest->landmarkIds());
 
-            // Using QLandmarkIdFilter to determine wether all the told landmarks exists
+            // Using QLandmarkIdFilter to determine whether all the told landmarks exists
             QList<QLandmarkId> fetchedLandmarkIds;
 
             fetchedLandmarkIds = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
@@ -4849,7 +4849,7 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
             //Read the buffer contents
             bufferPath->Read(0, ptr, bufferPath->Size());
 
-            //covert to char*
+            //convert to char*
             char* str = new (ELeave) char[ptr.Size() + 1];
             Mem::Copy(str, ptr.Ptr(), ptr.Size());
             str[ptr.Size()] = '\0';

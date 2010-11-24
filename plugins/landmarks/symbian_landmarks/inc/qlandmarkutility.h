@@ -147,7 +147,7 @@ public:
         QLandmarkCategory* qtLandmarkCategory);
 
     /*
-     * returns new object of qt category id coverted from symbian category object.
+     * returns new object of qt category id converted from symbian category object.
      */
     static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString managerUri,
         TPosLmItemId symbianLandmarkCategoryId);

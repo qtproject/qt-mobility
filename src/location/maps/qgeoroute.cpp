@@ -255,7 +255,7 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
     Sets the geometric shape of the route to \a path.
 
     The coordinates in \a path should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -266,7 +266,7 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
     Returns the geometric shape of the route.
 
     The coordinates should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {

@@ -74,7 +74,7 @@ QTM_BEGIN_NAMESPACE
     coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
 
-    The other virtual functions can be overriden. If the screen position to
+    The other virtual functions can be overridden. If the screen position to
     coordinate tranformations are expensive then overriding these functions may
     allow optimizations based on caching parts of the geometry information.
 
@@ -483,7 +483,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
     notices from their standard positions and so we have not provided API
     support for specifying the position of the notices at this time.
 
-    If support for hinting at the positon of the notices is to be provided by
+    If support for hinting at the position of the notices is to be provided by
     plugin parameters, the suggested parameter keys are
     "mapping.notices.copyright.alignment" and
     "mapping.notices.poweredby.alignment", with type Qt::Alignment.
