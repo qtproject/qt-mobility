@@ -65,7 +65,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-// static constant intialization
+// static constant initialization
 
 const QSize FlickrDemo::gridSize = QSize(52, 52);
 const QSize FlickrDemo::thumbnailSize = QSize(50, 50);

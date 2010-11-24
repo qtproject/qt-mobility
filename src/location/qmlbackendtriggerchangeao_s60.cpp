@@ -86,7 +86,7 @@ void QMLBackendTriggerChangeAO::RunL()
         case KErrNone :
 #if 0
             //implementation takes the updation, deletion into consideration
-            //from the UI, which is'nt possible with the current UI for LBT.
+            //from the UI, which isn't possible with the current UI for LBT.
             //The same should be considered once made availbale as part of the UI
             //check for Multiple trigger change events
             if (iTriggerChangeEvent.iEventType == ELbtTriggerChangeEventMultiple) {
