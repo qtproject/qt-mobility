@@ -71,8 +71,7 @@ public:
     QVersitContactExporterPrivate(const QStringList& profiles = QStringList());
     ~QVersitContactExporterPrivate();
 
-    bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
-                       QVersitContactExporter::Error* error);
+    void exportContact(const QContact& contact, QVersitDocument& versitDocument);
 
 protected:
     static void ensureDocumentContainsName(const QContact& contact, QVersitDocument* document);
