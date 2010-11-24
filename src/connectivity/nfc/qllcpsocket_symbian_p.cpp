@@ -96,21 +96,19 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
 }
 
 /*!
-    Constructed from llcap server side
+    Construct the socket and set it as listening state from llcp server side 
 */
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_symbianSocketType1(NULL),
       m_symbianSocketType2(socketType2_symbian),
-      m_socketType(connectionUnknown)
+      m_socketType(connectionType2)
 {
-    m_state = QLLCPUnconnected::Instance(this);
+    m_state = QLLCPListen::Instance(this);
 }
 
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
-    Q_UNUSED(target);   
-
     if( connectionType1 == m_socketType){
        return;
     }

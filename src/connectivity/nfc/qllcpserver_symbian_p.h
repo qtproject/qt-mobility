@@ -84,9 +84,6 @@ public:
     void invokeNewConnection();
     void invokeError() const ;
 
-private:
-    QLlcpSocket* qllcpsocket(CLlcpSocketType2*);
-
 signals:
     void newConnection();
     void error(QLlcpServer::Error socketError) const;

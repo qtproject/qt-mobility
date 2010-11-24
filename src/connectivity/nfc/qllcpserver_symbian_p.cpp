@@ -106,27 +106,16 @@ void QLlcpServerPrivate::invokeError() const
     emit error(QLlcpServer::UnknownSocketError);
 }
 
-QLlcpSocket* QLlcpServerPrivate::qllcpsocket(CLlcpSocketType2* socket_symbian)
-{
-    //TODO
-    // mignt need to pass in listen when the listening state is defined
-    QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
-    //TODO
-    //active the following line when Aaron fix it.
-    QLlcpSocket* qSocket = NULL;
-    //QLlcpSocket* qSocket = new QLlcpSocket(qSocket_p);
-
-    return qSocket;
-}
-
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
-    CLlcpSocketType2* socket_s = m_symbianbackend->nextPendingConnection();
-    if (socket_s)
+    QLlcpSocket* qSocket  = NULL;
+    CLlcpSocketType2* socket_symbian = m_symbianbackend->nextPendingConnection();
+    if (socket_symbian)
     {
-       return qllcpsocket(socket_s);
+        QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
+        QLlcpSocket* qSocket = new QLlcpSocket(qSocket_p);
     }
-    return NULL;
+    return qSocket;
 }
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const

@@ -6,11 +6,11 @@
 
 QT       += testlib
 
-TARGET = tst_qllcpsocket
+TARGET = tst_qllcpsockettype2
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += tst_qllcpsocket.cpp
+SOURCES += tst_qllcpsockettype2.cpp

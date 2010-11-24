@@ -2,12 +2,12 @@
 #include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
 
-class tst_qllcpsocket : public QObject
+class tst_qllcpsockettype1 : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_qllcpsocket();
+    tst_qllcpsockettype1();
 
 private Q_SLOTS:
     void initTestCase();
@@ -16,30 +16,30 @@ private Q_SLOTS:
     void testCase1_data();
 };
 
-tst_qllcpsocket::tst_qllcpsocket()
+tst_qllcpsockettype1::tst_qllcpsockettype1()
 {
 }
 
-void tst_qllcpsocket::initTestCase()
+void tst_qllcpsockettype1::initTestCase()
 {
 }
 
-void tst_qllcpsocket::cleanupTestCase()
+void tst_qllcpsockettype1::cleanupTestCase()
 {
 }
 
-void tst_qllcpsocket::testCase1()
+void tst_qllcpsockettype1::testCase1()
 {
     QFETCH(QString, data);
     QVERIFY2(true, "Failure");
 }
 
-void tst_qllcpsocket::testCase1_data()
+void tst_qllcpsockettype1::testCase1_data()
 {
     QTest::addColumn<QString>("data");
     QTest::newRow("0") << QString();
 }
 
-QTEST_MAIN(tst_qllcpsocket);
+QTEST_MAIN(tst_qllcpsockettype1);
 
-#include "tst_qllcpsocket.moc"
+#include "tst_qllcpsockettype1.moc"
