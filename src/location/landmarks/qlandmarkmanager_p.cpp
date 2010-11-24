@@ -83,7 +83,7 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
     foreach(QLandmarkManagerEngineFactory *f, factories)
     {
         QList<int> versions = f->supportedImplementationVersions();
-            if (implementationVersion == -1 //no given implemenation version required
+            if (implementationVersion == -1 //no given implementation version required
                || versions.isEmpty() //manager engine factory does not report any versions
                || versions.contains(implementationVersion)) {
                     engine = f->engine(parameters, &errorCode, &errorString);

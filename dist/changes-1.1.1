@@ -20,10 +20,6 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - Qt Maps and Navigation module
- - Qt Landmarks module
-
-
 ****************************************************************************
 *                   Important Behavior Changes                             *
 ****************************************************************************
@@ -67,8 +63,14 @@ QtGallery
 
 QtLocation
 ------
-
- -
+ - Harmattan backend for landmarks added
+ - Fixes for symbian backend for landmarks
+   * Asynchronous requests cannot be destroyed while they are active [QTMOBILITY-611]
+   * Ignore viewport field(from QGeoPlace) when saving a landmark
+   * Calling remove/save landmarks with a non-trivial number of landmarks results in
+     a databaseLockedError [MOBILITY-1901] / LandmarkManager remove
+     save doesn't work always [QTMOBILITY-694]
+   * Memory leak in symbian landmarks backend [MOBILITY-1949]
 
 QtMessaging
 ------

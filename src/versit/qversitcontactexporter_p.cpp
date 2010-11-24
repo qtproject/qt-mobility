@@ -129,10 +129,9 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 /*!
  * Export QT Contact into Versit Document.
  */
-bool QVersitContactExporterPrivate::exportContact(
+void QVersitContactExporterPrivate::exportContact(
     const QContact& contact,
-    QVersitDocument& document,
-    QVersitContactExporter::Error* error)
+    QVersitDocument& document)
 {
     QList<QContactDetail> allDetails = contact.details();
     foreach (const QContactDetail& detail, allDetails) {
@@ -222,7 +221,7 @@ bool QVersitContactExporterPrivate::exportContact(
     }
 
     ensureDocumentContainsName(contact, &document);
-    return true;
+    return;
 }
 
 /*!

@@ -180,7 +180,7 @@ QTM_BEGIN_NAMESPACE
     \value ShortestRoute
         Minimize the length of the journey.
     \value FastestRoute
-        Minimize the travelling time for the journey.
+        Minimize the traveling time for the journey.
     \value MostEconomicRoute
         Minimize the cost of the journey.
     \value MostScenicRoute

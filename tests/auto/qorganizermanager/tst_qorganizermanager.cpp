@@ -3715,8 +3715,7 @@ void tst_QOrganizerManager::idComparison()
 
     QVERIFY(bcid1 < bcid2);
     QVERIFY(bcid3 < bcid2);
-    if (!uri.contains("mkcal")) //this verification makes no sense for mkcal
-        QVERIFY(e1id < e2id); // this test may be unstable, depending on the backend?
+    QVERIFY(((e1id < e2id) || (e2id < e1id)) && (e1id != e2id));
 
     // now we do some tests which might be unstable
     QVERIFY(bcid1 < c1id); // collectionIds: the first comparison should be manager uri, and bcid manager uri is early in the alphabet.
