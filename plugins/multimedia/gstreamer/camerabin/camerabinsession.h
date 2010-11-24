@@ -173,6 +173,7 @@ private:
 
     QUrl m_sink;
     QUrl m_actualSink;
+    bool m_recordingActive;
     QString m_captureDevice;
     QCamera::State m_state;
     QCamera::State m_pendingState;

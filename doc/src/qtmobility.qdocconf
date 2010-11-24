@@ -99,19 +99,23 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/serviceframework \
+             ../../plugins/declarative/organizer \
+             ../../plugins/declarative/contacts \
+             ../../plugins/declarative/feedback \
+             ../../plugins/declarative/messaging \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
              ../../src/versitorganizer \
-             ../../plugins/declarative/serviceframework \
              ../../src/connectivity \
-             ../../plugins/declarative/organizer \
-             ../../plugins/declarative/contacts \
-             ../../plugins/declarative/feedback \
              .
 
 sourcedirs = ../../src/global \
@@ -135,11 +139,15 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
              ../../src/connectivity \

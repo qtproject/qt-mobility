@@ -157,7 +157,7 @@ QGeoServiceProvider::~QGeoServiceProvider()
     any geocoding services.
 
     This function will attempt to construct a QGeoSearchManager instance
-    when it is called for the first time.  If the attempt is succesful the
+    when it is called for the first time.  If the attempt is successful the
     QGeoSearchManager will be cached, otherwise each call of this function
     will attempt to construct a QGeoSearchManager instance until the
     construction is successful.
@@ -203,7 +203,7 @@ QGeoSearchManager* QGeoServiceProvider::searchManager() const
     any mapping services.
 
     This function will attempt to construct a QGeoMappingManager instance
-    when it is called for the first time.  If the attempt is succesful the
+    when it is called for the first time.  If the attempt is successful the
     QGeoMappingManager will be cached, otherwise each call of this function
     will attempt to construct a QGeoMappingManager instance until the
     construction is successful.
@@ -250,7 +250,7 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     any geographic routing services.
 
     This function will attempt to construct a QGeoRoutingManager instance
-    when it is called for the first time.  If the attempt is succesful the
+    when it is called for the first time.  If the attempt is successful the
     QGeoRoutingManager will be cached, otherwise each call of this function
     will attempt to construct a QGeoRoutingManager instance until the
     construction is successful.
