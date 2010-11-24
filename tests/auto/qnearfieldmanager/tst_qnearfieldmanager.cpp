@@ -53,6 +53,7 @@
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 Q_DECLARE_METATYPE(QNearFieldTarget::Type)
 Q_DECLARE_METATYPE(QNdefFilter)
+Q_DECLARE_METATYPE(QNdefRecord::TypeNameFormat)
 
 QTM_USE_NAMESPACE
 
@@ -70,6 +71,9 @@ private slots:
     void unregisterTargetDetectedHandler();
 
     void registerTargetDetectedHandler();
+
+    void registerTargetDetectedHandler_type_data();
+    void registerTargetDetectedHandler_type();
 
     void registerTargetDetectedHandler_filter_data();
     void registerTargetDetectedHandler_filter();
@@ -166,6 +170,51 @@ void tst_QNearFieldManager::registerTargetDetectedHandler()
     QVERIFY(manager.unregisterTargetDetectedHandler(id));
 }
 
+void tst_QNearFieldManager::registerTargetDetectedHandler_type_data()
+{
+    QTest::addColumn<QNdefRecord::TypeNameFormat>("typeNameFormat");
+    QTest::addColumn<QByteArray>("type");
+
+    QTest::newRow("Image") << QNdefRecord::Mime << QByteArray("image/png");
+    QTest::newRow("URI") << QNdefRecord::NfcRtd << QByteArray("U");
+    QTest::newRow("Text") << QNdefRecord::NfcRtd << QByteArray("T");
+}
+
+void tst_QNearFieldManager::registerTargetDetectedHandler_type()
+{
+    QFETCH(QNdefRecord::TypeNameFormat, typeNameFormat);
+    QFETCH(QByteArray, type);
+
+    QNearFieldManagerPrivateImpl *emulatorBackend = new QNearFieldManagerPrivateImpl;
+    QNearFieldManager manager(emulatorBackend, 0);
+
+    MessageListener listener;
+    QSignalSpy messageSpy(&listener, SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+
+    int id = manager.registerTargetDetectedHandler(typeNameFormat, type, &listener,
+                                                   SIGNAL(matchedNdefMessage(QNdefMessage,QNearFieldTarget*)));
+
+    QVERIFY(id != -1);
+
+    QTRY_VERIFY(!messageSpy.isEmpty());
+
+    const QNdefMessage message = messageSpy.first().at(0).value<QNdefMessage>();
+
+    bool hasRecord = false;
+    foreach (const QNdefRecord &record, message) {
+        if (record.typeNameFormat() == typeNameFormat && record.type() == type) {
+            hasRecord = true;
+            break;
+        }
+    }
+
+    QVERIFY(hasRecord);
+
+    QNearFieldTarget *target = messageSpy.first().at(1).value<QNearFieldTarget *>();
+
+    QVERIFY(target);
+}
+
 void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 {
     QTest::addColumn<QNdefFilter>("filter");
@@ -186,6 +235,18 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
     filter.appendRecord<QNdefNfcTextRecord>(1, 1);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("Text + URI") << filter;
+
+    QNdefFilter::Record record;
+
+    filter.clear();
+    filter.setOrderMatch(false);
+    filter.appendRecord<QNdefNfcUriRecord>(1, 1);
+    record.typeNameFormat = QNdefRecord::NfcRtd;
+    record.type = "T";
+    record.minimum = 1;
+    record.maximum = 1;
+    filter.appendRecord(record);
+    QTest::newRow("Unordered Text + URI") << filter;
 }
 
 void tst_QNearFieldManager::registerTargetDetectedHandler_filter()
