@@ -44,11 +44,14 @@
 #include <QtCore/QCoreApplication>
 
 #include <qllcpsocket.h>
-
+#include <qnearfieldmanager.h>
+#include <qnearfieldtarget.h>
 #include "qnfctestcommon.h"
 #include "qnfctestutil.h"
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QNearFieldTarget*)
 
 class tst_qllcpsockettype2 : public QObject
 {
@@ -80,6 +83,7 @@ void tst_qllcpsockettype2::echo()
 {
     QFETCH(QString, uri);
     QFETCH(QString, hint);
+    QFETCH(QString, echo);
     QNearFieldManager nfcManager;
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
@@ -93,13 +97,67 @@ void tst_qllcpsockettype2::echo()
 
     QLlcpSocket socket(this);
 
+    socket.connectToService(target, uri);
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+    //Send data to server
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)echo.length();
+    out << echo;
+
+    socket.write(block);
+
+    QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+    qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
+
+    while (written < echo.length())
+        {
+        QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        }
+
+    //Get the echoed data from server
+    QTRY_VERIFY(!readyReadSpy.isEmpty());
+    quint16 blockSize = 0;
+    QDataStream in(&socket);
+    in.setVersion(QDataStream::Qt_4_6);
+    while (socket.bytesAvailable() < (int)sizeof(quint16)){
+        QSignalSpy readyRead(&socket, SIGNAL(readyRead()));
+        QTRY_VERIFY(!readyRead.isEmpty());
+    }
+    in >> blockSize;
+
+    while (socket.bytesAvailable() < blockSize){
+        QSignalSpy readyRead(&socket, SIGNAL(readyRead()));
+        QTRY_VERIFY(!readyRead.isEmpty());
+    }
+    QString echoed;
+    in >> echoed;
+
+    //test the echoed string is same as the original string
+    QVERIFY(echo == echoed);
+
+    //Now data has been sent,check the if existing error
+    QVERIFY(errorSpy.isEmpty());
+
 }
 
 void tst_qllcpsockettype2::echo_data()
 {
-    QTest::addColumn<QString>("URI");
+    QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("uri") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
+    QTest::addColumn<QString>("echo");
+    QTest::newRow("0") << "uri"
+            << "Please touch a NFC device with llcp client enabled: uri = "
+            << "echo";
 
 }
 

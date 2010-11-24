@@ -74,9 +74,9 @@ void tst_QLlcpServer::cleanupTestCase()
 }
 void tst_QLlcpServer::newConnection_data()
 {
-    QTest::addColumn<QString>("URI");
+    QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("uri") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
+    QTest::newRow("0") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
 
 }
 
@@ -106,7 +106,7 @@ void tst_QLlcpServer::newConnection()
     quint16 blockSize = 0;
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_6);
-    while (socket ->bytesAvailable() < (int)sizeof(quint16)){
+    while (socket->bytesAvailable() < (int)sizeof(quint16)){
         QSignalSpy readyRead(socket, SIGNAL(readyRead()));
         QTRY_VERIFY(!readyRead.isEmpty());
     }
@@ -120,7 +120,13 @@ void tst_QLlcpServer::newConnection()
     in >> echo;
     //Send data to client
     QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
-    in << echo;
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)echo.length();
+    out << echo;
+
+    socket->write(block);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
