@@ -180,7 +180,7 @@ void tst_QDeclarativePosition::construction()
     if (shouldSucceed) {
         if (obj == 0) {
             if (component.isError()) {
-                qDebug() << "Error(s) occured when trying to instantiate. QDeclarativeComponent::errors(): ";
+                qDebug() << "Error(s) occurred when trying to instantiate. QDeclarativeComponent::errors(): ";
                 qDebug() << component.errors();
             }
             qWarning("--------- ------------- ------------- ---------------------- ------------ ");
