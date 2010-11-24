@@ -1,17 +1,15 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2010-11-12T15:09:41
-#
-#-------------------------------------------------
-
 QT       += testlib
 
 TARGET = tst_qllcpserver
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += testcase
+CONFIG   += mobility
+MOBILITY = connectivity
 
 TEMPLATE = app
 
-
+INCLUDEPATH += ../../../src/connectivity/nfc
+INCLUDEPATH += ../common
 SOURCES += tst_qllcpserver.cpp
-#DEFINES += SRCDIR=\\\"$$PWD/\\\"
+symbian:TARGET.CAPABILITY = ALL - TCB

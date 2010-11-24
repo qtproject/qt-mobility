@@ -13,3 +13,4 @@ INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
 
 SOURCES += tst_qnearfieldmanager.cpp
+symbian:TARGET.CAPABILITY = ALL - TCB
