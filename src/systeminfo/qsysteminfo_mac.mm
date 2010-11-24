@@ -1673,7 +1673,7 @@ void unmountCallback(DADiskRef disk, void *context)
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent), daSessionThread(0)
+        : QObject(parent), daSessionThread(0),sessionThreadStarted(0)
 {
     updateVolumesMap();
 
@@ -1866,8 +1866,10 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 
 bool QSystemStorageInfoPrivate::sessionThread()
 {
-    if(!daSessionThread)
+    if(!sessionThreadStarted) {
         daSessionThread = new QDASessionThread();
+        sessionThreadStarted = true;
+    }
     daSessionThread->doWork();
     return true;
 }
