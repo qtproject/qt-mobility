@@ -203,7 +203,7 @@ void tst_QGeoMapGroupObject::childObjects_data()
     list2.append(polygon);
 
     QGeoMapPolylineObject* polyline = new QGeoMapPolylineObject();
-    //make path accross rectangle
+    //make path across rectangle
     path.removeAt(1);
     path.removeAt(3);
 

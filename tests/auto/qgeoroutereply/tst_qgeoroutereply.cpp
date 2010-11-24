@@ -75,7 +75,7 @@ void RouteReply::t_qgrrep_constructor2_data()
 
     QTest::newRow("error1") << QGeoRouteReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoRouteReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Comunication Error.";
+    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Communication Error.";
     QTest::newRow("error4") << QGeoRouteReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoRouteReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoRouteReply::UnknownError << "Unknown Error.";
@@ -178,7 +178,7 @@ void RouteReply::t_qgrrep_error_data()
 
     QTest::newRow("error1") << QGeoRouteReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoRouteReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Comunication Error.";
+    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Communication Error.";
     QTest::newRow("error4") << QGeoRouteReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoRouteReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoRouteReply::UnknownError << "Unknown Error.";

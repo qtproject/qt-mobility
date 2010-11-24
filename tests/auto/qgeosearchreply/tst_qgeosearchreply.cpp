@@ -62,7 +62,7 @@ void SearchReply::t_qgsrep_constructor2_data()
 
     QTest::newRow("error1") << QGeoSearchReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoSearchReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Comunication Error.";
+    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Communication Error.";
     QTest::newRow("error4") << QGeoSearchReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoSearchReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
@@ -117,7 +117,7 @@ void SearchReply::t_qgsrep_error_data()
 
     QTest::newRow("error1") << QGeoSearchReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoSearchReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Comunication Error.";
+    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Communication Error.";
     QTest::newRow("error4") << QGeoSearchReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoSearchReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
