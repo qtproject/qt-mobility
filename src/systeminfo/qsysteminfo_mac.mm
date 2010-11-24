@@ -326,6 +326,8 @@ NSObject* delegate;
 
 - (void)bluetoothDeviceConnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
 {
+    Q_UNUSED(notification);
+
     if([ device getClassOfDevice ] == 9536) {
         QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(true);
         [device registerForDisconnectNotification:self selector:@selector(bluetoothDeviceDisconnected:device:)];
@@ -334,6 +336,7 @@ NSObject* delegate;
 
 - (void)bluetoothDeviceDisconnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
 {
+    Q_UNUSED(notification);
     if([ device getClassOfDevice ] == 9536) {
         QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(false);
     }
@@ -433,6 +436,8 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
            return QSystemDeviceInfoPrivate::model();
        }
        break;
+    default:
+        break;
     };
   return errorStr;
 }
@@ -1918,6 +1923,8 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 
 QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 {
+    //TODO
+    Q_UNUSED(driveVolume);
     return QString();
 }
 
@@ -1929,9 +1936,6 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(cons
     if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
         if( fs.f_bfree != 0) {
             long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
-            qDebug()  << driveVolume << percent;
-
-
             if(percent < 41 && percent > 10 ) {
                 storState = QSystemStorageInfo::LowStorageState;
             } else if(percent < 11 && percent > 2 ) {
@@ -2259,7 +2263,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*type*/)
 {
     return false;
 }
@@ -2328,7 +2332,7 @@ void QSystemScreenSaverPrivate::activityTimeout()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 : QObject(parent)
 {
-
+    getBatteryInfo();
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -2339,54 +2343,54 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-return QSystemBatteryInfo::UnknownCharger;
+    return curChargeType;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
 {
-return QSystemBatteryInfo::NotCharging;
+    return curChargeState;
 }
 
 
-qint32 QSystemBatteryInfoPrivate::nominalCapacity() const
+int QSystemBatteryInfoPrivate::nominalCapacity() const
 {
-return 0;
+    return capacity;
 }
 
-qint32 QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
 {
-return 0;
+    return currentBatLevelPercent;
 }
 
-qint32 QSystemBatteryInfoPrivate::remainingCapacity() const
+int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
-return 0;
+    return remainingEnergy;
 }
 
 
-qint32 QSystemBatteryInfoPrivate::voltage() const
+int QSystemBatteryInfoPrivate::voltage() const
 {
-return 0;
+    return currentVoltage;
 }
 
-qint32 QSystemBatteryInfoPrivate::remainingChargingTime() const
+int QSystemBatteryInfoPrivate::remainingChargingTime() const
 {
-return 0;
+    return timeToFull;
 }
 
-qint32 QSystemBatteryInfoPrivate::currentFlow() const
+int QSystemBatteryInfoPrivate::currentFlow() const
 {
-return 0;
+    return dischargeRate;
 }
 
-qint32 QSystemBatteryInfoPrivate::remainingCapacityBars() const
+int QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
-return 0;
+    return 0;
 }
 
-qint32 QSystemBatteryInfoPrivate::maxBars() const
+int QSystemBatteryInfoPrivate::maxBars() const
 {
-return 0;
+    return 0;
 }
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
@@ -2431,25 +2435,85 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 
 }
 
-void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+void QSystemBatteryInfoPrivate::disconnectNotify(const char */*signal*/)
 {
 
 }
 
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
 {
-      return QSystemBatteryInfo::BatteryUnknown;
+    return currentBatStatus;
 }
 
- qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+int QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 /*rate*/)
 {
-  return 0;
+    return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-     return QSystemBatteryInfo::UnitUnknown;
+    return QSystemBatteryInfo::UnitUnknown;
 
+}
+
+void QSystemBatteryInfoPrivate::getBatteryInfo()
+{
+    qDebug() << Q_FUNC_INFO;
+    CFTypeRef info;
+    CFArrayRef list;
+    CFDictionaryRef battery;
+
+    info = IOPSCopyPowerSourcesInfo();
+    if(info == NULL) {
+        qDebug() << "IOPSCopyPowerSourcesInfo error";
+        return;
+    }
+    list = IOPSCopyPowerSourcesList(info);
+    if(list == NULL) {
+        CFRelease(info);
+        qDebug() << "IOPSCopyPowerSourcesList error";
+        return;
+    }
+
+    if(CFArrayGetCount(list) && (battery = IOPSGetPowerSourceDescription(info, CFArrayGetValueAtIndex(list,0)))) {
+     //   self.outputInstalled = [[(NSDictionary*)battery objectForKey:@kIOPSIsPresentKey] boolValue];
+
+        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
+            curChargeType = QSystemBatteryInfo::WallCharger;
+        } else {
+            curChargeType = QSystemBatteryInfo::NoCharger;
+        }
+       if ([[(NSDictionary*)battery objectForKey:@kIOPSIsChargingKey] boolValue]) {
+           curChargeState = QSystemBatteryInfo::Charging;
+       } else {
+           curChargeState = QSystemBatteryInfo::NotCharging;
+       }
+
+        dischargeRate = [[(NSDictionary*)battery objectForKey:@kIOPSCurrentKey] intValue];
+        currentVoltage = [[(NSDictionary*)battery objectForKey:@kIOPSVoltageKey] intValue];
+        currentBatLevelPercent = [[(NSDictionary*)battery objectForKey:@kIOPSCurrentCapacityKey] intValue];
+        capacity = [[(NSDictionary*)battery objectForKey:@kIOPSMaxCapacityKey] intValue];
+        timeToFull = [[(NSDictionary*)battery objectForKey:@kIOPSTimeToFullChargeKey] intValue];
+        remainingEnergy = [[(NSDictionary*)battery objectForKey:@kIOPSPowerAdapterWattsKey] intValue];
+        qDebug() << curChargeType << curChargeState
+                    << currentBatLevelPercent
+                    << dischargeRate << currentVoltage
+                       << remainingEnergy << capacity << timeToFull;
+//
+    }
+    else {
+        qDebug() << "noda";
+
+    //    self.outputInstalled = NO;
+   //     self.outputConnected = NO;
+    //    self.outputCharging = NO;
+//        remainingEnergy = 0.0;
+//        currentVoltage = 0.0;
+//        remainingEnergy = 0.0;
+//        capacity = 0.0;
+    }
+    CFRelease(list);
+    CFRelease(info);
 }
 
 #include "moc_qsysteminfo_mac_p.cpp"
