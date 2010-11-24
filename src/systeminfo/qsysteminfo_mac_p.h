@@ -239,6 +239,7 @@ protected:
     void disconnectNotify(const char *signal);
 
     QDASessionThread *daSessionThread;
+    bool sessionThreadStarted;
 };
 
 class QBluetoothListenerThread;
