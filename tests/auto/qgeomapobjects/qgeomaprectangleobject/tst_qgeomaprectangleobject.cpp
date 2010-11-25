@@ -539,9 +539,9 @@ void tst_QGeoMapRectangleObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(box.center());
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(box.center());
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 
@@ -564,9 +564,6 @@ void tst_QGeoMapRectangleObject::boundingBox()
     QGeoBoundingBox box(topLeft, bottomRight);
 
     QGeoMapRectangleObject* object = new QGeoMapRectangleObject(box);
-
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
     QGraphicsGeoMap* map = m_helper->map();
 

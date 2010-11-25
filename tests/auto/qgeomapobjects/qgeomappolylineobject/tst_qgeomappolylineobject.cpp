@@ -422,6 +422,7 @@ void tst_QGeoMapPolylineObject::contains()
 
     object->setPath(path);
 
+
     QGraphicsGeoMap* map = m_helper->map();
 
     map->addMapObject(object);
@@ -435,9 +436,9 @@ void tst_QGeoMapPolylineObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(path.at(1));
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(path.at(1));
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 
@@ -463,9 +464,6 @@ void tst_QGeoMapPolylineObject::boundingBox()
     QGeoMapPolylineObject* object = new QGeoMapPolylineObject();
 
     object->setPath(path);
-
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
     QGraphicsGeoMap* map = m_helper->map();
 

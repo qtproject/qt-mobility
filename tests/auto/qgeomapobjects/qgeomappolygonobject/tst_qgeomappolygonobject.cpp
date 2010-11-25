@@ -166,9 +166,9 @@ void tst_QGeoMapPolygonObject::path_data()
         << QGeoCoordinate(-10, 10);
     QTest::newRow("(10,10)-(10,20)-(-10,20)-(-10,10)") << list1;
     QList<QGeoCoordinate> list2;
-    list2 << QGeoCoordinate(-10, 10) << QGeoCoordinate(-5, 10) << QGeoCoordinate(-5, 20)
-        << QGeoCoordinate(-10, 20);
-    QTest::newRow("(-10,10)-(-5,10)-(-5,20)-(-10,20)") << list2;
+    list2 << QGeoCoordinate(-5, 10) << QGeoCoordinate(-10, 10) << QGeoCoordinate(-10, 20)
+        << QGeoCoordinate(-5, 20);
+    QTest::newRow("(-5,10)-(-10,10)-(-10,20)-(-5,20)") << list2;
 
 }
 
@@ -193,7 +193,7 @@ void tst_QGeoMapPolygonObject::path()
 
     //check if object is not there
 
-    QGeoBoundingBox rectangle(path.first(), path.last());
+    QGeoBoundingBox rectangle(path.at(0), path.at(2));
 
     map->setCenter(rectangle.center());
 
@@ -270,10 +270,9 @@ void tst_QGeoMapPolygonObject::pen()
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
     QPointF diff(0, object->pen().width() + 1);
-
-    point -= diff;
-
-    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
+    //TODO: uncomment if pen area should also be selectable
+    //point -= diff;
+    //QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
 
     object->setPen(pen);
 
@@ -481,9 +480,9 @@ void tst_QGeoMapPolygonObject::contains()
     QSignalSpy spy1(object, SIGNAL(visibleChanged(bool)));
     QSignalSpy spy2(object, SIGNAL(zValueChanged(int)));
 
-    map->setCenter(box.center());
+    map->setCenter(coordinate);
 
-    QPointF point = map->coordinateToScreenPosition(box.center());
+    QPointF point = map->coordinateToScreenPosition(coordinate);
 
     bool contains = map->mapObjectsAtScreenPosition(point).size() == 1;
 
@@ -509,9 +508,6 @@ void tst_QGeoMapPolygonObject::boundingBox()
     QGeoMapPolygonObject* object = new QGeoMapPolygonObject();
 
     object->setPath(path);
-
-    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
     QGraphicsGeoMap* map = m_helper->map();
 

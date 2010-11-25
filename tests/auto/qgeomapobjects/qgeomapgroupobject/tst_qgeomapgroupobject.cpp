@@ -421,9 +421,9 @@ void tst_QGeoMapGroupObject::zvalue()
     QGeoMapGroupObject* object1 = new QGeoMapGroupObject();
     object1->addChildObject(circle1);
     QGeoMapGroupObject* object2 = new QGeoMapGroupObject();
-    object1->addChildObject(circle2);
+    object2->addChildObject(circle2);
     QGeoMapGroupObject* object3 = new QGeoMapGroupObject();
-    object1->addChildObject(circle3);
+    object3->addChildObject(circle3);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -453,17 +453,17 @@ void tst_QGeoMapGroupObject::zvalue()
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==circle2);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==circle3);
 
-    circle1->setZValue(1);
-    circle2->setZValue(2);
-    circle3->setZValue(3);
+    circle1->setZValue(3);
+    circle2->setZValue(1);
+    circle3->setZValue(2);
 
-    QCOMPARE(circle1->zValue(), 1);
-    QCOMPARE(circle2->zValue(), 2);
-    QCOMPARE(circle3->zValue(), 3);
+    QCOMPARE(circle1->zValue(), 3);
+    QCOMPARE(circle2->zValue(), 1);
+    QCOMPARE(circle3->zValue(), 2);
 
-    QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==circle1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==circle1);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==circle2);
-    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==circle3);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==circle3);
 
     object1->setZValue(zValue1);
     object2->setZValue(zValue2);
@@ -620,7 +620,6 @@ void tst_QGeoMapGroupObject::boundingBox()
     QGeoMapGroupObject* object = new QGeoMapGroupObject();
     object->addChildObject(circle);
     QVERIFY(object->childObjects().at(0)==circle);
-
 
     QGraphicsGeoMap* map = m_helper->map();
 
