@@ -48,8 +48,8 @@ class QNfcTestUtil : public QObject
 public:
     static void ShowMessage(const QString& message)
     {
-        QMessageBox b(QMessageBox::NoIcon, QObject::tr("NFC symbian backend test"),
-        message, QMessageBox::Yes | QMessageBox::No);
+        QMessageBox b(QMessageBox::Information, QObject::tr("NFC symbian backend test"),
+        message, QMessageBox::Ok);
         b.exec();
     }
 };
