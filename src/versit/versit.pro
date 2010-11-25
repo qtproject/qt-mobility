@@ -91,5 +91,5 @@ maemo5|maemo6 {
     INSTALLS += pkgconfig
 }
 
-CONFIG += app
+CONFIG += middleware
 include(../../features/deploy.pri)
