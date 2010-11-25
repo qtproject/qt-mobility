@@ -226,6 +226,12 @@ protected:
     void disconnectNotify(const char *signal);
 
 private:
+    qint64 m_addedLandmarkIdsTimeStamp;
+    qint64 m_changedLandmarkIdsTimeStamp;
+    qint64 m_removedLandmarkIdsTimeStamp;
+    qint64 m_addedCategoryIdsTimeStamp;
+    qint64 m_changedCategoryIdsTimeStamp;
+    qint64 m_removedCategoryIdsTimeStamp;
     bool m_changeNotificationsEnabled;
     void touchWatcherFile();
     void setChangeNotificationsEnabled(bool enabled);
