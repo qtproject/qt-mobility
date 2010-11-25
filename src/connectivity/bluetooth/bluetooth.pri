@@ -49,7 +49,8 @@ SOURCES += \
     bluetooth/qbluetoothtransferreply.cpp
 
 symbian {
-    QT *= network
+
+    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 
     PRIVATE_HEADERS += \
         bluetooth/utils_symbian_p.h\
