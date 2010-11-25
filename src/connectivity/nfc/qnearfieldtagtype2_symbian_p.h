@@ -51,7 +51,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType2Symbian : public QNearFieldTagType2, private QNearFieldTagImpl
+class QNearFieldTagType2Symbian : public QNearFieldTagType2, private QNearFieldTagImpl<QNearFieldTagType2Symbian>
 {
     Q_OBJECT
 public:

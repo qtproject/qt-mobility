@@ -78,7 +78,8 @@ symbian {
         nfc/symbian/llcpserver_symbian.h \
         nfc/symbian/llcpsockettype1_symbian.h \
         nfc/symbian/llcpsockettype2_symbian.h \        
-        nfc/symbian/nearfieldtagimpl_symbian.h
+        nfc/symbian/nearfieldtagimpl_symbian.h \
+        nfc/symbian/nearfieldtagoperationcallback_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \

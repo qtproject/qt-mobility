@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QNdefMessage;
 
-class Q_CONNECTIVITY_EXPORT QNearFieldTagMifareSymbian : public QNearFieldTarget, private QNearFieldTagImpl
+class QNearFieldTagMifareSymbian : public QNearFieldTarget, private QNearFieldTagImpl<QNearFieldTagMifareSymbian>
 {
     Q_OBJECT
 

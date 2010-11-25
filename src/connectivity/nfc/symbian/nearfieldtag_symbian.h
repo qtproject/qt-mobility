@@ -42,13 +42,14 @@
 #ifndef NEARFIELDTAG_H
 #define NEARFIELDTAG_H
 #include <nfcserver.h>
+#include <e32base.h>
 
 #include "nearfieldtarget_symbian.h"
 
 class MNfcTag;
 class MNfcConnection;
 
-class CNearFieldTag : public MNearFieldTarget
+class CNearFieldTag : public CActive, public MNearFieldTarget
     {
 public:
     // Cancel and destroy
@@ -76,6 +77,11 @@ public:
 private:
     // C++ constructor
     CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
+
+private:
+    void RunL();
+    void DoCancel();
+    TInt RunError(TInt aError);
 
 private:
     // own

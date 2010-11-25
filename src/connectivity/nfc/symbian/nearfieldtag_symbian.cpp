@@ -51,7 +51,8 @@
 */
 
 CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
-                                                                          iNfcServer(aNfcServer)
+                                                                          iNfcServer(aNfcServer),
+                                                                          CActive(EPriorityStandard)
     {
     }
 
@@ -71,6 +72,7 @@ CNearFieldTag* CNearFieldTag::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
 
 CNearFieldTag::~CNearFieldTag()
     {
+    Cancel();
     delete iTagConnection;
     delete iNfcTag;
     }
@@ -111,4 +113,17 @@ TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, cons
     {
     return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(aCommand, aResponse, aTimeout)
                                   : KErrInUse;
+    }
+
+void CNearFieldTag::DoCancel()
+    {
+    }
+
+void CNearFieldTag::RunL()
+    {
+    }
+
+TInt CNearFieldTag::RunError(TInt aError)
+    {
+    return aError;
     }

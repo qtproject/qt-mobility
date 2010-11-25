@@ -39,54 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTAGTYPE4SYMBIAN_H
-#define QNEARFIELDTAGTYPE4SYMBIAN_H
+#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
+#define NEARFIELDTAGOPERATIONCALLBACK_H
 
-#include <qnearfieldtarget.h>
-#include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtag_symbian.h"
-#include "nearfieldtagimpl_symbian.h"
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNearFieldTagType4Symbian : public QNearFieldTarget, private QNearFieldTagImpl<QNearFieldTagType4Symbian>
-{
-    Q_OBJECT
-
+class MNearFieldTagOperationCallback
+    {
 public:
+    virtual TInt CommandComplete() = 0;
+    virtual TInt NdefOperationComplete() = 0;
+    };
 
-    explicit QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent = 0);
-    
-    ~QNearFieldTagType4Symbian();
-
-    virtual QByteArray uid() const;
-    Type type() const { return NfcTagType4; }
-
-    bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
-
-    QByteArray sendCommand(const QByteArray &command);
-    QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-
-    QByteArray sendAPDUCommand(const QByteArray &command);
-    QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
-
-    void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
-    {
-        _setAccessMethods(accessMethods);
-    }
-
-    QNearFieldTarget::AccessMethods accessMethods() const
-    {
-        return _accessMethods();
-    }
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QNEARFIELDTAGTYPE4SYMBIAN_H
+#endif
