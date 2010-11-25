@@ -365,7 +365,7 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
 {
     Q_UNUSED(fetchHint);
     Q_UNUSED(error);
-    // TODO: optimise by using our own filters
+    // TODO: optimize by using our own filters
 
     // Just naively get all the incidences between the given startDate and endDate
     d->m_calendarBackendPtr->setFilter(0);
@@ -404,7 +404,7 @@ QList<QOrganizerItem> MKCalEngine::internalItems(const QDateTime& startDate, con
 
 bool MKCalEngine::itemHasRecurringChildInInterval(KCalCore::Incidence::Ptr incidence, QOrganizerItem generator, QDateTime startDate, QDateTime endDate, QOrganizerItemFilter filter) const
 {
-    //this function will check if the incidence has recurring childs in the specified interval with the given filter
+    //this function will check if the incidence has recurring children in the specified interval with the given filter
 
     if (filter.type() != QOrganizerItemFilter::DefaultFilter) {
 
@@ -808,7 +808,7 @@ void MKCalEngine::storageModified(mKCal::ExtendedStorage* storage, const QString
     }
 
     // XXX The mKCal docs says to not use this function because it's too slow!
-    // Can we optimise by only loading items from the date range required, perhaps lazily?
+    // Can we optimize by only loading items from the date range required, perhaps lazily?
     d->m_storagePtr->load();
 
     emit dataChanged();
