@@ -409,8 +409,6 @@ void QDeclarativeMediaBase::setPlaying(bool playing)
     if (playing == m_playing)
         return;
 
-    m_playing = playing;
-
     if (m_complete) {
         if (playing) {
             if (!m_autoLoad && !m_loaded) {
