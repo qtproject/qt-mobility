@@ -87,6 +87,7 @@ tst_QNearFieldManager::tst_QNearFieldManager()
 
 void tst_QNearFieldManager::initTestCase()
 {
+    qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget *");
 }
 
 void tst_QNearFieldManager::cleanupTestCase()
