@@ -80,6 +80,8 @@ QTM_BEGIN_NAMESPACE
     \value ConnectingState  The socket has started establishing a connection.
     \value ConnectedState   A connection is established.
     \value ClosingState     The socket is about to close.
+    \value BoundState       The socket is bound to a local port (for servers).
+    \value ListeningState   The socket is listening for incoming connections (for internal use).
 */
 
 /*!
@@ -117,6 +119,14 @@ QTM_BEGIN_NAMESPACE
 */
 QLlcpSocket::QLlcpSocket(QObject *parent)
 :   QIODevice(parent), d_ptr(new QLlcpSocketPrivate)
+{
+}
+
+/*!
+    \internal
+*/
+QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
+:   QIODevice(parent), d_ptr(d)
 {
 }
 
@@ -295,7 +305,7 @@ bool QLlcpSocket::waitForBytesWritten(int msecs)
 }
 
 /*!
-    Waits until the socket is connected, up to msecs milliseconds. If the connection has been
+    Waits until the socket is connected, up to \a msecs milliseconds. If the connection has been
     established, this function returns true; otherwise it returns false. In the case where it
     returns false, you can call error() to determine the cause of the error.
 
@@ -309,7 +319,7 @@ bool QLlcpSocket::waitForConnected(int msecs)
 }
 
 /*!
-    Waits until the socket is disconnected, up to msecs milliseconds. If the connection has been
+    Waits until the socket is disconnected, up to \a msecs milliseconds. If the connection has been
     disconnected, this function returns true; otherwise it returns false. In the case where it
     returns false, you can call error() to determine the cause of the error.
 

@@ -104,12 +104,10 @@ QByteArray TagType1::sendCommand(const QByteArray &command)
         return QByteArray();
 
     // check crc
-    int responseLength = response.length();
-    crc = (quint8(response.at(responseLength - 1)) << 8) | quint8(response.at(responseLength - 2));
-    response.chop(2);
-    if (crc != qNfcChecksum(response.constData(), response.length()))
+    if (qNfcChecksum(response.constData(), response.length()) != 0)
         return QByteArray();
 
+    response.chop(2);
     return response;
 }
 
