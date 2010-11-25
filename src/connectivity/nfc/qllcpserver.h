@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 class QLlcpSocket;
 class QLlcpServerPrivate;
 
-class QLlcpServer : public QObject
+class Q_CONNECTIVITY_EXPORT QLlcpServer : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QLlcpServer)
