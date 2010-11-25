@@ -8,38 +8,53 @@
 int main(int argc, char *argv[])
 {
 
+    QStringList providers;
     // If no plugin provided, show usage text
     if (argc < 2) {
+        qDebug() << "Plugin provider name not found !";
         qDebug() << "Usage: " << argv[0] << " plugin" << endl;
-        return 0;
+        qDebug() << "Query for providers...";
+        providers = QGeoServiceProvider::availableServiceProviders();
+
+    }else {
+
+        char* p = argv[argc - 1];
+        providers << QString(p);
+        argc--;
     }
 
     QApplication app(argc, argv);
 
-    char* p = argv[argc - 1];
+    int result = 0;
 
-    QString provider(p);
+    foreach (QString provider, providers)
+        {
+            qDebug();
+            qDebug() << "************************";
+            qDebug() << "Running tests for" << provider;
+            qDebug() << "************************";
 
-    TestHelper::loadProvider(provider);
+            TestHelper::loadProvider(provider);
 
-    argc--;
+            int failed = QGeoTestSuite::run(argc, argv);
 
-    int failed = QGeoTestSuite::run(argc, argv);
+            TestHelper::unloadProvider();
 
-    TestHelper::unloadProvider();
+            if (failed == 0) {
+                qDebug();
+                qDebug() << "************************";
+                qDebug() << "All" << QGeoTestSuite::count() << "test cases passed.";
+                qDebug() << "************************";
+            }
+            else {
+                qDebug() << "************************";
+                qDebug() << failed << "tests of" << QGeoTestSuite::count()
+                    << " test cases failed !";
+                qDebug() << "************************";
+            }
 
-    if (failed == 0) {
-        qDebug();
-        qDebug() << "************************";
-        qDebug() << "All" << QGeoTestSuite::count() << "test cases passed.";
-        qDebug() << "************************";
-    }
-    else {
-        qDebug() << "************************";
-        qDebug() << failed << "tests of" << QGeoTestSuite::count() << " test cases failed !";
-        qDebug() << "************************";
-    }
-
-    return failed;
+            result += failed;
+        }
+    return result;
 }
 

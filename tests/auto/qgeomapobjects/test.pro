@@ -1,13 +1,13 @@
-message(Work in progress ... please uncomment test in test.pro file)
-TESTS =
-#qgeomapcircleobject \
-#qgeomapgroupobject \
-#qgeomappolygonobject \
-#qgeomappolylineobject \
-#qgeomaprectangleobject \
-#qgeomaprouteobject \
-#qgeomaptextobject \
-#qgeomappixmapobject \
+TESTS = \
+qgeomapcircleobject \
+qgeomapgroupobject \
+qgeomappolygonobject \
+qgeomappolylineobject \
+qgeomaprectangleobject \
+qgeomaprouteobject \
+qgeomaptextobject \
+qgeomappixmapobject
+
 
 
 ##################################################################################
