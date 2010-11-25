@@ -43,7 +43,8 @@
 #ifndef QDECLARATIVEBATTERYINFO_P_H
 #define QDECLARATIVEBATTERYINFO_P_H
 
-#include <QSystemBatteryInfo>
+#include "qsystembatteryinfo.h"
+
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
@@ -72,7 +73,7 @@ Q_SIGNALS:
 public slots:
     void startBatteryStatusChanged();
 
-    void startchargingStateChanged();
+    void startChargingStateChanged();
     void startChargerTypeChanged();
 
     void startNominalCapacityChanged();
@@ -83,6 +84,8 @@ public slots:
     void startRemainingCapacityBarsChanged();
     void startRemainingChargingTimeChanged();
     void startVoltageChanged();
+    void startConnections();
+
 };
 
 #endif // QDECLARATIVEBATTERYINFO_P_H

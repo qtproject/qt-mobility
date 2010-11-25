@@ -58,7 +58,7 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_PROPERTY(int nominalCapacity READ nominalCapacity NOTIFY nominalCapacityChanged)
     Q_PROPERTY(int remainingCapacityPercent READ remainingCapacityPercent NOTIFY remainingCapacityPercentChanged)
     Q_PROPERTY(int remainingCapacity READ remainingCapacity NOTIFY remainingCapacityChanged)
-    Q_PROPERTY(int voltage READ voltage)
+    Q_PROPERTY(int voltage READ voltage CONSTANT)
     Q_PROPERTY(int remainingChargingTime READ remainingChargingTime NOTIFY remainingChargingTimeChanged)
 
     Q_PROPERTY(int currentFlow READ currentFlow  NOTIFY currentFlowChanged)
@@ -67,13 +67,14 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
 
     Q_PROPERTY(ChargerType chargerType READ chargerType NOTIFY chargerTypeChanged)
     Q_PROPERTY(ChargingState chargingState READ chargingState NOTIFY chargingStateChanged)
+    Q_PROPERTY(EnergyUnit energyMeasurementUnit READ energyMeasurementUnit CONSTANT)
+    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(ChargerType)
     Q_ENUMS(ChargingState)
     Q_ENUMS(EnergyUnit)
 
-    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
 
 public:
     explicit QSystemBatteryInfo(QObject *parent = 0);
@@ -106,7 +107,7 @@ public:
     };
 
     enum EnergyUnit {
-        UnitUnknown,
+        UnitUnknown = 0,
         UnitmAh,
         UnitmWh,
     };

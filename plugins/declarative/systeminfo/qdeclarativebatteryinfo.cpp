@@ -42,6 +42,7 @@
 
 #include "qdeclarativebatteryinfo_p.h"
 #include "qsystembatteryinfo.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -70,6 +71,24 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
 QDeclarativeBatteryInfo::QDeclarativeBatteryInfo(QObject *parent) :
     QSystemBatteryInfo(parent)
 {
+   startConnections();
+}
+
+void QDeclarativeBatteryInfo::startConnections()
+{
+    startBatteryStatusChanged();
+
+    startChargingStateChanged();
+    startChargerTypeChanged();
+
+    startNominalCapacityChanged();
+    startRemainingCapacityPercentChanged();
+    startRemainingCapacityChanged();
+
+    startCurrentFlowChanged();
+    startRemainingCapacityBarsChanged();
+    startRemainingChargingTimeChanged();
+    startVoltageChanged();
 }
 
 void QDeclarativeBatteryInfo::startBatteryStatusChanged()
@@ -78,7 +97,7 @@ void QDeclarativeBatteryInfo::startBatteryStatusChanged()
             this,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),Qt::UniqueConnection);
 }
 
-void QDeclarativeBatteryInfo::startchargingStateChanged()
+void QDeclarativeBatteryInfo::startChargingStateChanged()
 {
     connect(batteryInfo(),SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
             this,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),Qt::UniqueConnection);
