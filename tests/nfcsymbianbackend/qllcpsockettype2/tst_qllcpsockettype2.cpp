@@ -71,6 +71,7 @@ private Q_SLOTS:
 
 tst_qllcpsockettype2::tst_qllcpsockettype2()
 {
+    qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*");
 }
 
 void tst_qllcpsockettype2::initTestCase()
@@ -93,7 +94,7 @@ void tst_qllcpsockettype2::echo()
     QNfcTestUtil::ShowMessage(hint);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
     QVERIFY(target!=NULL);
     QVERIFY(target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
@@ -147,9 +148,10 @@ void tst_qllcpsockettype2::echo()
     //test the echoed string is same as the original string
     QVERIFY(echo == echoed);
 
+    socket.disconnectFromService();
+
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
-
 }
 
 void tst_qllcpsockettype2::echo_data()
@@ -236,9 +238,9 @@ void tst_qllcpsockettype2::echo_wait()
     //test the echoed string is same as the original string
     QVERIFY(echo == echoed);
 
+    socket.disconnectFromService();
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
-
     }
 
 void tst_qllcpsockettype2::echo_wait_data()

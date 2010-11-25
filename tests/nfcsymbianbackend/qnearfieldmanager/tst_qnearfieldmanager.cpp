@@ -81,6 +81,8 @@ private Q_SLOTS:
 
 tst_QNearFieldManager::tst_QNearFieldManager()
 {
+    qRegisterMetaType<QNdefMessage>("QNdefMessage");
+    qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
 }
 
 void tst_QNearFieldManager::initTestCase()
