@@ -1,30 +1,19 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2010-11-10T10:08:22
-#
-#-------------------------------------------------
-
-QT       += testlib
-
-QT       -= gui
-
-QT += xml network svg
-
-TARGET = tst_qgeoroutereply
-CONFIG   += console
-CONFIG   -= app_bundle
+TEMPLATE = app
 CONFIG+=testcase
+TARGET=tst_qgeoroutereply
+
+include (../../../common.pri)
+
+INCLUDEPATH += ../../../src/location
+
+# Input 
+HEADERS += tst_qgeoroutereply.h
+SOURCES += tst_qgeoroutereply.cpp 
+
 CONFIG += mobility
 MOBILITY = location
 
-TEMPLATE = app
-
-INCLUDEPATH += ../../src/global \
-               ../../src/bearer \
-               ../../src/location \
-               ../../src/location/maps
-
-SOURCES += tst_qgeoroutereply.cpp
-
-HEADERS += \
-    tst_qgeoroutereply.h
+symbian {
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
+    TARGET.CAPABILITY = ALL -TCB
+}

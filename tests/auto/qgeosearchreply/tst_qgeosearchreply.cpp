@@ -1,34 +1,75 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "tst_qgeosearchreply.h"
 
 QTM_USE_NAMESPACE
 
-void SearchReply::initTestCase()
+void tst_QGeoSearchReply::initTestCase()
 {
 
     reply = new SubSearchReply();
 }
 
-void SearchReply::cleanupTestCase()
+void tst_QGeoSearchReply::cleanupTestCase()
 {
 
     delete reply;
     delete qgeoplace;
 }
 
-void SearchReply::init()
+void tst_QGeoSearchReply::init()
 {
     qRegisterMetaType<QGeoSearchReply::Error>("Error");
     signalerror = new QSignalSpy(reply, SIGNAL(error(QGeoSearchReply::Error,const QString)));
     signalfinished = new QSignalSpy(reply, SIGNAL(finished()));
 }
 
-void SearchReply::cleanup()
+void tst_QGeoSearchReply::cleanup()
 {
     delete signalerror;
     delete signalfinished;
 }
 
-void SearchReply::t_qgsrep_constructor1()
+void tst_QGeoSearchReply::t_qgsrep_constructor1()
 {
     QVERIFY(!reply->isFinished());
     QVERIFY( signalerror->isValid() );
@@ -38,7 +79,7 @@ void SearchReply::t_qgsrep_constructor1()
     QCOMPARE(signalfinished->count(),0);
 }
 
-void SearchReply::t_qgsrep_constructor2()
+void tst_QGeoSearchReply::t_qgsrep_constructor2()
 {
     QFETCH(QGeoSearchReply::Error,error);
     QFETCH(QString,msg);
@@ -48,14 +89,14 @@ void SearchReply::t_qgsrep_constructor2()
 
     QGeoSearchReply *qgeosearchreplycopy = new QGeoSearchReply (error,msg,0);
 
-    QCOMPARE(typeid(*qgeosearchreplycopy).name(),"N10QtMobility15QGeoSearchReplyE");
+//    QCOMPARE(typeid(*qgeosearchreplycopy).name(),"N10QtMobility15QGeoSearchReplyE");
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
     QCOMPARE (qgeosearchreplycopy->errorString(),msg);
     delete qgeosearchreplycopy;
 }
 
-void SearchReply::t_qgsrep_constructor2_data()
+void tst_QGeoSearchReply::t_qgsrep_constructor2_data()
 {
     QTest::addColumn<QGeoSearchReply::Error>("error");
     QTest::addColumn<QString>("msg");
@@ -69,7 +110,7 @@ void SearchReply::t_qgsrep_constructor2_data()
 
 }
 
-void SearchReply::t_qgsrep_abort()
+void tst_QGeoSearchReply::t_qgsrep_abort()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -91,7 +132,7 @@ void SearchReply::t_qgsrep_abort()
     QCOMPARE (signalfinished->count(),2);
 }
 
-void SearchReply::t_qgsrep_error()
+void tst_QGeoSearchReply::t_qgsrep_error()
 {
     QFETCH(QGeoSearchReply::Error,error);
     QFETCH(QString,msg);
@@ -110,7 +151,7 @@ void SearchReply::t_qgsrep_error()
 
 }
 
-void SearchReply::t_qgsrep_error_data()
+void tst_QGeoSearchReply::t_qgsrep_error_data()
 {
     QTest::addColumn<QGeoSearchReply::Error>("error");
     QTest::addColumn<QString>("msg");
@@ -123,7 +164,7 @@ void SearchReply::t_qgsrep_error_data()
     QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
 }
 
-void SearchReply::t_qgsrep_finished()
+void tst_QGeoSearchReply::t_qgsrep_finished()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -151,21 +192,21 @@ void SearchReply::t_qgsrep_finished()
 
 
 
-void SearchReply::t_qgsrep_limit()
+void tst_QGeoSearchReply::t_qgsrep_limit()
 {
     int limit =30;
     reply->callSetLimit(limit);
     QCOMPARE(reply->limit(),limit);
 }
 
-void SearchReply::t_qgsrep_offset()
+void tst_QGeoSearchReply::t_qgsrep_offset()
 {
     int offset = 2;
     reply->callSetOffset(offset);
     QCOMPARE(reply->offset(),offset);
 }
 
-void SearchReply::t_qgsrep_places()
+void tst_QGeoSearchReply::t_qgsrep_places()
 {
     QList <QGeoPlace> geoplaces;
     geoplaces = reply->places();
@@ -208,7 +249,7 @@ void SearchReply::t_qgsrep_places()
     delete qgeoplacecopy;
 }
 
-void SearchReply::t_qgsrep_viewport()
+void tst_QGeoSearchReply::t_qgsrep_viewport()
 {
     QGeoCoordinate *qgeocoordinate = new QGeoCoordinate (12.12 , 54.43);
 
@@ -222,4 +263,4 @@ void SearchReply::t_qgsrep_viewport()
     delete qgeoboundingbox;
 }
 
-QTEST_MAIN(SearchReply);
+QTEST_MAIN(tst_QGeoSearchReply);

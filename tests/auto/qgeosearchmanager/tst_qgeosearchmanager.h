@@ -40,6 +40,10 @@
 ****************************************************************************/
 
 //TESTED_COMPONENT=src/location
+
+#ifndef TST_QGEOSEARCHMANAGER_H
+#define TST_QGEOSEARCHMANAGER_H
+
 #include <QLocale>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
@@ -98,4 +102,5 @@ Q_DECLARE_METATYPE( QGeoSearchReply::Error);
 Q_DECLARE_METATYPE( QGeoSearchManager::SearchType);
 
 
+#endif
 
