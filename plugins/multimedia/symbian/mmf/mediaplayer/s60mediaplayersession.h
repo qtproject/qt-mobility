@@ -165,6 +165,7 @@ private:
     int m_error;    
     bool m_play_requested;
     bool m_stream;
+    bool m_seekable;
 };
 
 #endif
