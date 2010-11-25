@@ -41,7 +41,7 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "tst_qgeoroutemanager.h"
+#include "tst_qgeoroutingmanager.h"
 
 QTM_USE_NAMESPACE
 

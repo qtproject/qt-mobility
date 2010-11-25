@@ -1,7 +1,47 @@
-#ifndef TST_Maneuver_H
-#define TST_Maneuver_H
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-#endif // TST_Maneuver_H
+#ifndef TST_QGEOMANEUVER_H
+#define TST_QGEOMANEUVER_H
+
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
@@ -9,19 +49,18 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
-#include <typeinfo>
-
+#include "../qlocationtestutils_p.h"
 #include <QGeoManeuver>
 #include <QGeoCoordinate>
 
 QTM_USE_NAMESPACE
 
-class Maneuver : public QObject
+class tst_QGeoManeuver : public QObject
 {
     Q_OBJECT
 
 public:
-    Maneuver();
+    tst_QGeoManeuver();
 
 private Q_SLOTS:
     void initTestCase();
@@ -30,19 +69,20 @@ private Q_SLOTS:
     void cleanup();
 
     //Start unit test for QGeoRouteManeuver
-    void t_qgm_constructor();
-    void t_qgm_constructorCopy();
-    void t_qgm_direction();
-    void t_qgm_direction_data();
-    void t_qgm_distanceToNextInstruction();
-    void t_qgm_instructionText();
-    void t_qgm_position();
-    void t_qgm_position_data();
-    void t_qgm_timeToNextInstruction();
-    void t_qgm_waypoint();
-    void t_qgm_waypoint_data();
-    void t_qgm_isValid();
-    void t_qgm_operators();
+    void constructor();
+    void copy_constructor();
+    void destructor();
+    void direction();
+    void direction_data();
+    void distanceToNextInstruction();
+    void instructionText();
+    void position();
+    void position_data();
+    void timeToNextInstruction();
+    void waypoint();
+    void waypoint_data();
+    void isValid();
+    void operators();
     //End Unit Test for QGeoRouteManeuver
 
 private:
@@ -53,4 +93,6 @@ private:
 
 Q_DECLARE_METATYPE( QList<double>);
 Q_DECLARE_METATYPE (QGeoManeuver::InstructionDirection);
+
+#endif // TST_QGEOMANEUVER_H
 

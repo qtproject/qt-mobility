@@ -1,7 +1,46 @@
-#ifndef TST_RouteRequest_H
-#define TST_RouteRequest_H
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
-#endif // TST_RouteRequest_H
+#ifndef TST_QGEOROUTEREQUEST_H
+#define TST_QGEOROUTEREQUEST_H
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
@@ -9,8 +48,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
-#include <typeinfo>
-
+#include "../qlocationtestutils_p.h"
 #include <QGeoCoordinate>
 #include <QGeoBoundingBox>
 #include <QGeoRouteRequest>
@@ -18,12 +56,12 @@
 
 QTM_USE_NAMESPACE
 
-class RouteRequest : public QObject
+class tst_QGeoRouteRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    RouteRequest();
+    tst_QGeoRouteRequest();
 
 private Q_SLOTS:
     void initTestCase();
@@ -32,23 +70,24 @@ private Q_SLOTS:
     void cleanup();
 
     //Start Unit Test for QGeoRouteRequest
-    void t_qgrreq_constructor1();
-    void t_qgrreq_constructor2();
-    void t_qgrreq_constructorcopy();
-    void t_qgrreq_excludeAreas();
-    void t_qgrreq_numberAlternativeRoutes();
-    void t_qgrreq_routeOptimization();
-    void t_qgrreq_routeOptimization_data();
-    void t_qgrreq_segmentDetail();
-    void t_qgrreq_segmentDetail_data();
-    void t_qgrreq_travelModes();
-    void t_qgrreq_travelModes_data();
-    void t_qgrreq_waypoints();
-    void t_qgrreq_waypoints_data();
-    void t_qgrreq_maneuverDetail();
-    void t_qgrreq_maneuverDetail_data();
-    void t_qgrreq_featureWeight();
-    void t_qgrreq_featureWeight_data();
+    void constructor_waypoints();
+    void constructor_orig_dest();
+    void copy_constructor();
+    void destructor();
+    void excludeAreas();
+    void numberAlternativeRoutes();
+    void routeOptimization();
+    void routeOptimization_data();
+    void segmentDetail();
+    void segmentDetail_data();
+    void travelModes();
+    void travelModes_data();
+    void waypoints();
+    void waypoints_data();
+    void maneuverDetail();
+    void maneuverDetail_data();
+    void featureWeight();
+    void featureWeight_data();
     //End Unit Test for QGeoRouteRequest
 
 private:
@@ -65,3 +104,6 @@ Q_DECLARE_METATYPE( QGeoRouteRequest::TravelMode );
 Q_DECLARE_METATYPE( QGeoRouteRequest::FeatureType);
 Q_DECLARE_METATYPE( QGeoRouteRequest::FeatureWeight);
 Q_DECLARE_METATYPE( QGeoRouteRequest::ManeuverDetail );
+
+#endif // TST_QGEOROUTEREQUEST_H
+

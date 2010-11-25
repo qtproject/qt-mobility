@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin static testplugin
-TARGET = $$qtLibraryTarget(qtgeoservices_staticrouteplugin)
+TARGET = $$qtLibraryTarget(qtgeoservices_staticroutingplugin)
 PLUGIN_TYPE=geoservices
 
 include(../../../../common.pri)

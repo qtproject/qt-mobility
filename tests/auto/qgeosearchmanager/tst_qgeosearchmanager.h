@@ -39,33 +39,68 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_test.h"
-#include "qgeoroutingmanagerengine_test.h"
+//TESTED_COMPONENT=src/location
 
-#include <QtPlugin>
+#ifndef TST_QGEOSEARCHMANAGER_H
+#define TST_QGEOSEARCHMANAGER_H
 
-QGeoServiceProviderFactoryTest::QGeoServiceProviderFactoryTest()
+#include <QLocale>
+#include <QtTest/QtTest>
+#include <QSignalSpy>
+
+#include <qgeoserviceprovider.h>
+#include <QGeoSearchManager>
+#include <QLandmarkManager>
+#include <QGeoSearchReply>
+#include <QGeoBoundingBox>
+#include <QGeoAddress>
+#include <QGeoCoordinate>
+
+
+Q_IMPORT_PLUGIN(qtgeoservices_staticsearchplugin)
+
+QTM_USE_NAMESPACE
+
+
+class SubLandmarkManager :public QLandmarkManager
 {
-}
+    Q_OBJECT
+public:
+    SubLandmarkManager (QString name):QLandmarkManager(){this->name=name;}
+    QString name;
+};
 
-QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
+class tst_QGeoSearchManager: public QObject
 {
-}
+    Q_OBJECT
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "static.georoute.test.plugin";
-}
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+    void cleanup();
+    void supports();
+    void landmarkManager();
+    void locale();
+    void name();
+    void version();
+    void search();
+    void search_data();
+    void geocode();
+    void reverseGeocode();
 
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 2;
-}
+private:
+    QGeoServiceProvider *qgeoserviceprovider;
+    QGeoSearchManager *qgeosearchmanager;
+    QSignalSpy *signalerror;
+    QSignalSpy *signalfinished;
+    void loadSearchManager();
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine(const QMap<
-    QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
-}
+};
+Q_DECLARE_METATYPE( QGeoSearchReply*);
+Q_DECLARE_METATYPE( QGeoSearchReply::Error);
+Q_DECLARE_METATYPE( QGeoSearchManager::SearchType);
 
-Q_EXPORT_PLUGIN2(qtgeoservices_staticrouteplugin, QGeoServiceProviderFactoryTest)
+
+#endif
+

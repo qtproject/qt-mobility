@@ -1,30 +1,22 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2010-11-10T10:08:22
-#
-#-------------------------------------------------
-
-QT       += testlib
-
-QT       -= gui
-
-QT += xml network svg
-
-TARGET = tst_qgeoaddress
-CONFIG   += console
-CONFIG   -= app_bundle
+TEMPLATE = app
 CONFIG+=testcase
+TARGET=tst_qgeoaddress
+
+
+include (../../../common.pri)
+
+INCLUDEPATH += ../../../src/location
+
+# Input
+HEADERS += tst_qgeoaddress.h \
+           ../qlocationtestutils_p.h
+SOURCES += tst_qgeoaddress.cpp \
+           ../qlocationtestutils.cpp
+
 CONFIG += mobility
 MOBILITY = location
 
-TEMPLATE = app
-
-INCLUDEPATH += ../../src/global \
-               ../../src/bearer \
-               ../../src/location \
-               ../../src/location/maps
-
-SOURCES += tst_qgeoaddress.cpp
-
-HEADERS += \
-    tst_qgeoaddress.h
+symbian {
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
+    TARGET.CAPABILITY = ALL -TCB
+}

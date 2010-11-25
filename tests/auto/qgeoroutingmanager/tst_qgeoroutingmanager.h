@@ -40,6 +40,10 @@
 ****************************************************************************/
 
 //TESTED_COMPONENT=src/location
+
+#ifndef TST_QGEOROUTINGMANAGER_H
+#define TST_QGEOROUTINGMANAGER_H
+
 #include <QLocale>
 #include <QtTest/QtTest>
 #include <qgeoserviceprovider.h>
@@ -49,7 +53,7 @@
 #include <QGeoCoordinate>
 #include <QGeoRoute>
 
-Q_IMPORT_PLUGIN(qtgeoservices_staticrouteplugin)
+Q_IMPORT_PLUGIN(qtgeoservices_staticroutingplugin)
 
 QTM_USE_NAMESPACE
 
@@ -82,4 +86,4 @@ private:
 
 };
 
-
+#endif
