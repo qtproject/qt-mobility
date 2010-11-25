@@ -3,6 +3,7 @@ include(../../staticconfig.pri)
 requires(contains(mobility_modules,location))
 
 TEMPLATE = subdirs
+CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
       qgeopositioninfo \
