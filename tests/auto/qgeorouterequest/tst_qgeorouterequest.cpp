@@ -72,10 +72,8 @@ void tst_QGeoRouteRequest::cleanup()
 
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_constructor1()
+void tst_QGeoRouteRequest::constructor_waypoints()
 {
-//    QCOMPARE(typeid(*qgeorouterequest).name(),"N10QtMobility16QGeoRouteRequestE");
-
     QGeoCoordinate *qgeocoord1 = new QGeoCoordinate (43.5435 , 76.342);
     QGeoCoordinate *qgeocoord2 = new QGeoCoordinate (-43.5435 , 176.342);
     QGeoCoordinate *qgeocoord3 = new QGeoCoordinate (-13.5435 , +76.342);
@@ -87,37 +85,65 @@ void tst_QGeoRouteRequest::t_qgrreq_constructor1()
 
     QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest (waypoints);
 
-//    QCOMPARE(typeid(*qgeorouterequest).name(),typeid(*qgeorouterequestcopy).name());
+    QCOMPARE(qgeorouterequestcopy->waypoints(),waypoints);
+    QCOMPARE(qgeorouterequestcopy->numberAlternativeRoutes(),0);
+    QCOMPARE(qgeorouterequestcopy->routeOptimization(),QGeoRouteRequest::FastestRoute);
+    QCOMPARE(qgeorouterequestcopy->segmentDetail(),QGeoRouteRequest::BasicSegmentData);
+    QCOMPARE(qgeorouterequestcopy->travelModes(),QGeoRouteRequest::CarTravel);
+    QCOMPARE(qgeorouterequestcopy->maneuverDetail(),QGeoRouteRequest::BasicManeuvers);
 
     delete qgeocoord1;
     delete qgeocoord2;
     delete qgeocoord3;
     delete qgeorouterequestcopy;
-
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_constructor2()
+void tst_QGeoRouteRequest::constructor_orig_dest()
 {
     QGeoCoordinate *qgeocoord1 = new QGeoCoordinate (43.5435 , 76.342);
     QGeoCoordinate *qgeocoord2 = new QGeoCoordinate (-43.5435 , 176.342);
 
     QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest (*qgeocoord1, *qgeocoord2);
-//    QCOMPARE(typeid(*qgeorouterequest).name(),typeid(*qgeorouterequestcopy).name());
+
+    QList<QGeoCoordinate> waypoints;
+    waypoints.append(*qgeocoord1);
+    waypoints.append(*qgeocoord2);
+
+    QCOMPARE(qgeorouterequestcopy->waypoints(),waypoints);
+    QCOMPARE(qgeorouterequestcopy->numberAlternativeRoutes(),0);
+    QCOMPARE(qgeorouterequestcopy->routeOptimization(),QGeoRouteRequest::FastestRoute);
+    QCOMPARE(qgeorouterequestcopy->segmentDetail(),QGeoRouteRequest::BasicSegmentData);
+    QCOMPARE(qgeorouterequestcopy->travelModes(),QGeoRouteRequest::CarTravel);
+    QCOMPARE(qgeorouterequestcopy->maneuverDetail(),QGeoRouteRequest::BasicManeuvers);
 
     delete qgeocoord1;
     delete qgeocoord2;
-
     delete qgeorouterequestcopy;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_constructorcopy()
+void tst_QGeoRouteRequest::copy_constructor()
 {
-
     QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest (*qgeorouterequest);
-//    QCOMPARE(typeid(*qgeorouterequest).name(),typeid(*qgeorouterequestcopy).name());
+    QCOMPARE(*qgeorouterequest,*qgeorouterequestcopy);
+    delete qgeorouterequestcopy;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_excludeAreas()
+void tst_QGeoRouteRequest::destructor()
+{
+    QGeoRouteRequest *qgeorouterequestcopy;
+
+    QLocationTestUtils::uheap_mark();
+    qgeorouterequestcopy = new QGeoRouteRequest();
+    delete qgeorouterequestcopy;
+    QLocationTestUtils::uheap_mark_end();
+
+    QLocationTestUtils::uheap_mark();
+    qgeorouterequestcopy = new QGeoRouteRequest(*qgeorouterequest);
+    delete qgeorouterequestcopy;
+    QLocationTestUtils::uheap_mark_end();
+}
+
+void tst_QGeoRouteRequest::excludeAreas()
 {
     qgeocoordinate->setLatitude(13.3851);
     qgeocoordinate->setLongitude(52.5312);
@@ -139,7 +165,7 @@ void tst_QGeoRouteRequest::t_qgrreq_excludeAreas()
     delete qgeocoordinatecopy;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_numberAlternativeRoutes()
+void tst_QGeoRouteRequest::numberAlternativeRoutes()
 {
     qgeorouterequest->setNumberAlternativeRoutes(0);
     QCOMPARE(qgeorouterequest->numberAlternativeRoutes(),0);
@@ -152,7 +178,7 @@ void tst_QGeoRouteRequest::t_qgrreq_numberAlternativeRoutes()
 //    QCOMPARE(qgeorouterequest->numberAlternativeRoutes(),0);
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_routeOptimization()
+void tst_QGeoRouteRequest::routeOptimization()
 {
     QFETCH(QGeoRouteRequest::RouteOptimization,optimization);
 
@@ -162,7 +188,7 @@ void tst_QGeoRouteRequest::t_qgrreq_routeOptimization()
     QCOMPARE(qgeorouterequest->routeOptimization(),optimization);
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_routeOptimization_data()
+void tst_QGeoRouteRequest::routeOptimization_data()
 {
     QTest::addColumn<QGeoRouteRequest::RouteOptimization>("optimization");
 
@@ -173,7 +199,7 @@ void tst_QGeoRouteRequest::t_qgrreq_routeOptimization_data()
 
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_segmentDetail()
+void tst_QGeoRouteRequest::segmentDetail()
 {
     QFETCH(QGeoRouteRequest::SegmentDetail,detail);
 
@@ -183,7 +209,7 @@ void tst_QGeoRouteRequest::t_qgrreq_segmentDetail()
     QCOMPARE(qgeorouterequest->segmentDetail(),detail);
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_segmentDetail_data()
+void tst_QGeoRouteRequest::segmentDetail_data()
 {
     QTest::addColumn<QGeoRouteRequest::SegmentDetail>("detail");
 
@@ -191,7 +217,7 @@ void tst_QGeoRouteRequest::t_qgrreq_segmentDetail_data()
     QTest::newRow("detail2") << QGeoRouteRequest::BasicSegmentData;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_travelModes()
+void tst_QGeoRouteRequest::travelModes()
 {
     QFETCH(QGeoRouteRequest::TravelMode,mode);
 
@@ -201,7 +227,7 @@ void tst_QGeoRouteRequest::t_qgrreq_travelModes()
     QCOMPARE(qgeorouterequest->travelModes(),mode);
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_travelModes_data()
+void tst_QGeoRouteRequest::travelModes_data()
 {
     QTest::addColumn<QGeoRouteRequest::TravelMode>("mode");
 
@@ -212,7 +238,7 @@ void tst_QGeoRouteRequest::t_qgrreq_travelModes_data()
     QTest::newRow("mode5") << QGeoRouteRequest::TruckTravel;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_waypoints()
+void tst_QGeoRouteRequest::waypoints()
 {
     QFETCH(QList<double>, coordinates);
 
@@ -237,7 +263,7 @@ void tst_QGeoRouteRequest::t_qgrreq_waypoints()
 
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_waypoints_data()
+void tst_QGeoRouteRequest::waypoints_data()
 {
     QTest::addColumn<QList<double> >("coordinates");
 
@@ -259,7 +285,7 @@ void tst_QGeoRouteRequest::t_qgrreq_waypoints_data()
     QTest::newRow("path5") << coordinates ;
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_maneuverDetail()
+void tst_QGeoRouteRequest::maneuverDetail()
 {
     QFETCH(QGeoRouteRequest::ManeuverDetail,maneuver);
 
@@ -269,7 +295,7 @@ void tst_QGeoRouteRequest::t_qgrreq_maneuverDetail()
     QCOMPARE(qgeorouterequest->maneuverDetail(),maneuver);
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_maneuverDetail_data()
+void tst_QGeoRouteRequest::maneuverDetail_data()
 {
     QTest::addColumn<QGeoRouteRequest::ManeuverDetail>("maneuver");
 
@@ -278,7 +304,7 @@ void tst_QGeoRouteRequest::t_qgrreq_maneuverDetail_data()
 
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_featureWeight()
+void tst_QGeoRouteRequest::featureWeight()
 {
     QFETCH(QGeoRouteRequest::FeatureType,type);
 
@@ -371,7 +397,7 @@ void tst_QGeoRouteRequest::t_qgrreq_featureWeight()
 
 }
 
-void tst_QGeoRouteRequest::t_qgrreq_featureWeight_data()
+void tst_QGeoRouteRequest::featureWeight_data()
 {
     QTest::addColumn<QGeoRouteRequest::FeatureType>("type");
 

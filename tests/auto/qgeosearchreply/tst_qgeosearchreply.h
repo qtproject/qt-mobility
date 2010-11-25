@@ -48,11 +48,12 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
+#include "../qlocationtestutils_p.h"
+
 #include <QGeoSearchReply>
 #include <QGeoPlace>
 #include <QGeoAddress>
 #include <QGeoCoordinate>
-
 #include <QGeoBoundingBox>
 
 QTM_USE_NAMESPACE
@@ -84,17 +85,19 @@ public slots:
 
     //Start Unit Test for QGeoSearchReply
 private slots:
-    void t_qgsrep_constructor1();
-    void t_qgsrep_constructor2();
-    void t_qgsrep_constructor2_data();
-    void t_qgsrep_abort();
-    void t_qgsrep_error();
-    void t_qgsrep_error_data();
-    void t_qgsrep_finished();
-    void t_qgsrep_limit();
-    void t_qgsrep_offset();
-    void t_qgsrep_places();
-    void t_qgsrep_viewport();
+    void constructor();
+    void constructor_error();
+    void constructor_error_data();
+    void destructor();
+    void destructor_data();
+    void abort();
+    void error();
+    void error_data();
+    void finished();
+    void limit();
+    void offset();
+    void places();
+    void viewport();
 
     //End Unit Test for QGeoSearchReply
 

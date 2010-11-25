@@ -49,42 +49,54 @@ tst_QGeoAddress::tst_QGeoAddress()
 
 void tst_QGeoAddress::initTestCase()
 {
-
 }
 
 void tst_QGeoAddress::cleanupTestCase()
 {
-
 }
 
 void tst_QGeoAddress::init()
 {
-
     qgeoaddress = new QGeoAddress();
-
-
-
 }
 
 void tst_QGeoAddress::cleanup()
 {
     delete qgeoaddress;
-
 }
 
-void tst_QGeoAddress::t_qga_constructor()
+void tst_QGeoAddress::constructor()
 {
-//    QCOMPARE(typeid(*qgeoaddress).name(),"N10QtMobility11QGeoAddressE");
-}
-
-void tst_QGeoAddress::t_qga_constructorCopy()
-{
-    QGeoAddress *qgeoaddresscopy = new QGeoAddress (*qgeoaddress);
-//    QCOMPARE(typeid(*qgeoaddress).name(),typeid(*qgeoaddresscopy).name());
+    QGeoAddress *qgeoaddresscopy = new QGeoAddress();
+    QVERIFY(qgeoaddress->isEmpty());
+    QCOMPARE(*qgeoaddress, *qgeoaddresscopy);
     delete qgeoaddresscopy;
 }
 
-void tst_QGeoAddress::t_qga_city()
+void tst_QGeoAddress::copy_constructor()
+{
+    QGeoAddress *qgeoaddresscopy = new QGeoAddress();
+    QVERIFY(qgeoaddresscopy->isEmpty());
+    QCOMPARE(*qgeoaddress, *qgeoaddresscopy);
+    delete qgeoaddresscopy;
+}
+
+void tst_QGeoAddress::destructor()
+{
+    QGeoAddress *qgeoaddresscopy;
+
+    QLocationTestUtils::uheap_mark();
+    qgeoaddresscopy = new QGeoAddress();
+    delete qgeoaddresscopy;
+    QLocationTestUtils::uheap_mark_end();
+
+    QLocationTestUtils::uheap_mark();
+    qgeoaddresscopy = new QGeoAddress(*qgeoaddress);
+    delete qgeoaddresscopy;
+    QLocationTestUtils::uheap_mark_end();
+}
+
+void tst_QGeoAddress::city()
 {
     QString city;
     qgeoaddress->setCity(city);
@@ -97,11 +109,9 @@ void tst_QGeoAddress::t_qga_city()
     city = "New York";
     qgeoaddress->setCity(city);
     QCOMPARE(qgeoaddress->city(),city);
-
-
 }
 
-void tst_QGeoAddress::t_qga_country()
+void tst_QGeoAddress::country()
 {
     QString country;
     qgeoaddress->setCountry(country);
@@ -114,10 +124,9 @@ void tst_QGeoAddress::t_qga_country()
     country = "Spain";
     qgeoaddress->setCountry(country);
     QCOMPARE(qgeoaddress->country(),country);
-
 }
 
-void tst_QGeoAddress::t_qga_countryCode()
+void tst_QGeoAddress::countryCode()
 {
     QString countryCode;
     qgeoaddress->setCountryCode(countryCode);
@@ -132,7 +141,7 @@ void tst_QGeoAddress::t_qga_countryCode()
     QCOMPARE(qgeoaddress->countryCode(),countryCode);
 }
 
-void tst_QGeoAddress::t_qga_county()
+void tst_QGeoAddress::county()
 {
     QString county;
     qgeoaddress->setCounty(county);
@@ -147,7 +156,7 @@ void tst_QGeoAddress::t_qga_county()
     QCOMPARE(qgeoaddress->county(),county);
 }
 
-void tst_QGeoAddress::t_qga_district()
+void tst_QGeoAddress::district()
 {
     QString district;
     qgeoaddress->setDistrict(district);
@@ -162,7 +171,7 @@ void tst_QGeoAddress::t_qga_district()
     QCOMPARE(qgeoaddress->district(),district);
 }
 
-void tst_QGeoAddress::t_qga_postcode()
+void tst_QGeoAddress::postcode()
 {
     QString postcode;
     qgeoaddress->setPostcode(postcode);
@@ -177,7 +186,7 @@ void tst_QGeoAddress::t_qga_postcode()
     QCOMPARE(qgeoaddress->postcode(),postcode);
 }
 
-void tst_QGeoAddress::t_qga_state()
+void tst_QGeoAddress::state()
 {
     QString state;
     qgeoaddress->setState(state);
@@ -192,7 +201,7 @@ void tst_QGeoAddress::t_qga_state()
     QCOMPARE(qgeoaddress->state(),state);
 }
 
-void tst_QGeoAddress::t_qga_street()
+void tst_QGeoAddress::street()
 {
     QString street;
     qgeoaddress->setStreet(street);
@@ -208,7 +217,7 @@ void tst_QGeoAddress::t_qga_street()
 }
 
 //Street Number is not define in the API!!!!
-/*void tst_QGeoAddress::t_qga_streetNumber()
+/*void tst_QGeoAddress::streetNumber()
 {
     QString streetNumber;
     qgeoaddress->setStreetNumber(streetNumber);
@@ -223,7 +232,7 @@ void tst_QGeoAddress::t_qga_street()
     QCOMPARE(qgeoaddress->streetNumber(),streetNumber);
 }*/
 
-void tst_QGeoAddress::t_qga_emptyClear()
+void tst_QGeoAddress::emptyClear()
 {
     QFETCH(QString, country);
     QFETCH(QString, countryCode);
@@ -281,7 +290,7 @@ void tst_QGeoAddress::t_qga_emptyClear()
 
 }
 
-void tst_QGeoAddress::t_qga_emptyClear_data()
+void tst_QGeoAddress::emptyClear_data()
 {
     QTest::addColumn<QString>("country");
     QTest::addColumn<QString>("countryCode");
@@ -296,7 +305,7 @@ void tst_QGeoAddress::t_qga_emptyClear_data()
 
 }
 
-void tst_QGeoAddress::t_qga_operators()
+void tst_QGeoAddress::operators()
 {
     //Create a copy and see that they are the same
     QGeoAddress *qgeoaddresscopy = new QGeoAddress (*qgeoaddress);
@@ -340,7 +349,7 @@ void tst_QGeoAddress::t_qga_operators()
 
 }
 
-void tst_QGeoAddress::t_qga_operators_data()
+void tst_QGeoAddress::operators_data()
 {
     QTest::addColumn<QString>("country");
     QTest::addColumn<QString>("countryCode");

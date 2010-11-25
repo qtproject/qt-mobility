@@ -69,9 +69,14 @@ void tst_QGeoSearchReply::cleanup()
     delete signalfinished;
 }
 
-void tst_QGeoSearchReply::t_qgsrep_constructor1()
+void tst_QGeoSearchReply::constructor()
 {
     QVERIFY(!reply->isFinished());
+
+    QCOMPARE(reply->limit(),-1);
+    QCOMPARE(reply->offset(),0);
+    QCOMPARE(reply->error(),QGeoSearchReply::NoError);
+
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
 
@@ -79,7 +84,7 @@ void tst_QGeoSearchReply::t_qgsrep_constructor1()
     QCOMPARE(signalfinished->count(),0);
 }
 
-void tst_QGeoSearchReply::t_qgsrep_constructor2()
+void tst_QGeoSearchReply::constructor_error()
 {
     QFETCH(QGeoSearchReply::Error,error);
     QFETCH(QString,msg);
@@ -89,28 +94,48 @@ void tst_QGeoSearchReply::t_qgsrep_constructor2()
 
     QGeoSearchReply *qgeosearchreplycopy = new QGeoSearchReply (error,msg,0);
 
-//    QCOMPARE(typeid(*qgeosearchreplycopy).name(),"N10QtMobility15QGeoSearchReplyE");
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
+
+    QCOMPARE (qgeosearchreplycopy->error(),error);
     QCOMPARE (qgeosearchreplycopy->errorString(),msg);
+
     delete qgeosearchreplycopy;
 }
 
-void tst_QGeoSearchReply::t_qgsrep_constructor2_data()
+void tst_QGeoSearchReply::constructor_error_data()
 {
     QTest::addColumn<QGeoSearchReply::Error>("error");
     QTest::addColumn<QString>("msg");
 
     QTest::newRow("error1") << QGeoSearchReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoSearchReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Communication Error.";
+    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Comunication Error.";
     QTest::newRow("error4") << QGeoSearchReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoSearchReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
 
 }
 
-void tst_QGeoSearchReply::t_qgsrep_abort()
+void tst_QGeoSearchReply::destructor()
+{
+    QGeoSearchReply *qgeosearchreplycopy;
+    QFETCH(QGeoSearchReply::Error,error);
+    QFETCH(QString,msg);
+
+    QLocationTestUtils::uheap_mark();
+    qgeosearchreplycopy = new QGeoSearchReply (error,msg,0);
+    delete qgeosearchreplycopy;
+    QLocationTestUtils::uheap_mark_end();
+
+}
+
+void tst_QGeoSearchReply::destructor_data()
+{
+    tst_QGeoSearchReply::constructor_error_data();
+}
+
+void tst_QGeoSearchReply::abort()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -132,7 +157,7 @@ void tst_QGeoSearchReply::t_qgsrep_abort()
     QCOMPARE (signalfinished->count(),2);
 }
 
-void tst_QGeoSearchReply::t_qgsrep_error()
+void tst_QGeoSearchReply::error()
 {
     QFETCH(QGeoSearchReply::Error,error);
     QFETCH(QString,msg);
@@ -151,7 +176,7 @@ void tst_QGeoSearchReply::t_qgsrep_error()
 
 }
 
-void tst_QGeoSearchReply::t_qgsrep_error_data()
+void tst_QGeoSearchReply::error_data()
 {
     QTest::addColumn<QGeoSearchReply::Error>("error");
     QTest::addColumn<QString>("msg");
@@ -164,7 +189,7 @@ void tst_QGeoSearchReply::t_qgsrep_error_data()
     QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
 }
 
-void tst_QGeoSearchReply::t_qgsrep_finished()
+void tst_QGeoSearchReply::finished()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -192,21 +217,21 @@ void tst_QGeoSearchReply::t_qgsrep_finished()
 
 
 
-void tst_QGeoSearchReply::t_qgsrep_limit()
+void tst_QGeoSearchReply::limit()
 {
     int limit =30;
     reply->callSetLimit(limit);
     QCOMPARE(reply->limit(),limit);
 }
 
-void tst_QGeoSearchReply::t_qgsrep_offset()
+void tst_QGeoSearchReply::offset()
 {
     int offset = 2;
     reply->callSetOffset(offset);
     QCOMPARE(reply->offset(),offset);
 }
 
-void tst_QGeoSearchReply::t_qgsrep_places()
+void tst_QGeoSearchReply::places()
 {
     QList <QGeoPlace> geoplaces;
     geoplaces = reply->places();
@@ -249,7 +274,7 @@ void tst_QGeoSearchReply::t_qgsrep_places()
     delete qgeoplacecopy;
 }
 
-void tst_QGeoSearchReply::t_qgsrep_viewport()
+void tst_QGeoSearchReply::viewport()
 {
     QGeoCoordinate *qgeocoordinate = new QGeoCoordinate (12.12 , 54.43);
 

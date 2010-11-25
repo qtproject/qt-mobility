@@ -72,23 +72,38 @@ void tst_QGeoPlace::cleanup()
     delete qgeocoordinate;
     delete qgeoplace;
     delete qgeoboundingbox;
-
-
 }
 
-void tst_QGeoPlace::t_qgp_constructor()
+void tst_QGeoPlace::constructor()
 {
-//    QCOMPARE(typeid(*qgeoplace).name(),"N10QtMobility9QGeoPlaceE");
+    QCOMPARE(qgeoplace->address(), *qgeoaddress);
+    QCOMPARE(qgeoplace->coordinate(), *qgeocoordinate);
+    QCOMPARE(qgeoplace->viewport(), *qgeoboundingbox);
 }
 
-void tst_QGeoPlace::t_qgp_constructorCopy()
+void tst_QGeoPlace::copy_constructor()
 {
     QGeoPlace *qgeoplacecopy = new QGeoPlace (*qgeoplace);
-//    QCOMPARE(typeid(*qgeoplace).name(),typeid(*qgeoplacecopy).name());
+    QCOMPARE(*qgeoplace, *qgeoplacecopy);
     delete qgeoplacecopy;
 }
 
-void tst_QGeoPlace::t_qgp_address()
+void tst_QGeoPlace::destructor()
+{
+    QGeoPlace *qgeoplacecopy;
+
+    QLocationTestUtils::uheap_mark();
+    qgeoplacecopy = new QGeoPlace();
+    delete qgeoplacecopy;
+    QLocationTestUtils::uheap_mark_end();
+
+    QLocationTestUtils::uheap_mark();
+    qgeoplacecopy = new QGeoPlace(*qgeoplace);
+    delete qgeoplacecopy;
+    QLocationTestUtils::uheap_mark_end();
+}
+
+void tst_QGeoPlace::address()
 {
     qgeoaddress->setCity("Berlin");
     qgeoaddress->setCountry("Germany");
@@ -106,7 +121,7 @@ void tst_QGeoPlace::t_qgp_address()
     QCOMPARE(qgeoplace->address(),*qgeoaddress);
 }
 
-void tst_QGeoPlace::t_qgp_coordinate()
+void tst_QGeoPlace::coordinate()
 {
     qgeocoordinate->setLatitude(13.3851);
     qgeocoordinate->setLongitude(52.5312);
@@ -121,7 +136,7 @@ void tst_QGeoPlace::t_qgp_coordinate()
     QCOMPARE(qgeoplace->coordinate(),*qgeocoordinate);
 }
 
-void tst_QGeoPlace::t_qgp_viewport()
+void tst_QGeoPlace::viewport()
 {
     qgeocoordinate->setLatitude(13.3851);
     qgeocoordinate->setLongitude(52.5312);
@@ -140,7 +155,7 @@ void tst_QGeoPlace::t_qgp_viewport()
     delete qgeoboundingboxcopy;
 }
 
-void tst_QGeoPlace::t_qgp_isLandmark()
+void tst_QGeoPlace::isLandmark()
 {
     QVERIFY(!qgeoplace->isLandmark());
 
@@ -162,7 +177,7 @@ void tst_QGeoPlace::t_qgp_isLandmark()
 
 }
 
-void tst_QGeoPlace::t_qgp_operators()
+void tst_QGeoPlace::operators()
 {
     QGeoAddress *qgeoaddresscopy = new QGeoAddress();
     qgeoaddresscopy->setCity("Berlin");

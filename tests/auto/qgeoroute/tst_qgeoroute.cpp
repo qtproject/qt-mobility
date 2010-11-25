@@ -69,22 +69,43 @@ void tst_QGeoRoute::cleanup()
     delete qgeocoordinate;
 }
 
-void tst_QGeoRoute::t_qgr_constructor()
+void tst_QGeoRoute::constructor()
 {
-    qgeoroute = new QGeoRoute ();
-//    QCOMPARE(typeid(*qgeoroute).name(),"N10QtMobility9QGeoRouteE");
+    QString empty="";
+    QGeoBoundingBox *boundingbox = new QGeoBoundingBox();
 
+    QCOMPARE(qgeoroute->bounds(),*boundingbox);
+    QCOMPARE(qgeoroute->distance(),0.0);
+    QCOMPARE(qgeoroute->path().size(),0);
+    QCOMPARE(qgeoroute->routeId(),empty);
+    QCOMPARE(qgeoroute->travelTime(),0);
+
+    delete boundingbox;
 }
 
-void tst_QGeoRoute::t_qgr_constructorCopy()
+void tst_QGeoRoute::copy_constructor()
 {
     QGeoRoute *qgeoroutecopy = new QGeoRoute (*qgeoroute);
-//    QCOMPARE(typeid(*qgeoroute).name(),typeid(*qgeoroutecopy).name());
+    QCOMPARE(*qgeoroute,*qgeoroutecopy);
     delete qgeoroutecopy;
-
 }
 
-void tst_QGeoRoute::t_qgr_bounds()
+void tst_QGeoRoute::destructor()
+{
+    QGeoRoute *qgeoroutecopy;
+
+    QLocationTestUtils::uheap_mark();
+    qgeoroutecopy = new QGeoRoute();
+    delete qgeoroutecopy;
+    QLocationTestUtils::uheap_mark_end();
+
+    QLocationTestUtils::uheap_mark();
+    qgeoroutecopy = new QGeoRoute(*qgeoroute);
+    delete qgeoroutecopy;
+    QLocationTestUtils::uheap_mark_end();
+}
+
+void tst_QGeoRoute::bounds()
 {
     qgeocoordinate->setLatitude(13.3851);
     qgeocoordinate->setLongitude(52.5312);
@@ -95,17 +116,17 @@ void tst_QGeoRoute::t_qgr_bounds()
 
     QCOMPARE(qgeoroute->bounds(),*qgeoboundingbox);
 
-    qgeoboundingbox->setHeight(23.1);
+    qgeoboundingbox->setWidth(23.1);
 
     QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->bounds(),*qgeoboundingbox);
+    QCOMPARE(qgeoroute->bounds().width(),qgeoboundingbox->width());
 
     delete qgeoboundingbox;
 
 
 }
 
-void tst_QGeoRoute::t_qgr_distance()
+void tst_QGeoRoute::distance()
 {
     double distance = 0.0;
 
@@ -120,7 +141,7 @@ void tst_QGeoRoute::t_qgr_distance()
     QCOMPARE(qgeoroute->distance(),distance);
 }
 
-void tst_QGeoRoute::t_qgr_path()
+void tst_QGeoRoute::path()
 {
     QFETCH(QList<double>, coordinates);
 
@@ -143,7 +164,7 @@ void tst_QGeoRoute::t_qgr_path()
     }
 }
 
-void tst_QGeoRoute::t_qgr_path_data()
+void tst_QGeoRoute::path_data()
 {
     QTest::addColumn<QList<double> >("coordinates");
 
@@ -164,7 +185,7 @@ void tst_QGeoRoute::t_qgr_path_data()
     coordinates << 1324.323 << 143242.323;
     QTest::newRow("path5") << coordinates ;
 }
-void tst_QGeoRoute::t_qgr_request()
+void tst_QGeoRoute::request()
 {
     qgeocoordinate->setLatitude(65.654);
     qgeocoordinate->setLongitude(0.4324);
@@ -195,7 +216,7 @@ void tst_QGeoRoute::t_qgr_request()
     delete qgeorouterequestcopy;
 }
 
-void tst_QGeoRoute::t_qgr_routeId()
+void tst_QGeoRoute::routeId()
 {
     QString text = "routeId 4504";
 
@@ -209,7 +230,7 @@ void tst_QGeoRoute::t_qgr_routeId()
 
 }
 
-void tst_QGeoRoute::t_qgr_firstrouteSegments()
+void tst_QGeoRoute::firstrouteSegments()
 {
     qgeoroutesegment = new QGeoRouteSegment ();
     qgeoroutesegment->setDistance(35.453);
@@ -232,14 +253,14 @@ void tst_QGeoRoute::t_qgr_firstrouteSegments()
 
 }
 
-void tst_QGeoRoute::t_qgr_travelMode()
+void tst_QGeoRoute::travelMode()
 {
     QFETCH(QGeoRouteRequest::TravelMode,mode);
 
     qgeoroute->setTravelMode(mode);
     QCOMPARE(qgeoroute->travelMode(),mode);
 }
-void tst_QGeoRoute::t_qgr_travelMode_data()
+void tst_QGeoRoute::travelMode_data()
 {
     QTest::addColumn<QGeoRouteRequest::TravelMode>("mode");
 
@@ -250,7 +271,7 @@ void tst_QGeoRoute::t_qgr_travelMode_data()
     QTest::newRow("mode5") << QGeoRouteRequest::TruckTravel;
 }
 
-void tst_QGeoRoute::t_qgr_travelTime()
+void tst_QGeoRoute::travelTime()
 {
     int time = 0;
     qgeoroute->setTravelTime(time);
@@ -266,7 +287,7 @@ void tst_QGeoRoute::t_qgr_travelTime()
     QCOMPARE (qgeoroute->travelTime(),time);
 }
 
-void tst_QGeoRoute::t_qgr_operators()
+void tst_QGeoRoute::operators()
 {
     QGeoRoute *qgeoroutecopy = new QGeoRoute (*qgeoroute);
 

@@ -68,4 +68,4 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEn
     return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
 }
 
-Q_EXPORT_PLUGIN2(qtgeoservices_staticrouteplugin, QGeoServiceProviderFactoryTest)
+Q_EXPORT_PLUGIN2(qtgeoservices_staticroutingplugin, QGeoServiceProviderFactoryTest)

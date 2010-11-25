@@ -68,22 +68,42 @@ void tst_QGeoManeuver::cleanup()
     delete qgeomaneuver;
 }
 
-void tst_QGeoManeuver::t_qgm_constructor()
+void tst_QGeoManeuver::constructor()
 {
-    qgeomaneuver = new QGeoManeuver ();
-//    QCOMPARE(typeid(*qgeomaneuver).name(),"N10QtMobility12QGeoManeuverE");
+    QString empty ="";
 
+    QVERIFY(!qgeomaneuver->isValid());
+    QCOMPARE(qgeomaneuver->direction(),QGeoManeuver::NoDirection);
+    QCOMPARE(qgeomaneuver->distanceToNextInstruction(),0.0);
+    QCOMPARE(qgeomaneuver->instructionText(),empty);
+    QCOMPARE(qgeomaneuver->timeToNextInstruction(),0);
 }
 
-void tst_QGeoManeuver::t_qgm_constructorCopy()
+void tst_QGeoManeuver::copy_constructor()
 {
     QGeoManeuver *qgeomaneuvercopy = new QGeoManeuver (*qgeomaneuver);
-//    QCOMPARE(typeid(*qgeomaneuver).name(),typeid(*qgeomaneuvercopy).name());
-    delete qgeomaneuvercopy;
 
+    QCOMPARE(*qgeomaneuver,*qgeomaneuvercopy);
+
+    delete qgeomaneuvercopy;
 }
 
-void tst_QGeoManeuver::t_qgm_direction()
+void tst_QGeoManeuver::destructor()
+{
+    QGeoManeuver *qgeomaneuvercopy;
+
+    QLocationTestUtils::uheap_mark();
+    qgeomaneuvercopy = new QGeoManeuver();
+    delete qgeomaneuvercopy;
+    QLocationTestUtils::uheap_mark_end();
+
+    QLocationTestUtils::uheap_mark();
+    qgeomaneuvercopy = new QGeoManeuver(*qgeomaneuver);
+    delete qgeomaneuvercopy;
+    QLocationTestUtils::uheap_mark_end();
+}
+
+void tst_QGeoManeuver::direction()
 {
     QFETCH(QGeoManeuver::InstructionDirection,direction);
 
@@ -91,7 +111,7 @@ void tst_QGeoManeuver::t_qgm_direction()
 
     QCOMPARE(qgeomaneuver->direction(),direction);
 }
-void tst_QGeoManeuver::t_qgm_direction_data()
+void tst_QGeoManeuver::direction_data()
 {
     QTest::addColumn<QGeoManeuver::InstructionDirection>("direction");
 
@@ -109,7 +129,7 @@ void tst_QGeoManeuver::t_qgm_direction_data()
     QTest::newRow("instruction12") << QGeoManeuver::DirectionBearLeft;
 }
 
-void tst_QGeoManeuver::t_qgm_distanceToNextInstruction()
+void tst_QGeoManeuver::distanceToNextInstruction()
 {
     double distance = 0.0;
     qgeomaneuver->setDistanceToNextInstruction(distance);
@@ -125,7 +145,7 @@ void tst_QGeoManeuver::t_qgm_distanceToNextInstruction()
     QCOMPARE (qgeomaneuver->distanceToNextInstruction(),distance);
 }
 
-void tst_QGeoManeuver::t_qgm_instructionText()
+void tst_QGeoManeuver::instructionText()
 {
     QString text = "After 50m turn left";
 
@@ -139,7 +159,7 @@ void tst_QGeoManeuver::t_qgm_instructionText()
 
 }
 
-void tst_QGeoManeuver::t_qgm_position()
+void tst_QGeoManeuver::position()
 {
     QFETCH(double, latitude);
     QFETCH(double, longitude);
@@ -153,7 +173,7 @@ void tst_QGeoManeuver::t_qgm_position()
     delete qgeocoordinate;
 }
 
-void tst_QGeoManeuver::t_qgm_position_data()
+void tst_QGeoManeuver::position_data()
 {
     QTest::addColumn<double>("latitude");
     QTest::addColumn<double>("longitude");
@@ -169,7 +189,7 @@ void tst_QGeoManeuver::t_qgm_position_data()
     QTest::newRow("correct5") << 45.0 << 90.0;
 }
 
-void tst_QGeoManeuver::t_qgm_timeToNextInstruction()
+void tst_QGeoManeuver::timeToNextInstruction()
 {
     int time = 0;
     qgeomaneuver->setTimeToNextInstruction(time);
@@ -185,7 +205,7 @@ void tst_QGeoManeuver::t_qgm_timeToNextInstruction()
     QCOMPARE (qgeomaneuver->timeToNextInstruction(),time);
 }
 
-void tst_QGeoManeuver::t_qgm_waypoint()
+void tst_QGeoManeuver::waypoint()
 {
     QFETCH(double, latitude);
     QFETCH(double, longitude);
@@ -203,7 +223,7 @@ void tst_QGeoManeuver::t_qgm_waypoint()
 
     delete qgeocoordinate;
 }
-void tst_QGeoManeuver::t_qgm_waypoint_data()
+void tst_QGeoManeuver::waypoint_data()
 {
     QTest::addColumn<double>("latitude");
     QTest::addColumn<double>("longitude");
@@ -219,14 +239,14 @@ void tst_QGeoManeuver::t_qgm_waypoint_data()
     QTest::newRow("correct5") << 45.0 << 90.0;
 }
 
-void tst_QGeoManeuver::t_qgm_isValid()
+void tst_QGeoManeuver::isValid()
 {
     QVERIFY(!qgeomaneuver->isValid());
     qgeomaneuver->setDirection(QGeoManeuver::DirectionBearLeft);
     QVERIFY(qgeomaneuver->isValid());
 }
 
-void tst_QGeoManeuver::t_qgm_operators(){
+void tst_QGeoManeuver::operators(){
 
     QGeoManeuver *qgeomaneuvercopy = new QGeoManeuver(*qgeomaneuver);
 

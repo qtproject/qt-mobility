@@ -39,68 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef TST_QGEOROUTE_H
-#define TST_QGEOROUTE_H
+//TESTED_COMPONENT=src/location
 
-#include <QtCore/QString>
+#ifndef TST_QGEOROUTINGMANAGER_H
+#define TST_QGEOROUTINGMANAGER_H
+
+#include <QLocale>
 #include <QtTest/QtTest>
-#include <QtCore/QCoreApplication>
-#include <QMetaType>
-#include <QSignalSpy>
-
-#include "../qlocationtestutils_p.h"
-#include <QGeoRoute>
-#include <QGeoBoundingBox>
-#include <QGeoCoordinate>
+#include <qgeoserviceprovider.h>
+#include <QGeoRoutingManager>
 #include <QGeoRouteRequest>
-#include <QGeoRouteSegment>
+#include <QGeoRouteReply>
+#include <QGeoCoordinate>
+#include <QGeoRoute>
 
+Q_IMPORT_PLUGIN(qtgeoservices_staticroutingplugin)
 
 QTM_USE_NAMESPACE
 
-class tst_QGeoRoute : public QObject
+class tst_QGeoRoutingManager: public QObject
 {
     Q_OBJECT
-
-public:
-    tst_QGeoRoute();
 
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void init();
     void cleanup();
-
-    //Start unit test for QGeoRoute
-    void constructor();
-    void copy_constructor();
-    void destructor();
-    void bounds();
-    void distance();
-    void path();
-    void path_data();
-    void request();
-    void routeId();
-    void firstrouteSegments();
-    void travelMode();
-    void travelMode_data();
-    void travelTime();
-    void operators();
-    //End Unit Test for QGeoRoute
+    void supports();
+    void locale();
+    void name();
+    void version();
+    void calculate();
+    void update();
 
 private:
-    QGeoRoute *qgeoroute;
-    QGeoBoundingBox *qgeoboundingbox;
-    QGeoCoordinate *qgeocoordinate;
-    QGeoRouteRequest *qgeorouterequest;
-    QGeoRouteSegment *qgeoroutesegment;
-
+    QGeoServiceProvider *qgeoserviceprovider;
+    QGeoRoutingManager *qgeoroutingmanager;
+    QGeoRouteRequest *request;
+    QGeoRouteReply *reply;
+    QGeoCoordinate *origin;
+    QGeoCoordinate *destination;
+    QGeoRoute *route;
+    QGeoCoordinate *position;
+    void loadRoutingManager();
 
 };
 
-Q_DECLARE_METATYPE( QList<double>);
-Q_DECLARE_METATYPE( QList<QGeoCoordinate>);
-Q_DECLARE_METATYPE( QGeoRouteRequest::TravelMode);
-
-
-#endif // TST_QGEOROUTE_H
+#endif

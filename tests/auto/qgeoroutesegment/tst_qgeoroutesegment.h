@@ -48,6 +48,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
+#include "../qlocationtestutils_p.h"
 #include <QGeoCoordinate>
 #include <QGeoRouteSegment>
 #include <QGeoManeuver>
@@ -68,19 +69,20 @@ private Q_SLOTS:
     void cleanup();
 
     //Start unit test for QGeoRouteSegment
-    void t_qgrs_constructor();
-    void t_qgrs_constructorCopy();
-    void t_qgrs_travelTime();
-    void t_qgrs_travelTime_data();
-    void t_qgrs_distance();
-    void t_qgrs_distance_data();
-    void t_qgrs_path();
-    void t_qgrs_path_data();
-    void t_qgrs_maneuver();
-    void t_qgrs_nextroutesegment();
-    void t_qgrs_isValid();
-    void t_qgrs_operators();
-    void t_qgrs_operators_data();
+    void constructor();
+    void copy_constructor();
+    void destructor();
+    void travelTime();
+    void travelTime_data();
+    void distance();
+    void distance_data();
+    void path();
+    void path_data();
+    void maneuver();
+    void nextroutesegment();
+    void isValid();
+    void operators();
+    void operators_data();
     //End Unit Test for QGeoRouteSegment
 
 private:

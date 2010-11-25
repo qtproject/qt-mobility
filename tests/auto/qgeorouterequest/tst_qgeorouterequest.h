@@ -48,6 +48,7 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
+#include "../qlocationtestutils_p.h"
 #include <QGeoCoordinate>
 #include <QGeoBoundingBox>
 #include <QGeoRouteRequest>
@@ -69,23 +70,24 @@ private Q_SLOTS:
     void cleanup();
 
     //Start Unit Test for QGeoRouteRequest
-    void t_qgrreq_constructor1();
-    void t_qgrreq_constructor2();
-    void t_qgrreq_constructorcopy();
-    void t_qgrreq_excludeAreas();
-    void t_qgrreq_numberAlternativeRoutes();
-    void t_qgrreq_routeOptimization();
-    void t_qgrreq_routeOptimization_data();
-    void t_qgrreq_segmentDetail();
-    void t_qgrreq_segmentDetail_data();
-    void t_qgrreq_travelModes();
-    void t_qgrreq_travelModes_data();
-    void t_qgrreq_waypoints();
-    void t_qgrreq_waypoints_data();
-    void t_qgrreq_maneuverDetail();
-    void t_qgrreq_maneuverDetail_data();
-    void t_qgrreq_featureWeight();
-    void t_qgrreq_featureWeight_data();
+    void constructor_waypoints();
+    void constructor_orig_dest();
+    void copy_constructor();
+    void destructor();
+    void excludeAreas();
+    void numberAlternativeRoutes();
+    void routeOptimization();
+    void routeOptimization_data();
+    void segmentDetail();
+    void segmentDetail_data();
+    void travelModes();
+    void travelModes_data();
+    void waypoints();
+    void waypoints_data();
+    void maneuverDetail();
+    void maneuverDetail_data();
+    void featureWeight();
+    void featureWeight_data();
     //End Unit Test for QGeoRouteRequest
 
 private:

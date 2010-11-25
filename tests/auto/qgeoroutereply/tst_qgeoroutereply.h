@@ -53,6 +53,8 @@
 #include <QGeoRouteReply>
 #include <QGeoRoute>
 
+#include "../qlocationtestutils_p.h"
+
 QTM_USE_NAMESPACE
 class SubRouteReply :public QGeoRouteReply
 {
@@ -76,15 +78,17 @@ public slots:
 
     //Start Unit Test for QGeoRouteReply
 private slots:
-    void t_qgrrep_constructor1();
-    void t_qgrrep_constructor2();
-    void t_qgrrep_constructor2_data();
-    void t_qgrrep_routes();
-    void t_qgrrep_finished();
-    void t_qgrrep_abort();
-    void t_qgrrep_error();
-    void t_qgrrep_error_data();
-    void t_qgrrep_request();
+    void constructor();
+    void constructor_error();
+    void constructor_error_data();
+    void destructor();
+    void destructor_data();
+    void routes();
+    void finished();
+    void abort();
+    void error();
+    void error_data();
+    void request();
     //End Unit Test for QGeoRouteReply
 
 

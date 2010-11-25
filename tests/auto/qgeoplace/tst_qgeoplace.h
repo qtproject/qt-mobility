@@ -46,13 +46,12 @@
 #include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
 #include <QMetaType>
-#include <QSignalSpy>
 
+#include "../qlocationtestutils_p.h"
 #include <QGeoAddress>
 #include <QGeoCoordinate>
 #include <QGeoPlace>
 #include <QGeoBoundingBox>
-
 
 QTM_USE_NAMESPACE
 
@@ -70,13 +69,14 @@ private Q_SLOTS:
     void cleanup();
 
    //Start Unit Tests for qgeoplace.h
-    void t_qgp_constructor();
-    void t_qgp_constructorCopy();
-    void t_qgp_address();
-    void t_qgp_coordinate();
-    void t_qgp_viewport();
-    void t_qgp_isLandmark();
-    void t_qgp_operators();
+    void constructor();
+    void copy_constructor();
+    void destructor();
+    void address();
+    void coordinate();
+    void viewport();
+    void isLandmark();
+    void operators();
     //End Unit Tests for qgeoplace.h
 
 

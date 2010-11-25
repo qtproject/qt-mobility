@@ -79,20 +79,20 @@ void tst_QGeoRouteReply::cleanup()
     delete signalfinished;
 }
 
-void tst_QGeoRouteReply::t_qgrrep_constructor1()
+void tst_QGeoRouteReply::constructor()
 {
     QVERIFY(!reply->isFinished());
+    QCOMPARE(reply->error(),QGeoRouteReply::NoError);
+    QCOMPARE(reply->request(),*qgeorouterequest);
+
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
 
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
-
-
-
 }
 
-void tst_QGeoRouteReply::t_qgrrep_constructor2()
+void tst_QGeoRouteReply::constructor_error()
 {
     QFETCH(QGeoRouteReply::Error,error);
     QFETCH(QString,msg);
@@ -102,28 +102,50 @@ void tst_QGeoRouteReply::t_qgrrep_constructor2()
 
     QGeoRouteReply *qgeoroutereplycopy = new QGeoRouteReply (error,msg,0);
 
-//    QCOMPARE(typeid(*qgeoroutereplycopy).name(),"N10QtMobility14QGeoRouteReplyE");
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
+
+    QVERIFY(qgeoroutereplycopy->isFinished());
+    QCOMPARE(qgeoroutereplycopy->error(),error);
     QCOMPARE (qgeoroutereplycopy->errorString(),msg);
+
     delete qgeoroutereplycopy;
 }
 
-void tst_QGeoRouteReply::t_qgrrep_constructor2_data()
+void tst_QGeoRouteReply::constructor_error_data()
 {
     QTest::addColumn<QGeoRouteReply::Error>("error");
     QTest::addColumn<QString>("msg");
 
     QTest::newRow("error1") << QGeoRouteReply::NoError << "No error.";
     QTest::newRow("error2") << QGeoRouteReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Communication Error.";
+    QTest::newRow("error3") << QGeoRouteReply::CommunicationError << "Comunication Error.";
     QTest::newRow("error4") << QGeoRouteReply::ParseError << "Parse Error.";
     QTest::newRow("error5") << QGeoRouteReply::UnsupportedOptionError << "Unsupported Option Error.";
     QTest::newRow("error6") << QGeoRouteReply::UnknownError << "Unknown Error.";
 
 }
 
-void tst_QGeoRouteReply::t_qgrrep_routes()
+void tst_QGeoRouteReply::destructor()
+{
+    QGeoRouteReply *qgeoroutereplycopy;
+
+    QFETCH(QGeoRouteReply::Error,error);
+    QFETCH(QString,msg);
+
+    QLocationTestUtils::uheap_mark();
+    qgeoroutereplycopy = new QGeoRouteReply (error,msg,0);
+    delete qgeoroutereplycopy;
+    QLocationTestUtils::uheap_mark_end();
+
+}
+
+void tst_QGeoRouteReply::destructor_data()
+{
+    tst_QGeoRouteReply::constructor_error_data();
+}
+
+void tst_QGeoRouteReply::routes()
 {
     QList<QGeoRoute> routes;
     QGeoRoute *route1 = new QGeoRoute ();
@@ -148,7 +170,7 @@ void tst_QGeoRouteReply::t_qgrrep_routes()
     delete route2;
 }
 
-void tst_QGeoRouteReply::t_qgrrep_finished()
+void tst_QGeoRouteReply::finished()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -172,7 +194,7 @@ void tst_QGeoRouteReply::t_qgrrep_finished()
     QCOMPARE (signalfinished->count(),2);
 }
 
-void tst_QGeoRouteReply::t_qgrrep_abort()
+void tst_QGeoRouteReply::abort()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -193,7 +215,7 @@ void tst_QGeoRouteReply::t_qgrrep_abort()
     QCOMPARE (signalfinished->count(),1);
 }
 
-void tst_QGeoRouteReply::t_qgrrep_error()
+void tst_QGeoRouteReply::error()
 {
     QFETCH(QGeoRouteReply::Error,error);
     QFETCH(QString,msg);
@@ -212,7 +234,7 @@ void tst_QGeoRouteReply::t_qgrrep_error()
 
 }
 
-void tst_QGeoRouteReply::t_qgrrep_error_data()
+void tst_QGeoRouteReply::error_data()
 {
     QTest::addColumn<QGeoRouteReply::Error>("error");
     QTest::addColumn<QString>("msg");
@@ -225,7 +247,7 @@ void tst_QGeoRouteReply::t_qgrrep_error_data()
     QTest::newRow("error6") << QGeoRouteReply::UnknownError << "Unknown Error.";
 }
 
-void tst_QGeoRouteReply::t_qgrrep_request()
+void tst_QGeoRouteReply::request()
 {
     SubRouteReply *rr= new SubRouteReply(*qgeorouterequest);
 

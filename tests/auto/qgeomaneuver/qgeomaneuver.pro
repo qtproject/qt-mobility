@@ -7,8 +7,10 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../src/location
 
 # Input 
-HEADERS += tst_qgeomaneuver.h
-SOURCES += tst_qgeomaneuver.cpp 
+HEADERS += ../qlocationtestutils_p.h \
+           tst_qgeomaneuver.h
+SOURCES += tst_qgeomaneuver.cpp \
+           ../qlocationtestutils.cpp
 
 CONFIG += mobility
 MOBILITY = location
