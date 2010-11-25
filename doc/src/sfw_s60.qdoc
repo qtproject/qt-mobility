@@ -108,7 +108,7 @@ are mapped to the same database.
 
 There are different implementations for the both emulator and device because emulator doesn't support multiple
 applications running at the same time, (Known issue: \l {http://bugreports.qt.nokia.com/browse/QTBUG-2950}{QTBUG-2950})
-prior to Symbian^3. The dll approach must be used in the emulator environment and the exe approach instead of
+prior to Symbian. The dll approach must be used in the emulator environment and the exe approach instead of
 dll in the real device.
 
 Note! The greatest part of the S60 specific code is located under the symbian folder in a directory hierarchy of

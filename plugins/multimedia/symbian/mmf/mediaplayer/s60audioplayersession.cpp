@@ -132,6 +132,11 @@ void S60AudioPlayerSession::doStop()
     m_player->Stop();
 }
 
+void S60AudioPlayerSession::doClose()
+{
+    m_player->Close();
+}
+
 void S60AudioPlayerSession::doSetVolumeL(int volume)
 {
     m_player->SetVolume(volume * m_player->MaxVolume() / 100);

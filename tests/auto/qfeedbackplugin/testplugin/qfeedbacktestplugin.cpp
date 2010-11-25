@@ -54,8 +54,6 @@ Q_EXPORT_PLUGIN2(feedback_testplugin, QFeedbackTestPlugin)
         QFeedbackTestPlugin::QFeedbackTestPlugin() : QObject(qApp), mHapticState(QFeedbackEffect::Stopped), mFileState(QFeedbackEffect::Stopped)
 {
     actuators_ << createFeedbackActuator(this, 0) << createFeedbackActuator(this, 1);
-    mHapticTimer.setSingleShot(true);
-    connect(&mHapticTimer, SIGNAL(timeout()), this, SLOT(timerExpired()));
 }
 
 QFeedbackTestPlugin::~QFeedbackTestPlugin()
@@ -115,11 +113,27 @@ bool QFeedbackTestPlugin::isActuatorCapabilitySupported(const QFeedbackActuator 
     return false;
 }
 
+QTimer* QFeedbackTestPlugin::ensureTimer(const QFeedbackHapticsEffect* effect)
+{
+    // Yes, this is slow
+    QTimer *t = mHapticEffects.key(effect);
+    if (!t) {
+        t = new QTimer();
+        t->setSingleShot(true);
+        t->setInterval(effect->duration());
+        connect(t, SIGNAL(timeout()), this, SLOT(timerExpired()));
+        mHapticEffects.insert(t, effect);
+    }
+    return t;
+}
+
 
 void QFeedbackTestPlugin::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty ep)
 {
-    if (ep == QFeedbackHapticsInterface::Duration)
-        mHapticTimer.setInterval(effect->duration());
+    if (ep == QFeedbackHapticsInterface::Duration) {
+        QTimer* t = ensureTimer(effect);
+        t->setInterval(effect->duration());
+    }
 }
 
 void QFeedbackTestPlugin::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
@@ -127,13 +141,14 @@ void QFeedbackTestPlugin::setEffectState(const QFeedbackHapticsEffect *effect, Q
     Q_UNUSED(effect)
     if (mHapticState != state) {
         mHapticState = state;
+        QTimer* t = ensureTimer(effect);
         if (mHapticState == QFeedbackEffect::Running) {
-            mHapticTimer.start();
+            t->start();
         } else if (mHapticState == QFeedbackEffect::Stopped) {
-            mHapticTimer.stop();
+            t->stop();
         } else if (mHapticState == QFeedbackEffect::Paused) {
             // In theory should set the duration to the remainder...
-            mHapticTimer.stop();
+            t->stop();
         }
     }
 }
@@ -147,6 +162,11 @@ QFeedbackEffect::State QFeedbackTestPlugin::effectState(const QFeedbackHapticsEf
 void QFeedbackTestPlugin::timerExpired()
 {
     mHapticState = QFeedbackEffect::Stopped;
+    // Emit the stateChanged signal
+    const QFeedbackHapticsEffect* effect = mHapticEffects.value(static_cast<QTimer*>(sender()));
+    if (effect) {
+        QMetaObject::invokeMethod(const_cast<QFeedbackHapticsEffect*>(effect), "stateChanged");
+    }
 }
 
 

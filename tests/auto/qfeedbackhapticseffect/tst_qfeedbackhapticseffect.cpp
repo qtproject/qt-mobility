@@ -281,7 +281,6 @@ void tst_QFeedbackHapticsEffect::startStop()
 
     QTRY_COMPARE(effect.state(), QFeedbackHapticsEffect::Stopped);
     QVERIFY(errorspy.isEmpty());
-    QEXPECT_FAIL("", "No plugin API to report state changed to stopped :/", Continue);
     QCOMPARE(stateSpy.count(), 4);
 }
 

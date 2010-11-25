@@ -51,9 +51,13 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 /*!
     \qmlclass GeneralInfo QDeclarativeGeneralInfo
-    \brief The GeneralInfo element allows you to receive notifications from the device.
+    \brief The GeneralInfo element allows you access to general system information and to receive notifications from the device.
 
-    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+\inherits QSystemInfo
+
+    \ingroup qml-systeminfo
+
+    This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
 
     Note: To use notification signals, you need to use the start* slots.
@@ -65,7 +69,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
         }
     \endqml
 
-\sa QSystemGeneralInfo
+\sa QSystemInfo
 */
 
 

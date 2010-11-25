@@ -1372,6 +1372,8 @@ QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) co
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeMobile);
       else if (value == "VOICE")
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeVoice);
+      else if (value == "FAX")
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFax);
 
       p = p->next;
     }
@@ -1914,6 +1916,8 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
         value = "CELL";
       else if (value == QContactPhoneNumber::SubTypeVoice)
         value = "VOICE";
+      else if (value == QContactPhoneNumber::SubTypeFax)
+        value = "FAX";
       paramValues << value.toUpper();
     } else
       attrValues << i.value().toString();

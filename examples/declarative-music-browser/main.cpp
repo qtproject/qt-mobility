@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     view.showFullScreen();
 #else
     view.show();
