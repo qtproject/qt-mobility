@@ -43,7 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLlcpSocketPrivate::QLlcpSocketPrivate()
+QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
+:   q_ptr(q)
 {
 }
 

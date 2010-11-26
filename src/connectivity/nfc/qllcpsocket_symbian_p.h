@@ -58,10 +58,11 @@ class QLLCPSocketState;
 
 class QLlcpSocketPrivate : public QObject
 {
-    Q_OBJECT
-    
+    Q_DECLARE_PUBLIC(QLlcpSocket)
+
 public:
     QLlcpSocketPrivate();
+    QLlcpSocketPrivate(QLlcpSocket *q);
     QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian);
     ~QLlcpSocketPrivate();
 
@@ -142,9 +143,10 @@ signals:
 // state machine part
     
 public:
-     void changeState(QLLCPSocketState* state);
+    void changeState(QLLCPSocketState* state);
 private:
-     QLLCPSocketState* m_state;  // own
+    QLLCPSocketState* m_state;  // own
+    QLlcpSocket *q_ptr;
 };
 
 

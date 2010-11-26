@@ -50,8 +50,10 @@ QTM_BEGIN_NAMESPACE
 
 class QLlcpSocketPrivate
 {
+    Q_DECLARE_PUBLIC(QLlcpSocket)
+
 public:
-    QLlcpSocketPrivate();
+    QLlcpSocketPrivate(QLlcpSocket *q);
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
     void disconnectFromService();
@@ -80,6 +82,9 @@ public:
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
+
+private:
+    QLlcpSocket *q_ptr;
 };
 
 QTM_END_NAMESPACE
