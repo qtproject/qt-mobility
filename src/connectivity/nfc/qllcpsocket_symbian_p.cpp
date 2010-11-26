@@ -87,6 +87,15 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
     m_state = QLLCPUnconnected::Instance(this);
 }
 
+QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
+	  : m_symbianSocketType1(NULL),
+     m_symbianSocketType2(NULL),
+     m_socketType(connectionUnknown),
+     q_ptr(q)
+{
+    m_state = QLLCPUnconnected::Instance(this);
+}
+
 
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
 {
