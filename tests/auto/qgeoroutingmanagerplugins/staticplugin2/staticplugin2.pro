@@ -14,8 +14,8 @@ HEADERS += qgeoroutingmanagerengine_test.h \
 SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
-INCLUDEPATH += $$SOURCE_DIR/src/location \
-               $$SOURCE_DIR/src/location/maps
+INCLUDEPATH += ../../../../src/location \
+               ../../../../src/location/maps
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
