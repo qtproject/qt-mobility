@@ -41,8 +41,27 @@
 
 //TESTED_COMPONENT=src/versitorganizer
 
+function startTestApp()
+{
+    prompt('Start application \'calendardemo\'
+    Verify test application started and closed without issue');
+}
+
+
 // Note for test cases relating to  functionality such as add event see test relating to src/organizer
 testcase = {
+
+        // prove that the test application starts before anything else is tested.
+        runTestApplication: function()
+        {
+            startTestApp();
+            if (!runAsManualTest()){
+                // ensure we have a widget to work with, dump its details
+                // TODO when run this test case 'automaticly' then enable this following code
+                //print('Focus widget is' + focusWidget());
+            }
+        },
+
 
         import_ical: function()
         {
@@ -63,7 +82,7 @@ testcase = {
                 | Subject   | \'Submit Income Taxes\'   |
                 | Time      | April 15, 1998 |
             1. if the platform(backend) supports journal entries:
-                | Subject   | \'Project Report\' |
+                | Subject   | \'Project xyz Review Meeting Minutes\' |
                 | Time      | March 24, 1997 |
            * *Hint:* Possibly using the target system\'s Todo, Calendar and Journal applications will be easiest to verify above details
         1. On app menu, select \'Delete all items\'
@@ -91,7 +110,7 @@ testcase = {
             1. Enter event details:
                 | Subject      | \'Event 2\' |
                 | Start time   | tomorrow\'s date, 02:00 PM |
-                | End time     | tomorrow\'s date, 01:00 PM |
+                | End time     | tomorrow\'s date, 03:00 PM |
                 | Alarm        | \'15 minutes before\' |
                 | Repeat       | \'None\' |
             1. Click \'Save\' button
