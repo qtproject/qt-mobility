@@ -9,6 +9,30 @@ Rectangle {
     BatteryInfo {
         id: batinfo;
 
+        onChargerTypeChanged:  {
+            if(batinfo.chargerType == -1) {
+                chargertype.text = "Unknown Charger"
+            }
+            if(batinfo.chargerType == 0) {
+                chargertype.text = "No Charger"
+            }
+            if(batinfo.chargerType == 1) {
+                chargertype.text = "Wall Charger"
+            }
+            if(batinfo.chargerType == 2) {
+                chargertype.text = "USB Charger"
+            }
+            if(batinfo.chargerType == 3) {
+                chargertype.text = "USB 500 mA Charger"
+            }
+            if(batinfo.chargerType == 4) {
+                chargertype.text = "USB 100 mA Charger"
+            }
+            if(batinfo.chargerType == 5) {
+                chargertype.text = "Variable Current Charger"
+            }
+        }
+
         onChargingStateChanged: {
             if(batinfo.chargingState == 0) {
                 chargeState.text = "Charging State: Not Charging"

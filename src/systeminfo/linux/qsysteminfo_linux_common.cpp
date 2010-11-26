@@ -3154,7 +3154,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
                             qDebug() << "connection malfunction";
                         }
                     }
-                    return;
                 }
             }
         }
@@ -3197,36 +3196,84 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
 }
 
 //#if !defined(QT_NO_DBUS)
-void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
+void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map)
 {
-    for(int i=0; i < map.count(); i++) {
-       if (map.at(i).toString() == "battery.charge_level.percentage") {
-            const int level = remainingCapacityPercent();
-            emit remainingCapacityPercentChanged(level);
+    QHalInterface iface;
+    QStringList list = iface.findDeviceByCapability("battery");
+    QHalDeviceInterface ifaceDevice(list.at(0)); //default battery
+    if (ifaceDevice.isValid()) {
+        for(int i=0; i < count; i++) {
+            if (map.at(i).toString() == "battery.charge_level.percentage") {
+                currentBatLevelPercent = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                emit remainingCapacityPercentChanged(currentBatLevelPercent);
 
-            QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
+                QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
-            if (level < 4) {
-                stat = QSystemBatteryInfo::BatteryCritical;
-            } else if (level < 11) {
-                 stat = QSystemBatteryInfo::BatteryVeryLow;
-            } else if (level < 41) {
-                 stat =  QSystemBatteryInfo::BatteryLow;
-            } else if (level > 40) {
-                 stat = QSystemBatteryInfo::BatteryOk;
-            } else if (level == 100) {
-                 stat = QSystemBatteryInfo::BatteryFull;
-            }
-            if (currentBatStatus != stat) {
-                currentBatStatus = stat;
+                if (currentBatLevelPercent < 4) {
+                    stat = QSystemBatteryInfo::BatteryCritical;
+                } else if (currentBatLevelPercent < 11) {
+                    stat = QSystemBatteryInfo::BatteryVeryLow;
+                } else if (currentBatLevelPercent < 41) {
+                    stat =  QSystemBatteryInfo::BatteryLow;
+                } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+                    stat = QSystemBatteryInfo::BatteryOk;
+                } else if (currentBatLevelPercent == 100) {
+                    stat = QSystemBatteryInfo::BatteryFull;
+                }
                 Q_EMIT batteryStatusChanged(currentBatStatus);
             }
+
+            if (map.at(i).toString() == "ac_adapter.present") {
+                if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
+                    curChargeType = QSystemBatteryInfo::WallCharger;
+                } else {
+                    curChargeType = QSystemBatteryInfo::NoCharger;
+                }
+                Q_EMIT chargerTypeChanged(curChargeType);
+            }
+
+            if (map.at(i).toString() == "battery.rechargeable.is_charging") {
+
+                if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                    curChargeState = QSystemBatteryInfo::Charging;
+                } else {
+                    curChargeState = QSystemBatteryInfo::NotCharging;
+                }
+                Q_EMIT chargingStateChanged(curChargeState);
+            }
+
+            if (map.at(i).toString() == "battery.voltage.current") {
+                currentVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
+                Q_EMIT voltageChanged(currentVoltage);
+            }
+
+            if (map.at(i).toString() == "battery.charge_level.rate") {
+                dischargeRate = ifaceDevice.getPropertyInt("battery.charge_level.rate");
+                Q_EMIT currentFlowChanged(dischargeRate);
+            }
+
+            if (map.at(i).toString() == "battery.reporting.last_full") {
+                capacity = ifaceDevice.getPropertyInt("battery.reporting.last_full");
+                Q_EMIT nominalCapacityChanged(capacity);
+            }
+
+            if (map.at(i).toString() == "battery.reporting.current") {
+                if(ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                    remainingEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+                } else {
+                    remainingEnergy = -1;
+                }
+                Q_EMIT remainingCapacityChanged(remainingEnergy);
+            }
+
+            if (map.at(i).toString() == "battery.remaining_time") {
+                if(ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                    remainingEnergy = ifaceDevice.getPropertyInt("battery.remaining_time");
+                    Q_EMIT remainingChargingTimeChanged(remainingEnergy);
+                }
+            }
+
         }
-        if ((map.at(i).toString() == "ac_adapter.present")
-        || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
-            QSystemBatteryInfo::ChargingState state = curChargeState;
-            emit chargingStateChanged(state);
-       }
     } //end map
 }
 
@@ -3302,8 +3349,16 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 if (iface.isValid()) {
                     if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
                         cState = QSystemBatteryInfo::Charging;
-                        break;
+                        cTime = ifaceDevice.getPropertyInt("battery.remaining_time");
+                    } else {
+                        cState = QSystemBatteryInfo::NotCharging;
                     }
+                    cVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
+                    cEnergy = ifaceDevice.getPropertyInt("battery.charge_level.rate");
+                    cLevel = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
+                    capacity = ifaceDevice.getPropertyInt("battery.reporting.last_full");
+                    rEnergy = ifaceDevice.getPropertyInt("battery.reporting.current");
+                    break;
                 }
             }
         }
@@ -3370,7 +3425,12 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasu
         return QSystemBatteryInfo::UnitmWh;
     }
 #endif
-    return QSystemBatteryInfo::UnitmAh;
+#if !defined(QT_NO_DBUS)
+    if (halIsAvailable) {
+        return QSystemBatteryInfo::UnitmWh;
+    }
+#endif
+    return QSystemBatteryInfo::UnitUnknown;
 }
 
 int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const

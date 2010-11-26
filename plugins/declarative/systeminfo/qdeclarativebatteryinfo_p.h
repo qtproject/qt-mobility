@@ -56,19 +56,19 @@ public:
 
 Q_SIGNALS:
 //    void batteryLevelChanged(int level);
-    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+//    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
-    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+//    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+//    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
-    void nominalCapacityChanged(int);
-    void remainingCapacityPercentChanged(int);
-    void remainingCapacityChanged(int);
+//    void nominalCapacityChanged(int);
+//    void remainingCapacityPercentChanged(int);
+//    void remainingCapacityChanged(int);
 
-    void currentFlowChanged(int);
-    void remainingCapacityBarsChanged(int);
-    void remainingChargingTimeChanged(int);
-    void voltageChanged(int);
+//    void currentFlowChanged(int);
+//    void remainingCapacityBarsChanged(int);
+//    void remainingChargingTimeChanged(int);
+//    void voltageChanged(int);
 
 public slots:
     void startBatteryStatusChanged();
