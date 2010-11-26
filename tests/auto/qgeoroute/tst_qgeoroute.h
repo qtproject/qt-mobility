@@ -49,11 +49,11 @@
 #include <QSignalSpy>
 
 #include "../qlocationtestutils_p.h"
-#include <QGeoRoute>
-#include <QGeoBoundingBox>
-#include <QGeoCoordinate>
-#include <QGeoRouteRequest>
-#include <QGeoRouteSegment>
+#include <qgeoroute.h>
+#include <qgeoboundingbox.h>
+#include <qgeocoordinate.h>
+#include <qgeorouterequest.h>
+#include <qgeoroutesegment.h>
 
 
 QTM_USE_NAMESPACE

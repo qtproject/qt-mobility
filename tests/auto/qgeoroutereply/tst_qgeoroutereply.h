@@ -48,10 +48,10 @@
 #include <QMetaType>
 #include <QSignalSpy>
 
-#include <QGeoCoordinate>
-#include <QGeoRouteRequest>
-#include <QGeoRouteReply>
-#include <QGeoRoute>
+#include <qgeocoordinate.h>
+#include <qgeorouterequest.h>
+#include <qgeoroutereply.h>
+#include <qgeoroute.h>
 
 #include "../qlocationtestutils_p.h"
 

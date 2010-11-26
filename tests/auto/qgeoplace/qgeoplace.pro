@@ -4,8 +4,7 @@ TARGET=tst_qgeoplace
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../src/location \
-                ../../../src/location/maps
+INCLUDEPATH += ../../../src/location
 
 # Input
 HEADERS += ../qlocationtestutils_p.h \

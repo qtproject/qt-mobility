@@ -50,8 +50,8 @@
 #include <QSignalSpy>
 
 #include "../qlocationtestutils_p.h"
-#include <QGeoManeuver>
-#include <QGeoCoordinate>
+#include <qgeomaneuver.h>
+#include <qgeocoordinate.h>
 
 QTM_USE_NAMESPACE
 
