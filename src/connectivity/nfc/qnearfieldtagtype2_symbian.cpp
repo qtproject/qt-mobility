@@ -50,7 +50,6 @@ QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObj
 
 QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 {
-    delete mTag;
 }
 
 QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)

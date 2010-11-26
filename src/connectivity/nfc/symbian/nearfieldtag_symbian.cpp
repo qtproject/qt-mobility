@@ -39,8 +39,10 @@
  **
  ****************************************************************************/
 #include <nfctag.h>
+#include <qglobal.h>
 #include <nfcconnection.h>
 #include "nearfieldtag_symbian.h"
+#include "nearfieldtagoperationcallback_symbian.h"
 
 /*!
     \class CNearFieldTag
@@ -111,8 +113,16 @@ const TDesC8& CNearFieldTag::Uid() const
 
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
-    return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(aCommand, aResponse, aTimeout)
-                                  : KErrInUse;
+    if (!iRequestOngoing)
+        {
+        // No ongoing request
+        return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout)
+                                      : KErrInUse;
+        }
+    else
+        {
+        return KErrInUse;
+        }
     }
 
 void CNearFieldTag::DoCancel()
@@ -121,9 +131,24 @@ void CNearFieldTag::DoCancel()
 
 void CNearFieldTag::RunL()
     {
+    if (iCallback)
+        {
+        QT_TRYCATCH_LEAVING(iCallback->CommandComplete(iStatus.Int()));
+        }
     }
 
 TInt CNearFieldTag::RunError(TInt aError)
     {
     return aError;
+    }
+
+
+void CNearFieldTag::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
+    {
+    iCallback = aCallback;
+    }
+
+MNearFieldTagOperationCallback * CNearFieldTag::TagOperationCallback()
+    {
+    return iCallback;
     }

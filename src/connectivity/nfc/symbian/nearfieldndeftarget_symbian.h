@@ -56,6 +56,8 @@ class CNdefMessage;
 class CNdefConnection;
 class MNfcTag;
 
+class MNearFieldTagOperationCallback;
+
 class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
     {
@@ -80,8 +82,8 @@ public: // New functions
 
     // NdefAccess
     TBool hasNdefMessage();
-    void ndefMessages(RPointerArray<CNdefMessage>& aMessages);
-    void setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
+    TInt ndefMessages(RPointerArray<CNdefMessage>& aMessages);
+    TInt setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
 
 public:
     CNearFieldTag * CastToTag();
@@ -91,6 +93,8 @@ public:
     void CloseConnection();
     TBool IsConnectionOpened();
     TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout);
+    void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
+    MNearFieldTagOperationCallback * TagOperationCallback();
 private:
     // C++ constructor
     CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -107,7 +111,6 @@ private: // From MNdefHandler
 private:
     // own
     MNearFieldTarget * iTagConnection;
-    CActiveSchedulerWait * iWait;
     CNdefConnection * iNdefConnection;
     // own by real target if real target is created
     // otherwise, own by this.
@@ -118,7 +121,8 @@ private:
     TOperation iCurrentOperation;
 
     // Not own
-    CNdefMessage * iMessage;
+    MNearFieldTagOperationCallback * iCallback;
+    RPointerArray<CNdefMessage> * iMessages;
     };
 
 #endif // NEARFIELDNDEFTARGET_H

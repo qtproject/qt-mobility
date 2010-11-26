@@ -66,7 +66,6 @@ QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObj
 */
 QNearFieldTagType4Symbian::~QNearFieldTagType4Symbian()
 {
-    delete mTag;
 }
 
 QByteArray QNearFieldTagType4Symbian::uid() const
