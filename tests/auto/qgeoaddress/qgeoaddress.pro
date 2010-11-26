@@ -5,7 +5,8 @@ TARGET=tst_qgeoaddress
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location \
+                ../../../src/location/maps
 
 # Input
 HEADERS += tst_qgeoaddress.h \
