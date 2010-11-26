@@ -4,7 +4,8 @@ TARGET=tst_qgeoroutesegment
 
 include (../../../common.pri)
 
-INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location \
+                ../../../src/location/maps
 
 # Input 
 HEADERS += ../qlocationtestutils_p.h \

@@ -37,9 +37,7 @@ SUBDIRS += qgeocoordinate \
 #    qdeclarativeapitests \
 #    geoservicesgeomapplugin \
 #    geoservicesgeotiledmapplugin \
-#    qgeocoordinate2 \
-#    qgeomapobjects \
-#    qgeopositioninfo2
+#    qgeomapobjects
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition

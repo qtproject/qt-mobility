@@ -5,7 +5,8 @@ TARGET=tst_qgeosearchmanager
 include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location \
-               ../../../src/location/maps
+               ../../../src/location/maps \
+               ../../../src/location/landmarks
 
 HEADERS += ../qlocationtestutils_p.h \
     tst_qgeosearchmanager.h
