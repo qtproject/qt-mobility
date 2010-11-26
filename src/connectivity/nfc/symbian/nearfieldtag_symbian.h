@@ -48,6 +48,7 @@
 
 class MNfcTag;
 class MNfcConnection;
+class MNearFieldTagOperationCallback;
 
 class CNearFieldTag : public CActive, public MNearFieldTarget
     {
@@ -74,6 +75,9 @@ public:
     const TDesC8& Uid() const;
 
     MNfcConnection * TagConnection() { return iTagConnection;}
+
+    void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
+    MNearFieldTagOperationCallback * TagOperationCallback();
 private:
     // C++ constructor
     CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -89,6 +93,11 @@ private:
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;
+
+    // Not own
+    MNearFieldTagOperationCallback * iCallback;
+
+    TBool iRequestOngoing;
     };
 
 #endif // NEARFIELDTAG_H

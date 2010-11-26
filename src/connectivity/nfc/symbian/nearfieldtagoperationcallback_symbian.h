@@ -45,8 +45,8 @@
 class MNearFieldTagOperationCallback
     {
 public:
-    virtual TInt CommandComplete() = 0;
-    virtual TInt NdefOperationComplete() = 0;
+    virtual void CommandComplete(TInt aError) = 0;
+    virtual void NdefOperationComplete(TInt aError) = 0;
     };
 
 #endif

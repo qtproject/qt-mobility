@@ -48,6 +48,7 @@
 class CNearFieldNdefTarget;
 
 class CNearFieldTag;
+class MNearFieldTagOperationCallback;
 
 class MNearFieldTarget 
     {
@@ -64,6 +65,8 @@ public:
     virtual TBool IsConnectionOpened() = 0;
 
     virtual TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout) = 0;
+    virtual void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback) = 0;
+    virtual MNearFieldTagOperationCallback * TagOperationCallback() = 0;
     };
 
 #endif // NEARFIELDTARGET_H

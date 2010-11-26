@@ -44,8 +44,10 @@
 #include <iso14443connection.h>
 #include <ndefconnection.h>
 #include <nfctag.h>
+#include <qglobal.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
+#include "nearfieldtagoperationcallback_symbian.h"
 
 /*!
     \class CNearFieldNdefTarget
@@ -77,7 +79,6 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag, RNfcServer& 
 
 void CNearFieldNdefTarget::ConstructL()
     {
-    iWait = new (ELeave) CActiveSchedulerWait;
     }
 
 void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
@@ -154,23 +155,35 @@ void CNearFieldNdefTarget::ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNde
 
 void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
     {
-    iMessage = aMessage;
-    if (iWait->IsStarted())
+    if (iCallback)
         {
-        iWait->AsyncStop();
+        TInt errIgnore = KErrNone;
+        TInt err = KErrNone;
+        if (iMessages)
+            {
+            err = iMessages->Append(aMessage);
+            }
+        iMessages = 0;
+        QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(err));
         }
     }
 
 void CNearFieldNdefTarget::WriteComplete()
     {
-    if (iWait->IsStarted())
+    if (iCallback)
         {
-        iWait->AsyncStop();
+        TInt errIgnore = KErrNone;
+        QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(KErrNone));
         }
     }
 
 void CNearFieldNdefTarget::HandleError( TInt aError )
     {
+    if (iCallback)
+        {
+        iMessages = 0;
+        iCallback->CommandComplete(aError);
+        }
     }   
 
 TBool CNearFieldNdefTarget::hasNdefMessage()
@@ -188,7 +201,7 @@ TBool CNearFieldNdefTarget::hasNdefMessage()
     return result;
     }
 
-void CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
+TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
     {
     TInt error = KErrNone;
     if (!IsConnectionOpened())
@@ -197,57 +210,47 @@ void CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
         }
     if (KErrNone == error)
         {
-        if (!iWait->IsStarted())
-            {
-            error = iNdefConnection->ReadMessage();
-            if (KErrNone == error)
-                {
-                iCurrentOperation = ERead;
-                iWait->Start();
-                iCurrentOperation = ENull;
-                aMessages.Append(iMessage);
-                }
-            }
-        else
-            {
-            error = KErrInUse;
-            }
+        iMessages = &aMessages;
+        error = iNdefConnection->ReadMessage();
         }
+    return error;
     }
 
-void CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aMessages)
+TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aMessages)
     {
+    TInt error = KErrNone;
     CNdefMessage * message;
     if (aMessages.Count() > 0)
         {
         // current only support single ndef message
         message = aMessages[0];
-        TInt error = KErrNone;
         if (!IsConnectionOpened())
             {
             error = OpenConnection();
             }
         if (KErrNone == error)
             {
-            if (!iWait->IsStarted())
-                {
-                error = iNdefConnection->WriteMessage(*message);
-                if (KErrNone == error)
-                    {
-                    iCurrentOperation = EWrite;
-                    iWait->Start();
-                    iCurrentOperation = ENull;
-                    }
-                }
+            error = iNdefConnection->WriteMessage(*message);
             }
         else
             {
             error = KErrInUse;
             }
         }
+    return error;
     }
 
 TInt CNearFieldNdefTarget::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
     return KErrNotSupported;
+    }
+
+void CNearFieldNdefTarget::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
+    {
+    iCallback = aCallback;
+    }
+
+MNearFieldTagOperationCallback * CNearFieldNdefTarget::TagOperationCallback()
+    {
+    return iCallback;
     }

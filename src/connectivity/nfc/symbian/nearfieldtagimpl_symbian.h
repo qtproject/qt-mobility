@@ -56,6 +56,7 @@ class QNearFieldTagImpl : public MNearFieldTagOperationCallback
 {
 public:
     QNearFieldTagImpl(MNearFieldTarget *tag);
+    virtual ~QNearFieldTagImpl();
     bool _hasNdefMessage();
     QList<QNdefMessage> _ndefMessages();
     void _setNdefMessages(const QList<QNdefMessage> &messages);
@@ -78,38 +79,32 @@ public:
     QByteArray _uid() const;
 
 private:
-    TInt CommandComplete(){};
-    TInt NdefOperationComplete(){};
+    void CommandComplete(TInt aError);
+    void NdefOperationComplete(TInt aError);
 
 protected:
     MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
     mutable QByteArray mUid;
+    RPointerArray<CNdefMessage> mMessageList;
+    RBuf8 mResponse;
 };
 
-template<typename TAGTYPE>
-template<int N>
-QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, int timeout)
-{
-    CNearFieldTag * tag = mTag->CastToTag();
-    QByteArray result;
-    if (tag)
-    {
-        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
-        TBuf8<N> response;
-        if (KErrNone == tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)))
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-        }
-    }
-    return result;
-}
 
 template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)
 {
 }
 
+template<typename TAGTYPE>
+QNearFieldTagImpl<TAGTYPE>::~QNearFieldTagImpl()
+{
+    delete mTag;
+    mMessageList.Close();
+
+    mResponse.Close();
+}
+    
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::_hasNdefMessage()
 {
@@ -132,24 +127,40 @@ QList<QNdefMessage> QNearFieldTagImpl<TAGTYPE>::_ndefMessages()
     
     if (ndefTarget)
     {
-        RPointerArray<CNdefMessage> messageList;
-        ndefTarget->ndefMessages(messageList);
-        // Convert every CNdefMessage to QNdefMessage and append it to the QList
-        TRAPD( err, 
-            for (int i = 0; i < messageList.Count(); ++i)
-            {
-                result.append(QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*messageList[i]));
-            }
-        )
-        if (err != KErrNone)
-        {
-            result.clear();
-        }
-        messageList.Close();
+        // clear the existing message list
+        mMessageList.Reset();
+        TInt err = ndefTarget->ndefMessages(mMessageList);
     }
     
     return result;
 }
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::NdefOperationComplete(TInt aError)
+{
+    QList<QNdefMessage> result;
+    if (KErrNone == aError)
+    {
+        TRAPD( err, 
+            for (int i = 0; i < mMessageList.Count(); ++i)
+            {
+                result.append(QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*mMessageList[i]));
+            }
+        )
+        
+        if (err != KErrNone)
+        {
+            result.clear();
+        }
+    }
+
+    // TODO: emit signal
+    /*
+     * TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+     * tag->emitSignal(); // this will emit the signal
+     */
+}
+        
 
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::_setNdefMessages(const QList<QNdefMessage> &messages)
@@ -179,22 +190,50 @@ template<typename TAGTYPE>
 QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, int timeout, int responseSize)
 {
     CNearFieldTag * tag = mTag->CastToTag();
-    QByteArray result;
     if (tag)
     {
         TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
         TRAPD( err, 
-            RBuf8 response;
-            response.CleanupClosePushL();
-            response.CreateL(responseSize);
-            User::LeaveIfError(tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)));
-            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
-            CleanupStack::PopAndDestroy();
+            mResponse.Close();
+            mResponse.CreateL(responseSize);
+            User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TTimeIntervalMicroSeconds32(timeout)));
         )
+    }
+}
+
+template<typename TAGTYPE>
+template<int N>
+QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, int timeout)
+{
+    CNearFieldTag * tag = mTag->CastToTag();
+    QByteArray result;
+    if (tag)
+    {
+        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+        TBuf8<N> response;
+        if (KErrNone == tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)))
+        {
+            result = QNFCNdefUtility::FromTDesCToQByteArray(response);
+        }
     }
     return result;
 }
 
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::CommandComplete(TInt aError)
+{
+    QByteArray result;
+    if (KErrNone == aError)
+    {
+        result = QNFCNdefUtility::FromTDesCToQByteArray(mResponse);
+    }
+    // TODO: emit signal
+    /*
+     * TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+     * tag->emitSignal(); // this will emit the signal
+     */
+}
+    
 template<typename TAGTYPE>
 QByteArray QNearFieldTagImpl<TAGTYPE>::_uid() const
 {
