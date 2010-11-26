@@ -6,6 +6,7 @@ Rectangle {
     width: 360
     height: 360
 
+
     BatteryInfo {
         id: batinfo;
 

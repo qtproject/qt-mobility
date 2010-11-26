@@ -45,7 +45,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("qrc:/battery-bubble.qml");
+    const QString mainQmlApp = QLatin1String("qrc:/battery2.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);

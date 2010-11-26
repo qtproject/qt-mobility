@@ -3,7 +3,7 @@ include($$PWD/../declarative-systeminfo.pri)
 
 QT += declarative
 SOURCES += $$PWD/battery2.cpp
-TARGET = qml_battery
+TARGET = qml_battery2
 
 symbian {
     TARGET.CAPABILITY = ReadUserData

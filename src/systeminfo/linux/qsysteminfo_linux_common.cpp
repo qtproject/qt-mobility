@@ -3224,7 +3224,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
             if (map.at(i).toString() == "ac_adapter.present") {
-                if (ifaceDevice.getPropertyBool("ac_adapter.present")) {
+                if (curChargeType != QSystemBatteryInfo::WallCharger) {
                     curChargeType = QSystemBatteryInfo::WallCharger;
                 } else {
                     curChargeType = QSystemBatteryInfo::NoCharger;
