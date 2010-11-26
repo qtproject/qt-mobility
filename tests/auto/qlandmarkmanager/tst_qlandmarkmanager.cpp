@@ -2307,7 +2307,8 @@ void tst_QLandmarkManager::simpleSaveLandmark() {
 void tst_QLandmarkManager::saveLandmark() {
     QFETCH(QString, type);
     QLandmarkManager* otherManager = new QLandmarkManager();
-    connect(otherManager, SIGNAL(dataChanged()),m_listener, SLOT(dataChanged()));
+    connect(otherManager, SIGNAL(landmarksAdded(QList<QLandmarkId>)),m_listener,
+            SLOT(landmarksAdded(QList<QLandmarkId>)));
 
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
     QSignalSpy spyChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
@@ -2317,7 +2318,7 @@ void tst_QLandmarkManager::saveLandmark() {
     QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     QSignalSpy spyDataChanged(m_manager, SIGNAL(dataChanged()));
 
-    QSignalSpy spyOtherDataChanged(otherManager, SIGNAL(dataChanged()));
+    QSignalSpy spyOtherAdd(otherManager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     int originalLandmarkCount = m_manager->landmarks().count();
     QLandmark emptyLandmark;
@@ -2337,11 +2338,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
 #if (defined(Q_WS_MAEMO_6))
-    QCOMPARE(spyOtherDataChanged.count(), 1);
+    QCOMPARE(spyOtherAdd.count(), 1);
 #endif
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), emptyLandmark.landmarkId());
     spyAdd.clear();
-    spyOtherDataChanged.clear();
+    spyOtherAdd.clear();
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -2405,8 +2406,9 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
 #if (defined(Q_WS_MAEMO_6))
-    QCOMPARE(spyOtherDataChanged.count(), 4);
+    QCOMPARE(spyOtherAdd.count(), 1);
 #endif
+    delete otherManager;
     spyAdd.clear();
     spyCatAdd.clear();
 
@@ -7254,7 +7256,11 @@ void tst_QLandmarkManager::importWaitForFinished()
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
+#if (defined(Q_WS_MAEMO_6))
+    QVERIFY(importRequest.waitForFinished(20000));
+#else
     QVERIFY(importRequest.waitForFinished(1000));
+#endif
     spy.clear();
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount*3);
 }
@@ -7288,7 +7294,11 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     //needed to complete the operation
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
+#if (defined(Q_WS_MAEMO_6))
+    QVERIFY(fetchRequest.waitForFinished(20000));
+#else
     QVERIFY(fetchRequest.waitForFinished(1000));
+#endif
     QCOMPARE(fetchRequest.landmarks().count(), fileLandmarksCount *3);
 }
 
