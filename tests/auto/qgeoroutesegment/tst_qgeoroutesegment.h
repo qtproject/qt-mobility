@@ -49,9 +49,9 @@
 #include <QSignalSpy>
 
 #include "../qlocationtestutils_p.h"
-#include <QGeoCoordinate>
-#include <QGeoRouteSegment>
-#include <QGeoManeuver>
+#include <qgeocoordinate.h>
+#include <qgeoroutesegment.h>
+#include <qgeomaneuver.h>
 
 QTM_USE_NAMESPACE
 

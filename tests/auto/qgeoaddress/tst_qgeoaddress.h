@@ -48,7 +48,7 @@
 #include <QMetaType>
 
 #include "../qlocationtestutils_p.h"
-#include <QGeoAddress>
+#include <qgeoaddress.h>
 
 QTM_USE_NAMESPACE
 

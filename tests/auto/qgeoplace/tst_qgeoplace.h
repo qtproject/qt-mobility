@@ -48,10 +48,10 @@
 #include <QMetaType>
 
 #include "../qlocationtestutils_p.h"
-#include <QGeoAddress>
-#include <QGeoCoordinate>
-#include <QGeoPlace>
-#include <QGeoBoundingBox>
+#include <qgeoaddress.h>
+#include <qgeocoordinate.h>
+#include <qgeoplace.h>
+#include <qgeoboundingbox.h>
 
 QTM_USE_NAMESPACE
 
