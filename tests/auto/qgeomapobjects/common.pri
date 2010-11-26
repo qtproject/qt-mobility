@@ -1,4 +1,4 @@
-#include(../../../../common.pri)
+include(../../../../common.pri)
 
 QT += gui
 CONFIG += qtestlib \

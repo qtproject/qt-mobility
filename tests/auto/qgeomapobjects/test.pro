@@ -1,3 +1,5 @@
+include(../../../common.pri)
+
 TESTS = \
 qgeomapcircleobject \
 qgeomapgroupobject \
@@ -9,7 +11,6 @@ qgeomaptextobject \
 qgeomappixmapobject
 
 
-
 ##################################################################################
 #TEST SUITE MODE
 ##################################################################################
@@ -18,7 +19,7 @@ suite{
 message('Compiling test suite')
 TEMPLATE = app
 TARGET = suite_runner
-#include(../../../common.pri)
+
 
 QT += gui
 CONFIG += qtestlib mobility
