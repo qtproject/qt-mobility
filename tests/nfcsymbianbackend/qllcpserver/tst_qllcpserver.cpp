@@ -79,10 +79,26 @@ void tst_QLlcpServer::newConnection_data()
 {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("0") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
+    QTest::newRow("0") << "urn:nfc:sn:test"
+            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test";
 
 }
 
+/*!
+ Description: Unit test for NFC LLCP server async functions
+
+ TestScenario: 1. Server will listen to a pre-defined URI
+               2. Wait client to connect.
+               3. Read message from client.
+               4. Echo the same message back to client
+               5. Wait client disconnect event.
+
+ TestExpectedResults:
+               1. The listen successfully set up.
+               2. The message has be received from client.
+               3. The echoed message has been sent to client.
+               4. Connection disconnected and NO error signals emitted.
+*/
 void tst_QLlcpServer::newConnection()
 {
     QFETCH(QString, uri);
@@ -146,6 +162,21 @@ void tst_QLlcpServer::newConnection()
     server.close();
 }
 
+/*!
+ Description: Unit test for NFC LLCP server sync(waitXXX) functions
+
+ TestScenario: 1. Server will listen to a pre-defined URI
+               2. Wait client to connect.
+               3. Read message from client.
+               4. Echo the same message back to client
+               5. Wait client disconnect event.
+
+ TestExpectedResults:
+               1. The listen successfully set up.
+               2. The message has be received from client.
+               3. The echoed message has been sent to client.
+               4. Connection disconnected and NO error signals emitted.
+*/
 void tst_QLlcpServer::newConnection_wait()
     {
     QFETCH(QString, uri);
@@ -218,7 +249,8 @@ void tst_QLlcpServer::newConnection_wait_data()
     {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("0") << "uri" << "Please touch a NFC device with llcp client enabled: uri = ";
+    QTest::newRow("0") << "urn:nfc:sn:test"
+            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test";
     }
 QTEST_MAIN(tst_QLlcpServer);
 

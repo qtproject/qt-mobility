@@ -82,6 +82,21 @@ void tst_qllcpsockettype2::cleanupTestCase()
 {
 }
 
+/*!
+ Description: Unit test for NFC LLCP socket async functions
+
+ TestScenario: 1. Touch a NFC device with LLCP Echo service actived
+               2. Echo client will connect to the Echo server
+               3. Echo client will send the "echo" message to the server
+               4. Echo client will receive the same message echoed from the server
+               5. Echo client will disconnect the connection.
+
+ TestExpectedResults:
+               1. The connection successfully set up.
+               2. The message has be sent to server.
+               3. The echoed message has been received from server.
+               4. Connection disconnected and NO error signals emitted.
+*/
 void tst_qllcpsockettype2::echo()
 {
     QFETCH(QString, uri);
@@ -159,12 +174,27 @@ void tst_qllcpsockettype2::echo_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
-    QTest::newRow("0") << "uri"
-            << "Please touch a NFC device with llcp client enabled: uri = "
+    QTest::newRow("0") << "urn:nfc:sn:test"
+            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test"
             << "echo";
 
 }
 
+/*!
+ Description: Unit test for NFC LLCP socket sync(waitXXX) functions
+
+ TestScenario: 1. Touch a NFC device with LLCP Echo service actived
+               2. Echo client will connect to the Echo server
+               3. Echo client will send the "echo" message to the server
+               4. Echo client will receive the same message echoed from the server
+               5. Echo client will disconnect the connection.
+
+ TestExpectedResults:
+               1. The connection successfully set up.
+               2. The message has be sent to server.
+               3. The echoed message has been received from server.
+               4. Connection disconnected and NO error signals emitted.
+*/
 void tst_qllcpsockettype2::echo_wait()
     {
     QFETCH(QString, uri);
@@ -239,6 +269,8 @@ void tst_qllcpsockettype2::echo_wait()
     QVERIFY(echo == echoed);
 
     socket.disconnectFromService();
+    ret = socket.waitForDisconnected(Timeout);
+    QVERIFY(ret);
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
     }
@@ -248,8 +280,8 @@ void tst_qllcpsockettype2::echo_wait_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
-    QTest::newRow("0") << "uri"
-            << "Please touch a NFC device with llcp client enabled: uri = "
+    QTest::newRow("0") << "urn:nfc:sn:test"
+            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test"
             << "echo";
 }
 
