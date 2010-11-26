@@ -3,6 +3,7 @@ include(../../staticconfig.pri)
 requires(contains(mobility_modules,location))
 
 TEMPLATE = subdirs
+CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
       qgeopositioninfo \
@@ -16,7 +17,27 @@ SUBDIRS += qgeocoordinate \
       qlandmarkmanagerengine \
       qlandmark \
       qlandmarkcategory \
-      qlandmarkmanager
+      qlandmarkmanager \
+      qgeoaddress \
+      qgeomaneuver \
+      qgeoplace \
+      qgeoroute \
+      qgeoroutingmanagerplugins \
+      qgeoroutingmanager \
+      qgeoroutereply \
+      qgeorouterequest \
+      qgeoroutesegment \
+      qgeosearchreply \
+      qgeosearchmanagerplugins \
+      qgeosearchmanager \
+      qgeoserviceproviderplugins \
+      qgeoserviceprovider
+
+#IGNORED_UNTIL_INTEGRATED_PROPERLY += \
+#    qdeclarativeapitests \
+#    geoservicesgeomapplugin \
+#    geoservicesgeotiledmapplugin \
+#    qgeomapobjects
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition
