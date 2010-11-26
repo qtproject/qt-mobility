@@ -1,0 +1,147 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of QtUiTest.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/feedback
+
+function startHapticsPlayerTestApp()
+{
+    prompt('Start application \'hapticsplayer\'');
+}
+
+function startHapticsSquareTestApp()
+{
+   prompt('Start application \'hapticsquare\'');
+}
+
+
+testcase = {
+
+    runTestApplication: function()
+    {
+       startHapticsPlayerTestApp();
+       if (!runAsManualTest()){
+           // ensure we have a widget to work with, dump its details
+           // TODO when run this test case 'automaticly' then enable this following code
+           //print('Focus widget is' + focusWidget());
+       }else{
+            prompt('Verify test application started and closed without issue');
+       }
+
+       startHapticsSquareTestApp();
+       if (!runAsManualTest()){
+           // ensure we have a widget to work with, dump its details
+           // TODO when run this test case 'automaticly' then enable this following code
+           //print('Focus widget is' + focusWidget());
+       }else{
+          prompt('Verify test application started and closed without issue');
+       }
+    },
+
+
+    vibrate_using_lowlevel_API_data : {
+        vibrateSet : [
+            [
+                {duration:2000, intensity:1, comment:'intense vibration, for two seconds'},
+                {duration:4000, intensity:1, comment:'intense vibration for four seconds'},
+                {duration:2000, intensity:0.5, comment:'half strength vibration, for two seconds'},
+                {duration:2000, intensity:0.1, comment:'very low vibration, for two seconds'},
+                {duration:2000, intensity:0.0 ,comment:'no vibration, for two seconds'},
+            ]
+        ]
+    },
+
+    vibrate_using_lowlevel_API: function(vibrateSet)
+    {
+        startHapticsPlayerTestApp();
+        for (var index = 0; index < vibrateSet.length; index++){
+            enter(vibrateSet[index].duration, 'duration');
+            enter(vibrateSet[index].intensity, 'intensity');
+            select('Play');
+            prompt('Verify that sound matches:' + vibrateSet[index].comment);
+        }
+    },
+
+
+    vibrate_using_highlevel_API: function()
+    {
+        startHapticsPlayerTestApp();
+        prompt('If \'high-level\' tab is disabled skip this test');
+        select('high-level', tabBar());
+        prompt('For each value of combobox');
+        prompt('* Click the \'Play\' button');
+        prompt('* Verify that the expected effect is heard');
+    },
+
+
+    vibrate_using_file_API: function()
+    {
+        startHapticsPlayerTestApp();
+        prompt('If \'file\' tab is disabled or no platform specific effect file is aviable skip this test');
+        select('file', tabBar());
+        select('...');
+        prompt('Enter locations to effect file');
+        select ('Open');
+        select('Play/pause');
+        prompt('Verify that the expected effect is heard');
+        select('Play/pause');
+        select('Stop');
+        prompt('Verify that the expected effect is stoped before it is completed');
+    },
+
+
+    simple_vibrate_test_data: {
+        effectNames : [
+                            ['Rumble', 'Ocean', 'Click', 'Oops']
+        ]
+    },
+
+    simple_vibrate_test: function(effectNames)
+    {
+        startHapticsSquareTestApp();
+        prompt('If device does not have a touch screen/mouse skip this test');
+        for (var index=0; index < effectNames.length; index++){
+            select(effectNames[index]);
+            prompt('Verify effects sounds like:' + effectNames[index]);
+        }
+    }
+
+}  // end of testcase
+
