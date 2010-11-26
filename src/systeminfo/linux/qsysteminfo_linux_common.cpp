@@ -3209,7 +3209,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
 
                 QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
 
-                if (currentBatLevelPercent < 4) {
+                if (currentBatLevelPercent == 0) {
+                    stat = QSystemBatteryInfo::BatteryEmpty;
+                } else if (currentBatLevelPercent < 4) {
                     stat = QSystemBatteryInfo::BatteryCritical;
                 } else if (currentBatLevelPercent < 11) {
                     stat = QSystemBatteryInfo::BatteryVeryLow;
@@ -3338,6 +3340,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
         } //end enumerateDevices
     }
 #endif
+    bool isPresent = false;
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
 
@@ -3347,6 +3350,9 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
             foreach (const QString &dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (iface.isValid()) {
+                    isPresent = (ifaceDevice.getPropertyBool("battery.present")
+                    && (ifaceDevice.getPropertyString("battery.type") == "pda"
+                        || ifaceDevice.getPropertyString("battery.type") == "primary"));
                     if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
                         cState = QSystemBatteryInfo::Charging;
                         cTime = ifaceDevice.getPropertyInt("battery.remaining_time");
@@ -3391,17 +3397,20 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     remainingEnergy = rEnergy;
 
     QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
-
-    if (cLevel < 4) {
-        stat = QSystemBatteryInfo::BatteryCritical;
-    } else if (cLevel < 11) {
-        stat = QSystemBatteryInfo::BatteryVeryLow;
-    } else if (cLevel < 41) {
-        stat =  QSystemBatteryInfo::BatteryLow;
-    } else if (cLevel > 40 && cLevel < 99) {
-        stat = QSystemBatteryInfo::BatteryOk;
-    } else if (cLevel == 100) {
-        stat = QSystemBatteryInfo::BatteryFull;
+    if(isPresent) {
+        if (cLevel == 0) {
+            stat = QSystemBatteryInfo::BatteryEmpty;
+        } else if (cLevel < 4) {
+            stat = QSystemBatteryInfo::BatteryCritical;
+        } else if (cLevel < 11) {
+            stat = QSystemBatteryInfo::BatteryVeryLow;
+        } else if (cLevel < 41) {
+            stat =  QSystemBatteryInfo::BatteryLow;
+        } else if (cLevel > 40 && cLevel < 99) {
+            stat = QSystemBatteryInfo::BatteryOk;
+        } else if (cLevel == 100) {
+            stat = QSystemBatteryInfo::BatteryFull;
+        }
     }
     currentBatStatus = stat;
 }

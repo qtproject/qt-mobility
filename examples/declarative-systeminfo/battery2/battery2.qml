@@ -35,6 +35,9 @@ Rectangle {
         }
 
         onChargingStateChanged: {
+            if(batinfo.chargingState == -1) {
+                chargeState.text = "Charging State: Not Charging / Error"
+            }
             if(batinfo.chargingState == 0) {
                 chargeState.text = "Charging State: Not Charging"
             }
@@ -43,25 +46,25 @@ Rectangle {
             }
         }
         onBatteryStatusChanged: {
-            if(batinfo.batteryStatus == 0) {
-                batStat.text = "Unknown status"
+            if(batinfo.batteryStatus == -1) {
+                batStat.text = "Battery Unknown"
             }
-            if(batinfo.batteryStatus == 1) {
+            if(batinfo.batteryStatus == 0) {
                 batStat.text = "Battery Empty"
             }
-            if(batinfo.batteryStatus == 2) {
+            if(batinfo.batteryStatus == 1) {
                 batStat.text = "Battery Critical"
             }
-            if(batinfo.batteryStatus == 3) {
+            if(batinfo.batteryStatus == 2) {
                 batStat.text = "Battery Very Low"
             }
-            if(batinfo.batteryStatus == 4) {
+            if(batinfo.batteryStatus == 3) {
                 batStat.text = "Battery Low"
             }
-            if(batinfo.batteryStatus == 5) {
+            if(batinfo.batteryStatus == 4) {
                 batStat.text = "Battery Ok"
             }
-            if(batinfo.batteryStatus == 6) {
+            if(batinfo.batteryStatus == 5) {
                 batStat.text = "Battery Full"
             }
         }
@@ -109,25 +112,25 @@ Rectangle {
         id: batStat
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: curFLow.bottom}
         text: {
-            if(batinfo.batteryStatus == 0) {
-                batStat.text = "Unknown status"
+            if(batinfo.batteryStatus == -1) {
+                batStat.text = "Battery Unknown"
             }
-            if(batinfo.batteryStatus == 1) {
+            if(batinfo.batteryStatus == 0) {
                 batStat.text = "Battery Empty"
             }
-            if(batinfo.batteryStatus == 2) {
+            if(batinfo.batteryStatus == 1) {
                 batStat.text = "Battery Critical"
             }
-            if(batinfo.batteryStatus == 3) {
+            if(batinfo.batteryStatus == 2) {
                 batStat.text = "Battery Very Low"
             }
-            if(batinfo.batteryStatus == 4) {
+            if(batinfo.batteryStatus == 3) {
                 batStat.text = "Battery Low"
             }
-            if(batinfo.batteryStatus == 5) {
+            if(batinfo.batteryStatus == 4) {
                 batStat.text = "Battery Ok"
             }
-            if(batinfo.batteryStatus == 6) {
+            if(batinfo.batteryStatus == 5) {
                 batStat.text = "Battery Full"
             }
         }
@@ -137,13 +140,13 @@ Rectangle {
         id: energyUnit
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: batStat.bottom}
         text: {
-            if(batinfo.energyMeasurementUnit == 0) {
+            if(batinfo.energyMeasurementUnit == -1) {
                 energyUnit.text = "Unknown energy unit"
             }
-            if(batinfo.energyMeasurementUnit == 1) {
+            if(batinfo.energyMeasurementUnit == 0) {
                 energyUnit.text = "mAh"
             }
-            if(batinfo.energyMeasurementUnit == 2) {
+            if(batinfo.energyMeasurementUnit == 1) {
                 energyUnit.text = "mWh"
             }
         }
@@ -180,6 +183,9 @@ Rectangle {
         id: chargeState
         anchors{ horizontalCenter: leveltext.horizontalCenter; top: chargertype.bottom}
         text: {
+            if(batinfo.chargingState == -1) {
+                chargeState.text = "Charging Unknown"
+            }
             if(batinfo.chargingState == 0) {
                 chargeState.text = "Discharging"
             }

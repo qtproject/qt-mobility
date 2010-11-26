@@ -81,7 +81,7 @@ public:
     ~QSystemBatteryInfo();
 
     enum BatteryStatus {
-        BatteryUnknown = 0,
+        BatteryUnknown = -1,
         BatteryEmpty,
         BatteryCritical,
         BatteryVeryLow,
@@ -107,7 +107,7 @@ public:
     };
 
     enum EnergyUnit {
-        UnitUnknown = 0,
+        UnitUnknown = -1,
         UnitmAh,
         UnitmWh,
     };
