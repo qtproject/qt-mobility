@@ -47,11 +47,11 @@
 #include <QLocale>
 #include <QtTest/QtTest>
 #include <qgeoserviceprovider.h>
-#include <QGeoRoutingManager>
-#include <QGeoRouteRequest>
-#include <QGeoRouteReply>
-#include <QGeoCoordinate>
-#include <QGeoRoute>
+#include <qgeoroutingmanager.h>
+#include <qgeorouterequest.h>
+#include <qgeoroutereply.h>
+#include <qgeocoordinate.h>
+#include <qgeoroute.h>
 
 Q_IMPORT_PLUGIN(qtgeoservices_staticroutingplugin)
 

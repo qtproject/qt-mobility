@@ -45,10 +45,10 @@
 #include <qgeoserviceprovider.h>
 #include <qgeosearchmanagerengine.h>
 #include <QLocale>
-#include <QLandmarkManager>
-#include <QGeoAddress>
-#include <QGeoPlace>
-#include <QGeoSearchReply>
+#include <qlandmarkmanager.h>
+#include <qgeoaddress.h>
+#include <qgeoplace.h>
+#include <qgeosearchreply.h>
 
 
 QTM_USE_NAMESPACE
@@ -102,7 +102,7 @@ public:
         searchreply->callSetFinished(true);
         emit(this->finished(searchreply));
 
-        return dynamic_cast<QGeoSearchReply*>(searchreply);
+        return static_cast<QGeoSearchReply*>(searchreply);
 
     }
 
@@ -114,7 +114,7 @@ public:
         searchreply->callSetFinished(true);
         emit(this->finished(searchreply));
 
-        return dynamic_cast<QGeoSearchReply*>(searchreply);
+        return static_cast<QGeoSearchReply*>(searchreply);
     }
 
     QGeoSearchReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
@@ -124,7 +124,7 @@ public:
         searchreply->callSetError(QGeoSearchReply::NoError,coordinate.toString());
         searchreply->callSetFinished(true);
         emit(this->finished(searchreply));
-        return dynamic_cast<QGeoSearchReply*>(searchreply);
+        return static_cast<QGeoSearchReply*>(searchreply);
     }
 
 

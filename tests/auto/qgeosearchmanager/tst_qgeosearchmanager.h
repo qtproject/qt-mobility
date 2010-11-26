@@ -49,12 +49,12 @@
 #include <QSignalSpy>
 
 #include <qgeoserviceprovider.h>
-#include <QGeoSearchManager>
-#include <QLandmarkManager>
-#include <QGeoSearchReply>
-#include <QGeoBoundingBox>
-#include <QGeoAddress>
-#include <QGeoCoordinate>
+#include <qgeosearchmanager.h>
+#include <qlandmarkmanager.h>
+#include <qgeosearchreply.h>
+#include <qgeoboundingbox.h>
+#include <qgeoaddress.h>
+#include <qgeocoordinate>
 
 
 Q_IMPORT_PLUGIN(qtgeoservices_staticsearchplugin)
