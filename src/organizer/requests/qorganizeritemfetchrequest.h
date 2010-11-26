@@ -69,11 +69,13 @@ public:
     void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
+    void setMaxCount(int maxCount);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
     QOrganizerItemFetchHint fetchHint() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
+    int maxCount() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;
