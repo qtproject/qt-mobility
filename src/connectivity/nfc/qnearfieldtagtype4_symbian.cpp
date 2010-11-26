@@ -70,6 +70,7 @@ QNearFieldTagType4Symbian::~QNearFieldTagType4Symbian()
 
 QByteArray QNearFieldTagType4Symbian::uid() const
 {
+    return _uid();
 }
     
 bool QNearFieldTagType4Symbian::hasNdefMessage()
@@ -106,6 +107,7 @@ QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray
     {
         result.append(sendCommand(cmd));
     }
+    return result;
 }
 
 QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)

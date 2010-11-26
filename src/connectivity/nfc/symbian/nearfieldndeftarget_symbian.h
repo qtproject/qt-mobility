@@ -61,7 +61,7 @@ class MNearFieldTagOperationCallback;
 class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
     {
-    typedef enum TOperation
+    enum TOperation
         {
         ENull,
         ERead,

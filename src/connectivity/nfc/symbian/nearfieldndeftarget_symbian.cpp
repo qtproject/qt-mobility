@@ -149,7 +149,7 @@ TBool CNearFieldNdefTarget::IsConnectionOpened()
     return iNdefConnection->IsActivated();
     }
 
-void CNearFieldNdefTarget::ReadComplete( CNdefRecord* aRecord, CNdefRecord::TNdefMessagePart aPart )
+void CNearFieldNdefTarget::ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ )
     {
     }
 
@@ -240,7 +240,7 @@ TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
     return error;
     }
 
-TInt CNearFieldNdefTarget::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
+TInt CNearFieldNdefTarget::RawModeAccess(const TDesC8& /*aCommand*/, TDes8& /*aResponse*/, const TTimeIntervalMicroSeconds32& /*aTimeout*/)
     {
     return KErrNotSupported;
     }

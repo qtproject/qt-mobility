@@ -56,6 +56,7 @@ QNearFieldTagType3Symbian::~QNearFieldTagType3Symbian()
 
 QByteArray QNearFieldTagType3Symbian::uid() const
 {
+    return _uid();
 }
 
 bool QNearFieldTagType3Symbian::hasNdefMessage()
@@ -76,7 +77,7 @@ void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 QByteArray QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
 {
     // TODO: should handle according to different command
-    _sendCommand(command, 100*1000, 512);
+    return _sendCommand(command, 100*1000, 4096);
 }
 
 QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
@@ -86,26 +87,35 @@ QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray
     {
         result.append(sendCommand(cmd));
     }
+    return result;
 }
 
 quint16 QNearFieldTagType3Symbian::systemCode()
 {
+    return 0;
 }
 
 QList<quint16> QNearFieldTagType3Symbian::services()
 {
+    return QList<quint16>();
 }
 
 int QNearFieldTagType3Symbian::serviceMemorySize(quint16 serviceCode)
 {
+    Q_UNUSED(serviceCode);
+    return -1;
 }
 
 QByteArray QNearFieldTagType3Symbian::serviceData(quint16 serviceCode)
 {
+    Q_UNUSED(serviceCode);
+    return QByteArray();
 }
 
 void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByteArray &data)
 {
+    Q_UNUSED(serviceCode);
+    Q_UNUSED(data);
 }
 
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
@@ -124,16 +134,25 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, Q
     }
 }
 
-void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
-                                       const QByteArray &data)  
+void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data)  
 {
+    quint8 numberOfBlocks;
+    QByteArray command;
+    command.append(0x06); // command code
+    command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
+    if (command.count() > 1)
+    {
+        command.append(data);
+        _sendCommand(command, 100*1000, 10);
+    }
 }
+
 
 const QByteArray& QNearFieldTagType3Symbian::getIDm()
 {
     if (mIDm.isEmpty())
     {
-    // this is the first time to get IDm
+        // this is the first time to get IDm
         CNearFieldTag * tag = mTag->CastToTag();
 
         if (tag)
@@ -246,4 +265,5 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
 }
      
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"
+
 QTM_END_NAMESPACE
