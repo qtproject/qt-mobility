@@ -58,6 +58,7 @@ class QLLCPSocketState;
 
 class QLlcpSocketPrivate : public QObject
 {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(QLlcpSocket)
 
 public:
@@ -94,13 +95,13 @@ public: //Implementation of QLlcpSocket API
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
-    
-public: 
+
+public:
     CLlcpSocketType1* newSocketType1();
     CLlcpSocketType2* newSocketType2();
     CLlcpSocketType1* socketType1Handler() {return m_symbianSocketType1;}
     CLlcpSocketType2* socketType2Handler() {return m_symbianSocketType2;}
-    
+
     QLlcpSocket* qllcpsocket(CLlcpSocketType2*);
 
 public:
@@ -108,13 +109,13 @@ public:
         ListeningState = QAbstractSocket::ListeningState,
     };
 private:
-    enum SocketType 
+    enum SocketType
     {
        connectionType1 = 1, // ConnectionLess mode
        connectionType2 = 2, // ConnectionOriented mode
        connectionUnknown = -1
     };
-    
+
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
     SocketType m_socketType;
@@ -139,9 +140,9 @@ signals:
      void connected();
      void disconnected();
 
- 
+
 // state machine part
-    
+
 public:
     void changeState(QLLCPSocketState* state);
 private:
