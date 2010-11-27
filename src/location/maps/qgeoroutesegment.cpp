@@ -242,7 +242,7 @@ QGeoManeuver QGeoRouteSegment::maneuver() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-    : valid(true),
+    : valid(false),
       travelTime(0),
       distance(0.0) {}
 

@@ -1,0 +1,29 @@
+TEMPLATE = lib
+CONFIG += plugin static testplugin
+TARGET = $$qtLibraryTarget(qtgeoservices_statictiledgeomapplugin)
+PLUGIN_TYPE=geoservices
+
+include(../../../../common.pri)
+
+CONFIG += mobility
+MOBILITY = location
+
+HEADERS += qgeomappingmanagerengine_test.h \
+           qgeoserviceproviderplugin_test.h
+
+SOURCES += qgeoserviceproviderplugin_test.cpp
+
+
+INCLUDEPATH += $$SOURCE_DIR/src/location \
+                $$SOURCE_DIR/src/location/maps \
+                $$SOURCE_DIR/src/location/maps/tiled
+
+RESOURCES += geoservicestestmaptiles.qrc
+
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep      
+}
