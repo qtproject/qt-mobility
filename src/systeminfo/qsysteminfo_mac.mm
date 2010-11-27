@@ -1630,9 +1630,9 @@ DAApprovalSessionRef session = NULL;
 
 void mountCallback(DADiskRef disk, CFArrayRef /*keys*/, void *context)
 {
-    NSDictionary *properties;
-    properties = (NSDictionary *)DADiskCopyDescription(disk);
-    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+    NSDictionary *batDoctionary;
+    batDoctionary = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[batDoctionary objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
 
     QString name = nsstringToQString([volumePath path]);
 
@@ -1651,14 +1651,14 @@ void mountCallback2(DADiskRef diskRef, void *context)
         if (mediaService) {
             if (IOObjectConformsTo(mediaService, kIOCDMediaClass) || IOObjectConformsTo(mediaService, kIODVDMediaClass)) {
 
-                NSDictionary *properties;
-                properties = (NSDictionary *)DADiskCopyDescription(diskRef);
-                NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+                NSDictionary *batDoctionary;
+                batDoctionary = (NSDictionary *)DADiskCopyDescription(diskRef);
+                NSURL *volumePath = [[batDoctionary objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
 
                 QString name = nsstringToQString([volumePath path]);
 
                 static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
-                CFRelease(properties);
+                CFRelease(batDoctionary);
             }
         }
         IOObjectRelease(mediaService);
@@ -1668,9 +1668,9 @@ void mountCallback2(DADiskRef diskRef, void *context)
 
 void unmountCallback(DADiskRef disk, void *context)
 {
-    NSDictionary *properties;
-    properties = (NSDictionary *)DADiskCopyDescription(disk);
-    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+    NSDictionary *batDoctionary;
+    batDoctionary = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[batDoctionary objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
 
     QString name = nsstringToQString([volumePath path]);
 
@@ -1970,8 +1970,14 @@ void QSystemStorageInfoPrivate::checkAvailableStorage()
 void powerInfoChanged(void* context)
 {
     QSystemDeviceInfoPrivate *sys = reinterpret_cast<QSystemDeviceInfoPrivate *>(context);
-    sys->batteryLevel();
-    sys->currentPowerState();
+    if(sys) {
+        sys->batteryLevel();
+        sys->currentPowerState();
+    }
+    QSystemBatteryInfoPrivate *bat = reinterpret_cast<QSystemBatteryInfoPrivate *>(context);
+    if(bat) {
+        bat->getBatteryInfo();
+    }
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
@@ -2333,13 +2339,20 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 : QObject(parent)
 {
     getBatteryInfo();
+
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
+    CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
+    if (runLoopSource) {
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
+        CFRelease(runLoopSource);
+    }
+    [autoreleasepool release];
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
-
 }
-
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
@@ -2350,7 +2363,6 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() con
 {
     return curChargeState;
 }
-
 
 int QSystemBatteryInfoPrivate::nominalCapacity() const
 {
@@ -2366,7 +2378,6 @@ int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
     return remainingEnergy;
 }
-
 
 int QSystemBatteryInfoPrivate::voltage() const
 {
@@ -2393,53 +2404,6 @@ int QSystemBatteryInfoPrivate::maxBars() const
     return 0;
 }
 
-void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
-{
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            nominalCapacityChanged(int))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityPercentChanged(int))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityChanged(int))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentFlowChanged(int))))) {
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingCapacityBarsChanged(int))))) {
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            remainingChargingTimeChanged(int))))) {
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
-
-}
-
-void QSystemBatteryInfoPrivate::disconnectNotify(const char */*signal*/)
-{
-
-}
-
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
 {
     return currentBatStatus;
@@ -2452,13 +2416,20 @@ int QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 /*rate*/)
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
-    return QSystemBatteryInfo::UnitUnknown;
-
+    return QSystemBatteryInfo::UnitmWh;
 }
 
 void QSystemBatteryInfoPrivate::getBatteryInfo()
 {
-    qDebug() << Q_FUNC_INFO;
+    int cLevel = 0;
+    int cEnergy = 0;
+    int cVoltage = 0;
+    int cTime = 0;
+    int rEnergy = 0;
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
+    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
+    bool isCharging;
+
     CFTypeRef info;
     CFArrayRef list;
     CFDictionaryRef battery;
@@ -2475,45 +2446,82 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         return;
     }
 
+    CFMutableDictionaryRef matching = NULL;
+    CFMutableDictionaryRef batDoctionary = NULL;
+    io_registry_entry_t entry = 0;
+    matching = IOServiceMatching("IOPMPowerSource");
+    entry = IOServiceGetMatchingService(kIOMasterPortDefault,matching);
+    IORegistryEntryCreateCFProperties(entry, &batDoctionary,NULL,0);
+
+    //    NSLog( @"%@" , batDoctionary );
+
+    NSDictionary *legacyDict = [(NSDictionary*)batDoctionary objectForKey:@"LegacyBatteryInfo"];
+
     if(CFArrayGetCount(list) && (battery = IOPSGetPowerSourceDescription(info, CFArrayGetValueAtIndex(list,0)))) {
-     //   self.outputInstalled = [[(NSDictionary*)battery objectForKey:@kIOPSIsPresentKey] boolValue];
 
-        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
-            curChargeType = QSystemBatteryInfo::WallCharger;
-        } else {
-            curChargeType = QSystemBatteryInfo::NoCharger;
+        cLevel = [[(NSDictionary*)battery objectForKey:@kIOPSCurrentCapacityKey] intValue];
+        if(cLevel != currentBatLevelPercent) {
+            currentBatLevelPercent = cLevel;
+            Q_EMIT remainingCapacityPercentChanged(currentBatLevelPercent);
         }
-       if ([[(NSDictionary*)battery objectForKey:@kIOPSIsChargingKey] boolValue]) {
-           curChargeState = QSystemBatteryInfo::Charging;
-       } else {
-           curChargeState = QSystemBatteryInfo::NotCharging;
-       }
 
-        dischargeRate = [[(NSDictionary*)battery objectForKey:@kIOPSCurrentKey] intValue];
-        currentVoltage = [[(NSDictionary*)battery objectForKey:@kIOPSVoltageKey] intValue];
-        currentBatLevelPercent = [[(NSDictionary*)battery objectForKey:@kIOPSCurrentCapacityKey] intValue];
-        capacity = [[(NSDictionary*)battery objectForKey:@kIOPSMaxCapacityKey] intValue];
-        timeToFull = [[(NSDictionary*)battery objectForKey:@kIOPSTimeToFullChargeKey] intValue];
-        remainingEnergy = [[(NSDictionary*)battery objectForKey:@kIOPSPowerAdapterWattsKey] intValue];
-        qDebug() << curChargeType << curChargeState
-                    << currentBatLevelPercent
-                    << dischargeRate << currentVoltage
-                       << remainingEnergy << capacity << timeToFull;
-//
-    }
-    else {
-        qDebug() << "noda";
+        isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];
+        //        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
+        if(isCharging) {
+            cType = QSystemBatteryInfo::WallCharger;
+        } else {
+            cType = QSystemBatteryInfo::NoCharger;
+        }
 
-    //    self.outputInstalled = NO;
-   //     self.outputConnected = NO;
-    //    self.outputCharging = NO;
-//        remainingEnergy = 0.0;
-//        currentVoltage = 0.0;
-//        remainingEnergy = 0.0;
-//        capacity = 0.0;
+        if(cType != curChargeType) {
+            curChargeType = cType;
+            Q_EMIT chargerTypeChanged(curChargeType);
+        }
+
+        if ([[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue]) {
+            cState = QSystemBatteryInfo::Charging;
+        } else {
+            cState = QSystemBatteryInfo::NotCharging;
+        }
+        if (cState != curChargeState ) {
+            curChargeState = cState;
+            Q_EMIT chargingStateChanged(curChargeState);
+        }
+        cVoltage = [[(NSDictionary*)batDoctionary objectForKey:@"Voltage"] intValue];
+        if (cVoltage != currentVoltage ) {
+            currentVoltage = cVoltage;
+            Q_EMIT voltageChanged(currentVoltage);
+        }
+
+        int amp = [[legacyDict objectForKey:@"Current"] intValue];
+        cEnergy = currentVoltage * amp / 1000;
+        if (cEnergy != curChargeState ) {
+            dischargeRate = cEnergy;
+            Q_EMIT currentFlowChanged(dischargeRate);
+        }
+
+        cTime = [[(NSDictionary*)batDoctionary objectForKey:@"AvgTimeToFull"] intValue];
+        if (cTime != timeToFull) {
+            if(!isCharging) {
+                cTime = -1;
+            }
+            timeToFull = cTime;
+            Q_EMIT remainingChargingTimeChanged(timeToFull);
+        }
+        capacity = [[(NSDictionary*)batDoctionary objectForKey:@"MaxCapacity"] intValue];
+        if (cState != curChargeState ) {
+            curChargeState = cState;
+            Q_EMIT chargingStateChanged(curChargeState);
+        }
+        rEnergy = [[(NSDictionary*)batDoctionary objectForKey:@"CurrentCapacity"] intValue];
+        if (rEnergy != remainingEnergy ) {
+            remainingEnergy = rEnergy;
+            Q_EMIT remainingCapacityChanged(remainingEnergy);
+        }
     }
     CFRelease(list);
     CFRelease(info);
+    CFRelease(batDoctionary);
 }
 
 #include "moc_qsysteminfo_mac_p.cpp"

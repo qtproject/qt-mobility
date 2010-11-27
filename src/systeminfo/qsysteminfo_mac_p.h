@@ -467,6 +467,7 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
     int startCurrentMeasurement(int rate);
+    void getBatteryInfo();
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -487,9 +488,6 @@ Q_SIGNALS:
     void remainingCapacityBarsChanged(int);
     void remainingChargingTimeChanged(int);
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
 private:
     QSystemBatteryInfo::BatteryStatus currentBatStatus;
     QSystemBatteryInfo::ChargingState curChargeState;
@@ -501,7 +499,6 @@ private:
     int capacity;
     int timeToFull;
     int remainingEnergy;
-    void getBatteryInfo();
 };
 
 QTM_END_NAMESPACE
