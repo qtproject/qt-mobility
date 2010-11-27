@@ -803,12 +803,19 @@ void QDASessionThread::doWork()
 
 static bool isBtPowerOn()
 {
-    //depreciated yes, but what's the replacement?
-    BluetoothHCIPowerState powerState;
-    IOBluetoothLocalDeviceGetPowerState(&powerState);
-    if(powerState == kBluetoothHCIPowerStateON)
-        return true;
-    return false;
+    CFMutableDictionaryRef matching = NULL;
+    CFMutableDictionaryRef btDictionary = NULL;
+    io_registry_entry_t entry = 0;
+    matching = IOServiceMatching("IOBluetoothHCIController");
+    entry = IOServiceGetMatchingService(kIOMasterPortDefault,matching);
+    IORegistryEntryCreateCFProperties(entry, &btDictionary,NULL,0);
+    bool powerOn = false;
+
+    if ([[(NSDictionary*)btDictionary objectForKey:@"HCIControllerPowerIsOn"] boolValue]) {
+        powerOn = true;
+    }
+    CFRelease(btDictionary);
+    return powerOn;
 }
 
 void btPowerStateChange(void *ref, io_service_t /*service*/, natural_t messageType, void */*info*/)
