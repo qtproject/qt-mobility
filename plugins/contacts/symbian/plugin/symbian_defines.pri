@@ -1,3 +1,4 @@
+include(../../../../common.pri)
 
 symbian: {
     contains(symbiancntmodelv2_enabled, yes) {
