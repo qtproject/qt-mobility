@@ -1308,7 +1308,7 @@ int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
     return 0;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
     return 0;
 }
@@ -1392,7 +1392,7 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 
 }
 
-qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
 {
  return 0;
 }
