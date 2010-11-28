@@ -15,3 +15,5 @@ DEFINES += DUMMYPLUGINNAME=LandmarkManagerFactoryDummyDynamic
 DEFINES += DUMMYPLUGINTARGET=landmarks_testdummydynamiccopy
 
 HEADERS += ../dummydynamicplugin/dummydynamicplugin.h
+
+include(../../landmarks_plugins.pri)
