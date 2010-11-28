@@ -247,6 +247,8 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QString model();
+    QString productName();
 
 protected:
 #if !defined(QT_NO_DBUS)

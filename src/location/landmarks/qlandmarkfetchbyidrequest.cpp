@@ -100,7 +100,7 @@ void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmar
 }
 
 /*!
-    Convenience fuction that sets  a single landmark, specified by \a landmarkId,
+    Convenience function that sets  a single landmark, specified by \a landmarkId,
     to be retrieved by this request.
 
 */

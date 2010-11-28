@@ -148,6 +148,8 @@ void tst_QMessage::initTestCase()
         QVERIFY(testAccountId.isValid());
     }
 
+#ifndef FREESTYLEMAILUSED
+    // Symbian FreeStyle email does not support folder creation
     {
         Support::Parameters p;
         p.insert("path", "/root");
@@ -157,6 +159,7 @@ void tst_QMessage::initTestCase()
         testFolderId = Support::addFolder(p);
         QVERIFY(testFolderId.isValid());
     }
+#endif
 }
 
 void tst_QMessage::cleanup()

@@ -98,7 +98,6 @@ public:
     QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemInfoLinuxCommonPrivate();
     QString currentLanguage() const;
-    QStringList availableLanguages() const {return QStringList();}
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
     QString currentCountryCode() const;

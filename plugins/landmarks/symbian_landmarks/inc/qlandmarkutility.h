@@ -93,12 +93,13 @@ public:
     /*
      * returns new qt landmark object converted from symbian landmark object.
      */
-    static QLandmark* convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark);
+    static void convertToQtLandmark(QString managerUri, CPosLandmark* symbianLandmark,
+        QLandmark* qtLandmark);
 
     /*
      * returns new symbian landmark converted from qt landmark object. 
      */
-    static CPosLandmark* convertToSymbianLandmarkL(QLandmark* qtLandmark);
+    static void convertToSymbianLandmarkL(QLandmark* qtLandmark, CPosLandmark* symbianLandmark);
 
     /*
      * set landmark attributes to existing symbian landmark object from 
@@ -130,14 +131,14 @@ public:
     /*
      * returns new object of qt landmark category converted from symbian landmark category. 
      */
-    static QLandmarkCategory* convertToQtLandmarkCategory(QString managerUri,
-        CPosLandmarkCategory* symbianLandmarkCategory);
+    static void convertToQtLandmarkCategory(QString managerUri,
+        CPosLandmarkCategory* symbianLandmarkCategory, QLandmarkCategory* qtLmCategory);
 
     /*
      * returns the symbian landmark category converted from qt landmark category.
      */
-    static CPosLandmarkCategory
-    * convertToSymbianLandmarkCategoryL(QLandmarkCategory* qtLandmarkCategory);
+    static void convertToSymbianLandmarkCategoryL(QLandmarkCategory* qtLandmarkCategory,
+        CPosLandmarkCategory * symbianLmCategory);
 
     /*
      * sets landmark category attributes to existing symbian category objects
@@ -147,7 +148,7 @@ public:
         QLandmarkCategory* qtLandmarkCategory);
 
     /*
-     * returns new object of qt category id coverted from symbian category object.
+     * returns new object of qt category id converted from symbian category object.
      */
     static QLandmarkCategoryId convertToQtLandmarkCategoryId(QString managerUri,
         TPosLmItemId symbianLandmarkCategoryId);

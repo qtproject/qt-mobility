@@ -47,6 +47,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
+#include <QEventLoop>
 #include <QFileInfo>
 #include <QMutexLocker>
 #include <QString>
@@ -57,6 +58,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QSqlQuery>
+#include <QTimer>
 #include <QThreadPool>
 #include <QUuid>
 
@@ -545,6 +547,28 @@ bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* reque
 bool QLandmarkManagerEngineSqlite::waitForRequestFinished(QLandmarkAbstractRequest* request,
         int msecs)
 {
+    //Aside: the request at least already be in the active state for this function to
+    //to be called.
+
+    QMutexLocker ml(&m_mutex);
+    if (!m_requestRunHash.contains(request))
+        return false;
+    ml.unlock();
+    QEventLoop eventLoop;
+
+    if (msecs > 0)
+        QTimer::singleShot(msecs, &eventLoop, SLOT(quit()));
+
+    QObject::connect(request, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+                     &eventLoop,SLOT(quit()));
+    if (request->state() == QLandmarkAbstractRequest::FinishedState)
+        return true;
+    else
+        eventLoop.exec();
+
+    if (request->state() == QLandmarkAbstractRequest::FinishedState)
+        return true;
+
     return false;
 }
 

@@ -1,13 +1,13 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtorganizer_maemo6)
+TARGET = $$qtLibraryTarget(qtorganizer_mkcal)
 PLUGIN_TYPE=organizer
 
 CONFIG += mobility
 MOBILITY = organizer
 
 CONFIG += link_pkgconfig
-PKGCONFIG += libextendedkcal
+PKGCONFIG += libmkcal
 
 include(../../../common.pri)
 
@@ -18,11 +18,10 @@ INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/details
 
 HEADERS += \
-        qorganizermaemo6.h \
-        maemo6itemlocalid.h
+        mkcalengine.h \
+        qorganizerasynchmanager.h \
+        mkcalid.h
 SOURCES += \
-        qorganizermaemo6.cpp
+        mkcalengine.cpp \
+        qorganizerasynchmanager.cpp
 
-# Once we know what the pkgconfig deps are
-# CONFIG += link_pkgconfig
-PKGCONFIG += 

@@ -45,13 +45,40 @@ QtBearer
 
 QtContacts
 ------
+ - At application unload time, any remaining engines will be destroyed *before*
+   their factories.
+ - Minor optimizations
+ - Fixed a crash and some other problems in QContactManagerEngineV2Wrapper
+ - Fixed several issues with Maemo5 engine:
+   * QTMOBILITY-698 - Support for Fax phone number type
+   * QTMOBILITY-644 - crash with malformed vcard data
+   * Possible crash with malformed address data
 
  -
+QtGallery
+------
+ - Harmattan backend added.
+ - Fixes for symbian backend.
+   * Fixed deployment to 3.2 and 5.0 devices. [MOBILITY-1794]
+   * Added support for Album, AlbumArtist, Album and Genre types
+     [MOBILITY-1796]
+   * Added support for count property to QGalleryTypeRequest [MOBILITY-1852]
+   * Fixed meta-data access from QGalleryItemRequest [MOBILITY-1854]
+   * Fixed implementation of QGalleryQueryRequest::cancel() [MOBILITY-1858]
+   * Corrected values of fileName, path, and url properties [MOBILITY-1881]
+ - QGalleryAbstractResponse
+   * Added default implementation of waitForFinished() [MOBILITY-1861]
 
 QtLocation
 ------
-
- -
+ - Harmattan backend for landmarks added
+ - Fixes for symbian backend for landmarks
+   * Asynchronous requests cannot be destroyed while they are active [QTMOBILITY-611]
+   * Ignore viewport field(from QGeoPlace) when saving a landmark
+   * Calling remove/save landmarks with a non-trivial number of landmarks results in
+     a databaseLockedError [MOBILITY-1901] / LandmarkManager remove
+     save doesn't work always [QTMOBILITY-694]
+   * Memory leak in symbian landmarks backend [MOBILITY-1949]
 
 QtMessaging
 ------
@@ -62,9 +89,24 @@ QtMultimediaKit
 ------
 
  -
+ - Fixes for DirectShow backend
+   * Return duration and position values in milliseconds instead of
+     microseconds [QTMOBILITY-585]
+   * Fixed video buffer size initialization [QTMOBILITY-583]
+   * Improved verification of video format before initializing a video surface
+     [QTMOBILITY-579]
+ - QAudioInput
+   * Fixed potential buffer overrun in Windows and ALSA backends.
 
 QtOrganizer
 ------
+ - Added mkcal backend
+ - Better performance with the memory engine
+ - Fix several Maemo5 issues:
+   * End dates are meant to be inclusive
+   * dataChanged signal is emitted when other processes change the database
+   * Issues with error reporting with async requests
+ - Fix some recurrence rule generation with memory engine
 
  -
 
@@ -90,8 +132,18 @@ QtSystemInfo
 
 QtVersit
 -----
+------
+ - Fix for a crash with a specific version of gcc
+ - Better handling of avatar paths when exporting
+ - QVersitWriter will put more important TYPEs (home, mobile etc) first for
+   better interoperability with readers that only choose the first type
 
  -
+QtFeedback
+------
+ - Added MMK backend for audio snippet feedback
+ - stateChanged signals should be emitted when the haptic effect has finished
+ - Minor documentation clarifications
 
 Qt Mobility Plugins
 ------

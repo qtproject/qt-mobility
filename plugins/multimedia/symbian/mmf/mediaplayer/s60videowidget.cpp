@@ -99,11 +99,11 @@ QBlackWidget::~QBlackWidget()
 {
 }
 
-void QBlackWidget::beginNativePaintEvent(const QRect& /*controlRect*/) 
+void QBlackWidget::beginNativePaintEvent(const QRect& /*controlRect*/)
 {
     emit beginVideoWindowNativePaint();
 }
-    
+
 void QBlackWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 {
     CCoeEnv::Static()->WsSession().Flush();
@@ -139,6 +139,9 @@ void S60VideoWidgetControl::initializeVideoOutput()
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
 {
+    QScopedPointer<QAbstractVideoWidget> widget(m_widget.take());
+    // Remove window handle from video player session before widget is deleted
+    emit windowHandleChanged();
 }
 
 QWidget *S60VideoWidgetControl::videoWidget()
@@ -153,11 +156,10 @@ Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 
 void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    if (m_aspectRatioMode == ratio)
-        return;
-
-    m_aspectRatioMode = ratio;
-    emit widgetUpdated();
+    if (m_aspectRatioMode != ratio) {
+        m_aspectRatioMode = ratio;
+        emit aspectRatioChanged();
+    }
 }
 
 bool S60VideoWidgetControl::isFullScreen() const
@@ -167,17 +169,14 @@ bool S60VideoWidgetControl::isFullScreen() const
 
 void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (m_fullScreenEnabled == fullScreen)
-        return;
-
-    m_fullScreenEnabled = fullScreen;
-
-    if (fullScreen && m_widget)
-        m_widget->showFullScreen();
-    else if (m_widget)
-        m_widget->showNormal();
-
-    emit fullScreenChanged(fullScreen);
+    if (m_fullScreenEnabled != fullScreen) {
+        m_fullScreenEnabled = fullScreen;
+        if (fullScreen && m_widget)
+            m_widget->showFullScreen();
+        else if (m_widget)
+            m_widget->showNormal();
+        emit fullScreenChanged(fullScreen);
+    }
 }
 
 int S60VideoWidgetControl::brightness() const
@@ -226,46 +225,51 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
         if (e->type() == QEvent::ParentChange) {
             if (QWidget *parent = m_widget->parentWidget())
                 parent->setProperty("_q_DummyWindowSurface", true);
-            emit widgetUpdated();
+            emit windowHandleChanged();
         } else if (e->type() == QEvent::WinIdChange
             || e->type() == QEvent::Show) {
-            emit widgetUpdated();
-        } else if (e->type() == QEvent::Resize
-            || e->type() == QEvent::Move) {
-#ifdef MMF_VIDEO_SURFACES_SUPPORTED
-           emit widgetResized();
-#else
-           emit widgetUpdated();
-#endif //MMF_VIDEO_SURFACES_SUPPORTED
-
+            emit windowHandleChanged();
+        } else if (e->type() == QEvent::Resize) {
+            emit displayRectChanged();
         }
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
+        // TODO: this is insufficient - we also need to respond to changes in
+        // the position of ancestor widgets
+        else if (e->type() == QEvent::Move) {
+            emit displayRectChanged();
+        }
+#endif
     }
     return false;
 }
 
-WId S60VideoWidgetControl::videoWidgetWId()
+WId S60VideoWidgetControl::videoWinId() const
 {
-    if (m_widget->internalWinId())
-        return m_widget->internalWinId();
-     
-    if (m_widget->effectiveWinId())
-        return m_widget->effectiveWinId();
-     
-    return NULL;
+    WId wid = 0;
+    if (m_widget) {
+        if (m_widget->internalWinId())
+            wid = m_widget->internalWinId();
+        else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+            wid = m_widget->effectiveWinId();
+    }
+    return wid;
 }
 
-QSize S60VideoWidgetControl::videoWidgetSize()
+QRect S60VideoWidgetControl::videoDisplayRect() const
 {
-    QSize result;
-    RWindowBase *window = NULL;
-    CCoeControl *control = videoWidgetWId();
-    if (control)
-        window = control->DrawableWindow();
-    if (window) {
-        const TSize size = window->Size();
-        result = QSize(size.iWidth, size.iHeight);
-    }
-    return result;
+    const RWindow *window = videoWindowHandle();
+    const TSize size = window ? window->Size() : TSize();
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    return QRect(0, 0, size.iWidth, size.iHeight);
+#else
+    const TPoint pos = window ? window->AbsPosition() : TPoint();
+    return QRect(pos.iX, pos.iY, size.iWidth, size.iHeight);
+#endif
+}
+
+Qt::AspectRatioMode S60VideoWidgetControl::videoAspectRatio() const
+{
+    return aspectRatioMode();
 }
 
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
@@ -275,15 +279,15 @@ void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 #if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::StoppedState";
         qt_widget_private(m_widget.data())->extraData()->disableBlit = false;
-#endif        
+#endif
 #endif
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
 #ifdef USE_PRIVATE_QWIDGET_METHODS
-#if QT_VERSION <= 0x040600 && !defined(FF_QT)       
+#if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qDebug()<<"S60VideoPlayerSession::videoStateChanged() - state == QMediaPlayer::PlayingState";
         qt_widget_private(m_widget.data())->extraData()->disableBlit = true;
-#endif  
+#endif
 #endif
     }
 }

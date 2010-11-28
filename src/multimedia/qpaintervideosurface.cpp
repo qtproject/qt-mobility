@@ -138,8 +138,13 @@ QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::start(const QVideoSurf
 
     const QAbstractVideoBuffer::HandleType t = format.handleType();
     if (t == QAbstractVideoBuffer::NoHandle) {
-        if (m_imageFormat != QImage::Format_Invalid && !m_imageSize.isEmpty())
+        if (m_imageFormat != QImage::Format_Invalid
+#ifdef QT_OPENGL_ES
+                && format.pixelFormat() != QVideoFrame::Format_RGB24
+#endif
+                && !m_imageSize.isEmpty()) {
             return QAbstractVideoSurface::NoError;
+        }
     } else if (t == QAbstractVideoBuffer::QPixmapHandle) {
         return QAbstractVideoSurface::NoError;
     }

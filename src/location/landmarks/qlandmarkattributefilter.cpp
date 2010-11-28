@@ -126,7 +126,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
         \o
     \endtable
 
-        Please note that different platforms support different capabilites with the attribute filter.
+        Please note that different platforms support different capabilities with the attribute filter.
         The S60 3.1, 3.2 and 5.0 platforms do not support an OR type attribute filter.
         These platforms are also not able to use the MatchContains flags.
 */
