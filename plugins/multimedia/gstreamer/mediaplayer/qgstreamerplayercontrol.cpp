@@ -56,6 +56,7 @@
 
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
     : QMediaPlayerControl(parent)
+    , m_ownStream(false)
     , m_session(session)
     , m_state(QMediaPlayer::StoppedState)
     , m_mediaStatus(QMediaPlayer::NoMedia)
@@ -290,7 +291,24 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
         closeFifo();
 
         disconnect(m_stream, SIGNAL(readyRead()), this, SLOT(writeFifo()));
+        if (m_ownStream)
+            delete m_stream;
         m_stream = 0;
+        m_ownStream = false;
+    }
+
+    // If the canonical URL refers to a Qt resource, open with QFile and use
+    // the stream playback capability to play.
+    if (stream == 0 && content.canonicalUrl().scheme() == QLatin1String("qrc")) {
+        stream = new QFile(QLatin1Char(':') + content.canonicalUrl().path(), this);
+        if (!stream->open(QIODevice::ReadOnly)) {
+            delete stream;
+            m_mediaStatus = QMediaPlayer::InvalidMedia;
+            emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid Qt resource"));
+            emit mediaStatusChanged(m_mediaStatus);
+            return;
+        }
+        m_ownStream = true;
     }
 
     m_currentResource = content;
