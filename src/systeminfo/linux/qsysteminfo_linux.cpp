@@ -910,7 +910,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
-    : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
 {
 
 }
