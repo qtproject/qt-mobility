@@ -95,6 +95,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
+    // check to see whether we support alarms.
+    QOrganizerManager defaultManager;
+    QStringList supportedDefinitionNames = defaultManager.detailDefinitions(QOrganizerItemType::TypeTodo).keys();
+
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
@@ -106,8 +110,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_priorityEdit);
     scrollAreaLayout->addWidget(statusLabel);
     scrollAreaLayout->addWidget(m_statusEdit);
-    scrollAreaLayout->addWidget(alarmLabel);
-    scrollAreaLayout->addWidget(m_alarmComboBox);
+    if (supportedDefinitionNames.contains(QOrganizerItemVisualReminder::DefinitionName)) {
+        scrollAreaLayout->addWidget(alarmLabel);
+        scrollAreaLayout->addWidget(m_alarmComboBox);
+    }
     scrollAreaLayout->addWidget(calendarLabel);
     scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
