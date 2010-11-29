@@ -57,6 +57,7 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Time:", this);
     m_timeEdit = new QDateTimeEdit(this);
+    m_timeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     m_alarmComboBox = new QComboBox(this);
     QLabel *calendarLabel = new QLabel("Calendar:", this);

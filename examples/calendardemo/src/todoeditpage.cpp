@@ -60,8 +60,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Start time:", this);
     m_startTimeEdit = new QDateTimeEdit(this);
+    m_startTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *dueTimeLabel = new QLabel("Due time:", this);
-    m_dueTimeEdit = new QDateTimeEdit(this);    
+    m_dueTimeEdit = new QDateTimeEdit(this);
+    m_dueTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *priorityLabel = new QLabel("Priority:", this);
     m_priorityEdit = new QComboBox(this);
     QLabel *statusLabel = new QLabel("Status:", this);
