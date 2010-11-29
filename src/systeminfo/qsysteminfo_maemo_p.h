@@ -298,6 +298,14 @@ private:
     QDBusInterface *mceConnectionInterface;
 #endif
 };
+class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+};
+
 
 QTM_END_NAMESPACE
 
