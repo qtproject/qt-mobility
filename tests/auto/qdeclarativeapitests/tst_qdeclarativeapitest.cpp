@@ -320,8 +320,14 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     geoServiceProvider->setName("nokia");
     PropertyValues nokiaPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapNokiaPluginPropertyMap.insert("plugin", nokiaPlugin);
-    QTest::newRow("Map (plugin separately)") << "QDeclarativeGraphicsGeoMap" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
-
+    QTest::newRow("Map (existing plugin)") << "QDeclarativeGraphicsGeoMap" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
+    // Must not crash even if there is no plugin
+    PropertyMap mapNonexistentPluginPropertyMap;
+    QDeclarativeGeoServiceProvider* geoNonexistentServiceProvider = new QDeclarativeGeoServiceProvider(this);
+    geoNonexistentServiceProvider->setName("non_existent_plugin");
+    PropertyValues nonexistentPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
+    mapNonexistentPluginPropertyMap.insert("plugin", nonexistentPlugin);
+    QTest::newRow("Map (nonexisting plugin)") << "QDeclarativeGraphicsGeoMap" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
 #endif // API_TEST_DECLARATIVE_LOCATION
 }
 
