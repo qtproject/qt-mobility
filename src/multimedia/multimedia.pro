@@ -64,7 +64,8 @@ PUBLIC_HEADERS += \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h \
-    qmediatimerange.h
+    qmediatimerange.h \
+    qmedianetworkaccesscontrol.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -105,7 +106,8 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp \
-    qmediatimerange.cpp
+    qmediatimerange.cpp \
+    qmedianetworkaccesscontrol.cpp
 
 #Camera
 PUBLIC_HEADERS += \
