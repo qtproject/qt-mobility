@@ -41,7 +41,8 @@ public:
 
 
 protected:
-    void resizeEvent(QResizeEvent * event);
+    virtual void resizeEvent(QResizeEvent * event);
+    virtual void timerEvent(QTimerEvent * event);
 
 private slots:
     void resetProvider();

@@ -25,12 +25,6 @@ MapBox::MapBox(QWidget *parent) :
 
     m_scene = new BoxGraphicsScene(m_statistics, this);
 
-    m_scene->addLine(-100,0,100,0)->setZValue(-1e6);
-    m_scene->addLine(0,-100,0,100)->setZValue(-1e6);
-
-    m_scene->addLine(-100,-100,100,100)->setZValue(1e6);
-    m_scene->addLine(-100,100,100,-100)->setZValue(1e6);
-
     m_qgv = new QGraphicsView(m_scene, this);
     m_qgv->setOptimizationFlag(QGraphicsView::IndirectPainting, true);
     m_qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -45,8 +39,14 @@ MapBox::MapBox(QWidget *parent) :
     // determine the order of the stat entries
     m_statistics->stat("FPS", -1);
     m_statistics->stat("Render time", -1);
-    //m_statistics->stat("mem", -1);
+    m_statistics->stat("mem", -1);
     //m_statistics->stat("map objects", 0);
+    startTimer(1000);
+}
+
+void MapBox::timerEvent(QTimerEvent * event)
+{
+    m_statistics->stat("mem", perf_currentMemUsage());
 }
 
 void MapBox::resetProvider()

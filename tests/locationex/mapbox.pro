@@ -31,3 +31,7 @@ include("../../common.pri")
 
 CONFIG += mobility
 MOBILITY = location
+
+win32 {
+LIBS += -lpsapi
+}
