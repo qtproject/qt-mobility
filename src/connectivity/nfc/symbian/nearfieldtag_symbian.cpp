@@ -113,9 +113,12 @@ const TDesC8& CNearFieldTag::Uid() const
 
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
-    if (!iRequestOngoing)
+    if (!IsActive())
         {
         // No ongoing request
+        if (IsConnectionOpened())
+            {
+            iTagConnection->RawModeAccess(iStatus, aCommand
         return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout)
                                       : KErrInUse;
         }

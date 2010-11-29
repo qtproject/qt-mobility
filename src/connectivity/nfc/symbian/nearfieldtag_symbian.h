@@ -96,8 +96,6 @@ private:
 
     // Not own
     MNearFieldTagOperationCallback * iCallback;
-
-    TBool iRequestOngoing;
     };
 
 #endif // NEARFIELDTAG_H
