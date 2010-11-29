@@ -56,9 +56,9 @@ QTM_BEGIN_NAMESPACE
 class QLlcpServerPrivate : public QObject
 {
     Q_OBJECT
-
+    Q_DECLARE_PUBLIC(QLlcpServer)
 public:
-    QLlcpServerPrivate();
+    QLlcpServerPrivate(QLlcpServer *q);
     ~QLlcpServerPrivate();
 
     bool listen(const QString &serviceUri);
@@ -91,6 +91,7 @@ signals:
 private:
     CLlcpServer* m_symbianbackend;
     ServerState m_state;
+    QLlcpServer *q_ptr;
 };
 
 QTM_END_NAMESPACE

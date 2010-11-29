@@ -46,13 +46,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLlcpServerPrivate::QLlcpServerPrivate()
-    :m_state(QLlcpServerPrivate::UnconnectedState)
+QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
+    :m_state(QLlcpServerPrivate::UnconnectedState),
+    q_ptr(q)
 {
     QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
 }
-
-
 QLlcpServerPrivate::~QLlcpServerPrivate()
 {
     delete m_symbianbackend;
@@ -98,7 +97,8 @@ bool QLlcpServerPrivate::hasPendingConnections() const
 
 void QLlcpServerPrivate::invokeNewConnection()
 {
-    emit newConnection();
+    Q_Q(QLlcpServer);
+    emit q->newConnection();
 }
 
 void QLlcpServerPrivate::invokeError() const
@@ -113,7 +113,7 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (socket_symbian)
     {
         QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
-        QLlcpSocket* qSocket = new QLlcpSocket(qSocket_p);
+        qSocket = new QLlcpSocket(qSocket_p);
     }
     return qSocket;
 }

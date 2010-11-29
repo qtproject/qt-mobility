@@ -290,7 +290,7 @@ TBool CLlcpSocketType2::WaitForConnected(TInt aMilliSeconds)
     {
     return WaitForOperationReady(EWaitForConnected, aMilliSeconds);
     }
-TBool CLlcpSocketType2::WaitForDisconnected(TInt aMilliSeconds)
+TBool CLlcpSocketType2::WaitForDisconnected(TInt /*aMilliSeconds*/)
     {
     return ETrue;//disconnect is a sync method
     }
@@ -330,7 +330,7 @@ void CLlcpSocketType2::Cleanup()
         iTransporter = NULL;
         }
     }
-void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error aSocketError)
+void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
     {
     //emit error
     if ( iCallback )
