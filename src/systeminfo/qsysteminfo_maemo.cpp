@@ -1383,7 +1383,7 @@ QString QSystemDeviceInfoPrivate::productName()
                                        "com.nokia.SystemInfo",
                                        QDBusConnection::systemBus());
 
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/productName");
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product-name");
     return reply.value();
 #endif
     return QString();
