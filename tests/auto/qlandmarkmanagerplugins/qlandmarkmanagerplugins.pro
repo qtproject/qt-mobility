@@ -6,5 +6,5 @@ SUBDIRS += dummydynamicplugin \
            nonlandmarkdynamicplugin \
            unittest   
 
-!symbian += dummystaticplugin
+!symbian:SUBDIRS+= dummystaticplugin
 } #disable wince plugin autotests for now
