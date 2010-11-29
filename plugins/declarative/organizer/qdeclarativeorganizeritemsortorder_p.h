@@ -58,7 +58,7 @@ class QDeclarativeOrganizerItemSortOrder : public QObject, public QDeclarativePa
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::CaseSensitivity sensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
-
+    Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(BlankPolicy)
 public:
     QDeclarativeOrganizerItemSortOrder(QObject* parent = 0)
