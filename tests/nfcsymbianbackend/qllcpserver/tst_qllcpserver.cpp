@@ -49,6 +49,7 @@
 #include "qnfctestutil.h"
 QTM_USE_NAMESPACE
 
+QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 class tst_QLlcpServer : public QObject
 {
     Q_OBJECT
@@ -79,8 +80,8 @@ void tst_QLlcpServer::newConnection_data()
 {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("0") << "urn:nfc:sn:test"
-            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test";
+    QTest::newRow("0") << TestUri
+            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri;
 
 }
 
@@ -249,8 +250,8 @@ void tst_QLlcpServer::newConnection_wait_data()
     {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("0") << "urn:nfc:sn:test"
-            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test";
+    QTest::newRow("0") << TestUri
+            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri;
     }
 QTEST_MAIN(tst_QLlcpServer);
 
