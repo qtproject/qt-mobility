@@ -72,7 +72,7 @@ public :
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
 
-    inline bool isValid() { if (location) return true; return false; }
+    inline bool isValid() { return location; }
 
 private slots:
     void positionUpdated(const QGeoPositionInfo &info);
@@ -83,6 +83,8 @@ private:
 
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
+    void checkStartStop();
 };
 
 QTM_END_NAMESPACE
