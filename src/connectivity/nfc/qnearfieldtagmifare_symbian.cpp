@@ -88,7 +88,7 @@ void QNearFieldTagMifareSymbian::setNdefMessages(const QList<QNdefMessage> &mess
 */
 QByteArray QNearFieldTagMifareSymbian::sendCommand(const QByteArray &command)
 {
-    return _sendCommand(command, 10*100, 4096);
+    return _sendCommand(command);
 }
 
 /*!
