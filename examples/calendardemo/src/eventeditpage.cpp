@@ -60,8 +60,10 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Start time:", this);
     m_startTimeEdit = new QDateTimeEdit(this);
+    m_startTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
+    m_endTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *repeatLabel = new QLabel("Repeat:", this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     QLabel *calendarLabel = new QLabel("Calendar:", this);
