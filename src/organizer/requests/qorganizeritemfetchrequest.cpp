@@ -64,6 +64,12 @@ QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemFetchRequest::~QOrganizerItemFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
 void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
