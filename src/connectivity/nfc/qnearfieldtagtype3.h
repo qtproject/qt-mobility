@@ -60,16 +60,15 @@ public:
 
     Type type() const { return NfcTagType3; }
 
-    quint16 systemCode(){};
-    QList<quint16> services(){};
-    int serviceMemorySize(quint16 serviceCode){};
+    quint16 systemCode();
+    QList<quint16> services();
+    int serviceMemorySize(quint16 serviceCode);
 
-    QByteArray serviceData(quint16 serviceCode){};
-    void writeServiceData(quint16 serviceCode, const QByteArray &data){};
+    QByteArray serviceData(quint16 serviceCode);
+    void writeServiceData(quint16 serviceCode, const QByteArray &data);
 
-    virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList){};
-    virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
-                        const QByteArray &data){};
+    QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList);
+    void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data);
 };
 
 QTM_END_NAMESPACE

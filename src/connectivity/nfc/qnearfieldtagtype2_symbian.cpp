@@ -147,11 +147,12 @@ QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray
     {
         result.append(sendCommand(cmd));
     }
+    return result;
 }
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
 {
-    _hasNdefMessage();
+    return _hasNdefMessage();
 }
 
 QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()

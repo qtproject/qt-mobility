@@ -199,6 +199,8 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, i
             User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TTimeIntervalMicroSeconds32(timeout)));
         )
     }
+    // TODO: remove after new interface ready
+    return QByteArray();
 }
 
 template<typename TAGTYPE>

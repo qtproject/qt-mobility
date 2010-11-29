@@ -47,7 +47,45 @@ QNearFieldTagType3::QNearFieldTagType3(QObject *parent) : QNearFieldTarget(paren
 {
 }
 
+quint16 QNearFieldTagType3::systemCode()
+{
+    return 0;
+}
 
+QList<quint16> QNearFieldTagType3::services()
+{
+    return QList<quint16>();
+}
+
+int QNearFieldTagType3::serviceMemorySize(quint16 serviceCode)
+{
+    Q_UNUSED(serviceCode);
+    return -1;
+}
+
+QByteArray serviceData(quint16 serviceCode)
+{
+    Q_UNUSED(serviceCode);
+    return QByteArray();
+}
+
+void QNearFieldTagType3::writeServiceData(quint16 serviceCode, const QByteArray &data)
+{
+    Q_UNUSED(serviceCode);
+    Q_UNUSED(data);
+}
+
+QMap<quint16, QByteArray> QNearFieldTagType3::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
+{
+    Q_UNUSED(serviceBlockList);
+    return QMap<quint16, QByteArray>();
+}
+
+void QNearFieldTagType3::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data)
+{
+    Q_UNUSED(serviceBlockList);
+    Q_UNUSED(data);
+}
 #include "moc_qnearfieldtagtype3.cpp"
 
 QTM_END_NAMESPACE
