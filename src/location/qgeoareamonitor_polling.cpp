@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 #define UPDATE_INTERVAL_5S  5000
 #define TO_METERS           1000
 
-QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent)
+QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent) : QGeoAreaMonitor(parent)
 {
     insideArea = false;
     location = QGeoPositionInfoSource::createDefaultSource(this);
@@ -58,25 +58,25 @@ QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(pa
     }
 }
 
-QGeoAreaMonitorMaemo::~QGeoAreaMonitorMaemo()
+QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
 {
     if (location)
         location->stopUpdates();
 
 }
 
-void QGeoAreaMonitorMaemo::setCenter(const QGeoCoordinate& coordinate)
+void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate& coordinate)
 {
     if (coordinate.isValid())
         QGeoAreaMonitor::setCenter(coordinate);
 }
 
-void QGeoAreaMonitorMaemo::setRadius(qreal radius)
+void QGeoAreaMonitorPolling::setRadius(qreal radius)
 {
     QGeoAreaMonitor::setRadius(radius);
 }
 
-void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info)
+void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
 {
     double distance =
         location_distance_between(info.coordinate().latitude(),
@@ -96,5 +96,5 @@ void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info)
     }
 }
 
-#include "moc_qgeoareamonitor_maemo_p.cpp"
+#include "moc_qgeoareamonitor_polling_p.cpp"
 QTM_END_NAMESPACE

@@ -100,13 +100,13 @@ maemo5 {
     SOURCES += gconfitem.cpp \
                liblocationwrapper.cpp \
                qgeopositioninfosource_maemo5.cpp \
-               qgeosatelliteinfosource_maemo5.cpp \
-               qgeoareamonitor_maemo.cpp
+               qgeoareamonitor_polling.cpp \
+               qgeosatelliteinfosource_maemo5.cpp
     HEADERS += gconfitem_p.h  \
                liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
-               qgeosatelliteinfosource_maemo5_p.h \
-               qgeoareamonitor_maemo_p.h
+               qgeoareamonitor_polling_p.h \
+               qgeosatelliteinfosource_maemo5_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
     CONFIG += create_pc create_prl
     LIBS += -llocation
