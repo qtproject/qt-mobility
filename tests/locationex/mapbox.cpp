@@ -13,6 +13,9 @@
 #include <QApplication>
 #include <QPushButton>
 
+#include "../../src/location/maps/qgraphicsgeomap_p.h"
+#include <qgeomapdata.h>
+
 MapBox::MapBox(QWidget *parent) :
     QWidget(parent),
     m_qgv(0),
@@ -40,13 +43,15 @@ MapBox::MapBox(QWidget *parent) :
     m_statistics->stat("FPS", -1);
     m_statistics->stat("Render time", -1);
     m_statistics->stat("mem", -1);
-    //m_statistics->stat("map objects", 0);
+    m_statistics->stat("map objects", 0);
     startTimer(1000);
 }
 
 void MapBox::timerEvent(QTimerEvent * event)
 {
     m_statistics->stat("mem", perf_currentMemUsage());
+
+    m_statistics->stat("map objects", m_mapWidget->mapObjects().size());
 }
 
 void MapBox::resetProvider()
