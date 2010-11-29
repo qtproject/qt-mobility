@@ -33,7 +33,8 @@ PRIVATE_HEADERS += \
                     qgeoboundingcircle_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
-                    qnmeapositioninfosource_p.h
+                    qnmeapositioninfosource_p.h \
+                    qgeoareamonitor_polling_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -100,12 +101,10 @@ maemo5 {
     SOURCES += gconfitem.cpp \
                liblocationwrapper.cpp \
                qgeopositioninfosource_maemo5.cpp \
-               qgeoareamonitor_polling.cpp \
                qgeosatelliteinfosource_maemo5.cpp
     HEADERS += gconfitem_p.h  \
                liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
-               qgeoareamonitor_polling_p.h \
                qgeosatelliteinfosource_maemo5_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
     CONFIG += create_pc create_prl
@@ -129,7 +128,8 @@ SOURCES += \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qlocationutils.cpp \
-            qnmeapositioninfosource.cpp
+            qnmeapositioninfosource.cpp \
+            qgeoareamonitor_polling.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

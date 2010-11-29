@@ -73,7 +73,7 @@ void QGeoAreaMonitorPolling::connectNotify(const char *signal)
 {
     if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
             signal == SIGNAL(areaExited(QGeoPositionInfo))) {
-        if (QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
+        if (location && QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
             location->startUpdates();
         }
     }
@@ -83,7 +83,7 @@ void QGeoAreaMonitorPolling::disconnectNotify(const char *signal)
 {
     if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
             signal == SIGNAL(areaExited(QGeoPositionInfo))) {
-        if (QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
+        if (location && QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
                 QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) == 0) {
             location->stopUpdates();
         }
