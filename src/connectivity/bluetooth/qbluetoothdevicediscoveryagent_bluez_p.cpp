@@ -104,6 +104,7 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::_q_deviceFound(const QString &a
     const QBluetoothAddress btAddress(address);
     const QString btName = dict.value(QLatin1String("Name")).toString();
     quint32 btClass = dict.value(QLatin1String("Class")).toUInt();
+    qDebug() << "Discovered: " << address << btName << btClass << discoveredDevices.count();
 
     QBluetoothDeviceInfo device(btAddress, btName, btClass);
     discoveredDevices.append(device);

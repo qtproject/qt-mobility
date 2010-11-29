@@ -39,56 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_H
-#define QLLCPSERVER_H
+#ifndef QBLUETOOTHSOCKET_BLUEZ_P_H
+#define QBLUETOOTHSOCKET_BLUEZ_P_H
 
-#include <qmobilityglobal.h>
+#include "qbluetoothsocket.h"
 
-#include <QtCore/QObject>
-#include <QtNetwork/QAbstractSocket>
+#include <QtGlobal>
+
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocket;
-class QLlcpServerPrivate;
-
-class Q_CONNECTIVITY_EXPORT QLlcpServer : public QObject
-{
+class QBluetoothSocketBluezPrivate : public QBluetoothSocketPrivate
+{    
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QLlcpServer)
 
 public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
+    QBluetoothSocketBluezPrivate(QBluetoothSocket *parent);
+    ~QBluetoothSocketBluezPrivate();
 
-    explicit QLlcpServer(QObject *parent = 0);
-    virtual ~QLlcpServer();
+    void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);
 
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
+    bool ensureNativeSocket(QBluetoothSocket::SocketType type);    
 
-    void close();
+public:
+    QSocketNotifier *connectNotifier;
 
-    QString serviceUri() const;
-    quint8 serverPort() const;
+    bool connecting;
 
-    virtual bool hasPendingConnections() const;
-    virtual QLlcpSocket *nextPendingConnection();
-
-    Error serverError() const;
-
-signals:
-    void newConnection();
-
-private:
-    QLlcpServerPrivate *d_ptr;
+public Q_SLOTS:
+    void writeNotify();
+    
 };
+
+static inline void convertAddress(quint64 from, quint8 (&to)[6])
+{
+    to[0] = (from >> 0) & 0xff;
+    to[1] = (from >> 8) & 0xff;
+    to[2] = (from >> 16) & 0xff;
+    to[3] = (from >> 24) & 0xff;
+    to[4] = (from >> 32) & 0xff;
+    to[5] = (from >> 40) & 0xff;
+}
+
+static inline void convertAddress(quint8 (&from)[6], quint64 &to)
+{
+    to = (quint64(from[0]) << 0) |
+         (quint64(from[1]) << 8) |
+         (quint64(from[2]) << 16) |
+         (quint64(from[3]) << 24) |
+         (quint64(from[4]) << 32) |
+         (quint64(from[5]) << 40);
+}
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QLLCPSERVER_H
+#endif

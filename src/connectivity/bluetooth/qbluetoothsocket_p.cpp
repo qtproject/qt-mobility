@@ -39,56 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_H
-#define QLLCPSERVER_H
+#include "qbluetoothsocket.h"
+#include "qbluetoothsocket_p.h"
+#ifdef Q_OS_SYMBIAN
+#include "qbluetoothsocket_symbian_p.h"
+#else
+#include "qbluetoothsocket_bluez_p.h"
+#endif
 
-#include <qmobilityglobal.h>
+#include <qplatformdefs.h>
 
-#include <QtCore/QObject>
-#include <QtNetwork/QAbstractSocket>
+#include <errno.h>
+#include <unistd.h>
 
-QT_BEGIN_HEADER
+#include <QtCore/QSocketNotifier>
 
 QTM_BEGIN_NAMESPACE
 
-class QLlcpSocket;
-class QLlcpServerPrivate;
-
-class Q_CONNECTIVITY_EXPORT QLlcpServer : public QObject
+QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
+:socketType(QBluetoothSocket::UnknownSocketType), state(QBluetoothSocket::UnconnectedState),
+ socketError(QBluetoothSocket::UnknownSocketError),socket(-1),
+ readNotifier(0), q(parent)
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QLlcpServer)
+    connect(this, SIGNAL(readyRead()), q, SIGNAL(readyRead()));
+    connect(this, SIGNAL(connected()), q, SIGNAL(connected()));
+    connect(this, SIGNAL(disconnected()), q, SIGNAL(disconnected()));
+    connect(this, SIGNAL(error(QBluetoothSocket::SocketError)), q, SIGNAL(error(QBluetoothSocket::SocketError)));
+    connect(this, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), q, SIGNAL(stateChanged(QBluetoothSocket::SocketState)));
+}
 
-public:
-    enum Error {
-        UnknownSocketError = QAbstractSocket::UnknownSocketError
-    };
+QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
+{
+    delete readNotifier;
+    readNotifier = 0;
+}
 
-    explicit QLlcpServer(QObject *parent = 0);
-    virtual ~QLlcpServer();
+bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
+{
+    qDebug() << "ensureNativeSocket: NOT IMPLEMENTED";
+    return false;
+}
 
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
+void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
+{
+    qDebug() << "connectToService: NOT IMPLEMENTED";
+}
 
-    void close();
-
-    QString serviceUri() const;
-    quint8 serverPort() const;
-
-    virtual bool hasPendingConnections() const;
-    virtual QLlcpSocket *nextPendingConnection();
-
-    Error serverError() const;
-
-signals:
-    void newConnection();
-
-private:
-    QLlcpServerPrivate *d_ptr;
-};
+#include "moc_qbluetoothsocket_p.cpp"
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QLLCPSERVER_H
