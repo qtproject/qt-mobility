@@ -6,6 +6,14 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
 #include <qgeocoordinate.h>
+#include <qgeomaprectangleobject.h>
+#include <qgeomapcircleobject.h>
+#include <qgeomappolylineobject.h>
+#include <qgeomappolygonobject.h>
+#include <qgeomaprouteobject.h>
+
+#include <qgeoroutingmanager.h>
+#include <qgeoroutereply.h>
 
 #include <QVBoxLayout>
 #include <QGraphicsView>
@@ -52,11 +60,6 @@ void MapBox::timerEvent(QTimerEvent * event)
     m_statistics->stat("mem", perf_currentMemUsage());
 
     m_statistics->stat("map objects", m_mapWidget->mapObjects().size());
-}
-
-void MapBox::resetProvider()
-{
-    setProvider("nokia");
 }
 
 MapBox::~MapBox()
@@ -115,20 +118,127 @@ void MapBox::resizeEvent(QResizeEvent * event)
     QWidget::resizeEvent(event);
 }
 
+static QPen defaultPen()
+{
+    QPen pen(Qt::white);
+    pen.setWidth(2);
+    pen.setCosmetic(true);
+    return pen;
+}
+
+static QBrush defaultBrush()
+{
+    return QBrush(QColor(0,0,0,65));
+}
+
+QGeoMapRectangleObject * MapBox::addRectangle(qreal top, qreal left, qreal bottom, qreal right)
+{
+    return addRectangle(QGeoCoordinate(top, left), QGeoCoordinate(bottom, right));
+}
+
+QGeoMapRectangleObject * MapBox::addRectangle(const QGeoCoordinate & topLeft, const QGeoCoordinate & bottomRight)
+{
+    QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(topLeft, bottomRight);
+
+    rectangle->setPen(defaultPen());
+    rectangle->setBrush(defaultBrush());
+
+    m_mapWidget->addMapObject(rectangle);
+
+    return rectangle;
+}
+
+QGeoMapPolylineObject * MapBox::addPolyline(const QList<QGeoCoordinate> & path)
+{
+    QGeoMapPolylineObject *polyline = new QGeoMapPolylineObject();
+
+    polyline->setPen(defaultPen());
+    polyline->setPath(path);
+
+    m_mapWidget->addMapObject(polyline);
+
+    return polyline;
+}
+
+QGeoMapPolygonObject * MapBox::addPolygon(const QList<QGeoCoordinate> & path)
+{
+    QGeoMapPolygonObject *polygon = new QGeoMapPolygonObject();
+
+    polygon->setPen(defaultPen());
+    polygon->setBrush(defaultBrush());
+    polygon->setPath(path);
+
+    m_mapWidget->addMapObject(polygon);
+
+    return polygon;
+}
+
+QGeoMapCircleObject * MapBox::addCircle(const QGeoCoordinate & center, qreal radius)
+{
+    QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
+
+    circle->setPen(defaultPen());
+    circle->setBrush(defaultBrush());
+
+    m_mapWidget->addMapObject(circle);
+
+    return circle;
+}
+
+void MapBox::addRoute(const QGeoCoordinate & start, const QGeoCoordinate & end)
+{
+    QList<QGeoCoordinate> waypoints;
+    waypoints << start << end;
+    addRoute(waypoints);
+}
+
+void MapBox::addRoute(const QList<QGeoCoordinate> & waypoints)
+{
+    QGeoRoutingManager * routingManager = m_serviceProvider->routingManager();
+
+    QGeoRouteRequest req(waypoints);
+    QGeoRouteReply *reply = routingManager->calculateRoute(req);
+
+    QObject::connect(reply, SIGNAL(finished()),
+                     this, SLOT(routeFinished()));
+}
+
+void MapBox::routeFinished()
+{
+    QGeoRouteReply *reply = static_cast<QGeoRouteReply*>(sender());
+
+    if (!reply)
+        return;
+
+    if (reply->routes().size() < 1)
+        return;
+
+    QPen pen(QColor(0, 0, 255, 127)); // blue, semi-transparent
+    pen.setWidth(7);
+    pen.setCosmetic(true);
+    pen.setCapStyle(Qt::RoundCap);
+
+    QGeoMapRouteObject *route = new QGeoMapRouteObject(reply->routes().at(0));
+
+    route->setPen(pen);
+
+    m_mapWidget->addMapObject(route);
+}
+
 /* TODO
     network session!!!
 
+    move proxy stuff to mapbox
+
+    addRoute doesn't work and freezes on exit if used
+
     statistics panel
-        - Render time: (nach_rendering-vor_rendering)" und "FPS: 1/(nach_rendering-nach_letztem_rendering)".
-            - derive scene, override paint, measure time there
         - mem
-            - wird eine plattformspezifische Lösung
-        - objects on map
-            - alles private, komme an nix ran, könnte mich höchstens durchhacken
+            more plattforms
         - network traffic
-            - evtl session?
+            - maybe from the session?
         - render mode
-            - was ist gemeint?
+            - sw/hw, but that's pretty static, no?
 
     remove EVIL workarounds after the "crash on deleting QGraphicsGeoMap" bug is fixed
 */
