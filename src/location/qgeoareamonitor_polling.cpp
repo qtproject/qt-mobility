@@ -95,11 +95,13 @@ void QGeoAreaMonitorPolling::checkStartStop()
 {
     if (!location) return;
 
-    if (QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
-            QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) == 0) {
-        location->stopUpdates();
-    } else if (QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
+    if (QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) > 0 &&
+            QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) > 0 &&
+            QGeoAreaMonitor::center().isValid() &&
+            QGeoAreaMonitor::radius() > qreal(0.0)) {
         location->startUpdates();
+    } else {
+        location->stopUpdates();
     }
 }
 
