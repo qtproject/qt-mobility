@@ -42,8 +42,6 @@
 
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
 #include "qgeoareamonitor_s60_p.h"
-#elif defined(QT_SIMULATOR)
-#include "qgeoareamonitor_simulator_p.h"
 #endif
 #include "qgeoareamonitor_polling_p.h"
 
@@ -180,8 +178,6 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     QGeoAreaMonitor *ret = NULL;
     TRAPD(error, ret = QGeoAreaMonitorS60::NewL(parent));
     return ret;
-#elif defined(QT_SIMULATOR)
-    return new QGeoAreaMonitorSimulator(parent);
 #else
     QGeoAreaMonitorPolling *ret = NULL;
     ret = new QGeoAreaMonitorPolling(parent);
