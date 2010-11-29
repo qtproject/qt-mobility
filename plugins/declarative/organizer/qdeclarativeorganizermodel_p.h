@@ -44,6 +44,8 @@
 
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
+#include <QDeclarativeParserStatus>
+
 #include "qorganizeritem.h"
 #include "qdeclarativeorganizeritem_p.h"
 #include "qversitreader.h"
@@ -55,7 +57,7 @@
 
 QTM_USE_NAMESPACE;
 class QDeclarativeOrganizerModelPrivate;
-class QDeclarativeOrganizerModel : public QAbstractListModel
+class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
@@ -75,6 +77,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
     Q_PROPERTY(QString error READ error)
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum {
         OrganizerItemRole = Qt::UserRole + 500
@@ -93,6 +96,10 @@ public:
 
     QDateTime endPeriod() const;
     void setEndPeriod(const QDateTime& end);
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
