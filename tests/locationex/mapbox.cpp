@@ -20,9 +20,19 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QPushButton>
+#include <QTimer>
+
+#include <QNetworkSession>
+#include <QNetworkConfigurationManager>
+
+#include <QProcessEnvironment>
+#include <QtNetwork/QNetworkProxyFactory>
+#include <QUrl>
 
 #include "../../src/location/maps/qgraphicsgeomap_p.h"
 #include <qgeomapdata.h>
+
+QNetworkSession * MapBox::m_session = 0;
 
 MapBox::MapBox(QWidget *parent) :
     QWidget(parent),
@@ -32,6 +42,21 @@ MapBox::MapBox(QWidget *parent) :
     m_serviceProvider(0),
     m_mapManager(0)
 {
+    // We need a session, make sure we get one.
+    Q_ASSERT(m_session);
+    Q_ASSERT(m_session->state() == QNetworkSession::Connected);
+
+    QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    if (!urlEnv.isEmpty()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+
     m_statistics = new StatsWidget(this);
 
     m_scene = new BoxGraphicsScene(m_statistics, this);
@@ -48,18 +73,24 @@ MapBox::MapBox(QWidget *parent) :
     setLayout(layout);
 
     // determine the order of the stat entries
-    m_statistics->stat("FPS", -1);
-    m_statistics->stat("Render time", -1);
-    m_statistics->stat("mem", -1);
-    m_statistics->stat("map objects", 0);
+    m_statistics->stat("FPS", "-");
+    m_statistics->stat("Render time", "-");
+    m_statistics->stat("mem", "-");
+    m_statistics->stat("map objects", "-");
+    m_statistics->stat("net recv", "-");
+    m_statistics->stat("net sent", "-");
     startTimer(1000);
 }
 
 void MapBox::timerEvent(QTimerEvent * event)
 {
     m_statistics->stat("mem", perf_currentMemUsage());
-
     m_statistics->stat("map objects", m_mapWidget->mapObjects().size());
+
+    if (m_session) {
+        m_statistics->stat("net recv", m_session->bytesReceived());
+        m_statistics->stat("net sent", m_session->bytesWritten());
+    }
 }
 
 MapBox::~MapBox()
@@ -107,6 +138,37 @@ MapBox * MapBox::createOfflineMap(QWidget * parent)
     MapBox * mapBox = new MapBox(parent);
     mapBox->setProvider("nokia_mos");
     return mapBox;
+}
+
+QNetworkSession * MapBox::session()
+{
+    if (!m_session) {
+        // Set Internet Access Point
+        QNetworkConfigurationManager manager;
+        const bool canStartIAP = (manager.capabilities()
+                                  & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+        // Is there default access point, use it
+        QNetworkConfiguration cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+            QMessageBox::information(0, tr("Map Viewer Demo"), tr(
+                                         "Available Access Points not found."));
+            qApp->quit();
+            return 0;
+        }
+
+        m_session = new QNetworkSession(cfg, 0); // TODO: find a suitable parent
+        /*
+        connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+        connect(m_session,
+                SIGNAL(error(QNetworkSession::SessionError)),
+                this,
+                SLOT(error(QNetworkSession::SessionError)));
+        */
+
+        // call asynchronously to ensure the caller gets a chance to connect before events are fired.
+        QTimer::singleShot(0, m_session, SLOT(open()));
+    }
+    return m_session;
 }
 
 void MapBox::resizeEvent(QResizeEvent * event)
@@ -226,17 +288,20 @@ void MapBox::routeFinished()
 }
 
 /* TODO
-    network session!!!
+    session wrapper
+    move proxy stuff to session wrapper
 
-    move proxy stuff to mapbox
+    cache clean function
+    make parameter hash accessible
+        - make it possible to change the server
 
     addRoute doesn't work and freezes on exit if used
 
     statistics panel
         - mem
-            more plattforms
+            more plattforms?
         - network traffic
-            - maybe from the session?
+            - from the session
         - render mode
             - sw/hw, but that's pretty static, no?
 

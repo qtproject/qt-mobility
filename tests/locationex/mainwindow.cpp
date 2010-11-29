@@ -10,6 +10,20 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    connect(MapBox::session(), SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+
+    setWindowTitle("MapBox test");
+
+    resize(640, 480);
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+void MainWindow::networkSessionOpened()
+{
     QGridLayout * layout = new QGridLayout;
 
     MapBox * box = MapBox::createOnlineMap(this);
@@ -20,13 +34,4 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(new QWidget(this));
     centralWidget()->setLayout(layout);
-
-    setWindowTitle("MapBox test");
-
-    resize(640,480);
-}
-
-MainWindow::~MainWindow()
-{
-
 }

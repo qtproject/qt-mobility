@@ -1,13 +1,15 @@
 #ifndef MAPBOX_H
 #define MAPBOX_H
 
-#include <QWidget>
-
 #include <qmobilityglobal.h>
+
+#include <QWidget>
+#include <QNetworkSession>
 
 class QGraphicsScene;
 class QGraphicsView;
 class StatsWidget;
+class QNetworkSession;
 
 QTM_BEGIN_NAMESPACE
     class QGeoCoordinate;
@@ -35,6 +37,8 @@ private:
     QGeoMappingManager *m_mapManager;
     void createMapWidget();
 
+    static QNetworkSession * m_session;
+
 public:
     StatsWidget * m_statistics;
     explicit MapBox(QWidget *parent = 0);
@@ -52,6 +56,8 @@ public:
     QGeoMapCircleObject * addCircle(const QGeoCoordinate & center, qreal radius);
     void addRoute(const QGeoCoordinate & start, const QGeoCoordinate & end);
     void addRoute(const QList<QGeoCoordinate> & waypoints);
+
+    static QNetworkSession * session();
 
 protected:
     virtual void resizeEvent(QResizeEvent * event);
