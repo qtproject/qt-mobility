@@ -124,7 +124,7 @@ public:
     void invokeReadyRead();
     void invokeBytesWritten(qint64 bytes) ;
     void invokeStateChanged(QLlcpSocket::State socketState);
-    void invokeError() const ;
+    void invokeError();
     void invokeDisconnected();
     void invokeConnected();
 signals:

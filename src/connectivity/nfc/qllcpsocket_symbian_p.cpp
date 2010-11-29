@@ -46,7 +46,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 #define Q_CHECK_LLCPTYPE(function, type)  do { \
 if ((type) != m_socketType) \
     { \
@@ -88,10 +87,10 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
-	  : m_symbianSocketType1(NULL),
-     m_symbianSocketType2(NULL),
-     m_socketType(connectionUnknown),
-     q_ptr(q)
+       : m_symbianSocketType1(NULL),
+         m_symbianSocketType2(NULL),
+         m_socketType(connectionUnknown),
+         q_ptr(q)
 {
     m_state = QLLCPUnconnected::Instance(this);
 }
@@ -137,33 +136,39 @@ void QLlcpSocketPrivate::disconnectFromService()
 
 void QLlcpSocketPrivate::invokeConnected() 
 {
+    Q_Q(QLlcpSocket);
     m_state->ConnectToServiceComplete();
-    emit connected();
+    emit q->connected();
 }
 
 void QLlcpSocketPrivate::invokeReadyRead()
 {
-    emit readyRead();
+    Q_Q(QLlcpSocket);
+    emit q->readyRead();
 }
 
 void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 {
-    emit bytesWritten(bytes);
+    Q_Q(QLlcpSocket);
+    emit q->bytesWritten(bytes);
 }
 
 void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
 {
-    emit stateChanged(socketState);
+    Q_Q(QLlcpSocket);
+    emit q->stateChanged(socketState);
 }
 
-void QLlcpSocketPrivate::invokeError() const
+void QLlcpSocketPrivate::invokeError()
 {
-    emit error(QLlcpSocket::UnknownSocketError);
+    Q_Q(QLlcpSocket);
+    emit q->error(QLlcpSocket::UnknownSocketError);
 }
 
 void QLlcpSocketPrivate::invokeDisconnected()
 {
-    emit disconnected();
+    Q_Q(QLlcpSocket);
+    emit q->disconnected();
 }
 
 /*!
