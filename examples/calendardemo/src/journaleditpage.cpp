@@ -86,13 +86,19 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
+    // check to see whether we support alarms.
+    QOrganizerManager defaultManager;
+    QStringList supportedDefinitionNames = defaultManager.detailDefinitions(QOrganizerItemType::TypeJournal).keys();
+
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
     scrollAreaLayout->addWidget(startTimeLabel);
     scrollAreaLayout->addWidget(m_timeEdit);
-    scrollAreaLayout->addWidget(alarmLabel);
-    scrollAreaLayout->addWidget(m_alarmComboBox);
+    if (supportedDefinitionNames.contains(QOrganizerItemVisualReminder::DefinitionName)) {
+        scrollAreaLayout->addWidget(alarmLabel);
+        scrollAreaLayout->addWidget(m_alarmComboBox);
+    }
     scrollAreaLayout->addWidget(calendarLabel);
     scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
