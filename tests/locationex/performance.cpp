@@ -72,6 +72,20 @@ quint64 perf_currentMemUsage()
 }
 
 #else
+#ifdef Q_OS_LINUX
+
+#include <cstdio>
+
+quint64 perf_currentMemUsage()
+{
+    FILE * statm = std::fopen("/proc/self/statm", "r");
+    long long ret = -1;
+    std::fscanf(statm, "%Lu", &ret);
+    std::fclose(statm);
+    return ret*1024;
+}
+
+#else
 #ifdef Q_OS_MAC
 
 #include <malloc/malloc.h>
@@ -95,7 +109,7 @@ static char * sbrk_0_initial = (char*)sbrk(0);
 
 quint64 perf_currentMemUsage()
 {
-    return (char*)sbrk(0)-sbrk_0_initial);
+    return (char*)sbrk(0)-sbrk_0_initial;
 }
 
 #else
@@ -104,6 +118,7 @@ quint64 perf_currentMemUsage()
     return 0;
 }
 
+#endif
 #endif
 #endif
 #endif
