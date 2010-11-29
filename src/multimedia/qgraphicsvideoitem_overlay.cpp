@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
 
 #define DEBUG_GFX_VIDEO_ITEM
 
-class QGraphicsVideoItemPrivate
+class QGraphicsVideoItemPrivate : public QObject
 {
 public:
     QGraphicsVideoItemPrivate()
@@ -71,7 +71,7 @@ public:
         , savedViewportUpdateMode(QGraphicsView::FullViewportUpdate)
         , aspectRatioMode(Qt::KeepAspectRatio)
         , rect(0.0, 0.0, 320, 240)
-        , winId(0)
+        , videoWidget(0)
     {
     }
 
@@ -89,8 +89,11 @@ public:
     QRectF displayRect;
     QSizeF nativeSize;
 
-    WId winId;
+    QWidget *videoWidget;
 
+    bool eventFilter(QObject *object, QEvent *event);
+
+    void setWidget(QWidget *widget);
     void clearService();
     void updateRects();
     void updateLastFrame();
@@ -104,6 +107,24 @@ public:
 void QGraphicsVideoItemPrivate::_q_present()
 {
 
+}
+
+bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
+{
+    if (windowControl && object == videoWidget && QEvent::WinIdChange == event->type())
+        windowControl->setWinId(videoWidget->effectiveWinId());
+    return false;
+}
+
+void QGraphicsVideoItemPrivate::setWidget(QWidget *widget)
+{
+    if (videoWidget != widget) {
+        videoWidget = widget;
+        if (widget) {
+            windowControl->setWinId(widget->winId());
+            widget->installEventFilter(this);
+        }
+    }
 }
 
 void QGraphicsVideoItemPrivate::clearService()
@@ -231,9 +252,6 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
                 //d->windowControl->setProperty("colorKey", QVariant(QColor(16,7,2)));
                 d->windowControl->setProperty("autopaintColorKey", QVariant(false));
 
-                if (d->winId)
-                    d->windowControl->setWinId(d->winId);
-
                 d->updateRects();
                 return true;
             } else {
@@ -326,7 +344,7 @@ void QGraphicsVideoItem::paint(
     QColor colorKey = Qt::black;
 
     if (d->windowControl != 0 && widget != 0) {
-        d->windowControl->setWinId(widget->winId());
+        d->setWidget(widget);
 
         QTransform transform = painter->combinedTransform();
         QRect overlayRect = transform.mapRect(d->displayRect).toRect();
@@ -342,6 +360,8 @@ void QGraphicsVideoItem::paint(
         colorKey = d->windowControl->property("colorKey").value<QColor>();
     }
 
+    if (colorKey.alpha() != 255)
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->fillRect(d->boundingRect, colorKey);
 }
 

@@ -754,6 +754,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
  */
 
 /*!
+   \fn QContactUrl::setUrl(const QUrl& url)
+   Sets the url stored in this detail to the string representation
+   of the given \a url.
+ */
+
+/*!
    \fn QContactUrl::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
  */

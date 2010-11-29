@@ -851,7 +851,7 @@ int QGeoTiledMapData::zoomFactor() const
 /*!
     Forces the map display to update in the region specified by \a target.
 
-    If \a target is empty the entire map display will be updated. 
+    If \a target is empty the entire map display will be updated.
 */
 void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 {
@@ -863,7 +863,7 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-    scene(0) {}
+      scene(0) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -872,7 +872,24 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
         reply->deleteLater();
     }
 
+    //before the model(scene) is destroyed , let the info object bound to this scene
+    //be destoryed.
+
+    QList<QGraphicsItem*> keys = itemMap.keys();
+
+    foreach(QGraphicsItem * object, keys) {
+
+        QGeoMapObject* o = itemMap.value(object);
+
+        //check if we have still this info object ,
+        //since it could be already removed
+        //by previous loop in case of group object
+
+        if (o != 0) o->setMapData(0);
+    }
+
     itemMap.clear();
+
 
     if (scene)
         delete scene;
@@ -1136,6 +1153,19 @@ bool QGeoTiledMapDataPrivate::intersectsScreen(const QRect &rect) const
     return (worldReferenceViewportRectLeft.intersects(rect)
             || (worldReferenceViewportRectRight.isValid()
                 && worldReferenceViewportRectRight.intersects(rect)));
+}
+
+void QGeoTiledMapDataPrivate::removeObjectInfo(QGeoTiledMapObjectInfo* object)
+{
+    if (object && object->graphicsItem && object->graphicsItem->scene())
+        scene->removeItem(object->graphicsItem);
+    itemMap.remove(object->graphicsItem);
+}
+
+void QGeoTiledMapDataPrivate::addObjectInfo(QGeoTiledMapObjectInfo* object)
+{
+    scene->addItem(object->graphicsItem);
+    itemMap.insert(object->graphicsItem, object->mapObject());
 }
 
 QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRect &rect, bool translateToScreen) const

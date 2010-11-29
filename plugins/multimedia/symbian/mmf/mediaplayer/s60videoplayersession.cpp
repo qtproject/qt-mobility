@@ -53,27 +53,26 @@
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
+const QString DefaultAudioEndpoint = QLatin1String("Default");
+
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
+    , m_wsSession(&CCoeEnv::Static()->WsSession())
+    , m_screenDevice(CCoeEnv::Static()->ScreenDevice())
+    , m_service(service)
     , m_player(0)
-    , m_rect(0, 0, 0, 0)
-    , m_videoOutput(0)
-    , m_windowId(0)
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
     , m_dsaActive(false)
     , m_dsaStopped(false)
-    , m_wsSession(CCoeEnv::Static()->WsSession())
-    , m_screenDevice(*CCoeEnv::Static()->ScreenDevice())
-    , m_window(0)
-    , m_displayWindow(0)
-    , m_service(*service)
-    , m_aspectRatioMode(Qt::KeepAspectRatio)
-    , m_originalSize(1, 1)
-    , m_audioEndpoint("Default")
-{
-#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-    m_audioOutput = 0;
 #endif
-
+    , m_videoOutput(0)
+    , m_displayWindow(0)
+    , m_audioEndpoint(DefaultAudioEndpoint)
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+    , m_audioOutput(0)
+#endif
+    , m_pendingChanges(0)
+{
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility2::NewL(
         *this,
@@ -81,16 +80,31 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         EMdaPriorityPreferenceNone
         ));
 #else
-    resetNativeHandles();
+    RWindow *window = 0;
+    QRect rect;
+    if (S60VideoOutputInterface *output = videoOutput()) {
+        window = output->videoWindowHandle();
+        rect = output->videoDisplayRect();
+    } else {
+        QWidget *widget = QApplication::activeWindow();
+        if (!widget)
+            widget = QApplication::allWidgets().at(0);
+        Q_ASSERT(widget);
+        WId wid = widget->effectiveWinId();
+        if (!wid)
+            wid = widget->winId();
+        window = static_cast<RWindow *>(wid->DrawableWindow());
+        rect = QRect(widget->mapToGlobal(widget->pos()), widget->size());
+    }
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility::NewL(
-        *this,
-        0,
-        EMdaPriorityPreferenceNone,
-        m_wsSession,
-        m_screenDevice,
-        *m_window,
-        m_rect,
-        m_rect));
+            *this,
+            0,
+            EMdaPriorityPreferenceNone,
+            *m_wsSession,
+            *m_screenDevice,
+            *window,
+            QRect2TRect(rect),
+            QRect2TRect(rect)));
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
@@ -143,91 +157,106 @@ qint64 S60VideoPlayerSession::doGetDurationL() const
     return m_player->DurationL().Int64() / qint64(1000);
 }
 
+void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
+{
+    if (videoOutput != m_videoOutput) {
+        if (m_videoOutput) {
+            disconnect(m_videoOutput);
+            m_videoOutput->disconnect(this);
+        }
+        if (videoOutput) {
+            connect(videoOutput, SIGNAL(windowHandleChanged()), this, SLOT(windowHandleChanged()));
+            connect(videoOutput, SIGNAL(displayRectChanged()), this, SLOT(displayRectChanged()));
+            connect(videoOutput, SIGNAL(aspectRatioChanged()), this, SLOT(aspectRatioChanged()));
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
+            connect(videoOutput, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
+            connect(videoOutput, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
+#endif
+            connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), videoOutput, SLOT(videoStateChanged(QMediaPlayer::State)));
+        }
+        m_videoOutput = videoOutput;
+        windowHandleChanged();
+    }
+}
+
+S60VideoOutputInterface *S60VideoPlayerSession::videoOutput() const
+{
+    S60VideoOutputInterface *result = 0;
+    if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(m_videoOutput))
+        result = control;
+    if (S60VideoOverlay *control = qobject_cast<S60VideoOverlay *>(m_videoOutput))
+        result = control;
+    return result;
+}
+
+void S60VideoPlayerSession::applyPendingChanges(bool force)
+{
+    if (   force
+        || QMediaPlayer::LoadedMedia == mediaStatus()
+        || QMediaPlayer::StalledMedia == mediaStatus()
+        || QMediaPlayer::BufferingMedia == mediaStatus()
+        || QMediaPlayer::BufferedMedia == mediaStatus()
+        || QMediaPlayer::EndOfMedia == mediaStatus()) {
+        int error = KErrNone;
+        S60VideoOutputInterface *output = videoOutput();
+        RWindow *const window = output ? output->videoWindowHandle() : 0;
+
+        const QRect qrect = output ? output->videoDisplayRect() : QRect();
+        const TRect extentRect = QRect2TRect(qrect);
+        TRect clipRect = extentRect;
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
-void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
-{
-    if (videoOutput == m_videoOutput)
-        return;
+        const TRect windowRect = window ? TRect(TPoint(), window->Size()) : TRect();
+        clipRect.Intersection(windowRect);
+        if (m_pendingChanges & WindowHandle) {
+            if (m_displayWindow) {
+                m_player->RemoveDisplayWindow(*m_displayWindow);
+                m_displayWindow = 0;
+            }
+            if (window) {
+                window->SetBackgroundColor(TRgb(0, 0, 0, 255));
+                TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
+                                                        *window, extentRect, clipRect));
+                if (KErrNone == error)
+                    m_displayWindow = window;
+            }
+            m_pendingChanges = ScaleFactors;
+        }
+        if (KErrNone == error && (m_pendingChanges & DisplayRect) && m_displayWindow) {
+            TRAP(error, m_player->SetVideoExtentL(*m_displayWindow, extentRect));
+            if (KErrNone == error)
+                TRAP(error, m_player->SetWindowClipRectL(*m_displayWindow, clipRect));
+            m_pendingChanges ^= DisplayRect;
+            m_pendingChanges |= ScaleFactors;
+        }
+#else
+        if (m_pendingChanges & WindowHandle || m_pendingChanges & DisplayRect) {
+            if (window)
+               TRAP(error, m_player->SetDisplayWindowL(*m_wsSession, *m_screenDevice,
+                                                       *window, extentRect, clipRect));
+            m_dsaActive = (KErrNone == error);
+            m_dsaStopped = false;
+            m_pendingChanges = ScaleFactors;
+        }
 
-    S60VideoWidgetControl *newWidgetControl = qobject_cast<S60VideoWidgetControl *>(videoOutput);
-    S60VideoWidgetControl *oldWidgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-
-    if (oldWidgetControl) {
-        disconnect(oldWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
-        disconnect(oldWidgetControl, SIGNAL(widgetResized()), this, SLOT(resizeVideoWindow()));
-        disconnect(this, SIGNAL(stateChanged(QMediaPlayer::State)), oldWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
-    }
-    if (newWidgetControl) {
-        connect(newWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
-        connect(newWidgetControl, SIGNAL(widgetResized()), this, SLOT(resizeVideoWindow()));
-        connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), newWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
-    }
-
-    m_videoOutput = videoOutput;
-    resetVideoDisplay();
-}
-#else // MMF_VIDEO_SURFACES_SUPPORTED
-void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
-{
-    if (videoOutput == m_videoOutput)
-        return;
-
-    S60VideoWidgetControl *newWidgetControl = qobject_cast<S60VideoWidgetControl *>(videoOutput);
-    S60VideoWidgetControl *oldWidgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-
-    if (oldWidgetControl) {
-        disconnect(oldWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
-        disconnect(oldWidgetControl, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
-        disconnect(oldWidgetControl, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
-        disconnect(this, SIGNAL(stateChanged(QMediaPlayer::State)), oldWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
-    }
-    if (newWidgetControl) {
-        connect(newWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
-        connect(newWidgetControl, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
-        connect(newWidgetControl, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
-        connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), newWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
-    }
-    m_videoOutput = videoOutput;
-    resetVideoDisplay();
-}
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
-
-bool S60VideoPlayerSession::resetNativeHandles()
-{
-    WId newId = 0;
-    TRect newRect = TRect(0,0,0,0);
-    Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio;
-
-    S60VideoWidgetControl *widgetControl;
-
-    if (!m_videoOutput) // this is for pre Symbian^3 devices as we need output for CVideoPlayerUtility
-        widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.requestControl(QVideoWidgetControl_iid));
-    else
-        widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-
-    if (widgetControl) {
-        QWidget *videoWidget = widgetControl->videoWidget();
-        newId = widgetControl->videoWidgetWId();
-        newRect = QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
-        aspectRatioMode = widgetControl->aspectRatioMode();
-    } else {
-        if (QApplication::activeWindow())
-            newId = QApplication::activeWindow()->effectiveWinId();
-        if (!newId && QApplication::allWidgets().count())
-            newId = QApplication::allWidgets().at(0)->effectiveWinId();
-        Q_ASSERT(newId != 0);
+        if (KErrNone == error && (m_pendingChanges & ScaleFactors) && m_displayWindow && output) {
+            QSize scaled = m_originalSize;
+            if (output->videoAspectRatio() == Qt::IgnoreAspectRatio)
+                scaled.scale(output->videoDisplayRect().size(), Qt::IgnoreAspectRatio);
+            else if(output->videoAspectRatio() == Qt::KeepAspectRatio)
+                scaled.scale(output->videoDisplayRect().size(), Qt::KeepAspectRatio);
+            const qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
+            const qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+            TRAP(error, m_player->SetScaleFactorL(*m_displayWindow, width, height));
+#else
+            static const TBool antialias = ETrue;
+            TRAP(error, m_player->SetScaleFactorL(width, height, antialias));
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
+            m_pendingChanges ^= ScaleFactors;
+        }
+        setError(error);
     }
-    if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode)
-        return false;
-
-    if (newId) {
-        m_rect = newRect;
-        m_windowId = newId;
-        m_window = m_windowId->DrawableWindow();
-        m_aspectRatioMode = aspectRatioMode;
-        return true;
-    }
-    return false;
 }
 
 bool S60VideoPlayerSession::isVideoAvailable()
@@ -240,7 +269,7 @@ bool S60VideoPlayerSession::isVideoAvailable()
         TRAPD(err, videoAvailable = m_player->VideoEnabledL());
         setError(err);
         return videoAvailable;
-    }else {
+    } else {
         return false;
     }
 #endif
@@ -249,11 +278,11 @@ bool S60VideoPlayerSession::isVideoAvailable()
 bool S60VideoPlayerSession::isAudioAvailable()
 {
     if (m_player) {
-        bool audioAvailable = true;
+        bool audioAvailable = false;
         TRAPD(err, audioAvailable = m_player->AudioEnabledL());
         setError(err);
         return audioAvailable;
-    }else {
+    } else {
         return false;
     }
 }
@@ -273,6 +302,11 @@ void S60VideoPlayerSession::doStop()
     m_player->Stop();
 }
 
+void S60VideoPlayerSession::doClose()
+{
+    m_player->Close();
+}
+
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
     return m_player->PositionL().Int64() / qint64(1000);
@@ -288,129 +322,41 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
     m_player->SetVolumeL(volume * m_player->MaxVolume() / 100);
 }
 
-QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
-{
-    QSize scaled = m_originalSize;
-    if (m_aspectRatioMode == Qt::IgnoreAspectRatio)
-        scaled.scale(TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);
-    else if(m_aspectRatioMode == Qt::KeepAspectRatio)
-        scaled.scale(TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);
-
-    qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
-    qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
-
-    return QPair<qreal, qreal>(width, height);
-}
-
-void S60VideoPlayerSession::startDirectScreenAccess()
-{
-    if(m_dsaActive)
-        return;
-
-    TRAPD(err, m_player->StartDirectScreenAccessL());
-    if(err == KErrNone)
-        m_dsaActive = true;
-    setError(err);
-}
-
-bool S60VideoPlayerSession::stopDirectScreenAccess()
-{
-    if(!m_dsaActive)
-        return false;
-
-    TRAPD(err, m_player->StopDirectScreenAccessL());
-    if(err == KErrNone)
-        m_dsaActive = false;
-
-    setError(err);
-    return true;
-}
-
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     setError(aError);
-    m_player->Prepare();
+    if (KErrNone == aError)
+        m_player->Prepare();
 }
 
-#ifdef MMF_VIDEO_SURFACES_SUPPORTED
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
-    setError(aError); // if we have some playback errors, handle them
-
-    if (m_displayWindow) {
-        m_player->RemoveDisplayWindow(*m_displayWindow);
-        m_displayWindow = NULL;
-    }
-
-    RWindow *window = static_cast<RWindow *>(m_window);
-    if (window) {
-        /* Get the window size */
-        TRect rect;
-        if (m_videoOutput && m_videoOutput->inherits("S60VideoWidgetControl")) {
-            S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-            const QSize size = widgetControl->videoWidgetSize();
-            rect.SetSize(TSize(size.width(), size.height()));
-        }
-        else if (m_videoOutput && m_videoOutput->inherits("S60VideoOverlay")) {
-            S60VideoOverlay* videoOverlay = qobject_cast<S60VideoOverlay *>(m_videoOutput);
-            const QSize size = videoOverlay->displayRect().size();
-            rect.SetSize(TSize(size.width(), size.height()));
-        }
-        m_rect = rect;
-
-        window->SetBackgroundColor(TRgb(0, 0, 0, 255));
-        TRAPD(error,
-            m_player->AddDisplayWindowL(m_wsSession, m_screenDevice, *window, m_rect, m_rect);)
-        setError(error); // if we can't add window it an error at this point
+    TInt error = aError;
+    if (KErrNone == error) {
         TSize originalSize;
-        TRAP_IGNORE(
-            m_player->VideoFrameSizeL(originalSize);
+        TRAP(error, m_player->VideoFrameSizeL(originalSize));
+        if (KErrNone == error) {
             m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
-            m_player->SetScaleFactorL(*window, scaleFactor().first, scaleFactor().second);)
-
-        m_displayWindow = window;
+            m_pendingChanges |= ScaleFactors;
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+            Q_ASSERT(!m_audioOutput);
+            TRAP(error, m_audioOutput = CAudioOutput::NewL(*m_player));
+            if (KErrNone == error) {
+                TRAP(error, m_audioOutput->RegisterObserverL(*this));
+                if (KErrNone == error)
+                    setActiveEndpoint(m_audioEndpoint);
+            }
+#endif
+        }
+        if (KErrNone == error) {
+            applyPendingChanges(true); // force apply even though state is not Loaded
+            if (KErrNone == this->error()) // applyPendingChanges() can call setError()
+                loaded();
+        }
+    } else {
+        setError(error);
     }
-
-#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-    TRAPD(err,
-        m_audioOutput = CAudioOutput::NewL(*m_player);
-        m_audioOutput->RegisterObserverL(*this);
-    );
-    setActiveEndpoint(m_audioEndpoint);
-    setError(err);
-#endif
-    loaded();
 }
-#else
-void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
-{
-    setError(aError);
-
-    TRAPD(err,
-        m_player->SetDisplayWindowL(m_wsSession,
-                                    m_screenDevice,
-                                    *m_window,
-                                    m_rect,
-                                    m_rect);
-        TSize originalSize;
-        m_player->VideoFrameSizeL(originalSize);
-        m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
-        m_player->SetScaleFactorL(scaleFactor().first, scaleFactor().second, true));
-
-    if (err == KErrNone)
-        m_dsaActive = true;
-    setError(err);
-#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-    TRAP(err,
-        m_audioOutput = CAudioOutput::NewL(*m_player);
-        m_audioOutput->RegisterObserverL(*this);
-    );
-    setActiveEndpoint(m_audioEndpoint);
-    setError(err);
-#endif
-    loaded();
-}
-#endif // MMF_VIDEO_SURFACES_SUPPORTED
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 {
@@ -420,8 +366,8 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
-    setError(aError);
     endOfMedia();
+    setError(aError);
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
@@ -433,9 +379,7 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
 {
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
-
     numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();
-
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
         entry = m_player->MetaDataEntryL(i);
@@ -444,100 +388,26 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
     }
     emit metaDataChanged();
 }
-#ifdef MMF_VIDEO_SURFACES_SUPPORTED
-void S60VideoPlayerSession::resetVideoDisplay()
+
+void S60VideoPlayerSession::windowHandleChanged()
 {
-    if (resetNativeHandles()) {
-
-        S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-        if (!widgetControl)
-            return;
-
-        TRect rect;
-        const QSize size = widgetControl->videoWidgetSize();
-        rect.SetSize(TSize(size.width(), size.height()));
-        m_rect = rect;
-
-        if (m_displayWindow) {
-            m_player->RemoveDisplayWindow(*m_displayWindow);
-            m_displayWindow = NULL;
-        }
-
-        RWindow *window = static_cast<RWindow *>(m_window);
-        if (window) {
-            window->SetBackgroundColor(TRgb(0, 0, 0, 255));
-            TRAP_IGNORE(
-               m_player->AddDisplayWindowL(m_wsSession,
-                                           m_screenDevice,
-                                           *window,
-                                           m_rect,
-                                           m_rect));
-            m_displayWindow = window;
-        }
-
-        if(    mediaStatus() == QMediaPlayer::LoadedMedia
-            || mediaStatus() == QMediaPlayer::StalledMedia
-            || mediaStatus() == QMediaPlayer::BufferingMedia
-            || mediaStatus() == QMediaPlayer::BufferedMedia
-            || mediaStatus() == QMediaPlayer::EndOfMedia) {
-            Q_ASSERT(m_displayWindow != 0);
-            TRAPD(err, m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second));
-            setError(err);
-        }
-    }
+    m_pendingChanges |= WindowHandle;
+    applyPendingChanges();
 }
-#else
-void S60VideoPlayerSession::resetVideoDisplay()
+
+void S60VideoPlayerSession::displayRectChanged()
 {
-    if (resetNativeHandles()) {
-        TRAPD(err,
-           m_player->SetDisplayWindowL(m_wsSession,
-                                       m_screenDevice,
-                                       *m_window,
-                                       m_rect,
-                                       m_rect));
-        if (err == KErrNone)
-            m_dsaActive = true;
-        setError(err);
-        if(    mediaStatus() == QMediaPlayer::LoadedMedia
-            || mediaStatus() == QMediaPlayer::StalledMedia
-            || mediaStatus() == QMediaPlayer::BufferingMedia
-            || mediaStatus() == QMediaPlayer::BufferedMedia
-            || mediaStatus() == QMediaPlayer::EndOfMedia) {
-            TRAPD(err, m_player->SetScaleFactorL(scaleFactor().first, scaleFactor().second, true));
-            setError(err);
-        }
-    }
+    m_pendingChanges |= DisplayRect;
+    applyPendingChanges();
 }
-#endif //MMF_VIDEO_SURFACES_SUPPORTED
 
-void S60VideoPlayerSession::resizeVideoWindow()
+void S60VideoPlayerSession::aspectRatioChanged()
 {
-#ifdef MMF_VIDEO_SURFACES_SUPPORTED
-    S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-    if (!widgetControl)
-        return;
-
-    m_aspectRatioMode = widgetControl->aspectRatioMode();
-
-    TRect rect;
-    const QSize size = widgetControl->videoWidgetSize();
-    rect.SetSize(TSize(size.width(), size.height()));
-    m_rect = rect;
-
-    TRAPD( err, m_player->SetVideoExtentL(*m_displayWindow, m_rect);
-        m_player->SetWindowClipRectL(*m_displayWindow, m_rect);)
-
-    // don't waste time on calling this when we have error
-    if (KErrNone != err) {
-        TSize originalSize;
-        TRAP_IGNORE(
-            m_player->VideoFrameSizeL(originalSize);
-            m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
-            m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second); )
-    }
-#endif //MMF_VIDEO_SURFACES_SUPPORTED
+    m_pendingChanges |= ScaleFactors;
+    applyPendingChanges();
 }
+
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {
     m_dsaStopped = stopDirectScreenAccess();
@@ -545,12 +415,33 @@ void S60VideoPlayerSession::suspendDirectScreenAccess()
 
 void S60VideoPlayerSession::resumeDirectScreenAccess()
 {
-    if(!m_dsaStopped)
+    if (!m_dsaStopped)
         return;
-
     startDirectScreenAccess();
     m_dsaStopped = false;
 }
+
+void S60VideoPlayerSession::startDirectScreenAccess()
+{
+    if (m_dsaActive)
+        return;
+    TRAPD(err, m_player->StartDirectScreenAccessL());
+    if (err == KErrNone)
+        m_dsaActive = true;
+    setError(err);
+}
+
+bool S60VideoPlayerSession::stopDirectScreenAccess()
+{
+    if (!m_dsaActive)
+        return false;
+    TRAPD(err, m_player->StopDirectScreenAccessL());
+    if (err == KErrNone)
+        m_dsaActive = false;
+    setError(err);
+    return true;
+}
+#endif
 
 void S60VideoPlayerSession::MvloLoadingStarted()
 {
@@ -569,7 +460,7 @@ void S60VideoPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 
 QString S60VideoPlayerSession::activeEndpoint() const
 {
-    QString outputName = QString("Default");
+    QString outputName = m_audioEndpoint;
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
@@ -581,7 +472,7 @@ QString S60VideoPlayerSession::activeEndpoint() const
 
 QString S60VideoPlayerSession::defaultEndpoint() const
 {
-    QString outputName = QString("Default");
+    QString outputName = DefaultAudioEndpoint;
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
@@ -595,8 +486,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 {
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
-
-    if (name == QString("Default"))
+    if (name == DefaultAudioEndpoint)
         output = CAudioOutput::ENoPreference;
     else if (name == QString("All"))
         output = CAudioOutput::EAll;
@@ -606,7 +496,6 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
-
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
@@ -615,7 +504,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 }
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
 void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
-                                        CAudioOutput::TAudioOutputPreference aNewDefault )
+                                        CAudioOutput::TAudioOutputPreference aNewDefault)
 {
     // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)

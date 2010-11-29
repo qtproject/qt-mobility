@@ -59,6 +59,7 @@
 #include <QtCore/qdebug.h>
 #include <QCoreApplication>
 #include <QtCore/qmetaobject.h>
+#include <QtGui/qdesktopservices.h>
 
 #include <QtGui/qimage.h>
 
@@ -138,6 +139,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
      m_state(QCamera::UnloadedState),
      m_pendingState(QCamera::UnloadedState),
+     m_recordingActive(false),
      m_pendingResolutionUpdate(false),
      m_muted(false),
      m_captureMode(QCamera::CaptureStillImage),
@@ -207,6 +209,16 @@ GstPhotography *CameraBinSession::photography()
     }
 
     return 0;
+}
+
+CameraBinSession::CameraRole CameraBinSession::cameraRole() const
+{
+#ifdef Q_WS_MAEMO_5
+    return m_inputDevice == QLatin1String("/dev/video1") ?
+                FrontCamera : BackCamera;
+#endif
+
+    return BackCamera;
 }
 
 bool CameraBinSession::setupCameraBin()
@@ -308,7 +320,7 @@ void CameraBinSession::setupCaptureResolution()
         //it's also necessary to setup video resolution,
         //which is used for viewfinder
 
-        if (m_inputDevice != QLatin1String("/dev/video1")) {
+        if (cameraRole() == BackCamera) {
             //this is necessary to set only for the mail camera,
             //not for face one.
 
@@ -423,9 +435,11 @@ QDir CameraBinSession::defaultDir(QCamera::CaptureMode mode) const
 #endif
 
     if (mode == QCamera::CaptureVideo) {
+        dirCandidates << QDesktopServices::storageLocation(QDesktopServices::MoviesLocation);
         dirCandidates << QDir::home().filePath("Documents/Video");
         dirCandidates << QDir::home().filePath("Documents/Videos");
     } else {
+        dirCandidates << QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
         dirCandidates << QDir::home().filePath("Documents/Photo");
         dirCandidates << QDir::home().filePath("Documents/Photos");
         dirCandidates << QDir::home().filePath("Documents/photo");
@@ -551,6 +565,9 @@ void CameraBinSession::setState(QCamera::State newState)
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
+        if (m_recordingActive)
+            stopVideoRecording();
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
         emit stateChanged(m_state);
@@ -559,6 +576,9 @@ void CameraBinSession::setState(QCamera::State newState)
         //focus is lost at least on n900 when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
+        if (m_recordingActive)
+            stopVideoRecording();
 
         if (m_videoInputHasChanged) {
             gst_element_set_state(m_pipeline, GST_STATE_NULL);
@@ -892,6 +912,7 @@ static gboolean imgCaptured(GstElement *camera,
 
 void CameraBinSession::recordVideo()
 {
+    m_recordingActive = true;
     m_actualSink = m_sink;
     if (m_actualSink.isEmpty()) {
         QString ext = m_mediaContainerControl->containerMimeType();
@@ -905,6 +926,7 @@ void CameraBinSession::recordVideo()
 
 void CameraBinSession::resumeVideoRecording()
 {
+    m_recordingActive = true;
     g_signal_emit_by_name(G_OBJECT(m_pipeline), CAPTURE_START, NULL);
 }
 
@@ -916,6 +938,7 @@ void CameraBinSession::pauseVideoRecording()
 
 void CameraBinSession::stopVideoRecording()
 {
+    m_recordingActive = false;
     g_signal_emit_by_name(G_OBJECT(m_pipeline), CAPTURE_STOP, NULL);
 }
 
@@ -1151,12 +1174,14 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
                                << QSize(2048, 1536)
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
-        const QSize minSize = res.first();
+        QSize minSize = res.first();
         QSize maxSize = res.last();
 
 #ifdef Q_WS_MAEMO_5
-        if (mode == QCamera::CaptureVideo)
+        if (mode == QCamera::CaptureVideo && cameraRole() == BackCamera)
             maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureStillImage)
+            minSize = QSize(640, 480);
 #elif defined(Q_WS_MAEMO_6)
         if (mode == QCamera::CaptureStillImage)
             maxSize = QSize(4000, 3000);

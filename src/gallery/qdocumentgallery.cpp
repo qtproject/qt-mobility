@@ -485,7 +485,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, language)
 /*!
     \variable QDocumentGallery::path
 
-    This property contains the path of a file in the document gallery.
+    This property contains the absolute path excluding the file name of a file
+    in the document gallery.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, path)
@@ -493,8 +494,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, path)
 /*!
     \variable QDocumentGallery::filePath
 
-    This property contains the path including the file name of a file in the
-    document gallery.
+    This property contains the absolute path including the file name of a file
+    in the document gallery.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, filePath)
@@ -502,7 +503,8 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, filePath)
 /*!
     \variable QDocumentGallery::fileName
 
-    This property contains the file name of a file in the document gallery.
+    This property contains the file name excluding the path of a file in
+    the document gallery.
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, fileName)

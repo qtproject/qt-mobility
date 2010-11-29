@@ -80,6 +80,10 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
             this, SLOT(updateState(QMediaPlayer::State)));
+#ifdef Q_WS_MAEMO_6
+    connect(m_session, SIGNAL(resourceLost()),
+            this, SLOT(resourceLost()));
+#endif // Q_WS_MAEMO_6
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SLOT(setBufferProgress(int)));
     connect(m_session, SIGNAL(playbackFinished()),
@@ -92,6 +96,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(seekableChanged(bool)));
     connect(m_session, SIGNAL(error(int,QString)),
             this, SIGNAL(error(int,QString)));
+    connect(m_session, SIGNAL(invalidMedia()),
+            this, SLOT(handleInvalidMedia()));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -190,6 +196,9 @@ void QGstreamerPlayerControl::pause()
 
 void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
 {
+    if (m_mediaStatus == QMediaPlayer::NoMedia)
+        return;
+
     QMediaPlayer::State oldState = m_state;
     QMediaPlayer::MediaStatus oldMediaStatus = m_mediaStatus;
 
@@ -214,6 +223,9 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
 
     if (!ok)
         return;
+
+    if (m_mediaStatus == QMediaPlayer::InvalidMedia)
+        m_mediaStatus = QMediaPlayer::LoadingMedia;
 
     m_state = newState;
 
@@ -368,6 +380,14 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
         emit mediaStatusChanged(m_mediaStatus);
 }
 
+#ifdef Q_WS_MAEMO_6
+void QGstreamerPlayerControl::resourceLost()
+{
+    if (m_mediaStatus != QMediaPlayer::EndOfMedia)
+        m_mediaStatus = QMediaPlayer::StalledMedia;
+}
+#endif // Q_WS_MAEMO_6
+
 void QGstreamerPlayerControl::processEOS()
 {
     m_mediaStatus = QMediaPlayer::EndOfMedia;
@@ -493,4 +513,19 @@ void QGstreamerPlayerControl::closeFifo()
         m_bufferSize = 0;
         m_bufferOffset = 0;
     }
+}
+
+void QGstreamerPlayerControl::handleInvalidMedia()
+{
+    bool emitMediaStateChanged = false;
+    if (m_mediaStatus != QMediaPlayer::InvalidMedia) {
+        m_mediaStatus = QMediaPlayer::InvalidMedia;
+        emitMediaStateChanged = true;
+    }
+    if (m_state != m_session->state()) {
+        m_state = m_session->state();
+        emit stateChanged(m_state);
+    }
+    if (emitMediaStateChanged)
+        emit mediaStatusChanged(m_mediaStatus);
 }

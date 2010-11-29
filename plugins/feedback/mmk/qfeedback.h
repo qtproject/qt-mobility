@@ -67,6 +67,7 @@ public:
     virtual QStringList supportedMimeTypes();
 private Q_SLOTS:
     void soundEffectLoaded();
+    void soundEffectPlayingChanged();
 
 private:
     struct FeedbackInfo {

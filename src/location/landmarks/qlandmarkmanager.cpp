@@ -173,7 +173,7 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
 /*!
     \enum QLandmarkManager::TransferOption
-    Defines the possible options when transfering landmarks during import or export.
+    Defines the possible options when transferring landmarks during import or export.
     \value IncludeCategoryData During an import, category data is included.  If an imported category doesn't exist
                                the category is created.  If the imported category name matches an existing
                                category name, then the landmark is added to that category.  For exports, categories
@@ -221,7 +221,9 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     QString managerName;
 
 #ifdef Q_OS_SYMBIAN
-    managerName = "com.nokia.qt.landmarks.engines.symbian";
+     managerName = "com.nokia.qt.landmarks.engines.symbian";
+#elif defined Q_WS_MAEMO_6
+     managerName = "com.nokia.qt.landmarks.engines.qsparql";
 #else
     managerName = "com.nokia.qt.landmarks.engines.sqlite";
 #endif
@@ -838,7 +840,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     The \a option can be used to control whether categories in the imported
     file will be added during the import.  If the \c AttachSingleCategory option is used, then
     all the landmarks in the import file are assigned to the category identified by
-    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    \a categoryId, in all other circumstances \a categoryId is ignored.  If \a categoryId
     doesn't exist when using \c AttachSingleCategory, QLandmarkManager::CategoryDoesNotExistError is set.  Note that
     some file formats may not support categories at all.
 
@@ -875,7 +877,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     The \a option can be used to control whether categories in the imported
     file will be added during the import.  If the \c AttachSingleCategory option is used, then
     all the landmarks in the import file are assigned to the category identified by
-    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    \a categoryId, in all other circumstances \a categoryId is ignored.  If \a categoryId
     doesn't exist when using \c AttachSingleCategory, QLandmarkManager::CategoryDoesNotExistError is set.  Note that
     some file formats may not support categories at all.
 

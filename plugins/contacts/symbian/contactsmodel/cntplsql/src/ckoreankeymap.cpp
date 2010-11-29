@@ -261,18 +261,18 @@ void CKoreanKeyMap::FillKeyPressMap()
 
 
 	// The 11 jong characters that consist of two consonants.
-	// Map them to key sequence that produces the two consonants (TODO: chk if this is the correct way)
+	// Map them to key sequence that produces the two consonants.
 	MapCharacters("17", 0x11aa);
-	MapCharacters("27a", 0x11ac);
-	MapCharacters("28a", 0x11ad);
+	MapCharacters("27", 0x11ac);
+	MapCharacters("28", 0x11ad);
 	MapCharacters("41", 0x11b0);
 	MapCharacters("45", 0x11b1);
-	MapCharacters("45a", 0x11b2);
+	MapCharacters("45", 0x11b2);
 	MapCharacters("47", 0x11b3);
-	MapCharacters("42aa", 0x11b4);
-	MapCharacters("45aa", 0x11b5);
-	MapCharacters("48a", 0x11b6);
-	MapCharacters("5a7", 0x11b9);
+	MapCharacters("42", 0x11b4);
+	MapCharacters("45", 0x11b5);
+	MapCharacters("48", 0x11b6);
+	MapCharacters("57", 0x11b9);
 	}
 
 // ----------------------------------------------------------------------------

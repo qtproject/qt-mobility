@@ -24,3 +24,6 @@ maemo* {
     DEFINES += PLAYER_NO_COLOROPTIONS
 }
 
+symbian {
+    LIBS += -lavkon -lcone -leikcore
+}

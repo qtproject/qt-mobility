@@ -139,15 +139,52 @@ EXPORTS
 	_ZN10QtMobility17QSystemDeviceInfo18isKeyboardFlipOpenEv @ 138 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo25wirelessKeyboardConnectedEb @ 139 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo27isWirelessKeyboardConnectedEv @ 140 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo10typeOfLockEv @ 141 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo10lockStatusEv @ 141 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo11backLightOnEv @ 142 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo11lockChangedENS0_8LockTypeEb @ 143 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo12deviceLockedEb @ 144 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo13keypadLightOnEv @ 145 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo12deviceLockedEb @ 143 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo13keypadLightOnENS0_10keypadTypeE @ 144 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo17lockStatusChangedENS0_8LockTypeE @ 145 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo6hostIdEv @ 146 NONAME
-	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 147 NONAME
-	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 148 NONAME
-	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 149 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 150 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11backLightOnEv @ 151 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11backLightOnEv @ 147 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13cellIdChangedEi @ 148 NONAME
+	_ZN10QtMobility18QSystemStorageInfo11uriForDriveERK7QString @ 149 NONAME
+	_ZN10QtMobility18QSystemStorageInfo15getStorageStateERK7QString @ 150 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19storageStateChangedERK7QStringNS0_12StorageStateE @ 151 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo11qt_metacallEN11QMetaObject4CallEiPPv @ 152 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo11qt_metacastEPKc @ 153 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo13connectNotifyEPKc @ 154 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo14voltageChangedEi @ 155 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo16disconnectNotifyEPKc @ 156 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo16staticMetaObjectE @ 157 NONAME DATA 16
+	_ZN10QtMobility18QSystemBatteryInfo18chargerTypeChangedENS0_11ChargerTypeE @ 158 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo18currentFlowChangedEi @ 159 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo19getStaticMetaObjectEv @ 160 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo20batteryStatusChangedENS0_13BatteryStatusE @ 161 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo20chargingStateChangedENS0_13ChargingStateE @ 162 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo22nominalCapacityChangedEi @ 163 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo23startCurrentMeasurementEi @ 164 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo24remainingCapacityChangedEi @ 165 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo28remainingCapacityBarsChangedEi @ 166 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo28remainingChargingTimeChangedEi @ 167 NONAME
+	_ZN10QtMobility18QSystemBatteryInfo31remainingCapacityPercentChangedEi @ 168 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoC1EP7QObject @ 169 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoC2EP7QObject @ 170 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD0Ev @ 171 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD1Ev @ 172 NONAME
+	_ZN10QtMobility18QSystemBatteryInfoD2Ev @ 173 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo10metaObjectEv @ 174 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11chargerTypeEv @ 175 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo11currentFlowEv @ 176 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13batteryStatusEv @ 177 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo13chargingStateEv @ 178 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo15nominalCapacityEv @ 179 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo17remainingCapacityEv @ 180 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21energyMeasurementUnitEv @ 181 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingCapacityBarsEv @ 182 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo21remainingChargingTimeEv @ 183 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo24remainingCapacityPercentEv @ 184 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7maxBarsEv @ 185 NONAME
+	_ZNK10QtMobility18QSystemBatteryInfo7voltageEv @ 186 NONAME
+	_ZTIN10QtMobility18QSystemBatteryInfoE @ 187 NONAME ; #<TI>#
+	_ZTVN10QtMobility18QSystemBatteryInfoE @ 188 NONAME ; #<VT>#
 

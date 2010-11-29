@@ -118,13 +118,6 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     careful to ensue that they do not assume that a request has not been
     deleted at some time point during processing of a request, particularly
     if the engine has a multithreaded implementation.
-
-    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
-    deletion of a request whilst in the active state that may cause
-    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
-    The request must be in the inactive or finished state before it
-    can be destroyed.  As a workaround to delete an active request,
-    ensure the request is canceled first before deletion.
 */
 
 QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
@@ -199,13 +192,6 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
     the enine implementation, even though the request itself has been destroyed.
     The sqlite engine continues the operation behind the scenes if the
     request is destroyed whilst active.  For the symbian engine see the note below.
-
-    \note The symbian platform, as of Qt Mobility 1.1.0 has a bug affecting
-    deletion of a request whilst in the active state that may cause
-    an application to hang.  There is a bug report for this issue: QTMOBILITY-611.
-    The request must be in the inactive or finished state before it
-    can be destroyed.  As a workaround to delete an active request,
-    ensure the request is canceled first before deletion.
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
@@ -383,7 +369,8 @@ bool QLandmarkAbstractRequest::cancel()
     Returns true if the request was canceled or completed
     within the given period, otherwise returns false.  Some backends may be unable
     to support this  operation safely and will return false immediately.
-    The sqlite backend does currently does not support waitForFinished.
+    The sqlite and sparql managers currently do not support waitForFinished(),
+    while the symbian manager does.
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when

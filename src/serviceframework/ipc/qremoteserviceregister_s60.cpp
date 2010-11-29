@@ -367,7 +367,7 @@ TInt RServiceSession::StartServer()
     // Looks up from Kernel-side if there are active servers with the given name.
     // If not found, a process providing the service needs to be started.    
     if (findServer.Next(name) != KErrNone) {
-#ifdef __WINS__
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
           qWarning("WINS Support for QSFW OOP not implemented.");
 #else
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -465,11 +465,11 @@ static const TInt myRanges[myRangeCount] =
     };
 static const TUint8 myElementsIndex[myRangeCount] =
     {
-    CPolicyServer::EPass
+    CPolicyServer::EAlwaysPass
     };
 static const CPolicyServer::TPolicyElement myElements[] =
     {
-        {_INIT_SECURITY_POLICY_C1(ECapabilityDiskAdmin), CPolicyServer::EFailClient} // Dummy entry
+        {_INIT_SECURITY_POLICY_PASS } // Dummy entry
     };
 static const CPolicyServer::TPolicy myPolicy =
     {

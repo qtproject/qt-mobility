@@ -12,7 +12,8 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h 
+    qsystemstorageinfo.h  \
+    qsystembatteryinfo.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
@@ -20,6 +21,7 @@ SOURCES += qsystemgeneralinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
     qsystemstorageinfo.cpp \
+    qsystembatteryinfo.cpp \
     qsystemalignedtimer.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
@@ -44,7 +46,10 @@ win32:!simulator {
             -lGdi32 \
             -lIphlpapi \
             -lOleaut32 \
-            -lDxva2
+            -lDxva2 \
+            -lPowrProf \
+            -lSetupapi
+
     }
 
     win32-g++ : {
@@ -59,6 +64,8 @@ win32:!simulator {
 
 unix:!simulator {
     QT += gui
+    PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
+
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += linux/qsysteminfo_linux_common.cpp
@@ -242,5 +249,4 @@ simulator {
 HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
-
 

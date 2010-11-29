@@ -129,10 +129,9 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 /*!
  * Export QT Contact into Versit Document.
  */
-bool QVersitContactExporterPrivate::exportContact(
+void QVersitContactExporterPrivate::exportContact(
     const QContact& contact,
-    QVersitDocument& document,
-    QVersitContactExporter::Error* error)
+    QVersitDocument& document)
 {
     QList<QContactDetail> allDetails = contact.details();
     foreach (const QContactDetail& detail, allDetails) {
@@ -222,7 +221,7 @@ bool QVersitContactExporterPrivate::exportContact(
     }
 
     ensureDocumentContainsName(contact, &document);
-    return true;
+    return;
 }
 
 /*!
@@ -602,13 +601,15 @@ void QVersitContactExporterPrivate::encodeAvatar(
     QUrl imageUrl(contactAvatar.imageUrl());
     // XXX: fix up this mess: checking the scheme here and in encodeContentFromFile,
     // organisation logo and ringtone are QStrings but avatar is a QUrl
-    if (!imageUrl.scheme().isEmpty() && !imageUrl.host().isEmpty()) {
+    if (!imageUrl.scheme().isEmpty()
+            && !imageUrl.host().isEmpty()
+            && imageUrl.scheme() != QLatin1String("file")) {
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
         property.setValue(imageUrl.toString());
         *generatedProperties << property;
         *processedFields << QContactAvatar::FieldImageUrl;
     } else {
-        if (encodeContentFromFile(contactAvatar.imageUrl().toString(), property)) {
+        if (encodeContentFromFile(contactAvatar.imageUrl().toLocalFile(), property)) {
             *generatedProperties << property;
             *processedFields << QContactAvatar::FieldImageUrl;
         }

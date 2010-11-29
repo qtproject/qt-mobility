@@ -39,14 +39,12 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
     system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
 
-    unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
-    win32 {
-        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
-        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
-    }
-    symbian {
-        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
-        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    sourcePath = $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template
+    contains(QMAKE_HOST.os,Windows) {
+        sourcePath=$$replace(sourcePath,/,\\)
+        system(type $${sourcePath} >> $$PRF_OUTPUT)
+    } else {
+        system(cat $${sourcePath} >> $$PRF_OUTPUT)
     }
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
@@ -58,11 +56,16 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
-        nativePath=$$replace(QT_MOBILITY_BUILD_TREE,/,\\)
-        FORMATDIR=$$[QT_INSTALL_DATA]\\mkspecs\\features
-        FORMATDIR=$$replace(FORMATDIR,/,\\)
-        system(copy "$${nativePath}\\features\\mobility.prf $$FORMATDIR")
-        system(copy "$${nativePath}\\features\\mobilityconfig.prf $$FORMATDIR")
+        sourcePath=$$QT_MOBILITY_BUILD_TREE/features/
+        destPath=$$[QT_INSTALL_DATA]/mkspecs/features
+
+        contains(QMAKE_HOST.os,Windows) {
+            sourcePath=$$replace(sourcePath,/,\\)
+            destPath=$$replace(destPath,/,\\)
+        }
+
+        system($$QMAKE_COPY "$${sourcePath}mobility.prf" "$$destPath")
+        system($$QMAKE_COPY "$${sourcePath}mobilityconfig.prf" "$$destPath")
     }
 
     # install config file
@@ -91,7 +94,11 @@ contains(build_docs, yes) {
     SUBDIRS += doc
     include(doc/doc.pri)
 
-    OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
+    OTHER_FILES += \
+        doc/src/*.qdoc \
+        doc/src/legal/*.qdoc \
+        doc/src/examples/*.qdoc \
+        doc/src/plugins/*.qdoc
 }
 
 contains(build_unit_tests, yes):SUBDIRS+=tests

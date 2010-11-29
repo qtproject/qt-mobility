@@ -65,10 +65,10 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMa
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
+
+    tiledMapDataPrivate->removeObjectInfo(this);
+
     if (graphicsItem) {
-        if (graphicsItem->scene())
-            graphicsItem->scene()->removeItem(graphicsItem);
-        tiledMapDataPrivate->itemMap.remove(graphicsItem);
         delete graphicsItem;
         graphicsItem = 0;
     }
@@ -77,10 +77,8 @@ QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
-        if (!graphicsItem->scene())
-            tiledMapDataPrivate->scene->addItem(graphicsItem);
-
-        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
+        tiledMapDataPrivate->addObjectInfo(this);
+        graphicsItem->setZValue(mapObject()->zValue());
         graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
@@ -162,6 +160,9 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
         qreal ypole)
 {
     QPolygonF points;
+
+    if (path.isEmpty())
+        return points;
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = tiledMapData->coordinateToWorldReferencePosition(lastCoord);

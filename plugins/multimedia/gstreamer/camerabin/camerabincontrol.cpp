@@ -68,7 +68,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
     m_session(session),
     m_state(QCamera::UnloadedState),
-    m_status(QCamera::UnloadedStatus)
+    m_status(QCamera::UnloadedStatus),
+    m_reloadPending(false)
 {
     connect(m_session, SIGNAL(stateChanged(QCamera::State)),
             this, SLOT(updateStatus()));
@@ -102,6 +103,17 @@ void CameraBinControl::setCaptureMode(QCamera::CaptureMode mode)
         m_session->setCaptureMode(mode);
         reloadLater();
     }
+}
+
+bool CameraBinControl::isCaptureModeSupported(QCamera::CaptureMode mode) const
+{
+#ifdef Q_WS_MAEMO_5
+    //Front camera on N900 supports only video capture
+    if (m_session->cameraRole() == CameraBinSession::FrontCamera)
+        return mode == QCamera::CaptureVideo;
+#endif
+
+    return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
 }
 
 void CameraBinControl::setState(QCamera::State state)

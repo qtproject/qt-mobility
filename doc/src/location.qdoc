@@ -314,12 +314,19 @@ The following table shows names of the default managers for each platform.
     \o Platform
 \row
     \o com.nokia.qt.landmarks.engines.symbian
-    \o S60 3.1,3.2,5.0, Symbian^3
+    \o S60 3.1,3.2,5.0, Symbian
 \row
     \o com.nokia.qt.landmarks.engines.sqlite
-    \o Maemo5, WindowsXp/Vista,Linux
+    \o Maemo5, Windows Xp/Vista,Linux, Mac OS X
+\row
+    \o com.nokia.qt.landmarks.engines.qsparql
+    \o Harmattan
 \endtable
 
+For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
+the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql
+as the \i {sparql manager}.  (Please note that there are several known issues with the sparql manager that are outlined in
+bug report for QTMOBILITY-744 at http://bugreports.qt.nokia.com)
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -340,7 +347,7 @@ QLandmarkManager::supportedFormats() function.
     \o  Gpx, Lmx
     \o  Lmx
 \row
-    \o  Symbian ^3
+    \o  Symbian
     \o  Gpx, Lmx, Kml, Kmz
     \o  Lmx
 \row
@@ -366,6 +373,10 @@ landmarks which have NaN latitude and longitude values.  If you try to export al
 are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
 of those landmarks have NaN latitude or longitude values.
 
+Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
+as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
+ignoring the url field during export if the URI is invalid while the sqlite and sparql manager will export the url
+and subsequently create an invalid lmx file (this issue is intended to be resolved in a future release).
 
 \section2 Landmark classes
 
@@ -537,7 +548,5 @@ If the Mercator projection and the most common tile addressing scheme is used th
 For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
 
 \note At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
-      Also note that on Symbian (as at Qt Mobility 1.1.0), the QML for the Landmarks API may not behave as expected due to a bug described in QTMOBILITY-611.  There may be problems in updating a
-      LandmarkAbstractModel element.
 */
 
