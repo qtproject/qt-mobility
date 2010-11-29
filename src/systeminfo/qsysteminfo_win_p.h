@@ -330,6 +330,81 @@ private:
 
 };
 
+class QSystemBatteryInfoPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
+    int startCurrentMeasurement(int rate);
+
+    void getBatteryStatus();
+    static QSystemBatteryInfoPrivate *instance() {return batself;}
+
+
+Q_SIGNALS:
+//    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+
+    void currentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+    void voltageChanged(int);
+
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+private:
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+   // QVariantMap pMap;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int batteryLevel() const ;
+
+    void setConnection();
+    static QSystemBatteryInfoPrivate *batself;
+#if defined(Q_OS_WINCE)
+    QPowerNotificationThread *powerNotificationThread;
+#endif
+
+public slots:
+    void notificationArrived();
+
+};
+
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

@@ -1477,6 +1477,17 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return (displayOn && isBlankingInhibited && isInhibited);
 }
 
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
 #include "moc_qsysteminfo_maemo_p.cpp"
 
 QTM_END_NAMESPACE
