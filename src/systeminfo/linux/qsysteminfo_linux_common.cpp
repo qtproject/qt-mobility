@@ -967,10 +967,6 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             const QDir eDir(baseSysDir);
             const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
-=======
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString &dir, dirs) {
->>>>>>> Temporary merge branch 2
             foreach (const QString dir, dirs) {
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
