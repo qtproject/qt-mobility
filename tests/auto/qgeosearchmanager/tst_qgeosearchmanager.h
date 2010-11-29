@@ -54,7 +54,7 @@
 #include <qgeosearchreply.h>
 #include <qgeoboundingbox.h>
 #include <qgeoaddress.h>
-#include <qgeocoordinate>
+#include <qgeocoordinate.h>
 
 
 Q_IMPORT_PLUGIN(qtgeoservices_staticsearchplugin)
