@@ -113,23 +113,29 @@ const TDesC8& CNearFieldTag::Uid() const
 
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
+    TInt error = KErrInUse;
     if (!IsActive())
         {
         // No ongoing request
         if (IsConnectionOpened())
             {
-            iTagConnection->RawModeAccess(iStatus, aCommand
-        return (IsConnectionOpened()) ? iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout)
-                                      : KErrInUse;
+            error = iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
+            if (KErrNone == error)
+                {
+                SetActive();
+                }
+            }
         }
-    else
-        {
-        return KErrInUse;
-        }
+    return error;
     }
 
 void CNearFieldTag::DoCancel()
     {
+    // TODO: need invoke CancelRawModeAccess to cancel the request
+    if (iCallback)
+        {
+        QT_TRYCATCH_LEAVING(iCallback->CommandComplete(KErrCancel));
+        }
     }
 
 void CNearFieldTag::RunL()
@@ -142,7 +148,8 @@ void CNearFieldTag::RunL()
 
 TInt CNearFieldTag::RunError(TInt aError)
     {
-    return aError;
+    // Can't do anything
+    return KErrNone;
     }
 
 

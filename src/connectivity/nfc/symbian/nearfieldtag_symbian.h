@@ -91,9 +91,7 @@ private:
     // own
     MNfcConnection * iTagConnection;
     MNfcTag * iNfcTag;
-    
     RNfcServer& iNfcServer;
-
     // Not own
     MNearFieldTagOperationCallback * iCallback;
     };
