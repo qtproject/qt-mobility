@@ -174,9 +174,8 @@ QContactSortOrder QDeclarativeContactSortOrder::sortOrder()
     if (m_field.type() != QVariant::String) {
        QDeclarativeContactDetail::ContactDetailType dt = QDeclarativeContactDetail::detailType(ddn);
        dfn = QDeclarativeContactDetail::fieldName(dt, m_field.toInt());
-       m_field.clear();
     } else {
-        dfn = m_sortOrder.detailFieldName();
+        dfn = m_field.toString();
     }
 
     m_sortOrder.setDetailDefinitionName(ddn, dfn);

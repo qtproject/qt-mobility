@@ -57,6 +57,7 @@ class QDeclarativeContactDetailRangeFilter : public QDeclarativeContactFilter, p
     Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged())
     Q_PROPERTY(RangeFlags rangeFlags READ rangeFlags WRITE setRangeFlags NOTIFY valueChanged())
     Q_FLAGS(RangeFlags)
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum RangeFlag {
         IncludeLower = QContactDetailRangeFilter::IncludeLower,
