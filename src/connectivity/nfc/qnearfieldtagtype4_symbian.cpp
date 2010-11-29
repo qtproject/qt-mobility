@@ -44,26 +44,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QNearFieldTagType4Symbian
-    \brief The QNearFieldTagType4Symbian class provides symbian backend implementation for communicating with an NFC Tag
-           Type 1 tag.
-
-    \ingroup connectivity-nfc
-    \inmodule QtConnectivity
-*/
-
-/*!
-    Constructs a new tag type 1 near field target with \a tag and \a parent.
-*/
 QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTarget(parent), QNearFieldTagImpl(tag)
 {
 }
 
-/*!
-    Destructor
-*/
 QNearFieldTagType4Symbian::~QNearFieldTagType4Symbian()
 {
 }
@@ -88,18 +73,11 @@ void QNearFieldTagType4Symbian::setNdefMessages(const QList<QNdefMessage> &messa
     _setNdefMessages(messages);
 }
 
-/*!
-    \reimp
-*/
 QByteArray QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 {
-    // 512 bytes for one operation
     return _sendCommand(command);
 }
 
-/*!
-    \reimp
-*/
 QList<QByteArray> QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray> &commands)
 {
     QList<QByteArray> result;
@@ -115,9 +93,6 @@ QByteArray QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
     return sendCommand(command);
 }
 
-/*!
-    \reimp
-*/
 QList<QByteArray> QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
 {
     return sendCommands(commands);

@@ -133,10 +133,7 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 
 QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
-    QByteArray result;
-
-    result = _sendCommand(command);
-    return result;
+    return (_sendCommand(command));
 }
 
 QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)

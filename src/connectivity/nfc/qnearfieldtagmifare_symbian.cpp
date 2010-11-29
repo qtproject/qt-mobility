@@ -44,9 +44,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    Constructs a new near field target with \a parent.
-*/
 QNearFieldTagMifareSymbian::QNearFieldTagMifareSymbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTarget(parent), QNearFieldTagImpl(tag)
 {
@@ -67,33 +64,21 @@ bool QNearFieldTagMifareSymbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-/*!
-    Returns a list of all NDEF messages stored on the near field target.
-*/
 QList<QNdefMessage> QNearFieldTagMifareSymbian::ndefMessages()
 {
     return _ndefMessages();
 }
 
-/*!
-    Sets the NDEF messages stored on the near field target to \a messages.
-*/
 void QNearFieldTagMifareSymbian::setNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages);
 }
 
-/*!
-    Sends \a command to the near field target and returns the result.
-*/
 QByteArray QNearFieldTagMifareSymbian::sendCommand(const QByteArray &command)
 {
     return _sendCommand(command);
 }
 
-/*!
-    Sends multiple \a commands to the near field target and returns the result.
-*/
 QList<QByteArray> QNearFieldTagMifareSymbian::sendCommands(const QList<QByteArray> &commands)
 {
     QList<QByteArray> result;

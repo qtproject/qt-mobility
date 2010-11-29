@@ -49,14 +49,6 @@
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
 
-/*!
-    \class CNearFieldNdefTarget
-    \brief The CNearFieldNdefTarget class provides ways to access tag type1
-
-    \ingroup connectivity-nfc
-    \inmodule QtConnectivity
-*/
-
 CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
                                                                                         iNfcServer(aNfcServer)
     {
