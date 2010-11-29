@@ -48,51 +48,41 @@
 class QDeclarativeContactChangeLogFilter: public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDateTime since READ since WRITE setSince NOTIFY valueChanged)
-    Q_PROPERTY(EventType eventType READ eventType WRITE setEventType NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime since READ since WRITE setSince NOTIFY valueChanged())
+    Q_PROPERTY(EventType eventType READ eventType WRITE setEventType NOTIFY valueChanged())
 
     Q_ENUMS(EventType)
 public:
     enum EventType {
-        EventAdded,
-        EventChanged,
-        EventRemoved
+        EventAdded = QContactChangeLogFilter::EventAdded,
+        EventChanged = QContactChangeLogFilter::EventChanged,
+        EventRemoved = QContactChangeLogFilter::EventRemoved
     };
     QDeclarativeContactChangeLogFilter(QObject* parent = 0)
         :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     void setEventType(EventType type)
     {
-        QContactChangeLogFilter::EventType t;
-
-        if (type == EventAdded)
-            t = QContactChangeLogFilter::EventAdded;
-        else if (type == EventChanged)
-            t = QContactChangeLogFilter::EventChanged;
-        else if (type == EventRemoved)
-            t = QContactChangeLogFilter::EventRemoved;
-
-        d.setEventType(t);
+       if (type != eventType()) {
+           d.setEventType(static_cast<QContactChangeLogFilter::EventType>(type));
+           emit valueChanged();
+       }
     }
 
     EventType eventType() const
     {
-        switch (d.eventType()) {
-        case QContactChangeLogFilter::EventAdded:
-            return EventAdded;
-        case QContactChangeLogFilter::EventChanged:
-            return EventChanged;
-        case QContactChangeLogFilter::EventRemoved:
-            return EventRemoved;
-        }
-        return EventAdded;
+        return static_cast<EventType>(d.eventType());
     }
 
     void setSince(const QDateTime& since)
     {
-        d.setSince(since);
+        if (since != d.since()) {
+            d.setSince(since);
+            emit valueChanged();
+        }
     }
 
     QDateTime since() const
