@@ -1402,6 +1402,7 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit(
     return QSystemBatteryInfo::UnitUnknown;
 
 }
+
 #include "moc_qsysteminfo_s60_p.cpp"
 
 QTM_END_NAMESPACE
