@@ -18,7 +18,7 @@ SUBDIRS += qgeocoordinate \
       qlandmarkmanager
 
 
-!symbian:SUBDIRS +=qlandmarkmanagerplugins
+SUBDIRS +=qlandmarkmanagerplugins
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition

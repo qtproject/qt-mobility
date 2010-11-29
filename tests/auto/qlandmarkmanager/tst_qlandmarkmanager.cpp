@@ -193,7 +193,7 @@ public:
 
 #ifdef Q_OS_SYMBIAN
     deleteDefaultDb();
-    prefix =""
+    prefix ="";
 #else
 #if !defined(Q_WS_MAEMO_6)
     QFile::remove("test.db");
