@@ -306,14 +306,7 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
-    QByteArray result;
-
-    if (command.length() > 0)
-    {
-        result = _sendCommand(command);
-    }
-
-    return result;            
+    return (_sendCommand(command));
 }
 
 /*!

@@ -251,28 +251,31 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, i
 template<typename TAGTYPE>
 QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command)
 {
-    CNearFieldTag * tag = mTag->CastToTag();
-
     QByteArray result;
-    if (tag)
+    if (command.count() > 0)
     {
-        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
-        TRAPD( err, 
-            if (mResponse.MaxLength() == 0)
-            {
-                // the response is not created yet.
-                mResponse.CreateL(TagConstValue<TAGTYPE>::MaxResponseSize);
-            }
-            else
-            {
-                mResponse.Zero();
-            }
-            
-            User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TagConstValue<TAGTYPE>::Timeout));
-        )
-        if (KErrNone == err)
+        CNearFieldTag * tag = mTag->CastToTag();
+
+        if (tag)
         {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(mResponse);
+            TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+            TRAPD( err, 
+                if (mResponse.MaxLength() == 0)
+                {
+                    // the response is not created yet.
+                    mResponse.CreateL(TagConstValue<TAGTYPE>::MaxResponseSize);
+                }
+                else
+                {
+                    mResponse.Zero();
+                }
+                
+                User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TagConstValue<TAGTYPE>::Timeout));
+            )
+            if (KErrNone == err)
+            {
+                result = QNFCNdefUtility::FromTDesCToQByteArray(mResponse);
+            }
         }
     }
     return result;
