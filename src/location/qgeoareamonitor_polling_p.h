@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORMAEMO_H
-#define QGEOAREAMONITORMAEMO_H
+#ifndef QGEOAREAMONITORPOLLING_H
+#define QGEOAREAMONITORPOLLING_H
 
 //
 //  W A R N I N G
@@ -68,16 +68,16 @@ extern "C"
 QTM_BEGIN_NAMESPACE
 
 /**
- *  QGeoAreaMonitorMaemo
+ *  QGeoAreaMonitorPolling
  *
  */
-class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
+class QGeoAreaMonitorPolling : public QGeoAreaMonitor
 {
     Q_OBJECT
 
 public :
-    QGeoAreaMonitorMaemo(QObject *parent = 0);
-    ~QGeoAreaMonitorMaemo();
+    QGeoAreaMonitorPolling(QObject *parent = 0);
+    ~QGeoAreaMonitorPolling();
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
 
@@ -90,4 +90,4 @@ private:
 };
 
 QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORMAEMO_H
+#endif // QGEOAREAMONITORPOLLING_H
