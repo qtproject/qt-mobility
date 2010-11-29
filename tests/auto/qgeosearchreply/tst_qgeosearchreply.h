@@ -50,14 +50,14 @@
 
 #include "../qlocationtestutils_p.h"
 
-#include <QGeoSearchReply>
-#include <QGeoPlace>
-#include <QGeoAddress>
-#include <QGeoCoordinate>
-#include <QGeoBoundingBox>
+#include <qgeosearchreply.h>
+#include <qgeoplace.h>
+#include <qgeoaddress.h>
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
 
 QTM_USE_NAMESPACE
-class SubSearchReply :public QGeoSearchReply
+class SubSearchReply : public QGeoSearchReply
 {
     Q_OBJECT
 public:
