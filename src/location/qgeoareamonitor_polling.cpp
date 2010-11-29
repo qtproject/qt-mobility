@@ -65,34 +65,42 @@ QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
 
 void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate& coordinate)
 {
-    if (coordinate.isValid())
+    if (coordinate.isValid()) {
         QGeoAreaMonitor::setCenter(coordinate);
-}
-
-void QGeoAreaMonitorPolling::connectNotify(const char *signal)
-{
-    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
-            signal == SIGNAL(areaExited(QGeoPositionInfo))) {
-        if (location && QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
-            location->startUpdates();
-        }
-    }
-}
-
-void QGeoAreaMonitorPolling::disconnectNotify(const char *signal)
-{
-    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
-            signal == SIGNAL(areaExited(QGeoPositionInfo))) {
-        if (location && QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
-                QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) == 0) {
-            location->stopUpdates();
-        }
+        checkStartStop();
     }
 }
 
 void QGeoAreaMonitorPolling::setRadius(qreal radius)
 {
     QGeoAreaMonitor::setRadius(radius);
+    checkStartStop();
+}
+
+void QGeoAreaMonitorPolling::connectNotify(const char *signal)
+{
+    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
+            signal == SIGNAL(areaExited(QGeoPositionInfo)))
+        checkStartStop();
+}
+
+void QGeoAreaMonitorPolling::disconnectNotify(const char *signal)
+{
+    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
+            signal == SIGNAL(areaExited(QGeoPositionInfo)))
+        checkStartStop();
+}
+
+void QGeoAreaMonitorPolling::checkStartStop()
+{
+    if (!location) return;
+
+    if (QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
+            QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) == 0) {
+        location->stopUpdates();
+    } else if (QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
+        location->startUpdates();
+    }
 }
 
 void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
