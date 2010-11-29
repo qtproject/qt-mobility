@@ -11,6 +11,7 @@ SOURCES += tst_qdeclarativeapitest.cpp
 
 contains(mobility_modules,location) {
     MOBILITY += location
+    QT *= network
     DEFINES += API_TEST_DECLARATIVE_LOCATION=1
     INCLUDEPATH += ../../../src/location
     INCLUDEPATH += ../../../plugins/declarative/location
@@ -20,6 +21,7 @@ contains(mobility_modules,location) {
     HEADERS += ../../../plugins/declarative/location/qdeclarativegeoserviceprovider_p.h
     SOURCES += ../../../plugins/declarative/location/qdeclarativecoordinate.cpp
     SOURCES += ../../../plugins/declarative/location/qdeclarativegeoserviceprovider.cpp
+
 }
 
 symbian|wince* {

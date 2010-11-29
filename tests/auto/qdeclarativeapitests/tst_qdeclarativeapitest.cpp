@@ -50,9 +50,13 @@
 
 #ifdef API_TEST_DECLARATIVE_LOCATION
 #include "qdeclarativegeomapobject_p.h"
+#include "qdeclarativegeomaptextobject_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativecoordinate_p.h"
+#include "qdeclarativegeomapobjectborder_p.h"
+#include "qdeclarativegeomappixmapobject_p.h"
+
 #endif
 
 // Eventually these will make it into qtestcase.h
@@ -146,12 +150,18 @@ Q_DECLARE_METATYPE(PropertyMap);
 // Assign custom enum types a QMetaTypeId so that QVariant can handle them
 Q_DECLARE_METATYPE(QDeclarativeGraphicsGeoMap::MapType);
 Q_DECLARE_METATYPE(QDeclarativeGraphicsGeoMap::ConnectivityMode);
+Q_DECLARE_METATYPE(QDeclarativeGeoMapTextObject::HorizontalAlignment);
+Q_DECLARE_METATYPE(QDeclarativeGeoMapTextObject::VerticalAlignment);
+Q_DECLARE_METATYPE(QDeclarativeGeoMapPixmapObject::Status);
 #endif
+
 void tst_QDeclarativeApiTest::initTestCase()
 {
 #ifdef API_TEST_DECLARATIVE_LOCATION
     // const keyword in signal parms is a pain
     qRegisterMetaType<const QDeclarativeCoordinate*>("const QDeclarativeCoordinate*");
+    qRegisterMetaType<QDeclarativeGeoMapTextObject::HorizontalAlignment>("HorizontalAlignment");
+    qRegisterMetaType<QDeclarativeGeoMapTextObject::VerticalAlignment>("VerticalAlignment");
 #endif
 }
 void tst_QDeclarativeApiTest::cleanupTestCase() {}
@@ -176,14 +186,14 @@ void tst_QDeclarativeApiTest::basicApiTest()
     qDebug() << "************************** Testing element: " << meta_obj->className();
     for (int property_index = meta_obj->propertyOffset(); property_index < meta_obj->propertyCount(); ++property_index) {
         QMetaProperty meta_prop = meta_obj->property(property_index);
+        qDebug() << "*** Testing property: " << meta_prop.name();
+        QVERIFY(meta_prop.isReadable());
         // Verify that the property is expected, otherwise testcase is outdated.
         if (checkPropertiesAreCovered) {
             QVERIFY(expectedProperties.contains(meta_prop.name()));
         } else if (!expectedProperties.contains(meta_prop.name())) {
             continue;
         }
-        qDebug() << "*** Testing property: " << meta_prop.name();
-        QVERIFY(meta_prop.isReadable());
         QVariant expectedPropertyValue = expectedProperties.value(meta_prop.name()).defaultValue;
         QVariant newPropertyValue = expectedProperties.value(meta_prop.name()).newValue;
         bool (*userTypeCompFn)(QVariant,QVariant) = expectedProperties.value(meta_prop.name()).customTypeCompFn;
@@ -239,8 +249,12 @@ void tst_QDeclarativeApiTest::basicApiTest()
             expectedProperties.remove(meta_prop.name());
     }
     // Verify that all properties were checked. Otherwise testcase is outdated
-    if (checkPropertiesAreCovered)
+    if (checkPropertiesAreCovered) {
+        if (!expectedProperties.isEmpty()) {
+            qWarning() << "*** Following properties are not covered: " << expectedProperties.keys();
+        }
         QVERIFY(expectedProperties.isEmpty());
+    }
     qDebug() << "************************** /End testing element: " << meta_obj->className() << "\n";
     delete obj;
 }
@@ -280,6 +294,9 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     QTest::addColumn<bool>("checkPropertiesAreCovered");
 #ifdef API_TEST_DECLARATIVE_LOCATION
 
+    // Some general purpose variables
+    QDeclarativeCoordinate* generalDeclarativeCoordinate = new QDeclarativeCoordinate(QGeoCoordinate(10,10), this);
+
     // Address
     PropertyMap geoAddressPropertyMap;
     PropertyValues country = {"", "newValue",0}; geoAddressPropertyMap.insert("country", country);
@@ -306,8 +323,8 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     mapDefaultPropertyMap.insert("minimumZoomLevel", minimumZoomLevel);
     PropertyValues maximumZoomLevel = {qreal(-1.0), QVariant(), 0};  // (Is not writable -> no newValue)
     mapDefaultPropertyMap.insert("maximumZoomLevel", maximumZoomLevel);
-    QDeclarativeCoordinate* centerCoordinate = new QDeclarativeCoordinate(QGeoCoordinate(10,10), this);
-    PropertyValues center = {QVariant(), QVariant::fromValue(centerCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    // QDeclarativeCoordinate* centerCoordinate = new QDeclarativeCoordinate(QGeoCoordinate(10,10), this);
+    PropertyValues center = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
     mapDefaultPropertyMap.insert("center", center);
     PropertyValues plugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant(), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapDefaultPropertyMap.insert("plugin", plugin);
@@ -328,6 +345,53 @@ void tst_QDeclarativeApiTest::basicApiTest_data()
     PropertyValues nonexistentPlugin = {QVariant::fromValue((QDeclarativeGeoServiceProvider*)(0)), QVariant::fromValue(geoServiceProvider), &customPodCompFn<QDeclarativeGeoServiceProvider*>};
     mapNonexistentPluginPropertyMap.insert("plugin", nonexistentPlugin);
     QTest::newRow("Map (nonexisting plugin)") << "QDeclarativeGraphicsGeoMap" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Map {}" << mapNokiaPluginPropertyMap << false;
+
+    // MapCircle
+    PropertyMap mapCircleDefaultPropertyMap;
+    // QDeclarativeCoordinate* mapCircleCoordinate = new QDeclarativeCoordinate(QGeoCoordinate(10,10), this);
+    PropertyValues mapCircleCenterCoordinate = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    mapCircleDefaultPropertyMap.insert("center", mapCircleCenterCoordinate);
+    PropertyValues mapCircleColor = {QColor(), QColor(1,2,3), 0};
+    mapCircleDefaultPropertyMap.insert("color", mapCircleColor);
+    PropertyValues mapCircleBorder = {QVariant(), QVariant(), 0};
+    mapCircleDefaultPropertyMap.insert("border", mapCircleBorder);
+    QTest::newRow("MapCircle") << "QDeclarativeGeoMapCircleObject" << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapCircle {}" << mapCircleDefaultPropertyMap << true;
+
+    // MapText
+    PropertyMap mapTextDefaultPropertyMap;
+    PropertyValues mapTextCoordinate = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    mapTextDefaultPropertyMap.insert("coordinate", mapTextCoordinate);
+    PropertyValues mapTextColor = {QColor(), QColor(1,2,3), 0};
+    mapTextDefaultPropertyMap.insert("color", mapTextColor);
+    PropertyValues mapTextHorizontalAlignment = {QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignHCenter), QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignLeft), &customPodCompFn<QtMobility::QDeclarativeGeoMapTextObject::HorizontalAlignment>};
+    mapTextDefaultPropertyMap.insert("horizontalAlignment", mapTextHorizontalAlignment);
+    PropertyValues mapTextVerticalAlignment = {QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignVCenter), QVariant::fromValue(QDeclarativeGeoMapTextObject::AlignBottom), &customPodCompFn<QtMobility::QDeclarativeGeoMapTextObject::VerticalAlignment>};
+    mapTextDefaultPropertyMap.insert("verticalAlignment", mapTextVerticalAlignment);
+    QTest::newRow("MapText") << "QDeclarativeGeoMapTextObject" << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapText {}" << mapTextDefaultPropertyMap << true;
+
+    // MapRectangle
+    PropertyMap mapRectangleDefaultPropertyMap;
+    PropertyValues mapRectangleTopLeft = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    mapRectangleDefaultPropertyMap.insert("topLeft", mapRectangleTopLeft);
+    PropertyValues mapRectangleBottomRight = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    mapRectangleDefaultPropertyMap.insert("bottomRight", mapRectangleBottomRight);
+    PropertyValues mapRectangleColor = {QColor(), QColor(1,2,3), 0};
+    mapRectangleDefaultPropertyMap.insert("color", mapRectangleColor);
+    PropertyValues mapRectangleBorder = {QVariant(), QVariant(), 0};
+    mapRectangleDefaultPropertyMap.insert("border", mapRectangleBorder);
+    QTest::newRow("MapRectangle") << "QDeclarativeGeoMapRectangleObject" << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapRectangle {}" << mapRectangleDefaultPropertyMap << true;
+
+    // MapImage
+    PropertyMap mapImageDefaultPropertyMap;
+    PropertyValues mapImageCoordinate = {QVariant(), QVariant::fromValue(generalDeclarativeCoordinate), &customPtrCompFn<QDeclarativeCoordinate*>};
+    mapImageDefaultPropertyMap.insert("coordinate", mapImageCoordinate);
+    PropertyValues mapImageSource = {QUrl(), QUrl("some_url"), 0};
+    mapImageDefaultPropertyMap.insert("source", mapImageSource);
+    // Error below is due to nonexistent image url
+    PropertyValues mapImageStatus = {QVariant::fromValue(QDeclarativeGeoMapPixmapObject::Error), QVariant(), &customPodCompFn<QtMobility::QDeclarativeGeoMapPixmapObject::Status>};
+    mapImageDefaultPropertyMap.insert("status", mapImageStatus);
+    QTest::newRow("MapImage") << "QDeclarativeGeoMapPixmapObject" << "import Qt 4.7 \n import QtMobility.location 1.1 \n MapImage {}" << mapImageDefaultPropertyMap << true;
+
 #endif // API_TEST_DECLARATIVE_LOCATION
 }
 
