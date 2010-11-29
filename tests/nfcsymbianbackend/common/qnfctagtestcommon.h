@@ -53,7 +53,7 @@ class QNfcTagTestCommon : public QObject
 public:
     QNfcTagTestCommon();
     ~QNfcTagTestCommon();
-    QNearFieldTarget* touchTarget(QNearFieldTarget::Type targetType);
+    void touchTarget(QNearFieldTarget::Type targetType);
     void removeTarget(); 
 
     void NdefCheck();

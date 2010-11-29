@@ -21,7 +21,7 @@ QNfcTagTestCommon::~QNfcTagTestCommon()
     delete target;
 }
 
-QNearFieldTarget * QNfcTagTestCommon::touchTarget(QNearFieldTarget::Type targetType)
+void QNfcTagTestCommon::touchTarget(QNearFieldTarget::Type targetType)
 {
     if (target)
     {

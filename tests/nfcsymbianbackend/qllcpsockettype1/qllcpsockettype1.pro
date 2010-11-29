@@ -3,14 +3,18 @@
 # Project created by QtCreator 2010-11-12T15:10:40
 #
 #-------------------------------------------------
-
 QT       += testlib
 
-TARGET = tst_qllcpsocket
+TARGET = tst_qllcpsockettype1
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += testcase
+CONFIG   += mobility
+MOBILITY = connectivity
 
 TEMPLATE = app
 
-
-SOURCES += tst_qllcpsockettype1.cpp 
+INCLUDEPATH += ../../../src/connectivity/nfc
+INCLUDEPATH += ../common
+SOURCES += tst_qllcpsockettype1.cpp
+symbian:TARGET.CAPABILITY = ALL - TCB
