@@ -118,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     Construct a new unconnected LLCP socket with \a parent.
 */
 QLlcpSocket::QLlcpSocket(QObject *parent)
-:   QIODevice(parent), d_ptr(new QLlcpSocketPrivate)
+:   QIODevice(parent), d_ptr(new QLlcpSocketPrivate(this))
 {
 }
 
@@ -128,6 +128,7 @@ QLlcpSocket::QLlcpSocket(QObject *parent)
 QLlcpSocket::QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent)
 :   QIODevice(parent), d_ptr(d)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
