@@ -88,38 +88,24 @@ QContactLocalId  QDeclarativeContactRelationship::second() const
 }
 
 /*!
-  \qmlproperty int Relationship::type
+  \qmlproperty string Relationship::type
 
   This property holds the type of relationship which the source contact has with the destination contacts.
   The value for this property can be one of:
   \list
-  \o Relationship.HasMember
-  \o Relationship.Aggregates
-  \o Relationship.IsSameAs
-  \o Relationship.HasAssistant
-  \o Relationship.HasManager
-  \o Relationship.HasSpouse
+  \o HasMember
+  \o Aggregates
+  \o IsSameAs
+  \o HasAssistant
+  \o HasManager
+  \o HasSpouse
   \endlist
   or any other customized relationship type string.
   */
 
 QVariant QDeclarativeContactRelationship::relationshipType() const
 {
-    QString type = m_relationship.relationshipType();
-    if (type == QContactRelationship::HasAssistant)
-        return QDeclarativeContactRelationship::HasAssistant;
-    if (type == QContactRelationship::Aggregates)
-        return QDeclarativeContactRelationship::Aggregates;
-    if (type == QContactRelationship::HasManager)
-        return QDeclarativeContactRelationship::HasManager;
-    if (type == QContactRelationship::HasMember)
-        return QDeclarativeContactRelationship::HasMember;
-    if (type == QContactRelationship::HasSpouse)
-        return QDeclarativeContactRelationship::HasSpouse;
-    if (type == QContactRelationship::IsSameAs)
-        return QDeclarativeContactRelationship::IsSameAs;
-    //customized type
-    return type;
+    return m_relationship.relationshipType();
 }
 
 void QDeclarativeContactRelationship::setFirst(QContactLocalId firstId)

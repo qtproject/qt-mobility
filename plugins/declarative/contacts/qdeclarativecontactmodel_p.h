@@ -100,6 +100,11 @@ public:
     void setAutoUpdate(bool autoUpdate);
 
     QDeclarativeListProperty<QDeclarativeContact> contacts() ;
+    static void contacts_append(QDeclarativeListProperty<QDeclarativeContact>* prop, QDeclarativeContact* contact);
+    static int contacts_count(QDeclarativeListProperty<QDeclarativeContact>* prop);
+    static QDeclarativeContact* contacts_at(QDeclarativeListProperty<QDeclarativeContact>* prop, int index);
+    static void contacts_clear(QDeclarativeListProperty<QDeclarativeContact>* prop);
+
     QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
 
     Q_INVOKABLE void removeContact(QContactLocalId id);
@@ -118,11 +123,13 @@ signals:
 
 public slots:
     void update();
+    void cancelUpdate();
     void exportContacts(const QUrl& url, const QStringList& profiles = QStringList());
     void importContacts(const QUrl& url, const QStringList& profiles = QStringList());
     void removeContacts(const QList<QContactLocalId>& ids);
     void fetchContacts(const QList<QContactLocalId>& contactIds);
 private slots:
+    void clearContacts();
     void fetchAgain();
     void requestUpdated();
     void contactsSaved();
