@@ -255,9 +255,9 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
     return m_item;
 }
 
-uint QDeclarativeOrganizerItemMetaObject::itemId() const
+QString QDeclarativeOrganizerItemMetaObject::itemId() const
 {
-    return qHash(m_item.id());
+    return m_item.id().toString();
 }
 
 

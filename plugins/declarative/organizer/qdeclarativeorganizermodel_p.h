@@ -112,8 +112,8 @@ public:
     QDeclarativeListProperty<QDeclarativeOrganizerItem> journals();
     QDeclarativeListProperty<QDeclarativeOrganizerItem> notes();
 
-    Q_INVOKABLE void removeItem(uint id);
-    Q_INVOKABLE void removeItems(const QList<uint>& ids);
+    Q_INVOKABLE void removeItem(const QString& id);
+    Q_INVOKABLE void removeItems(const QList<QString>& ids);
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
 
     bool autoUpdate() const;
@@ -122,8 +122,6 @@ public:
     void setFilter(QDeclarativeOrganizerItemFilter* filter);
     void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
-    static QOrganizerItemId itemIdFromHash(uint key);
-    static QOrganizerCollectionId collectionIdFromHash(uint key);
 
 signals:
     void managerChanged();

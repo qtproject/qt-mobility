@@ -114,12 +114,12 @@ QOrganizerItem QDeclarativeOrganizerItem::item() const
 
 
 /*!
-  \qmlproperty int OrganizerItem::itemId
+  \qmlproperty string OrganizerItem::itemId
 
    This property holds the id of the OrganizerItem object.
    This property is read only.
   */
-uint QDeclarativeOrganizerItem::itemId() const
+QString QDeclarativeOrganizerItem::itemId() const
 {
     return d->itemId();
 }
@@ -514,18 +514,18 @@ QDateTime QDeclarativeOrganizerEventOccurrence::startDateTime() const
 
   This property holds the id of the event which is this occurrence's parent.
   */
-void QDeclarativeOrganizerEventOccurrence::setParentId(uint key)
+void QDeclarativeOrganizerEventOccurrence::setParentId(const QString& pid)
 {
-     QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(key);
+     QOrganizerItemId itemId = QOrganizerItemId::fromString(pid);
      if (itemId != m_eo->parentId()) {
         m_eo->setParentId(itemId);
         emit valueChanged();
      }
 }
 
-uint QDeclarativeOrganizerEventOccurrence::parentId() const
+QString QDeclarativeOrganizerEventOccurrence::parentId() const
 {
-    return qHash(m_eo->parentId());
+    return m_eo->parentId().toString();
 }
 
 
@@ -990,18 +990,18 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::finishedDateTime() const
 
   This property holds the id of the todo which is this occurrence's parent.
   */
-void QDeclarativeOrganizerTodoOccurrence::setParentId(uint key)
+void QDeclarativeOrganizerTodoOccurrence::setParentId(const QString& pid)
 {
-    QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(key);
+    QOrganizerItemId itemId = QOrganizerItemId::fromString(pid);
     if (itemId != m_to->parentId()) {
        m_to->setParentId(itemId);
        emit valueChanged();
     }
 }
 
-uint QDeclarativeOrganizerTodoOccurrence::parentId() const
+QString QDeclarativeOrganizerTodoOccurrence::parentId() const
 {
-    return qHash(m_to->parentId());
+    return m_to->parentId().toString();
 }
 
 /*!
