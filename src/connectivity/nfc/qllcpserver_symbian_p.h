@@ -85,7 +85,6 @@ public:
     void invokeError() const ;
 
 signals:
-    void newConnection();
     void error(QLlcpServer::Error socketError) const;
 
 private:
