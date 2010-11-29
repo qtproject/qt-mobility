@@ -18,7 +18,6 @@ OTHER_FILES += \
     contents/timeline.js \
     contents/settingsview.qml \
     contents/ScrollBar.qml \
-    contents/monthview.qml \
     contents/MediaButton.qml \
     contents/detailsview.qml \
     contents/Button.qml \
@@ -34,7 +33,8 @@ OTHER_FILES += \
     contents/images/default.svg \
     contents/images/button-pressed.png \
     contents/images/button.png \
-    contents/month.js
+    contents/month.js \
+    contents/MonthView.qml
 
 symbian: {
     load(data_caging_paths)

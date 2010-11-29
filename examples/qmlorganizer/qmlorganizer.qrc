@@ -4,7 +4,7 @@
         <file>contents/Button.qml</file>
         <file>contents/detailsview.qml</file>
         <file>contents/MediaButton.qml</file>
-        <file>contents/monthview.qml</file>
+        <file>contents/MonthView.qml</file>
         <file>contents/ScrollBar.qml</file>
         <file>contents/settingsview.qml</file>
         <file>contents/timeline.js</file>

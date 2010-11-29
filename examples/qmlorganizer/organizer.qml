@@ -106,7 +106,7 @@ Rectangle {
             height: 600;
             opacity: 0;
             anchors.fill: contentArea;
-            Loader {id: monthLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/monthview.qml";}
+            Loader {id: monthLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/MonthView.qml";}
         }
         Rectangle {
             id: timelineView;

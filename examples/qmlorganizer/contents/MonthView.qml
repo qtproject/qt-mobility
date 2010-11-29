@@ -40,6 +40,8 @@
 
 import Qt 4.7
 import "month.js" as Month
+import QtMobility.organizer 1.1
+
 Item {
     id:monthView
     property int month: 9
@@ -47,6 +49,7 @@ Item {
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
     property int today
+    property OrganizerModel model:null
 
     anchors.fill: parent
 

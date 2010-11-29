@@ -106,8 +106,8 @@
 
 /*!
    \qmlclass DetailFilter QDeclarativeOrganizerItemDetailFilter
-   \brief The DetailFilter element provides a filter based around a detail value criterion.
-
+   \brief The \l DetailFilter element provides a filter based around a detail value criterion.
+   \qmlmodule organizer
    \ingroup qml-organizer
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
