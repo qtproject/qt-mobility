@@ -53,6 +53,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 
+QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 class tst_qllcpsockettype2 : public QObject
 {
     Q_OBJECT
@@ -174,8 +175,8 @@ void tst_qllcpsockettype2::echo_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
-    QTest::newRow("0") << "urn:nfc:sn:test"
-            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test"
+    QTest::newRow("0") << TestUri
+            << "Please touch a NFC device with llcp client enabled: uri = "+ TestUri
             << "echo";
 
 }
@@ -280,8 +281,8 @@ void tst_qllcpsockettype2::echo_wait_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
-    QTest::newRow("0") << "urn:nfc:sn:test"
-            << "Please touch a NFC device with llcp client enabled: uri = urn:nfc:sn:test"
+    QTest::newRow("0") << TestUri
+            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri
             << "echo";
 }
 
