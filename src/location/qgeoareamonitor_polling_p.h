@@ -87,6 +87,9 @@ private slots:
 private:
     bool insideArea;
     QGeoPositionInfoSource *location;
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 QTM_END_NAMESPACE

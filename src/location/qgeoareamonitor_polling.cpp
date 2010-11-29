@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeoareamonitor_maemo_p.h"
+#include "qgeoareamonitor_polling_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,7 +54,6 @@ QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent) : QGeoAreaMonito
         location->setUpdateInterval(UPDATE_INTERVAL_5S);
         connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
-        location->startUpdates();
     }
 }
 
@@ -62,13 +61,33 @@ QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
 {
     if (location)
         location->stopUpdates();
-
 }
 
 void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate& coordinate)
 {
     if (coordinate.isValid())
         QGeoAreaMonitor::setCenter(coordinate);
+}
+
+void QGeoAreaMonitorPolling::connectNotify(const char *signal)
+{
+    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
+            signal == SIGNAL(areaExited(QGeoPositionInfo))) {
+        if (QGeoAreaMonitor::center().isValid() && QGeoAreaMonitor::radius() > qreal(0.0)) {
+            location->startUpdates();
+        }
+    }
+}
+
+void QGeoAreaMonitorPolling::disconnectNotify(const char *signal)
+{
+    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
+            signal == SIGNAL(areaExited(QGeoPositionInfo))) {
+        if (QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) == 0 &&
+                QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) == 0) {
+            location->stopUpdates();
+        }
+    }
 }
 
 void QGeoAreaMonitorPolling::setRadius(qreal radius)
