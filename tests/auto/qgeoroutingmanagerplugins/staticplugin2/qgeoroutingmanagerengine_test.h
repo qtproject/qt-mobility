@@ -45,8 +45,8 @@
 #include <qgeoserviceprovider.h>
 #include <qgeoroutingmanagerengine.h>
 #include <qgeocoordinate.h>
-#include <QGeoRouteReply>
-#include <QGeoRouteRequest>
+#include <qgeoroutereply.h>
+#include <qgeorouterequest.h>
 
 QTM_USE_NAMESPACE
 
