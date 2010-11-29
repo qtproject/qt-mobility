@@ -514,7 +514,7 @@ void QDeclarativeContactModel::requestUpdated()
         QList<QContact> contacts = req->contacts();
         if (d->m_contacts.isEmpty()) {
             QList<QDeclarativeContact*> dcs;
-            foreach(QContact c, contacts) {
+            foreach (QContact c, contacts) {
                 QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
                 dcs.append(dc);
                 d->m_contactMap.insert(c.localId(), dc);
@@ -527,7 +527,7 @@ void QDeclarativeContactModel::requestUpdated()
         } else {
             //Partial updating, insert the fetched contacts into the the exist contact list.
             QList<QDeclarativeContact*> dcs;
-            foreach(QContact c, contacts) {
+            foreach (QContact c, contacts) {
                 if (d->m_contactMap.contains(c.localId())) {
                     d->m_contactMap.value(c.localId())->setContact(c);
                 } else {
@@ -669,7 +669,7 @@ void QDeclarativeContactModel::contactsRemoved()
             QList<QContactLocalId> ids = req->contactIds();
             QList<int> errorIds = req->errorMap().keys();
             QList<QContactLocalId> removedIds;
-            for( int i = 0; i < ids.count(); i++) {
+            for (int i = 0; i < ids.count(); i++) {
                 if (!errorIds.contains(i))
                     removedIds << ids.at(i);
             }
