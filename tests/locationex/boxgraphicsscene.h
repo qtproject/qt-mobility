@@ -4,15 +4,18 @@
 #include <QGraphicsScene>
 #include "performance.h"
 
+class StatsWidget;
+class MapBox;
+
 class BoxGraphicsScene : public QGraphicsScene
 {
     Q_OBJECT
 private:
-    class StatsWidget * m_statistics;
+    StatsWidget * m_statistics;
     perf_t last_after_rendering;
 
 public:
-    explicit BoxGraphicsScene(class StatsWidget * statistics, class MapBox * parent = 0);
+    explicit BoxGraphicsScene(StatsWidget * statistics, MapBox * parent = 0);
 
 protected:
     virtual void drawItems(QPainter *painter, int numItems,

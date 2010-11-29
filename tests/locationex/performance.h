@@ -14,5 +14,6 @@ typedef QTime perf_t;
 perf_t perf_currentTime();
 double perf_diffTime(perf_t start, perf_t end);
 quint64 perf_diffTimeNative(perf_t start, perf_t end);
+quint64 perf_currentMemUsage();
 
 #endif // PERFORMANCE_H

@@ -14,7 +14,7 @@ HEADERS += qgeomappingmanagerengine_test.h \
 SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
-INCLUDEPATH += ../../..src/location \
+INCLUDEPATH += ../../../src/location \
                ../../../src/location/maps
 
 symbian {
