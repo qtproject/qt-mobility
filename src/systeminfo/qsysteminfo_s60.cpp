@@ -1275,6 +1275,134 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
     User::ResetInactivityTime();
 }
 
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
+: QObject(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
+
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
+{
+    return QSystemBatteryInfo::UnknownCharger;
+}
+
+QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
+{
+    return QSystemBatteryInfo::NotCharging;
+}
+
+
+int QSystemBatteryInfoPrivate::nominalCapacity() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacity() const
+{
+    return 0;
+}
+
+
+int QSystemBatteryInfoPrivate::voltage() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingChargingTime() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityBars() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::maxBars() const
+{
+    return 0;
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
+{
+   return QSystemBatteryInfo::BatteryUnknown;
+}
+
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            nominalCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityPercentChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityBarsChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingChargingTimeChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            voltageChanged(int))))) {
+    }
+
+
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+
+}
+
+int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
+{
+    return QSystemBatteryInfo::UnitUnknown;
+
+}
+
 #include "moc_qsysteminfo_s60_p.cpp"
 
 QTM_END_NAMESPACE

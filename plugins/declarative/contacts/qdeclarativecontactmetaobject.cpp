@@ -278,7 +278,8 @@ QContact QDeclarativeContactMetaObject::contact()
 {
     foreach (const QDeclarativeContactDetail* cd, m_details) {
        QContactDetail detail = cd->detail();
-       m_contact.saveDetail(&detail);
+       if (!detail.isEmpty())
+          m_contact.saveDetail(&detail);
     }
 
     return m_contact;

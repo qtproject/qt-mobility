@@ -44,6 +44,8 @@ simulator:SOURCES += \
     nfc/qllcpsocket_simulator_p.cpp \
     nfc/qllcpserver_simulator_p.cpp
 
+simulator:QT *= gui
+
 symbian:PRIVATE_HEADERS += \
     nfc/qnearfieldmanager_symbian_p.h \
     nfc/qllcpsocket_symbian_p.h \

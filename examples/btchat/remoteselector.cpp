@@ -115,7 +115,8 @@ void RemoteSelector::discoveryFinished()
 }
 
 void RemoteSelector::on_remoteDevices_itemActivated(QListWidgetItem *item)
-{
+{    
+    qDebug() << "got click" << item->text();
     m_service = m_discoveredServices.value(item);
 
     accept();

@@ -61,6 +61,8 @@ int main(int argc, char *argv[])
                          SLOT(targetDetected(QNearFieldTarget*)));
 
 
+    manager.startTargetDetection();
+
     mainWindow.setCentralWidget(&annotatedUrl);
 
     mainWindow.show();

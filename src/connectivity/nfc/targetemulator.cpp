@@ -143,14 +143,13 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
         quint8 address = command.at(1);
         quint8 data = command.at(2);
         QByteArray uid = command.mid(3, 4);
-        quint16 crc = (quint8(command.at(8)) << 8) | quint8(command.at(7));
+
+        // check checksum
+        if (qNfcChecksum(command.constData(), command.length()) != 0)
+            return QByteArray();
 
         // check UID
         if (uid != memory.left(4))
-            return QByteArray();
-
-        // check checksum
-        if (crc != qNfcChecksum(command.left(7).constData(), 7))
             return QByteArray();
 
         switch (opcode) {
@@ -213,14 +212,13 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
         quint8 address = command.at(1);
         QByteArray data = command.mid(2, 8);
         QByteArray uid = command.mid(10, 4);
-        quint16 crc = (quint8(command.at(15)) << 8) | quint8(command.at(14));
+
+        // check checksum
+        if (qNfcChecksum(command.constData(), command.length()) != 0)
+            return QByteArray();
 
         // check UID
         if (uid != memory.left(4))
-            return QByteArray();
-
-        // check checksum
-        if (crc != qNfcChecksum(command.left(14).constData(), 14))
             return QByteArray();
 
         switch (opcode) {

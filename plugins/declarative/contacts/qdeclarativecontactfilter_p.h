@@ -50,15 +50,16 @@ QTM_USE_NAMESPACE
 class QDeclarativeContactFilter : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(FilterType type READ type NOTIFY typeChanged)
-
     Q_ENUMS(FilterType)
     Q_FLAGS(MatchFlags)
 public:
     QDeclarativeContactFilter(QObject *parent=0)
         :QObject(parent)
     {
+        //for grouped filter: intersect /union filters
+        if (parent && qobject_cast<QDeclarativeContactFilter*>(parent)) {
+            connect(this, SIGNAL(filterChanged()), parent, SIGNAL(filterChanged()));
+        }
     }
 
     enum FilterType {
@@ -96,8 +97,7 @@ public:
     }
 
 signals:
-    void typeChanged();
-    void valueChanged();
+    void filterChanged();
 };
 
 

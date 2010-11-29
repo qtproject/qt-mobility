@@ -59,9 +59,11 @@ class QBluetoothServiceInfo;
 
 class Q_CONNECTIVITY_EXPORT QBluetoothSocket : public QIODevice
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QBluetoothSocket)
+    Q_OBJECT    
 
+    friend class QBluetoothSocketPrivate;
+    friend class QBluetoothSocketBluezPrivate;
+    friend class QBluetoothSocketSymbianPrivate;
     friend class QRfcommServer;
     friend class QRfcommServerPrivate;
 
@@ -84,7 +86,9 @@ public:
 
     enum SocketError {
         UnknownSocketError = QAbstractSocket::UnknownSocketError,
-        ConnectionRefusedError = QAbstractSocket::ConnectionRefusedError,
+        ConnectionRefusedError = QAbstractSocket::ConnectionRefusedError,        
+        RemoteHostClosedError = QAbstractSocket::RemoteHostClosedError,
+        HostNotFoundError = QAbstractSocket::HostNotFoundError
     };
 
     QBluetoothSocket(SocketType socketType, QObject *parent = 0);   // create socket of type socketType
@@ -99,7 +103,7 @@ public:
     virtual qint64 bytesAvailable() const;
     virtual qint64 bytesToWrite() const;
 
-    //virtual bool canReadLine() const;
+    virtual bool canReadLine() const;
 
     void connectToService(const QBluetoothServiceInfo &service, OpenMode openMode = ReadWrite);
     void connectToService(const QBluetoothAddress &address, const QBluetoothUuid &uuid, OpenMode openMode = ReadWrite);
@@ -129,12 +133,13 @@ public:
     SocketType socketType() const;
     SocketState state() const;
     SocketError error() const;
+    QString errorString() const;
 
     //bool waitForConnected(int msecs = 30000);
     //bool waitForDisconnected(int msecs = 30000);
     //virtual bool waitForReadyRead(int msecs = 30000);
 
-signals:
+Q_SIGNALS:
     void connected();
     void disconnected();
     void error(QBluetoothSocket::SocketError error);
@@ -148,7 +153,8 @@ protected:
     void setSocketError(SocketError error);
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
+    QBluetoothSocketPrivate *d;
+//    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
 };
 
 #ifndef QT_NO_DEBUG_STREAM
