@@ -3276,7 +3276,16 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
         }
-    } //end map
+    } else {
+        currentBatLevelPercent = 0;
+        currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
+        curChargeType = QSystemBatteryInfo::WallCharger;
+        curChargeState = QSystemBatteryInfo::NotCharging;
+        currentVoltage = 0;
+        dischargeRate = 0;
+        capacity = 0;
+        remainingEnergy = 0;
+    }
 }
 
 void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
@@ -3367,6 +3376,15 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                     break;
                 }
             }
+        } else {
+            currentBatLevelPercent = 0;
+            currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
+            curChargeType = QSystemBatteryInfo::WallCharger;
+            curChargeState = QSystemBatteryInfo::NotCharging;
+            currentVoltage = 0;
+            dischargeRate = 0;
+            capacity = 0;
+            remainingEnergy = 0;
         }
 
         list = iface.findDeviceByCapability("ac_adapter");
