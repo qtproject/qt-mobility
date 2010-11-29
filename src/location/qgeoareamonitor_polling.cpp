@@ -40,11 +40,11 @@
 ****************************************************************************/
 
 #include "qgeoareamonitor_polling_p.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
 #define UPDATE_INTERVAL_5S  5000
-#define TO_METERS           1000
 
 QGeoAreaMonitorPolling::QGeoAreaMonitorPolling(QObject *parent) : QGeoAreaMonitor(parent)
 {
@@ -97,13 +97,7 @@ void QGeoAreaMonitorPolling::setRadius(qreal radius)
 
 void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
 {
-    double distance =
-        location_distance_between(info.coordinate().latitude(),
-                                  info.coordinate().longitude(),
-                                  QGeoAreaMonitor::center().latitude(),
-                                  QGeoAreaMonitor::center().longitude());
-
-    distance = distance * TO_METERS;
+    double distance = info.coordinate().distanceTo(QGeoAreaMonitor::center());
 
     if (distance <= QGeoAreaMonitor::radius()) {
         if (!insideArea)
