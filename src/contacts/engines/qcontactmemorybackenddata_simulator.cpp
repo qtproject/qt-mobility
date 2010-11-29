@@ -71,6 +71,12 @@ uint qHash(const QContactStringHolder &h)
 
 void qt_registerContactsTypes()
 {
+    qRegisterMetaTypeStreamOperators<QContact>("QtMobility::QContact");
+    qRegisterMetaTypeStreamOperators<QContactId>("QtMobility::QContactId");
+    qRegisterMetaTypeStreamOperators<QContactDetail>("QtMobility::QContactDetail");
+    qRegisterMetaTypeStreamOperators<QContactDetailDefinition>("QtMobility::QContactDetailDefinition");
+    qRegisterMetaTypeStreamOperators<QContactDetailFieldDefinition>("QtMobility::QContactDetailFieldDefinition");
+    qRegisterMetaTypeStreamOperators<QContactRelationship>("QtMobility::QContactRelationship");
     qRegisterMetaTypeStreamOperators<QContactSimulatorData>("QtMobility::QContactSimulatorData");
     qRegisterMetaTypeStreamOperators<QContactStringHolder>("QtMobility::QContactStringHolder");
     qRegisterMetaTypeStreamOperators<Simulator::SaveContactReply>("QtMobility::Simulator::SaveContactReply");

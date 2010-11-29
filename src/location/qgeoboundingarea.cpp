@@ -101,7 +101,7 @@ An empty area is a region which has a geometrical area of 0.
 /*!
 \fn bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
 
-Returns whether the coordinate \a coordinate is contained withing this 
+Returns whether the coordinate \a coordinate is contained within this 
 area.
 */
 

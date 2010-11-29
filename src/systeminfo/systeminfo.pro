@@ -12,14 +12,16 @@ PUBLIC_HEADERS +=   qsysteminfo.h \
     qsystemdisplayinfo.h \
     qsystemnetworkinfo.h \
     qsystemscreensaver.h \
-    qsystemstorageinfo.h 
+    qsystemstorageinfo.h  \
+    qsystembatteryinfo.h
 
 SOURCES += qsystemgeneralinfo.cpp \
     qsystemdeviceinfo.cpp \
     qsystemdisplayinfo.cpp \
     qsystemnetworkinfo.cpp \
     qsystemscreensaver.cpp \
-    qsystemstorageinfo.cpp
+    qsystemstorageinfo.cpp \
+    qsystembatteryinfo.cpp
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
@@ -43,7 +45,10 @@ win32:!simulator {
             -lGdi32 \
             -lIphlpapi \
             -lOleaut32 \
-            -lDxva2
+            -lDxva2 \
+            -lPowrProf \
+            -lSetupapi
+
     }
 
     win32-g++ : {

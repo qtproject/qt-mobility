@@ -173,7 +173,7 @@ Describes the type of search that should be performed by search().
     implementation provided by \a engine.
 
     This constructor is used interally by QGeoServiceProviderFactory. Regular
-    users should aquire instance of QGeoSearchManager with
+    users should acquire instances of QGeoSearchManager with
     QGeoServiceProvider::searchManager();
 */
 QGeoSearchManager::QGeoSearchManager(QGeoSearchManagerEngine *engine, QObject *parent)

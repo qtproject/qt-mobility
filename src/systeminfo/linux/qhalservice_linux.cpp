@@ -72,7 +72,6 @@ QHalInterface::QHalInterface(QObject *parent)
                                                 QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
-        qDebug() << "Could not find Hal";
         d->valid = false;
         return;
     } else {
@@ -182,7 +181,6 @@ QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject 
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qDebug() << "Could not find HalDeviceInterface";
         return;
     } else {
         d->valid = true;
@@ -307,7 +305,6 @@ QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &de
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qDebug() << "Could not find HalDeviceLaptopPanelInterface";
         return;
     } else {
         d->valid = true;
@@ -363,7 +360,6 @@ QHalDeviceKillSwitchInterface::QHalDeviceKillSwitchInterface(const QString &devi
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
-        qDebug() << "Could not find HalDeviceLaptopPanelInterface";
         return;
     } else {
         d->valid = true;

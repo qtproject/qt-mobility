@@ -93,13 +93,15 @@ void AlbumDelegate::paint(
     painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
     rect.setTop(textRect.bottom() + margin);
 
-    int trackCount =  index.data(TrackCount).toInt();
+    QVariant trackCount = index.data(TrackCount);
 
-    text = trackCount != 1
-            ? tr("%1 Songs").arg(trackCount)
-            : tr("1 Song");
+    if (trackCount.isValid()) {
+        text = trackCount.toInt() != 1
+                ? tr("%1 Songs").arg(trackCount.toInt())
+                : tr("1 Song");
 
-    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+        painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+    }
 
     painter->setPen(oldPen);
 }

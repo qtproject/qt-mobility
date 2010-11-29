@@ -132,5 +132,5 @@ simulator {
 
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
 
-CONFIG += app
+CONFIG += middleware
 include(../../features/deploy.pri)

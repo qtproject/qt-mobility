@@ -49,6 +49,8 @@
 
 #include "qcamera.h"
 
+class SimulatorCameraSettings;
+
 class SimulatorCameraSession : public QObject
 {
     Q_OBJECT
@@ -68,8 +70,11 @@ public:
 
     int captureImage(const QString &fileName);
 
+    SimulatorCameraSettings *settings() const;
+
 signals:
     void stateChanged(QCamera::State state);
+    void captureError(int id, int error, const QString &errorString);
     void error(int error, const QString &errorString);
     void imageExposed(int requestId);
     void imageCaptured(int requestId, const QImage &img);
@@ -81,6 +86,8 @@ private:
 
     QObject *mViewfinder;
     const QImage *mImage;
+
+    SimulatorCameraSettings *mSettings;
 
 public:
     int mRequestId;

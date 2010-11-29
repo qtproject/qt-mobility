@@ -48,6 +48,21 @@
 
 using namespace QTM_NAMESPACE;
 
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
 class tst_QFeedbackPlugin : public QObject
 {
     Q_OBJECT
@@ -135,7 +150,8 @@ void tst_QFeedbackPlugin::testFileEffect()
     // Change the url
     fileEffect.setSource(QUrl("failload"));
     QVERIFY(!fileEffect.isLoaded());
-    QVERIFY(fileEffect.state() == QFeedbackEffect::Stopped);
+    // Spinning the event loop is necessary for mmk to fail a load
+    QTRY_COMPARE(fileEffect.state(), QFeedbackEffect::Stopped);
     QCOMPARE(fileEffect.duration(), 0); // unknown
 
     fileEffect.setSource(QUrl("load"));

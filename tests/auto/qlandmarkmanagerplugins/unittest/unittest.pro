@@ -5,7 +5,8 @@ CONFIG+=testcase
 
 include(../../../../common.pri)
 
-INCLUDEPATH += ../../../../src/location
+INCLUDEPATH += ../../../../src/location \
+               ../../../../src/location/landmarks
 
 
 CONFIG += mobility
@@ -13,12 +14,22 @@ MOBILITY = location
 SOURCES  += tst_qlandmarkmanagerplugins.cpp
 
 !symbian {
-LIBS += -L../../../../build/tests/bin/plugins/landmarks/ -llandmarks_testdummystatic
 
-TESTDLLS = \
-    $$mobilityDeployFilename(landmarks_testdummystatic)
+LIBS += -L../../../../build/tests/bin/plugins/landmarks/
+
+CONFIG(debug, debug|release) {
+    win32 {
+        LIBS += -llandmarks_testdummystaticd
+    } else {
+        LIBS += -llandmarks_testdummystatic
+    }
+} else {
+    LIBS += -llandmarks_testdummystatic
 }
 
+}
+TESTDLLS = \
+    $$mobilityDeployFilename(landmarks_testdummystatic)
 # App local deployment
 symbian|wince* {
     symbian:QLANDMARKMANAGER_PLUGINS_DEPLOY.sources = $$join(TESTDLLS, ".dll ", " ", ".dll")

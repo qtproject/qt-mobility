@@ -150,4 +150,41 @@ EXPORTS
 	?lockStatusChanged@QSystemDeviceInfo@QtMobility@@IAEXW4LockType@12@@Z @ 149 NONAME ; void QtMobility::QSystemDeviceInfo::lockStatusChanged(enum QtMobility::QSystemDeviceInfo::LockType)
 	?deviceLocked@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 150 NONAME ; void QtMobility::QSystemDeviceInfo::deviceLocked(bool)
 	?backLightOn@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 151 NONAME ; bool QtMobility::QSystemDeviceInfo::backLightOn(void)
+	??0QSystemBatteryInfo@QtMobility@@QAE@PAVQObject@@@Z @ 152 NONAME ; QtMobility::QSystemBatteryInfo::QSystemBatteryInfo(class QObject *)
+	??1QSystemBatteryInfo@QtMobility@@UAE@XZ @ 153 NONAME ; QtMobility::QSystemBatteryInfo::~QSystemBatteryInfo(void)
+	??_EQSystemBatteryInfo@QtMobility@@UAE@I@Z @ 154 NONAME ; QtMobility::QSystemBatteryInfo::~QSystemBatteryInfo(unsigned int)
+	?batteryStatus@QSystemBatteryInfo@QtMobility@@QBE?AW4BatteryStatus@12@XZ @ 155 NONAME ; enum QtMobility::QSystemBatteryInfo::BatteryStatus QtMobility::QSystemBatteryInfo::batteryStatus(void) const
+	?batteryStatusChanged@QSystemBatteryInfo@QtMobility@@IAEXW4BatteryStatus@12@@Z @ 156 NONAME ; void QtMobility::QSystemBatteryInfo::batteryStatusChanged(enum QtMobility::QSystemBatteryInfo::BatteryStatus)
+	?chargerType@QSystemBatteryInfo@QtMobility@@QBE?AW4ChargerType@12@XZ @ 157 NONAME ; enum QtMobility::QSystemBatteryInfo::ChargerType QtMobility::QSystemBatteryInfo::chargerType(void) const
+	?chargerTypeChanged@QSystemBatteryInfo@QtMobility@@IAEXW4ChargerType@12@@Z @ 158 NONAME ; void QtMobility::QSystemBatteryInfo::chargerTypeChanged(enum QtMobility::QSystemBatteryInfo::ChargerType)
+	?chargingState@QSystemBatteryInfo@QtMobility@@QBE?AW4ChargingState@12@XZ @ 159 NONAME ; enum QtMobility::QSystemBatteryInfo::ChargingState QtMobility::QSystemBatteryInfo::chargingState(void) const
+	?chargingStateChanged@QSystemBatteryInfo@QtMobility@@IAEXW4ChargingState@12@@Z @ 160 NONAME ; void QtMobility::QSystemBatteryInfo::chargingStateChanged(enum QtMobility::QSystemBatteryInfo::ChargingState)
+	?connectNotify@QSystemBatteryInfo@QtMobility@@MAEXPBD@Z @ 161 NONAME ; void QtMobility::QSystemBatteryInfo::connectNotify(char const *)
+	?currentFlow@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 162 NONAME ; int QtMobility::QSystemBatteryInfo::currentFlow(void) const
+	?currentFlowChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 163 NONAME ; void QtMobility::QSystemBatteryInfo::currentFlowChanged(int)
+	?disconnectNotify@QSystemBatteryInfo@QtMobility@@MAEXPBD@Z @ 164 NONAME ; void QtMobility::QSystemBatteryInfo::disconnectNotify(char const *)
+	?energyMeasurementUnit@QSystemBatteryInfo@QtMobility@@QBE?AW4EnergyUnit@12@XZ @ 165 NONAME ; enum QtMobility::QSystemBatteryInfo::EnergyUnit QtMobility::QSystemBatteryInfo::energyMeasurementUnit(void) const
+	?getStaticMetaObject@QSystemBatteryInfo@QtMobility@@SAABUQMetaObject@@XZ @ 166 NONAME ; struct QMetaObject const & QtMobility::QSystemBatteryInfo::getStaticMetaObject(void)
+	?maxBars@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 167 NONAME ; int QtMobility::QSystemBatteryInfo::maxBars(void) const
+	?metaObject@QSystemBatteryInfo@QtMobility@@UBEPBUQMetaObject@@XZ @ 168 NONAME ; struct QMetaObject const * QtMobility::QSystemBatteryInfo::metaObject(void) const
+	?nominalCapacity@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 169 NONAME ; int QtMobility::QSystemBatteryInfo::nominalCapacity(void) const
+	?nominalCapacityChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 170 NONAME ; void QtMobility::QSystemBatteryInfo::nominalCapacityChanged(int)
+	?qt_metacall@QSystemBatteryInfo@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 171 NONAME ; int QtMobility::QSystemBatteryInfo::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QSystemBatteryInfo@QtMobility@@UAEPAXPBD@Z @ 172 NONAME ; void * QtMobility::QSystemBatteryInfo::qt_metacast(char const *)
+	?remainingCapacity@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 173 NONAME ; int QtMobility::QSystemBatteryInfo::remainingCapacity(void) const
+	?remainingCapacityBars@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 174 NONAME ; int QtMobility::QSystemBatteryInfo::remainingCapacityBars(void) const
+	?remainingCapacityBarsChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 175 NONAME ; void QtMobility::QSystemBatteryInfo::remainingCapacityBarsChanged(int)
+	?remainingCapacityChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 176 NONAME ; void QtMobility::QSystemBatteryInfo::remainingCapacityChanged(int)
+	?remainingCapacityPercent@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 177 NONAME ; int QtMobility::QSystemBatteryInfo::remainingCapacityPercent(void) const
+	?remainingCapacityPercentChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 178 NONAME ; void QtMobility::QSystemBatteryInfo::remainingCapacityPercentChanged(int)
+	?remainingChargingTime@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 179 NONAME ; int QtMobility::QSystemBatteryInfo::remainingChargingTime(void) const
+	?remainingChargingTimeChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 180 NONAME ; void QtMobility::QSystemBatteryInfo::remainingChargingTimeChanged(int)
+	?startCurrentMeasurement@QSystemBatteryInfo@QtMobility@@QAEHH@Z @ 181 NONAME ; int QtMobility::QSystemBatteryInfo::startCurrentMeasurement(int)
+	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 182 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *)
+	?tr@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 183 NONAME ; class QString QtMobility::QSystemBatteryInfo::tr(char const *, char const *, int)
+	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 184 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *)
+	?trUtf8@QSystemBatteryInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 185 NONAME ; class QString QtMobility::QSystemBatteryInfo::trUtf8(char const *, char const *, int)
+	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 186 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
+	?voltageChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 187 NONAME ; void QtMobility::QSystemBatteryInfo::voltageChanged(int)
+	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 188 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
 

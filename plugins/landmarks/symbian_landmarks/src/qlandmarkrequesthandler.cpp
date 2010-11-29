@@ -111,7 +111,7 @@ void CLandmarkRequestAO::RunL()
 
             }
         }
-        // if request is complete or any error occured 
+        // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
             iIsComplete = ETrue;
@@ -146,7 +146,7 @@ void CLandmarkRequestAO::RunL()
                 User::RequestComplete(Ptr, KErrNone);
             }
         }
-        // if request is complete or any error occured 
+        // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
             iIsComplete = ETrue;
@@ -207,7 +207,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
                 TRequestStatus *Ptr = &iStatus;
                 User::RequestComplete(Ptr, 0);
             }
-            // if request is complete or any error occured 
+            // if request is complete or any error occurred 
             // then complete the request with appropriate error code
             else {
                 iIsComplete = ETrue;
@@ -238,7 +238,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
                     User::RequestComplete(Ptr, KErrNone);
                 }
             }
-            // if request is complete or any error occured 
+            // if request is complete or any error occurred 
             // then complete the request with appropriate error code
             else {
                 iIsComplete = ETrue;
@@ -339,7 +339,7 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
                 User::RequestComplete(Ptr, KErrNone);
             }
         }
-        // if request is complete or any error occured 
+        // if request is complete or any error occurred 
         // then complete the request with appropriate error code
         else {
             iIsComplete = ETrue;
