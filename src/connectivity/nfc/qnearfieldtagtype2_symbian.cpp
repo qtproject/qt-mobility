@@ -133,10 +133,9 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 
 QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
-    int timeout = 100 * 1000; //100ms
     QByteArray result;
 
-    result = _sendCommand<18>(command, timeout);
+    result = _sendCommand(command);
     return result;
 }
 

@@ -94,7 +94,7 @@ void QNearFieldTagType4Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 QByteArray QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 {
     // 512 bytes for one operation
-    return _sendCommand(command, 100*1000, 512);
+    return _sendCommand(command);
 }
 
 /*!

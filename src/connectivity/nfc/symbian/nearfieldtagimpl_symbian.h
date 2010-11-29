@@ -47,9 +47,36 @@
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldutility_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
+#include "nearfieldtarget_symbian.h"
 
-QTM_USE_NAMESPACE
-class MNearFieldTarget;
+QTM_BEGIN_NAMESPACE
+class QNearFieldTagType1Symbian;
+class QNearFieldTagType2Symbian;
+class QNearFieldTagType3Symbian;
+
+template<typename TAGTYPE>
+struct TagConstValue
+{
+    enum { MaxResponseSize = 4096, Timeout = 100 * 1000 };
+};
+
+template<>
+struct TagConstValue<QNearFieldTagType1Symbian>
+{
+    enum { MaxResponseSize = 131, Timeout = 5 * 1000 };
+};
+
+template<>
+struct TagConstValue<QNearFieldTagType2Symbian>
+{
+    enum { MaxResponseSize = 18, Timeout = 5 * 1000 };
+};
+
+template<>
+struct TagConstValue<QNearFieldTagType3Symbian>
+{
+    enum { MaxResponseSize = 256, Timeout = 500 * 1000 };
+};
 
 template <typename TAGTYPE>
 class QNearFieldTagImpl : public MNearFieldTagOperationCallback
@@ -71,10 +98,7 @@ public:
         return mAccessMethods;
     }
 
-    QByteArray _sendCommand(const QByteArray &command, int timeout, int reponseSize);
-
-    template<int N>
-    QByteArray _sendCommand(const QByteArray &command, int timeout);
+    QByteArray _sendCommand(const QByteArray &command);
 
     QByteArray _uid() const;
 
@@ -101,7 +125,6 @@ QNearFieldTagImpl<TAGTYPE>::~QNearFieldTagImpl()
 {
     delete mTag;
     mMessageList.Close();
-
     mResponse.Close();
 }
     
@@ -186,6 +209,7 @@ void QNearFieldTagImpl<TAGTYPE>::_setNdefMessages(const QList<QNdefMessage> &mes
     }
 }
 
+#if 0
 template<typename TAGTYPE>
 QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, int timeout, int responseSize)
 {
@@ -202,7 +226,9 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, i
     // TODO: remove after new interface ready
     return QByteArray();
 }
+#endif
 
+#if 0
 template<typename TAGTYPE>
 template<int N>
 QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, int timeout)
@@ -216,6 +242,37 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command, i
         if (KErrNone == tag->RawModeAccess(cmd, response, TTimeIntervalMicroSeconds32(timeout)))
         {
             result = QNFCNdefUtility::FromTDesCToQByteArray(response);
+        }
+    }
+    return result;
+}
+#endif
+
+template<typename TAGTYPE>
+QByteArray QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command)
+{
+    CNearFieldTag * tag = mTag->CastToTag();
+
+    QByteArray result;
+    if (tag)
+    {
+        TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+        TRAPD( err, 
+            if (mResponse.MaxLength() == 0)
+            {
+                // the response is not created yet.
+                mResponse.CreateL(TagConstValue<TAGTYPE>::MaxResponseSize);
+            }
+            else
+            {
+                mResponse.Zero();
+            }
+            
+            User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TagConstValue<TAGTYPE>::Timeout));
+        )
+        if (KErrNone == err)
+        {
+            result = QNFCNdefUtility::FromTDesCToQByteArray(mResponse);
         }
     }
     return result;
@@ -249,4 +306,6 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_uid() const
     }
     return mUid;
 }
+
+QTM_END_NAMESPACE
 #endif // QNEARFIELDTAGIMPL_H

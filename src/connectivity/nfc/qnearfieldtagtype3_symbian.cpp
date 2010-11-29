@@ -77,7 +77,7 @@ void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 QByteArray QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
 {
     // TODO: should handle according to different command
-    return _sendCommand(command, 100*1000, 4096);
+    return _sendCommand(command);
 }
 
 QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
@@ -126,7 +126,8 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, Q
     command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
     if (command.count() > 1)
     {
-        return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command, 100*1000, 12+16*numberOfBlocks)); 
+        //return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command, 100*1000, 12+16*numberOfBlocks)); 
+        return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command)); 
     }
     else
     {
@@ -143,7 +144,7 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
     if (command.count() > 1)
     {
         command.append(data);
-        _sendCommand(command, 100*1000, 10);
+        _sendCommand(command);
     }
 }
 
