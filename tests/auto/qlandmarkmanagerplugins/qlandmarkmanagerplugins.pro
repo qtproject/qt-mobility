@@ -1,10 +1,8 @@
 TEMPLATE=subdirs
 !wince* {
-
+!symbian:SUBDIRS+= dummystaticplugin
 SUBDIRS += dummydynamicplugin \
            dummydynamiccopyplugin \
            nonlandmarkdynamicplugin \
            unittest   
-
-!symbian:SUBDIRS+= dummystaticplugin
 } #disable wince plugin autotests for now
