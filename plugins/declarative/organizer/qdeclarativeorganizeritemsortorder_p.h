@@ -45,17 +45,19 @@
 #include "qdeclarative.h"
 
 #include "qorganizeritemsortorder.h"
+#include "qdeclarativeorganizeritemdetail_p.h"
+#include <QDeclarativeParserStatus>
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeOrganizerItemSortOrder : public QObject
+class QDeclarativeOrganizerItemSortOrder : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
-    Q_PROPERTY(QString definitionName READ definitionName WRITE setDefinitionName NOTIFY valueChanged)
-    Q_PROPERTY(QString fieldName READ fieldName WRITE setFieldName NOTIFY valueChanged)
-    Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY valueChanged)
-    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY valueChanged)
-    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY valueChanged)
+    Q_PROPERTY(QVariant detail READ detail WRITE setDetail NOTIFY sortOrderChanged)
+    Q_PROPERTY(QVariant field READ field WRITE setField NOTIFY sortOrderChanged)
+    Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
 
     Q_ENUMS(BlankPolicy)
 public:
@@ -68,20 +70,27 @@ public:
         BlanksLast = QOrganizerItemSortOrder::BlanksLast,
     };
 
-
-    void setDefinitionName(const QString& name)
+    //from QDeclarativeParserStatus
+    void classBegin() {}
+    void componentComplete()
     {
-        if (name != d.detailDefinitionName()) {
-            d.setDetailDefinitionName(name, d.detailFieldName());
-            emit valueChanged();
-        }
+         d = sortOrder();
     }
 
-    void setFieldName(const QString& name)
+    void setDetail(const QVariant& v)
     {
-        if (name != d.detailFieldName()) {
-            d.setDetailDefinitionName(d.detailDefinitionName(), name);
-            emit valueChanged();
+        if (m_detail != v) {
+            m_detail = v;
+            emit sortOrderChanged();
+        }
+
+    }
+
+    void setField(const QVariant& v)
+    {
+        if (m_field !=v) {
+            m_field = v;
+            emit sortOrderChanged();
         }
     }
 
@@ -89,7 +98,7 @@ public:
     {
         if (policy != blankPolicy()) {
             d.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(policy));
-            emit valueChanged();
+            emit sortOrderChanged();
         }
     }
 
@@ -97,7 +106,7 @@ public:
     {
         if (newDirection != direction()) {
             d.setDirection(newDirection);
-            emit valueChanged();
+            emit sortOrderChanged();
         }
     }
 
@@ -105,17 +114,17 @@ public:
     {
         if (newSensitivity != caseSensitivity()) {
             d.setCaseSensitivity(newSensitivity);
-            emit valueChanged();
+            emit sortOrderChanged();
         }
     }
 
-    QString definitionName() const
+    QVariant detail() const
     {
-        return d.detailDefinitionName();
+        return m_detail;
     }
-    QString fieldName() const
+    QVariant field() const
     {
-        return d.detailFieldName();
+        return m_field;
     }
     BlankPolicy blankPolicy() const
     {
@@ -130,19 +139,42 @@ public:
         return d.caseSensitivity();
     }
 
-    QOrganizerItemSortOrder sortOrder() const
+    QOrganizerItemSortOrder sortOrder()
     {
+        QString ddn;
+        if (m_detail.type() != QVariant::String) {
+            ddn = QDeclarativeOrganizerItemDetail::definitionName(static_cast<QDeclarativeOrganizerItemDetail::ItemDetailType>(m_detail.toInt()));
+        } else {
+            ddn = m_detail.toString();
+        }
+
+        QString dfn;
+        if (m_field.type() != QVariant::String) {
+           QDeclarativeOrganizerItemDetail::ItemDetailType dt = QDeclarativeOrganizerItemDetail::detailType(ddn);
+           dfn = QDeclarativeOrganizerItemDetail::fieldName(dt, m_field.toInt());
+        } else {
+            dfn = m_field.toString();
+        }
+
+        d.setDetailDefinitionName(ddn, dfn);
+        m_detail = ddn;
+        m_field = dfn;
         return d;
     }
 
     void setSortOrder(const QOrganizerItemSortOrder& sortOrder)
     {
         d = sortOrder;
+        m_field = d.detailFieldName();
+        m_detail = d.detailDefinitionName();
+        emit sortOrderChanged();
     }
 
 signals:
-    void valueChanged();
+    void sortOrderChanged();
 private:
+    QVariant m_field;
+    QVariant m_detail;
     QOrganizerItemSortOrder d;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemSortOrder)
