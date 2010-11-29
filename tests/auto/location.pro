@@ -30,12 +30,14 @@ SUBDIRS += qgeocoordinate \
       qgeosearchmanagerplugins \
       qgeosearchmanager \
       qgeoserviceproviderplugins \
-      qgeoserviceprovider
+      qgeoserviceprovider \
+      geoservicesgeomapplugin \
+      geoservicesgeomap \
+      geoservicesgeotiledmapplugin \
+      geoservicesgeotiledmap
 
 #IGNORED_UNTIL_INTEGRATED_PROPERLY += \
 #    qdeclarativeapitests \
-#    geoservicesgeomapplugin \
-#    geoservicesgeotiledmapplugin \
 #    qgeomapobjects
 
 
