@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subatteryStatusidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -78,6 +78,11 @@
 #endif
 #include <HighLevelMonitorConfigurationAPI.h>
 
+#include <PowrProf.h>
+#include <Setupapi.h>
+
+#include <BatClass.h>
+
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
 #include "windows/qwmihelper_win_p.h"
@@ -117,7 +122,7 @@ enum WLAN_INTF_OPCODE {
     wlan_intf_opcode_background_scan_enabled,
     wlan_intf_opcode_media_streaming_mode,
     wlan_intf_opcode_radio_state,
-    wlan_intf_opcode_bss_type,
+    wlan_intf_opcode_batteryStatuss_type,
     wlan_intf_opcode_interface_state,
     wlan_intf_opcode_current_connection,
     wlan_intf_opcode_channel_number,
@@ -227,10 +232,10 @@ enum DOT11_CIPHER_ALGORITHM {
 };
 
 
-enum DOT11_BSS_TYPE {
-    dot11_BSS_type_infrastructure = 1,
-    dot11_BSS_type_independent = 2,
-    dot11_BSS_type_any = 3
+enum DOT11_batteryStatusS_TYPE {
+    dot11_batteryStatusS_type_infrastructure = 1,
+    dot11_batteryStatusS_type_independent = 2,
+    dot11_batteryStatusS_type_any = 3
 };
 
 
@@ -243,8 +248,8 @@ typedef UCHAR DOT11_MAC_ADDRESS[6];
 
 struct WLAN_ASSOCIATION_ATTRIBUTES {
     DOT11_SSID dot11Ssid;
-    DOT11_BSS_TYPE dot11BssType;
-    DOT11_MAC_ADDRESS dot11Bssid;
+    DOT11_batteryStatusS_TYPE dot11batteryStatussType;
+    DOT11_MAC_ADDRESS dot11batteryStatussid;
     DOT11_PHY_TYPE dot11PhyType;
     ULONG uDot11PhyIndex;
     ULONG wlanSignalQuality;
@@ -253,7 +258,7 @@ struct WLAN_ASSOCIATION_ATTRIBUTES {
 };
 
 struct WLAN_SECURITY_ATTRIBUTES {
-    BOOL bSecurityEnabled;
+    BOOL batteryStatusecurityEnabled;
     BOOL bOneXEnabled;
     DOT11_AUTH_ALGORITHM dot11AuthAlgorithm;
     DOT11_CIPHER_ALGORITHM dot11CipherAlgorithm;
@@ -273,7 +278,7 @@ enum WLAN_NOTIFICATION_ACM {
     wlan_notification_acm_autoconf_disabled,
     wlan_notification_acm_background_scan_enabled,
     wlan_notification_acm_background_scan_disabled,
-    wlan_notification_acm_bss_type_change,
+    wlan_notification_acm_batteryStatuss_type_change,
     wlan_notification_acm_power_setting_change,
     wlan_notification_acm_scan_complete,
     wlan_notification_acm_scan_fail,
@@ -1477,7 +1482,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     wHelper =  WMIHelper::instance();
     wHelper->setWmiNamespace("root/cimv2");
     wHelper->setClassName("Win32_VolumeChangeEvent");
-    wHelper->setupNotfication("root/cimv2","",QStringList());
+    QString aString = "SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE (TargetInstance ISA 'Win32_LogicalDisk') AND (TargetInstance.DriveType = 5 OR TargetInstance.DriveType = 2)";
+
+    wHelper->setupNotfication("root/cimv2",aString,QStringList());
 
     connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
 #endif
@@ -1625,7 +1632,7 @@ QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *par
     : parent(parent),
     done(false)
 {
-    wakeUpEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    wakeUpEvent = CreateEvent(NULL, FA      LSE, FALSE, NULL);
 }
 
 QPowerNotificationThread::~QPowerNotificationThread() {
@@ -1641,7 +1648,8 @@ QPowerNotificationThread::~QPowerNotificationThread() {
     CloseHandle(wakeUpEvent);
 }
 
-void QPowerNotificationThread::run() {
+void QPowerNotificationThread::run()
+{
 
     const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO)
         + MAX_PATH;
@@ -1658,9 +1666,7 @@ void QPowerNotificationThread::run() {
     if (messageQueue == NULL)
         return;
 
-    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION
-            | PBT_POWERINFOCHANGE);
-
+    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION|PBT_POWERINFOCHANGE);
     if (messageQueue == NULL)
         return;
 
@@ -1691,10 +1697,10 @@ void QPowerNotificationThread::run() {
             }
 
             POWER_BROADCAST *broadcast = (POWER_BROADCAST*) (buffer);
-
             if (broadcast->Message == PBT_POWERINFOCHANGE) {
                 POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;
-                parent->batteryLevel();
+                parent->notificationArrived();
+                qDebug() << "CHANGED!";
             }
 
             parent->currentPowerState();
@@ -1718,17 +1724,28 @@ void QPowerNotificationThread::run() {
 #endif
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
+QSystemBatteryInfoPrivate *QSystemBatteryInfoPrivate::batself = 0;
 
 #if !defined(Q_OS_WINCE)
 bool qax_winEventFilter(void *message)
 {
     MSG *pMsg = (MSG*)message;
     if( pMsg->message == WM_POWERBROADCAST) {
+
+        qDebug() << Q_FUNC_INFO;
+        POWERBROADCAST_SETTING* pps = (POWERBROADCAST_SETTING*) pMsg->lParam;
+        if ( sizeof(int) == pps->DataLength &&
+                pps->PowerSetting == GUID_BATTERY_PERCENTAGE_REMAINING ) {
+            int nPercentLeft = *(int*)(DWORD_PTR) pps->Data;
+
+            qDebug() <<Q_FUNC_INFO << nPercentLeft;
+        }
         switch (pMsg->wParam) {
         case PBT_APMPOWERSTATUSCHANGE:
-            QSystemDeviceInfoPrivate::instance()->batteryLevel();
-            QSystemDeviceInfoPrivate::instance()->currentPowerState();
-            break;
+        {
+//            QSystemDeviceInfoPrivate::instance()->batteryLevel();
+//            QSystemDeviceInfoPrivate::instance()->currentPowerState();
+        }
             break;
         default:
             break;
@@ -1746,7 +1763,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
 #if !defined(Q_OS_WINCE)
-    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+//    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
 #else
     powerNotificationThread = new QPowerNotificationThread(this);
     powerNotificationThread->start();
@@ -2110,7 +2127,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn()
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
     return false;
 }
@@ -2125,7 +2142,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return 0;//gethostid();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -2175,6 +2192,10 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
 : QObject(parent)
 {
+    if(!batself)
+        batself = this;
+    setConnection();
+    getBatteryStatus();
 
 }
 
@@ -2186,49 +2207,44 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
-    return QSystemBatteryInfo::Unknown;
+    return curChargeType;
 }
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
 {
-    return QSystemBatteryInfo::NotCharging;
+    return curChargeState;
 }
 
 
 int QSystemBatteryInfoPrivate::nominalCapacity() const
 {
-    return 0;
+    return capacity;
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
 {
-    return 0;
+    return currentBatLevelPercent;
 }
 
-int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
-    return 0;
+    return remainingEnergy;
 }
 
 
 int QSystemBatteryInfoPrivate::voltage() const
 {
-    return 0;
+    return currentVoltage;
 }
 
 int QSystemBatteryInfoPrivate::remainingChargingTime() const
 {
-    return 0;
+    return timeToFull;
 }
 
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
-    return 0;
-}
-
-int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
-{
-    return 0;
+    return dischargeRate;
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacityBars() const
@@ -2248,13 +2264,263 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {
+   if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
 
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            nominalCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityPercentChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityBarsChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingChargingTimeChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            voltageChanged(int))))) {
+    }
+
+}
+
+void QSystemBatteryInfoPrivate::setConnection()
+{
+#if !defined(Q_OS_WINCE)
+    QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+#else
+    powerNotificationThread = new QPowerNotificationThread(this);
+    powerNotificationThread->start();
+#endif
+
+    QTimer *timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),this,SLOT(notificationArrived()));
+    timer->start(1000);
+
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
+//    WMIHelper *wHelper;
+//    wHelper =  WMIHelper::instance();
+//    wHelper->setWmiNamespace("root/cimv2");
+//    wHelper->setClassName("Win32_PowerManagementEvent");
+//    QString aString = "SELECT * FROM Win32_PowerManagementEvent";
+//    wHelper->setupNotfication("root/cimv2",aString,QStringList());
+
+//    connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
+#endif
+#endif
+}
+
+void QSystemBatteryInfoPrivate::notificationArrived()
+{
+    getBatteryStatus();
 }
 
 void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 {
 
 }
+
+qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+{
+   return QSystemBatteryInfo::UnitmWh;
+}
+
+void QSystemBatteryInfoPrivate::getBatteryStatus()
+{
+    int cLevel = 0;
+    int cEnergy = 0;
+    int cVoltage = 0;
+    int cTime = 0;
+    int rEnergy = 0;
+
+    QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
+    QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
+    QSystemBatteryInfo::BatteryStatus batStatus = QSystemBatteryInfo::BatteryUnknown;
+
+    NTSTATUS powerStatus;
+    SYSTEM_BATTERY_STATE systemBatteryState;
+    powerStatus = CallNtPowerInformation(SystemBatteryState,NULL,0,&systemBatteryState,sizeof(systemBatteryState));
+
+    if(systemBatteryState.Charging) {
+        cState = QSystemBatteryInfo::Charging;
+    } else {
+        cState = QSystemBatteryInfo::NotCharging;
+    }
+
+    if(cState != curChargeState ) {
+        curChargeState = cState;
+        emit chargingStateChanged(curChargeState);
+    }
+
+
+    capacity = systemBatteryState.MaxCapacity;
+
+    rEnergy = systemBatteryState.RemainingCapacity;
+    if(rEnergy != remainingEnergy) {
+        remainingEnergy = rEnergy;
+        emit remainingCapacityChanged(remainingEnergy);
+    }
+
+    cEnergy = systemBatteryState.Rate;
+    if (cEnergy != dischargeRate) {
+        dischargeRate = cEnergy;
+        emit currentFlowChanged(dischargeRate);
+    }
+
+    if (systemBatteryState.AcOnLine) {
+        cType = QSystemBatteryInfo::WallCharger;
+    } else {
+        cType = QSystemBatteryInfo::NoCharger;
+    }
+    if (cType != curChargeType) {
+        curChargeType = cType;
+        emit chargerTypeChanged(curChargeType);
+    }
+
+    cTime = systemBatteryState.EstimatedTime;
+    if(cTime != timeToFull) {
+        timeToFull = cTime;
+        emit remainingChargingTimeChanged(timeToFull);
+    }
+
+    SYSTEM_POWER_STATUS status;
+    if(GetSystemPowerStatus( &status) ) {
+
+        cLevel = status.BatteryLifePercent;
+        if(cLevel != currentBatLevelPercent) {
+            currentBatLevelPercent = cLevel;
+            emit remainingCapacityPercentChanged(currentBatLevelPercent);
+        }
+        switch(status.BatteryFlag) {
+        case (1):
+            batStatus = QSystemBatteryInfo::BatteryOk;
+            break;
+        case (2):
+            batStatus = QSystemBatteryInfo::BatteryLow;
+            break;
+        case (3):
+            batStatus = QSystemBatteryInfo::BatteryVeryLow;
+            break;
+        case (4):
+            batStatus = QSystemBatteryInfo::BatteryCritical;
+            break;
+        case (128):
+        case (255):
+            batStatus = QSystemBatteryInfo::BatteryUnknown;
+            break;
+        }
+    }
+    if(batStatus != currentBatStatus) {
+        currentBatStatus = batStatus;
+        emit batteryStatusChanged(currentBatStatus);
+    }
+
+
+#define HASBATTERY 0x1
+#define ONBATTERY  0x2
+
+    QUuid guidDeviceBattery(0x72631e54L,0x78A4,0x11d0,0xbc,0xf7,0x00,0xaa,0x00,0xb7,0xb3,0x2a);
+    GUID GUID_DEVICE_BATTERY = static_cast<GUID>(guidDeviceBattery);
+
+    DWORD dwResult = ONBATTERY;
+    HDEVINFO hdevInfo = SetupDiGetClassDevs(&GUID_DEVICE_BATTERY,0,0,DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    if (INVALID_HANDLE_VALUE != hdevInfo) {
+        for (int i = 0; i < 100; i++) {
+            SP_DEVICE_INTERFACE_DATA deviceInterfaceData = {0};
+            deviceInterfaceData.cbSize = sizeof(deviceInterfaceData);
+
+            if (SetupDiEnumDeviceInterfaces(hdevInfo,0,&GUID_DEVICE_BATTERY,i,&deviceInterfaceData)){
+                DWORD cbRequired = 0;
+
+                SetupDiGetDeviceInterfaceDetail(hdevInfo, &deviceInterfaceData,0, 0, &cbRequired, 0);
+                if (ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
+                    PSP_DEVICE_INTERFACE_DETAIL_DATA deviceInterfaceDetail =
+                            (PSP_DEVICE_INTERFACE_DETAIL_DATA)LocalAlloc(LPTR, cbRequired);
+                    if (deviceInterfaceDetail){
+                        deviceInterfaceDetail->cbSize = sizeof(*deviceInterfaceDetail);
+                        if (SetupDiGetDeviceInterfaceDetail(hdevInfo, &deviceInterfaceData, deviceInterfaceDetail, cbRequired, &cbRequired, 0)) {
+
+                            HANDLE batteryHandle = CreateFile(deviceInterfaceDetail->DevicePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                            if (INVALID_HANDLE_VALUE != batteryHandle){
+
+                                BATTERY_QUERY_INFORMATION batteryQueryInfo = {0};
+
+                                DWORD inBuf = 0;
+                                DWORD dwOut;
+
+                                if (DeviceIoControl(batteryHandle,IOCTL_BATTERY_QUERY_TAG, &inBuf, sizeof(inBuf), &batteryQueryInfo.BatteryTag, sizeof(batteryQueryInfo.BatteryTag), &dwOut, NULL)
+                                        && batteryQueryInfo.BatteryTag) {
+                                    BATTERY_INFORMATION batteryInfo = {0};
+                                    batteryQueryInfo.InformationLevel = BatteryInformation;
+
+                                    if (DeviceIoControl(batteryHandle, IOCTL_BATTERY_QUERY_INFORMATION,&batteryQueryInfo,sizeof(batteryQueryInfo),&batteryInfo,sizeof(batteryInfo), &dwOut, NULL)) {
+
+                                        if (batteryInfo.Capabilities & BATTERY_SYSTEM_BATTERY) {
+                                            if (!(batteryInfo.Capabilities & BATTERY_IS_SHORT_TERM)) {
+                                                dwResult |= HASBATTERY;
+                                            }
+
+                                            BATTERY_WAIT_STATUS batteryWaitStatus = {0};
+                                            batteryWaitStatus.BatteryTag = batteryQueryInfo.BatteryTag;
+
+                                            BATTERY_STATUS batteryStatus;
+                                            if (DeviceIoControl(batteryHandle, IOCTL_BATTERY_QUERY_STATUS, &batteryWaitStatus, sizeof(batteryWaitStatus), &batteryStatus, sizeof(batteryStatus), &dwOut, NULL)) {
+                                                if (batteryStatus.PowerState & BATTERY_POWER_ON_LINE) {
+                                                    dwResult &= ~ONBATTERY;
+                                                }
+                                                cVoltage = batteryStatus.Voltage;
+                                                if(cVoltage != currentVoltage) {
+                                                    currentVoltage= cVoltage;
+                                                    emit voltageChanged(currentVoltage);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                CloseHandle(batteryHandle);
+                            }
+                        }
+                        LocalFree(deviceInterfaceDetail);
+                    }
+                }
+            }
+            else  if (ERROR_NO_MORE_ITEMS == GetLastError()) {
+                break;
+            }
+        }
+        SetupDiDestroyDeviceInfoList(hdevInfo);
+    }
+    if (!(dwResult & HASBATTERY))
+        dwResult &= ~ONBATTERY;
+}
+
 
 #include "moc_qsysteminfo_win_p.cpp"
 

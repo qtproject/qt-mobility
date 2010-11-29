@@ -1021,7 +1021,7 @@ void QSystemBatteryInfoPrivate::setInitialData()
 
     setNominalCapacity(9876);
     setRemainingCapacityPercent(56);
-    setRemainingCapacitymAh(567);
+    setRemainingCapacity(567);
 
     setVoltage(24);
     setRemainingChargingTime(45);
@@ -1066,10 +1066,10 @@ void QSystemBatteryInfoPrivate::setRemainingCapacityPercent(int v)
     }
 }
 
-void QSystemBatteryInfoPrivate::setRemainingCapacitymAh(int v)
+void QSystemBatteryInfoPrivate::setRemainingCapacity(int v)
 {
-    if (data.remainingCapacitymAh != v) {
-        data.remainingCapacitymAh = v;
+    if (data.remainingCapacity != v) {
+        data.remainingCapacity = v;
     }
 }
 
@@ -1116,6 +1116,18 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
     }
 }
 
+int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
+{
+
+}
+
+//QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+//{
+//    if (data.energyMeasurementUnit != v) {
+//        data.energyMeasurementUnit = v;
+//    }
+
+//}
 
 
 #include "moc_qsysteminfo_simulator_p.cpp"

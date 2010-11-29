@@ -91,7 +91,7 @@ void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State 
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (catSaveRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Category save succesfully completed";
+            qDebug() << "Category save successfully completed";
         }
         else {
             qDebug() << "Category save was unsuccessful";
@@ -134,7 +134,7 @@ void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State 
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (lmSaveRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Landmark save succesfully completed";
+            qDebug() << "Landmark save successfully completed";
         }
         else {
             qDebug() << "Landmark save was unsuccessful";
@@ -168,7 +168,7 @@ void RequestExample::categoryFetchRequestHandler(QLandmarkAbstractRequest::State
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (catFetchRequest->error() == QLandmarkManager::NoError) {
             QList<QLandmarkCategory> categories = catFetchRequest->categories();
-            qDebug() << "Category fetch succesfully completed";
+            qDebug() << "Category fetch successfully completed";
             for(int i=0; i < categories.count(); ++i) {
                 qDebug() << categories[i].name();
             }
@@ -213,7 +213,7 @@ void RequestExample::landmarkFetchRequestHandler(QLandmarkAbstractRequest::State
     if (state == QLandmarkAbstractRequest::FinishedState) {
         previousLastIndex = 0;
         if (lmFetchRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Landmark fetch succesfully completed";
+            qDebug() << "Landmark fetch successfully completed";
             QList<QLandmark> landmarks = lmFetchRequest->landmarks();
             for(int i=0; i < landmarks.count(); ++i) {
                 qDebug() << landmarks[i].name();
@@ -250,7 +250,7 @@ void RequestExample::categoryRemoveRequestHandler(QLandmarkAbstractRequest::Stat
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (catRemoveRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Category remove succesfully completed";
+            qDebug() << "Category remove successfully completed";
         }
         else {
             qDebug() << "Category remove was unsuccessful";
@@ -280,7 +280,7 @@ void RequestExample::landmarkRemoveRequestHandler(QLandmarkAbstractRequest::Stat
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (lmRemoveRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Landmark removal succesfully completed";
+            qDebug() << "Landmark removal successfully completed";
         }
         else {
             qDebug() << "Landmark removal was unsuccessful";
@@ -532,7 +532,7 @@ void RequestExample::landmarkImportRequestHandler(QLandmarkAbstractRequest::Stat
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (lmImportRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Landmark import succesfully completed";
+            qDebug() << "Landmark import successfully completed";
         }
         else {
             qDebug() << "Landmark import was unsuccessful";
@@ -568,7 +568,7 @@ void RequestExample::landmarkExportRequestHandler(QLandmarkAbstractRequest::Stat
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (lmExportRequest->error() == QLandmarkManager::NoError) {
-            qDebug() << "Landmark export succesfully completed";
+            qDebug() << "Landmark export successfully completed";
         }
         else {
             qDebug() << "Landmark export was unsuccessful";

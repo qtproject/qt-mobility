@@ -102,6 +102,7 @@ QMAKE_EXEC=qmake
 LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
+PLATFORM_CONFIG=
 MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity"
 MOBILITY_MODULES_UNPARSED=
@@ -157,6 +158,9 @@ usage()
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+#    echo "-staticconfig <name>"
+#    echo "                    Avoids running of configuration tests. The default"
+#    echo "                    values are sourced from features/platformconfig/<name>.pri"
     echo
     
     rm -f "$CONFIG_IN"
@@ -273,6 +277,10 @@ while [ "$#" -gt 0 ]; do
             fi
             shift
             ;;
+        -staticconfig)
+            PLATFORM_CONFIG=$2
+            shift
+            ;;
         *)
             echo "Unknown option: $1"
             usage
@@ -286,6 +294,8 @@ checkostype()
     match="Darwin"
     if [ `uname -s` = "${match}" ]; then
         OS="darwin"
+        QMKSPEC="-spec macx-g++"
+        echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
     fi
 }
 
@@ -295,7 +305,7 @@ findframeworks()
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`$QMAKE_EXEC 1.pro 2>&1`
+    SOMETHING=`$QMAKE_EXEC -spec macx-g++ 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -313,7 +323,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`$QMAKE_EXEC 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
@@ -543,28 +553,42 @@ compileTest()
     cd "$CURRENT_PWD"
 }
 
+if [ -z "$PLATFORM_CONFIG" ]; then
 #compile tests
-compileTest QMF qmf
-compileTest NetworkManager networkmanager
-compileTest "CoreWLAN (MacOS 10.6)" corewlan
-compileTest Immersion immersion
-compileTest "Maemo ICD" maemo-icd
-compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
-compileTest "Maemo5 contacts dependencies" maemo5-contacts
-compileTest "Maemo5 organizer dependencies" maemo5-calendar
-compileTest "Bluez" bluez
-compileTest "Gstreamer Photography" gstreamer-photography
-compileTest "Blkid" blkid
-compileTest "Pulse Audio" pulseaudio
-compileTest "udev" udev
+    compileTest QMF qmf
+    compileTest NetworkManager networkmanager
+    compileTest "CoreWLAN (MacOS 10.6)" corewlan
+    compileTest Immersion immersion
+    compileTest "Maemo ICD" maemo-icd
+    compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+    compileTest "Maemo5 contacts dependencies" maemo5-contacts
+    compileTest "Maemo5 organizer dependencies" maemo5-calendar
+    compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
+    compileTest "Bluez" bluez
+    compileTest "Gstreamer Photography" gstreamer-photography
+    compileTest "Blkid" blkid
+    compileTest "Pulse Audio" pulseaudio
+    compileTest "udev" udev
 
-if [ "$LINUX_TARGET" = maemo6 ]; then
-    compileTest sensord sensord
+    if [ "$LINUX_TARGET" = maemo6 ]; then
+        compileTest sensord sensord
+    else
+        echo "sensord_enabled = no" >> "$CONFIG_IN"
+    fi
+
+    if [ "$LINUX_TARGET" = meego ]; then
+        compileTest connman connman
+    fi
+
 else
-    echo "sensord_enabled = no" >> "$CONFIG_IN"
-fi
-if [ "$LINUX_TARGET" = meego ]; then
-compileTest connman connman
+    echo "Skipping configure tests"
+    echo "Loading ... features/platformconfig/$PLATFORM_CONFIG.pri"
+    if [ ! -f "$relpath/features/platformconfig/$PLATFORM_CONFIG.pri" ]; then
+        echo "Invalid platform configuration $PLATFORM_CONFIG.pri"
+        exit 1;
+    else
+        echo "include(\$\${QT_MOBILITY_SOURCE_TREE}/features/platformconfig/$PLATFORM_CONFIG.pri)" >> "$CONFIG_IN"
+    fi
 fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"

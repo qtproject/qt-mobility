@@ -214,10 +214,11 @@ public:
     bool isWirelessKeyboardConnected()const { return data.wirelessConnected; }
     bool isKeyboardFlipOpen()const { return data.keyboardFlip; }
 
-    bool keypadLightOn()const { return data.keypadLight; }
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type)const { return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
     QUuid hostId()const { return data.hostId; }
-    QSystemDeviceInfo::LockType typeOfLock()const { return data.lockType; }
+
+    QSystemDeviceInfo::LockType lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 
@@ -338,14 +339,17 @@ public:
 
     int nominalCapacity() const { return data.nominalCapacity; }
     int remainingCapacityPercent() const { return data.remainingCapacityPercent; }
-    int remainingCapacitymAh() const { return data.remainingCapacitymAh; }
+    int remainingCapacity() const { return data.remainingCapacity; }
 
     int voltage() const { return data.voltage; }
     int remainingChargingTime() const { return data.remainingChargingTime; }
     int currentFlow() const { return data.currentFlow; }
+    int startCurrentMeasurement(int rate);
+
     int cumulativeCurrentFlow() const { return data.cumulativeCurrentFlow; }
     int remainingCapacityBars() const{ return data.remainingCapacityBars; }
     int maxBars() const { return data.maxBars; }
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit(){ return data.energyMeasurementUnit; }
 
 
     void setBatteryStatus(QSystemBatteryInfo::BatteryStatus v);
@@ -355,7 +359,7 @@ public:
 
     void  setNominalCapacity(int v);
     void  setRemainingCapacityPercent(int v);
-    void  setRemainingCapacitymAh(int v);
+    void  setRemainingCapacity(int v);
 
     void  setVoltage(int v);
     void  setRemainingChargingTime(int v);

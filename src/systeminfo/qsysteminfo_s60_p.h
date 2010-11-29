@@ -251,10 +251,10 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -266,7 +266,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 protected:
     //From QObject
@@ -456,18 +456,19 @@ public:
 
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
-    int remainingCapacitymAh() const;
+    int remainingCapacity() const;
 
     int voltage() const;
     int remainingChargingTime() const;
     int currentFlow() const;
-    int cumulativeCurrentFlow() const;
     int remainingCapacityBars() const;
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
+    qint32 startCurrentMeasurement(int rate);
 
 Q_SIGNALS:
-    void batteryLevelChanged(int level);
+    void batteryLevelChanged(qint32 level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
 

@@ -281,10 +281,10 @@ public:
     bool isKeyboardFlipOpen();//1.2
 
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -297,7 +297,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 private:
     bool btPowered;
@@ -342,36 +342,68 @@ public:
 
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
-    int remainingCapacitymAh() const;
+    int remainingCapacity() const;
 
     int voltage() const;
     int remainingChargingTime() const;
     int currentFlow() const;
-    int cumulativeCurrentFlow() const;
     int remainingCapacityBars() const;
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
+    int startCurrentMeasurement(int rate);
+
+    void getBatteryStatus();
+    static QSystemBatteryInfoPrivate *instance() {return batself;}
+
 
 Q_SIGNALS:
-    void batteryLevelChanged(int level);
+//    void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
-
     void chargingStateChanged(QSystemBatteryInfo::ChargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
     void nominalCapacityChanged(int);
     void remainingCapacityPercentChanged(int);
-    void remainingCapacitymAhChanged(int);
-    void batteryCurrentFlowChanged(int);
-    void voltageChanged(int);
+    void remainingCapacityChanged(int);
 
     void currentFlowChanged(int);
-    void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+    void voltageChanged(int);
+
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
+private:
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+   // QVariantMap pMap;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int batteryLevel() const ;
+
+    void setConnection();
+    static QSystemBatteryInfoPrivate *batself;
+#if defined(Q_OS_WINCE)
+    QPowerNotificationThread *powerNotificationThread;
+#endif
+
+public slots:
+    void notificationArrived();
+
 };
+
 
 QTM_END_NAMESPACE
 

@@ -99,11 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
-#if !defined(Q_WS_MAEMO_6)
-    GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#if defined(Q_WS_MAEMO_6)
+    QDir langDir("/etc/meego-supported-languages");
+    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
 #else
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
-#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString &locale, locales) {
@@ -111,6 +111,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     }
     languages << currentLanguage();
     languages.removeDuplicates();
+#endif
 
     return languages;
 }
@@ -119,7 +120,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/language");
-    return langItem.value().toString();
+    return langItem.value().toString().left(2);
 #else
     return QSystemInfoLinuxCommonPrivate::currentLanguage();
 #endif
@@ -226,8 +227,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
-    QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
-    QCoreApplication::processEvents();//this needs to be called otherwise this timer never fires
+    setupNetworkInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -387,7 +387,7 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
                                        "Phone.Sim",
                                        QDBusConnection::systemBus());
     if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
+        qDebug() << "interface not valid";
         return QString();
     }
     QDBusReply<QByteArray> reply = connectionInterface.call(QLatin1String("read_hplmn"));
@@ -610,7 +610,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                                        "Phone.Net",
                                        systemDbusConnection);
     if (!connectionInterface.isValid()) {
-        qWarning() << "setupNetworkInfo(): interface not valid";
+        qDebug() << "setupNetworkInfo(): interface not valid";
         return;
     }
     QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
@@ -622,28 +622,28 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         currentMCC.setNum(argList.at(MCC_INDEX).value<uint>());
         currentMNC.setNum(argList.at(MNC_INDEX).value<uint>());
     } else {
-        qWarning() << reply.errorMessage();
+        qDebug() << reply.errorMessage();
     }
     if (!systemDbusConnection.connect("com.nokia.phone.net",
                        "/com/nokia/phone/net",
                        "Phone.Net",
                        "registration_status_change",
                        this, SLOT(registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar)))) {
-        qWarning() << "unable to connect to registration_status_change";
+        qDebug() << "unable to connect to registration_status_change";
     }
     reply = connectionInterface.call(QLatin1String("get_signal_strength"));
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
         cellSignalStrength = argList.at(0).toInt();
     } else {
-        qWarning() << reply.errorMessage();
+        qDebug() << reply.errorMessage();
     }
     if (!systemDbusConnection.connect("com.nokia.phone.net",
                        "/com/nokia/phone/net",
                        "Phone.Net",
                        "signal_strength_change",
                        this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
-        qWarning() << "unable to connect to signal_strength_change";
+        qDebug() << "unable to connect to signal_strength_change";
     }
     uchar type = 0;
     QList<QVariant> argumentList;
@@ -654,14 +654,14 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         QList<QVariant> argList = reply.arguments();
         currentOperatorName = argList.at(0).toString();
     } else {
-        qWarning() << reply.errorMessage();
+        qDebug() << reply.errorMessage();
     }
     if (!systemDbusConnection.connect("com.nokia.phone.net",
                        "/com/nokia/phone/net",
                        "Phone.Net",
                        "operator_name_change",
                        this, SLOT(operatorNameChanged(uchar,QString,QString,uint,uint)))) {
-        qWarning() << "unable to connect to operator_name_change";
+        qDebug() << "unable to connect to operator_name_change";
     }
 
     reply = connectionInterface.call(QLatin1String("get_radio_access_technology"));
@@ -669,28 +669,28 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         QList<QVariant> argList = reply.arguments();
         radioAccessTechnology = argList.at(0).toInt();
     } else {
-        qWarning() << reply.errorMessage();
+        qDebug() << reply.errorMessage();
     }
     if (!systemDbusConnection.connect("com.nokia.phone.net",
                        "/com/nokia/phone/net",
                        "Phone.Net",
                        "radio_access_technology_change",
                        this, SLOT(networkModeChanged(int)))) {
-        qWarning() << "unable to connect to radio_access_technology_change";
+        qDebug() << "unable to connect to radio_access_technology_change";
     }
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
                               QLatin1String("charger_connected"),
                               this, SLOT(usbCableAction())) ) {
-        qWarning() << "unable to connect to usbCableAction (connect)";
+        qDebug() << "unable to connect to usbCableAction (connect)";
     }
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
                               QLatin1String("charger_disconnected"),
                               this, SLOT(usbCableAction())) ) {
-        qWarning() << "unable to connect to usbCableAction (disconnect)";
+        qDebug() << "unable to connect to usbCableAction (disconnect)";
     }
     #endif /* Maemo 5 */
 
@@ -699,21 +699,21 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               "com.nokia.icd",
                               QLatin1String("status_changed"),
                               this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
-        qWarning() << "unable to connect to icdStatusChanged";
+        qDebug() << "unable to connect to icdStatusChanged";
     }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceAdded"),
                               this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
-        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (1)";
+        qDebug() << "unable to connect to bluetoothNetworkStatusCheck (1)";
     }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceRemoved"),
                               this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
-        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (2)";
+        qDebug() << "unable to connect to bluetoothNetworkStatusCheck (2)";
     }
 #endif
 }
@@ -1071,7 +1071,7 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
-       qWarning() << __FUNCTION__ << map.at(i).toString();
+       qDebug() << __FUNCTION__ << map.at(i).toString();
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
@@ -1185,7 +1185,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
         return tkLockModeReply.value() == "locked";
     }
 
-    qWarning() << "mce interface not valid";
+    qDebug() << "mce interface not valid";
 #endif
     return false;
 }
@@ -1236,7 +1236,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
                                             "org.bluez.Adapter",
                                             "PropertyChanged",
                                             this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
-                     qWarning() << "bluez could not connect signal";
+                     qDebug() << "bluez could not connect signal";
                  }
              }
          }
@@ -1247,7 +1247,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
  {
-     //qWarning() << str << v.variant().toBool();
+     //qDebug() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
  }
 #endif
@@ -1256,7 +1256,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 void QSystemDeviceInfoPrivate::setupProfile()
 {
-    qDebug() << Q_FUNC_INFO;
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
     QDBusInterface mceConnectionInterface("com.nokia.mce",
@@ -1264,7 +1263,7 @@ void QSystemDeviceInfoPrivate::setupProfile()
                                       "com.nokia.mce.request",
                                       systemDbusConnection);
     if (!mceConnectionInterface.isValid()) {
-        qWarning() << "mce interface not valid";
+        qDebug() << "mce interface not valid";
         return;
     } else {
         QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
@@ -1276,7 +1275,7 @@ void QSystemDeviceInfoPrivate::setupProfile()
                            "com.nokia.mce.signal",
                            "sig_device_mode_ind",
                            this, SLOT(deviceModeChanged(QString)))) {
-        qWarning() << "unable to connect to sig_device_mode_ind";
+        qDebug() << "unable to connect to sig_device_mode_ind";
     }
 
 
@@ -1285,17 +1284,15 @@ void QSystemDeviceInfoPrivate::setupProfile()
                                       "com.nokia.profiled",
                                       QDBusConnection::sessionBus());
     if(!connectionInterface.isValid()) {
-       qWarning() << "profiled interface not valid";
+       qDebug() << "profiled interface not valid";
        return;
     }
 
     QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
     if (profileNameReply.isValid())
         profileName = profileNameReply.value();
-qDebug() << Q_FUNC_INFO << profileName;
 
     QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
-    qDebug() << ringingAlertTypeReply.value();
 
     if (ringingAlertTypeReply.isValid()) {
         silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
@@ -1319,7 +1316,7 @@ qDebug() << Q_FUNC_INFO << profileName;
                            "com.nokia.profiled",
                            "profile_changed",
                            this, SLOT(profileChanged(bool, bool, QString, QList<ProfileDataValue>)))) {
-        qWarning() << "unable to connect to profile_changed";
+        qDebug() << "unable to connect to profile_changed";
     }
 
 }
@@ -1334,7 +1331,6 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
         foreach (const ProfileDataValue &value, values) {
@@ -1351,6 +1347,46 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         if (changed)
             emit currentProfileChanged(currentProfile());
     }
+}
+
+QString QSystemDeviceInfoPrivate::model()
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/product");
+    return reply.value();
+#endif
+    return QString();
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+#if !defined(QT_NO_DBUS)
+#if defined(Q_WS_MAEMO_6)
+    QString dBusService = "com.nokia.SystemInfo";
+#else
+    /* Maemo 5 */
+    QString dBusService = "com.nokia.SystemInfo";
+#endif
+    QDBusInterface connectionInterface(dBusService,
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue","/component/productName");
+    return reply.value();
+#endif
+    return QString();
 }
 
 #endif

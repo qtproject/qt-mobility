@@ -56,6 +56,7 @@ void qt_registerSystemInfoTypes()
     qRegisterMetaTypeStreamOperators<QSystemDisplayInfoData>("QtMobility::QSystemDisplayInfoData");
 
     qRegisterMetaTypeStreamOperators<QSystemBatteryInfoData>("QtMobility::QSystemBatteryInfoData");
+
 }
 
 QDataStream &operator<<(QDataStream &out, const QSystemInfoData &s)
@@ -200,22 +201,25 @@ QDataStream &operator<<(QDataStream &out, const QSystemBatteryInfoData &s)
 {
     out << static_cast<qint32>(s.batteryStatus) << static_cast<qint32>(s.chargingState);
     out << static_cast<qint32>(s.chargerType);
-    out << s.nominalCapacity << s.remainingCapacityPercent << s.remainingCapacitymAh << s.voltage;
+    out << s.nominalCapacity << s.remainingCapacityPercent << s.remainingCapacity << s.voltage;
     out << s.remainingChargingTime << s.currentFlow << s.cumulativeCurrentFlow << s.remainingCapacityBars;
     out << s.maxBars;
+    out << s.energyMeasurementUnit;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, QSystemBatteryInfoData &s)
 {
-    qint32 batteryStatus, chargingState, chargerType;
-    in >> batteryStatus >> chargingState >> chargerType;
+    qint32 batteryStatus, chargingState, chargerType, energyMeasurementUnit;
+    in >> batteryStatus >> chargingState >> chargerType >> energyMeasurementUnit;
 
     s.batteryStatus = static_cast<QSystemBatteryInfo::BatteryStatus>(batteryStatus);
     s.chargingState = static_cast<QSystemBatteryInfo::ChargingState>(chargingState);
     s.chargerType = static_cast<QSystemBatteryInfo::ChargerType>(chargerType);
 
-    in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacitymAh;
+    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
+
+    in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacity;
     in >> s.voltage >> s.remainingChargingTime >> s.currentFlow;
     in >> s.cumulativeCurrentFlow >> s.remainingCapacityBars >> s.maxBars;
     return in;

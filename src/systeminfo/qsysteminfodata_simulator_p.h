@@ -169,10 +169,11 @@ struct QSystemBatteryInfoData
     QSystemBatteryInfo::BatteryStatus batteryStatus;
     QSystemBatteryInfo::ChargingState chargingState;
     QSystemBatteryInfo::ChargerType chargerType;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit;
 
     int nominalCapacity;
     int remainingCapacityPercent;
-    int remainingCapacitymAh;
+    int remainingCapacity;
 
     int voltage;
     int remainingChargingTime;
@@ -181,6 +182,7 @@ struct QSystemBatteryInfoData
     int cumulativeCurrentFlow;
     int remainingCapacityBars;
     int maxBars;
+
 };
 
 QTM_END_NAMESPACE

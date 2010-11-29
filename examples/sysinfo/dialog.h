@@ -64,16 +64,22 @@ private:
     void setupStorage();
     void setupNetwork();
     void setupSaver();
+    void setupBattery();
 
     QSystemScreenSaver *saver;
     QSystemInfo *systemInfo;
     QSystemDeviceInfo *di;
     QSystemNetworkInfo *ni;
     QSystemStorageInfo *sti;
+    QSystemBatteryInfo *bi;
     void updateStorage();
-    QSystemDeviceInfo::BatteryStatus currentBatStat;
+
+    QSystemBatteryInfo::BatteryStatus currentBatStat;
     QSystemDeviceInfo::PowerState currentPowerState;
-    
+
+    QSystemBatteryInfo::ChargerType currentChargerType;
+    QSystemBatteryInfo::ChargingState currentChargingState;
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -84,7 +90,7 @@ private slots:
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
-    void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
+    void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);
     void updateSimStatus();
     void updateProfile();
@@ -97,6 +103,11 @@ private slots:
 
     void storageChanged(bool added,const QString &vol);
     void bluetoothChanged(bool);
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void startCurrentPushed();
 
 };
 

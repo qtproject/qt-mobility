@@ -45,7 +45,10 @@ win32:!simulator {
             -lGdi32 \
             -lIphlpapi \
             -lOleaut32 \
-            -lDxva2
+            -lDxva2 \
+            -lPowrProf \
+            -lSetupapi
+
     }
 
     win32-g++ : {
@@ -60,6 +63,7 @@ win32:!simulator {
 
 unix:!simulator {
     QT += gui
+    PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
     !maemo5:!maemo6:linux-*: {
 

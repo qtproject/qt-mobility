@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ITEMLOCALID_H
-#define MAEMO6ITEMLOCALID_H
+#ifndef QPULSEHELPER_H
+#define QPULSEHELPER_H
 
 //
 //  W A R N I N G
@@ -53,61 +53,21 @@
 // We mean it.
 //
 
-#include "qorganizeritemenginelocalid.h"
+#include "qaudiodeviceinfo.h"
+#include <qaudioformat.h>
+#include <pulse/pulseaudio.h>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Maemo6ItemLocalId : public QOrganizerItemEngineLocalId
+namespace QPulseAudioInternal
 {
-public:
-    Maemo6ItemLocalId() {}
-    Maemo6ItemLocalId(const QString& id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id == static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const
-    {
-        return m_id < static_cast<const Maemo6ItemLocalId*>(other)->m_id;
-    }
-    uint engineLocalIdType() const
-    {
-        static uint t = qHash("maemo6");
-        return t;
-    }
-    QOrganizerItemEngineLocalId* clone() const
-    {
-        return new Maemo6ItemLocalId(m_id);
-    }
-#ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg)
-    {
-        return dbg << m_id;
-    }
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out)
-    {
-        return out << m_id;
-    }
-    QDataStream& dataStreamIn(QDataStream& in)
-    {
-        in >> m_id;
-        return in;
-    }
-#endif
-    uint hash() const
-    {
-        return qHash(m_id);
-    }
+pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format);
+QString stateToQString(pa_stream_state_t state);
+QString stateToQString(pa_context_state_t state);
+QString sampleFormatToQString(pa_sample_format format);
+QAudioFormat sampleSpecToAudioFormat(pa_sample_spec spec);
+}
 
-    QString toString() const
-    {
-        return m_id;
-    }
-
-private:
-    QString m_id;
-};
+QT_END_NAMESPACE
 
 #endif

@@ -84,10 +84,14 @@ void tst_QLandmarkManagerPlugins::testDummy()
 {
 #ifndef Q_OS_SYMBIAN
     QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyStatic"));
+    QLandmarkManager lm1("LandmarkManagerFactoryDummyStatic");
+    //Note the tests below is intended to "fail"
+    //the dummy plugin is mocked to return a LockedError. we are just testing if the plugin loads
+    QVERIFY(lm1.error() == QLandmarkManager::LockedError);
+    QVERIFY(lm1.managerName() == "");
 #endif
     QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyDynamic"));
 #if !defined (Q_OS_SYMBIAN) && !defined(Q_OS_WINCE) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
-
     QVERIFY(QLandmarkManager::availableManagers().contains("com.nokia.qt.landmarks.engines.sqlite"));
     QLandmarkManager lm("com.nokia.qt.landmarks.engines.sqlite");
     QVERIFY(lm.managerName() == "com.nokia.qt.landmarks.engines.sqlite");

@@ -146,7 +146,7 @@ static const symbol_t ChargingState_lut[] =
     SYM(QSystemBatteryInfo::NotCharging),
     SYM(QSystemBatteryInfo::Charging),
     SYM(QSystemBatteryInfo::BatteryVeryLow),
-    SYM(QSystemBatteryInfo::ChargingFailed),
+    SYM(QSystemBatteryInfo::ChargingError),
 };
 
 static const symbol_t ChargerType_lut[] =
@@ -215,7 +215,7 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
-  X(deviceinfo.typeOfLock());
+  X(deviceinfo.lockStatus());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -351,7 +351,7 @@ static void test_systemnetworkinfo(void)
     qDebug() << "  networkinfo.networkStatus() ->" << status;
 
     QString network = networkinfo.networkName(mode);
-    qDebug() << "  networkinfo.networkName() ->" << network;
+    qDebug() << "  networkinfo.netwoerkName() ->" << network;
 
     int sigstr = networkinfo.networkSignalStrength(mode);
     qDebug() << "  networkinfo.networkSignalStrength() ->" << sigstr;
@@ -375,21 +375,21 @@ static void test_systemscreensaver(void)
 
 static void test_systembatteryinfo(void)
 {
-    QSystemBatteryInfo batteryinfo;
-
-    X(batteryinfo.nominalCapacity());
-    X(batteryinfo.remainingCapacityPercent());
-    X(batteryinfo.remainingCapacitymAh());
-
-    X(batteryinfo.voltage());
-    X(batteryinfo.remainingChargingTime());
-    X(batteryinfo.currentFlow());
-    X(batteryinfo.cumulativeCurrentFlow());
-
-    X(batteryinfo.remainingCapacityBars());
-    X(batteryinfo.maxBars());
-    X(batteryinfo.batteryStatus());
+    QSystemBatteryInfo batInfo;
+    X(batInfo.chargerType());
+    X(batInfo.chargingState() );
+    X(batInfo.nominalCapacity());
+    X(batInfo.remainingCapacityPercent());
+    X(batInfo.remainingCapacity());
+    X(batInfo.voltage());
+    X(batInfo.remainingChargingTime());
+    X(batInfo.currentFlow());
+    X(batInfo.remainingCapacityBars());
+    X(batInfo.maxBars());
+    X(batInfo.batteryStatus());
+    X(batInfo.energyMeasurementUnit());
 }
+
 
 struct dummy_t
 {

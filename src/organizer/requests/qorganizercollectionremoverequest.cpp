@@ -67,6 +67,7 @@ QOrganizerCollectionRemoveRequest::QOrganizerCollectionRemoveRequest(QObject* pa
 void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionId& collectionId)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_collectionIds.clear();
     d->m_collectionIds.append(collectionId);
 }
@@ -75,6 +76,7 @@ void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollecti
 void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_collectionIds = collectionIds;
 }
 
@@ -82,6 +84,7 @@ void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerC
 QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_collectionIds;
 }
 
@@ -89,6 +92,7 @@ QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds()
 QMap<int, QOrganizerManager::Error> QOrganizerCollectionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

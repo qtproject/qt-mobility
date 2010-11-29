@@ -82,39 +82,9 @@
 //#endif
 
 #endif
+#include "qsysteminfo_dbus_p.h"
 
 QTM_BEGIN_NAMESPACE
-static bool halAvailable()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
-        if (reply.isValid() && reply.value()) {
-            return reply.value();
-        }
-    }
-#endif
-    return false;
-}
-static bool ofonoAvailable()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
-        if (reply.isValid() && reply.value()) {
-            return reply.value();
-        } else {
-         qDebug() << "ofono not available" << reply.value();
-        }
-    }
-#endif
-
-    return false;
-}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
@@ -940,6 +910,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
 {
 
 }

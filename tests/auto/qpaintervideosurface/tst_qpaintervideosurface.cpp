@@ -224,13 +224,22 @@ void tst_QPainterVideoSurface::supportedFormat_data()
             << QAbstractVideoBuffer::NoHandle
             << QVideoFrame::Format_RGB24
             << QSize(1024, 768)
+#ifndef QT_OPENGL_ES
             << true
             << true;
+#else
+            << false
+            << false;
+#endif
     QTest::newRow("rgb24 -1024x-768")
             << QAbstractVideoBuffer::NoHandle
             << QVideoFrame::Format_RGB24
             << QSize(-1024, -768)
+#ifndef QT_OPENGL_ES
             << true
+#else
+            << false
+#endif
             << false;
     QTest::newRow("rgb565 0x0")
             << QAbstractVideoBuffer::NoHandle
@@ -377,6 +386,7 @@ void tst_QPainterVideoSurface::present_data()
             << int(sizeof(argb32ImageData))
             << 8;
 
+#ifndef QT_OPENGL_ES
     QTest::newRow("rgb32 -> rgb24")
             << QVideoFrame::Format_RGB32
             << QSize(2, 2)
@@ -388,6 +398,7 @@ void tst_QPainterVideoSurface::present_data()
             << static_cast<const uchar *>(rgb24ImageData)
             << int(sizeof(rgb24ImageData))
             << 8;
+#endif
 
     QTest::newRow("rgb32 -> rgb565")
             << QVideoFrame::Format_RGB32
@@ -401,6 +412,7 @@ void tst_QPainterVideoSurface::present_data()
             << int(sizeof(rgb565ImageData))
             << 4;
 
+#ifndef QT_OPENGL_ES
     QTest::newRow("rgb24 -> rgb565")
             << QVideoFrame::Format_RGB24
             << QSize(2, 2)
@@ -412,6 +424,7 @@ void tst_QPainterVideoSurface::present_data()
             << static_cast<const uchar *>(rgb565ImageData)
             << int(sizeof(rgb565ImageData))
             << 4;
+#endif
 }
 
 void tst_QPainterVideoSurface::present()
@@ -761,14 +774,23 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(1024, 768)
+#ifndef QT_OPENGL_ES
                 << true
                 << true;
+#else
+                << false
+                << false;
+#endif
         QTest::newRow((type.second + "rgb24 -1024x-768").constData())
                 << type.first
                 << QAbstractVideoBuffer::NoHandle
                 << QVideoFrame::Format_RGB24
                 << QSize(-1024, -768)
+#ifndef QT_OPENGL_ES
                 << true
+#else
+                << false
+#endif
                 << false;
 #ifndef Q_WS_MAC
         QTest::newRow((type.second + "YUV420P 640x480").constData())

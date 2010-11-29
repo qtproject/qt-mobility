@@ -78,6 +78,7 @@ void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
         tiledMapDataPrivate->addObjectInfo(this);
+        graphicsItem->setZValue(mapObject()->zValue());
         graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
     }
@@ -159,6 +160,9 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
         qreal ypole)
 {
     QPolygonF points;
+
+    if (path.isEmpty())
+        return points;
 
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = tiledMapData->coordinateToWorldReferencePosition(lastCoord);

@@ -145,7 +145,7 @@ private slots:
     void tst_keypadLightOn();
     void tst_backLightOn();
     void tst_hostId();
-    void tst_typeOfLock();
+    void tst_lockStatus();
 
 
     void tst_batteryLevelChanged_data();
@@ -382,10 +382,14 @@ void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
 }
 
 void tst_QSystemDeviceInfo::tst_keypadLightOn()
+
 {
     QSystemDeviceInfo di;
-    bool on = di.keypadLightOn();
+    bool on = di.keypadLightOn(QSystemDeviceInfo::PrimaryKeypad);
     QVERIFY(on || !on);
+    on = di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
+    QVERIFY(on || !on);
+
 }
 
 void tst_QSystemDeviceInfo::tst_backLightOn()
@@ -402,10 +406,10 @@ void tst_QSystemDeviceInfo::tst_hostId()
     QVERIFY(id.isNull()|| !id.isNull());
 }
 
-void tst_QSystemDeviceInfo::tst_typeOfLock()
+void tst_QSystemDeviceInfo::tst_lockStatus()
 {
     QSystemDeviceInfo di;
-    QSystemDeviceInfo::LockType lock = di.typeOfLock();
+    QSystemDeviceInfo::LockType lock = di.lockStatus();
     if (di.isDeviceLocked()) {
         QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
