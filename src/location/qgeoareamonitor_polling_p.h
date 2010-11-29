@@ -81,6 +81,8 @@ public :
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
 
+    inline bool isValid() { if (location) return true; return false; }
+
 private slots:
     void positionUpdated(const QGeoPositionInfo &info);
 
