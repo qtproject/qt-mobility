@@ -53,6 +53,7 @@ class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(DisplayOrientation)
+    Q_ENUMS(BacklightState)
 
 public:
 
@@ -67,6 +68,13 @@ public:
         InvertedPortrait
     };
 
+    enum BacklightState {
+        BacklightUnknown = -1,
+        BacklightOff,
+        backlightStateDimmed,
+        backlightStateFull
+    };
+
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
@@ -77,7 +85,7 @@ public:
     int physicalHeight(int screen);
     int physicalWidth(int screen);
 
-    bool backLightOn(); //1.2
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
 };
 
