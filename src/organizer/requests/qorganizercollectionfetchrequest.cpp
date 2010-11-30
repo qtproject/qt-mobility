@@ -63,6 +63,12 @@ QOrganizerCollectionFetchRequest::QOrganizerCollectionFetchRequest(QObject* pare
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerCollectionFetchRequest::~QOrganizerCollectionFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Returns the collections retrieved by this request */
 QList<QOrganizerCollection> QOrganizerCollectionFetchRequest::collections() const
 {
