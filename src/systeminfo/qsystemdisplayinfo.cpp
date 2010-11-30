@@ -52,7 +52,7 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
 
 // display
 /*!
-    \enum QSystemInfo::DisplayOrientation
+    \enum QSystemDisplayInfo::DisplayOrientation
     This enum describes the orientation of the default window.
 
     \value Unknown                  Unknown orientation or error.
@@ -62,6 +62,15 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \value InvertedPortrait         Portrait that is inverted.
   */
 
+/*!
+  \enum QSystemDisplayInfo::BacklightState
+  This enum describes the state of the Backlight.
+
+  \value BacklightUnknown          Error, no, or unknown Backlight state.
+  \value BacklightOff              Backlight is turned off.
+  \value BacklightStateDimmed      Backlight has been dimmed.
+  \value BacklightStateFull        Backlight is on full.
+  */
  /*!
    \class QSystemDisplayInfo
    \ingroup systeminfo
@@ -76,6 +85,8 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
 {
+    qRegisterMetaType<QSystemDisplayInfo::DisplayOrientation>("QSystemDisplayInfo::DisplayOrientation");
+    qRegisterMetaType<QSystemDisplayInfo::BacklightState>("QSystemDisplayInfo::BacklightState");
 }
 
 /*!
@@ -178,11 +189,11 @@ int QSystemDisplayInfo::physicalWidth(int screen)
 }
 
 /*!
-    Returns whether the display backlighting is on or not.
+    Returns whether the QSystemDisplayInfo::BacklightState for the screen \a screen.
 */
-bool QSystemDisplayInfo::backLightOn()
+QSystemDisplayInfo::BacklightState QSystemDisplayInfo::backlightStatus(int screen)
 {
-    return displayInfoPrivate()->backLightOn();
+    return displayInfoPrivate()->backlightStatus(screen);
 }
 
 

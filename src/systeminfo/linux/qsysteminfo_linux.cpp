@@ -506,9 +506,10 @@ Q_UNUSED(screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)

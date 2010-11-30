@@ -1749,9 +1749,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
-bool QSystemDisplayInfoLinuxCommonPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightUnknown;
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
@@ -2838,11 +2839,6 @@ void QSystemDeviceInfoLinuxCommonPrivate::keyboardConnected(bool connect)
 }
 
 bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
-{
-    return false;
-}
-
-bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
 {
     return false;
 }
