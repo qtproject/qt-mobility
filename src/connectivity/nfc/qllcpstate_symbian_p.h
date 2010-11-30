@@ -212,6 +212,7 @@ public://from base class
     qint64 WriteDatagram(const char *data, qint64 size,QNearFieldTarget *target, quint8 port);
     qint64 ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget **target = 0, quint8 *port = 0);
     bool WaitForBytesWritten(int msecs);
+    bool WaitForReadyRead(int msecs);
     
 private:
     QLLCPBind(QLlcpSocketPrivate* aSocket);

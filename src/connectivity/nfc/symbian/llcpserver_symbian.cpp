@@ -43,11 +43,12 @@
 #include "llcpsockettype2_symbian.h"
 #include "../qllcpserver_symbian_p.h"
 #include "nearfieldutility_symbian.h"
-#include <e32debug.h>
-#include <e32test.h>
-#include <iostream>
-//#define LOG(a) iLog->Printf(a)
-#define LOG(a) iCallback.log(QtMobility::QNFCNdefUtility::FromDesC8ToQString(a))
+
+#include <QDebug>
+
+#define LOG1 qDebug() <<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
+#define LOG qDebug() <<__FUNCTION__<<": "<<__LINE__;
+
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -57,8 +58,10 @@ const TInt KInterestingSsap = 35;
 */
 CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
     {
+    LOG
     CLlcpServer* self = CLlcpServer::NewLC(aCallback);
     CleanupStack::Pop( self );
+    LOG
     return self;
     }
 
@@ -90,7 +93,6 @@ void CLlcpServer::ConstructL()
     {
     User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
-    iLog = new(ELeave) RTest(_L("Test"));
     }
 
 /*!
@@ -98,12 +100,13 @@ void CLlcpServer::ConstructL()
 */
 CLlcpServer::~CLlcpServer()
     {
+    LOG
     delete iLlcp;
     iLlcpSocketArray.ResetAndDestroy();
     iLlcpSocketArray.Close();
     iServiceName.Close();
     iNfcServer.Close();
-    delete iLog;
+    LOG
     }
 
 /*!
@@ -118,12 +121,14 @@ CLlcpServer::~CLlcpServer()
 CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     {
     // take first element
+    LOG
     CLlcpSocketType2 *llcpSocket = NULL;
     if (iLlcpSocketArray.Count() > 0)
         {
         llcpSocket = iLlcpSocketArray[0];
         iLlcpSocketArray.Remove(0);
         }
+    LOG
     return llcpSocket;
     }
 
@@ -142,30 +147,23 @@ const TDesC8&  CLlcpServer::serviceUri() const
 */
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
-    RDebug::Print(_L("CLlcpServer::Listen begin"));
-    LOG(_L8("CLlcpServer::Listen begin"));
-    std::cout << "CLlcpServer::Listen begin" << endl;
+    LOG
     TInt error = KErrNone;
 
     // TODO
     // will updated to
     // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
-    iServiceName = aServiceName;
-    LOG(_L8("CLlcpServer::Listen before TRAP"));
-    std::cout << "CLlcpServer::Listen before TRAP" << endl;
-    if (iLlcp == NULL)
+    iServiceName.Zero();
+    if (iServiceName.Create(aServiceName.Size()) < 0)
         {
-        LOG(_L8("iLlcp == NULL"));
-        std::cout << "iLlcp == NULL" << endl;
+        return EFalse;
         }
+    iServiceName.Append(aServiceName);
+
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
-    RDebug::Print(_L("CLlcpServer::Listen after TRAP"));
-    LOG(_L8("CLlcpServer::Listen after TRAP"));
-    std::cout << "CLlcpServer::Listen after TRAP" << endl;
+
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
-    RDebug::Print(_L("CLlcpServer::Listen end"));
-    LOG(_L8("CLlcpServer::Listen end"));
-    std::cout << "CLlcpServer::Listen end" << endl;
+    LOG
     return iSocketListening;
     }
 
@@ -190,6 +188,7 @@ TBool CLlcpServer::isListening() const
 */
 void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
     {
+    LOG
     if (aConnection == NULL)
         return;
 
@@ -214,6 +213,6 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         TRAP_IGNORE(
                 QT_TRYCATCH_LEAVING(iCallback.invokeError()));
         }
-
+    LOG
     }
 //EOF
