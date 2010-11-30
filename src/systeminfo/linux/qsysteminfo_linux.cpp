@@ -509,7 +509,7 @@ Q_UNUSED(screen)
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightUnknown;
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
