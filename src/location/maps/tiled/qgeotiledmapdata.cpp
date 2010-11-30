@@ -341,7 +341,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     Q_D(QGeoTiledMapData);
 
     QPixmap oldImage(windowSize().toSize());
-    if (d->zoomLevel != -1.0) {
+    if (!oldImage.isNull()) {
         // grab the old image
         QPainter painter1(&oldImage);
         d->paintMap(&painter1, 0);
@@ -368,7 +368,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->updateScreenRect();
 
-    if (oldZoomLevel == -1.0) {
+    if (oldImage.isNull()) {
         d->updateMapImage();
         emit zoomLevelChanged(d->zoomLevel);
         return;

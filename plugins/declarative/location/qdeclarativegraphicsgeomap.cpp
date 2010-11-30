@@ -148,11 +148,22 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
                                                plugin_->parameterMap());
 
-    // check for error
+    if (serviceProvider_->error() != QGeoServiceProvider::NoError) {
+        qWarning() << serviceProvider_->errorString();
+        delete serviceProvider_;
+        serviceProvider_ = 0;
+        return;
+    }
 
     mappingManager_ = serviceProvider_->mappingManager();
-
-    // check for error
+    if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+        qWarning() << serviceProvider_->errorString();
+        delete serviceProvider_;
+        serviceProvider_ = 0;
+        delete mappingManager_;
+        mappingManager_ = 0;
+        return;
+    }
 
     mapData_ = mappingManager_->createMapData();
     mapData_->init();

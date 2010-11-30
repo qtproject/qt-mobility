@@ -222,7 +222,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
     qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
     qRegisterMetaType<QSystemDeviceInfo::keypadType>("QSystemDeviceInfo::keypadType");
-    }
+}
 
 /*!
   Destroys the QSystemDeviceInfo object.
@@ -555,16 +555,6 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::keypadType type)
     return deviceInfoPrivate()->keypadLightOn(type);
 }
 
-/*!
-  \property QSystemDeviceInfo::backLightOn
-  \brief backlight on.
-
-  Returns true if the display backlight is on, otherwise false;
-  */
-bool QSystemDeviceInfo::backLightOn()
-{
-    return deviceInfoPrivate()->backLightOn();
-}
 
 /*!
   \property QSystemDeviceInfo::hostId
