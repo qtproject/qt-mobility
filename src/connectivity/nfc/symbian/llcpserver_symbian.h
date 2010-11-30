@@ -111,7 +111,6 @@ private:
    RBuf8 iServiceName;
 
    QtMobility::QLlcpServerPrivate& iCallback;
-   RTest *iLog;
    };
 
 #endif /* LLCPSERVER_SYMBIAN_H_ */
