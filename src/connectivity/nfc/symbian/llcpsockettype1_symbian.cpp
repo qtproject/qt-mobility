@@ -649,7 +649,7 @@ CLlcpReceiverType1::~CLlcpReceiverType1()
 TInt CLlcpReceiverType1::ReceiveDataFromBuf(TDes8& aData)
     {
     if (iReceiveBuf.Size() == 0)
-        return;
+        return 0;
 
     TInt requiredLength = aData.Length();
     TInt bufLength =  iReceiveBuf.Length();
