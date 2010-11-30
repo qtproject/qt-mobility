@@ -72,7 +72,7 @@ public:
         BacklightUnknown = -1,
         BacklightOff,
         backlightStateDimmed,
-        backlightStateFull
+        backlightStateOn
     };
 
     static int displayBrightness(int screen);
