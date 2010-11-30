@@ -42,31 +42,54 @@
 
 #include "qsystemalignedtimer.h"
 
-//QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
-//    QObject(parent)
-//{
-//}
 
-void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
-{
+/*!
+  \class QSystemAlignedTimer
+  \ingroup systeminfo
+  \inmodule QtSystemInfo
+  \brief The QSystemAlignedTimer class provides a service for applications to synchronize their activity.
 
-}
+  Applications that must do periodic activity - after being in sleep mode a certain period - do
+  that at the same time. For example send network "alive" messages at the same time (i.e. turn the
+  wireless radio on at the same time).
 
+  The service is not only for network-aware applications, it is for use by any applications
+  that need to periodic wake-ups.
+
+*/
+
+/*!
+   \fn QSystemBatteryInfo::QSystemAlignedTimer(QObject *parent)
+   Constructs a QSystemAlignedTimer object with the given \a parent.
+  */
 QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent) :
     QObject(parent),d(parent)
 {
 }
+
+/*!
+
+*/
 
 QTime QSystemAlignedTimer::requestTimer(QTime minInterval, QTime maxInterval)
 {
 
 }
 
+/*!
+
+*/
 QTime QSystemAlignedTimer::requestTimer(ushort optimalInterval, ushort timerWindow)
 {
 
 }
 
+
+/*!\internal
+This function is called when the client sconnects to signals.
+
+\sa connectNotify()
+*/
 
 void QSystemAlignedTimer::connectNotify(const char *signal)
 {
@@ -74,14 +97,57 @@ void QSystemAlignedTimer::connectNotify(const char *signal)
             hearbeat())))) {
         connect(d,SIGNAL(hearbeat()),this,SIGNAL(hearbeat()),Qt::UniqueConnection);
 
-//,Qt::UniqueConnection
     }
 }
+/*!
+ Called if the application woke up by itself.
+ This method should be called if the application  has woken up by some other
+ method than via system heartbeat to prevent unnecessary wakeup signals.
+
+True if success, false if error
+  */
+bool QSystemAlignedTimer::wokeUp()
+{
+    return false;
+}
+
+
+/*!
+ \internal
+ This function is called when the client disconnects to signals.
+
+ \sa disconnectNotify()
+*/
 
 void QSystemAlignedTimer::disconnectNotify(const char *signal)
+{
+    Q_UNUSED(signal)
+}
+
+
+QSystemAlignedTimer::WaitMode QSystemAlignedTimer::waitMode()
+{
+
+}
+
+bool QSystemAlignedTimer::setWaitMode(QSystemAlignedTimer::WaitMode)
 {
 
 }
 
 
+QSystemAlignedTimer::SignalNeed QSystemAlignedTimer::signalNeeded()
+{
 
+}
+
+bool QSystemAlignedTimer::setSignalNeeded(QSystemAlignedTimer::SignalNeed)
+{
+
+}
+
+
+void QSystemAlignedTimerPrivate::timerEvent(QTimerEvent *)
+{
+
+}

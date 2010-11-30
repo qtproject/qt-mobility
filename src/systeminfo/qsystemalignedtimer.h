@@ -46,6 +46,7 @@
 #include <QObject>
 #include <QTime>
 #include "qmobilityglobal.h"
+#include "qsystemalignedtimer.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -55,22 +56,44 @@ class QSystemAlignedTimerPrivate;
 class QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QTime requestTimer READ requestTimer CONSTANT)
+    Q_PROPERTY(bool wokeUp READ wokeUp CONSTANT)
+    Q_PROPERTY(WaitMode waitMode READ waitMode WRITE setWaitMode)
+    Q_PROPERTY(SignalNeed signalNeeded READ signalNeeded WRITE setSignalNeeded)
+
 public:
+    enum SignalNeed {
+        NoSignalNeeded = 0,
+        SignalNeeded
+    };
+
+    enum WaitMode {
+        DoNotWaitHeartbeat = 0,
+        WaitHeartbeat
+    };
+
+    Q_ENUMS(SignalNeed)
+    Q_ENUMS(WaitMode)
+
     explicit QSystemAlignedTimer(QObject *parent = 0);
 
     QTime requestTimer(QTime minInterval, QTime maxInterval);
-
     QTime requestTimer(ushort optimalInterval, ushort timerWindow);
+
+    bool wokeUp();
+
+    QSystemAlignedTimer::WaitMode waitMode();
+    bool setWaitMode(QSystemAlignedTimer::WaitMode waitMode);
+
+    QSystemAlignedTimer::SignalNeed signalNeeded();
+    bool setSignalNeeded(QSystemAlignedTimer::SignalNeed signalNeed);
 
 Q_SIGNALS:
     void hearbeat();
 
-public slots:
-
 private:
-    QTimer *alignedTimer;
     QSystemAlignedTimerPrivate *d;
-    QList<QObject *> requestedTimers;
 
 protected:
     void connectNotify(const char *signal);
@@ -84,10 +107,9 @@ class QSystemAlignedTimerPrivate : public QObject
     Q_OBJECT
 public:
     explicit QSystemAlignedTimerPrivate(QObject *parent = 0){};
-Q_SIGNALS:
-    void hearbeat();
 
 private:
+    QTimer *alignedTimer;
      void timerEvent(QTimerEvent *);
 };
 
