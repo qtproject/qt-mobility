@@ -51,31 +51,85 @@ class QDeclarativeContactUrl : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
-    Q_PROPERTY(QString subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+    Q_PROPERTY(QVariant subType READ subType WRITE setSubType NOTIFY fieldsChanged)
 
-    Q_ENUMS(FieldType);
-    Q_CLASSINFO("DefaultProperty", "url")
+    Q_ENUMS(FieldType)
+    Q_ENUMS(UrlSubType)
 public:
     enum FieldType {
         Url = 0,
         SubType
     };
 
+    enum UrlSubType {
+        Unknown = 0,
+        HomePage,
+        Blog,
+        Favourite
+    };
+
     QDeclarativeContactUrl(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactUrl());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
         return QDeclarativeContactDetail::Url;
     }
-
-    void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Url:
+            return QContactUrl::FieldUrl;
+        case SubType:
+            return QContactUrl::FieldSubType;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setUrl(const QString& v)
+    {
+        if (!readOnly() && v != url()) {
+            detail().setValue(QContactUrl::FieldUrl, v);
+        }
+    }
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 
-    void setSubType(const QString& subType) {detail().setValue(QContactUrl::FieldSubType, subType);}
-    QString subType() const {return detail().value(QContactUrl::FieldSubType);}
+    void setSubType(const QVariant& v)
+    {
+        if (!readOnly()) {
+            QString st;
+            if (v.type() != QVariant::String) {
+                switch (v.toInt()) {
+                case HomePage:
+                    st = QLatin1String(QContactUrl::SubTypeHomePage);
+                    break;
+                case Blog:
+                    st = QLatin1String(QContactUrl::SubTypeBlog);
+                    break;
+                case Favourite:
+                    st = QLatin1String(QContactUrl::SubTypeFavourite);
+                    break;
+                default:break;
+                }
+            } else {
+                st = v.toString();
+            }
+
+            if (st != detail().value(QContactUrl::FieldSubType)) {
+                detail().setValue(QContactUrl::FieldSubType, st);
+                emit fieldsChanged();
+            }
+        }
+    }
+    QVariant subType() const
+    {
+        return detail().value(QContactUrl::FieldSubType);
+    }
 signals:
     void fieldsChanged();
 };

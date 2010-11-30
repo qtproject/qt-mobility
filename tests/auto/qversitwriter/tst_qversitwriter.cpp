@@ -100,38 +100,47 @@ void tst_QVersitWriter::testDefaultCodec()
     QVERIFY(mWriter->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
 
-void tst_QVersitWriter::testFold()
+void tst_QVersitWriter::testWritingVersions()
 {
-    // 87 characters long
-    QString longString(QLatin1String(
-        "4567890123456789012345678901234567890123456789012345678901234567890123456"
-        "234567890123456789012345678901234567890123456789012345678901234567890123456"
-        "234567890123456789012"));
-    QByteArray expected(
-            "BEGIN:VCARD\r\n"
-            "VERSION:2.1\r\n"
-            "FN:4567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
-            " 234567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
-            " 234567890123456789012\r\n"
-            "END:VCARD\r\n");
-    QVersitDocument document;
-    document.setComponentType(QLatin1String("VCARD"));
-    QVersitProperty property;
-    property.setName(QLatin1String("FN"));
-    property.setValue(longString);
-    document.addProperty(property);
-    document.setType(QVersitDocument::VCard21Type);
-    QList<QVersitDocument> list;
-    list.append(document);
     mWriter->setDevice(mOutputDevice);
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
-    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
-    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
-    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QString::fromAscii("John"));
+    document.addProperty(property);
+
+    QByteArray vCard30(
+        "BEGIN:VCARD\r\n"
+        "VERSION:3.0\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+    QByteArray vCard21(
+        "BEGIN:VCARD\r\n"
+        "VERSION:2.1\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+
+    // Given no type or componentType, it should be vCard 3.0
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
+
+    // document type should override the guess
+    document.setType(QVersitDocument::VCard21Type);
+    mOutputDevice->buffer().clear();
     mOutputDevice->seek(0);
-    QByteArray result(mOutputDevice->readAll());
-    QCOMPARE(result, expected);
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard21);
+
+    // param to startWriting should override document type
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY(mWriter->startWriting(document, QVersitDocument::VCard30Type));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
 }
 
 void tst_QVersitWriter::testWriting21()
@@ -271,7 +280,7 @@ void tst_QVersitWriter::testByteArrayOutput()
     property.setName(QString(QLatin1String("FN")));
     property.setValue(QLatin1String("John"));
     document.addProperty(property);
-    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->startWriting(document), QString::number(mWriter->error()).toAscii().data());
     QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(output, vCard30);
 }
@@ -283,11 +292,23 @@ void tst_QVersitWriter::testWritingDocument()
 
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->startWriting(document), QString::number(mWriter->error()).toAscii().data());
     QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
+    if (result!=expected) qDebug() << result << expected;
+    QCOMPARE(result, expected);
 
+    // try it again in another codec
+    QTextCodec* utf16(QTextCodec::codecForName("UTF-16"));
+    mWriter->setDefaultCodec(utf16);
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY2(mWriter->startWriting(document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
+    mOutputDevice->seek(0);
+    result = mOutputDevice->readAll();
+    expected = utf16->fromUnicode(QString::fromAscii(expected));
     if (result!=expected) qDebug() << result << expected;
     QCOMPARE(result, expected);
 }
@@ -376,6 +397,65 @@ void tst_QVersitWriter::testWritingDocument_data()
                         "SUMMARY:Bastille Day Party\r\n"
                         "END:VEVENT\r\n"
                         "END:VCALENDAR\r\n");
+    }
+
+    {
+        QString longString(QLatin1String(
+            "4567890123456789012345678901234567890123456789012345678901234567890123456"
+            "234567890123456789012345678901234567890123456789012345678901234567890123456"
+            "234567890123456789012"));
+        QVersitDocument document(QVersitDocument::VCard21Type);
+        document.setComponentType(QLatin1String("VCARD"));
+        QVersitProperty property;
+        property.setName(QLatin1String("FN"));
+        property.setValue(longString);
+        document.addProperty(property);
+        QByteArray expected21(
+                "BEGIN:VCARD\r\n"
+                "VERSION:2.1\r\n"
+                "FN:4567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+                " 234567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+                " 234567890123456789012\r\n"
+                "END:VCARD\r\n");
+        QTest::newRow("folding 2.1") << document << expected21;
+
+        document.setType(QVersitDocument::VCard30Type);
+        QByteArray expected30(
+                "BEGIN:VCARD\r\n"
+                "VERSION:3.0\r\n"
+                "FN:4567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+                " 234567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+                " 234567890123456789012\r\n"
+                "END:VCARD\r\n");
+        QTest::newRow("folding 3.0") << document << expected30;
+
+        document.setType(QVersitDocument::VCard21Type);
+        property.setValue(longString.toAscii());
+        property.setValueType(QVersitProperty::BinaryType);
+        document.removeProperties("FN");
+        document.addProperty(property);
+        QByteArray expected21b(
+                "BEGIN:VCARD\r\n"
+                "VERSION:2.1\r\n"
+                "FN;ENCODING=BASE64:\r\n"
+                " NDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODk\r\n"
+                " wMTIzNDU2Nzg5MDEyMzQ1NjIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MD\r\n"
+                " EyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1NjIzNDU2Nzg5MDEyMzQ1Njc4OTAxM\r\n"
+                " g==\r\n"
+                "\r\n"
+                "END:VCARD\r\n");
+        QTest::newRow("folding 2.1") << document << expected21b;
+
+        document.setType(QVersitDocument::VCard30Type);
+        QByteArray expected30b(
+                "BEGIN:VCARD\r\n"
+                "VERSION:3.0\r\n"
+                "FN;ENCODING=b:NDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OT\r\n"
+                " AxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1NjIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwM\r\n"
+                " TIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1NjIzNDU2Nzg5MDEy\r\n"
+                " MzQ1Njc4OTAxMg==\r\n"
+                "END:VCARD\r\n");
+        QTest::newRow("folding 3.0") << document << expected30b;
     }
 }
 

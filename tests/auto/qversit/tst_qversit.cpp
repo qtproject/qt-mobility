@@ -108,8 +108,12 @@ class tst_QVersit : public QObject
 private slots: // Tests
     void testImportVCardFiles();
     void testImportVCardFiles_data();
-    void testExportImportVCard();
-    void testExportImportVCard_data();
+    void testBackupVCard();
+    void testBackupVCard_data();
+    void testPreserveVCard();
+    void testPreserveVCard_data();
+    void testPreserveVCardWithBackup();
+    void testPreserveVCardWithBackup_data();
     void testImportICalFiles();
     void testImportICalFiles_data();
 
@@ -133,12 +137,14 @@ void tst_QVersit::testImportVCardFiles()
     QVERIFY(reader.startReading());
     QVERIFY(reader.waitForFinished());
     QList<QVersitDocument> documents = reader.results();
+    QVERIFY(!documents.isEmpty());
     QCOMPARE(reader.error(), QVersitReader::NoError);
     QVersitContactImporter importer;
     MyQVersitResourceHandler resourceHandler;
     importer.setResourceHandler(&resourceHandler);
     QVERIFY(importer.importDocuments(documents));
     QList<QContact> contacts = importer.contacts();
+    QVERIFY(!contacts.isEmpty());
 
     if (expectedContacts.size() > 0) {
         QCOMPARE(contacts.size(), expectedContacts.size());
@@ -275,9 +281,13 @@ void tst_QVersit::testImportVCardFiles_data()
         QTest::newRow("test1.vcf") << QString::fromAscii("test1.vcf")
             << QByteArray("UTF-8") << (QList<QContact>() << contact);
     }
+
+    // A file with bad wrapping (no preceding space on a line continuation)
+    QTest::newRow("badwrap.vcf") << QString::fromAscii("badwrap.vcf")
+        << QByteArray("UTF-8") << QList<QContact>();
 }
 
-void tst_QVersit::testExportImportVCard()
+void tst_QVersit::testBackupVCard()
 {
     // Test that using the backup profile, a contact, when exported and imported again, is unaltered.
     QFETCH(QContact, contact);
@@ -312,7 +322,7 @@ void tst_QVersit::testExportImportVCard()
 
 enum Color { RED, GREEN, BLUE };
 
-void tst_QVersit::testExportImportVCard_data()
+void tst_QVersit::testBackupVCard_data()
 {
     QTest::addColumn<QContact>("contact");
 
@@ -402,6 +412,160 @@ void tst_QVersit::testExportImportVCard_data()
     customDetail.setValue(QLatin1String("CustomField"), RED);
     contact.saveDetail(&customDetail);
     QTest::newRow("enum field") << contact;
+}
+
+/*! Returns a list of properties from \a document that have the name \a propertyName */
+QList<QVersitProperty> findPropertiesByName(
+        const QVersitDocument &document, const QString &propertyName)
+{
+    QList<QVersitProperty> result;
+    foreach (const QVersitProperty& property, document.properties()) {
+        if (property.name() == propertyName)
+            result << property;
+    }
+    return result;
+}
+
+/*! Returns true iff supers.size() == subs.size() and for every i, supers[i] has a superset of the
+ * properties of subs[i]. */
+bool areSuperdocuments(const QList<QVersitDocument>& supers, const QList<QVersitDocument>& subs) {
+    if (supers.size() != subs.size())
+        return false;
+
+    for (int i = 0; i < supers.size(); i++) {
+        const QVersitDocument& super = supers[i];
+        const QVersitDocument& sub = subs[i];
+
+        if (sub.type() != super.type())
+            return false;
+        if (sub.componentType() != super.componentType())
+            return false;
+
+        foreach (const QVersitProperty& property, sub.properties()) {
+            QList<QVersitProperty> matches(findPropertiesByName(super, property.name()));
+            bool foundMatch = false;
+            foreach (const QVersitProperty& candidate, matches) {
+                if (candidate.valueType() == property.valueType()
+                        && candidate.variantValue() == property.variantValue()) {
+                    foundMatch = true;
+                }
+            }
+            if (!foundMatch) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void tst_QVersit::testPreserveVCard()
+{
+    // Test that using the preserver profile, a document, when imported and exported again, is unaltered.
+    QFETCH(QByteArray, documentBytes);
+
+    QVersitReader reader(documentBytes);
+    reader.startReading();
+    reader.waitForFinished();
+    QList<QVersitDocument> parsedDocuments = reader.results();
+
+    QVersitDocument::VersitType versitType = parsedDocuments.first().type();
+    QVersitContactImporter importer("Preserve");
+    QVERIFY(importer.importDocuments(parsedDocuments));
+    QList<QContact> contacts = importer.contacts();
+
+    QVersitContactExporter exporter("Preserve");
+    QVERIFY(exporter.exportContacts(contacts, versitType));
+    QList<QVersitDocument> documents = exporter.documents();
+
+    QByteArray writtenBytes;
+    QVersitWriter writer(&writtenBytes);
+    writer.startWriting(documents);
+    writer.waitForFinished();
+
+    if (!areSuperdocuments(documents, parsedDocuments)) {
+        qDebug() << "Contacts:" << contacts;
+        qDebug() << "Actual:" << writtenBytes;
+        qDebug() << "Expected:" << documentBytes;
+        QVERIFY2(false, "Actual vCards aren't supersets of Expected vCards");
+    }
+}
+
+void tst_QVersit::testPreserveVCard_data()
+{
+    QTest::addColumn<QByteArray>("documentBytes");
+
+    QTest::newRow("basic") << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:2.1\r\n"
+            "FN:John\r\n"
+            "END:VCARD\r\n");
+
+    QTest::newRow("custom property") << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:2.1\r\n"
+            "FN:John\r\n"
+            "X-SOMETHING:Nothing\r\n"
+            "END:VCARD\r\n");
+}
+
+void tst_QVersit::testPreserveVCardWithBackup()
+{
+    // Test that the preserver and backup profile work well together
+    QFETCH(QByteArray, documentBytes);
+
+    // Read them
+    QVersitReader reader(documentBytes);
+    reader.startReading();
+    reader.waitForFinished();
+    QList<QVersitDocument> parsedDocuments = reader.results();
+
+    // Import them
+    QVersitDocument::VersitType versitType = parsedDocuments.first().type();
+    QVersitContactImporter importer(QStringList()
+            << "Preserve"
+            << QVersitContactHandlerFactory::ProfileBackup);
+    QVERIFY(importer.importDocuments(parsedDocuments));
+    QList<QContact> contacts = importer.contacts();
+
+    // Make a little change
+    QVERIFY(contacts.size() >= 1);
+    QContactDetail customDetail("CustomDetail");
+    customDetail.setValue(QLatin1String("CustomField"), QLatin1String("value"));
+    contacts[0].saveDetail(&customDetail);
+
+    // Export them
+    QVersitContactExporter exporter(QStringList()
+            << QVersitContactHandlerFactory::ProfileBackup
+            << "Preserve");
+    QVERIFY(exporter.exportContacts(contacts, versitType));
+    QList<QVersitDocument> documents = exporter.documents();
+
+    QByteArray writtenBytes;
+    QVersitWriter writer(&writtenBytes);
+    writer.startWriting(documents);
+    writer.waitForFinished();
+
+    if (!areSuperdocuments(documents, parsedDocuments)) {
+        qDebug() << "Contacts:" << contacts;
+        qDebug() << "Actual:" << writtenBytes;
+        qDebug() << "Expected:" << documentBytes;
+        QVERIFY2(false, "Actual vCards aren't supersets of Expected vCards");
+    }
+
+    // Import them (again)
+    QVERIFY(importer.importDocuments(documents));
+    QList<QContact> contacts2 = importer.contacts();
+
+    if (contacts != contacts2) {
+        qDebug() << "Versit documents:" << writtenBytes;
+        qDebug() << "Actual:" << contacts2;
+        qDebug() << "Expected:" << contacts;
+        QVERIFY(contacts == contacts2);
+    }
+}
+
+void tst_QVersit::testPreserveVCardWithBackup_data() {
+    testPreserveVCard_data();
 }
 
 void tst_QVersit::testImportICalFiles()

@@ -10,7 +10,7 @@ function changeToday() {
 
     yearList.currentIndex = year - yearModel.start;
     monthList.currentIndex = month;
-    dayList.positionViewAtIndex(day, Center);
+    dayList.positionViewAtIndex(day, ListView.Center);
     dayList.currentIndex = day;
 }
 function extendYearModel(init) {

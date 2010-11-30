@@ -232,7 +232,7 @@ qreal QGeoRoute::distance() const
 }
 
 /*!
-    Sets the travel mode for this route.
+    Sets the travel mode for this route to \a mode.
 
     This should be one of the travel modes returned by request().travelModes().
 */
@@ -255,7 +255,7 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
     Sets the geometric shape of the route to \a path.
 
     The coordinates in \a path should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -266,7 +266,7 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
     Returns the geometric shape of the route.
 
     The coordinates should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    would be traversed by someone traveling along this segment of the route.
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {
@@ -285,7 +285,6 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
       id(other.id),
       request(other.request),
       bounds(other.bounds),
-      //routeSegments(other.routeSegments),
       travelTime(other.travelTime),
       distance(other.distance),
       travelMode(other.travelMode),
@@ -313,7 +312,6 @@ bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
     return ((id == other.id)
             && (request == other.request)
             && (bounds == other.bounds)
-            //&& (routeSegments == other.routeSegments)
             && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (travelMode == other.travelMode)

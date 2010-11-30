@@ -44,53 +44,99 @@
 
 #include "qdeclarativecontactfilter_p.h"
 #include "qcontactdetailfilter.h"
+#include "qdeclarativecontactdetail_p.h"
+#include <QDeclarativeParserStatus>
 
-class QDeclarativeContactDetailFilter : public QDeclarativeContactFilter
+class QDeclarativeContactDetailFilter : public QDeclarativeContactFilter, public QDeclarativeParserStatus
 {
     Q_OBJECT
-    Q_PROPERTY(QString detail READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
-    Q_PROPERTY(QString field READ detailFieldName WRITE setDetailFieldName NOTIFY valueChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
+    Q_PROPERTY(QVariant detail READ detail WRITE setDetail NOTIFY valueChanged())
+    Q_PROPERTY(QVariant field READ field WRITE setField NOTIFY valueChanged())
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged())
+    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged())
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
 
     QDeclarativeContactDetailFilter(QObject* parent = 0)
-        :QDeclarativeContactFilter(parent)
+        :QDeclarativeContactFilter(parent),
+          m_componentCompleted(false)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
-    void setDetailDefinitionName(const QString& definition)
+    //from QDeclarativeParserStatus
+    void classBegin() {}
+    void componentComplete()
     {
-        d.setDetailDefinitionName(definition, d.detailFieldName());
-    }
-
-    QString detailDefinitionName() const
-    {
-        return d.detailDefinitionName();
-    }
-
-    void setDetailFieldName(QString& field)
-    {
-        d.setDetailDefinitionName(d.detailDefinitionName(), field);
+        setDetailDefinitionName();
+        m_componentCompleted = true;
     }
 
-    QString detailFieldName() const
+    void setDetailDefinitionName()
     {
-        return d.detailFieldName();
+        QString ddn;
+        if (m_detail.type() != QVariant::String) {
+            ddn = QDeclarativeContactDetail::definitionName(static_cast<QDeclarativeContactDetail::ContactDetailType>(m_detail.toInt()));
+        } else {
+            ddn = m_detail.toString();
+        }
+
+        QString dfn;
+        if (m_field.type() != QVariant::String) {
+           QDeclarativeContactDetail::ContactDetailType dt = static_cast<QDeclarativeContactDetail::ContactDetailType>(QDeclarativeContactDetail::detailType(ddn));
+           dfn = QDeclarativeContactDetail::fieldName(dt, m_field.toInt());
+        } else {
+            dfn = m_field.toString();
+        }
+        d.setDetailDefinitionName(ddn, dfn);
+        m_detail = ddn;
+        m_field = dfn;
     }
+
+    void setDetail(const QVariant& detailType)
+    {
+        if (detailType != m_detail || m_componentCompleted) {
+            m_detail = detailType;
+            if (m_componentCompleted)
+                setDetailDefinitionName();
+            emit filterChanged();
+        }
+    }
+
+    QVariant detail() const
+    {
+        return m_detail;
+    }
+
+    void setField(const QVariant& fieldType)
+    {
+        if (fieldType != m_field || m_componentCompleted) {
+            m_field = fieldType;
+            if (m_componentCompleted)
+                setDetailDefinitionName();
+            emit filterChanged();
+        }
+    }
+
+    QVariant field() const
+    {
+        return m_field;
+    }
+
 
     QDeclarativeContactFilter::MatchFlags matchFlags() const
     {
-        QDeclarativeContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)d.matchFlags();
-        return matchFlags;
+        QDeclarativeContactFilter::MatchFlags flags;
+        flags = ~flags & (int)d.matchFlags();
+        return flags;
     }
     void setMatchFlags(QDeclarativeContactFilter::MatchFlags flags)
     {
-        QContactFilter::MatchFlags matchFlags;
-        matchFlags &= 0xFFFFFFFF;
-        matchFlags &= (int)flags;
-        d.setMatchFlags(matchFlags);
+        QContactFilter::MatchFlags newFlags;
+        newFlags = ~newFlags & (int)flags;
+        if (newFlags != d.matchFlags()) {
+            d.setMatchFlags(newFlags);
+            emit valueChanged();
+        }
     }
 
     QVariant value() const
@@ -99,7 +145,10 @@ public:
     }
     void setValue(const QVariant& value)
     {
-        d.setValue(value);
+        if (value != d.value()) {
+            d.setValue(value);
+            emit valueChanged();
+        }
     }
 
     QContactFilter filter() const
@@ -111,6 +160,9 @@ signals:
 
 
 private:
+    bool m_componentCompleted;
+    QVariant m_field;
+    QVariant m_detail;
     QContactDetailFilter d;
 };
 

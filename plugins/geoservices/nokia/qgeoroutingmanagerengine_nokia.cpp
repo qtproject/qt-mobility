@@ -55,22 +55,33 @@
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
-        m_host("stg.loupe.lbsp.navteq.com")
+        m_host("prd.lbsp.navteq.com"),
+        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    QList<QString> keys = parameters.keys();
-
-    if (keys.contains("routing.proxy")) {
+    if (parameters.contains("routing.proxy")) {
         QString proxy = parameters.value("routing.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if (keys.contains("routing.host")) {
+    if (parameters.contains("routing.host")) {
         QString host = parameters.value("routing.host").toString();
         if (!host.isEmpty())
             m_host = host;
+    }
+
+    if (parameters.contains("routing.referer")) {
+        m_referer = parameters.value("routing.referer").toString();
+    }
+
+    if (parameters.contains("routing.token")) {
+        m_token = parameters.value("routing.token").toString();
+    }
+    else if (parameters.contains("token")) {
+        m_token = parameters.value("token").toString();
     }
 
     setSupportsRouteUpdates(true);
@@ -218,15 +229,17 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/routing/6.2/calculateroute.xml";
+    requestString += "/routing/6.2/calculateroute.xml?referer=" + m_referer;
+
+    if (!m_token.isNull())
+        requestString += "&token=" + m_token;
 
     int numWaypoints = request.waypoints().size();
     if (numWaypoints < 2)
         return "";
 
     for (int i = 0;i < numWaypoints;++i) {
-        requestString += i == 0 ? "?" : "&";
-        requestString += "waypoint";
+        requestString += "&waypoint";
         requestString += QString::number(i);
         requestString += "=";
         requestString += trimDouble(request.waypoints().at(i).latitude());

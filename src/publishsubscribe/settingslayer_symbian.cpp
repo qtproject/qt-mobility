@@ -44,7 +44,7 @@
 #include "xqsettingskey_p.h"
 #include "xqpublishandsubscribeutils.h"
 
-#ifdef __WINS__
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
     #include "pathmapper_symbian.cpp"
     #include "qcrmlparser.cpp"
 #else
@@ -394,6 +394,8 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
             path.append(QLatin1Char('/'));
 
         sh = symbianSettingsHandle(item(Handle(sh), path));
+        if (!sh)
+        	return false;
         createdHandle = true;
     }
 

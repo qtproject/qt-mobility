@@ -276,6 +276,9 @@ QUPowerInterface::QUPowerInterface(/*const QString &dbusPathName,*/QObject *pare
                                  UPOWER_SERVICE,
                                  QDBusConnection::systemBus(), parent)
 {
+    propertiesInterface = new QDBusInterface(UPOWER_SERVICE, UPOWER_PATH,
+                                               "org.freedesktop.DBus.Properties",
+                                               QDBusConnection::systemBus());
 }
 
 QUPowerInterface::~QUPowerInterface()
@@ -292,18 +295,15 @@ QList<QDBusObjectPath> QUPowerInterface::enumerateDevices()
 
 QVariantMap QUPowerInterface::getProperties()
 {
-    QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetAll"));
+    QDBusReply<QVariantMap> reply = propertiesInterface->call(QLatin1String("GetAll"),QLatin1String("org.freedesktop.UPower"));
     return reply.value();
 }
 
 QVariant QUPowerInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QDBusInterface *iface = new QDBusInterface(UPOWER_SERVICE, UPOWER_PATH,
-                                               "org.freedesktop.DBus.Properties",
-                                               QDBusConnection::systemBus());
-    if (iface && iface->isValid()) {
-        QDBusReply<QVariant> r = iface->call("Get", UPOWER_PATH, property);
+    if (propertiesInterface && propertiesInterface->isValid()) {
+        QDBusReply<QVariant> r = propertiesInterface->call("Get", UPOWER_PATH, property);
         var = r.value();
     }
     return var;
@@ -348,7 +348,10 @@ QUPowerDeviceInterface::QUPowerDeviceInterface(const QString &dbusPathName,QObje
                                  QDBusConnection::systemBus(), parent)
 {
     path = dbusPathName;
-
+    propertiesInterface = new QDBusInterface(UPOWER_SERVICE, path,
+                                               "org.freedesktop.DBus.Properties",
+                                               QDBusConnection::systemBus());
+    pMap = getProperties();
 }
 
 QUPowerDeviceInterface::~QUPowerDeviceInterface()
@@ -358,7 +361,8 @@ QUPowerDeviceInterface::~QUPowerDeviceInterface()
 
 QVariantMap QUPowerDeviceInterface::getProperties()
 {
-    QDBusReply<QVariantMap > reply = this->call(QLatin1String("Get"));
+
+    QDBusReply<QVariantMap> reply = propertiesInterface->call(QLatin1String("GetAll"),QLatin1String("org.freedesktop.UPower.Device"));
     if(!reply.isValid()) {
         qDebug() << reply.error();
     }
@@ -368,11 +372,9 @@ QVariantMap QUPowerDeviceInterface::getProperties()
 QVariant QUPowerDeviceInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QDBusInterface *iface = new QDBusInterface(UPOWER_SERVICE, path,
-                                               "org.freedesktop.DBus.Properties",
-                                               QDBusConnection::systemBus());
-    if (iface && iface->isValid()) {
-        QDBusReply<QVariant> r = iface->call("Get", path, property);
+
+    if (propertiesInterface && propertiesInterface->isValid()) {
+        QDBusReply<QVariant> r = propertiesInterface->call("Get", path, property);
         var = r.value();
     }
     return var;
@@ -486,7 +488,6 @@ bool QUPowerDeviceInterface::recallNotice()
 QString QUPowerDeviceInterface::recallVendor()
 {
     return this->getProperty("RecallVendor").toString();
-
 }
 
 QString QUPowerDeviceInterface::recallUrl()
@@ -497,12 +498,22 @@ QString QUPowerDeviceInterface::recallUrl()
 
 void QUPowerDeviceInterface::connectNotify(const char *signal)
 {
+
     if (QLatin1String(signal) == SIGNAL(changed())) {
-        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
+        if (!connection().connect(QLatin1String(UPOWER_SERVICE),
                                path,
                                UPOWER_DEVICE_SERVICE,
                                QLatin1String("Changed"),
                                this,SIGNAL(changed()))) {
+            qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+    if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
+        if (!connection().connect(QLatin1String(UPOWER_SERVICE),
+                               path,
+                               UPOWER_DEVICE_SERVICE,
+                               QLatin1String("Changed"),
+                               this,SIGNAL(propChanged()))) {
             qDebug() << "Error"<<connection().lastError().message();
         }
     }
@@ -517,6 +528,20 @@ void QUPowerDeviceInterface::disconnectNotify(const char *signal)
                                QLatin1String("Changed"),
                                this,SIGNAL(changed()))) {
             qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+}
+
+void QUPowerDeviceInterface::propChanged()
+{
+    QVariantMap map = getProperties();
+
+    QMapIterator<QString,QVariant> i(map);
+    while(i.hasNext()) {
+        i.next();
+        if(pMap.value(i.key()) != i.value()) {
+            pMap[i.key()] = i.value();
+            Q_EMIT propertyChanged(i.key(),QVariant::fromValue(i.value()));
         }
     }
 }

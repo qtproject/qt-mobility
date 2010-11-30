@@ -45,6 +45,7 @@
 
 QT_BEGIN_NAMESPACE
 
+
 class QDeclarativeOpenMetaObjectPrivate
 {
 public:
@@ -111,6 +112,11 @@ public:
     inline QObjectData *data() { return d_ptr.data(); }
 };
 
+/*!
+    \class QDeclarativeOpenMetaObject
+    \internal
+    \brief open meta object for dynamic properties
+*/
 QDeclarativeOpenMetaObject::QDeclarativeOpenMetaObject(QObject *obj)
 : d(new QDeclarativeOpenMetaObjectPrivate(this))
 {

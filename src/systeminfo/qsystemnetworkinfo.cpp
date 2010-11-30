@@ -53,13 +53,9 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
 /*!
    \class QSystemNetworkInfo
    \ingroup systeminfo
-   \inmodule QtSystemInfo
 
-   \brief The QSystemNetworkInfo class provides access to network information.
+  \inmodule QtSystemInfo
 
-    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-
-        Constructs a QSystemNetworkInfo object with the given \a parent.
 */
 
 
@@ -90,10 +86,6 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
-            \value GprsMode                GPRS mode
-            \value EdgeMode                Edge mode
-            \value HspaMode                HSPA mode
-            \value  LteMode                 LTE mode
           */
 
 
@@ -135,6 +127,9 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
           This signal is emitted whenever the network mode changes, specified by \a mode.
         */
 
+/*!
+    Constructs a QSystemNetworkInfo with the given \a parent.
+*/
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())
 {
@@ -166,7 +161,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-   return netInfoPrivate()->networkSignalStrength(mode);
+    QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
+    if(info  == QSystemNetworkInfo::UndefinedStatus
+            || info == QSystemNetworkInfo::NoNetworkAvailable) {
+        return 0;
+    }
+    return netInfoPrivate()->networkSignalStrength(mode);
 }
 
 /*!

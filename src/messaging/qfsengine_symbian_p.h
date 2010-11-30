@@ -57,6 +57,7 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
+#include "maemohelpers_p.h"
 #include <emailinterfacefactory.h>
 #include <memailclientapi.h>
 #include <memailmessagesearch.h>
@@ -75,6 +76,7 @@ using namespace EmailInterface;
 QTM_BEGIN_NAMESPACE
 
 class CFSMessagesFindOperation;
+class CFSContentFetchOperation;
 class QMessageId;
 class QMessageAccount;
 
@@ -93,18 +95,19 @@ struct FSMessageQueryInfo
     int currentFilterListIndex;
     QMessageIdList ids;
     int count;
+    bool canceled;    
 };
 
 struct FSSearchOperation
 {
     MEmailMailbox* m_mailbox;
-    MEmailMessageSearchAsync* m_search;
+    TEmailSortCriteria m_emailSortCriteria;
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver
 #else
-class CFSEngine : public QObject, public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxSyncObserver
 #endif
 {
     Q_OBJECT
@@ -149,7 +152,12 @@ public:
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
     
-    void setMtmAccountIdList(QMessageAccountIdList accountList);
+    void retrieveMessageContentHeaders(QMessage& message) const;
+    QString attachmentTextContent(long int messageId, TMessageContentId attachmentContentId, const QByteArray &charset) const;
+    QByteArray attachmentContent(long int messageId, TMessageContentId attachmentContentId) const;
+    QString bodyContent(long int messageId, TMessageContentId bodyContentId) const;
+    
+    void cancel(QMessageServicePrivate& privateService);
     
 public: // from MMailboxSyncObserver
     void MailboxSynchronisedL(TInt aResult);
@@ -164,17 +172,16 @@ public:
     void MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId);       
 #endif
     
-public: // From MEmailFetchObserver
-    virtual void DataFetchedL(const TInt aResult);
-
 public slots:
     void cleanupFSBackend();
+    void contentFetched(void* service, bool success);
 
 private:
 
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
+    void doNextQuery() const;
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccountsL() const;
@@ -185,17 +192,19 @@ private:
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessageFolderIdList allFolders() const;
     QMessageFolder folderL(const QMessageFolderId &id) const;
-    bool fsFolderL(const QMessageFolderId& id, MEmailMailbox* mailbox, MEmailFolder* folder) const;
+    bool fsFolderL(const QMessageFolderId& id, MEmailMailbox*& mailbox, MEmailFolder*& folder) const;
     TFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    QMessage CreateQMessageL(MEmailMessage* aMessage) const; 
-    void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage) const;
-    void addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
+    void CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMessage) const;
+    void addMessagePartsToQMessage(QMessage& message, MEmailMessage& mEmailMessage) const;
+    void addContentToQMessage(QMessage& message, const MEmailMessageContent& content, TMessageId messageId) const;
+    void addAttachmentToQMessage(QMessage& message, QMessageContentContainer& attachment) const;
+    QString bodyContentFromMessageContent(const MEmailMessageContent& messageContent) const;
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
-    QMessage messageL(const QMessageId& id) const;
+    bool message(QMessage* message, const QMessageId& id) const;
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
     void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
     void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;
@@ -212,8 +221,18 @@ private:
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void exportUpdatesL(const QMessageAccountId &id);
     
-    void retrieveTotalBodyL(MEmailMessageContent* aContent);
-    void retrieveAttachmentsL(MEmailMessage* aMessage);
+    MEmailAttachment* attachmentById(TMessageContentId attachmentId) const;
+    MEmailTextContent* textContentById(TMessageContentId contentId, MEmailMessageContent* parentContent = NULL) const;
+    void deleteContentFetchOperation(QMessageServicePrivate& service);
+
+    static TMessageId fsMessageIdFromQMessageId(QMessageId messageId);
+    static QMessageId qMessageIdFromFsMessageId(TMessageId messageId);
+    static TFolderId fsFolderIdFromQMessageFolderId(QMessageFolderId folderId);
+    static QMessageFolderId qMessageFolderIdFromFsFolderId(TFolderId folderId);
+    static TMailboxId fsMailboxIdFromQMessageAccountId(QMessageAccountId accountId);
+    static QMessageAccountId qMessageAccountIdFromFsMailboxId(TMailboxId mailboxId);
+
+    static void cleanup();
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
@@ -222,23 +241,25 @@ private:
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
+    friend class CFSContentFetchOperation;
     
 private:
-
     CEmailInterfaceFactory* m_factory;
     mutable MEmailInterface* m_ifPtr;
     mutable MEmailClientApi* m_clientApi;
     mutable QHash<QString, QMessageAccount> m_accounts;
+    mutable QHash<TEntryId, QMessage::StandardFolder> m_folderTypes;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
-    QMessageAccountIdList m_mtmAccountList;
+    mutable QMap<QMessageServicePrivate*, CFSContentFetchOperation*> m_fetchOperations;
+    mutable bool m_messageQueryActive;
     TMailboxId m_mailboxId;
     QMessageStorePrivate* ipMessageStorePrivate;
     bool iListenForNotifications;
     QMessageManager::NotificationFilterId m_filterId;
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
-    RMailboxPtrArray m_mailboxes;
+    mutable QMap<TEntryId, MEmailMailbox*> m_mailboxes;
     REmailAttachmentArray m_attachments;
     QMessageServicePrivate* m_privateService;
     friend class QMessageService;
@@ -248,10 +269,33 @@ private:
     mutable QMessageFolderSortOrder m_currentFolderOrdering;
     mutable QMessageSortOrder m_currentMessageOrdering;
 
-
+    mutable bool m_cleanedup;
 };
 
-class CFSMessagesFindOperation : public QObject, MEmailSearchObserver
+class CFSContentFetchOperation : public QObject, MEmailFetchObserver
+{
+    Q_OBJECT
+
+public:
+    CFSContentFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
+                             MEmailMessageContent* content, MEmailMessage* message = NULL);
+    ~CFSContentFetchOperation();
+
+    bool fetch();
+
+protected: // From MEmailFetchObserver
+    void DataFetchedL(const TInt aResult);
+
+private:
+    CFSEngine& m_parentEngine;
+    QMessageServicePrivate& m_service;
+    MEmailMessageContent* m_content;
+    MEmailMessage* m_message;
+
+    friend class CFSEngine;
+};
+
+class CFSMessagesFindOperation : public QObject
 {
     Q_OBJECT
     
@@ -259,26 +303,23 @@ public:
     CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId); 
     ~CFSMessagesFindOperation();
 
-    void filterAndOrderMessages(const QMessageFilter& filter,
-                                const QMessageSortOrder& sortOrder,
-                                const QString body = QString(),
-                                QMessageDataComparator::MatchFlags matchFlags = 0);
-    void filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                const QMessageSortOrder& sortOrder,
-                                const QString body = QString(),
-                                QMessageDataComparator::MatchFlags matchFlags = 0);
+    int filterAndOrderMessages(const QMessageFilter& filter,
+                               const QMessageSortOrder& sortOrder,
+                               const QString body = QString(),
+                               QMessageDataComparator::MatchFlags matchFlags = 0);
+    int filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
+                               const QMessageSortOrder& sortOrder,
+                               const QString body = QString(),
+                               QMessageDataComparator::MatchFlags matchFlags = 0);
 
     enum Field {None = 0, Sender, Recipients, Subject, Body};
 
     
 public slots:
+    void searchAccountFolders();
     void SearchCompleted();
 
 private:
-    // from memailmessagesearch
-    virtual void HandleResultL(MEmailMessage* aMessage);
-    virtual void SearchCompletedL();
-
     void filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
@@ -286,18 +327,22 @@ private:
     
     void getAllMessagesL(TEmailSortCriteria& sortCriteria);
     void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
-    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
+    void getAccountSpecificMessagesFromAccountFoldersL(FSSearchOperation& searchOperation);
+    void getFolderSpecificMessagesL(MEmailFolder& folder, TEmailSortCriteria sortCriteria);
     
-    bool fillsSearchKeyCriteria(QMessageId& messageId);
+    bool filterBody(QMessageId& messageId);
 
+    // TODO: Remove this function as soon as CMessageIterator bug is fixed
+    static unsigned int pluginReferenceCount(MEmailFolder* folder);
+    // TODO: Remove this function as soon as CMessageIterator bug is fixed
+    static void setPluginReferenceCount(MEmailFolder* folder, unsigned int referenceCount);
     
 private: // Data
     CFSEngine& m_owner;
     
     int m_numberOfHandledFilters;
     int m_operationId;
-    int m_activeSearchCount;
-    //TMsvSelectionOrdering iOrdering;
+    bool m_asynchronousSearchStarted;
     bool m_resultCorrectlyOrdered;
     QMessageIdList m_idList;
     QMessageFilterPrivate::SortedMessageFilterList m_filterList;
@@ -306,15 +351,40 @@ private: // Data
     MEmailClientApi* m_clientApi;
     
     CEmailInterfaceFactory* m_factory; 
-    MEmailInterface* m_interfacePtr; 
+    MEmailInterface* m_interfacePtr;
     bool m_receiveNewMessages;
     QList<FSSearchOperation> m_searchOperations;
     
-    Field m_searchField;
+    QString m_body;
     QMessageDataComparator::MatchFlags m_matchFlags;
-    QString m_searchKey;
 };
 
+// TODO: Remove this class definition as soon as CMessageIterator bug is fixed
+class TPluginData
+{
+public:
+    TPluginData(TUid uid) : iUid(uid) {}
+    void* iPlugin;
+    const TUid iUid;
+};
+
+// TODO: Remove this class definition as soon as CMessageIterator bug is fixed
+class CPluginData : public CBase
+{
+public:
+    CPluginData() : iData(TPluginData(TUid::Null())), iPluginLoadError(0), iRefCount(0) {}
+    TPluginData iData;
+    TInt iPluginLoadError;
+    TUint iRefCount;
+};
+
+// TODO: Remove this class definition as soon as CMessageIterator bug is fixed
+class CEmailFolder : public CBase, public MEmailFolder
+{
+public:
+    CEmailFolder(CPluginData &aPluginData) : iPluginData(aPluginData) {}
+    CPluginData&    iPluginData;
+};
 
 QTM_END_NAMESPACE
 

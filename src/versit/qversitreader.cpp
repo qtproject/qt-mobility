@@ -139,6 +139,9 @@ QVersitReader::~QVersitReader()
  * Sets the device used for reading the input to be the given \a device.
  * Does not take ownership of the device.  This overrides any byte array input source set with
  * setData().
+ *
+ * The caller must ensure that \a device remains valid for the lifetime of
+ * this QVersitReader object.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {
@@ -173,18 +176,19 @@ void QVersitReader::setData(const QByteArray &inputData)
 /*!
  * Sets \a codec as the codec for the reader to use when parsing the input stream to.
  * This codec is not used for values where the CHARSET Versit parameter occurs.
+ * If the codec is null, this denotes that the reader will try to detect the codec
+ * from the input.  The codec autodetection algorithm can detect UTF-8, UTF-16 or
+ * UTF-32.  If the input is in some 8-bit codec, it will fall back to using the system
+ * locale's codec.
  */
 void QVersitReader::setDefaultCodec(QTextCodec *codec)
 {
-    if (codec != NULL) {
-        d->mDefaultCodec = codec;
-    } else {
-        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
-    }
+    d->mDefaultCodec = codec;
 }
 
 /*!
- * Returns the codec the reader uses when parsing the input stream.
+ * Returns the codec the reader uses when parsing the input stream.  If the codec is
+ * null, this denotes that the reader will try to detect the codec from the input.
  */
 QTextCodec* QVersitReader::defaultCodec() const
 {
@@ -250,13 +254,11 @@ void QVersitReader::cancel()
 bool QVersitReader::waitForFinished(int msec)
 {
     State state = d->state();
-    if (state == ActiveState) {
+    if (state != InactiveState) {
         if (msec <= 0)
             return d->wait(ULONG_MAX);
         else
             return d->wait(msec);
-    } else if (state == FinishedState) {
-        return true;
     } else {
         return false;
     }

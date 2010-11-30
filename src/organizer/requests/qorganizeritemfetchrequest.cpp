@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
 QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
 {
 }
 
@@ -68,6 +68,7 @@ QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
 void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -75,6 +76,7 @@ void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -89,13 +91,31 @@ void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>
 void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = fetchHint;
+}
+
+/*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_startDate = date;
+}
+
+/*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_endDate = date;
 }
 
 /*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -103,6 +123,7 @@ QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -117,13 +138,53 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
+}
+
+/*!
+  Returns the start date of the request.  The start date
+  is the lower bound of the time-period within which an
+  item must occur (that is, either it or one of its occurrences
+  must have a time-period defined by its start-date and end-date
+  which overlaps with the time-period defined in this request)
+  in order to be returned by the request.
+
+  An empty or invalid start date signifies a start date of
+  negative-infinity (that is, all items which occur at any
+  point in time, up until the end date, will be returned).
+ */
+QDateTime QOrganizerItemFetchRequest::startDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_startDate;
+}
+
+/*!
+  Returns the end date of the request.  The end date
+  is the upper bound of the time-period within which an
+  item must occur (that is, either it or one of its occurrences
+  must have a time-period defined by its start-date and end-date
+  which overlaps with the time-period defined in this request)
+  in order to be returned by the request.
+
+  An empty or invalid end date signifies an end date of
+  positive-infinity (that is, all items which occur at any
+  point in time after the start date, will be returned).
+ */
+QDateTime QOrganizerItemFetchRequest::endDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_endDate;
 }
 
 /*! Returns the list of organizer items retrieved by this request */
 QList<QOrganizerItem> QOrganizerItemFetchRequest::items() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 

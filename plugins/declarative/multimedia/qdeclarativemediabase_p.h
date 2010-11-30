@@ -64,8 +64,8 @@ class QMediaPlayerControl;
 class QMediaService;
 class QMediaServiceProvider;
 class QMetaDataReaderControl;
-class QMetaDataControlMetaObject;
 class QDeclarativeMediaBaseAnimation;
+class QDeclarativeMediaMetaData;
 
 class QDeclarativeMediaBase
 {
@@ -83,8 +83,8 @@ public:
     bool isAutoLoad() const;
     void setAutoLoad(bool autoLoad);
 
-    int loops() const;
-    void setLoops(int loopCount);
+    int loopCount() const;
+    void setLoopCount(int loopCount);
 
     bool isPlaying() const;
     void setPlaying(bool playing);
@@ -112,7 +112,7 @@ public:
 
     QString errorString() const;
 
-    QObject *metaData() const;
+    QDeclarativeMediaMetaData *metaData() const;
 
     void _q_statusChanged();
 
@@ -129,7 +129,7 @@ protected:
     virtual void autoLoadChanged() = 0;
     virtual void playingChanged() = 0;
     virtual void pausedChanged() = 0;
-    virtual void loopsChanged() = 0;
+    virtual void loopCountChanged() = 0;
 
     virtual void started() = 0;
     virtual void resumed() = 0;
@@ -137,12 +137,6 @@ protected:
     virtual void stopped() = 0;
 
     virtual void statusChanged() = 0;
-
-    virtual void loaded() = 0;
-    virtual void buffering() = 0;
-    virtual void stalled() = 0;
-    virtual void buffered() = 0;
-    virtual void endOfMedia() = 0;
 
     virtual void durationChanged() = 0;
     virtual void positionChanged() = 0;
@@ -158,13 +152,13 @@ protected:
     virtual void errorChanged() = 0;
 
     bool m_paused;
-    int m_loopCount;
-    int m_runningCount;
     bool m_playing;
     bool m_autoLoad;
     bool m_loaded;
     bool m_muted;
     bool m_complete;
+    int m_loopCount;
+    int m_runningCount;
     int m_position;
     qreal m_vol;
     qreal m_playbackRate;
@@ -174,11 +168,9 @@ protected:
     QMediaObject *m_mediaObject;
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataReaderControl *m_metaDataControl;
-    QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
-    QScopedPointer<QObject> m_metaData;
+    QScopedPointer<QDeclarativeMediaMetaData> m_metaData;
 
-    QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
     QMediaPlayer::Error m_error;
     QString m_errorString;

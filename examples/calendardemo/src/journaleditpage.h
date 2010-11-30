@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -48,7 +48,7 @@
 #include <qorganizerjournal.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
@@ -69,7 +69,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
+    void journalChanged(QOrganizerManager *manager, const QOrganizerJournal &journal);
     void handleAlarmIndexChanged(const QString);
 
 Q_SIGNALS:
@@ -79,7 +79,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerJournal m_organizerJournal;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_timeEdit;

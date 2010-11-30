@@ -88,7 +88,7 @@ public:
     void setValid(bool valid);
     bool valid() const;
 
-    void updateItem();
+    void updateItem(const QRectF &target = QRectF());
 
     QRectF bounds;
 
@@ -97,6 +97,11 @@ public:
 
     bool isValid;
     bool isVisible;
+
+    QGeoMapObject* mapObject() {
+        return QGeoMapObjectInfo::mapObject();
+    }
+
 
 public slots:
     virtual void zValueChanged(int zValue);

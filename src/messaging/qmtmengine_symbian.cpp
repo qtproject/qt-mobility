@@ -57,6 +57,7 @@
 #include "qmessageservice_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagecontentcontainer_p.h"
+#include "maemohelpers_p.h"
 
 #include <msvstd.h>
 #include <msvids.h> // TMsvId's
@@ -77,7 +78,6 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <CMessageData.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
@@ -99,6 +99,7 @@
 
 #include <email_services_api.h>
 #else
+#include <CMessageData.h> //CMessageData
 #include <SendUiConsts.h>
 #include <sendui.h>    // SendUi API
 #endif
@@ -328,9 +329,14 @@ int CMTMEngine::countAccounts(const QMessageAccountFilter &filter) const
 
 QMessageAccount CMTMEngine::account(const QMessageAccountId &id) const
 {
-    TRAPD(err, updateEmailAccountsL());
-    Q_UNUSED(err)
-    return iAccounts[id.toString()];
+    QMessageAccount account;
+
+    TRAP_IGNORE(updateEmailAccountsL());
+    if (iAccounts.contains(id.toString())) {
+        account = iAccounts[id.toString()];
+    }
+
+    return account;
 }
 
 QMessageAccountId CMTMEngine::accountIdByServiceId(TMsvId serviceId) const
@@ -383,6 +389,7 @@ QMessageAccountIdList CMTMEngine::accountsByType(QMessage::Type type) const
 
 void CMTMEngine::updateEmailAccountsL() const
 {
+#ifndef FREESTYLEMAILUSED
     QStringList keys = iAccounts.keys();
     keys.removeOne(iSMSAccountidAsString);
     keys.removeOne(iMMSAccountidAsString);
@@ -475,6 +482,7 @@ void CMTMEngine::updateEmailAccountsL() const
     }
     
     CleanupStack::PopAndDestroy(pEmailAccounts);
+#endif
 }
 
 TUid CMTMEngine::mtmUidByType(MTMType aMTMType)
@@ -674,6 +682,10 @@ bool CMTMEngine::updateMessage(QMessage* m)
             retVal = false;
     }
 
+    if (retVal) {
+        MessageCache::instance()->remove(m->id());
+    }
+
     return retVal;
 }
 
@@ -699,8 +711,11 @@ bool CMTMEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpt
     
     bool retVal = false;
     TRAPD(err, retVal = removeMessageL(id, option));
-    if (err != KErrNone)
+    if (err == KErrNone) {
+        MessageCache::instance()->remove(id);
+    } else {
         retVal = false;
+    }
     
     return retVal;
 }
@@ -1454,6 +1469,7 @@ void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1493,6 +1509,7 @@ void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1537,6 +1554,7 @@ void CMTMEngine::countMessagesL(QMessageServicePrivate& privateService, const QM
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     queryInfo.count = 0;
+    queryInfo.canceled = false;
     iMessageQueries.append(queryInfo);
     
     handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
@@ -1558,6 +1576,12 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
         if (iMessageQueries[index].operationId == operationId) {
             break;
         }
+    }
+    
+    if (iMessageQueries[index].canceled) {
+        delete iMessageQueries[index].findOperation;
+        iMessageQueries.removeAt(index);
+        return;
     }
 
     if (success) {
@@ -1653,6 +1677,14 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
     iMessageQueries.removeAt(index);
 }
 
+void CMTMEngine::cancel(QMessageServicePrivate& privateService)
+{
+    for (int i=0; i < iMessageQueries.count(); i++) {
+        if (iMessageQueries[i].privateService == &privateService) {
+            iMessageQueries[i].canceled = true;
+        }
+    }
+}
 
 void CMTMEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
 {
@@ -2190,8 +2222,13 @@ QMessage CMTMEngine::message(const QMessageId& id) const
         return QMessage();
     
     QMessage message;
-    TRAPD(err, message = messageL(id));
-    Q_UNUSED(err)
+    message = MessageCache::instance()->message(id);
+    if (message.type() == QMessage::NoType) {
+        TRAPD(err, message = messageL(id));
+        if (err == KErrNone) {
+            MessageCache::instance()->insert(message);
+        }
+    }
 
     return message;
 }
@@ -4599,6 +4636,13 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         return;
     }
 
+#ifdef FREESTYLEMAILUSED
+    // Email messages are handled by CFSEngine
+    if (aMsgType == KUidMsgTypeSMTP || aMsgType == KUidMsgTypePOP3 || aMsgType == KUidMsgTypeIMAP4) {
+        return;
+    }
+#endif
+
 #ifdef NCNLISTREMOVED
     if (aMsgType == KUidMsgTypeSMS) { // we need to check if sms message is 'indicator clear message' (for voice messages)
         if (aEvent == EMsvEntriesCreated) {
@@ -4621,7 +4665,41 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         }
     }
 #endif // NCNLISTREMOVED
-    
+
+    bool messageInPreparation = false;
+    TRAP_IGNORE(
+        CMsvEntry* pEntry = ipMsvSession->GetEntryL(aMessageId);
+        CleanupStack::PushL(pEntry);
+        TMsvEntry changedEntry = pEntry->Entry();
+        if (changedEntry.InPreparation()) {
+            messageInPreparation = true;
+        }
+        CleanupStack::PopAndDestroy(pEntry);
+        );
+    if (messageInPreparation) {
+        // Message that's related to event is in preparation state.
+        if (!iMessagesInPreparation.contains(aMessageId)) {
+            // Event is not yet in InPreparation list
+            // => Add event into InPreparation list.
+            iMessagesInPreparation.insert(aMessageId, aEvent);
+        }
+        // Don't handle event. Wait until preparation finishes.
+        return;
+    } else {
+        // Message that's related to event is NOT in preparation state.
+        if (iMessagesInPreparation.contains(aMessageId)) {
+            // Event was found from InPreparation list
+            if (aEvent != EMsvEntriesDeleted) {
+                // => Original event can be handled.
+                aEvent = iMessagesInPreparation.take(aMessageId);
+            } else {
+                // Message was deleted
+                // => There is no need to handle original event
+                iMessagesInPreparation.remove(aMessageId);
+            }
+        }
+    }
+
     QMessageManager::NotificationFilterIdSet matchingFilters;
 
     // Copy the filter map to protect against modification during traversal
@@ -4679,11 +4757,13 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
 
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
     if (aEvent == EMsvEntriesCreated) {
-        notificationType = QMessageStorePrivate::Added; 
+        notificationType = QMessageStorePrivate::Added;
     } else if (aEvent == EMsvEntriesChanged || aEvent == EMsvEntriesMoved) {
-        notificationType = QMessageStorePrivate::Updated; 
+        notificationType = QMessageStorePrivate::Updated;
+        MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
     } if (aEvent == EMsvEntriesDeleted) {
-        notificationType = QMessageStorePrivate::Removed; 
+        notificationType = QMessageStorePrivate::Removed;
+        MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
     }
 
     if (matchingFilters.count() > 0) {
@@ -4730,7 +4810,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             tryToDeliverMessageNotifications();
         } else {
             // Message was removed before reading was possible
-            // => All avents related to removed messageId can be ignored
+            // => All events related to removed messageId can be ignored
             // => Remove all related events from undelivered message events queue
             for (int i=iUndeliveredMessageEvents.count()-1; i >= 0; i--) {
                 if (iUndeliveredMessageEvents[i].messageId == aMessageId) {
@@ -5331,6 +5411,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                     getAccountSpecificMessagesL(messageAccount, iOrdering, privateFilter);
                 }
             } else { // NotEqual
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & type)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
@@ -5341,12 +5422,14 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
             QMessage::TypeFlags typeFlags = static_cast<QMessage::TypeFlags>(pf->_value.toInt());
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
             if (cmp == QMessageDataComparator::Includes) {
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (value.messageTypes() | typeFlags) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
                     }
                 }
             } else { // Excludes
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & typeFlags)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
@@ -6094,6 +6177,10 @@ void CAsynchronousMTMOperation::RunL()
         ipMsvOperation = NULL;
 
         isActive = false;
+        if (iMessageId) {
+            // Make sure that new message contents will be updated to cache
+            MessageCache::instance()->remove(QMessageId(SymbianHelpers::addIdPrefix(QString::number(iMessageId), SymbianHelpers::EngineTypeMTM)));
+        }
         ipPrivateService->setFinished(true);
         ipParent->deleteAsynchronousMTMOperation(this);
         break;

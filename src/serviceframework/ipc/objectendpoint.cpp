@@ -164,14 +164,6 @@ public:
     QUuid serviceInstanceId;
 };
 
-//TODO list:
-/*
-    - Why do we need entry and serviceInstanceId on service side. The instance id should be sufficient.
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
-
-*/
-
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
 {
@@ -201,7 +193,9 @@ void ObjectEndPoint::disconnected()
     if (d->endPointType == Service) {
         InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
     }
-    deleteLater();
+    // deleteLater on symbian does not function properly from disconnect()
+    // maybe disconnect comes in on a thread?  Call from timer works.
+    QTimer::singleShot(0, this, SLOT(deleteLater()));
 }
 
 /*

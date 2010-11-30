@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
     The polygon is specified by a set of at least 3 valid QGeoCoordinate
     instances listed in the same order in which the coordinates would be
-    traversed when travelling aroudn the border of the polygon.
+    traversed when traveling around the border of the polygon.
 */
 
 /*!
@@ -90,7 +90,7 @@ QGeoMapObject::Type QGeoMapPolygonObject::type() const
     The default value of this property is an empty list of coordinates.
 
     The coordinates should be listed in the order in which they would be
-    traversed when travelling around the border of the polygon.
+    traversed when traveling around the border of the polygon.
 
     Invalid coordinates in the list will be ignored, and if the list of
     coordinates contains less than 3 valid coordinates then the polygon object
@@ -159,6 +159,33 @@ QBrush QGeoMapPolygonObject::brush() const
 {
     return d_ptr->brush;
 }
+
+/*!
+\fn void QGeoMapPolygonObject::pathChanged(const QList<QGeoCoordinate> &path)
+
+    This signal is emitted when the ordered list of coordinates that define 
+    the polygon to be drawn by this polygon object has changed.
+
+    The new value is \a path.
+*/
+
+/*!
+\fn void QGeoMapPolygonObject::penChanged(const QPen &pen)
+
+    This signal is emitted when the pen used to draw the edge of this 
+    polygon object has changed.
+
+    The new value is \a pen.
+*/
+
+/*!
+\fn void QGeoMapPolygonObject::brushChanged(const QBrush &brush)
+
+    This signal is emitted when the brush used to fill in the interior of 
+    this polygon object has changed.
+    
+    The new value is \a brush.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

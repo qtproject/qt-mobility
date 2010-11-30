@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -48,11 +48,13 @@
 #include <qlandmarkcategoryfilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkproximityfilter.h>
+#include <QDebug>
 
 #include "landmarkfilterdialog.h"
 
-LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QWidget *parent, Qt::WindowFlags flags)
+LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QLandmarkManager * manager, QWidget *parent, Qt::WindowFlags flags)
     : QDialog(parent, flags),
+    manager(manager),
       fetchRequest(fetchRequest)
 
 {
@@ -69,7 +71,7 @@ LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, 
     connect(filterProximityCheckBox, SIGNAL(stateChanged(int)),
             this, SLOT(otherFiltersCheckBoxStateChanged(int)));
 
-    connect(&manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+    connect(manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
             this, SLOT(categoryRemoved(QList<QLandmarkCategoryId>)));
 
     filterAllCheckBox->setCheckState(Qt::Checked);
@@ -135,7 +137,7 @@ void LandmarkFilterDialog::otherFiltersCheckBoxStateChanged(int state)
 void LandmarkFilterDialog::showEvent(QShowEvent *showEvent)
 {
 
-    QList<QLandmarkCategory> categories = manager.categories();
+    QList<QLandmarkCategory> categories = manager->categories();
     categoryComboBox->clear();
 
     for (int i=0; i < categories.count(); ++i) {

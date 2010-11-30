@@ -111,11 +111,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new tiled map data object, which stores the map data required by
-    \a geoMap and makes use of the functionality provided by \a engine.
+    Constructs a new tiled map data object, which makes use of the functionality provided by \a engine.
 */
-QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
+QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine)
+    : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine))
 {
     Q_D(QGeoTiledMapData);
 
@@ -294,7 +293,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
     d->worldReferenceViewportCenter = coordinateToWorldReferencePosition(center);
     d->updateScreenRect();
-    geoMap()->update();
+    emit updateMapDisplay();
 
     emit centerChanged(center);
 
@@ -318,7 +317,7 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     d->clearRequests();
     d->cache.clear();
     d->zoomCache.clear();
-    geoMap()->update();
+    emit updateMapDisplay();
 
     emit mapTypeChanged(d->mapType);
 
@@ -342,7 +341,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     Q_D(QGeoTiledMapData);
 
     QPixmap oldImage(windowSize().toSize());
-    if (d->zoomLevel != -1.0) {
+    if (!oldImage.isNull()) {
         // grab the old image
         QPainter painter1(&oldImage);
         d->paintMap(&painter1, 0);
@@ -369,7 +368,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->updateScreenRect();
 
-    if (oldZoomLevel == -1.0) {
+    if (oldImage.isNull()) {
         d->updateMapImage();
         emit zoomLevelChanged(d->zoomLevel);
         return;
@@ -445,7 +444,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         }
     }
 
-    geoMap()->update();
+    emit updateMapDisplay();
 
     d->clearRequests();
     d->updateMapImage();
@@ -718,7 +717,7 @@ void QGeoTiledMapData::tileFinished()
                                int(t.width()) / d->zoomFactor,
                                int(t.height()) / d->zoomFactor);
 
-        geoMap()->update(target);
+        emit updateMapDisplay(target);
     }
 
     if (d->requests.size() > 0)
@@ -849,11 +848,22 @@ int QGeoTiledMapData::zoomFactor() const
     return d->zoomFactor;
 }
 
+/*!
+    Forces the map display to update in the region specified by \a target.
+
+    If \a target is empty the entire map display will be updated.
+*/
+void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
+{
+    emit updateMapDisplay(target);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : QGeoMapDataPrivate(parent, engine, geoMap) {}
+QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
+    : QGeoMapDataPrivate(parent, engine),
+      scene(0) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -862,7 +872,27 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
         reply->deleteLater();
     }
 
+    //before the model(scene) is destroyed , let the info object bound to this scene
+    //be destoryed.
+
+    QList<QGraphicsItem*> keys = itemMap.keys();
+
+    foreach(QGraphicsItem * object, keys) {
+
+        QGeoMapObject* o = itemMap.value(object);
+
+        //check if we have still this info object ,
+        //since it could be already removed
+        //by previous loop in case of group object
+
+        if (o != 0) o->setMapData(0);
+    }
+
     itemMap.clear();
+
+
+    if (scene)
+        delete scene;
 }
 
 void QGeoTiledMapDataPrivate::updateMapImage()
@@ -1123,6 +1153,19 @@ bool QGeoTiledMapDataPrivate::intersectsScreen(const QRect &rect) const
     return (worldReferenceViewportRectLeft.intersects(rect)
             || (worldReferenceViewportRectRight.isValid()
                 && worldReferenceViewportRectRight.intersects(rect)));
+}
+
+void QGeoTiledMapDataPrivate::removeObjectInfo(QGeoTiledMapObjectInfo* object)
+{
+    if (object && object->graphicsItem && object->graphicsItem->scene())
+        scene->removeItem(object->graphicsItem);
+    itemMap.remove(object->graphicsItem);
+}
+
+void QGeoTiledMapDataPrivate::addObjectInfo(QGeoTiledMapObjectInfo* object)
+{
+    scene->addItem(object->graphicsItem);
+    itemMap.insert(object->graphicsItem, object->mapObject());
 }
 
 QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRect &rect, bool translateToScreen) const

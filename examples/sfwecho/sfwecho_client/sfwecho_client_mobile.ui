@@ -79,21 +79,21 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="uniqueChat"/>
-    <addaction name="sharedChat"/>
+    <addaction name="privateChat"/>
+    <addaction name="globalChat"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="uniqueChat">
+  <action name="privateChat">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Unique Chat</string>
+    <string>Private Chat</string>
    </property>
   </action>
-  <action name="sharedChat">
+  <action name="globalChat">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -101,7 +101,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Shared Chat</string>
+    <string>Global Chat</string>
    </property>
   </action>
  </widget>

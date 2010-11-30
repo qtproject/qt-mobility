@@ -188,7 +188,7 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
-  X(deviceinfo.typeOfLock());
+  X(deviceinfo.lockStatus());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -316,7 +316,7 @@ static void test_systemnetworkinfo(void)
     qDebug() << "  networkinfo.networkStatus() ->" << status;
 
     QString network = networkinfo.networkName(mode);
-    qDebug() << "  networkinfo.networkName() ->" << network;
+    qDebug() << "  networkinfo.netwoerkName() ->" << network;
 
     int sigstr = networkinfo.networkSignalStrength(mode);
     qDebug() << "  networkinfo.networkSignalStrength() ->" << sigstr;
@@ -331,6 +331,23 @@ static void test_systemscreensaver(void)
   X(screensaver.setScreenSaverInhibit());
 }
 
+static void test_systembatteryinfo(void)
+{
+    QSystemBatteryInfo batInfo;
+    X(batInfo.chargerType());
+    X(batInfo.chargingState() );
+    X(batInfo.nominalCapacity());
+    X(batInfo.remainingCapacityPercent());
+    X(batInfo.remainingCapacity());
+    X(batInfo.voltage());
+    X(batInfo.remainingChargingTime());
+    X(batInfo.currentFlow());
+    X(batInfo.remainingCapacityBars());
+    X(batInfo.maxBars());
+    X(batInfo.batteryStatus());
+    X(batInfo.energyMeasurementUnit());
+}
+
 struct dummy_t
 {
   const char *name;
@@ -343,6 +360,7 @@ struct dummy_t
   ADD(systemnetworkinfo),
   ADD(systemscreensaver),
   ADD(systemdisplayinfo),
+  ADD(systembatteryinfo),
 #undef ADD
   {0,0}
 };

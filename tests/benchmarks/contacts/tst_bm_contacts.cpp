@@ -746,7 +746,7 @@ void tst_QContactBenchmark::benchmarking()
             }
         }
 
-        quint64 succeededCount, failedCount, averageSuccessTime, averageFailTime;
+        qint64 succeededCount, failedCount, averageSuccessTime, averageFailTime;
         outputMessage += QString("\nwith numberOfContacts = %1").arg(numberOfContacts);
         outputMessage += QLatin1String("\n  Synchronous:");
 
@@ -766,7 +766,7 @@ void tst_QContactBenchmark::benchmarking()
             for (int j = 0; j < whitespaceAdjust; ++j) {
                 tempStr += " ";
             }
-            tempStr += QString("  succeeded: %1  average_time(success): %2  failed: %3  average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
+            tempStr += QString("  succeeded: %1  average_time(success): %2\t  failed: %3  average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
             if (i == 9) {
                 outputMessage += QString(QLatin1String("\n    (")) + QString::number(i+1) + QString(QLatin1String(") "));
             } else {
@@ -792,7 +792,7 @@ void tst_QContactBenchmark::benchmarking()
             for (int j = 0; j < whitespaceAdjust; ++j) {
                 tempStr += " ";
             }
-            tempStr += QString("  succeeded: %1  average_time(success): %2  failed: %3 average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
+            tempStr += QString("  succeeded: %1  average_time(success): %2\t  failed: %3 average_time(failed): %4").arg(succeededCount).arg(averageSuccessTime).arg(failedCount).arg(averageFailTime);
             if (i == 9) {
                 outputMessage += QString(QLatin1String("\n    (")) + QString::number(i+1) + QString(QLatin1String(") "));
             } else {
@@ -801,6 +801,14 @@ void tst_QContactBenchmark::benchmarking()
             outputMessage += tempStr;
         }
         outputMessage += QLatin1String("\n----------------------------------------");
+
+        // clear the variables.
+        memset(ssb, 0, sizeof(ssb));
+        memset(esb, 0, sizeof(esb));
+        memset(sab, 0, sizeof(sab));
+        memset(eab, 0, sizeof(eab));
+        memset(esbc, 0, sizeof(esbc));
+        memset(eabc, 0, sizeof(eabc));
     }
 
     outputMessage += QLatin1String("\n(All times measured in milliseconds).");

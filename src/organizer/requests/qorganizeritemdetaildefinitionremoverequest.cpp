@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new detail definition remove request whose parent is the specified \a parent */
 QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemDetailDefinitionRemoveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
@@ -78,6 +78,7 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names.clear();
     d->m_names.append(definitionName);
 }
@@ -91,6 +92,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QStrin
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -98,6 +100,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStri
 QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -107,6 +110,7 @@ QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemType = organizeritemType;
 }
 
@@ -114,13 +118,15 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& org
 QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritemType;
 }
 
 /*! Returns the map of input name list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

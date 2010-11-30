@@ -4,37 +4,36 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -102,6 +101,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_qgv->setVisible(true);
     m_qgv->setInteractive(true);
+    m_qgv->setMouseTracking(true);
+    m_qgv->viewport()->setMouseTracking(true);
 
     // setup slider control
 
@@ -173,8 +174,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
     m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
 
-    QSignalMapper * mapper = new QSignalMapper(this);
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
 
     QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
 
@@ -184,9 +183,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         mapTypeMenu->addAction(action);
         m_mapControlActions.append(action);
-
-        connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-        mapper->setMapping(action, m_mapControlTypes[i]);
     }
 
     QGridLayout *layout = new QGridLayout();
@@ -291,6 +287,9 @@ void MainWindow::setupUi()
     // setup map type control
     connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
 
+    QSignalMapper * mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
+
     QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
     for (int controlIndex = 0; controlIndex < m_mapControlTypes.size(); ++controlIndex) {
         QAction *action = m_mapControlActions.at(controlIndex);
@@ -299,6 +298,9 @@ void MainWindow::setupUi()
         if (supportedTypeIndex == -1) {
             action->setEnabled(false);
         } else {
+            connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+            mapper->setMapping(action, m_mapControlTypes[controlIndex]);
+
             action->setEnabled(true);
             action->setChecked(m_mapControlTypes[controlIndex] == m_mapWidget->mapType());
         }
@@ -573,6 +575,20 @@ void MainWindow::createMenus()
     QAction* menuItem;
     QMenu* subMenuItem;
     m_popupMenu = new QMenu(this);
+    m_popupMenuMapObject = new QMenu(this);
+
+    //**************************************************************
+
+    // MapObject-specific context menu. The map object is in m_lastClickedMapObject.
+    subMenuItem = new QMenu(tr("MapObject"), this);
+    m_popupMenuMapObject->addMenu(subMenuItem);
+
+    menuItem = new QAction(tr("Remove"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(removeMapObject()));
+
+    //**************************************************************
 
     /*
 
@@ -584,6 +600,7 @@ void MainWindow::createMenus()
 
     subMenuItem = new QMenu(tr("Spawn stuff"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Items near the dateline"), this);
     subMenuItem->addAction(menuItem);
@@ -605,6 +622,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Set marker"), this);
     subMenuItem->addAction(menuItem);
@@ -624,6 +642,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Draw"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Rectangle"), this);
     subMenuItem->addAction(menuItem);
@@ -653,6 +672,7 @@ void MainWindow::createMenus()
     //**************************************************************
     subMenuItem = new QMenu(tr("Route"), this);
     m_popupMenu->addMenu(subMenuItem);
+    m_popupMenuMapObject->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Calculate route"), this);
     subMenuItem->addAction(menuItem);
@@ -834,6 +854,13 @@ void MainWindow::removePixmaps()
         marker->deleteLater();
     }
 }
+void MainWindow::removeMapObject()
+{
+    m_mapWidget->removeMapObject(m_lastClickedMapObject);
+    if (m_lastClickedMapObject->type() == QGeoMapObject::PixmapType)
+        m_markerObjects.removeAll(static_cast<QGeoMapPixmapObject*>(m_lastClickedMapObject));
+    m_lastClickedMapObject->deleteLater();
+}
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
@@ -849,7 +876,18 @@ void MainWindow::customContextMenuRequest(const QPoint& point)
         if (!m_popupMenu)
             createMenus();
 
-        m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
+        QList<QGeoMapObject*> objectsAtCursor = m_mapWidget->mapObjectsAtScreenPosition(m_lastClicked);
+        if (objectsAtCursor.isEmpty()) {
+            // No objects, display the default context menu
+            m_lastClickedMapObject = 0;
+            m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
+        }
+        else {
+            // There is an object here, store it and open the appropriate context menu
+            m_lastClickedMapObject = objectsAtCursor.last();
+            m_popupMenuMapObject->popup(m_qgv->mapToGlobal(m_lastClicked));
+        }
+
     }
 }
 

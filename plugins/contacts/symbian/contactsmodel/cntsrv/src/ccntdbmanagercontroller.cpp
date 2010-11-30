@@ -528,7 +528,7 @@ void CCntDbManagerController::SetCurrentDbL(const TDesC& aNewCurrentDb, TUint aS
 	event.iContactId = KNullContactId;
 	event.iConnectionId = aSessionId;
     event.iTypeV2 = EContactDbObserverEventV2Null;
-    event.iAdditionalContactId = 0;
+    event.iAdditionalContactIds = NULL;
 	NotifyDbManagersL(event);	
 	}
 	

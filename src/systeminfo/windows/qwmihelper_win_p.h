@@ -100,6 +100,8 @@ private:
     QString m_wmiNamespace;
     void initializeWMI(const QString &wmiNamespace);
 
+    bool initialized;
+
 };
 
 class EventSink : public IWbemObjectSink

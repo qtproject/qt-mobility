@@ -85,55 +85,51 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            bool retVal = CFSEngine::instance()->sendEmail(message);
-            if (retVal == true) {
-                setFinished(retVal);
-            }
-            return retVal;
+        {
+        bool retVal = CFSEngine::instance()->sendEmail(message);
+        if (retVal == true) {
+             setFinished(retVal);
+        }
+        return retVal;
+        }
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->sendEmail((QMessageServicePrivate&)*this, message);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->sendEmail((QMessageServicePrivate&)*this, message);
     }
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->showMessage(id);
+        return CFSEngine::instance()->showMessage(id);
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->showMessage(id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->showMessage(id);
     }
 }
 
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->composeMessage(message);
+        return CFSEngine::instance()->composeMessage(message);
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->composeMessage(message);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->composeMessage(message);
     }
 }
 
@@ -209,51 +205,45 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
     switch (idType(messageId)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieve(*this, messageId, id);
+        return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieve(*this, messageId, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieve(*this, messageId, id);
     }
 }
 
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveBody(*this, id);
+        return CFSEngine::instance()->retrieveBody(*this, id);
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveBody(*this, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieveBody(*this, id);
     }
 }
 
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
     switch (idType(id)) {
-        case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveHeader(*this, id);
+        return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
-            return false;
+        return false;
 #endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveHeader(*this, id);
-            break;
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->retrieveHeader(*this, id);
     }
 }
 
@@ -313,15 +303,15 @@ void QMessageServicePrivate::messagesCounted(int count)
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
     switch (idType(id)) {
-            case EngineTypeFreestyle:
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-                return CFSEngine::instance()->exportUpdates(id);
+        return CFSEngine::instance()->exportUpdates(id);
 #else
-                return false;
+        return false;
 #endif
-            case EngineTypeMTM:
-            default:
-                return CMTMEngine::instance()->exportUpdates(*this, id);
+    case EngineTypeMTM:
+    default:
+        return CMTMEngine::instance()->exportUpdates(*this, id);
     }
 }
 
@@ -337,6 +327,16 @@ void QMessageServicePrivate::setFinished(bool successful)
     emit q_ptr->stateChanged(_state);
 }
 
+void QMessageServicePrivate::cancel()
+{
+    if (_active) {
+#ifdef FREESTYLEMAILUSED
+        CFSEngine::instance()->cancel((QMessageServicePrivate&)*this);
+#endif        
+        CMTMEngine::instance()->cancel((QMessageServicePrivate&)*this);
+    }
+}
+
 QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServicePrivate(this))
@@ -349,6 +349,7 @@ QMessageService::QMessageService(QObject *parent)
 
 QMessageService::~QMessageService()
 {
+    d_ptr->cancel();
 }
 
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
@@ -477,22 +478,27 @@ bool QMessageService::send(QMessage &message)
     }
     
     if (retVal) {
+        QMessage outgoing(message);
+
         // Set default account if unset
-        if (!message.parentAccountId().isValid()) {
-            message.setParentAccountId(accountId);
+        if (!outgoing.parentAccountId().isValid()) {
+            outgoing.setParentAccountId(accountId);
         }
-        
-        if (message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-            message.setType(msgType);
+
+        if (outgoing.type() == QMessage::AnyType || outgoing.type() == QMessage::NoType) {
+            outgoing.setType(msgType);
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = d_ptr->sendSMS(message);
+            retVal = d_ptr->sendSMS(outgoing);
         } else if (account.messageTypes() & QMessage::Mms) {
-            retVal = d_ptr->sendMMS(message);
+            retVal = d_ptr->sendMMS(outgoing);
         } else if (account.messageTypes() & QMessage::Email) {
-            retVal = d_ptr->sendEmail(message);
+            retVal = d_ptr->sendEmail(outgoing);
         }
+
+        QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+        privateMessage->_id = outgoing.id();
     }
     
     if (retVal == false) {
@@ -655,6 +661,12 @@ QMessageService::State QMessageService::state() const
 
 void QMessageService::cancel()
 {
+    if (d_ptr->_active) {
+        d_ptr->cancel();
+        d_ptr->_active = false;
+        d_ptr->_state = QMessageService::CanceledState;
+        emit stateChanged(d_ptr->_state);
+    }
 }
 
 QMessageManager::Error QMessageService::error() const

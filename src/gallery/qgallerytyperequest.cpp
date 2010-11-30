@@ -112,7 +112,23 @@ public:
     \brief The QGalleryTypeRequest class provides an interface for requesting
     the properties of a type from a gallery.
 
+    QGalleryItemRequest executes a query which returns information summarizing
+    items of the type specified in \l itemType. The query will return
+    \l {metaData()}{meta-data} values which describe the type as a whole such
+    as the total number of items of that type.
+
+    When the request has finished and if the type is one recognized by the
+    gallery the \l valid property will be true, if not it will be false.
+
+    If the \l autoUpdate property is true when the request is executed it will
+    enter an \l Idle state on finishing and will refresh the queried
+    information if the type changes.  If the gallery can't provide updates
+    it will instead go immediately to the \l Finished state.  Automatic updates
+    can be canceled by calling cancel() on a idle request.
+
+    \sa QDocumentGallery
 */
+
 /*!
     Constructs a new gallery type request.
 
@@ -157,8 +173,18 @@ QStringList QGalleryTypeRequest::propertyNames() const
 
 void QGalleryTypeRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryTypeRequest::propertyNamesChanged()
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryTypeRequest::autoUpdate
@@ -178,8 +204,18 @@ bool QGalleryTypeRequest::autoUpdate() const
 
 void QGalleryTypeRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryTypeRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryTypeRequest::itemType
@@ -195,9 +231,11 @@ QString QGalleryTypeRequest::itemType() const
 
 void QGalleryTypeRequest::setItemType(const QString &itemType)
 {
-    d_func()->itemType = itemType;
+    if (d_func()->itemType != itemType) {
+        d_func()->itemType = itemType;
 
-    emit itemTypeChanged();
+        emit itemTypeChanged();
+    }
 }
 
 /*!

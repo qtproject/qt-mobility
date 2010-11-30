@@ -88,16 +88,18 @@ public:
     void HandleObjectNotification( CMdESession& aSession,
         TObserverNotificationType aType,
         const RArray<TItemId>& aObjectIdArray );
-#else    
+#else
     void HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
     void HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
     void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
 #endif //MDS_25_COMPILATION_ENABLED
-    
+
     void createQuery();
 
+    void cancel();
+
 private:
-    
+
     void doHandleObjectNotificationL(CMdESession& aSession,
         QMdeSessionObserverQueryNotificationType aType,
         const RArray<TItemId>& aObjectIdArray);
@@ -109,7 +111,6 @@ private:
     CMdEObjectQuery *m_query;
     QEventLoop m_eventLoop;
 
-    CMdELogicCondition *m_queryConditions;
     RArray<TItemId> m_currentObjectIDs;
 
     bool m_launchUpdateQuery;

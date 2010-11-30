@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -36,7 +36,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
-***********************************/
+****************************************************************************/
 
 import Qt 4.7
 import QtMobility.systeminfo 1.1
@@ -56,6 +56,7 @@ Rectangle{
         onPowerStateChanged : getPowerState(/*powerState*/);
         onBatteryLevelChanged: doBatteryLevelChange(level)
         property int battlevel: batteryLevel;
+
 
     }
 
@@ -93,28 +94,25 @@ Rectangle{
         oldstate = img.state;
         img.state = "levelchange"
         img.state = oldstate;
-    getPowerState();
+        console.debug("batteryChangeLevel: " );
+        getPowerState();
 }
 
-    function getPowerState(/*powerState*/) {
-        oldstate = img.state;
+    function getPowerState() {
 
+        console.debug("curPowerState: " );
         if ( curPowerState == 1) {
             img.state = "Battery"
-            img.state = oldstate;
-            return "On Battery : " + batlevel +"%"
+            oldstate = img.state;
         }
         if ( curPowerState == 2 ) {
             img.state = "WallPower"
-            img.state = oldstate;
-            return "Wall Power : " + batlevel +"%"
+            oldstate = img.state;
         }
         if ( curPowerState == 3) {
             img.state = "Charging"
-            img.state = oldstate;
-            return "Charging : " + batlevel +"%"
+            oldstate = img.state;
         }
-        return ""
     }
 
     property alias manufacturer: deviceinfo.manufacturer
@@ -130,7 +128,7 @@ Rectangle{
 
     Text {
         id: power
-        text: getPowerState();
+        text: img.state + " "+batlevel +"%"
         anchors.top: manu.bottom
         color: "white";
     }

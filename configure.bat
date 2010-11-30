@@ -59,13 +59,15 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback connectivity
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
+set PLATFORM_CONFIG=
 
-set ORGANIZER_REQUESTED="no"
+REM By default, all modules are requested.  Reset this later if -modules is supplied
+set ORGANIZER_REQUESTED=yes
 
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
@@ -101,7 +103,7 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
-
+if "%1" == "-staticconfig"     goto staticConfigTag
 
 echo Unknown option: "%1"
 goto usage
@@ -139,7 +141,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts gallery location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework
-    echo                     sensors versit organizer feedback
+    echo                     sensors versit organizer feedback connectivity
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a selected module depends on other modules
     echo                     those modules (and their dependencies) will automatically be enabled.
@@ -152,6 +154,12 @@ goto exitTag
 :qtTag
 shift
 set QT_PATH=%1\
+shift
+goto cmdline_parsing
+
+:staticConfigTag
+shift
+set PLATFORM_CONFIG=%1
 shift
 goto cmdline_parsing
 
@@ -282,6 +290,7 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
+set ORGANIZER_REQUESTED=no
 
 echo Checking selected modules:
 :modulesTag2
@@ -313,13 +322,15 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
-    set ORGANIZER_REQUESTED="yes"
+    set ORGANIZER_REQUESTED=yes
 ) else if %FIRST% == feedback (
     echo     Feedback selected
 ) else if %FIRST% == sensors (
     echo     Sensors selected
 ) else if %FIRST% == gallery (
     echo     Gallery selected
+) else if %FIRST% == connectivity (
+    echo     Connectivity selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -418,6 +429,7 @@ call %QT_PATH%qmake -query QT_VERSION
 
 goto checkMake
 
+REM Detect make tool
 :makeTest
 setlocal
     set CURRENT_PWD=%CD%
@@ -520,13 +532,20 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
+
+REM No reason to do config tests if we got a platform configuration
+if not "%PLATFORM_CONFIG%" == "" goto platformconfig
+
 REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
 REM compile tests go here.
 for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
-if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
+if "%BUILDSYSTEM%" == "symbian-sbsv2" (
+  call compilercheck.pl
+  goto symbianTests
+)
 goto windowsTests
 
 :symbianTests
@@ -570,10 +589,25 @@ call :compileTest EnhancedVideoRenderer evr
 echo End of compile tests
 echo.
 echo.
+goto processHeaders
 
+:platformconfig
+
+echo.
+echo Skipping configure tests
+echo Loading ... features\platformconfig\%PLATFORM_CONFIG%.pri
+
+if not exist "%SOURCE_PATH%\features\platformconfig\%PLATFORM_CONFIG%.pri" (
+    echo >&2Invalid platform configuration %PLATFORM_CONFIG%.pri
+    goto errorTag
+)
+echo include($${QT_MOBILITY_SOURCE_TREE}/features/platformconfig/%PLATFORM_CONFIG%.pri) >> %PROJECT_CONFIG%
+
+:processHeaders
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
-copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
+if not exist "%BUILD_PATH%\features\strict_flags.prf" copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
+
 echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
@@ -619,9 +653,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
-REM    if "%ORGANIZER_REQUESTED%" == "yes" (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
-REM        )
+    if %ORGANIZER_REQUESTED% == yes (
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
+    )
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
@@ -634,6 +668,10 @@ REM        )
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == feedback (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtFeedback %SOURCE_PATH%\src\feedback
+) else if %FIRST% == connectivity (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\nfc
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\bluetooth
 )
 
 if "%REMAINING%" == "" (
@@ -663,6 +701,7 @@ echo.
 echo configure failed.
 goto errorTag
 
+REM Unset the internal variables
 :errorTag
 set BUILD_PATH=
 set CURRENTDIR=
@@ -681,6 +720,7 @@ set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
+set PLATFORM_CONFIG=
 exit /b 1
 
 :exitTag
@@ -701,4 +741,5 @@ set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 set ORGANIZER_REQUESTED=
+set PLATFORM_CONFIG=
 exit /b 0

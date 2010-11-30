@@ -44,8 +44,8 @@ userinclude ../src //for cntstd.h
 userinclude ../cntsrv/inc //for persistencelayer.h 
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
-userinclude 	../cntplsql/inc 
-userinclude 	../inc			//for ccontactprivate.h
+userinclude 	../cntplsql/inc
+userinclude 	../inc			//for ccontactprivate.h, cntdbconsts_internal.h
 
 // Qt Macros
 MACRO		UNICODE
@@ -114,6 +114,8 @@ LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
 LIBRARY     	xqsettingsmanager
+LIBRARY      	platformenv.lib
+LIBRARY         charconv.lib
 
 OPTION ARMCC --visibility_inlines_hidden
 

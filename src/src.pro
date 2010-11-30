@@ -12,7 +12,13 @@ contains(mobility_modules,serviceframework) {
     }
 }
 
-contains(mobility_modules,bearer): SUBDIRS += bearer
+contains(mobility_modules,bearer){
+    SUBDIRS += bearer
+    symbian {
+        !contains(MOBILITY_SD_MCL_BUILD, yes):exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis)|exists($${EPOCROOT}epoc32/release/armv5/lib/libstdcppv5.dso): SUBDIRS += bearer/bearer_old
+    }
+}
+    
 contains(mobility_modules,location): SUBDIRS += location
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 
@@ -36,6 +42,7 @@ contains(mobility_modules,publishsubscribe) {
 
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,sensors): SUBDIRS += sensors
+contains(mobility_modules,connectivity): SUBDIRS += connectivity
 
 # Versit depends on Contacts
 versit.subdir=versit

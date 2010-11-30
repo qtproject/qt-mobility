@@ -42,6 +42,7 @@
 #ifndef S60VIDEOWIDGET_H
 #define S60VIDEOWIDGET_H
 
+#include "s60videooutputinterface.h"
 #include <qvideowidgetcontrol.h>
 #include <qmediaplayer.h>
 
@@ -89,6 +90,7 @@ protected:
 };
 
 class S60VideoWidgetControl : public QVideoWidgetControl
+                            , public S60VideoOutputInterface
 {
     Q_OBJECT
 	
@@ -113,16 +115,18 @@ public:
     // from QObject
     bool eventFilter(QObject *object, QEvent *event);
 
-    //new methods
-    WId videoWidgetWId();
-    QSize videoWidgetSize();
+    // S60VideoOutputInterface
+    WId videoWinId() const;
+    QRect videoDisplayRect() const;
+    Qt::AspectRatioMode videoAspectRatio() const;
 
 private:
     void initializeVideoOutput();
     
 signals:
-    void widgetUpdated();
-    void widgetResized();
+    void windowHandleChanged();
+    void displayRectChanged();
+    void aspectRatioChanged();
     void beginVideoWindowNativePaint();
     void endVideoWindowNativePaint();
     
@@ -130,7 +134,7 @@ private slots:
     void videoStateChanged(QMediaPlayer::State state);
     
 private:
-    QAbstractVideoWidget *m_widget;
+    QScopedPointer<QAbstractVideoWidget> m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
     bool m_fullScreenEnabled;
 };

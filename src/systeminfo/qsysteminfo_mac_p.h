@@ -66,6 +66,7 @@
 #include "qsystemnetworkinfo.h"
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <QTimer>
 #include <QtCore/qthread.h>
@@ -134,7 +135,7 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
 
@@ -207,6 +208,7 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
+    bool backLightOn();
 };
 
 class QDASessionThread;
@@ -250,6 +252,7 @@ protected:
     void disconnectNotify(const char *signal);
 
     QDASessionThread *daSessionThread;
+    bool sessionThreadStarted;
 };
 
 class QBluetoothListenerThread;
@@ -288,11 +291,11 @@ public:
     bool isKeyboardFlipOpen();//1.2
 
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
     bool backLightOn(); //1.2
     void deviceLocked(bool isLocked); // 1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 
 Q_SIGNALS:
@@ -305,7 +308,7 @@ Q_SIGNALS:
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
-    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 
 private:
@@ -439,6 +442,63 @@ private:
     QMutex mutex;
 
 private Q_SLOTS:
+};
+
+class QSystemBatteryInfoPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
+    int startCurrentMeasurement(int rate);
+    void getBatteryInfo();
+
+Q_SIGNALS:
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+    void batteryCurrentFlowChanged(int);
+    void voltageChanged(int);
+
+    void currentFlowChanged(int);
+    void cumulativeCurrentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+
+private:
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
 };
 
 QTM_END_NAMESPACE

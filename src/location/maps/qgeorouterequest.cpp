@@ -123,6 +123,9 @@ QTM_BEGIN_NAMESPACE
     QGeoRouteRequest::FeatureWeight to determine if they should or should
     not be part of the route.
 
+    \value NoFeature
+        Used by QGeoRoutingManager::supportedFeatureTypes() to indicate that 
+        no features will be taken into account when planning the route.    
     \value TollFeature
         Consdier tollways when planning the route.
     \value HighwayFeature
@@ -152,7 +155,7 @@ QTM_BEGIN_NAMESPACE
     not be part of the route.
 
     \value NeutralFeatureWeight
-        The presence or absence of a the feature will not affect the
+        The presence or absence of the feature will not affect the
         planning of the route.
     \value PreferFeatureWeight
         Routes which contain the feature will be preferred over those that do
@@ -177,7 +180,7 @@ QTM_BEGIN_NAMESPACE
     \value ShortestRoute
         Minimize the length of the journey.
     \value FastestRoute
-        Minimize the travelling time for the journey.
+        Minimize the traveling time for the journey.
     \value MostEconomicRoute
         Minimize the cost of the journey.
     \value MostScenicRoute
@@ -353,14 +356,18 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
     Assigns the weight \a featureWeight to the feauture \a featureType during
     the planning of the route.
 
-    By defaul all features are assigned a weight of NeutralFeatureWeight.
+    By default all features are assigned a weight of NeutralFeatureWeight.
+
+    It is impossible to assign a weight to QGeoRouteRequest::NoFeature.
 */
 void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
-    if (featureWeight != QGeoRouteRequest::NeutralFeatureWeight)
-        d_ptr->featureWeights[featureType] = featureWeight;
-    else
+    if (featureWeight != QGeoRouteRequest::NeutralFeatureWeight) {
+        if (featureType != QGeoRouteRequest::NoFeature)
+            d_ptr->featureWeights[featureType] = featureWeight;
+    } else {
         d_ptr->featureWeights.remove(featureType);
+    }
 }
 
 /*!

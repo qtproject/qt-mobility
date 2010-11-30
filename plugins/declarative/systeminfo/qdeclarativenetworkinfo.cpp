@@ -49,9 +49,12 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 
 /*!
     \qmlclass NetworkInfo QDeclarativeNetworkInfo
-    \brief The NetworkInfo element allows you to receive notifications from the network.
+    \brief The NetworkInfo element allows you to get information and receive notifications from the network.
+    \inherits QObject
 
-    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    \ingroup qml-systeminfo
+
+    This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
 
     Note: To use notification signals, you need to use the start* slots.
@@ -122,12 +125,6 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
 */
 
-/*!
-    \internal
-    \class QDeclarativeNetworkInfo
-    \brief The QDeclarativeNetworkInfo class provides an network info item that you can add to a QDeclarativeView.
-*/
-
 QDeclarativeNetworkInfo::QDeclarativeNetworkInfo(QObject *parent) :
     QSystemNetworkInfo(parent)
 {
@@ -143,7 +140,7 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
-    Default is whatever defaultMode is.
+    If not set, the default is whatever defaultMode is.
 */
 
 void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
@@ -195,7 +192,6 @@ QString QDeclarativeNetworkInfo::networkName()
     \qmlmethod NetworkInfo::interfaceForMode()
    Returns the QNetworkInterface for this NetworkInfo.
 
-   \sa connectNotify()
 */
 QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
 {
@@ -208,72 +204,66 @@ QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
     \qmlmethod NetworkInfo::startStatusChanged()
    This function is needed to start statusChanged notification
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startStatusChanged()
 {
     connect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+            this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),Qt::UniqueConnection);
 }
 
 /*!
     \qmlmethod NetworkInfo::signalStrengthChanged()
    This function is needed to start signalStrengthChanged notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 {
     connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+            this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),Qt::UniqueConnection);
 }
 
 /*!
     \qmlmethod NetworkInfo::startStatusChanged()
    This function is needed to start statusChanged notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startNameChanged()
 {
     connect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-            this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+            this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),Qt::UniqueConnection);
 }
 
 /*!
     \qmlmethod NetworkInfo::modeChanged()
    This function is needed to start modeChanged notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startModeChanged()
 {
     connect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-            this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+            this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)),Qt::UniqueConnection);
 }
 
 /*!
     \qmlmethod NetworkInfo::currentMobileCountryCodeChanged()
    This function is needed to start currentMobileCountryCodeChanged notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged()
 {
     connect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
-            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+            this,SIGNAL(currentMobileCountryCodeChanged(QString)),Qt::UniqueConnection);
 }
 
 /*!
     \qmlmethod NetworkInfo::currentMobileNetworkCodeChanged()
    This function is needed to start currentMobileNetworkCodeChanged notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
 {
     connect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
-            this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+            this,SIGNAL(currentMobileNetworkCodeChanged(QString)),Qt::UniqueConnection);
 }
 
 /*!
@@ -282,7 +272,6 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
    This function is called when the client connects from the networkSignalStrengthChanged()
    notification.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status)
 {
@@ -291,58 +280,68 @@ void QDeclarativeNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMo
     }
 }
 
+/*!
+   \internal
+    Converts QSystemNetworkStatus to user string
+
+*/
 QString QDeclarativeNetworkInfo::statusToString(QSystemNetworkInfo::NetworkStatus status)
 {
     switch(status) {
     case QSystemNetworkInfo::UndefinedStatus:
-        return "Undefined";
+        return QLatin1String("Undefined");
     case QSystemNetworkInfo::NoNetworkAvailable:
-        return "No Network Available";
+        return QLatin1String("No Network Available");
     case QSystemNetworkInfo::EmergencyOnly:
-        return "Emergency Only";
+        return QLatin1String("Emergency Only");
     case QSystemNetworkInfo::Searching:
-        return "Searching";
+        return QLatin1String("Searching");
     case QSystemNetworkInfo::Busy:
-        return "Busy";
+        return QLatin1String("Busy");
     case QSystemNetworkInfo::Connected:
-        return "Connected";
+        return QLatin1String("Connected");
     case QSystemNetworkInfo::HomeNetwork:
-        return "Home Network";
+        return QLatin1String("Home Network");
     case QSystemNetworkInfo::Denied:
-        return "Denied";
+        return QLatin1String("Denied");
     case QSystemNetworkInfo::Roaming:
-        return "Roaming";
+        return QLatin1String("Roaming");
     }
     return QString();
 }
 
+/*!
+   \internal
+    Converts QSYstemNetworkMode to user string
+
+*/
 QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::UnknownMode:
-        return "Unknown";
+        return QLatin1String("Unknown");
     case QSystemNetworkInfo::GsmMode:
-        return "Gsm";
+        return QLatin1String("Gsm");
     case QSystemNetworkInfo::CdmaMode:
-        return "Cdma";
+        return QLatin1String("Cdma");
     case QSystemNetworkInfo::WcdmaMode:
-        return "Wcdma";
+        return QLatin1String("Wcdma");
     case QSystemNetworkInfo::WlanMode:
-        return "Wlan";
+        return QLatin1String("Wlan");
     case QSystemNetworkInfo::EthernetMode:
-        return "Ethernet";
+        return QLatin1String("Ethernet");
     case QSystemNetworkInfo::BluetoothMode:
-        return "Bluetooth";
+        return QLatin1String("Bluetooth");
     case QSystemNetworkInfo::WimaxMode:
-        return "Wimax";
+        return QLatin1String("Wimax");
     case QSystemNetworkInfo::GprsMode:
-        return "Gprs";
+        return QLatin1String("Gprs");
     case QSystemNetworkInfo::EdgeMode:
-        return "Edge";
+        return QLatin1String("Edge");
     case QSystemNetworkInfo::HspaMode:
-        return "Hspa";
+        return QLatin1String("Hspa");
     case QSystemNetworkInfo::LteMode:
-        return "Lte";
+        return QLatin1String("Lte");
     };
     return QString();
 }
@@ -353,7 +352,6 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
    This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength)
 {
@@ -369,7 +367,6 @@ void QDeclarativeNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::N
    This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &name)
 {
@@ -384,7 +381,6 @@ void QDeclarativeNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode
    This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
-   \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -393,6 +389,11 @@ void QDeclarativeNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode
     }
 }
 
+/*!
+   \internal
+
+   This function returns a list of available QSystemNetworkInfo::NetworkMode.
+*/
 QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
 {
     QList<QSystemNetworkInfo::NetworkMode> list;
@@ -405,3 +406,12 @@ QList<QSystemNetworkInfo::NetworkMode> QDeclarativeNetworkInfo::availableModes()
     return list;
 }
 
+/*!
+    \qmlmethod NetworkInfo::mode()
+    This function returns the mode set by useMode(QSystemNetworkInfo::NetworkMode mode);
+
+*/
+QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
+{
+    return m_mode;
+}

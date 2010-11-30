@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>750</width>
-    <height>353</height>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>System Information</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_20">
+  <layout class="QGridLayout" name="gridLayout_6">
    <item row="0" column="0">
     <widget class="QComboBox" name="comboBox">
      <item>
@@ -38,7 +38,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Device 3</string>
+       <string>Battery</string>
       </property>
      </item>
      <item>
@@ -662,9 +662,269 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_5">
-      <layout class="QGridLayout" name="gridLayout_6">
+      <layout class="QGridLayout" name="gridLayout_10">
        <item row="0" column="0" rowspan="2">
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QLCDNumber" name="maxBarslcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Max Bars</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QLCDNumber" name="chargeTimelcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>remainingcharge time</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLCDNumber" name="remainingCapBarslcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>remaining Capacity bars</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLCDNumber" name="voltagelcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Voltage</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLCDNumber" name="remainCaplcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Remaining capacity</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="energyMeasurementUnit">
+             <property name="text">
+              <string>.</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLCDNumber" name="NominalCaplcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Nominal Capacity</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QLCDNumber" name="currentFLowlcdNumber"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Current Flow</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="startMeasurementPushButton">
+             <property name="text">
+              <string>Measure Current</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="currentMeasurementSpinBox"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>period</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QProgressBar" name="batteryLevelBar">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>75</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLCDNumber" name="lcdNumber">
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="numDigits">
+            <number>3</number>
+           </property>
+           <property name="segmentStyle">
+            <enum>QLCDNumber::Flat</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="2" rowspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QRadioButton" name="radioButton">
            <property name="sizePolicy">
@@ -680,7 +940,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Unknown Power</string>
+            <string>Unknown Charger</string>
            </property>
           </widget>
          </item>
@@ -699,7 +959,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Battery Power</string>
+            <string>No Charger</string>
            </property>
           </widget>
          </item>
@@ -718,7 +978,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Wall Power</string>
+            <string>Wall Charger</string>
            </property>
           </widget>
          </item>
@@ -737,82 +997,39 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>Wall Power charging Battery</string>
+            <string>USB Charger</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_5">
+           <property name="text">
+            <string>USB 500 mA charger</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_6">
+           <property name="text">
+            <string>USB 100 mA charger</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_7">
+           <property name="text">
+            <string>Variable current Charger</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="0" column="2">
-        <widget class="QProgressBar" name="batteryLevelBar">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>75</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chargingCheckBox">
+         <property name="text">
+          <string>Charging</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="3" rowspan="2">
-        <spacer name="horizontalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>343</width>
-           <height>100</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="1" colspan="2">
-        <widget class="QLCDNumber" name="lcdNumber">
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
-         </property>
-         <property name="segmentStyle">
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" rowspan="2" colspan="2">
-        <spacer name="verticalSpacer_25">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>302</width>
-           <height>178</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>135</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -1344,7 +1561,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="currentMMCLabel">
+          <widget class="QLabel" name="currentMNCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1375,12 +1592,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="currentMNCLabel">
+          <widget class="QLabel" name="currentMCCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1411,12 +1628,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="homeMMCLabel">
+          <widget class="QLabel" name="homeMCCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>

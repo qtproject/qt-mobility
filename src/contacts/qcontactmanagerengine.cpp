@@ -1236,6 +1236,28 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
         d.setFields(fields);
         d.setUnique(false);
         retn.insert(d.name(), d);
+
+        // There are a few extra fields in some details
+
+        // Birthday gets a calendar id
+        d = retn.value(QContactBirthday::DefinitionName);
+        fields = d.fields();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactBirthday::FieldCalendarId, f);
+        d.setFields(fields);
+        retn.insert(d.name(), d);
+
+        // Urls can be blogs
+        d = retn.value(QContactUrl::DefinitionName);
+        fields = d.fields();
+        f = fields.value(QContactUrl::FieldSubType);
+        QVariantList v = f.allowableValues();
+        v.append(QString(QLatin1String(QContactUrl::SubTypeBlog)));
+        f.setAllowableValues(v);
+        fields.insert(QContactUrl::FieldSubType, f);
+        d.setFields(fields);
+        retn.insert(d.name(), d);
     }
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.
@@ -2846,21 +2868,35 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
  */
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
 {
-    // Default implementation is to fetch one by one
-    QList<QContact> ret;
+    QContactLocalIdFilter lif;
+    lif.setIds(localIds);
 
-    for (int i = 0; i < localIds.count(); i++) {
-        QContactManager::Error localError = QContactManager::NoError;
-        ret.append(contact(localIds.at(i), fetchHint, &localError));
+    QList<QContact> unsorted = contacts(lif, QContactSortOrder(), fetchHint, error);
 
-        if (localError != QContactManager::NoError) {
-            *error = localError;
-            if (errorMap)
-                errorMap->insert(i, localError);
+    // Build an index into the results
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
+    if (*error == QContactManager::NoError) {
+        for (int i = 0; i < unsorted.size(); i++) {
+            idMap.insert(unsorted[i].localId(), i);
         }
     }
 
-    return ret;
+    // Build up the results and errors
+    QList<QContact> results;
+    for (int i = 0; i < localIds.count(); i++) {
+        QContactLocalId id(localIds[i]);
+        if (!idMap.contains(id)) {
+            if (errorMap)
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            if (*error == QContactManager::NoError)
+                *error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(unsorted[idMap[id]]);
+        }
+    }
+
+    return results;
 }
 
 /*!

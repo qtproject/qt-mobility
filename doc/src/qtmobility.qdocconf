@@ -95,14 +95,27 @@ headerdirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
+             ../../plugins/declarative/contacts \
+             ../../plugins/declarative/contacts/details \
+             ../../plugins/declarative/contacts/filters \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/serviceframework \
+             ../../plugins/declarative/organizer \
+             ../../plugins/declarative/contacts \
+             ../../plugins/declarative/feedback \
+             ../../plugins/declarative/messaging \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
-             ../../plugins/declarative/serviceframework \
+             ../../src/versitorganizer \
+             ../../src/connectivity \
              .
 
 sourcedirs = ../../src/global \
@@ -117,15 +130,28 @@ sourcedirs = ../../src/global \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../plugins/declarative/location \
+             ../../plugins/declarative/organizer \
+             ../../plugins/declarative/contacts \
+             ../../plugins/declarative/contacts/details \
+             ../../plugins/declarative/contacts/filters \
              ../../plugins/declarative/messaging \
              ../../plugins/declarative/serviceframework \
+             ../../plugins/declarative/organizer \
+             ../../plugins/declarative/contacts \
+             ../../plugins/declarative/feedback \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../src/connectivity \
+             ../../src/versitorganizer \
              .
 
 excludedirs = ../../src/messaging/win32wce \

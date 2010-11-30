@@ -54,6 +54,7 @@
 //
 
 #include "qgeotiledmapobjectinfo_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QFont>
 #include <QPen>
@@ -72,10 +73,13 @@ public:
     QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
+    QGeoBoundingBox boundingBox() const;
+
     void updateValidity();
 
     QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem;
+    QGraphicsSimpleTextItem *textItem1;
+    QGraphicsSimpleTextItem *textItem2;
 
 public slots:
     void coordinateChanged(const QGeoCoordinate &coordinate);
@@ -90,6 +94,8 @@ public slots:
 
 private:
     void update();
+
+    QGeoBoundingBox boundingBox_;
 };
 
 QTM_END_NAMESPACE

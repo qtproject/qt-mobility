@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -45,7 +45,7 @@
 #include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
@@ -67,18 +67,18 @@ public Q_SLOTS:
     void deleteClicked();
     void backClicked();
     void itemDoubleClicked(QListWidgetItem *listItem);
-    void showPage(QOrganizerItemManager *manager);
+    void showPage(QOrganizerManager *manager);
 
 Q_SIGNALS:
     void addClicked();
     void showPreviousPage();
-    void showAddCalendarPage(QOrganizerItemManager*, QOrganizerCollection*);
+    void showAddCalendarPage(QOrganizerManager*, QOrganizerCollection*);
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerCollection m_collection;
     QAction *m_saveOrNextSoftKey;
     QListWidget *m_calendarList;

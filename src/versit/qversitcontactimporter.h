@@ -93,12 +93,13 @@ public:
     };
 
     QVersitContactImporter();
-    QVersitContactImporter(const QString& profile);
+    explicit QVersitContactImporter(const QString& profile);
+    explicit QVersitContactImporter(const QStringList& profiles);
     ~QVersitContactImporter();
 
     bool importDocuments(const QList<QVersitDocument>& documents);
     QList<QContact> contacts() const;
-    QMap<int, Error> errors() const;
+    QMap<int, Error> errorMap() const;
 
     void setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler);
 
@@ -106,6 +107,7 @@ public:
     QVersitResourceHandler* resourceHandler() const;
 
     /* deprecated */
+    QMap<int, Error> errors() const;
     void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     QVersitContactImporterPropertyHandler* propertyHandler() const;
 

@@ -88,11 +88,13 @@ public:
 
     QContactManagerEngineV2* m_engine;
     QContactManager::Error m_error;
+    QMap<int, QContactManager::Error> m_errorMap;
 
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
+    static QSet<QContactManager*> m_aliveEngines;
+    static QContactManagerData* managerData(QContactManager* manager) {return manager->d;}
     static QList<QContactActionManagerPlugin*> m_actionManagers;
-    static bool m_discovered;
     static bool m_discoveredStatic;
     static QStringList m_pluginPaths;
     static void loadFactories();

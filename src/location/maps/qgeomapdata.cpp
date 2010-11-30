@@ -74,7 +74,7 @@ QTM_BEGIN_NAMESPACE
     coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
 
-    The other virtual functions can be overriden. If the screen position to
+    The other virtual functions can be overridden. If the screen position to
     coordinate tranformations are expensive then overriding these functions may
     allow optimizations based on caching parts of the geometry information.
 
@@ -84,11 +84,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-    Constructs a new map data object, which stores the map data required by
-    \a geoMap and makes use of the functionality provided by \a engine.
+    Constructs a new map data object, which makes use of the functionality provided by \a engine.
 */
-QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine)
+    : d_ptr(new QGeoMapDataPrivate(this, engine))
 {
     if (engine->supportedConnectivityModes().length() > 0)
         setConnectivityMode(engine->supportedConnectivityModes().at(0));
@@ -110,17 +109,17 @@ QGeoMapData::~QGeoMapData()
     delete d;
 }
 
-void QGeoMapData::setup()
-{
-    d_ptr->containerObject = new QGeoMapGroupObject(this);
-}
-
 /*!
-    Returns the QGraphicsGeoMap instance that this map data object is associated with.
+    This function is run after the QGeoMapData instance has been 
+    constructed.
+
+    Any subclasses which override this function should make sure that
+    QGeoMapData::init() is called within the body of the overridding function.
 */
-QGraphicsGeoMap* QGeoMapData::geoMap() const
+void QGeoMapData::init()
 {
-    return d_ptr->geoMap;
+    d_ptr->containerObject = new QGeoMapGroupObject();
+    d_ptr->containerObject->setMapData(this);
 }
 
 /*!
@@ -484,7 +483,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
     notices from their standard positions and so we have not provided API
     support for specifying the position of the notices at this time.
 
-    If support for hinting at the positon of the notices is to be provided by
+    If support for hinting at the position of the notices is to be provided by
     plugin parameters, the suggested parameter keys are
     "mapping.notices.copyright.alignment" and
     "mapping.notices.poweredby.alignment", with type Qt::Alignment.
@@ -575,13 +574,64 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     d_ptr->blockPropertyChangeSignals = block;
 }
 
+/*!
+\fn void QGeoMapData::windowSizeChanged(const QSizeF &windowSize)
+
+    This signal is emitted when the size of the window which contains 
+    the map has changed.
+
+    The new value is \a windowSize.
+*/
+
+/*!
+\fn void QGeoMapData::zoomLevelChanged(qreal zoomLevel)
+
+    This signal is emitted when the zoom level of the map has changed.
+
+    The new value is \a zoomLevel.
+*/
+
+/*!
+\fn void QGeoMapData::centerChanged(const QGeoCoordinate &coordinate)
+
+    This signal is emitted when the center of the map has changed.
+
+    The new value is \a coordinate.
+*/
+
+/*!
+\fn void QGeoMapData::mapTypeChanged(QGraphicsGeoMap::MapType mapType)
+
+    This signal is emitted when the type of the map has changes.
+
+    The value is \a mapType.
+*/
+
+/*!
+\fn void QGeoMapData::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+
+    This signal is emitted when the connectivity mode used to fetch the 
+    map data has changed.
+
+    The new value is \a connectivityMode.
+*/
+
+/*!
+\fn void QGeoMapData::updateMapDisplay(const QRectF &target)
+
+    This signal is emitted when the region \a target of the window which 
+    contains the map needs to be updated.
+
+
+    If \a target is empty then the entire map will be updated.
+*/
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
     : q_ptr(parent),
       engine(engine),
-      geoMap(geoMap),
       containerObject(0),
       zoomLevel(-1.0),
       blockPropertyChangeSignals(false) {}

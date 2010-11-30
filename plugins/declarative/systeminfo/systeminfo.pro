@@ -14,11 +14,16 @@ QT += declarative
 SOURCES += systeminfo.cpp \
     qdeclarativenetworkinfo.cpp \
     qdeclarativescreensaver.cpp \
-    qdeclarativedeviceinfo.cpp
+    qdeclarativedeviceinfo.cpp \
+    qdeclarativegeneralinfo.cpp \
+    qdeclarativebatteryinfo.cpp
+
 HEADERS += \
     qdeclarativenetworkinfo_p.h \
     qdeclarativescreensaver_p.h \
-    qdeclarativedeviceinfo_p.h
+    qdeclarativedeviceinfo_p.h \
+    qdeclarativegeneralinfo_p.h \
+    qdeclarativebatteryinfo_p.h
 
 CONFIG += mobility
 MOBILITY += systeminfo

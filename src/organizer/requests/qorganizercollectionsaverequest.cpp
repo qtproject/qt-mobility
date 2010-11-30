@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
 QOrganizerCollectionSaveRequest::QOrganizerCollectionSaveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionSaveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerCollectionSaveRequestPrivate, parent)
 {
 }
 
@@ -67,6 +67,7 @@ QOrganizerCollectionSaveRequest::QOrganizerCollectionSaveRequest(QObject* parent
 void QOrganizerCollectionSaveRequest::setCollection(const QOrganizerCollection& collection)
 {
     Q_D(QOrganizerCollectionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_collections.clear();
     d->m_collections.append(collection);
 }
@@ -75,6 +76,7 @@ void QOrganizerCollectionSaveRequest::setCollection(const QOrganizerCollection& 
 void QOrganizerCollectionSaveRequest::setCollections(const QList<QOrganizerCollection>& collections)
 {
     Q_D(QOrganizerCollectionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_collections = collections;
 }
 
@@ -83,13 +85,15 @@ void QOrganizerCollectionSaveRequest::setCollections(const QList<QOrganizerColle
 QList<QOrganizerCollection> QOrganizerCollectionSaveRequest::collections() const
 {
     Q_D(const QOrganizerCollectionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_collections;
 }
 
 /*! Returns any errors which occurred during the request */
-QMap<int, QOrganizerItemManager::Error> QOrganizerCollectionSaveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerCollectionSaveRequest::errorMap() const
 {
     Q_D(const QOrganizerCollectionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

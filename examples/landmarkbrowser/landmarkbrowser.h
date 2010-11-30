@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -51,6 +51,7 @@
 #include <qlandmarkremoverequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryremoverequest.h>
 
 #include "ui_landmarkbrowser.h"
 #include "landmarkfilterdialog.h"
@@ -84,11 +85,24 @@ private slots:
    void doFetchAll();
    void cancel();
 
+   void landmarksAdded(QList<QLandmarkId> landmarkIds);
+   void landmarksChanged();
+   void landmarksRemoved();
+
+   void categoriesAdded();
+   void categoriesChanged();
+   void categoriesRemoved();
+
+   void dataChanged();
+
 private:
     void updateRowLabels();
     void updateCategoryRowLabels();
     void updateTable(const QList<QLandmark> &lms);
     void updateCategoryTable(const QList<QLandmarkCategory> &cats);
+
+    void reloadingLandmarks();
+    void reloadingCategories();
 
     QLandmarkFetchRequest *landmarkFetch;
     QLandmarkImportRequest *landmarkImport;
@@ -96,6 +110,7 @@ private:
     QLandmarkRemoveRequest *landmarkRemove;
     QLandmarkSaveRequest *landmarkSave;
     QLandmarkCategoryFetchRequest *categoryFetch;
+    QLandmarkCategoryRemoveRequest *categoryRemove;
     QProgressDialog *progress;
     QLandmarkManager *manager;
     int currentLandmarkOffset;

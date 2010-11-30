@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QDECLARATIVECONTACTFILTER_P_H
 #define QDECLARATIVECONTACTFILTER_P_H
 #include <qdeclarative.h>
@@ -51,65 +50,44 @@ QTM_USE_NAMESPACE
 class QDeclarativeContactFilter : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(FilterType type READ type NOTIFY typeChanged)
-
-    Q_ENUMS(FilterType);
-    Q_FLAGS(MatchFlags);
+    Q_ENUMS(FilterType)
+    Q_FLAGS(MatchFlags)
 public:
     QDeclarativeContactFilter(QObject *parent=0)
         :QObject(parent)
     {
+        //for grouped filter: intersect /union filters
+        if (parent && qobject_cast<QDeclarativeContactFilter*>(parent)) {
+            connect(this, SIGNAL(filterChanged()), parent, SIGNAL(filterChanged()));
+        }
     }
 
     enum FilterType {
-        InvalidFilter,
-        ContactDetailFilter,
-        ContactDetailRangeFilter,
-        ChangeLogFilter,
-        ActionFilter,
-        RelationshipFilter,
-        IntersectionFilter,
-        UnionFilter,
-        LocalIdFilter,
-        DefaultFilter
+        InvalidFilter = QContactFilter::InvalidFilter,
+        DetailFilter = QContactFilter::ContactDetailFilter,
+        DetailRangeFilter = QContactFilter::ContactDetailRangeFilter,
+        ChangeLogFilter = QContactFilter::ChangeLogFilter,
+        ActionFilter = QContactFilter::ActionFilter,
+        RelationshipFilter = QContactFilter::RelationshipFilter,
+        IntersectionFilter = QContactFilter::IntersectionFilter,
+        UnionFilter = QContactFilter::UnionFilter,
+        IdFilter = QContactFilter::LocalIdFilter,
+        DefaultFilter = QContactFilter::DefaultFilter
     };
 
     FilterType type() const {
-        switch (filter().type()) {
-        case QContactFilter::InvalidFilter:
-            return InvalidFilter;
-        case QContactFilter::ContactDetailFilter:
-            return ContactDetailFilter;
-        case QContactFilter::ContactDetailRangeFilter:
-            return ContactDetailRangeFilter;
-        case QContactFilter::ChangeLogFilter:
-            return ChangeLogFilter;
-        case QContactFilter::ActionFilter:
-            return ActionFilter;
-        case QContactFilter::RelationshipFilter:
-            return RelationshipFilter;
-        case QContactFilter::IntersectionFilter:
-            return IntersectionFilter;
-        case QContactFilter::UnionFilter:
-            return UnionFilter;
-        case QContactFilter::LocalIdFilter:
-            return LocalIdFilter;
-        case QContactFilter::DefaultFilter:
-            return DefaultFilter;
-        }
-        return InvalidFilter;
+        return static_cast<FilterType>(filter().type());
     }
 
     enum MatchFlag {
-        MatchExactly = Qt::MatchExactly,    // 0
-        MatchContains = Qt::MatchContains,  // 1
-        MatchStartsWith = Qt::MatchStartsWith,  // 2
-        MatchEndsWith = Qt::MatchEndsWith, // 3
-        MatchFixedString = Qt::MatchFixedString, // 8
-        MatchCaseSensitive = Qt::MatchCaseSensitive, // 16
-        MatchPhoneNumber = 1024,
-        MatchKeypadCollation = 2048
+        MatchExactly = QContactFilter::MatchExactly,
+        MatchContains = QContactFilter::MatchContains,
+        MatchStartsWith = QContactFilter::MatchStartsWith,
+        MatchEndsWith = QContactFilter::MatchEndsWith,
+        MatchFixedString = QContactFilter::MatchFixedString,
+        MatchCaseSensitive = QContactFilter::MatchCaseSensitive,
+        MatchPhoneNumber = QContactFilter::MatchPhoneNumber,
+        MatchKeypadCollation = QContactFilter::MatchKeypadCollation
     };
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
@@ -119,8 +97,7 @@ public:
     }
 
 signals:
-    void typeChanged();
-    void valueChanged();
+    void filterChanged();
 };
 
 

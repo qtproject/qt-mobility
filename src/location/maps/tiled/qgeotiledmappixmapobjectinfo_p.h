@@ -54,6 +54,7 @@
 //
 
 #include "qgeotiledmapobjectinfo_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QPixmap>
 
@@ -70,8 +71,11 @@ public:
     QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPixmapObjectInfo();
 
+    QGeoBoundingBox boundingBox() const;
+
     QGeoMapPixmapObject* pixmap;
-    QGraphicsPixmapItem *pixmapItem;
+    QGraphicsPixmapItem *pixmapItem1;
+    QGraphicsPixmapItem *pixmapItem2;
 
     void updateValidity();
 
@@ -81,7 +85,9 @@ public slots:
     void offsetChanged(const QPoint &offset);
     void zoomLevelChanged(qreal zoomLevel);
 private:
-    void updateOffset();
+    void update();
+
+    QGeoBoundingBox boundingBox_;
 };
 
 QTM_END_NAMESPACE

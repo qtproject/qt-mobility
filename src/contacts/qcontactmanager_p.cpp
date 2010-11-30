@@ -76,15 +76,23 @@ QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QSet<QContactManager*> QContactManagerData::m_aliveEngines;
 QList<QContactActionManagerPlugin*> QContactManagerData::m_actionManagers;
 
-bool QContactManagerData::m_discovered;
 bool QContactManagerData::m_discoveredStatic;
 QStringList QContactManagerData::m_pluginPaths;
 
 static void qContactsCleanEngines()
 {
-    QContactManagerData::m_discovered = false;
+    // This is complicated by needing to remove any engines before we unload factories
+    foreach(QContactManager* manager, QContactManagerData::m_aliveEngines) {
+        // We don't delete the managers here, we just kill their engines
+        // and replace it with an invalid engine (for safety :/)
+        QContactManagerData* d = QContactManagerData::managerData(manager);
+        delete d->m_engine;
+        d->m_engine = new QContactInvalidEngine();
+    }
+
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
 
     for (int i=0; i < factories.count(); i++) {
@@ -92,8 +100,8 @@ static void qContactsCleanEngines()
     }
     QContactManagerData::m_engines.clear();
     QContactManagerData::m_actionManagers.clear();
+    QContactManagerData::m_aliveEngines.clear();
 }
-
 
 static int parameterValue(const QMap<QString, QString>& parameters, const char* key, int defaultValue)
 {
@@ -223,20 +231,24 @@ void QContactManagerData::loadFactories()
     // Always do this..
     loadStaticFactories();
 
-    QStringList plugins;
-    plugins = mobilityPlugins(QLatin1String("contacts"));
+    // But only load dynamic plugins when the paths change
+    QStringList paths = QCoreApplication::libraryPaths();
+#ifdef QTM_PLUGIN_PATH
+    paths << QLatin1String(QTM_PLUGIN_PATH);
+#endif
 
-    if (!m_discovered || plugins != m_pluginPaths) {
-        m_discovered = true;
-        m_pluginPaths = plugins;
+    if (paths != m_pluginPaths) {
+        m_pluginPaths = paths;
+
+        QStringList plugins = mobilityPlugins(QLatin1String("contacts"));
 
         /* Now discover the dynamic plugins */
-        for (int i=0; i < m_pluginPaths.count(); i++) {
-            QPluginLoader qpl(m_pluginPaths.at(i));
+        for (int i=0; i < plugins.count(); i++) {
+            QPluginLoader qpl(plugins.at(i));
 
 #if !defined QT_NO_DEBUG
             if (showDebug)
-                qDebug() << "Loading plugin" << m_pluginPaths.at(i);
+                qDebug() << "Loading plugin" << plugins.at(i);
 #endif
 
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
@@ -251,12 +263,12 @@ void QContactManagerData::loadFactories()
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
-                        qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                        qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
                     } else {
                         m_engines.insertMulti(name, f);
                     }
                 } else {
-                    qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "with reserved name" << name << "ignored";
+                    qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
                 }
             }
 

@@ -108,6 +108,7 @@ struct MessageQueryInfo
     int currentFilterListIndex;
     QMessageIdList ids;
     int count;
+    bool canceled;
 };
 
 class CMTMEngine : public QObject, public CActive, public MMsvSessionObserver
@@ -171,6 +172,8 @@ public:
     void notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId);
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
+    
+    void cancel(QMessageServicePrivate& privateService);
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
 
@@ -314,6 +317,7 @@ private:
     QList<MessageEvent> iUndeliveredMessageEvents;
     RTimer              iTimer; // Timer used for delaying delivering of received
                                 // messages until messages are ready to be read
+    QMap<TMsvId, TMsvSessionEvent>  iMessagesInPreparation;
     TMsvId iMessageId;
     bool iNewMessage;
     

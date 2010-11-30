@@ -21,6 +21,8 @@
 
 
 const TInt KArrayGranularity = 4;
+//max amount of contacts deleted in one go 
+const TInt KDeleteBatchSize = 200;
 
 /**
 @param aDatabase A handle to the database.
@@ -228,6 +230,79 @@ void CPplGroupsTable::DeleteL(const CContactItem& aItem, TBool& aLowDiskErrorOcc
 	DeleteItemL(aItem.Id(), aLowDiskErrorOccurred);
 	}
 
+/**
+Deletes group informations related to passed contact items from group table
+
+@param aIdArray contact items ids
+*/
+void CPplGroupsTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
+    {
+    _LIT(KDeleteQueryPart1, "DELETE FROM groups WHERE contact_group_id IN (");
+    _LIT(KDeleteQueryPart2, " OR contact_group_member_id IN (");
+    TInt count = aIdArray->Count();
+    bool allContactsProcessed = false;
+    TInt round = 0;
+    while (!allContactsProcessed) 
+        {
+        RBuf deleteQuery;
+        deleteQuery.CreateL(KDeleteQueryPart1().Length());
+        CleanupClosePushL(deleteQuery);
+        deleteQuery.Copy(KDeleteQueryPart1);
+        TInt startValue = round*KDeleteBatchSize;
+        TInt endValue = (round+1)*KDeleteBatchSize < count ? (round+1)*KDeleteBatchSize : count;
+        for (TInt j = startValue; j < endValue; j++)
+            {
+            //add all contact ids to the delete query
+            TContactItemId id = aIdArray->operator[](j);
+            TBuf<16> number;
+            number.Num(id);
+            deleteQuery.ReAllocL(deleteQuery.Length() + number.Length() + 1); //1 is for comma or
+                                                                              //closing bracket
+            deleteQuery.Append(number);
+            if (j < endValue - 1)
+                {
+                //last id doesn't need a comma afterwards
+                deleteQuery.Append(',');
+                }
+            else
+                {
+                deleteQuery.Append(')');
+                }
+            }
+        
+        deleteQuery.ReAllocL(deleteQuery.Length() + KDeleteQueryPart2().Length());
+        deleteQuery.Append(KDeleteQueryPart2);
+        for (TInt k = startValue; k < endValue; k++)
+            {
+            //add all contact ids to the delete query
+            TContactItemId id = aIdArray->operator[](k);
+            TBuf<16> number;
+            number.Num(id);
+            deleteQuery.ReAllocL(deleteQuery.Length() + number.Length() + 1); //1 is for comma or
+                                                                              //closing bracket
+            deleteQuery.Append(number);
+            if (k < endValue - 1)
+                {
+                //last id doesn't need a comma afterwards
+                deleteQuery.Append(',');
+                }
+            else
+                {
+                deleteQuery.Append(')');
+                }
+            }
+        
+        TInt err = iDatabase.Exec(deleteQuery);
+        User::LeaveIfError(err);
+        CleanupStack::PopAndDestroy(&deleteQuery);
+        
+        round++;
+        if (endValue == count)
+            {
+            allContactsProcessed = true;
+            }
+        }    
+    }
 
 /**
 Creates the groups table and its indexes in the database.

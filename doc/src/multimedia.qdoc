@@ -53,8 +53,6 @@ Unlike the other APIs in Qt Mobility, the Multimedia API is \i not in the
 
 \section1 Overview
 
-This library will require Qt 4.6.
-
 This API delivers an easy to use interface to multimedia functions. The 
 developer can use the API to display an image, or a video, record sound or play a
 multimedia stream.
@@ -181,7 +179,7 @@ hue, saturation and full screen mode.
     player->play();
 \endcode
 
-The \l {player}{Player} example does things a bit differently to our sample code. instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
+The \l {player}{Player} example does things a bit differently to our sample code. Instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
 
 \snippet ../../demos/player/player.cpp  2
 
@@ -211,9 +209,12 @@ Basically, the idea is that to use the Multimedia API you would use these three 
     \o \l QMediaControl allows the control of the service using a known interface.
     \endlist
 
-Consider a developer creating, for example, a media player class called MyPlayer. It may have special requirements beyond ordinary media players and so may need a custom service and a custom control. We can subclass \l QMediaServiceProvider to create out MyServiceProvider class. Also we will create a MyMediaService, and the MyMediaControl to manipulate the media service.
+Consider a developer creating, for example, a media player class called MyPlayer. It may have special
+requirements beyond ordinary media players and so may need a custom service and a custom control. We can
+subclass \l QMediaServiceProvider to create our MyServiceProvider class. Also we will create a
+MyMediaService, and the MyMediaControl to manipulate the media service.
 
-The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling \l {QMediaService::control()}{control()} it will receive the control object derived from QMediaControl. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to control() is a c-type string, \i {const char *}, for the interface.
+The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling \l {QMediaService::requestControl()}{requestControl()} it will receive the control object derived from QMediaControl. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to requestControl() is a c-type string, \i {const char *}, for the interface.
 
 
 \section2 Adding a Media Service Provider
@@ -326,11 +327,14 @@ shutter button is pressed the camera is locked as before but instead the
 Focusing is managed by the classes \l QCameraFocus and \l QCameraFocusControl.
 QCameraFocus allows the developer to set the general policy by means of the
 enums for the \l {QCameraFocus::FocusMode}{FocusMode} and the
-\l {QCameraFocus::FocusPointMode}{FocusPointMode}. \l FocusMode deals with
-settings such as \l AutoFocus, \l ContinuousFocus and \l InfinityFocus, whereas
-\l FocusPointMode deals with the various focus zones within the view.
-\l FocusPointMode has support for face recognition, center focus and a custom
-focus where the focus point can be specified.
+\l {QCameraFocus::FocusPointMode}{FocusPointMode}.
+\l {QCameraFocus::FocusMode}{FocusMode} deals with
+settings such as \l {QCameraFocus::FocusMode}{AutoFocus},
+\l {QCameraFocus::FocusMode}{ContinuousFocus} and
+\l {QCameraFocus::FocusMode}{InfinityFocus}, whereas
+\l {QCameraFocus::FocusPointMode}{FocusPointMode} deals with the various focus zones within the view.
+\l {QCameraFocus::FocusPointMode}{FocusPointMode} has support for face
+recognition, center focus and a custom focus where the focus point can be specified.
 
 
 
@@ -340,7 +344,7 @@ Various operations such as image capture and auto focusing occur
 asynchrously. These operations can often be cancelled by the start of a new
 operation as long as this is supported by the backend. For image capture,
 the operation can be cancelled by calling
-\l {QStillImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
+\l {QCameraImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
 autoexposure or white balance cancellation can be done by calling
 \i {QCamera::unlock(QCamera::LockFocus)}.
 

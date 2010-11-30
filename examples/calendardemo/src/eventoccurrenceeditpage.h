@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -47,7 +47,7 @@
 #include <qorganizerevent.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItemSaveRequest;
 class QOrganizerEvent;
 class QOrganizerItem;
@@ -73,7 +73,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveOrNextClicked();
-    void eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
+    void eventOccurrenceChanged(QOrganizerManager *manager, const QOrganizerEventOccurrence &eventOccurrence);
 
 Q_SIGNALS:
     void showDayPage();
@@ -82,7 +82,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerEventOccurrence m_organizerEventOccurrence;
     QList<QOrganizerItem> m_listOfEvents;
     QOrganizerItemSaveRequest *m_saveItemRequest;

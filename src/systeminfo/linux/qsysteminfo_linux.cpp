@@ -82,39 +82,9 @@
 //#endif
 
 #endif
+#include "qsysteminfo_dbus_p.h"
 
 QTM_BEGIN_NAMESPACE
-static bool halAvailable()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
-        if (reply.isValid() && reply.value()) {
-            return reply.value();
-        }
-    }
-#endif
-    return false;
-}
-static bool ofonoAvailable()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
-        if (reply.isValid() && reply.value()) {
-            return reply.value();
-        } else {
-         qDebug() << "ofono not available" << reply.value();
-        }
-    }
-#endif
-
-    return false;
-}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
@@ -133,7 +103,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << QLatin1String("qt_*.qm") ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(const QString localeName, localeList) {
+        foreach (const QString &localeName, localeList) {
             const QString lang = localeName.mid(3,2);
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help"))) {
                 langList <<lang;
@@ -144,51 +114,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         }
     }
     return QStringList() << currentLanguage();
-}
-
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,
-                                    const QString &parameter)
-{
-    QString errorStr = QLatin1String("Not Available");
-
-    bool useDate = false;
-    if(parameter == QLatin1String("versionDate")) {
-        useDate = true;
-    }
-
-    switch(type) {
-        case QSystemInfo::Firmware :
-        {
-#if !defined(QT_NO_DBUS)
-            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-                if(!str.isEmpty()) {
-                    return str;
-                }
-                if(useDate) {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
-                    if(!str.isEmpty()) {
-                        return str;
-                    }
-                } else {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.version"));
-                    if(str.isEmpty()) {
-                        if(!str.isEmpty()) {
-                            return str;
-                        }
-                    }
-                }
-            }
-            break;
-#endif
-        }
-        default:
-            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-            break;
-    };
-    return errorStr;
 }
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
@@ -210,7 +135,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
 #if defined(QT_NO_CONNMAN)
     iface = new QNetworkManagerInterface(this);
 
-   foreach(const QDBusObjectPath path, iface->getDevices()) {
+   foreach (const QDBusObjectPath &path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path(), this);
 
         switch(devIface->deviceType()) {
@@ -281,12 +206,12 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
 
     const QList <QDBusObjectPath> connections = dbIface->activeConnections();
 
-    foreach(const QDBusObjectPath activeconpath, connections) {
+    foreach (const QDBusObjectPath &activeconpath, connections) {
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
         activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path(), this));
 
         const QList<QDBusObjectPath> devices = activeCon->devices();
-        foreach(const QDBusObjectPath device, devices) {
+        foreach (const QDBusObjectPath &device, devices) {
             activePaths.insert(activeconpath.path(),device.path());
         }
     }
@@ -581,6 +506,11 @@ Q_UNUSED(screen)
     return width;
 }
 
+bool QSystemDisplayInfoPrivate::backLightOn()
+{
+    return false;
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
         : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
@@ -745,7 +675,7 @@ QString QSystemDeviceInfoPrivate::productName()
         QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
                                                      QDir::Files | QDir::NoDotAndDotDot,
                                                      QDir::Name);
-        foreach(const QFileInfo fileInfo, localeList) {
+        foreach (const QFileInfo &fileInfo, localeList) {
             const QString filepath = fileInfo.filePath();
             QFile file(filepath);
             if (file.open(QIODevice::ReadOnly)) {
@@ -786,7 +716,7 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
- QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
+QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
          : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {
      kdeIsRunning = false;
@@ -804,7 +734,7 @@ QString QSystemDeviceInfoPrivate::productName()
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
-         foreach(const QString iface, ifaceList) {
+         foreach (const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
@@ -853,7 +783,7 @@ Q_UNUSED(timeout)
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
-         foreach(const QString iface, ifaceList) {
+         foreach (const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
@@ -961,7 +891,7 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
         ifaceList << QLatin1String("org.gnome.ScreenSaver");
         QDBusInterface *connectionInterface;
-        foreach(const QString iface, ifaceList) {
+        foreach (const QString iface, ifaceList) {
             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                      QLatin1String("/ScreenSaver"),
                                                      QLatin1String(iface.toLatin1()),
@@ -978,6 +908,18 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     }
     return false;
 }
+
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
+    : QSystemBatteryInfoLinuxCommonPrivate(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
 
 #include "moc_qsysteminfo_linux_p.cpp"
 

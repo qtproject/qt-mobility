@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
     operations.
 
     The isFinished(), error() and errorString() methods provide information
-    on whether the operation has completed and if it completed succesfully.
+    on whether the operation has completed and if it completed successfully.
 
     The finished() and error(QGeoSearchReply::Error,QString)
     signals can be used to monitor the progress of the operation.
@@ -126,7 +126,7 @@ QGeoSearchReply::~QGeoSearchReply()
     emitted.
 
     If the operation completed successfully, QGeoSearchReply::setPlaces()
-    should be called before this function. If an error occured,
+    should be called before this function. If an error occurred,
     QGeoSearchReply::setError() should be used instead.
 */
 void QGeoSearchReply::setFinished(bool finished)
@@ -260,7 +260,8 @@ int QGeoSearchReply::limit() const
 }
 
 /*!
-    Returns the offset
+    Returns the offset into the entire result set at which to start 
+    fetching results.
 */
 int QGeoSearchReply::offset() const
 {
@@ -278,6 +279,8 @@ void QGeoSearchReply::setLimit(int limit)
 }
 
 /*!
+    Sets the offset in the entire result set at which to start 
+    fetching result to \a offset.
 */
 void QGeoSearchReply::setOffset(int offset)
 {

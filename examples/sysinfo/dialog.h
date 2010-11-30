@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -64,14 +64,22 @@ private:
     void setupStorage();
     void setupNetwork();
     void setupSaver();
+    void setupBattery();
 
     QSystemScreenSaver *saver;
     QSystemInfo *systemInfo;
     QSystemDeviceInfo *di;
     QSystemNetworkInfo *ni;
     QSystemStorageInfo *sti;
+    QSystemBatteryInfo *bi;
     void updateStorage();
-    
+
+    QSystemBatteryInfo::BatteryStatus currentBatStat;
+    QSystemDeviceInfo::PowerState currentPowerState;
+
+    QSystemBatteryInfo::ChargerType currentChargerType;
+    QSystemBatteryInfo::ChargingState currentChargingState;
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -82,7 +90,7 @@ private slots:
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
-    void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
+    void displayBatteryStatus(QSystemBatteryInfo::BatteryStatus);
     void updateProfile(QSystemDeviceInfo::Profile profile);
     void updateSimStatus();
     void updateProfile();
@@ -95,6 +103,11 @@ private slots:
 
     void storageChanged(bool added,const QString &vol);
     void bluetoothChanged(bool);
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void startCurrentPushed();
 
 };
 

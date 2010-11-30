@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
+#include <QTimer>
 #include "instancemanager_p.h"
 #include "qremoteserviceregisterentry_p.h"
 
@@ -47,6 +48,11 @@ QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(InstanceManager, typeRegister);
 
+/*!
+    \internal
+
+    Returns the instance manager for the service process
+*/
 InstanceManager* InstanceManager::instance()
 {
     return typeRegister();
@@ -64,18 +70,23 @@ InstanceManager::~InstanceManager()
         ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
         if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
             if (descr.globalInstance)
-               descr.globalInstance->deleteLater();
+               QTimer::singleShot(0, descr.globalInstance, SLOT(deleteLater())); // Symbian issue, use timer
             descr.globalInstance = 0;
         } else {
             QList<QUuid> allUuids = descr.individualInstances.keys();
             while (!allUuids.isEmpty()) {
-                descr.individualInstances.take(allUuids.takeFirst())->deleteLater();
+                QTimer::singleShot(0, descr.individualInstances.take(allUuids.takeFirst()), SLOT(deleteLater())); // Symbian issue
             }
         }
     }
 
 }
 
+/*!
+    \internal
+    
+    Adds an entry to the map of service identifiers
+*/
 bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
 {
     QMutexLocker ml(&lock);
@@ -92,7 +103,11 @@ bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
     return false;
 }
 
+/*!
+    \internal
 
+    Returns the metaobject of a registered service object identified by its \a entry
+*/
 const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Entry& entry) const
 {
     QMutexLocker ml(&lock);
@@ -103,6 +118,11 @@ const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Ent
     }
 }
 
+/*!
+   \internal
+
+   Returns a list of all the registered entries
+*/
 QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
 {
     QMutexLocker ml(&lock);
@@ -110,9 +130,11 @@ QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
 }
 
 /*!
+    \internal
+
     Instance manager takes ownership of service instance. Returns a null pointer
-    if \a entry cannot be mapped to a known meta object. \a instanceId will
-    contain the id for the new service instance.
+    if \a entry cannot be mapped to a known meta object. The \a instanceId will
+    contain the unique ID for the new service instance.
 */
 QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId)
 {
@@ -150,15 +172,19 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Ent
 }
 
 /*!
-    The associated service object will be deleted in the process.
+    \internal
+
+    The associated service object instance will be deleted in the service process.
+    Removes an instance with \a instanceId from a map of remote service descriptors
+    using the \a entry as the key.
+
+    Emits instanceClosed() and allInstancesClosed() if no more instances are open
 */
 void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId)
 {
     QMutexLocker ml(&lock);
     if (!metaMap.contains(entry))
         return;
-
-    emit instanceClosed(entry);
 
     ServiceIdentDescriptor& descr = metaMap[entry];
     if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {        
@@ -167,24 +193,46 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
 
         if (descr.globalRefCount == 1) {            
             if (descr.globalInstance)
-                descr.globalInstance->deleteLater();
+                QTimer::singleShot(0, descr.globalInstance, SLOT(deleteLater()));
             descr.globalInstance = 0;
             descr.globalId = QUuid();
             descr.globalRefCount = 0;
-            metaMap.remove(entry);
+            emit instanceClosed(entry);
+            emit instanceClosed(entry, instanceId);    //internal use
         } else {
             descr.globalRefCount--;
         }
     } else {
         QObject* service = descr.individualInstances.take(instanceId);
         if (service) {
-            service->deleteLater();
+            QTimer::singleShot(0, service, SLOT(deleteLater())); // symbian issue
+            emit instanceClosed(entry);
+            emit instanceClosed(entry, instanceId);    //internal use
         }
-        metaMap.remove(entry);
     }
-    if(metaMap.empty())
-        emit allInstancesClosed();
 
+    // Check that no instances are open
+    if (totalInstances() < 1)
+        emit allInstancesClosed();
+}
+
+/*!
+    \internal
+
+    Provides a count of how many global and private instances are currently open
+*/
+int InstanceManager::totalInstances() const
+{
+    int total = 0;
+
+    QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
+    foreach (const QRemoteServiceRegister::Entry& entry, allEntries) {
+        ServiceIdentDescriptor descr = metaMap[entry];
+        total += descr.globalRefCount;
+        total += descr.individualInstances.size();
+    }
+   
+    return total;
 }
 
 #include "moc_instancemanager_p.cpp"

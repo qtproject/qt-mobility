@@ -81,7 +81,7 @@ QContactFetchByIdRequest::~QContactFetchByIdRequest()
 }
 
 /*!
-  Sets the list of ids of the contacts that the backend should retrieve.
+  Sets the list of ids of the contacts that the backend should retrieve to \a localIds.
  */
 void QContactFetchByIdRequest::setLocalIds(const QList<QContactLocalId>& localIds)
 {

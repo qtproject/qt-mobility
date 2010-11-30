@@ -1,0 +1,64 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \group qml-feedback
+    \title QML Feedback Plugin
+    QML Support for the Mobility Project Feedback API.
+
+*/
+
+
+/*!
+    \page qml-feedback-api.html
+
+    \title Feedback QML Plugin
+
+    \brief A QML plugin for the Mobility Project Feedback API.
+
+    
+
+    \section1 Overview
+
+     The API provides abstractions for various types of feedback, and allows custom implementations of these types of feedback.
+    The identifying string for this component is \i {"QtMobility.feedback"}.
+
+
+    The Feedback API allows application developers to implement feedback and programmatic vibration in their applications.
+    Use this in the QML \i {import} statement.
+
+    \note At the time of the Qt Mobility 1.1 release the QML support for the Feedback API is incomplete and likely to be refined
+          and improved in the next patch release.
+
+
+    \section1 Feedback elements
+
+    \annotatedlist qml-feedback-api
+
+*/
+
+
