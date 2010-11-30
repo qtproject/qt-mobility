@@ -67,7 +67,8 @@ public:
         ImagingDevice = 6,
         WearableDevice = 7,
         ToyDevice = 8,
-        UncategorizedDevice = 9,
+        HealthDevice = 9,
+        UncategorizedDevice = 31,
     };
 
     enum MinorMiscellaneousClass {
@@ -143,20 +144,9 @@ public:
     enum MinorImagingClass {
         UncategorizedImagingDevice = 0,
         ImageDisplay = 0x04,
-        ImageCamera = 0x08,
-        ImageCamera2 = 0x0C,
+        ImageCamera = 0x08,       
         ImageScanner = 0x10,
-        ImageScanner2 = 0x14,
-        ImageScanner3 = 0x18,
-        ImageScanner4 = 0x1C,
-        ImagePrinter = 0x20,
-        ImagePrinter2 = 0x24,
-        ImagePrinter3 = 0x28,
-        ImagePrinter4 = 0x2C,
-        ImagePrinter5 = 0x30,
-        ImagePrinter6 = 0x34,
-        ImagePrinter7 = 0x38,
-        ImagePrinter8 = 0x3C,
+        ImagePrinter = 0x20
     };
 
     enum MinorWearableClass {
@@ -175,6 +165,17 @@ public:
         ToyDoll = 3,
         ToyController = 4,
         ToyGame = 5,
+    };
+
+    enum MinorHealthClass {
+        UncategorizedHealthDevice = 0,
+        HealthBloodPressureMonitor = 0x1,
+        HealthThermometer = 0x2,
+        HealthWeightScale = 0x3,
+        HealthGlucoseMeter = 0x4,
+        HealthPulseOximeter = 0x5,
+        HealthDataDisplay = 0x6,
+        HealthStepCounter = 0x7
     };
 
     enum ServiceClass {

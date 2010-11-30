@@ -73,11 +73,8 @@ private Q_SLOTS:
     void _q_deviceFound(const QString &address, const QVariantMap &dict);
     void _q_propertyChanged(const QString &name, const QDBusVariant &value);
 
-public:
-    QList<QBluetoothDeviceInfo> discoveredDevices;
-
 private:
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
+//    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType;
 
 #if !defined(QT_NO_DBUS)
     OrgBluezManagerInterface *manager;

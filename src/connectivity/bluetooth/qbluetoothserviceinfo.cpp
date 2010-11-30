@@ -524,60 +524,61 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
 {
     switch (var.type()) {
     case QMetaType::Void:
-        qDebug("%sEmpty", indent.toLocal8Bit().constData());
+//        qDebug("%sEmpty", indent.toLocal8Bit().constData());
         break;
     case QMetaType::UChar:
-        qDebug("%suchar %u", indent.toLocal8Bit().constData(), var.toUInt());
+//        qDebug("%suchar %u", indent.toLocal8Bit().constData(), var.toUInt());
         break;
     case QMetaType::UShort:
-        qDebug("%sushort %u", indent.toLocal8Bit().constData(), var.toUInt());
+//        qDebug("%sushort %u", indent.toLocal8Bit().constData(), var.toUInt());
     case QMetaType::UInt:
-        qDebug("%suint %u", indent.toLocal8Bit().constData(), var.toUInt());
+//        qDebug("%suint %u", indent.toLocal8Bit().constData(), var.toUInt());
         break;
     case QMetaType::Char:
-        qDebug("%schar %d", indent.toLocal8Bit().constData(), var.toInt());
+//        qDebug("%schar %d", indent.toLocal8Bit().constData(), var.toInt());
         break;
     case QMetaType::Short:
-        qDebug("%sshort %d", indent.toLocal8Bit().constData(), var.toInt());
+//        qDebug("%sshort %d", indent.toLocal8Bit().constData(), var.toInt());
         break;
     case QMetaType::Int:
-        qDebug("%sint %d", indent.toLocal8Bit().constData(), var.toInt());
+//        qDebug("%sint %d", indent.toLocal8Bit().constData(), var.toInt());
         break;
     case QMetaType::QString:
-        qDebug("%sstring %s", indent.toLocal8Bit().constData(), var.toString().toLocal8Bit().constData());
+//        qDebug("%sstring %s", indent.toLocal8Bit().constData(), var.toString().toLocal8Bit().constData());
         break;
     case QMetaType::Bool:
-        qDebug("%sbool %d", indent.toLocal8Bit().constData(), var.toBool());
+//        qDebug("%sbool %d", indent.toLocal8Bit().constData(), var.toBool());
         break;
     case QMetaType::QUrl:
-        qDebug("%surl %s", indent.toLocal8Bit().constData(), var.toUrl().toString().toLocal8Bit().constData());
+//        qDebug("%surl %s", indent.toLocal8Bit().constData(), var.toUrl().toString().toLocal8Bit().constData());
         break;
     case QVariant::UserType:
         if (var.userType() == qMetaTypeId<QBluetoothUuid>()) {
             QBluetoothUuid uuid = var.value<QBluetoothUuid>();
             switch (uuid.minimumSize()) {
             case 0:
-                qDebug("%suuid NULL", indent.toLocal8Bit().constData());
+//                qDebug("%suuid NULL", indent.toLocal8Bit().constData());
                 break;
             case 2:
-                qDebug("%suuid %04x", indent.toLocal8Bit().constData(), uuid.toUInt16());
+//                qDebug("%suuid %04x", indent.toLocal8Bit().constData(), uuid.toUInt16());
                 break;
             case 4:
-                qDebug("%suuid %08x", indent.toLocal8Bit().constData(), uuid.toUInt32());
+//                qDebug("%suuid %08x", indent.toLocal8Bit().constData(), uuid.toUInt32());
                 break;
             case 16:
-                qDebug("%suuid %s", indent.toLocal8Bit().constData(), QByteArray(reinterpret_cast<const char *>(uuid.toUInt128().data), 16).toHex().constData());
+//                qDebug("%suuid %s", indent.toLocal8Bit().constData(), QByteArray(reinterpret_cast<const char *>(uuid.toUInt128().data), 16).toHex().constData());
                 break;
             default:
-                qDebug("%suuid ???", indent.toLocal8Bit().constData());
+//                qDebug("%suuid ???", indent.toLocal8Bit().constData());
+                ;
             }
         } else if (var.userType() == qMetaTypeId<QBluetoothServiceInfo::Sequence>()) {
-            qDebug("%sSequence", indent.toLocal8Bit().constData());
+//            qDebug("%sSequence", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Sequence *sequence = static_cast<const QBluetoothServiceInfo::Sequence *>(var.data());
             foreach (const QVariant &v, *sequence)
                 dumpAttributeVariant(v, indent + '\t');
         } else if (var.userType() == qMetaTypeId<QBluetoothServiceInfo::Alternative>()) {
-            qDebug("%sAlternative", indent.toLocal8Bit().constData());
+//            qDebug("%sAlternative", indent.toLocal8Bit().constData());
             const QBluetoothServiceInfo::Alternative *alternative = static_cast<const QBluetoothServiceInfo::Alternative *>(var.data());
             foreach (const QVariant &v, *alternative)
                 dumpAttributeVariant(v, indent + '\t');

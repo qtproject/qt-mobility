@@ -54,7 +54,8 @@ public:
     {
       connect(this, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)), parent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo)));
       connect(this, SIGNAL(finished()), parent, SIGNAL(finished()));
-      connect(this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), parent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
+      connect(this, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)), parent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));      
+      inquiryType = QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry;
     }
     virtual ~QBluetoothDeviceDiscoveryAgentPrivate() { };
 

@@ -780,9 +780,10 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -1223,11 +1224,6 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
 }
 
 bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
-{
-    return false;
-}
-
-bool QSystemDeviceInfoPrivate::backLightOn()
 {
     return false;
 }
