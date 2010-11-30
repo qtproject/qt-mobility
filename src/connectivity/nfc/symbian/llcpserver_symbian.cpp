@@ -143,30 +143,29 @@ const TDesC8&  CLlcpServer::serviceUri() const
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     RDebug::Print(_L("CLlcpServer::Listen begin"));
-//    LOG(_L("CLlcpServer::Listen begin"));
-    std::cout << "CLlcpServer::Listen begin";
-//    iCallback.log(QNFCNdefUtility::FromDesC8ToQString(_L("CLlcpServer::Listen begin"));
+    LOG(_L8("CLlcpServer::Listen begin"));
+    std::cout << "CLlcpServer::Listen begin" << endl;
     TInt error = KErrNone;
 
     // TODO
     // will updated to
     // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
     iServiceName = aServiceName;
-//    LOG(_L("CLlcpServer::Listen before TRAP"));
-    std::cout << "CLlcpServer::Listen before TRAP";
+    LOG(_L8("CLlcpServer::Listen before TRAP"));
+    std::cout << "CLlcpServer::Listen before TRAP" << endl;
     if (iLlcp == NULL)
         {
-//        LOG(_L("iLlcp == NULL"));
-        std::cout << "iLlcp == NULL";
+        LOG(_L8("iLlcp == NULL"));
+        std::cout << "iLlcp == NULL" << endl;
         }
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
     RDebug::Print(_L("CLlcpServer::Listen after TRAP"));
-//    LOG(_L("CLlcpServer::Listen after TRAP"));
-    std::cout << "CLlcpServer::Listen after TRAP";
+    LOG(_L8("CLlcpServer::Listen after TRAP"));
+    std::cout << "CLlcpServer::Listen after TRAP" << endl;
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     RDebug::Print(_L("CLlcpServer::Listen end"));
-//    LOG(_L("CLlcpServer::Listen end"));
-    std::cout << "CLlcpServer::Listen end";
+    LOG(_L8("CLlcpServer::Listen end"));
+    std::cout << "CLlcpServer::Listen end" << endl;
     return iSocketListening;
     }
 
