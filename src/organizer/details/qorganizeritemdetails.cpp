@@ -568,7 +568,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
 /*!
-  \internal
   Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
 
   Since the data types stored in this detail are custom data types, the base class
@@ -1348,29 +1347,5 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
    \fn QOrganizerItemType::setType(const QString& type)
    Sets the type of the organizer item to be the give \a type.
  */
-
-
-/*!
-    \fn QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
-
-    Returns true if this QOrganizerItemRecurrence equals \a other. 
-*/
-
-/*!
-    \fn QOrganizerItemRecurrence::operator!=(const QOrganizerItemRecurrence& other) const
-
-    Returns true if this QOrganizerItemRecurrence does not equal \a other.
-*/
-
-
-
-
-
-
-
-
-
-
-
 
 QTM_END_NAMESPACE

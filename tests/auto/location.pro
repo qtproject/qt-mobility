@@ -12,11 +12,13 @@ SUBDIRS += qgeocoordinate \
       qgeoareamonitor \
       qlocationutils \
       qnmeapositioninfosource \
-      #qlandmarkmanagerplugins \
       qlandmarkmanagerengine \
       qlandmark \
       qlandmarkcategory \
       qlandmarkmanager
+
+
+SUBDIRS +=qlandmarkmanagerplugins
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition
