@@ -12,12 +12,12 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 
-class tst_qllcpsockettype1 : public QObject
+class tst_qllcpsocketremote : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_qllcpsockettype1();
+    tst_qllcpsocketremote();
 
 private Q_SLOTS:
     void initTestCase();
@@ -26,20 +26,20 @@ private Q_SLOTS:
     void testCase1_data();
 };
 
-tst_qllcpsockettype1::tst_qllcpsockettype1()
+tst_qllcpsocketremote::tst_qllcpsocketremote()
 {
 }
 
-void tst_qllcpsockettype1::initTestCase()
+void tst_qllcpsocketremote::initTestCase()
 {
 }
 
-void tst_qllcpsockettype1::cleanupTestCase()
+void tst_qllcpsocketremote::cleanupTestCase()
 {
 }
 
 /*!
- Description: Unit test for NFC LLCP connection-less mode socket - local peer
+ Description: Unit test for NFC LLCP connection-less mode socket - remote peer (passive)
 
  TestScenario: 1. Touch a NFC device with LLCP connection-less service actived
                2. Local peer binds to the remote peer
@@ -52,9 +52,9 @@ void tst_qllcpsockettype1::cleanupTestCase()
                2. The message has be sent to remote peer.
                3. The message has been received from remote peer.
 */
-void tst_qllcpsockettype1::testCase1()
+void tst_qllcpsocketremote::testCase1()
 {
-    // STEP 1:  Touch a NFC device with LLCP connection-less service actived
+    // STEP 1:  touch a NFC device with LLCP connection-less service actived
     QFETCH(quint8, port);
     QFETCH(QString, hint);
     QFETCH(QString, message);
@@ -62,25 +62,38 @@ void tst_qllcpsockettype1::testCase1()
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QNfcTestUtil::ShowMessage(hint);
+    QMessageBox b(QMessageBox::Information, QObject::tr("llcp remote peer"), hint, QMessageBox::Ok);
+    b.show();
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
+    b.close();
 
     QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
     QVERIFY(target!=NULL);
     QVERIFY(target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
-    // STEP 2:  Local peer binds to the remote peer
+    // STEP 2:  bind the local port for current socket
     QLlcpSocket socket(this);
     bool ret = socket.bind(port);
     QVERIFY(ret);
 
-    // STEP 3: Local peer sends the  message to the remote peer
+    // STEP 3: Receive data from the peer which send messages to
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+    QTRY_VERIFY(readyReadSpy.count() == 1);
+    QByteArray datagram;
+    while (socket.hasPendingDatagrams())
+    {
+       datagram.resize(socket.pendingDatagramSize());
+       qint64 readSize = socket.readDatagram(datagram.data(), datagram.size());
+       QVERIFY(readSize != -1);
+    }
+
+    // STEP 4: Send the received message back to the intiated device.
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
 
     const char* data = (const char *) message.data();
     qint64 strSize = message.size();
-    socket.writeDatagram(data,strSize,target, port);
+    socket.writeDatagram(datagram,target, port);
 
     const int Timeout = 10 * 1000;
     ret = socket.waitForBytesWritten(Timeout);
@@ -91,23 +104,11 @@ void tst_qllcpsockettype1::testCase1()
     qint64 writtenSize  = arguments.at(0).value<qint64>();
     QCOMPARE(writtenSize, strSize);
 
-    // STEP 4: Receive data from remote peer
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    QTRY_VERIFY(readyReadSpy.count() == 1);
-
-    while (socket.hasPendingDatagrams())
-    {
-       QByteArray datagram;
-       datagram.resize(socket.pendingDatagramSize());
-       qint64 readSize = socket.readDatagram(datagram.data(), datagram.size());
-       QVERIFY(readSize != -1);
-    }
-
     // make sure the no error signal emitted
     QCOMPARE(errorSpy.count(), 0);
 }
 
-void tst_qllcpsockettype1::testCase1_data()
+void tst_qllcpsocketremote::testCase1_data()
 {
     quint8 port = 35;
     QString data("connect-less unit test string");
@@ -116,11 +117,11 @@ void tst_qllcpsockettype1::testCase1_data()
     QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("message");
     QTest::newRow("row1") << port
-            << "Please touch a NFC device with llcp client enabled: port num = 35"
+            << "This device served as remote peer, please wait for local peer's activation"
             << data;
 
 }
 
-QTEST_MAIN(tst_qllcpsockettype1);
+QTEST_MAIN(tst_qllcpsocketremote);
 
-#include "tst_qllcpsockettype1.moc"
+#include "tst_qllcpsocketremote.moc"

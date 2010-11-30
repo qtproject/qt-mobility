@@ -16,5 +16,5 @@ TEMPLATE = app
 
 INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
-SOURCES += tst_qllcpsockettype1.cpp
+SOURCES += tst_qllcpsocketlocal.cpp
 symbian:TARGET.CAPABILITY = ALL - TCB
