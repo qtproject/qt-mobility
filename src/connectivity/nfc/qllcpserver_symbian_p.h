@@ -73,6 +73,7 @@ public:
     QLlcpSocket *nextPendingConnection();
 
     QLlcpServer::Error serverError() const;
+    void log(const QString log);
 
 public:
     typedef enum State {
