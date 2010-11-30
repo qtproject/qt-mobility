@@ -45,18 +45,42 @@
 
 #include <qmobilityglobal.h>
 
+#include <QObject>
 #include <QtCore/QList>
+#include <QString>
+
+#include "qbluetoothaddress.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddress;
 class QBluetoothLocalDevicePrivate;
 
-class Q_CONNECTIVITY_EXPORT QBluetoothLocalDevice
+class Q_CONNECTIVITY_EXPORT QBluetoothHostInfo
 {
-    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
+public:
+    QBluetoothHostInfo() { };
+    QBluetoothHostInfo(const QBluetoothHostInfo &other) {
+        m_address = other.m_address;
+        m_name = other.m_name;
+    };
+
+    QBluetoothAddress getAddress() const { return m_address; }
+    void setAddress(const QBluetoothAddress &address) { m_address = address; }
+
+    QString getName() const { return m_name; }
+    void setName(const QString &name){ m_name = name; }
+
+private:
+    QBluetoothAddress m_address;
+    QString m_name;
+
+};
+
+class Q_CONNECTIVITY_EXPORT QBluetoothLocalDevice : public QObject
+{
+    Q_OBJECT
 
 public:
     enum Pairing {
@@ -65,38 +89,34 @@ public:
         AuthorizedPaired
     };
 
-    enum PowerState {        
-        PowerOff,
-        PowerOn
-    };
-
-    enum HostMode {
-        HostUnconnectable,
+    enum HostMode {        
+        HostPoweredOff,
         HostConnectable,
         HostDiscoverable
     };
 
-    QBluetoothLocalDevice();
-    ~QBluetoothLocalDevice();
+    QBluetoothLocalDevice(QObject *parent = 0);
+    QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent = 0);
+    virtual ~QBluetoothLocalDevice();
 
     bool isValid() const;
 
-    void setPairing(const QBluetoothAddress &address, Pairing pairing);
-    Pairing pairing(const QBluetoothAddress &address) const;
-
-    // TODO should this emit a signal when complete?
-    void setPowerState(PowerState powerState);
-    PowerState powerState() const;
+    void requestPairing(const QBluetoothAddress &address, Pairing pairing);
+    Pairing pairingStatus(const QBluetoothAddress &address) const;
 
     void setHostMode(QBluetoothLocalDevice::HostMode mode);
     HostMode hostMode() const;
 
-    QString name() const;
+    void powerOn();
 
+    QString name() const;
     QBluetoothAddress address() const;
 
-    static QBluetoothLocalDevice defaultDevice();
-    static QList<QBluetoothLocalDevice> allDevices();
+    static QList<QBluetoothHostInfo> allDevices();
+
+Q_SIGNALS:    
+    void hostModeStateChanged(HostMode state);
+    void pairingFinished(const QBluetoothAddress &address, Pairing pairing);
 
 private:
     QBluetoothLocalDevicePrivate *d_ptr;
