@@ -70,7 +70,7 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
   \value BacklightUnknown          Error, no, or unknown Backlight state.
   \value BacklightOff              Backlight is turned off.
   \value BacklightStateDimmed      Backlight has been dimmed.
-  \value BacklightStateFull        Backlight is on full.
+  \value BacklightStateOn          Backlight is on.
   */
  /*!
    \class QSystemDisplayInfo
