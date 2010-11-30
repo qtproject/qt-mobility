@@ -8,11 +8,11 @@ INCLUDEPATH += ../../../src/location \
                 ../../../src/location/maps \
                 ../qgeomapobjectplugin
 
-# Input 
+# Input
 SOURCES += tst_qgeomaptextobject.cpp \
             ../qgeomapobjectplugin/testhelper.cpp
 
-HEADERS += ../qgeomapobjectplugin/testhelper.h 
+HEADERS += ../qgeomapobjectplugin/testhelper.h
 
 CONFIG += mobility
 MOBILITY = location

@@ -53,9 +53,9 @@ class QGeoMapReplyTest : public QGeoTiledMapReply
 {
     Q_OBJECT
 public:
-    QGeoMapReplyTest(const QGeoTiledMapRequest &request, QObject *parent = 0) 
+    QGeoMapReplyTest(const QGeoTiledMapRequest &request, QObject *parent = 0)
         : QGeoTiledMapReply(request, parent)
-    { 
+    {
         setFinished(true);
     }
 

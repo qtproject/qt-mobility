@@ -8,7 +8,7 @@ INCLUDEPATH += ../../../src/location \
                 ../../../src/location/maps \
                 ../qgeomapobjectplugin
 
-# Input 
+# Input
 SOURCES += tst_qgeomapcircleobject.cpp \
             ../qgeomapobjectplugin/testhelper.cpp
 
