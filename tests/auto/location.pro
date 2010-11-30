@@ -5,6 +5,7 @@ requires(contains(mobility_modules,location))
 TEMPLATE = subdirs
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
+      qgeotiledmappingmanagerengine \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
