@@ -67,9 +67,13 @@ signals:
 private slots:
     void kineticTimerEvent();
 
+    void hoveredMapObjectDestroyed();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
@@ -97,6 +101,9 @@ private:
 
     void panFloatWrapper(const QPointF& delta);
     void applyPan(const Qt::KeyboardModifiers& modifiers);
+
+    QGeoMapObject* m_lastHoveredMapObject;
+    QPen m_lastHoveredMapObjectPen;
 
 public:
     QGeoMapCircleObject *lastCircle;
