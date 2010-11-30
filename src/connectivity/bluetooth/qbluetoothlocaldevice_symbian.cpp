@@ -45,14 +45,53 @@
 
 QTM_BEGIN_NAMESPACE
 
-QString QBluetoothLocalDevice::name() const
+class QBluetoothLocalDevicePrivate
 {
-    return QString();
+public:
+};
+
+/*!
+    Constructs a QBluetoothLocalDevice.
+*/
+QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
+:   QObject(parent)
+{
 }
 
-QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
+QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
+: QObject(parent)
 {
-    return QBluetoothLocalDevice();
 }
+
+QString QBluetoothLocalDevice::name() const
+{
+  return QString();
+}
+
+QBluetoothAddress QBluetoothLocalDevice::address() const
+{
+  return QBluetoothAddress();
+}
+
+void QBluetoothLocalDevice::powerOn()
+{
+}
+
+void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
+{
+}
+
+QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
+{
+    return HostPoweredOff;
+}
+
+QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
+{
+    QList<QBluetoothHostInfo> localDevices;
+
+    return localDevices;
+}
+
 
 QTM_END_NAMESPACE
