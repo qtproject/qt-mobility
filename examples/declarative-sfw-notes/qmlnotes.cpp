@@ -41,10 +41,35 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <qservicemanager.h>
+
+QTM_USE_NAMESPACE
+
+void unregisterExampleService()
+{
+    QServiceManager m;
+    m.removeService("NotesManagerService");
+}
+
+void registerExampleService()
+{
+    unregisterExampleService();
+    
+    QServiceManager m;
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/notesmanagerservice.xml";
+    if (!m.addService(path)) {
+        qWarning() << "Unable to register notes manager service";
+    }
+}
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+#ifndef Q_OS_SYMBIAN
+    registerExampleService();
+#endif
+
 #if defined(Q_WS_MAEMO_5) | defined(Q_WS_MAEMO_6)
     const QString mainQmlApp = QLatin1String("qrc:/maemo-sfw-notes.qml");
 #else
@@ -61,5 +86,10 @@ int main(int argc, char *argv[])
 #else // Q_OS_SYMBIAN
     view.show();
 #endif // Q_OS_SYMBIAN
-    return application.exec();
+
+    int ret = application.exec();
+#ifndef Q_OS_SYMBIAN
+    unregisterExampleService();
+#endif
+    return ret;
 }
