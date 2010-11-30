@@ -57,6 +57,7 @@
 #include <qmediaplaylistsourcecontrol.h>
 #include <qvideowidget.h>
 #include <qgraphicsvideoitem.h>
+#include <qmedianetworkaccesscontrol.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -142,6 +143,7 @@ public:
 
     QPointer<QObject> videoOutput;
     QMediaPlaylist *playlist;
+    QMediaNetworkAccessControl *networkAccessControl;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -285,7 +287,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
     } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->requestControl(QMediaPlayerControl_iid));
         d->playlistSourceControl = qobject_cast<QMediaPlaylistSourceControl*>(d->service->requestControl(QMediaPlaylistSourceControl_iid));
-
+        d->networkAccessControl = qobject_cast<QMediaNetworkAccessControl*>(d->service->requestControl(QMediaNetworkAccessControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -307,6 +309,10 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
                 addPropertyWatch("bufferStatus");
+        }
+        if (d->networkAccessControl != 0) {
+            connect(d->networkAccessControl, SIGNAL(configurationChanged(QNetworkConfiguration)),
+            this, SIGNAL(networkConfigurationChanged(QNetworkConfiguration)));
         }
     }
 }
@@ -396,6 +402,23 @@ void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
         }
 
     }
+}
+
+/*!
+    Sets the network access point via QNetworkConfiguration's for remote media playback.
+    \a configurations contains, in ascending preferential order, a list of
+    configurations that can be used for network access.
+    Configurations should be in QNetworkConfiguration::Discovered state for
+    immediate use.
+    This will invalidate the choice of previous configurations.
+    \sa QMediaplayer networkConfigurationChanged()
+*/
+void QMediaPlayer::setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations)
+{
+    Q_D(QMediaPlayer);
+
+    if (d->networkAccessControl)
+        d->networkAccessControl->setConfigurations(configurations);
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -515,6 +538,22 @@ QMediaPlayer::Error QMediaPlayer::error() const
 QString QMediaPlayer::errorString() const
 {
     return d_func()->errorString;
+}
+
+/*!
+    Returns the current in use network configuration.
+    A returned default constructed configuration indicates
+    that this feature is not available or that the
+    current supplied configurations are not in use.
+*/
+QNetworkConfiguration QMediaPlayer::currentNetworkConfiguration() const
+{
+    Q_D(const QMediaPlayer);
+
+    if (d->networkAccessControl)
+        d_func()->networkAccessControl->currentConfiguration();
+
+    return QNetworkConfiguration();
 }
 
 //public Q_SLOTS:
@@ -1007,6 +1046,12 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     \fn void QMediaPlayer::bufferStatusChanged(int percentFilled)
 
     Signal the amount of the local buffer filled as a percentage by \a percentFilled.
+*/
+
+/*!
+   \fn void QMediaPlayer::networkConfigurationChanged(const QNetworkConfiguration &configuration)
+
+    Signal that the active in use QNetworkConfiguration has been changed to \a configuration and all subsequent network access will this use \a configuration.
 */
 
 /*!
