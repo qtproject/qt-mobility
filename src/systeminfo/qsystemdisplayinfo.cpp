@@ -42,6 +42,7 @@
 #include "qsystemdisplayinfo.h"
 #include "qsysteminfocommon_p.h"
 #include <QDesktopWidget>
+#include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
