@@ -46,15 +46,13 @@
 #include <nfcserver.h>                      // RNfcServer
 #include <llcpprovider.h>                   // CLlcpProvider
 #include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
-
-class CLlcpSocketType2;
-
 #include <qmobilityglobal.h>
 #include "../qllcpserver_symbian_p.h"
 
-/*!
- *  CLASS DECLARATION for CLlcpSocketPrivate.
- */
+
+class CLlcpSocketType2;
+class RTest;
+
 class CLlcpServer : public CBase,
                     public MLlcpConnOrientedListener
    {
@@ -63,56 +61,57 @@ public:
     * Creates a new CLlcpServer object.
     */
    static CLlcpServer* NewL(QtMobility::QLlcpServerPrivate&);
-   
+
    /*!
     * Creates a new CLlcpServer object.
     */
    static CLlcpServer* NewLC(QtMobility::QLlcpServerPrivate&);
-   
+
    /*!
     * Destructor
     */
    ~CLlcpServer();
-   
-public:    
+
+public:
    TBool Listen( const TDesC8& aServiceName);
    void StopListening();
    TBool isListening() const;
    CLlcpSocketType2 *nextPendingConnection();
    TBool hasPendingConnections() const;
    const TDesC8& serviceUri() const;
-    
-private: // From MLlcpConnOrientedListener   
-    void RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection ); 
-    
+
+private: // From MLlcpConnOrientedListener
+    void RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection );
+
 private:
     // Constructor
     CLlcpServer(QtMobility::QLlcpServerPrivate&);
-    
+
     // Second phase constructor
     void ConstructL();
-    
+
 private:
-   
+
     RPointerArray<CLlcpSocketType2>  iLlcpSocketArray;
-    
+
    /*!
     * Handle to NFC-server.
     * Own.
-    */ 
+    */
    RNfcServer iNfcServer;
-   
+
    /*!
     * Pointer to CLlcpProvider object.
     * Own.
     */
    CLlcpProvider* iLlcp;
-   
+
    TBool iSocketListening;
-   
+
    RBuf8 iServiceName;
-   
+
    QtMobility::QLlcpServerPrivate& iCallback;
+   RTest *iLog;
    };
-    
+
 #endif /* LLCPSERVER_SYMBIAN_H_ */

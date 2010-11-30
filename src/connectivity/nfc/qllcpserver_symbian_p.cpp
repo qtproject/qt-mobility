@@ -65,8 +65,9 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
     m_state = QLlcpServerPrivate::ListeningState;
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
     qDebug() << "QLlcpServerPrivate::listen() FromQStringToTptrC8";
-    return m_symbianbackend->Listen(serviceName);
+    bool ret =  m_symbianbackend->Listen(serviceName);
     qDebug() << "QLlcpServerPrivate::listen() end";
+    return ret;
 }
 
 bool QLlcpServerPrivate::isListening() const

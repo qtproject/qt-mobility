@@ -44,7 +44,9 @@
 #include "../qllcpserver_symbian_p.h"
 
 #include <e32debug.h>
+#include <e32test.h>
 
+#define LOG(a) iLog->Printf(a)
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -87,6 +89,7 @@ void CLlcpServer::ConstructL()
     {
     User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
+    iLog = new(ELeave) RTest(_L("Test"));
     }
 
 /*!
@@ -99,6 +102,7 @@ CLlcpServer::~CLlcpServer()
     iLlcpSocketArray.Close();
     iServiceName.Close();
     iNfcServer.Close();
+    delete iLog;
     }
 
 /*!
@@ -138,16 +142,24 @@ const TDesC8&  CLlcpServer::serviceUri() const
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     RDebug::Print(_L("CLlcpServer::Listen begin"));
+    LOG(_L("CLlcpServer::Listen begin"));
     TInt error = KErrNone;
 
     // TODO
     // will updated to
     // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
     iServiceName = aServiceName;
+    LOG(_L("CLlcpServer::Listen before TRAP"));
+    if (iLlcp == NULL)
+        {
+        LOG(_L("iLlcp == NULL"));
+        }
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
     RDebug::Print(_L("CLlcpServer::Listen after TRAP"));
+    LOG(_L("CLlcpServer::Listen after TRAP"));
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     RDebug::Print(_L("CLlcpServer::Listen end"));
+    LOG(_L("CLlcpServer::Listen end"));
     return iSocketListening;
     }
 
