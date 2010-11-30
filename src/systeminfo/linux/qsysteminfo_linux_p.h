@@ -153,7 +153,7 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
-    bool backLightOn();
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();

@@ -86,7 +86,6 @@ private slots:
     void tst_isWirelessKeyboardConnected();
     void tst_isKeyboardFlipOpen();
     void tst_keypadLightOn();
-    void tst_backLightOn();
     void tst_hostId();
     void tst_lockStatus();
 
@@ -285,13 +284,6 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn()
     on = di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
     QVERIFY(on || !on);
 
-}
-
-void tst_QSystemDeviceInfo::tst_backLightOn()
-{
-    QSystemDeviceInfo di;
-    bool on = di.backLightOn();
-    QVERIFY(on || !on);
 }
 
 void tst_QSystemDeviceInfo::tst_hostId()

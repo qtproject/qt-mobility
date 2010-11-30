@@ -1749,9 +1749,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
-bool QSystemDisplayInfoLinuxCommonPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightUnknown;
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
@@ -2842,11 +2843,6 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypa
     return false;
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
-{
-    return false;
-}
-
 QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
 {
 #if !defined(QT_NO_DBUS)
@@ -3276,7 +3272,16 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
             }
 
         }
-    } //end map
+    } else {
+        currentBatLevelPercent = 0;
+        currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
+        curChargeType = QSystemBatteryInfo::WallCharger;
+        curChargeState = QSystemBatteryInfo::NotCharging;
+        currentVoltage = 0;
+        dischargeRate = 0;
+        capacity = 0;
+        remainingEnergy = 0;
+    }
 }
 
 void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
@@ -3367,6 +3372,15 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                     break;
                 }
             }
+        } else {
+            currentBatLevelPercent = 0;
+            currentBatStatus = QSystemBatteryInfo::BatteryUnknown;
+            curChargeType = QSystemBatteryInfo::WallCharger;
+            curChargeState = QSystemBatteryInfo::NotCharging;
+            currentVoltage = 0;
+            dischargeRate = 0;
+            capacity = 0;
+            remainingEnergy = 0;
         }
 
         list = iface.findDeviceByCapability("ac_adapter");

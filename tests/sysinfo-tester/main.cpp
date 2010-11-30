@@ -219,6 +219,9 @@ static void test_systemdisplayinfo(void)
     qDebug() << "  displayinfo.physicalHeight() ->" << physicalHeight;
     int physicalWidth = displayinfo.physicalWidth(display);
     qDebug() << "  displayinfo.physicalWidth() ->" << physicalWidth;
+    QSystemDisplayInfo::BacklightState state = displayinfo.backlightStatus(display);
+    qDebug() << "  displayinfo.backlightStatus() ->" << state;
+
   }
 }
 
