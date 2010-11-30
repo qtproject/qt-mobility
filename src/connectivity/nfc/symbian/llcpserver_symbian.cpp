@@ -42,11 +42,12 @@
 #include "llcpserver_symbian.h"
 #include "llcpsockettype2_symbian.h"
 #include "../qllcpserver_symbian_p.h"
-
+#include "nearfieldutility_symbian.h"
 #include <e32debug.h>
 #include <e32test.h>
-
-#define LOG(a) iLog->Printf(a)
+#include <iostream>
+//#define LOG(a) iLog->Printf(a)
+#define LOG(a) iCallback.log(QtMobility::QNFCNdefUtility::FromDesC8ToQString(a))
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -142,24 +143,30 @@ const TDesC8&  CLlcpServer::serviceUri() const
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
     RDebug::Print(_L("CLlcpServer::Listen begin"));
-    LOG(_L("CLlcpServer::Listen begin"));
+//    LOG(_L("CLlcpServer::Listen begin"));
+    std::cout << "CLlcpServer::Listen begin";
+//    iCallback.log(QNFCNdefUtility::FromDesC8ToQString(_L("CLlcpServer::Listen begin"));
     TInt error = KErrNone;
 
     // TODO
     // will updated to
     // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
     iServiceName = aServiceName;
-    LOG(_L("CLlcpServer::Listen before TRAP"));
+//    LOG(_L("CLlcpServer::Listen before TRAP"));
+    std::cout << "CLlcpServer::Listen before TRAP";
     if (iLlcp == NULL)
         {
-        LOG(_L("iLlcp == NULL"));
+//        LOG(_L("iLlcp == NULL"));
+        std::cout << "iLlcp == NULL";
         }
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
     RDebug::Print(_L("CLlcpServer::Listen after TRAP"));
-    LOG(_L("CLlcpServer::Listen after TRAP"));
+//    LOG(_L("CLlcpServer::Listen after TRAP"));
+    std::cout << "CLlcpServer::Listen after TRAP";
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
     RDebug::Print(_L("CLlcpServer::Listen end"));
-    LOG(_L("CLlcpServer::Listen end"));
+//    LOG(_L("CLlcpServer::Listen end"));
+    std::cout << "CLlcpServer::Listen end";
     return iSocketListening;
     }
 

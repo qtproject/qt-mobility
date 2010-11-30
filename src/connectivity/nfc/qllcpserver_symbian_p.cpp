@@ -128,7 +128,10 @@ QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {
     return QLlcpServer::UnknownSocketError;
 }
-
+void QLlcpServerPrivate::log(const QString log)
+    {
+    qDebug() << log;
+    }
 #include "moc_qllcpserver_symbian_p.cpp"
 
 QTM_END_NAMESPACE
