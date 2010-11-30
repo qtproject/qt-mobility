@@ -19,6 +19,15 @@ SUBDIRS += qgeocoordinate \
       qlandmarkmanager \
       qgeoaddress \
       qgeomaneuver \
+      qgeomapobjectplugin \
+      qgeomapcircleobject \
+      qgeomapgroupobject \
+      qgeomappixmapobject \
+      qgeomappolygonobject \
+      qgeomappolylineobject \
+      qgeomaprectangleobject \
+      qgeomaprouteobject \
+      qgeomaptextobject \
       qgeoplace \
       qgeoroute \
       qgeoroutingmanagerplugins \
@@ -36,9 +45,9 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeotiledmapplugin \
       geoservicesgeotiledmap
 
+
 #IGNORED_UNTIL_INTEGRATED_PROPERLY += \
-#    qdeclarativeapitests \
-#    qgeomapobjects
+#    qdeclarativeapitests
 
 
 SUBDIRS +=qlandmarkmanagerplugins
