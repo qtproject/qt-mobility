@@ -106,15 +106,17 @@ void tst_QLlcpServer::newConnection()
     QFETCH(QString, hint);
 
     QLlcpServer server;
+    qDebug() << "Create QLlcpServer completed";
+    qDebug() << "Start listening...";
     bool ret = server.listen(uri);
     QVERIFY(ret);
-
+    qDebug() << "Listen() return ok";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
 
     QNfcTestUtil::ShowMessage(hint);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
-
+    qDebug() << "try to call nextPendingConnection()";
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
 
