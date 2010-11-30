@@ -85,20 +85,6 @@ QTime QSystemAlignedTimer::requestTimer(ushort optimalInterval, ushort timerWind
 }
 
 
-/*!\internal
-This function is called when the client sconnects to signals.
-
-\sa connectNotify()
-*/
-
-void QSystemAlignedTimer::connectNotify(const char *signal)
-{
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            hearbeat())))) {
-        connect(d,SIGNAL(hearbeat()),this,SIGNAL(hearbeat()),Qt::UniqueConnection);
-
-    }
-}
 /*!
  Called if the application woke up by itself.
  This method should be called if the application  has woken up by some other
@@ -110,20 +96,6 @@ bool QSystemAlignedTimer::wokeUp()
 {
     return false;
 }
-
-
-/*!
- \internal
- This function is called when the client disconnects to signals.
-
- \sa disconnectNotify()
-*/
-
-void QSystemAlignedTimer::disconnectNotify(const char *signal)
-{
-    Q_UNUSED(signal)
-}
-
 
 QSystemAlignedTimer::WaitMode QSystemAlignedTimer::waitMode()
 {

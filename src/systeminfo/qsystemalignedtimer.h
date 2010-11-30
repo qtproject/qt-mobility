@@ -58,6 +58,7 @@ class QSystemAlignedTimer : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QTime requestTimer READ requestTimer CONSTANT)
+
     Q_PROPERTY(bool wokeUp READ wokeUp CONSTANT)
     Q_PROPERTY(WaitMode waitMode READ waitMode WRITE setWaitMode)
     Q_PROPERTY(SignalNeed signalNeeded READ signalNeeded WRITE setSignalNeeded)
@@ -95,9 +96,6 @@ Q_SIGNALS:
 private:
     QSystemAlignedTimerPrivate *d;
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
 };
 
 
