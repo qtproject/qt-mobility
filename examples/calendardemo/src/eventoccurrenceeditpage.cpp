@@ -60,8 +60,10 @@ EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Start time:", this);
     m_startTimeEdit = new QDateTimeEdit(this);
+    m_startTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
+    m_endTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
 
 #ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
