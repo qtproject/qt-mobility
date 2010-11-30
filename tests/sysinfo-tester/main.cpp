@@ -41,6 +41,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 
 #include "qsysteminfo.h"
 
@@ -198,8 +199,8 @@ static void test_systemdeviceinfo(void)
 static void test_systemdisplayinfo(void)
 {
   QSystemDisplayInfo displayinfo;
-
-  for( int display = 0; display < 4; ++display )
+  QDesktopWidget wid;
+  for( int display = 0; display < wid.screenCount(); ++display )
   {
     qDebug() << "";
     qDebug() << "Display:" << display;
