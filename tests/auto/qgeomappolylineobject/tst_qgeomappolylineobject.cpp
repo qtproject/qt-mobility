@@ -123,7 +123,6 @@ void tst_QGeoMapPolylineObject::qgeomappolylineobject()
 
     QCOMPARE(object->path(), QList<QGeoCoordinate>());
     QPen pen(Qt::black);
-    pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     QCOMPARE(object->zValue(), 0);
     QCOMPARE(object->isSelected(),false);
@@ -219,23 +218,17 @@ void tst_QGeoMapPolylineObject::pen_data()
 
     pen1.setWidth(5);
 
-    pen1.setCosmetic(true);
-
     QTest::newRow("blue,5") << pen1;
 
     QPen pen2(Qt::white);
 
     pen2.setWidth(10);
 
-    pen2.setCosmetic(true);
-
     QTest::newRow("white,10") << pen2;
 
     QPen pen3(Qt::black);
 
     pen3.setWidth(15);
-
-    pen3.setCosmetic(true);
 
     QTest::newRow("black,15") << pen3;
 }
@@ -269,7 +262,7 @@ void tst_QGeoMapPolylineObject::pen()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-    QPointF diff(0,pen.width()/2-1);
+    QPointF diff(pen.width() / 2 - 1, pen.width() / 2 - 1);
 
     point+=diff;
 
@@ -281,8 +274,7 @@ void tst_QGeoMapPolylineObject::pen()
 
     //check if object is there
 
-// Test failing
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 1);
@@ -313,12 +305,18 @@ void tst_QGeoMapPolylineObject::zvalue()
     path << QGeoCoordinate(2.0, 1.0, 0);
     path << QGeoCoordinate(2.0, 2.0, 0);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapPolylineObject* object1 = new QGeoMapPolylineObject();
     object1->setPath(path);
+    object1->setPen(pen);
     QGeoMapPolylineObject* object2 = new QGeoMapPolylineObject();
     object2->setPath(path);
+    object2->setPen(pen);
     QGeoMapPolylineObject* object3 = new QGeoMapPolylineObject();
     object3->setPath(path);
+    object3->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -342,8 +340,6 @@ void tst_QGeoMapPolylineObject::zvalue()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-// Test failure, effects subsequent tests
-/*
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==object1);
@@ -368,7 +364,6 @@ void tst_QGeoMapPolylineObject::zvalue()
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 1);
-*/    
 }
 
 // public bool isVisible() const
@@ -380,8 +375,12 @@ void tst_QGeoMapPolylineObject::isVisible()
     path << QGeoCoordinate(2.0, 1.0, 0);
     path << QGeoCoordinate(2.0, 2.0, 0);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapPolylineObject* object = new QGeoMapPolylineObject();
     object->setPath(path);
+    object->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -399,8 +398,7 @@ void tst_QGeoMapPolylineObject::isVisible()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-// Test failing
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     object->setVisible(false);
 
@@ -412,8 +410,7 @@ void tst_QGeoMapPolylineObject::isVisible()
 
     QCOMPARE(object->isVisible(), true);
 
-// Test failing
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 2);
