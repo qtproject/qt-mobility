@@ -67,7 +67,7 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
   \enum QSystemDisplayInfo::BacklightState
   This enum describes the state of the Backlight.
 
-  \value BacklightUnknown          Error, no, or unknown Backlight state.
+  \value BacklightStateUnknown          Error, no, or unknown Backlight state.
   \value BacklightOff              Backlight is turned off.
   \value BacklightStateDimmed      Backlight has been dimmed.
   \value BacklightStateOn          Backlight is on.
