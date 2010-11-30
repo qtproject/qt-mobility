@@ -628,7 +628,7 @@ void tst_QGeoMapTextObject::text()
 
     QPointF point = map->coordinateToScreenPosition(center);
 
-    QPoint diff(bounds.width() * 2, 0);
+    QPoint diff(bounds.width() * 3 / 2, bounds.height() / 2);
 
     point += diff;
 
@@ -638,8 +638,7 @@ void tst_QGeoMapTextObject::text()
 
     QCOMPARE(object->text(), text);
 
-// Test failing
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);

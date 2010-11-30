@@ -353,9 +353,9 @@ void tst_QGeoMapPixmapObject::zvalue_data()
     QTest::newRow("z:3,2,1 offset:0,0,0") << 3 << 2 << 1 << 0 << 0 << 0 << 2 << 1 << 0;
     QTest::newRow("z:2,1,3 offset:0,0,0") << 2 << 1 << 3 << 0 << 0 << 0 << 1 << 0 << 2;
 
-    QTest::newRow("z:1,2,3 offset:2,1,3") << 1 << 2 << 3 << 2 << 1 << 3 << 1 << 2 << 0;
+    QTest::newRow("z:1,2,3 offset:2,1,3") << 1 << 2 << 3 << 2 << 1 << 3 << 0 << 1 << 2;
     QTest::newRow("z:3,2,1 offset:1,2,3") << 3 << 2 << 1 << 1 << 2 << 3 << 2 << 1 << 0;
-    QTest::newRow("z:2,1,3 offset:1,1,3") << 2 << 1 << 3 << 1 << 1 << 3 << 2 << 1 << 0;
+    QTest::newRow("z:2,1,3 offset:1,1,3") << 2 << 1 << 3 << 1 << 1 << 3 << 1 << 0 << 2;
 }
 
 // public int zValue() const
@@ -422,10 +422,9 @@ void tst_QGeoMapPixmapObject::zvalue()
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
-// Test failing
-//    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result1)==object1);
-//    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result2)==object2);
-//    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result3)==object3);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result1)==object1);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result2)==object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(result3)==object3);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
