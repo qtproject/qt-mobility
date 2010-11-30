@@ -1,6 +1,6 @@
 TEMPLATE = lib
-CONFIG += plugin static testplugin
-TARGET = $$qtLibraryTarget(qtgeoservices_staticroutingplugin)
+CONFIG += plugin testplugin
+TARGET = $$qtLibraryTarget(qtgeoservices_geomapobjectplugin)
 PLUGIN_TYPE=geoservices
 
 include(../../../common.pri)
@@ -8,14 +8,15 @@ include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = location
 
-HEADERS += qgeoroutingmanagerengine_test.h \
+HEADERS += qgeomappingmanagerengine_test.h \
            qgeoserviceproviderplugin_test.h
 
 SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
 INCLUDEPATH += ../../../src/location \
-               ../../../src/location/maps
+               ../../../src/location/maps \
+               ../../../src/location/maps/tiled
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

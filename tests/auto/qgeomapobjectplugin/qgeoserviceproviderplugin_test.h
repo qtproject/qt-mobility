@@ -39,50 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+#ifndef QGEOSERVICEPROVIDER_TEST_H
+#define QGEOSERVICEPROVIDER_TEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qgeoserviceproviderfactory.h>
+#include <QObject>
 
-#include "qgeotiledmapobjectinfo_p.h"
+QTM_USE_NAMESPACE
 
-#include <QPen>
-#include <QPolygonF>
-
-class QGraphicsPathItem;
-class QPointF;
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoMapPolylineObject;
-
-class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
+class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolylineObjectInfo();
+    QGeoServiceProviderFactoryTest();
+    ~QGeoServiceProviderFactoryTest();
 
-    QGeoMapPolylineObject *polyline;
-    QGraphicsPathItem *pathItem;
+    QString providerName() const;
+    int providerVersion() const;
 
-    QPolygonF points;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const;
 
-public slots:
-    void zoomLevelChanged(qreal zoomLevel);
-    void pathChanged(const QList<QGeoCoordinate> &path);
-    void penChanged(const QPen &pen);
 };
 
-QTM_END_NAMESPACE
+#endif
 
-#endif //QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+

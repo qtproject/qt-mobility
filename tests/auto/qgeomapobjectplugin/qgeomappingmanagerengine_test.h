@@ -39,50 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
-#define QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+#ifndef QGEOMAPPINGMANAGERENGINE_TEST_H
+#define QGEOMAPPINGMANAGERENGINE_TEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qgeoserviceprovider.h>
+#include <qgeotiledmappingmanagerengine.h>
+#include <qgeotiledmapreply.h>
+#include <qgeotiledmaprequest.h>
 
-#include "qgeotiledmapobjectinfo_p.h"
+QTM_USE_NAMESPACE
 
-#include <QPen>
-#include <QPolygonF>
-
-class QGraphicsPathItem;
-class QPointF;
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoMapPolylineObject;
-
-class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
+class QGeoMapReplyTest : public QGeoTiledMapReply
 {
     Q_OBJECT
 public:
-    QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapPolylineObjectInfo();
+    QGeoMapReplyTest(const QGeoTiledMapRequest &request, QObject *parent = 0)
+        : QGeoTiledMapReply(request, parent)
+    {
+        setFinished(true);
+    }
 
-    QGeoMapPolylineObject *polyline;
-    QGraphicsPathItem *pathItem;
-
-    QPolygonF points;
-
-public slots:
-    void zoomLevelChanged(qreal zoomLevel);
-    void pathChanged(const QList<QGeoCoordinate> &path);
-    void penChanged(const QPen &pen);
+    ~QGeoMapReplyTest() {}
 };
 
-QTM_END_NAMESPACE
+class QGeoMappingManagerEngineTest: public QGeoTiledMappingManagerEngine
 
-#endif //QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+{
+    Q_OBJECT
+public:
+    QGeoMappingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) :
+        QGeoTiledMappingManagerEngine(parameters)
+    {
+        Q_UNUSED(error)
+        Q_UNUSED(errorString)
+        setTileSize(QSize(256, 256));
+        setMinimumZoomLevel(0.0);
+        setMaximumZoomLevel(18.0);
+
+        QList<QGraphicsGeoMap::MapType> types;
+        types << QGraphicsGeoMap::StreetMap;
+        types << QGraphicsGeoMap::SatelliteMapDay;
+        types << QGraphicsGeoMap::TerrainMap;
+        setSupportedMapTypes(types);
+
+        QList<QGraphicsGeoMap::ConnectivityMode> modes;
+        modes << QGraphicsGeoMap::OnlineMode;
+        setSupportedConnectivityModes(modes);
+    }
+
+    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request)
+    {
+        return new QGeoMapReplyTest(request, this);
+    }
+};
+
+#endif
