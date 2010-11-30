@@ -150,7 +150,7 @@ private:
     QDeclarativeContactMetaObject* d;
     friend class QDeclarativeContactMetaObject;
 };
-
+Q_DECLARE_METATYPE(QContactLocalId)
 QML_DECLARE_TYPE(QDeclarativeContact)
 
 #endif // QDECLARATIVECONTACT_P_H

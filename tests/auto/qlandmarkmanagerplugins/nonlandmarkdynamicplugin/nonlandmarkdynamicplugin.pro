@@ -12,3 +12,5 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += nonlandmarkdynamicplugin.h
+
+include(../../landmarks_plugins.pri)
