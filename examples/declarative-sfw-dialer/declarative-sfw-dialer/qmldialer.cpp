@@ -55,7 +55,7 @@ void unregisterExampleService()
 void registerExampleService()
 {
     unregisterExampleService();
-    
+
     QServiceManager m;
     QStringList exampleXmlFiles;
     exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml" << "removedialerservice.xml";
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 #else // Q_OS_SYMBIAN
     view.show();
 #endif // Q_OS_SYMBIAN
-    
+
     int ret = application.exec();
 #ifndef Q_OS_SYMBIAN
     unregisterExampleService();

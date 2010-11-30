@@ -54,7 +54,7 @@ void unregisterExampleService()
 void registerExampleService()
 {
     unregisterExampleService();
-    
+
     QServiceManager m;
     const QString path = QCoreApplication::applicationDirPath() + "/xmldata/notesmanagerservice.xml";
     if (!m.addService(path)) {
