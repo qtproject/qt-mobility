@@ -131,18 +131,20 @@ void Chat::connectClicked()
     if (remoteSelector.exec() == QDialog::Accepted) {
         QBluetoothServiceInfo service = remoteSelector.service();
 
-        qDebug() << "Connecting to service" << service.serviceName()
+        qDebug() << "Connecting to service 2" << service.serviceName()
                  << "on" << service.device().name();
 
         // Create client
+        qDebug() << "Going to create client";
         ChatClient *client = new ChatClient(this);
+qDebug() << "Connecting...";
 
         connect(client, SIGNAL(messageReceived(QString,QString)),
                 this, SLOT(showMessage(QString,QString)));
         connect(client, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
         connect(client, SIGNAL(connected(QString)), this, SLOT(connected(QString)));
         connect(this, SIGNAL(sendMessage(QString)), client, SLOT(sendMessage(QString)));
-
+qDebug() << "Start client";
         client->startClient(service);
 
         clients.append(client);

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QIODEVICE_P_H
-#define QIODEVICE_P_H
+#ifndef QIODEVICEI_P_H
+#define QIODEVICEI_P_H
 
 //
 //  W A R N I N G

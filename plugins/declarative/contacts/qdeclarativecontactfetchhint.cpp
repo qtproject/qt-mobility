@@ -41,7 +41,7 @@
 
 #include "qdeclarativecontactfetchhint_p.h"
 
-
+#include <QSet>
 
 /*!
    \qmlclass FetchHint QDeclarativeContactFetchHint
@@ -73,7 +73,10 @@ QStringList QDeclarativeContactFetchHint::detailDefinitionsHint() const
 }
 void QDeclarativeContactFetchHint::setDetailDefinitionsHint(const QStringList& definitionNames)
 {
-    m_fetchHint.setDetailDefinitionsHint(definitionNames);
+    if (definitionNames.toSet() != m_fetchHint.detailDefinitionsHint().toSet()) {
+        m_fetchHint.setDetailDefinitionsHint(definitionNames);
+        emit fetchHintChanged();
+    }
 }
 
 /*!
@@ -88,22 +91,51 @@ QStringList QDeclarativeContactFetchHint::relationshipTypesHint() const
 }
 void QDeclarativeContactFetchHint::setRelationshipTypesHint(const QStringList& relationshipTypes)
 {
-    m_fetchHint.setRelationshipTypesHint(relationshipTypes);
+    if (relationshipTypes.toSet() != m_fetchHint.relationshipTypesHint().toSet()) {
+        m_fetchHint.setRelationshipTypesHint(relationshipTypes);
+        emit fetchHintChanged();
+    }
+}
+
+
+/*!
+  \qmlproperty int FetchHint::imageWidth
+
+  This property holds the preferred pixel width for any images returned
+  by the manager for a given request.  This hint may be ignored by the manager.
+  */
+int QDeclarativeContactFetchHint::preferredImageWidth() const
+{
+    return m_fetchHint.preferredImageSize().width();
+}
+void QDeclarativeContactFetchHint::setPreferredImageWidth(int w)
+{
+    if (m_fetchHint.preferredImageSize().width() != w) {
+        QSize s = m_fetchHint.preferredImageSize();
+        s.setWidth(w);
+        m_fetchHint.setPreferredImageSize(s);
+        emit fetchHintChanged();
+    }
 }
 
 /*!
-  \qmlproperty size FetchHint::preferredImageSize
+  \qmlproperty int FetchHint::imageHeight
 
-  This property holds the preferred pixel dimensions for any images returned
+  This property holds the preferred pixel height for any images returned
   by the manager for a given request.  This hint may be ignored by the manager.
   */
-QSize QDeclarativeContactFetchHint::preferredImageSize() const
+int QDeclarativeContactFetchHint::preferredImageHeight() const
 {
-    return m_fetchHint.preferredImageSize();
+    return m_fetchHint.preferredImageSize().height();
 }
-void QDeclarativeContactFetchHint::setPreferredImageSize(const QSize& size)
+void QDeclarativeContactFetchHint::setPreferredImageHeight(int h)
 {
-    m_fetchHint.setPreferredImageSize(size);
+    if (m_fetchHint.preferredImageSize().height() != h) {
+        QSize s = m_fetchHint.preferredImageSize();
+        s.setHeight(h);
+        m_fetchHint.setPreferredImageSize(s);
+        emit fetchHintChanged();
+    }
 }
 
 /*!
@@ -123,27 +155,18 @@ void QDeclarativeContactFetchHint::setPreferredImageSize(const QSize& size)
   */
 QDeclarativeContactFetchHint::OptimizationHints QDeclarativeContactFetchHint::optimizationHints() const
 {
-    switch (m_fetchHint.optimizationHints()) {
-    case QContactFetchHint::NoRelationships:
-        return QDeclarativeContactFetchHint::NoRelationships;
-    case QContactFetchHint::NoActionPreferences:
-        return QDeclarativeContactFetchHint::NoActionPreferences;
-    case QContactFetchHint::NoBinaryBlobs:
-        return QDeclarativeContactFetchHint::NoBinaryBlobs;
-    }
-    return QDeclarativeContactFetchHint::AllRequired;
+    QDeclarativeContactFetchHint::OptimizationHints hints;
+    hints = ~hints & (int)m_fetchHint.optimizationHints();
+    return hints;
 }
 void QDeclarativeContactFetchHint::setOptimizationHints(QDeclarativeContactFetchHint::OptimizationHints hints)
 {
-    switch (hints) {
-    case QDeclarativeContactFetchHint::NoRelationships:
-        m_fetchHint.setOptimizationHints(QContactFetchHint::NoRelationships);
-    case QDeclarativeContactFetchHint::NoActionPreferences:
-        m_fetchHint.setOptimizationHints(QContactFetchHint::NoActionPreferences);
-    case QDeclarativeContactFetchHint::NoBinaryBlobs:
-        m_fetchHint.setOptimizationHints(QContactFetchHint::NoBinaryBlobs);
+    QContactFetchHint::OptimizationHints newHints;
+    newHints = ~newHints & (int)hints;
+    if (newHints != m_fetchHint.optimizationHints()) {
+        m_fetchHint.setOptimizationHints(newHints);
+        emit fetchHintChanged();
     }
-    m_fetchHint.setOptimizationHints(QContactFetchHint::AllRequired);
 }
 
 QContactFetchHint QDeclarativeContactFetchHint::fetchHint() const

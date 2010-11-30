@@ -266,10 +266,12 @@ int QNearFieldManager::registerTargetDetectedHandler(QNdefRecord::TypeNameFormat
     if (!metaMethod.enclosingMetaObject())
         return -1;
 
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(type);
+    QNdefFilter filter;
+    filter.appendRecord(typeNameFormat, type);
 
-    return -1;
+    Q_D(QNearFieldManager);
+
+    return d->registerTargetDetectedHandler(filter, object, metaMethod);
 }
 
 /*!

@@ -126,6 +126,10 @@ void tst_QNearFieldTagType1::staticMemoryModel()
 {
     waitForMatchingTarget();
 
+    QVERIFY(target->accessMethods() & QNearFieldTarget::TagTypeSpecificAccess);
+
+    QCOMPARE(target->version(), quint8(0x10));
+
     // readIdentification()
     {
         const QByteArray id = target->readIdentification();

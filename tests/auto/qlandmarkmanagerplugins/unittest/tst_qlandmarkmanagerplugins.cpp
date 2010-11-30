@@ -78,7 +78,9 @@ void tst_QLandmarkManagerPlugins::cleanup()
 {
 }
 
+#ifndef Q_OS_SYMBIAN
 Q_IMPORT_PLUGIN(landmarks_testdummystatic)
+#endif
 
 void tst_QLandmarkManagerPlugins::testDummy()
 {
