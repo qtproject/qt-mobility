@@ -43,6 +43,8 @@
 #include "llcpsockettype2_symbian.h"
 #include "../qllcpserver_symbian_p.h"
 
+#include <e32debug.h>
+
 // TODO
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
@@ -135,6 +137,7 @@ const TDesC8&  CLlcpServer::serviceUri() const
 */
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
+    RDebug::Print(_L("CLlcpServer::Listen begin"));
     TInt error = KErrNone;
 
     // TODO
@@ -142,8 +145,9 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     // iLlcp->StartListeningConnOrientedRequestL( *this, aServiceName );
     iServiceName = aServiceName;
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
-
+    RDebug::Print(_L("CLlcpServer::Listen after TRAP"));
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
+    RDebug::Print(_L("CLlcpServer::Listen end"));
     return iSocketListening;
     }
 
