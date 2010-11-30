@@ -44,7 +44,6 @@
 #define QMEDIANETWORKACCESSCONTROL_H
 
 #include "qmediacontrol.h"
-#include "qmedianetworkaccess.h"
 
 #include <QtNetwork/qnetworkconfiguration.h>
 #include <QtCore/qlist.h>
