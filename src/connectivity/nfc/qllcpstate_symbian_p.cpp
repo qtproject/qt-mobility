@@ -115,6 +115,22 @@ bool QLLCPBind::WaitForBytesWritten(int msecs)
 }
 
 /*!
+    Connection-Less Mode
+*/
+bool QLLCPBind::WaitForReadyRead(int msecs)
+{
+    bool isOK = false;
+    CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
+    if (socketHandler != NULL && socketHandler->HasPendingDatagrams())
+    {
+       isOK = true;
+    }
+
+    return isOK;
+}
+
+
+/*!
     Connection-Less Mode  
 */
 qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
