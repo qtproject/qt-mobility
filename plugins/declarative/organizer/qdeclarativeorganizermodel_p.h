@@ -144,6 +144,7 @@ signals:
 
 public slots:
     void update();
+    void cancelUpdate();
     void exportItems(const QString& file);
     void importItems(const QString& file);
 private slots:
@@ -167,6 +168,10 @@ private:
     static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);
     static void  item_clear(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
 
+    static void sortOrder_append(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p, QDeclarativeOrganizerItemSortOrder *sortOrder);
+    static int  sortOrder_count(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p);
+    static QDeclarativeOrganizerItemSortOrder * sortOrder_at(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p, int idx);
+    static void  sortOrder_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p);
 
     QDeclarativeOrganizerModelPrivate* d;
 };

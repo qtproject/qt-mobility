@@ -63,7 +63,8 @@ class QDeclarativeOrganizerItemSortOrder : public QObject, public QDeclarativePa
 public:
     QDeclarativeOrganizerItemSortOrder(QObject* parent = 0)
         :QObject(parent)
-    {}
+    {
+    }
 
     enum BlankPolicy {
         BlanksFirst = QOrganizerItemSortOrder::BlanksFirst,
@@ -74,7 +75,7 @@ public:
     void classBegin() {}
     void componentComplete()
     {
-         d = sortOrder();
+         setSortOrder(sortOrder());
     }
 
     void setDetail(const QVariant& v)
