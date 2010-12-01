@@ -474,8 +474,8 @@ void QDeclarativeContactModel::fetchContacts(const QList<QContactLocalId>& conta
 }
 void QDeclarativeContactModel::clearContacts()
 {
-    d->m_contacts.clear();
     qDeleteAll(d->m_contacts);
+    d->m_contacts.clear();
     d->m_contactMap.clear();
 }
 
@@ -587,7 +587,7 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
