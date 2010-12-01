@@ -61,9 +61,6 @@ Item {
 
     anchors.fill: parent
 
-    Component.onCompleted : {
-    }
-
     Grid {
         id:container
         anchors.fill: parent

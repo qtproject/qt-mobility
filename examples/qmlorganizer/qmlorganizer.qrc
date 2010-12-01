@@ -12,7 +12,7 @@
         <file>contents/timeline.js</file>
         <file>contents/timelineview.qml</file>
         <file>contents/MenuBar.qml</file>
-        <file>contents/ToolBar.qml</file>
+        <file>contents/StatusBar.qml</file>
         <file>contents/images/button.png</file>
         <file>contents/images/button-pressed.png</file>
         <file>contents/images/default.svg</file>

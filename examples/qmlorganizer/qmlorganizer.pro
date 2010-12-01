@@ -12,7 +12,7 @@ SOURCES = \
 
 OTHER_FILES += \
     organizer.qml \
-    contents/ToolBar.qml \
+    contents/StatusBar.qml \
     contents/MenuBar.qml \
     contents/timelineview.qml \
     contents/timeline.js \

@@ -44,6 +44,7 @@ import "contents" as TimeScape
 Item {
     id: screen; width: 380; height: 640
     property string viewType : "contactListView"
+    property alias status:statusBar.status
 
     Rectangle {
         id: topItem
@@ -56,8 +57,9 @@ Item {
 
         SystemPalette { id: activePalette }
 
-        // Quick hack top menu bar to change views
-        TimeScape.MenuBar { id: menuBar; width: parent.width; height: 40; opacity: 0.9 }
+
+        TimeScape.MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9 }
+        TimeScape.StatusBar { id: statusBar; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: topItem.bottom}
 
         states: [
             State {name: "MonthView"; PropertyChanges { target: monthView; opacity: 1; }},
@@ -83,21 +85,21 @@ Item {
             anchors.top: menuBar.bottom;
             anchors.left: topItem.left;
             anchors.right: topItem.right;
-            anchors.bottom: topItem.bottom;
+            anchors.bottom: statusBar.top;
 
             // TODO these should be components too
             Rectangle {
                 id: monthView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
                 Loader {id: monthLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/monthview.qml";}
             }
             Rectangle {
                 id: timelineView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
 
@@ -105,8 +107,8 @@ Item {
             }
             Rectangle {
                 id: weekView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
 
@@ -114,8 +116,8 @@ Item {
             }
             Rectangle {
                 id: dayView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
 
@@ -123,8 +125,8 @@ Item {
             }
             Rectangle {
                 id: agenderView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
 
@@ -132,8 +134,8 @@ Item {
             }
             Rectangle {
                 id: detailsView;
-                width: 360;
-                height: 600;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
 
