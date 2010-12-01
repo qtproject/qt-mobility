@@ -69,7 +69,11 @@
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     QNearFieldTarget * tag = 0;
-    if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
+    if (!aNfcTag)
+        {
+        tag = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
+        }
+    else if(aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
         tag = CreateTagTypeL<CNfcType1Connection, QNearFieldTagType1Symbian>(aNfcTag, aNfcServer, aParent);
         }
@@ -89,10 +93,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
         {
         tag = CreateTagTypeL<CMifareClassicConnection, QNearFieldTagMifareSymbian>(aNfcTag, aNfcServer, aParent);
         }
-    else if (!aNfcTag)
-        {
-        tag = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
-        }
+
     return tag;
     }
 
