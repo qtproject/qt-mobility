@@ -136,7 +136,7 @@ QPen QGeoMapRouteObject::pen() const
 void QGeoMapRouteObject::setPen(const QPen &pen)
 {
     QPen newPen = pen;
-    newPen.setCosmetic(true);
+//    newPen.setCosmetic(true);
 
     if (d_ptr->pen == newPen)
         return;
@@ -206,7 +206,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate()
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
-    pen.setCosmetic(true);
+//    pen.setCosmetic(true);
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}

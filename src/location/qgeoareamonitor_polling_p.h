@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORMAEMO_H
-#define QGEOAREAMONITORMAEMO_H
+#ifndef QGEOAREAMONITORPOLLING_H
+#define QGEOAREAMONITORPOLLING_H
 
 //
 //  W A R N I N G
@@ -56,30 +56,23 @@
 #include "qgeoareamonitor.h"
 #include "qgeopositioninfosource.h"
 
-extern "C"
-{
-    // The following include is needed since liblocation v. 0.102 has a bug in
-    // location-distance-utils.h
-#include <glib-object.h>
-
-#include <location/location-distance-utils.h>
-}
-
 QTM_BEGIN_NAMESPACE
 
 /**
- *  QGeoAreaMonitorMaemo
+ *  QGeoAreaMonitorPolling
  *
  */
-class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
+class QGeoAreaMonitorPolling : public QGeoAreaMonitor
 {
     Q_OBJECT
 
 public :
-    QGeoAreaMonitorMaemo(QObject *parent = 0);
-    ~QGeoAreaMonitorMaemo();
+    QGeoAreaMonitorPolling(QObject *parent = 0);
+    ~QGeoAreaMonitorPolling();
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
+
+    inline bool isValid() { return location; }
 
 private slots:
     void positionUpdated(const QGeoPositionInfo &info);
@@ -87,7 +80,12 @@ private slots:
 private:
     bool insideArea;
     QGeoPositionInfoSource *location;
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    void checkStartStop();
 };
 
 QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORMAEMO_H
+#endif // QGEOAREAMONITORPOLLING_H
