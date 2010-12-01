@@ -151,6 +151,8 @@ public:
     ~ContextKitHandle();
 
     bool value(const QString &path, QVariant *data);
+    bool setValue(const QString &path, QVariant &data);
+    bool unsetValue(const QString &path);
     void subscribe();
     void unsubscribe();
     QSet<QString> children();
@@ -161,6 +163,7 @@ signals:
 private:
     QString prefix;
     QHash<QString, ContextProperty *> props;
+    QHash<QString, ContextProvider::Property*> provProps;
     ContextProvider::Service *service;
 
     void insert(const QString &path, const QString &key);
@@ -227,8 +230,7 @@ ContextKitHandle::~ContextKitHandle()
     delete service;
 }
 
-bool
-ContextKitHandle::value(const QString &path, QVariant *data)
+bool ContextKitHandle::value(const QString &path, QVariant *data)
 {
     // path always starts with a "/".
     ContextProperty *p = props.value(path.mid(1));
@@ -240,15 +242,37 @@ ContextKitHandle::value(const QString &path, QVariant *data)
         return false;
 }
 
-void
-ContextKitHandle::subscribe()
+bool ContextKitHandle::setValue(const QString &path, QVariant &data)
+{
+    ContextProvider::Property *p = provProps.value(path.mid(1));
+    if (!p) {
+        p = new ContextProvider::Property(service, path.mid(1));
+        provProps.insert(path.mid(1), p);
+    }
+
+    p->setValue(data);
+    return true;
+}
+
+bool ContextKitHandle::unsetValue(const QString &path)
+{
+    ContextProvider::Property *p = provProps.value(path.mid(1));
+    if (!p) {
+        p = new ContextProvider::Property(service, path.mid(1));
+        provProps.insert(path.mid(1), p);
+    }
+
+    p->unsetValue();
+    return true;
+}
+
+void ContextKitHandle::subscribe()
 {
     foreach (ContextProperty *p, props.values())
         p->subscribe();
 }
 
-void
-ContextKitHandle::unsubscribe()
+void ContextKitHandle::unsubscribe()
 {
     foreach (ContextProperty *p, props.values())
         p->unsubscribe();
@@ -302,9 +326,12 @@ public:
     bool notifyInterest(Handle handle, bool interested);
 
     /* ValueSpaceLayer interface - QValueSpacePublisher functions */
-    bool setValue(QValueSpacePublisher *, Handle, const QString &, const QVariant &) { return false; }
-    bool removeValue(QValueSpacePublisher *, Handle, const QString &) { return false; }
-    bool removeSubTree(QValueSpacePublisher *, Handle) { return false; }
+    bool setValue(QValueSpacePublisher *vsp, Handle handle,
+                  const QString &path, const QVariant &value);
+    bool removeValue(QValueSpacePublisher *vsp, Handle handle,
+                     const QString &path);
+    bool removeSubTree(QValueSpacePublisher *vsp, Handle handle);
+
     void addWatch(QValueSpacePublisher *, Handle) { return; }
     void removeWatches(QValueSpacePublisher *, Handle) { return; }
     void sync() { return; }
@@ -378,12 +405,15 @@ QAbstractValueSpaceLayer::Handle ContextKitLayer::item(Handle parent,
 void ContextKitLayer::removeHandle(Handle handle)
 {
     ContextKitHandle *h = handleToCKHandle(handle);
-    delete h;
+    if (h)
+        delete h;
 }
 
 void ContextKitLayer::setProperty(Handle handle, Properties properties)
 {
     ContextKitHandle *h = handleToCKHandle(handle);
+    if (!h)
+        return;
 
     if (properties & Publish)
         connect(h, SIGNAL(valueChanged()),
@@ -401,13 +431,53 @@ void ContextKitLayer::contextHandleChanged()
 bool ContextKitLayer::value(Handle handle, QVariant *data)
 {
     ContextKitHandle *h = handleToCKHandle(handle);
-    return h->value("", data);
+    if (h)
+        return h->value("", data);
+    else
+        return false;
 }
 
 bool ContextKitLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
     ContextKitHandle *h = handleToCKHandle(handle);
-    return h->value(subPath, data);
+    if (h)
+        return h->value(subPath, data);
+    else
+        return false;
+}
+
+bool ContextKitLayer::setValue(QValueSpacePublisher *, Handle handle,
+                               const QString &path, const QVariant &value)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->setValue(path, value);
+    else
+        return false;
+}
+
+bool ContextKitLayer::removeValue(QValueSpacePublisher *, Handle handle,
+                                  const QString &path)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->unsetValue(path);
+    else
+        return false;
+}
+
+bool ContextKitLayer::removeSubTree(QValueSpacePublisher *vsp, Handle handle)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (!h)
+        return false;
+
+    // this is far from perfect, just removes all values inside this one
+    // can't remove sub-trees properly as there's no way to discover them
+    foreach (QString kid, h->children())
+        if (!h->unsetValue(kid)) return false;
+
+    return true;
 }
 
 bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
