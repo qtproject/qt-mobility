@@ -224,7 +224,7 @@ void CNearFieldManager::LlcpRemoteFound()
     {
     TRAP_IGNORE(
         QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
-        CleanupStack::Pop(tag);
+        CleanupStack::PushL(tag);
         QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
         CleanupStack::Pop(tag);
         );

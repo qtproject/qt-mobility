@@ -81,7 +81,7 @@ void tst_QLlcpServer::newConnection_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::newRow("0") << TestUri
-            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri;
+            << "QLlcpServer enabled: uri = " + TestUri;
 
 }
 
