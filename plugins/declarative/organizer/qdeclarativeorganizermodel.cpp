@@ -51,6 +51,17 @@
 
 #include "qorganizeritemrequests.h"
 
+static QString urlToLocalFileName(const QUrl& url)
+{
+   if (!url.isValid()) {
+      return url.toString();
+   } else if (url.scheme() == "qrc") {
+      return url.toString().remove(0, 5).prepend(':');
+   } else {
+      return url.toLocalFile();
+   }
+
+}
 
 class QDeclarativeOrganizerModelPrivate
 {
@@ -81,6 +92,7 @@ public:
     QDeclarativeOrganizerItemFilter* m_filter;
     QOrganizerItemFetchRequest* m_fetchRequest;
     QList<QString> m_updatedItemIds;
+    QStringList m_importProfiles;
     QVersitReader m_reader;
     QVersitWriter m_writer;
     QDateTime m_startPeriod;
@@ -246,10 +258,11 @@ void QDeclarativeOrganizerModel::setEndPeriod(const QDateTime& end)
 
   Import organizer items from a vcalendar by the given \a url and optional \a profiles.
   */
-void QDeclarativeOrganizerModel::importItems(const QString& fileName)
+void QDeclarativeOrganizerModel::importItems(const QUrl& url, const QStringList& profiles)
 {
-   qWarning() << "importing items from:" << fileName;
-   QFile*  file = new QFile(fileName);
+   d->m_importProfiles = profiles;
+   //TODO: need to allow download vcard from network
+   QFile*  file = new QFile(urlToLocalFileName(url));
    bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
       d->m_reader.setDevice(file);
@@ -262,22 +275,24 @@ void QDeclarativeOrganizerModel::importItems(const QString& fileName)
   Export organizer items into a vcalendar file to the given \a url by optional \a profiles.
   At the moment only the local file url is supported in export method.
   */
-void QDeclarativeOrganizerModel::exportItems(const QString& fileName)
+void QDeclarativeOrganizerModel::exportItems(const QUrl& url, const QStringList& profiles)
 {
-   QVersitOrganizerExporter exporter;
-   QList<QOrganizerItem> items;
-   foreach (QDeclarativeOrganizerItem* di, d->m_items) {
-       items.append(di->item());
-   }
+    QString profile = profiles.isEmpty()? QString() : profiles.at(0);
 
-   exporter.exportItems(items);
-   QVersitDocument document = exporter.document();
-   QFile* file = new QFile(fileName);
-   bool ok = file->open(QIODevice::ReadWrite);
-   if (ok) {
-      d->m_writer.setDevice(file);
-      d->m_writer.startWriting(document);
-   }
+    QVersitOrganizerExporter exporter(profile);
+    QList<QOrganizerItem> items;
+    foreach (QDeclarativeOrganizerItem* di, d->m_items) {
+        items.append(di->item());
+    }
+
+    exporter.exportItems(items, QVersitDocument::VCard30Type);
+    QVersitDocument document = exporter.document();
+    QFile* file = new QFile(urlToLocalFileName(url));
+    bool ok = file->open(QIODevice::ReadWrite);
+    if (ok) {
+       d->m_writer.setDevice(file);
+       d->m_writer.startWriting(document);
+    }
 }
 
 void QDeclarativeOrganizerModel::itemsExported(QVersitWriter::State state)
@@ -439,9 +454,10 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
             d->m_reader.setDevice(0);
 
             if (d->m_manager) {
-                if (d->m_manager->saveItems(&items))
-                    qWarning() << "items imported.";
-                    fetchAgain();
+                if (d->m_manager->saveItems(&items)) {
+                    //qWarning() << "items imported.";
+                    update();
+                }
             }
         }
     }

@@ -146,8 +146,8 @@ signals:
 public slots:
     void update();
     void cancelUpdate();
-    void exportItems(const QString& file);
-    void importItems(const QString& file);
+    void exportItems(const QUrl& url, const QStringList& profiles=QStringList());
+    void importItems(const QUrl& url, const QStringList& profiles=QStringList());
 private slots:
     void fetchAgain();
     void requestUpdated();
