@@ -339,4 +339,8 @@ EXPORTS
 	_ZTVN10QtMobility12QLightSensorE @ 338 NONAME
 	_ZTVN10QtMobility13QLightReadingE @ 339 NONAME
 	_ZTVN10QtMobility17QGyroscopeReadingE @ 340 NONAME
+	_ZN10QtMobility14QSensorManager17unregisterBackendERK10QByteArrayS3_ @ 341 NONAME
+	_ZN10QtMobility14QSensorManager19isBackendRegisteredERK10QByteArrayS3_ @ 342 NONAME
+	_ZN10QtMobility7QSensor16registerInstanceEv @ 343 NONAME
+	_ZN10QtMobility7QSensor23availableSensorsChangedEv @ 344 NONAME
 
