@@ -49,7 +49,7 @@ class  QDeclarativeContactBirthday : public QDeclarativeContactDetail
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDateTime birthday READ birthday WRITE setBirthday NOTIFY fieldsChanged);
+    Q_PROPERTY(QDateTime birthday READ birthday WRITE setBirthday NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
