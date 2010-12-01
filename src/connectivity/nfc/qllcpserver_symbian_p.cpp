@@ -120,6 +120,7 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     {
         QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
         qSocket = new QLlcpSocket(qSocket_p);
+        socket_symbian->AttachCallbackHandler(qSocket_p);
     }
     return qSocket;
 }

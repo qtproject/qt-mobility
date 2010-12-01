@@ -59,13 +59,6 @@ void CLlcpSocketType2::ConstructL()
     User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
     iWait = new (ELeave) CActiveSchedulerWait;
-
-    if (iTransporter && iTransporter->IsConnected())//has connected llcp transporter
-        {
-        LOG2("A server llcp type2 socket");
-        iReceiver = CLlcpReceiverAO::NewL( *iTransporter, *this );
-        User::LeaveIfError( iReceiver->StartReceiveDatagram() );
-        }
     LOG
     }
 
@@ -323,6 +316,23 @@ RPointerArray<HBufC8>& CLlcpSocketType2::GetAndLockBuffer()
 void CLlcpSocketType2::UnlockBuffer()
     {
     //TODO unlock buffer
+    }
+void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback)
+    {
+    iCallback = aCallback;
+    if (iTransporter && iTransporter->IsConnected())//has connected llcp transporter
+        {
+        LOG2("A server llcp type2 socket");
+        if (!iReceiver)
+            {
+            TRAPD(err,iReceiver = CLlcpReceiverAO::NewL( *iTransporter, *this ));
+            if (err != KErrNone)
+                {
+                return;
+                }
+            }
+        iReceiver->StartReceiveDatagram();
+        }
     }
 /*!
     Cancel the Receive/Transfer and destroy the local/remote connection.

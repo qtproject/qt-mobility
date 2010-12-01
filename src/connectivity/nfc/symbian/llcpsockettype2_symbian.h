@@ -97,6 +97,8 @@ public:
 
     RPointerArray<HBufC8>& GetAndLockBuffer();
     void UnlockBuffer();
+
+    void AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback);
 private:
     // Constructor
     CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
