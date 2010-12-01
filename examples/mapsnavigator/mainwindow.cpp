@@ -63,13 +63,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_mapsWidget, SIGNAL(addMarker(MarkerObject*)),
             m_markers, SLOT(addMarker(MarkerObject*)));
-    
+
     connect(m_mapsWidget, SIGNAL(removeMarker(MarkerObject*)),
             m_markers, SLOT(removeMarker(MarkerObject*)));
-    
+
     connect(m_mapsWidget, SIGNAL(markerPressed(MarkerObject*)),
             m_markers, SLOT(markerPressed(MarkerObject*)));
-    
+
     connect(m_mapsWidget, SIGNAL(markerReleased()),
             m_markers, SLOT(markerReleased()));
 
@@ -87,10 +87,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_searchWidget, SIGNAL(deleteMarker(MarkerObject*)),
             m_mapsWidget, SLOT(deleteMarker(MarkerObject*)));
 
-    connect(m_searchWidget, SIGNAL(addMarker(QGeoCoordinate)), 
+    connect(m_searchWidget, SIGNAL(addMarker(QGeoCoordinate)),
             this, SLOT(addSearchMarker(QGeoCoordinate)));
-    
-    connect(m_searchWidget, SIGNAL(addMarker(QString)), 
+
+    connect(m_searchWidget, SIGNAL(addMarker(QString)),
             this, SLOT(addSearchMarker(QString)));
 
     connect(m_directionsWidget, SIGNAL(selectWaypoint(MarkerObject*)),
@@ -108,10 +108,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     QAction *directionsAction = new QAction(tr("Directions"), this);
     connect(directionsAction, SIGNAL(triggered()), m_directionsWidget, SLOT(showDirectionsDialog()));
-    
+
     QAction *exitAction = new QAction(tr("Exit"), this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-   
+
     QMenu *searchMenu = new QMenu(tr("Search"), this);
     QAction *geocodeAction = new QAction(tr("By Addres"), this);
     QAction *revgeocodeAction = new QAction(tr("By Coordinate"), this);
@@ -119,17 +119,17 @@ MainWindow::MainWindow(QWidget *parent)
     searchMenu->addAction(revgeocodeAction);
     connect(geocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showGeocodeDialog()));
     connect(revgeocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showRevGeocodeDialog()));
-   
+
     QMenu* mapTypeMenu = new QMenu(tr("Map Type"), this);
     QStringList mapTypes;
-    mapTypes << tr("Street") << tr("Satellite") << tr("Satellite - Night") << tr("Terrain"); 
+    mapTypes << tr("Street") << tr("Satellite") << tr("Satellite - Night") << tr("Terrain");
 
     for (int i=0; i<mapTypes.size(); i++) {
         QAction *mapTypeAction = new QAction(mapTypes[i], this);
         mapTypeMenu->addAction(mapTypeAction);
         //connect(myLocationAction, SIGNAL(triggered()), this, SLOT(close()));
     }
-    
+
     menuBar()->addAction(myLocationAction);
     menuBar()->addAction(directionsAction);
     menuBar()->addMenu(searchMenu);
@@ -140,11 +140,11 @@ MainWindow::MainWindow(QWidget *parent)
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-    
+
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("Geo Service Demo"), 
+        QMessageBox::information(this, tr("Geo Service Demo"),
                                  tr("Available Access Points not found."));
         return;
     }
@@ -232,7 +232,7 @@ void MainWindow::setProvider()
     m_markers->initialize(m_serviceProvider->searchManager());
     m_mapsWidget->initialize(m_serviceProvider->mappingManager());
     m_searchWidget->initialize(m_serviceProvider->searchManager(), m_mapsWidget->getMyLocation());
-    m_directionsWidget->initialize(m_serviceProvider->routingManager(), 
+    m_directionsWidget->initialize(m_serviceProvider->routingManager(),
                                    m_serviceProvider->searchManager(),
                                    m_mapsWidget);
 }
