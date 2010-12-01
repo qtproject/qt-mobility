@@ -57,38 +57,28 @@ class QSystemAlignedTimer : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QTime requestTimer READ requestTimer CONSTANT)
-
     Q_PROPERTY(bool wokeUp READ wokeUp CONSTANT)
     Q_PROPERTY(WaitMode waitMode READ waitMode WRITE setWaitMode)
-    Q_PROPERTY(SignalNeed signalNeeded READ signalNeeded WRITE setSignalNeeded)
 
 public:
-    enum SignalNeed {
-        NoSignalNeeded = 0,
-        SignalNeeded
-    };
 
     enum WaitMode {
-        DoNotWaitHeartbeat = 0,
-        WaitHeartbeat
+        DoNotWaitForHeartbeat = 0,
+        WaitForHeartbeat
     };
 
-    Q_ENUMS(SignalNeed)
     Q_ENUMS(WaitMode)
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
 
-    QTime requestTimer(QTime minInterval, QTime maxInterval);
-    QTime requestTimer(ushort optimalInterval, ushort timerWindow);
+    Q_INVOKABLE QTime wait(QTime minInterval, QTime maxInterval);
+    Q_INVOKABLE QTime wait(uint optimalInterval, uint timerWindow);
 
     bool wokeUp();
 
     QSystemAlignedTimer::WaitMode waitMode();
     bool setWaitMode(QSystemAlignedTimer::WaitMode waitMode);
 
-    QSystemAlignedTimer::SignalNeed signalNeeded();
-    bool setSignalNeeded(QSystemAlignedTimer::SignalNeed signalNeed);
 
 Q_SIGNALS:
     void hearbeat();
