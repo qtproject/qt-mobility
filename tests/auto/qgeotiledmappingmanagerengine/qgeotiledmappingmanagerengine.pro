@@ -6,11 +6,12 @@ include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location
 
-# Input 
+# Input
 HEADERS += ../qlocationtestutils_p.h \
            pixelindexengine.h
+
 SOURCES += tst_qgeotiledmappingmanagerengine.cpp \
-	   pixelindexengine.cpp \
+           pixelindexengine.cpp \
            ../qlocationtestutils.cpp
 
 CONFIG += mobility
