@@ -56,7 +56,7 @@ unix:!symbian {
     maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
-        PKGCONFIG += contextsubscriber-1.0 QtDBus
+        PKGCONFIG += contextsubscriber-1.0 contextprovider-1.0 QtDBus
     } else {
         QT += network
 

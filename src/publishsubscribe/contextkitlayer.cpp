@@ -45,6 +45,7 @@
 #include <QSet>
 #include <QDebug>
 #include <contextproperty.h>
+#include <contextprovider.h>
 #include <contextregistryinfo.h>
 
 QTM_BEGIN_NAMESPACE
@@ -100,13 +101,13 @@ class ContextKitHandle : public QObject {
     Q_OBJECT
 
 public:
-    ContextKitHandle (ContextKitHandle *parent, const QString &root);
-    ~ContextKitHandle ();
+    ContextKitHandle(ContextKitHandle *parent, const QString &root);
+    ~ContextKitHandle();
 
-    bool value (const QString &path, QVariant *data);
-    void subscribe ();
-    void unsubscribe ();
-    QSet<QString> children ();
+    bool value(const QString &path, QVariant *data);
+    void subscribe();
+    void unsubscribe();
+    QSet<QString> children();
 
 signals:
     void valueChanged();
@@ -115,18 +116,18 @@ private:
     QString prefix;
     QHash<QString, ContextProperty *> props;
 
-    void insert (const QString &path, const QString &key);
+    void insert(const QString &path, const QString &key);
 };
 
-void ContextKitHandle::insert (const QString &path, const QString &key)
+void ContextKitHandle::insert(const QString &path, const QString &key)
 {
-    ContextProperty *prop = new ContextProperty (key);
-    connect (prop, SIGNAL (valueChanged()),
-             this, SIGNAL (valueChanged()));
-    props.insert (path, prop);
+    ContextProperty *prop = new ContextProperty(key);
+    connect(prop, SIGNAL(valueChanged()),
+            this, SIGNAL(valueChanged()));
+    props.insert(path, prop);
 }
 
-ContextKitHandle::ContextKitHandle (ContextKitHandle *parent, const QString &path)
+ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path)
 {
     QString key = path;
     if (key.startsWith(QLatin1Char('/')))
@@ -143,21 +144,21 @@ ContextKitHandle::ContextKitHandle (ContextKitHandle *parent, const QString &pat
         if (k == key)
             insert(QString(), k);
         else if (k.startsWith(prefix))
-            insert(k.mid(prefix.length()).replace (QLatin1Char('.'), QLatin1Char('/')), k);
+            insert(k.mid(prefix.length()).replace(QLatin1Char('.'), QLatin1Char('/')), k);
     }
 }
 
-ContextKitHandle::~ContextKitHandle ()
+ContextKitHandle::~ContextKitHandle()
 {
     foreach (ContextProperty *prop, props.values())
         delete prop;
 }
 
 bool
-ContextKitHandle::value (const QString &path, QVariant *data)
+ContextKitHandle::value(const QString &path, QVariant *data)
 {
     // path always starts with a "/".
-    ContextProperty *p = props.value (path.mid(1));
+    ContextProperty *p = props.value(path.mid(1));
     if (p)
     {
         *data = p->value();
@@ -168,21 +169,20 @@ ContextKitHandle::value (const QString &path, QVariant *data)
 }
 
 void
-ContextKitHandle::subscribe ()
+ContextKitHandle::subscribe()
 {
     foreach (ContextProperty *p, props.values())
-        p->subscribe ();
+        p->subscribe();
 }
 
 void
-ContextKitHandle::unsubscribe ()
+ContextKitHandle::unsubscribe()
 {
     foreach (ContextProperty *p, props.values())
-        p->unsubscribe ();
+        p->unsubscribe();
 }
 
-QSet<QString>
-ContextKitHandle::children ()
+QSet<QString> ContextKitHandle::children()
 {
     QSet<QString> kids;
 
@@ -190,9 +190,9 @@ ContextKitHandle::children ()
     {
         int pos = path.indexOf("/");
         if (pos >= 0)
-            kids.insert (path.left(pos));
+            kids.insert(path.left(pos));
         else
-            kids.insert (path);
+            kids.insert(path);
     }
     return kids;
 }
@@ -242,22 +242,33 @@ public:
 
 private slots:
     void contextHandleChanged();
+
+private:
+    static ContextKitHandle *handleToCKHandle(Handle handle);
 };
 
 QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitLayer);
 
-ContextKitLayer::ContextKitLayer ()
+ContextKitLayer::ContextKitLayer()
 {
 }
 
-ContextKitLayer::~ContextKitLayer ()
+ContextKitLayer::~ContextKitLayer()
 {
 }
 
 Q_GLOBAL_STATIC(ContextKitLayer, contextKitLayer);
-ContextKitLayer *ContextKitLayer::instance ()
+ContextKitLayer *ContextKitLayer::instance()
 {
-    return contextKitLayer ();
+    return contextKitLayer();
+}
+
+ContextKitHandle *handleToCKHandle(Handle handle)
+{
+    ContextKitHandle *ckh = NULL;
+    if (handle != InvalidHandle)
+        ckh = reinterpret_cast<ContextKitHandle*>(handle);
+    return ckh;
 }
 
 QString ContextKitLayer::name()
@@ -280,58 +291,57 @@ unsigned int ContextKitLayer::order()
     return 0;
 }
 
-LayerOptions ContextKitLayer::layerOptions () const
+LayerOptions ContextKitLayer::layerOptions() const
 {
     return TransientLayer | ReadOnlyLayer;
 }
 
-QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
+QAbstractValueSpaceLayer::Handle ContextKitLayer::item(Handle parent,
+                                                       const QString &subPath)
 {
-    return (Handle) new ContextKitHandle ((parent == InvalidHandle)
-                                          ? NULL
-                                          : (ContextKitHandle *) parent,
-                                          subPath);
+    ContextKitHandle *parentHandle = handleToCKHandle(parent);
+    ContextKitHandle *h = new ContextKitHandle(parentHandle, subPath);
+    return reinterpret_cast<Handle>(h);
 }
 
-void ContextKitLayer::removeHandle (Handle handle)
+void ContextKitLayer::removeHandle(Handle handle)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
+    ContextKitHandle *h = handleToCKHandle(handle);
     delete h;
 }
 
-void ContextKitLayer::setProperty (Handle handle, Properties properties)
+void ContextKitLayer::setProperty(Handle handle, Properties properties)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
+    ContextKitHandle *h = handleToCKHandle(handle);
 
     if (properties & Publish)
-        connect (h, SIGNAL(valueChanged()),
-                 this, SLOT(contextHandleChanged()));
+        connect(h, SIGNAL(valueChanged()),
+                this, SLOT(contextHandleChanged()));
     else
-        disconnect (h, SIGNAL(valueChanged()),
-                    this, SLOT(contextHandleChanged()));
+        disconnect(h, SIGNAL(valueChanged()),
+                   this, SLOT(contextHandleChanged()));
 }
 
 void ContextKitLayer::contextHandleChanged()
 {
-    ContextKitHandle *h = (ContextKitHandle *)sender();
-    emit handleChanged ((Handle) h);
+    emit handleChanged(reinterpret_cast<Handle>(sender()));
 }
 
-bool ContextKitLayer::value (Handle handle, QVariant *data)
+bool ContextKitLayer::value(Handle handle, QVariant *data)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->value ("", data);
+    ContextKitHandle *h = handleToCKHandle(handle);
+    return h->value("", data);
 }
 
-bool ContextKitLayer::value (Handle handle, const QString &subPath, QVariant *data)
+bool ContextKitLayer::value(Handle handle, const QString &subPath, QVariant *data)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->value (subPath, data);
+    ContextKitHandle *h = handleToCKHandle(handle);
+    return h->value(subPath, data);
 }
 
 bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
+    ContextKitHandle *h = handleToCKHandle(handle);
 
     if (interested)
         h->subscribe();
@@ -340,10 +350,10 @@ bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-QSet<QString> ContextKitLayer::children (Handle handle)
+QSet<QString> ContextKitLayer::children(Handle handle)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->children ();
+    ContextKitHandle *h = handleToCKHandle(handle);
+    return h->children();
 }
 
 #include "contextkitlayer.moc"
