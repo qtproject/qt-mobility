@@ -254,7 +254,13 @@ qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
     if (socketHandler != NULL)
     {
         TPtr8 ptr((TUint8*)data, (TInt)maxSize);
-        val = socketHandler->ReadDatagram(ptr);
+        if (port == NULL){
+           val = socketHandler->ReadDatagram(ptr);
+        }
+        else {
+           quint8 portNum = *port;
+           val = socketHandler->ReadDatagram(ptr, (TInt8&)portNum);
+        }
     }
 
     return val;

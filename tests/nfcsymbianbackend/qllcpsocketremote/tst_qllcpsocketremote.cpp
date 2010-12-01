@@ -74,12 +74,12 @@ void tst_qllcpsocketremote::testCase1()
 
     // STEP 1:  bind the local port for current socket
     QLlcpSocket socket(this);
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
     bool ret = socket.bind(port);
+    QTRY_VERIFY(readyReadSpy.count() == 1);
     QVERIFY(ret);
 
     // STEP 2: Receive data from the peer which send messages to
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    QTRY_VERIFY(readyReadSpy.count() == 1);
     QByteArray datagram;
     while (socket.hasPendingDatagrams())
     {

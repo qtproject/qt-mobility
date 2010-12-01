@@ -105,6 +105,7 @@ public:
 public:    
    TInt StartWriteDatagram(const TDesC8& aData,TInt8 portNum);
    TInt ReadDatagram(TDes8& aData);
+   TInt ReadDatagram(TDes8& aData, TInt8& aRemotePortNum);
    bool Bind(TInt8 portNum);
    
    /*!
@@ -172,6 +173,8 @@ private:
    bool iConnLessStarted;
    
    QtMobility::QLlcpSocketPrivate& iCallback;
+   
+   TInt8 iRemotePortNum;
    };
 
 /*!
@@ -213,7 +216,7 @@ public:
    /*!
     * Starts receive data from ConnLess.
     */
-   TInt Receive(MLlcpReadWriteCb&,TInt64 aMaxSize);
+   TInt Receive(MLlcpReadWriteCb&);
    
    /*!
     * Cancels COwnLlcpConnection::Receive() request.
@@ -280,7 +283,7 @@ public:
     /*!
      * Starts receive data from ConnLess.
      */
-    TInt Receive(MLlcpReadWriteCb&,TInt64 aMaxSize);
+    TInt Receive(MLlcpReadWriteCb&);
     
     /*!
      * Cancels COwnLlcpConnection::Receive() request.

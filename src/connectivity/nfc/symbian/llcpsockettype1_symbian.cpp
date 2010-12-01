@@ -72,7 +72,8 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
       iWait(NULL),
       iTimer(NULL),
       iConnLessStarted(EFalse),
-      iCallback(aCallback)
+      iCallback(aCallback),
+      iRemotePortNum(-1)
     {
     }
 
@@ -163,6 +164,13 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     return val; 
     }
 
+
+TInt CLlcpSocketType1::ReadDatagram(TDes8& aData, TInt8& aRemotePortNum)
+    {
+    aRemotePortNum = iRemotePortNum;
+    ReadDatagram(aData);
+    }
+
 TInt CLlcpSocketType1::ReadDatagram(TDes8& aData)
     {
     TInt readSize = -1;
@@ -172,7 +180,7 @@ TInt CLlcpSocketType1::ReadDatagram(TDes8& aData)
 
         // Start receiving data again
         TInt error = KErrNone;
-        error = iConnection->Receive(*this, aData.Length());
+        error = iConnection->Receive(*this);
         if (KErrNone != error)
             {
             readSize =  -1;
@@ -207,7 +215,11 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
 */
 void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
-    CreateConnection(aConnection);
+    iRemotePortNum = aConnection->DsapL();
+    if (KErrNone == CreateConnection(aConnection))
+        {
+        iConnection->Receive(*this);
+        }
     }
 
 /*!
@@ -448,15 +460,16 @@ void COwnLlcpConnLess::ReceiveCancel()
     }
 
 /*!
+ *  Trigger the receive AO to start receive datagram
     Receive data from remote peer to local peer via connectionLess transport
 */
-TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb, TInt64 aMaxSize)
+TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb)
     {
     TInt error = KErrNone;
     // Pass message on to transmit AO
     if (!iReceiverAO->IsActive())
         {
-        error = iReceiverAO->Receive(aLlcpReceiveCb, aMaxSize);
+        error = iReceiverAO->Receive(aLlcpReceiveCb);
         }
     return error;
     }
@@ -588,39 +601,27 @@ CLlcpReceiverType1* CLlcpReceiverType1::NewL(MLlcpConnLessTransporter* iConnecti
 
 
 /*!
-    Set active for the receiver AO as given maximum read size "aMaxSize" requested
+    Set active for the receiver AO 
     Receive complete callback function "cb" registed
 */
-TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb,TInt64 aMaxSize)
+TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb)
     {
     TInt error = KErrNone;
     if (!IsActive())
         {     
         TInt length = 0;
         length = iConnection->SupportedDataLength();
-        if (length > aMaxSize)
-          {
-          length = aMaxSize;
-          }   
-      
-        if ( length > 0 )
-          {
-          iReceiveBuf.Zero();
-          error = iReceiveBuf.ReAlloc( length );
+        iReceiveBuf.Zero();
+        error = iReceiveBuf.ReAlloc( length );
           
-          if ( error == KErrNone )
-              {
-              iConnection->Receive( iStatus, iReceiveBuf );
-              SetActive();
-              // Register the call back function which will complete in RunL
-              iReceiveObserver = &cb;
-              }
-          }
-     else
-          {
-          error = KErrInUse;
-          }
-        }
+        if ( error == KErrNone )
+            {
+            iConnection->Receive( iStatus, iReceiveBuf );
+            SetActive();
+            // Register the call back function which will complete in RunL
+            iReceiveObserver = &cb;          
+            }
+       }
     return error;
     }
     
