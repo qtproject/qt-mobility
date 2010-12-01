@@ -122,6 +122,7 @@ public:
     Q_INVOKABLE void removeItem(const QString& id);
     Q_INVOKABLE void removeItems(const QList<QString>& ids);
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
+    Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
@@ -149,13 +150,12 @@ public slots:
     void importItems(const QString& file);
 private slots:
     void fetchAgain();
-    void itemFetched();
+    void requestUpdated();
 
-    void saveItem();
-    void itemSaved();
+    void itemsSaved();
 
-    void removeItem();
-    void itemRemoved();
+    void itemsRemoved();
+    void itemsRemoved(const QList<QOrganizerItemId>& ids);
 
     void startImport(QVersitReader::State state);
     void itemsExported(QVersitWriter::State state);
@@ -163,6 +163,7 @@ private slots:
 
 
 private:
+    void clearItems();
     static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
     static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);
