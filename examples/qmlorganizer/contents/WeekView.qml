@@ -39,5 +39,70 @@
 ****************************************************************************/
 
 import Qt 4.7
+import QtMobility.organizer 1.1
 
-Text {text: "Details View"; anchors.centerIn: parent}
+Rectangle
+{
+    id:weekView
+    anchors.fill: parent
+
+    ListView {
+        id : dayList
+        anchors.fill: parent
+        clip: true
+        focus: true
+        opacity : parent.opacity
+        preferredHighlightBegin: dayList.height * 0.5
+        preferredHighlightEnd: preferredHighlightBegin
+        highlightFollowsCurrentItem : true
+        highlightMoveSpeed : 2000
+        keyNavigationWraps : true
+
+        model : ListModel {
+                ListElement {day : "Sunday"}
+                ListElement {day : "Monday"}
+                ListElement {day : "Tuesday"}
+                ListElement {day : "Wednesday"}
+                ListElement {day : "Thursday"}
+                ListElement {day : "Fridady"}
+                ListElement {day : "Saturday"}
+         }
+
+        delegate :  Component {
+            Item {
+                width : dayList.width
+                height : dayList.height / 7
+                Column {
+                    Rectangle {
+                        height : 1
+                        width : dayList.width
+                        color : "black"
+                    }
+                    Text {
+                        text: day
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked : dayList.currentIndex = index
+                    onDoubleClicked: {
+                        topItem.state = "DayView"
+                    }
+                }
+            }
+        }
+
+        highlight:  Component {
+
+            Rectangle {
+                width: dayList.width
+                height: dayList.height /7
+                color: "lightsteelblue"
+                radius: 5
+            }
+        }
+
+        Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
+    }
+}
+

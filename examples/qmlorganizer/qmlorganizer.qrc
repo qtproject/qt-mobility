@@ -2,15 +2,15 @@
     <qresource prefix="/">
         <file>organizer.qml</file>
         <file>contents/Button.qml</file>
-        <file>contents/detailsview.qml</file>
+        <file>contents/DetailsView.qml</file>
         <file>contents/MediaButton.qml</file>
-        <file>contents/monthview.qml</file>
+        <file>contents/MonthView.qml</file>
         <file>contents/ScrollBar.qml</file>
-        <file>contents/weekview.qml</file>
-        <file>contents/dayview.qml</file>
-        <file>contents/agenderview.qml</file>
+        <file>contents/WeekView.qml</file>
+        <file>contents/DayView.qml</file>
+        <file>contents/AgenderView.qml</file>
         <file>contents/timeline.js</file>
-        <file>contents/timelineview.qml</file>
+        <file>contents/TimelineView.qml</file>
         <file>contents/MenuBar.qml</file>
         <file>contents/StatusBar.qml</file>
         <file>contents/images/button.png</file>

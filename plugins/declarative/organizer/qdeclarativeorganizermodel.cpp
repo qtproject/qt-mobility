@@ -71,6 +71,7 @@ public:
         m_fetchHint(0),
         m_filter(0),
         m_fetchRequest(0),
+        m_occurrenceFetchRequest(0),
         m_startPeriod(QDateTime::currentDateTime()),
         m_endPeriod(QDateTime::currentDateTime()),
         m_autoUpdate(true),
@@ -86,11 +87,14 @@ public:
 
     QList<QDeclarativeOrganizerItem*> m_items;
     QMap<QString, QDeclarativeOrganizerItem*> m_itemMap;
+    QList<QDeclarativeOrganizerItem*> m_itemOccurrences;
+    QMap<QDateTime, QDeclarativeOrganizerItem*> m_itemOccurrenceMap;
     QOrganizerManager* m_manager;
     QDeclarativeOrganizerItemFetchHint* m_fetchHint;
     QList<QDeclarativeOrganizerItemSortOrder*> m_sortOrders;
     QDeclarativeOrganizerItemFilter* m_filter;
     QOrganizerItemFetchRequest* m_fetchRequest;
+    QOrganizerItemOccurrenceFetchRequest* m_occurrenceFetchRequest;
     QList<QString> m_updatedItemIds;
     QStringList m_importProfiles;
     QVersitReader m_reader;

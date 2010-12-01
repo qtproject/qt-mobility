@@ -14,14 +14,14 @@ OTHER_FILES += \
     organizer.qml \
     contents/StatusBar.qml \
     contents/MenuBar.qml \
-    contents/timelineview.qml \
+    contents/TimelineView.qml \
     contents/timeline.js \
-    contents/weekview.qml \
-    contents/dayview.qml \
-    contents/agenderview.qml \
+    contents/WeekView.qml \
+    contents/DayView.qml \
+    contents/AgenderView.qml \
     contents/ScrollBar.qml \
     contents/MediaButton.qml \
-    contents/detailsview.qml \
+    contents/DetailsView.qml \
     contents/Button.qml \
     contents/images/toolbutton.sci \
     contents/images/toolbutton.png \
@@ -36,7 +36,7 @@ OTHER_FILES += \
     contents/images/button-pressed.png \
     contents/images/button.png \
     contents/month.js \
-    contents/monthview.qml \
+    contents/MonthView.qml \
     contents/2010-FIFA-WorldCup.ics
 
 symbian: {

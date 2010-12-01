@@ -42,7 +42,7 @@ import Qt 4.7
 
 Item {
     id: statusbar
-    property string status;
+    property string status
     signal leftClicked
     signal rightClicked
 
@@ -53,6 +53,21 @@ Item {
         text: "  <"
         anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 50; height: 32
         onClicked: statusbar.leftClicked()
+    }
+    Text {
+        id:statusText
+        color: "#ecc70a"
+        text:status
+        font.family: "Monospace"
+        font.bold: true
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.pointSize: 19
+        anchors.left: leftButton.right
+        anchors.leftMargin: 5
+        anchors.right: rightButton.left
+        anchors.rightMargin: 5
+
     }
 
     Button {
