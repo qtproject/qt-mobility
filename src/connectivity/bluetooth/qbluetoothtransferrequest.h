@@ -72,6 +72,8 @@ public:
     QVariant attribute(Attribute code, const QVariant &defaultValue = QVariant()) const;
     void setAttribute(Attribute code, const QVariant &value);
 
+    QBluetoothAddress address() const;
+    
     bool operator!=(const QBluetoothTransferRequest &other) const;
     QBluetoothTransferRequest &operator=(const QBluetoothTransferRequest &other);
     bool operator==(const QBluetoothTransferRequest &other) const;

@@ -134,6 +134,17 @@ void QBluetoothTransferRequest::setAttribute(Attribute code, const QVariant &val
 }
 
 /*!
+    Returns the address associated with the Bluetooth transfer request.
+*/
+QBluetoothAddress QBluetoothTransferRequest::address() const
+{
+    Q_D(const QBluetoothTransferRequest);
+    
+    return d->m_address;
+}
+
+
+/*!
     Returns true if this object is not the same as \a other.
 
     \sa operator==()
