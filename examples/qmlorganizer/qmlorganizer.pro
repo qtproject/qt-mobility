@@ -36,7 +36,8 @@ OTHER_FILES += \
     contents/images/button-pressed.png \
     contents/images/button.png \
     contents/month.js \
-    contents/monthview.qml
+    contents/monthview.qml \
+    contents/2010-FIFA-WorldCup.ics
 
 symbian: {
     load(data_caging_paths)

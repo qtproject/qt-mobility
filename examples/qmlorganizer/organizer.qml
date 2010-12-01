@@ -56,8 +56,6 @@ Item {
 
         SystemPalette { id: activePalette }
 
-       // OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}
-        //OrganizerItem {id:organizerItem; guid:'1112232133'}
         // Quick hack top menu bar to change views
         TimeScape.MenuBar { id: menuBar; width: parent.width; height: 40; opacity: 0.9 }
 
@@ -66,7 +64,8 @@ Item {
             State {name: "TimelineView"; PropertyChanges { target: timelineView; opacity: 1; }},
             State {name: "WeekView"; PropertyChanges { target: weekView; opacity: 1; }},
             State {name: "DayView"; PropertyChanges { target: dayView; opacity: 1; }},
-            State {name: "AgenderView"; PropertyChanges { target: agenderView; opacity: 1; }}
+            State {name: "AgenderView"; PropertyChanges { target: agenderView; opacity: 1; }},
+            State {name: "DetailsView"; PropertyChanges { target: detailsView; opacity: 1; }}
         ]
         transitions: [
             Transition {
@@ -89,7 +88,6 @@ Item {
             // TODO these should be components too
             Rectangle {
                 id: monthView;
-                color: "#808000";
                 width: 360;
                 height: 600;
                 opacity: 0;
@@ -98,7 +96,6 @@ Item {
             }
             Rectangle {
                 id: timelineView;
-                color: "#008080";
                 width: 360;
                 height: 600;
                 opacity: 0;
@@ -108,7 +105,6 @@ Item {
             }
             Rectangle {
                 id: weekView;
-                color: "#008000";
                 width: 360;
                 height: 600;
                 opacity: 0;
@@ -118,7 +114,6 @@ Item {
             }
             Rectangle {
                 id: dayView;
-                color: "#F08000";
                 width: 360;
                 height: 600;
                 opacity: 0;
@@ -128,7 +123,6 @@ Item {
             }
             Rectangle {
                 id: agenderView;
-                color: "#F08000";
                 width: 360;
                 height: 600;
                 opacity: 0;
@@ -138,7 +132,6 @@ Item {
             }
             Rectangle {
                 id: detailsView;
-                color: "#F08000";
                 width: 360;
                 height: 600;
                 opacity: 0;

@@ -52,11 +52,8 @@ Rectangle {
     }
     Row {
         spacing: 2
-        //anchors.horizontalCenter: parent.horizontalCenter;
         Image {
             id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
             height: monthButton.height
             width:height
             source: "images/quit.png"
