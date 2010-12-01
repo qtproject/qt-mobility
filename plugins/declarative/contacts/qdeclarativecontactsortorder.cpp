@@ -158,7 +158,7 @@ void QDeclarativeContactSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensit
 
 void QDeclarativeContactSortOrder::componentComplete()
 {
-    m_sortOrder = sortOrder();
+    setSortOrder(sortOrder());
 }
 
 QContactSortOrder QDeclarativeContactSortOrder::sortOrder()

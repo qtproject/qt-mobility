@@ -105,6 +105,11 @@ public:
     static QDeclarativeContact* contacts_at(QDeclarativeListProperty<QDeclarativeContact>* prop, int index);
     static void contacts_clear(QDeclarativeListProperty<QDeclarativeContact>* prop);
 
+    static void sortOrder_append(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, QDeclarativeContactSortOrder *sortOrder);
+    static int  sortOrder_count(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p);
+    static QDeclarativeContactSortOrder * sortOrder_at(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, int idx);
+    static void  sortOrder_clear(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p);
+
     QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
 
     Q_INVOKABLE void removeContact(QContactLocalId id);
