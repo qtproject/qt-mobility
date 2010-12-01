@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaRecorder class is used for the recording of media content.
 
     The QMediaRecorder class is a high level media recording class.  It's not

@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     service implementations.
     \inmodule QtMultimediaKit
     \ingroup multimedia
-    \preliminary
+    
 
     Media services provide implementations of the functionality promised
     by media objects, and allow multiple providers to implement a QMediaObject.
