@@ -42,7 +42,7 @@
 #include "qllcpstate_symbian_p.h"
 #include "symbian/llcpsockettype1_symbian.h"
 #include "symbian/llcpsockettype2_symbian.h"
-#include "symbian/nearfieldutility_symbian.h" 
+#include "symbian/nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -104,7 +104,7 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
 }
 
 /*!
-    Construct the socket and set it as listening state from llcp server side 
+    Construct the socket and set it as listening state from llcp server side
 */
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_symbianSocketType1(NULL),
@@ -123,18 +123,20 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     else if (connectionUnknown == m_socketType){
        m_socketType = connectionType2;
     }
-
+    Q_Q(QLlcpSocket);
+    if (!q->isOpen())
+        q->open(QIODevice::ReadWrite);
     m_state->ConnectToService(target,serviceUri);
 }
 
 void QLlcpSocketPrivate::disconnectFromService()
 {
-    Q_CHECK_LLCPTYPE(QLlcpSocketPrivate::disconnectFromService(),connectionType2); 
+    Q_CHECK_LLCPTYPE(QLlcpSocketPrivate::disconnectFromService(),connectionType2);
     Q_CHECK_SOCKET_HANDLER2(QLlcpSocketPrivate::disconnectFromService());
     m_state->DisconnectFromService();
 }
 
-void QLlcpSocketPrivate::invokeConnected() 
+void QLlcpSocketPrivate::invokeConnected()
 {
     Q_Q(QLlcpSocket);
     m_state->ConnectToServiceComplete();
@@ -205,7 +207,7 @@ bool QLlcpSocketPrivate::hasPendingDatagrams() const
     no datagram available, this function returns -1.
 */
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
-{   
+{
     int val = -1;
     Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::pendingDatagramSize(), connectionType1, val);
     if (m_symbianSocketType1)
@@ -269,7 +271,7 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
-{ 
+{
     if( connectionType2 == m_socketType){
        return -1;
     }
