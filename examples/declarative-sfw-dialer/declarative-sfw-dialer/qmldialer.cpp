@@ -41,7 +41,9 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#ifndef Q_OS_SYMBIAN
 #include <qservicemanager.h>
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -58,7 +60,7 @@ void registerExampleService()
 
     QServiceManager m;
     QStringList exampleXmlFiles;
-    exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml" << "removedialerservice.xml";
+    exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml" << "remotedialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         m.addService(path);
@@ -68,6 +70,11 @@ void registerExampleService()
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+#ifndef Q_OS_SYMBIAN
+    registerExampleService();
+#endif
+
     const QString mainQmlApp = QLatin1String("qrc:/declarative-sfw-dialer.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));

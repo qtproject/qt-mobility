@@ -41,7 +41,9 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#ifndef Q_OS_SYMBIAN
 #include <qservicemanager.h>
+#endif
 
 QTM_USE_NAMESPACE
 
