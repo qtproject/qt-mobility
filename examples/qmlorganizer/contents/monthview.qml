@@ -40,6 +40,8 @@
 
 import Qt 4.7
 import "month.js" as Month
+import QtMobility.organizer 1.1
+
 Item {
     id:monthView
     property int month: 9
@@ -47,11 +49,17 @@ Item {
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
     property int today
+    OrganizerModel {
+        id: organizer;
+        startPeriod:startDay;
+        endPeriod:new Date(year, month+1, 1);
+        Component.onCompleted : {
+            if (manager == "memory")
+                organizer.importItems(Qt.resolvedUrl("2010-FIFA-WorldCup.ics"));
+        }
+    }
 
     anchors.fill: parent
-
-    Component.onCompleted : {
-    }
 
     Grid {
         id:container

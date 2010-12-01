@@ -44,6 +44,8 @@
 
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
+#include <QDeclarativeParserStatus>
+
 #include "qorganizeritem.h"
 #include "qdeclarativeorganizeritem_p.h"
 #include "qversitreader.h"
@@ -55,7 +57,7 @@
 
 QTM_USE_NAMESPACE;
 class QDeclarativeOrganizerModelPrivate;
-class QDeclarativeOrganizerModel : public QAbstractListModel
+class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
@@ -75,6 +77,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
     Q_PROPERTY(QString error READ error)
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum {
         OrganizerItemRole = Qt::UserRole + 500
@@ -94,6 +97,10 @@ public:
     QDateTime endPeriod() const;
     void setEndPeriod(const QDateTime& end);
 
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
@@ -112,9 +119,10 @@ public:
     QDeclarativeListProperty<QDeclarativeOrganizerItem> journals();
     QDeclarativeListProperty<QDeclarativeOrganizerItem> notes();
 
-    Q_INVOKABLE void removeItem(uint id);
-    Q_INVOKABLE void removeItems(const QList<uint>& ids);
+    Q_INVOKABLE void removeItem(const QString& id);
+    Q_INVOKABLE void removeItems(const QList<QString>& ids);
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
+    Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
@@ -122,8 +130,6 @@ public:
     void setFilter(QDeclarativeOrganizerItemFilter* filter);
     void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
-    static QOrganizerItemId itemIdFromHash(uint key);
-    static QOrganizerCollectionId collectionIdFromHash(uint key);
 
 signals:
     void managerChanged();
@@ -139,29 +145,34 @@ signals:
 
 public slots:
     void update();
-    void exportItems(const QString& file);
-    void importItems(const QString& file);
+    void cancelUpdate();
+    void exportItems(const QUrl& url, const QStringList& profiles=QStringList());
+    void importItems(const QUrl& url, const QStringList& profiles=QStringList());
 private slots:
     void fetchAgain();
-    void itemFetched();
+    void requestUpdated();
 
-    void saveItem();
-    void itemSaved();
+    void itemsSaved();
 
-    void removeItem();
-    void itemRemoved();
-
+    void itemsRemoved();
+    void itemsRemoved(const QList<QOrganizerItemId>& ids);
+    void itemsChanged(const QList<QOrganizerItemId>& ids);
     void startImport(QVersitReader::State state);
     void itemsExported(QVersitWriter::State state);
 
 
 
 private:
+    void clearItems();
     static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
     static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);
     static void  item_clear(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
 
+    static void sortOrder_append(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p, QDeclarativeOrganizerItemSortOrder *sortOrder);
+    static int  sortOrder_count(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p);
+    static QDeclarativeOrganizerItemSortOrder * sortOrder_at(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p, int idx);
+    static void  sortOrder_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> *p);
 
     QDeclarativeOrganizerModelPrivate* d;
 };

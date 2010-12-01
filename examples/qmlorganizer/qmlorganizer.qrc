@@ -6,11 +6,13 @@
         <file>contents/MediaButton.qml</file>
         <file>contents/monthview.qml</file>
         <file>contents/ScrollBar.qml</file>
-        <file>contents/settingsview.qml</file>
+        <file>contents/weekview.qml</file>
+        <file>contents/dayview.qml</file>
+        <file>contents/agenderview.qml</file>
         <file>contents/timeline.js</file>
         <file>contents/timelineview.qml</file>
-        <file>contents/TitleBar.qml</file>
-        <file>contents/ToolBar.qml</file>
+        <file>contents/MenuBar.qml</file>
+        <file>contents/StatusBar.qml</file>
         <file>contents/images/button.png</file>
         <file>contents/images/button-pressed.png</file>
         <file>contents/images/default.svg</file>
@@ -24,5 +26,6 @@
         <file>contents/images/toolbutton.png</file>
         <file>contents/images/toolbutton.sci</file>
         <file>contents/month.js</file>
+        <file>contents/2010-FIFA-WorldCup.ics</file>
     </qresource>
 </RCC>
