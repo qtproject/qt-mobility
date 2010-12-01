@@ -820,7 +820,7 @@ QDeclarativeOrganizerItem * QDeclarativeOrganizerModel::item_at(QDeclarativeList
     if (model && idx < model->d->m_items.size()) {
         int i = 0;
         if (!type.isEmpty()) {
-            foreach(QDeclarativeOrganizerItem* di, model->d->m_items) {
+            foreach (QDeclarativeOrganizerItem* di, model->d->m_items) {
                 if (di->item().type() == type) {
                     if (i == idx) {
                         item = di;
@@ -844,7 +844,7 @@ void  QDeclarativeOrganizerModel::item_clear(QDeclarativeListProperty<QDeclarati
 
     if (model) {
         if (!type.isEmpty()) {
-            foreach(QDeclarativeOrganizerItem* di, model->d->m_items) {
+            foreach (QDeclarativeOrganizerItem* di, model->d->m_items) {
                 if (di->item().type() == type) {
                     di->deleteLater();
                     model->d->m_items.removeAll(di);
@@ -881,7 +881,7 @@ QDeclarativeOrganizerItemSortOrder * QDeclarativeOrganizerModel::sortOrder_at(QD
     QDeclarativeOrganizerItemSortOrder* sortOrder = 0;
     if (model) {
         int i = 0;
-        foreach(QDeclarativeOrganizerItemSortOrder* s, model->d->m_sortOrders) {
+        foreach (QDeclarativeOrganizerItemSortOrder* s, model->d->m_sortOrders) {
             if (i == idx) {
                 sortOrder = s;
                 break;
