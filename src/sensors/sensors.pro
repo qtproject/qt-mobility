@@ -16,6 +16,7 @@ symbian {
     LIBS += -lefsrv
 }
 
+QT=core
 CONFIG += strict_flags
 CONFIG(debug,debug|release):DEFINES += ENABLE_RUNTIME_SENSORLOG
 
