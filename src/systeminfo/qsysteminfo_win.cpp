@@ -1470,7 +1470,7 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightUnknown;
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)

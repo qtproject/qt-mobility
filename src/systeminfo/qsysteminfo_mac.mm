@@ -1629,8 +1629,15 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightUnknown;
+    int bright = displayBrightness(screen);
+    if(bright == 0) {
+        return QSystemDisplayInfo::BacklightStateOff;
+    } else if(bright > 1 && bright < 99) {
+        return QSystemDisplayInfo::backlightStateDimmed;
+       } else {
+        return QSystemDisplayInfo::backlightStateOn;
+    }
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 
