@@ -196,7 +196,9 @@ void RequestController::handleUpdatedSubRequest(QContactAbstractRequest::State s
     QContactAbstractRequest* subRequest = qobject_cast<QContactAbstractRequest*>(caller);
     if (subRequest) {
         if (state == QContactAbstractRequest::FinishedState) {
-            handleFinishedSubRequest(subRequest);
+            // It's possibly already finished if waitForFinished has previously been called
+            if (!isFinished())
+                handleFinishedSubRequest(subRequest);
         } else {
             // XXX maybe Canceled should be handled
         }
@@ -226,11 +228,12 @@ bool FetchByIdRequestController::start()
     // Our strategy is to translate it to a ContactFetchRequest.  Later when it finishes, we can
     // fiddle with the results to get it in the right format.
     Q_ASSERT(m_request);
+    QContactFetchByIdRequest* originalRequest = static_cast<QContactFetchByIdRequest*>(m_request.data());
     QContactFetchRequest* qcfr = new QContactFetchRequest;
     QContactLocalIdFilter lif;
-    lif.setIds(static_cast<QContactFetchByIdRequest*>(m_request.data())->localIds());
+    lif.setIds(originalRequest->localIds());
     qcfr->setFilter(lif);
-    qcfr->setFetchHint(qcfr->fetchHint());
+    qcfr->setFetchHint(originalRequest->fetchHint());
     // normally, you'd set the manager, but in this case, we only have a bare engine:
     QContactManagerEngineV2Wrapper::setEngineOfRequest(qcfr, m_engine);
     m_currentSubRequest.reset(qcfr);
@@ -243,11 +246,6 @@ bool FetchByIdRequestController::start()
 /* One of our subrequests has finished.  Go to the next step. */
 void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractRequest* subReq)
 {
-    // It's possibly already finished if this function is called asynchronously and waitForFinished
-    // had previously been called
-    if (isFinished())
-        return;
-
     // For a FetchByIdRequest, we know that the only subrequest is a QContactFetchRequest.
     // The next step is simply to take the results and reformat it.
     // Take the results:
@@ -334,11 +332,6 @@ bool PartialSaveRequestController::start()
 /* One of our subrequests has finished.  Go to the next step. */
 void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequest* subReq)
 {
-    // It's possibly already finished if this function is called asynchronously and waitForFinished
-    // had previously been called
-    if (isFinished())
-        return;
-
     if (subReq->type() == QContactAbstractRequest::ContactFetchByIdRequest) {
         QContactFetchByIdRequest* cfbir = qobject_cast<QContactFetchByIdRequest*>(subReq);
         QList<QContact> contactsToSave;

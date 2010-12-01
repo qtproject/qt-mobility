@@ -63,6 +63,12 @@ QOrganizerCollectionSaveRequest::QOrganizerCollectionSaveRequest(QObject* parent
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerCollectionSaveRequest::~QOrganizerCollectionSaveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Clears the list of collections which will be saved, and sets the collection which will be saved to \a collection */
 void QOrganizerCollectionSaveRequest::setCollection(const QOrganizerCollection& collection)
 {

@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
   can simply implement the functionality that is supported by
   the specific organizer items engine that is being adapted.
 
-  More information on writing a organizer items engine plugin is available in
+  More information on writing an organizer engine plugin is available in
   the \l{Qt Organizer Manager Engines} documentation.
 
   \sa QOrganizerManager, QOrganizerManagerEngineFactory
@@ -2437,6 +2437,67 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
 }
 
 /*!
+ * Returns the date associated with \a item that can be used for the purpose of date-sorting
+ * the item.
+ */
+QDateTime getDateForSorting(const QOrganizerItem& item)
+{
+    QDateTime retn;
+    {
+        QOrganizerEventTime detail = item.detail<QOrganizerEventTime>();
+        if (!detail.isEmpty()) {
+            retn = detail.startDateTime();
+            if (!retn.isValid())
+                retn = detail.endDateTime();
+            if (retn.isValid() && detail.isAllDay()) {
+                // set it to a millisecond before the given date to have it sorted correctly
+                retn.setTime(QTime(23, 59, 59, 999));
+                retn.addDays(-1);
+            }
+            return retn;
+        }
+    }
+    {
+        QOrganizerTodoTime detail = item.detail<QOrganizerTodoTime>();
+        if (!detail.isEmpty()) {
+            retn = detail.startDateTime();
+            if (!retn.isValid())
+                retn = detail.dueDateTime();
+            if (retn.isValid() && detail.isAllDay()) {
+                // set it to a millisecond before the given date to have it sorted correctly
+                retn.setTime(QTime(23, 59, 59, 999));
+                retn.addDays(-1);
+            }
+            return retn;
+        }
+    }
+
+    // If it's a note, this will just return null, as expected
+    return item.detail<QOrganizerJournalTime>().entryDateTime();
+}
+
+/*!
+ * Returns true if and only if \a a is temporally less than \a b.  Items with an earlier date are
+ * temporally less than items with a later date, or items with no date.  All day items are
+ * temporally less than non-all day items on the same date.  For events and todos, the
+ * start date is used, or if null, the end date is used.  This function defines a total ordering
+ * suitable for use in a sort function.
+ */
+bool QOrganizerManagerEngine::itemLessThan(const QOrganizerItem& a, const QOrganizerItem& b)
+{
+    QDateTime date1 = getDateForSorting(a);
+    if (!date1.isValid()) {
+        return false;
+    } else {
+        QDateTime date2 = getDateForSorting(b);
+        if (!date2.isValid())
+            return true;
+        else
+            return date1 < date2;
+    }
+}
+
+/*!
   Compares two organizer items (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
   before \a b according to the sort order, a positive number if \a a should appear after \a b according to the sort order,
   and zero if the two are unable to be sorted.
@@ -2925,6 +2986,98 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
         if (emitState && ireq)
             emit ireq.data()->stateChanged(newState);
     }
+}
+
+/*!
+  \class QOrganizerManagerEngine
+  \brief The QOrganizerManagerEngine class provides the interface for all
+  implementations of the organizer item manager backend functionality.
+
+  \inmodule QtOrganizer
+  \ingroup organizer-backends
+
+  Instances of this class are usually provided by a
+  \l QOrganizerManagerEngineFactory, which is loaded from a plugin.
+
+  The default implementation of this interface provides a basic
+  level of functionality for some functions so that specific engines
+  can simply implement the functionality that is supported by
+  the specific organizer items engine that is being adapted.
+
+  More information on writing an organizer engine plugin is available in
+  the \l{Qt Organizer Manager Engines} documentation.
+
+  Engines that support the QOrganizerManagerEngine interface but not the
+  QOrganizerManagerEngineV2 interface will be wrapped by the QOrganizerManager
+  by a class that emulates the extra functionality of the
+  QOrganizerManagerEngineV2 interface.
+
+  The additional features of a V2 engine compared to the original QOrganizerManagerEngine are:
+  \list
+  \o The items function which takes a \code{maxCount} parameter
+  \o The result of the items functions must be sorted by date according to the sort order defined by
+     \l itemLessThan
+  \o The corresponding changes to QOrganizerItemFetchRequest
+  \endlist
+
+  \sa QOrganizerManager, QOrganizerManagerEngineFactory
+ */
+
+/*!
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted
+  according to the given list of \a sortOrders, for any item or item occurrence which occurs in the
+  range specified by the given \a startDate and \a endDate.  A default-constructed (invalid) \a
+  startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which
+  occurs after the \a startDate).  If both the \a startDate and \a endDate are invalid, this
+  function will return all items which match the \a filter criteria.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details and relationships in the matching
+  organizer items will be returned.  A client should not make changes to an item which has been
+  retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
+  information loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
+
+  If \a sortOrders is the empty list, the returned items will be sorted by date.
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+{
+    return QOrganizerManagerEngine::items(
+            startDate, endDate, filter, sortOrders, fetchHint, error);
+}
+
+
+/*!
+  Returns a list of organizer items that match the given \a filter, sorted according to the given
+  list of \a sortOrders, for any item or occurrence of an item which occurs in the range specified
+  by the given \a startDate and \a endDate, inclusive.  A default-constructed (invalid) \a startDate
+  specifies an open start date (matches anything which occurs up until the \a endDate), and a
+  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
+  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
+  return all items which match the \a filter criteria.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details and relationships in the matching
+  organizer items will be returned.  A client should not make changes to an organizer item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
+  information loss when saving the organizer item back to the manager (as the "new" restricted
+  organizer item will replace the previously saved organizer item in the backend).
+
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+{
+    QList<QOrganizerItem> list = items(
+            startDate, endDate, filter, QList<QOrganizerItemSortOrder>(), fetchHint, error);
+    return list.mid(0, maxCount);
 }
 
 
