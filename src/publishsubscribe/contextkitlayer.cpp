@@ -44,6 +44,7 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QCoreApplication>
 #include <contextproperty.h>
 #include <contextprovider.h>
 #include <contextregistryinfo.h>
@@ -51,6 +52,51 @@
 QTM_BEGIN_NAMESPACE
 
 using namespace QValueSpace;
+
+// borrowed from qt/corelib/io/qsettings_mac
+static QString comify(const QString &organization)
+{
+    for (int i = organization.size() - 1; i >= 0; --i) {
+        QChar ch = organization.at(i);
+        if (ch == QLatin1Char('.') || ch == QChar(0x3002) || ch == QChar(0xff0e)
+                || ch == QChar(0xff61)) {
+            QString suffix = organization.mid(i + 1).toLower();
+            if (suffix.size() == 2 || suffix == QLatin1String("com")
+                    || suffix == QLatin1String("org") || suffix == QLatin1String("net")
+                    || suffix == QLatin1String("edu") || suffix == QLatin1String("gov")
+                    || suffix == QLatin1String("mil") || suffix == QLatin1String("biz")
+                    || suffix == QLatin1String("info") || suffix == QLatin1String("name")
+                    || suffix == QLatin1String("pro") || suffix == QLatin1String("aero")
+                    || suffix == QLatin1String("coop") || suffix == QLatin1String("museum")) {
+                QString result = organization;
+                result.replace(QLatin1Char('/'), QLatin1Char(' '));
+                return result;
+            }
+            break;
+        }
+        int uc = ch.unicode();
+        if ((uc < 'a' || uc > 'z') && (uc < 'A' || uc > 'Z'))
+            break;
+    }
+
+    QString domain;
+    for (int i = 0; i < organization.size(); ++i) {
+        QChar ch = organization.at(i);
+        int uc = ch.unicode();
+        if ((uc >= 'a' && uc <= 'z') || (uc >= '0' && uc <= '9')) {
+            domain += ch;
+        } else if (uc >= 'A' && uc <= 'Z') {
+            domain += ch.toLower();
+        } else {
+           domain += QLatin1Char(' ');
+        }
+    }
+    domain = domain.simplified();
+    domain.replace(QLatin1Char(' '), QLatin1Char('-'));
+    if (!domain.isEmpty())
+        domain.append(QLatin1String(".com"));
+    return domain;
+}
 
 /* ContextKit layer
 
@@ -115,6 +161,7 @@ signals:
 private:
     QString prefix;
     QHash<QString, ContextProperty *> props;
+    ContextProvider::Service *service;
 
     void insert(const QString &path, const QString &key);
 };
@@ -139,19 +186,45 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
     if (!key.isEmpty())
         prefix = key + QLatin1Char('.');
 
-    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys())
-    {
+    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys()) {
         if (k == key)
             insert(QString(), k);
         else if (k.startsWith(prefix))
             insert(k.mid(prefix.length()).replace(QLatin1Char('.'), QLatin1Char('/')), k);
     }
+
+    QString javaPackageName;
+    int curPos = 0;
+    int nextDot;
+
+    QString domainName = comify(QCoreApplication::organizationDomain());
+    if (domainName.isEmpty()) {
+        setStatus(QSettings::AccessError);
+        domainName = QLatin1String("unknown-organization.trolltech.com");
+    }
+
+    while ((nextDot = domainName.indexOf(QLatin1Char('.'), curPos)) != -1) {
+        javaPackageName.prepend(domainName.mid(curPos, nextDot - curPos));
+        javaPackageName.prepend(QLatin1Char('.'));
+        curPos = nextDot + 1;
+    }
+    javaPackageName.prepend(domainName.mid(curPos));
+    javaPackageName = javaPackageName.toLower();
+    if (curPos == 0)
+        javaPackageName.prepend(QLatin1String("com."));
+
+    javaPackageName += QLatin1Char('.');
+    javaPackageName += QCoreApplication::applicationName();
+
+    service = new ContextProvider::Service(QDBusConnection::SessionBus,
+                                           javaPackageName);
 }
 
 ContextKitHandle::~ContextKitHandle()
 {
     foreach (ContextProperty *prop, props.values())
         delete prop;
+    delete service;
 }
 
 bool
@@ -159,8 +232,7 @@ ContextKitHandle::value(const QString &path, QVariant *data)
 {
     // path always starts with a "/".
     ContextProperty *p = props.value(path.mid(1));
-    if (p)
-    {
+    if (p) {
         *data = p->value();
         return true;
     }
@@ -186,8 +258,7 @@ QSet<QString> ContextKitHandle::children()
 {
     QSet<QString> kids;
 
-    foreach (const QString &path, props.keys())
-    {
+    foreach (const QString &path, props.keys()) {
         int pos = path.indexOf("/");
         if (pos >= 0)
             kids.insert(path.left(pos));
