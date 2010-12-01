@@ -731,7 +731,7 @@ QDeclarativeContactSortOrder * QDeclarativeContactModel::sortOrder_at(QDeclarati
     QDeclarativeContactSortOrder* sortOrder = 0;
     if (model) {
         int i = 0;
-        foreach(QDeclarativeContactSortOrder* s, model->d->m_sortOrders) {
+        foreach (QDeclarativeContactSortOrder* s, model->d->m_sortOrders) {
             if (i == idx) {
                 sortOrder = s;
                 break;
