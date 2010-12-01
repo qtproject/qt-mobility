@@ -2017,20 +2017,9 @@ bool DatabaseOperations::saveLandmark(QLandmark* landmark,
 {
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
-    bool update = landmark->landmarkId().isValid();
     bool result = saveLandmarkHelper(landmark, error, errorString);
 
-    if (result) {
-        if(update) {
-            changedIds << landmark->landmarkId();
-            emit landmarksChanged(changedIds);
-        }
-        else {
-            addedIds << landmark->landmarkId();
-            emit landmarksAdded(addedIds);
-        }
-    }
-   return result;
+    return result;
 }
 
 bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
@@ -2093,19 +2082,6 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             *error = lastError;
         if (errorString)
             *errorString = lastErrorString;
-    }
-
-    if (addedIds->size() != 0) {
-        if (addedIds->size() < 50)
-            emit landmarksAdded(*addedIds);
-        else
-            emit dataChanged();
-    }
-    if (changedIds->size() != 0) {
-        if (changedIds->size() < 50)
-            emit landmarksChanged(*changedIds);
-        else
-            emit dataChanged();
     }
     return noErrors;
 }
@@ -2209,10 +2185,6 @@ bool DatabaseOperations::removeLandmark(const QLandmarkId &landmarkId,
     QList<QLandmarkId> removedIds;
     bool result = removeLandmarkHelper(landmarkId, error, errorString, managerUri);
 
-    if (result) {
-        removedIds.append(landmarkId);
-        emit landmarksRemoved(removedIds);
-    }
     return result;
 }
 
@@ -2270,9 +2242,6 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (removedIds->size() != 0)
-        emit landmarksRemoved(*removedIds);
-
     return noErrors;
 }
 
@@ -2607,19 +2576,8 @@ bool DatabaseOperations::saveCategory(QLandmarkCategory *category,
 {
     QList<QLandmarkCategoryId> addedIds;
     QList<QLandmarkCategoryId> changedIds;
-    bool update = category->categoryId().isValid();
     bool result = saveCategoryHelper(category, error, errorString);
 
-    if (result) {
-        if(update) {
-            changedIds << category->categoryId();
-            emit categoriesChanged(changedIds);
-        }
-        else {
-            addedIds << category->categoryId();
-            emit categoriesAdded(addedIds);
-        }
-    }
    return result;
 }
 
@@ -2672,18 +2630,6 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (addedIds->size() != 0) {
-        if (addedIds->size() < 50)
-            emit categoriesAdded(*addedIds);
-        else
-            emit dataChanged();
-    }
-    if (changedIds->size() != 0) {
-        if (changedIds->size() < 50)
-            emit categoriesChanged(*changedIds);
-        else
-            emit dataChanged();
-    }
     return noErrors;
 }
 
@@ -2693,10 +2639,6 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
     QList<QLandmarkCategoryId> removedIds;
     bool result = removeCategoryHelper(categoryId, error, errorString);
 
-    if (result) {
-        removedIds.append(categoryId);
-        emit categoriesRemoved(removedIds);
-    }
     return result;
 }
 
@@ -2809,9 +2751,6 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (removedIds->size() != 0)
-        emit categoriesRemoved(*removedIds);
-
     return noErrors;
 }
 
@@ -2902,25 +2841,11 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
         result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
                                     addedLandmarkIds, addedCategoryIds);
         device->close();
-        if (addedLandmarkIds->size() + addedCategoryIds->size() > 50) {
-            emit dataChanged();
-        } else {
-            if (addedLandmarkIds->size() != 0)
-                emit landmarksAdded(*addedLandmarkIds);
-            if (addedCategoryIds->size() != 0)
-                emit categoriesAdded(*addedCategoryIds);
-        }
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
         result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
                                     addedLandmarkIds);
         device->close();
-        if (addedLandmarkIds->size() > 50) {
-            emit dataChanged();
-        } else {
-            if (addedLandmarkIds->size() != 0)
-                emit landmarksAdded(*addedLandmarkIds);
-        }
         return result;
     } else {
         if (error)
@@ -3562,14 +3487,6 @@ void QueryRun::run()
                 QList<QLandmarkId> addedIds;
                 QList<QLandmarkId> changedIds;
                 databaseOperations.saveLandmarks(&lms, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                if (addedIds.size() + changedIds.size() > 50) {
-                    engine->dataChanging();
-                } else {
-                    if (addedIds.size() != 0)
-                        engine->landmarksAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->landmarksChanging(changedIds);
-                }
             }
             ml.unlock();
         }
@@ -3604,13 +3521,6 @@ void QueryRun::run()
                 ml.unlock();
                 QList<QLandmarkId> removedIds;
                 databaseOperations.removeLandmarks(lmIds, &errorMap, &error, &errorString, &removedIds);
-                if (removedIds.size() != 0) {
-                    if (removedIds.size() > 50) {
-                        engine->dataChanging();
-                    } else {
-                        engine->landmarksRemoving(removedIds);
-                    }
-                }
             }
             ml.unlock();
         }
@@ -3756,14 +3666,6 @@ void QueryRun::run()
                 QList<QLandmarkCategoryId> addedIds;
                 QList<QLandmarkCategoryId> changedIds;
                 databaseOperations.saveCategories( &categories, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                if (addedIds.size() + changedIds.size() > 50) {
-                    engine->dataChanging();
-                } else {
-                    if (addedIds.size() != 0)
-                        engine->categoriesAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->categoriesChanging(changedIds);
-                }
             }
             ml.unlock();
         }
@@ -3805,13 +3707,6 @@ void QueryRun::run()
                     databaseOperations.removeCategories(categoryIds,
                                                         &errorMap, &error,
                                                         &errorString, &removedIds);
-                    if (removedIds.size() != 0) {
-                        if (removedIds.size() > 50) {
-                            engine->dataChanging();
-                        } else {
-                            engine->categoriesRemoving(removedIds);
-                        }
-                    }
                 }
                 ml.unlock();
             }
@@ -3858,14 +3753,6 @@ void QueryRun::run()
                                                       &error, &errorString,
                                                       &addedLandmarkIds, &addedCategoryIds,
                                                       this, &landmarkIds);
-                   if (addedLandmarkIds.size() + addedCategoryIds.size()  > 50) {
-                       engine->dataChanging();
-                   } else {
-                       if (addedLandmarkIds.size() != 0)
-                           engine->landmarksAdding(addedLandmarkIds);
-                       if (addedCategoryIds.size() != 0)
-                           engine->categoriesAdding(addedCategoryIds);
-                   }
                }
                ml.unlock();
            }

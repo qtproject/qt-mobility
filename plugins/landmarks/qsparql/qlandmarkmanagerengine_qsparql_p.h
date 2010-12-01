@@ -54,13 +54,12 @@
 //
 
 #include  <qlandmarkmanagerengine.h>
-#include "databasefilewatcher_p.h"
-
+#include "databaseoperations_p.h"
+#include "trackernotifier_p.h"
 #include <QSqlDatabase>
 #include <QHash>
 #include <QSet>
 #include <QMutex>
-#include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -207,14 +206,8 @@ public slots:
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state, unsigned int id);
 
 private slots:
-    void databaseChanged();
-    void dataChanging();
-    void landmarksAdding(QList<QLandmarkId> ids);
-    void landmarksChanging(QList<QLandmarkId> ids);
-    void landmarksRemoving(QList<QLandmarkId> ids);
-    void categoriesAdding(QList<QLandmarkCategoryId> ids);
-    void categoriesChanging(QList<QLandmarkCategoryId> ids);
-    void categoriesRemoving(QList<QLandmarkCategoryId> ids);
+    void landmarksNotified(QList<QList<int> >, QList<QList<int> >);
+    void categoriesNotified(QList<QList<int> >, QList<QList<int> >);
 
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
@@ -226,18 +219,14 @@ protected:
     void disconnectNotify(const char *signal);
 
 private:
-    qint64 m_addedLandmarkIdsTimeStamp;
-    qint64 m_changedLandmarkIdsTimeStamp;
-    qint64 m_removedLandmarkIdsTimeStamp;
-    qint64 m_addedCategoryIdsTimeStamp;
-    qint64 m_changedCategoryIdsTimeStamp;
-    qint64 m_removedCategoryIdsTimeStamp;
     bool m_changeNotificationsEnabled;
-    void touchWatcherFile();
+    QHash<QString, int> m_landmarkHash;
+    QHash<QString, int> m_categoryHash;
     void setChangeNotificationsEnabled(bool enabled);
-    QString m_dbWatcherFilename;
+    QString m_filename;
     QString m_dbConnectionName;
-    DatabaseFileWatcher *m_dbWatcher;
+    QTrackerChangeNotifier *m_landmarkNotifier;
+    QTrackerChangeNotifier *m_categoryNotifier;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
     bool m_isCustomAttributesEnabled;

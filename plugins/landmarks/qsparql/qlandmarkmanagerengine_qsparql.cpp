@@ -43,6 +43,7 @@
 #include "qlandmarkfilehandler_gpx_p.h"
 #include "qlandmarkfilehandler_lmx_p.h"
 #include "databaseoperations_p.h"
+#include "trackernotifier.cpp"
 
 #include <QDateTime>
 #include <QDebug>
@@ -57,6 +58,11 @@
 #include <QThreadPool>
 #include <QTimer>
 #include <QUuid>
+
+#include <QtSparql/QSparqlConnection>
+#include <QtSparql/QSparqlConnectionOptions>
+#include <QtSparql/QSparqlQuery>
+#include <QtSparql/QSparqlResult>
 
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
@@ -96,25 +102,10 @@ Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
-static QList<QString> addedLandmarkLocalIds;
-static QList<QString> changedLandmarkLocalIds;
-static QList<QString> removedLandmarkLocalIds;
-static QList<QString> addedCategoryLocalIds;
-static QList<QString> changedCategoryLocalIds;
-static QList<QString> removedCategoryLocalIds;
-
-static qint64 addedLandmarkIdsTimeStamp = 0;
-static qint64 changedLandmarkIdsTimeStamp = 0;
-static qint64 removedLandmarkIdsTimeStamp = 0;
-static qint64 addedCategoryIdsTimeStamp = 0;
-static qint64 changedCategoryIdsTimeStamp= 0;
-static qint64 removedCategoryIdsTimeStamp = 0;
-
 QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &filename, QLandmarkManager::Error * error,
                                                            QString *errorString)
-        : m_dbWatcherFilename(filename),
+        : m_filename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
-        m_dbWatcher(NULL),
         m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
@@ -143,62 +134,94 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     qRegisterMetaType<QLandmarkExportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
-    QDateTime dateTime= QDateTime::currentDateTime();
-    m_addedLandmarkIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    m_changedLandmarkIdsTimeStamp = m_addedLandmarkIdsTimeStamp;
-    m_removedLandmarkIdsTimeStamp = m_addedLandmarkIdsTimeStamp;
-    m_addedCategoryIdsTimeStamp = m_addedLandmarkIdsTimeStamp;
-    m_changedCategoryIdsTimeStamp = m_addedLandmarkIdsTimeStamp;
-    m_removedCategoryIdsTimeStamp = m_addedLandmarkIdsTimeStamp;
-
-    if (m_dbWatcherFilename.isEmpty()) {
+    if (m_filename.isEmpty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                            QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
         QFileInfo fi(settings.fileName());
         QDir dir = fi.dir();
         dir.mkpath(dir.path());
-        m_dbWatcherFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".txt");
+        m_filename = dir.path() + QDir::separator() + QString("QtLandmarks") + QLatin1String(".db");
     }
 
     if (filename == ":memory:")
         return;
 
-    QFileInfo fileInfo(m_dbWatcherFilename);
-    if (!fileInfo.exists()) {
-        QFile file;
-        file.setFileName(m_dbWatcherFilename);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-                 out << "This file is needed by the database changes watcher of the Landmarks API.";
-        }
-        file.close();
-    }
-
+    m_filename = filename;
     m_databaseOperations.managerUri = managerUri();
 
-    connect(&m_databaseOperations,SIGNAL(dataChanged()), this, SLOT(dataChanging()));
+    QSparqlConnection conn("QTRACKER");
+    QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+    QSparqlResult* r = conn.exec(landmarkQuery);
+    r->waitForFinished();
+    if (!r->hasError()) {
+        while (r->next()) {
+            if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
+                m_landmarkHash.insert(r->value(1).toString(), r->value(0).toInt());
+            }
+        }
+    }
+    delete r;
 
-    connect(&m_databaseOperations,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-            this, SLOT(landmarksAdding(QList<QLandmarkId>)));
-    connect(&m_databaseOperations,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-            this, SLOT(landmarksChanging(QList<QLandmarkId>)));
-    connect(&m_databaseOperations,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-            this, SLOT(landmarksRemoving(QList<QLandmarkId>)));
+    QSparqlQuery categoryQuery("select tracker:id(?u) ?u { ?u a slo:LandmarkCategory }");
+    r = conn.exec(categoryQuery);
+    r->waitForFinished();
+    if (!r->hasError()) {
+        while (r->next()) {
+            if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
+                m_categoryHash.insert(r->value(1).toString(), r->value(0).toInt());
+            }
+        }
+    }
+    delete r;
 
-    connect(&m_databaseOperations,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesAdding(QList<QLandmarkCategoryId>)));
-    connect(&m_databaseOperations,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesChanging(QList<QLandmarkCategoryId>)));
-    connect(&m_databaseOperations,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-            this, SLOT(categoriesRemoving(QList<QLandmarkCategoryId>)));
+    // Query: what's the current name of the landmark class?
+    QString className;
+    QSparqlQuery lq("select tracker:uri(tracker:id(slo:Landmark)) "
+                   "{}");
+    r = conn.exec(lq);
+    r->waitForFinished();
+    if (r->hasError()) {
+        className = QString("slo:Landmark");
+    }
+    if (r->next()) {
+        className = r->value(0).toString();
+    }
+    else
+        className = QString("slo:Landmark");
+    delete r;
+    m_landmarkNotifier = new QTrackerChangeNotifier(className, this);
+    connect(m_landmarkNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
+                                       this,SLOT(landmarksNotified(QList<QList<int> >, QList<QList<int> >)));
+
+    // Query: what's the current name of the landmarkCategory class?
+    QSparqlQuery cq("select tracker:uri(tracker:id(slo:LandmarkCategory)) "
+                   "{}");
+    r = conn.exec(cq);
+    r->waitForFinished();
+    if (r->hasError()) {
+        className = QString("slo:LandmarkCategory");
+    }
+    if (r->next()) {
+        className = r->value(0).toString();
+    }
+    else
+        className = QString("slo:LandmarkCategory");
+    delete r;
+    m_categoryNotifier = new QTrackerChangeNotifier("className", this);
+    connect(m_categoryNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
+                                       this,SLOT(categoriesNotified(QList<QList<int> >, QList<QList<int> >)));
+
 }
 
 QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
 {
     QThreadPool *threadPool = QThreadPool::globalInstance();
     threadPool->waitForDone();
-    if (m_dbWatcher !=0)
-        delete m_dbWatcher;
+
+    if (m_landmarkNotifier != 0)
+        delete m_landmarkNotifier;
+    if (m_categoryNotifier != 0)
+        delete m_categoryNotifier;
 }
 
 /* URI reporting */
@@ -211,7 +234,7 @@ QMap<QString, QString> QLandmarkManagerEngineQsparql::managerParameters() const
 {
     QMap<QString, QString> parameters;
 
-    parameters["filename"] = m_dbWatcherFilename;
+    parameters["filename"] = m_filename;
 
     return parameters;
 }
@@ -577,199 +600,124 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
     return false;
 }
 
-void QLandmarkManagerEngineQsparql::databaseChanged()
+void QLandmarkManagerEngineQsparql::landmarksNotified(QList<QList<int> >, QList<QList<int> >)
 {
-    QLandmarkId landmarkId;
-    landmarkId.setManagerUri(managerUri());
+    if (m_changeNotificationsEnabled) {
+        QLandmarkId landmarkId;
+        landmarkId.setManagerUri(managerUri());
+        QList<QLandmarkId> addedLandmarkIds;
+        QList<QLandmarkId> changedLandmarkIds;
+        QList<QLandmarkId> removedLandmarkIds;
+        QHash<QString, int> landmarkHash;
 
-    QList<QLandmarkId> addedLandmarkIds;
-    QList<QLandmarkId> changedLandmarkIds;
-    QList<QLandmarkId> removedLandmarkIds;
+        QSparqlConnection conn("QTRACKER");
+        QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+        QSparqlResult* r = conn.exec(landmarkQuery);
+        r->waitForFinished();
+        if (!r->hasError()) {
+            while (r->next()) {
+                if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
+                    landmarkHash.insert(r->value(1).toString(), r->value(0).toInt());
+                }
+            }
+        }
+        delete r;
 
-    if (m_addedLandmarkIdsTimeStamp < addedLandmarkIdsTimeStamp) {
-        foreach(QString localId, addedLandmarkLocalIds) {
-            landmarkId.setLocalId(localId);
-            addedLandmarkIds << landmarkId;
+        foreach(QString localId, m_landmarkHash.keys()) {
+            if (!landmarkHash.contains(localId)) {
+                landmarkId.setLocalId(localId);
+                removedLandmarkIds << landmarkId;
+            }
         }
-    }
-    if (m_changedLandmarkIdsTimeStamp < changedLandmarkIdsTimeStamp) {
-        foreach(QString localId, changedLandmarkLocalIds) {
-            landmarkId.setLocalId(localId);
-            changedLandmarkIds << landmarkId;
+        foreach(QString localId, landmarkHash.keys()) {
+            if (!m_landmarkHash.contains(localId)) {
+                landmarkId.setLocalId(localId);
+                addedLandmarkIds << landmarkId;
+            } else {
+                if(m_landmarkHash.value(localId) != landmarkHash.value(localId)) {
+                    landmarkId.setLocalId(localId);
+                    changedLandmarkIds << landmarkId;
+                }
+            }
         }
-    }
-    if (m_removedLandmarkIdsTimeStamp < removedLandmarkIdsTimeStamp) {
-        foreach(QString localId, removedLandmarkLocalIds) {
-            landmarkId.setLocalId(localId);
-            removedLandmarkIds << landmarkId;
-        }
-    }
-    m_addedLandmarkIdsTimeStamp = addedLandmarkIdsTimeStamp;
-    m_changedLandmarkIdsTimeStamp = changedLandmarkIdsTimeStamp;
-    m_removedLandmarkIdsTimeStamp = removedLandmarkIdsTimeStamp;
+        int totalChangeCount = addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
 
-    QLandmarkCategoryId categoryId;
-    categoryId.setManagerUri(managerUri());
-
-    QList<QLandmarkCategoryId> addedCategoryIds;
-    QList<QLandmarkCategoryId> changedCategoryIds;
-    QList<QLandmarkCategoryId> removedCategoryIds;
-
-    if (m_addedCategoryIdsTimeStamp < addedCategoryIdsTimeStamp) {
-        foreach(QString localId, addedCategoryLocalIds) {
-            categoryId.setLocalId(localId);
-            addedCategoryIds << categoryId;
+        if (totalChangeCount > 50 ) {
+            emit dataChanged();
+        } else {
+            if (addedLandmarkIds.count() > 0)
+                emit landmarksAdded(addedLandmarkIds);
+            if (changedLandmarkIds.count() > 0)
+                emit landmarksChanged(changedLandmarkIds);
+            if (removedLandmarkIds.count() > 0)
+                emit landmarksRemoved(removedLandmarkIds);
         }
-    }
-    if (m_changedCategoryIdsTimeStamp < changedCategoryIdsTimeStamp) {
-        foreach(QString localId, changedCategoryLocalIds) {
-            categoryId.setLocalId(localId);
-            changedCategoryIds << categoryId;
-        }
-    }
-    if (m_removedCategoryIdsTimeStamp < removedCategoryIdsTimeStamp) {
-        foreach(QString localId, removedCategoryLocalIds) {
-            categoryId.setLocalId(localId);
-            removedCategoryIds << categoryId;
-        }
-    }
-    m_addedCategoryIdsTimeStamp = addedCategoryIdsTimeStamp;
-    m_changedCategoryIdsTimeStamp = changedCategoryIdsTimeStamp;
-    m_removedCategoryIdsTimeStamp = removedCategoryIdsTimeStamp;
-
-    int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count()
-                           + addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
-
-    if (totalChangeCount > 50 ) {
-        emit dataChanged();
-    } else {
-        if (addedCategoryIds.count() > 0)
-            emit categoriesAdded(addedCategoryIds);
-        if (changedCategoryIds.count() > 0)
-            emit categoriesChanged(changedCategoryIds);
-        if (removedCategoryIds.count() > 0) {
-            emit categoriesRemoved(removedCategoryIds);
-        }
-        if (addedLandmarkIds.count() > 0)
-            emit landmarksAdded(addedLandmarkIds);
-        if (changedLandmarkIds.count() > 0)
-            emit landmarksChanged(changedLandmarkIds);
-        if (removedLandmarkIds.count() > 0)
-            emit landmarksRemoved(removedLandmarkIds);
+        m_landmarkHash.clear();
+        m_landmarkHash = landmarkHash;
     }
 }
 
-void QLandmarkManagerEngineQsparql::dataChanging() {
-    emit dataChanged();
-    touchWatcherFile();
-}
+void QLandmarkManagerEngineQsparql::categoriesNotified(QList<QList<int> >, QList<QList<int> >)
+{
+    if (m_changeNotificationsEnabled) {
+        QLandmarkCategoryId categoryId;
+        categoryId.setManagerUri(managerUri());
+        QList<QLandmarkCategoryId> addedCategoryIds;
+        QList<QLandmarkCategoryId> changedCategoryIds;
+        QList<QLandmarkCategoryId> removedCategoryIds;
+        QHash<QString, int> categoryHash;
 
-void QLandmarkManagerEngineQsparql::landmarksAdding(QList<QLandmarkId> ids) {
-    if (m_changeNotificationsEnabled)
-        emit landmarksAdded(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    addedLandmarkIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (addedLandmarkIdsTimeStamp > (m_addedLandmarkIdsTimeStamp + 20))
-        addedLandmarkLocalIds.clear();
-    foreach(QLandmarkId id, ids)
-        addedLandmarkLocalIds.append(id.localId());
-    m_addedLandmarkIdsTimeStamp = addedLandmarkIdsTimeStamp;
-    touchWatcherFile();
-}
+        QSparqlConnection conn("QTRACKER");
+        QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+        QSparqlResult* r = conn.exec(landmarkQuery);
+        r->waitForFinished();
+        if (!r->hasError()) {
+            while (r->next()) {
+                if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
+                    categoryHash.insert(r->value(1).toString(), r->value(0).toInt());
+                }
+            }
+        }
+        delete r;
 
-void QLandmarkManagerEngineQsparql::landmarksChanging(QList<QLandmarkId> ids) {
-    if (m_changeNotificationsEnabled)
-       emit landmarksChanged(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    changedLandmarkIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (changedLandmarkIdsTimeStamp > (m_changedLandmarkIdsTimeStamp + 20))
-        changedLandmarkLocalIds.clear();
-    foreach(QLandmarkId id, ids)
-         changedLandmarkLocalIds.append(id.localId());
-    m_changedLandmarkIdsTimeStamp = changedLandmarkIdsTimeStamp;
-    touchWatcherFile();
-}
+        foreach(QString localId, m_categoryHash.keys()) {
+            if (!categoryHash.contains(localId)) {
+                categoryId.setLocalId(localId);
+                removedCategoryIds << categoryId;
+            }
+        }
+        foreach(QString localId, categoryHash.keys()) {
+            if (!m_categoryHash.contains(localId)) {
+                categoryId.setLocalId(localId);
+                addedCategoryIds << categoryId;
+            } else {
+                if(m_categoryHash.value(localId) != categoryHash.value(localId)) {
+                    categoryId.setLocalId(localId);
+                    changedCategoryIds << categoryId;
+                }
+            }
+        }
+        int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count();
 
-void QLandmarkManagerEngineQsparql::landmarksRemoving(QList<QLandmarkId> ids) {
-    if  (m_changeNotificationsEnabled)
-        emit landmarksRemoved(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    removedLandmarkIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (removedLandmarkIdsTimeStamp > (m_removedLandmarkIdsTimeStamp + 20))
-        removedLandmarkLocalIds.clear();
-    foreach(QLandmarkId id, ids)
-         removedLandmarkLocalIds.append(id.localId());
-    m_removedLandmarkIdsTimeStamp = removedLandmarkIdsTimeStamp;
-    touchWatcherFile();
-}
-
- void QLandmarkManagerEngineQsparql::categoriesAdding(QList<QLandmarkCategoryId> ids) {
-    if (m_changeNotificationsEnabled)
-        emit categoriesAdded(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    addedCategoryIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (addedCategoryIdsTimeStamp > (m_addedCategoryIdsTimeStamp + 20))
-        addedCategoryLocalIds.clear();
-    foreach(QLandmarkCategoryId id, ids)
-         addedCategoryLocalIds.append(id.localId());
-    m_addedCategoryIdsTimeStamp = addedCategoryIdsTimeStamp;
-    touchWatcherFile();
-}
-
-void QLandmarkManagerEngineQsparql::categoriesChanging(QList<QLandmarkCategoryId> ids) {
-    if (m_changeNotificationsEnabled)
-        emit categoriesChanged(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    changedCategoryIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (changedCategoryIdsTimeStamp > (m_changedCategoryIdsTimeStamp + 20))
-        changedCategoryLocalIds.clear();
-    foreach(QLandmarkCategoryId id, ids)
-        changedCategoryLocalIds.append(id.localId());
-    m_changedCategoryIdsTimeStamp = changedCategoryIdsTimeStamp;
-    touchWatcherFile();
-}
-
-void QLandmarkManagerEngineQsparql::categoriesRemoving(QList<QLandmarkCategoryId> ids) {
-    if (m_changeNotificationsEnabled)
-        emit categoriesRemoved(ids);
-    QDateTime dateTime= QDateTime::currentDateTime();
-    removedCategoryIdsTimeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
-    if (removedCategoryIdsTimeStamp > (m_removedCategoryIdsTimeStamp + 20))
-        removedCategoryLocalIds.clear();
-    foreach(QLandmarkCategoryId id, ids)
-        removedCategoryLocalIds.append(id.localId());
-    m_removedCategoryIdsTimeStamp = removedCategoryIdsTimeStamp;
-    touchWatcherFile();
+        if (totalChangeCount > 50 ) {
+            emit dataChanged();
+        } else {
+            if (addedCategoryIds.count() > 0)
+                emit categoriesAdded(addedCategoryIds);
+            if (changedCategoryIds.count() > 0)
+                emit categoriesChanged(changedCategoryIds);
+            if (removedCategoryIds.count() > 0)
+                emit categoriesRemoved(removedCategoryIds);
+        }
+        m_categoryHash.clear();
+        m_categoryHash = categoryHash;
+    }
 }
 
 void QLandmarkManagerEngineQsparql::setChangeNotificationsEnabled(bool enabled)
 {
-    if (!m_dbWatcher) {
-        m_dbWatcher = new DatabaseFileWatcher(m_dbWatcherFilename);
-        connect(m_dbWatcher, SIGNAL(notifyChange()),this,SLOT(databaseChanged()));
-    }
-    m_dbWatcher->setEnabled(enabled);
     m_changeNotificationsEnabled = enabled;
 }
-
-void QLandmarkManagerEngineQsparql::touchWatcherFile()
-{
-    if (m_changeNotificationsEnabled) {
-        // dbWatcher should not react to touches by its own manager
-        m_dbWatcher->setEnabled(false);
-        QFile file;
-        file.setFileName(m_dbWatcherFilename );
-        file.open(QIODevice::WriteOnly | QIODevice::Text);
-        file.close();
-        m_dbWatcher->setEnabled(true);
-    } else {
-        QFile file;
-        file.setFileName(m_dbWatcherFilename );
-        file.open(QIODevice::WriteOnly | QIODevice::Text);
-        file.close();
-    }
-}
-
 
 void QLandmarkManagerEngineQsparql::connectNotify(const char *signal)
 {
