@@ -86,6 +86,8 @@ public:
 
 signals:
     void disconnected();
+    
+    friend class QNearFieldTagImpl<QNearFieldTagMifareSymbian>;
 };
 
 

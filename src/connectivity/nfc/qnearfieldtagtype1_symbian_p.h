@@ -94,6 +94,8 @@ public:
     {
         return _accessMethods();
     }
+    
+    friend class QNearFieldTagImpl<QNearFieldTagType1Symbian>;
 };
 
 QTM_END_NAMESPACE

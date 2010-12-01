@@ -138,7 +138,7 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
 {
     quint8 numberOfBlocks;
     QByteArray command;
-    command.append(0x06); // command code
+    command.append(0x08); // command code
     command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
     if (command.count() > 1)
     {

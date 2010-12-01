@@ -83,6 +83,8 @@ public:
     {
         return _accessMethods();
     }
+    
+    friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
 };
 
 QTM_END_NAMESPACE

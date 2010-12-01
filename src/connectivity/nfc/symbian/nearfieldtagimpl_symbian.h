@@ -180,7 +180,7 @@ void QNearFieldTagImpl<TAGTYPE>::NdefOperationComplete(TInt aError)
     // TODO: emit signal
     /*
      * TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-     * tag->emitSignal(); // this will emit the signal
+     * emit tag->signal
      */
 }
         
@@ -292,7 +292,7 @@ void QNearFieldTagImpl<TAGTYPE>::CommandComplete(TInt aError)
     // TODO: emit signal
     /*
      * TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-     * tag->emitSignal(); // this will emit the signal
+     * emit tag->signal
      */
 }
     

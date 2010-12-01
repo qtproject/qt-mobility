@@ -92,6 +92,8 @@ private:
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response);
 private:
     QByteArray mIDm;
+    
+    friend class QNearFieldTagImpl<QNearFieldTagType3Symbian>;
 };
     
 QTM_END_NAMESPACE
