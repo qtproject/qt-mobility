@@ -108,10 +108,13 @@ void tst_QLlcpServer::newConnection()
     QLlcpServer server;
     qDebug() << "Create QLlcpServer completed";
     qDebug() << "Start listening...";
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+
     bool ret = server.listen(uri);
     QVERIFY(ret);
     qDebug() << "Listen() return ok";
-    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
 
     QNfcTestUtil::ShowMessage(hint);
 
@@ -120,8 +123,7 @@ void tst_QLlcpServer::newConnection()
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
 
-    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+
     //Get data from client
     QTRY_VERIFY(!readyReadSpy.isEmpty());
 

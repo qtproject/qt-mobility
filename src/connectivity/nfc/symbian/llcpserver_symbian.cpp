@@ -47,7 +47,7 @@
 #include <QDebug>
 
 #define LOG1 qDebug()<<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
-#define LOG qDebug()<<__FUNCTION__<<": "<<__LINE__;
+#define LOG qDebug()<<"CLlcpServer::"<<__FUNCTION__<<": "<<__LINE__;
 
 // TODO
 // will obslete with API updated

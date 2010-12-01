@@ -116,14 +116,17 @@ void tst_qllcpsockettype2::echo()
 
     QLlcpSocket socket(this);
 
-    socket.connectToService(target, uri);
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    socket.connectToService(target, uri);
+
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
     //Send data to server
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);

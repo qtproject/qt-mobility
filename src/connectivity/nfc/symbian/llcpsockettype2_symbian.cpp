@@ -45,7 +45,8 @@
 #include <QDebug>
 
 #define LOG1 qDebug() <<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
-#define LOG qDebug() <<__FUNCTION__<<": "<<__LINE__;
+#define LOG qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__;
+#define LOG2(a) qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__<<a;
 // will obslete with API updated
 const TInt KInterestingSsap = 35;
 
@@ -61,7 +62,7 @@ void CLlcpSocketType2::ConstructL()
 
     if (iTransporter && iTransporter->IsConnected())//has connected llcp transporter
         {
-        LOG
+        LOG2("A server llcp type2 socket");
         iReceiver = CLlcpReceiverAO::NewL( *iTransporter, *this );
         User::LeaveIfError( iReceiver->StartReceiveDatagram() );
         }
@@ -534,6 +535,7 @@ void CLlcpConnecterAO::RunL()
       {
       if ( error == KErrNone )
         {
+          LOG2("Connected to LLCP server");
         // Updating state
         iConnState = EConnected;
         //emit connected signal
@@ -544,6 +546,7 @@ void CLlcpConnecterAO::RunL()
         }
       else
         {
+          LOG2("!!Failed to Connected to LLCP server");
         //KErrNotSupported when remote peer has lost from the near field.
         iConnState = ENotConnected;
         //emit error signal
