@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,60 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMDISPLAYINFO_H
-#define QSYSTEMDISPLAYINFO_H
 
-#include <QObject>
-#include "qmobilityglobal.h"
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+#include <QNetworkProxyFactory>
 
-class QSystemDisplayInfoPrivate;
-
-class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-    Q_ENUMS(DisplayOrientation)
-    Q_ENUMS(BacklightState)
+    QApplication app(argc, argv);
 
-public:
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
 
-    explicit QSystemDisplayInfo(QObject *parent = 0);
-    ~QSystemDisplayInfo();
+    MainWindow window;
 
-    enum DisplayOrientation {
-        Unknown = 0,
-        Landscape,
-        Portrait,
-        InvertedLandscape,
-        InvertedPortrait
-    };
-
-    enum BacklightState {
-        BacklightStateUnknown = -1,
-        BacklightStateOff,
-        backlightStateDimmed,
-        backlightStateOn
-    };
-
-    static int displayBrightness(int screen);
-    static int colorDepth(int screen);
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
-
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
-};
-
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QSYSTEMDISPLAYINFO_H
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    window.showMaximized();
+#else
+    window.show();
+#endif
+    return app.exec();
+}
