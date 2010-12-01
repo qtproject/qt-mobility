@@ -18,6 +18,7 @@ SUBDIRS += \
 #        qbluetoothserviceinfo\
 #        qbluetoothservicediscoveryagent\
 #        qbluetoothsocket\
-#        qrfcommserver
+#        qrfcommserver \
+#        qbluetoothtransferrequest
 
 
