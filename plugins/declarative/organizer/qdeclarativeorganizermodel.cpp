@@ -614,6 +614,21 @@ void QDeclarativeOrganizerModel::removeItems(const QList<QString>& ids)
     req->start();
 }
 
+void QDeclarativeOrganizerModel::itemsChanged(const QList<QOrganizerItemId>& ids)
+{
+    if (d->m_autoUpdate) {
+        QList<QString> updatedIds;
+        foreach (const QOrganizerItemId& id, ids) {
+            if (d->m_itemMap.contains(id.toString())) {
+                updatedIds << id.toString();
+            }
+        }
+
+        if (updatedIds.count() > 0)
+            fetchItems(updatedIds);
+    }
+}
+
 void QDeclarativeOrganizerModel::itemsRemoved()
 {
     if (d->m_autoUpdate) {

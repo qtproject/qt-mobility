@@ -156,7 +156,7 @@ private slots:
 
     void itemsRemoved();
     void itemsRemoved(const QList<QOrganizerItemId>& ids);
-
+    void itemsChanged(const QList<QOrganizerItemId>& ids);
     void startImport(QVersitReader::State state);
     void itemsExported(QVersitWriter::State state);
 
