@@ -109,8 +109,7 @@ void tst_QLlcpServer::newConnection()
     qDebug() << "Create QLlcpServer completed";
     qDebug() << "Start listening...";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+
 
     bool ret = server.listen(uri);
     QVERIFY(ret);
@@ -122,7 +121,8 @@ void tst_QLlcpServer::newConnection()
     qDebug() << "try to call nextPendingConnection()";
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
-
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
 
     //Get data from client
     QTRY_VERIFY(!readyReadSpy.isEmpty());
