@@ -723,6 +723,7 @@ int  QDeclarativeContactModel::sortOrder_count(QDeclarativeListProperty<QDeclara
     QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
     if (model)
         return model->d->m_sortOrders.size();
+    return 0;
 }
 QDeclarativeContactSortOrder * QDeclarativeContactModel::sortOrder_at(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, int idx)
 {
