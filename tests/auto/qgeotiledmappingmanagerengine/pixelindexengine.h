@@ -39,45 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORSIMULATOR_H
-#define QGEOAREAMONITORSIMULATOR_H
+#ifndef PIXELINDEXENGINE_H
+#define PIXELINDEXENGINE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtGui/QApplication>
+#include <QDebug>
+#include <QtGui>
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
+#include <qgeocoordinate.h>
+#include <qgraphicsgeomap.h>
+#include <qgeomapdata.h>
+#include <qgeotiledmapdata.h>
+#include <qgeotiledmaprequest.h>
+#include <qgeotiledmapreply.h>
+#include <qgeotiledmappingmanagerengine.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-/**
- *  QGeoAreaMonitorSimulator
- *
- */
-class QGeoAreaMonitorSimulator : public QGeoAreaMonitor
+typedef union {
+    QRgb rgb;
+    struct {
+        unsigned zoom:4;
+        unsigned px:10;
+        unsigned py:10;
+    };
+} TilePixelValue;
+
+/*!
+  A tiled map reply subclass that is constructed already finished, with
+  a given QPixmap as its content (saved in PNG format).
+  */
+class PixmapTiledMapReply : public QGeoTiledMapReply
 {
     Q_OBJECT
-
-public :
-    QGeoAreaMonitorSimulator(QObject *parent = 0);
-    virtual ~QGeoAreaMonitorSimulator();
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
+public:
+    PixmapTiledMapReply(QPixmap &pixmap, const QGeoTiledMapRequest &request,
+                        QObject *parent=0);
 
 private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
+    QPixmap m_pixmap;
 };
 
-QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORSIMULATOR_H
+/*!
+  Tiled map engine that returns tiles made up of pixels with their color set
+  to a TilePixelValue for that pixel's location and zoom level. Used for testing
+  the map rendering code.
+  */
+class PixelIndexEngine : public QGeoTiledMappingManagerEngine
+{
+    Q_OBJECT
+public:
+    PixelIndexEngine(const QMap<QString, QVariant> &parameters,
+                     QObject *parent=0);
+
+    QGeoTiledMapReply *getTileImage(const QGeoTiledMapRequest &request);
+
+};
+
+#endif // PIXELINDEXENGINE_H
