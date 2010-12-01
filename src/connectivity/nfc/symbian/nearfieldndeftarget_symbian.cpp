@@ -158,6 +158,7 @@ void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
         iMessages = 0;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(err));
         }
+    iCurrentOperation = ENull;
     }
 
 void CNearFieldNdefTarget::WriteComplete()
@@ -167,6 +168,7 @@ void CNearFieldNdefTarget::WriteComplete()
         TInt errIgnore = KErrNone;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(KErrNone));
         }
+    iCurrentOperation = ENull;
     }
 
 void CNearFieldNdefTarget::HandleError( TInt aError )
@@ -196,14 +198,22 @@ TBool CNearFieldNdefTarget::hasNdefMessage()
 TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
     {
     TInt error = KErrNone;
-    if (!IsConnectionOpened())
+    if (iCurrentOperation != ENull)
         {
-        error = OpenConnection();
+        error = KErrInUse;
         }
-    if (KErrNone == error)
+    else
         {
-        iMessages = &aMessages;
-        error = iNdefConnection->ReadMessage();
+        if (!IsConnectionOpened())
+            {
+            error = OpenConnection();
+            }
+        if (KErrNone == error)
+            {
+            iMessages = &aMessages;
+            error = iNdefConnection->ReadMessage();
+            iCurrentOperation = (KErrNone == error) ? ERead : ENull;
+            }
         }
     return error;
     }
@@ -212,21 +222,25 @@ TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
     {
     TInt error = KErrNone;
     CNdefMessage * message;
-    if (aMessages.Count() > 0)
+    if (iCurrentOperation != ENull)
         {
-        // current only support single ndef message
-        message = aMessages[0];
-        if (!IsConnectionOpened())
+        error = KErrInUse;
+        }
+    else
+        {
+        if (aMessages.Count() > 0)
             {
-            error = OpenConnection();
-            }
-        if (KErrNone == error)
-            {
-            error = iNdefConnection->WriteMessage(*message);
-            }
-        else
-            {
-            error = KErrInUse;
+            // current only support single ndef message
+            message = aMessages[0];
+            if (!IsConnectionOpened())
+                {
+                error = OpenConnection();
+                }
+            if (KErrNone == error)
+                {
+                error = iNdefConnection->WriteMessage(*message);
+                iCurrentOperation = (KErrNone == error) ? EWrite : ENull;
+                }
             }
         }
     return error;
