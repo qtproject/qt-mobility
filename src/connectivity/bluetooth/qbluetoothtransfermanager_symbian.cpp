@@ -39,44 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERMANAGER_H
-#define QBLUETOOTHTRANSFERMANAGER_H
-
-#include <qmobilityglobal.h>
-#include <qbluetoothaddress.h>
-
-#include <QtCore/QObject>
-
-QT_FORWARD_DECLARE_CLASS(QIODevice)
-
-QT_BEGIN_HEADER
+#include "qbluetoothtransfermanager.h"
+#include "qbluetoothtransferrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReply;
-class QBluetoothTransferRequest;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferManager : public QObject
+/*!
+    Sends the contents of \a data to the remote device \a request and returns a new
+    QBluetoothTransferReply, that can be used to track the request's progress.
+*/
+QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
+                                                        QIODevice *data)
 {
-    Q_OBJECT
+    Q_UNUSED(request);
+    Q_UNUSED(data);
 
-public:
-    enum Operation {
-        GetOperation,
-        PutOperation
-    };
-
-    explicit QBluetoothTransferManager(QObject *parent = 0);
-    ~QBluetoothTransferManager();
-
-    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);    
-
-signals:
-    void finished(QBluetoothTransferReply *reply);
-};
+    return 0;
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QBLUETOOTHTRANSFERMANAGER_H

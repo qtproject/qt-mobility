@@ -96,7 +96,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new NFC LLCP server with \a parent.
 */
 QLlcpServer::QLlcpServer(QObject *parent)
-:   QObject(parent), d_ptr(new QLlcpServerPrivate)
+:   QObject(parent), d_ptr(new QLlcpServerPrivate(this))
 {
 }
 

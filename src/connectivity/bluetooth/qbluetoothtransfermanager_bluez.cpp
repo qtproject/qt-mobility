@@ -39,44 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERMANAGER_H
-#define QBLUETOOTHTRANSFERMANAGER_H
-
-#include <qmobilityglobal.h>
-#include <qbluetoothaddress.h>
-
-#include <QtCore/QObject>
-
-QT_FORWARD_DECLARE_CLASS(QIODevice)
-
-QT_BEGIN_HEADER
+#include "qbluetoothtransfermanager.h"
+#include "qbluetoothtransferrequest.h"
+#include "qbluetoothtransferreply.h"
+#include "qbluetoothtransferreply_bluez_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReply;
-class QBluetoothTransferRequest;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferManager : public QObject
+/*!
+    Sends the contents of \a data to the remote device \a request and returns a new
+    QBluetoothTransferReply, that can be used to track the request's progress.
+*/
+QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
+                                                        QIODevice *data)
 {
-    Q_OBJECT
 
-public:
-    enum Operation {
-        GetOperation,
-        PutOperation
-    };
+    QBluetoothTransferReplyBluez *rep = new QBluetoothTransferReplyBluez(data);
 
-    explicit QBluetoothTransferManager(QObject *parent = 0);
-    ~QBluetoothTransferManager();
+    rep->setAddress(request.address());
 
-    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);    
+    connect(rep, SIGNAL(finished(QBluetoothTransferReply*)), this, SIGNAL(finished(QBluetoothTransferReply*)));
 
-signals:
-    void finished(QBluetoothTransferReply *reply);
-};
+    rep->start();
+
+    return rep;
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QBLUETOOTHTRANSFERMANAGER_H

@@ -39,44 +39,73 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERMANAGER_H
-#define QBLUETOOTHTRANSFERMANAGER_H
+#ifndef QBLUETOOTHTRANSFERREPLY_BLUEZ_P_H
+#define QBLUETOOTHTRANSFERREPLY_BLUEZ_P_H
 
-#include <qmobilityglobal.h>
-#include <qbluetoothaddress.h>
+#include <QtCore/QIODevice>
+#include <QtDBus/QtDBus>
 
-#include <QtCore/QObject>
+#include <qbluetoothtransferrequest.h>
+#include <qbluetoothtransfermanager.h>
 
-QT_FORWARD_DECLARE_CLASS(QIODevice)
+#include "qbluetoothtransferreply.h"
 
 QT_BEGIN_HEADER
 
+class OrgOpenobexClientInterface;
+class OrgOpenobexManagerInterface;
+class AgentAdaptor;
+
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReply;
-class QBluetoothTransferRequest;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferManager : public QObject
+class Q_CONNECTIVITY_EXPORT QBluetoothTransferReplyBluez : public QBluetoothTransferReply
 {
     Q_OBJECT
 
 public:
-    enum Operation {
-        GetOperation,
-        PutOperation
-    };
+    QBluetoothTransferReplyBluez(QIODevice *input, QObject *parent = 0);
+    ~QBluetoothTransferReplyBluez();
 
-    explicit QBluetoothTransferManager(QObject *parent = 0);
-    ~QBluetoothTransferManager();
+    void abort();
+    QVariant attribute(QBluetoothTransferRequest::Attribute code) const;
+    bool isFinished() const;
+    bool isRunning() const;
 
-    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);    
+    bool start();
 
-signals:
-    void finished(QBluetoothTransferReply *reply);
+    static bool copyToTempFile(QIODevice *to, QIODevice *from);
+
+    void startOPP(QString filename);
+
+    void setAddress(QBluetoothAddress &address);
+
+private:
+    OrgOpenobexClientInterface *client;
+    OrgOpenobexManagerInterface *manager;
+    AgentAdaptor *agent;
+
+    QTemporaryFile *tempfile;
+    QIODevice *source;
+
+    bool m_running;
+    bool m_finished;
+
+    QBluetoothAddress address;
+
+private slots:
+    void copyDone();
+
+public slots:
+    void Complete(const QDBusObjectPath &in0);
+    void Error(const QDBusObjectPath &in0, const QString &in1);
+    void Progress(const QDBusObjectPath &in0, uint in1);
+    void Release();
+    QString Request(const QDBusObjectPath &in0);
+
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QBLUETOOTHTRANSFERMANAGER_H
+#endif // QBLUETOOTHTRANSFERREPLY_H
