@@ -2133,7 +2133,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);

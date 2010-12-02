@@ -2289,7 +2289,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*typ
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
@@ -2300,7 +2300,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
 
         return QUuid(stringFromCFString((const __CFString*)cfStringKey));
     }
-    return QUuid(QString::number(gethostid()));
+    return QUuid(QString::number(getuniqueID()));
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
