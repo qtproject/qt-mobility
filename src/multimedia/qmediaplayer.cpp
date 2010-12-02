@@ -311,8 +311,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
                 addPropertyWatch("bufferStatus");
         }
         if (d->networkAccessControl != 0) {
-            connect(d->networkAccessControl, SIGNAL(configurationChanged(QNetworkConfiguration)),
-            this, SIGNAL(networkConfigurationChanged(QNetworkConfiguration)));
+            connect(d->networkAccessControl, SIGNAL(configurationChanged(QString)),
+            this, SIGNAL(networkConfigurationChanged(QString)));
         }
     }
 }
@@ -405,20 +405,20 @@ void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
 }
 
 /*!
-    Sets the network access point via QNetworkConfiguration's for remote media playback.
-    \a configurations contains, in ascending preferential order, a list of
-    configurations that can be used for network access.
-    Configurations should be in QNetworkConfiguration::Discovered state for
-    immediate use.
+    Sets the network access point via it's Id for remote media playback.
+    \a configurationIds contains, in ascending preferential order, a list of
+    configiuration Id's that can be used for network access.
+
     This will invalidate the choice of previous configurations.
+    Note: For Qt 4.7 and above the id's can be extracted from QNetworkConfiguration::identifier()
     \sa QMediaplayer networkConfigurationChanged()
 */
-void QMediaPlayer::setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations)
+void QMediaPlayer::setNetworkConfigurations(const QList<QString> &configurationIds)
 {
     Q_D(QMediaPlayer);
 
     if (d->networkAccessControl)
-        d->networkAccessControl->setConfigurations(configurations);
+        d->networkAccessControl->setConfigurationIds(configurations);
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -541,19 +541,20 @@ QString QMediaPlayer::errorString() const
 }
 
 /*!
-    Returns the current in use network configuration.
-    A returned default constructed configuration indicates
-    that this feature is not available or that the
-    current supplied configurations are not in use.
+    Returns the current network access point id in use.
+    An empty string indicates
+    that this feature is not available or that none of the
+    current supplied id's are in use.
+    Note: for Qt 4.7 and above the id is equivalent to QNetworkConfiguration::identifier()
 */
-QNetworkConfiguration QMediaPlayer::currentNetworkConfiguration() const
+QString QMediaPlayer::currentNetworkConfiguration() const
 {
     Q_D(const QMediaPlayer);
 
     if (d->networkAccessControl)
         d_func()->networkAccessControl->currentConfiguration();
 
-    return QNetworkConfiguration();
+    return QString();
 }
 
 //public Q_SLOTS:
@@ -1049,9 +1050,10 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 */
 
 /*!
-   \fn void QMediaPlayer::networkConfigurationChanged(const QNetworkConfiguration &configuration)
+   \fn void QMediaPlayer::networkConfigurationChanged(const QString &configurationId)
 
-    Signal that the active in use QNetworkConfiguration has been changed to \a configuration and all subsequent network access will this use \a configuration.
+    Signal that the active in use network access point Id has been changed to \a configurationId and all subsequent network access will this use \a configurationId.
+    note: For Qt 4.7 and above a \v configurationId is equivalent to QNetworkConfiguration::identifier()
 */
 
 /*!

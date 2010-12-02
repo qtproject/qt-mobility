@@ -56,6 +56,7 @@ QT_BEGIN_NAMESPACE
     network related activities. the exact nature in dependant on the underlying
     usage by the supported QMediaObject
 
+    Note: For Qt 4.7 and above the id's in question are taken from QNetworkConfiguration::identifier()
     \sa QMediaServices::requestControl()
 */
 
@@ -72,32 +73,25 @@ QMediaNetworkAccessControl::~QMediaNetworkAccessControl()
 }
 
 /*!
-    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QNetworkConfiguration> &configurations);
+    \fn void QMediaNetworkAccessControl::setConfigurations(const QList<QString> &configurationIds);
 
     \a configurations contains a list of network configurations to be used for network access.
 
     It is assumed the list is sorted in highest to lowest preference order.
     By calling this function all previous configurations will be invalidated.
-
-    Note: All Network Configurations should be in QNetworkConfiguration::Discovered state to be usable
-    Any configurations not in the Discovered state are ignored since they should be immediatly available for
-    use.
 */
 
 /*
-    \fn QNetworkConfiguration QMediaNetworkAccessControl::currentConfiguration() const
+    \fn QString QMediaNetworkAccessControl::currentConfiguration() const
 
-    Returns the current active configuration in use.
-    Can potentially return the backend default configuration.
-    However this is not guaranteed.
-    A default constructed QNetworkConfoguration is returned if
-    no user supplied configurations are used.
+    Returns the current active configuration id in use.
+    An QString is returned if no user supplied configuration Ids are used.
 */
 
 
 /*!
-    \fn QNetworkConfiguration::configurationChanged(const QNetworkConfiguration & configuration)
-    This signal is emited when the current active configuration changes to \a configuration.
+    \fn QNetworkAccessControl::configurationChanged(const QString &configurationId)
+    This signal is emited when the current active configuration Id changes to \a configurationId.
 */
 
 

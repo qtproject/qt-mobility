@@ -42,7 +42,6 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <QtNetwork/qnetworkconfiguration.h>
 
 #include "qmediaserviceprovider.h"
 #include "qmediaobject.h"
@@ -149,7 +148,7 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QNetworkConfiguration currentNetworkConfiguration() const;
+    QString currentNetworkConfigurationId() const;
 
 public Q_SLOTS:
     void play();
@@ -165,7 +164,7 @@ public Q_SLOTS:
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
     void setPlaylist(QMediaPlaylist *playlist);
 
-    void setNetworkConfigurations(const QList<QNetworkConfiguration> &configurations);
+    void setNetworkConfigurations(const QList<QString> &configurationIds);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -188,7 +187,7 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
-    void networkConfigurationChanged(const QNetworkConfiguration &configuration);
+    void networkConfigurationChanged(const QString &configurationId);
 public:
     virtual bool bind(QObject *);
     virtual void unbind(QObject *);
