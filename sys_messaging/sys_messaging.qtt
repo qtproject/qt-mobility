@@ -88,8 +88,8 @@ testcase = {
     1. Fill in To, Subject, Content
     1. Click "Add attachment" menu item and select file(s) to attach
     1. Click on "Compose" menu entry
-    1. Confirm that the Outlook mail client for Windows is now showing
-    1. Click on the "Send" menu button in Outlook client
+    1. On Windows, confirm that the Outlook mail client for Windows is now showing
+    1. Click on the "Send" menu button in Outlook client, on other platforms, choose send from action
     1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
         '));
         }
@@ -138,5 +138,34 @@ testcase = {
     1. Verify the correct messages are shown in Messages list box 
         '));
         }
-    }
+    },
+
+     messagingEx : function() {
+
+         if (automatedTestEnvironment()){
+         }else{
+             prompt(twiki('---++++ Messaging Ex
+
+     1. Start messagingEx application
+     1. For each supportted backend, fill in the receiver, title, body, and select attachment
+     1. Click on "store" button and verify the message has been stored to the system
+     1. For each supportted backend, fill in the receiver, title, body, and select attachment
+     1. Click on "send" and verify the message has been sent correctly
+                          '));
+         }
+     },
+
+     declarativeMessaging : function() {
+          if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Declarative Messaging
+
+      1. Start declarativeMessaging application
+      1. Verify that the sample messages are listed
+      1. Randomly click on a sample message
+      1. Verify that the message details are shown
+                           '));
+          }
+      },
+
 }
