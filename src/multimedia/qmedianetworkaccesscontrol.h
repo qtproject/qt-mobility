@@ -56,7 +56,7 @@ public:
 
     virtual ~QMediaNetworkAccessControl();
 
-    virtual void setConfigurationIds(const QList<QString> &configurationIds) = 0;
+    virtual void setConfigurations(const QList<QString> &configurationIds) = 0;
     virtual QString currentConfiguration() const = 0;
 
 Q_SIGNALS:

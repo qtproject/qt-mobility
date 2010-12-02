@@ -418,7 +418,7 @@ void QMediaPlayer::setNetworkConfigurations(const QList<QString> &configurationI
     Q_D(QMediaPlayer);
 
     if (d->networkAccessControl)
-        d->networkAccessControl->setConfigurationIds(configurations);
+        d->networkAccessControl->setConfigurations(configurationIds);
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -547,7 +547,7 @@ QString QMediaPlayer::errorString() const
     current supplied id's are in use.
     Note: for Qt 4.7 and above the id is equivalent to QNetworkConfiguration::identifier()
 */
-QString QMediaPlayer::currentNetworkConfiguration() const
+QString QMediaPlayer::currentNetworkConfigurationId() const
 {
     Q_D(const QMediaPlayer);
 
