@@ -82,6 +82,8 @@ public:
 
     ~QOrganizerItemData() {}
 
+    void removeOnly(const QString& definitionName);
+
     QOrganizerItemId m_id;
     QOrganizerCollectionId m_collectionId;
     QList<QOrganizerItemDetail> m_details;

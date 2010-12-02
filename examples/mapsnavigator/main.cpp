@@ -39,49 +39,23 @@
 **
 ****************************************************************************/
 
-#include "qgeoareamonitor_simulator_p.h"
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QNetworkProxyFactory>
 
-#define UPDATE_INTERVAL_5S  5000
-
-QGeoAreaMonitorSimulator::QGeoAreaMonitorSimulator(QObject *parent) : QGeoAreaMonitor(parent)
+int main(int argc, char *argv[])
 {
-    insideArea = false;
-    location = QGeoPositionInfoSource::createDefaultSource(this);
-    if(location) {
-        location->setUpdateInterval(UPDATE_INTERVAL_5S);
-        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdated(QGeoPositionInfo)));
-        location->startUpdates();
-    }
+    QApplication app(argc, argv);
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    MainWindow window;
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    window.showMaximized();
+#else
+    window.show();
+#endif
+    return app.exec();
 }
-
-QGeoAreaMonitorSimulator::~QGeoAreaMonitorSimulator()
-{
-    if(location)
-        location->stopUpdates();
-}
-
-void QGeoAreaMonitorSimulator::setCenter(const QGeoCoordinate& coordinate)
-{
-    if (coordinate.isValid())
-        QGeoAreaMonitor::setCenter(coordinate);
-}
-
-void QGeoAreaMonitorSimulator::positionUpdated(const QGeoPositionInfo &info)
-{
-    qreal distance = info.coordinate().distanceTo(center());
-
-    if (distance <= QGeoAreaMonitor::radius()) {
-        if(!insideArea)
-            emit areaEntered(info);
-        insideArea = true;
-    } else if (insideArea) {
-        emit areaExited(info);
-        insideArea = false;
-    }
-}
-
-#include "moc_qgeoareamonitor_simulator_p.cpp"
-QTM_END_NAMESPACE

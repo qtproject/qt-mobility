@@ -64,6 +64,7 @@ private slots:
     void displayLabel();
     void description();
     void comments();
+    void tags();
     void type();
     void emptiness();
     void idLessThan();
@@ -483,12 +484,41 @@ void tst_QOrganizerItem::comments()
     QVERIFY(oi.comments().size() == 0);
     QVERIFY(oi.details().count() == 1); // should have a type detail left.
 
-    oi.addComment("and yet another test comment");
+    oi.clearComments();
+    oi.setComments(QStringList() << "comment 1" << "comment 2");
+    QVERIFY(oi.comments().size() == 2);
+    QVERIFY(oi.details().count() == 3);
 
     /* Test self assign */
     oi.operator =(oi);
-    QVERIFY(oi.details().count() == 2);
+    QVERIFY(oi.details().count() == 3);
     QVERIFY(oi.isEmpty() == false);
+}
+
+void tst_QOrganizerItem::tags()
+{
+    QOrganizerItem item;
+    QVERIFY(item.tags().isEmpty());
+
+    item.addTag("tag 1");
+    QStringList tags;
+    tags.append("tag 1");
+    QCOMPARE(item.tags(), tags);
+    QList<QOrganizerItemTag> tagDetails = item.details<QOrganizerItemTag>();
+    QCOMPARE(tagDetails.size(), 1);
+    QCOMPARE(tagDetails.first().tag(), QLatin1String("tag 1"));
+
+    item.clearTags();
+    QVERIFY(item.tags().isEmpty());
+    QVERIFY(item.details<QOrganizerItemTag>().isEmpty());
+
+    tags.append("tag 2"); // tags is now "tag 1", "tag 2"
+    item.setTags(tags);
+    QCOMPARE(item.tags(), tags);
+    tagDetails = item.details<QOrganizerItemTag>();
+    QCOMPARE(tagDetails.size(), 2);
+    QCOMPARE(tagDetails.at(0).tag(), QLatin1String("tag 1"));
+    QCOMPARE(tagDetails.at(1).tag(), QLatin1String("tag 2"));
 }
 
 void tst_QOrganizerItem::debugOutput()
