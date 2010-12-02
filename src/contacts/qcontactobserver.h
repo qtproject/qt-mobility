@@ -39,60 +39,31 @@
 **
 ****************************************************************************/
 
+#ifndef QCONTACTOBSERVER_H
+#define QCONTACTOBSERVER_H
 
-#ifndef QCONTACTINVALIDBACKEND_P_H
-#define QCONTACTINVALIDBACKEND_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
-
-#include <QMap>
-#include <QString>
+#include <QObject>
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QContactInvalidEngine : public QContactManagerEngineV3
+class QContactObserver : public QObject
 {
+    Q_OBJECT
 public:
-    QContactInvalidEngine();
-    QString managerName() const;
+    void emitContactChanged();
+    void emitContactRemoved();
+signals:
+    void contactChanged();
+    void contactRemoved();
 
-    /*! \reimp */
-    int managerVersion() const {return 0;}
+private:
+    QContactObserver(QObject* parent = 0);
 
-    /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QString();
-    }
-
-    /*! \reimp */
-    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QContact();
-    }
-
-    QSharedPointer<QContactObserver> observeContact(QContactLocalId id)
-    {
-        Q_UNUSED(id);
-        return QSharedPointer<QContactObserver>(createContactObserver(this));
-    }
+    Q_DISABLE_COPY(QContactObserver)
+    friend class QContactManagerEngineV3;
 };
 
 QTM_END_NAMESPACE
 
 #endif
-

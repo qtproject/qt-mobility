@@ -39,60 +39,51 @@
 **
 ****************************************************************************/
 
+#include "qcontactobserver.h"
 
-#ifndef QCONTACTINVALIDBACKEND_P_H
-#define QCONTACTINVALIDBACKEND_P_H
+QTM_USE_NAMESPACE
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+/*!
+  \class QContactObserver
+  \brief The QContactObserver class is a simple class that emits a signal when a single particular
+  contact is updated or deleted.
+  \inmodule QtContacts
 
-#include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
+  \ingroup contacts-main
 
-#include <QMap>
-#include <QString>
+  This class is created by calling QContactManager::observeContact(QContactLocalId).
 
-QTM_BEGIN_NAMESPACE
+  \sa QContactManager::observeContact
+ */
 
-class QContactInvalidEngine : public QContactManagerEngineV3
+QContactObserver::QContactObserver(QObject* parent) : QObject(parent) {}
+
+/*!
+  \fn contactChanged()
+
+  This signal is emitted when the observed contact is changed in the manager.
+ */
+
+/*!
+  \fn contactRemoved()
+
+  This signal is emitted when the observed contact is removed from the manager.
+ */
+
+/*!
+  This function causes the contactChanged() signal to be emitted.
+ */
+void QContactObserver::emitContactChanged()
 {
-public:
-    QContactInvalidEngine();
-    QString managerName() const;
+    emit contactChanged();
+}
 
-    /*! \reimp */
-    int managerVersion() const {return 0;}
+/*!
+  This function causes the contactRemoved() signal to be emitted.
+ */
+void QContactObserver::emitContactRemoved()
+{
+    emit contactRemoved();
+}
 
-    /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QString();
-    }
-
-    /*! \reimp */
-    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QContact();
-    }
-
-    QSharedPointer<QContactObserver> observeContact(QContactLocalId id)
-    {
-        Q_UNUSED(id);
-        return QSharedPointer<QContactObserver>(createContactObserver(this));
-    }
-};
-
-QTM_END_NAMESPACE
-
-#endif
-
+#include "moc_qcontactobserver.cpp"
