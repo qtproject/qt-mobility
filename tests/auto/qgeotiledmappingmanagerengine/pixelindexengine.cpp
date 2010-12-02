@@ -43,6 +43,65 @@
 #include <QBuffer>
 #include <QByteArray>
 
+TilePixelValue::TilePixelValue()
+    : data_(0) {}
+
+TilePixelValue::TilePixelValue(QRgb rgb)
+    : data_(0)
+{
+    setRgb(rgb);
+}
+
+TilePixelValue::TilePixelValue(unsigned int zoom, unsigned int px, unsigned int py)
+    : data_(0)
+{
+    setZoom(zoom);
+    setPx(px);
+    setPy(py);
+}
+
+TilePixelValue::~TilePixelValue() {}
+
+void TilePixelValue::setRgb(QRgb rgb)
+{
+    data_ = static_cast<unsigned int>(rgb);
+}
+
+QRgb TilePixelValue::rgb() const
+{
+    return static_cast<QRgb>(data_);
+}
+
+void TilePixelValue::setZoom(unsigned int zoom)
+{
+    data_ = (data_ & 0xFFFFFFF0) + (zoom & 0x0000000F);
+}
+
+unsigned int TilePixelValue::zoom() const
+{
+    return (data_ & 0x0000000F);
+}
+
+void TilePixelValue::setPx(unsigned int px)
+{
+    data_ = (data_ & 0xFFFFC00F) + ((px & 0x000003FF) << 4);
+}
+
+unsigned int TilePixelValue::px() const
+{
+    return (data_ & 0x00003FF0) >> 4;
+}
+
+void TilePixelValue::setPy(unsigned int py)
+{
+    data_ = (data_ & 0xFF003FFF) + ((py & 0x000003FF) << 14);
+}
+
+unsigned int TilePixelValue::py() const
+{
+    return (data_ & 0x00FFC000) >> 14;
+}
+
 PixmapTiledMapReply::PixmapTiledMapReply(QPixmap &pixmap, const QGeoTiledMapRequest &request, QObject *parent) :
     QGeoTiledMapReply(request, parent),
     m_pixmap(pixmap)
@@ -83,11 +142,10 @@ QGeoTiledMapReply *PixelIndexEngine::getTileImage(const QGeoTiledMapRequest &req
     for (int y = 0; y < im.height(); y++) {
         for (int x = 0; x < im.width(); x++) {
             TilePixelValue tpv;
-            tpv.py = request.row()*128 + y;
-            tpv.px = request.column()*128 + x;
-            tpv.zoom = request.zoomLevel();
-
-            im.setPixel(x, y, tpv.rgb);
+            tpv.setPy(request.row()*128 + y);
+            tpv.setPx(request.column()*128 + x);
+            tpv.setZoom(request.zoomLevel());
+            im.setPixel(x, y, tpv.rgb());
         }
     }
 
