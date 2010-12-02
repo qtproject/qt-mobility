@@ -128,7 +128,7 @@ Rectangle  {
                        id:dayContainer
                        width: container.width / 7
                        height: (container.height - 35) / 6
-                       color: Month.getColorOfDay(startDay,   index - startWeekday +1)
+                       color: Month.isToday(startDay,   index - startWeekday +1) ? "lightsteelblue": Month.getColorOfDay(startDay,   index - startWeekday +1)
                        border.color: "black"
                        Text {
                            color: "#6ba24b";
@@ -138,6 +138,7 @@ Rectangle  {
                            font.pointSize: 12
                            anchors.centerIn: parent
                        }
+
                        MouseArea {
                            hoverEnabled:true
                            anchors.fill: parent

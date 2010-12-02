@@ -12,12 +12,18 @@ function getColorOfDay(startDayOfMonth, offset) {
 
     var newDay = startDayOfMonth.clone();
     newDay.setDate(offset);
-//    console.log("startDay:" + startDayOfMonth);
-//    console.log("offset:" + offset);
-//    console.log("newDay:" + newDay);
     if (newDay.getMonth() == startDayOfMonth.getMonth())
         return "white";
     else
         return "lightgray";
 
 }
+
+function isToday(startDayOfMonth, offset) {
+
+    var newDay = startDayOfMonth.clone();
+    newDay.setDate(offset);
+    var today = new Date();
+    return newDay.toDateString() == today.toDateString();
+}
+
