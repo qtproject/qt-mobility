@@ -2300,7 +2300,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueID()
 
         return QUuid(stringFromCFString((const __CFString*)cfStringKey));
     }
-    return QUuid(QString::number(getuniqueID()));
+    return QUuid(QString::number(gethostid()));
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
