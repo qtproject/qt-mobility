@@ -40,103 +40,117 @@
 
 import Qt 4.7
 import QtMobility.organizer 1.1
-import "contents" as TimeScape
+import "contents"
 
 Rectangle {
-    id: topItem
-    width: 360
-    height: 640
-    x: 0
-    y: 0
+         id: topItem
+         width: 380
+         height: 640
+         property date day: new Date()
+         property string status:day.toDateString()
 
-    color: "#080808";
-    state: "MonthView";
+        color: "#343434";
+        Image { source: "contents/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 1 }
 
-    SystemPalette { id: activePalette }
+        state: "MonthView";
 
-   // OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}
-    //OrganizerItem {id:organizerItem; guid:'1112232133'}
-    // Quick hack top menu bar to change views
-    states: [
-        State {name: "MonthView"; PropertyChanges { target: monthView; opacity: 1; }},
-        State {name: "TimelineView"; PropertyChanges { target: timelineView; opacity: 1; }},
-        State {name: "DetailsView"; PropertyChanges { target: detailsView; opacity: 1; }},
-        State {name: "SettingsView"; PropertyChanges { target: settingsView; opacity: 1; }}
-    ]
-    transitions: [
-        Transition {
-            NumberAnimation {
-                properties: "opacity"
-                easing.type: "OutBounce"
-                duration: 100
+        SystemPalette { id: activePalette }
+
+
+        MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9 }
+        StatusBar {
+            id: statusBar; status:topItem.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: topItem.bottom
+            onLeftClicked: {
+                if (topItem.state == "MonthView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() - 1, topItem.day.getDate());
+                } else if (topItem.state == "WeekView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() - 7);
+                } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() - 1);
+                }
+               topItem.status = day.toDateString();
             }
+            onRightClicked: {
+                if (topItem.state == "MonthView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() + 1, topItem.day.getDate());
+                } else if (topItem.state == "WeekView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() + 7);
+                } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
+                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() + 1);
+                }
+                topItem.status = day.toDateString();
+            } //rightClick
         }
-    ]
-    Rectangle {
-        id: menuBar;
-        y:0;
-        height:childrenRect.height;
-        width: parent.width;
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: activePalette.dark }
-            GradientStop { position: 1.0; color: Qt.darker(activePalette.dark); }
-        }
-        Row {
-            spacing: 2
-            anchors.horizontalCenter: parent.horizontalCenter;
-            TimeScape.Button {text: "Month"; onClicked: topItem.state="MonthView";}
-            TimeScape.Button {text: "Timeline";onClicked: topItem.state="TimelineView";}
-            TimeScape.Button {text: "Settings";onClicked: topItem.state="SettingsView";}
-            TimeScape.Button {text: "Details";onClicked: topItem.state="DetailsView";}
-        }
-    }
 
-    Item {
-        id: contentArea;
-        anchors.top: menuBar.bottom;
-        anchors.left: topItem.left;
-        anchors.right: topItem.right;
-        anchors.bottom: topItem.bottom;
+        states: [
+            State {name: "MonthView"; PropertyChanges { target: monthView; opacity: 1; }},
+            State {name: "TimelineView"; PropertyChanges { target: timelineView; opacity: 1; }},
+            State {name: "WeekView"; PropertyChanges { target: weekView; opacity: 1; }},
+            State {name: "DayView"; PropertyChanges { target: dayView; opacity: 1; }},
+            State {name: "AgenderView"; PropertyChanges { target: agenderView; opacity: 1; }},
+            State {name: "DetailsView"; PropertyChanges { target: detailsView; opacity: 1; }}
+        ]
+        transitions: [
+            Transition {
+                NumberAnimation {
+                    properties: "opacity"
+                    easing.type: "Linear"
+                    duration: 100
+                }
+            }
+        ]
 
-        // TODO these should be components too
-        Rectangle {
-            id: monthView;
-            color: "#808000";
-            width: 360;
-            height: 600;
-            opacity: 0;
-            anchors.fill: contentArea;
-            Loader {id: monthLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/monthview.qml";}
-        }
-        Rectangle {
-            id: timelineView;
-            color: "#008080";
-            width: 360;
-            height: 600;
-            opacity: 0;
-            anchors.fill: contentArea;
 
-            Loader {id: timelineLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/timelineview.qml";}
-        }
-        Rectangle {
-            id: detailsView;
-            color: "#008000";
-            width: 360;
-            height: 600;
-            opacity: 0;
-            anchors.fill: contentArea;
+        Item {
+            id: contentArea;
+            anchors.top: menuBar.bottom;
+            anchors.left: topItem.left;
+            anchors.right: topItem.right;
+            anchors.bottom: statusBar.top;
 
-            Loader {id: detailLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/detailsview.qml";}
-        }
-        Rectangle {
-            id: settingsView;
-            color: "#F08000";
-            width: 360;
-            height: 600;
-            opacity: 0;
-            anchors.fill: contentArea;
+            MonthView {
+                id: monthView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
+            TimelineView {
+                id: timelineView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
+            WeekView {
+                id: weekView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
+            DayView {
+                id: dayView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
 
-            Loader {id: settingsLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/settingsview.qml";}
+            AgenderView {
+                id: agenderView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
+            DetailsView {
+                id: detailsView;
+                width: topItem.width;
+                height: topItem.height - menuBar.height - statusBar.height;
+                opacity: 0;
+                anchors.fill: contentArea;
+            }
+
         }
-    }
 }

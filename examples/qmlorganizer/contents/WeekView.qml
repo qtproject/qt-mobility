@@ -39,27 +39,70 @@
 ****************************************************************************/
 
 import Qt 4.7
+import QtMobility.organizer 1.1
 
-Item {
-    id: toolbar
+Rectangle
+{
+    id:weekView
+    anchors.fill: parent
 
-    property alias button1Label: button1.text
-    property alias button2Label: button2.text
-    signal button1Clicked
-    signal button2Clicked
+    ListView {
+        id : dayList
+        anchors.fill: parent
+        clip: true
+        focus: true
+        opacity : parent.opacity
+        preferredHighlightBegin: dayList.height * 0.5
+        preferredHighlightEnd: preferredHighlightBegin
+        highlightFollowsCurrentItem : true
+        highlightMoveSpeed : 2000
+        keyNavigationWraps : true
 
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+        model : ListModel {
+                ListElement {day : "Sunday"}
+                ListElement {day : "Monday"}
+                ListElement {day : "Tuesday"}
+                ListElement {day : "Wednesday"}
+                ListElement {day : "Thursday"}
+                ListElement {day : "Fridady"}
+                ListElement {day : "Saturday"}
+         }
 
-    Button {
-        id: button1
-        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button1Clicked()
+        delegate :  Component {
+            Item {
+                width : dayList.width
+                height : dayList.height / 7
+                Column {
+                    Rectangle {
+                        height : 1
+                        width : dayList.width
+                        color : "black"
+                    }
+                    Text {
+                        text: day
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked : dayList.currentIndex = index
+                    onDoubleClicked: {
+                        topItem.state = "DayView"
+                    }
+                }
+            }
+        }
+
+        highlight:  Component {
+
+            Rectangle {
+                width: dayList.width
+                height: dayList.height /7
+                color: "lightsteelblue"
+                radius: 5
+            }
+        }
+
+        Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
     }
-
-    Button {
-        id: button2
-        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button2Clicked()
-    }
-
 }
+

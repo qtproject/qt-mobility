@@ -40,4 +40,10 @@
 
 import Qt 4.7
 
-Text {text: "Details View"; anchors.centerIn: parent}
+import QtMobility.organizer 1.1
+
+Rectangle
+{
+    id:detailsView
+    anchors.fill: parent
+}

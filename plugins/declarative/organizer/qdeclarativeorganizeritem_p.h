@@ -59,7 +59,7 @@ class QDeclarativeOrganizerItem : public QObject
     Q_OBJECT
     Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged)
     Q_PROPERTY (QString manager READ manager)
-    Q_PROPERTY (uint itemId READ itemId)
+    Q_PROPERTY (QString itemId READ itemId)
     Q_PROPERTY (QString type READ type)
     Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY itemChanged)
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY itemChanged)
@@ -83,7 +83,7 @@ public:
     explicit QDeclarativeOrganizerItem(const QOrganizerItem& item, const QMap<QString, QOrganizerItemDetailDefinition>& defs, QObject *parent = 0);
     ~QDeclarativeOrganizerItem();
 
-    uint itemId() const;
+    QString itemId() const;
     QString manager() const;
     bool modified() const;
 
@@ -168,7 +168,7 @@ class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
@@ -176,8 +176,8 @@ public:
 
     explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
-    void setParentId(uint parentId);
-    uint parentId() const;
+    void setParentId(const QString& parentId);
+    QString parentId() const;
 
     void setOriginalDate(const QDate& date);
 
@@ -289,7 +289,7 @@ class QDeclarativeOrganizerTodoOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::StatusType status READ status WRITE setStatus NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
@@ -301,8 +301,8 @@ public:
 
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
-    uint parentId() const;
-    void setParentId(uint parentId);
+    QString parentId() const;
+    void setParentId(const QString& parentId);
 
     void setPriority(QDeclarativeOrganizerItemPriority::PriorityType priority);
 
