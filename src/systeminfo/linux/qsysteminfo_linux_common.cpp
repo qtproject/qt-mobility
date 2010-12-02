@@ -2843,7 +2843,7 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypa
     return false;
 }
 
-QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
 {
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
@@ -2854,6 +2854,24 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
             return QUuid(id);
         }
     }
+#if !defined(QT_NO_MEEGO)
+    QDBusInterface connectionInterface("org.freedesktop.PolicyKit1",
+                                       "/org/freedesktop/PolicyKit1/Authority",
+                                       "org.freedesktop.DBus.Peer",
+                                        QDBusConnection::systemBus());
+    if(!connectionInterface.isValid()) {
+        qDebug() <<connectionInterface.lastError().message()<< "not valid";
+    }
+
+    QDBusReply< QString > reply = connectionInterface.call("GetMachineId");
+    QString uid = reply.value();
+// grrrrrr PolicyKit returns a malformed uuid
+    uid.insert(8,"-");
+    uid.insert(13,"-");
+    uid.insert(18,"-");
+    uid.insert(23,"-");
+    return uid;
+#endif
 #endif
     return QUuid(QString::number(gethostid()));
 }
