@@ -90,7 +90,8 @@ class QOrganizerItemFetchRequestPrivate : public QOrganizerAbstractRequestPrivat
 {
 public:
     QOrganizerItemFetchRequestPrivate()
-        : QOrganizerAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate(),
+        m_maxCount(-1)
     {
     }
 
@@ -111,6 +112,8 @@ public:
 
     QDateTime m_startDate;
     QDateTime m_endDate;
+
+    int m_maxCount;
 };
 
 class QOrganizerItemFetchForExportRequestPrivate : public QOrganizerAbstractRequestPrivate
