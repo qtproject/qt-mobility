@@ -381,7 +381,10 @@ void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint
         emit fetchHintChanged();
     }
 }
-
+int QDeclarativeOrganizerModel::itemCount() const
+{
+    return d->m_items.size();
+}
 /*!
   \qmlproperty string OrganizerModel::error
 
@@ -391,39 +394,41 @@ void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint
   */
 QString QDeclarativeOrganizerModel::error() const
 {
-    switch (d->m_manager->error()) {
-    case QOrganizerManager::DoesNotExistError:
-        return QLatin1String("DoesNotExist");
-    case QOrganizerManager::AlreadyExistsError:
-        return QLatin1String("AlreadyExists");
-    case QOrganizerManager::InvalidDetailError:
-        return QLatin1String("InvalidDetail");
-    case QOrganizerManager::InvalidCollectionError:
-        return QLatin1String("InvalidCollection");
-    case QOrganizerManager::LockedError:
-        return QLatin1String("LockedError");
-    case QOrganizerManager::DetailAccessError:
-        return QLatin1String("DetailAccessError");
-    case QOrganizerManager::PermissionsError:
-        return QLatin1String("PermissionsError");
-    case QOrganizerManager::OutOfMemoryError:
-        return QLatin1String("OutOfMemory");
-    case QOrganizerManager::NotSupportedError:
-        return QLatin1String("NotSupported");
-    case QOrganizerManager::BadArgumentError:
-        return QLatin1String("BadArgument");
-    case QOrganizerManager::UnspecifiedError:
-        return QLatin1String("UnspecifiedError");
-    case QOrganizerManager::VersionMismatchError:
-        return QLatin1String("VersionMismatch");
-    case QOrganizerManager::LimitReachedError:
-        return QLatin1String("LimitReached");
-    case QOrganizerManager::InvalidItemTypeError:
-        return QLatin1String("InvalidItemType");
-        case QOrganizerManager::InvalidOccurrenceError:
-            return QLatin1String("InvalidOccurrence");
-    default:
-        break;
+    if (d->m_manager) {
+        switch (d->m_manager->error()) {
+        case QOrganizerManager::DoesNotExistError:
+            return QLatin1String("DoesNotExist");
+        case QOrganizerManager::AlreadyExistsError:
+            return QLatin1String("AlreadyExists");
+        case QOrganizerManager::InvalidDetailError:
+            return QLatin1String("InvalidDetail");
+        case QOrganizerManager::InvalidCollectionError:
+            return QLatin1String("InvalidCollection");
+        case QOrganizerManager::LockedError:
+            return QLatin1String("LockedError");
+        case QOrganizerManager::DetailAccessError:
+            return QLatin1String("DetailAccessError");
+        case QOrganizerManager::PermissionsError:
+            return QLatin1String("PermissionsError");
+        case QOrganizerManager::OutOfMemoryError:
+            return QLatin1String("OutOfMemory");
+        case QOrganizerManager::NotSupportedError:
+            return QLatin1String("NotSupported");
+        case QOrganizerManager::BadArgumentError:
+            return QLatin1String("BadArgument");
+        case QOrganizerManager::UnspecifiedError:
+            return QLatin1String("UnspecifiedError");
+        case QOrganizerManager::VersionMismatchError:
+            return QLatin1String("VersionMismatch");
+        case QOrganizerManager::LimitReachedError:
+            return QLatin1String("LimitReached");
+        case QOrganizerManager::InvalidItemTypeError:
+            return QLatin1String("InvalidItemType");
+            case QOrganizerManager::InvalidOccurrenceError:
+                return QLatin1String("InvalidOccurrence");
+        default:
+            break;
+        }
     }
     return QLatin1String("NoError");
 }

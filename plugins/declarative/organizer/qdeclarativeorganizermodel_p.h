@@ -76,7 +76,8 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativ
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
-    Q_PROPERTY(QString error READ error)
+    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    Q_PROPERTY(int itemCount READ itemCount NOTIFY itemsChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 public:
     enum {
@@ -88,6 +89,7 @@ public:
     explicit QDeclarativeOrganizerModel(QOrganizerManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
     QString error() const;
+    int itemCount() const;
     QString manager() const;
     void setManager(const QString& managerName);
     QStringList availableManagers() const;
