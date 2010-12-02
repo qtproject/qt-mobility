@@ -130,7 +130,6 @@ Rectangle {
                 height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
-                day: topItem.day.getDay();
             }
             DayView {
                 id: dayView;

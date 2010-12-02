@@ -45,7 +45,7 @@ Rectangle
 {
     id:weekView
     anchors.fill: parent
-    property int day:0
+    property int day:topItem.day.getDay()
     ListView {
         id : dayList
         anchors.fill: parent
@@ -58,11 +58,10 @@ Rectangle
         highlightMoveSpeed : 2000
         keyNavigationWraps : true
         Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
-        currentIndex: day
         onOpacityChanged: {
             //when back to week view, select the current day.
             if (opacity != 0)
-                currentIndex = day;
+                currentIndex = topItem.day.getDay();
         }
 
         model : ListModel {

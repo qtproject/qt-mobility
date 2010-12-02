@@ -45,6 +45,19 @@ Rectangle {
     id : timelineView
     anchors.fill : parent
     opacity : parent.opacity
+    property int year:topItem.day.getFullYear()
+    property int month:topItem.day.getMonth()
+    property int day:topItem.day.getDate()
+    onOpacityChanged : {
+        if (opacity != 0) {
+            timelineView.year = topItem.day.getFullYear();
+            timelineView.month = topItem.day.getMonth();
+            timelineView.day = topItem.day.getDate();
+            dayList.currentIndex = timelineView.day - 1;
+            monthList.currentIndex = timelineView.month;
+            yearList.currentIndex = timelineView.year - yearModel.start;
+       }
+    }
 
     //Day view
     Rectangle {
@@ -71,10 +84,14 @@ Rectangle {
             highlightMoveSpeed : 2000
             keyNavigationWraps : true
 
-            Component.onCompleted : Timeline.changeToday()
-            onOpacityChanged : Timeline.changeToday()
-            Keys.onUpPressed : Timeline.changeDate()
-            Keys.onDownPressed : Timeline.changeDate()
+            onCurrentIndexChanged : {
+                topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), currentIndex + 1);
+                timelineView.month = topItem.day.getMonth();
+                timelineView.day = topItem.day.getDate();
+                monthList.currentIndex = timelineView.month;
+                currentIndex = timelineView.day - 1;
+            }
+
         }
 
         Component {
@@ -170,11 +187,13 @@ Rectangle {
                monthList.currentIndex = month;
                var  d = Date.parse("Feb 31, 2010");
             }
-//            onCurrentIndexChanged : {
-
-//            }
-
-
+            onCurrentIndexChanged : {
+                topItem.day = new Date(topItem.day.getFullYear(), currentIndex, topItem.day.getDate());
+                timelineView.month = topItem.day.getMonth();
+                timelineView.day = topItem.day.getDate();
+                currentIndex = timelineView.month;
+                dayList.currentIndex = timelineView.day - 1;
+            }
         }
 
         Component {
@@ -278,8 +297,11 @@ Rectangle {
             highlightFollowsCurrentItem : true
 
             Component.onCompleted: Timeline.extendYearModel(true);
-            onCurrentIndexChanged: Timeline.extendYearModel(false);
-        }
+            onCurrentIndexChanged: {
+                Timeline.extendYearModel(false);
+                timelineView.year = yearModel.start + currentIndex;
+                topItem.day = new Date(timelineView.year,  topItem.day.getMonth(), topItem.day.getDate());
+            }
 
         ListModel {
             id : yearModel
@@ -291,5 +313,5 @@ Rectangle {
             }
         }
     }
-
+    }
 }

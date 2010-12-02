@@ -3,15 +3,10 @@ function changeDate() {
 }
 
 function changeToday() {
-    var now = new Date();
-    var year = now.getFullYear();
-    var month = now.getMonth();
-    var day = now.getUTCDate();
-
-    yearList.currentIndex = year - yearModel.start;
-    monthList.currentIndex = month;
-    dayList.positionViewAtIndex(day, ListView.Center);
-    dayList.currentIndex = day;
+    yearList.currentIndex = timelineView.year - yearModel.start;
+    monthList.currentIndex = timelineView.month;
+    dayList.positionViewAtIndex(timelineView.day, ListView.Center);
+    dayList.currentIndex = timelineView.day;
 }
 function extendYearModel(init) {
 
