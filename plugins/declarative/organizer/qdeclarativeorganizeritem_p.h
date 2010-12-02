@@ -8,7 +8,7 @@
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
+** This file Is pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
@@ -82,6 +82,8 @@ public:
     explicit QDeclarativeOrganizerItem(QObject *parent = 0);
     explicit QDeclarativeOrganizerItem(const QOrganizerItem& item, const QMap<QString, QOrganizerItemDetailDefinition>& defs, QObject *parent = 0);
     ~QDeclarativeOrganizerItem();
+
+    OrganizerItemType itemType() const;
 
     QString itemId() const;
     QString manager() const;

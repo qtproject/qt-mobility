@@ -44,8 +44,8 @@ import QtMobility.organizer 1.1
 
 Rectangle  {
     id:monthView
-    property int month: topItem.day.getMonth()
-    property int year: topItem.day.getFullYear()
+    property int month: calendar.day.getMonth()
+    property int year: calendar.day.getFullYear()
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
 
@@ -106,7 +106,7 @@ Rectangle  {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                topItem.state = "WeekView";
+                                calendar.state = "WeekView";
                             }
                         }
             }
@@ -117,7 +117,14 @@ Rectangle  {
                        id:dayContainer
                        width: container.width / 7
                        height: (container.height - 35) / 6
-                       color: Month.isToday(startDay,   index - startWeekday +1) ? "lightsteelblue": Month.getColorOfDay(startDay,   index - startWeekday +1)
+                       color:  {
+                                  if (Month.isToday(startDay,   index - startWeekday +1))
+                                      return "lightsteelblue";
+                                  else if (calendar.organizer.containsItems(Month.dateOfThisDay(startDay,   index - startWeekday +1)))
+                                      return "steelblue";
+                                  else
+                                      return Month.getColorOfDay(startDay,   index - startWeekday +1);
+                              }
                        border.color: "black"
                        Text {
                            color: "#6ba24b";
@@ -140,8 +147,8 @@ Rectangle  {
                                dayContainer.border.width = 1;
                            }
                            onClicked: {
-                               topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), index - startWeekday +1);
-                               topItem.state = "DayView";
+                               calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), index - startWeekday +1);
+                               calendar.state = "DayView";
                            }
                        }
                    }

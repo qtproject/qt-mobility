@@ -263,6 +263,23 @@ QString QDeclarativeOrganizerItem::type() const
     return d->m_item.type();
 }
 
+QDeclarativeOrganizerItem::OrganizerItemType QDeclarativeOrganizerItem::itemType() const
+{
+    if (d->m_item.type() == QOrganizerItemType::TypeEvent)
+        return QDeclarativeOrganizerItem::Event;
+    else if (d->m_item.type() == QOrganizerItemType::TypeEventOccurrence)
+        return QDeclarativeOrganizerItem::EventOccurrence;
+    else if (d->m_item.type() == QOrganizerItemType::TypeTodo)
+        return QDeclarativeOrganizerItem::Todo;
+    else if (d->m_item.type() == QOrganizerItemType::TypeTodoOccurrence)
+        return QDeclarativeOrganizerItem::TodoOccurrence;
+    else if (d->m_item.type() == QOrganizerItemType::TypeJournal)
+        return QDeclarativeOrganizerItem::Journal;
+    else if (d->m_item.type() == QOrganizerItemType::TypeNote)
+        return QDeclarativeOrganizerItem::Note;
+    return QDeclarativeOrganizerItem::Customized;
+}
+
 /*!
     \qmlproperty string OrganizerItem::displayLabel
 
@@ -333,7 +350,7 @@ QDeclarativeOrganizerEvent::QDeclarativeOrganizerEvent(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
     d->setMetaObject(QDeclarativeOrganizerEvent::staticMetaObject);
-    m_event = static_cast<QOrganizerEvent*>(&d->m_item);
+    m_event = reinterpret_cast<QOrganizerEvent*>(&(d->m_item));
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 
@@ -352,7 +369,7 @@ void QDeclarativeOrganizerEvent::setStartDateTime(const QDateTime& datetime)
 
 QDateTime QDeclarativeOrganizerEvent::startDateTime() const
 {
-    return m_event->startDateTime();
+    return d->m_item.detail<QOrganizerEventTime>().startDateTime();
 }
 
 /*!

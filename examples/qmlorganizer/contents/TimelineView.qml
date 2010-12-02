@@ -49,11 +49,11 @@ Rectangle {
     property int month
     property int day
     Connections {
-        target: topItem
+        target: calendar
         onDayChanged : {
-            year = topItem.day.getFullYear();
-            month = topItem.day.getMonth();
-            day = topItem.day.getDate();
+            year = calendar.day.getFullYear();
+            month = calendar.day.getMonth();
+            day = calendar.day.getDate();
             dayList.currentIndex = day - 1;
             monthList.currentIndex = month;
             yearList.currentIndex = year - yearModel.start;
@@ -85,9 +85,9 @@ Rectangle {
             keyNavigationWraps : true
 
             onCurrentIndexChanged : {
-                topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), currentIndex + 1);
-                timelineView.month = topItem.day.getMonth();
-                timelineView.day = topItem.day.getDate();
+                calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), currentIndex + 1);
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
                 monthList.currentIndex = timelineView.month;
                 currentIndex = timelineView.day - 1;
             }
@@ -188,9 +188,9 @@ Rectangle {
                var  d = Date.parse("Feb 31, 2010");
             }
             onCurrentIndexChanged : {
-                topItem.day = new Date(topItem.day.getFullYear(), currentIndex, topItem.day.getDate());
-                timelineView.month = topItem.day.getMonth();
-                timelineView.day = topItem.day.getDate();
+                calendar.day = new Date(calendar.day.getFullYear(), currentIndex, calendar.day.getDate());
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
                 currentIndex = timelineView.month;
                 dayList.currentIndex = timelineView.day - 1;
             }
@@ -299,10 +299,10 @@ Rectangle {
             Component.onCompleted: Timeline.extendYearModel(true);
             onCurrentIndexChanged: {
                 Timeline.extendYearModel(false);
-                topItem.day = new Date(yearModel.start + currentIndex,  topItem.day.getMonth(), topItem.day.getDate());
-                timelineView.year = topItem.day.getFullYear();
-                timelineView.month = topItem.day.getMonth();
-                timelineView.day = topItem.day.getDate();
+                calendar.day = new Date(yearModel.start + currentIndex,  calendar.day.getMonth(), calendar.day.getDate());
+                timelineView.year = calendar.day.getFullYear();
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
                 monthList.currentIndex = timelineView.month;
                 dayList.currentIndex = timelineView.day - 1;
             }

@@ -45,7 +45,7 @@ Rectangle
 {
     id:weekView
     anchors.fill: parent
-    property int day:topItem.day.getDay()
+    property int day:calendar.day.getDay()
     ListView {
         id : dayList
         anchors.fill: parent
@@ -61,7 +61,7 @@ Rectangle
         onOpacityChanged: {
             //when back to week view, select the current day.
             if (opacity != 0)
-                currentIndex = topItem.day.getDay();
+                currentIndex = calendar.day.getDay();
         }
 
         model : ListModel {
@@ -92,8 +92,8 @@ Rectangle
                     anchors.fill: parent
                     onClicked : dayList.currentIndex = index
                     onDoubleClicked: {
-                        topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), topItem.day.getDate() + dayList.currentIndex - weekView.day);
-                        topItem.state = "DayView"
+                        calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
+                        calendar.state = "DayView"
                     }
                 }
             }

@@ -43,13 +43,23 @@ import QtMobility.organizer 1.1
 import "contents"
 
 Rectangle {
-         id: topItem
+         id: calendar
          width: 400
          height: 640
          property date day: new Date()
          property string status:day.toDateString()
+         property OrganizerModel organizer:OrganizerModel{
+             id: organizer
+             startPeriod:new Date(calendar.day.getFullYear(), 1, 1)
+             endPeriod:new Date(calendar.day.getFullYear(), 12, 31)
+             autoUpdate:false
+             Component.onCompleted : {
+                 if (manager == "memory")
+                     organizer.importItems(Qt.resolvedUrl("contents/2010-FIFA-WorldCup.ics"));
+             }
+         }
          onDayChanged: {
-             topItem.status = day.toDateString();
+             calendar.status = day.toDateString();
          }
 
         color: "#343434";
@@ -59,37 +69,28 @@ Rectangle {
 
         SystemPalette { id: activePalette }
 
-        OrganizerModel {
-            id: organizer
-            startPeriod:new Date(topItem.day.getFullYear(), 1, 1)
-            endPeriod:new Date(topItem.day.getFullYear(), 12, 31)
-            autoUpdate:false
-            Component.onCompleted : {
-                if (manager == "memory")
-                    organizer.importItems(Qt.resolvedUrl("2010-FIFA-WorldCup.ics"));
-            }
-        }
+
 
         MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9; info: organizer.error + "\nTotal:" + organizer.itemCount }
         StatusBar {
-            id: statusBar; status:topItem.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: topItem.bottom
+            id: statusBar; status:calendar.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: calendar.bottom
             onLeftClicked: {
-                if (topItem.state == "MonthView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() - 1, topItem.day.getDate());
-                } else if (topItem.state == "WeekView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() - 7);
-                } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() - 1);
+                if (calendar.state == "MonthView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() - 1, calendar.day.getDate());
+                } else if (calendar.state == "WeekView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() - 7);
+                } else if (calendar.state == "DayView" || calendar.state == "TimelineView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() - 1);
                 }
 
             }
             onRightClicked: {
-                if (topItem.state == "MonthView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() + 1, topItem.day.getDate());
-                } else if (topItem.state == "WeekView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() + 7);
-                } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
-                    topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() + 1);
+                if (calendar.state == "MonthView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() + 1, calendar.day.getDate());
+                } else if (calendar.state == "WeekView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() + 7);
+                } else if (calendar.state == "DayView" || calendar.state == "TimelineView") {
+                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() + 1);
                 }
             } //rightClick
         }
@@ -116,50 +117,50 @@ Rectangle {
         Item {
             id: contentArea;
             anchors.top: menuBar.bottom;
-            anchors.left: topItem.left;
-            anchors.right: topItem.right;
+            anchors.left: calendar.left;
+            anchors.right: calendar.right;
             anchors.bottom: statusBar.top;
 
             MonthView {
                 id: monthView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }
             TimelineView {
                 id: timelineView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }
             WeekView {
                 id: weekView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }
             DayView {
                 id: dayView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }
 
             AgenderView {
                 id: agenderView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }
             DetailsView {
                 id: detailsView;
-                width: topItem.width;
-                height: topItem.height - menuBar.height - statusBar.height;
+                width: calendar.width;
+                height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
             }

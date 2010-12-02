@@ -7,6 +7,11 @@ function getDayOfMonth(startDayOfMonth, offset) {
     return day.getDate();
 }
 
+function dateOfThisDay(startDayOfMonth, offset) {
+    var day = startDayOfMonth.clone();
+    day.setDate(offset);
+    return day;
+}
 
 function getColorOfDay(startDayOfMonth, offset) {
 

@@ -63,6 +63,31 @@ static QString urlToLocalFileName(const QUrl& url)
 
 }
 
+static QDateTime itemEntryDateTime(const QDeclarativeOrganizerItem* item)
+{
+    switch (item->itemType()) {
+    case QDeclarativeOrganizerItem::Event:
+        return static_cast<const QDeclarativeOrganizerEvent*>(item)->startDateTime();
+    case QDeclarativeOrganizerItem::EventOccurrence:
+        return static_cast<const QDeclarativeOrganizerEventOccurrence*>(item)->startDateTime();
+    case QDeclarativeOrganizerItem::Todo:
+        return static_cast<const QDeclarativeOrganizerTodo*>(item)->startDateTime();
+    case QDeclarativeOrganizerItem::TodoOccurrence:
+        return static_cast<const QDeclarativeOrganizerTodoOccurrence*>(item)->startDateTime();
+    case QDeclarativeOrganizerItem::Journal:
+        return static_cast<const QDeclarativeOrganizerJournal*>(item)->dateTime();
+    case QDeclarativeOrganizerItem::Note:
+    default:
+        break;
+    }
+    return item->item().detail<QOrganizerItemTimestamp>().created();
+}
+
+static bool itemLessThan(const QDeclarativeOrganizerItem* item1, const QDeclarativeOrganizerItem* item2)
+{
+    return itemEntryDateTime(item1) < itemEntryDateTime(item2);
+}
+
 class QDeclarativeOrganizerModelPrivate
 {
 public:
@@ -458,7 +483,7 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
 
             importer.importDocument(d->m_reader.results().at(0));
             QList<QOrganizerItem> items = importer.items();
-
+//            qDebug() << "importing..." << items.size() << " items.";
             delete d->m_reader.device();
             d->m_reader.setDevice(0);
 
@@ -490,6 +515,17 @@ void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
     QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
 }
 
+bool QDeclarativeOrganizerModel::containsItems(const QDate& start, const QDate& end)
+{
+    //TODO: quick search this
+    QDate endDate = end.isNull()? start:end;
+    foreach (const QDeclarativeOrganizerItem* item, d->m_items) {
+        QDate dt = itemEntryDateTime(item).date();
+        if ( dt >= start && dt <= endDate)
+            return true;
+    }
+    return false;
+}
 
 void QDeclarativeOrganizerModel::fetchAgain()
 {
