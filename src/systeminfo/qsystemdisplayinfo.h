@@ -69,8 +69,8 @@ public:
     };
 
     enum BacklightState {
-        BacklightUnknown = -1,
-        BacklightOff,
+        BacklightStateUnknown = -1,
+        BacklightStateOff,
         backlightStateDimmed,
         backlightStateOn
     };

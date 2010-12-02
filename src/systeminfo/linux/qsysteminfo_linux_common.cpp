@@ -1752,7 +1752,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightUnknown;
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
