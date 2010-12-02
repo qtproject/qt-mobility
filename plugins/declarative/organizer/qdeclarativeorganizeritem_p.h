@@ -156,9 +156,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerEvent* m_event;
-
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
 
@@ -199,8 +196,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerEventOccurrence* m_eo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEventOccurrence)
 
@@ -217,8 +212,6 @@ public:
     QDateTime dateTime() const;
 signals:
     void valueChanged();
-private:
-    QOrganizerJournal* m_journal;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerJournal)
 
@@ -276,8 +269,6 @@ public:
 
 signals:
     void valueChanged();
-private:
-    QOrganizerTodo* m_todo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodo)
 
@@ -324,8 +315,6 @@ public:
     QDateTime finishedDateTime() const;
 signals:
     void valueChanged();
-private:
-    QOrganizerTodoOccurrence* m_to;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoOccurrence)
 #endif // QDECLARATIVEORGANIZERITEM_H
