@@ -39,45 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORSIMULATOR_H
-#define QGEOAREAMONITORSIMULATOR_H
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QNetworkProxyFactory>
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
-
-QTM_BEGIN_NAMESPACE
-
-/**
- *  QGeoAreaMonitorSimulator
- *
- */
-class QGeoAreaMonitorSimulator : public QGeoAreaMonitor
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
 
-public :
-    QGeoAreaMonitorSimulator(QObject *parent = 0);
-    virtual ~QGeoAreaMonitorSimulator();
-    virtual void setCenter(const QGeoCoordinate &coordinate);
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
 
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
+    MainWindow window;
 
-private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
-};
-
-QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORSIMULATOR_H
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    window.showMaximized();
+#else
+    window.show();
+#endif
+    return app.exec();
+}

@@ -39,49 +39,48 @@
 **
 ****************************************************************************/
 
-#include "qgeoareamonitor_simulator_p.h"
+#ifndef MAINWINDOW_H_
+#define MAINWINDOW_H_
 
-QTM_BEGIN_NAMESPACE
+#include "directionswidget.h"
+#include "mapswidget.h"
+#include "markerlist.h"
+#include "searchwidget.h"
 
-#define UPDATE_INTERVAL_5S  5000
+#include <QMainWindow>
 
-QGeoAreaMonitorSimulator::QGeoAreaMonitorSimulator(QObject *parent) : QGeoAreaMonitor(parent)
+#include <qnetworksession.h>
+#include <qgeoserviceprovider.h>
+
+QTM_USE_NAMESPACE
+
+class MainWindow: public QMainWindow
 {
-    insideArea = false;
-    location = QGeoPositionInfoSource::createDefaultSource(this);
-    if(location) {
-        location->setUpdateInterval(UPDATE_INTERVAL_5S);
-        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdated(QGeoPositionInfo)));
-        location->startUpdates();
-    }
-}
+    Q_OBJECT
 
-QGeoAreaMonitorSimulator::~QGeoAreaMonitorSimulator()
-{
-    if(location)
-        location->stopUpdates();
-}
+public:
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-void QGeoAreaMonitorSimulator::setCenter(const QGeoCoordinate& coordinate)
-{
-    if (coordinate.isValid())
-        QGeoAreaMonitor::setCenter(coordinate);
-}
+public slots:
+    void setProvider();
+    void networkSessionOpened();
+    void error(QNetworkSession::SessionError error);
 
-void QGeoAreaMonitorSimulator::positionUpdated(const QGeoPositionInfo &info)
-{
-    qreal distance = info.coordinate().distanceTo(center());
+private slots:
+    void showSearchDialog(MarkerObject *marker);
+    void addSearchMarker(const QGeoCoordinate &coord);
+    void addSearchMarker(const QString &address);
+    void selectWaypointMarker(MarkerObject *marker);
 
-    if (distance <= QGeoAreaMonitor::radius()) {
-        if(!insideArea)
-            emit areaEntered(info);
-        insideArea = true;
-    } else if (insideArea) {
-        emit areaExited(info);
-        insideArea = false;
-    }
-}
+private:
+    QNetworkSession *m_session;
+    QGeoServiceProvider *m_serviceProvider;
 
-#include "moc_qgeoareamonitor_simulator_p.cpp"
-QTM_END_NAMESPACE
+    MarkerList *m_markers;
+    MapsWidget *m_mapsWidget;
+    SearchWidget *m_searchWidget;
+    DirectionsWidget *m_directionsWidget;
+};
+
+#endif /* MAINWINDOW_H_ */
