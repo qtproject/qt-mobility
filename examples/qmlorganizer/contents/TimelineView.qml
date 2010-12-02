@@ -299,8 +299,12 @@ Rectangle {
             Component.onCompleted: Timeline.extendYearModel(true);
             onCurrentIndexChanged: {
                 Timeline.extendYearModel(false);
-                timelineView.year = yearModel.start + currentIndex;
-                topItem.day = new Date(timelineView.year,  topItem.day.getMonth(), topItem.day.getDate());
+                topItem.day = new Date(yearModel.start + currentIndex,  topItem.day.getMonth(), topItem.day.getDate());
+                timelineView.year = topItem.day.getFullYear();
+                timelineView.month = topItem.day.getMonth();
+                timelineView.day = topItem.day.getDate();
+                monthList.currentIndex = timelineView.month;
+                dayList.currentIndex = timelineView.day - 1;
             }
 
         ListModel {
