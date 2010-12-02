@@ -113,6 +113,7 @@ void Waypoint::updateText()
     */
 }
 
+//TODO: Directions input dialog allows adding more waypoints for the route list
 DirectionsInputDialog::DirectionsInputDialog(QString& start, QString& end, QGeoRouteRequest::TravelModes& travel, QWidget *parent)
         : QDialog(parent), m_start(start), m_end(end), m_travel(travel)
 {
@@ -204,6 +205,8 @@ void DirectionsInputDialog::accept()
     QDialog::accept();
 }
 
+//TODO: directions widget taken from GeoServiceDemo (to be removed)
+//      needs to be reimplemented to fit current example
 DirectionsWidget::DirectionsWidget(QWidget *parent) :
         QWidget(parent),
         m_routingManager(0),
@@ -506,6 +509,7 @@ void DirectionsWidget::setCurrentWaypoint(MarkerObject *marker)
 
 void DirectionsWidget::waypointSelected()
 {
+    //TODO: updateWaypoint needs to trigger marker to redo revgeocode
     emit updateWaypoint(currentWaypoint->marker);
     currentWaypoint = 0;
     showDirectionsDialog();

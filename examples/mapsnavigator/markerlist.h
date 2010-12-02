@@ -44,11 +44,11 @@
 
 #include <QWidget>
 
-#include <qgeosearchManager.h>
-#include <qgeosearchReply.h>
+#include <qgeosearchmanager.h>
+#include <qgeosearchreply.h>
 #include <qgeocoordinate.h>
-#include <qgeomapObject.h>
-#include <qgeomapPixmapObject.h>
+#include <qgeomapobject.h>
+#include <qgeomappixmapobject.h>
 #include <qgeoplace.h>
 
 QTM_USE_NAMESPACE
