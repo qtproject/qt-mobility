@@ -17,9 +17,11 @@ class tst_qllcpsocketremote : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+
+    // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void initTestCase();
     void cleanupTestCase();
-    void testCase1();
+    void testCase1();   // handshake 1
     void testCase1_data();
 
 private:
@@ -69,6 +71,9 @@ void tst_qllcpsocketremote::cleanupTestCase()
 */
 void tst_qllcpsocketremote::testCase1()
 {  
+    QString message("handshake 1");
+    QNfcTestUtil::ShowMessage(message);
+
     QFETCH(quint8, port);
     QFETCH(bool, enableWaiterFlag);
 
@@ -117,6 +122,7 @@ void tst_qllcpsocketremote::testCase1_data()
     QTest::newRow("row1") << port << false;
     QTest::newRow("row2") << port << true;
 }
+
 
 
 QTEST_MAIN(tst_qllcpsocketremote);

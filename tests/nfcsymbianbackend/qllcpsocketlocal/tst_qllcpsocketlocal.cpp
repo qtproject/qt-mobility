@@ -19,9 +19,12 @@ class tst_qllcpsocketlocal : public QObject
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
-    void testCase1();
+
+    // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
+    void testCase1();   // handshake 1
     void testCase1_data();
     void testCase2();
+    void testCase3();
 
     void negTestCase1();
     void negTestCase1_data();
@@ -50,7 +53,7 @@ void tst_qllcpsocketlocal::initTestCase()
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QString message("Please touch a NFC device with llcp connection-less mode client enabled: port = 35");
+    QString message("Wait touch");
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
@@ -80,6 +83,9 @@ void tst_qllcpsocketlocal::cleanupTestCase()
 */
 void tst_qllcpsocketlocal::testCase1()
 {
+    QString messageBox("handshake 1");
+    QNfcTestUtil::ShowMessage(messageBox);
+
     QFETCH(quint8, port);
     QFETCH(QString, message);
     QFETCH(bool, enableWaiterFlag);
@@ -153,11 +159,29 @@ void tst_qllcpsocketlocal::testCase2()
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
     QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged()));
-    socket.bind(m_port);
+    bool ret = socket.bind(m_port);
+    QVERIFY(ret);
     QVERIFY(!stateChangedSpy.isEmpty());
     QCOMPARE(socket.state(), QLlcpSocket::BoundState);
 }
 
+
+/*!
+ Description:  native socket deleted during the datagram write
+ TestExpectedResults: should not panic
+*/
+void tst_qllcpsocketlocal::testCase3()
+{
+    QLlcpSocket *socket = new QLlcpSocket(this);
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+
+    QString message("remote socket closed during the datagram write");
+    const char* data = (const char *) message.data();
+    qint64 strSize = message.size();
+    socket->writeDatagram(data,strSize,m_target, m_port);
+    // delete the socket without waiting for datagram written
+    delete socket;
+}
 
 /*!
  Description: bind negative test -invalid port
@@ -211,12 +235,10 @@ void tst_qllcpsocketlocal::negTestCase3()
 {
     QLlcpSocket socket(this);
     // readDatagram must be called before bind
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     QByteArray datagram;
     datagram.resize(127);
     qint64 ret = socket.readDatagram(datagram.data(), datagram.size());
     QVERIFY(ret == -1);
-    QVERIFY(!errorSpy.isEmpty());
 }
 
 /*!

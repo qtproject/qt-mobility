@@ -60,10 +60,18 @@ public:
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
-    void newConnection();
+
+    // ALERT£º Handshake required, do NOT¡¡change the following sequence of testcases.
+
+    // basic acceptance test
+    void newConnection(); //  handshake 1
     void newConnection_data();
-    void newConnection_wait();
+    void newConnection_wait(); // handshake 2
     void newConnection_wait_data();
+    void api_coverage();  // handshake 3
+
+    // nagetive testcases
+    void negTestCase1();  // handshake 4
 };
 
 tst_QLlcpServer::tst_QLlcpServer()
@@ -78,11 +86,10 @@ void tst_QLlcpServer::cleanupTestCase()
 }
 void tst_QLlcpServer::newConnection_data()
 {
+    QString hint = "handshake 1";
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
-    QTest::newRow("0") << TestUri
-            << "QLlcpServer enabled: uri = " + TestUri;
-
+    QTest::newRow("0") << TestUri << hint;
 }
 
 /*!
@@ -109,7 +116,6 @@ void tst_QLlcpServer::newConnection()
     qDebug() << "Create QLlcpServer completed";
     qDebug() << "Start listening...";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-
 
     bool ret = server.listen(uri);
     QVERIFY(ret);
@@ -192,7 +198,6 @@ void tst_QLlcpServer::newConnection_wait()
     QVERIFY(ret);
 
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-
     QNfcTestUtil::ShowMessage(hint);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -255,8 +260,82 @@ void tst_QLlcpServer::newConnection_wait_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("hint");
     QTest::newRow("0") << TestUri
-            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri;
+            << "handshake 2";
     }
+
+
+
+/*!
+ Description: LLCP Server API test & Socket readDatagram API test
+ TestScenario:
+     1) Read two datagrams from llcp client device
+     2) Covered API: readDatagram(), serviceUri(), servicePort(), isListening(), serverError()
+ */
+void tst_QLlcpServer::api_coverage()
+{
+    QString uri = TestUri;
+    QLlcpServer server;
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
+    bool ret = server.listen(uri);
+    QVERIFY(ret);
+
+    QString message("handshake 3");
+    QNfcTestUtil::ShowMessage(message);
+
+    QTRY_VERIFY(!connectionSpy.isEmpty());
+
+    QLlcpSocket *socket = server.nextPendingConnection();
+    QVERIFY(socket != NULL);
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    //Get data from client
+    QTRY_VERIFY(!readyReadSpy.isEmpty());
+
+    qint64 size = socket->bytesAvailable();
+    QTRY_VERIFY(size > 0);
+    QByteArray datagram;
+    datagram.resize(size);
+    qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
+    QVERIFY(readSize != -1);
+
+    QTRY_VERIFY(readyReadSpy.count() == 2);
+    // Read the second datagram
+    datagram.clear();
+    size = socket->bytesAvailable();
+    datagram.resize(size);
+    readSize = socket->readDatagram(datagram.data(), datagram.size());
+    QVERIFY(readSize != -1);
+
+    QCOMPARE(uri,server.serviceUri());
+
+    quint8 unsupportedPort = -1;
+    QCOMPARE(unsupportedPort,server.serverPort());
+
+    QVERIFY(server.isListening() == true);
+    QVERIFY(server.serverError() == QLlcpServer::UnknownSocketError);
+}
+
+
+/*!
+ Description: listen negative test - listen twice
+*/
+void tst_QLlcpServer::negTestCase1()
+{
+    QString message("handshake 4");
+    QNfcTestUtil::ShowMessage(message);
+
+    QString uri = TestUri;
+    QLlcpServer server;
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
+    bool ret = server.listen(uri);
+    QVERIFY(ret);
+
+    ret = server.listen(uri);
+    QVERIFY(ret == false);
+
+    server.close();
+}
+
+
 QTEST_MAIN(tst_QLlcpServer);
 
 #include "tst_qllcpserver.moc"

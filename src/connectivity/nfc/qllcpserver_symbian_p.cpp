@@ -93,7 +93,7 @@ QString QLlcpServerPrivate::serviceUri() const
 
 quint8 QLlcpServerPrivate::serverPort() const
 {
-    return 0;
+    return -1;
 }
 
 bool QLlcpServerPrivate::hasPendingConnections() const

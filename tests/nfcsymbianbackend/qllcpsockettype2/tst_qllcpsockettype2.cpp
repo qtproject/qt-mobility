@@ -52,6 +52,8 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
+Q_DECLARE_METATYPE(QLlcpSocket::State)
+
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 class tst_qllcpsockettype2 : public QObject
@@ -64,10 +66,25 @@ public:
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
-    void echo();
+
+    // ALERT£º Handshake required, do NOT¡¡change the following sequence of testcases.
+
+    // basic acceptance testcases
+    void echo();   // handshake 1
     void echo_data();
-    void echo_wait();
+    void echo_wait();  // handshake 2
     void echo_wait_data();
+    void api_coverage();  // handshake 3
+    void connectTest();   // handshake 4
+
+    // nagetive testcases
+    void negTestCase1();
+    void negTestCase1_data();
+    void negTestCase2();
+    void negTestCase3();
+
+ private:
+    QNearFieldTarget *m_target; // not own
 };
 
 tst_qllcpsockettype2::tst_qllcpsockettype2()
@@ -77,23 +94,35 @@ tst_qllcpsockettype2::tst_qllcpsockettype2()
 
 void tst_qllcpsockettype2::initTestCase()
 {
+    QString message("Please touch a NFC device with llcp client enabled");
+    QNearFieldManager nfcManager;
+    QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
+    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
+
+    QNfcTestUtil::ShowMessage(message);
+    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
+
+    QNearFieldTarget *m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
+    QVERIFY(m_target!=NULL);
+    QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 }
+
 
 void tst_qllcpsockettype2::cleanupTestCase()
 {
 }
 
+
 /*!
  Description: Unit test for NFC LLCP socket async functions
 
- TestScenario: 1. Touch a NFC device with LLCP Echo service actived
-               2. Echo client will connect to the Echo server
-               3. Echo client will send the "echo" message to the server
-               4. Echo client will receive the same message echoed from the server
-               5. Echo client will disconnect the connection.
+ TestScenario:
+               1. Echo client will connect to the Echo server
+               2. Echo client will send the "echo" message to the server
+               3. Echo client will receive the same message echoed from the server
+               4. Echo client will disconnect the connection.
 
  TestExpectedResults:
-               1. The connection successfully set up.
                2. The message has be sent to server.
                3. The echoed message has been received from server.
                4. Connection disconnected and NO error signals emitted.
@@ -101,33 +130,23 @@ void tst_qllcpsockettype2::cleanupTestCase()
 void tst_qllcpsockettype2::echo()
 {
     QFETCH(QString, uri);
-    QFETCH(QString, hint);
     QFETCH(QString, echo);
-    QNearFieldManager nfcManager;
-    QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QNfcTestUtil::ShowMessage(hint);
-    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
-
-    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
-    QVERIFY(target!=NULL);
-    QVERIFY(target->accessMethods() & QNearFieldTarget::LlcpAccess);
+    QString message("handshake 1");
+    QNfcTestUtil::ShowMessage(message);
 
     QLlcpSocket socket(this);
-
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
 
-    socket.connectToService(target, uri);
+    socket.connectToService(m_target, uri);
 
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
     //Send data to server
-
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
@@ -176,12 +195,10 @@ void tst_qllcpsockettype2::echo()
 void tst_qllcpsockettype2::echo_data()
 {
     QTest::addColumn<QString>("uri");
-    QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
             << "Client: uri = echo"
             << "echo";
-
 }
 
 /*!
@@ -202,24 +219,15 @@ void tst_qllcpsockettype2::echo_data()
 void tst_qllcpsockettype2::echo_wait()
     {
     QFETCH(QString, uri);
-    QFETCH(QString, hint);
     QFETCH(QString, echo);
-    QNearFieldManager nfcManager;
-    QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QNfcTestUtil::ShowMessage(hint);
-    QTRY_VERIFY(!targetDetectedSpy.isEmpty());
-
-    QNearFieldTarget *target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
-    QVERIFY(target!=NULL);
-    QVERIFY(target->accessMethods() & QNearFieldTarget::LlcpAccess);
+    QString message("handshake 2");
+    QNfcTestUtil::ShowMessage(message);
 
     QLlcpSocket socket(this);
-
     const int Timeout = 10 * 1000;
 
-    socket.connectToService(target, uri);
+    socket.connectToService(m_target, uri);
 
     bool ret = socket.waitForConnected(Timeout);
     QVERIFY(ret);
@@ -282,11 +290,168 @@ void tst_qllcpsockettype2::echo_wait()
 void tst_qllcpsockettype2::echo_wait_data()
 {
     QTest::addColumn<QString>("uri");
-    QTest::addColumn<QString>("hint");
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
-            << "Please touch a NFC device with llcp client enabled: uri = " + TestUri
             << "echo";
+}
+
+
+
+/*!
+ Description: LLCP Socket API & State Machine test (ReadDatagram tested in server side)
+ TestScenario:
+     Covered API: state(), error(), writeDatagram(const char *data, qint64 size);
+                  writeDatagram(const QByteArray &datagram);
+ */
+void tst_qllcpsockettype2::api_coverage()
+{
+
+    QString message("handshake 3");
+    QNfcTestUtil::ShowMessage(message);
+
+    QLlcpSocket socket(this);
+    QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
+    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged()));
+
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    socket.connectToService(m_target, TestUri);
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    QVERIFY(stateChangedSpy.count() == 2);
+    QLlcpSocket::State  state1 = stateChangedSpy.first().at(0).value<QLlcpSocket::State>();
+    QLlcpSocket::State  state2 = stateChangedSpy.first().at(1).value<QLlcpSocket::State>();
+    QCOMPARE(state1, QLlcpSocket::ConnectingState);
+    QCOMPARE(state2, QLlcpSocket::ConnectedState);
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    message = "Connection oriented write test string I";
+    const char* data = (const char *) message.data();
+    quint64 ret = socket.writeDatagram(data,message.size());
+    QTRY_VERIFY(bytesWrittenSpy.count()==1);
+
+    //Write datagram using another writeDatagram API
+    QByteArray datagram("Connection oriented write test string II");
+    qint64 readSize = socket.writeDatagram(datagram);
+    QVERIFY(readSize != -1);
+    QTRY_VERIFY(bytesWrittenSpy.count()==2);
+
+    stateChangedSpy.clear();
+    socket.disconnectFromService();
+    QVERIFY(stateChangedSpy.count() == 2);
+    state1 = stateChangedSpy.first().at(0).value<QLlcpSocket::State>();
+    state2 = stateChangedSpy.first().at(1).value<QLlcpSocket::State>();
+    QCOMPARE(state1, QLlcpSocket::ClosingState);
+    QCOMPARE(state2, QLlcpSocket::UnconnectedState);
+
+    QCOMPARE(socket.error(),QLlcpSocket::UnknownSocketError);
+
+    QTRY_VERIFY(ret != -1);
+}
+
+
+/*!
+ Description:  connect to Service testcases
+ TestScenario:  1) double connect cause failure
+                2) disconnect the connecting socket should not cause failure
+                3) readDatagram after disconnection will cause failure.
+ */
+void tst_qllcpsockettype2::connectTest()
+{
+    QString message("handshake 4");
+    QNfcTestUtil::ShowMessage(message);
+
+    QLlcpSocket socket(this);
+    QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
+    QSignalSpy errorSpy(&socket, SIGNAL(error()));
+
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    socket.connectToService(m_target, TestUri);
+
+    //connect to the service again when previous one is connecting
+    socket.connectToService(m_target, TestUri);
+    QVERIFY(!errorSpy.isEmpty());
+
+    errorSpy.clear();
+    // make sure it is still connecting
+    if(connectedSpy.isEmpty())
+    {
+       socket.disconnectFromService();
+    }
+     QVERIFY(errorSpy.isEmpty());
+
+     //double disconnect should not cause error
+     socket.disconnectFromService();
+     QVERIFY(errorSpy.isEmpty());
+
+     // readDatagram must be called before successul connection to server
+     QByteArray datagram;
+     datagram.resize(127);
+     qint64 ret = socket.readDatagram(datagram.data(), datagram.size());
+     QVERIFY(ret == -1);
+}
+
+
+/*!
+ Description:  negative test - connect to an invalid service
+ TODO: this test can not be realized,since the port num is hardcode at this time
+*/
+void tst_qllcpsockettype2::negTestCase1()
+{
+}
+
+/*!
+ invalid service name pool
+*/
+void tst_qllcpsockettype2::negTestCase1_data()
+{
+    QTest::addColumn<QString>("URI");
+    QString invalidService = "InvalidURI";
+    QTest::newRow("row1") << invalidService;
+}
+
+/*!
+ Description: readDatagram/writeDatagram negative test - read/write without connectToService
+*/
+void tst_qllcpsockettype2::negTestCase2()
+{
+    QLlcpSocket socket(this);
+    QByteArray datagram("Connection oriented negTestCase2");
+    quint64 ret = socket.writeDatagram(datagram);
+    QTRY_VERIFY(ret == -1);
+    ret = socket.readDatagram(datagram.data(),datagram.size());
+    QTRY_VERIFY(ret == -1);
+}
+
+
+/*!
+ Description: negative testcase II - invalid usage of connection-less API
+*/
+void tst_qllcpsockettype2::negTestCase3()
+{
+    QLlcpSocket socket(this);
+
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    bool ret = socket.bind(35);
+    QVERIFY(ret == false);
+
+    ret = socket.hasPendingDatagrams();
+    QVERIFY(ret == false);
+
+    qint64 size = socket.pendingDatagramSize();
+    QVERIFY(size == -1);
+
+    QString message = "Oops, Invalid usage for writeDatagram";
+    const char* data = (const char *) message.data();
+    qint64 strSize = message.size();
+    size = socket.writeDatagram(data,strSize,m_target, 35);
+    QVERIFY(size == -1);
+    QByteArray datagram(data);
+    size = socket.writeDatagram(datagram,m_target, 35);
+    QVERIFY(size == -1);
+
+    quint8 port = 35;
+    size = socket.readDatagram(datagram.data(),datagram.size(),&m_target, &port);
+    QVERIFY(size == -1);
 }
 
 QTEST_MAIN(tst_qllcpsockettype2);
