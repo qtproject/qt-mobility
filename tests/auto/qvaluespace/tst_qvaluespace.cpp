@@ -329,7 +329,7 @@ void tst_QValueSpace::availableLayers()
     QVERIFY(layers.contains(QVALUESPACE_GCONF_LAYER));
 #endif
 
-#ifdef Q_WS_MAEMO_6
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
     QVERIFY(layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));
 #else
     QVERIFY(!layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));

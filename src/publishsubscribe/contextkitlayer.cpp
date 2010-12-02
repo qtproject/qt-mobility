@@ -46,7 +46,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <contextproperty.h>
-#include <contextprovider.h>
+#include <ContextProvider>
 #include <contextregistryinfo.h>
 
 QTM_BEGIN_NAMESPACE
