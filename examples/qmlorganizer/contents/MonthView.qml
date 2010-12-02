@@ -50,41 +50,7 @@ Rectangle  {
     property int startWeekday:startDay.getDay()
 
     anchors.fill: parent
-    //    GridView {
-    //        id:container
-    //        anchors.fill: parent
-    //        cellHeight: container.height/7
-    //        cellWidth: container.width/7
-    //        clip: true
-    //        focus: true
-    //        opacity : parent.opacity
-    //        property variant weekDays:["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-    //        preferredHighlightBegin: cellHeight.height * 0.5
-    //        preferredHighlightEnd: preferredHighlightBegin
-    //        highlightFollowsCurrentItem : true
-    //        highlightMoveDuration: 200
-    //        keyNavigationWraps : true
-
-    //        highlight:Rectangle {
-    //            width: container.cellWidth
-    //            height: container.cellHeight
-    //            color: "lightsteelblue"
-    //            radius: 5
-    //        }
-
-    //        model: 49
-    //        delegate:Rectangle {
-    //            width: container.width / 7
-    //            height: container.height / 7
-    //            color: index <=7? "lightgray" : Month.getColorOfDay(startDay,   index - startWeekday +1)
-    //            border.color: index <=7? "#3f4947" : "black"
-    //            Text { text: index <=7? container.weekDays[index] : Month.getDayOfMonth(startDay,   index - 7 - startWeekday +1)
-    //                   font.pointSize: 10
-    //                   anchors.centerIn: parent
-    //            }
-    //        }
-    //    }
     Grid {
         id:container
         anchors.fill: parent
@@ -121,7 +87,7 @@ Rectangle  {
                                   if (Month.isToday(startDay,   index - startWeekday +1))
                                       return "lightsteelblue";
                                   else if (calendar.organizer.containsItems(Month.dateOfThisDay(startDay,   index - startWeekday +1)))
-                                      return "steelblue";
+                                      return "yellow";
                                   else
                                       return Month.getColorOfDay(startDay,   index - startWeekday +1);
                               }

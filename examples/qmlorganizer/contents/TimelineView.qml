@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
+import QtMobility.organizer 1.1
 import "timeline.js" as Timeline
 
 Rectangle {
@@ -97,7 +98,9 @@ Rectangle {
         Component {
             id: dayHighlight
             Rectangle {
-                width: dayList.width; height: dayList.height /7 ; color: "lightsteelblue" ;radius: 5
+                width: dayList.width;
+                height: dayList.height /7 ;
+                color: "lightsteelblue" ;radius: 5
             }
         }
 
@@ -105,7 +108,7 @@ Rectangle {
             id: dayDelegate
             Item {
                 width : dayList.width
-                height : dayList.height / 7
+                height : childrenRect.height
                 Column {
                     Rectangle {
                         height : 1
@@ -115,10 +118,31 @@ Rectangle {
                     Text {
                         text: day
                     }
+                    Repeater {
+                        focus: true
+                        model:calendar.organizer.itemIds(new Date(calendar.day.getFullYear(),
+                                                                                                        calendar.day.getMonth(),
+                                                                                                        index + 1))
+
+                        Text {
+                            clip: true
+                            focus: true
+                            property OrganizerItem oi: calendar.organizer.item(modelData)
+                            text: "<a href=\"#\">" + oi.displayLabel + "</a>"
+                            onLinkActivated: {
+                                    console.log(oi.type + "," + oi.displayLabel + oi.description);
+                                   //TODO: goto details view
+                            }
+                        }
+                    }
                 }
                 MouseArea {
                     anchors.fill: parent
                     onClicked : dayList.currentIndex = index
+                    onDoubleClicked: {
+                        //calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
+                        calendar.state = "DayView"
+                    }
                 }
             }
         }

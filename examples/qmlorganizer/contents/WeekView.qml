@@ -74,29 +74,55 @@ Rectangle
                 ListElement {day : "Saturday"}
          }
 
-        delegate :  Component {
-            Item {
+        delegate : Rectangle {
+                id:weekDayDelegate
                 width : dayList.width
-                height : dayList.height / 7
-                Column {
-                    Rectangle {
-                        height : 1
-                        width : dayList.width
-                        color : "black"
+                height :  childrenRect.height > dayList.height / 7  ? childrenRect.height  : dayList.height / 7
+               focus: true
+
+               FocusScope {
+                   focus: true
+                    Column {
+                        focus: true
+                        Rectangle {
+                            height : 2
+                            width : dayList.width
+                            color : "lightsteelblue"
+                        }
+                        Text {
+                            text: day
+                        }
+
+                        Repeater {
+                            focus: true
+                            model:calendar.organizer.itemIds(new Date(calendar.day.getFullYear(),
+                                                                                                            calendar.day.getMonth(),
+                                                                                                            index - calendar.day.getDay() + calendar.day.getDate()))
+
+                            Text {
+                                clip: true
+                                focus: true
+                                property OrganizerItem oi: calendar.organizer.item(modelData)
+                                text: "<a href=\"#\">" + oi.displayLabel + "</a>"
+                                onLinkActivated: {
+                                        console.log(oi.type + "," + oi.displayLabel + oi.description);
+                                        //TODO: goto details view
+                                }
+                            }
+                        }
                     }
-                    Text {
-                        text: day
-                    }
-                }
-                MouseArea {
+               }
+               MouseArea {
                     anchors.fill: parent
-                    onClicked : dayList.currentIndex = index
+                    onClicked: {
+                        dayList.currentIndex = index
+                        weekDayDelegate.forceActiveFocus()
+                    }
                     onDoubleClicked: {
                         calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
                         calendar.state = "DayView"
                     }
                 }
-            }
         }
 
         highlight:  Component {
