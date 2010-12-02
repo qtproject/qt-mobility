@@ -527,6 +527,25 @@ bool QDeclarativeOrganizerModel::containsItems(const QDate& start, const QDate& 
     return false;
 }
 
+QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
+{
+    if (d->m_itemMap.contains(id))
+        return d->m_itemMap.value(id);
+}
+
+QStringList QDeclarativeOrganizerModel::itemIds(const QDate& start, const QDate& end)
+{
+    //TODO: quick search this
+    QStringList ids;
+    QDate endDate = end.isNull()? start:end;
+    foreach (QDeclarativeOrganizerItem* item, d->m_items) {
+        QDate dt = itemEntryDateTime(item).date();
+        if ( dt >= start && dt <= endDate)
+            ids << item->itemId();
+    }
+    return ids;
+}
+
 void QDeclarativeOrganizerModel::fetchAgain()
 {
     cancelUpdate();

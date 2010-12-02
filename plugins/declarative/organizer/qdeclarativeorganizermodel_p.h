@@ -127,6 +127,8 @@ public:
     Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
     Q_INVOKABLE bool containsItems(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE QDeclarativeOrganizerItem* item(const QString& id);
+    Q_INVOKABLE QStringList itemIds(const QDate& start, const QDate& end = QDate());
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
 
