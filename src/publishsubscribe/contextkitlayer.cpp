@@ -151,7 +151,7 @@ public:
     ~ContextKitHandle();
 
     bool value(const QString &path, QVariant *data);
-    bool setValue(const QString &path, QVariant &data);
+    bool setValue(const QString &path, const QVariant &data);
     bool unsetValue(const QString &path);
     void subscribe();
     void unsubscribe();
@@ -202,8 +202,7 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
 
     QString domainName = comify(QCoreApplication::organizationDomain());
     if (domainName.isEmpty()) {
-        setStatus(QSettings::AccessError);
-        domainName = QLatin1String("unknown-organization.trolltech.com");
+        domainName = QLatin1String("unknown-organization.nokia.com");
     }
 
     while ((nextDot = domainName.indexOf(QLatin1Char('.'), curPos)) != -1) {
@@ -242,11 +241,11 @@ bool ContextKitHandle::value(const QString &path, QVariant *data)
         return false;
 }
 
-bool ContextKitHandle::setValue(const QString &path, QVariant &data)
+bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
 {
     ContextProvider::Property *p = provProps.value(path.mid(1));
     if (!p) {
-        p = new ContextProvider::Property(service, path.mid(1));
+        p = new ContextProvider::Property(*service, path.mid(1));
         provProps.insert(path.mid(1), p);
     }
 
@@ -258,7 +257,7 @@ bool ContextKitHandle::unsetValue(const QString &path)
 {
     ContextProvider::Property *p = provProps.value(path.mid(1));
     if (!p) {
-        p = new ContextProvider::Property(service, path.mid(1));
+        p = new ContextProvider::Property(*service, path.mid(1));
         provProps.insert(path.mid(1), p);
     }
 
@@ -361,7 +360,7 @@ ContextKitLayer *ContextKitLayer::instance()
     return contextKitLayer();
 }
 
-ContextKitHandle *handleToCKHandle(Handle handle)
+ContextKitHandle *ContextKitLayer::handleToCKHandle(Handle handle)
 {
     ContextKitHandle *ckh = NULL;
     if (handle != InvalidHandle)
