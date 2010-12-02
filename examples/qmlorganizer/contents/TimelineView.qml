@@ -45,20 +45,20 @@ Rectangle {
     id : timelineView
     anchors.fill : parent
     opacity : parent.opacity
-    property int year:topItem.day.getFullYear()
-    property int month:topItem.day.getMonth()
-    property int day:topItem.day.getDate()
-    onOpacityChanged : {
-        if (opacity != 0) {
-            timelineView.year = topItem.day.getFullYear();
-            timelineView.month = topItem.day.getMonth();
-            timelineView.day = topItem.day.getDate();
-            dayList.currentIndex = timelineView.day - 1;
-            monthList.currentIndex = timelineView.month;
-            yearList.currentIndex = timelineView.year - yearModel.start;
-       }
+    property int year
+    property int month
+    property int day
+    Connections {
+        target: topItem
+        onDayChanged : {
+            year = topItem.day.getFullYear();
+            month = topItem.day.getMonth();
+            day = topItem.day.getDate();
+            dayList.currentIndex = day - 1;
+            monthList.currentIndex = month;
+            yearList.currentIndex = year - yearModel.start;
+        }
     }
-
     //Day view
     Rectangle {
         id: dayView
