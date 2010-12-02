@@ -78,6 +78,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_busHelper(0),
      m_playbin(0),
      m_usePlaybin2(false),
+     m_usingColorspaceElement(false),
      m_videoSink(0),
      m_pendingVideoSink(0),
      m_nullVideoSink(0),
@@ -122,12 +123,13 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 
     m_videoIdentity = GST_ELEMENT(g_object_new(gst_video_connector_get_type(), 0));
     m_colorSpace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-vo");
-    m_videoScale = gst_element_factory_make("videoscale","videoscale-vo");
+    gst_object_ref(GST_OBJECT(m_colorSpace));
+
     m_nullVideoSink = gst_element_factory_make("fakesink", NULL);
     g_object_set(G_OBJECT(m_nullVideoSink), "sync", true, NULL);
     gst_object_ref(GST_OBJECT(m_nullVideoSink));
-    gst_bin_add_many(GST_BIN(m_videoOutputBin), m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
-    gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoScale, m_nullVideoSink, NULL);
+    gst_bin_add_many(GST_BIN(m_videoOutputBin), m_videoIdentity, m_nullVideoSink, NULL);
+    gst_element_link(m_videoIdentity, m_nullVideoSink);
 
     m_videoSink = m_nullVideoSink;
 
@@ -178,6 +180,7 @@ QGstreamerPlayerSession::~QGstreamerPlayerSession()
         delete m_busHelper;
         gst_object_unref(GST_OBJECT(m_bus));
         gst_object_unref(GST_OBJECT(m_playbin));
+        gst_object_unref(GST_OBJECT(m_colorSpace));
         gst_object_unref(GST_OBJECT(m_nullVideoSink));
         gst_object_unref(GST_OBJECT(m_videoOutputBin));
     }
@@ -403,14 +406,29 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
         m_pendingVideoSink = 0;        
         gst_element_set_state(m_videoSink, GST_STATE_NULL);
         gst_element_set_state(m_playbin, GST_STATE_NULL);
-        gst_element_unlink(m_videoScale, m_videoSink);
+
+        if (m_usingColorspaceElement) {
+            gst_element_unlink(m_colorSpace, m_videoSink);
+            gst_bin_remove(GST_BIN(m_videoOutputBin), m_colorSpace);
+        } else {
+            gst_element_unlink(m_videoIdentity, m_videoSink);
+        }
 
         gst_bin_remove(GST_BIN(m_videoOutputBin), m_videoSink);
 
         m_videoSink = videoSink;
 
         gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
-        gst_element_link(m_videoScale, m_videoSink);
+
+        m_usingColorspaceElement = (m_videoSink != m_nullVideoSink) &&
+                m_renderer->isColorSpaceElementRequired();
+
+        if (m_usingColorspaceElement) {
+            gst_bin_add(GST_BIN(m_videoOutputBin), m_colorSpace);
+            gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoSink, NULL);
+        } else {
+            gst_element_link(m_videoIdentity, m_videoSink);
+        }
 
         switch (m_pendingState) {
         case QMediaPlayer::PausedState:
@@ -487,11 +505,16 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
         return;
     }  
 
-    gst_element_set_state(m_colorSpace, GST_STATE_NULL);
-    gst_element_set_state(m_videoScale, GST_STATE_NULL);
-    gst_element_set_state(m_videoSink, GST_STATE_NULL);
+    if (m_usingColorspaceElement) {
+        gst_element_set_state(m_colorSpace, GST_STATE_NULL);
+        gst_element_set_state(m_videoSink, GST_STATE_NULL);
 
-    gst_element_unlink(m_videoScale, m_videoSink);
+        gst_element_unlink(m_colorSpace, m_videoSink);
+        gst_bin_remove(GST_BIN(m_videoOutputBin), m_colorSpace);
+    } else {
+        gst_element_set_state(m_videoSink, GST_STATE_NULL);
+        gst_element_unlink(m_videoIdentity, m_videoSink);
+    }
 
     gst_bin_remove(GST_BIN(m_videoOutputBin), m_videoSink);
 
@@ -499,9 +522,20 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
     m_pendingVideoSink = 0;
 
     gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
-    if (!gst_element_link(m_videoScale, m_videoSink))
-        qWarning() << "Linking video output element failed";
 
+    m_usingColorspaceElement = (m_videoSink != m_nullVideoSink) &&
+            m_renderer->isColorSpaceElementRequired();
+
+    bool linked = false;
+    if (m_usingColorspaceElement) {
+        gst_bin_add(GST_BIN(m_videoOutputBin), m_colorSpace);
+        linked = gst_element_link_many(m_videoIdentity, m_colorSpace, m_videoSink, NULL);
+    } else {
+        linked = gst_element_link(m_videoIdentity, m_videoSink);
+    }
+
+    if (!linked)
+        qWarning() << "Linking video output element failed";
 
     qDebug() << "notify the video connector it has to emit a new segment message...";
     //it's necessary to send a new segment event just before
@@ -522,8 +556,9 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
         break;
     }
 
-    gst_element_set_state(m_colorSpace, state);
-    gst_element_set_state(m_videoScale, state);
+    if (m_usingColorspaceElement)
+        gst_element_set_state(m_colorSpace, state);
+
     gst_element_set_state(m_videoSink, state);    
 
     // Set state change that was deferred due the video output
