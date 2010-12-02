@@ -65,7 +65,7 @@ Rectangle {
         Button { id: monthButton; text: "Month"; onClicked: topItem.state="MonthView";}
         Button { id: weekButton; text: "Week";onClicked: topItem.state="WeekView";}
         Button { id: dayButton; text: "Day";onClicked: topItem.state="DayView";}
-        Button { id: agenderButton; text: "Agender";onClicked: topItem.state="AgenderView";}
+        //Button { id: agenderButton; text: "Agender";onClicked: topItem.state="AgenderView";}
         Button { id: timelineButton; text: "Timeline";onClicked: topItem.state="TimelineView";}
     }
 }

@@ -61,7 +61,41 @@ Rectangle  {
     }
 
     anchors.fill: parent
+    //    GridView {
+    //        id:container
+    //        anchors.fill: parent
+    //        cellHeight: container.height/7
+    //        cellWidth: container.width/7
+    //        clip: true
+    //        focus: true
+    //        opacity : parent.opacity
+    //        property variant weekDays:["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
+    //        preferredHighlightBegin: cellHeight.height * 0.5
+    //        preferredHighlightEnd: preferredHighlightBegin
+    //        highlightFollowsCurrentItem : true
+    //        highlightMoveDuration: 200
+    //        keyNavigationWraps : true
+
+    //        highlight:Rectangle {
+    //            width: container.cellWidth
+    //            height: container.cellHeight
+    //            color: "lightsteelblue"
+    //            radius: 5
+    //        }
+
+    //        model: 49
+    //        delegate:Rectangle {
+    //            width: container.width / 7
+    //            height: container.height / 7
+    //            color: index <=7? "lightgray" : Month.getColorOfDay(startDay,   index - startWeekday +1)
+    //            border.color: index <=7? "#3f4947" : "black"
+    //            Text { text: index <=7? container.weekDays[index] : Month.getDayOfMonth(startDay,   index - 7 - startWeekday +1)
+    //                   font.pointSize: 10
+    //                   anchors.centerIn: parent
+    //            }
+    //        }
+    //    }
     Grid {
         id:container
         anchors.fill: parent
@@ -69,25 +103,57 @@ Rectangle  {
         Repeater {
             model:["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
             Rectangle { width: container.width / 7
-                        height: container.height / 7
+                        height: 35
                         color: "lightgray"
                         border.color: "#3f4947"
                         Text { text: modelData
-                               font.pointSize: 10
-                               anchors.centerIn: parent
+                            font.bold: true
+                            verticalAlignment: Text.AlignVCenter
+                            style: Text.Sunken
+                            styleColor: "#1365f3"
+                            font.pointSize: 14
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                topItem.state = "WeekView";
+                            }
                         }
             }
         }
 
         Repeater { model: 42
-                   Rectangle { width: container.width / 7
-                               height: container.height / 7
-                               color: Month.getColorOfDay(startDay,   index - startWeekday +1)
-                               border.color: "black"
-                               Text { text: Month.getDayOfMonth(startDay,   index - startWeekday +1)
-                                      font.pointSize: 10
-                                      anchors.centerIn: parent
-                               }
+                   Rectangle {
+                       id:dayContainer
+                       width: container.width / 7
+                       height: (container.height - 35) / 6
+                       color: Month.getColorOfDay(startDay,   index - startWeekday +1)
+                       border.color: "black"
+                       Text {
+                           color: "#6ba24b";
+                           text: Month.getDayOfMonth(startDay,   index - startWeekday +1)
+                           font.bold: true
+                           style: Text.Raised
+                           font.pointSize: 12
+                           anchors.centerIn: parent
+                       }
+                       MouseArea {
+                           hoverEnabled:true
+                           anchors.fill: parent
+                           onEntered: {
+                               dayContainer.border.color = "#1365f3";
+                               dayContainer.border.width = 2;
+                           }
+                           onExited: {
+                               dayContainer.border.color = "black";
+                               dayContainer.border.width = 1;
+                           }
+                           onClicked: {
+                               topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), index - startWeekday +1);
+                               topItem.state = "DayView";
+                           }
+                       }
                    }
         }
     }

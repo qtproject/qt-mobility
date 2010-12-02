@@ -45,7 +45,7 @@ Rectangle
 {
     id:weekView
     anchors.fill: parent
-
+    property int day:0
     ListView {
         id : dayList
         anchors.fill: parent
@@ -57,6 +57,13 @@ Rectangle
         highlightFollowsCurrentItem : true
         highlightMoveSpeed : 2000
         keyNavigationWraps : true
+        Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
+        currentIndex: day
+        onOpacityChanged: {
+            //when back to week view, select the current day.
+            if (opacity != 0)
+                currentIndex = day;
+        }
 
         model : ListModel {
                 ListElement {day : "Sunday"}
@@ -86,6 +93,7 @@ Rectangle
                     anchors.fill: parent
                     onClicked : dayList.currentIndex = index
                     onDoubleClicked: {
+                        topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth(), topItem.day.getDate() + dayList.currentIndex - weekView.day);
                         topItem.state = "DayView"
                     }
                 }
@@ -102,7 +110,6 @@ Rectangle
             }
         }
 
-        Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
     }
 }
 

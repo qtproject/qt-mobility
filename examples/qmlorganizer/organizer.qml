@@ -48,6 +48,9 @@ Rectangle {
          height: 640
          property date day: new Date()
          property string status:day.toDateString()
+         onDayChanged: {
+             topItem.status = day.toDateString();
+         }
 
         color: "#343434";
         Image { source: "contents/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 1 }
@@ -68,7 +71,7 @@ Rectangle {
                 } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
                     topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() - 1);
                 }
-               topItem.status = day.toDateString();
+
             }
             onRightClicked: {
                 if (topItem.state == "MonthView") {
@@ -78,7 +81,6 @@ Rectangle {
                 } else if (topItem.state == "DayView" || topItem.state == "TimelineView") {
                     topItem.day = new Date(topItem.day.getFullYear(), topItem.day.getMonth() , topItem.day.getDate() + 1);
                 }
-                topItem.status = day.toDateString();
             } //rightClick
         }
 
@@ -95,7 +97,7 @@ Rectangle {
                 NumberAnimation {
                     properties: "opacity"
                     easing.type: "Linear"
-                    duration: 100
+                    duration: 10
                 }
             }
         ]
@@ -128,6 +130,7 @@ Rectangle {
                 height: topItem.height - menuBar.height - statusBar.height;
                 opacity: 0;
                 anchors.fill: contentArea;
+                day: topItem.day.getDay();
             }
             DayView {
                 id: dayView;
