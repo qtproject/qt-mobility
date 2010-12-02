@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,60 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMDISPLAYINFO_H
-#define QSYSTEMDISPLAYINFO_H
 
-#include <QObject>
-#include "qmobilityglobal.h"
+#ifndef MAINWINDOW_H_
+#define MAINWINDOW_H_
 
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+#include "directionswidget.h"
+#include "mapswidget.h"
+#include "markerlist.h"
+#include "searchwidget.h"
 
-class QSystemDisplayInfoPrivate;
+#include <QMainWindow>
 
-class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
+#include <qnetworksession.h>
+#include <qgeoserviceprovider.h>
+
+QTM_USE_NAMESPACE
+
+class MainWindow: public QMainWindow
 {
     Q_OBJECT
-    Q_ENUMS(DisplayOrientation)
-    Q_ENUMS(BacklightState)
 
 public:
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-    explicit QSystemDisplayInfo(QObject *parent = 0);
-    ~QSystemDisplayInfo();
+public slots:
+    void setProvider();
+    void networkSessionOpened();
+    void error(QNetworkSession::SessionError error);
 
-    enum DisplayOrientation {
-        Unknown = 0,
-        Landscape,
-        Portrait,
-        InvertedLandscape,
-        InvertedPortrait
-    };
+private slots:
+    void showSearchDialog(MarkerObject *marker);
+    void addSearchMarker(const QGeoCoordinate &coord);
+    void addSearchMarker(const QString &address);
+    void selectWaypointMarker(MarkerObject *marker);
 
-    enum BacklightState {
-        BacklightStateUnknown = -1,
-        BacklightStateOff,
-        backlightStateDimmed,
-        backlightStateOn
-    };
+private:
+    QNetworkSession *m_session;
+    QGeoServiceProvider *m_serviceProvider;
 
-    static int displayBrightness(int screen);
-    static int colorDepth(int screen);
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
-
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
-
+    MarkerList *m_markers;
+    MapsWidget *m_mapsWidget;
+    SearchWidget *m_searchWidget;
+    DirectionsWidget *m_directionsWidget;
 };
 
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QSYSTEMDISPLAYINFO_H
+#endif /* MAINWINDOW_H_ */

@@ -133,12 +133,11 @@ void tst_QGeoTiledMappingManagerEngine::centering()
     painter->end();
 
     QImage im = pm.toImage();
-    TilePixelValue tpv;
-    tpv.rgb = im.pixel(250,250);
+    TilePixelValue tpv(im.pixel(250,250));
 
-    QCOMPARE(tpv.zoom, static_cast<uint>(zoom));
-    QCOMPARE(tpv.px, static_cast<uint>(centerPixel.x()));
-    QCOMPARE(tpv.py, static_cast<uint>(centerPixel.y()));
+    QCOMPARE(tpv.zoom(), static_cast<uint>(zoom));
+    QCOMPARE(tpv.px(), static_cast<uint>(centerPixel.x()));
+    QCOMPARE(tpv.py(), static_cast<uint>(centerPixel.y()));
 }
 
 /*!
@@ -167,15 +166,15 @@ void tst_QGeoTiledMappingManagerEngine::stitching()
     uint x = 120;
     int px = 242;
     for (; x < 130; x++, px++) {
-        tpv.rgb = im.pixel(px, 255);
-        QCOMPARE(tpv.px, x);
+        tpv.setRgb(im.pixel(px, 255));
+        QCOMPARE(tpv.px(), x);
     }
 
     uint y = 512;
     int py = 250;
     for (; y < 512+150; y++, py++) {
-        tpv.rgb = im.pixel(312, py);
-        QCOMPARE(tpv.py, y);
+        tpv.setRgb(im.pixel(312, py));
+        QCOMPARE(tpv.py(), y);
     }
 
 }
@@ -215,12 +214,11 @@ void tst_QGeoTiledMappingManagerEngine::zoomLevels()
     painter->end();
 
     QImage im = pm.toImage();
-    TilePixelValue tpv;
-    tpv.rgb = im.pixel(250,250);
+    TilePixelValue tpv(im.pixel(250,250));
 
-    QCOMPARE(tpv.zoom, static_cast<uint>(zoom));
-    QCOMPARE(tpv.px, midx);
-    QCOMPARE(tpv.py, midy);
+    QCOMPARE(tpv.zoom(), static_cast<uint>(zoom));
+    QCOMPARE(tpv.px(), midx);
+    QCOMPARE(tpv.py(), midy);
 }
 
 void tst_QGeoTiledMappingManagerEngine::sizes_data()
@@ -277,22 +275,21 @@ void tst_QGeoTiledMappingManagerEngine::sizes()
     painter->end();
 
     QImage im = pm.toImage();
-    TilePixelValue tpv;
-    tpv.rgb = im.pixel(width/2, height/2);
+    TilePixelValue tpv(im.pixel(width/2, height/2));
 
-    QCOMPARE(tpv.zoom, 3u);
-    QCOMPARE(tpv.px, static_cast<uint>(center.x()));
-    QCOMPARE(tpv.py, static_cast<uint>(center.y()));
+    QCOMPARE(tpv.zoom(), 3u);
+    QCOMPARE(tpv.px(), static_cast<uint>(center.x()));
+    QCOMPARE(tpv.py(), static_cast<uint>(center.y()));
 
-    tpv.rgb = im.pixel(0, 0);
-    QCOMPARE(tpv.zoom, 3u);
-    QCOMPARE(tpv.px, static_cast<uint>(topLeft.x()));
-    QCOMPARE(tpv.py, static_cast<uint>(topLeft.y()));
+    tpv.setRgb(im.pixel(0, 0));
+    QCOMPARE(tpv.zoom(), 3u);
+    QCOMPARE(tpv.px(), static_cast<uint>(topLeft.x()));
+    QCOMPARE(tpv.py(), static_cast<uint>(topLeft.y()));
 
-    tpv.rgb = im.pixel(width-1, 0);
-    QCOMPARE(tpv.zoom, 3u);
-    QCOMPARE(tpv.px, static_cast<uint>(topRight.x()));
-    QCOMPARE(tpv.py, static_cast<uint>(topRight.y()));
+    tpv.setRgb(im.pixel(width-1, 0));
+    QCOMPARE(tpv.zoom(), 3u);
+    QCOMPARE(tpv.px(), static_cast<uint>(topRight.x()));
+    QCOMPARE(tpv.py(), static_cast<uint>(topRight.y()));
 }
 
 /*!
