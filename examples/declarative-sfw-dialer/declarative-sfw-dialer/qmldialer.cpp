@@ -43,7 +43,6 @@
 #include <QtDeclarative/QDeclarativeEngine>
 #ifndef Q_OS_SYMBIAN
 #include <qservicemanager.h>
-#endif
 
 QTM_USE_NAMESPACE
 
@@ -66,6 +65,7 @@ void registerExampleService()
         m.addService(path);
     }
 }
+#endif
 
 int main(int argc, char *argv[])
 {

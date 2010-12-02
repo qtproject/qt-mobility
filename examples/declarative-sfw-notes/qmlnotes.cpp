@@ -43,7 +43,6 @@
 #include <QtDeclarative/QDeclarativeEngine>
 #ifndef Q_OS_SYMBIAN
 #include <qservicemanager.h>
-#endif
 
 QTM_USE_NAMESPACE
 
@@ -63,6 +62,7 @@ void registerExampleService()
         qWarning() << "Unable to register notes manager service";
     }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
