@@ -2843,7 +2843,7 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypa
     return false;
 }
 
-QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
 {
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
