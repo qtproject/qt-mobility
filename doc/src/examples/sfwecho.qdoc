@@ -37,4 +37,12 @@
 
     The second echo client is for running a second identical instance on Symbian
     which usually does not allow starting the same program multiple times.
+
+    For Maemo and Linux platforms using D-Bus as the underlying IPC mechanism,
+    the autostart feature can be intialised by running the service framework tool
+    in the the mobility binary install folder:
+
+    \code
+        servicefw dbusservice xmldata/sfwechoservice.xml sfwecho_service
+    \endcode
 */
