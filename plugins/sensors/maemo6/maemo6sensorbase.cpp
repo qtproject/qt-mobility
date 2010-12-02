@@ -68,6 +68,8 @@ void maemo6sensorbase::start()
 {
 
     if (m_sensorInterface) {
+
+        // dataRate
         int dataRate = sensor()->dataRate();
         if (dataRate > 0) {
             int interval = 1000 / dataRate;
@@ -79,6 +81,19 @@ void maemo6sensorbase::start()
         } else {
             qDebug() << "Data rate in don't care mode (interval" << m_sensorInterface->interval() << "ms) for" << m_sensorInterface->id();
         }
+
+        // outputRange
+        int currentRange = sensor()->outputRange();
+
+        if (currentRange != m_prevOutputRange){
+            qoutputrange range = sensor()->outputRanges().at(currentRange);
+            DataRange range1(range.minimum, range.maximum, range.accuracy);
+            m_sensorInterface->requestDataRange(range1);
+            m_prevOutputRange = currentRange;
+        }
+
+        // TODO: buffer, if changed between starts
+        
         int returnCode = m_sensorInterface->start().error().type();
         if (returnCode==0) return;
         qWarning()<<"m_sensorInterface did not start, error code:"<<returnCode;

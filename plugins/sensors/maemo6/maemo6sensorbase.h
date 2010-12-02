@@ -120,7 +120,7 @@ protected:
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;
-
+    int m_prevOutputRange;
 };
 
 #endif
