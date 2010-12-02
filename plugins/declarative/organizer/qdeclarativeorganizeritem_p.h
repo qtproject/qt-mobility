@@ -58,13 +58,15 @@ class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged)
-    Q_PROPERTY (QString manager READ manager)
-    Q_PROPERTY (QString itemId READ itemId)
-    Q_PROPERTY (QString type READ type)
+    Q_PROPERTY (QString manager READ manager NOTIFY itemChanged)
+    Q_PROPERTY (QString itemId READ itemId NOTIFY itemChanged)
+    Q_PROPERTY (QString type READ type NOTIFY itemChanged)
     Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY itemChanged)
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY itemChanged)
     Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY itemChanged)
-    Q_PROPERTY (bool modified READ modified)
+    Q_PROPERTY (bool modified READ modified NOTIFY itemChanged)
+    Q_PROPERTY(QDateTime itemStartTime READ itemStartTime NOTIFY itemChanged)
+    Q_PROPERTY(QDateTime itemEndTime READ itemEndTime NOTIFY itemChanged)
     Q_ENUMS(OrganizerItemType)
     Q_CLASSINFO("DefaultProperty", "details")
 
@@ -89,6 +91,8 @@ public:
     QString manager() const;
     bool modified() const;
 
+    QDateTime itemStartTime() const;
+    QDateTime itemEndTime() const;
     void setItem(const QOrganizerItem& c);
     QOrganizerItem item() const;
 

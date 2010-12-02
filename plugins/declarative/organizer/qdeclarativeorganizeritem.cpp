@@ -147,6 +147,49 @@ bool QDeclarativeOrganizerItem::modified() const
     return d->m_modified;
 }
 
+QDateTime QDeclarativeOrganizerItem::itemStartTime() const
+{
+    switch (itemType()) {
+    case QDeclarativeOrganizerItem::Event:
+        return static_cast<const QDeclarativeOrganizerEvent*>(this)->startDateTime();
+    case QDeclarativeOrganizerItem::EventOccurrence:
+        return static_cast<const QDeclarativeOrganizerEventOccurrence*>(this)->startDateTime();
+    case QDeclarativeOrganizerItem::Todo:
+        return static_cast<const QDeclarativeOrganizerTodo*>(this)->startDateTime();
+    case QDeclarativeOrganizerItem::TodoOccurrence:
+        return static_cast<const QDeclarativeOrganizerTodoOccurrence*>(this)->startDateTime();
+    case QDeclarativeOrganizerItem::Journal:
+        return static_cast<const QDeclarativeOrganizerJournal*>(this)->dateTime();
+    case QDeclarativeOrganizerItem::Note:
+    default:
+        break;
+    }
+    return item().detail<QOrganizerItemTimestamp>().created();
+}
+
+QDateTime QDeclarativeOrganizerItem::itemEndTime() const
+{
+    switch (itemType()) {
+    case QDeclarativeOrganizerItem::Event:
+        return static_cast<const QDeclarativeOrganizerEvent*>(this)->endDateTime();
+    case QDeclarativeOrganizerItem::EventOccurrence:
+        return static_cast<const QDeclarativeOrganizerEventOccurrence*>(this)->endDateTime();
+    case QDeclarativeOrganizerItem::Todo:
+        return static_cast<const QDeclarativeOrganizerTodo*>(this)->dueDateTime();
+    case QDeclarativeOrganizerItem::TodoOccurrence:
+        return static_cast<const QDeclarativeOrganizerTodoOccurrence*>(this)->dueDateTime();
+    case QDeclarativeOrganizerItem::Journal:
+        //there is no end time for journal item,  make it 30mins later for display purpose
+        return static_cast<const QDeclarativeOrganizerJournal*>(this)->dateTime().addSecs(60*30);
+    case QDeclarativeOrganizerItem::Note:
+    default:
+        break;
+    }
+    //there is no end time for note or customized items,  make it 30mins later for display purpose
+    return item().detail<QOrganizerItemTimestamp>().created().addSecs(60*30);
+}
+
+
 void QDeclarativeOrganizerItem::setModified()
 {
     d->m_modified = true;

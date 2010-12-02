@@ -63,29 +63,10 @@ static QString urlToLocalFileName(const QUrl& url)
 
 }
 
-static QDateTime itemEntryDateTime(const QDeclarativeOrganizerItem* item)
-{
-    switch (item->itemType()) {
-    case QDeclarativeOrganizerItem::Event:
-        return static_cast<const QDeclarativeOrganizerEvent*>(item)->startDateTime();
-    case QDeclarativeOrganizerItem::EventOccurrence:
-        return static_cast<const QDeclarativeOrganizerEventOccurrence*>(item)->startDateTime();
-    case QDeclarativeOrganizerItem::Todo:
-        return static_cast<const QDeclarativeOrganizerTodo*>(item)->startDateTime();
-    case QDeclarativeOrganizerItem::TodoOccurrence:
-        return static_cast<const QDeclarativeOrganizerTodoOccurrence*>(item)->startDateTime();
-    case QDeclarativeOrganizerItem::Journal:
-        return static_cast<const QDeclarativeOrganizerJournal*>(item)->dateTime();
-    case QDeclarativeOrganizerItem::Note:
-    default:
-        break;
-    }
-    return item->item().detail<QOrganizerItemTimestamp>().created();
-}
 
 static bool itemLessThan(const QDeclarativeOrganizerItem* item1, const QDeclarativeOrganizerItem* item2)
 {
-    return itemEntryDateTime(item1) < itemEntryDateTime(item2);
+    return item1->itemStartTime() < item2->itemStartTime();
 }
 
 class QDeclarativeOrganizerModelPrivate
@@ -520,8 +501,8 @@ bool QDeclarativeOrganizerModel::containsItems(const QDate& start, const QDate& 
     //TODO: quick search this
     QDate endDate = end.isNull()? start:end;
     foreach (const QDeclarativeOrganizerItem* item, d->m_items) {
-        QDate dt = itemEntryDateTime(item).date();
-        if ( dt >= start && dt <= endDate)
+
+        if ( item->itemStartTime().date() >= start && item->itemStartTime().date() <= endDate)
             return true;
     }
     return false;
@@ -539,8 +520,7 @@ QStringList QDeclarativeOrganizerModel::itemIds(const QDate& start, const QDate&
     QStringList ids;
     QDate endDate = end.isNull()? start:end;
     foreach (QDeclarativeOrganizerItem* item, d->m_items) {
-        QDate dt = itemEntryDateTime(item).date();
-        if ( dt >= start && dt <= endDate)
+        if ( item->itemStartTime().date() >= start && item->itemEndTime().date() <= endDate)
             ids << item->itemId();
     }
     return ids;
