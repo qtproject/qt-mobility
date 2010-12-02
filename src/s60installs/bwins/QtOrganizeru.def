@@ -1091,4 +1091,22 @@ EXPORTS
 	??_EQOrganizerItemId@QtMobility@@QAE@I@Z @ 1090 NONAME ; QtMobility::QOrganizerItemId::~QOrganizerItemId(unsigned int)
 	??_EQOrganizerItemDetailDefinition@QtMobility@@QAE@I@Z @ 1091 NONAME ; QtMobility::QOrganizerItemDetailDefinition::~QOrganizerItemDetailDefinition(unsigned int)
 	??_EQOrganizerItemDetail@QtMobility@@QAE@I@Z @ 1092 NONAME ; QtMobility::QOrganizerItemDetail::~QOrganizerItemDetail(unsigned int)
+	?trUtf8@QOrganizerManagerEngineV2@QtMobility@@SA?AVQString@@PBD0@Z @ 1093 NONAME ; class QString QtMobility::QOrganizerManagerEngineV2::trUtf8(char const *, char const *)
+	??0QOrganizerManagerEngineV2@QtMobility@@QAE@XZ @ 1094 NONAME ; QtMobility::QOrganizerManagerEngineV2::QOrganizerManagerEngineV2(void)
+	?items@QOrganizerManagerEngineV2@QtMobility@@UBE?AV?$QList@VQOrganizerItem@QtMobility@@@@ABVQDateTime@@0HABVQOrganizerItemFilter@2@ABVQOrganizerItemFetchHint@2@PAW4Error@QOrganizerManager@2@@Z @ 1095 NONAME ; class QList<class QtMobility::QOrganizerItem> QtMobility::QOrganizerManagerEngineV2::items(class QDateTime const &, class QDateTime const &, int, class QtMobility::QOrganizerItemFilter const &, class QtMobility::QOrganizerItemFetchHint const &, enum QtMobility::QOrganizerManager::Error *) const
+	?itemLessThan@QOrganizerManagerEngine@QtMobility@@SA_NABVQOrganizerItem@2@0@Z @ 1096 NONAME ; bool QtMobility::QOrganizerManagerEngine::itemLessThan(class QtMobility::QOrganizerItem const &, class QtMobility::QOrganizerItem const &)
+	?trUtf8@QOrganizerManagerEngineV2@QtMobility@@SA?AVQString@@PBD0H@Z @ 1097 NONAME ; class QString QtMobility::QOrganizerManagerEngineV2::trUtf8(char const *, char const *, int)
+	?tr@QOrganizerManagerEngineV2@QtMobility@@SA?AVQString@@PBD0@Z @ 1098 NONAME ; class QString QtMobility::QOrganizerManagerEngineV2::tr(char const *, char const *)
+	?items@QOrganizerManager@QtMobility@@QBE?AV?$QList@VQOrganizerItem@QtMobility@@@@ABVQDateTime@@0HABVQOrganizerItemFilter@2@ABVQOrganizerItemFetchHint@2@@Z @ 1099 NONAME ; class QList<class QtMobility::QOrganizerItem> QtMobility::QOrganizerManager::items(class QDateTime const &, class QDateTime const &, int, class QtMobility::QOrganizerItemFilter const &, class QtMobility::QOrganizerItemFetchHint const &) const
+	?getStaticMetaObject@QOrganizerManagerEngineV2@QtMobility@@SAABUQMetaObject@@XZ @ 1100 NONAME ; struct QMetaObject const & QtMobility::QOrganizerManagerEngineV2::getStaticMetaObject(void)
+	?setMaxCount@QOrganizerItemFetchRequest@QtMobility@@QAEXH@Z @ 1101 NONAME ; void QtMobility::QOrganizerItemFetchRequest::setMaxCount(int)
+	??1QOrganizerManagerEngineV2@QtMobility@@UAE@XZ @ 1102 NONAME ; QtMobility::QOrganizerManagerEngineV2::~QOrganizerManagerEngineV2(void)
+	?maxCount@QOrganizerItemFetchRequest@QtMobility@@QBEHXZ @ 1103 NONAME ; int QtMobility::QOrganizerItemFetchRequest::maxCount(void) const
+	?items@QOrganizerManagerEngineV2@QtMobility@@UBE?AV?$QList@VQOrganizerItem@QtMobility@@@@ABVQDateTime@@0ABVQOrganizerItemFilter@2@ABV?$QList@VQOrganizerItemSortOrder@QtMobility@@@@ABVQOrganizerItemFetchHint@2@PAW4Error@QOrganizerManager@2@@Z @ 1104 NONAME ; class QList<class QtMobility::QOrganizerItem> QtMobility::QOrganizerManagerEngineV2::items(class QDateTime const &, class QDateTime const &, class QtMobility::QOrganizerItemFilter const &, class QList<class QtMobility::QOrganizerItemSortOrder> const &, class QtMobility::QOrganizerItemFetchHint const &, enum QtMobility::QOrganizerManager::Error *) const
+	?qt_metacast@QOrganizerManagerEngineV2@QtMobility@@UAEPAXPBD@Z @ 1105 NONAME ; void * QtMobility::QOrganizerManagerEngineV2::qt_metacast(char const *)
+	?qt_metacall@QOrganizerManagerEngineV2@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1106 NONAME ; int QtMobility::QOrganizerManagerEngineV2::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QOrganizerManagerEngineV2@QtMobility@@SA?AVQString@@PBD0H@Z @ 1107 NONAME ; class QString QtMobility::QOrganizerManagerEngineV2::tr(char const *, char const *, int)
+	?staticMetaObject@QOrganizerManagerEngineV2@QtMobility@@2UQMetaObject@@B @ 1108 NONAME ; struct QMetaObject const QtMobility::QOrganizerManagerEngineV2::staticMetaObject
+	?metaObject@QOrganizerManagerEngineV2@QtMobility@@UBEPBUQMetaObject@@XZ @ 1109 NONAME ; struct QMetaObject const * QtMobility::QOrganizerManagerEngineV2::metaObject(void) const
+	??_EQOrganizerManagerEngineV2@QtMobility@@UAE@I@Z @ 1110 NONAME ; QtMobility::QOrganizerManagerEngineV2::~QOrganizerManagerEngineV2(unsigned int)
 
