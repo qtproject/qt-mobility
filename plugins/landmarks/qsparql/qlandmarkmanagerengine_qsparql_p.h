@@ -55,11 +55,12 @@
 
 #include  <qlandmarkmanagerengine.h>
 #include "databaseoperations_p.h"
-#include "trackernotifier_p.h"
+
 #include <QSqlDatabase>
 #include <QHash>
 #include <QSet>
 #include <QMutex>
+#include <QtSparqlTrackerExtensions/TrackerChangeNotifier>
 
 QTM_USE_NAMESPACE
 
@@ -225,8 +226,8 @@ private:
     void setChangeNotificationsEnabled(bool enabled);
     QString m_filename;
     QString m_dbConnectionName;
-    QTrackerChangeNotifier *m_landmarkNotifier;
-    QTrackerChangeNotifier *m_categoryNotifier;
+    TrackerChangeNotifier *m_landmarkNotifier;
+    TrackerChangeNotifier *m_categoryNotifier;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
     bool m_isCustomAttributesEnabled;

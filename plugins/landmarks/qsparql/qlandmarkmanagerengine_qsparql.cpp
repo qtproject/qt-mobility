@@ -43,7 +43,6 @@
 #include "qlandmarkfilehandler_gpx_p.h"
 #include "qlandmarkfilehandler_lmx_p.h"
 #include "databaseoperations_p.h"
-#include "trackernotifier.cpp"
 
 #include <QDateTime>
 #include <QDebug>
@@ -189,7 +188,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     else
         className = QString("slo:Landmark");
     delete r;
-    m_landmarkNotifier = new QTrackerChangeNotifier(className, this);
+    m_landmarkNotifier = new TrackerChangeNotifier(className, this);
     connect(m_landmarkNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
                                        this,SLOT(landmarksNotified(QList<QList<int> >, QList<QList<int> >)));
 
@@ -207,7 +206,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     else
         className = QString("slo:LandmarkCategory");
     delete r;
-    m_categoryNotifier = new QTrackerChangeNotifier("className", this);
+    m_categoryNotifier = new TrackerChangeNotifier("className", this);
     connect(m_categoryNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
                                        this,SLOT(categoriesNotified(QList<QList<int> >, QList<QList<int> >)));
 
