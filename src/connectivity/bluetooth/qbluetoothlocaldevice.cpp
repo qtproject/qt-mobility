@@ -85,22 +85,13 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the most of the local Bluetooth device.
 
-    \value HostUnconnectable    Remove Bluetooth devices cannot connect to the local Bluetooth
-                                device.
+    \value HostPoweredOff       Powers the device down
     \value HostConnectable      Remote Bluetooth devices can connect to the local Bluetooth device
                                 if they have previously been paired with it or otherwise know its
                                 address.
     \value HostDiscoverable     Remote Bluetooth devices can discover the presense of the local
                                 Bluetooth device.
 */
-
-/*!
-    Constructs a QBluetoothLocalDevice.
-*/
-QBluetoothLocalDevice::QBluetoothLocalDevice()
-:   d_ptr(0)
-{
-}
 
 /*!
     Destroys the QBluetoothLocalDevice.
@@ -114,16 +105,15 @@ QBluetoothLocalDevice::~QBluetoothLocalDevice()
     otherwise return false.
 */
 bool QBluetoothLocalDevice::isValid() const
-{
-    Q_D(const QBluetoothLocalDevice);
-    return d;
+{    
+    return d_ptr;
 }
 
 /*!
     Sets pairing of this local Bluetooth device and the remote Bluetooth device with \a address to
     \a pairing.
 */
-void QBluetoothLocalDevice::setPairing(const QBluetoothAddress &address, Pairing pairing)
+void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
 {
     Q_UNUSED(address);
     Q_UNUSED(pairing);
@@ -133,24 +123,12 @@ void QBluetoothLocalDevice::setPairing(const QBluetoothAddress &address, Pairing
     Returns the current pairing between this local Bluetooth device and the remote Bluetooth device
     with \a address.
 */
-QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairing(const QBluetoothAddress &address) const
+QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
 {
     Q_UNUSED(address);
 
     return Unpaired;
 }
-
-/*!
-    \fn void QBluetoothLocalDevice::setPowerState(PowerState powerState)
-
-    Sets the power state of this local Bluetooth device to \a powerState.
-*/
-
-/*!
-    \fn QBluetoothLocalDevice::PowerState QBluetoothLocalDevice::powerState() const
-
-    Returns the current power state of this local Bluetooth device.
-*/
 
 /*!
     \fn void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
@@ -187,5 +165,7 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairing(const QBluetoothAd
 
     Returns a list of all available local Bluetooth devices.
 */
+
+#include "moc_qbluetoothlocaldevice.cpp"
 
 QTM_END_NAMESPACE

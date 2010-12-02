@@ -80,7 +80,7 @@ Chat::Chat(QWidget *parent)
     //! [Create Chat Server]
 
     //! [Get local device name]
-    localName = QBluetoothLocalDevice::defaultDevice().name();
+    localName = QBluetoothLocalDevice().name();
     //! [Get local device name]
 }
 

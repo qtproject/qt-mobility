@@ -39,59 +39,31 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothlocaldevice.h"
+#ifndef QBLUETOOTHTRANSFERREPLYPRIVATE_H
+#define QBLUETOOTHTRANSFERREPLYPRIVATE_H
 
-#include <QtCore/QString>
+#include "qbluetoothtransferreply.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothLocalDevicePrivate
+class QBluetoothTransferReplyPrivate : public QObject
 {
+    Q_OBJECT
+
 public:
+    QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent);
+    virtual ~QBluetoothTransferReplyPrivate();
+
+public:
+    QBluetoothTransferReply *q;
+    QMap<int, QVariant> m_parameters;
+    QBluetoothTransferManager::Operation operation;
 };
 
-/*!
-    Constructs a QBluetoothLocalDevice.
-*/
-QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
-:   QObject(parent)
-{
-}
-
-QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
-: QObject(parent)
-{
-}
-
-QString QBluetoothLocalDevice::name() const
-{
-  return QString();
-}
-
-QBluetoothAddress QBluetoothLocalDevice::address() const
-{
-  return QBluetoothAddress();
-}
-
-void QBluetoothLocalDevice::powerOn()
-{
-}
-
-void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
-{
-}
-
-QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
-{
-    return HostPoweredOff;
-}
-
-QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
-{
-    QList<QBluetoothHostInfo> localDevices;
-
-    return localDevices;
-}
-
-
 QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QBLUETOOTHTRANSFERREPLYPRIVATE_H
