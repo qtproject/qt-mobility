@@ -224,6 +224,7 @@ private:
 
     uint currentPid;
     bool kdeIsRunning;
+    bool meegoIsRunning;
     bool gnomeIsRunning;
     void whichWMRunning();
     bool screenSaverIsInhibited;
