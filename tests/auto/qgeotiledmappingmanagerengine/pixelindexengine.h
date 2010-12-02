@@ -56,14 +56,39 @@
 
 QTM_USE_NAMESPACE
 
+/*
 typedef union {
     QRgb rgb;
     struct {
-        unsigned zoom:4;
-        unsigned px:10;
-        unsigned py:10;
+        unsigned int zoom:4;
+        unsigned int px:10;
+        unsigned int py:10;
     };
 } TilePixelValue;
+*/
+class TilePixelValue {
+
+public:
+    TilePixelValue();
+    TilePixelValue(QRgb rgb);
+    TilePixelValue(unsigned int zoom, unsigned int px, unsigned int py);
+    ~TilePixelValue();
+
+    void setRgb(QRgb rgb);
+    QRgb rgb() const;
+
+    void setZoom(unsigned int zoom);
+    unsigned int zoom() const;
+
+    void setPx(unsigned int px);
+    unsigned int px() const;
+
+    void setPy(unsigned int py);
+    unsigned int py() const;
+
+private:
+    unsigned int data_;
+};
 
 /*!
   A tiled map reply subclass that is constructed already finished, with
