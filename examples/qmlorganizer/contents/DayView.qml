@@ -45,7 +45,7 @@ import QtMobility.organizer 1.1
 Rectangle
 {
     id:dayView
-
+    property variant itemIds:calendar.organizer.itemIds(calendar.day)
 
     anchors.fill: parent
 
@@ -142,10 +142,9 @@ Rectangle
             }
         }
 
-        Component.onCompleted : positionViewAtIndex(currentIndex, ListView.Beginning)
-//        onOpacityChanged : Timeline.changeToday()
-//        Keys.onUpPressed : Timeline.changeDate()
-//        Keys.onDownPressed : Timeline.changeDate()
+        Component.onCompleted : {
+            positionViewAtIndex(currentIndex, ListView.Beginning);
+        }
     }
 
 }

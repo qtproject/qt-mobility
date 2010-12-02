@@ -63,6 +63,17 @@ Rectangle {
     //Day view
     Rectangle {
         id: dayView
+        color: "#9eaf30"
+        gradient: Gradient {
+            GradientStop {
+                position: 0.00;
+                color: "#9eaf30";
+            }
+            GradientStop {
+                position: 0.89;
+                color: "#ffffff";
+            }
+        }
         anchors.right : parent.right
         anchors.left : monthView.right
         anchors.top : parent.top

@@ -8,6 +8,7 @@
         <file>contents/ScrollBar.qml</file>
         <file>contents/WeekView.qml</file>
         <file>contents/DayView.qml</file>
+        <file>contents/ItemView.qml</file>
         <file>contents/AgenderView.qml</file>
         <file>contents/timeline.js</file>
         <file>contents/TimelineView.qml</file>

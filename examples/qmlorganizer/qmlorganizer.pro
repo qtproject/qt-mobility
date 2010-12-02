@@ -18,6 +18,7 @@ OTHER_FILES += \
     contents/timeline.js \
     contents/WeekView.qml \
     contents/DayView.qml \
+    contents/ItemView.qml \
     contents/AgenderView.qml \
     contents/ScrollBar.qml \
     contents/MediaButton.qml \

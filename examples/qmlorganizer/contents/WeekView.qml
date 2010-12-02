@@ -46,6 +46,7 @@ Rectangle
     id:weekView
     anchors.fill: parent
     property int day:calendar.day.getDay()
+
     ListView {
         id : dayList
         anchors.fill: parent
@@ -78,7 +79,7 @@ Rectangle
                 id:weekDayDelegate
                 width : dayList.width
                 height :  childrenRect.height > dayList.height / 7  ? childrenRect.height  : dayList.height / 7
-               focus: true
+                focus: true
 
                FocusScope {
                    focus: true
