@@ -44,7 +44,7 @@ import "contents"
 
 Rectangle {
          id: topItem
-         width: 380
+         width: 400
          height: 640
          property date day: new Date()
          property string status:day.toDateString()
@@ -59,8 +59,18 @@ Rectangle {
 
         SystemPalette { id: activePalette }
 
+        OrganizerModel {
+            id: organizer
+            startPeriod:new Date(topItem.day.getFullYear(), 1, 1)
+            endPeriod:new Date(topItem.day.getFullYear(), 12, 31)
+            autoUpdate:false
+            Component.onCompleted : {
+                if (manager == "memory")
+                    organizer.importItems(Qt.resolvedUrl("2010-FIFA-WorldCup.ics"));
+            }
+        }
 
-        MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9 }
+        MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9; info: organizer.error + "\nTotal:" + organizer.itemCount }
         StatusBar {
             id: statusBar; status:topItem.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: topItem.bottom
             onLeftClicked: {

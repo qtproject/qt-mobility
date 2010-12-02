@@ -49,17 +49,6 @@ Rectangle  {
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
 
-
-    OrganizerModel {
-        id: organizer;
-        startPeriod:startDay;
-        endPeriod:new Date(year, month+1, 1);
-        Component.onCompleted : {
-            if (manager == "memory")
-                organizer.importItems(Qt.resolvedUrl("2010-FIFA-WorldCup.ics"));
-        }
-    }
-
     anchors.fill: parent
     //    GridView {
     //        id:container

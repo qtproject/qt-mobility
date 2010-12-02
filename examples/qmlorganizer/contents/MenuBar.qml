@@ -45,13 +45,14 @@ Rectangle {
     y:0;
     height:childrenRect.height;
     width: parent.width;
+    property string info;
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
     gradient: Gradient {
         GradientStop { position: 0.0; color: activePalette.dark }
         GradientStop { position: 1.0; color: Qt.darker(activePalette.dark); }
     }
     Row {
-        spacing: 2
+        spacing: 0
         Image {
             id: quitButton
             height: monthButton.height
@@ -62,11 +63,12 @@ Rectangle {
                 onClicked: Qt.quit()
             }
         }
+        Button {id: todayButton; text: "Today";onClicked:topItem.day = new Date();}
         Button { id: monthButton; text: "Month"; onClicked: topItem.state="MonthView";}
         Button { id: weekButton; text: "Week";onClicked: topItem.state="WeekView";}
         Button { id: dayButton; text: "Day";onClicked: topItem.state="DayView";}
-        //Button { id: agenderButton; text: "Agender";onClicked: topItem.state="AgenderView";}
         Button { id: timelineButton; text: "Timeline";onClicked: topItem.state="TimelineView";}
+        Text { color: "#f5f210";text:info ; font.bold: true; verticalAlignment: Text.AlignVCenter; style: Text.Sunken;font.pointSize: 10}
     }
 }
 
