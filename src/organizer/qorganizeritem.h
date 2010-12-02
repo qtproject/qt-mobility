@@ -184,7 +184,13 @@ public:
 
     QStringList comments() const;
     void clearComments();
+    void setComments(const QStringList& comments);
     void addComment(const QString& comment);
+
+    QStringList tags() const;
+    void clearTags();
+    void addTag(const QString& tag);
+    void setTags(const QStringList& tags);
 
     QString guid() const;
     void setGuid(const QString& guid);
