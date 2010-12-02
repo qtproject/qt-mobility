@@ -70,7 +70,4 @@
     The example will not work correctly on platforms which do not have a
     QFeedbackHapticInterface (haptic effect provider) plugin loaded.  On such
     platforms, the example will do nothing.
-
-    Currently, the Maemo 5 platform has no haptic effect provider plugin
-    available.
 */

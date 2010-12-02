@@ -47,19 +47,19 @@
 //! [0]
 HapticSquare::HapticSquare()
 {
-    m_rumble.setAttackIntensity(0.0);
+    m_rumble.setAttackIntensity(0.1);
     m_rumble.setAttackTime(250);
     m_rumble.setIntensity(1.0);
     m_rumble.setDuration(100);
     m_rumble.setFadeTime(250);
-    m_rumble.setFadeIntensity(0.0);
+    m_rumble.setFadeIntensity(0.1);
 //! [0]
 
 //! [1]
-    m_ocean.setAttackIntensity(0.0);
+    m_ocean.setAttackIntensity(0.1);
     m_ocean.setAttackTime(450);
     m_ocean.setIntensity(0.8);
-    m_ocean.setDuration(150);
+    m_ocean.setDuration(6000);
     m_ocean.setFadeTime(900);
     m_ocean.setFadeIntensity(0.05);
     m_ocean.setPeriod(1500);
