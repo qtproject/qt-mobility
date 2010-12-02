@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QRadioTunerControl class provides access to the radio tuning
     functionality of a QMediaService.
 

@@ -57,6 +57,10 @@ public:
     //(winId is known,
     virtual bool isReady() const { return true; }
 
+    //video renderer can declare it's confident it can play
+    //video frames  without colorspace converter inserted before.
+    virtual bool isColorSpaceElementRequired() const { return true; }
+
     //signals:
     //void sinkChanged();
     //void readyChanged(bool);
