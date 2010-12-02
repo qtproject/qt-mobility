@@ -1,8 +1,8 @@
 include(declarative-sfw-dialer.pri)
 include(deployment.pri)
 
-INCLUDEPATH += ../../src/serviceframework
-DEPENDPATH += ../../src/serviceframework
+INCLUDEPATH += ../../../src/serviceframework
+DEPENDPATH += ../../../src/serviceframework
 
 QT += declarative network script
 SOURCES += qmldialer.cpp
