@@ -39,55 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERREQUEST_H
-#define QBLUETOOTHTRANSFERREQUEST_H
 
-#include <qmobilityglobal.h>
-
-#include <QtCore/QtGlobal>
-#include <QtCore/QVariant>
-
-QT_BEGIN_HEADER
+#include "qbluetoothtransferreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddress;
-class QBluetoothTransferRequestPrivate;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferRequest
+QBluetoothTransferReplyPrivate::QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent)
+:   q(parent)
 {
-public:
-    enum Attribute {
-        DescriptionAttribute,
-        TimeAttribute,
-        TypeAttribute,
-        LengthAttribute,
-        NameAttribute
-    };
+}
 
-    QBluetoothTransferRequest(const QBluetoothAddress &address);
-    QBluetoothTransferRequest(const QBluetoothTransferRequest &other);
-    ~QBluetoothTransferRequest();
+/*!
+    Destroys the QBluetoothTransferReply object.
+*/
+QBluetoothTransferReplyPrivate::~QBluetoothTransferReplyPrivate()
+{
+}
 
-    QVariant attribute(Attribute code, const QVariant &defaultValue = QVariant()) const;
-    void setAttribute(Attribute code, const QVariant &value);
+/*!
+    Returns the attribute associated with the code \a code. If the attribute has not been set, it
+    returns an invalid QVariant.
+*/
 
-    QBluetoothAddress address() const;
-    
-    bool operator!=(const QBluetoothTransferRequest &other) const;
-    QBluetoothTransferRequest &operator=(const QBluetoothTransferRequest &other);
-    bool operator==(const QBluetoothTransferRequest &other) const;
-
-protected:
-    QBluetoothTransferRequestPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QBluetoothTransferRequest)
-
-};
-
-QT_END_HEADER
+#include "moc_qbluetoothtransferreply_p.cpp"
 
 QTM_END_NAMESPACE
-
-#endif // QBLUETOOTHTRANSFERREQUEST_H

@@ -41,6 +41,8 @@
 
 #include "qbluetoothtransferrequest.h"
 #include "qbluetoothaddress.h"
+#include "qbluetoothtransferrequest_p.h"
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -76,16 +78,20 @@ QTM_BEGIN_NAMESPACE
     Constructs a new Bluetooth transfer request to the device wit address \a address.
 */
 QBluetoothTransferRequest::QBluetoothTransferRequest(const QBluetoothAddress &address)
+:d_ptr(new QBluetoothTransferRequestPrivate)
 {
-    Q_UNUSED(address);
+    Q_D(QBluetoothTransferRequest);
+    
+    d->m_address = address;
 }
 
 /*!
     Constructs a new Bluetooth transfer request that is a copy of \a other.
 */
 QBluetoothTransferRequest::QBluetoothTransferRequest(const QBluetoothTransferRequest &other)
+:d_ptr(new QBluetoothTransferRequestPrivate)
 {
-    Q_UNUSED(other);
+    *this = other;
 }
 
 /*!
@@ -93,6 +99,7 @@ QBluetoothTransferRequest::QBluetoothTransferRequest(const QBluetoothTransferReq
 */
 QBluetoothTransferRequest::~QBluetoothTransferRequest()
 {
+    delete d_ptr;
 }
 
 /*!
@@ -103,9 +110,13 @@ QBluetoothTransferRequest::~QBluetoothTransferRequest()
 */
 QVariant QBluetoothTransferRequest::attribute(Attribute code, const QVariant &defaultValue) const
 {
-    Q_UNUSED(code);
-
-    return defaultValue;
+    Q_D(const QBluetoothTransferRequest);
+    
+    if (d->m_parameters.contains((int)code)) {
+        return d->m_parameters.value((int)code);
+    } else {
+        return defaultValue;
+    }
 }
 
 /*!
@@ -117,20 +128,30 @@ QVariant QBluetoothTransferRequest::attribute(Attribute code, const QVariant &de
 */
 void QBluetoothTransferRequest::setAttribute(Attribute code, const QVariant &value)
 {
-    Q_UNUSED(code);
-    Q_UNUSED(value);
+    Q_D(QBluetoothTransferRequest);
+    
+    d->m_parameters.insert((int)code, value);
 }
 
 /*!
-    Returns false if this object is not the same as \a other.
+    Returns the address associated with the Bluetooth transfer request.
+*/
+QBluetoothAddress QBluetoothTransferRequest::address() const
+{
+    Q_D(const QBluetoothTransferRequest);
+    
+    return d->m_address;
+}
+
+
+/*!
+    Returns true if this object is not the same as \a other.
 
     \sa operator==()
 */
 bool QBluetoothTransferRequest::operator!=(const QBluetoothTransferRequest &other) const
 {
-    Q_UNUSED(other);
-
-    return false;
+    return !(*this == other);
 }
 
 /*!
@@ -138,7 +159,10 @@ bool QBluetoothTransferRequest::operator!=(const QBluetoothTransferRequest &othe
 */
 QBluetoothTransferRequest &QBluetoothTransferRequest::operator=(const QBluetoothTransferRequest &other)
 {
-    Q_UNUSED(other);
+    Q_D(QBluetoothTransferRequest);
+    
+    d->m_address = other.d_func()->m_address;
+    d->m_parameters = other.d_func()->m_parameters;
 
     return *this;
 }
@@ -148,9 +172,16 @@ QBluetoothTransferRequest &QBluetoothTransferRequest::operator=(const QBluetooth
 */
 bool QBluetoothTransferRequest::operator==(const QBluetoothTransferRequest &other) const
 {
-    Q_UNUSED(other);
-
+    Q_D(const QBluetoothTransferRequest);
+    if (d->m_address == other.d_func()->m_address && d->m_parameters == other.d_func()->m_parameters) {
+        return true;
+    }
     return false;
 }
+
+QBluetoothTransferRequestPrivate::QBluetoothTransferRequestPrivate()
+{
+}
+
 
 QTM_END_NAMESPACE
