@@ -39,44 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHTRANSFERMANAGER_H
-#define QBLUETOOTHTRANSFERMANAGER_H
+#ifndef QBLUETOOTHTRANSFERREQUESTPRIVATE_H
+#define QBLUETOOTHTRANSFERREQUESTPRIVATE_H
 
 #include <qmobilityglobal.h>
-#include <qbluetoothaddress.h>
-
-#include <QtCore/QObject>
-
-QT_FORWARD_DECLARE_CLASS(QIODevice)
+#include "qbluetoothtransferrequest.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReply;
-class QBluetoothTransferRequest;
+class QBluetoothAddress;
 
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferManager : public QObject
+class QBluetoothTransferRequestPrivate
 {
-    Q_OBJECT
-
 public:
-    enum Operation {
-        GetOperation,
-        PutOperation
-    };
+    QBluetoothTransferRequestPrivate();
 
-    explicit QBluetoothTransferManager(QObject *parent = 0);
-    ~QBluetoothTransferManager();
-
-    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);    
-
-signals:
-    void finished(QBluetoothTransferReply *reply);
+    QBluetoothAddress m_address;
+    QMap<int, QVariant> m_parameters;
 };
-
-QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QBLUETOOTHTRANSFERMANAGER_H
+QTM_END_NAMESPACE
+
+#endif // QBLUETOOTHTRANSFERREQUESTPRIVATE_H
