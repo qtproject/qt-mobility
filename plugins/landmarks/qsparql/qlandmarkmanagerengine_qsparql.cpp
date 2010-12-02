@@ -62,6 +62,7 @@
 #include <QtSparql/QSparqlConnectionOptions>
 #include <QtSparql/QSparqlQuery>
 #include <QtSparql/QSparqlResult>
+#include <QtSparqlTrackerExtensions/TrackerChangeNotifier>
 
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkidfetchrequest.h>
@@ -189,8 +190,8 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         className = QString("slo:Landmark");
     delete r;
     m_landmarkNotifier = new TrackerChangeNotifier(className, this);
-    connect(m_landmarkNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
-                                       this,SLOT(landmarksNotified(QList<QList<int> >, QList<QList<int> >)));
+    connect(m_landmarkNotifier, SIGNAL(changed(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)),
+        this, SLOT(landmarksNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)));
 
     // Query: what's the current name of the landmarkCategory class?
     QSparqlQuery cq("select tracker:uri(tracker:id(slo:LandmarkCategory)) "
@@ -207,9 +208,8 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
         className = QString("slo:LandmarkCategory");
     delete r;
     m_categoryNotifier = new TrackerChangeNotifier("className", this);
-    connect(m_categoryNotifier, SIGNAL(changed(QList<QList<int> >, QList<QList<int> >)),
-                                       this,SLOT(categoriesNotified(QList<QList<int> >, QList<QList<int> >)));
-
+    connect(m_categoryNotifier, SIGNAL(changed(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)),
+        this, SLOT(categoriesNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)));
 }
 
 QLandmarkManagerEngineQsparql::~QLandmarkManagerEngineQsparql()
@@ -599,7 +599,7 @@ bool QLandmarkManagerEngineQsparql::waitForRequestFinished(QLandmarkAbstractRequ
     return false;
 }
 
-void QLandmarkManagerEngineQsparql::landmarksNotified(QList<QList<int> >, QList<QList<int> >)
+void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)
 {
     if (m_changeNotificationsEnabled) {
         QLandmarkId landmarkId;
@@ -656,7 +656,7 @@ void QLandmarkManagerEngineQsparql::landmarksNotified(QList<QList<int> >, QList<
     }
 }
 
-void QLandmarkManagerEngineQsparql::categoriesNotified(QList<QList<int> >, QList<QList<int> >)
+void QLandmarkManagerEngineQsparql::categoriesNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)
 {
     if (m_changeNotificationsEnabled) {
         QLandmarkCategoryId categoryId;

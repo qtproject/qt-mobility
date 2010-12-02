@@ -207,8 +207,8 @@ public slots:
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state, unsigned int id);
 
 private slots:
-    void landmarksNotified(QList<QList<int> >, QList<QList<int> >);
-    void categoriesNotified(QList<QList<int> >, QList<QList<int> >);
+    void landmarksNotified(QList<TrackerChangeNotifier::Quad> deletes, QList<TrackerChangeNotifier::Quad> inserts);
+    void categoriesNotified(QList<TrackerChangeNotifier::Quad> deletes, QList<TrackerChangeNotifier::Quad> inserts);
 
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
