@@ -12,15 +12,17 @@ SOURCES = \
 
 OTHER_FILES += \
     organizer.qml \
-    contents/ToolBar.qml \
-    contents/TitleBar.qml \
-    contents/timelineview.qml \
+    contents/StatusBar.qml \
+    contents/MenuBar.qml \
+    contents/TimelineView.qml \
     contents/timeline.js \
-    contents/settingsview.qml \
+    contents/WeekView.qml \
+    contents/DayView.qml \
+    contents/ItemView.qml \
+    contents/AgenderView.qml \
     contents/ScrollBar.qml \
-    contents/monthview.qml \
     contents/MediaButton.qml \
-    contents/detailsview.qml \
+    contents/DetailsView.qml \
     contents/Button.qml \
     contents/images/toolbutton.sci \
     contents/images/toolbutton.png \
@@ -34,11 +36,13 @@ OTHER_FILES += \
     contents/images/default.svg \
     contents/images/button-pressed.png \
     contents/images/button.png \
-    contents/month.js
+    contents/month.js \
+    contents/MonthView.qml \
+    contents/2010-FIFA-WorldCup.ics
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData ReadUserData WriteUserData
     TARGET.UID3 = 0xE1407FC3
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
     contains(DEFINES, ORIENTATIONLOCK):LIBS += -lavkon -leikcore -leiksrv -lcone

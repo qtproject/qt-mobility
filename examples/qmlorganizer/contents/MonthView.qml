@@ -40,18 +40,16 @@
 
 import Qt 4.7
 import "month.js" as Month
-Item {
+import QtMobility.organizer 1.1
+
+Rectangle  {
     id:monthView
-    property int month: 9
-    property int year: 2010
+    property int month: calendar.day.getMonth()
+    property int year: calendar.day.getFullYear()
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
-    property int today
 
     anchors.fill: parent
-
-    Component.onCompleted : {
-    }
 
     Grid {
         id:container
@@ -60,25 +58,65 @@ Item {
         Repeater {
             model:["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
             Rectangle { width: container.width / 7
-                        height: container.height / 7
+                        height: 35
                         color: "lightgray"
                         border.color: "#3f4947"
                         Text { text: modelData
-                               font.pointSize: 10
-                               anchors.centerIn: parent
+                            font.bold: true
+                            verticalAlignment: Text.AlignVCenter
+                            style: Text.Sunken
+                            styleColor: "#1365f3"
+                            font.pointSize: 14
+                            anchors.centerIn: parent
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                calendar.state = "WeekView";
+                            }
                         }
             }
         }
 
         Repeater { model: 42
-                   Rectangle { width: container.width / 7
-                               height: container.height / 7
-                               color: Month.getColorOfDay(startDay,   index - startWeekday +1)
-                               border.color: "black"
-                               Text { text: Month.getDayOfMonth(startDay,   index - startWeekday +1)
-                                      font.pointSize: 10
-                                      anchors.centerIn: parent
-                               }
+                   Rectangle {
+                       id:dayContainer
+                       width: container.width / 7
+                       height: (container.height - 35) / 6
+                       color:  {
+                                  if (Month.isToday(startDay,   index - startWeekday +1))
+                                      return "lightsteelblue";
+                                  else if (calendar.organizer.containsItems(Month.dateOfThisDay(startDay,   index - startWeekday +1)))
+                                      return "yellow";
+                                  else
+                                      return Month.getColorOfDay(startDay,   index - startWeekday +1);
+                              }
+                       border.color: "black"
+                       Text {
+                           color: "#6ba24b";
+                           text: Month.getDayOfMonth(startDay,   index - startWeekday +1)
+                           font.bold: true
+                           style: Text.Raised
+                           font.pointSize: 12
+                           anchors.centerIn: parent
+                       }
+
+                       MouseArea {
+                           hoverEnabled:true
+                           anchors.fill: parent
+                           onEntered: {
+                               dayContainer.border.color = "#1365f3";
+                               dayContainer.border.width = 2;
+                           }
+                           onExited: {
+                               dayContainer.border.color = "black";
+                               dayContainer.border.width = 1;
+                           }
+                           onClicked: {
+                               calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), index - startWeekday +1);
+                               calendar.state = "DayView";
+                           }
+                       }
                    }
         }
     }

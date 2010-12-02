@@ -40,4 +40,32 @@
 
 import Qt 4.7
 
-Text {text: "Settings View"; anchors.centerIn: parent}
+import QtMobility.organizer 1.1
+
+Rectangle
+{
+    id:itemView
+    property string  itemId
+    property OrganizerItem item:calendar.organizer.item(itemId)
+    property time startTime:item.itemStartTime
+    property time endTime:item.itemEndTime
+    color: "#f1f727"
+    border.color: "#d5cbcb"
+    gradient: Gradient {
+        GradientStop {
+            position: 0.00;
+            color: "#f1f727";
+        }
+        GradientStop {
+            position: 1.00;
+            color: "#ffffff";
+        }
+
+        Column {
+            Text { text: item.displayLabel ; font.bold: true; style: Text.Raised; verticalAlignment: Text.AlignVCenter; font.pointSize: 12 }
+            Text { text: item.description ;  font.pointSize: 10}
+        }
+    }
+
+
+}

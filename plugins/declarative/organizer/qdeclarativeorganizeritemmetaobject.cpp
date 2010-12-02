@@ -240,7 +240,7 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
       QDeclarativeOrganizerItemDetail* itemDetail = new QDeclarativeOrganizerItemDetail(object());
 
       itemDetail->setDetail(detail);
-      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(detailsChanged()));
+      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(itemChanged()));
 
       m_details.append(itemDetail);
     }
@@ -255,9 +255,9 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
     return m_item;
 }
 
-uint QDeclarativeOrganizerItemMetaObject::itemId() const
+QString QDeclarativeOrganizerItemMetaObject::itemId() const
 {
-    return qHash(m_item.id());
+    return m_item.id().toString();
 }
 
 

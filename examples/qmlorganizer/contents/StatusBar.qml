@@ -41,25 +41,40 @@
 import Qt 4.7
 
 Item {
-    id: toolbar
-
-    property alias button1Label: button1.text
-    property alias button2Label: button2.text
-    signal button1Clicked
-    signal button2Clicked
+    id: statusbar
+    property string status
+    signal leftClicked
+    signal rightClicked
 
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
     Button {
-        id: button1
-        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button1Clicked()
+        id: leftButton
+        text: "  <"
+        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 50; height: 32
+        onClicked: statusbar.leftClicked()
+    }
+    Text {
+        id:statusText
+        color: "#ecc70a"
+        text:status
+        font.family: "Monospace"
+        font.bold: true
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.pointSize: 19
+        anchors.left: leftButton.right
+        anchors.leftMargin: 5
+        anchors.right: rightButton.left
+        anchors.rightMargin: 5
+
     }
 
     Button {
-        id: button2
-        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
-        onClicked: toolbar.button2Clicked()
+        id: rightButton
+        text: "  >"
+        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 50; height: 32
+        onClicked: statusbar.rightClicked()
     }
 
 }
