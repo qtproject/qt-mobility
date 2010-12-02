@@ -767,7 +767,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemOccurrences(const 
 
     // now order the contents of retn by date
     qSort(rdates);
-    if (qBinaryFind(rdates, initialDateTime) == rdates.end()) {
+    if (qBinaryFind(rdates, initialDateTime) == rdates.constEnd()) {
         rdates.prepend(initialDateTime);
     }
 
@@ -944,7 +944,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
     // check to see if this organizer item already exists
     const QOrganizerItemId& theOrganizerItemId = theOrganizerItem->id();
     QHash<QOrganizerItemId, QOrganizerItem>::const_iterator hashIterator = d->m_idToItemHash.find(theOrganizerItemId);
-    if (hashIterator != d->m_idToItemHash.end()) {
+    if (hashIterator != d->m_idToItemHash.constEnd()) {
         /* We also need to check that there are no modified create only details */
         QOrganizerItem oldOrganizerItem = hashIterator.value();
 
@@ -1222,7 +1222,7 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
 bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     QHash<QOrganizerItemId, QOrganizerItem>::const_iterator hashIterator = d->m_idToItemHash.find(organizeritemId);
-    if (hashIterator == d->m_idToItemHash.end()) {
+    if (hashIterator == d->m_idToItemHash.constEnd()) {
         *error = QOrganizerManager::DoesNotExistError;
         return false;
     }

@@ -61,6 +61,10 @@ QTM_BEGIN_NAMESPACE
 class QBluetoothAddress;
 class QBluetoothSocket;
 
+#ifdef Q_OS_SYMBIAN
+class QBluetoothSocketSymbianPrivate;
+#endif
+
 class QRfcommServer;
 
 class QRfcommServerPrivate
@@ -95,6 +99,7 @@ public:
 #ifdef Q_OS_SYMBIAN
     QBluetoothSocket *pendingSocket;
     mutable QList<QBluetoothSocket *> activeSockets;
+    QBluetoothSocketSymbianPrivate *ds;
 #endif
 
     int maxPendingConnections;

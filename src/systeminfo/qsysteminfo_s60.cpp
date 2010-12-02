@@ -780,9 +780,10 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -1227,14 +1228,9 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
     return false;
 }
 
-bool QSystemDeviceInfoPrivate::backLightOn()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
-    return false;
-}
-
-QUuid QSystemDeviceInfoPrivate::hostId()
-{
-    return 0;//gethostid();
+    return 0;//getuniqueID();
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
@@ -1402,6 +1398,7 @@ QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit(
     return QSystemBatteryInfo::UnitUnknown;
 
 }
+
 #include "moc_qsysteminfo_s60_p.cpp"
 
 QTM_END_NAMESPACE

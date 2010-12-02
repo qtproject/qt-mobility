@@ -1627,9 +1627,17 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    int bright = displayBrightness(screen);
+    if(bright == 0) {
+        return QSystemDisplayInfo::BacklightStateOff;
+    } else if(bright > 1 && bright < 99) {
+        return QSystemDisplayInfo::backlightStateDimmed;
+       } else {
+        return QSystemDisplayInfo::backlightStateOn;
+    }
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 
@@ -2281,12 +2289,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*typ
     return false;
 }
 
-bool QSystemDeviceInfoPrivate::backLightOn()
-{
-    return false;
-}
-
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,

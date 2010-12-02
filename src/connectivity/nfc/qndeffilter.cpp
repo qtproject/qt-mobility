@@ -185,11 +185,17 @@ void QNdefFilter::appendRecord(const Record &record)
     d->filterRecords.append(record);
 }
 
+/*!
+    Returns the NDEF record at index \a i.
+*/
 QNdefFilter::Record QNdefFilter::recordAt(int i) const
 {
     return d->filterRecords.at(i);
 }
 
+/*!
+    Returns the number of NDEF records in the filter.
+*/
 int QNdefFilter::recordCount() const
 {
     return d->filterRecords.count();

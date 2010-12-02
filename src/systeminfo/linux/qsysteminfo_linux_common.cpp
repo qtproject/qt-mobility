@@ -1751,9 +1751,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
-bool QSystemDisplayInfoLinuxCommonPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoLinuxCommonPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
@@ -2844,12 +2845,7 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypa
     return false;
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
-{
-    return false;
-}
-
-QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
 {
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
@@ -3197,7 +3193,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
 #endif
 }
 
-//#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS)
 void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map)
 {
     QHalInterface iface;
@@ -3434,7 +3430,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     }
     currentBatStatus = stat;
 }
-
+#endif
 
 void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 {
@@ -3544,6 +3540,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
     return 0;
 }
 
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
 void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop, const QVariant &v)
 {
  //   qDebug() << __FUNCTION__ << prop << v;
@@ -3610,6 +3607,8 @@ void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop,
     }
 
 }
+#endif
+
 #include "moc_qsysteminfo_linux_common_p.cpp"
 
 QTM_END_NAMESPACE

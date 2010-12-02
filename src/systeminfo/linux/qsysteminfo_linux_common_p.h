@@ -229,7 +229,7 @@ public:
     int getDPIHeight(int /*screen*/){return 0;};
     int physicalHeight(int /*screen*/){return 0;};
     int physicalWidth(int /*screen*/){return 0;};
-    bool backLightOn();
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -317,8 +317,7 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
-    bool backLightOn(); //1.2
-    QUuid hostId(); //1.2
+    QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
@@ -433,7 +432,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void getBatteryStats();
     void timeout();
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     void propertyChanged(const QString &, const QVariant &);
+#endif
 #endif
 private:
 

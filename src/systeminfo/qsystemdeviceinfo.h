@@ -180,8 +180,7 @@ public:
     bool isKeyboardFlipOpen();//1.2
 
     bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
-    bool backLightOn(); //1.2
-    QUuid hostId(); //1.2
+    QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 #ifdef TESTR
     QSystemDeviceInfoPrivate *priv;

@@ -193,7 +193,7 @@ public:
 
 #ifdef Q_OS_SYMBIAN
     deleteDefaultDb();
-    prefix =""
+    prefix ="";
 #else
 #if !defined(Q_WS_MAEMO_6)
     QFile::remove("test.db");
@@ -212,6 +212,8 @@ private:
     QString prefix;  //prefix for path strings for importing and exporting depending on symbian or not.
 
     bool waitForActive(QSignalSpy &spy, QLandmarkAbstractRequest* request, int ms=100) {
+        if (request->isActive())
+            return true;
         int msWaitedSoFar =0;
         while(msWaitedSoFar < ms) {
             QTest::qWait(10);
@@ -7230,6 +7232,10 @@ void tst_QLandmarkManager::importWaitForFinished()
     importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
     importRequest.start();
     QVERIFY(waitForActive(spy, &importRequest,100));
+#ifdef Q_OS_SYMBIAN
+    QVERIFY(!importRequest.waitForFinished());
+    //Symbian doesn't support wait for finished for importing
+#else
     QVERIFY(importRequest.waitForFinished());
     spy.clear();
 
@@ -7257,6 +7263,7 @@ void tst_QLandmarkManager::importWaitForFinished()
     QVERIFY(importRequest.waitForFinished(1000));
     spy.clear();
     QCOMPARE(m_manager->landmarkIds().count(), fileLandmarkCount*3);
+#endif
 }
 
 void tst_QLandmarkManager::fetchWaitForFinished()
@@ -7265,6 +7272,12 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    int expectedLandmarksCount = fileLandmarksCount * 8;
 
     QLandmarkFetchRequest fetchRequest(m_manager);
     QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -7273,7 +7286,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(fetchRequest.waitForFinished());
-    QCOMPARE(fetchRequest.landmarks().count(), fileLandmarksCount *3);
+    QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 
     //try wait for finished by providing time period less than the time needed to finish the operation.
     QVERIFY(fetchRequest.start());
@@ -7282,15 +7295,16 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 
     //try wait with a negative time period
     fetchRequest.waitForFinished(-1);
-    QCOMPARE(fetchRequest.landmarks().count(), fileLandmarksCount *3);
+    QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 
     //try wait for finished with a time period greater than the amount of time
     //needed to complete the operation
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(fetchRequest.waitForFinished(1000));
-    QCOMPARE(fetchRequest.landmarks().count(), fileLandmarksCount *3);
+    QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 }
+
 
 #endif
 

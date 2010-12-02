@@ -1467,9 +1467,10 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -2132,14 +2133,15 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
     return false;
 }
 
-bool QSystemDeviceInfoPrivate::backLightOn()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
-    return false;
-}
+    WMIHelper *wHelper;
+    wHelper = new WMIHelper(this);
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_ComputerSystemProduct");
+    wHelper->setClassProperty(QStringList() << "UUID");
 
-QUuid QSystemDeviceInfoPrivate::hostId()
-{
-    return 0;//gethostid();
+    return  QUuid(wHelper->getWMIData().toString());
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()

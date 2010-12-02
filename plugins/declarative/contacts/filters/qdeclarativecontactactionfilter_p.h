@@ -47,16 +47,19 @@
 class QDeclarativeContactActionFilter : public QDeclarativeContactFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QString actionName READ actionName WRITE setActionName NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "actionName")
+    Q_PROPERTY(QString actionName READ actionName WRITE setActionName NOTIFY valueChanged())
 public:
     QDeclarativeContactActionFilter(QObject* parent=0)
         :QDeclarativeContactFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
     void setActionName(const QString& action)
     {
-        d.setActionName(action);
+        if (action != d.actionName()) {
+            d.setActionName(action);
+            emit valueChanged();
+        }
     }
 
     QString actionName() const

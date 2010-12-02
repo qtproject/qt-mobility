@@ -1,454 +1,505 @@
 EXPORTS
-	??0QBluetoothAddress@QtMobility@@QAE@ABV01@@Z @ 1 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(class QtMobility::QBluetoothAddress const &)
-	??0QBluetoothAddress@QtMobility@@QAE@ABVQString@@@Z @ 2 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(class QString const &)
-	??0QBluetoothAddress@QtMobility@@QAE@XZ @ 3 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(void)
-	??0QBluetoothAddress@QtMobility@@QAE@_K@Z @ 4 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(unsigned long long)
-	??0QBluetoothDeviceDiscoveryAgent@QtMobility@@QAE@PAVQObject@@@Z @ 5 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(class QObject *)
-	??0QBluetoothDeviceInfo@QtMobility@@QAE@ABV01@@Z @ 6 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(class QtMobility::QBluetoothDeviceInfo const &)
-	??0QBluetoothDeviceInfo@QtMobility@@QAE@ABVQBluetoothAddress@1@ABVQString@@I@Z @ 7 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(class QtMobility::QBluetoothAddress const &, class QString const &, unsigned int)
-	??0QBluetoothDeviceInfo@QtMobility@@QAE@XZ @ 8 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(void)
-	??0QBluetoothLocalDevice@QtMobility@@QAE@XZ @ 9 NONAME ; QtMobility::QBluetoothLocalDevice::QBluetoothLocalDevice(void)
-	??0QBluetoothServiceDiscoveryAgent@QtMobility@@QAE@ABVQBluetoothAddress@1@PAVQObject@@@Z @ 10 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(class QtMobility::QBluetoothAddress const &, class QObject *)
-	??0QBluetoothServiceDiscoveryAgent@QtMobility@@QAE@PAVQObject@@@Z @ 11 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(class QObject *)
-	??0QBluetoothServiceInfo@QtMobility@@QAE@ABV01@@Z @ 12 NONAME ; QtMobility::QBluetoothServiceInfo::QBluetoothServiceInfo(class QtMobility::QBluetoothServiceInfo const &)
-	??0QBluetoothServiceInfo@QtMobility@@QAE@XZ @ 13 NONAME ; QtMobility::QBluetoothServiceInfo::QBluetoothServiceInfo(void)
-	??0QBluetoothSocket@QtMobility@@QAE@PAVQObject@@@Z @ 14 NONAME ; QtMobility::QBluetoothSocket::QBluetoothSocket(class QObject *)
-	??0QBluetoothSocket@QtMobility@@QAE@W4SocketType@01@PAVQObject@@@Z @ 15 NONAME ; QtMobility::QBluetoothSocket::QBluetoothSocket(enum QtMobility::QBluetoothSocket::SocketType, class QObject *)
-	??0QBluetoothTransferManager@QtMobility@@QAE@PAVQObject@@@Z @ 16 NONAME ; QtMobility::QBluetoothTransferManager::QBluetoothTransferManager(class QObject *)
-	??0QBluetoothTransferReply@QtMobility@@IAE@PAVQObject@@@Z @ 17 NONAME ; QtMobility::QBluetoothTransferReply::QBluetoothTransferReply(class QObject *)
-	??0QBluetoothTransferRequest@QtMobility@@QAE@ABV01@@Z @ 18 NONAME ; QtMobility::QBluetoothTransferRequest::QBluetoothTransferRequest(class QtMobility::QBluetoothTransferRequest const &)
-	??0QBluetoothTransferRequest@QtMobility@@QAE@ABVQBluetoothAddress@1@@Z @ 19 NONAME ; QtMobility::QBluetoothTransferRequest::QBluetoothTransferRequest(class QtMobility::QBluetoothAddress const &)
-	??0QBluetoothUuid@QtMobility@@QAE@ABUQUuid@@@Z @ 20 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(struct QUuid const &)
-	??0QBluetoothUuid@QtMobility@@QAE@ABV01@@Z @ 21 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(class QtMobility::QBluetoothUuid const &)
-	??0QBluetoothUuid@QtMobility@@QAE@ABVQString@@@Z @ 22 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(class QString const &)
-	??0QBluetoothUuid@QtMobility@@QAE@G@Z @ 23 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(unsigned short)
-	??0QBluetoothUuid@QtMobility@@QAE@I@Z @ 24 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(unsigned int)
-	??0QBluetoothUuid@QtMobility@@QAE@Uquint128@1@@Z @ 25 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(struct QtMobility::quint128)
-	??0QBluetoothUuid@QtMobility@@QAE@W4ProtocolUuid@01@@Z @ 26 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(enum QtMobility::QBluetoothUuid::ProtocolUuid)
-	??0QBluetoothUuid@QtMobility@@QAE@W4ServiceClassUuid@01@@Z @ 27 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(enum QtMobility::QBluetoothUuid::ServiceClassUuid)
-	??0QBluetoothUuid@QtMobility@@QAE@XZ @ 28 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(void)
-	??0QL2capServer@QtMobility@@QAE@PAVQObject@@@Z @ 29 NONAME ; QtMobility::QL2capServer::QL2capServer(class QObject *)
-	??0QLlcpSocket@QtMobility@@QAE@PAVQObject@@@Z @ 30 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QObject *)
-	??0QNdefFilter@QtMobility@@QAE@ABV01@@Z @ 31 NONAME ; QtMobility::QNdefFilter::QNdefFilter(class QtMobility::QNdefFilter const &)
-	??0QNdefFilter@QtMobility@@QAE@XZ @ 32 NONAME ; QtMobility::QNdefFilter::QNdefFilter(void)
-	??0QNdefMessage@QtMobility@@QAE@ABV01@@Z @ 33 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefMessage const &)
-	??0QNdefMessage@QtMobility@@QAE@ABV?$QList@VQNdefRecord@QtMobility@@@@@Z @ 34 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QList<class QtMobility::QNdefRecord> const &)
-	??0QNdefMessage@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 35 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefRecord const &)
-	??0QNdefMessage@QtMobility@@QAE@XZ @ 36 NONAME ; QtMobility::QNdefMessage::QNdefMessage(void)
-	??0QNdefNfcTextRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 37 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(class QtMobility::QNdefRecord const &)
-	??0QNdefNfcTextRecord@QtMobility@@QAE@XZ @ 38 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(void)
-	??0QNdefNfcUriRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 39 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(class QtMobility::QNdefRecord const &)
-	??0QNdefNfcUriRecord@QtMobility@@QAE@XZ @ 40 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(void)
-	??0QNdefRecord@QtMobility@@IAE@ABV01@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 41 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &, enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
-	??0QNdefRecord@QtMobility@@IAE@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 42 NONAME ; QtMobility::QNdefRecord::QNdefRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
-	??0QNdefRecord@QtMobility@@QAE@ABV01@@Z @ 43 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &)
-	??0QNdefRecord@QtMobility@@QAE@XZ @ 44 NONAME ; QtMobility::QNdefRecord::QNdefRecord(void)
-	??0QNearFieldManager@QtMobility@@QAE@PAVQNearFieldManagerPrivate@1@PAVQObject@@@Z @ 45 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QtMobility::QNearFieldManagerPrivate *, class QObject *)
+	?qt_metacall@QBluetoothLocalDevice@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1 NONAME ; int QtMobility::QBluetoothLocalDevice::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getStaticMetaObject@QNearFieldTarget@QtMobility@@SAABUQMetaObject@@XZ @ 2 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTarget::getStaticMetaObject(void)
+	?writeByte@QNearFieldTagType1@QtMobility@@UAE_NEEW4WriteMode@12@@Z @ 3 NONAME ; bool QtMobility::QNearFieldTagType1::writeByte(unsigned char, unsigned char, enum QtMobility::QNearFieldTagType1::WriteMode)
+	?peerAddress@QBluetoothSocket@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 4 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothSocket::peerAddress(void) const
+	??0QBluetoothServiceInfo@QtMobility@@QAE@ABV01@@Z @ 5 NONAME ; QtMobility::QBluetoothServiceInfo::QBluetoothServiceInfo(class QtMobility::QBluetoothServiceInfo const &)
+	?serviceName@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 6 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceName(void) const
+	?qt_metacall@QNearFieldTarget@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 7 NONAME ; int QtMobility::QNearFieldTarget::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?listen@QLlcpServer@QtMobility@@QAE_NABVQString@@@Z @ 8 NONAME ; bool QtMobility::QLlcpServer::listen(class QString const &)
+	?minimumSize@QBluetoothUuid@QtMobility@@QBEHXZ @ 9 NONAME ; int QtMobility::QBluetoothUuid::minimumSize(void) const
+	??_EQBluetoothTransferReply@QtMobility@@UAE@I@Z @ 10 NONAME ; QtMobility::QBluetoothTransferReply::~QBluetoothTransferReply(unsigned int)
+	?uri@QNdefNfcUriRecord@QtMobility@@QBE?AVQUrl@@XZ @ 11 NONAME ; class QUrl QtMobility::QNdefNfcUriRecord::uri(void) const
+	??8QBluetoothTransferRequest@QtMobility@@QBE_NABV01@@Z @ 12 NONAME ; bool QtMobility::QBluetoothTransferRequest::operator==(class QtMobility::QBluetoothTransferRequest const &) const
+	??1QNdefFilter@QtMobility@@QAE@XZ @ 13 NONAME ; QtMobility::QNdefFilter::~QNdefFilter(void)
+	?serverAddress@QRfcommServer@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 14 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QRfcommServer::serverAddress(void) const
+	?inquiryType@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AW4InquiryType@12@XZ @ 15 NONAME ; enum QtMobility::QBluetoothDeviceDiscoveryAgent::InquiryType QtMobility::QBluetoothDeviceDiscoveryAgent::inquiryType(void) const
+	??1QBluetoothTransferManager@QtMobility@@UAE@XZ @ 16 NONAME ; QtMobility::QBluetoothTransferManager::~QBluetoothTransferManager(void)
+	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXABV?$QList@W4Type@QNearFieldTarget@QtMobility@@@@@Z @ 17 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(class QList<enum QtMobility::QNearFieldTarget::Type> const &)
+	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@PAVQObject@@PBD@Z @ 18 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, class QObject *, char const *)
+	?memorySize@QNearFieldTagType1@QtMobility@@QAEHXZ @ 19 NONAME ; int QtMobility::QNearFieldTagType1::memorySize(void)
+	?toUInt128@QBluetoothUuid@QtMobility@@QBE?AUquint128@2@XZ @ 20 NONAME ; struct QtMobility::quint128 QtMobility::QBluetoothUuid::toUInt128(void) const
+	?metaObject@QNearFieldTagType2@QtMobility@@UBEPBUQMetaObject@@XZ @ 21 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType2::metaObject(void) const
+	?errorString@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AVQString@@XZ @ 22 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::errorString(void) const
+	?trUtf8@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 23 NONAME ; class QString QtMobility::QBluetoothSocket::trUtf8(char const *, char const *)
+	?setOperation@QBluetoothTransferReply@QtMobility@@IAEXW4Operation@QBluetoothTransferManager@2@@Z @ 24 NONAME ; void QtMobility::QBluetoothTransferReply::setOperation(enum QtMobility::QBluetoothTransferManager::Operation)
+	?request@QBluetoothTransferReply@QtMobility@@QBE?AVQBluetoothTransferRequest@2@XZ @ 25 NONAME ; class QtMobility::QBluetoothTransferRequest QtMobility::QBluetoothTransferReply::request(void) const
+	?qt_metacast@QNearFieldTagType2@QtMobility@@UAEPAXPBD@Z @ 26 NONAME ; void * QtMobility::QNearFieldTagType2::qt_metacast(char const *)
+	?pairingStatus@QBluetoothLocalDevice@QtMobility@@QBE?AW4Pairing@12@ABVQBluetoothAddress@2@@Z @ 27 NONAME ; enum QtMobility::QBluetoothLocalDevice::Pairing QtMobility::QBluetoothLocalDevice::pairingStatus(class QtMobility::QBluetoothAddress const &) const
+	?tr@QRfcommServer@QtMobility@@SA?AVQString@@PBD0@Z @ 28 NONAME ; class QString QtMobility::QRfcommServer::tr(char const *, char const *)
+	??1QBluetoothUuid@QtMobility@@QAE@XZ @ 29 NONAME ; QtMobility::QBluetoothUuid::~QBluetoothUuid(void)
+	?d_func@QBluetoothServiceInfo@QtMobility@@ABEPBVQBluetoothServiceInfoPrivate@2@XZ @ 30 NONAME ; class QtMobility::QBluetoothServiceInfoPrivate const * QtMobility::QBluetoothServiceInfo::d_func(void) const
+	??1QNearFieldTarget@QtMobility@@UAE@XZ @ 31 NONAME ; QtMobility::QNearFieldTarget::~QNearFieldTarget(void)
+	?trUtf8@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 32 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::trUtf8(char const *, char const *)
+	?sendCommand@QNearFieldTarget@QtMobility@@UAE?AVQByteArray@@ABV3@@Z @ 33 NONAME ; class QByteArray QtMobility::QNearFieldTarget::sendCommand(class QByteArray const &)
+	??1QBluetoothDeviceInfo@QtMobility@@QAE@XZ @ 34 NONAME ; QtMobility::QBluetoothDeviceInfo::~QBluetoothDeviceInfo(void)
+	?setSecurityFlags@QL2capServer@QtMobility@@QAEXV?$QFlags@W4Security@QBluetooth@QtMobility@@@@@Z @ 35 NONAME ; void QtMobility::QL2capServer::setSecurityFlags(class QFlags<enum QtMobility::QBluetooth::Security>)
+	?manager@QBluetoothTransferReply@QtMobility@@QBEPAVQBluetoothTransferManager@2@XZ @ 36 NONAME ; class QtMobility::QBluetoothTransferManager * QtMobility::QBluetoothTransferReply::manager(void) const
+	??_EQNdefMessage@QtMobility@@QAE@I@Z @ 37 NONAME ; QtMobility::QNdefMessage::~QNdefMessage(unsigned int)
+	??0QBluetoothHostInfo@QtMobility@@QAE@XZ @ 38 NONAME ; QtMobility::QBluetoothHostInfo::QBluetoothHostInfo(void)
+	?getStaticMetaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@SAABUQMetaObject@@XZ @ 39 NONAME ; struct QMetaObject const & QtMobility::QBluetoothServiceDiscoveryAgent::getStaticMetaObject(void)
+	?readDatagram@QLlcpSocket@QtMobility@@QAE_JPAD_JPAPAVQNearFieldTarget@2@PAE@Z @ 40 NONAME ; long long QtMobility::QLlcpSocket::readDatagram(char *, long long, class QtMobility::QNearFieldTarget * *, unsigned char *)
+	?error@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXW4Error@12@@Z @ 41 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::error(enum QtMobility::QBluetoothServiceDiscoveryAgent::Error)
+	?metaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@UBEPBUQMetaObject@@XZ @ 42 NONAME ; struct QMetaObject const * QtMobility::QBluetoothServiceDiscoveryAgent::metaObject(void) const
+	?getAddress@QBluetoothHostInfo@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 43 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothHostInfo::getAddress(void) const
+	??1QBluetoothHostInfo@QtMobility@@QAE@XZ @ 44 NONAME ; QtMobility::QBluetoothHostInfo::~QBluetoothHostInfo(void)
+	?attribute@QBluetoothServiceInfo@QtMobility@@QBE?AVQVariant@@G@Z @ 45 NONAME ; class QVariant QtMobility::QBluetoothServiceInfo::attribute(unsigned short) const
 	??0QNearFieldManager@QtMobility@@QAE@PAVQObject@@@Z @ 46 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QObject *)
-	??0QNearFieldTagType1@QtMobility@@QAE@PAVQObject@@@Z @ 47 NONAME ; QtMobility::QNearFieldTagType1::QNearFieldTagType1(class QObject *)
-	??0QNearFieldTagType2@QtMobility@@QAE@PAVQObject@@@Z @ 48 NONAME ; QtMobility::QNearFieldTagType2::QNearFieldTagType2(class QObject *)
-	??0QNearFieldTarget@QtMobility@@QAE@PAVQObject@@@Z @ 49 NONAME ; QtMobility::QNearFieldTarget::QNearFieldTarget(class QObject *)
-	??0QRfcommServer@QtMobility@@QAE@PAVQObject@@@Z @ 50 NONAME ; QtMobility::QRfcommServer::QRfcommServer(class QObject *)
-	??1QBluetoothDeviceDiscoveryAgent@QtMobility@@UAE@XZ @ 51 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent(void)
-	??1QBluetoothDeviceInfo@QtMobility@@QAE@XZ @ 52 NONAME ; QtMobility::QBluetoothDeviceInfo::~QBluetoothDeviceInfo(void)
-	??1QBluetoothLocalDevice@QtMobility@@QAE@XZ @ 53 NONAME ; QtMobility::QBluetoothLocalDevice::~QBluetoothLocalDevice(void)
-	??1QBluetoothServiceDiscoveryAgent@QtMobility@@UAE@XZ @ 54 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent(void)
-	??1QBluetoothServiceInfo@QtMobility@@QAE@XZ @ 55 NONAME ; QtMobility::QBluetoothServiceInfo::~QBluetoothServiceInfo(void)
-	??1QBluetoothSocket@QtMobility@@UAE@XZ @ 56 NONAME ; QtMobility::QBluetoothSocket::~QBluetoothSocket(void)
-	??1QBluetoothTransferManager@QtMobility@@UAE@XZ @ 57 NONAME ; QtMobility::QBluetoothTransferManager::~QBluetoothTransferManager(void)
-	??1QBluetoothTransferReply@QtMobility@@UAE@XZ @ 58 NONAME ; QtMobility::QBluetoothTransferReply::~QBluetoothTransferReply(void)
-	??1QBluetoothTransferRequest@QtMobility@@QAE@XZ @ 59 NONAME ; QtMobility::QBluetoothTransferRequest::~QBluetoothTransferRequest(void)
-	??1QBluetoothUuid@QtMobility@@QAE@XZ @ 60 NONAME ; QtMobility::QBluetoothUuid::~QBluetoothUuid(void)
-	??1QL2capServer@QtMobility@@UAE@XZ @ 61 NONAME ; QtMobility::QL2capServer::~QL2capServer(void)
-	??1QLlcpSocket@QtMobility@@UAE@XZ @ 62 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
-	??1QNdefFilter@QtMobility@@QAE@XZ @ 63 NONAME ; QtMobility::QNdefFilter::~QNdefFilter(void)
-	??1QNdefMessage@QtMobility@@QAE@XZ @ 64 NONAME ; QtMobility::QNdefMessage::~QNdefMessage(void)
-	??1QNdefRecord@QtMobility@@QAE@XZ @ 65 NONAME ; QtMobility::QNdefRecord::~QNdefRecord(void)
-	??1QNearFieldManager@QtMobility@@UAE@XZ @ 66 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(void)
-	??1QNearFieldTagType1@QtMobility@@UAE@XZ @ 67 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(void)
-	??1QNearFieldTagType2@QtMobility@@UAE@XZ @ 68 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(void)
-	??1QNearFieldTarget@QtMobility@@UAE@XZ @ 69 NONAME ; QtMobility::QNearFieldTarget::~QNearFieldTarget(void)
-	??1QRfcommServer@QtMobility@@UAE@XZ @ 70 NONAME ; QtMobility::QRfcommServer::~QRfcommServer(void)
-	??4QBluetoothAddress@QtMobility@@QAEAAV01@ABV01@@Z @ 71 NONAME ; class QtMobility::QBluetoothAddress & QtMobility::QBluetoothAddress::operator=(class QtMobility::QBluetoothAddress const &)
-	??4QBluetoothDeviceInfo@QtMobility@@QAEAAV01@ABV01@@Z @ 72 NONAME ; class QtMobility::QBluetoothDeviceInfo & QtMobility::QBluetoothDeviceInfo::operator=(class QtMobility::QBluetoothDeviceInfo const &)
-	??4QBluetoothServiceInfo@QtMobility@@QAEAAV01@ABV01@@Z @ 73 NONAME ; class QtMobility::QBluetoothServiceInfo & QtMobility::QBluetoothServiceInfo::operator=(class QtMobility::QBluetoothServiceInfo const &)
-	??4QBluetoothTransferRequest@QtMobility@@QAEAAV01@ABV01@@Z @ 74 NONAME ; class QtMobility::QBluetoothTransferRequest & QtMobility::QBluetoothTransferRequest::operator=(class QtMobility::QBluetoothTransferRequest const &)
-	??4QNdefFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 75 NONAME ; class QtMobility::QNdefFilter & QtMobility::QNdefFilter::operator=(class QtMobility::QNdefFilter const &)
-	??4QNdefRecord@QtMobility@@QAEAAV01@ABV01@@Z @ 76 NONAME ; class QtMobility::QNdefRecord & QtMobility::QNdefRecord::operator=(class QtMobility::QNdefRecord const &)
-	??6QtMobility@@YA?AVQDebug@@V1@ABVQBluetoothServiceInfo@0@@Z @ 77 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QBluetoothServiceInfo const &)
-	??6QtMobility@@YA?AVQDebug@@V1@W4SocketError@QBluetoothSocket@0@@Z @ 78 NONAME ; class QDebug QtMobility::operator<<(class QDebug, enum QtMobility::QBluetoothSocket::SocketError)
-	??6QtMobility@@YA?AVQDebug@@V1@W4SocketState@QBluetoothSocket@0@@Z @ 79 NONAME ; class QDebug QtMobility::operator<<(class QDebug, enum QtMobility::QBluetoothSocket::SocketState)
-	??8QBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 80 NONAME ; bool QtMobility::QBluetoothAddress::operator==(class QtMobility::QBluetoothAddress const &) const
-	??8QBluetoothTransferRequest@QtMobility@@QBE_NABV01@@Z @ 81 NONAME ; bool QtMobility::QBluetoothTransferRequest::operator==(class QtMobility::QBluetoothTransferRequest const &) const
-	??8QBluetoothUuid@QtMobility@@QBE_NABV01@@Z @ 82 NONAME ; bool QtMobility::QBluetoothUuid::operator==(class QtMobility::QBluetoothUuid const &) const
-	??8QNdefMessage@QtMobility@@QBE_NABV01@@Z @ 83 NONAME ; bool QtMobility::QNdefMessage::operator==(class QtMobility::QNdefMessage const &) const
-	??8QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 84 NONAME ; bool QtMobility::QNdefRecord::operator==(class QtMobility::QNdefRecord const &) const
-	??9QBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 85 NONAME ; bool QtMobility::QBluetoothAddress::operator!=(class QtMobility::QBluetoothAddress const &) const
-	??9QBluetoothTransferRequest@QtMobility@@QBE_NABV01@@Z @ 86 NONAME ; bool QtMobility::QBluetoothTransferRequest::operator!=(class QtMobility::QBluetoothTransferRequest const &) const
-	??9QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 87 NONAME ; bool QtMobility::QNdefRecord::operator!=(class QtMobility::QNdefRecord const &) const
-	??MQBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 88 NONAME ; bool QtMobility::QBluetoothAddress::operator<(class QtMobility::QBluetoothAddress const &) const
-	??_EQBluetoothDeviceDiscoveryAgent@QtMobility@@UAE@I@Z @ 89 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent(unsigned int)
-	??_EQBluetoothDeviceInfo@QtMobility@@QAE@I@Z @ 90 NONAME ; QtMobility::QBluetoothDeviceInfo::~QBluetoothDeviceInfo(unsigned int)
-	??_EQBluetoothServiceDiscoveryAgent@QtMobility@@UAE@I@Z @ 91 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent(unsigned int)
-	??_EQBluetoothServiceInfo@QtMobility@@QAE@I@Z @ 92 NONAME ; QtMobility::QBluetoothServiceInfo::~QBluetoothServiceInfo(unsigned int)
-	??_EQBluetoothSocket@QtMobility@@UAE@I@Z @ 93 NONAME ; QtMobility::QBluetoothSocket::~QBluetoothSocket(unsigned int)
-	??_EQBluetoothTransferManager@QtMobility@@UAE@I@Z @ 94 NONAME ; QtMobility::QBluetoothTransferManager::~QBluetoothTransferManager(unsigned int)
-	??_EQBluetoothTransferReply@QtMobility@@UAE@I@Z @ 95 NONAME ; QtMobility::QBluetoothTransferReply::~QBluetoothTransferReply(unsigned int)
-	??_EQBluetoothUuid@QtMobility@@QAE@I@Z @ 96 NONAME ; QtMobility::QBluetoothUuid::~QBluetoothUuid(unsigned int)
-	??_EQL2capServer@QtMobility@@UAE@I@Z @ 97 NONAME ; QtMobility::QL2capServer::~QL2capServer(unsigned int)
-	??_EQLlcpSocket@QtMobility@@UAE@I@Z @ 98 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(unsigned int)
-	??_EQNdefMessage@QtMobility@@QAE@I@Z @ 99 NONAME ; QtMobility::QNdefMessage::~QNdefMessage(unsigned int)
-	??_EQNdefRecord@QtMobility@@QAE@I@Z @ 100 NONAME ; QtMobility::QNdefRecord::~QNdefRecord(unsigned int)
-	??_EQNearFieldManager@QtMobility@@UAE@I@Z @ 101 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(unsigned int)
-	??_EQNearFieldTagType1@QtMobility@@UAE@I@Z @ 102 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(unsigned int)
-	??_EQNearFieldTagType2@QtMobility@@UAE@I@Z @ 103 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(unsigned int)
-	??_EQNearFieldTarget@QtMobility@@UAE@I@Z @ 104 NONAME ; QtMobility::QNearFieldTarget::~QNearFieldTarget(unsigned int)
-	??_EQRfcommServer@QtMobility@@UAE@I@Z @ 105 NONAME ; QtMobility::QRfcommServer::~QRfcommServer(unsigned int)
-	?abort@QBluetoothSocket@QtMobility@@QAEXXZ @ 106 NONAME ; void QtMobility::QBluetoothSocket::abort(void)
-	?address@QBluetoothDeviceInfo@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 107 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothDeviceInfo::address(void) const
-	?appendRecord@QNdefFilter@QtMobility@@QAEXABURecord@12@@Z @ 108 NONAME ; void QtMobility::QNdefFilter::appendRecord(struct QtMobility::QNdefFilter::Record const &)
-	?appendRecord@QNdefFilter@QtMobility@@QAEXW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@II@Z @ 109 NONAME ; void QtMobility::QNdefFilter::appendRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, unsigned int, unsigned int)
-	?attribute@QBluetoothServiceInfo@QtMobility@@QBE?AVQVariant@@G@Z @ 110 NONAME ; class QVariant QtMobility::QBluetoothServiceInfo::attribute(unsigned short) const
-	?attribute@QBluetoothTransferReply@QtMobility@@QBE?AVQVariant@@W4Attribute@QBluetoothTransferRequest@2@@Z @ 111 NONAME ; class QVariant QtMobility::QBluetoothTransferReply::attribute(enum QtMobility::QBluetoothTransferRequest::Attribute) const
-	?attribute@QBluetoothTransferRequest@QtMobility@@QBE?AVQVariant@@W4Attribute@12@ABV3@@Z @ 112 NONAME ; class QVariant QtMobility::QBluetoothTransferRequest::attribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &) const
-	?attributes@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@G@@XZ @ 113 NONAME ; class QList<unsigned short> QtMobility::QBluetoothServiceInfo::attributes(void) const
-	?bind@QLlcpSocket@QtMobility@@QAE_NE@Z @ 114 NONAME ; bool QtMobility::QLlcpSocket::bind(unsigned char)
-	?bytesAvailable@QBluetoothSocket@QtMobility@@UBE_JXZ @ 115 NONAME ; long long QtMobility::QBluetoothSocket::bytesAvailable(void) const
-	?bytesToWrite@QBluetoothSocket@QtMobility@@UBE_JXZ @ 116 NONAME ; long long QtMobility::QBluetoothSocket::bytesToWrite(void) const
-	?clear@QBluetoothAddress@QtMobility@@QAEXXZ @ 117 NONAME ; void QtMobility::QBluetoothAddress::clear(void)
-	?clear@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXXZ @ 118 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::clear(void)
-	?clear@QNdefFilter@QtMobility@@QAEXXZ @ 119 NONAME ; void QtMobility::QNdefFilter::clear(void)
-	?close@QBluetoothSocket@QtMobility@@UAEXXZ @ 120 NONAME ; void QtMobility::QBluetoothSocket::close(void)
-	?close@QRfcommServer@QtMobility@@QAEXXZ @ 121 NONAME ; void QtMobility::QRfcommServer::close(void)
-	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothAddress@2@ABVQBluetoothUuid@2@V?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 122 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothAddress const &, class QtMobility::QBluetoothUuid const &, class QFlags<enum QIODevice::OpenModeFlag>)
-	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothAddress@2@GV?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 123 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothAddress const &, unsigned short, class QFlags<enum QIODevice::OpenModeFlag>)
-	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothServiceInfo@2@V?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 124 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothServiceInfo const &, class QFlags<enum QIODevice::OpenModeFlag>)
-	?connectToService@QLlcpSocket@QtMobility@@QAEXPAVQNearFieldTarget@2@ABVQString@@@Z @ 125 NONAME ; void QtMobility::QLlcpSocket::connectToService(class QtMobility::QNearFieldTarget *, class QString const &)
-	?connected@QBluetoothSocket@QtMobility@@IAEXXZ @ 126 NONAME ; void QtMobility::QBluetoothSocket::connected(void)
-	?connected@QLlcpSocket@QtMobility@@IAEXXZ @ 127 NONAME ; void QtMobility::QLlcpSocket::connected(void)
-	?contains@QBluetoothServiceInfo@QtMobility@@QBE_NG@Z @ 128 NONAME ; bool QtMobility::QBluetoothServiceInfo::contains(unsigned short) const
-	?d_func@QBluetoothDeviceInfo@QtMobility@@AAEPAVQBluetoothDeviceInfoPrivate@2@XZ @ 129 NONAME ; class QtMobility::QBluetoothDeviceInfoPrivate * QtMobility::QBluetoothDeviceInfo::d_func(void)
-	?d_func@QBluetoothDeviceInfo@QtMobility@@ABEPBVQBluetoothDeviceInfoPrivate@2@XZ @ 130 NONAME ; class QtMobility::QBluetoothDeviceInfoPrivate const * QtMobility::QBluetoothDeviceInfo::d_func(void) const
-	?d_func@QBluetoothLocalDevice@QtMobility@@AAEPAVQBluetoothLocalDevicePrivate@2@XZ @ 131 NONAME ; class QtMobility::QBluetoothLocalDevicePrivate * QtMobility::QBluetoothLocalDevice::d_func(void)
-	?d_func@QBluetoothLocalDevice@QtMobility@@ABEPBVQBluetoothLocalDevicePrivate@2@XZ @ 132 NONAME ; class QtMobility::QBluetoothLocalDevicePrivate const * QtMobility::QBluetoothLocalDevice::d_func(void) const
-	?d_func@QBluetoothServiceDiscoveryAgent@QtMobility@@AAEPAVQBluetoothServiceDiscoveryAgentPrivate@2@XZ @ 133 NONAME ; class QtMobility::QBluetoothServiceDiscoveryAgentPrivate * QtMobility::QBluetoothServiceDiscoveryAgent::d_func(void)
-	?d_func@QBluetoothServiceDiscoveryAgent@QtMobility@@ABEPBVQBluetoothServiceDiscoveryAgentPrivate@2@XZ @ 134 NONAME ; class QtMobility::QBluetoothServiceDiscoveryAgentPrivate const * QtMobility::QBluetoothServiceDiscoveryAgent::d_func(void) const
-	?d_func@QBluetoothServiceInfo@QtMobility@@AAEPAVQBluetoothServiceInfoPrivate@2@XZ @ 135 NONAME ; class QtMobility::QBluetoothServiceInfoPrivate * QtMobility::QBluetoothServiceInfo::d_func(void)
-	?d_func@QBluetoothServiceInfo@QtMobility@@ABEPBVQBluetoothServiceInfoPrivate@2@XZ @ 136 NONAME ; class QtMobility::QBluetoothServiceInfoPrivate const * QtMobility::QBluetoothServiceInfo::d_func(void) const
-	?d_func@QBluetoothSocket@QtMobility@@AAEPAVQBluetoothSocketPrivate@2@XZ @ 137 NONAME ; class QtMobility::QBluetoothSocketPrivate * QtMobility::QBluetoothSocket::d_func(void)
-	?d_func@QBluetoothSocket@QtMobility@@ABEPBVQBluetoothSocketPrivate@2@XZ @ 138 NONAME ; class QtMobility::QBluetoothSocketPrivate const * QtMobility::QBluetoothSocket::d_func(void) const
-	?d_func@QL2capServer@QtMobility@@AAEPAVQL2capServerPrivate@2@XZ @ 139 NONAME ; class QtMobility::QL2capServerPrivate * QtMobility::QL2capServer::d_func(void)
-	?d_func@QL2capServer@QtMobility@@ABEPBVQL2capServerPrivate@2@XZ @ 140 NONAME ; class QtMobility::QL2capServerPrivate const * QtMobility::QL2capServer::d_func(void) const
-	?d_func@QLlcpSocket@QtMobility@@AAEPAVQLlcpSocketPrivate@2@XZ @ 141 NONAME ; class QtMobility::QLlcpSocketPrivate * QtMobility::QLlcpSocket::d_func(void)
-	?d_func@QLlcpSocket@QtMobility@@ABEPBVQLlcpSocketPrivate@2@XZ @ 142 NONAME ; class QtMobility::QLlcpSocketPrivate const * QtMobility::QLlcpSocket::d_func(void) const
-	?d_func@QNearFieldManager@QtMobility@@AAEPAVQNearFieldManagerPrivate@2@XZ @ 143 NONAME ; class QtMobility::QNearFieldManagerPrivate * QtMobility::QNearFieldManager::d_func(void)
-	?d_func@QNearFieldManager@QtMobility@@ABEPBVQNearFieldManagerPrivate@2@XZ @ 144 NONAME ; class QtMobility::QNearFieldManagerPrivate const * QtMobility::QNearFieldManager::d_func(void) const
-	?d_func@QRfcommServer@QtMobility@@AAEPAVQRfcommServerPrivate@2@XZ @ 145 NONAME ; class QtMobility::QRfcommServerPrivate * QtMobility::QRfcommServer::d_func(void)
-	?d_func@QRfcommServer@QtMobility@@ABEPBVQRfcommServerPrivate@2@XZ @ 146 NONAME ; class QtMobility::QRfcommServerPrivate const * QtMobility::QRfcommServer::d_func(void) const
-	?defaultDevice@QBluetoothLocalDevice@QtMobility@@SA?AV12@XZ @ 147 NONAME ; class QtMobility::QBluetoothLocalDevice QtMobility::QBluetoothLocalDevice::defaultDevice(void)
-	?device@QBluetoothServiceInfo@QtMobility@@QBE?AVQBluetoothDeviceInfo@2@XZ @ 148 NONAME ; class QtMobility::QBluetoothDeviceInfo QtMobility::QBluetoothServiceInfo::device(void) const
-	?deviceDiscovered@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXABVQBluetoothDeviceInfo@2@@Z @ 149 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::deviceDiscovered(class QtMobility::QBluetoothDeviceInfo const &)
-	?disconnectFromService@QBluetoothSocket@QtMobility@@QAEXXZ @ 150 NONAME ; void QtMobility::QBluetoothSocket::disconnectFromService(void)
-	?disconnectFromService@QLlcpSocket@QtMobility@@QAEXXZ @ 151 NONAME ; void QtMobility::QLlcpSocket::disconnectFromService(void)
-	?disconnected@QBluetoothSocket@QtMobility@@IAEXXZ @ 152 NONAME ; void QtMobility::QBluetoothSocket::disconnected(void)
-	?disconnected@QLlcpSocket@QtMobility@@IAEXXZ @ 153 NONAME ; void QtMobility::QLlcpSocket::disconnected(void)
-	?disconnected@QNearFieldTarget@QtMobility@@IAEXXZ @ 154 NONAME ; void QtMobility::QNearFieldTarget::disconnected(void)
-	?discoveredDevices@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothDeviceInfo@QtMobility@@@@XZ @ 155 NONAME ; class QList<class QtMobility::QBluetoothDeviceInfo> QtMobility::QBluetoothDeviceDiscoveryAgent::discoveredDevices(void) const
-	?discoveredServices@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothServiceInfo@QtMobility@@@@XZ @ 156 NONAME ; class QList<class QtMobility::QBluetoothServiceInfo> QtMobility::QBluetoothServiceDiscoveryAgent::discoveredServices(void) const
-	?downloadProgress@QBluetoothTransferReply@QtMobility@@IAEX_J0@Z @ 157 NONAME ; void QtMobility::QBluetoothTransferReply::downloadProgress(long long, long long)
-	?encoding@QNdefNfcTextRecord@QtMobility@@QBE?AW4Encoding@12@XZ @ 158 NONAME ; enum QtMobility::QNdefNfcTextRecord::Encoding QtMobility::QNdefNfcTextRecord::encoding(void) const
-	?error@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXW4Error@12@@Z @ 159 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::error(enum QtMobility::QBluetoothDeviceDiscoveryAgent::Error)
-	?error@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AW4Error@12@XZ @ 160 NONAME ; enum QtMobility::QBluetoothDeviceDiscoveryAgent::Error QtMobility::QBluetoothDeviceDiscoveryAgent::error(void) const
-	?error@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXW4Error@12@@Z @ 161 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::error(enum QtMobility::QBluetoothServiceDiscoveryAgent::Error)
-	?error@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AW4Error@12@XZ @ 162 NONAME ; enum QtMobility::QBluetoothServiceDiscoveryAgent::Error QtMobility::QBluetoothServiceDiscoveryAgent::error(void) const
-	?error@QBluetoothSocket@QtMobility@@IAEXW4SocketError@12@@Z @ 163 NONAME ; void QtMobility::QBluetoothSocket::error(enum QtMobility::QBluetoothSocket::SocketError)
-	?error@QBluetoothSocket@QtMobility@@QBE?AW4SocketError@12@XZ @ 164 NONAME ; enum QtMobility::QBluetoothSocket::SocketError QtMobility::QBluetoothSocket::error(void) const
-	?error@QLlcpSocket@QtMobility@@IAEXW4Error@12@@Z @ 165 NONAME ; void QtMobility::QLlcpSocket::error(enum QtMobility::QLlcpSocket::Error)
-	?error@QLlcpSocket@QtMobility@@QBE?AW4Error@12@XZ @ 166 NONAME ; enum QtMobility::QLlcpSocket::Error QtMobility::QLlcpSocket::error(void) const
-	?errorString@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AVQString@@XZ @ 167 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::errorString(void) const
-	?errorString@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AVQString@@XZ @ 168 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::errorString(void) const
-	?finished@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXXZ @ 169 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::finished(void)
-	?finished@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXXZ @ 170 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::finished(void)
-	?finished@QBluetoothTransferManager@QtMobility@@IAEXPAVQBluetoothTransferReply@2@@Z @ 171 NONAME ; void QtMobility::QBluetoothTransferManager::finished(class QtMobility::QBluetoothTransferReply *)
-	?finished@QBluetoothTransferReply@QtMobility@@IAEXXZ @ 172 NONAME ; void QtMobility::QBluetoothTransferReply::finished(void)
-	?fromByteArray@QNdefMessage@QtMobility@@SA?AV12@ABVQByteArray@@@Z @ 173 NONAME ; class QtMobility::QNdefMessage QtMobility::QNdefMessage::fromByteArray(class QByteArray const &)
-	?get@QBluetoothTransferManager@QtMobility@@QAEPAVQBluetoothTransferReply@2@ABVQBluetoothTransferRequest@2@@Z @ 174 NONAME ; class QtMobility::QBluetoothTransferReply * QtMobility::QBluetoothTransferManager::get(class QtMobility::QBluetoothTransferRequest const &)
-	?getStaticMetaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@SAABUQMetaObject@@XZ @ 175 NONAME ; struct QMetaObject const & QtMobility::QBluetoothDeviceDiscoveryAgent::getStaticMetaObject(void)
-	?getStaticMetaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@SAABUQMetaObject@@XZ @ 176 NONAME ; struct QMetaObject const & QtMobility::QBluetoothServiceDiscoveryAgent::getStaticMetaObject(void)
-	?getStaticMetaObject@QBluetoothSocket@QtMobility@@SAABUQMetaObject@@XZ @ 177 NONAME ; struct QMetaObject const & QtMobility::QBluetoothSocket::getStaticMetaObject(void)
-	?getStaticMetaObject@QBluetoothTransferManager@QtMobility@@SAABUQMetaObject@@XZ @ 178 NONAME ; struct QMetaObject const & QtMobility::QBluetoothTransferManager::getStaticMetaObject(void)
-	?getStaticMetaObject@QBluetoothTransferReply@QtMobility@@SAABUQMetaObject@@XZ @ 179 NONAME ; struct QMetaObject const & QtMobility::QBluetoothTransferReply::getStaticMetaObject(void)
-	?getStaticMetaObject@QL2capServer@QtMobility@@SAABUQMetaObject@@XZ @ 180 NONAME ; struct QMetaObject const & QtMobility::QL2capServer::getStaticMetaObject(void)
-	?getStaticMetaObject@QLlcpSocket@QtMobility@@SAABUQMetaObject@@XZ @ 181 NONAME ; struct QMetaObject const & QtMobility::QLlcpSocket::getStaticMetaObject(void)
-	?getStaticMetaObject@QNearFieldManager@QtMobility@@SAABUQMetaObject@@XZ @ 182 NONAME ; struct QMetaObject const & QtMobility::QNearFieldManager::getStaticMetaObject(void)
-	?getStaticMetaObject@QNearFieldTagType1@QtMobility@@SAABUQMetaObject@@XZ @ 183 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType1::getStaticMetaObject(void)
-	?getStaticMetaObject@QNearFieldTagType2@QtMobility@@SAABUQMetaObject@@XZ @ 184 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType2::getStaticMetaObject(void)
-	?getStaticMetaObject@QNearFieldTarget@QtMobility@@SAABUQMetaObject@@XZ @ 185 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTarget::getStaticMetaObject(void)
-	?getStaticMetaObject@QRfcommServer@QtMobility@@SAABUQMetaObject@@XZ @ 186 NONAME ; struct QMetaObject const & QtMobility::QRfcommServer::getStaticMetaObject(void)
-	?hasNdefMessage@QNearFieldTagType1@QtMobility@@UAE_NXZ @ 187 NONAME ; bool QtMobility::QNearFieldTagType1::hasNdefMessage(void)
-	?hasNdefMessage@QNearFieldTarget@QtMobility@@UAE_NXZ @ 188 NONAME ; bool QtMobility::QNearFieldTarget::hasNdefMessage(void)
-	?hasPendingConnections@QRfcommServer@QtMobility@@QBE_NXZ @ 189 NONAME ; bool QtMobility::QRfcommServer::hasPendingConnections(void) const
-	?hasPendingDatagrams@QLlcpSocket@QtMobility@@QBE_NXZ @ 190 NONAME ; bool QtMobility::QLlcpSocket::hasPendingDatagrams(void) const
-	?id@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 191 NONAME ; class QByteArray QtMobility::QNdefRecord::id(void) const
-	?inquiryType@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AW4InquiryType@12@XZ @ 192 NONAME ; enum QtMobility::QBluetoothDeviceDiscoveryAgent::InquiryType QtMobility::QBluetoothDeviceDiscoveryAgent::inquiryType(void) const
-	?isActive@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE_NXZ @ 193 NONAME ; bool QtMobility::QBluetoothDeviceDiscoveryAgent::isActive(void) const
-	?isActive@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE_NXZ @ 194 NONAME ; bool QtMobility::QBluetoothServiceDiscoveryAgent::isActive(void) const
-	?isComplete@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 195 NONAME ; bool QtMobility::QBluetoothServiceInfo::isComplete(void) const
-	?isEmpty@QNdefRecord@QtMobility@@QBE_NXZ @ 196 NONAME ; bool QtMobility::QNdefRecord::isEmpty(void) const
-	?isFinished@QBluetoothTransferReply@QtMobility@@QBE_NXZ @ 197 NONAME ; bool QtMobility::QBluetoothTransferReply::isFinished(void) const
-	?isListening@QL2capServer@QtMobility@@QBE_NXZ @ 198 NONAME ; bool QtMobility::QL2capServer::isListening(void) const
-	?isListening@QRfcommServer@QtMobility@@QBE_NXZ @ 199 NONAME ; bool QtMobility::QRfcommServer::isListening(void) const
-	?isNull@QBluetoothAddress@QtMobility@@QBE_NXZ @ 200 NONAME ; bool QtMobility::QBluetoothAddress::isNull(void) const
-	?isRegistered@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 201 NONAME ; bool QtMobility::QBluetoothServiceInfo::isRegistered(void) const
-	?isRunning@QBluetoothTransferReply@QtMobility@@QBE_NXZ @ 202 NONAME ; bool QtMobility::QBluetoothTransferReply::isRunning(void) const
-	?isSequential@QBluetoothSocket@QtMobility@@UBE_NXZ @ 203 NONAME ; bool QtMobility::QBluetoothSocket::isSequential(void) const
-	?isValid@QBluetoothDeviceInfo@QtMobility@@QBE_NXZ @ 204 NONAME ; bool QtMobility::QBluetoothDeviceInfo::isValid(void) const
-	?isValid@QBluetoothLocalDevice@QtMobility@@QBE_NXZ @ 205 NONAME ; bool QtMobility::QBluetoothLocalDevice::isValid(void) const
-	?isValid@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 206 NONAME ; bool QtMobility::QBluetoothServiceInfo::isValid(void) const
-	?listen@QRfcommServer@QtMobility@@QAE_NABVQBluetoothAddress@2@G@Z @ 207 NONAME ; bool QtMobility::QRfcommServer::listen(class QtMobility::QBluetoothAddress const &, unsigned short)
-	?localAddress@QBluetoothSocket@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 208 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothSocket::localAddress(void) const
-	?localName@QBluetoothSocket@QtMobility@@QBE?AVQString@@XZ @ 209 NONAME ; class QString QtMobility::QBluetoothSocket::localName(void) const
-	?localPort@QBluetoothSocket@QtMobility@@QBEGXZ @ 210 NONAME ; unsigned short QtMobility::QBluetoothSocket::localPort(void) const
-	?locale@QNdefNfcTextRecord@QtMobility@@QBE?AVQLocale@@XZ @ 211 NONAME ; class QLocale QtMobility::QNdefNfcTextRecord::locale(void) const
-	?majorDeviceClass@QBluetoothDeviceInfo@QtMobility@@QBE?AW4MajorDeviceClass@12@XZ @ 212 NONAME ; enum QtMobility::QBluetoothDeviceInfo::MajorDeviceClass QtMobility::QBluetoothDeviceInfo::majorDeviceClass(void) const
-	?manager@QBluetoothTransferReply@QtMobility@@QBEPAVQBluetoothTransferManager@2@XZ @ 213 NONAME ; class QtMobility::QBluetoothTransferManager * QtMobility::QBluetoothTransferReply::manager(void) const
-	?manufacturerSpecificData@QBluetoothDeviceInfo@QtMobility@@QBE?AVQByteArray@@PA_N@Z @ 214 NONAME ; class QByteArray QtMobility::QBluetoothDeviceInfo::manufacturerSpecificData(bool *) const
-	?maxPendingConnections@QL2capServer@QtMobility@@QBEHXZ @ 215 NONAME ; int QtMobility::QL2capServer::maxPendingConnections(void) const
-	?maxPendingConnections@QRfcommServer@QtMobility@@QBEHXZ @ 216 NONAME ; int QtMobility::QRfcommServer::maxPendingConnections(void) const
-	?memorySize@QNearFieldTagType1@QtMobility@@QAEHXZ @ 217 NONAME ; int QtMobility::QNearFieldTagType1::memorySize(void)
-	?memorySize@QNearFieldTagType2@QtMobility@@QAEHXZ @ 218 NONAME ; int QtMobility::QNearFieldTagType2::memorySize(void)
-	?metaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@UBEPBUQMetaObject@@XZ @ 219 NONAME ; struct QMetaObject const * QtMobility::QBluetoothDeviceDiscoveryAgent::metaObject(void) const
-	?metaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@UBEPBUQMetaObject@@XZ @ 220 NONAME ; struct QMetaObject const * QtMobility::QBluetoothServiceDiscoveryAgent::metaObject(void) const
-	?metaObject@QBluetoothSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 221 NONAME ; struct QMetaObject const * QtMobility::QBluetoothSocket::metaObject(void) const
-	?metaObject@QBluetoothTransferManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 222 NONAME ; struct QMetaObject const * QtMobility::QBluetoothTransferManager::metaObject(void) const
-	?metaObject@QBluetoothTransferReply@QtMobility@@UBEPBUQMetaObject@@XZ @ 223 NONAME ; struct QMetaObject const * QtMobility::QBluetoothTransferReply::metaObject(void) const
-	?metaObject@QL2capServer@QtMobility@@UBEPBUQMetaObject@@XZ @ 224 NONAME ; struct QMetaObject const * QtMobility::QL2capServer::metaObject(void) const
-	?metaObject@QLlcpSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 225 NONAME ; struct QMetaObject const * QtMobility::QLlcpSocket::metaObject(void) const
-	?metaObject@QNearFieldManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 226 NONAME ; struct QMetaObject const * QtMobility::QNearFieldManager::metaObject(void) const
-	?metaObject@QNearFieldTagType1@QtMobility@@UBEPBUQMetaObject@@XZ @ 227 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType1::metaObject(void) const
-	?metaObject@QNearFieldTagType2@QtMobility@@UBEPBUQMetaObject@@XZ @ 228 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType2::metaObject(void) const
-	?metaObject@QNearFieldTarget@QtMobility@@UBEPBUQMetaObject@@XZ @ 229 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTarget::metaObject(void) const
-	?metaObject@QRfcommServer@QtMobility@@UBEPBUQMetaObject@@XZ @ 230 NONAME ; struct QMetaObject const * QtMobility::QRfcommServer::metaObject(void) const
-	?minimumSize@QBluetoothUuid@QtMobility@@QBEHXZ @ 231 NONAME ; int QtMobility::QBluetoothUuid::minimumSize(void) const
-	?minorDeviceClass@QBluetoothDeviceInfo@QtMobility@@QBEEXZ @ 232 NONAME ; unsigned char QtMobility::QBluetoothDeviceInfo::minorDeviceClass(void) const
-	?name@QBluetoothDeviceInfo@QtMobility@@QBE?AVQString@@XZ @ 233 NONAME ; class QString QtMobility::QBluetoothDeviceInfo::name(void) const
-	?name@QBluetoothLocalDevice@QtMobility@@QBE?AVQString@@XZ @ 234 NONAME ; class QString QtMobility::QBluetoothLocalDevice::name(void) const
-	?ndefMessages@QNearFieldTagType1@QtMobility@@UAE?AV?$QList@VQNdefMessage@QtMobility@@@@XZ @ 235 NONAME ; class QList<class QtMobility::QNdefMessage> QtMobility::QNearFieldTagType1::ndefMessages(void)
-	?ndefMessages@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQNdefMessage@QtMobility@@@@XZ @ 236 NONAME ; class QList<class QtMobility::QNdefMessage> QtMobility::QNearFieldTarget::ndefMessages(void)
-	?newConnection@QL2capServer@QtMobility@@IAEXXZ @ 237 NONAME ; void QtMobility::QL2capServer::newConnection(void)
-	?newConnection@QRfcommServer@QtMobility@@IAEXXZ @ 238 NONAME ; void QtMobility::QRfcommServer::newConnection(void)
-	?nextPendingConnection@QRfcommServer@QtMobility@@QAEPAVQBluetoothSocket@2@XZ @ 239 NONAME ; class QtMobility::QBluetoothSocket * QtMobility::QRfcommServer::nextPendingConnection(void)
-	?operation@QBluetoothTransferReply@QtMobility@@QBE?AW4Operation@QBluetoothTransferManager@2@XZ @ 240 NONAME ; enum QtMobility::QBluetoothTransferManager::Operation QtMobility::QBluetoothTransferReply::operation(void) const
-	?orderMatch@QNdefFilter@QtMobility@@QBE_NXZ @ 241 NONAME ; bool QtMobility::QNdefFilter::orderMatch(void) const
-	?pairing@QBluetoothLocalDevice@QtMobility@@QBE?AW4Pairing@12@ABVQBluetoothAddress@2@@Z @ 242 NONAME ; enum QtMobility::QBluetoothLocalDevice::Pairing QtMobility::QBluetoothLocalDevice::pairing(class QtMobility::QBluetoothAddress const &) const
-	?payload@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 243 NONAME ; class QByteArray QtMobility::QNdefRecord::payload(void) const
-	?peerAddress@QBluetoothSocket@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 244 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothSocket::peerAddress(void) const
-	?peerName@QBluetoothSocket@QtMobility@@QBE?AVQString@@XZ @ 245 NONAME ; class QString QtMobility::QBluetoothSocket::peerName(void) const
-	?peerPort@QBluetoothSocket@QtMobility@@QBEGXZ @ 246 NONAME ; unsigned short QtMobility::QBluetoothSocket::peerPort(void) const
-	?pendingDatagramSize@QLlcpSocket@QtMobility@@QBE_JXZ @ 247 NONAME ; long long QtMobility::QLlcpSocket::pendingDatagramSize(void) const
-	?protocolDescriptor@QBluetoothServiceInfo@QtMobility@@QBE?AVSequence@12@W4ProtocolUuid@QBluetoothUuid@2@@Z @ 248 NONAME ; class QtMobility::QBluetoothServiceInfo::Sequence QtMobility::QBluetoothServiceInfo::protocolDescriptor(enum QtMobility::QBluetoothUuid::ProtocolUuid) const
-	?protocolServiceMultiplexer@QBluetoothServiceInfo@QtMobility@@QBEHXZ @ 249 NONAME ; int QtMobility::QBluetoothServiceInfo::protocolServiceMultiplexer(void) const
-	?put@QBluetoothTransferManager@QtMobility@@QAEPAVQBluetoothTransferReply@2@ABVQBluetoothTransferRequest@2@PAVQIODevice@@@Z @ 250 NONAME ; class QtMobility::QBluetoothTransferReply * QtMobility::QBluetoothTransferManager::put(class QtMobility::QBluetoothTransferRequest const &, class QIODevice *)
-	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 251 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
-	?qt_metacall@QBluetoothDeviceDiscoveryAgent@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 252 NONAME ; int QtMobility::QBluetoothDeviceDiscoveryAgent::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QBluetoothServiceDiscoveryAgent@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 253 NONAME ; int QtMobility::QBluetoothServiceDiscoveryAgent::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QBluetoothSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 254 NONAME ; int QtMobility::QBluetoothSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QBluetoothTransferManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 255 NONAME ; int QtMobility::QBluetoothTransferManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QBluetoothTransferReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 256 NONAME ; int QtMobility::QBluetoothTransferReply::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QL2capServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 257 NONAME ; int QtMobility::QL2capServer::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLlcpSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 258 NONAME ; int QtMobility::QLlcpSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNearFieldManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 259 NONAME ; int QtMobility::QNearFieldManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNearFieldTagType1@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 260 NONAME ; int QtMobility::QNearFieldTagType1::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNearFieldTagType2@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 261 NONAME ; int QtMobility::QNearFieldTagType2::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNearFieldTarget@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 262 NONAME ; int QtMobility::QNearFieldTarget::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QRfcommServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 263 NONAME ; int QtMobility::QRfcommServer::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@QBluetoothDeviceDiscoveryAgent@QtMobility@@UAEPAXPBD@Z @ 264 NONAME ; void * QtMobility::QBluetoothDeviceDiscoveryAgent::qt_metacast(char const *)
-	?qt_metacast@QBluetoothServiceDiscoveryAgent@QtMobility@@UAEPAXPBD@Z @ 265 NONAME ; void * QtMobility::QBluetoothServiceDiscoveryAgent::qt_metacast(char const *)
-	?qt_metacast@QBluetoothSocket@QtMobility@@UAEPAXPBD@Z @ 266 NONAME ; void * QtMobility::QBluetoothSocket::qt_metacast(char const *)
-	?qt_metacast@QBluetoothTransferManager@QtMobility@@UAEPAXPBD@Z @ 267 NONAME ; void * QtMobility::QBluetoothTransferManager::qt_metacast(char const *)
-	?qt_metacast@QBluetoothTransferReply@QtMobility@@UAEPAXPBD@Z @ 268 NONAME ; void * QtMobility::QBluetoothTransferReply::qt_metacast(char const *)
-	?qt_metacast@QL2capServer@QtMobility@@UAEPAXPBD@Z @ 269 NONAME ; void * QtMobility::QL2capServer::qt_metacast(char const *)
-	?qt_metacast@QLlcpSocket@QtMobility@@UAEPAXPBD@Z @ 270 NONAME ; void * QtMobility::QLlcpSocket::qt_metacast(char const *)
-	?qt_metacast@QNearFieldManager@QtMobility@@UAEPAXPBD@Z @ 271 NONAME ; void * QtMobility::QNearFieldManager::qt_metacast(char const *)
-	?qt_metacast@QNearFieldTagType1@QtMobility@@UAEPAXPBD@Z @ 272 NONAME ; void * QtMobility::QNearFieldTagType1::qt_metacast(char const *)
-	?qt_metacast@QNearFieldTagType2@QtMobility@@UAEPAXPBD@Z @ 273 NONAME ; void * QtMobility::QNearFieldTagType2::qt_metacast(char const *)
-	?qt_metacast@QNearFieldTarget@QtMobility@@UAEPAXPBD@Z @ 274 NONAME ; void * QtMobility::QNearFieldTarget::qt_metacast(char const *)
-	?qt_metacast@QRfcommServer@QtMobility@@UAEPAXPBD@Z @ 275 NONAME ; void * QtMobility::QRfcommServer::qt_metacast(char const *)
-	?readAll@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@XZ @ 276 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readAll(void)
-	?readBlock@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@E@Z @ 277 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readBlock(unsigned char)
-	?readBlock@QNearFieldTagType2@QtMobility@@UAE?AVQByteArray@@E@Z @ 278 NONAME ; class QByteArray QtMobility::QNearFieldTagType2::readBlock(unsigned char)
-	?readBufferSize@QBluetoothTransferReply@QtMobility@@QBE_JXZ @ 279 NONAME ; long long QtMobility::QBluetoothTransferReply::readBufferSize(void) const
-	?readByte@QNearFieldTagType1@QtMobility@@UAEEE@Z @ 280 NONAME ; unsigned char QtMobility::QNearFieldTagType1::readByte(unsigned char)
-	?readData@QBluetoothSocket@QtMobility@@MAE_JPAD_J@Z @ 281 NONAME ; long long QtMobility::QBluetoothSocket::readData(char *, long long)
-	?readData@QLlcpSocket@QtMobility@@MAE_JPAD_J@Z @ 282 NONAME ; long long QtMobility::QLlcpSocket::readData(char *, long long)
-	?readDatagram@QLlcpSocket@QtMobility@@QAE_JPAD_JPAPAVQNearFieldTarget@2@PAE@Z @ 283 NONAME ; long long QtMobility::QLlcpSocket::readDatagram(char *, long long, class QtMobility::QNearFieldTarget * *, unsigned char *)
-	?readIdentification@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@XZ @ 284 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readIdentification(void)
-	?readSegment@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@E@Z @ 285 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readSegment(unsigned char)
-	?recordAt@QNdefFilter@QtMobility@@QBE?AURecord@12@H@Z @ 286 NONAME ; struct QtMobility::QNdefFilter::Record QtMobility::QNdefFilter::recordAt(int) const
-	?recordCount@QNdefFilter@QtMobility@@QBEHXZ @ 287 NONAME ; int QtMobility::QNdefFilter::recordCount(void) const
-	?registerService@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 288 NONAME ; bool QtMobility::QBluetoothServiceInfo::registerService(void) const
-	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHABVQNdefFilter@2@PAVQObject@@PBD@Z @ 289 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QtMobility::QNdefFilter const &, class QObject *, char const *)
-	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHPAVQObject@@PBD@Z @ 290 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QObject *, char const *)
-	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@PAVQObject@@PBD@Z @ 291 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, class QObject *, char const *)
-	?removeAttribute@QBluetoothServiceInfo@QtMobility@@QAEXG@Z @ 292 NONAME ; void QtMobility::QBluetoothServiceInfo::removeAttribute(unsigned short)
-	?request@QBluetoothTransferReply@QtMobility@@QBE?AVQBluetoothTransferRequest@2@XZ @ 293 NONAME ; class QtMobility::QBluetoothTransferRequest QtMobility::QBluetoothTransferReply::request(void) const
-	?securityFlags@QL2capServer@QtMobility@@QBE?AV?$QFlags@W4Security@QBluetooth@QtMobility@@@@XZ @ 294 NONAME ; class QFlags<enum QtMobility::QBluetooth::Security> QtMobility::QL2capServer::securityFlags(void) const
-	?securityFlags@QRfcommServer@QtMobility@@QBE?AV?$QFlags@W4Security@QBluetooth@QtMobility@@@@XZ @ 295 NONAME ; class QFlags<enum QtMobility::QBluetooth::Security> QtMobility::QRfcommServer::securityFlags(void) const
-	?selectSector@QNearFieldTagType2@QtMobility@@UAE_NE@Z @ 296 NONAME ; bool QtMobility::QNearFieldTagType2::selectSector(unsigned char)
-	?sendApduCommand@QNearFieldTarget@QtMobility@@UAE?AVQByteArray@@ABV3@@Z @ 297 NONAME ; class QByteArray QtMobility::QNearFieldTarget::sendApduCommand(class QByteArray const &)
-	?sendApduCommands@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQByteArray@@@@ABV3@@Z @ 298 NONAME ; class QList<class QByteArray> QtMobility::QNearFieldTarget::sendApduCommands(class QList<class QByteArray> const &)
-	?sendCommand@QNearFieldTarget@QtMobility@@UAE?AVQByteArray@@ABV3@@Z @ 299 NONAME ; class QByteArray QtMobility::QNearFieldTarget::sendCommand(class QByteArray const &)
-	?sendCommands@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQByteArray@@@@ABV3@@Z @ 300 NONAME ; class QList<class QByteArray> QtMobility::QNearFieldTarget::sendCommands(class QList<class QByteArray> const &)
-	?serverAddress@QRfcommServer@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 301 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QRfcommServer::serverAddress(void) const
-	?serverChannel@QBluetoothServiceInfo@QtMobility@@QBEHXZ @ 302 NONAME ; int QtMobility::QBluetoothServiceInfo::serverChannel(void) const
-	?serverPort@QRfcommServer@QtMobility@@QBEGXZ @ 303 NONAME ; unsigned short QtMobility::QRfcommServer::serverPort(void) const
-	?serviceAvailability@QBluetoothServiceInfo@QtMobility@@QBEEXZ @ 304 NONAME ; unsigned char QtMobility::QBluetoothServiceInfo::serviceAvailability(void) const
-	?serviceClassUuids@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@XZ @ 305 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothServiceInfo::serviceClassUuids(void) const
-	?serviceClasses@QBluetoothDeviceInfo@QtMobility@@QBE?AV?$QFlags@W4ServiceClass@QBluetoothDeviceInfo@QtMobility@@@@XZ @ 306 NONAME ; class QFlags<enum QtMobility::QBluetoothDeviceInfo::ServiceClass> QtMobility::QBluetoothDeviceInfo::serviceClasses(void) const
-	?serviceDescription@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 307 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceDescription(void) const
-	?serviceDiscovered@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXABVQBluetoothServiceInfo@2@@Z @ 308 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::serviceDiscovered(class QtMobility::QBluetoothServiceInfo const &)
-	?serviceName@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 309 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceName(void) const
-	?serviceProvider@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 310 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceProvider(void) const
-	?serviceUuid@QBluetoothServiceInfo@QtMobility@@QBE?AVQBluetoothUuid@2@XZ @ 311 NONAME ; class QtMobility::QBluetoothUuid QtMobility::QBluetoothServiceInfo::serviceUuid(void) const
-	?serviceUuids@QBluetoothDeviceInfo@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@PAW4DataCompleteness@12@@Z @ 312 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothDeviceInfo::serviceUuids(enum QtMobility::QBluetoothDeviceInfo::DataCompleteness *) const
-	?serviceUuidsCompleteness@QBluetoothDeviceInfo@QtMobility@@QBE?AW4DataCompleteness@12@XZ @ 313 NONAME ; enum QtMobility::QBluetoothDeviceInfo::DataCompleteness QtMobility::QBluetoothDeviceInfo::serviceUuidsCompleteness(void) const
-	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVAlternative@12@@Z @ 314 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothServiceInfo::Alternative const &)
-	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVQBluetoothUuid@2@@Z @ 315 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothUuid const &)
-	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVQVariant@@@Z @ 316 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QVariant const &)
-	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVSequence@12@@Z @ 317 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothServiceInfo::Sequence const &)
-	?setAttribute@QBluetoothTransferReply@QtMobility@@IAEXW4Attribute@QBluetoothTransferRequest@2@ABVQVariant@@@Z @ 318 NONAME ; void QtMobility::QBluetoothTransferReply::setAttribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &)
-	?setAttribute@QBluetoothTransferRequest@QtMobility@@QAEXW4Attribute@12@ABVQVariant@@@Z @ 319 NONAME ; void QtMobility::QBluetoothTransferRequest::setAttribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &)
-	?setDevice@QBluetoothServiceInfo@QtMobility@@QAEXABVQBluetoothDeviceInfo@2@@Z @ 320 NONAME ; void QtMobility::QBluetoothServiceInfo::setDevice(class QtMobility::QBluetoothDeviceInfo const &)
-	?setEncoding@QNdefNfcTextRecord@QtMobility@@QAEXW4Encoding@12@@Z @ 321 NONAME ; void QtMobility::QNdefNfcTextRecord::setEncoding(enum QtMobility::QNdefNfcTextRecord::Encoding)
-	?setId@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 322 NONAME ; void QtMobility::QNdefRecord::setId(class QByteArray const &)
-	?setInquiryType@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXW4InquiryType@12@@Z @ 323 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::setInquiryType(enum QtMobility::QBluetoothDeviceDiscoveryAgent::InquiryType)
-	?setLocale@QNdefNfcTextRecord@QtMobility@@QAEXABVQLocale@@@Z @ 324 NONAME ; void QtMobility::QNdefNfcTextRecord::setLocale(class QLocale const &)
-	?setManufacturerSpecificData@QBluetoothDeviceInfo@QtMobility@@QAEXABVQByteArray@@@Z @ 325 NONAME ; void QtMobility::QBluetoothDeviceInfo::setManufacturerSpecificData(class QByteArray const &)
-	?setMaxPendingConnections@QRfcommServer@QtMobility@@QAEXH@Z @ 326 NONAME ; void QtMobility::QRfcommServer::setMaxPendingConnections(int)
-	?setNdefMessages@QNearFieldTagType1@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 327 NONAME ; void QtMobility::QNearFieldTagType1::setNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
-	?setNdefMessages@QNearFieldTarget@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 328 NONAME ; void QtMobility::QNearFieldTarget::setNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
-	?setOperation@QBluetoothTransferReply@QtMobility@@IAEXW4Operation@QBluetoothTransferManager@2@@Z @ 329 NONAME ; void QtMobility::QBluetoothTransferReply::setOperation(enum QtMobility::QBluetoothTransferManager::Operation)
-	?setOrderMatch@QNdefFilter@QtMobility@@QAEX_N@Z @ 330 NONAME ; void QtMobility::QNdefFilter::setOrderMatch(bool)
-	?setPairing@QBluetoothLocalDevice@QtMobility@@QAEXABVQBluetoothAddress@2@W4Pairing@12@@Z @ 331 NONAME ; void QtMobility::QBluetoothLocalDevice::setPairing(class QtMobility::QBluetoothAddress const &, enum QtMobility::QBluetoothLocalDevice::Pairing)
-	?setPayload@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 332 NONAME ; void QtMobility::QNdefRecord::setPayload(class QByteArray const &)
-	?setReadBufferSize@QBluetoothTransferReply@QtMobility@@UAEX_J@Z @ 333 NONAME ; void QtMobility::QBluetoothTransferReply::setReadBufferSize(long long)
-	?setSecurityFlags@QL2capServer@QtMobility@@QAEXV?$QFlags@W4Security@QBluetooth@QtMobility@@@@@Z @ 334 NONAME ; void QtMobility::QL2capServer::setSecurityFlags(class QFlags<enum QtMobility::QBluetooth::Security>)
-	?setSecurityFlags@QRfcommServer@QtMobility@@QAEXV?$QFlags@W4Security@QBluetooth@QtMobility@@@@@Z @ 335 NONAME ; void QtMobility::QRfcommServer::setSecurityFlags(class QFlags<enum QtMobility::QBluetooth::Security>)
-	?setServiceAvailability@QBluetoothServiceInfo@QtMobility@@QAEXE@Z @ 336 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceAvailability(unsigned char)
-	?setServiceDescription@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 337 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceDescription(class QString const &)
-	?setServiceName@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 338 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceName(class QString const &)
-	?setServiceProvider@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 339 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceProvider(class QString const &)
-	?setServiceUuid@QBluetoothServiceInfo@QtMobility@@QAEXABVQBluetoothUuid@2@@Z @ 340 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceUuid(class QtMobility::QBluetoothUuid const &)
-	?setServiceUuids@QBluetoothDeviceInfo@QtMobility@@QAEXABV?$QList@VQBluetoothUuid@QtMobility@@@@W4DataCompleteness@12@@Z @ 341 NONAME ; void QtMobility::QBluetoothDeviceInfo::setServiceUuids(class QList<class QtMobility::QBluetoothUuid> const &, enum QtMobility::QBluetoothDeviceInfo::DataCompleteness)
-	?setSocketError@QBluetoothSocket@QtMobility@@IAEXW4SocketError@12@@Z @ 342 NONAME ; void QtMobility::QBluetoothSocket::setSocketError(enum QtMobility::QBluetoothSocket::SocketError)
-	?setSocketState@QBluetoothSocket@QtMobility@@IAEXW4SocketState@12@@Z @ 343 NONAME ; void QtMobility::QBluetoothSocket::setSocketState(enum QtMobility::QBluetoothSocket::SocketState)
-	?setText@QNdefNfcTextRecord@QtMobility@@QAEXVQString@@@Z @ 344 NONAME ; void QtMobility::QNdefNfcTextRecord::setText(class QString)
-	?setType@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 345 NONAME ; void QtMobility::QNdefRecord::setType(class QByteArray const &)
-	?setTypeNameFormat@QNdefRecord@QtMobility@@QAEXW4TypeNameFormat@12@@Z @ 346 NONAME ; void QtMobility::QNdefRecord::setTypeNameFormat(enum QtMobility::QNdefRecord::TypeNameFormat)
-	?setUri@QNdefNfcUriRecord@QtMobility@@QAEXABVQUrl@@@Z @ 347 NONAME ; void QtMobility::QNdefNfcUriRecord::setUri(class QUrl const &)
-	?setUuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXABV?$QList@VQBluetoothUuid@QtMobility@@@@@Z @ 348 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::setUuidFilter(class QList<class QtMobility::QBluetoothUuid> const &)
-	?setUuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXABVQBluetoothUuid@2@@Z @ 349 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::setUuidFilter(class QtMobility::QBluetoothUuid const &)
-	?socketProtocol@QBluetoothServiceInfo@QtMobility@@QBE?AW4Protocol@12@XZ @ 350 NONAME ; enum QtMobility::QBluetoothServiceInfo::Protocol QtMobility::QBluetoothServiceInfo::socketProtocol(void) const
-	?socketType@QBluetoothSocket@QtMobility@@QBE?AW4SocketType@12@XZ @ 351 NONAME ; enum QtMobility::QBluetoothSocket::SocketType QtMobility::QBluetoothSocket::socketType(void) const
-	?start@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXXZ @ 352 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::start(void)
-	?start@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXW4DiscoveryMode@12@@Z @ 353 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::start(enum QtMobility::QBluetoothServiceDiscoveryAgent::DiscoveryMode)
-	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXABV?$QList@W4Type@QNearFieldTarget@QtMobility@@@@@Z @ 354 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(class QList<enum QtMobility::QNearFieldTarget::Type> const &)
-	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXW4Type@QNearFieldTarget@2@@Z @ 355 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(enum QtMobility::QNearFieldTarget::Type)
-	?state@QBluetoothSocket@QtMobility@@QBE?AW4SocketState@12@XZ @ 356 NONAME ; enum QtMobility::QBluetoothSocket::SocketState QtMobility::QBluetoothSocket::state(void) const
-	?stateChanged@QBluetoothSocket@QtMobility@@IAEXW4SocketState@12@@Z @ 357 NONAME ; void QtMobility::QBluetoothSocket::stateChanged(enum QtMobility::QBluetoothSocket::SocketState)
-	?stateChanged@QLlcpSocket@QtMobility@@IAEXW4State@12@@Z @ 358 NONAME ; void QtMobility::QLlcpSocket::stateChanged(enum QtMobility::QLlcpSocket::State)
-	?stop@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXXZ @ 359 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::stop(void)
-	?stop@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXXZ @ 360 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::stop(void)
-	?stopTargetDetection@QNearFieldManager@QtMobility@@QAEXXZ @ 361 NONAME ; void QtMobility::QNearFieldManager::stopTargetDetection(void)
-	?targetDetected@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 362 NONAME ; void QtMobility::QNearFieldManager::targetDetected(class QtMobility::QNearFieldTarget *)
-	?targetLost@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 363 NONAME ; void QtMobility::QNearFieldManager::targetLost(class QtMobility::QNearFieldTarget *)
-	?text@QNdefNfcTextRecord@QtMobility@@QBE?AVQString@@XZ @ 364 NONAME ; class QString QtMobility::QNdefNfcTextRecord::text(void) const
-	?toByteArray@QNdefMessage@QtMobility@@QBE?AVQByteArray@@XZ @ 365 NONAME ; class QByteArray QtMobility::QNdefMessage::toByteArray(void) const
-	?toString@QBluetoothAddress@QtMobility@@QBE?AVQString@@XZ @ 366 NONAME ; class QString QtMobility::QBluetoothAddress::toString(void) const
-	?toUInt128@QBluetoothUuid@QtMobility@@QBE?AUquint128@2@XZ @ 367 NONAME ; struct QtMobility::quint128 QtMobility::QBluetoothUuid::toUInt128(void) const
-	?toUInt16@QBluetoothUuid@QtMobility@@QBEGPA_N@Z @ 368 NONAME ; unsigned short QtMobility::QBluetoothUuid::toUInt16(bool *) const
-	?toUInt32@QBluetoothUuid@QtMobility@@QBEIPA_N@Z @ 369 NONAME ; unsigned int QtMobility::QBluetoothUuid::toUInt32(bool *) const
-	?toUInt64@QBluetoothAddress@QtMobility@@QBE_KXZ @ 370 NONAME ; unsigned long long QtMobility::QBluetoothAddress::toUInt64(void) const
-	?tr@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 371 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::tr(char const *, char const *)
-	?tr@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 372 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::tr(char const *, char const *, int)
-	?tr@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 373 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::tr(char const *, char const *)
-	?tr@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 374 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::tr(char const *, char const *, int)
-	?tr@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 375 NONAME ; class QString QtMobility::QBluetoothSocket::tr(char const *, char const *)
-	?tr@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 376 NONAME ; class QString QtMobility::QBluetoothSocket::tr(char const *, char const *, int)
-	?tr@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0@Z @ 377 NONAME ; class QString QtMobility::QBluetoothTransferManager::tr(char const *, char const *)
-	?tr@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 378 NONAME ; class QString QtMobility::QBluetoothTransferManager::tr(char const *, char const *, int)
-	?tr@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0@Z @ 379 NONAME ; class QString QtMobility::QBluetoothTransferReply::tr(char const *, char const *)
-	?tr@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0H@Z @ 380 NONAME ; class QString QtMobility::QBluetoothTransferReply::tr(char const *, char const *, int)
-	?tr@QL2capServer@QtMobility@@SA?AVQString@@PBD0@Z @ 381 NONAME ; class QString QtMobility::QL2capServer::tr(char const *, char const *)
-	?tr@QL2capServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 382 NONAME ; class QString QtMobility::QL2capServer::tr(char const *, char const *, int)
-	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 383 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *)
-	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 384 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *, int)
-	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 385 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *)
-	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 386 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *, int)
-	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 387 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *)
-	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 388 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *, int)
-	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 389 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *)
-	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 390 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *, int)
-	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 391 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *)
-	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 392 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *, int)
-	?tr@QRfcommServer@QtMobility@@SA?AVQString@@PBD0@Z @ 393 NONAME ; class QString QtMobility::QRfcommServer::tr(char const *, char const *)
-	?tr@QRfcommServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 394 NONAME ; class QString QtMobility::QRfcommServer::tr(char const *, char const *, int)
-	?trUtf8@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 395 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::trUtf8(char const *, char const *)
-	?trUtf8@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 396 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::trUtf8(char const *, char const *, int)
-	?trUtf8@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 397 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::trUtf8(char const *, char const *)
-	?trUtf8@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 398 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::trUtf8(char const *, char const *, int)
-	?trUtf8@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 399 NONAME ; class QString QtMobility::QBluetoothSocket::trUtf8(char const *, char const *)
-	?trUtf8@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 400 NONAME ; class QString QtMobility::QBluetoothSocket::trUtf8(char const *, char const *, int)
-	?trUtf8@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0@Z @ 401 NONAME ; class QString QtMobility::QBluetoothTransferManager::trUtf8(char const *, char const *)
-	?trUtf8@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 402 NONAME ; class QString QtMobility::QBluetoothTransferManager::trUtf8(char const *, char const *, int)
-	?trUtf8@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0@Z @ 403 NONAME ; class QString QtMobility::QBluetoothTransferReply::trUtf8(char const *, char const *)
-	?trUtf8@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0H@Z @ 404 NONAME ; class QString QtMobility::QBluetoothTransferReply::trUtf8(char const *, char const *, int)
-	?trUtf8@QL2capServer@QtMobility@@SA?AVQString@@PBD0@Z @ 405 NONAME ; class QString QtMobility::QL2capServer::trUtf8(char const *, char const *)
-	?trUtf8@QL2capServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 406 NONAME ; class QString QtMobility::QL2capServer::trUtf8(char const *, char const *, int)
-	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 407 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *)
-	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 408 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *, int)
-	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 409 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *)
-	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 410 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *, int)
-	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 411 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *)
-	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 412 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *, int)
-	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 413 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *)
-	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 414 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *, int)
-	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 415 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *)
-	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 416 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *, int)
-	?trUtf8@QRfcommServer@QtMobility@@SA?AVQString@@PBD0@Z @ 417 NONAME ; class QString QtMobility::QRfcommServer::trUtf8(char const *, char const *)
-	?trUtf8@QRfcommServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 418 NONAME ; class QString QtMobility::QRfcommServer::trUtf8(char const *, char const *, int)
-	?transactionDetected@QNearFieldManager@QtMobility@@IAEXABVQByteArray@@@Z @ 419 NONAME ; void QtMobility::QNearFieldManager::transactionDetected(class QByteArray const &)
-	?type@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 420 NONAME ; class QByteArray QtMobility::QNdefRecord::type(void) const
-	?type@QNearFieldTagType1@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 421 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType1::type(void) const
-	?type@QNearFieldTagType2@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 422 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType2::type(void) const
-	?typeNameFormat@QNdefRecord@QtMobility@@QBE?AW4TypeNameFormat@12@XZ @ 423 NONAME ; enum QtMobility::QNdefRecord::TypeNameFormat QtMobility::QNdefRecord::typeNameFormat(void) const
-	?unregisterService@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 424 NONAME ; bool QtMobility::QBluetoothServiceInfo::unregisterService(void) const
-	?unregisterTargetDetectedHandler@QNearFieldManager@QtMobility@@QAE_NH@Z @ 425 NONAME ; bool QtMobility::QNearFieldManager::unregisterTargetDetectedHandler(int)
-	?uploadProgress@QBluetoothTransferReply@QtMobility@@IAEX_J0@Z @ 426 NONAME ; void QtMobility::QBluetoothTransferReply::uploadProgress(long long, long long)
-	?uri@QNdefNfcUriRecord@QtMobility@@QBE?AVQUrl@@XZ @ 427 NONAME ; class QUrl QtMobility::QNdefNfcUriRecord::uri(void) const
-	?url@QNearFieldTarget@QtMobility@@UBE?AVQUrl@@XZ @ 428 NONAME ; class QUrl QtMobility::QNearFieldTarget::url(void) const
-	?uuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@XZ @ 429 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothServiceDiscoveryAgent::uuidFilter(void) const
-	?version@QNearFieldTagType1@QtMobility@@QAEEXZ @ 430 NONAME ; unsigned char QtMobility::QNearFieldTagType1::version(void)
-	?version@QNearFieldTagType2@QtMobility@@QAEEXZ @ 431 NONAME ; unsigned char QtMobility::QNearFieldTagType2::version(void)
-	?writeBlock@QNearFieldTagType1@QtMobility@@UAE_NEABVQByteArray@@W4WriteMode@12@@Z @ 432 NONAME ; bool QtMobility::QNearFieldTagType1::writeBlock(unsigned char, class QByteArray const &, enum QtMobility::QNearFieldTagType1::WriteMode)
-	?writeBlock@QNearFieldTagType2@QtMobility@@UAE_NEABVQByteArray@@@Z @ 433 NONAME ; bool QtMobility::QNearFieldTagType2::writeBlock(unsigned char, class QByteArray const &)
-	?writeByte@QNearFieldTagType1@QtMobility@@UAE_NEEW4WriteMode@12@@Z @ 434 NONAME ; bool QtMobility::QNearFieldTagType1::writeByte(unsigned char, unsigned char, enum QtMobility::QNearFieldTagType1::WriteMode)
-	?writeData@QBluetoothSocket@QtMobility@@MAE_JPBD_J@Z @ 435 NONAME ; long long QtMobility::QBluetoothSocket::writeData(char const *, long long)
-	?writeData@QLlcpSocket@QtMobility@@MAE_JPBD_J@Z @ 436 NONAME ; long long QtMobility::QLlcpSocket::writeData(char const *, long long)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@@Z @ 437 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@PAVQNearFieldTarget@2@E@Z @ 438 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &, class QtMobility::QNearFieldTarget *, unsigned char)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_J@Z @ 439 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_JPAVQNearFieldTarget@2@E@Z @ 440 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long, class QtMobility::QNearFieldTarget *, unsigned char)
-	?staticMetaObject@QRfcommServer@QtMobility@@2UQMetaObject@@B @ 441 NONAME ; struct QMetaObject const QtMobility::QRfcommServer::staticMetaObject
-	?staticMetaObject@QLlcpSocket@QtMobility@@2UQMetaObject@@B @ 442 NONAME ; struct QMetaObject const QtMobility::QLlcpSocket::staticMetaObject
-	?staticMetaObject@QBluetoothSocket@QtMobility@@2UQMetaObject@@B @ 443 NONAME ; struct QMetaObject const QtMobility::QBluetoothSocket::staticMetaObject
-	?staticMetaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@2UQMetaObject@@B @ 444 NONAME ; struct QMetaObject const QtMobility::QBluetoothServiceDiscoveryAgent::staticMetaObject
-	?staticMetaObject@QNearFieldTagType1@QtMobility@@2UQMetaObject@@B @ 445 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType1::staticMetaObject
-	?staticMetaObject@QL2capServer@QtMobility@@2UQMetaObject@@B @ 446 NONAME ; struct QMetaObject const QtMobility::QL2capServer::staticMetaObject
-	?staticMetaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@2UQMetaObject@@B @ 447 NONAME ; struct QMetaObject const QtMobility::QBluetoothDeviceDiscoveryAgent::staticMetaObject
-	?staticMetaObject@QNearFieldManager@QtMobility@@2UQMetaObject@@B @ 448 NONAME ; struct QMetaObject const QtMobility::QNearFieldManager::staticMetaObject
-	?staticMetaObject@QNearFieldTagType2@QtMobility@@2UQMetaObject@@B @ 449 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType2::staticMetaObject
-	?staticMetaObject@QBluetoothTransferReply@QtMobility@@2UQMetaObject@@B @ 450 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferReply::staticMetaObject
-	?staticMetaObject@QBluetoothTransferManager@QtMobility@@2UQMetaObject@@B @ 451 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferManager::staticMetaObject
-	?staticMetaObject@QNearFieldTarget@QtMobility@@2UQMetaObject@@B @ 452 NONAME ; struct QMetaObject const QtMobility::QNearFieldTarget::staticMetaObject
+	?connected@QLlcpSocket@QtMobility@@IAEXXZ @ 47 NONAME ; void QtMobility::QLlcpSocket::connected(void)
+	?writeData@QBluetoothSocket@QtMobility@@MAE_JPBD_J@Z @ 48 NONAME ; long long QtMobility::QBluetoothSocket::writeData(char const *, long long)
+	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 49 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *, int)
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@@Z @ 50 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &)
+	?sendApduCommands@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQByteArray@@@@ABV3@@Z @ 51 NONAME ; class QList<class QByteArray> QtMobility::QNearFieldTarget::sendApduCommands(class QList<class QByteArray> const &)
+	?setPayload@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 52 NONAME ; void QtMobility::QNdefRecord::setPayload(class QByteArray const &)
+	?qt_metacall@QNearFieldTagType2@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 53 NONAME ; int QtMobility::QNearFieldTagType2::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?requestPairing@QBluetoothLocalDevice@QtMobility@@QAEXABVQBluetoothAddress@2@W4Pairing@12@@Z @ 54 NONAME ; void QtMobility::QBluetoothLocalDevice::requestPairing(class QtMobility::QBluetoothAddress const &, enum QtMobility::QBluetoothLocalDevice::Pairing)
+	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 55 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *)
+	?trUtf8@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 56 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::trUtf8(char const *, char const *, int)
+	?qt_metacast@QBluetoothLocalDevice@QtMobility@@UAEPAXPBD@Z @ 57 NONAME ; void * QtMobility::QBluetoothLocalDevice::qt_metacast(char const *)
+	?isActive@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE_NXZ @ 58 NONAME ; bool QtMobility::QBluetoothServiceDiscoveryAgent::isActive(void) const
+	?hasPendingConnections@QLlcpServer@QtMobility@@UBE_NXZ @ 59 NONAME ; bool QtMobility::QLlcpServer::hasPendingConnections(void) const
+	??1QBluetoothSocket@QtMobility@@UAE@XZ @ 60 NONAME ; QtMobility::QBluetoothSocket::~QBluetoothSocket(void)
+	?tr@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0@Z @ 61 NONAME ; class QString QtMobility::QBluetoothTransferReply::tr(char const *, char const *)
+	?state@QBluetoothSocket@QtMobility@@QBE?AW4SocketState@12@XZ @ 62 NONAME ; enum QtMobility::QBluetoothSocket::SocketState QtMobility::QBluetoothSocket::state(void) const
+	?type@QNearFieldTagType1@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 63 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType1::type(void) const
+	?metaObject@QNearFieldTarget@QtMobility@@UBEPBUQMetaObject@@XZ @ 64 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTarget::metaObject(void) const
+	?error@QLlcpSocket@QtMobility@@IAEXW4Error@12@@Z @ 65 NONAME ; void QtMobility::QLlcpSocket::error(enum QtMobility::QLlcpSocket::Error)
+	??_EQNearFieldTagType2@QtMobility@@UAE@I@Z @ 66 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(unsigned int)
+	?recordCount@QNdefFilter@QtMobility@@QBEHXZ @ 67 NONAME ; int QtMobility::QNdefFilter::recordCount(void) const
+	?readIdentification@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@XZ @ 68 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readIdentification(void)
+	??4QBluetoothDeviceInfo@QtMobility@@QAEAAV01@ABV01@@Z @ 69 NONAME ; class QtMobility::QBluetoothDeviceInfo & QtMobility::QBluetoothDeviceInfo::operator=(class QtMobility::QBluetoothDeviceInfo const &)
+	?setAddress@QBluetoothHostInfo@QtMobility@@QAEXABVQBluetoothAddress@2@@Z @ 70 NONAME ; void QtMobility::QBluetoothHostInfo::setAddress(class QtMobility::QBluetoothAddress const &)
+	?metaObject@QLlcpSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 71 NONAME ; struct QMetaObject const * QtMobility::QLlcpSocket::metaObject(void) const
+	?sendApduCommand@QNearFieldTarget@QtMobility@@UAE?AVQByteArray@@ABV3@@Z @ 72 NONAME ; class QByteArray QtMobility::QNearFieldTarget::sendApduCommand(class QByteArray const &)
+	?qt_metacast@QL2capServer@QtMobility@@UAEPAXPBD@Z @ 73 NONAME ; void * QtMobility::QL2capServer::qt_metacast(char const *)
+	?staticMetaObject@QRfcommServer@QtMobility@@2UQMetaObject@@B @ 74 NONAME ; struct QMetaObject const QtMobility::QRfcommServer::staticMetaObject
+	?recordAt@QNdefFilter@QtMobility@@QBE?AURecord@12@H@Z @ 75 NONAME ; struct QtMobility::QNdefFilter::Record QtMobility::QNdefFilter::recordAt(int) const
+	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 76 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QLlcpServer@QtMobility@@2UQMetaObject@@B @ 77 NONAME ; struct QMetaObject const QtMobility::QLlcpServer::staticMetaObject
+	?hasPendingDatagrams@QLlcpSocket@QtMobility@@QBE_NXZ @ 78 NONAME ; bool QtMobility::QLlcpSocket::hasPendingDatagrams(void) const
+	?stop@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXXZ @ 79 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::stop(void)
+	?hostMode@QBluetoothLocalDevice@QtMobility@@QBE?AW4HostMode@12@XZ @ 80 NONAME ; enum QtMobility::QBluetoothLocalDevice::HostMode QtMobility::QBluetoothLocalDevice::hostMode(void) const
+	?discoveredServices@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothServiceInfo@QtMobility@@@@XZ @ 81 NONAME ; class QList<class QtMobility::QBluetoothServiceInfo> QtMobility::QBluetoothServiceDiscoveryAgent::discoveredServices(void) const
+	?uploadProgress@QBluetoothTransferReply@QtMobility@@IAEX_J0@Z @ 82 NONAME ; void QtMobility::QBluetoothTransferReply::uploadProgress(long long, long long)
+	?errorString@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AVQString@@XZ @ 83 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::errorString(void) const
+	?unregisterService@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 84 NONAME ; bool QtMobility::QBluetoothServiceInfo::unregisterService(void) const
+	?writeBlock@QNearFieldTagType2@QtMobility@@UAE_NEABVQByteArray@@@Z @ 85 NONAME ; bool QtMobility::QNearFieldTagType2::writeBlock(unsigned char, class QByteArray const &)
+	??0QNearFieldManager@QtMobility@@QAE@PAVQNearFieldManagerPrivate@1@PAVQObject@@@Z @ 86 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QtMobility::QNearFieldManagerPrivate *, class QObject *)
+	?trUtf8@QBluetoothLocalDevice@QtMobility@@SA?AVQString@@PBD0H@Z @ 87 NONAME ; class QString QtMobility::QBluetoothLocalDevice::trUtf8(char const *, char const *, int)
+	?d_func@QRfcommServer@QtMobility@@ABEPBVQRfcommServerPrivate@2@XZ @ 88 NONAME ; class QtMobility::QRfcommServerPrivate const * QtMobility::QRfcommServer::d_func(void) const
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@PAVQNearFieldTarget@2@E@Z @ 89 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &, class QtMobility::QNearFieldTarget *, unsigned char)
+	?close@QBluetoothSocket@QtMobility@@UAEXXZ @ 90 NONAME ; void QtMobility::QBluetoothSocket::close(void)
+	??0QBluetoothTransferRequest@QtMobility@@QAE@ABV01@@Z @ 91 NONAME ; QtMobility::QBluetoothTransferRequest::QBluetoothTransferRequest(class QtMobility::QBluetoothTransferRequest const &)
+	?getStaticMetaObject@QBluetoothTransferManager@QtMobility@@SAABUQMetaObject@@XZ @ 92 NONAME ; struct QMetaObject const & QtMobility::QBluetoothTransferManager::getStaticMetaObject(void)
+	?tr@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 93 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::tr(char const *, char const *)
+	?qt_metacall@QLlcpServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 94 NONAME ; int QtMobility::QLlcpServer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QNearFieldManager@QtMobility@@UAEPAXPBD@Z @ 95 NONAME ; void * QtMobility::QNearFieldManager::qt_metacast(char const *)
+	?tr@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 96 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::tr(char const *, char const *, int)
+	?setSocketError@QBluetoothSocket@QtMobility@@IAEXW4SocketError@12@@Z @ 97 NONAME ; void QtMobility::QBluetoothSocket::setSocketError(enum QtMobility::QBluetoothSocket::SocketError)
+	?appendRecord@QNdefFilter@QtMobility@@QAEXABURecord@12@@Z @ 98 NONAME ; void QtMobility::QNdefFilter::appendRecord(struct QtMobility::QNdefFilter::Record const &)
+	?connectToService@QLlcpSocket@QtMobility@@QAEXPAVQNearFieldTarget@2@ABVQString@@@Z @ 99 NONAME ; void QtMobility::QLlcpSocket::connectToService(class QtMobility::QNearFieldTarget *, class QString const &)
+	?attribute@QBluetoothTransferReply@QtMobility@@QBE?AVQVariant@@W4Attribute@QBluetoothTransferRequest@2@@Z @ 100 NONAME ; class QVariant QtMobility::QBluetoothTransferReply::attribute(enum QtMobility::QBluetoothTransferRequest::Attribute) const
+	?appendRecord@QNdefFilter@QtMobility@@QAEXW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@II@Z @ 101 NONAME ; void QtMobility::QNdefFilter::appendRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, unsigned int, unsigned int)
+	?toString@QBluetoothAddress@QtMobility@@QBE?AVQString@@XZ @ 102 NONAME ; class QString QtMobility::QBluetoothAddress::toString(void) const
+	?error@QBluetoothSocket@QtMobility@@QBE?AW4SocketError@12@XZ @ 103 NONAME ; enum QtMobility::QBluetoothSocket::SocketError QtMobility::QBluetoothSocket::error(void) const
+	?readData@QBluetoothSocket@QtMobility@@MAE_JPAD_J@Z @ 104 NONAME ; long long QtMobility::QBluetoothSocket::readData(char *, long long)
+	?put@QBluetoothTransferManager@QtMobility@@QAEPAVQBluetoothTransferReply@2@ABVQBluetoothTransferRequest@2@PAVQIODevice@@@Z @ 105 NONAME ; class QtMobility::QBluetoothTransferReply * QtMobility::QBluetoothTransferManager::put(class QtMobility::QBluetoothTransferRequest const &, class QIODevice *)
+	?tr@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 106 NONAME ; class QString QtMobility::QBluetoothTransferManager::tr(char const *, char const *, int)
+	?trUtf8@QL2capServer@QtMobility@@SA?AVQString@@PBD0@Z @ 107 NONAME ; class QString QtMobility::QL2capServer::trUtf8(char const *, char const *)
+	?setServiceUuids@QBluetoothDeviceInfo@QtMobility@@QAEXABV?$QList@VQBluetoothUuid@QtMobility@@@@W4DataCompleteness@12@@Z @ 108 NONAME ; void QtMobility::QBluetoothDeviceInfo::setServiceUuids(class QList<class QtMobility::QBluetoothUuid> const &, enum QtMobility::QBluetoothDeviceInfo::DataCompleteness)
+	?nextPendingConnection@QLlcpServer@QtMobility@@UAEPAVQLlcpSocket@2@XZ @ 109 NONAME ; class QtMobility::QLlcpSocket * QtMobility::QLlcpServer::nextPendingConnection(void)
+	?disconnected@QNearFieldTarget@QtMobility@@IAEXXZ @ 110 NONAME ; void QtMobility::QNearFieldTarget::disconnected(void)
+	??0QL2capServer@QtMobility@@QAE@PAVQObject@@@Z @ 111 NONAME ; QtMobility::QL2capServer::QL2capServer(class QObject *)
+	?registerService@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 112 NONAME ; bool QtMobility::QBluetoothServiceInfo::registerService(void) const
+	?d_func@QLlcpSocket@QtMobility@@AAEPAVQLlcpSocketPrivate@2@XZ @ 113 NONAME ; class QtMobility::QLlcpSocketPrivate * QtMobility::QLlcpSocket::d_func(void)
+	?qt_metacall@QBluetoothTransferReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 114 NONAME ; int QtMobility::QBluetoothTransferReply::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?errorString@QBluetoothSocket@QtMobility@@QBE?AVQString@@XZ @ 115 NONAME ; class QString QtMobility::QBluetoothSocket::errorString(void) const
+	??0QBluetoothLocalDevice@QtMobility@@QAE@PAVQObject@@@Z @ 116 NONAME ; QtMobility::QBluetoothLocalDevice::QBluetoothLocalDevice(class QObject *)
+	?trUtf8@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 117 NONAME ; class QString QtMobility::QBluetoothSocket::trUtf8(char const *, char const *, int)
+	?maxPendingConnections@QL2capServer@QtMobility@@QBEHXZ @ 118 NONAME ; int QtMobility::QL2capServer::maxPendingConnections(void) const
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_JPAVQNearFieldTarget@2@E@Z @ 119 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long, class QtMobility::QNearFieldTarget *, unsigned char)
+	??_EQBluetoothUuid@QtMobility@@QAE@I@Z @ 120 NONAME ; QtMobility::QBluetoothUuid::~QBluetoothUuid(unsigned int)
+	??0QBluetoothServiceInfo@QtMobility@@QAE@XZ @ 121 NONAME ; QtMobility::QBluetoothServiceInfo::QBluetoothServiceInfo(void)
+	?connected@QBluetoothSocket@QtMobility@@IAEXXZ @ 122 NONAME ; void QtMobility::QBluetoothSocket::connected(void)
+	?id@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 123 NONAME ; class QByteArray QtMobility::QNdefRecord::id(void) const
+	?d_func@QLlcpServer@QtMobility@@AAEPAVQLlcpServerPrivate@2@XZ @ 124 NONAME ; class QtMobility::QLlcpServerPrivate * QtMobility::QLlcpServer::d_func(void)
+	??_EQNearFieldManager@QtMobility@@UAE@I@Z @ 125 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(unsigned int)
+	?trUtf8@QRfcommServer@QtMobility@@SA?AVQString@@PBD0@Z @ 126 NONAME ; class QString QtMobility::QRfcommServer::trUtf8(char const *, char const *)
+	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 127 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *, int)
+	??0QBluetoothDeviceInfo@QtMobility@@QAE@XZ @ 128 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(void)
+	??0QBluetoothServiceDiscoveryAgent@QtMobility@@QAE@PAVQObject@@@Z @ 129 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(class QObject *)
+	?tr@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 130 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::tr(char const *, char const *, int)
+	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 131 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *)
+	?bytesAvailable@QBluetoothSocket@QtMobility@@UBE_JXZ @ 132 NONAME ; long long QtMobility::QBluetoothSocket::bytesAvailable(void) const
+	??_EQBluetoothServiceDiscoveryAgent@QtMobility@@UAE@I@Z @ 133 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent(unsigned int)
+	??0QNdefRecord@QtMobility@@QAE@ABV01@@Z @ 134 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &)
+	??1QBluetoothServiceDiscoveryAgent@QtMobility@@UAE@XZ @ 135 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent(void)
+	?newConnection@QRfcommServer@QtMobility@@IAEXXZ @ 136 NONAME ; void QtMobility::QRfcommServer::newConnection(void)
+	?qt_metacast@QRfcommServer@QtMobility@@UAEPAXPBD@Z @ 137 NONAME ; void * QtMobility::QRfcommServer::qt_metacast(char const *)
+	??0QNdefFilter@QtMobility@@QAE@ABV01@@Z @ 138 NONAME ; QtMobility::QNdefFilter::QNdefFilter(class QtMobility::QNdefFilter const &)
+	?qt_metacast@QNearFieldTagType1@QtMobility@@UAEPAXPBD@Z @ 139 NONAME ; void * QtMobility::QNearFieldTagType1::qt_metacast(char const *)
+	?setUri@QNdefNfcUriRecord@QtMobility@@QAEXABVQUrl@@@Z @ 140 NONAME ; void QtMobility::QNdefNfcUriRecord::setUri(class QUrl const &)
+	??_EQBluetoothTransferManager@QtMobility@@UAE@I@Z @ 141 NONAME ; QtMobility::QBluetoothTransferManager::~QBluetoothTransferManager(unsigned int)
+	?tr@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 142 NONAME ; class QString QtMobility::QBluetoothSocket::tr(char const *, char const *)
+	?close@QRfcommServer@QtMobility@@QAEXXZ @ 143 NONAME ; void QtMobility::QRfcommServer::close(void)
+	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVQBluetoothUuid@2@@Z @ 144 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothUuid const &)
+	??0QBluetoothDeviceDiscoveryAgent@QtMobility@@QAE@PAVQObject@@@Z @ 145 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent(class QObject *)
+	??0QBluetoothUuid@QtMobility@@QAE@ABV01@@Z @ 146 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(class QtMobility::QBluetoothUuid const &)
+	??0QBluetoothUuid@QtMobility@@QAE@W4ServiceClassUuid@01@@Z @ 147 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(enum QtMobility::QBluetoothUuid::ServiceClassUuid)
+	?ndefMessages@QNearFieldTagType1@QtMobility@@UAE?AV?$QList@VQNdefMessage@QtMobility@@@@XZ @ 148 NONAME ; class QList<class QtMobility::QNdefMessage> QtMobility::QNearFieldTagType1::ndefMessages(void)
+	?disconnected@QBluetoothSocket@QtMobility@@IAEXXZ @ 149 NONAME ; void QtMobility::QBluetoothSocket::disconnected(void)
+	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVSequence@12@@Z @ 150 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothServiceInfo::Sequence const &)
+	?serverPort@QLlcpServer@QtMobility@@QBEEXZ @ 151 NONAME ; unsigned char QtMobility::QLlcpServer::serverPort(void) const
+	?error@QLlcpSocket@QtMobility@@QBE?AW4Error@12@XZ @ 152 NONAME ; enum QtMobility::QLlcpSocket::Error QtMobility::QLlcpSocket::error(void) const
+	?qt_metacast@QNearFieldTarget@QtMobility@@UAEPAXPBD@Z @ 153 NONAME ; void * QtMobility::QNearFieldTarget::qt_metacast(char const *)
+	?staticMetaObject@QLlcpSocket@QtMobility@@2UQMetaObject@@B @ 154 NONAME ; struct QMetaObject const QtMobility::QLlcpSocket::staticMetaObject
+	?setSecurityFlags@QRfcommServer@QtMobility@@QAEXV?$QFlags@W4Security@QBluetooth@QtMobility@@@@@Z @ 155 NONAME ; void QtMobility::QRfcommServer::setSecurityFlags(class QFlags<enum QtMobility::QBluetooth::Security>)
+	?d_func@QNearFieldManager@QtMobility@@AAEPAVQNearFieldManagerPrivate@2@XZ @ 156 NONAME ; class QtMobility::QNearFieldManagerPrivate * QtMobility::QNearFieldManager::d_func(void)
+	??8QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 157 NONAME ; bool QtMobility::QNdefRecord::operator==(class QtMobility::QNdefRecord const &) const
+	?qt_metacast@QBluetoothTransferReply@QtMobility@@UAEPAXPBD@Z @ 158 NONAME ; void * QtMobility::QBluetoothTransferReply::qt_metacast(char const *)
+	?uuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@XZ @ 159 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothServiceDiscoveryAgent::uuidFilter(void) const
+	?setReadBufferSize@QBluetoothTransferReply@QtMobility@@UAEX_J@Z @ 160 NONAME ; void QtMobility::QBluetoothTransferReply::setReadBufferSize(long long)
+	?setInquiryType@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXW4InquiryType@12@@Z @ 161 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::setInquiryType(enum QtMobility::QBluetoothDeviceDiscoveryAgent::InquiryType)
+	?qt_metacall@QRfcommServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 162 NONAME ; int QtMobility::QRfcommServer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QBluetoothTransferRequest@QtMobility@@QAE@ABVQBluetoothAddress@1@@Z @ 163 NONAME ; QtMobility::QBluetoothTransferRequest::QBluetoothTransferRequest(class QtMobility::QBluetoothAddress const &)
+	?isValid@QBluetoothLocalDevice@QtMobility@@QBE_NXZ @ 164 NONAME ; bool QtMobility::QBluetoothLocalDevice::isValid(void) const
+	??9QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 165 NONAME ; bool QtMobility::QNdefRecord::operator!=(class QtMobility::QNdefRecord const &) const
+	?bytesToWrite@QBluetoothSocket@QtMobility@@UBE_JXZ @ 166 NONAME ; long long QtMobility::QBluetoothSocket::bytesToWrite(void) const
+	?minorDeviceClass@QBluetoothDeviceInfo@QtMobility@@QBEEXZ @ 167 NONAME ; unsigned char QtMobility::QBluetoothDeviceInfo::minorDeviceClass(void) const
+	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 168 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *, int)
+	?qt_metacall@QNearFieldTagType1@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 169 NONAME ; int QtMobility::QNearFieldTagType1::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?trUtf8@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0H@Z @ 170 NONAME ; class QString QtMobility::QBluetoothTransferReply::trUtf8(char const *, char const *, int)
+	?maxPendingConnections@QRfcommServer@QtMobility@@QBEHXZ @ 171 NONAME ; int QtMobility::QRfcommServer::maxPendingConnections(void) const
+	??0QNdefNfcTextRecord@QtMobility@@QAE@XZ @ 172 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(void)
+	?getStaticMetaObject@QBluetoothSocket@QtMobility@@SAABUQMetaObject@@XZ @ 173 NONAME ; struct QMetaObject const & QtMobility::QBluetoothSocket::getStaticMetaObject(void)
+	?listen@QRfcommServer@QtMobility@@QAE_NABVQBluetoothAddress@2@G@Z @ 174 NONAME ; bool QtMobility::QRfcommServer::listen(class QtMobility::QBluetoothAddress const &, unsigned short)
+	??0QNearFieldTarget@QtMobility@@QAE@PAVQObject@@@Z @ 175 NONAME ; QtMobility::QNearFieldTarget::QNearFieldTarget(class QObject *)
+	??1QNearFieldTagType2@QtMobility@@UAE@XZ @ 176 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(void)
+	??0QLlcpSocket@QtMobility@@AAE@PAVQLlcpSocketPrivate@1@PAVQObject@@@Z @ 177 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QtMobility::QLlcpSocketPrivate *, class QObject *)
+	?newConnection@QLlcpServer@QtMobility@@IAEXXZ @ 178 NONAME ; void QtMobility::QLlcpServer::newConnection(void)
+	?device@QBluetoothServiceInfo@QtMobility@@QBE?AVQBluetoothDeviceInfo@2@XZ @ 179 NONAME ; class QtMobility::QBluetoothDeviceInfo QtMobility::QBluetoothServiceInfo::device(void) const
+	?qt_metacall@QBluetoothServiceDiscoveryAgent@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 180 NONAME ; int QtMobility::QBluetoothServiceDiscoveryAgent::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1QLlcpServer@QtMobility@@UAE@XZ @ 181 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(void)
+	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHPAVQObject@@PBD@Z @ 182 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QObject *, char const *)
+	?setText@QNdefNfcTextRecord@QtMobility@@QAEXVQString@@@Z @ 183 NONAME ; void QtMobility::QNdefNfcTextRecord::setText(class QString)
+	??0QBluetoothServiceDiscoveryAgent@QtMobility@@QAE@ABVQBluetoothAddress@1@PAVQObject@@@Z @ 184 NONAME ; QtMobility::QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(class QtMobility::QBluetoothAddress const &, class QObject *)
+	?tr@QL2capServer@QtMobility@@SA?AVQString@@PBD0@Z @ 185 NONAME ; class QString QtMobility::QL2capServer::tr(char const *, char const *)
+	?qt_metacall@QL2capServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 186 NONAME ; int QtMobility::QL2capServer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QBluetoothSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 187 NONAME ; class QString QtMobility::QBluetoothSocket::tr(char const *, char const *, int)
+	?serviceUuid@QBluetoothServiceInfo@QtMobility@@QBE?AVQBluetoothUuid@2@XZ @ 188 NONAME ; class QtMobility::QBluetoothUuid QtMobility::QBluetoothServiceInfo::serviceUuid(void) const
+	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 189 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *)
+	?tr@QBluetoothLocalDevice@QtMobility@@SA?AVQString@@PBD0H@Z @ 190 NONAME ; class QString QtMobility::QBluetoothLocalDevice::tr(char const *, char const *, int)
+	?locale@QNdefNfcTextRecord@QtMobility@@QBE?AVQLocale@@XZ @ 191 NONAME ; class QLocale QtMobility::QNdefNfcTextRecord::locale(void) const
+	?allDevices@QBluetoothLocalDevice@QtMobility@@SA?AV?$QList@VQBluetoothHostInfo@QtMobility@@@@XZ @ 192 NONAME ; class QList<class QtMobility::QBluetoothHostInfo> QtMobility::QBluetoothLocalDevice::allDevices(void)
+	?d_func@QBluetoothDeviceInfo@QtMobility@@ABEPBVQBluetoothDeviceInfoPrivate@2@XZ @ 193 NONAME ; class QtMobility::QBluetoothDeviceInfoPrivate const * QtMobility::QBluetoothDeviceInfo::d_func(void) const
+	?canReadLine@QBluetoothSocket@QtMobility@@UBE_NXZ @ 194 NONAME ; bool QtMobility::QBluetoothSocket::canReadLine(void) const
+	?bind@QLlcpSocket@QtMobility@@QAE_NE@Z @ 195 NONAME ; bool QtMobility::QLlcpSocket::bind(unsigned char)
+	?error@QBluetoothServiceDiscoveryAgent@QtMobility@@QBE?AW4Error@12@XZ @ 196 NONAME ; enum QtMobility::QBluetoothServiceDiscoveryAgent::Error QtMobility::QBluetoothServiceDiscoveryAgent::error(void) const
+	??_EQL2capServer@QtMobility@@UAE@I@Z @ 197 NONAME ; QtMobility::QL2capServer::~QL2capServer(unsigned int)
+	??4QNdefRecord@QtMobility@@QAEAAV01@ABV01@@Z @ 198 NONAME ; class QtMobility::QNdefRecord & QtMobility::QNdefRecord::operator=(class QtMobility::QNdefRecord const &)
+	??_EQLlcpServer@QtMobility@@UAE@I@Z @ 199 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(unsigned int)
+	?metaObject@QL2capServer@QtMobility@@UBEPBUQMetaObject@@XZ @ 200 NONAME ; struct QMetaObject const * QtMobility::QL2capServer::metaObject(void) const
+	?toUInt32@QBluetoothUuid@QtMobility@@QBEIPA_N@Z @ 201 NONAME ; unsigned int QtMobility::QBluetoothUuid::toUInt32(bool *) const
+	?localPort@QBluetoothSocket@QtMobility@@QBEGXZ @ 202 NONAME ; unsigned short QtMobility::QBluetoothSocket::localPort(void) const
+	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 203 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QBluetoothLocalDevice@QtMobility@@2UQMetaObject@@B @ 204 NONAME ; struct QMetaObject const QtMobility::QBluetoothLocalDevice::staticMetaObject
+	??0QBluetoothDeviceInfo@QtMobility@@QAE@ABVQBluetoothAddress@1@ABVQString@@I@Z @ 205 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(class QtMobility::QBluetoothAddress const &, class QString const &, unsigned int)
+	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothServiceInfo@2@V?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 206 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothServiceInfo const &, class QFlags<enum QIODevice::OpenModeFlag>)
+	??0QBluetoothAddress@QtMobility@@QAE@XZ @ 207 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(void)
+	??1QNearFieldTagType1@QtMobility@@UAE@XZ @ 208 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(void)
+	?hasNdefMessage@QNearFieldTagType1@QtMobility@@UAE_NXZ @ 209 NONAME ; bool QtMobility::QNearFieldTagType1::hasNdefMessage(void)
+	?tr@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0@Z @ 210 NONAME ; class QString QtMobility::QBluetoothTransferManager::tr(char const *, char const *)
+	?stateChanged@QLlcpSocket@QtMobility@@IAEXW4State@12@@Z @ 211 NONAME ; void QtMobility::QLlcpSocket::stateChanged(enum QtMobility::QLlcpSocket::State)
+	?setType@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 212 NONAME ; void QtMobility::QNdefRecord::setType(class QByteArray const &)
+	?trUtf8@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 213 NONAME ; class QString QtMobility::QBluetoothTransferManager::trUtf8(char const *, char const *, int)
+	??0QBluetoothHostInfo@QtMobility@@QAE@ABV01@@Z @ 214 NONAME ; QtMobility::QBluetoothHostInfo::QBluetoothHostInfo(class QtMobility::QBluetoothHostInfo const &)
+	?setSocketState@QBluetoothSocket@QtMobility@@IAEXW4SocketState@12@@Z @ 215 NONAME ; void QtMobility::QBluetoothSocket::setSocketState(enum QtMobility::QBluetoothSocket::SocketState)
+	?getName@QBluetoothHostInfo@QtMobility@@QBE?AVQString@@XZ @ 216 NONAME ; class QString QtMobility::QBluetoothHostInfo::getName(void) const
+	?staticMetaObject@QBluetoothSocket@QtMobility@@2UQMetaObject@@B @ 217 NONAME ; struct QMetaObject const QtMobility::QBluetoothSocket::staticMetaObject
+	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 218 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *)
+	?setTypeNameFormat@QNdefRecord@QtMobility@@QAEXW4TypeNameFormat@12@@Z @ 219 NONAME ; void QtMobility::QNdefRecord::setTypeNameFormat(enum QtMobility::QNdefRecord::TypeNameFormat)
+	??8QNdefMessage@QtMobility@@QBE_NABV01@@Z @ 220 NONAME ; bool QtMobility::QNdefMessage::operator==(class QtMobility::QNdefMessage const &) const
+	??0QBluetoothAddress@QtMobility@@QAE@_K@Z @ 221 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(unsigned long long)
+	?serverChannel@QBluetoothServiceInfo@QtMobility@@QBEHXZ @ 222 NONAME ; int QtMobility::QBluetoothServiceInfo::serverChannel(void) const
+	?name@QBluetoothDeviceInfo@QtMobility@@QBE?AVQString@@XZ @ 223 NONAME ; class QString QtMobility::QBluetoothDeviceInfo::name(void) const
+	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 224 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *, int)
+	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 225 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *)
+	??0QNdefNfcUriRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 226 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(class QtMobility::QNdefRecord const &)
+	??0QBluetoothUuid@QtMobility@@QAE@G@Z @ 227 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(unsigned short)
+	?setId@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 228 NONAME ; void QtMobility::QNdefRecord::setId(class QByteArray const &)
+	??4QNdefFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 229 NONAME ; class QtMobility::QNdefFilter & QtMobility::QNdefFilter::operator=(class QtMobility::QNdefFilter const &)
+	?waitForBytesWritten@QLlcpSocket@QtMobility@@UAE_NH@Z @ 230 NONAME ; bool QtMobility::QLlcpSocket::waitForBytesWritten(int)
+	??1QBluetoothTransferRequest@QtMobility@@QAE@XZ @ 231 NONAME ; QtMobility::QBluetoothTransferRequest::~QBluetoothTransferRequest(void)
+	?readBlock@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@E@Z @ 232 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readBlock(unsigned char)
+	??0QLlcpServer@QtMobility@@QAE@PAVQObject@@@Z @ 233 NONAME ; QtMobility::QLlcpServer::QLlcpServer(class QObject *)
+	?hasPendingConnections@QRfcommServer@QtMobility@@QBE_NXZ @ 234 NONAME ; bool QtMobility::QRfcommServer::hasPendingConnections(void) const
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_J@Z @ 235 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long)
+	?waitForConnected@QLlcpSocket@QtMobility@@UAE_NH@Z @ 236 NONAME ; bool QtMobility::QLlcpSocket::waitForConnected(int)
+	?setAttribute@QBluetoothTransferRequest@QtMobility@@QAEXW4Attribute@12@ABVQVariant@@@Z @ 237 NONAME ; void QtMobility::QBluetoothTransferRequest::setAttribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &)
+	?encoding@QNdefNfcTextRecord@QtMobility@@QBE?AW4Encoding@12@XZ @ 238 NONAME ; enum QtMobility::QNdefNfcTextRecord::Encoding QtMobility::QNdefNfcTextRecord::encoding(void) const
+	??0QRfcommServer@QtMobility@@QAE@PAVQObject@@@Z @ 239 NONAME ; QtMobility::QRfcommServer::QRfcommServer(class QObject *)
+	??0QBluetoothSocket@QtMobility@@QAE@W4SocketType@01@PAVQObject@@@Z @ 240 NONAME ; QtMobility::QBluetoothSocket::QBluetoothSocket(enum QtMobility::QBluetoothSocket::SocketType, class QObject *)
+	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 241 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *)
+	?finished@QBluetoothTransferReply@QtMobility@@IAEXXZ @ 242 NONAME ; void QtMobility::QBluetoothTransferReply::finished(void)
+	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 243 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *)
+	?getStaticMetaObject@QBluetoothTransferReply@QtMobility@@SAABUQMetaObject@@XZ @ 244 NONAME ; struct QMetaObject const & QtMobility::QBluetoothTransferReply::getStaticMetaObject(void)
+	?getStaticMetaObject@QNearFieldManager@QtMobility@@SAABUQMetaObject@@XZ @ 245 NONAME ; struct QMetaObject const & QtMobility::QNearFieldManager::getStaticMetaObject(void)
+	??0QNdefRecord@QtMobility@@IAE@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 246 NONAME ; QtMobility::QNdefRecord::QNdefRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
+	?transactionDetected@QNearFieldManager@QtMobility@@IAEXABVQByteArray@@@Z @ 247 NONAME ; void QtMobility::QNearFieldManager::transactionDetected(class QByteArray const &)
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQBluetoothServiceInfo@0@@Z @ 248 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QBluetoothServiceInfo const &)
+	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 249 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *)
+	?readBufferSize@QBluetoothTransferReply@QtMobility@@QBE_JXZ @ 250 NONAME ; long long QtMobility::QBluetoothTransferReply::readBufferSize(void) const
+	?metaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@UBEPBUQMetaObject@@XZ @ 251 NONAME ; struct QMetaObject const * QtMobility::QBluetoothDeviceDiscoveryAgent::metaObject(void) const
+	?powerOn@QBluetoothLocalDevice@QtMobility@@QAEXXZ @ 252 NONAME ; void QtMobility::QBluetoothLocalDevice::powerOn(void)
+	?qt_metacast@QLlcpSocket@QtMobility@@UAEPAXPBD@Z @ 253 NONAME ; void * QtMobility::QLlcpSocket::qt_metacast(char const *)
+	??8QBluetoothUuid@QtMobility@@QBE_NABV01@@Z @ 254 NONAME ; bool QtMobility::QBluetoothUuid::operator==(class QtMobility::QBluetoothUuid const &) const
+	??8QBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 255 NONAME ; bool QtMobility::QBluetoothAddress::operator==(class QtMobility::QBluetoothAddress const &) const
+	?staticMetaObject@QBluetoothServiceDiscoveryAgent@QtMobility@@2UQMetaObject@@B @ 256 NONAME ; struct QMetaObject const QtMobility::QBluetoothServiceDiscoveryAgent::staticMetaObject
+	?setServiceUuid@QBluetoothServiceInfo@QtMobility@@QAEXABVQBluetoothUuid@2@@Z @ 257 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceUuid(class QtMobility::QBluetoothUuid const &)
+	?qt_metacast@QBluetoothDeviceDiscoveryAgent@QtMobility@@UAEPAXPBD@Z @ 258 NONAME ; void * QtMobility::QBluetoothDeviceDiscoveryAgent::qt_metacast(char const *)
+	?removeAttribute@QBluetoothServiceInfo@QtMobility@@QAEXG@Z @ 259 NONAME ; void QtMobility::QBluetoothServiceInfo::removeAttribute(unsigned short)
+	??0QBluetoothAddress@QtMobility@@QAE@ABVQString@@@Z @ 260 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(class QString const &)
+	?trUtf8@QBluetoothLocalDevice@QtMobility@@SA?AVQString@@PBD0@Z @ 261 NONAME ; class QString QtMobility::QBluetoothLocalDevice::trUtf8(char const *, char const *)
+	?setServiceDescription@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 262 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceDescription(class QString const &)
+	?qt_metacast@QBluetoothTransferManager@QtMobility@@UAEPAXPBD@Z @ 263 NONAME ; void * QtMobility::QBluetoothTransferManager::qt_metacast(char const *)
+	?trUtf8@QRfcommServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 264 NONAME ; class QString QtMobility::QRfcommServer::trUtf8(char const *, char const *, int)
+	?orderMatch@QNdefFilter@QtMobility@@QBE_NXZ @ 265 NONAME ; bool QtMobility::QNdefFilter::orderMatch(void) const
+	??0QBluetoothLocalDevice@QtMobility@@QAE@ABVQBluetoothAddress@1@PAVQObject@@@Z @ 266 NONAME ; QtMobility::QBluetoothLocalDevice::QBluetoothLocalDevice(class QtMobility::QBluetoothAddress const &, class QObject *)
+	?clear@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXXZ @ 267 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::clear(void)
+	?url@QNearFieldTarget@QtMobility@@UBE?AVQUrl@@XZ @ 268 NONAME ; class QUrl QtMobility::QNearFieldTarget::url(void) const
+	??0QBluetoothTransferManager@QtMobility@@QAE@PAVQObject@@@Z @ 269 NONAME ; QtMobility::QBluetoothTransferManager::QBluetoothTransferManager(class QObject *)
+	?d_func@QNearFieldManager@QtMobility@@ABEPBVQNearFieldManagerPrivate@2@XZ @ 270 NONAME ; class QtMobility::QNearFieldManagerPrivate const * QtMobility::QNearFieldManager::d_func(void) const
+	?stopTargetDetection@QNearFieldManager@QtMobility@@QAEXXZ @ 271 NONAME ; void QtMobility::QNearFieldManager::stopTargetDetection(void)
+	??0QNdefRecord@QtMobility@@QAE@XZ @ 272 NONAME ; QtMobility::QNdefRecord::QNdefRecord(void)
+	?serviceProvider@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 273 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceProvider(void) const
+	??0QNdefRecord@QtMobility@@IAE@ABV01@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 274 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &, enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
+	?pairingFinished@QBluetoothLocalDevice@QtMobility@@IAEXABVQBluetoothAddress@2@W4Pairing@12@@Z @ 275 NONAME ; void QtMobility::QBluetoothLocalDevice::pairingFinished(class QtMobility::QBluetoothAddress const &, enum QtMobility::QBluetoothLocalDevice::Pairing)
+	?disconnectFromService@QLlcpSocket@QtMobility@@QAEXXZ @ 276 NONAME ; void QtMobility::QLlcpSocket::disconnectFromService(void)
+	??0QBluetoothUuid@QtMobility@@QAE@ABVQString@@@Z @ 277 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(class QString const &)
+	??6QtMobility@@YA?AVQDebug@@V1@W4SocketError@QBluetoothSocket@0@@Z @ 278 NONAME ; class QDebug QtMobility::operator<<(class QDebug, enum QtMobility::QBluetoothSocket::SocketError)
+	??0QNdefMessage@QtMobility@@QAE@XZ @ 279 NONAME ; QtMobility::QNdefMessage::QNdefMessage(void)
+	?setName@QBluetoothHostInfo@QtMobility@@QAEXABVQString@@@Z @ 280 NONAME ; void QtMobility::QBluetoothHostInfo::setName(class QString const &)
+	?d_func@QBluetoothServiceDiscoveryAgent@QtMobility@@ABEPBVQBluetoothServiceDiscoveryAgentPrivate@2@XZ @ 281 NONAME ; class QtMobility::QBluetoothServiceDiscoveryAgentPrivate const * QtMobility::QBluetoothServiceDiscoveryAgent::d_func(void) const
+	??1QBluetoothServiceInfo@QtMobility@@QAE@XZ @ 282 NONAME ; QtMobility::QBluetoothServiceInfo::~QBluetoothServiceInfo(void)
+	?getStaticMetaObject@QRfcommServer@QtMobility@@SAABUQMetaObject@@XZ @ 283 NONAME ; struct QMetaObject const & QtMobility::QRfcommServer::getStaticMetaObject(void)
+	?isComplete@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 284 NONAME ; bool QtMobility::QBluetoothServiceInfo::isComplete(void) const
+	??_EQBluetoothHostInfo@QtMobility@@QAE@I@Z @ 285 NONAME ; QtMobility::QBluetoothHostInfo::~QBluetoothHostInfo(unsigned int)
+	?error@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AW4Error@12@XZ @ 286 NONAME ; enum QtMobility::QBluetoothDeviceDiscoveryAgent::Error QtMobility::QBluetoothDeviceDiscoveryAgent::error(void) const
+	?hostModeStateChanged@QBluetoothLocalDevice@QtMobility@@IAEXW4HostMode@12@@Z @ 287 NONAME ; void QtMobility::QBluetoothLocalDevice::hostModeStateChanged(enum QtMobility::QBluetoothLocalDevice::HostMode)
+	?d_func@QBluetoothDeviceInfo@QtMobility@@AAEPAVQBluetoothDeviceInfoPrivate@2@XZ @ 288 NONAME ; class QtMobility::QBluetoothDeviceInfoPrivate * QtMobility::QBluetoothDeviceInfo::d_func(void)
+	?setEncoding@QNdefNfcTextRecord@QtMobility@@QAEXW4Encoding@12@@Z @ 289 NONAME ; void QtMobility::QNdefNfcTextRecord::setEncoding(enum QtMobility::QNdefNfcTextRecord::Encoding)
+	??0QBluetoothDeviceInfo@QtMobility@@QAE@ABV01@@Z @ 290 NONAME ; QtMobility::QBluetoothDeviceInfo::QBluetoothDeviceInfo(class QtMobility::QBluetoothDeviceInfo const &)
+	?toUInt64@QBluetoothAddress@QtMobility@@QBE_KXZ @ 291 NONAME ; unsigned long long QtMobility::QBluetoothAddress::toUInt64(void) const
+	?qt_metacall@QBluetoothTransferManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 292 NONAME ; int QtMobility::QBluetoothTransferManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QBluetoothTransferReply@QtMobility@@IAE@PAVQObject@@@Z @ 293 NONAME ; QtMobility::QBluetoothTransferReply::QBluetoothTransferReply(class QObject *)
+	?localAddress@QBluetoothSocket@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 294 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothSocket::localAddress(void) const
+	?majorDeviceClass@QBluetoothDeviceInfo@QtMobility@@QBE?AW4MajorDeviceClass@12@XZ @ 295 NONAME ; enum QtMobility::QBluetoothDeviceInfo::MajorDeviceClass QtMobility::QBluetoothDeviceInfo::majorDeviceClass(void) const
+	?trUtf8@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 296 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::trUtf8(char const *, char const *)
+	?clear@QNdefFilter@QtMobility@@QAEXXZ @ 297 NONAME ; void QtMobility::QNdefFilter::clear(void)
+	?tr@QRfcommServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 298 NONAME ; class QString QtMobility::QRfcommServer::tr(char const *, char const *, int)
+	?start@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXW4DiscoveryMode@12@@Z @ 299 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::start(enum QtMobility::QBluetoothServiceDiscoveryAgent::DiscoveryMode)
+	??4QBluetoothTransferRequest@QtMobility@@QAEAAV01@ABV01@@Z @ 300 NONAME ; class QtMobility::QBluetoothTransferRequest & QtMobility::QBluetoothTransferRequest::operator=(class QtMobility::QBluetoothTransferRequest const &)
+	?securityFlags@QL2capServer@QtMobility@@QBE?AV?$QFlags@W4Security@QBluetooth@QtMobility@@@@XZ @ 301 NONAME ; class QFlags<enum QtMobility::QBluetooth::Security> QtMobility::QL2capServer::securityFlags(void) const
+	?readData@QLlcpSocket@QtMobility@@MAE_JPAD_J@Z @ 302 NONAME ; long long QtMobility::QLlcpSocket::readData(char *, long long)
+	?contains@QBluetoothServiceInfo@QtMobility@@QBE_NG@Z @ 303 NONAME ; bool QtMobility::QBluetoothServiceInfo::contains(unsigned short) const
+	??4QBluetoothServiceInfo@QtMobility@@QAEAAV01@ABV01@@Z @ 304 NONAME ; class QtMobility::QBluetoothServiceInfo & QtMobility::QBluetoothServiceInfo::operator=(class QtMobility::QBluetoothServiceInfo const &)
+	?metaObject@QBluetoothSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 305 NONAME ; struct QMetaObject const * QtMobility::QBluetoothSocket::metaObject(void) const
+	?setServiceName@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 306 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceName(class QString const &)
+	?metaObject@QLlcpServer@QtMobility@@UBEPBUQMetaObject@@XZ @ 307 NONAME ; struct QMetaObject const * QtMobility::QLlcpServer::metaObject(void) const
+	?qt_metacall@QNearFieldManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 308 NONAME ; int QtMobility::QNearFieldManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?isListening@QL2capServer@QtMobility@@QBE_NXZ @ 309 NONAME ; bool QtMobility::QL2capServer::isListening(void) const
+	?staticMetaObject@QNearFieldTagType1@QtMobility@@2UQMetaObject@@B @ 310 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType1::staticMetaObject
+	?qt_metacast@QBluetoothSocket@QtMobility@@UAEPAXPBD@Z @ 311 NONAME ; void * QtMobility::QBluetoothSocket::qt_metacast(char const *)
+	?tr@QL2capServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 312 NONAME ; class QString QtMobility::QL2capServer::tr(char const *, char const *, int)
+	?ndefMessages@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQNdefMessage@QtMobility@@@@XZ @ 313 NONAME ; class QList<class QtMobility::QNdefMessage> QtMobility::QNearFieldTarget::ndefMessages(void)
+	?getStaticMetaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@SAABUQMetaObject@@XZ @ 314 NONAME ; struct QMetaObject const & QtMobility::QBluetoothDeviceDiscoveryAgent::getStaticMetaObject(void)
+	??1QNdefMessage@QtMobility@@QAE@XZ @ 315 NONAME ; QtMobility::QNdefMessage::~QNdefMessage(void)
+	?getStaticMetaObject@QLlcpServer@QtMobility@@SAABUQMetaObject@@XZ @ 316 NONAME ; struct QMetaObject const & QtMobility::QLlcpServer::getStaticMetaObject(void)
+	?attribute@QBluetoothTransferRequest@QtMobility@@QBE?AVQVariant@@W4Attribute@12@ABV3@@Z @ 317 NONAME ; class QVariant QtMobility::QBluetoothTransferRequest::attribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &) const
+	?address@QBluetoothDeviceInfo@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 318 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothDeviceInfo::address(void) const
+	?version@QNearFieldTagType2@QtMobility@@QAEEXZ @ 319 NONAME ; unsigned char QtMobility::QNearFieldTagType2::version(void)
+	?trUtf8@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0@Z @ 320 NONAME ; class QString QtMobility::QBluetoothTransferReply::trUtf8(char const *, char const *)
+	?hasNdefMessage@QNearFieldTarget@QtMobility@@UAE_NXZ @ 321 NONAME ; bool QtMobility::QNearFieldTarget::hasNdefMessage(void)
+	?waitForReadyRead@QLlcpSocket@QtMobility@@UAE_NH@Z @ 322 NONAME ; bool QtMobility::QLlcpSocket::waitForReadyRead(int)
+	?setUuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXABV?$QList@VQBluetoothUuid@QtMobility@@@@@Z @ 323 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::setUuidFilter(class QList<class QtMobility::QBluetoothUuid> const &)
+	??0QBluetoothAddress@QtMobility@@QAE@ABV01@@Z @ 324 NONAME ; QtMobility::QBluetoothAddress::QBluetoothAddress(class QtMobility::QBluetoothAddress const &)
+	??0QNdefMessage@QtMobility@@QAE@ABV?$QList@VQNdefRecord@QtMobility@@@@@Z @ 325 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QList<class QtMobility::QNdefRecord> const &)
+	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothAddress@2@GV?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 326 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothAddress const &, unsigned short, class QFlags<enum QIODevice::OpenModeFlag>)
+	??_EQRfcommServer@QtMobility@@UAE@I@Z @ 327 NONAME ; QtMobility::QRfcommServer::~QRfcommServer(unsigned int)
+	?disconnected@QLlcpSocket@QtMobility@@IAEXXZ @ 328 NONAME ; void QtMobility::QLlcpSocket::disconnected(void)
+	?getStaticMetaObject@QLlcpSocket@QtMobility@@SAABUQMetaObject@@XZ @ 329 NONAME ; struct QMetaObject const & QtMobility::QLlcpSocket::getStaticMetaObject(void)
+	?localName@QBluetoothSocket@QtMobility@@QBE?AVQString@@XZ @ 330 NONAME ; class QString QtMobility::QBluetoothSocket::localName(void) const
+	?toUInt16@QBluetoothUuid@QtMobility@@QBEGPA_N@Z @ 331 NONAME ; unsigned short QtMobility::QBluetoothUuid::toUInt16(bool *) const
+	??_EQBluetoothSocket@QtMobility@@UAE@I@Z @ 332 NONAME ; QtMobility::QBluetoothSocket::~QBluetoothSocket(unsigned int)
+	?trUtf8@QBluetoothTransferManager@QtMobility@@SA?AVQString@@PBD0@Z @ 333 NONAME ; class QString QtMobility::QBluetoothTransferManager::trUtf8(char const *, char const *)
+	?metaObject@QBluetoothLocalDevice@QtMobility@@UBEPBUQMetaObject@@XZ @ 334 NONAME ; struct QMetaObject const * QtMobility::QBluetoothLocalDevice::metaObject(void) const
+	?setLocale@QNdefNfcTextRecord@QtMobility@@QAEXABVQLocale@@@Z @ 335 NONAME ; void QtMobility::QNdefNfcTextRecord::setLocale(class QLocale const &)
+	??1QNdefRecord@QtMobility@@QAE@XZ @ 336 NONAME ; QtMobility::QNdefRecord::~QNdefRecord(void)
+	?getStaticMetaObject@QL2capServer@QtMobility@@SAABUQMetaObject@@XZ @ 337 NONAME ; struct QMetaObject const & QtMobility::QL2capServer::getStaticMetaObject(void)
+	?metaObject@QBluetoothTransferReply@QtMobility@@UBEPBUQMetaObject@@XZ @ 338 NONAME ; struct QMetaObject const * QtMobility::QBluetoothTransferReply::metaObject(void) const
+	?tr@QBluetoothTransferReply@QtMobility@@SA?AVQString@@PBD0H@Z @ 339 NONAME ; class QString QtMobility::QBluetoothTransferReply::tr(char const *, char const *, int)
+	?start@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXXZ @ 340 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::start(void)
+	??0QBluetoothUuid@QtMobility@@QAE@W4ProtocolUuid@01@@Z @ 341 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(enum QtMobility::QBluetoothUuid::ProtocolUuid)
+	?qt_metacast@QLlcpServer@QtMobility@@UAEPAXPBD@Z @ 342 NONAME ; void * QtMobility::QLlcpServer::qt_metacast(char const *)
+	??_EQNdefRecord@QtMobility@@QAE@I@Z @ 343 NONAME ; QtMobility::QNdefRecord::~QNdefRecord(unsigned int)
+	??_EQNearFieldTarget@QtMobility@@UAE@I@Z @ 344 NONAME ; QtMobility::QNearFieldTarget::~QNearFieldTarget(unsigned int)
+	?waitForDisconnected@QLlcpSocket@QtMobility@@UAE_NH@Z @ 345 NONAME ; bool QtMobility::QLlcpSocket::waitForDisconnected(int)
+	?serverPort@QRfcommServer@QtMobility@@QBEGXZ @ 346 NONAME ; unsigned short QtMobility::QRfcommServer::serverPort(void) const
+	?d_func@QLlcpSocket@QtMobility@@ABEPBVQLlcpSocketPrivate@2@XZ @ 347 NONAME ; class QtMobility::QLlcpSocketPrivate const * QtMobility::QLlcpSocket::d_func(void) const
+	?isRegistered@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 348 NONAME ; bool QtMobility::QBluetoothServiceInfo::isRegistered(void) const
+	?isActive@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE_NXZ @ 349 NONAME ; bool QtMobility::QBluetoothDeviceDiscoveryAgent::isActive(void) const
+	?metaObject@QNearFieldManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 350 NONAME ; struct QMetaObject const * QtMobility::QNearFieldManager::metaObject(void) const
+	?trUtf8@QBluetoothServiceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0H@Z @ 351 NONAME ; class QString QtMobility::QBluetoothServiceDiscoveryAgent::trUtf8(char const *, char const *, int)
+	?version@QNearFieldTagType1@QtMobility@@QAEEXZ @ 352 NONAME ; unsigned char QtMobility::QNearFieldTagType1::version(void)
+	?d_func@QLlcpServer@QtMobility@@ABEPBVQLlcpServerPrivate@2@XZ @ 353 NONAME ; class QtMobility::QLlcpServerPrivate const * QtMobility::QLlcpServer::d_func(void) const
+	?deviceDiscovered@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXABVQBluetoothDeviceInfo@2@@Z @ 354 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::deviceDiscovered(class QtMobility::QBluetoothDeviceInfo const &)
+	?readAll@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@XZ @ 355 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readAll(void)
+	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHABVQNdefFilter@2@PAVQObject@@PBD@Z @ 356 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QtMobility::QNdefFilter const &, class QObject *, char const *)
+	?staticMetaObject@QL2capServer@QtMobility@@2UQMetaObject@@B @ 357 NONAME ; struct QMetaObject const QtMobility::QL2capServer::staticMetaObject
+	??9QBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 358 NONAME ; bool QtMobility::QBluetoothAddress::operator!=(class QtMobility::QBluetoothAddress const &) const
+	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 359 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *)
+	?type@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 360 NONAME ; class QByteArray QtMobility::QNdefRecord::type(void) const
+	?pendingDatagramSize@QLlcpSocket@QtMobility@@QBE_JXZ @ 361 NONAME ; long long QtMobility::QLlcpSocket::pendingDatagramSize(void) const
+	?readBlock@QNearFieldTagType2@QtMobility@@UAE?AVQByteArray@@E@Z @ 362 NONAME ; class QByteArray QtMobility::QNearFieldTagType2::readBlock(unsigned char)
+	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 363 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *)
+	?serverError@QLlcpServer@QtMobility@@QBE?AW4Error@12@XZ @ 364 NONAME ; enum QtMobility::QLlcpServer::Error QtMobility::QLlcpServer::serverError(void) const
+	?protocolServiceMultiplexer@QBluetoothServiceInfo@QtMobility@@QBEHXZ @ 365 NONAME ; int QtMobility::QBluetoothServiceInfo::protocolServiceMultiplexer(void) const
+	?connectToService@QBluetoothSocket@QtMobility@@QAEXABVQBluetoothAddress@2@ABVQBluetoothUuid@2@V?$QFlags@W4OpenModeFlag@QIODevice@@@@@Z @ 366 NONAME ; void QtMobility::QBluetoothSocket::connectToService(class QtMobility::QBluetoothAddress const &, class QtMobility::QBluetoothUuid const &, class QFlags<enum QIODevice::OpenModeFlag>)
+	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVAlternative@12@@Z @ 367 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QtMobility::QBluetoothServiceInfo::Alternative const &)
+	?readSegment@QNearFieldTagType1@QtMobility@@UAE?AVQByteArray@@E@Z @ 368 NONAME ; class QByteArray QtMobility::QNearFieldTagType1::readSegment(unsigned char)
+	?qt_metacast@QBluetoothServiceDiscoveryAgent@QtMobility@@UAEPAXPBD@Z @ 369 NONAME ; void * QtMobility::QBluetoothServiceDiscoveryAgent::qt_metacast(char const *)
+	?d_func@QL2capServer@QtMobility@@ABEPBVQL2capServerPrivate@2@XZ @ 370 NONAME ; class QtMobility::QL2capServerPrivate const * QtMobility::QL2capServer::d_func(void) const
+	?operation@QBluetoothTransferReply@QtMobility@@QBE?AW4Operation@QBluetoothTransferManager@2@XZ @ 371 NONAME ; enum QtMobility::QBluetoothTransferManager::Operation QtMobility::QBluetoothTransferReply::operation(void) const
+	?setMaxPendingConnections@QRfcommServer@QtMobility@@QAEXH@Z @ 372 NONAME ; void QtMobility::QRfcommServer::setMaxPendingConnections(int)
+	?finished@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXXZ @ 373 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::finished(void)
+	?finished@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXXZ @ 374 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::finished(void)
+	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 375 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *, int)
+	?close@QLlcpServer@QtMobility@@QAEXXZ @ 376 NONAME ; void QtMobility::QLlcpServer::close(void)
+	?staticMetaObject@QBluetoothDeviceDiscoveryAgent@QtMobility@@2UQMetaObject@@B @ 377 NONAME ; struct QMetaObject const QtMobility::QBluetoothDeviceDiscoveryAgent::staticMetaObject
+	??_EQBluetoothDeviceDiscoveryAgent@QtMobility@@UAE@I@Z @ 378 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent(unsigned int)
+	?serviceClasses@QBluetoothDeviceInfo@QtMobility@@QBE?AV?$QFlags@W4ServiceClass@QBluetoothDeviceInfo@QtMobility@@@@XZ @ 379 NONAME ; class QFlags<enum QtMobility::QBluetoothDeviceInfo::ServiceClass> QtMobility::QBluetoothDeviceInfo::serviceClasses(void) const
+	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 380 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QNearFieldManager@QtMobility@@2UQMetaObject@@B @ 381 NONAME ; struct QMetaObject const QtMobility::QNearFieldManager::staticMetaObject
+	?clear@QBluetoothAddress@QtMobility@@QAEXXZ @ 382 NONAME ; void QtMobility::QBluetoothAddress::clear(void)
+	??0QNdefNfcUriRecord@QtMobility@@QAE@XZ @ 383 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(void)
+	?isValid@QBluetoothServiceInfo@QtMobility@@QBE_NXZ @ 384 NONAME ; bool QtMobility::QBluetoothServiceInfo::isValid(void) const
+	?manufacturerSpecificData@QBluetoothDeviceInfo@QtMobility@@QBE?AVQByteArray@@PA_N@Z @ 385 NONAME ; class QByteArray QtMobility::QBluetoothDeviceInfo::manufacturerSpecificData(bool *) const
+	?sendCommands@QNearFieldTarget@QtMobility@@UAE?AV?$QList@VQByteArray@@@@ABV3@@Z @ 386 NONAME ; class QList<class QByteArray> QtMobility::QNearFieldTarget::sendCommands(class QList<class QByteArray> const &)
+	??_EQBluetoothLocalDevice@QtMobility@@UAE@I@Z @ 387 NONAME ; QtMobility::QBluetoothLocalDevice::~QBluetoothLocalDevice(unsigned int)
+	?setHostMode@QBluetoothLocalDevice@QtMobility@@QAEXW4HostMode@12@@Z @ 388 NONAME ; void QtMobility::QBluetoothLocalDevice::setHostMode(enum QtMobility::QBluetoothLocalDevice::HostMode)
+	?type@QNearFieldTagType2@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 389 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType2::type(void) const
+	?setManufacturerSpecificData@QBluetoothDeviceInfo@QtMobility@@QAEXABVQByteArray@@@Z @ 390 NONAME ; void QtMobility::QBluetoothDeviceInfo::setManufacturerSpecificData(class QByteArray const &)
+	??0QBluetoothUuid@QtMobility@@QAE@Uquint128@1@@Z @ 391 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(struct QtMobility::quint128)
+	?metaObject@QNearFieldTagType1@QtMobility@@UBEPBUQMetaObject@@XZ @ 392 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType1::metaObject(void) const
+	?nextPendingConnection@QRfcommServer@QtMobility@@QAEPAVQBluetoothSocket@2@XZ @ 393 NONAME ; class QtMobility::QBluetoothSocket * QtMobility::QRfcommServer::nextPendingConnection(void)
+	?trUtf8@QL2capServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 394 NONAME ; class QString QtMobility::QL2capServer::trUtf8(char const *, char const *, int)
+	?d_func@QBluetoothServiceInfo@QtMobility@@AAEPAVQBluetoothServiceInfoPrivate@2@XZ @ 395 NONAME ; class QtMobility::QBluetoothServiceInfoPrivate * QtMobility::QBluetoothServiceInfo::d_func(void)
+	??1QBluetoothDeviceDiscoveryAgent@QtMobility@@UAE@XZ @ 396 NONAME ; QtMobility::QBluetoothDeviceDiscoveryAgent::~QBluetoothDeviceDiscoveryAgent(void)
+	?setNdefMessages@QNearFieldTagType1@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 397 NONAME ; void QtMobility::QNearFieldTagType1::setNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
+	??0QLlcpSocket@QtMobility@@QAE@PAVQObject@@@Z @ 398 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QObject *)
+	?getStaticMetaObject@QNearFieldTagType1@QtMobility@@SAABUQMetaObject@@XZ @ 399 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType1::getStaticMetaObject(void)
+	?typeNameFormat@QNdefRecord@QtMobility@@QBE?AW4TypeNameFormat@12@XZ @ 400 NONAME ; enum QtMobility::QNdefRecord::TypeNameFormat QtMobility::QNdefRecord::typeNameFormat(void) const
+	?setServiceAvailability@QBluetoothServiceInfo@QtMobility@@QAEXE@Z @ 401 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceAvailability(unsigned char)
+	?setUuidFilter@QBluetoothServiceDiscoveryAgent@QtMobility@@QAEXABVQBluetoothUuid@2@@Z @ 402 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::setUuidFilter(class QtMobility::QBluetoothUuid const &)
+	?setNdefMessages@QNearFieldTarget@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 403 NONAME ; void QtMobility::QNearFieldTarget::setNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
+	?isEmpty@QNdefRecord@QtMobility@@QBE_NXZ @ 404 NONAME ; bool QtMobility::QNdefRecord::isEmpty(void) const
+	??1QBluetoothLocalDevice@QtMobility@@UAE@XZ @ 405 NONAME ; QtMobility::QBluetoothLocalDevice::~QBluetoothLocalDevice(void)
+	?targetDetected@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 406 NONAME ; void QtMobility::QNearFieldManager::targetDetected(class QtMobility::QNearFieldTarget *)
+	??0QNdefMessage@QtMobility@@QAE@ABV01@@Z @ 407 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefMessage const &)
+	??0QNearFieldTagType1@QtMobility@@QAE@PAVQObject@@@Z @ 408 NONAME ; QtMobility::QNearFieldTagType1::QNearFieldTagType1(class QObject *)
+	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXW4Type@QNearFieldTarget@2@@Z @ 409 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(enum QtMobility::QNearFieldTarget::Type)
+	??4QBluetoothAddress@QtMobility@@QAEAAV01@ABV01@@Z @ 410 NONAME ; class QtMobility::QBluetoothAddress & QtMobility::QBluetoothAddress::operator=(class QtMobility::QBluetoothAddress const &)
+	?downloadProgress@QBluetoothTransferReply@QtMobility@@IAEX_J0@Z @ 411 NONAME ; void QtMobility::QBluetoothTransferReply::downloadProgress(long long, long long)
+	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 412 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *, int)
+	??1QNearFieldManager@QtMobility@@UAE@XZ @ 413 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(void)
+	?finished@QBluetoothTransferManager@QtMobility@@IAEXPAVQBluetoothTransferReply@2@@Z @ 414 NONAME ; void QtMobility::QBluetoothTransferManager::finished(class QtMobility::QBluetoothTransferReply *)
+	?serviceClassUuids@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@XZ @ 415 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothServiceInfo::serviceClassUuids(void) const
+	?address@QBluetoothLocalDevice@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 416 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothLocalDevice::address(void) const
+	??_EQLlcpSocket@QtMobility@@UAE@I@Z @ 417 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(unsigned int)
+	??1QRfcommServer@QtMobility@@UAE@XZ @ 418 NONAME ; QtMobility::QRfcommServer::~QRfcommServer(void)
+	?selectSector@QNearFieldTagType2@QtMobility@@UAE_NE@Z @ 419 NONAME ; bool QtMobility::QNearFieldTagType2::selectSector(unsigned char)
+	?setAttribute@QBluetoothTransferReply@QtMobility@@IAEXW4Attribute@QBluetoothTransferRequest@2@ABVQVariant@@@Z @ 420 NONAME ; void QtMobility::QBluetoothTransferReply::setAttribute(enum QtMobility::QBluetoothTransferRequest::Attribute, class QVariant const &)
+	?isListening@QRfcommServer@QtMobility@@QBE_NXZ @ 421 NONAME ; bool QtMobility::QRfcommServer::isListening(void) const
+	??0QNdefNfcTextRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 422 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(class QtMobility::QNdefRecord const &)
+	??0QNdefMessage@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 423 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefRecord const &)
+	?isSequential@QBluetoothSocket@QtMobility@@UBE_NXZ @ 424 NONAME ; bool QtMobility::QBluetoothSocket::isSequential(void) const
+	?staticMetaObject@QNearFieldTagType2@QtMobility@@2UQMetaObject@@B @ 425 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType2::staticMetaObject
+	?setDevice@QBluetoothServiceInfo@QtMobility@@QAEXABVQBluetoothDeviceInfo@2@@Z @ 426 NONAME ; void QtMobility::QBluetoothServiceInfo::setDevice(class QtMobility::QBluetoothDeviceInfo const &)
+	?writeBlock@QNearFieldTagType1@QtMobility@@UAE_NEABVQByteArray@@W4WriteMode@12@@Z @ 427 NONAME ; bool QtMobility::QNearFieldTagType1::writeBlock(unsigned char, class QByteArray const &, enum QtMobility::QNearFieldTagType1::WriteMode)
+	?setAttribute@QBluetoothServiceInfo@QtMobility@@QAEXGABVQVariant@@@Z @ 428 NONAME ; void QtMobility::QBluetoothServiceInfo::setAttribute(unsigned short, class QVariant const &)
+	??0QBluetoothUuid@QtMobility@@QAE@I@Z @ 429 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(unsigned int)
+	?isNull@QBluetoothAddress@QtMobility@@QBE_NXZ @ 430 NONAME ; bool QtMobility::QBluetoothAddress::isNull(void) const
+	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 431 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *, int)
+	?setServiceProvider@QBluetoothServiceInfo@QtMobility@@QAEXABVQString@@@Z @ 432 NONAME ; void QtMobility::QBluetoothServiceInfo::setServiceProvider(class QString const &)
+	?payload@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 433 NONAME ; class QByteArray QtMobility::QNdefRecord::payload(void) const
+	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 434 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *)
+	?staticMetaObject@QBluetoothTransferReply@QtMobility@@2UQMetaObject@@B @ 435 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferReply::staticMetaObject
+	??0QBluetoothUuid@QtMobility@@QAE@ABUQUuid@@@Z @ 436 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(struct QUuid const &)
+	?serviceDiscovered@QBluetoothServiceDiscoveryAgent@QtMobility@@IAEXABVQBluetoothServiceInfo@2@@Z @ 437 NONAME ; void QtMobility::QBluetoothServiceDiscoveryAgent::serviceDiscovered(class QtMobility::QBluetoothServiceInfo const &)
+	?newConnection@QL2capServer@QtMobility@@IAEXXZ @ 438 NONAME ; void QtMobility::QL2capServer::newConnection(void)
+	?text@QNdefNfcTextRecord@QtMobility@@QBE?AVQString@@XZ @ 439 NONAME ; class QString QtMobility::QNdefNfcTextRecord::text(void) const
+	?state@QLlcpSocket@QtMobility@@QBE?AW4State@12@XZ @ 440 NONAME ; enum QtMobility::QLlcpSocket::State QtMobility::QLlcpSocket::state(void) const
+	?qt_metacall@QLlcpSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 441 NONAME ; int QtMobility::QLlcpSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QNearFieldTagType2@QtMobility@@QAE@PAVQObject@@@Z @ 442 NONAME ; QtMobility::QNearFieldTagType2::QNearFieldTagType2(class QObject *)
+	??1QBluetoothTransferReply@QtMobility@@UAE@XZ @ 443 NONAME ; QtMobility::QBluetoothTransferReply::~QBluetoothTransferReply(void)
+	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 444 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *, int)
+	?abort@QBluetoothSocket@QtMobility@@QAEXXZ @ 445 NONAME ; void QtMobility::QBluetoothSocket::abort(void)
+	?protocolDescriptor@QBluetoothServiceInfo@QtMobility@@QBE?AVSequence@12@W4ProtocolUuid@QBluetoothUuid@2@@Z @ 446 NONAME ; class QtMobility::QBluetoothServiceInfo::Sequence QtMobility::QBluetoothServiceInfo::protocolDescriptor(enum QtMobility::QBluetoothUuid::ProtocolUuid) const
+	??6QtMobility@@YA?AVQDebug@@V1@W4SocketState@QBluetoothSocket@0@@Z @ 447 NONAME ; class QDebug QtMobility::operator<<(class QDebug, enum QtMobility::QBluetoothSocket::SocketState)
+	??0QNdefFilter@QtMobility@@QAE@XZ @ 448 NONAME ; QtMobility::QNdefFilter::QNdefFilter(void)
+	??_EQBluetoothDeviceInfo@QtMobility@@QAE@I@Z @ 449 NONAME ; QtMobility::QBluetoothDeviceInfo::~QBluetoothDeviceInfo(unsigned int)
+	?isValid@QBluetoothDeviceInfo@QtMobility@@QBE_NXZ @ 450 NONAME ; bool QtMobility::QBluetoothDeviceInfo::isValid(void) const
+	?targetLost@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 451 NONAME ; void QtMobility::QNearFieldManager::targetLost(class QtMobility::QNearFieldTarget *)
+	?qt_metacall@QBluetoothSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 452 NONAME ; int QtMobility::QBluetoothSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 453 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *, int)
+	?stop@QBluetoothDeviceDiscoveryAgent@QtMobility@@QAEXXZ @ 454 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::stop(void)
+	?socketProtocol@QBluetoothServiceInfo@QtMobility@@QBE?AW4Protocol@12@XZ @ 455 NONAME ; enum QtMobility::QBluetoothServiceInfo::Protocol QtMobility::QBluetoothServiceInfo::socketProtocol(void) const
+	?peerPort@QBluetoothSocket@QtMobility@@QBEGXZ @ 456 NONAME ; unsigned short QtMobility::QBluetoothSocket::peerPort(void) const
+	?discoveredDevices@QBluetoothDeviceDiscoveryAgent@QtMobility@@QBE?AV?$QList@VQBluetoothDeviceInfo@QtMobility@@@@XZ @ 457 NONAME ; class QList<class QtMobility::QBluetoothDeviceInfo> QtMobility::QBluetoothDeviceDiscoveryAgent::discoveredDevices(void) const
+	?tr@QBluetoothDeviceDiscoveryAgent@QtMobility@@SA?AVQString@@PBD0@Z @ 458 NONAME ; class QString QtMobility::QBluetoothDeviceDiscoveryAgent::tr(char const *, char const *)
+	??0QBluetoothUuid@QtMobility@@QAE@XZ @ 459 NONAME ; QtMobility::QBluetoothUuid::QBluetoothUuid(void)
+	?metaObject@QBluetoothTransferManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 460 NONAME ; struct QMetaObject const * QtMobility::QBluetoothTransferManager::metaObject(void) const
+	?getStaticMetaObject@QNearFieldTagType2@QtMobility@@SAABUQMetaObject@@XZ @ 461 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType2::getStaticMetaObject(void)
+	?isRunning@QBluetoothTransferReply@QtMobility@@QBE_NXZ @ 462 NONAME ; bool QtMobility::QBluetoothTransferReply::isRunning(void) const
+	??_EQBluetoothServiceInfo@QtMobility@@QAE@I@Z @ 463 NONAME ; QtMobility::QBluetoothServiceInfo::~QBluetoothServiceInfo(unsigned int)
+	?socketType@QBluetoothSocket@QtMobility@@QBE?AW4SocketType@12@XZ @ 464 NONAME ; enum QtMobility::QBluetoothSocket::SocketType QtMobility::QBluetoothSocket::socketType(void) const
+	??MQBluetoothAddress@QtMobility@@QBE_NABV01@@Z @ 465 NONAME ; bool QtMobility::QBluetoothAddress::operator<(class QtMobility::QBluetoothAddress const &) const
+	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 466 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *)
+	?d_func@QRfcommServer@QtMobility@@AAEPAVQRfcommServerPrivate@2@XZ @ 467 NONAME ; class QtMobility::QRfcommServerPrivate * QtMobility::QRfcommServer::d_func(void)
+	?serviceAvailability@QBluetoothServiceInfo@QtMobility@@QBEEXZ @ 468 NONAME ; unsigned char QtMobility::QBluetoothServiceInfo::serviceAvailability(void) const
+	?securityFlags@QRfcommServer@QtMobility@@QBE?AV?$QFlags@W4Security@QBluetooth@QtMobility@@@@XZ @ 469 NONAME ; class QFlags<enum QtMobility::QBluetooth::Security> QtMobility::QRfcommServer::securityFlags(void) const
+	?d_func@QL2capServer@QtMobility@@AAEPAVQL2capServerPrivate@2@XZ @ 470 NONAME ; class QtMobility::QL2capServerPrivate * QtMobility::QL2capServer::d_func(void)
+	?staticMetaObject@QBluetoothTransferManager@QtMobility@@2UQMetaObject@@B @ 471 NONAME ; struct QMetaObject const QtMobility::QBluetoothTransferManager::staticMetaObject
+	?memorySize@QNearFieldTagType2@QtMobility@@QAEHXZ @ 472 NONAME ; int QtMobility::QNearFieldTagType2::memorySize(void)
+	?writeData@QLlcpSocket@QtMobility@@MAE_JPBD_J@Z @ 473 NONAME ; long long QtMobility::QLlcpSocket::writeData(char const *, long long)
+	?serviceUuids@QBluetoothDeviceInfo@QtMobility@@QBE?AV?$QList@VQBluetoothUuid@QtMobility@@@@PAW4DataCompleteness@12@@Z @ 474 NONAME ; class QList<class QtMobility::QBluetoothUuid> QtMobility::QBluetoothDeviceInfo::serviceUuids(enum QtMobility::QBluetoothDeviceInfo::DataCompleteness *) const
+	?error@QBluetoothSocket@QtMobility@@IAEXW4SocketError@12@@Z @ 475 NONAME ; void QtMobility::QBluetoothSocket::error(enum QtMobility::QBluetoothSocket::SocketError)
+	??_EQNearFieldTagType1@QtMobility@@UAE@I@Z @ 476 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(unsigned int)
+	?serviceUri@QLlcpServer@QtMobility@@QBE?AVQString@@XZ @ 477 NONAME ; class QString QtMobility::QLlcpServer::serviceUri(void) const
+	?serviceDescription@QBluetoothServiceInfo@QtMobility@@QBE?AVQString@@XZ @ 478 NONAME ; class QString QtMobility::QBluetoothServiceInfo::serviceDescription(void) const
+	?isListening@QLlcpServer@QtMobility@@QBE_NXZ @ 479 NONAME ; bool QtMobility::QLlcpServer::isListening(void) const
+	?readByte@QNearFieldTagType1@QtMobility@@UAEEE@Z @ 480 NONAME ; unsigned char QtMobility::QNearFieldTagType1::readByte(unsigned char)
+	?fromByteArray@QNdefMessage@QtMobility@@SA?AV12@ABVQByteArray@@@Z @ 481 NONAME ; class QtMobility::QNdefMessage QtMobility::QNdefMessage::fromByteArray(class QByteArray const &)
+	?peerName@QBluetoothSocket@QtMobility@@QBE?AVQString@@XZ @ 482 NONAME ; class QString QtMobility::QBluetoothSocket::peerName(void) const
+	?isFinished@QBluetoothTransferReply@QtMobility@@QBE_NXZ @ 483 NONAME ; bool QtMobility::QBluetoothTransferReply::isFinished(void) const
+	??0QBluetoothSocket@QtMobility@@QAE@PAVQObject@@@Z @ 484 NONAME ; QtMobility::QBluetoothSocket::QBluetoothSocket(class QObject *)
+	?stateChanged@QBluetoothSocket@QtMobility@@IAEXW4SocketState@12@@Z @ 485 NONAME ; void QtMobility::QBluetoothSocket::stateChanged(enum QtMobility::QBluetoothSocket::SocketState)
+	?unregisterTargetDetectedHandler@QNearFieldManager@QtMobility@@QAE_NH@Z @ 486 NONAME ; bool QtMobility::QNearFieldManager::unregisterTargetDetectedHandler(int)
+	?setOrderMatch@QNdefFilter@QtMobility@@QAEX_N@Z @ 487 NONAME ; void QtMobility::QNdefFilter::setOrderMatch(bool)
+	?error@QBluetoothDeviceDiscoveryAgent@QtMobility@@IAEXW4Error@12@@Z @ 488 NONAME ; void QtMobility::QBluetoothDeviceDiscoveryAgent::error(enum QtMobility::QBluetoothDeviceDiscoveryAgent::Error)
+	?tr@QBluetoothLocalDevice@QtMobility@@SA?AVQString@@PBD0@Z @ 489 NONAME ; class QString QtMobility::QBluetoothLocalDevice::tr(char const *, char const *)
+	?serviceUuidsCompleteness@QBluetoothDeviceInfo@QtMobility@@QBE?AW4DataCompleteness@12@XZ @ 490 NONAME ; enum QtMobility::QBluetoothDeviceInfo::DataCompleteness QtMobility::QBluetoothDeviceInfo::serviceUuidsCompleteness(void) const
+	??1QL2capServer@QtMobility@@UAE@XZ @ 491 NONAME ; QtMobility::QL2capServer::~QL2capServer(void)
+	?getStaticMetaObject@QBluetoothLocalDevice@QtMobility@@SAABUQMetaObject@@XZ @ 492 NONAME ; struct QMetaObject const & QtMobility::QBluetoothLocalDevice::getStaticMetaObject(void)
+	?qt_metacall@QBluetoothDeviceDiscoveryAgent@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 493 NONAME ; int QtMobility::QBluetoothDeviceDiscoveryAgent::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?get@QBluetoothTransferManager@QtMobility@@QAEPAVQBluetoothTransferReply@2@ABVQBluetoothTransferRequest@2@@Z @ 494 NONAME ; class QtMobility::QBluetoothTransferReply * QtMobility::QBluetoothTransferManager::get(class QtMobility::QBluetoothTransferRequest const &)
+	?metaObject@QRfcommServer@QtMobility@@UBEPBUQMetaObject@@XZ @ 495 NONAME ; struct QMetaObject const * QtMobility::QRfcommServer::metaObject(void) const
+	?toByteArray@QNdefMessage@QtMobility@@QBE?AVQByteArray@@XZ @ 496 NONAME ; class QByteArray QtMobility::QNdefMessage::toByteArray(void) const
+	?staticMetaObject@QNearFieldTarget@QtMobility@@2UQMetaObject@@B @ 497 NONAME ; struct QMetaObject const QtMobility::QNearFieldTarget::staticMetaObject
+	?d_func@QBluetoothServiceDiscoveryAgent@QtMobility@@AAEPAVQBluetoothServiceDiscoveryAgentPrivate@2@XZ @ 498 NONAME ; class QtMobility::QBluetoothServiceDiscoveryAgentPrivate * QtMobility::QBluetoothServiceDiscoveryAgent::d_func(void)
+	??9QBluetoothTransferRequest@QtMobility@@QBE_NABV01@@Z @ 499 NONAME ; bool QtMobility::QBluetoothTransferRequest::operator!=(class QtMobility::QBluetoothTransferRequest const &) const
+	?name@QBluetoothLocalDevice@QtMobility@@QBE?AVQString@@XZ @ 500 NONAME ; class QString QtMobility::QBluetoothLocalDevice::name(void) const
+	??1QLlcpSocket@QtMobility@@UAE@XZ @ 501 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
+	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 502 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
+	?attributes@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@G@@XZ @ 503 NONAME ; class QList<unsigned short> QtMobility::QBluetoothServiceInfo::attributes(void) const
 
