@@ -91,7 +91,7 @@ public:
     bool isSeekable() const;
 
     qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
+    bool setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QtMultimediaKit::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }

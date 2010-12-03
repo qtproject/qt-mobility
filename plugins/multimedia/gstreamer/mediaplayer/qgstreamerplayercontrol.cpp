@@ -171,7 +171,8 @@ qreal QGstreamerPlayerControl::playbackRate() const
 
 void QGstreamerPlayerControl::setPlaybackRate(qreal rate)
 {
-    m_session->setPlaybackRate(rate);
+    if (m_session->setPlaybackRate(rate))
+        emit playbackRateChanged(rate);
 }
 
 void QGstreamerPlayerControl::setPosition(qint64 pos)

@@ -226,7 +226,7 @@ qreal QGstreamerPlayerSession::playbackRate() const
     return m_playbackRate;
 }
 
-void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
+bool QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
     if (!qFuzzyCompare(m_playbackRate, rate)) {
         m_playbackRate = rate;
@@ -236,7 +236,9 @@ void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
                              GST_SEEK_TYPE_NONE,0,
                              GST_SEEK_TYPE_NONE,0 );
         }
+        return true;
     }
+    return false;
 }
 
 int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType streamType) const
