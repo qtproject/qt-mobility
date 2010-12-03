@@ -7,7 +7,7 @@ include (../../../common.pri)
 INCLUDEPATH += ../../../src/location \
                 ../../../src/location/maps
 
-# Input 
+# Input
 HEADERS += ../qlocationtestutils_p.h \
            tst_qgeoroute.h
 SOURCES += tst_qgeoroute.cpp \
