@@ -91,7 +91,7 @@ public:
     bool isSeekable() const;
 
     qreal playbackRate() const;
-    bool setPlaybackRate(qreal rate);
+    void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QtMultimediaKit::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
@@ -134,6 +134,7 @@ signals:
     void seekableChanged(bool);
     void error(int error, const QString &errorString);
     void invalidMedia();
+    void playbackRateChanged(qreal);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);

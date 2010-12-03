@@ -99,6 +99,9 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(error(int,QString)));
     connect(m_session, SIGNAL(invalidMedia()),
             this, SLOT(handleInvalidMedia()));
+    connect(m_session, SIGNAL(playbackRateChanged(qreal)),
+            this, SIGNAL(playbackRateChanged(qreal)));
+
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -171,8 +174,7 @@ qreal QGstreamerPlayerControl::playbackRate() const
 
 void QGstreamerPlayerControl::setPlaybackRate(qreal rate)
 {
-    if (m_session->setPlaybackRate(rate))
-        emit playbackRateChanged(rate);
+    m_session->setPlaybackRate(rate);
 }
 
 void QGstreamerPlayerControl::setPosition(qint64 pos)
