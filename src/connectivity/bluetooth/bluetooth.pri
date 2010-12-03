@@ -27,8 +27,7 @@ PRIVATE_HEADERS += \
     bluetooth/qrfcommserver_p.h \
     bluetooth/qiodevice_p.h \
     bluetooth/qobjectpriv_p.h \
-    bluetooth/qbluetoothtransferrequest_p.h \
-    bluetooth/qbluetoothtransferreply_p.h
+    bluetooth/qbluetoothtransferrequest_p.h
     
 
 SOURCES += \
@@ -49,8 +48,7 @@ SOURCES += \
     bluetooth/qrfcommsocket.cpp \
     bluetooth/qbluetoothtransfermanager.cpp \
     bluetooth/qbluetoothtransferrequest.cpp \
-    bluetooth/qbluetoothtransferreply.cpp \
-    bluetooth/qbluetoothtransferreply_p.cpp
+    bluetooth/qbluetoothtransferreply.cpp
 
 symbian {
 
