@@ -47,20 +47,15 @@
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerChangeNotifier::QGalleryTrackerChangeNotifier(
-        int serviceId,
+        const QString &service,
         const QGalleryDBusInterfacePointer &daemonInterface, QObject *parent)
     : QObject(parent)
     , m_daemonInterface(daemonInterface)
-    , m_serviceId(serviceId)
-
+    , m_service(service)
 {
-    Q_ASSERT(m_daemonInterface.data()->isValid());
-    bool ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsAdded(const QStringList&)),
-            this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
-    Q_ASSERT(ret);
-    ret = connect(m_daemonInterface.data(), SIGNAL(SubjectsRemoved(const QStringList&)),
-            this, SLOT(subjectsAddedOrRemoved(const QStringList &)));
-    Q_ASSERT(ret);
+    connect(
+        m_daemonInterface.data(), SIGNAL(GraphUpdated(QString,QVector<QGalleryTrackerGraphUpdate>,QVector<QGalleryTrackerGraphUpdate>)),
+        this, SLOT(graphUpdated(QString,QVector<QGalleryTrackerGraphUpdate>,QVector<QGalleryTrackerGraphUpdate>)));
 }
 
 void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
@@ -68,9 +63,20 @@ void QGalleryTrackerChangeNotifier::itemsEdited(const QString &service)
     emit itemsChanged(QGalleryTrackerSchema::serviceUpdateId(service));
 }
 
-void QGalleryTrackerChangeNotifier::subjectsAddedOrRemoved(const QStringList &subjects)
+void QGalleryTrackerChangeNotifier::graphUpdated(
+        const QString &className,
+        const QVector<QGalleryTrackerGraphUpdate> &,
+        const QVector<QGalleryTrackerGraphUpdate> &)
 {
-    emit itemsChanged(m_serviceId);
+    /*
+     * className ends with e.g. ...nfo#Audio and m_service contains "nfo:Audio".
+     */
+    QString identifier(m_service);
+    identifier.replace(':','#');
+    if (className.endsWith(identifier)
+            || (m_service == QLatin1String("nmm:Artist") && className.endsWith("nfo#Audio"))) {
+        emit itemsChanged(QGalleryTrackerSchema::serviceUpdateId(m_service));
+    }
 }
 
 #include "moc_qgallerytrackerchangenotifier_p.cpp"
