@@ -512,6 +512,7 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 {
     if (d->m_itemMap.contains(id))
         return d->m_itemMap.value(id);
+    return 0;
 }
 
 QStringList QDeclarativeOrganizerModel::itemIds(const QDate& start, const QDate& end)
