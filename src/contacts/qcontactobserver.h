@@ -47,7 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactObserver : public QObject
+class Q_CONTACTS_EXPORT QContactObserver : public QObject
 {
     Q_OBJECT
 public:
