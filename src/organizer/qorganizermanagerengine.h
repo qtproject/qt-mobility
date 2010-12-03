@@ -198,6 +198,16 @@ public:
     virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
     virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
 
+    // Again, this is the v1 function
+    QList<QOrganizerItem> itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+    virtual QList<QOrganizerItem> itemsForExport(const QList<QOrganizerItemId>& itemIds, const QOrganizerItemFetchHint& fetchHint, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error) const;
+
+    // Again, this is the v1 function
+    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
+    virtual bool saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
+
+    static void updateItemFetchByIdRequest(QOrganizerItemFetchByIdRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State);
+
     virtual QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId) = 0;
 
 protected:
