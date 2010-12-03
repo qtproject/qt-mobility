@@ -47,7 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemObserver : public QObject
+class Q_ORGANIZER_EXPORT QOrganizerItemObserver : public QObject
 {
     Q_OBJECT
 public:
