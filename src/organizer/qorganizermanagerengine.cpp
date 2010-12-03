@@ -1519,7 +1519,132 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
         return retnSchema;
     }
 
-    // the most recent version of the schema is version 1.
+    if (version == 2) {
+        // EVENT
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEvent);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEvent, retn); // replace insert
+
+
+        // EVENT OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEventOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn); // replace insert
+
+
+        // TODO
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodo);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodo, retn); // replace insert
+
+
+        // TODO OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodoOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn); // replace insert
+
+
+        // JOURNAL
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeJournal);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeJournal, retn); // replace insert
+
+
+        // NOTE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeNote);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeNote, retn); // replace insert
+
+
+        // return the modified schema.
+        return retnSchema;
+    }
+
+    // the most recent version of the schema is version 2.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
     return empty;
 }
