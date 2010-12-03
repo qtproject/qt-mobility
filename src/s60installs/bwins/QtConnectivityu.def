@@ -501,4 +501,7 @@ EXPORTS
 	??1QLlcpSocket@QtMobility@@UAE@XZ @ 500 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
 	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 501 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
 	?attributes@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@G@@XZ @ 502 NONAME ; class QList<unsigned short> QtMobility::QBluetoothServiceInfo::attributes(void) const
+	?d_func@QBluetoothTransferRequest@QtMobility@@ABEPBVQBluetoothTransferRequestPrivate@2@XZ @ 503 NONAME ; class QtMobility::QBluetoothTransferRequestPrivate const * QtMobility::QBluetoothTransferRequest::d_func(void) const
+	?d_func@QBluetoothTransferRequest@QtMobility@@AAEPAVQBluetoothTransferRequestPrivate@2@XZ @ 504 NONAME ; class QtMobility::QBluetoothTransferRequestPrivate * QtMobility::QBluetoothTransferRequest::d_func(void)
+	?address@QBluetoothTransferRequest@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 505 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothTransferRequest::address(void) const
 
