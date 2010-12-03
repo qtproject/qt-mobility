@@ -49,7 +49,7 @@
 #include <QLabel>
 #include <QLineEdit>
 
-#include <qgeosearchManager.h>
+#include <qgeosearchmanager.h>
 #include <qgeoplace.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>

@@ -29,7 +29,11 @@
 #include <QtNetwork/QNetworkProxyFactory>
 #include <QUrl>
 
+#include <QNetworkDiskCache>
+#include <QNetworkAccessManager>
+
 #include "../../src/location/maps/qgraphicsgeomap_p.h"
+#include "../../plugins/geoservices/nokia/qgeomappingmanagerengine_nokia.h"
 #include <qgeomapdata.h>
 
 QNetworkSession * MapBox::m_session = 0;
@@ -287,11 +291,30 @@ void MapBox::routeFinished()
     m_mapWidget->addMapObject(route);
 }
 
-/* TODO
-    session wrapper
-    move proxy stuff to session wrapper
+void MapBox::clearCache()
+{
+    QGeoMappingManagerEngineNokia * engineNokia = 0;
+    foreach (QObject * child, m_mapManager->children()) {
+        engineNokia = dynamic_cast<QGeoMappingManagerEngineNokia *>(child);
+        if (engineNokia) break;
+    }
+    Q_ASSERT(engineNokia);
 
-    cache clean function
+    QNetworkAccessManager * nam = 0;
+    foreach (QObject * child, engineNokia->children()) {
+        nam = dynamic_cast<QNetworkAccessManager *>(child);
+        if (nam) break;
+    }
+    Q_ASSERT(nam);
+
+    QAbstractNetworkCache * cache = nam->cache();
+    QNetworkDiskCache * diskCache = dynamic_cast<QNetworkDiskCache *>(cache);
+    Q_ASSERT(diskCache);
+
+    diskCache->clear();
+}
+
+/* TODO
     make parameter hash accessible
         - make it possible to change the server
 
@@ -301,7 +324,7 @@ void MapBox::routeFinished()
         - mem
             more plattforms?
         - network traffic
-            - from the session
+            - from other sources than the session, for the desktop
         - render mode
             - sw/hw, but that's pretty static, no?
 

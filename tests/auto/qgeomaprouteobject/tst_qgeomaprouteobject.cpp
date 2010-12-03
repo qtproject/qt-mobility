@@ -45,6 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeoboundingbox.h"
+#include "qgeoroutesegment.h"
 
 QTM_USE_NAMESPACE
 
@@ -160,21 +161,23 @@ void tst_QGeoMapRouteObject::qgeomaprouteobject()
 void tst_QGeoMapRouteObject::detailLevel_data()
 {
 
-    QTest::addColumn<quint32>("detailLevel");
-    QTest::newRow("8") << quint32(8);
-    QTest::newRow("10") << quint32(10);
-    QTest::newRow("12") << quint32(12);
+    QTest::addColumn<int>("detailLevel");
+    QTest::newRow("8") << 8;
+    QTest::newRow("10") << 10;
+    QTest::newRow("12") << 12;
 
 }
 
 // public quint32 detailLevel() const
 void tst_QGeoMapRouteObject::detailLevel()
 {
-    QFETCH(quint32, detailLevel);
+    QFETCH(int, detailLevel);
 
     QGeoCoordinate center(10, 20);
 
     QGeoRoute route;
+
+    QGeoRouteSegment segment;
 
     QList<QGeoCoordinate> path;
 
@@ -192,8 +195,6 @@ void tst_QGeoMapRouteObject::detailLevel()
 
     QGeoCoordinate coord = map->screenPositionToCoordinate(point);
 
-    map->setCenter(coord);
-
     path << coord;
 
     QPointF diff2(-detailLevel / 2, detailLevel / 2);
@@ -204,6 +205,16 @@ void tst_QGeoMapRouteObject::detailLevel()
 
     path << coord;
 
+    QPointF diff3(0, detailLevel / 2);
+
+    point += diff3;
+
+    coord = map->screenPositionToCoordinate(point);
+
+    path << coord;
+
+    segment.setPath(path);
+    route.setFirstRouteSegment(segment);
     route.setPath(path);
 
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
@@ -212,9 +223,11 @@ void tst_QGeoMapRouteObject::detailLevel()
 
     QPen p;
 
-    p.setWidth(10);
+    p.setWidth(2);
 
     object->setPen(p);
+
+    object->setDetailLevel(1);
 
     map->addMapObject(object);
 
@@ -227,15 +240,15 @@ void tst_QGeoMapRouteObject::detailLevel()
     QSignalSpy spy2(object, SIGNAL(routeChanged(QGeoRoute const&)));
 
     //check if we have the point
+    map->setCenter(path.at(1));
 
     point = map->coordinateToScreenPosition(path.at(1));
 
-// Test failure
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
-    object->setDetailLevel(detailLevel);
+    object->setDetailLevel(detailLevel+1);
 
-    QCOMPARE(object->detailLevel(), detailLevel);
+    QCOMPARE(object->detailLevel(), (quint32)detailLevel+1);
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
 
@@ -279,11 +292,15 @@ void tst_QGeoMapRouteObject::pen()
 
     QGeoRoute route;
 
+    QGeoRouteSegment segment;
+
     QList<QGeoCoordinate> path;
 
     path << QGeoCoordinate(10, 10) << QGeoCoordinate(10, 20) << QGeoCoordinate(10, 30);
 
-    route.setPath(path);
+    segment.setPath(path);
+
+    route.setFirstRouteSegment(segment);
 
     object->setRoute(route);
 
@@ -322,8 +339,8 @@ void tst_QGeoMapRouteObject::pen()
     QCOMPARE(object->pen(), pen);
 
     //check if object is there
-// Test failure
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 1);
@@ -336,18 +353,27 @@ void tst_QGeoMapRouteObject::route_data()
 
     QTest::addColumn<QGeoRoute>("route");
     QGeoRoute route1;
+    QGeoRouteSegment segment1;
     QList<QGeoCoordinate> list1;
     list1 << QGeoCoordinate(10, 10) << QGeoCoordinate(10, 20) << QGeoCoordinate(10, 30);
+    segment1.setPath(list1);
+    route1.setFirstRouteSegment(segment1);
     route1.setPath(list1);
     QTest::newRow("(10,10)-(10,20)-(10,30)") << route1;
     QGeoRoute route2;
+    QGeoRouteSegment segment2;
     QList<QGeoCoordinate> list2;
     list2 << QGeoCoordinate(-10, 10) << QGeoCoordinate(-5, 10) << QGeoCoordinate(-2, 10);
+    segment2.setPath(list2);
+    route2.setFirstRouteSegment(segment2);
     route2.setPath(list2);
     QTest::newRow("(-10,10)-(-5,10)-(-2,10)") << route2;
     QGeoRoute route3;
+    QGeoRouteSegment segment3;
     QList<QGeoCoordinate> list3;
     list3 << QGeoCoordinate(-10, 10) << QGeoCoordinate(-5, 10) << QGeoCoordinate(2, 10);
+    segment3.setPath(list3);
+    route3.setFirstRouteSegment(segment3);
     route3.setPath(list3);
     QTest::newRow("(-10,10)-(-5,10)-(2,10)") << route3;
 }
@@ -390,8 +416,8 @@ void tst_QGeoMapRouteObject::route()
     QCOMPARE(object->route(), route);
 
     //check if object is there
-// Test failure    
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
@@ -418,13 +444,15 @@ void tst_QGeoMapRouteObject::zvalue()
     QFETCH(int, zValue3);
 
     QList<QGeoCoordinate> path;
+    QGeoRouteSegment segment;
 
     path << QGeoCoordinate(2.0, -1.0, 0);
     path << QGeoCoordinate(2.0, 1.0, 0);
     path << QGeoCoordinate(2.0, 2.0, 0);
 
     QGeoRoute route;
-    route.setPath(path);
+    segment.setPath(path);
+    route.setFirstRouteSegment(segment);
 
     QPen pen;
     pen.setWidth(1);
@@ -461,8 +489,8 @@ void tst_QGeoMapRouteObject::zvalue()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-// Test failing, effects subsequent tests
-/*    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==object1);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==object2);
@@ -486,7 +514,7 @@ void tst_QGeoMapRouteObject::zvalue()
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 1);
-*/
+
 }
 
 // public bool isVisible() const
@@ -499,7 +527,9 @@ void tst_QGeoMapRouteObject::isVisible()
     path << QGeoCoordinate(2.0, 2.0, 0);
 
     QGeoRoute route;
-    route.setPath(path);
+    QGeoRouteSegment segment;
+    segment.setPath(path);
+    route.setFirstRouteSegment(segment);
 
     QPen pen;
     pen.setWidth(1);
@@ -524,8 +554,8 @@ void tst_QGeoMapRouteObject::isVisible()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-// Test failing
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     object->setVisible(false);
 
@@ -537,8 +567,8 @@ void tst_QGeoMapRouteObject::isVisible()
 
     QCOMPARE(object->isVisible(), true);
 
-// Test failure
-//    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+
+    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 2);
@@ -586,7 +616,9 @@ void tst_QGeoMapRouteObject::contains()
     path << QGeoCoordinate(2.0, 2.0, 0);
 
     QGeoRoute route;
-    route.setPath(path);
+    QGeoRouteSegment segment;
+    segment.setPath(path);
+    route.setFirstRouteSegment(segment);
 
     QPen pen;
     pen.setWidth(1);
@@ -636,26 +668,25 @@ void tst_QGeoMapRouteObject::boundingBox()
     path << QGeoCoordinate(-2.0, -1.0, 0);
 
     QGeoRoute route;
+    QGeoRouteSegment segment;
+    segment.setPath(path);
+    route.setFirstRouteSegment(segment);
     route.setPath(path);
-
-    QPen pen;
-    pen.setWidth(1);
 
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
     object->setRoute(route);
-    object->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
+    map->setZoomLevel(1);
     map->addMapObject(object);
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
     QVERIFY(list.at(0)==object);
 
-// Test failing
-//    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
-//    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
 }
 

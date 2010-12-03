@@ -7,14 +7,6 @@
      <file>icons/endmarker.png</file>
      <file>icons/pathmarker.png</file>
      <file>icons/searchmarker.png</file>
-     <file>icons/waypointmarker1.png</file>
-     <file>icons/waypointmarker2.png</file>
-     <file>icons/waypointmarker3.png</file>
-     <file>icons/waypointmarker4.png</file>
-     <file>icons/waypointmarker5.png</file>
-     <file>icons/waypointmarker6.png</file>
-     <file>icons/waypointmarker7.png</file>
-     <file>icons/waypointmarker8.png</file>
-     <file>icons/waypointmarker9.png</file>
+     <file>icons/waypointmarker.png</file>
  </qresource>
  </RCC>
