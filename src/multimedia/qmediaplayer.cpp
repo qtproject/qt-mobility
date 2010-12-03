@@ -552,7 +552,7 @@ QString QMediaPlayer::currentNetworkConfigurationId() const
     Q_D(const QMediaPlayer);
 
     if (d->networkAccessControl)
-        d_func()->networkAccessControl->currentConfiguration();
+        return d_func()->networkAccessControl->currentConfiguration();
 
     return QString();
 }
