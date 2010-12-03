@@ -6169,6 +6169,9 @@ void tst_QLandmarkManager::filterAttribute2()
     QCOMPARE(lms.count(), 4);
 
     attributeFilter.setAttribute(field, "aaa", QLandmarkFilter::MatchContains);
+#ifdef Q_OS_SYMBIAN
+    doFetch(type, attributeFilter, &lms, QLandmarkManager::NotSupportedError);
+#else
     doFetch(type, attributeFilter, &lms);
     QVERIFY(lms.contains(lm1));
     QVERIFY(lms.contains(lm2));
@@ -6183,6 +6186,7 @@ void tst_QLandmarkManager::filterAttribute2()
     QVERIFY(lms.contains(lm11));
     QVERIFY(lms.contains(lm12));
     QCOMPARE(lms.count(), 12);
+#endif
 
     attributeFilter.setAttribute(field, "aaa", QLandmarkFilter::MatchEndsWith);
     doFetch(type, attributeFilter, &lms);
@@ -6201,7 +6205,11 @@ void tst_QLandmarkManager::filterAttribute2()
     attributeFilter.setAttribute(field, "aaabbbccc", QLandmarkFilter::MatchExactly);
     doFetch(type, attributeFilter, &lms);
     QVERIFY(lms.contains(lm1));
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(lms.count(),2);//for symbian MatchExactly has the same semantics as MatchFixedString
+#else
     QCOMPARE(lms.count(),1);
+#endif
 }
 
 void tst_QLandmarkManager::filterAttribute2_data()
