@@ -781,13 +781,16 @@ bool QGstreamerPlayerSession::processSyncMessage(const QGstreamerMessage &messag
 {
     GstMessage* gm = message.rawMessage();
 
-    if (gm &&
-        GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT &&
-        gst_structure_has_name(gm->structure, "prepare-xwindow-id"))
-    {
-        if (m_renderer)
-            m_renderer->precessNewStream();
-        return true;
+    if (gm && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT) {
+        if (m_renderer) {
+            if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_videoSink))
+                m_renderer->handleSyncMessage(gm);
+
+            if (gst_structure_has_name(gm->structure, "prepare-xwindow-id")) {
+                m_renderer->precessNewStream();
+                return true;
+            }
+        }
     }
 
     return false;
@@ -1015,14 +1018,17 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             }
         } else if (m_videoSink
                    && m_renderer
-                   && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_videoSink)
-                   && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_STATE_CHANGED) {
-            GstState oldState;
-            GstState newState;
-            gst_message_parse_state_changed(gm, &oldState, &newState, 0);
+                   && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_videoSink)) {
 
-            if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
-                m_renderer->precessNewStream();
+            m_renderer->handleBusMessage(gm);
+            if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_STATE_CHANGED) {
+                GstState oldState;
+                GstState newState;
+                gst_message_parse_state_changed(gm, &oldState, &newState, 0);
+
+                if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
+                    m_renderer->precessNewStream();
+            }
         } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
                 // If the source has given up, so do we.
                 emit invalidMedia();
