@@ -1519,7 +1519,200 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
         return retnSchema;
     }
 
-    // the most recent version of the schema is version 1.
+    if (version == 2) {
+        // we added EventAttendee, EventRsvp and ItemAttachment in Mobility 1.2
+
+        // EVENT
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEvent);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        // attendee
+        d.setName(QOrganizerEventAttendee::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventAttendee::FieldName, f);
+        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
+        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attendees at a single event
+        retn.insert(d.name(), d);
+
+        // rsvp
+        d.setName(QOrganizerEventRsvp::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
+        f.setDataType(QVariant::Date);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
+        d.setFields(fields);
+        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEvent, retn); // replace insert
+
+
+        // EVENT OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEventOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        // attendee
+        d.setName(QOrganizerEventAttendee::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventAttendee::FieldName, f);
+        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
+        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attendees at a single event
+        retn.insert(d.name(), d);
+
+        // rsvp
+        d.setName(QOrganizerEventRsvp::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
+        f.setDataType(QVariant::Date);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
+        d.setFields(fields);
+        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn); // replace insert
+
+
+        // TODO
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodo);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodo, retn); // replace insert
+
+
+        // TODO OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodoOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn); // replace insert
+
+
+        // JOURNAL
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeJournal);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeJournal, retn); // replace insert
+
+
+        // NOTE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeNote);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeNote, retn); // replace insert
+
+
+        // return the modified schema.
+        return retnSchema;
+    }
+
+    // the most recent version of the schema is version 2.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
     return empty;
 }
@@ -3080,6 +3273,21 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
     return list.mid(0, maxCount);
 }
 
+/*!
+  \fn virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
+
+  Returns an observer object for the item with id \a itemId.
+
+  \sa QOrganizerItemObserver
+ */
+
+/*!
+  Factory function to construct a QOrganizerItemObserver with given \a parent.
+ */
+QOrganizerItemObserver* QOrganizerItemManagerEngineV2::createOrganizerItemObserver(QObject* parent)
+{
+    return new QOrganizerItemObserver(parent);
+}
 
 #include "moc_qorganizermanagerengine.cpp"
 
