@@ -62,7 +62,35 @@
     \fn QSensorPluginInterface::registerSensors()
 
     This function is called when the plugin is loaded. The plugin should register
-    sensor backends by calling QSensorManager::registerBackend().
+    sensor backends by calling QSensorManager::registerBackend(). Any backends
+    that utilise other sensors should be registered in the
+    QSensorPluginInterface::sensorsChanged() method instead.
+
+    \sa {Creating a sensor plugin}
+*/
+
+/*!
+    \class QSensorChangesInterface
+    \ingroup sensors_backend
+    \inmodule QtSensors
+    \brief The QSensorChangesInterface class is the pure virtual interface to sensor plugins.
+
+    The QSensorChangesInterface class is implemented in sensor plugins to receive notification
+    that registered sensor backends have changed.
+
+    \sa {Creating a sensor plugin}
+*/
+
+/*!
+    \fn QSensorChangesInterface::~QSensorChangesInterface()
+    \internal
+*/
+/*!
+    \fn QSensorChangesInterface::sensorsChanged()
+
+    This function is called when the registered backends have changed.
+    Any backends that depend on the presence of other sensors should be
+    registered or unregistered in here.
 
     \sa {Creating a sensor plugin}
 */

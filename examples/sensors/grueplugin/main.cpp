@@ -45,25 +45,32 @@
 #include <QFile>
 #include <QDebug>
 
-class GrueSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class GrueSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorChangesInterface, public QSensorBackendFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+    Q_INTERFACES(QtMobility::QSensorPluginInterface QtMobility::QSensorChangesInterface)
 public:
     void registerSensors()
     {
         qDebug() << "loaded the grue plugin";
-        QSensorManager::registerBackend(GrueSensor::type, gruesensorimpl::id, this);
+    }
+
+    void sensorsChanged()
+    {
+        if (!QSensor::defaultSensorForType(QAmbientLightSensor::type).isEmpty()) {
+            // There is a light sensor available. Register the backend
+            if (!QSensorManager::isBackendRegistered(GrueSensor::type, gruesensorimpl::id))
+                QSensorManager::registerBackend(GrueSensor::type, gruesensorimpl::id, this);
+        } else {
+            if (QSensorManager::isBackendRegistered(GrueSensor::type, gruesensorimpl::id))
+                QSensorManager::unregisterBackend(GrueSensor::type, gruesensorimpl::id);
+        }
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
-        if (sensor->identifier() == gruesensorimpl::id) {
-            // Can't make this unless we have an ambient light sensor
-            if (!QSensor::defaultSensorForType(QAmbientLightSensor::type).isEmpty())
-                return new gruesensorimpl(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because no" << QAmbientLightSensor::type << "sensors exist";
-        }
+        if (sensor->identifier() == gruesensorimpl::id)
+            return new gruesensorimpl(sensor);
 
         return 0;
     }
