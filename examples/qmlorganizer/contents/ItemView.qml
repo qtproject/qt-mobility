@@ -46,26 +46,31 @@ Rectangle
 {
     id:itemView
     property string  itemId
-    property OrganizerItem item:calendar.organizer.item(itemId)
-    property time startTime:item.itemStartTime
-    property time endTime:item.itemEndTime
-    color: "#f1f727"
-    border.color: "#d5cbcb"
-    gradient: Gradient {
-        GradientStop {
-            position: 0.00;
-            color: "#f1f727";
-        }
-        GradientStop {
-            position: 1.00;
-            color: "#ffffff";
-        }
-
-        Column {
-            Text { text: item.displayLabel ; font.bold: true; style: Text.Raised; verticalAlignment: Text.AlignVCenter; font.pointSize: 12 }
-            Text { text: item.description ;  font.pointSize: 10}
+    property OrganizerItem item
+    property int startTime
+    property int endTime
+    onItemIdChanged :{
+        if (itemId != "") {
+            item = calendar.organizer.item(itemId);
+            startTime = item.itemStartTime.getHours() * 60 + item.itemStartTime.getMinutes();
+            endTime = item.itemEndTime.getHours() * 60 + item.itemEndTime.getMinutes();
+            itemLabel.text = item.displayLabel;
+            itemDesc.text = item.description;
         }
     }
+    radius: 5
+    color: "steelblue"
 
+    Column {
+        Text { id: itemLabel; color: "yellow"; wrapMode: Text.Wrap;  font.bold: true; horizontalAlignment: Text.AlignHCenter; style: Text.Raised; verticalAlignment: Text.AlignVCenter; font.pointSize: 12 }
+        Text { id: itemDesc; color: "white"; wrapMode: Text.Wrap;  font.pointSize: 10}
+    }
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked : {
+            detailsView.itemId = itemId
+            calendar.state = "DetailsView"
+        }
+    }
 }

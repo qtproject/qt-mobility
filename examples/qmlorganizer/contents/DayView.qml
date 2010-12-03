@@ -49,75 +49,44 @@ Rectangle
 
     anchors.fill: parent
 
+
     ListView {
         id : timeList
         anchors.fill: parent
-        clip: true
-        focus: true
-        opacity : parent.opacity
-        currentIndex: 16
-        preferredHighlightBegin: timeList.height * 0.5
-        preferredHighlightEnd: preferredHighlightBegin
-        highlightFollowsCurrentItem : true
-        highlightMoveSpeed : 2000
-        keyNavigationWraps : true
+        opacity : parent.opacity * 0.4
 
         model : ListModel {
                 ListElement {hour : "0:00"}
-                ListElement {hour : "0:30"}
                 ListElement {hour : "1:00"}
-                ListElement {hour : "1:30"}
                 ListElement {hour : "2:00"}
-                ListElement {hour : "2:30"}
                 ListElement {hour : "3:00"}
-                ListElement {hour : "3:30"}
                 ListElement {hour : "4:00"}
-                ListElement {hour : "4:30"}
                 ListElement {hour : "5:00"}
-                ListElement {hour : "5:30"}
                 ListElement {hour : "6:00"}
-                ListElement {hour : "6:30"}
                 ListElement {hour : "7:00"}
-                ListElement {hour : "7:30"}
                 ListElement {hour : "8:00"}
-                ListElement {hour : "8:30"}
                 ListElement {hour : "9:00"}
-                ListElement {hour : "9:30"}
                 ListElement {hour : "10:00"}
-                ListElement {hour : "10:30"}
                 ListElement {hour : "11:00"}
-                ListElement {hour : "11:30"}
                 ListElement {hour : "12:00"}
-                ListElement {hour : "12:30"}
                 ListElement {hour : "13:00"}
-                ListElement {hour : "13:30"}
                 ListElement {hour : "14:00"}
-                ListElement {hour : "14:30"}
                 ListElement {hour : "15:00"}
-                ListElement {hour : "15:30"}
                 ListElement {hour : "16:00"}
-                ListElement {hour : "16:30"}
                 ListElement {hour : "17:00"}
-                ListElement {hour : "17:30"}
                 ListElement {hour : "18:00"}
-                ListElement {hour : "18:30"}
                 ListElement {hour : "19:00"}
-                ListElement {hour : "19:30"}
                 ListElement {hour : "20:00"}
-                ListElement {hour : "20:30"}
                 ListElement {hour : "21:00"}
-                ListElement {hour : "21:30"}
                 ListElement {hour : "22:00"}
-                ListElement {hour : "22:30"}
                 ListElement {hour : "23:00"}
-                ListElement {hour : "23:30"}
                 ListElement {hour : "0:00"}
             }
 
         delegate :  Component {
             Item {
                 width : timeList.width
-                height : timeList.height / 10
+                height : timeList.height / 24
                 Column {
                     Rectangle {
                         height : 1
@@ -135,16 +104,35 @@ Rectangle
             }
         }
 
-        highlight:  Component {
-
-            Rectangle {
-                width: timeList.width; height: timeList.height /10 ; color: "lightsteelblue" ;radius: 5
-            }
-        }
 
         Component.onCompleted : {
             positionViewAtIndex(currentIndex, ListView.Beginning);
         }
     }
 
+    ListView {
+        anchors.fill: parent
+        model:itemIds
+        delegate: ItemView {
+            property int timePos: (startTime/(24*60))*timeList.height
+            focus: true
+            width:timeList.width
+            height: endTime< startTime ? 30: timeList.height * (endTime - startTime)/(24*60)
+            anchors.leftMargin: 40
+            anchors.rightMargin: 5
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: timePos
+
+            opacity : dayView.opacity * 0.8
+            itemId: modelData
+            Component.onCompleted: {
+                console.log ("startTime:" + startTime);
+                console.log ("endTime:" + endTime);
+                console.log ("height:" + height);
+                console.log ("anchors.top:" + timePos);
+            }
+        }
+    }
 }
