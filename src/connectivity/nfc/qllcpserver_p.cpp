@@ -43,7 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLlcpServerPrivate::QLlcpServerPrivate()
+QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
+:   q_ptr(q)
 {
 }
 

@@ -56,6 +56,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QO
 
 public:
     QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent = 0);
+    ~QOrganizerItemDetailDefinitionRemoveRequest();
 
     /* Selection */
     void setDefinitionName(const QString& definitionName);
