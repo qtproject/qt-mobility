@@ -39,63 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFETCHHINT_H
-#define QCONTACTFETCHHINT_H
+#ifndef QCONTACTOBSERVER_H
+#define QCONTACTOBSERVER_H
 
-#include <QVariant>
-#include <QList>
-#include <QSharedData>
-#include <QSize>
-
-#include "qtcontactsglobal.h"
-#include "qcontactdetaildefinition.h"
+#include <QObject>
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QContactFetchHintPrivate;
-class Q_CONTACTS_EXPORT QContactFetchHint {
+class Q_CONTACTS_EXPORT QContactObserver : public QObject
+{
+    Q_OBJECT
 public:
-    QContactFetchHint();
-    QContactFetchHint(const QContactFetchHint& other);
-    ~QContactFetchHint();
-    QContactFetchHint& operator=(const QContactFetchHint& other);
-
-    QStringList detailDefinitionsHint() const;
-    void setDetailDefinitionsHint(const QStringList& definitionNames);
-
-    QStringList relationshipTypesHint() const;
-    void setRelationshipTypesHint(const QStringList& relationshipTypes);
-
-    QSize preferredImageSize() const;
-    void setPreferredImageSize(const QSize& size);
-
-    enum OptimizationHint {
-        AllRequired = 0x0,
-        NoRelationships = 0x1,
-        NoActionPreferences = 0x2,
-        NoBinaryBlobs = 0x4
-        // any other optimization hints?
-    };
-    Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
-
-    OptimizationHints optimizationHints() const;
-    void setOptimizationHints(OptimizationHints hints);
-
-    int maxCount() const;
-    void setMaxCount(int count);
+    void emitContactChanged();
+    void emitContactRemoved();
+signals:
+    void contactChanged();
+    void contactRemoved();
 
 private:
-    QSharedDataPointer<QContactFetchHintPrivate> d;
+    QContactObserver(QObject* parent = 0);
+
+    Q_DISABLE_COPY(QContactObserver)
+    friend class QContactManagerEngineV3;
 };
 
-#ifndef QT_NO_DATASTREAM
-Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint);
-Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint);
-#endif
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFetchHint::OptimizationHints);
-
 QTM_END_NAMESPACE
-
 
 #endif
