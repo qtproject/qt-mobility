@@ -135,14 +135,7 @@ QOrganizerAbstractRequest::QOrganizerAbstractRequest(QOrganizerAbstractRequestPr
 /*! Cleans up the memory used by this request */
 QOrganizerAbstractRequest::~QOrganizerAbstractRequest()
 {
-    if (d_ptr) {
-        QOrganizerManagerEngine *engine = QOrganizerManagerData::engine(d_ptr->m_manager);
-        if (engine) {
-            engine->requestDestroyed(this);
-        }
-
-        delete d_ptr;
-    }
+    delete d_ptr;
 }
 
 /*!

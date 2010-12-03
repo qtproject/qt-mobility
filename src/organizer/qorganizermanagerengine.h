@@ -174,6 +174,7 @@ public:
 
     /* Helper functions */
     static bool isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod);
+    static bool itemLessThan(const QOrganizerItem& a, const QOrganizerItem& b);
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);
     static void addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
@@ -185,6 +186,19 @@ private:
     /* QOrganizerItemChangeSet is a utility class used to emit the appropriate signals */
     friend class QOrganizerItemChangeSet;
     friend class QOrganizerCollectionChangeSet;
+};
+
+class Q_ORGANIZER_EXPORT QOrganizerManagerEngineV2 : public QOrganizerManagerEngine
+{
+    Q_OBJECT
+public:
+    QOrganizerManagerEngineV2() : QOrganizerManagerEngine() {}
+
+    // This is the V1 function - c++ overloading rules require this here, or to use "using"
+    virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+    virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+
+    // TODO async function
 };
 
 QTM_END_NAMESPACE

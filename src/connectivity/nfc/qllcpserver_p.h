@@ -50,8 +50,10 @@ QTM_BEGIN_NAMESPACE
 
 class QLlcpServerPrivate
 {
+    Q_DECLARE_PUBLIC(QLlcpServer)
+
 public:
-    QLlcpServerPrivate();
+    QLlcpServerPrivate(QLlcpServer *q);
 
     bool listen(const QString &serviceUri);
     bool isListening() const;
@@ -65,6 +67,9 @@ public:
     QLlcpSocket *nextPendingConnection();
 
     QLlcpServer::Error serverError() const;
+
+private:
+    QLlcpServer *q_ptr;
 };
 
 QTM_END_NAMESPACE

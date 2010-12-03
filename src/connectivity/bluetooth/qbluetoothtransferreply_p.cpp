@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
-#define QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
 
-#include "qtorganizerglobal.h"
-#include "qorganizerabstractrequest.h"
-#include "qorganizeritemsortorder.h"
-#include "qorganizeritemfilter.h"
-#include "qorganizeritem.h"
-#include "qorganizeritemfetchhint.h"
-
-#include <QList>
-#include <QStringList>
+#include "qbluetoothtransferreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemOccurrenceFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemOccurrenceFetchRequest : public QOrganizerAbstractRequest
+QBluetoothTransferReplyPrivate::QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent)
+:   q(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    QOrganizerItemOccurrenceFetchRequest(QObject* parent = 0);
-    ~QOrganizerItemOccurrenceFetchRequest();
+/*!
+    Destroys the QBluetoothTransferReply object.
+*/
+QBluetoothTransferReplyPrivate::~QBluetoothTransferReplyPrivate()
+{
+}
 
-    void setParentItem(const QOrganizerItem& item);
-    void setStartDate(const QDateTime& date);
-    void setEndDate(const QDateTime& date);
-    void setMaxOccurrences(int maxCount);
-    void setFetchHint(const QOrganizerItemFetchHint& hint);
+/*!
+    Returns the attribute associated with the code \a code. If the attribute has not been set, it
+    returns an invalid QVariant.
+*/
 
-    QOrganizerItem parentItem() const;
-    QDateTime startDate() const;
-    QDateTime endDate() const;
-    int maxOccurrences() const;
-    QOrganizerItemFetchHint fetchHint() const;
-
-    /* Results */
-    QList<QOrganizerItem> itemOccurrences() const;
-
-private:
-    Q_DISABLE_COPY(QOrganizerItemOccurrenceFetchRequest)
-    friend class QOrganizerManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemOccurrenceFetchRequest)
-};
+#include "moc_qbluetoothtransferreply_p.cpp"
 
 QTM_END_NAMESPACE
-
-#endif

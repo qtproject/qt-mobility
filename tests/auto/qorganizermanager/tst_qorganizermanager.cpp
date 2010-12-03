@@ -176,6 +176,7 @@ private slots:
     void dataSerialization();
     void itemFetch();
     void todoItemFetch();
+    void itemFetchV2();
     void spanOverDays();
     void recurrence();
     void idComparison();
@@ -216,6 +217,7 @@ private slots:
     void dataSerialization_data() {addManagers();}
     void itemFetch_data() {addManagers();}
     void todoItemFetch_data() {addManagers();}
+    void itemFetchV2_data() {addManagers();}
     void spanOverDays_data() {addManagers();}
     void recurrence_data() {addManagers();}
     void idComparison_data() {addManagers();}
@@ -3442,6 +3444,52 @@ void tst_QOrganizerManager::todoItemFetch()
     }
     QCOMPARE(todoCount, 1);
     QCOMPARE(todoOccurrenceCount, 3);
+}
+
+void tst_QOrganizerManager::itemFetchV2()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+
+    QOrganizerEvent event1;
+    event1.setDisplayLabel("event1");
+    event1.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(11, 0, 0)));
+    event1.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(11, 30, 0)));
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(QDate(2010, 1, 2));
+    event1.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event1));
+
+    QOrganizerEvent event2;
+    event2.setDisplayLabel("event2");
+    event2.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(13, 0, 0)));
+    event2.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(13, 30, 0)));
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrule.setLimit(QDate(2010, 1, 2));
+    event2.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event2));
+
+    // Get items without a maxCount, check that they're date sorted
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                            QDateTime());
+    QCOMPARE(items.size(), 4);
+    QCOMPARE(items[0].displayLabel(), QLatin1String("event1"));
+    QCOMPARE(items[1].displayLabel(), QLatin1String("event2"));
+    QCOMPARE(items[2].displayLabel(), QLatin1String("event1"));
+    QCOMPARE(items[3].displayLabel(), QLatin1String("event2"));
+
+    // Get the next 3 items from 2010-02-01
+    items = cm->items(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                      QDateTime(),  // no end date limit
+                      3);           // maxCount
+    QCOMPARE(items.size(), 3);
+    QCOMPARE(items[0].displayLabel(), QLatin1String("event1"));
+    QCOMPARE(items[1].displayLabel(), QLatin1String("event2"));
+    QCOMPARE(items[2].displayLabel(), QLatin1String("event1"));
 }
 
 void tst_QOrganizerManager::spanOverDays()
