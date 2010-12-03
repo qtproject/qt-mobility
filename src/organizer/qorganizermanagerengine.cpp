@@ -3273,6 +3273,21 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
     return list.mid(0, maxCount);
 }
 
+/*!
+  \fn virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
+
+  Returns an observer object for the item with id \a itemId.
+
+  \sa QOrganizerItemObserver
+ */
+
+/*!
+  Factory function to construct a QOrganizerItemObserver with given \a parent.
+ */
+QOrganizerItemObserver* QOrganizerItemManagerEngineV2::createOrganizerItemObserver(QObject* parent)
+{
+    return new QOrganizerItemObserver(parent);
+}
 
 #include "moc_qorganizermanagerengine.cpp"
 

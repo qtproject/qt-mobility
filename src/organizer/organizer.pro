@@ -31,6 +31,7 @@ PUBLIC_HEADERS += \
     qorganizeritem.h \
     qorganizeritemid.h \
     qorganizeritemengineid.h \
+    qorganizeritemobserver.h \
     qorganizermanager.h \
     qorganizermanagerengine.h \
     qorganizermanagerenginefactory.h \
@@ -70,6 +71,7 @@ SOURCES += \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
     qorganizeritemengineid.cpp \
+    qorganizeritemobserver.cpp \
     qorganizermanager.cpp \
     qorganizermanagerengine.cpp \
     qorganizermanagerenginefactory.cpp \
