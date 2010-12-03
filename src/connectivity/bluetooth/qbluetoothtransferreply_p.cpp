@@ -39,45 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORSIMULATOR_H
-#define QGEOAREAMONITORSIMULATOR_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
+#include "qbluetoothtransferreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-/**
- *  QGeoAreaMonitorSimulator
- *
- */
-class QGeoAreaMonitorSimulator : public QGeoAreaMonitor
+QBluetoothTransferReplyPrivate::QBluetoothTransferReplyPrivate(QBluetoothTransferReply *parent)
+:   q(parent)
 {
-    Q_OBJECT
+}
 
-public :
-    QGeoAreaMonitorSimulator(QObject *parent = 0);
-    virtual ~QGeoAreaMonitorSimulator();
-    virtual void setCenter(const QGeoCoordinate &coordinate);
+/*!
+    Destroys the QBluetoothTransferReply object.
+*/
+QBluetoothTransferReplyPrivate::~QBluetoothTransferReplyPrivate()
+{
+}
 
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
+/*!
+    Returns the attribute associated with the code \a code. If the attribute has not been set, it
+    returns an invalid QVariant.
+*/
 
-private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
-};
+#include "moc_qbluetoothtransferreply_p.cpp"
 
 QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORSIMULATOR_H

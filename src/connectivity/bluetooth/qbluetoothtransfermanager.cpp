@@ -98,17 +98,6 @@ QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransfer
     return 0;
 }
 
-/*!
-    Sends a request for the contents of the target \a request. Returns a QBluetoothTransferReply,
-    that can be used to track the request's progress.
-*/
-QBluetoothTransferReply *QBluetoothTransferManager::get(const QBluetoothTransferRequest &request)
-{
-    Q_UNUSED(request);
-
-    return 0;
-}
-
 #include "moc_qbluetoothtransfermanager.cpp"
 
 QTM_END_NAMESPACE

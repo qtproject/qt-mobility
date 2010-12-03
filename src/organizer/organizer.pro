@@ -51,6 +51,7 @@ PRIVATE_HEADERS += \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizermanager_p.h \
+    qorganizermanagerenginev2wrapper_p.h \
     qorganizerrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
 
@@ -72,6 +73,7 @@ SOURCES += \
     qorganizermanager.cpp \
     qorganizermanagerengine.cpp \
     qorganizermanagerenginefactory.cpp \
+    qorganizermanagerenginev2wrapper_p.cpp \
     qorganizerrecurrencerule.cpp \
     qorganizeritemsortorder.cpp \
     qorganizermanager_p.cpp

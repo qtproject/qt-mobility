@@ -128,7 +128,6 @@ void tst_QGeoMapRouteObject::qgeomaprouteobject()
 
     QCOMPARE((int)object->detailLevel(), 6);
     QPen pen(Qt::black);
-    pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     QCOMPARE(object->route().path(),QGeoRoute().path());
     QCOMPARE(object->zValue(), 0);
@@ -255,23 +254,17 @@ void tst_QGeoMapRouteObject::pen_data()
 
     pen1.setWidth(5);
 
-    pen1.setCosmetic(true);
-
     QTest::newRow("blue,5") << pen1;
 
     QPen pen2(Qt::white);
 
     pen2.setWidth(10);
 
-    pen2.setCosmetic(true);
-
     QTest::newRow("white,10") << pen2;
 
     QPen pen3(Qt::black);
 
     pen3.setWidth(15);
-
-    pen3.setCosmetic(true);
 
     QTest::newRow("black,15") << pen3;
 
@@ -318,7 +311,7 @@ void tst_QGeoMapRouteObject::pen()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-    QPointF diff(0, pen.width() / 2 - 1);
+    QPointF diff(pen.width() / 2 - 1, pen.width() / 2 - 1);
 
     point += diff;
 
@@ -433,12 +426,18 @@ void tst_QGeoMapRouteObject::zvalue()
     QGeoRoute route;
     route.setPath(path);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapRouteObject* object1 = new QGeoMapRouteObject();
     object1->setRoute(route);
+    object1->setPen(pen);
     QGeoMapRouteObject* object2 = new QGeoMapRouteObject();
     object2->setRoute(route);
+    object2->setPen(pen);
     QGeoMapRouteObject* object3 = new QGeoMapRouteObject();
     object3->setRoute(route);
+    object3->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -502,8 +501,12 @@ void tst_QGeoMapRouteObject::isVisible()
     QGeoRoute route;
     route.setPath(path);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
     object->setRoute(route);
+    object->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -585,9 +588,13 @@ void tst_QGeoMapRouteObject::contains()
     QGeoRoute route;
     route.setPath(path);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
 
     object->setRoute(route);
+    object->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -631,8 +638,12 @@ void tst_QGeoMapRouteObject::boundingBox()
     QGeoRoute route;
     route.setPath(path);
 
+    QPen pen;
+    pen.setWidth(1);
+
     QGeoMapRouteObject* object = new QGeoMapRouteObject();
     object->setRoute(route);
+    object->setPen(pen);
 
     QGraphicsGeoMap* map = m_helper->map();
 
