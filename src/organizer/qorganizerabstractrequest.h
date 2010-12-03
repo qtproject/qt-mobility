@@ -85,7 +85,8 @@ public:
         DetailDefinitionSaveRequest,
         CollectionFetchRequest,
         CollectionRemoveRequest,
-        CollectionSaveRequest
+        CollectionSaveRequest,
+        ItemFetchByIdRequest
     };
 
     RequestType type() const;

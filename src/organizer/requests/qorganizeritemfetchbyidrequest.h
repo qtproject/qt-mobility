@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,27 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMFETCHBYIDREQUEST_H
+#define QORGANIZERITEMFETCHBYIDREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtorganizerglobal.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QStringList>
 
-#include "qorganizeritemoccurrencefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemfetchbyidrequest.h"
-#include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionremoverequest.h"
-#include "qorganizercollectionsaverequest.h"
+class QOrganizerItemFetchByIdRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemFetchByIdRequest : public QOrganizerAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemFetchByIdRequest(QObject* parent = 0);
+    ~QOrganizerItemFetchByIdRequest();
+
+    /* Selection, restriction and sorting */
+    void setIds(const QList<QOrganizerItemId>& ids);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    QList<QOrganizerItemId> ids() const;
+    QOrganizerItemFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QOrganizerItem> items() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemFetchByIdRequest)
+    friend class QOrganizerManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemFetchByIdRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-

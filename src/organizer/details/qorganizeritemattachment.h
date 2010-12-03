@@ -39,27 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMATTACHMENT_H
+#define QORGANIZERITEMATTACHMENT_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include <QString>
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritemfilter.h"
 
-#include "qorganizeritemoccurrencefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemfetchbyidrequest.h"
-#include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionremoverequest.h"
-#include "qorganizercollectionsaverequest.h"
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemAttachment : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldDescription;
+    static const QLatin1Constant FieldAttachmentData;
+    static const QLatin1Constant FieldAttachmentMimeType;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemAttachment, "Attachment")
+    Q_DECLARE_LATIN1_CONSTANT(FieldDescription, "Description");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentData, "AttachmentData");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentMimeType, "AttachmentMimeType");
+#endif
+
+    void setDescription(const QString& description) {setValue(FieldDescription, description);}
+    QString description() const {return value(FieldDescription);}
+
+    void setAttachment(const QByteArray& data, const QString& mimeType);
+    QByteArray attachmentData() const;
+    QString attachmentMimeType() const;
+};
+
+QTM_END_NAMESPACE
 
 #endif
 

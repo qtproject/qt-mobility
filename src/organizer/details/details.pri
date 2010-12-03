@@ -2,7 +2,10 @@ INCLUDEPATH += details \
     ./
 
 PUBLIC_HEADERS += \
+    details/qorganizereventattendee.h \
+    details/qorganizereventrsvp.h \
     details/qorganizereventtime.h \
+    details/qorganizeritemattachment.h \
     details/qorganizeritemaudiblereminder.h \
     details/qorganizeritemcomment.h \
     details/qorganizeritemdescription.h \

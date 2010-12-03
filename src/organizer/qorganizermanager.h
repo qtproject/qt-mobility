@@ -57,6 +57,7 @@
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfetchhint.h"
 #include "qorganizeritemfilter.h"
+#include "qorganizeritemobserver.h"
 
 #include "qorganizercollection.h"
 #include "qorganizercollectionid.h"
@@ -129,6 +130,8 @@ public:
     bool saveItems(QList<QOrganizerItem>* items);
     bool removeItem(const QOrganizerItemId& itemId);
     bool removeItems(const QList<QOrganizerItemId>& itemIds);
+
+    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;

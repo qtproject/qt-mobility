@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,27 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#include "qorganizeritemobserver.h"
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+QTM_USE_NAMESPACE
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+/*!
+  \class QOrganizerItemObserver
+  \brief The QOrganizerItemObserver class is a simple class that emits a signal when a single
+  particular item is updated or deleted.
+  \inmodule QtOrganizer
 
-#include "qorganizeritemoccurrencefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemfetchbyidrequest.h"
-#include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+  \ingroup organizer-main
 
-#include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionremoverequest.h"
-#include "qorganizercollectionsaverequest.h"
+  This class is created by calling QOrganizerManager::observeItem(QOrganizerItemId).
 
-#endif
+  \sa QOrganizerManager::observeItem
+ */
 
+QOrganizerItemObserver::QOrganizerItemObserver(QObject* parent) : QObject(parent) {}
+
+/*!
+  \fn itemChanged()
+
+  This signal is emitted when the observed item is changed in the manager.
+ */
+
+/*!
+  \fn itemRemoved()
+
+  This signal is emitted when the observed item is removed from the manager.
+ */
+
+/*!
+  This function causes the itemChanged() signal to be emitted.
+ */
+void QOrganizerItemObserver::emitItemChanged()
+{
+    emit itemChanged();
+}
+
+/*!
+  This function causes the itemRemoved() signal to be emitted.
+ */
+void QOrganizerItemObserver::emitItemRemoved()
+{
+    emit itemRemoved();
+}
+
+#include "moc_qorganizeritemobserver.cpp"

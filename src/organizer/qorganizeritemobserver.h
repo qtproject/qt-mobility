@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,27 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMOBSERVER_H
+#define QORGANIZERITEMOBSERVER_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include <QObject>
+#include "qmobilityglobal.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#include "qorganizeritemoccurrencefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemfetchbyidrequest.h"
-#include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+class Q_ORGANIZER_EXPORT QOrganizerItemObserver : public QObject
+{
+    Q_OBJECT
+public:
+    void emitItemChanged();
+    void emitItemRemoved();
+signals:
+    void itemChanged();
+    void itemRemoved();
 
-#include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionremoverequest.h"
-#include "qorganizercollectionsaverequest.h"
+private:
+    QOrganizerItemObserver(QObject* parent = 0);
+
+    Q_DISABLE_COPY(QOrganizerItemObserver)
+    friend class QOrganizerManagerEngineV2;
+};
+
+QTM_END_NAMESPACE
 
 #endif
-
