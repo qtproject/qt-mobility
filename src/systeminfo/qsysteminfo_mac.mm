@@ -2289,7 +2289,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*typ
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,

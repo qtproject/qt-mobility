@@ -72,7 +72,7 @@ WMIHelper *WMIHelper::instance()
 
 QVariant WMIHelper::getWMIData()
 {
-    qDebug() << Q_FUNC_INFO << m_wmiNamespace << m_className << m_classProperties;
+//    qDebug() << Q_FUNC_INFO << m_wmiNamespace << m_className << m_classProperties;
 
    if (!m_wmiNamespace.isEmpty() && !m_className.isEmpty() && !m_classProperties.isEmpty()) {
       return getWMIData(m_wmiNamespace, m_className, m_classProperties);
