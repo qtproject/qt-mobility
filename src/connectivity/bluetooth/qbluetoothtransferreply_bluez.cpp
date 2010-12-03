@@ -52,24 +52,25 @@
 #include <QFutureWatcher>
 #include <QtConcurrentRun>
 
-#define AGENT_PATH "/qt/agent"
+#define AGENT_PATH "/qt/agent/test"
 
 QTM_BEGIN_NAMESPACE
 
 QBluetoothTransferReplyBluez::QBluetoothTransferReplyBluez(QIODevice *input, QObject *parent)
-:   QBluetoothTransferReply(parent), source(input), m_running(false), m_finished(false)
+:   QBluetoothTransferReply(parent), tempfile(0), source(input), m_running(false), m_finished(false)
 {
-    client = new OrgOpenobexClientInterface(QLatin1String("org.openobex"), QLatin1String("/"),
+    client = new OrgOpenobexClientInterface(QLatin1String("org.openobex.client"), QLatin1String("/"),
                                            QDBusConnection::sessionBus());
 
-    manager = new OrgOpenobexManagerInterface(QLatin1String("org.openobex"), QLatin1String("/"),
-                                           QDBusConnection::sessionBus());
+//    manager = new OrgOpenobexManagerInterface(QLatin1String("org.openobex"), QLatin1String("/"),
+//                                           QDBusConnection::sessionBus());
 
     agent = new AgentAdaptor(this);
 
-    QDBusConnection::sessionBus().registerObject(AGENT_PATH, agent);
+    bool res = QDBusConnection::sessionBus().registerObject(AGENT_PATH, agent, QDBusConnection::ExportAllContents);
+    res = QDBusConnection::sessionBus().registerService("org.qt.bt");
+qDebug() << "Created dbus objects" << res;
 
-    tempfile = new QTemporaryFile(this);
 
 }
 
@@ -88,6 +89,8 @@ bool QBluetoothTransferReplyBluez::start()
     QFile *file = qobject_cast<QFile *>(source);
 
     if(!file){
+qDebug() << "Not a QFile, making a copy";
+        tempfile = new QTemporaryFile(this);
         tempfile->open();
 
         QFutureWatcher<bool> watcher;
@@ -97,6 +100,7 @@ bool QBluetoothTransferReplyBluez::start()
         watcher.setFuture(results);
     }
     else {
+qDebug() << "QFile, not making a copy";
         startOPP(file->fileName());
     }
     return true;
@@ -114,6 +118,7 @@ bool QBluetoothTransferReplyBluez::copyToTempFile(QIODevice *to, QIODevice *from
     }
 
     delete[] block;
+qDebug() << "File copy done";
     return true;
 }
 
@@ -127,10 +132,19 @@ void QBluetoothTransferReplyBluez::startOPP(QString filename)
     QVariantMap device;
     QStringList files;
 
+qDebug() << "Starting obex push" << filename;
+
     device.insert(QString::fromLatin1("Destination"), address.toString());
     files << filename;
 
-    client->SendFiles(device, files, QDBusObjectPath(QString::fromLocal8Bit(AGENT_PATH)));
+    QDBusObjectPath path(QString::fromLocal8Bit(AGENT_PATH));
+    QDBusPendingReply<> sendReply = client->SendFiles(device, files, path);
+    sendReply.waitForFinished();
+    if(sendReply.isError()){
+        qDebug() << "Failed to send file" << sendReply.error().message();
+        emit finished(this);
+    }
+qDebug() << "Send started reply: " << sendReply.isError() << path.path() << device << files;
 }
 
 void QBluetoothTransferReplyBluez::Complete(const QDBusObjectPath &in0)
@@ -138,6 +152,8 @@ void QBluetoothTransferReplyBluez::Complete(const QDBusObjectPath &in0)
     qDebug() << "Got complete: " << in0.path();
     m_finished = true;
     m_running = false;
+    // done by Release()
+//    emit finished(this);
 }
 
 void QBluetoothTransferReplyBluez::Error(const QDBusObjectPath &in0, const QString &in1)
@@ -147,7 +163,7 @@ void QBluetoothTransferReplyBluez::Error(const QDBusObjectPath &in0, const QStri
     m_running = false;
 }
 
-void QBluetoothTransferReplyBluez::Progress(const QDBusObjectPath &in0, uint in1)
+void QBluetoothTransferReplyBluez::Progress(const QDBusObjectPath &in0, qulonglong in1)
 {
     qDebug() << "Got progress: " << in0.path() << in1;
 }
@@ -155,11 +171,13 @@ void QBluetoothTransferReplyBluez::Progress(const QDBusObjectPath &in0, uint in1
 void QBluetoothTransferReplyBluez::Release()
 {
     qDebug() << "Got release";
+    emit finished(this);
 }
 
 QString QBluetoothTransferReplyBluez::Request(const QDBusObjectPath &in0)
 {
     qDebug() << "Got request" << in0.path();
+    return QString();
 
 }
 
@@ -184,10 +202,21 @@ void QBluetoothTransferReplyBluez::abort()
     qDebug() << "Abort() is not implemented";
 }
 
-void QBluetoothTransferReplyBluez::setAddress(QBluetoothAddress &destination)
+void QBluetoothTransferReplyBluez::setAddress(const QBluetoothAddress &destination)
 {
     address = destination;
 }
+
+qint64 QBluetoothTransferReplyBluez::readData(char*, qint64)
+{
+    return 0;
+}
+
+qint64 QBluetoothTransferReplyBluez::writeData(const char*, qint64)
+{
+    return 0;
+}
+
 
 #include "moc_qbluetoothtransferreply_bluez_p.cpp"
 

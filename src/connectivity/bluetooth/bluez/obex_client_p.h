@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef OBEX_CLIENT_P_H_1291186316
-#define OBEX_CLIENT_P_H_1291186316
+#ifndef OBEX_CLIENT_P_H_1291349694
+#define OBEX_CLIENT_P_H_1291349694
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
