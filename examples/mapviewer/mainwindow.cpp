@@ -762,7 +762,6 @@ void MainWindow::drawPolyline(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
-    pen.setCosmetic(true);
     QGeoMapPolylineObject *polyline = new QGeoMapPolylineObject();
     polyline->setPen(pen);
     polyline->setPath(path);
@@ -998,7 +997,6 @@ void MainWindow::routeFinished()
     routeColor.setAlpha(127); //semi-transparent
     QPen pen(routeColor);
     pen.setWidth(7);
-    pen.setCosmetic(true);
     pen.setCapStyle(Qt::RoundCap);
     route->setPen(pen);
     m_mapWidget->addMapObject(route);

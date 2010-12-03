@@ -63,7 +63,8 @@ HEADERS += ../../../plugins/declarative/contacts/qdeclarativecontactdetail_p.h\
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactdetailrangefilter_p.h \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactrelationshipfilter_p.h \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactfilters_p.h	 \
-           ../../../plugins/declarative/contacts/filters/qdeclarativecontactunionfilter_p.h
+           ../../../plugins/declarative/contacts/filters/qdeclarativecontactunionfilter_p.h\
+           ../../../plugins/declarative/contacts/qmetaobjectbuilder_p.h
 SOURCES += tst_qdeclarativecontact.cpp \
            ../../../plugins/declarative/contacts/qdeclarativecontactdetail.cpp\
            ../../../plugins/declarative/contacts/qdeclarativeopenmetaobject.cpp\
@@ -74,7 +75,8 @@ SOURCES += tst_qdeclarativecontact.cpp \
            ../../../plugins/declarative/contacts/qdeclarativecontactsortorder.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactfilter.cpp\
  	   ../../../plugins/declarative/contacts/qdeclarativecontact.cpp\
-           ../../../plugins/declarative/contacts/qdeclarativecontactrelationshipmodel.cpp
+           ../../../plugins/declarative/contacts/qdeclarativecontactrelationshipmodel.cpp\
+           ../../../plugins/declarative/contacts/qmetaobjectbuilder.cpp
 symbian: {
     importFiles.sources = data
     importFiles.path = .

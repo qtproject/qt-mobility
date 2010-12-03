@@ -63,6 +63,12 @@ QOrganizerItemOccurrenceFetchRequest::QOrganizerItemOccurrenceFetchRequest(QObje
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemOccurrenceFetchRequest::~QOrganizerItemOccurrenceFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the parent item, whose occurrences are to be fetched to \a item. */
 void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &item)
 {
@@ -89,7 +95,10 @@ void QOrganizerItemOccurrenceFetchRequest::setEndDate(const QDateTime &date)
     d->m_endDate = date;
 }
 
-/*! Sets the maximum number of items to fetch to \a maxCount. */
+/*! Sets the maximum number of items to fetch to \a maxCount.
+
+  A negative value denotes that no limit will be imposed on the number of items to fetch.
+ */
 void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
@@ -131,7 +140,12 @@ QDateTime QOrganizerItemOccurrenceFetchRequest::endDate() const
     return d->m_endDate;
 }
 
-/*! Returns the maximum number of items to fetch. */
+/*! Returns the maximum number of items to fetch.
+
+  A negative value denotes that no limit will be imposed on the number of items to fetch.
+
+  The default value is -1.
+ */
 int QOrganizerItemOccurrenceFetchRequest::maxOccurrences() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);

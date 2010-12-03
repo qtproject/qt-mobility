@@ -64,6 +64,12 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemDetailDefinitionRemoveRequest::~QOrganizerItemDetailDefinitionRemoveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different organizer item types, and so attempting to remove definitions with certain names may fail if no such

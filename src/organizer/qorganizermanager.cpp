@@ -451,6 +451,38 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
 }
 
 /*!
+  Returns a list of organizer items that match the given \a filter, sorted according to the given
+  list of \a sortOrders, for any item or occurrence of an item which occurs in the range specified
+  by the given \a startDate and \a endDate, inclusive.  A default-constructed (invalid) \a startDate
+  specifies an open start date (matches anything which occurs up until the \a endDate), and a
+  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
+  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
+  return all items which match the \a filter criteria.
+
+  This function will return both persisted and generated occurrences of items which match the
+  specified criteria.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve
+  retrieving all organizer items and testing them against the supplied filter - see the \l
+  isFilterSupported() function.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details and relationships in the matching
+  organizer items will be returned.  A client should not make changes to an organizer item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
+  information loss when saving the organizer item back to the manager (as the "new" restricted
+  organizer item will replace the previously saved organizer item in the backend).
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const
+{
+    d->m_error = QOrganizerManager::NoError;
+    d->m_errorMap.clear();
+    return d->m_engine->items(startDate, endDate, maxCount, filter, fetchHint, &d->m_error);
+}
+
+/*!
   Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders,
   for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate, inclusive.
   A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),

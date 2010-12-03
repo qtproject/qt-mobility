@@ -88,7 +88,8 @@ public:
     QMap<QString, int> m_preferences;
 
     // Helper function
-    void removeOnly(const QSet<QString>& detailMask);
+    void removeOnly(const QString& definitionName);
+    void removeOnly(const QSet<QString>& definitionNames);
 
     // Trampoline
     static QSharedDataPointer<QContactData>& contactData(QContact& contact) {return contact.d;}
