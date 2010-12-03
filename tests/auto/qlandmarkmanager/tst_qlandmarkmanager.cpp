@@ -155,6 +155,7 @@ Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkFilter::MatchFlags)
 
 class ManagerListener : public QObject
 {
@@ -1123,6 +1124,9 @@ private slots:
 #ifdef FILTER_ATTRIBUTE
     void filterAttribute();
     void filterAttribute_data();
+
+    void filterAttribute2();
+    void filterAttribute2_data();
 #endif
 
 #ifdef IMPORT_GPX
@@ -5935,6 +5939,297 @@ void tst_QLandmarkManager::filterAttribute_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+
+void tst_QLandmarkManager::filterAttribute2()
+{
+    QFETCH(QString, field);
+    QFETCH(QString, type);
+
+    QGeoAddress address;
+
+    QLandmark lm1;
+    lm1.setName("aaabbbccc");
+    lm1.setDescription("aaabbbccc");
+    lm1.setPhoneNumber("aaabbbccc");
+    address.setCountryCode("aaabbbccc");
+    address.setCountry("aaabbbccc");
+    address.setState("aaabbbccc");
+    address.setCity("aaabbbccc");
+    address.setDistrict("aaabbbccc");
+    address.setStreet("aaabbbccc");
+    address.setPostcode("aaabbbccc");
+    lm1.setAddress(address);
+
+    m_manager->saveLandmark(&lm1);
+    address.clear();
+
+    QLandmark lm2;
+    lm2.setName("bbbaaaccc");
+    lm2.setDescription("bbbaaaccc");
+    lm2.setPhoneNumber("bbbaaaccc");
+    address.setCountryCode("bbbaaaccc");
+    address.setCountry("bbbaaaccc");
+    address.setState("bbbaaaccc");
+    address.setCity("bbbaaaccc");
+    address.setDistrict("bbbaaaccc");
+    address.setStreet("bbbaaaccc");
+    address.setPostcode("bbbaaaccc");
+    lm2.setAddress(address);
+
+    m_manager->saveLandmark(&lm2);
+    address.clear();
+
+    QLandmark lm3;
+    lm3.setName("bbbcccaaa");
+    lm3.setDescription("bbbcccaaa");
+    lm3.setPhoneNumber("bbbcccaaa");
+    address.setCountryCode("bbbcccaaa");
+    address.setCountry("bbbcccaaa");
+    address.setState("bbbcccaaa");
+    address.setCity("bbbcccaaa");
+    address.setDistrict("bbbcccaaa");
+    address.setStreet("bbbcccaaa");
+    address.setPostcode("bbbcccaaa");
+    lm3.setAddress(address);
+
+    m_manager->saveLandmark(&lm3);
+    address.clear();
+
+    QLandmark lm4;
+    lm4.setName("aaaabbbbcccc");
+    lm4.setDescription("aaaabbbbcccc");
+    lm4.setPhoneNumber("aaaabbbbcccc");
+    address.setCountryCode("aaaabbbbcccc");
+    address.setCountry("aaaabbbbcccc");
+    address.setState("aaaabbbbcccc");
+    address.setCity("aaaabbbbcccc");
+    address.setDistrict("aaaabbbbcccc");
+    address.setStreet("aaaabbbbcccc");
+    address.setPostcode("aaaabbbbcccc");
+    lm4.setAddress(address);
+
+    m_manager->saveLandmark(&lm4);
+    address.clear();
+
+    QLandmark lm5;
+    lm5.setName("ccccaaaabbbb");
+    lm5.setDescription("ccccaaaabbbb");
+    lm5.setPhoneNumber("ccccaaaabbbb");
+    address.setCountryCode("ccccaaaabbbb");
+    address.setCountry("ccccaaaabbbb");
+    address.setState("ccccaaaabbbb");
+    address.setCity("ccccaaaabbbb");
+    address.setDistrict("ccccaaaabbbb");
+    address.setStreet("ccccaaaabbbb");
+    address.setPostcode("ccccaaaabbbb");
+    lm5.setAddress(address);
+
+    m_manager->saveLandmark(&lm5);
+    address.clear();
+
+    QLandmark lm6;
+    lm6.setName("ccccbbbbaaaa");
+    lm6.setDescription("ccccbbbbaaaa");
+    lm6.setPhoneNumber("ccccbbbbaaaa");
+    address.setCountryCode("ccccbbbbaaaa");
+    address.setCountry("ccccbbbbaaaa");
+    address.setState("ccccbbbbaaaa");
+    address.setCity("ccccbbbbaaaa");
+    address.setDistrict("ccccbbbbaaaa");
+    address.setStreet("ccccbbbbaaaa");
+    address.setPostcode("ccccbbbbaaaa");
+    lm6.setAddress(address);
+
+    m_manager->saveLandmark(&lm6);
+    address.clear();
+
+    QLandmark lm7;
+    lm7.setName("AAABBBCCC");
+    lm7.setDescription("AAABBBCCC");
+    lm7.setPhoneNumber("AAABBBCCC");
+    address.setCountryCode("AAABBBCCC");
+    address.setCountry("AAABBBCCC");
+    address.setState("AAABBBCCC");
+    address.setCity("AAABBBCCC");
+    address.setDistrict("AAABBBCCC");
+    address.setStreet("AAABBBCCC");
+    address.setPostcode("AAABBBCCC");
+    lm7.setAddress(address);
+
+    m_manager->saveLandmark(&lm7);
+    address.clear();
+
+    QLandmark lm8;
+    lm8.setName("BBBAAACCC");
+    lm8.setDescription("BBBAAACCC");
+    lm8.setPhoneNumber("BBBAAACCC");
+    address.setCountryCode("BBBAAACCC");
+    address.setCountry("BBBAAACCC");
+    address.setState("BBBAAACCC");
+    address.setCity("BBBAAACCC");
+    address.setDistrict("BBBAAACCC");
+    address.setStreet("BBBAAACCC");
+    address.setPostcode("BBBAAACCC");
+    lm8.setAddress(address);
+
+    m_manager->saveLandmark(&lm8);
+    address.clear();
+
+    QLandmark lm9;
+    lm9.setName("BBBCCCAAA");
+    lm9.setDescription("BBBCCCAAA");
+    lm9.setPhoneNumber("BBBCCCAAA");
+    address.setCountryCode("BBBCCCAAA");
+    address.setCountry("BBBCCCAAA");
+    address.setState("BBBCCCAAA");
+    address.setCity("BBBCCCAAA");
+    address.setDistrict("BBBCCCAAA");
+    address.setStreet("BBBCCCAAA");
+    address.setPostcode("BBBCCCAAA");
+    lm9.setAddress(address);
+
+    m_manager->saveLandmark(&lm9);
+    address.clear();
+
+    QLandmark lm10;
+    lm10.setName("AAAABBBBCCCC");
+    lm10.setDescription("AAAABBBBCCCC");
+    lm10.setPhoneNumber("AAAABBBBCCCC");
+    address.setCountryCode("AAAABBBBCCCC");
+    address.setCountry("AAAABBBBCCCC");
+    address.setState("AAAABBBBCCCC");
+    address.setCity("AAAABBBBCCCC");
+    address.setDistrict("AAAABBBBCCCC");
+    address.setStreet("AAAABBBBCCCC");
+    address.setPostcode("AAAABBBBCCCC");
+    lm10.setAddress(address);
+
+    m_manager->saveLandmark(&lm10);
+    address.clear();
+
+    QLandmark lm11;
+    lm11.setName("CCCCAAAABBBB");
+    lm11.setDescription("CCCCAAAABBBB");
+    lm11.setPhoneNumber("CCCCAAAABBBB");
+    address.setCountryCode("CCCCAAAABBBB");
+    address.setCountry("CCCCAAAABBBB");
+    address.setState("CCCCAAAABBBB");
+    address.setCity("CCCCAAAABBBB");
+    address.setDistrict("CCCCAAAABBBB");
+    address.setStreet("CCCCAAAABBBB");
+    address.setPostcode("CCCCAAAABBBB");
+    lm11.setAddress(address);
+
+    m_manager->saveLandmark(&lm11);
+    address.clear();
+
+    QLandmark lm12;
+    lm12.setName("CCCCBBBBAAAA");
+    lm12.setDescription("CCCCBBBBAAAA");
+    lm12.setPhoneNumber("CCCCBBBBAAAA");
+    address.setCountryCode("CCCCBBBBAAAA");
+    address.setCountry("CCCCBBBBAAAA");
+    address.setState("CCCCBBBBAAAA");
+    address.setCity("CCCCBBBBAAAA");
+    address.setDistrict("CCCCBBBBAAAA");
+    address.setStreet("CCCCBBBBAAAA");
+    address.setPostcode("CCCCBBBBAAAA");
+    lm12.setAddress(address);
+
+    m_manager->saveLandmark(&lm12);
+    address.clear();
+
+    QLandmark lm13;
+    lm13.setName("xxxyyyzzz");
+    lm13.setDescription("xxxyyyzzz");
+    lm13.setPhoneNumber("xxxyyyzzz");
+    address.setCountryCode("xxxyyyzzz");
+    address.setCountry("xxxyyyzzz");
+    address.setState("xxxyyyzzz");
+    address.setCity("xxxyyyzzz");
+    address.setDistrict("xxxyyyzzz");
+    address.setStreet("xxxyyyzzz");
+    address.setPostcode("xxxyyyzzz");
+    lm13.setAddress(address);
+    m_manager->saveLandmark(&lm13);
+    address.clear();
+
+    QLandmark lm14;
+    m_manager->saveLandmark(&lm14);
+
+    QLandmarkAttributeFilter attributeFilter;
+    attributeFilter.setAttribute(field, "aaa",QLandmarkFilter::MatchStartsWith);
+
+    QList<QLandmark> lms;
+    doFetch(type, attributeFilter, &lms);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm10));
+    QCOMPARE(lms.count(), 4);
+
+    attributeFilter.setAttribute(field, "aaa", QLandmarkFilter::MatchContains);
+    doFetch(type, attributeFilter, &lms);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm8));
+    QVERIFY(lms.contains(lm9));
+    QVERIFY(lms.contains(lm10));
+    QVERIFY(lms.contains(lm11));
+    QVERIFY(lms.contains(lm12));
+    QCOMPARE(lms.count(), 12);
+
+    attributeFilter.setAttribute(field, "aaa", QLandmarkFilter::MatchEndsWith);
+    doFetch(type, attributeFilter, &lms);
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm9));
+    QVERIFY(lms.contains(lm12));
+    QCOMPARE(lms.count(), 4);
+
+    attributeFilter.setAttribute(field, "aaabbbccc", QLandmarkFilter::MatchFixedString);
+    doFetch(type, attributeFilter, &lms);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm7));
+    QCOMPARE(lms.count(),2);
+
+    attributeFilter.setAttribute(field, "aaabbbccc", QLandmarkFilter::MatchExactly);
+    doFetch(type, attributeFilter, &lms);
+    QVERIFY(lms.contains(lm1));
+    QCOMPARE(lms.count(),1);
+}
+
+void tst_QLandmarkManager::filterAttribute2_data()
+{
+    QTest::addColumn<QString> ("field");
+    QTest::addColumn<QString> ("type");
+    QTest::newRow("name sync") << "name" << "sync";
+    QTest::newRow("name async") << "name" << "async";
+    QTest::newRow("description sync") << "description" << "sync";
+    QTest::newRow("description async") << "description" << "async";
+    QTest::newRow("phone number sync") << "phoneNumber" << "sync";
+    QTest::newRow("phone number async") << "phoneNumber" << "async";
+    QTest::newRow("countryCode sync") << "countryCode" << "sync";
+    QTest::newRow("countryCode async") << "countryCode" << "async";
+    QTest::newRow("country sync") << "country" << "sync";
+    QTest::newRow("country async") << "country" << "async";
+    QTest::newRow("state sync") << "state" << "sync";
+    QTest::newRow("state sync") << "state" << "async";
+    QTest::newRow("city sync") << "city" << "sync";
+    QTest::newRow("city async") << "city" << "async";
+    QTest::newRow("district sync") << "district" << "sync";
+    QTest::newRow("district async") << "district" << "async";
+    QTest::newRow("street sync") << "street" << "sync";
+    QTest::newRow("street async") << "street" << "async";
+    QTest::newRow("postcode sync") << "postcode" << "sync";
+    QTest::newRow("postcode async") << "postcode" << "async";
+}
+
 #endif
 
 #ifdef SORT_LANDMARKS
