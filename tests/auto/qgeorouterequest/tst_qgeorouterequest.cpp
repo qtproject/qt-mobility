@@ -313,7 +313,7 @@ void tst_QGeoRouteRequest::featureWeight()
     QCOMPARE(qgeorouterequest->featureTypes(),types);
 
     //Set a weight to the feature
-    switch(type) {
+    switch (type) {
     case QGeoRouteRequest::NoFeature :
         QCOMPARE(qgeorouterequest->featureWeight(type),QGeoRouteRequest::NeutralFeatureWeight);
         qgeorouterequest->setFeatureWeight(type,QGeoRouteRequest::PreferFeatureWeight);
