@@ -55,6 +55,7 @@
 
 #include <QPointer>
 #include <QScopedPointer>
+#include <QMultiHash>
 #include "qorganizermanagerengine.h"
 
 QTM_USE_NAMESPACE
@@ -69,6 +70,8 @@ class QOrganizerManagerEngineV2Wrapper : public QOrganizerManagerEngineV2
 public:
     QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine* wrappee);
     ~QOrganizerManagerEngineV2Wrapper();
+
+    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
 
     /* Extra functions */
     static void setEngineOfRequest(QOrganizerAbstractRequest* request, QOrganizerManagerEngine* engine);
@@ -246,6 +249,7 @@ private Q_SLOTS:
 
 private:
     QHash<QOrganizerAbstractRequest*, RequestController*> m_controllerForRequest;
+    QMultiHash<QOrganizerItemId, QOrganizerItemObserver*> m_observerForItem;
     QOrganizerManagerEngine* m_engine;
 };
 

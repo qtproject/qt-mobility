@@ -198,7 +198,7 @@ public:
     virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
     virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
 
-    virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
+    virtual QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId) = 0;
 
 protected:
     static QOrganizerItemObserver* createOrganizerItemObserver(QObject* parent = 0);

@@ -208,6 +208,46 @@ bool QOrganizerManagerEngineV2Wrapper::waitForRequestFinished(QOrganizerAbstract
 
 }
 
+QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2Wrapper::observeItem(
+        const QOrganizerItemId& itemId)
+{
+    QOrganizerItemObserver* observer = createOrganizerItemObserver(this);
+    connect(observer, SIGNAL(destroyed(QObject*)),
+            this, SLOT(observerDestroyed(QOrganizerItemObserver*)));
+    m_observerForItem.insert(itemId, observer);
+    return QSharedPointer<QOrganizerItemObserver>(observer);
+}
+
+void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QOrganizerItemObserver* observer)
+{
+    QOrganizerItemId key = m_observerForItem.key(observer);
+    if (!key.isNull()) {
+        m_observerForItem.remove(key, observer);
+    }
+}
+
+void QOrganizerManagerEngineV2Wrapper::itemsUpdated(const QList<QOrganizerItemId>& ids)
+{
+    foreach (QOrganizerItemId id, ids) {
+        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
+        while (it != m_observerForItem.end()) {
+            (*it)->emitItemChanged();
+            it++;
+        }
+    }
+}
+
+void QOrganizerManagerEngineV2Wrapper::itemsDeleted(const QList<QOrganizerItemId>& ids)
+{
+    foreach (QOrganizerItemId id, ids) {
+        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
+        while (it != m_observerForItem.end()) {
+            (*it)->emitItemRemoved();
+            it++;
+        }
+    }
+}
+
 /* A static helper to twiddle with \a request's privates, setting its engine to \a engine. */
 void QOrganizerManagerEngineV2Wrapper::setEngineOfRequest(QOrganizerAbstractRequest* request,
                                                           QOrganizerManagerEngine* engine)
@@ -310,44 +350,4 @@ void ItemFetchRequestController::handleFinishedSubRequest(QOrganizerAbstractRequ
             error,
             QOrganizerAbstractRequest::FinishedState);
     finish();
-}
-
-QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2Wrapper::observeItem(
-        const QOrganizerItemId& itemId)
-{
-    QOrganizerItemObserver* observer = createOrganizerItemObserver(this);
-    connect(observer, SIGNAL(destroyed(QObject*)),
-            this, SLOT(observerDestroyed(QOrganizerItemObserver*)));
-    m_observerForItem.insert(itemId, observer);
-    return QSharedPointer<QOrganizerItemObserver>(observer);
-}
-
-void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QOrganizerItemObserver* observer)
-{
-    QOrganizerItemId key = m_observerForItem.key(observer);
-    if (key != 0) {
-        m_observerForItem.remove(key, observer);
-    }
-}
-
-void QOrganizerManagerEngineV2Wrapper::itemsUpdated(const QList<QOrganizerItemId>& ids)
-{
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemChanged();
-            it++;
-        }
-    }
-}
-
-void QOrganizerManagerEngineV2Wrapper::itemsDeleted(const QList<QOrganizerItemId>& ids)
-{
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemRemoved();
-            it++;
-        }
-    }
 }

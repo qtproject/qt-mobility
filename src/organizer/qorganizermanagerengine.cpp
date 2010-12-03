@@ -3284,7 +3284,7 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
 /*!
   Factory function to construct a QOrganizerItemObserver with given \a parent.
  */
-QOrganizerItemObserver* QOrganizerItemManagerEngineV2::createOrganizerItemObserver(QObject* parent)
+QOrganizerItemObserver* QOrganizerManagerEngineV2::createOrganizerItemObserver(QObject* parent)
 {
     return new QOrganizerItemObserver(parent);
 }
