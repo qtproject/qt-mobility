@@ -67,6 +67,11 @@ QContactManagerEngineV3Wrapper::QContactManagerEngineV3Wrapper(QContactManagerEn
             this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     connect(wrappee, SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)),
             this, SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)));
+
+    connect(wrappee, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+            this, SLOT(contactsUpdated(QList<QContactLocalId>)));
+    connect(wrappee, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+            this, SLOT(contactsDeleted(QList<QContactLocalId>)));
 }
 
 QContactManagerEngineV3Wrapper::~QContactManagerEngineV3Wrapper()
@@ -87,13 +92,6 @@ void QContactManagerEngineV3Wrapper::observerDestroyed(QContactObserver* observe
     QContactLocalId key = m_observerForContact.key(observer);
     if (key != 0) {
         m_observerForContact.remove(key, observer);
-    }
-}
-
-void QContactManagerEngineV3Wrapper::contactsUpdated()
-{
-    foreach (QContactObserver* observer, m_observerForContact.values()) {
-        observer->emitContactChanged();
     }
 }
 
