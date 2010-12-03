@@ -41,6 +41,9 @@
 
 #include "qorganizermanagerenginev2wrapper_p.h"
 #include "qorganizerabstractrequest_p.h"
+#include "qorganizeritemsaverequest.h"
+#include "qorganizeritemidfilter.h"
+#include "qorganizeritem_p.h"
 
 QOrganizerManagerEngineV2Wrapper::QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine *wrappee)
     : m_engine(wrappee)
@@ -350,4 +353,201 @@ void ItemFetchRequestController::handleFinishedSubRequest(QOrganizerAbstractRequ
             error,
             QOrganizerAbstractRequest::FinishedState);
     finish();
+}
+
+
+// FetchByIdRequestController stuff
+/* A FetchByIdRequestController is a RequestController for QOrganizerItemFetchByIdRequests */
+bool FetchByIdRequestController::start()
+{
+    // Our strategy is to translate it to a OrganizerItemFetchRequest.  Later when it finishes, we can
+    // fiddle with the results to get it in the right format.
+    Q_ASSERT(m_request);
+    QOrganizerItemFetchByIdRequest* originalRequest = static_cast<QOrganizerItemFetchByIdRequest*>(m_request.data());
+    QOrganizerItemFetchRequest* qoifr = new QOrganizerItemFetchRequest;
+    QOrganizerItemIdFilter filter;
+    filter.setIds(originalRequest->ids());
+    qoifr->setFilter(filter);
+    qoifr->setFetchHint(originalRequest->fetchHint());
+    // normally, you'd set the manager, but in this case, we only have a bare engine:
+    QOrganizerManagerEngineV2Wrapper::setEngineOfRequest(qoifr, m_engine);
+    m_currentSubRequest.reset(qoifr);
+    connect(qoifr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(handleUpdatedSubRequest(QOrganizerAbstractRequest::State)),
+            Qt::QueuedConnection);
+    return qoifr->start();
+}
+
+/* One of our subrequests has finished.  Go to the next step. */
+void FetchByIdRequestController::handleFinishedSubRequest(QOrganizerAbstractRequest* subReq)
+{
+    // For a FetchByIdRequest, we know that the only subrequest is a
+    // QOrganizerItemFetchForExportRequest.
+    // The next step is simply to take the results and reformat it.
+    // Take the results:
+    QOrganizerItemFetchForExportRequest* qoiffer = qobject_cast<QOrganizerItemFetchForExportRequest*>(subReq);
+    QList<QOrganizerItem> items = qoiffer->items();
+    QOrganizerManager::Error error = qoiffer->error();
+
+    // Build an index into the results
+    QHash<QOrganizerItemId, int> idMap; // value is index into unsorted
+    if (error == QOrganizerManager::NoError) {
+        for (int i = 0; i < items.size(); i++) {
+            idMap.insert(items[i].id(), i);
+        }
+    }
+
+    // Find the order in which the results should be presented
+    QOrganizerItemFetchByIdRequest* request = static_cast<QOrganizerItemFetchByIdRequest*>(m_request.data());
+    QList<QOrganizerItemId> ids(request->ids());
+
+    // Build up the results and errors
+    QList<QOrganizerItem> results;
+    QMap<int, QOrganizerManager::Error> errorMap;
+    for (int i = 0; i < ids.count(); i++) {
+        QOrganizerItemId id(ids[i]);
+        if (!idMap.contains(id)) {
+            errorMap.insert(i, QOrganizerManager::DoesNotExistError);
+            if (error == QOrganizerManager::NoError)
+                error = QOrganizerManager::DoesNotExistError;
+            results.append(QOrganizerItem());
+        } else {
+            results.append(items[idMap[id]]);
+        }
+    }
+
+    // Update the request object
+    QOrganizerManagerEngineV2Wrapper::updateItemFetchByIdRequest(
+            request,
+            results,
+            error,
+            errorMap,
+            QOrganizerAbstractRequest::FinishedState);
+    finish();
+}
+
+
+// PartialSaveRequestController stuff
+/* A PartialSaveRequestController is a RequestController for QOrganizerItemSaveRequests with definition mask */
+bool PartialSaveRequestController::start()
+{
+    // The first step is to fetch the existing items.
+    QList<QOrganizerItemId> existingItemIds;
+
+    // First, remove the items that aren't from this manager
+    QList<QOrganizerItem> items(request()->items());
+    // Try to figure out which of our arguments are new items
+    for(int i = 0; i < items.count(); i++) {
+        // See if there's a itemId that's not from this manager
+        const QOrganizerItem item = items.at(i);
+        if (item.id().managerUri() == m_engine->managerUri()) {
+            if (!item.id().isNull()) {
+                m_existingIdMap.insert(i, existingItemIds.count());
+                existingItemIds.append(item.id());
+            } else {
+                // Strange. it's just a new item
+            }
+        } else if (!item.id().managerUri().isEmpty() || !item.id().isNull()) {
+            // Hmm, error (wrong manager)
+            m_errorMap.insert(i, QOrganizerManager::DoesNotExistError);
+        } // else new item
+    }
+
+    // Now do the fetch and wait for the result in handleFinishedSubRequest
+    QOrganizerItemFetchByIdRequest* oifbir = new QOrganizerItemFetchByIdRequest;
+    oifbir->setIds(existingItemIds);
+    // normally, you'd set the manager, but in this case, we only have a bare engine:
+    QOrganizerManagerEngineV2Wrapper::setEngineOfRequest(oifbir, m_v2wrapper);
+    m_currentSubRequest.reset(oifbir);
+    connect(oifbir, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(handleUpdatedSubRequest(QOrganizerAbstractRequest::State)),
+            Qt::QueuedConnection);
+    return oifbir->start();
+}
+
+/* One of our subrequests has finished.  Go to the next step. */
+void PartialSaveRequestController::handleFinishedSubRequest(QOrganizerAbstractRequest* subReq)
+{
+    if (subReq->type() == QOrganizerAbstractRequest::ItemFetchByIdRequest) {
+        QOrganizerItemFetchByIdRequest* oifbir = qobject_cast<QOrganizerItemFetchByIdRequest*>(subReq);
+        QList<QOrganizerItem> itemsToSave;
+        QMap<int, QOrganizerManager::Error> fetchErrors(oifbir->errorMap());
+        QList<QOrganizerItem> existingItems(oifbir->items());
+        QList<QOrganizerItem> items(request()->items());
+        QSet<QString> mask(request()->definitionMask().toSet());
+        for (int i = 0; i < items.count(); i++) {
+            // See if this is an existing item or a new one
+            const int fetchedIdx = m_existingIdMap.value(i, -1);
+            QOrganizerItem itemToSave;
+            if (fetchedIdx >= 0) {
+                // See if we had an error
+                if (fetchErrors[fetchedIdx] != QOrganizerManager::NoError) {
+                    m_errorMap.insert(i, fetchErrors[fetchedIdx]);
+                    continue;
+                }
+
+                // Existing item we should have fetched
+                itemToSave = existingItems.at(fetchedIdx);
+
+                QSharedDataPointer<QOrganizerItemData>& data = QOrganizerItemData::itemData(itemToSave);
+                data->removeOnly(mask);
+            } else if (m_errorMap.contains(i)) {
+                // A bad argument.  Leave it out of the itemsToSave list
+                continue;
+            } // else new item
+
+            // Now copy in the details from the arguments
+            const QOrganizerItem& item = items.at(i);
+
+            // Perhaps this could do this directly rather than through saveDetail
+            // but that would duplicate the checks for display label etc
+            foreach (const QString& name, mask) {
+                QList<QOrganizerItemDetail> details = item.details(name);
+                foreach(QOrganizerItemDetail detail, details) {
+                    itemToSave.saveDetail(&detail);
+                }
+            }
+
+            m_savedToOriginalMap.append(i);
+            itemsToSave.append(itemToSave);
+        }
+
+        // Now do the fetch and wait for the result
+        QOrganizerItemSaveRequest* oisr = new QOrganizerItemSaveRequest;
+        oisr->setItems(itemsToSave);
+        // normally, you'd set the manager, but in this case, we only have a bare engine:
+        QOrganizerManagerEngineV2Wrapper::setEngineOfRequest(oisr, m_engine);
+        m_currentSubRequest.reset(oisr);
+        connect(oisr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+                this, SLOT(handleUpdatedSubRequest(QOrganizerAbstractRequest::State)),
+                Qt::QueuedConnection);
+        oisr->start(); // TODO what if this fails?
+    } else if (subReq->type() == QOrganizerAbstractRequest::ItemSaveRequest) {
+        QOrganizerItemSaveRequest* oisr = qobject_cast<QOrganizerItemSaveRequest*>(subReq);
+        QList<QOrganizerItem> savedItems(oisr->items());
+        QMap<int, QOrganizerManager::Error> saveErrors(oisr->errorMap());
+        QList<QOrganizerItem> items(request()->items());
+        for (int i = 0; i < savedItems.count(); i++) {
+            items[m_savedToOriginalMap[i]].setId(savedItems[i].id());
+        }
+        // Populate the m_errorMap with the m_errorMap of the attempted save
+        QMap<int, QOrganizerManager::Error>::iterator it(saveErrors.begin());
+        QOrganizerManager::Error error = QOrganizerManager::NoError;
+        while (it != saveErrors.end()) {
+            error = it.value();
+            m_errorMap.insert(m_savedToOriginalMap[it.key()], it.value());
+            it++;
+        }
+
+        // Update the request object
+        QOrganizerManagerEngine::updateItemSaveRequest(
+                request(),
+                items,
+                error,
+                m_errorMap,
+                QOrganizerAbstractRequest::FinishedState);
+        finish();
+    } else {
+        Q_ASSERT(false);
+    }
 }
