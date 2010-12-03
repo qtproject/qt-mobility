@@ -72,7 +72,7 @@ private:
 
 /*!
     \class QMediaContent
-    \preliminary
+    
     \brief The QMediaContent class provides access to the resources relating to a media content.
 
     \inmodule QtMultimediaKit
