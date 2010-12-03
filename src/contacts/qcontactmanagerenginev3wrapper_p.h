@@ -117,7 +117,6 @@ public:
 #endif
 
 private Q_SLOTS:
-    void contactsUpdated();
     void contactsUpdated(const QList<QContactLocalId>& ids);
     void contactsDeleted(const QList<QContactLocalId>& ids);
     void observerDestroyed(QContactObserver* object);
