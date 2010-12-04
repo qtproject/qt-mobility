@@ -174,7 +174,7 @@ void tst_QGeoRouteRequest::numberAlternativeRoutes()
     QCOMPARE(qgeorouterequest->numberAlternativeRoutes(),24);
 
     qgeorouterequest->setNumberAlternativeRoutes(-12);
-// Not passing    
+// Not passing
 //    QCOMPARE(qgeorouterequest->numberAlternativeRoutes(),0);
 }
 
@@ -313,8 +313,7 @@ void tst_QGeoRouteRequest::featureWeight()
     QCOMPARE(qgeorouterequest->featureTypes(),types);
 
     //Set a weight to the feature
-    switch(type)
-    {
+    switch (type) {
     case QGeoRouteRequest::NoFeature :
         QCOMPARE(qgeorouterequest->featureWeight(type),QGeoRouteRequest::NeutralFeatureWeight);
         qgeorouterequest->setFeatureWeight(type,QGeoRouteRequest::PreferFeatureWeight);
