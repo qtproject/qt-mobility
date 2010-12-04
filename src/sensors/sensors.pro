@@ -14,8 +14,13 @@ symbian {
     SENSORS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += SENSORS_DEPLOYMENT
     LIBS += -lefsrv
+
+    # We break on Symbian^3 unless we have this include (normally obtained by linking to QtGui)
+    load(platform_paths)
+    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
 }
 
+QT=core
 CONFIG += strict_flags
 CONFIG(debug,debug|release):DEFINES += ENABLE_RUNTIME_SENSORLOG
 
