@@ -168,11 +168,14 @@ inline QStringList nsarrayToQStringList(void *nsarray)
 
 bool hasIOServiceMatching(const QString &classstr)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     io_iterator_t ioIterator = NULL;
     IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceNameMatching(classstr.toAscii()), &ioIterator);
     if(ioIterator) {
+        [pool drain];
         return true;
     }
+    [pool drain];
     return false;
 }
 
@@ -424,9 +427,12 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     }
     switch(type) {
     case QSystemInfo::Os:
-        {
-            return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"]);
-        }
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        QString ver = nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"]);
+        [pool drain];
+        return ver;
+    }
         break;
     case QSystemInfo::QtCore:
        return  qVersion();
@@ -451,6 +457,7 @@ QString QSystemInfoPrivate::currentCountryCode() const
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     bool featureSupported = false;
     switch (feature) {
     case QSystemInfo::BluetoothFeature:
@@ -545,6 +552,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         featureSupported = false;
         break;
     };
+    [pool drain];
     return featureSupported;
 }
 
@@ -1302,10 +1310,12 @@ QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
     QString cmcc;
 #if defined(MAC_SDK_10_6)
     if(hasWifi) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         CWInterface *primary = [CWInterface interfaceWithName:nil];
         if([primary power]) {
             cmcc = nsstringToQString([primary countryCode]);
         }
+        [pool drain];
     }
 #endif
     return cmcc;
@@ -2261,6 +2271,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
 
 bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSArray *pairedDevices = [ IOBluetoothDevice pairedDevices];
 
     for (IOBluetoothDevice *currentBtDevice in pairedDevices) {
@@ -2269,6 +2280,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
             hasWirelessKeyboardConnected = true;
         }
     }
+    [pool drain];
     return hasWirelessKeyboardConnected;
 }
 
