@@ -67,7 +67,7 @@ void QMediaObjectPrivate::_q_notify()
 
 /*!
     \class QMediaObject
-    \preliminary
+    
     \brief The QMediaObject class provides a common base for multimedia objects.
 
     \inmodule QtMultimediaKit

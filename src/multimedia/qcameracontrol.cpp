@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraControl
 
-    \preliminary
+    
 
     \brief The QCameraControl class is an abstract base class for
     classes that control still cameras or video cameras.
