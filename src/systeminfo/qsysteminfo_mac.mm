@@ -1703,17 +1703,16 @@ void unmountCallback(DADiskRef disk, void *context)
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent), daSessionThread(0),sessionThreadStarted(0)
+        : QObject(parent), daSessionThread(0),sessionThreadStarted(0), storageTimer(0)
 {
     updateVolumesMap();
-
     checkAvailableStorage();
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
-    if(daSessionThread->keepRunning) {
+    if(sessionThreadStarted) {
         daSessionThread->stop();
         delete daSessionThread;
     }
@@ -1767,14 +1766,15 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
 {
-    struct statfs64 *buf = NULL;
+    struct statfs *buf = NULL;
     unsigned i, count = 0;
 
     mountEntriesMap.clear();
 
-    count = getmntinfo64(&buf, 0);
+    count = getmntinfo(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
+
         if(buf[i].f_type != 19
            && buf[i].f_type != 20
            && !mountEntriesMap.contains(volName)) {
@@ -1799,10 +1799,10 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     getStorageState(driveVolume);
-
     qint64 totalBytes=0;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    NSString *vol = qstringToNSString(driveVolume);
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:vol error:nil];
     totalBytes = [[attr objectForKey:NSFileSystemSize] doubleValue];
     [pool release];
 
@@ -1915,6 +1915,7 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
                                                  kDADiskDescriptionWatchVolumePath, mountCallback,this);
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
+        sessionThreadStarted = true;
     }
 
     if (QLatin1String(signal) ==
@@ -1943,6 +1944,7 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
         disconnect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+        storageTimer = 0;
     }
 }
 
@@ -1978,7 +1980,7 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(cons
 void QSystemStorageInfoPrivate::checkAvailableStorage()
 {
     QMap<QString, QString> oldDrives = mountEntriesMap;
-    Q_FOREACH(const QString &vol, oldDrives.keys()) {
+    foreach(const QString &vol, oldDrives.keys()) {
         QSystemStorageInfo::StorageState storState = getStorageState(vol);
         if(!stateMap.contains(vol)) {
             stateMap.insert(vol,storState);
