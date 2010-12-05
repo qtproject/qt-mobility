@@ -953,4 +953,16 @@ void QOrganizerItemData::removeOnly(const QString& definitionName)
     }
 }
 
+void QOrganizerItemData::removeOnly(const QSet<QString> &definitionNames)
+{
+    QList<QOrganizerItemDetail>::iterator dit = m_details.begin();
+    while (dit != m_details.end()) {
+        // XXX this doesn't check type or display label
+        if (definitionNames.contains(dit->definitionName()))
+            dit = m_details.erase(dit);
+        else
+            ++dit;
+    }
+}
+
 QTM_END_NAMESPACE

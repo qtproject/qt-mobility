@@ -655,6 +655,23 @@ bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritem
 }
 
 /*!
+  Returns an observer object for the item with id \a itemId.
+
+  The returned object will emit itemChanged and itemRemoved signals until it is deleted (eg.
+  by the pointer falling out of scope).  Note that the QOrganizerItemObserver in the returned
+  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
+  is responsible for keeping a reference to the shared pointer as long as it is interested in the
+  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
+  the signals and delete the shared pointer.
+
+  \sa QOrganizerItemObserver
+ */
+QSharedPointer<QOrganizerItemObserver> QOrganizerManager::observeItem(const QOrganizerItemId& itemId)
+{
+    return d->m_engine->observeItem(itemId);
+}
+
+/*!
   Returns the id of the default collection managed by this manager
  */
 QOrganizerCollection QOrganizerManager::defaultCollection() const

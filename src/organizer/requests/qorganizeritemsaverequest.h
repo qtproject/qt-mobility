@@ -63,6 +63,9 @@ public:
     void setItem(const QOrganizerItem& organizeritem);
     void setItems(const QList<QOrganizerItem>& organizeritems);
 
+    void setDefinitionMask(const QStringList& definitionMask);
+    QStringList definitionMask() const;
+
     /* Results */
     QList<QOrganizerItem> items() const;
     QMap<int, QOrganizerManager::Error> errorMap() const;

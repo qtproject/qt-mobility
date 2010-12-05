@@ -1519,7 +1519,200 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
         return retnSchema;
     }
 
-    // the most recent version of the schema is version 1.
+    if (version == 2) {
+        // we added EventAttendee, EventRsvp and ItemAttachment in Mobility 1.2
+
+        // EVENT
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEvent);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        // attendee
+        d.setName(QOrganizerEventAttendee::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventAttendee::FieldName, f);
+        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
+        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attendees at a single event
+        retn.insert(d.name(), d);
+
+        // rsvp
+        d.setName(QOrganizerEventRsvp::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
+        f.setDataType(QVariant::Date);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
+        d.setFields(fields);
+        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEvent, retn); // replace insert
+
+
+        // EVENT OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeEventOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        // attendee
+        d.setName(QOrganizerEventAttendee::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventAttendee::FieldName, f);
+        fields.insert(QOrganizerEventAttendee::FieldEmailAddress, f);
+        fields.insert(QOrganizerEventAttendee::FieldContactId, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventAttendee::FieldParticipationStatus, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attendees at a single event
+        retn.insert(d.name(), d);
+
+        // rsvp
+        d.setName(QOrganizerEventRsvp::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerName, f);
+        fields.insert(QOrganizerEventRsvp::FieldOrganizerEmail, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationRole, f);
+        fields.insert(QOrganizerEventRsvp::FieldParticipationStatus, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseRequirement, f);
+        f.setDataType(QVariant::Date);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDeadline, f);
+        fields.insert(QOrganizerEventRsvp::FieldResponseDate, f);
+        d.setFields(fields);
+        d.setUnique(true); // the RSVP detail is for the user of the calendar; unique per event.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn); // replace insert
+
+
+        // TODO
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodo);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodo, retn); // replace insert
+
+
+        // TODO OCCURRENCE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeTodoOccurrence);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn); // replace insert
+
+
+        // JOURNAL
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeJournal);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeJournal, retn); // replace insert
+
+
+        // NOTE
+        retn.clear();
+        retn = retnSchema.value(QOrganizerItemType::TypeNote);
+
+        // attachment
+        d.setName(QOrganizerItemAttachment::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QOrganizerItemAttachment::FieldDescription, f);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentMimeType, f);
+        f.setDataType(QVariant::ByteArray);
+        fields.insert(QOrganizerItemAttachment::FieldAttachmentData, f);
+        d.setFields(fields);
+        d.setUnique(false); // can have multiple attachments per item.
+        retn.insert(d.name(), d);
+
+        retnSchema.insert(QOrganizerItemType::TypeNote, retn); // replace insert
+
+
+        // return the modified schema.
+        return retnSchema;
+    }
+
+    // the most recent version of the schema is version 2.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
     return empty;
 }
@@ -3080,6 +3273,252 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
     return list.mid(0, maxCount);
 }
 
+/*! \reimp */
+bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+{
+    return QOrganizerManagerEngine::saveItems(items, errorMap, error);
+}
+
+/*!
+  For each item in \a items, either add it to the database or update an existing one.
+
+  This function accepts a \a definitionMask, which specifies which details of the items should be
+  updated.  Details with definition names not included in the definitionMask will not be updated
+  or added.
+
+  The manager should populate \a errorMap (the map of indices of the \a items list to the error
+  which occurred when saving the item at that index) for every index for which the item could
+  not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
+  The \l QOrganizerManager::error() function will only return \c QOrganizerManager::NoError if all
+  items were saved successfully.
+
+  For each newly saved item that was successful, the id of the item in the \a items list
+  will be updated with the new value.  If a failure occurs when saving a new item, the id will be
+  cleared.
+
+  Any errors encountered during this operation should be stored to \a error.
+ */
+bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem> *items, const QStringList &definitionMask, QMap<int, QOrganizerManager::Error> *errorMap, QOrganizerManager::Error *error)
+{
+    // TODO should the default implementation do the right thing, or return false?
+    if (definitionMask.isEmpty()) {
+        // Non partial, just pass it on
+        return saveItems(items, errorMap, error);
+    } else {
+        // Partial item save.
+        // Basically
+
+        // Need to:
+        // 1) fetch existing items
+        // 2) strip out details in definitionMask for existing items
+        // 3) copy the details from the passed in list for existing items
+        // 4) for any new items, copy the masked details to a blank item
+        // 5) save the modified ones
+        // 6) update the id of any new items
+        // 7) transfer any errors from saving to errorMap
+
+        QList<QOrganizerItemId> existingItemIds;
+
+        // Error conditions:
+        // 1) bad id passed in (can't fetch)
+        // 2) bad fetch (can't save partial update)
+        // 3) bad save error
+        // all of which needs to be returned in the error map
+
+        QHash<int, int> existingIdMap; // items index to existingItems index
+
+        // Try to figure out which of our arguments are new items
+        for(int i = 0; i < items->count(); i++) {
+            // See if there's a itemId that's not from this manager
+            const QOrganizerItem item = items->at(i);
+            if (item.id().managerUri() == managerUri()) {
+                if (!item.id().isNull()) {
+                    existingIdMap.insert(i, existingItemIds.count());
+                    existingItemIds.append(item.id());
+                } else {
+                    // Strange. it's just a new item
+                }
+            } else if (!item.id().managerUri().isEmpty() || !item.id().isNull()) {
+                // Hmm, error (wrong manager)
+                errorMap->insert(i, QOrganizerManager::DoesNotExistError);
+            } // else new item
+        }
+
+        // Now fetch the existing items
+        QMap<int, QOrganizerManager::Error> fetchErrors;
+        QOrganizerManager::Error fetchError = QOrganizerManager::NoError;
+        QList<QOrganizerItem> existingItems = this->itemsForExport(existingItemIds, QOrganizerItemFetchHint(), &fetchErrors, &fetchError);
+
+        // Prepare the list to save
+        QList<QOrganizerItem> itemsToSave;
+        QList<int> savedToOriginalMap; // itemsToSave index to items index
+        QSet<QString> mask = definitionMask.toSet();
+
+        for (int i = 0; i < items->count(); i++) {
+            // See if this is an existing item or a new one
+            const int fetchedIdx = existingIdMap.value(i, -1);
+            QOrganizerItem itemToSave;
+            if (fetchedIdx >= 0) {
+                // See if we had an error
+                if (fetchErrors[fetchedIdx] != QOrganizerManager::NoError) {
+                    errorMap->insert(i, fetchErrors[fetchedIdx]);
+                    continue;
+                }
+
+                // Existing item we should have fetched
+                itemToSave = existingItems.at(fetchedIdx);
+
+                QSharedDataPointer<QOrganizerItemData>& data = QOrganizerItemData::itemData(itemToSave);
+                data->removeOnly(mask);
+            } else if (errorMap->contains(i)) {
+                // A bad argument.  Leave it out of the itemsToSave list
+                continue;
+            } // else new item
+
+            // Now copy in the details from the arguments
+            const QOrganizerItem& item = items->at(i);
+
+            // Perhaps this could do this directly rather than through saveDetail
+            // but that would duplicate the checks for display label etc
+            foreach (const QString& name, mask) {
+                QList<QOrganizerItemDetail> details = item.details(name);
+                foreach(QOrganizerItemDetail detail, details) {
+                    itemToSave.saveDetail(&detail);
+                }
+            }
+
+            savedToOriginalMap.append(i);
+            itemsToSave.append(itemToSave);
+        }
+
+        // Now save them
+        QMap<int, QOrganizerManager::Error> saveErrors;
+        QOrganizerManager::Error saveError = QOrganizerManager::NoError;
+        saveItems(&itemsToSave, &saveErrors, &saveError);
+
+        // Now update the passed in arguments, where necessary
+
+        // Update IDs of the items list
+        for (int i = 0; i < itemsToSave.count(); i++) {
+            (*items)[savedToOriginalMap[i]].setId(itemsToSave[i].id());
+        }
+        // Populate the errorMap with the errorMap of the attempted save
+        QMap<int, QOrganizerManager::Error>::iterator it(saveErrors.begin());
+        while (it != saveErrors.end()) {
+            if (it.value() != QOrganizerManager::NoError) {
+                errorMap->insert(savedToOriginalMap[it.key()], it.value());
+            }
+            it++;
+        }
+
+        return errorMap->isEmpty();
+    }
+}
+
+/*! \reimp */
+QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+{
+    return QOrganizerManagerEngine::itemsForExport(startDate, endDate, filter, sortOrders, fetchHint, error);
+}
+
+/*!
+  Returns the list of items with the ids given by \a ids.  There is a one-to-one
+  correspondence between the returned items and the supplied \a ids.
+
+  If there is an invalid id in \a ids, then an empty QOrganizerItem will take its place in the
+  returned list and an entry will be inserted into \a errorMap.
+
+  The overall operation error will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching items will be returned.
+
+  If a non-default fetch hint is supplied, and the client wishes to make changes to the items,
+  they should ensure that only a detail definition hint is supplied and that when saving it back, a
+  definition mask should be used which corresponds to the detail definition hint.  This is to ensure
+  that no data is lost by overwriting an existing item with a restricted version of it.
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QList<QOrganizerItemId> &ids, const QOrganizerItemFetchHint &fetchHint, QMap<int, QOrganizerManager::Error> *errorMap, QOrganizerManager::Error *error) const
+{
+    QOrganizerItemIdFilter filter;
+    filter.setIds(ids);
+
+    QList<QOrganizerItem> unsorted = itemsForExport(QDateTime(), QDateTime(), filter, QOrganizerItemSortOrder(), fetchHint, error);
+
+    // Build an index into the results
+    QHash<QOrganizerItemId, int> idMap; // value is index into unsorted
+    if (*error == QOrganizerManager::NoError) {
+        for (int i = 0; i < unsorted.size(); i++) {
+            idMap.insert(unsorted[i].id(), i);
+        }
+    }
+
+    // Build up the results and errors
+    QList<QOrganizerItem> results;
+    for (int i = 0; i < ids.count(); i++) {
+        QOrganizerItemId id(ids[i]);
+        if (!idMap.contains(id)) {
+            if (errorMap)
+                errorMap->insert(i, QOrganizerManager::DoesNotExistError);
+            if (*error == QOrganizerManager::NoError)
+                *error = QOrganizerManager::DoesNotExistError;
+            results.append(QOrganizerItem());
+        } else {
+            results.append(unsorted[idMap[id]]);
+        }
+    }
+
+    return results;
+}
+
+/*!
+  Updates the given QOrganizerItemFetchByIdRequest \a req with the latest results \a result, and operation error \a error, and map of input index to individual error \a errorMap.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerManagerEngineV2::updateItemFetchByIdRequest(QOrganizerItemFetchByIdRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
+{
+    if (req) {
+        QWeakPointer<QOrganizerItemFetchByIdRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemFetchByIdRequestPrivate* rd = static_cast<QOrganizerItemFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_items = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
+}
+
+/*!
+  \fn virtual QSharedPointer<QOrganizerItemObserver> observeItem(QOrganizerItemId itemId) = 0;
+
+  Returns an observer object for the item with id \a itemId.
+
+  \sa QOrganizerItemObserver
+ */
+
+/*!
+  Factory function to construct a QOrganizerItemObserver with given \a parent.
+ */
+QOrganizerItemObserver* QOrganizerManagerEngineV2::createOrganizerItemObserver(QObject* parent)
+{
+    return new QOrganizerItemObserver(parent);
+}
 
 #include "moc_qorganizermanagerengine.cpp"
 

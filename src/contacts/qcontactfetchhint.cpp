@@ -233,6 +233,45 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
     d->m_optimizationHints = hints;
 }
 
+/*!
+  Returns the number of results which the client considers to be the
+  maximum number of useful results.  The client is only interested
+  in this number of results, so returning any more results
+  would be superfluous to the client's requirements.
+  Note that this fetch hint only affects operations where the
+  backend would return a list of contacts; this hint specifies
+  the maximum number of contacts in the list which would be useful
+  to the client.  The backend may ignore this hint, in which case it
+  must return all contacts which would otherwise have been returned
+  as a result of the operation.
+
+  A negative value for count denotes that the client wishes to
+  retrieve all results.  The default value is -1.
+ */
+int QContactFetchHint::maxCount() const
+{
+    return d->m_maxCount;
+}
+
+/*!
+  Sets the maximum number of results which the client is interested in
+  to \a count.  The client is only interested in this number of results,
+  so returning any more results would be superfluous to the client's
+  requirements. Note that this fetch hint only affects operations where
+  the backend would return a list of contacts; this hint specifies
+  the maximum number of contacts in the list which would be useful
+  to the client.  The backend may ignore this hint, in which case it
+  must return all contacts which would otherwise have been returned
+  as a result of the operation.
+
+  A negative value for count denotes that the client wishes to
+  retrieve all results.  The default value is -1.
+*/
+void QContactFetchHint::setMaxCount(int count)
+{
+    count < 0 ? (d->m_maxCount = -1) : (d->m_maxCount = count);
+}
+
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
 {

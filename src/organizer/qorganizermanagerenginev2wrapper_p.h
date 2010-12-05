@@ -55,6 +55,7 @@
 
 #include <QPointer>
 #include <QScopedPointer>
+#include <QMultiHash>
 #include "qorganizermanagerengine.h"
 
 QTM_USE_NAMESPACE
@@ -69,6 +70,8 @@ class QOrganizerManagerEngineV2Wrapper : public QOrganizerManagerEngineV2
 public:
     QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine* wrappee);
     ~QOrganizerManagerEngineV2Wrapper();
+
+    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
 
     /* Extra functions */
     static void setEngineOfRequest(QOrganizerAbstractRequest* request, QOrganizerManagerEngine* engine);
@@ -237,12 +240,19 @@ public:
     }
 
 private Q_SLOTS:
+    void itemsUpdated(const QList<QOrganizerItemId>& ids);
+    void itemsDeleted(const QList<QOrganizerItemId>& ids);
+    void observerDestroyed(QOrganizerItemObserver* observer);
+
+private Q_SLOTS:
     void requestStateChanged(QOrganizerAbstractRequest::State state);
 
 private:
     QHash<QOrganizerAbstractRequest*, RequestController*> m_controllerForRequest;
+    QMultiHash<QOrganizerItemId, QOrganizerItemObserver*> m_observerForItem;
     QOrganizerManagerEngine* m_engine;
 };
+
 
 class RequestController : public QObject {
     Q_OBJECT
@@ -279,6 +289,7 @@ private:
     bool m_finished;
 };
 
+
 class ItemFetchRequestController : public RequestController
 {
     Q_OBJECT
@@ -291,6 +302,44 @@ protected:
     void handleFinishedSubRequest(QOrganizerAbstractRequest* req);
 
     QOrganizerManagerEngine* m_engine;
+};
+
+
+class FetchByIdRequestController : public RequestController
+{
+    Q_OBJECT
+public:
+    FetchByIdRequestController(QOrganizerManagerEngine* engine)
+        : RequestController(), m_engine(engine) {}
+    bool start();
+
+protected:
+    void handleFinishedSubRequest(QOrganizerAbstractRequest* req);
+
+    QOrganizerManagerEngine* m_engine;
+};
+
+
+class PartialSaveRequestController : public RequestController
+{
+    Q_OBJECT
+public:
+    PartialSaveRequestController(QOrganizerManagerEngine* engine, QOrganizerManagerEngineV2* v2wrapper)
+        : RequestController(), m_engine(engine), m_v2wrapper(v2wrapper) {}
+    bool start();
+
+protected:
+    void handleFinishedSubRequest(QOrganizerAbstractRequest* req);
+
+private:
+    QOrganizerItemSaveRequest* request() { return static_cast<QOrganizerItemSaveRequest*>(m_request.data()); }
+
+    QOrganizerManagerEngine* m_engine;
+    QOrganizerManagerEngineV2* m_v2wrapper;
+    bool m_finished;
+    QHash<int, int> m_existingIdMap; // items index to existingItems index
+    QList<int> m_savedToOriginalMap; // itemsToSave index to items index
+    QMap<int, QOrganizerManager::Error> m_errorMap;
 };
 
 QTM_END_NAMESPACE

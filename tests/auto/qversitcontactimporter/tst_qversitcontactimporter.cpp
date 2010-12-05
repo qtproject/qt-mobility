@@ -1020,13 +1020,13 @@ void tst_QVersitContactImporter::testDisplayLabel()
 void tst_QVersitContactImporter::testOnlineAccount()
 {
     QString accountUri(QLatin1String("sip:john.citizen@example.com"));
+    QVersitDocument document;
 
     // Plain X-SIP, no TYPE ->
-    QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
     property.setName(QLatin1String("X-SIP"));
     property.setValue(accountUri);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactOnlineAccount onlineAccount = contact.detail<QContactOnlineAccount>();
@@ -1036,15 +1036,13 @@ void tst_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSip);
 
     // X-SIP;SWIS
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     property = QVersitProperty();
     property.setName(QLatin1String("X-SIP"));
     property.setValue(accountUri);
     QMultiHash<QString,QString> params;
     params.insert(QLatin1String("TYPE"),QLatin1String("SWIS"));
     property.setParameters(params);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     onlineAccount =  contact.detail<QContactOnlineAccount>();
@@ -1054,15 +1052,13 @@ void tst_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeVideoShare);
 
     // X-SIP;VOIP
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     property = QVersitProperty();
     property.setName(QLatin1String("X-SIP"));
     property.setValue(accountUri);
     params.clear();
     params.insert(QLatin1String("TYPE"),QLatin1String("VOIP"));
     property.setParameters(params);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     onlineAccount =  contact.detail<QContactOnlineAccount>();
@@ -1072,12 +1068,10 @@ void tst_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSipVoip);
 
     // X-IMPP
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     property = QVersitProperty();
     property.setName(QLatin1String("X-IMPP"));
     property.setValue(accountUri);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     onlineAccount =  contact.detail<QContactOnlineAccount>();
@@ -1087,12 +1081,10 @@ void tst_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
 
     // IMPP
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     property = QVersitProperty();
     property.setName(QLatin1String("IMPP"));
     property.setValue(accountUri);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     onlineAccount =  contact.detail<QContactOnlineAccount>();
@@ -1102,12 +1094,10 @@ void tst_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
 
     // X-JABBER
-    document.clear();
-    document.setType(QVersitDocument::VCard30Type);
     property = QVersitProperty();
     property.setName(QLatin1String("X-JABBER"));
     property.setValue(accountUri);
-    document.addProperty(property);
+    document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     onlineAccount =  contact.detail<QContactOnlineAccount>();
@@ -1115,6 +1105,58 @@ void tst_QVersitContactImporter::testOnlineAccount()
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
+    QVERIFY(onlineAccount.serviceProvider() == QContactOnlineAccount::ServiceJabber);
+
+    document = QVersitDocument(QVersitDocument::VCard30Type);
+    property.setName("X-AIM");
+    property.setValue("a");
+    document.addProperty(property);
+    property.setName("X-ICQ");
+    property.setValue("b");
+    document.addProperty(property);
+    property.setName("X-MSN");
+    property.setValue("c");
+    document.addProperty(property);
+    property.setName("X-QQ");
+    property.setValue("d");
+    document.addProperty(property);
+    property.setName("X-YAHOO");
+    property.setValue("e");
+    document.addProperty(property);
+    property.setName("X-SKYPE");
+    property.setValue("f");
+    document.addProperty(property);
+    property.setName("X-SKYPE-USERNAME");
+    property.setValue("g");
+    document.addProperty(property);
+    property.setName("X-MS-IMADDRESS");
+    property.setValue("h");
+    document.addProperty(property);
+    property.setName("X-KADDRESSBOOK-X-IMADDRESS");
+    property.setValue("i");
+    document.addProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    QList<QContactOnlineAccount> onlineAccounts = contact.details<QContactOnlineAccount>();
+    QCOMPARE(onlineAccounts.size(), 9);
+    QVERIFY(onlineAccounts[0].serviceProvider() == QContactOnlineAccount::ServiceAim);
+    QVERIFY(onlineAccounts[0].accountUri() == "a");
+    QVERIFY(onlineAccounts[1].serviceProvider() == QContactOnlineAccount::ServiceIcq);
+    QVERIFY(onlineAccounts[1].accountUri() == "b");
+    QVERIFY(onlineAccounts[2].serviceProvider() == QContactOnlineAccount::ServiceMsn);
+    QVERIFY(onlineAccounts[2].accountUri() == "c");
+    QVERIFY(onlineAccounts[3].serviceProvider() == QContactOnlineAccount::ServiceQq);
+    QVERIFY(onlineAccounts[3].accountUri() == "d");
+    QVERIFY(onlineAccounts[4].serviceProvider() == QContactOnlineAccount::ServiceYahoo);
+    QVERIFY(onlineAccounts[4].accountUri() == "e");
+    QVERIFY(onlineAccounts[5].serviceProvider() == QContactOnlineAccount::ServiceSkype);
+    QVERIFY(onlineAccounts[5].accountUri() == "f");
+    QVERIFY(onlineAccounts[6].serviceProvider() == QContactOnlineAccount::ServiceSkype);
+    QVERIFY(onlineAccounts[6].accountUri() == "g");
+    QVERIFY(onlineAccounts[7].serviceProvider().isEmpty());
+    QVERIFY(onlineAccounts[7].accountUri() == "h");
+    QVERIFY(onlineAccounts[8].serviceProvider().isEmpty());
+    QVERIFY(onlineAccounts[8].accountUri() == "i");
 }
 
 void tst_QVersitContactImporter::testFamily()

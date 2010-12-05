@@ -62,7 +62,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactInvalidEngine : public QContactManagerEngineV2
+class QContactInvalidEngine : public QContactManagerEngineV3
 {
 public:
     QContactInvalidEngine();
@@ -83,6 +83,12 @@ public:
     {
         *error =  QContactManager::NotSupportedError;
         return QContact();
+    }
+
+    QSharedPointer<QContactObserver> observeContact(QContactLocalId id)
+    {
+        Q_UNUSED(id);
+        return QSharedPointer<QContactObserver>(createContactObserver(this));
     }
 };
 
