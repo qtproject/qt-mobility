@@ -256,7 +256,7 @@ int QSystemBatteryInfo::voltage() const
   \brief The remaining time of charging
 
     Returns the remaining time of charging in seconds if charging,
-    or -1 if not charging, or no battery found.
+    0 if battery is full and not charging, or -1 no battery found.
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {
