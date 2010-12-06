@@ -116,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     QMenu *searchMenu = new QMenu(tr("Search"), this);
-    QAction *geocodeAction = new QAction(tr("By Addres"), this);
+    QAction *geocodeAction = new QAction(tr("By Address"), this);
     QAction *revgeocodeAction = new QAction(tr("By Coordinate"), this);
     searchMenu->addAction(geocodeAction);
     searchMenu->addAction(revgeocodeAction);
@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
     QSignalMapper *mapper = new QSignalMapper(this);
     QMenu* mapTypeMenu = new QMenu(tr("Map Type"), this);
 
+    // TODO: actually look at available map types
     QStringList mapTypes;
     mapTypes << tr("Street") << tr("Satellite")
              << tr("Satellite - Night") << tr("Terrain");
