@@ -420,4 +420,9 @@ EXPORTS
 	?staticMetaObject@QLightSensor@QtMobility@@2UQMetaObject@@B @ 419 NONAME ; struct QMetaObject const QtMobility::QLightSensor::staticMetaObject
 	?staticMetaObject@QLightReading@QtMobility@@2UQMetaObject@@B @ 420 NONAME ; struct QMetaObject const QtMobility::QLightReading::staticMetaObject
 	?type@QLightSensor@QtMobility@@2QBDB @ 421 NONAME ; char const * const QtMobility::QLightSensor::type
+	??1QSensorChangesInterface@QtMobility@@IAE@XZ @ 422 NONAME ; QtMobility::QSensorChangesInterface::~QSensorChangesInterface(void)
+	?availableSensorsChanged@QSensor@QtMobility@@IAEXXZ @ 423 NONAME ; void QtMobility::QSensor::availableSensorsChanged(void)
+	?isBackendRegistered@QSensorManager@QtMobility@@SA_NABVQByteArray@@0@Z @ 424 NONAME ; bool QtMobility::QSensorManager::isBackendRegistered(class QByteArray const &, class QByteArray const &)
+	?registerInstance@QSensor@QtMobility@@AAEXXZ @ 425 NONAME ; void QtMobility::QSensor::registerInstance(void)
+	?unregisterBackend@QSensorManager@QtMobility@@SAXABVQByteArray@@0@Z @ 426 NONAME ; void QtMobility::QSensorManager::unregisterBackend(class QByteArray const &, class QByteArray const &)
 
