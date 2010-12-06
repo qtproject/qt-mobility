@@ -145,8 +145,20 @@ signals:
 
 public:
     void changeState(QLLCPSocketState* state);
+    QLLCPSocketState* getUnconnectedState() { return m_unconnectedState;}
+    QLLCPSocketState* getConnectedState() { return m_connectedState;}
+    QLLCPSocketState* getConnectingState() { return m_connectingState;}
+    QLLCPSocketState* getBindState() { return m_bindState;}
+    QLLCPSocketState* getClosingState() { return m_closingState;}
+
 private:
     QLLCPSocketState* m_state;  // own
+    QLLCPSocketState* m_unconnectedState; // own
+    QLLCPSocketState* m_connectedState; // own
+    QLLCPSocketState* m_connectingState; // own
+    QLLCPSocketState* m_closingState; // own
+    QLLCPSocketState* m_bindState; // own
+
     QLlcpSocket *q_ptr;
 };
 

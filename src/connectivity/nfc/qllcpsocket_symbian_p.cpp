@@ -84,7 +84,7 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
      m_symbianSocketType2(NULL),
      m_socketType(connectionUnknown)
 {
-    m_state = QLLCPUnconnected::Instance(this);
+    m_state = new QLLCPUnconnected(this);
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
@@ -93,7 +93,12 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
          m_socketType(connectionUnknown),
          q_ptr(q)
 {
-    m_state = QLLCPUnconnected::Instance(this);
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_closingState = new QLLCPClosing(this);
+    m_bindState = new QLLCPBind(this);
+    m_state = m_unconnectedState;
 }
 
 
@@ -102,19 +107,23 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
     delete m_state;
+    delete m_unconnectedState;
+    delete m_connectingState;
+    delete m_connectedState;
+    delete m_closingState;
+    delete m_bindState;
 }
 
 /*!
-    Construct the socket and set it as listening state from llcp server side
+    Construct the socket and set it as connected state from llcp server side
 */
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_symbianSocketType1(NULL),
       m_symbianSocketType2(socketType2_symbian),
       m_socketType(connectionType2)
 {
-    m_state = QLLCPListen::Instance(this);
+    m_state = new QLLCPConnected(this);
 }
-
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
@@ -360,10 +369,6 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 
 void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
 {
-    if (m_state)
-    {
-       delete m_state;
-    }
     m_state = state;
 }
 

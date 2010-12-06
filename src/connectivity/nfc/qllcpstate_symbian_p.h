@@ -71,8 +71,7 @@ class QLlcpSocketPrivate;
 class QLLCPSocketState
 {
 public:
-    QLLCPSocketState(QLlcpSocketPrivate*);
-    virtual void ChangeState(QLlcpSocketPrivate*t,QLLCPSocketState *s );
+    explicit QLLCPSocketState(QLlcpSocketPrivate*);
 
 public:
     // all the following default implementation will emit errors.
@@ -91,8 +90,8 @@ public:
     virtual bool WaitForConnected(int);
     virtual bool WaitForDisconnected(int);
 
-protected:
-    QLlcpSocketPrivate *m_socket;  // not own
+public:
+    QLlcpSocketPrivate* m_socket;
 };
 
 /*!
@@ -101,9 +100,8 @@ protected:
 class QLLCPUnconnected: public QLLCPSocketState
 {
 public:
-    ~QLLCPUnconnected() {delete m_instance;}
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
-    
+    explicit QLLCPUnconnected(QLlcpSocketPrivate*);
+
 public: // from base class
      bool Bind(quint8 port);
      void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -113,12 +111,6 @@ public: // from base class
      qint64 WriteDatagram(const char *data, qint64 size,
                           QNearFieldTarget *target, quint8 port);
      bool WaitForBytesWritten(int);     
-   
-private:
-    QLLCPUnconnected(QLlcpSocketPrivate*);
-    
-private:
-    static QLLCPSocketState* m_instance;
 };
 
 
@@ -128,10 +120,10 @@ private:
 class QLLCPConnecting: public QLLCPSocketState
 {
 public:
-    ~QLLCPConnecting() {delete m_instance;}
+    explicit QLLCPConnecting(QLlcpSocketPrivate*);
 
 public:  
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
+     QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
   
 public: // from base class
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -139,12 +131,6 @@ public: // from base class
     void DisconnectFromService();
     void ConnectToServiceComplete();
     bool WaitForConnected(int);
-    
-private:
-    QLLCPConnecting(QLlcpSocketPrivate*);
-    
-private:
-    static QLLCPSocketState* m_instance;
 };
 
 
@@ -154,10 +140,7 @@ private:
 class QLLCPConnected: public QLLCPSocketState
 {
 public:
-    ~QLLCPConnected() {delete m_instance;}
-
-public:  
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
+    explicit QLLCPConnected(QLlcpSocketPrivate*);
 
 public: // from base class
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -168,12 +151,7 @@ public: // from base class
    bool WaitForBytesWritten(int msecs);
    bool WaitForReadyRead(int msecs);
    bool WaitForDisconnected(int);
-    
 private:
-    QLLCPConnected(QLlcpSocketPrivate*);
-    
-private:
-    static QLLCPSocketState* m_instance;
 };
 
 
@@ -183,20 +161,10 @@ private:
 class QLLCPClosing: public QLLCPSocketState
 {
 public:
-    ~QLLCPClosing() {delete m_instance;}
-
-public:  
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
-
+    explicit QLLCPClosing(QLlcpSocketPrivate*);
 public: // from base class
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    void DisconnectFromService();
-    
-private:
-    QLLCPClosing(QLlcpSocketPrivate*);
-    
-private:
-    static QLLCPSocketState* m_instance;
+    void DisconnectFromService();   
 };
 
 /*!
@@ -204,39 +172,15 @@ private:
 */
 class QLLCPBind: public QLLCPSocketState
     {  
-public:  
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
-    ~QLLCPBind() {delete m_instance;}
-
+public:
+    explicit QLLCPBind(QLlcpSocketPrivate*);
 public://from base class
     qint64 WriteDatagram(const char *data, qint64 size,QNearFieldTarget *target, quint8 port);
     qint64 ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget **target = 0, quint8 *port = 0);
     bool WaitForBytesWritten(int msecs);
     bool WaitForReadyRead(int msecs);
-    
-private:
-    QLLCPBind(QLlcpSocketPrivate* aSocket);
-    static QLLCPSocketState* m_instance;
     };
 
-
-/*!
-    \QLLCPListen
-*/
-class QLLCPListen: public QLLCPSocketState
-    {
-public:
-    static QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
-    ~QLLCPListen() {delete m_instance;}
-
-public://from base class
-    qint64 WriteDatagram(const char *data, qint64 size);
-    qint64 ReadDatagram(char *data, qint64 maxSize);
-
-private:
-    QLLCPListen(QLlcpSocketPrivate* aSocket);
-    static QLLCPSocketState* m_instance;
-    };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
