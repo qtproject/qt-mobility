@@ -61,7 +61,10 @@ ContextKitPath::ContextKitPath(QString path)
     if (startingSlash)
         path = path.mid(1);
 
-    if ((hasSlash && !hasDot) || (hasSlash && startingSlash)) {
+    if (path == "" || path == "/") {
+        slashPath = true;
+        dotPath = false;
+    } else if ((hasSlash && !hasDot) || (hasSlash && startingSlash)) {
         parts = path.split(QLatin1Char('/'));
         slashPath = true;
         dotPath = false;
@@ -132,9 +135,14 @@ ContextKitPath ContextKitPath::operator+(const QString &str) const
 
 ContextKitPath ContextKitPath::operator-(const ContextKitPath &other) const
 {
+    if (other.parts.size() > parts.size()) return ContextKitPath();
+    if (other.parts.size() == 0) return ContextKitPath(*this);
+    if (parts.size() == 0) return ContextKitPath();
+
     ContextKitPath p(*this);
     ContextKitPath q(other);
-    while (p.parts.first() == q.parts.first()) {
+    while (p.parts.size() > 0 && q.parts.size() > 0 &&
+           p.parts.first() == q.parts.first()) {
         p.parts.removeFirst();
         q.parts.removeFirst();
     }
@@ -160,8 +168,13 @@ bool ContextKitPath::operator==(const ContextKitPath &other) const
 
 bool ContextKitPath::includes(ContextKitPath &other) const
 {
+    // can't include things smaller than you
     if (other.parts.size() < parts.size())
         return false;
+
+    // root path includes all others
+    if (parts.size() == 0)
+        return true;
 
     for (int i = 0; i < parts.size(); i++)
         if (other.parts.at(i) != parts.at(i))
@@ -270,6 +283,7 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
         qWarning("No application name specified, registering on DBUS as "
                  "'unknown-application'");
     } else {
+        app.replace(QLatin1Char(' '), QLatin1Char('-'));
         javaPackageName += app;
     }
 
@@ -366,7 +380,8 @@ QSet<QString> ContextKitHandle::children()
     foreach (const QString &qp, readProps.keys()) {
         ContextKitPath pth(qp);
         pth = pth - this->path;
-        kids.insert(pth.at(0));
+        if (pth.size() > 0)
+            kids.insert(pth.at(0));
     }
     return kids;
 }

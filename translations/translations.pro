@@ -97,6 +97,10 @@ isEmpty(vcproj) {
 }
 
 qmfiles.files = $$prependAll(LANGUAGES, $$OUT_PWD/qtmobility_,.qm)
-qmfiles.path = $${QT_MOBILITY_PREFIX}/translations
+meego|maemo6 {
+    qmfiles.path = $${QT_MOBILITY_PREFIX}/share/qtmobility/translations
+} else {
+    qmfiles.path = $${QT_MOBILITY_PREFIX}/translations
+}
 qmfiles.CONFIG += no_check_exist
 INSTALLS += qmfiles

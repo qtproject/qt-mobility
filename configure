@@ -58,7 +58,7 @@ isAbsPath() {
 # maemo we do not want to follow symbolic links that are
 # introduced by scratchbox
 absPath() {
-    if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
+    if [ "$2" = "maemo5" -o "$2" = "maemo6" -o "$2" = "meego" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
         else
@@ -570,7 +570,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
 
-    if [ "$LINUX_TARGET" = maemo6 ]; then
+    if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
         compileTest sensord sensord
     else
         echo "sensord_enabled = no" >> "$CONFIG_IN"
