@@ -261,7 +261,6 @@ void tst_QSystemBatteryInfo::tst_remainingChargingTime()
 {
     QSystemBatteryInfo bi;
     int rem = bi.remainingChargingTime();
-    qDebug() << Q_FUNC_INFO << rem;
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
         QVERIFY(rem == -1);
     } else {

@@ -2525,6 +2525,9 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         }
 
         cTime = [[(NSDictionary*)batDoctionary objectForKey:@"AvgTimeToFull"] intValue]; //FIXME thats not right
+        if(!isCharging) {
+            cTime = 0;
+        }
         if (cTime != timeToFull) {
             timeToFull = cTime;
             Q_EMIT remainingChargingTimeChanged(timeToFull);
