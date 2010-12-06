@@ -63,6 +63,12 @@ QOrganizerCollectionRemoveRequest::QOrganizerCollectionRemoveRequest(QObject* pa
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerCollectionRemoveRequest::~QOrganizerCollectionRemoveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the list of ids of collections which will be removed by this request to a list containing the single element \a collectionId */
 void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionId& collectionId)
 {

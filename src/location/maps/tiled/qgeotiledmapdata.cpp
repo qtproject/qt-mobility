@@ -636,6 +636,9 @@ void QGeoTiledMapData::processRequests()
         d->replies.insert(reply);
         d->replyRects.insert(reply->request().tileRect());
 
+        if (reply->isFinished())
+            replyFinished(reply);
+
         if (reply->isCached())
             break;
     }
@@ -651,7 +654,14 @@ void QGeoTiledMapData::tileFinished()
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
         return;
+    } else {
+        replyFinished(reply);
     }
+}
+
+void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
+{
+    Q_D(QGeoTiledMapData);
 
     d->replyRects.remove(reply->request().tileRect());
     d->replies.remove(reply);

@@ -52,6 +52,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
+class QBluetoothTransferRequestPrivate;
 
 class Q_CONNECTIVITY_EXPORT QBluetoothTransferRequest
 {
@@ -71,9 +72,18 @@ public:
     QVariant attribute(Attribute code, const QVariant &defaultValue = QVariant()) const;
     void setAttribute(Attribute code, const QVariant &value);
 
+    QBluetoothAddress address() const;
+    
     bool operator!=(const QBluetoothTransferRequest &other) const;
     QBluetoothTransferRequest &operator=(const QBluetoothTransferRequest &other);
     bool operator==(const QBluetoothTransferRequest &other) const;
+
+protected:
+    QBluetoothTransferRequestPrivate *d_ptr;
+
+private:
+    Q_DECLARE_PRIVATE(QBluetoothTransferRequest)
+
 };
 
 QT_END_HEADER

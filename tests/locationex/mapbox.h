@@ -59,6 +59,9 @@ public:
 
     static QNetworkSession * session();
 
+public slots:
+    void clearCache();
+
 protected:
     virtual void resizeEvent(QResizeEvent * event);
     virtual void timerEvent(QTimerEvent * event);

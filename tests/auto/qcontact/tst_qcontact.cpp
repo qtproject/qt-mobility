@@ -64,6 +64,7 @@ private slots:
     void relationships();
     void displayName();
     void type();
+    void tags();
     void emptiness();
     void idLessThan();
     void idHash();
@@ -572,6 +573,32 @@ void tst_QContact::type()
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
+}
+
+void tst_QContact::tags()
+{
+    QContact c;
+    QVERIFY(c.tags().isEmpty());
+
+    c.addTag("tag 1");
+    QStringList tags;
+    tags.append("tag 1");
+    QCOMPARE(c.tags(), tags);
+    QList<QContactTag> tagDetails = c.details<QContactTag>();
+    QCOMPARE(tagDetails.size(), 1);
+    QCOMPARE(tagDetails.first().tag(), QLatin1String("tag 1"));
+
+    c.clearTags();
+    QVERIFY(c.tags().isEmpty());
+    QVERIFY(c.details<QContactTag>().isEmpty());
+
+    tags.append("tag 2"); // tags is now "tag 1", "tag 2"
+    c.setTags(tags);
+    QCOMPARE(c.tags(), tags);
+    tagDetails = c.details<QContactTag>();
+    QCOMPARE(tagDetails.size(), 2);
+    QCOMPARE(tagDetails.at(0).tag(), QLatin1String("tag 1"));
+    QCOMPARE(tagDetails.at(1).tag(), QLatin1String("tag 2"));
 }
 
 void tst_QContact::emptiness()

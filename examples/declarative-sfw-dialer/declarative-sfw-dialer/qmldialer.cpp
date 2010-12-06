@@ -41,6 +41,29 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <qservicemanager.h>
+
+QTM_USE_NAMESPACE
+
+void unregisterExampleService()
+{
+    QServiceManager m;
+    m.removeService("LandlineDialer");
+    m.removeService("VoipDialer");
+}
+
+void registerExampleService()
+{
+    unregisterExampleService();
+
+    QServiceManager m;
+    QStringList exampleXmlFiles;
+    exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml" << "removedialerservice.xml";
+    foreach (const QString &fileName, exampleXmlFiles) {
+        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        m.addService(path);
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -57,5 +80,10 @@ int main(int argc, char *argv[])
 #else // Q_OS_SYMBIAN
     view.show();
 #endif // Q_OS_SYMBIAN
-    return application.exec();
+
+    int ret = application.exec();
+#ifndef Q_OS_SYMBIAN
+    unregisterExampleService();
+#endif
+    return ret;
 }

@@ -64,6 +64,12 @@ QOrganizerItemSaveRequest::QOrganizerItemSaveRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemSaveRequest::~QOrganizerItemSaveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the organizer item to be saved to \a organizeritem.
   Equivalent to calling:
@@ -102,6 +108,47 @@ QMap<int, QOrganizerManager::Error> QOrganizerItemSaveRequest::errorMap() const
     Q_D(const QOrganizerItemSaveRequest);
     QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
+}
+
+/*!
+    Set the list of definitions to restrict saving to \a definitionMask.  This allows you to perform
+    partial save (and remove) operations on existing items.
+
+    If \a definitionMask is empty (the default), no restrictions will apply, and the passed
+    in items will be saved as is.  Otherwise, only details whose definitions are in
+    the list will be saved.  If a definition name is present in the list, but there are no
+    corresponding details in the item passed into this request, any existing details in
+    the manager for that item will be removed.
+
+    This is useful if you've used a fetch hint to fetch a partial item from a manager
+    so that you can save changes to the details you actually fetched without removing
+    the details you didn't.
+
+    Additionally, when performing synchronization operations with other managers that don't
+    support the full range of details, you can restrict the update operation to only those
+    details so that you don't lose the extra details that are supported in this manager.
+
+    \note Some managers do not support partial updates natively, in which case the QtOrganizer
+    framework will emulate the functionality (fetching the whole item, applying the
+    new restricted details, and saving the item back).
+*/
+void QOrganizerItemSaveRequest::setDefinitionMask(const QStringList &definitionMask)
+{
+    Q_D(QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_definitionMask = definitionMask;
+}
+
+/*!
+    Returns the list of definitions that this request will operate on.
+
+    If the list is empty, the request will operate on all details.
+ */
+QStringList QOrganizerItemSaveRequest::definitionMask() const
+{
+    Q_D(const QOrganizerItemSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_definitionMask;
 }
 
 #include "moc_qorganizeritemsaverequest.cpp"

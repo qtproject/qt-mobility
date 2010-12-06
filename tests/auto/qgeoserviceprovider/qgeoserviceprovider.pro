@@ -22,7 +22,7 @@ symbian {
     LIBS           += -lqtgeoservices_staticplugin1.lib
     LIBS           += -lqtgeoservices_staticplugin2.lib
 } else {
-    LIBS           += -L../../../build/tests/bin/plugins/geoservices 
+    LIBS           += -L../../../build/tests/bin/plugins/geoservices
     LIBS           += -l$$mobilityDeployFilename(qtgeoservices_staticplugin1)
     LIBS           += -l$$mobilityDeployFilename(qtgeoservices_staticplugin2)
 

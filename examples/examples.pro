@@ -37,11 +37,13 @@ contains(mobility_modules,location) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
                         geoservicedemo \
+                        mapsnavigator \
                         mapviewer
         }
     } else {
         SUBDIRS +=  flickrdemo \
                     geoservicedemo \
+                    mapsnavigator \
                     mapviewer
     }
 

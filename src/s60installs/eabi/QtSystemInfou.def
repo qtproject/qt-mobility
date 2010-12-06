@@ -47,7 +47,7 @@ EXPORTS
 	_ZN10QtMobility17QSystemDeviceInfo4imeiEv @ 46 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo4imsiEv @ 47 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo5modelEv @ 48 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo6hostIdEv @ 49 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo8uniqueIDEv @ 49 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo9simStatusEv @ 50 NONAME
 	_ZN10QtMobility17QSystemDeviceInfoC1EP7QObject @ 51 NONAME
 	_ZN10QtMobility17QSystemDeviceInfoC2EP7QObject @ 52 NONAME

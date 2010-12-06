@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,49 +39,42 @@
 **
 ****************************************************************************/
 
-#include "qgeoareamonitor_simulator_p.h"
+#ifndef QORGANIZERITEMATTACHMENT_H
+#define QORGANIZERITEMATTACHMENT_H
+
+#include <QString>
+
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
-#define UPDATE_INTERVAL_5S  5000
-
-QGeoAreaMonitorSimulator::QGeoAreaMonitorSimulator(QObject *parent) : QGeoAreaMonitor(parent)
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemAttachment : public QOrganizerItemDetail
 {
-    insideArea = false;
-    location = QGeoPositionInfoSource::createDefaultSource(this);
-    if(location) {
-        location->setUpdateInterval(UPDATE_INTERVAL_5S);
-        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdated(QGeoPositionInfo)));
-        location->startUpdates();
-    }
-}
+public:
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldDescription;
+    static const QLatin1Constant FieldAttachmentData;
+    static const QLatin1Constant FieldAttachmentMimeType;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemAttachment, "Attachment")
+    Q_DECLARE_LATIN1_CONSTANT(FieldDescription, "Description");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentData, "AttachmentData");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttachmentMimeType, "AttachmentMimeType");
+#endif
 
-QGeoAreaMonitorSimulator::~QGeoAreaMonitorSimulator()
-{
-    if(location)
-        location->stopUpdates();
-}
+    void setDescription(const QString& description) {setValue(FieldDescription, description);}
+    QString description() const {return value(FieldDescription);}
 
-void QGeoAreaMonitorSimulator::setCenter(const QGeoCoordinate& coordinate)
-{
-    if (coordinate.isValid())
-        QGeoAreaMonitor::setCenter(coordinate);
-}
+    void setAttachment(const QByteArray& data, const QString& mimeType);
+    QByteArray attachmentData() const;
+    QString attachmentMimeType() const;
+};
 
-void QGeoAreaMonitorSimulator::positionUpdated(const QGeoPositionInfo &info)
-{
-    qreal distance = info.coordinate().distanceTo(center());
-
-    if (distance <= QGeoAreaMonitor::radius()) {
-        if(!insideArea)
-            emit areaEntered(info);
-        insideArea = true;
-    } else if (insideArea) {
-        emit areaExited(info);
-        insideArea = false;
-    }
-}
-
-#include "moc_qgeoareamonitor_simulator_p.cpp"
 QTM_END_NAMESPACE
+
+#endif
+

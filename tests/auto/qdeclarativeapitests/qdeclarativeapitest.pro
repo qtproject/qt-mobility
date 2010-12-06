@@ -19,10 +19,12 @@ contains(mobility_modules,location) {
     INCLUDEPATH += ../../../src/location/maps
     HEADERS += ../../../plugins/declarative/location/qdeclarativecoordinate_p.h
     HEADERS += ../../../plugins/declarative/location/qdeclarativegeoserviceprovider_p.h
+    HEADERS += ../../../plugins/declarative/location/qdeclarativegeoaddress_p.h
     SOURCES += ../../../plugins/declarative/location/qdeclarativecoordinate.cpp
     SOURCES += ../../../plugins/declarative/location/qdeclarativegeoserviceprovider.cpp
-
+    SOURCES += ../../../plugins/declarative/location/qdeclarativegeoaddress.cpp
 }
+
 
 symbian|wince* {
     symbian {

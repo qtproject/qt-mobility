@@ -59,6 +59,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionFetchRequest : public QOr
 
 public:
     QOrganizerItemDetailDefinitionFetchRequest(QObject* parent = 0);
+    ~QOrganizerItemDetailDefinitionFetchRequest();
 
     /* Selection */
     void setDefinitionName(const QString& definitionName);
