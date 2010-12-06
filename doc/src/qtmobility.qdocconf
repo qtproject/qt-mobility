@@ -73,6 +73,10 @@ qhp.QtMobility.subprojects.examples.title = Examples
 qhp.QtMobility.subprojects.examples.indexTitle = Qt Mobility Project Examples
 qhp.QtMobility.subprojects.examples.selectors = fake:example
 qhp.QtMobility.subprojects.examples.sortPages = true
+qhp.QtMobility.subprojects.tutorials.title = Tutorials
+qhp.QtMobility.subprojects.tutorials.indexTitle = Qt Mobility Project Tutorials
+qhp.QtMobility.subprojects.tutorials.selectors = fake:tutorial
+qhp.QtMobility.subprojects.tutorials.sortPages = true
 
 defines                 = Q_QDOC \
                           __cplusplus \

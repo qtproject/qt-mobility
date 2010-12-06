@@ -1,0 +1,243 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \page tutorials-mapsnavigator.html
+    \title Maps Navigator Tutorial
+    
+    \brief An introduction to the Location API, showing how to develop a simple
+           map search and navigation application.
+    
+    In this tutorial, you will learn about the basic components of the Location
+    API, including
+    
+    \list
+    \o items
+    \o here...
+    \endlist
+    
+    We will be developing the map search and navigation application shown below:
+    
+    \image mapsnavigator-finished.png
+    
+    Tutorial contents:
+    
+    \list 1
+    \o \l{tutorials/mapsnavigator/part1}{The Map Widget}
+    \endlist
+    
+    Some more text goes here.
+*/
+
+/*!
+    \page tutorials-mapsnavigator-part1.html
+    \example tutorials/mapsnavigator/part1
+    \title Part 1 - The Map Widget
+    
+    To begin with, we will start defining the map widget, which is the central part of
+    the application's user interface.
+    
+    \section2 The very basics
+    
+    The Location module provides the QGraphicsGeoMap which is a simple, easy way to insert
+    maps into a QGraphicsScene. Since we're going to be extending the map later, we'll
+    create a subclass of QGraphicsGeoMap called \c GeoMap, as below:
+    
+    \code
+class GeoMap : public QGraphicsGeoMap
+{
+    Q_OBJECT
+    
+public:
+    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+
+private:
+    MapsWidget *m_mapsWidget;
+};
+
+GeoMap::GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget) :
+    QGraphicsGeoMap(manager), m_mapsWidget(mapsWidget)
+{
+}
+    \endcode
+    
+    And next we define a QWidget subclass, MapsWidget, which handles the creation of
+    QGraphicsView and QGraphicsScene to put the GeoMap into:
+    
+    \code
+class MapsWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    MapsWidget(QWidget *parent = 0);
+    ~MapsWidget();
+
+public slots:
+    void initialize(QGeoMappingManager *manager);
+
+private:
+    GeoMap *geoMap;
+    QGraphicsView *graphicsView;
+};
+    \endcode
+    
+    We perform the creation of the QGraphicsScene and GeoMap in the initialize() method:
+    
+    \code
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    geoMap = new GeoMap(manager, this);
+
+    QGraphicsScene *sc = new QGraphicsScene;
+    sc->addItem(geoMap);
+
+    geoMap->resize(300, 480);
+
+    graphicsView = new QGraphicsView(sc, this);
+    graphicsView->setVisible(true);
+    graphicsView->setInteractive(true);
+
+    geoMap->setCenter(QGeoCoordinate(-27.5796, 153.1));
+    geoMap->setZoomLevel(15);
+}
+    \endcode
+    
+    Doing this in the constructor, while possible, is not the preferred approach, as
+    the QGeoMappingManager may not be available until the user has chosen it, or until a
+    network connection is available. This is especially important in mobile
+    environments, as we'll see later.
+    
+    To get an instance of QGeoMappingManager we use the list of service providers
+    available in QGeoServiceProvider::availableServiceProviders(). Service providers
+    provide the ability to fetch and draw maps, search for locations, get directions,
+    and a variety of other tasks.
+    
+    To test out the MapsWidget we just wrote, we can simply get the first available
+    service provider in the main() function, as follows:
+    
+    \code
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    MapsWidget w;
+    w.show();
+
+    QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
+    QGeoServiceProvider *serviceProvider = new QGeoServiceProvider(providers[0]);
+
+    w.initialize(serviceProvider->mappingManager());
+
+    return a.exec();
+}
+    \endcode
+    
+    If you compile and run the code so far, you should see a window appear containing
+    a street map of Eight Mile Plains, in Queensland, Australia, rendered by your
+    platform's default geo service provider.
+    
+    \section2 Pan & zoom
+    
+    Next we'll add some basic pan and zoom capability to the map widget. Like most other
+    classes in Qt, QGraphicsGeoMap allows mouse and keyboard events to be handled by
+    private methods.
+    
+    Into the private section of the GeoMap declaration we add:
+    \code
+bool panActive;
+
+void mousePressEvent(QGraphicsSceneMouseEvent *event);
+void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    \endcode
+    
+    And their definitions:
+    
+    \code
+void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = true;
+    event->accept();
+}
+
+void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = false;
+    event->accept();
+}
+
+void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (panActive) {
+        QPointF delta = event->lastPos() - event->pos();
+        pan(delta.x(), delta.y());
+    }
+    event->accept();
+}
+    \endcode
+    
+    These three short methods are enough to add basic panning support to the map.
+    The panning method is a simple mouse-locked one, and moving long distances on
+    a touch screen with it can get quite tedious. Many map applications now make
+    use of "kinetic" panning for a better user experience, especially on touch
+    devices, and we'll implement support for that later.
+    
+    Next, to add zoom support on the mouse scrollwheel:
+    
+    \code
+void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    qreal panx = event->pos().x() - size().width() / 2.0;
+    qreal pany = event->pos().y() - size().height() / 2.0;
+    pan(panx, pany);
+    if (event->delta() > 0) {   // zoom in
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+    } else {                    // zoom out
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+    }
+    pan(-panx, -pany);
+    event->accept();
+}
+    \endcode
+    
+    This method is a little more complicated. To provide a suitable zoom feel, we
+    have to actually combine panning with zooming, so that the user's point of
+    interest (the mouse cursor) remains in the same part of the view. So, we
+    actually pan the mouse cursor's location into the center, then adjust
+    the zoom level, then pan back at the end.
+    
+    \section2 Map icons
+    
+    Another important basic feature is the ability to render icons on the map to
+    represent points of interest.
+    
+*/
