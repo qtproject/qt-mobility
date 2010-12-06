@@ -119,6 +119,7 @@ void MarkerObject::searchError(QGeoSearchReply::Error error, const QString &erro
 {
     Q_UNUSED(error);
     Q_UNUSED(errorString);
+    qDebug("got error: %s", qPrintable(errorString));
     //emit searchReplyError(errorString);
     m_searchReply->deleteLater();
     m_searchReply = 0;

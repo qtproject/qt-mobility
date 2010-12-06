@@ -88,6 +88,8 @@ public slots:
     void setMarkerLocation(const QGeoCoordinate &coord);
     void setMouseMarker(QGeoMapObject *marker);
 
+    void setMapType(QString type);
+
     void beginWaypointSelect(MarkerObject *marker);
 
 signals:
