@@ -42,8 +42,7 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
-#include "qsysteminfo.h"
-//#include "qsysteminfo_simulator_p.h"
+#include "qsystembatteryinfo.h"
 #include <QDebug>
 
 QTM_USE_NAMESPACE
@@ -213,9 +212,10 @@ void tst_QSystemBatteryInfo::tst_nominalCapacity()
 {
     QSystemBatteryInfo bi;
     int nom = bi.nominalCapacity();
-    QVERIFY(nom != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(nom == -1);
     } else {
+        QVERIFY(nom != -1);
 
     }
 }
@@ -224,10 +224,10 @@ void tst_QSystemBatteryInfo::tst_remainingCapacityPercent()
 {
     QSystemBatteryInfo bi;
     int rem = bi.remainingCapacityPercent();
-    QVERIFY(rem != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(rem == -1);
     } else {
-
+        QVERIFY(rem > -1 && rem < 101);
     }
 }
 
@@ -235,10 +235,10 @@ void tst_QSystemBatteryInfo::tst_remainingCapacity()
 {
     QSystemBatteryInfo bi;
     int rem = bi.remainingCapacity();
-    QVERIFY(rem != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(rem == -1);
     } else {
-
+        QVERIFY(rem != -1);
     }
 }
 
@@ -246,10 +246,10 @@ void tst_QSystemBatteryInfo::tst_voltage()
 {
     QSystemBatteryInfo bi;
     int volt = bi.voltage();
-    QVERIFY(volt != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(volt == -1);
     } else {
-
+        QVERIFY(volt != -1);
     }
 }
 
@@ -257,10 +257,11 @@ void tst_QSystemBatteryInfo::tst_remainingChargingTime()
 {
     QSystemBatteryInfo bi;
     int rem = bi.remainingChargingTime();
-    QVERIFY(rem != -1);
-    if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+    if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown ||
+            bi.batteryStatus() == QSystemBatteryInfo::BatteryFull ) {
+        QVERIFY(rem == -1);
     } else {
-
+        QVERIFY(rem != -1);
     }
 }
 
@@ -268,10 +269,10 @@ void tst_QSystemBatteryInfo::tst_currentFlow()
 {
     QSystemBatteryInfo bi;
     int flow = bi.currentFlow();
-    QVERIFY(flow != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(flow == 0);
     } else {
-
+        QVERIFY(flow != -1);
     }
 }
 
@@ -279,10 +280,10 @@ void tst_QSystemBatteryInfo::tst_remainingCapacityBars()
 {
     QSystemBatteryInfo bi;
     int rem = bi.remainingCapacityBars();
-    QVERIFY(rem != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+   //     QVERIFY(rem == 0);
     } else {
-
+     //   QVERIFY(rem != -1);
     }
 }
 
@@ -290,7 +291,6 @@ void tst_QSystemBatteryInfo::tst_maxBars()
 {
     QSystemBatteryInfo bi;
     int max = bi.maxBars();
-    QVERIFY(max != -1);
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
     } else {
 
@@ -301,10 +301,9 @@ void tst_QSystemBatteryInfo::tst_batteryStatus()
 {
     QSystemBatteryInfo bi;
     QSystemBatteryInfo::BatteryStatus bstatus = bi.batteryStatus();
-    QVERIFY(bstatus != -1);
-    if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+    if (bstatus == QSystemBatteryInfo::BatteryUnknown) {
     } else {
-
+        QVERIFY(bstatus != -1);
     }
 }
 
@@ -312,6 +311,7 @@ void tst_QSystemBatteryInfo::tst_energyMeasurementUnit()
 {
     QSystemBatteryInfo bi;
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        QVERIFY(bi.energyMeasurementUnit() == QSystemBatteryInfo::UnitUnknown);
     } else {
 
     }

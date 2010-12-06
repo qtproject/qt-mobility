@@ -8,15 +8,14 @@ SUBDIRS += qsysteminfo \
       qsystemdisplayinfo \
       qsystemstorageinfo \
       qsystemnetworkinfo \
-      qsystemscreensaver \
-      qsystembatteryinfo
+      qsystemscreensaver
 
 maemo6: {
       #maemo6 specific autotests
       SUBDIRS += maemo6
 }
 contains(QT_CONFIG,declarative) {
-SUBDIRS += qdeclarativebatteryinfo \
+SUBDIRS += \
            qdeclarativedeviceinfo \
 #           qdeclarativedisplayinfo \
            qdeclarativesysteminfo \
@@ -24,3 +23,14 @@ SUBDIRS += qdeclarativebatteryinfo \
            qdeclarativescreensaver \
 #           qdeclarativestorageinfo
 }
+
+ mac:contains(corewlan_enabled, yes) {
+# something is weird about 10.5, it can't find includes.
+ SUBDIRS += qsystembatteryinfo \
+            qdeclarativebatteryinfo
+ }
+ !mac: {
+SUBDIRS += qsystembatteryinfo \
+            qdeclarativebatteryinfo
+
+ }
