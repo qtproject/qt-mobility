@@ -130,17 +130,15 @@ contains(build_unit_tests, yes) {
 
 contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
 
-maemo6 {
-    DEFINES+= Q_WS_MAEMO_6
+maemo6|meego {
+    maemo6:DEFINES+= Q_WS_MAEMO_6
+    meego:DEFINES+= Q_WS_MEEGO
     contains(TEMPLATE,.*app.*): QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
     QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
     QMAKE_RPATHDIR += $$[QT_INSTALL_LIBS]
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
-}
-meego {
-    DEFINES+= Q_WS_MEEGO
 }
 
 wince* {
