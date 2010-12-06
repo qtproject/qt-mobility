@@ -1418,7 +1418,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                 QString macbtMac = nsstringToQString([controller addressAsString]).replace("-",":").toUpper();
                 if(!macbtMac.isEmpty()) {
                     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-                    foreach(const QNetworkInterface thisNetInterface, interfaces) {
+                    Q_FOREACH(const QNetworkInterface thisNetInterface, interfaces) {
                         if( thisNetInterface.hardwareAddress() == macbtMac) {
                             netInterface = thisNetInterface;
                             break;
@@ -1980,7 +1980,7 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(cons
 void QSystemStorageInfoPrivate::checkAvailableStorage()
 {
     QMap<QString, QString> oldDrives = mountEntriesMap;
-    foreach(const QString &vol, oldDrives.keys()) {
+    Q_FOREACH(const QString &vol, oldDrives.keys()) {
         QSystemStorageInfo::StorageState storState = getStorageState(vol);
         if(!stateMap.contains(vol)) {
             stateMap.insert(vol,storState);
