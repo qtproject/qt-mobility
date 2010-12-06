@@ -191,8 +191,16 @@ void tst_QSystemBatteryInfo::tst_chargerType()
                     || cType == QSystemBatteryInfo::USB_100mACharger
                     || cType == QSystemBatteryInfo::VariableCurrentCharger);
         } else {
-            QVERIFY(cType == QSystemBatteryInfo::NoCharger
-                    || cType == QSystemBatteryInfo::UnknownCharger);
+            if(bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+                QVERIFY(cType == QSystemBatteryInfo::NoCharger
+                        || cType == QSystemBatteryInfo::UnknownCharger);
+            } else {
+                QVERIFY(cType == QSystemBatteryInfo::WallCharger
+                        || cType == QSystemBatteryInfo::USBCharger
+                        || cType == QSystemBatteryInfo::USB_500mACharger
+                        || cType == QSystemBatteryInfo::USB_100mACharger
+                        || cType == QSystemBatteryInfo::VariableCurrentCharger);
+            }
         }
     }
 }
@@ -267,7 +275,11 @@ void tst_QSystemBatteryInfo::tst_remainingChargingTime()
         if(bi.batteryStatus() == QSystemBatteryInfo::BatteryFull) {
             QVERIFY(rem == 0);
         } else {
-            QVERIFY(rem != -1);
+            if (bi.chargingState() == QSystemBatteryInfo::NotCharging) {
+                QVERIFY(rem == 0);
+            } else {
+                QVERIFY(rem != -1);
+            }
         }
     }
 }

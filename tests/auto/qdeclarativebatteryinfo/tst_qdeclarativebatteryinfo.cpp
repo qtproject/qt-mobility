@@ -184,12 +184,24 @@ void tst_QDeclarativeBatteryInfo::tst_chargerType()
      QVERIFY(cType == QSystemBatteryInfo::NoCharger
              || cType == QSystemBatteryInfo::UnknownCharger);
     } else {
-        QVERIFY(cType == QSystemBatteryInfo::WallCharger
-                || cType == QSystemBatteryInfo::USBCharger
-                || cType == QSystemBatteryInfo::USB_500mACharger
-                || cType == QSystemBatteryInfo::USB_100mACharger
-                || cType == QSystemBatteryInfo::VariableCurrentCharger);
-
+        if(bi.chargingState() == QSystemBatteryInfo::Charging) {
+            QVERIFY(cType == QSystemBatteryInfo::WallCharger
+                    || cType == QSystemBatteryInfo::USBCharger
+                    || cType == QSystemBatteryInfo::USB_500mACharger
+                    || cType == QSystemBatteryInfo::USB_100mACharger
+                    || cType == QSystemBatteryInfo::VariableCurrentCharger);
+        } else {
+            if(bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+                QVERIFY(cType == QSystemBatteryInfo::NoCharger
+                        || cType == QSystemBatteryInfo::UnknownCharger);
+            } else {
+                QVERIFY(cType == QSystemBatteryInfo::WallCharger
+                        || cType == QSystemBatteryInfo::USBCharger
+                        || cType == QSystemBatteryInfo::USB_500mACharger
+                        || cType == QSystemBatteryInfo::USB_100mACharger
+                        || cType == QSystemBatteryInfo::VariableCurrentCharger);
+            }
+        }
     }
 }
 
@@ -257,11 +269,18 @@ void tst_QDeclarativeBatteryInfo::tst_remainingChargingTime()
 {
     QDeclarativeBatteryInfo bi;
     int rem = bi.remainingChargingTime();
-    if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown ||
-            bi.batteryStatus() == QSystemBatteryInfo::BatteryFull ) {
+    if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
         QVERIFY(rem == -1);
     } else {
-        QVERIFY(rem != -1);
+        if(bi.batteryStatus() == QSystemBatteryInfo::BatteryFull) {
+            QVERIFY(rem == 0);
+        } else {
+            if (bi.chargingState() == QSystemBatteryInfo::NotCharging) {
+                QVERIFY(rem == 0);
+            } else {
+                QVERIFY(rem != -1);
+            }
+        }
     }
 }
 
