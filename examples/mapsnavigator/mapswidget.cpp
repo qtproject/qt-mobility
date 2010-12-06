@@ -140,6 +140,24 @@ protected:
         event->accept();
     }
 
+    void wheelEvent(QGraphicsSceneWheelEvent *event)
+    {
+        qreal panx = event->pos().x() - size().width() / 2.0;
+        qreal pany = event->pos().y() - size().height() / 2.0;
+        pan(panx, pany);
+        if (event->delta() > 0) { //zoom in
+            if (zoomLevel() < maximumZoomLevel()) {
+                setZoomLevel(zoomLevel() + 1);
+            }
+        } else { //zoom out
+            if (zoomLevel() > minimumZoomLevel()) {
+                setZoomLevel(zoomLevel() - 1);
+            }
+        }
+        pan(-panx, -pany);
+        event->accept();
+    }
+
 private:
     MapsWidget *m_mapsWidget;
     QTimer *timer;
@@ -203,6 +221,18 @@ void MapsWidget::initialize(QGeoMappingManager *mappingManager)
 MarkerObject* MapsWidget::getMyLocation()
 {
     return myLocationMarker;
+}
+
+void MapsWidget::setMapType(QString type)
+{
+    if (type == tr("Street"))
+        geomap->setMapType(QGraphicsGeoMap::StreetMap);
+    else if (type == tr("Satellite"))
+        geomap->setMapType(QGraphicsGeoMap::SatelliteMapDay);
+    else if (type == tr("Satellite - Night"))
+        geomap->setMapType(QGraphicsGeoMap::SatelliteMapNight);
+    else if (type == tr("Terrain"))
+        geomap->setMapType(QGraphicsGeoMap::TerrainMap);
 }
 
 bool MapsWidget::getWaypointSelect()

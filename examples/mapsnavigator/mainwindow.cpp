@@ -49,6 +49,9 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QNetworkProxyFactory>
+#include <QProcessEnvironment>
+#include <QSignalMapper>
+#include <QUrl>
 #include <qnetworkconfigmanager.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -120,15 +123,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(geocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showGeocodeDialog()));
     connect(revgeocodeAction, SIGNAL(triggered()), m_searchWidget, SLOT(showRevGeocodeDialog()));
 
+    QSignalMapper *mapper = new QSignalMapper(this);
     QMenu* mapTypeMenu = new QMenu(tr("Map Type"), this);
-    QStringList mapTypes;
-    mapTypes << tr("Street") << tr("Satellite") << tr("Satellite - Night") << tr("Terrain");
 
-    for (int i=0; i<mapTypes.size(); i++) {
-        QAction *mapTypeAction = new QAction(mapTypes[i], this);
+    QStringList mapTypes;
+    mapTypes << tr("Street") << tr("Satellite")
+             << tr("Satellite - Night") << tr("Terrain");
+
+    foreach (QString type, mapTypes) {
+        QAction *mapTypeAction = new QAction(type, this);
         mapTypeMenu->addAction(mapTypeAction);
-        //connect(myLocationAction, SIGNAL(triggered()), this, SLOT(close()));
+        mapper->setMapping(mapTypeAction, type);
+        connect(mapTypeAction, SIGNAL(triggered()),
+                mapper, SLOT(map()));
     }
+    connect(mapper, SIGNAL(mapped(QString)),
+            m_mapsWidget, SLOT(setMapType(QString)));
 
     menuBar()->addAction(myLocationAction);
     menuBar()->addAction(directionsAction);
@@ -167,7 +177,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::networkSessionOpened()
 {
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    if (!urlEnv.isEmpty()) {
+        qDebug("got proxy from env: %s", qPrintable(urlEnv));
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+
     QTimer::singleShot(0, this, SLOT(setProvider()));
 }
 
