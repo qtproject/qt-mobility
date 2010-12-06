@@ -59,7 +59,9 @@
     \title Part 1 - The Map Widget
     
     To begin with, we will start defining the map widget, which is the central part of
-    the application's user interface.
+    the application's user interface. Enough of the map widget will be defined here to
+    work satisfactorily on most desktop platforms -- full consideration for mobile use
+    will be made later along with other parts of the application.
     
     \section2 The very basics
     
@@ -161,6 +163,8 @@ int main(int argc, char *argv[])
     a street map of Eight Mile Plains, in Queensland, Australia, rendered by your
     platform's default geo service provider.
     
+    \image mapsnavigator-verybasic.png
+    
     \section2 Pan & zoom
     
     Next we'll add some basic pan and zoom capability to the map widget. Like most other
@@ -238,6 +242,20 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     \section2 Map icons
     
     Another important basic feature is the ability to render icons on the map to
-    represent points of interest.
+    represent points of interest. The QGeoMapPixmapObject class provides most of 
+    the functionality necessary to achieve this, and we'll use a subclass of it
+    in similar vein to our GeoMap, above.
+    
+    For our application, we need to deal with 6 different kinds of icons:
+    \list
+    \o A "my location" icon
+    \o "Search" icons for search results
+    \o User waypoints for direction routes
+    \o Start points for directions
+    \o End points for directions
+    \o "Path" markers for individual steps in the direction route
+    \endlist
+    
+    
     
 */
