@@ -62,6 +62,7 @@ Rectangle
     color: "steelblue"
 
     Column {
+        spacing: 2
         Text { id: itemLabel; color: "yellow"; wrapMode: Text.Wrap;  font.bold: true; horizontalAlignment: Text.AlignHCenter; style: Text.Raised; verticalAlignment: Text.AlignVCenter; font.pointSize: 12 }
         Text { id: itemDesc; color: "white"; wrapMode: Text.Wrap;  font.pointSize: 10}
     }
