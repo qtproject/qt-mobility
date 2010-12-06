@@ -50,11 +50,7 @@ Rectangle
     anchors.fill: parent
 
 
-    ListView {
-        id : timeList
-        anchors.fill: parent
-        opacity : parent.opacity * 0.4
-
+    Repeater {
         model : ListModel {
                 ListElement {hour : "0:00"}
                 ListElement {hour : "1:00"}
@@ -83,56 +79,44 @@ Rectangle
                 ListElement {hour : "0:00"}
             }
 
-        delegate :  Component {
-            Item {
-                width : timeList.width
-                height : timeList.height / 24
-                Column {
-                    Rectangle {
-                        height : 1
-                        width : timeList.width
-                        color : "black"
-                    }
-                    Text {
-                        text: hour
-                    }
+        Rectangle {
+            width : dayView.width
+            height : dayView.height / 24
+            y:index * height
+            Column {
+                Rectangle {
+                    height : 1
+                    width : dayView.width
+                    color : "lightsteelblue"
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked : timeList.currentIndex = index
+                Text {
+                    text: hour
+                    color : "steelblue"
+                    font.pointSize: 12
                 }
             }
-        }
-
-
-        Component.onCompleted : {
-            positionViewAtIndex(currentIndex, ListView.Beginning);
         }
     }
 
-    ListView {
-        anchors.fill: parent
+    Repeater {
         model:itemIds
-        delegate: ItemView {
-            property int timePos: (startTime/(24*60))*timeList.height
+        ItemView {
+            property int timePos: (startTime/(24*60))*dayView.height
             focus: true
-            width:timeList.width
-            height: endTime< startTime ? 30: timeList.height * (endTime - startTime)/(24*60)
-            anchors.leftMargin: 40
-            anchors.rightMargin: 5
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.topMargin: timePos
+            width:dayView.width - 50
+            height: endTime< startTime ? 30: dayView.height * (endTime - startTime)/(24*60)
+            x: dayView.x + 50
+            y: dayView.y + timePos
+
 
             opacity : dayView.opacity * 0.8
             itemId: modelData
-            Component.onCompleted: {
-                console.log ("startTime:" + startTime);
-                console.log ("endTime:" + endTime);
-                console.log ("height:" + height);
-                console.log ("anchors.top:" + timePos);
-            }
+//            Component.onCompleted: {
+//                console.log ("startTime:" + startTime);
+//                console.log ("endTime:" + endTime);
+//                console.log ("height:" + height);
+//                console.log ("anchors.top:" + timePos);
+//            }
         }
     }
 }
