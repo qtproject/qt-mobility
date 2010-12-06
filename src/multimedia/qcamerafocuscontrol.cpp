@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraFocusControl
 
-    \preliminary
+    
     \brief The QCameraFocusControl class supplies control for
     focusing related camera parameters.
 
