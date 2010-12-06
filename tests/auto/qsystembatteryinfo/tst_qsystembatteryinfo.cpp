@@ -42,8 +42,7 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
-#include "qsysteminfo.h"
-//#include "qsysteminfo_simulator_p.h"
+#include "qsystembatteryinfo.h"
 #include <QDebug>
 
 QTM_USE_NAMESPACE
