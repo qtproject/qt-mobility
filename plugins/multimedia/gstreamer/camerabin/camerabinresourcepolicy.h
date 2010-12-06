@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,57 +39,63 @@
 **
 ****************************************************************************/
 
+#ifndef CAMERARESOURCEPOLICY_H
+#define CAMERARESOURCEPOLICY_H
 
-#ifndef CAMERABINCONTROL_H
-#define CAMERABINCONTROL_H
+#include <QtCore/qobject.h>
+#include <QtCore/qlist.h>
 
-#include <QHash>
-#include <qcameracontrol.h>
-#include "camerabinsession.h"
+namespace ResourcePolicy {
+class ResourceSet;
+};
 
-QT_USE_NAMESPACE
-
-class CamerabinResourcePolicy;
-
-class CameraBinControl : public QCameraControl
+class CamerabinResourcePolicy : public QObject
 {
     Q_OBJECT
 public:
-    CameraBinControl( CameraBinSession *session );
-    virtual ~CameraBinControl();
+    enum ResourceSet {
+        NoResources,
+        LoadedResources,
+        ImageCaptureResources,
+        VideoCaptureResources
+    };
 
-    bool isValid() const { return true; }
+    CamerabinResourcePolicy(QObject *parent);
+    ~CamerabinResourcePolicy();
 
-    QCamera::State state() const;
-    void setState(QCamera::State state);
+    ResourceSet resourceSet() const;
+    void setResourceSet(ResourceSet set);
 
-    QCamera::Status status() const { return m_status; }
+    bool isResourcesGranted() const;
 
-    QCamera::CaptureMode captureMode() const;
-    void setCaptureMode(QCamera::CaptureMode mode);
+Q_SIGNALS:
+    void resourcesDenied();
+    void resourcesGranted();
+    void resourcesLost();
 
-    bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
-
-public slots:
-    void reloadLater();
-
-private slots:
-    void updateStatus();
-    void delayedReload();
-
+private Q_SLOTS:
     void handleResourcesGranted();
+    void handleResourcesDenied();
     void handleResourcesLost();
 
 private:
-    void updateSupportedResolutions(const QString &device);
+    ResourceSet m_resourceSet;
 
-    CameraBinSession *m_session;
-    QCamera::State m_state;
-    QCamera::Status m_status;
-    CamerabinResourcePolicy *m_resourcePolicy;
+    enum ResourceStatus {
+        Initial = 0,
+        RequestedResource,
+        GrantedResource
+    };
 
-    bool m_reloadPending;
+    enum {
+        LoadedResourcesSet = 0,
+        ImageResourcesSet,
+        VideoResouresSet
+    };
+
+    QList<ResourcePolicy::ResourceSet *> m_resources;
+    QList<ResourceStatus> m_resourceStatuses;
+    QList<int> m_requestedSets;
 };
 
-#endif // CAMERABINCONTROL_H
+#endif
