@@ -40,4 +40,35 @@
 
 import Qt 4.7
 
-Text {text: "Settings View"; anchors.centerIn: parent}
+Rectangle {
+    id: menuBar;
+    y:0;
+    height:childrenRect.height;
+    width: parent.width;
+    property string info;
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: activePalette.dark }
+        GradientStop { position: 1.0; color: Qt.darker(activePalette.dark); }
+    }
+    Row {
+        spacing: 0
+        Image {
+            id: quitButton
+            height: monthButton.height
+            width:height
+            source: "images/quit.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.quit()
+            }
+        }
+        Button {id: todayButton; text: "Today";onClicked:calendar.day = new Date();}
+        Button { id: monthButton; text: "Month"; onClicked: calendar.state="MonthView";}
+        Button { id: weekButton; text: "Week";onClicked: calendar.state="WeekView";}
+        Button { id: dayButton; text: "Day";onClicked: calendar.state="DayView";}
+        Button { id: timelineButton; text: "Timeline";onClicked: calendar.state="TimelineView";}
+        Text { color: "#f5f210";text:info ; font.bold: true; verticalAlignment: Text.AlignVCenter; style: Text.Sunken;font.pointSize: 10}
+    }
+}
+

@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraExposureControl
 
-    \preliminary
+    
     \brief The QCameraExposureControl class supplies control for exposure
     related camera parameters.
 

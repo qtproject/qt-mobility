@@ -80,11 +80,12 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
             } else {
                 // New sound effect!
                 fi.soundEffect = new QSoundEffect(this);
+                mEffects.insert(effect, fi);
+                mEffectMap.insert(fi.soundEffect, effect);
+
                 connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectLoaded()));
                 connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
                 fi.soundEffect->setSource(effect->source());
-                mEffects.insert(effect, fi);
-                mEffectMap.insert(fi.soundEffect, effect);
             }
         }
     } else {

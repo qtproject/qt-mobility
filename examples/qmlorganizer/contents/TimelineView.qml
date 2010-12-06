@@ -39,16 +39,41 @@
 ****************************************************************************/
 
 import Qt 4.7
+import QtMobility.organizer 1.1
 import "timeline.js" as Timeline
 
 Rectangle {
     id : timelineView
     anchors.fill : parent
     opacity : parent.opacity
-
+    property int year
+    property int month
+    property int day
+    Connections {
+        target: calendar
+        onDayChanged : {
+            year = calendar.day.getFullYear();
+            month = calendar.day.getMonth();
+            day = calendar.day.getDate();
+            dayList.currentIndex = day - 1;
+            monthList.currentIndex = month;
+            yearList.currentIndex = year - yearModel.start;
+        }
+    }
     //Day view
     Rectangle {
         id: dayView
+        color: "#9eaf30"
+        gradient: Gradient {
+            GradientStop {
+                position: 0.00;
+                color: "#9eaf30";
+            }
+            GradientStop {
+                position: 0.89;
+                color: "#ffffff";
+            }
+        }
         anchors.right : parent.right
         anchors.left : monthView.right
         anchors.top : parent.top
@@ -71,16 +96,22 @@ Rectangle {
             highlightMoveSpeed : 2000
             keyNavigationWraps : true
 
-            Component.onCompleted : Timeline.changeToday()
-            onOpacityChanged : Timeline.changeToday()
-            Keys.onUpPressed : Timeline.changeDate()
-            Keys.onDownPressed : Timeline.changeDate()
+            onCurrentIndexChanged : {
+                calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), currentIndex + 1);
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
+                monthList.currentIndex = timelineView.month;
+                currentIndex = timelineView.day - 1;
+            }
+
         }
 
         Component {
             id: dayHighlight
             Rectangle {
-                width: dayList.width; height: dayList.height /7 ; color: "lightsteelblue" ;radius: 5
+                width: dayList.width;
+                height: dayList.height /7 ;
+                color: "lightsteelblue" ;radius: 5
             }
         }
 
@@ -88,7 +119,7 @@ Rectangle {
             id: dayDelegate
             Item {
                 width : dayList.width
-                height : dayList.height / 7
+                height : childrenRect.height
                 Column {
                     Rectangle {
                         height : 1
@@ -98,10 +129,30 @@ Rectangle {
                     Text {
                         text: day
                     }
+                    Repeater {
+                        focus: true
+                        model:calendar.organizer.itemIds(new Date(calendar.day.getFullYear(),
+                                                                                                        calendar.day.getMonth(),
+                                                                                                        index + 1))
+
+                        Text {
+                            clip: true
+                            focus: true
+                            property OrganizerItem oi: calendar.organizer.item(modelData)
+                            text: "<a href=\"#\">" + oi.displayLabel + "</a>"
+                            onLinkActivated: {
+                                    console.log(oi.type + "," + oi.displayLabel + oi.description);
+                                   //TODO: goto details view
+                            }
+                        }
+                    }
                 }
                 MouseArea {
                     anchors.fill: parent
-                    onClicked : dayList.currentIndex = index
+                    onClicked : {
+                        dayList.currentIndex = index
+                        calendar.state = "DayView"
+                    }
                 }
             }
         }
@@ -170,11 +221,13 @@ Rectangle {
                monthList.currentIndex = month;
                var  d = Date.parse("Feb 31, 2010");
             }
-//            onCurrentIndexChanged : {
-
-//            }
-
-
+            onCurrentIndexChanged : {
+                calendar.day = new Date(calendar.day.getFullYear(), currentIndex, calendar.day.getDate());
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
+                currentIndex = timelineView.month;
+                dayList.currentIndex = timelineView.day - 1;
+            }
         }
 
         Component {
@@ -278,8 +331,15 @@ Rectangle {
             highlightFollowsCurrentItem : true
 
             Component.onCompleted: Timeline.extendYearModel(true);
-            onCurrentIndexChanged: Timeline.extendYearModel(false);
-        }
+            onCurrentIndexChanged: {
+                Timeline.extendYearModel(false);
+                calendar.day = new Date(yearModel.start + currentIndex,  calendar.day.getMonth(), calendar.day.getDate());
+                timelineView.year = calendar.day.getFullYear();
+                timelineView.month = calendar.day.getMonth();
+                timelineView.day = calendar.day.getDate();
+                monthList.currentIndex = timelineView.month;
+                dayList.currentIndex = timelineView.day - 1;
+            }
 
         ListModel {
             id : yearModel
@@ -291,5 +351,5 @@ Rectangle {
             }
         }
     }
-
+    }
 }

@@ -69,8 +69,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 {
     m_stackedWidget = new QStackedWidget(this);
 
-    m_monthPage = new MonthPage(m_stackedWidget);
     m_dayPage = new DayPage(m_stackedWidget);
+    m_monthPage = new MonthPage(m_stackedWidget);
     m_eventEditPage = new EventEditPage(m_stackedWidget);
     m_todoEditPage = new TodoEditPage(m_stackedWidget);
     m_journalEditPage = new JournalEditPage(m_stackedWidget);
