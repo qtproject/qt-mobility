@@ -2490,8 +2490,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         }
 
         isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];
-        //        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
-        if(isCharging) {
+        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
             cType = QSystemBatteryInfo::WallCharger;
         } else {
             cType = QSystemBatteryInfo::NoCharger;
