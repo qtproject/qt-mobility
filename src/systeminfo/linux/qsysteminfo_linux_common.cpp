@@ -230,14 +230,13 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
 {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
      QUdevService udevService;
-     QUdevFeatureMatrix udevFeature = udevService.availableFeatures();
 #endif
      bool featureSupported = false;
      switch (feature) {
      case QSystemInfo::BluetoothFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.bluetooth;
+             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_BLUETOOTH);
 #endif
              const QString sysPath = "/sys/class/bluetooth/";
              const QDir sysDir(sysPath);
@@ -255,7 +254,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::CameraFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.camera;
+             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:capture:*");
 #endif
  #if !defined(QT_NO_DBUS)
              featureSupported = hasHalUsbFeature(0x06); // image
@@ -268,7 +267,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::FmradioFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.radio;
+             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:radio:*");
 #endif
              const QString sysPath = "/sys/class/video4linux/";
              const QDir sysDir(sysPath);
@@ -285,7 +284,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::IrFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         return udevFeature.infrared;
+         return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*irda*");
 #endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalUsbFeature(0xFE);
@@ -298,7 +297,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::LedFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.leds;
+             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_LEDS);
 #endif
              featureSupported = hasSysFeature("led"); //?
          }
@@ -306,7 +305,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::MemcardFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.memcard;
+             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
 #endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
@@ -331,7 +330,12 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::UsbFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         return udevFeature.usb;
+             if (udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_MUSB))
+                 return true;
+             if(udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_USB))
+                 return true;
+             if(udevService.isPropertyAvailable(UDEV_PROPERTY_INTERFACE, "usb*"))
+                 return true;
 #endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalDeviceFeature("usb");
@@ -343,7 +347,10 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VibFeature :
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         return udevFeature.vibration;
+         if (udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*vibra*"))
+            return true;
+         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*Vibra*"))
+         return true;
 #endif
  #if !defined(QT_NO_DBUS)
          if (hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib")) {
@@ -354,7 +361,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::WlanFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.wlan;
+             return udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_WLAN);
 #endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
@@ -373,7 +380,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::LocationFeature :
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.gps;
+             return udevService.isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*gps*");
 #endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalDeviceFeature("gps"); //might not always be true
@@ -385,7 +392,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::VideoOutFeature :
          {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-             return udevFeature.videoOut;
+             return udevService.isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:video_output:*");
 #endif
              const QString sysPath = "/sys/class/video4linux/";
              const QDir sysDir(sysPath);
@@ -399,7 +406,10 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::HapticsFeature:
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         return udevFeature.haptics;
+         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*touch*"))
+             return true;
+         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*Touch*"))
+             return true;
 #endif
          break;
      default:
