@@ -377,6 +377,19 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          }
          break;
      case QSystemInfo::SimFeature :
+         {
+#if !defined(QT_NO_CONNMAN)
+ if (ofonoAvailable()) {
+     QOfonoManagerInterface ofonoManager(this);
+     QString modempath = ofonoManager.currentModem().path();
+     if (!modempath.isEmpty()) {
+         QOfonoSimInterface simInterface(modempath,this);
+         return simInterface.isValid();
+     }
+ }
+#endif
+
+         }
          break;
      case QSystemInfo::LocationFeature :
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
