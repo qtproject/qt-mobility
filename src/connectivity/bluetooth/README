@@ -1,0 +1,43 @@
+Bluetooth
+
+The Bluetooth API is under development and subject to change between the tech
+preview and its official release with Qt Mobility 1.2. For the technology
+preview the only functional back end is bluez.
+
+What does NOT work:
+
+1. Symbian, Windows or Mac
+
+2. QL2capServer and QL2capSocket
+
+3. QBluetoothLocalDevice Pairing functions
+
+4. QBluetoothLocalDevice power control and state functions
+
+5. QBluetoothServiceDiscoveryAgent errorString
+
+6. QBluetoothTransferManager needs testing
+
+
+What should work:
+
+1. QBluetoothAddress
+
+2. QBluetoothDeviceDiscoveryAgent
+
+3. QBluetoothServiceDiscoveryAgent
+
+4. QBluetoothDeviceInfo
+
+5. QBluetoothServiceInfo
+
+6. QBluetoothSocket
+
+7. QBluetoothTransferManager::put (needs OpenObex installed)
+
+8. QBluetoothUuid
+
+9. QBluetoothRfcommServer
+
+10. QBluetoothRfcommSocket
+
