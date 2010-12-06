@@ -8,9 +8,19 @@ SUBDIRS += qsysteminfo \
       qsystemdisplayinfo \
       qsystemstorageinfo \
       qsystemnetworkinfo \
-      qsystemscreensaver
+      qsystemscreensaver \
+      qsystembatteryinfo
 
 maemo6: {
-      #maemo6 spesific autotests
+      #maemo6 specific autotests
       SUBDIRS += maemo6
+}
+contains(QT_CONFIG,declarative) {
+SUBDIRS += qdeclarativebatteryinfo \
+           qdeclarativedeviceinfo \
+#           qdeclarativedisplayinfo \
+           qdeclarativesysteminfo \
+           qdeclarativenetworkinfo \
+           qdeclarativescreensaver \
+#           qdeclarativestorageinfo
 }
