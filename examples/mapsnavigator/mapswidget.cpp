@@ -171,7 +171,7 @@ void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         int entries_considered = 0;
 
         QTime currentTime = QTime::currentTime();
-        foreach(MouseHistoryEntry entry, mouseHistory) {
+        foreach (MouseHistoryEntry entry, mouseHistory) {
             // first=speed, second=time
             int deltaTime = entry.second.msecsTo(currentTime);
             if (deltaTime < holdTimeThreshold) {
@@ -269,64 +269,64 @@ void GeoMap::panFloatWrapper(const QPointF& delta)
 void GeoMap::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-        case Qt::Key_Minus:
+    case Qt::Key_Minus:
 #ifdef Q_OS_SYMBIAN
-        case Qt::Key_VolumeDown:
+    case Qt::Key_VolumeDown:
 #endif
-            if (zoomLevel() > minimumZoomLevel()) {
-                setZoomLevel(zoomLevel() - 1);
-            }
-            break;
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+        break;
 
-        case Qt::Key_Plus:
+    case Qt::Key_Plus:
 #ifdef Q_OS_SYMBIAN
-        case Qt::Key_VolumeUp:
+    case Qt::Key_VolumeUp:
 #endif
-            if (zoomLevel() < maximumZoomLevel()) {
-                setZoomLevel(zoomLevel() + 1);
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+        break;
+
+    case Qt::Key_T:
+        if (mapType() == QGraphicsGeoMap::StreetMap)
+            setMapType(QGraphicsGeoMap::SatelliteMapDay);
+        else if (mapType() == QGraphicsGeoMap::SatelliteMapDay)
+            setMapType(QGraphicsGeoMap::StreetMap);
+        break;
+
+    case Qt::Key_Shift:
+        // If there's no current movement, we don't need to handle shift.
+        if (panDir.manhattanLength() == 0) break;
+    case Qt::Key_Left:
+    case Qt::Key_Right:
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+        if (!event->isAutoRepeat()) {
+            switch (event->key()) {
+            case Qt::Key_Left:
+                panDir.setX(-1);
+                break;
+
+            case Qt::Key_Right:
+                panDir.setX(1);
+                break;
+
+            case Qt::Key_Up:
+                panDir.setY(-1);
+                break;
+
+            case Qt::Key_Down:
+                panDir.setY(1);
+                break;
             }
-            break;
 
-        case Qt::Key_T:
-            if (mapType() == QGraphicsGeoMap::StreetMap)
-                setMapType(QGraphicsGeoMap::SatelliteMapDay);
-            else if (mapType() == QGraphicsGeoMap::SatelliteMapDay)
-                setMapType(QGraphicsGeoMap::StreetMap);
-            break;
+            lastMoveTime = QTime::currentTime();
+            kineticTimer->start();
+            panDecellerate = false;
 
-        case Qt::Key_Shift:
-            // If there's no current movement, we don't need to handle shift.
-            if (panDir.manhattanLength() == 0) break;
-        case Qt::Key_Left:
-        case Qt::Key_Right:
-        case Qt::Key_Up:
-        case Qt::Key_Down:
-            if (!event->isAutoRepeat()) {
-                switch (event->key()) {
-                    case Qt::Key_Left:
-                        panDir.setX(-1);
-                        break;
-
-                    case Qt::Key_Right:
-                        panDir.setX(1);
-                        break;
-
-                    case Qt::Key_Up:
-                        panDir.setY(-1);
-                        break;
-
-                    case Qt::Key_Down:
-                        panDir.setY(1);
-                        break;
-                }
-
-                lastMoveTime = QTime::currentTime();
-                kineticTimer->start();
-                panDecellerate = false;
-
-                applyPan(event->modifiers());
-            }
-            break;
+            applyPan(event->modifiers());
+        }
+        break;
     }
 
     event->accept();
@@ -340,22 +340,22 @@ void GeoMap::keyReleaseEvent(QKeyEvent* event)
     if (event->isAutoRepeat()) return;
 
     switch (event->key()) {
-        case Qt::Key_Left:
-        case Qt::Key_Right:
-            panDir.setX(0);
-            break;
+    case Qt::Key_Left:
+    case Qt::Key_Right:
+        panDir.setX(0);
+        break;
 
-        case Qt::Key_Up:
-        case Qt::Key_Down:
-            panDir.setY(0);
-            break;
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+        panDir.setY(0);
+        break;
 
-        case Qt::Key_Shift:
-            if (panDir.manhattanLength() == 0) return;
-            break;
+    case Qt::Key_Shift:
+        if (panDir.manhattanLength() == 0) return;
+        break;
 
-        default:
-            return;
+    default:
+        return;
     }
 
     applyPan(event->modifiers());
