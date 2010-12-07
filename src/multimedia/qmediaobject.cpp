@@ -143,7 +143,7 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 
     This method establishes a relationship between the media object and a
     helper object. The nature of the relationship depends on both parties. This
-    methods returns true if the helper was succesfully bound, false otherwise.
+    methods returns true if the helper was successfully bound, false otherwise.
 
     The object passed must implement the QMediaBindableInterface interface.
 

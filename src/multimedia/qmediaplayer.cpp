@@ -1020,7 +1020,7 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     \value StreamPlayback
             The player is expected to play QIODevice based streams.
             If passed to QMediaPlayer constructor, the service supporting
-            streams playback will be choosen.
+            streams playback will be chosen.
 */
 
 #include "moc_qmediaplayer.cpp"
