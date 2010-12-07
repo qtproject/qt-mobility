@@ -180,6 +180,7 @@ void tst_QSystemBatteryInfo::tst_chargerType()
 {
     QSystemBatteryInfo bi;
     QSystemBatteryInfo::ChargerType cType = bi.chargerType();
+
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
      QVERIFY(cType == QSystemBatteryInfo::NoCharger
              || cType == QSystemBatteryInfo::UnknownCharger);
@@ -190,8 +191,9 @@ void tst_QSystemBatteryInfo::tst_chargerType()
                     || cType == QSystemBatteryInfo::USB_500mACharger
                     || cType == QSystemBatteryInfo::USB_100mACharger
                     || cType == QSystemBatteryInfo::VariableCurrentCharger);
-        } else {
-            if(bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        } else { //not charging
+            if(bi.batteryStatus() != QSystemBatteryInfo::BatteryFull
+                    && bi.chargingState() == QSystemBatteryInfo::NotCharging) {
                 QVERIFY(cType == QSystemBatteryInfo::NoCharger
                         || cType == QSystemBatteryInfo::UnknownCharger);
             } else {

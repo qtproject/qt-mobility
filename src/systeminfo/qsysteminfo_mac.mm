@@ -2500,6 +2500,24 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             Q_EMIT remainingCapacityPercentChanged(currentBatLevelPercent);
         }
 
+        QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
+
+        if (currentBatLevelPercent < 4) {
+            stat = QSystemBatteryInfo::BatteryCritical;
+        } else if (currentBatLevelPercent < 11) {
+             stat = QSystemBatteryInfo::BatteryVeryLow;
+        } else if (currentBatLevelPercent < 41) {
+             stat =  QSystemBatteryInfo::BatteryLow;
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+             stat = QSystemBatteryInfo::BatteryOk;
+        } else if (currentBatLevelPercent == 100) {
+             stat = QSystemBatteryInfo::BatteryFull;
+        }
+        if(currentBatStatus != stat) {
+            currentBatStatus = stat;
+            emit batteryStatusChanged(stat);
+        }
+
         isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];
         if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
             cType = QSystemBatteryInfo::WallCharger;
