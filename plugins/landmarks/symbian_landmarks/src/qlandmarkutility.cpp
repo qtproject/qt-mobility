@@ -1086,7 +1086,7 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
 {
     TPositionFieldId fieldId = 0;
 
-    if (keyValue == "phone")
+    if (keyValue == "phoneNumber")
         fieldId = EPositionFieldBuildingTelephone;
     else if (keyValue == "street")
         fieldId = EPositionFieldStreet;

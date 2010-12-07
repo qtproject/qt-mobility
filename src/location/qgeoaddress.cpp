@@ -150,7 +150,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
 */
 
 /*!
-    Returns the country name according to ISO 3166-1 alpha-3
+    Returns the country name.
 */
 QString QGeoAddress::country() const
 {
@@ -158,7 +158,7 @@ QString QGeoAddress::country() const
 }
 
 /*!
-    Sets the \a country name according to ISO 3166-1 alpha-3
+    Sets the \a country name.
 */
 void QGeoAddress::setCountry(const QString &country)
 {

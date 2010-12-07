@@ -80,6 +80,7 @@ Rectangle {
             }
 
             Text {
+                horizontalAlignment: Text.AlignHCenter
                 id: txtItem; text: container.text; font.pixelSize: 16; color: activePalette.buttonText
             }
         }

@@ -57,7 +57,7 @@ public:
         Engaged
     };
 
-    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
+    Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged)
     ConnectionState state() const;
 
 

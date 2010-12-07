@@ -45,7 +45,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QAudioEndpointSelector
-    \preliminary
+    
     \brief The QAudioEndpointSelector class provides an audio endpoint selector media control.
     \inmodule QtMultimediaKit
     \ingroup multimedia
