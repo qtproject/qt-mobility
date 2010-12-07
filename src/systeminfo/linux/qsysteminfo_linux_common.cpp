@@ -3326,15 +3326,20 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
             QUPowerDeviceInterface powerDevice(objpath.path(),this);
             if (!powerDevice.isPowerSupply())
                 continue;
+            if (powerDevice.getType() == 1) { //line power
+                if(powerDevice.isOnline()) {
+                    cType = QSystemBatteryInfo::WallCharger;
+                } else {
+                    cType = QSystemBatteryInfo::NoCharger;
+                }
+            }
 
-            if (powerDevice.getType() == 2) {
+            if (powerDevice.getType() == 2) { //battery power
+                batteryIsPresent = true;
                 switch(powerDevice.getState()) {
                 case 1: // charging
                     {
                         cState = QSystemBatteryInfo::Charging;
-                     //   if (powerDevice.getType() == 1) {
-                            cType = QSystemBatteryInfo::WallCharger;
-                    //    }
                     }
                     break;
                 case 2: //discharging
@@ -3343,9 +3348,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
                 case 5: //pending charge
                 case 6: //pending discharge
                     cState = QSystemBatteryInfo::NotCharging;
-            //        if (powerDevice.getType() == 2) {
-                        cType = QSystemBatteryInfo::NoCharger;
-              //      }
                     break;
                 default:
                     cState = QSystemBatteryInfo::ChargingError;
