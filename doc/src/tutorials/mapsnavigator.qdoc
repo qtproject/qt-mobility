@@ -48,6 +48,7 @@
     
     \list 1
     \o \l{tutorials/mapsnavigator/part1}{The Map Widget}
+    \o \l{tutorials/mapsnavigator/part2}{Searching for locations}
     \endlist
     
     Some more text goes here.
@@ -256,6 +257,444 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     \o "Path" markers for individual steps in the direction route
     \endlist
     
+    \code
+class Marker : public QGeoMapPixmapObject
+{
+    Q_OBJECT
+public:
+    enum MarkerType {
+        MyLocationMarker,
+        SearchMarker,
+        WaypointMarker,
+        StartMarker,
+        EndMarker,
+        PathMarker
+    };
+
+    explicit Marker(MarkerType type);
+
+    inline MarkerType markerType() const { return m_type; }
+    void setMarkerType(MarkerType type);
+
+private:
+    MarkerType m_type;
+
+};
+    \endcode
+    
+    So we can construct Marker instances of different types, but we need QPixmaps
+    to represent each one. In our implementation we will simply use a \c switch
+    statement to map MarkerTypes to QPixmaps.
+    
+    \code
+Marker::Marker(MarkerType type) :
+    QGeoMapPixmapObject()
+{
+    setMarkerType(type);
+}
+
+void Marker::setMarkerType(MarkerType type)
+{
+    QString filename;
+    QPoint offset;
+    int scale;
+
+    m_type = type;
+
+    switch (m_type) {
+    case MyLocationMarker:
+        filename = ":/icons/mylocation.png";
+        break;
+    case SearchMarker:
+        filename = ":/icons/searchmarker.png";
+        break;
+    case WaypointMarker:
+        filename = ":/icons/waypointmarker.png";
+        break;
+    case StartMarker:
+        filename = ":/icons/startmarker.png";
+        break;
+    case EndMarker:
+        filename = ":/icons/endmarker.png";
+        break;
+    case PathMarker:
+        filename = ":/icons/pathmarker.png";
+        break;
+    }
+
+    if (m_type == MyLocationMarker) {
+        offset = QPoint(-13,-13);
+        scale = 25;
+    } else {
+        offset = QPoint(-15, -36);
+        scale = 30;
+    }
+
+    setOffset(offset);
+    setPixmap(QPixmap(filename).scaledToWidth(scale, Qt::SmoothTransformation));
+}
+    \endcode
+    
+    The icon PNG images can be found in the \c examples/mapsnavigator/icons
+    directory in the Qt Mobility distribution. All we have to do to have this
+    working is simply add the PNG icons to a \c .qrc file and add it to the 
+    project.
+    
+    The QGraphicsGeoMap::addMapObject method is used to add markers to a map.
+    We can add a call to create a marker at our starting point into 
+    MapsWidget::initialize() as a demonstration:
+    
+    \code
+// in MapsWidget::initialize()
+Marker *me = new Marker(Marker::MyLocationMarker);
+me->setCoordinate(QGeoCoordinate(-27.5796, 153.1));
+geoMap->addMapObject(me);
+    \endcode
+    
+    Build and start the application, and we now have a "My Location" icon in
+    the centre of the initial view.
+    
+    This now concludes the basic functionality of the map widget. We'll be
+    making a few modifications and improvements to it as we go along, but
+    the basic skeleton will remain the same.
+    
+    Next, we'll add a basic GUI around the map widget, and the ability
+    to search for locations like addresses.
+*/
+
+/*!
+    \page tutorials-mapsnavigator-part2.html
+    \example tutorials/mapsnavigator/part2
+    \title Part 2 - Searching for locations
+    
+    Now that we have a basic map widget, we want to add the capability
+    to search for addresses and locations and create markers for them
+    on the map.
+    
+    \section2 Search classes
+    
+    Searching in the Location API is handled by use of the QGeoSearchManager,
+    which we obtain in similar fashion to the MappingManager (in main() in
+    part 1). As we want to create markers for search results and then
+    be able to remove them for the next search (or perhaps other operations),
+    we need some way to organise collections of markers.
+    
+    To do this, we introduce a new class, MarkerManager:
+    
+    \code
+class MarkerManager : public QObject
+{
+    Q_OBJECT
+public:
+    explicit MarkerManager(QGeoSearchManager *sm, QObject *parent=0);
+    ~MarkerManager();
+
+public slots:
+    void setMap(QGraphicsGeoMap *map);
+    void setMyLocation(QGeoCoordinate coord);
+    void search(QString query);
+    void removeSearchMarkers();
+
+signals:
+    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void searchFinished();
+
+private:
+    Marker *m_myLocation;
+    QList<Marker*> searchMarkers;
+
+    QGraphicsGeoMap *m_map;
+    QGeoSearchManager *m_searchManager;
+    QSignalMapper sigMap;
+
+private slots:
+    void replyFinished(QObject *reply);
+};
+    \endcode
+    
+    The MarkerManager tracks both the "My Location" marker and a list of search
+    result markers. Implementing the My Location portion is nothing new:
+    
+    \code
+MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
+    QObject(parent),
+    m_searchManager(searchManager)
+{
+    m_myLocation = new Marker(Marker::MyLocationMarker);
+}
+
+MarkerManager::~MarkerManager()
+{
+    m_map->removeMapObject(m_myLocation);
+    delete m_myLocation;
+    ...
+}
+
+void MarkerManager::setMap(QGraphicsGeoMap *map)
+{
+    ...
+    map->addMapObject(m_myLocation);
+    ...
+}
+
+void MarkerManager::setMyLocation(QGeoCoordinate coord)
+{
+    m_myLocation->setCoordinate(coord);
+}
+    \endcode
+    
+    To implement searching, we call the QGeoSearchManager::search method, which
+    returns a QGeoSearchReply. This reply object emits a signal finished() when
+    the search results are available. It can also be constructed already
+    finished, and we need to check for this first before connecting the signals.
+    
+    Since we'd like to have one general slot that handles both the pre-finished
+    and the signal case, we give the slot a QObject* parameter and make use of
+    QSignalMapper:
+    
+    \code
+void MarkerManager::search(QString query)
+{
+    QGeoSearchReply *reply = m_searchManager->search(query);
+    if (reply->isFinished()) {
+        replyFinished(reply);
+    } else {
+        sigMap.setMapping(reply, reply);
+        connect(reply, SIGNAL(finished()),
+                &sigMap, SLOT(map()));
+        connect(&sigMap, SIGNAL(mapped(QObject*)),
+                this, SLOT(replyFinished(QObject*)));
+
+        connect(reply, SIGNAL(error(QGeoSearchReply::Error,QString)),
+                this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
+    }
+}
+    \endcode
+    
+    The QGeoSearchReply yields its results as a list of QGeoPlace instances.
+    While these hold quite a bit of information, for now we'll just be using
+    them for their coordinates.
+    
+    \code
+void MarkerManager::replyFinished(QObject *obj)
+{
+    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
+    Q_ASSERT(reply != NULL);
+
+    // generate the markers and add them to the map
+    foreach (QGeoPlace place, reply->places()) {
+        Marker *m = new Marker(Marker::SearchMarker);
+        m->setCoordinate(place.coordinate());
+        searchMarkers.append(m);
+
+        if (m_map) {
+            m_map->addMapObject(m);
+            // also zoom out until marker is visible
+            while (!m_map->viewport().contains(place.coordinate()))
+                m_map->setZoomLevel(m_map->zoomLevel()-1);
+        }
+    }
+
+    reply->deleteLater();
+
+    emit searchFinished();
+}
+    \endcode
+    
+    Next, we add two methods to MapsWidget to keep track of a MarkerManager
+    instance associated with its map:
+    
+    \code
+class MapsWidget : public QWidget
+{
+    ...
+public:
+    void setMarkerManager(MarkerManager *markerManager);
+    MarkerManager *markerManager() const;
+
+    ...
+private:
+    MarkerManager *m_markerManager;
+    ...
+};
+    \endcode
+    
+    And then add two small sections of code to connect them together:
+    
+    \code
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    geoMap = new GeoMap(manager, this);
+    if (m_markerManager)
+        m_markerManager->setMap(geoMap);
+    ...
+}
+
+void MapsWidget::setMarkerManager(MarkerManager *markerManager)
+{
+    m_markerManager = markerManager;
+    if (geoMap)
+        markerManager->setMap(geoMap);
+}
+    \endcode
+    
+    Now we have basic search capability added to our code. But we still
+    have no GUI to drive it, and so we'll focus on that in the next section.
+    
+    \section2 GUI with search dialog
+    
+    Next we'll build a GUI around our map widget and add a search dialog to
+    make use of the code we just wrote. Our finished GUI looks like this:
+    
+    \image mapsnavigator-searchgui.png
+    
+    We won't cover building the GUI in too much detail (that being the
+    subject of other tutorials), but the complete code is in the finished
+    MapsNavigator example in the Qt Mobility distribution.
+    
+    Our GUI consists of a QMainWindow containing our MapsWidget and a QMenuBar.
+    On the QMenuBar is an option for zooming to the current "My Location", and
+    a menu for performing search operations.
+    
+    Also part of the GUI is the dialog box displayed when selecting "Search
+    for address or name" -- this is a simple QDialog subclass with a QFormLayout
+    and a QDialogButtonBox.
+    
+    In the MainWindow constructor, we simply set up the menubar and MapsWidget
+    and other UI details. All initialization of Location-based details are in
+    the MainWindow::initialize() slot. For the moment, we will simply assume
+    that initialize() is called directly from the constructor (the purpose of
+    this decoupling will be explained later).
+    
+    \code
+void MainWindow::initialize()
+{
+    if (serviceProvider)
+        delete serviceProvider;
+
+    QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
+    if (providers.size() < 1) {
+        QMessageBox::information(this, tr("Maps Navigator"),
+                                 tr("No service providers are available"));
+        QCoreApplication::quit();
+        return;
+    }
+
+    serviceProvider = new QGeoServiceProvider(providers[0]);
+    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+        QMessageBox::information(this, tr("Maps Navigator"),
+                                 tr("Error loading geoservice plugin: %1").arg(providers[0]));
+        QCoreApplication::quit();
+        return;
+    }
+
+    mapsWidget->initialize(serviceProvider->mappingManager());
+    markerManager = new MarkerManager(serviceProvider->searchManager());
+    mapsWidget->setMarkerManager(markerManager);
+
+    connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
+            this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+
+    mapsWidget->setMyLocation(QGeoCoordinate(-27.5796, 153.1));
+}
+    \endcode
+    
+    As you can see, this performs more or less the same actions as our old
+    code in main() from part 1 of the tutorial did. It fetches the first
+    available service provider, then initializes the MapsWidget and
+    MarkerManager using the appropriate Manager instances.
+    
+    Additionally, we've added a setMyLocation() method to MapsWidget which
+    simply calls the current MarkerManager's method of the same name, plus
+    centreing the view on the marker.
+    
+    The "Search for address or name" menu item sets off the showSearchDialog()
+    slot:
+    
+    \code
+void MainWindow::showSearchDialog()
+{
+    SearchDialog sd;
+    if (sd.exec() == QDialog::Accepted) {
+        if (markerManager) {
+            markerManager->removeSearchMarkers();
+            markerManager->search(sd.searchTerms());
+        }
+    }
+}
+    \endcode
+    
+    Which uses the methods on MarkerManager that we defined previously. So now
+    we have a basic searchable mapping application. However, there is one big
+    piece of functionality missing for a searchable map: consider if we had
+    a provider that allowed us to search for local businesses. We might type
+    in a business name in the Search dialog and press OK, and then be presented
+    with tens or hundreds of businesses that match the name we typed from all
+    around the world. Some of these results might not even be the kind of
+    business we were looking for (partial text matches etc).
+    
+    This can be solved with the addition of two key features: viewing the extra
+    details about search results that we're currently throwing away; and adding
+    the ability to limit the search area.
+    
+    \section2 Adding details to search markers
+    
+    First up, we'll add some additional properties to the Marker class:
+    
+    \code
+class Marker : public QGeoMapPixmapObject
+{
+    ....
+public:
+    inline QString name() const { return m_name; }
+    inline void setName(QString name) { m_name = name; }
+
+    inline bool moveable() const { return m_moveable; }
+    inline void setMoveable(bool moveable) { m_moveable = moveable; }
+    
+private:
+    ...
+    QString m_name;
+    bool m_moveable;
+};
+    \endcode
+    
+    And add code to MarkerManager to set them from search results:
+    
+    \code
+void MarkerManager::replyFinished(QObject *obj)
+{
+    ...
+    foreach (QGeoPlace place, reply->places()) {
+        Marker *m = new Marker(Marker::SearchMarker);
+        m->setCoordinate(place.coordinate());
+        m->setName(QString("%1, %2").arg(place.address().street())
+                                    .arg(place.address().city()));
+        m->setMoveable(false);
+        searchMarkers.append(m);
+	...
+    \endcode
+    
+    So now the data is available from the Marker objects. We want to show
+    this to the user somehow, though, and the best means of doing this is
+    probably a dialog box. We're going to do a dialog box that appears when
+    the user clicks a marker, so we'll have to add click detection to
+    MapsWidget and GeoMap, first.
+    
+    We already have methods for handling mouse presses and releases over
+    the map widget, so we will modify these. Add two private fields to GeoMap:
+    
+    \code
+class GeoMap : public QGraphicsGeoMap
+{
+    ...
+private:
+    ...
+    bool markerPressed;
+    QGeoMapObject *pressed;
+    ...
+};
+    \endcode
     
     
 */
