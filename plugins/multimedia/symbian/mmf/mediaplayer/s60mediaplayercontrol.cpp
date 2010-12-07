@@ -135,15 +135,16 @@ void S60MediaPlayerControl::setPlaybackRate(qreal rate)
     //getting the current playbackrate    
     qreal currentPBrate = m_mediaSettings.playbackRate();
     //checking if we need to change the Playback rate
-    if(currentPBrate != rate)
+    if (!qFuzzyCompare(currentPBrate,rate))
     {
         if(m_session)
             m_session->setPlaybackRate(rate);
         
         m_mediaSettings.setPlaybackRate(rate);
+
+        emit playbackRateChanged(playbackRate());
     }
     
-    emit playbackRateChanged(playbackRate());
     
 }
 
