@@ -186,4 +186,12 @@ EXPORTS
 	_ZTVN10QtMobility18QSystemNetworkInfoE @ 185 NONAME ; #<VT>#
 	_ZTVN10QtMobility18QSystemScreenSaverE @ 186 NONAME ; #<VT>#
 	_ZTVN10QtMobility18QSystemStorageInfoE @ 187 NONAME ; #<VT>#
+	_ZN10QtMobility17QSystemDeviceInfo20ActiveProfileDetailsC1Ev @ 188 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo20ActiveProfileDetailsC2Ev @ 189 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo20ActiveProfileDetailsD1Ev @ 190 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo20ActiveProfileDetailsD2Ev @ 191 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo23getActiveProfileDetailsEv @ 192 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails15vibrationActiveEv @ 193 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails19voiceRingtoneVolumeEv @ 194 NONAME
+	_ZNK10QtMobility17QSystemDeviceInfo20ActiveProfileDetails21messageRingtoneVolumeEv @ 195 NONAME
 

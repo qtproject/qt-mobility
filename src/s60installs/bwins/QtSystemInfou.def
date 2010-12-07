@@ -186,4 +186,11 @@ EXPORTS
 	?staticMetaObject@QSystemInfo@QtMobility@@2UQMetaObject@@B @ 185 NONAME ; struct QMetaObject const QtMobility::QSystemInfo::staticMetaObject
 	?staticMetaObject@QSystemStorageInfo@QtMobility@@2UQMetaObject@@B @ 186 NONAME ; struct QMetaObject const QtMobility::QSystemStorageInfo::staticMetaObject
 	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 187 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	??0ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QAE@XZ @ 188 NONAME ; QtMobility::QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(void)
+	??1ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QAE@XZ @ 189 NONAME ; QtMobility::QSystemDeviceInfo::ActiveProfileDetails::~ActiveProfileDetails(void)
+	??_EActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QAE@I@Z @ 190 NONAME ; QtMobility::QSystemDeviceInfo::ActiveProfileDetails::~ActiveProfileDetails(unsigned int)
+	?getActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QAEPAVActiveProfileDetails@12@XZ @ 191 NONAME ; class QtMobility::QSystemDeviceInfo::ActiveProfileDetails * QtMobility::QSystemDeviceInfo::getActiveProfileDetails(void)
+	?messageRingtoneVolume@ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 192 NONAME ; int QtMobility::QSystemDeviceInfo::ActiveProfileDetails::messageRingtoneVolume(void) const
+	?vibrationActive@ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 193 NONAME ; bool QtMobility::QSystemDeviceInfo::ActiveProfileDetails::vibrationActive(void) const
+	?voiceRingtoneVolume@ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 194 NONAME ; int QtMobility::QSystemDeviceInfo::ActiveProfileDetails::voiceRingtoneVolume(void) const
 
