@@ -697,7 +697,7 @@ bool V4LRadioControl::initRadio()
     fd = ::open("/dev/radio1", O_RDWR);
 
     if(fd != -1) {
-        // Capabilites
+        // Capabilities
         memset(&cap, 0, sizeof(cap));
         if(::ioctl(fd, VIDIOC_QUERYCAP, &cap ) >= 0) {
             available = true;
