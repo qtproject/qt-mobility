@@ -363,6 +363,12 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return result;
 }
 
+bool QMessageStore::removeAccount(const QMessageAccountId &id)
+{
+#warning TODO: implement
+    return false;
+}
+
 bool QMessageStore::addMessage(QMessage *message)
 {
     bool result(false);

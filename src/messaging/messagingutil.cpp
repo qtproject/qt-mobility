@@ -226,6 +226,46 @@ namespace MessagingUtil {
         return prefix;
     }
 
+    // Needs to support escaping, and to be unit tested :P
+    bool globMatch(const QString &pattern, const QString &haystack) {
+        QString::const_iterator patIt(pattern.begin());
+        QString::const_iterator hayIt(haystack.begin());
+
+        for ( ; hayIt != haystack.end() && *patIt != '%' ; ++hayIt, ++patIt) {
+            if ((patIt->toLower() != hayIt->toLower())
+                    && (*patIt != '_')) {
+                return false;
+            }
+         }
+
+        QString::const_iterator tPatIt(pattern.end());
+        QString::const_iterator tHayIt(haystack.end());
+
+        while (patIt != pattern.end() && hayIt != haystack.end()) {
+            if (*patIt == '%') {
+                if (++patIt == pattern.end())
+                    return true;
+
+                tPatIt = patIt;
+                tHayIt = hayIt + 1;
+            } else if (patIt->toLower() == hayIt->toLower() || (*patIt != '_')) {
+                patIt++;
+                hayIt++;
+            } else {
+                patIt = tPatIt;
+                hayIt = tHayIt++;
+            }
+        }
+
+        // eat trailing %
+        while (patIt != pattern.end() && *patIt == '%') {
+            patIt++;
+        }
+
+        return hayIt == haystack.end() && patIt == pattern.end();
+    }
+
+
 }
 
 QTM_END_NAMESPACE
