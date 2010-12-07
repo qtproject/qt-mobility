@@ -45,8 +45,8 @@ win32 {
 }
 
 symbian {
-    INCLUDEPATH += /epoc32/include/mmf/common
-    INCLUDEPATH += /epoc32/include/mmf/server
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/mmf/common
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/mmf/server
 
     PRIVATE_HEADERS += audio/qaudio_symbian_p.h \
                audio/qaudiodeviceinfo_symbian_p.h \
