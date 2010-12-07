@@ -39,29 +39,67 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothtransfermanager.h"
-#include "qbluetoothtransferrequest.h"
-#include "qbluetoothtransferreply.h"
+
 #include "qbluetoothtransferreply_symbian_p.h"
+
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    Sends the contents of \a data to the remote device \a request and returns a new
-    QBluetoothTransferReply, that can be used to track the request's progress.
-*/
-QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
-                                                        QIODevice *data)
+QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
+:   QBluetoothTransferReply(parent), m_source(input)
 {
-    QBluetoothTransferReplySymbian *reply = new QBluetoothTransferReplySymbian(data);
-
-    reply->setAddress(request.address());
-
-    connect(reply, SIGNAL(finished(QBluetoothTransferReply*)), this, SIGNAL(finished(QBluetoothTransferReply*)));
-
-    reply->start();
-
-    return reply;
 }
+
+/*!
+    Destroys the QBluetoothTransferReply object.
+*/
+QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
+{
+}
+
+void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address)
+{
+    m_address = address;
+}
+
+bool QBluetoothTransferReplySymbian::start()
+{
+    return true;
+}
+
+/*!
+    Returns true if this reply has finished; otherwise returns false.
+*/
+bool QBluetoothTransferReplySymbian::isFinished() const
+{
+    return m_finished;
+}
+
+/*!
+    Returns true if this reply is running; otherwise returns false.
+*/
+bool QBluetoothTransferReplySymbian::isRunning() const
+{
+    return m_running;
+}
+
+void QBluetoothTransferReplySymbian::abort()
+{
+    qDebug() << "Abort() is not implemented";
+}
+
+qint64 QBluetoothTransferReplySymbian::readData(char*, qint64)
+{
+    return 0;
+}
+
+qint64 QBluetoothTransferReplySymbian::writeData(const char*, qint64)
+{
+    return 0;
+}
+
+
+#include "moc_qbluetoothtransferreply_symbian_p.cpp"
 
 QTM_END_NAMESPACE

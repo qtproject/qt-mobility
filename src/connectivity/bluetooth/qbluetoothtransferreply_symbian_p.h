@@ -39,29 +39,47 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothtransfermanager.h"
-#include "qbluetoothtransferrequest.h"
+#ifndef QBLUETOOTHTRANSFERREPLYSYMBIAN_H
+#define QBLUETOOTHTRANSFERREPLYSYMBIAN_H
+
 #include "qbluetoothtransferreply.h"
-#include "qbluetoothtransferreply_symbian_p.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    Sends the contents of \a data to the remote device \a request and returns a new
-    QBluetoothTransferReply, that can be used to track the request's progress.
-*/
-QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
-                                                        QIODevice *data)
+class QBluetoothTransferReplySymbian : public QBluetoothTransferReply
 {
-    QBluetoothTransferReplySymbian *reply = new QBluetoothTransferReplySymbian(data);
+    Q_OBJECT
 
-    reply->setAddress(request.address());
+public:
+    QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent = 0);
+    ~QBluetoothTransferReplySymbian();
 
-    connect(reply, SIGNAL(finished(QBluetoothTransferReply*)), this, SIGNAL(finished(QBluetoothTransferReply*)));
+    void abort();
+    bool isFinished() const;
+    bool isRunning() const;
 
-    reply->start();
+    bool start();
 
-    return reply;
-}
+    void setAddress(const QBluetoothAddress &address);
+
+protected:
+    qint64 readData(char*, qint64);
+    qint64 writeData(const char*, qint64);
+
+public:
+    QIODevice *m_source;
+    
+    QBluetoothAddress m_address;
+
+    bool m_running;
+    bool m_finished;
+    
+};
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QBLUETOOTHTRANSFERREPLYPRIVATE_H

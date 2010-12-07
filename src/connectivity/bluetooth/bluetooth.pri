@@ -57,7 +57,9 @@ symbian {
     PRIVATE_HEADERS += \
         bluetooth/utils_symbian_p.h\
         bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h \
-        bluetooth/qbluetoothsocket_symbian_p.h
+        bluetooth/qbluetoothsocket_symbian_p.h \
+		bluetooth/qbluetoothtransferreply_symbian_p.h
+
 
     SOURCES += \
         bluetooth/qbluetoothserviceinfo_symbian.cpp\     
@@ -67,6 +69,7 @@ symbian {
         bluetooth/qbluetoothsocket_symbian_p.cpp\
         bluetooth/qrfcommserver_symbian.cpp \
         bluetooth/qbluetoothlocaldevice_symbian.cpp \
+        bluetooth/qbluetoothtransferreply_symbian.cpp \
         bluetooth/qbluetoothtransfermanager_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib

@@ -460,4 +460,6 @@ EXPORTS
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 459 NONAME
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 460 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 461 NONAME
+	_ZN10QtMobility25QBluetoothTransferManager3putERKNS_25QBluetoothTransferRequestEP9QIODevice @ 462 NONAME
+	_ZNK10QtMobility11QLlcpSocket14bytesAvailableEv @ 463 NONAME
 

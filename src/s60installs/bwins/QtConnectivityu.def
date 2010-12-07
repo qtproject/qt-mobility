@@ -500,7 +500,9 @@ EXPORTS
 	??1QLlcpSocket@QtMobility@@UAE@XZ @ 499 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
 	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 500 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
 	?attributes@QBluetoothServiceInfo@QtMobility@@QBE?AV?$QList@G@@XZ @ 501 NONAME ; class QList<unsigned short> QtMobility::QBluetoothServiceInfo::attributes(void) const
-	?d_func@QBluetoothTransferRequest@QtMobility@@ABEPBVQBluetoothTransferRequestPrivate@2@XZ @ 503 NONAME ; class QtMobility::QBluetoothTransferRequestPrivate const * QtMobility::QBluetoothTransferRequest::d_func(void) const
-	?d_func@QBluetoothTransferRequest@QtMobility@@AAEPAVQBluetoothTransferRequestPrivate@2@XZ @ 504 NONAME ; class QtMobility::QBluetoothTransferRequestPrivate * QtMobility::QBluetoothTransferRequest::d_func(void)
-	?address@QBluetoothTransferRequest@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 505 NONAME ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothTransferRequest::address(void) const
+	?d_func@QBluetoothTransferRequest@QtMobility@@ABEPBVQBluetoothTransferRequestPrivate@2@XZ @ 502 NONAME ABSENT ; class QtMobility::QBluetoothTransferRequestPrivate const * QtMobility::QBluetoothTransferRequest::d_func(void) const
+	?d_func@QBluetoothTransferRequest@QtMobility@@AAEPAVQBluetoothTransferRequestPrivate@2@XZ @ 503 NONAME ABSENT ; class QtMobility::QBluetoothTransferRequestPrivate * QtMobility::QBluetoothTransferRequest::d_func(void)
+	?address@QBluetoothTransferRequest@QtMobility@@QBE?AVQBluetoothAddress@2@XZ @ 504 NONAME ABSENT ; class QtMobility::QBluetoothAddress QtMobility::QBluetoothTransferRequest::address(void) const
+	?bytesAvailable@QLlcpSocket@QtMobility@@UBE_JXZ @ 505 NONAME ; long long QtMobility::QLlcpSocket::bytesAvailable(void) const
+	?put@QBluetoothTransferManager@QtMobility@@QAEPAVQBluetoothTransferReply@2@ABVQBluetoothTransferRequest@2@PAVQIODevice@@@Z @ 506 NONAME ; class QtMobility::QBluetoothTransferReply * QtMobility::QBluetoothTransferManager::put(class QtMobility::QBluetoothTransferRequest const &, class QIODevice *)
 
