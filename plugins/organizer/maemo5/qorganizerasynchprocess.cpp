@@ -171,12 +171,12 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerAbstractRequest *r
 
     m_timeoutMutex.lock();
     if (!m_activeRequests.contains(req)) {
-        // timeout occured
+        // timeout occurred
         m_timeoutMutex.unlock();
         return false;
     }
     else {
-        // timeout not occured
+        // timeout not occurred
         m_activeRequests.remove(req);
 
         // cancel and remove timer
