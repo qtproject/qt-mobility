@@ -6,7 +6,9 @@
 
 class MapBox;
 class QGridLayout;
+class QLayout;
 class QPushButton;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -14,9 +16,11 @@ class MainWindow : public QMainWindow
 private:
     QList<MapBox *> m_boxes;
     QGridLayout * m_layout;
+    QLayout * m_controlLayout;
     void addBox(MapBox * box);
     QTime eventTime;
     QPushButton * m_cleanButton;
+    QLabel * m_errorLabel;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -24,6 +28,7 @@ public:
 
 private slots:
     void networkSessionOpened();
+    void compareImages();
 
 protected:
     void timerEvent(QTimerEvent * event);
