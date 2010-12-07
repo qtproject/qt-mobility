@@ -96,6 +96,8 @@ public:
     Error error() const;
     State state() const;
 
+    qint64 bytesAvailable() const;
+
     bool waitForReadyRead(int msecs = 30000);
     bool waitForBytesWritten(int msecs = 30000);
     virtual bool waitForConnected(int msecs = 30000);
