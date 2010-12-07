@@ -317,7 +317,7 @@ public:
 
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
-    QUuid hostId(); //1.2
+    QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
@@ -399,6 +399,7 @@ public:
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
     int startCurrentMeasurement(int rate);
+    bool batteryIsPresent;
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);

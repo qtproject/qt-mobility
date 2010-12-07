@@ -42,8 +42,8 @@
 //TESTED_COMPONENT=src/systeminfo
 
 #include <QtTest/QtTest>
-#include "qsysteminfo.h"
-#include "../qsysteminfotestcommon.h"
+#include "qdeclarativedeviceinfo_p.h"
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemDeviceInfo::BatteryStatus);
@@ -54,7 +54,7 @@ Q_DECLARE_METATYPE(QSystemDeviceInfo::SimStatus);
 
 Q_DECLARE_METATYPE(QSystemDeviceInfo::KeyboardTypeFlags);
 
-class tst_QSystemDeviceInfo : public QObject
+class tst_QDeclarativeDeviceInfo : public QObject
 {
     Q_OBJECT
 
@@ -98,7 +98,7 @@ signal todo:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
   */
 
-void tst_QSystemDeviceInfo::initTestCase()
+void tst_QDeclarativeDeviceInfo::initTestCase()
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
@@ -113,56 +113,56 @@ void tst_QSystemDeviceInfo::initTestCase()
 
 }
 
-void tst_QSystemDeviceInfo::tst_inputMethodType()
+void tst_QDeclarativeDeviceInfo::tst_inputMethodType()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QVERIFY( di.inputMethodType() != 0
         || di.inputMethodType() == 0);
 }
 
-void tst_QSystemDeviceInfo::tst_imei()
+void tst_QDeclarativeDeviceInfo::tst_imei()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QString imeiStr =di.imei();
     QVERIFY(!imeiStr.isEmpty() || imeiStr.isEmpty());
 
 }
 
-void tst_QSystemDeviceInfo::tst_imsi()
+void tst_QDeclarativeDeviceInfo::tst_imsi()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QString imsiStr = di.imsi();
     QVERIFY(!imsiStr.isEmpty() || imsiStr.isEmpty());
 
 }
 
-void tst_QSystemDeviceInfo::tst_manufacturer()
+void tst_QDeclarativeDeviceInfo::tst_manufacturer()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QString manu = di.manufacturer();
     QVERIFY(!manu.isEmpty() || manu.isEmpty());
 
 }
 
-void tst_QSystemDeviceInfo::tst_model()
+void tst_QDeclarativeDeviceInfo::tst_model()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QString model = di.model();
     QVERIFY(!model.isEmpty() || model.isEmpty());
 
 }
 
-void tst_QSystemDeviceInfo::tst_productName()
+void tst_QDeclarativeDeviceInfo::tst_productName()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QString product = di.productName();
     QVERIFY(!product.isEmpty() | product.isEmpty());
 
 }
 
-void tst_QSystemDeviceInfo::tst_batteryLevel()
+void tst_QDeclarativeDeviceInfo::tst_batteryLevel()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QVERIFY(di.batteryLevel() > -1);
 
 // until we simulate this, or wait the signalspy to olong, this will always fail
@@ -174,9 +174,9 @@ void tst_QSystemDeviceInfo::tst_batteryLevel()
 //    }
 }
 
-void tst_QSystemDeviceInfo::tst_batteryStatus()
+void tst_QDeclarativeDeviceInfo::tst_batteryStatus()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     int level = di.batteryLevel();
     if(level < 4) {
         QVERIFY(di.batteryStatus() ==QSystemDeviceInfo::BatteryCritical );
@@ -201,9 +201,9 @@ void tst_QSystemDeviceInfo::tst_batteryStatus()
 //    }
 }
 
-void tst_QSystemDeviceInfo::tst_currentProfile()
+void tst_QDeclarativeDeviceInfo::tst_currentProfile()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QSystemDeviceInfo::Profile profile = di.currentProfile();
     QVERIFY( profile == QSystemDeviceInfo::UnknownProfile
              || profile == QSystemDeviceInfo::SilentProfile
@@ -215,24 +215,24 @@ void tst_QSystemDeviceInfo::tst_currentProfile()
              || profile == QSystemDeviceInfo::CustomProfile);
 }
 
-void tst_QSystemDeviceInfo::tst_simStatus()
+void tst_QDeclarativeDeviceInfo::tst_simStatus()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     bool simStat = di.simStatus();
     QVERIFY(simStat == true || simStat == false);
 
 }
 
-void tst_QSystemDeviceInfo::tst_isDeviceLocked()
+void tst_QDeclarativeDeviceInfo::tst_isDeviceLocked()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     bool devLock = di.isDeviceLocked();
     QVERIFY(devLock == true || devLock == false);
 }
 
-void tst_QSystemDeviceInfo::tst_currentPowerState()
+void tst_QDeclarativeDeviceInfo::tst_currentPowerState()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QSystemDeviceInfo::PowerState state = di.currentPowerState();
     QVERIFY( state == QSystemDeviceInfo::UnknownPower
              || state == QSystemDeviceInfo::BatteryPower
@@ -240,17 +240,17 @@ void tst_QSystemDeviceInfo::tst_currentPowerState()
              || state == QSystemDeviceInfo::WallPowerChargingBattery);
 }
 
-void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
+void tst_QDeclarativeDeviceInfo::tst_currentBluetoothPowerState()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     bool state = di.currentPowerState();
     QVERIFY(state || !state);
 }
 
 
-void tst_QSystemDeviceInfo::tst_keyboardType()
+void tst_QDeclarativeDeviceInfo::tst_keyboardType()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardType();
 
     QVERIFY( (flags && QSystemDeviceInfo::UnknownKeyboard == QSystemDeviceInfo::UnknownKeyboard)
@@ -261,24 +261,24 @@ void tst_QSystemDeviceInfo::tst_keyboardType()
              || (flags && QSystemDeviceInfo::WirelessKeyboard ==  QSystemDeviceInfo::WirelessKeyboard));
 }
 
-void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
+void tst_QDeclarativeDeviceInfo::tst_isWirelessKeyboardConnected()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
    bool on = di.isWirelessKeyboardConnected();
    QVERIFY(on || !on);
 }
 
-void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
+void tst_QDeclarativeDeviceInfo::tst_isKeyboardFlipOpen()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     bool on = di.isKeyboardFlipOpen();
     QVERIFY(on || !on);
 }
 
-void tst_QSystemDeviceInfo::tst_keypadLightOn()
+void tst_QDeclarativeDeviceInfo::tst_keypadLightOn()
 
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     bool on = di.keypadLightOn(QSystemDeviceInfo::PrimaryKeypad);
     QVERIFY(on || !on);
     on = di.keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
@@ -286,16 +286,16 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn()
 
 }
 
-void tst_QSystemDeviceInfo::tst_uniqueID()
+void tst_QDeclarativeDeviceInfo::tst_uniqueID()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QUuid id = di.uniqueID();
     QVERIFY(id.isNull()|| !id.isNull());
 }
 
-void tst_QSystemDeviceInfo::tst_lockStatus()
+void tst_QDeclarativeDeviceInfo::tst_lockStatus()
 {
-    QSystemDeviceInfo di;
+    QDeclarativeDeviceInfo di;
     QSystemDeviceInfo::LockType lock = di.lockStatus();
     if (di.isDeviceLocked()) {
         QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
@@ -305,5 +305,5 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
     }
 }
 
-QTEST_MAIN(tst_QSystemDeviceInfo)
-#include "tst_qsystemdeviceinfo.moc"
+QTEST_MAIN(tst_QDeclarativeDeviceInfo)
+#include "tst_qdeclarativedeviceinfo.moc"

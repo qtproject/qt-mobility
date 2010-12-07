@@ -1228,9 +1228,9 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
-    return 0;//gethostid();
+    return 0;//getuniqueID();
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
