@@ -290,6 +290,12 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
     return retVal;
 }
 
+bool QMessageStorePrivate::removeAccount(const QMessageAccountId &id)
+{
+#warning TODO: implementation
+    return false;
+}
+
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
 {
     switch (idType(id)) {
