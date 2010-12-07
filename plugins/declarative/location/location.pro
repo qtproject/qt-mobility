@@ -47,6 +47,10 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeoplace_p.h \
            qdeclarativegeoaddress_p.h \
            qdeclarativegeoboundingbox_p.h
+           qdeclarativegeoroutingmodel_p.h \
+           qdeclarativegeoroute_p.h \
+           qdeclarativegeoroutesegment_p.h \
+           qdeclarativegeomaneuver_p.h \
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -76,7 +80,10 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeoplace.cpp \
            qdeclarativegeoaddress.cpp \
            qdeclarativegeoboundingbox.cpp
-
+           qdeclarativegeoroutingmodel.cpp \
+           qdeclarativegeoroute.cpp \
+           qdeclarativegeoroutesegment.cpp \
+           qdeclarativegeomaneuver.cpp \
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,
