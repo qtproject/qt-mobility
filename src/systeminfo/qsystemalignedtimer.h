@@ -53,32 +53,22 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemAlignedTimerPrivate;
 
-class QSystemAlignedTimer : public QObject
+class QSystemAlignedTimer : public QTimer
 {
     Q_OBJECT
 
     Q_PROPERTY(bool wokeUp READ wokeUp CONSTANT)
-    Q_PROPERTY(WaitMode waitMode READ waitMode WRITE setWaitMode)
 
 public:
-
-    enum WaitMode {
-        DoNotWaitForHeartbeat = 0,
-        WaitForHeartbeat
-    };
 
     Q_ENUMS(WaitMode)
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
 
-    Q_INVOKABLE QTime wait(QTime minInterval, QTime maxInterval);
-    Q_INVOKABLE QTime wait(uint optimalInterval, uint timerWindow);
+    Q_INVOKABLE bool requestTimer(QTime minInterval, QTime maxInterval);
+    Q_INVOKABLE bool requestTimer(uint optimalInterval, uint timerWindow);
 
     bool wokeUp();
-
-    QSystemAlignedTimer::WaitMode waitMode();
-    bool setWaitMode(QSystemAlignedTimer::WaitMode waitMode);
-
 
 Q_SIGNALS:
     void hearbeat();
