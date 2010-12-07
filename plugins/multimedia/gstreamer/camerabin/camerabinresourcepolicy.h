@@ -39,9 +39,63 @@
 **
 ****************************************************************************/
 
-#include "libicd-network-wlan-dev.h"
+#ifndef CAMERARESOURCEPOLICY_H
+#define CAMERARESOURCEPOLICY_H
 
-int main(int, char**)
+#include <QtCore/qobject.h>
+#include <QtCore/qlist.h>
+
+namespace ResourcePolicy {
+class ResourceSet;
+};
+
+class CamerabinResourcePolicy : public QObject
 {
-    return 0;
-}
+    Q_OBJECT
+public:
+    enum ResourceSet {
+        NoResources,
+        LoadedResources,
+        ImageCaptureResources,
+        VideoCaptureResources
+    };
+
+    CamerabinResourcePolicy(QObject *parent);
+    ~CamerabinResourcePolicy();
+
+    ResourceSet resourceSet() const;
+    void setResourceSet(ResourceSet set);
+
+    bool isResourcesGranted() const;
+
+Q_SIGNALS:
+    void resourcesDenied();
+    void resourcesGranted();
+    void resourcesLost();
+
+private Q_SLOTS:
+    void handleResourcesGranted();
+    void handleResourcesDenied();
+    void handleResourcesLost();
+
+private:
+    ResourceSet m_resourceSet;
+
+    enum ResourceStatus {
+        Initial = 0,
+        RequestedResource,
+        GrantedResource
+    };
+
+    enum {
+        LoadedResourcesSet = 0,
+        ImageResourcesSet,
+        VideoResouresSet
+    };
+
+    QList<ResourcePolicy::ResourceSet *> m_resources;
+    QList<ResourceStatus> m_resourceStatuses;
+    QList<int> m_requestedSets;
+};
+
+#endif

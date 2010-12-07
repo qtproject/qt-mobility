@@ -56,6 +56,11 @@ FileBrowser::FileBrowser(QWidget *parent, Qt::WindowFlags flags)
     setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
+    menuBar()->addAction(tr("Documents"), this, SLOT(browseDocuments()));
+    menuBar()->addAction(tr("Audio"), this, SLOT(browseAudio()));
+    menuBar()->addAction(tr("Images"), this, SLOT(browseImages()));
+    menuBar()->addAction(tr("Videos"), this, SLOT(browseVideos()));
+
     fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setRootPath(QDesktopServices::storageLocation(QDesktopServices::HomeLocation));
 
@@ -64,11 +69,6 @@ FileBrowser::FileBrowser(QWidget *parent, Qt::WindowFlags flags)
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
     setCentralWidget(view);
-
-    menuBar()->addAction(tr("Documents"), this, SLOT(browseDocuments()));
-    menuBar()->addAction(tr("Audio"), this, SLOT(browseAudio()));
-    menuBar()->addAction(tr("Images"), this, SLOT(browseImages()));
-    menuBar()->addAction(tr("Videos"), this, SLOT(browseVideos()));
 
     browseDocuments();
 }

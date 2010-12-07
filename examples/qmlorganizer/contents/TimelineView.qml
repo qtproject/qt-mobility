@@ -149,9 +149,8 @@ Rectangle {
                 }
                 MouseArea {
                     anchors.fill: parent
-                    onClicked : dayList.currentIndex = index
-                    onDoubleClicked: {
-                        //calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
+                    onClicked : {
+                        dayList.currentIndex = index
                         calendar.state = "DayView"
                     }
                 }

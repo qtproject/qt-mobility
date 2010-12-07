@@ -119,13 +119,8 @@ Rectangle
             TextInput { text:detailsView.item.guid}
 
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
         }
     }
 
@@ -162,13 +157,8 @@ Rectangle
             TextInput { text:detailsView.item.originalDate}
 
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
 
             Text { text: "manager:" }
             Text { text:detailsView.item.manager}
@@ -202,13 +192,8 @@ Rectangle
             TextInput { text:detailsView.item.startDateTime}
 
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
 
             Text { text: "manager:" }
             Text { text:detailsView.item.manager}
@@ -239,13 +224,8 @@ Rectangle
             TextInput { text:detailsView.item.description}
 
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
 
             Text { text: "manager:" }
             Text { text:detailsView.item.manager}
@@ -300,13 +280,8 @@ Rectangle
             Text { text: "*not implemented*"}
 
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
 
             Text { text: "manager:" }
             Text { text:detailsView.item.manager}
@@ -328,8 +303,9 @@ Rectangle
         opacity: itemType == "TodoOccurrence" ? 1: 0
 
         Grid {
-            columns: 2
+            columns: 1
             spacing: 2
+
             Text { text: "displayLabel:" }
             TextInput { text:detailsView.item.displayLabel}
 
@@ -363,15 +339,8 @@ Rectangle
             Text { text: "original date:" }
             TextInput { text:detailsView.item.originalDate}
 
-
             Text { text: "timestamp:" }
-            Text { text:detailsView.item.timestamp}
-
-            Text { text: "tag:" }
-            TextInput { text:detailsView.item.tag}
-
-            Text { text: "comment:" }
-            TextInput { text:detailsView.item.comment}
+            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
             Text { text: "manager:" }
             Text { text:detailsView.item.manager}

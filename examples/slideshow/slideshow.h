@@ -78,11 +78,10 @@ private:
     QMediaImageViewer *imageViewer;
     QMediaPlaylist *playlist;
     QLabel *statusLabel;
-    QAction *countdownAction;
+    QLabel *countdownLabel;
     QAction *playAction;
     QAction *stopAction;
     QToolBar *toolBar;
-    QStackedLayout *viewerLayout;
 };
 
 #endif

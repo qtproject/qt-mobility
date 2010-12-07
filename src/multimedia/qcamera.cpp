@@ -78,7 +78,7 @@ public:
 /*!
     \class QCamera
 
-    \preliminary
+    
     \brief The QCamera class provides interface for system camera devices.
 
     \inmodule QtMultimediaKit

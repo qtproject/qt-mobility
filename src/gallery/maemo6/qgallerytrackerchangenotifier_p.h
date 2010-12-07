@@ -63,8 +63,10 @@ class QGalleryTrackerChangeNotifier : public QObject
 {
     Q_OBJECT
 public:
-    QGalleryTrackerChangeNotifier( int serviceId,
-            const QGalleryDBusInterfacePointer &daemonInterface, QObject *parent = 0);
+    QGalleryTrackerChangeNotifier(
+            const QString &service,
+            const QGalleryDBusInterfacePointer &daemonInterface,
+            QObject *parent = 0);
 
 public Q_SLOTS:
     void itemsEdited(const QString &service);
@@ -73,11 +75,14 @@ Q_SIGNALS:
     void itemsChanged(int updateId);
 
 private Q_SLOTS:
-    void subjectsAddedOrRemoved(const QStringList &subjects);
+    void graphUpdated(
+            const QString &className,
+            const QVector<QGalleryTrackerGraphUpdate> &deletes,
+            const QVector<QGalleryTrackerGraphUpdate> &inserts);
 
 private:
     const QGalleryDBusInterfacePointer m_daemonInterface;
-    int m_serviceId;
+    QString m_service;
 };
 
 QTM_END_NAMESPACE
