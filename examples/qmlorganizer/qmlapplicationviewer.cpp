@@ -135,7 +135,7 @@ void QmlApplicationViewer::setOrientation(Orientation orientation)
         qWarning("'ORIENTATIONLOCK' needs to be defined on Symbian when locking the orientation.");
 #endif // ORIENTATIONLOCK
     }
-#elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#elif defined(Q_WS_MAEMO_5)
     Qt::WidgetAttribute attribute;
     switch (orientation) {
     case LockPortrait:
