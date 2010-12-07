@@ -104,13 +104,23 @@ MapBox::~MapBox()
 
 void MapBox::setProvider(const QString & providerId)
 {
+    if (m_providerId == providerId)
+        return;
+
+    m_providerId = providerId;
+
+    createProvider();
+}
+
+void MapBox::createProvider()
+{
     delete m_serviceProvider;
 
-    m_serviceProvider = new QGeoServiceProvider(providerId);
+    m_serviceProvider = new QGeoServiceProvider(m_providerId, m_parameters);
 
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("MapViewer Example"), tr(
-            "Unable to find the %1 geoservices plugin.").arg(providerId));
+            "Unable to find the %1 geoservices plugin.").arg(m_providerId));
         qApp->quit();
     }
 
@@ -118,6 +128,7 @@ void MapBox::setProvider(const QString & providerId)
 
     createMapWidget();
 }
+
 void MapBox::createMapWidget()
 {
     // delete m_mapWidget; // TODO: uncomment, since this is an EVIL workaround
@@ -314,9 +325,16 @@ void MapBox::clearCache()
     diskCache->clear();
 }
 
+void MapBox::setParameter(const QString & parameter, const QVariant & value)
+{
+    m_parameters[parameter] = value;
+
+    // TODO: defer provider re-creation?
+    createProvider();
+}
+
 /* TODO
-    make parameter hash accessible
-        - make it possible to change the server
+    - make it possible to change the server (already possible through setParameter("mapping.host", "hostname"))
 
     addRoute doesn't work and freezes on exit if used
 

@@ -35,9 +35,13 @@ private:
 
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
+    void createProvider();
     void createMapWidget();
 
     static QNetworkSession * m_session;
+
+    QString m_providerId;
+    QMap<QString,QVariant> m_parameters;
 
 public:
     StatsWidget * m_statistics;
@@ -58,6 +62,8 @@ public:
     void addRoute(const QList<QGeoCoordinate> & waypoints);
 
     static QNetworkSession * session();
+
+    void setParameter(const QString & parameter, const QVariant & value);
 
 public slots:
     void clearCache();
