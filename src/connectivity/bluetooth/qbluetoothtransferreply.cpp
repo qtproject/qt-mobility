@@ -117,26 +117,24 @@ QBluetoothTransferReply::~QBluetoothTransferReply()
 */
 QVariant QBluetoothTransferReply::attribute(QBluetoothTransferRequest::Attribute code) const
 {
-    Q_UNUSED(code);
-
-    return QVariant();
+    return m_attributes[code];
 }
 
 /*!
     Returns true if this reply has finished; otherwise returns false.
 */
-bool QBluetoothTransferReply::isFinished() const
-{
-    return false;
-}
+//bool QBluetoothTransferReply::isFinished() const
+//{
+//    return false;
+//}
 
 /*!
     Returns true if this reply is running; otherwise returns false.
 */
-bool QBluetoothTransferReply::isRunning() const
-{
-    return false;
-}
+//bool QBluetoothTransferReply::isRunning() const
+//{
+//    return false;
+//}
 
 /*!
     Returns the QBluetoothTransferManager that was used to create this QBluetoothTransferReply
@@ -144,7 +142,7 @@ bool QBluetoothTransferReply::isRunning() const
 */
 QBluetoothTransferManager *QBluetoothTransferReply::manager() const
 {
-    return 0;
+    return m_manager;
 }
 
 /*!
@@ -152,24 +150,24 @@ QBluetoothTransferManager *QBluetoothTransferReply::manager() const
 */
 QBluetoothTransferManager::Operation QBluetoothTransferReply::operation() const
 {
-    return QBluetoothTransferManager::GetOperation;
+    return m_operation;
 }
 
 /*!
     Returns a copy of the QBluetoothTransferRequest object used to create this
     QBluetoothTransferReply.
 */
-QBluetoothTransferRequest QBluetoothTransferReply::request() const
-{
-    return QBluetoothTransferRequest(QBluetoothAddress());
-}
+//QBluetoothTransferRequest QBluetoothTransferReply::request() const
+//{
+//    return QBluetoothTransferRequest(QBluetoothAddress());
+//}
 
 /*!
     Returns the read buffer size.
 */
 qint64 QBluetoothTransferReply::readBufferSize() const
 {
-    return 0;
+    return m_buffersize;
 }
 
 /*!
@@ -177,7 +175,7 @@ qint64 QBluetoothTransferReply::readBufferSize() const
 */
 void QBluetoothTransferReply::setReadBufferSize(qint64 size)
 {
-    Q_UNUSED(size);
+    m_buffersize = size;
 }
 
 /*!
@@ -186,8 +184,7 @@ void QBluetoothTransferReply::setReadBufferSize(qint64 size)
 void QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute code,
                                            const QVariant &value)
 {
-    Q_UNUSED(code);
-    Q_UNUSED(value);
+    m_attributes.insert(code, value);
 }
 
 /*!
@@ -195,7 +192,7 @@ void QBluetoothTransferReply::setAttribute(QBluetoothTransferRequest::Attribute 
 */
 void QBluetoothTransferReply::setOperation(QBluetoothTransferManager::Operation operation)
 {
-    Q_UNUSED(operation);
+    m_operation = operation;
 }
 
 #include "moc_qbluetoothtransferreply.cpp"

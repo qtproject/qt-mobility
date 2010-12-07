@@ -73,11 +73,13 @@ public:
 
     bool start();
 
-    static bool copyToTempFile(QIODevice *to, QIODevice *from);
-
     void startOPP(QString filename);
 
-    void setAddress(QBluetoothAddress &address);
+    void setAddress(const QBluetoothAddress &address);
+
+protected:
+    qint64 readData(char*, qint64);
+    qint64 writeData(const char*, qint64);
 
 private:
     OrgOpenobexClientInterface *client;
@@ -92,15 +94,18 @@ private:
 
     QBluetoothAddress address;
 
+    static bool copyToTempFile(QIODevice *to, QIODevice *from);
+
 private slots:
     void copyDone();
 
 public slots:
     void Complete(const QDBusObjectPath &in0);
     void Error(const QDBusObjectPath &in0, const QString &in1);
-    void Progress(const QDBusObjectPath &in0, uint in1);
+    void Progress(const QDBusObjectPath &in0, qulonglong in1);
     void Release();
     QString Request(const QDBusObjectPath &in0);
+
 
 };
 
