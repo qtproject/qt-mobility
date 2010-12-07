@@ -464,9 +464,10 @@ int QSystemBatteryInfo::startCurrentMeasurement(int rate)
 }
 
 /*!
+    \property QSystemBatteryInfo::energyMeasurementUnit
+        \brief The energy unit used by the system.
   Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
   */
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
 {
     return batteryInfoPrivate()->energyMeasurementUnit();
