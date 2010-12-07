@@ -1,0 +1,36 @@
+Near Field Communication (NFC)
+
+The NFC API is under development and subject to change between the tech preview
+and its official release with Qt Mobility 1.2. Unfortunately there are no
+functional backend for real hardware for the technology preview. An emulation
+backend is available, however, which is used by both the unit tests and the
+Qt Simulator backend. To use the Qt Simulator backend a modified version of the
+Qt Simulator is required. It is available at http://qt.gitorious.org/?????
+
+What should work:
+
+1. NDEF record and message parsing
+
+2. NDEF record and message creation
+
+3. NDEF notification
+
+4. NFC Tag Type 1 tags are supported
+    - NDEF reading
+    - NDEF writing
+    - Tag specific commands
+    - Static and Dynamic memory models
+
+
+What does NOT work:
+
+1. Backends for real hardware: Symbian, MeeGo
+
+2. LLCP Sockets
+
+3. Other common tag technologies
+    - NFC Tag Type 2
+    - NFC Tag Type 3
+    - NFC Tag Type 4
+    - Mifare
+
