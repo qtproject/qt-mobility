@@ -370,7 +370,8 @@ bool QLandmarkAbstractRequest::cancel()
     within the given period, otherwise returns false.  Some backends may be unable
     to support this  operation safely and will return false immediately.
     The sqlite and sparql managers currently do not support waitForFinished(),
-    while the symbian manager does.
+    while the symbian manager does. (with the exception of an import request,
+    which will always return false on symbian when waitForFinished() is called).
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when
