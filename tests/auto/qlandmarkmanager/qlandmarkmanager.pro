@@ -37,6 +37,8 @@ symbian {
         addFiles.sources += data/places.gpx
         addFiles.sources += data/test.kml
         addFiles.sources += data/malformed.kml
+        addFiles.sources += data/test.kmz
+        addFiles.sources += data/malformed.kmz
         addFiles.path = data
         DEPLOYMENT += addFiles
 }

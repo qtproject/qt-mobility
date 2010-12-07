@@ -121,6 +121,7 @@
 #define LANDMARK_FETCH_CANCEL
 #ifdef Q_OS_SYMBIAN
 #define IMPORT_KML
+#define IMPORT_KMZ
 #endif
 #define IMPORT_GPX
 #define IMPORT_LMX
@@ -1121,6 +1122,11 @@ private slots:
 #ifdef IMPORT_KML
     void importKml();
     void importKml_data();
+#endif
+
+#ifdef IMPORT_KMZ
+    void importKmz();
+    void importKmz_data();
 #endif
 
 #ifdef IMPORT_GPX
@@ -6527,11 +6533,8 @@ void tst_QLandmarkManager::importKml()
     QVERIFY(lms.contains(lm2));
     QVERIFY(lms.contains(lm3));
 
-    //try import file using null pointer.
-
     static bool errorTestsDone = false;
     if (!errorTestsDone) {
-
         //no io device
         QVERIFY(!m_manager->importLandmarks(NULL,QLandmarkManager::Kml));
         QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
@@ -6567,14 +6570,14 @@ void tst_QLandmarkManager::importKml()
 
         //malformed file
         QVERIFY(!m_manager->importLandmarks("data/malformed.kml", QLandmarkManager::Kml));
-        QEXPECT_FAIL("", "MOBLITY-2109: wrong error code returned when imported malformed landmark file", Continue);
+        QEXPECT_FAIL("", "MOBLITY-2109: imprecise code returned when imported malformed landmark file", Continue);
         QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
 
         importRequest.setFormat(QLandmarkManager::Kml);
         importRequest.setFileName("data/malformed.kml");
         importRequest.start();
-        QEXPECT_FAIL("", "MOBLITY-2109: wrong error code returned when imported malformed landmark file", Continue);
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
+        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError));
 
         errorTestsDone = true;
     }
@@ -6601,7 +6604,133 @@ void tst_QLandmarkManager::importKml_data()
     QTest::newRow("async filename attachSingleCategory") << "async" << tst_QLandmarkManager::Filename << QLandmarkManager::AttachSingleCategory;
     QTest::newRow("async iodevice attachSingleCategory") << "async" << tst_QLandmarkManager::IODevice << QLandmarkManager::AttachSingleCategory;
 }
+#endif
 
+#ifdef IMPORT_KMZ
+void tst_QLandmarkManager::importKmz()
+{
+    QFETCH(QString, type);
+    QFETCH(tst_QLandmarkManager::InputType, inputType);
+    QFETCH(QLandmarkManager::TransferOption, transferOption);
+    QLandmarkCategory cat1;
+    cat1.setName("CAT1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+    QVERIFY(m_manager->removeCategory(cat3.categoryId()));
+
+    QList<QLandmarkId> lmIds;
+    QVERIFY(doImport(type,
+                     "data/test.kmz",
+                     QLandmarkManager::NoError,
+                     &lmIds,inputType,
+                     QLandmarkManager::Kmz,
+                     transferOption,
+                     cat2.categoryId()));
+    QList<QLandmark> lms = m_manager->landmarks();
+    QLandmark lm1;
+    lm1.setName("w0");
+    lm1.setCoordinate(QGeoCoordinate(2.0,1.0,3));
+
+    QLandmark lm2;
+    lm2.setName("w1");
+    lm2.setCoordinate(QGeoCoordinate(1.0, 2.0,3));
+
+    QLandmark lm3;
+    lm3.setName("w2");
+    lm3.setCoordinate(QGeoCoordinate(2.0,3.0,1));
+
+    if (transferOption == QLandmarkManager::AttachSingleCategory) {
+        lm1.addCategoryId(cat2.categoryId());
+        lm2.addCategoryId(cat2.categoryId());
+        lm3.addCategoryId(cat2.categoryId());
+    }
+
+    for (int i=0; i < lms.count(); ++i) {
+        lms[i].setLandmarkId(QLandmarkId());
+    }
+
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+
+    static bool errorTestsDone = false;
+    if (!errorTestsDone) {
+        //no io device
+        QVERIFY(!m_manager->importLandmarks(NULL,QLandmarkManager::Kmz));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        QLandmarkImportRequest importRequest(m_manager);
+        QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        importRequest.setFormat(QLandmarkManager::Kmz);
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::BadArgumentError)); //no io device set
+
+        //no permissions
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::WriteOwner);
+        noPermFile->close();
+        QVERIFY(!m_manager->importLandmarks(noPermFile, QLandmarkManager::Kmz));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        importRequest.setFormat(QLandmarkManager::Gpx);
+        importRequest.setFileName("nopermfile");
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::BadArgumentError)); //no permissions
+        noPermFile->remove();
+
+        //non-existent file
+        QVERIFY(!m_manager->importLandmarks("doesnotexist", QLandmarkManager::Kmz));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError); //file does not exist
+
+        importRequest.setFormat(QLandmarkManager::Kmz);
+        importRequest.setFileName("doesnotexist");
+        importRequest.start();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError)); //does not exist
+
+        //malformed file
+        QVERIFY(!m_manager->importLandmarks("data/malformed.kmz", QLandmarkManager::Kmz));
+        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
+        QCOMPARE(m_manager->error(), QLandmarkManager::ParsingError);
+
+        importRequest.setFormat(QLandmarkManager::Kmz);
+        importRequest.setFileName("data/malformed.kmz");
+        importRequest.start();
+        QEXPECT_FAIL("", "MOBLITY-2109: imprecise error code returned when imported malformed landmark file", Continue);
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::ParsingError)); //does not exist
+
+        errorTestsDone = true;
+    }
+}
+
+void tst_QLandmarkManager::importKmz_data()
+{
+    QTest::addColumn<QString>("type");
+    QTest::addColumn<tst_QLandmarkManager::InputType> ("inputType");
+    QTest::addColumn<QLandmarkManager::TransferOption>("transferOption");
+
+    QTest::newRow("sync filename includeCategoryData") << "sync" << tst_QLandmarkManager::Filename << QLandmarkManager::IncludeCategoryData;
+    QTest::newRow("sync iodevice includeCategoryData") << "sync" << tst_QLandmarkManager::IODevice << QLandmarkManager::IncludeCategoryData;
+    QTest::newRow("async filename includeCategorData") << "async" << tst_QLandmarkManager::Filename << QLandmarkManager::IncludeCategoryData;
+    QTest::newRow("async iodevice includeCategoryData") << "async" << tst_QLandmarkManager::IODevice << QLandmarkManager::IncludeCategoryData;
+
+    QTest::newRow("sync filename excludeCategoryData") << "sync" << tst_QLandmarkManager::Filename << QLandmarkManager::ExcludeCategoryData;
+    QTest::newRow("sync iodevice excludeCategoryData") << "sync" << tst_QLandmarkManager::IODevice << QLandmarkManager::ExcludeCategoryData;
+    QTest::newRow("async filename excludeCategorData") << "async" << tst_QLandmarkManager::Filename << QLandmarkManager::ExcludeCategoryData;
+    QTest::newRow("async iodevice excludeCategoryData") << "async" << tst_QLandmarkManager::IODevice << QLandmarkManager::ExcludeCategoryData;
+
+    QTest::newRow("sync filename attachSingleCategory") << "sync" << tst_QLandmarkManager::Filename << QLandmarkManager::AttachSingleCategory;
+    QTest::newRow("sync iodevice attachSingleCategory") << "sync" << tst_QLandmarkManager::IODevice << QLandmarkManager::AttachSingleCategory;
+    QTest::newRow("async filename attachSingleCategory") << "async" << tst_QLandmarkManager::Filename << QLandmarkManager::AttachSingleCategory;
+    QTest::newRow("async iodevice attachSingleCategory") << "async" << tst_QLandmarkManager::IODevice << QLandmarkManager::AttachSingleCategory;
+}
 #endif
 
 #ifdef IMPORT_GPX
