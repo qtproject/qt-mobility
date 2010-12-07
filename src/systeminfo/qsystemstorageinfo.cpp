@@ -55,7 +55,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
    \class QSystemStorageInfo
    \ingroup systeminfo
    \inmodule QtSystemInfo
-        \brief The QSystemStorageInfo class provides access to memory and disk information from the system.
+        \brief The QSystemStorageInfo class provides access to disk storage information from the system.
 */
 
 /*!

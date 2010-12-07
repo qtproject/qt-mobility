@@ -62,7 +62,8 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         \class QSystemDeviceInfo::ActiveProfileDetails
         \ingroup systeminfo
         \inmodule QtSystemInfo
-        \brief The QSystemDeviceInfo::ActiveProfileDetails class provides access to
+
+        \brief The ActiveProfileDetails class provides access to
          details of the currently active phone profile.
 
   */
