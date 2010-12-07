@@ -228,7 +228,7 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
 
     Note that this only prevents new instance of the backend from being created. It does not
     invalidate the existing instances of the backend. The backend code should handle the
-    dissappearance of the underlying hardware itself.
+    disappearance of the underlying hardware itself.
 */
 void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray &identifier)
 {
