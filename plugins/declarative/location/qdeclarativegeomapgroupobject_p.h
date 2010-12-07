@@ -39,52 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
-#define QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
+#ifndef QDECLARATIVEGEOMAPGROUPOBJECT_H
+#define QDECLARATIVEGEOMAPGROUPOBJECT_H
+
+#include "qgeomapgroupobject.h"
 
 #include "qdeclarativegeomapobject_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomapobjectborder_p.h"
-#include "qgeomappolylineobject.h"
-
+#include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>
-
-class QColor;
-class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
+class QGeoCoordinate;
+
+class QDeclarativeGeoMapGroupObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
 
 public:
-    QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);
-    ~QDeclarativeGeoMapPolylineObject();
+    QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent = 0);
+    ~QDeclarativeGeoMapGroupObject();
 
-    QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
-    QDeclarativeGeoMapObjectBorder* border();
+    QDeclarativeListProperty<QDeclarativeGeoMapObject> objects();
 
-private Q_SLOTS:
-    void borderColorChanged(const QColor &color);
-    void borderWidthChanged(int width);
+    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void enterEvent();
+    virtual void exitEvent();
+    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
 
 private:
-    static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    static void child_append(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, QDeclarativeGeoMapObject *mapObject);
+    static int child_count(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
+    static QDeclarativeGeoMapObject* child_at(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, int index);
+    static void child_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
 
-    QGeoMapPolylineObject* polyline_;
-    QList<QDeclarativeCoordinate*> path_;
-    QDeclarativeGeoMapObjectBorder border_;
+    QGeoMapGroupObject* group_;
+    QList<QDeclarativeGeoMapObject*> objects_;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPolylineObject));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapGroupObject));
 
 #endif

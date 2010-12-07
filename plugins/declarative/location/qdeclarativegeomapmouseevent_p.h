@@ -39,79 +39,78 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPPIXMAPOBJECT_H
-#define QDECLARATIVEGEOMAPPIXMAPOBJECT_H
+#ifndef QDECLARATIVEGEOMAPMOUSEEVENT_H
+#define QDECLARATIVEGEOMAPMOUSEEVENT_H
 
-#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
-#include "qgeomappixmapobject.h"
 
-#include <QColor>
-#include <QUrl>
-#include <QNetworkReply>
+#include <QtDeclarative/qdeclarative.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPixmapObject : public QDeclarativeGeoMapObject
+class QDeclarativeGeoMapMouseEvent : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Status)
 
+    Q_PROPERTY(bool accepted READ accepted WRITE setAccepted NOTIFY acceptedChanged)
+    Q_PROPERTY(int buttons READ buttons WRITE setButtons NOTIFY buttonsChanged)
+    Q_PROPERTY(int modifiers READ modifiers WRITE setModifiers NOTIFY modifiersChanged)
+    Q_PROPERTY(bool wasHeld READ wasHeld WRITE setWasHeld NOTIFY wasHeldChanged)
+    Q_PROPERTY(int x READ x WRITE setX NOTIFY xChanged)
+    Q_PROPERTY(int y READ y WRITE setY NOTIFY yChanged)
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
 public:
-    enum Status {
-        Null,
-        Ready,
-        Loading,
-        Error
-    };
+    QDeclarativeGeoMapMouseEvent(QObject *parent = 0);
+    ~QDeclarativeGeoMapMouseEvent();
 
-    QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent = 0);
-    ~QDeclarativeGeoMapPixmapObject();
+    void setAccepted(bool accepted);
+    bool accepted() const;
 
+    void setButtons(int buttons);
+    int buttons() const;
+
+    void setModifiers(int modifiers);
+    int modifiers() const;
+
+    void setWasHeld(bool wasHeld);
+    bool wasHeld() const;
+
+    void setX(int x);
+    int x() const;
+
+    void setY(int y);
+    int y() const;
+
+    void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
-    void setCoordinate(const QDeclarativeCoordinate *coordinate);
-
-    QUrl source() const;
-    void setSource(const QUrl &source);
-
-    QPoint offset() const;
-    void setOffset(const QPoint &offset);
-
-    Status status() const;
 
 Q_SIGNALS:
-    void coordinateChanged(const QDeclarativeCoordinate *coordinate);
-    void sourceChanged(const QUrl &source);
-    void offsetChanged(const QPoint &offset);
-    void statusChanged(QDeclarativeGeoMapPixmapObject::Status status);
+    void acceptedChanged(bool accepted);
+    void buttonsChanged(int buttons);
+    void modifiersChanged(int modifiers);
+    void wasHeldChanged(bool wasHeld);
+    int xChanged(int x);
+    int yChanged(int y);
+    void coordinateChanged(QDeclarativeCoordinate *coordinate);
 
 private Q_SLOTS:
     void coordinateLatitudeChanged(double latitude);
     void coordinateLongitudeChanged(double longitude);
     void coordinateAltitudeChanged(double altitude);
-    void finished();
-    void error(QNetworkReply::NetworkError error);
 
 private:
-    void setStatus(const QDeclarativeGeoMapPixmapObject::Status status);
-    void load();
-
-    QGeoMapPixmapObject* pixmap_;
+    bool accepted_;
+    int buttons_;
+    int modifiers_;
+    bool wasHeld_;
+    int x_;
+    int y_;
     QDeclarativeCoordinate coordinate_;
-    QUrl source_;
-    QNetworkReply *reply_;
-    Status status_;
-
-    Q_DISABLE_COPY(QDeclarativeGeoMapPixmapObject)
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPixmapObject));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseEvent));
 
 #endif

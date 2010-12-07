@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -41,97 +40,149 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapobject_p.h"
+#include "qdeclarativegeomapmousearea_p.h"
+
+#include <QDeclarativeParserStatus>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \qmlclass MapGroup
-
-    \brief The MapGroup element aggregates a set of map objects.
-    \inherits QGeoMapGroupObject
-
-    \ingroup qml-location-maps
-
-    Grouping is provided to make it easier to quickly add, remove, show 
-    and hide groups of objects.
-
-    It also allows users to specify an ordering of objects local to the 
-    group via the z-values and insertion order of the objects in the group.
-
-    The MapGroup element is part of the \bold{QtMobility.location 1.1} module.
-*/
-
-QDeclarativeGeoMapObject::QDeclarativeGeoMapObject()
-        : QGeoMapGroupObject() {}
+QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QDeclarativeItem *parent)
+    : QDeclarativeItem(parent),
+      object_(0),
+      visible_(true) {}
 
 QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
 
-/*!
-    \qmlproperty list<QGeoMapObject> MapGroup::objects
-    \default
-
-    This property holds the list of objects which make up the group.
-*/
-
-QDeclarativeListProperty<QGeoMapObject> QDeclarativeGeoMapObject::objects()
+void QDeclarativeGeoMapObject::componentComplete()
 {
-    return QDeclarativeListProperty<QGeoMapObject>(this,
-            0,
-            child_append,
-            child_count,
-            child_at,
-            child_clear);
+    QDeclarativeItem::componentComplete();
+
+    QList<QGraphicsItem*> children = childItems();
+    for (int i = 0; i < children.size(); ++i) {
+        QDeclarativeGeoMapMouseArea *mouseArea
+                = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
+        if (mouseArea)
+            mouseAreas_.append(mouseArea);
+    }
 }
 
-void QDeclarativeGeoMapObject::child_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
+void QDeclarativeGeoMapObject::clickEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    static_cast<QDeclarativeGeoMapObject*>(prop->object)->addChildObject(mapObject);
+    if (event->accepted())
+        return;
+
+    for (int i = 0; i < mouseAreas_.size(); ++i) {
+        mouseAreas_.at(i)->clickEvent(event);
+        if (event->accepted())
+            return;
+    }
 }
 
-int QDeclarativeGeoMapObject::child_count(QDeclarativeListProperty<QGeoMapObject> *prop)
+void QDeclarativeGeoMapObject::doubleClickEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    return static_cast<QDeclarativeGeoMapObject*>(prop->object)->childObjects().size();
+    if (event->accepted())
+        return;
+
+    for (int i = 0; i < mouseAreas_.size(); ++i) {
+        mouseAreas_.at(i)->doubleClickEvent(event);
+        if (event->accepted())
+            return;
+    }
 }
 
-QGeoMapObject *QDeclarativeGeoMapObject::child_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
+void QDeclarativeGeoMapObject::pressEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    return static_cast<QDeclarativeGeoMapObject*>(prop->object)->childObjects().at(index);
+    if (event->accepted())
+        return;
+
+    for (int i = 0; i < mouseAreas_.size(); ++i) {
+        mouseAreas_.at(i)->pressEvent(event);
+        if (event->accepted())
+            return;
+    }
 }
 
-void QDeclarativeGeoMapObject::child_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
+void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
 {
-    static_cast<QDeclarativeGeoMapObject*>(prop->object)->clearChildObjects();
+    if (event->accepted())
+        return;
+
+    for (int i = 0; i < mouseAreas_.size(); ++i) {
+        mouseAreas_.at(i)->releaseEvent(event);
+        if (event->accepted())
+            return;
+    }
 }
 
-/*!
-    \qmlproperty int MapGroup::zValue
+void QDeclarativeGeoMapObject::enterEvent()
+{
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_.at(i)->enterEvent();
+}
 
-    This property holds the z-value of the group.
+void QDeclarativeGeoMapObject::exitEvent()
+{
+    for (int i = 0; i < mouseAreas_.size(); ++i)
+        mouseAreas_.at(i)->exitEvent();
+}
 
-    Map objects are drawn in z-value order, and objects with the 
-    same z-value will be drawn in insertion order.
+void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
+{
+    if (event->accepted())
+        return;
 
-    The objects inside the group are drawn according to the z-values 
-    and insertion order of the other elements of the group.  This 
-    is indpendent of the z-value and insertion order of the group 
-    element itself.
-*/
+    for (int i = 0; i < mouseAreas_.size(); ++i) {
+        mouseAreas_.at(i)->moveEvent(event);
+        if (event->accepted())
+            return;
+    }
+}
 
-/*!
-    \qmlproperty bool MapGroup::visible
+void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
+{
+    if (!object)
+        return;
 
-    This property holds a boolean corresponding to whether or not the 
-    group is visible.
-*/
+    object_ = object;
+    object_->setVisible(visible_);
 
-/*!
-    \qmlproperty bool MapGroup::selected
+    connect(this,
+            SIGNAL(zChanged()),
+            this,
+            SLOT(parentZChanged()));
 
-    This property holds a boolean corresponding to whether or not the 
-    group is selected.
-*/
+    object_->setZValue(zValue());
+}
+
+QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
+{
+    return object_;
+}
+
+void QDeclarativeGeoMapObject::parentZChanged()
+{
+    object_->setZValue(zValue());
+}
+
+void QDeclarativeGeoMapObject::setVisible(bool visible)
+{
+    if (visible_ == visible)
+        return;
+
+    visible_ = visible;
+
+    if (object_)
+        object_->setVisible(visible);
+
+    emit visibleChanged(visible_);
+}
+
+bool QDeclarativeGeoMapObject::isVisible() const
+{
+    return visible_;
+}
 
 #include "moc_qdeclarativegeomapobject_p.cpp"
 
 QTM_END_NAMESPACE
-
