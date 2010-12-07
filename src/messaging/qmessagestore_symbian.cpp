@@ -434,6 +434,11 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return messageStorePrivate()->removeMessages(filter, option);
 }
 
+bool QMessageStore::removeAccount(const QMessageAccountId &id)
+{
+    return messageStorePrivate()->removeAccount(id);
+}
+
 bool QMessageStore::addMessage(QMessage *m)
 {
     return messageStorePrivate()->addMessage(m);   	
