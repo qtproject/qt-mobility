@@ -200,6 +200,7 @@ void SearchWidget::clearWidget()
 
 void SearchWidget::updateWidget()
 {
+    qDebug("updatewidget now");
     setupWidget(m_marker);
 }
 

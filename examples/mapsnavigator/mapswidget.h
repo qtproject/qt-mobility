@@ -50,6 +50,7 @@
 #include <QHBoxLayout>
 
 #include <QTimer>
+#include <QTime>
 
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
@@ -88,6 +89,8 @@ public slots:
     void setMarkerLocation(const QGeoCoordinate &coord);
     void setMouseMarker(QGeoMapObject *marker);
 
+    void setMapType(QString type);
+
     void beginWaypointSelect(MarkerObject *marker);
 
 signals:
@@ -114,6 +117,56 @@ private:
     MarkerObject *myLocationMarker;
 
     friend class GeoMap;
+};
+
+class GeoMap : public QGraphicsGeoMap
+{
+    Q_OBJECT
+private slots:
+    void kineticTimerEvent();
+
+public:
+    GeoMap(QGeoMappingManager *manager, MapsWidget *mapsWidget);
+    ~GeoMap();
+
+    void setObjectHeld(bool held);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
+private:
+    MapsWidget *m_mapsWidget;
+    QTimer *timer;
+    bool panActive;
+    bool objectPressed;
+    bool objectHeld;
+
+    bool panDecellerate;
+
+    // Fractional pan, used by panFloatWrapper
+    QPointF remainingPan;
+
+    // current kinetic panning speed, in pixel/msec
+    QPointF kineticPanSpeed;
+    QPoint panDir;
+    QTimer *kineticTimer;
+    QTime lastMoveTime;
+
+    // An entry in the mouse history. first=speed, second=time
+    typedef QPair<QPointF, QTime> MouseHistoryEntry;
+    // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
+    QList<MouseHistoryEntry> mouseHistory;
+
+    void panFloatWrapper(const QPointF& delta);
+    void applyPan(const Qt::KeyboardModifiers& modifiers);
+
 };
 
 #endif /* MAPSWIDGET_H_ */
