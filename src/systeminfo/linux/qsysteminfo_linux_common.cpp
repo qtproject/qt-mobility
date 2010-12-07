@@ -418,12 +418,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          }
          break;
      case QSystemInfo::HapticsFeature:
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
-         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*touch*"))
-             return true;
-         if(udevService.isPropertyAvailable(UDEV_PROPERTY_NAME, "*Touch*"))
-             return true;
-#endif
+
          break;
      default:
          featureSupported = false;
