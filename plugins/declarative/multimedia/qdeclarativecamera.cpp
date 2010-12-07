@@ -144,7 +144,7 @@ void QDeclarativeCamera::_q_updateLockStatus(QCamera::LockType type,
     if (type == QCamera::LockFocus) {
         if (status == QCamera::Unlocked && reason == QCamera::LockFailed) {
             //display failed focus points in red for 1 second
-            m_focusFailedTime == QTime::currentTime();
+            m_focusFailedTime = QTime::currentTime();
             QTimer::singleShot(1000, this, SLOT(_q_updateFocusZones()));
         } else {
             m_focusFailedTime = QTime();
