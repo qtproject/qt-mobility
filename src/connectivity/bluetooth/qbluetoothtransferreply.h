@@ -56,6 +56,14 @@ class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QIODevice
     Q_OBJECT
 
 public:
+    enum TransferError {
+        NoError = 0,
+        UnknownError,
+        FileNotFoundError,
+        HostNotFoundError
+    };
+
+
     ~QBluetoothTransferReply();
 
     virtual void abort() = 0;
@@ -71,6 +79,9 @@ public:
 
     qint64 readBufferSize() const;
     virtual void setReadBufferSize(qint64 size);
+
+    virtual TransferError error() const = 0;
+    virtual QString errorString() const = 0;
 
 signals:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
