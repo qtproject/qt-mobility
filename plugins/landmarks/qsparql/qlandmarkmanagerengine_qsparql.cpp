@@ -150,25 +150,25 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     m_databaseOperations.managerUri = managerUri();
 
     QSparqlConnection conn("QTRACKER");
-    QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+    QSparqlQuery landmarkQuery("select ?id ?u {?u a slo:Landmark . OPTIONAL { ?u nie:identifier ?id }}");
     QSparqlResult* r = conn.exec(landmarkQuery);
     r->waitForFinished();
     if (!r->hasError()) {
         while (r->next()) {
-            if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
-                m_landmarkHash.insert(r->value(1).toString(), r->value(0).toInt());
+            if (!r->value(1).toString().isEmpty()) {
+                m_landmarkHash.insert(r->value(1).toString(), r->value(0).toString());
             }
         }
     }
     delete r;
 
-    QSparqlQuery categoryQuery("select tracker:id(?u) ?u { ?u a slo:LandmarkCategory }");
+    QSparqlQuery categoryQuery("select ?id ?u {?u a slo:LandmarkCategory . OPTIONAL { ?u nie:identifier ?id }}");
     r = conn.exec(categoryQuery);
     r->waitForFinished();
     if (!r->hasError()) {
         while (r->next()) {
-            if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
-                m_categoryHash.insert(r->value(1).toString(), r->value(0).toInt());
+            if (!r->value(1).toString().isEmpty()) {
+                m_categoryHash.insert(r->value(1).toString(), r->value(0).toString());
             }
         }
     }
@@ -207,7 +207,7 @@ QLandmarkManagerEngineQsparql::QLandmarkManagerEngineQsparql(const QString &file
     else
         className = QString("slo:LandmarkCategory");
     delete r;
-    m_categoryNotifier = new TrackerChangeNotifier("className", this);
+    m_categoryNotifier = new TrackerChangeNotifier(className, this);
     connect(m_categoryNotifier, SIGNAL(changed(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)),
         this, SLOT(categoriesNotified(QList<TrackerChangeNotifier::Quad>, QList<TrackerChangeNotifier::Quad>)));
 }
@@ -607,16 +607,16 @@ void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifie
         QList<QLandmarkId> addedLandmarkIds;
         QList<QLandmarkId> changedLandmarkIds;
         QList<QLandmarkId> removedLandmarkIds;
-        QHash<QString, int> landmarkHash;
+        QHash<QString, QString> landmarkHash;
 
         QSparqlConnection conn("QTRACKER");
-        QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+        QSparqlQuery landmarkQuery("select ?id ?u {?u a slo:Landmark . OPTIONAL { ?u nie:identifier ?id }}");
         QSparqlResult* r = conn.exec(landmarkQuery);
         r->waitForFinished();
         if (!r->hasError()) {
             while (r->next()) {
-                if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
-                    landmarkHash.insert(r->value(1).toString(), r->value(0).toInt());
+                if (!r->value(1).toString().isEmpty()) {
+                    landmarkHash.insert(r->value(1).toString(), r->value(0).toString());
                 }
             }
         }
@@ -633,7 +633,7 @@ void QLandmarkManagerEngineQsparql::landmarksNotified(QList<TrackerChangeNotifie
                 landmarkId.setLocalId(localId);
                 addedLandmarkIds << landmarkId;
             } else {
-                if(m_landmarkHash.value(localId) != landmarkHash.value(localId)) {
+                if(m_landmarkHash.value(localId).compare(landmarkHash.value(localId), Qt::CaseSensitive) != 0) {
                     landmarkId.setLocalId(localId);
                     changedLandmarkIds << landmarkId;
                 }
@@ -664,16 +664,16 @@ void QLandmarkManagerEngineQsparql::categoriesNotified(QList<TrackerChangeNotifi
         QList<QLandmarkCategoryId> addedCategoryIds;
         QList<QLandmarkCategoryId> changedCategoryIds;
         QList<QLandmarkCategoryId> removedCategoryIds;
-        QHash<QString, int> categoryHash;
+        QHash<QString, QString> categoryHash;
 
         QSparqlConnection conn("QTRACKER");
-        QSparqlQuery landmarkQuery("select tracker:id(?u) ?u { ?u a slo:Landmark }");
+        QSparqlQuery landmarkQuery("select ?id ?u {?u a slo:LandmarkCategory . OPTIONAL { ?u nie:identifier ?id }}");
         QSparqlResult* r = conn.exec(landmarkQuery);
         r->waitForFinished();
         if (!r->hasError()) {
             while (r->next()) {
-                if (r->value(0).toInt() != 0 && !r->value(1).toString().isEmpty()) {
-                    categoryHash.insert(r->value(1).toString(), r->value(0).toInt());
+                if (!r->value(1).toString().isEmpty()) {
+                    categoryHash.insert(r->value(1).toString(), r->value(0).toString());
                 }
             }
         }
@@ -690,7 +690,7 @@ void QLandmarkManagerEngineQsparql::categoriesNotified(QList<TrackerChangeNotifi
                 categoryId.setLocalId(localId);
                 addedCategoryIds << categoryId;
             } else {
-                if(m_categoryHash.value(localId) != categoryHash.value(localId)) {
+                if(m_categoryHash.value(localId).compare(categoryHash.value(localId), Qt::CaseSensitive) != 0) {
                     categoryId.setLocalId(localId);
                     changedCategoryIds << categoryId;
                 }

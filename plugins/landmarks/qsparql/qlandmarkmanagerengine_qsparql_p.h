@@ -221,8 +221,8 @@ protected:
 
 private:
     bool m_changeNotificationsEnabled;
-    QHash<QString, int> m_landmarkHash;
-    QHash<QString, int> m_categoryHash;
+    QHash<QString, QString> m_landmarkHash;
+    QHash<QString, QString> m_categoryHash;
     void setChangeNotificationsEnabled(bool enabled);
     QString m_filename;
     QString m_dbConnectionName;

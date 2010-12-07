@@ -70,8 +70,9 @@
 #include <qlandmarkimportrequest.h>
 #include <qlandmarkexportrequest.h>
 
-#include <QFile>
+#include <QDateTime>
 #include <QDebug>
+#include <QFile>
 #include <math.h>
 #include <QUuid>
 #include <QSet>
@@ -1862,6 +1863,13 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             return false;
         }
     }
+    queryString.append("; nie:identifier \"");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    qint64 timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    QString timeStampString;
+    queryString.append(timeStampString.setNum(timeStamp));
+    queryString.append("\" ");
+
     if (!landmark->description().isEmpty()) {
         queryString.append("; nie:description \"");
         queryString.append(landmark->description());
@@ -2148,6 +2156,8 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
                "WHERE { ?:landmark_uri slo:location ?g . } "
                "delete { ?:landmark_uri nie:description ?des . } "
                "WHERE { ?:landmark_uri nie:description ?des . } "
+               "delete { ?:landmark_uri nie:identifier ?ide . } "
+               "WHERE { ?:landmark_uri nie:identifier ?ide . } "
                "delete { ?:landmark_uri a slo:Landmark . }");
 
     if (!otherContactHasSameNumber) {
@@ -2529,6 +2539,13 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         queryString.append(category->name());
         queryString.append("\' ");
     }
+    queryString.append("; nie:identifier \"");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    qint64 timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    QString timeStampString;
+    queryString.append(timeStampString.setNum(timeStamp));
+    queryString.append("\" ");
+
     if (!category->iconUrl().toString().isEmpty()) {
         queryString.append("; slo:categoryIconUrl \'");
         queryString.append(category->iconUrl().toString());
@@ -2686,11 +2703,14 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     }
 
     QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(
-            "delete { ?:category_uri a rdfs:Resource . }",
+            "delete { ?:category_uri nie:identifier ?ide . } "
+            "WHERE { ?:category_uri nie:identifier ?ide . } "
+            "delete { ?:category_uri a slo:LandmarkCategory . }",
              QSparqlQuery::DeleteStatement);
 
+    //"delete { ?:category_uri a rdfs:Resource . }",
     qsparqlDeleteQuery.unbindValues();
-    qsparqlDeleteQuery.bindValue("category_uri", categoryId.localId());
+    qsparqlDeleteQuery.bindValue("category_uri", QUrl(categoryId.localId()));
     QSparqlResult* deleteResult = m_conn->exec(qsparqlDeleteQuery);
 
     deleteResult->waitForFinished();
