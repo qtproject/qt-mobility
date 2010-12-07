@@ -65,6 +65,17 @@ public:
 
     void setParameter(const QString & parameter, const QVariant & value);
 
+    QPixmap grab();
+    qreal squareError(MapBox * other);
+    qreal squareError(const QPixmap & other);
+    qreal squareError(const QImage & other);
+    static qreal squareError(const QImage & image1, const QImage & image2);
+
+    int countErrors(MapBox * other);
+    int countErrors(const QPixmap & other);
+    int countErrors(const QImage & other);
+    static int countErrors(const QImage & image1, const QImage & image2);
+
 public slots:
     void clearCache();
 

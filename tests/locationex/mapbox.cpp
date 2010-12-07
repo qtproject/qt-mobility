@@ -32,6 +32,8 @@
 #include <QNetworkDiskCache>
 #include <QNetworkAccessManager>
 
+#include <cmath>
+
 #include "../../src/location/maps/qgraphicsgeomap_p.h"
 #include "../../plugins/geoservices/nokia/qgeomappingmanagerengine_nokia.h"
 #include <qgeomapdata.h>
@@ -331,6 +333,92 @@ void MapBox::setParameter(const QString & parameter, const QVariant & value)
 
     // TODO: defer provider re-creation?
     createProvider();
+}
+
+QPixmap MapBox::grab()
+{
+    Q_ASSERT(m_qgv);
+    return QPixmap::grabWidget(m_qgv);
+}
+
+qreal MapBox::squareError(MapBox * other)
+{
+    return squareError(other->grab());
+}
+
+qreal MapBox::squareError(const QPixmap & otherPixmap)
+{
+    return squareError(otherPixmap.toImage());
+}
+
+qreal MapBox::squareError(const QImage & otherImage)
+{
+    QPixmap me = grab();
+
+    QImage meImage = me.toImage();
+
+    return squareError(meImage, otherImage);
+}
+
+qreal MapBox::squareError(const QImage & image1, const QImage & image2)
+{
+    qreal delta;
+
+    for (int y = 0; y < image1.height(); ++y) {
+        for (int x = 0; x < image1.width(); ++x) {
+            QRgb val1 = image1.pixel(x,y);
+            QRgb val2 = image2.pixel(x,y);
+
+            qreal deltaR = qRed(val1)   - qRed(val2);
+            qreal deltaG = qGreen(val1) - qGreen(val2);
+            qreal deltaB = qBlue(val1)  - qBlue(val2);
+
+            delta += deltaR*deltaR + deltaG*deltaG + deltaB*deltaB;
+        }
+    }
+
+    return std::sqrt(delta);
+}
+
+int MapBox::countErrors(MapBox * other)
+{
+    return countErrors(other->grab());
+}
+
+int MapBox::countErrors(const QPixmap & otherPixmap)
+{
+    return countErrors(otherPixmap.toImage());
+}
+
+int MapBox::countErrors(const QImage & otherImage)
+{
+    QPixmap me = grab();
+
+    QImage meImage = me.toImage();
+
+    return countErrors(meImage, otherImage);
+}
+
+int MapBox::countErrors(const QImage & image1, const QImage & image2)
+{
+    int errors;
+
+    for (int y = 0; y < image1.height(); ++y) {
+        for (int x = 0; x < image1.width(); ++x) {
+            QRgb val1 = image1.pixel(x, y);
+            QRgb val2 = image2.pixel(x, y);
+
+            if (
+                qRed(val1)   != qRed(val2) ||
+                qGreen(val1) != qGreen(val2) ||
+                qBlue(val1)  != qBlue(val2)
+            ) {
+                ++errors;
+            }
+        }
+    }
+
+    return errors;
 }
 
 /* TODO
