@@ -89,6 +89,8 @@ private slots:
     void tst_uniqueID();
     void tst_lockStatus();
 
+    void tst_getActiveProfileDetails();
+
 };
 /*
 signal todo:
@@ -295,6 +297,7 @@ void tst_QDeclarativeDeviceInfo::tst_uniqueID()
 
 void tst_QDeclarativeDeviceInfo::tst_lockStatus()
 {
+    qDebug() << Q_FUNC_INFO;
     QDeclarativeDeviceInfo di;
     QSystemDeviceInfo::LockType lock = di.lockStatus();
     if (di.isDeviceLocked()) {
@@ -302,6 +305,20 @@ void tst_QDeclarativeDeviceInfo::tst_lockStatus()
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
     } else {
         QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+    }
+}
+
+void tst_QDeclarativeDeviceInfo::tst_getActiveProfileDetails()
+{
+    QDeclarativeDeviceInfo di;
+    QSystemDeviceInfo::ActiveProfileDetails *details = di.getActiveProfileDetails();
+    int vol = details->messageRingtoneVolume();
+    int vol2 = details->voiceRingtoneVolume();
+    bool vib = details->vibrationActive();
+    if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
+        QVERIFY(vol > -1 && vol < 101);
+        QVERIFY(vol2 > -1 && vol2 < 101);
+        QVERIFY(vib || !vib);
     }
 }
 

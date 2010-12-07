@@ -88,6 +88,7 @@ private slots:
     void tst_keypadLightOn();
     void tst_uniqueID();
     void tst_lockStatus();
+    void tst_getActiveProfileDetails();
 
 };
 /*
@@ -302,6 +303,20 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
     } else {
         QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+    }
+}
+
+void tst_QSystemDeviceInfo::tst_getActiveProfileDetails()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::ActiveProfileDetails *details = di.getActiveProfileDetails();
+    int vol = details->messageRingtoneVolume();
+    int vol2 = details->voiceRingtoneVolume();
+    bool vib = details->vibrationActive();
+    if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
+        QVERIFY(vol > -1 && vol < 101);
+        QVERIFY(vol2 > -1 && vol2 < 101);
+        QVERIFY(vib || !vib);
     }
 }
 

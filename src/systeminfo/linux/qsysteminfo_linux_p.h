@@ -187,6 +187,9 @@ public:
     QString model();
     QString productName();
 
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
 
 //    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
 //    bool isWirelessKeyboardConnected(); //1.2

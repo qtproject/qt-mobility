@@ -58,6 +58,14 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         \brief The QSystemDeviceInfo class provides access to device information from the system.
         */
 
+/*!
+        \class QSystemDeviceInfo::ActiveProfileDetails
+        \ingroup systeminfo
+        \inmodule QtSystemInfo
+        \brief The QSystemDeviceInfo::ActiveProfileDetails class provides access to
+         details of the currently active phone profile.
+
+  */
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
 
@@ -213,7 +221,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
    */
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-    : QObject(parent), d(deviceInfoPrivate())
+    : QObject(parent), d(deviceInfoPrivate()),activeProfileDetails(0)
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
@@ -229,6 +237,8 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
+    if(activeProfileDetails != NULL)
+        delete activeProfileDetails;
 }
 
 
@@ -579,6 +589,59 @@ QUuid QSystemDeviceInfo::uniqueID()
 QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
 {
     return deviceInfoPrivate()->lockStatus();
+}
+
+/*!
+  Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
+  */
+QSystemDeviceInfo::ActiveProfileDetails *QSystemDeviceInfo::getActiveProfileDetails()
+{
+    if(activeProfileDetails == NULL)
+        activeProfileDetails = new QSystemDeviceInfo::ActiveProfileDetails();
+    return activeProfileDetails;
+}
+
+
+/*!
+    Constructs a null ActiveProfileDetails.
+*/
+QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails()
+{
+
+}
+
+/*!
+    Destroys the ActiveProfileDetails.
+*/
+QSystemDeviceInfo::ActiveProfileDetails::~ActiveProfileDetails()
+{
+
+}
+
+/*!
+    Returns the active profile's message ringtone volume. From 0 to 100.
+  */
+int QSystemDeviceInfo::ActiveProfileDetails::messageRingtoneVolume() const
+{
+    return deviceInfoPrivate()->messageRingtoneVolume();
+}
+
+/*!
+    Returns the active profile's voice ringtone volume. From 0 to 100.
+
+  */
+int QSystemDeviceInfo::ActiveProfileDetails::voiceRingtoneVolume() const
+{
+    return deviceInfoPrivate()->messageRingtoneVolume();
+}
+
+/*!
+    Returns the whether the active profile's vibration is active.
+
+  */
+bool QSystemDeviceInfo::ActiveProfileDetails::vibrationActive() const
+{
+    return deviceInfoPrivate()->messageRingtoneVolume();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"
