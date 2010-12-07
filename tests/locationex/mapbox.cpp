@@ -361,7 +361,7 @@ qreal MapBox::squareError(const QImage & otherImage)
 
 qreal MapBox::squareError(const QImage & image1, const QImage & image2)
 {
-    qreal delta;
+    qreal delta = 0.0;
 
     for (int y = 0; y < image1.height(); ++y) {
         for (int x = 0; x < image1.width(); ++x) {
@@ -376,7 +376,7 @@ qreal MapBox::squareError(const QImage & image1, const QImage & image2)
         }
     }
 
-    return std::sqrt(delta);
+    return std::sqrt(delta / (image1.height()*image1.width()));
 }
 
 int MapBox::countErrors(MapBox * other)
@@ -400,7 +400,7 @@ int MapBox::countErrors(const QImage & otherImage)
 
 int MapBox::countErrors(const QImage & image1, const QImage & image2)
 {
-    int errors;
+    int errors = 0;
 
     for (int y = 0; y < image1.height(); ++y) {
         for (int x = 0; x < image1.width(); ++x) {
@@ -430,6 +430,8 @@ int MapBox::countErrors(const QImage & image1, const QImage & image2)
             more plattforms?
         - network traffic
             - from other sources than the session, for the desktop
+                - Windows: Network Monitor
+                    http://blogs.technet.com/netmon/archive/2008/09/17/network-monitor-3-2-has-arrived.aspx
         - render mode
             - sw/hw, but that's pretty static, no?
 */
