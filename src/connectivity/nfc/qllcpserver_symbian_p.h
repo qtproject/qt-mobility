@@ -71,14 +71,8 @@ public:
 
     bool hasPendingConnections() const;
     QLlcpSocket *nextPendingConnection();
-
     QLlcpServer::Error serverError() const;
 
-public:
-    typedef enum State {
-        UnconnectedState = QAbstractSocket::UnconnectedState,
-        ListeningState = QAbstractSocket::ListeningState
-    }ServerState;
 
 public:
     void invokeNewConnection();
@@ -89,7 +83,6 @@ signals:
 
 private:
     CLlcpServer* m_symbianbackend;
-    ServerState m_state;
     QLlcpServer *q_ptr;
 };
 

@@ -97,8 +97,8 @@ public: //Implementation of QLlcpSocket API
     bool waitForDisconnected(int msecs);
 
 public:
-    CLlcpSocketType1* newSocketType1();
-    CLlcpSocketType2* newSocketType2();
+    CLlcpSocketType1* socketType1Instance();
+    CLlcpSocketType2* socketType2Instance();
     CLlcpSocketType1* socketType1Handler() {return m_symbianSocketType1;}
     CLlcpSocketType2* socketType2Handler() {return m_symbianSocketType2;}
 
@@ -152,6 +152,7 @@ public:
     QLLCPSocketState* getClosingState() { return m_closingState;}
 
 private:
+    QLlcpSocket::Error m_error;
     QLLCPSocketState* m_state;  // own
     QLLCPSocketState* m_unconnectedState; // own
     QLLCPSocketState* m_connectedState; // own

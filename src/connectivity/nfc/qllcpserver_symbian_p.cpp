@@ -47,8 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
-    :m_state(QLlcpServerPrivate::UnconnectedState),
-    q_ptr(q)
+    :q_ptr(q)
 {
     qDebug() << "QLlcpServerPrivate() begin";
     QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
@@ -62,7 +61,6 @@ QLlcpServerPrivate::~QLlcpServerPrivate()
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     qDebug() << "QLlcpServerPrivate::listen() begin";
-    m_state = QLlcpServerPrivate::ListeningState;
     TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
     qDebug() << "QLlcpServerPrivate::listen() FromQStringToTptrC8";
     bool ret =  m_symbianbackend->Listen(serviceName);
@@ -80,7 +78,6 @@ bool QLlcpServerPrivate::isListening() const
 */
 void QLlcpServerPrivate::close()
 {
-    m_state = QLlcpServerPrivate::UnconnectedState;
     m_symbianbackend->StopListening();
 }
 

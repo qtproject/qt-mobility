@@ -80,7 +80,8 @@ if (m_symbianSocketType2 == NULL) \
 
 
 QLlcpSocketPrivate::QLlcpSocketPrivate()
-   : m_symbianSocketType1(NULL),
+   : m_error(QLlcpSocket::UnknownSocketError),
+     m_symbianSocketType1(NULL),
      m_symbianSocketType2(NULL),
      m_socketType(connectionUnknown)
 {
@@ -88,7 +89,8 @@ QLlcpSocketPrivate::QLlcpSocketPrivate()
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
-       : m_symbianSocketType1(NULL),
+       : m_error(QLlcpSocket::UnknownSocketError),
+         m_symbianSocketType1(NULL),
          m_symbianSocketType2(NULL),
          m_socketType(connectionUnknown),
          q_ptr(q)
@@ -104,6 +106,11 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
 {
+    Q_Q(QLlcpSocket);
+    if (q->isOpen()) {
+        q->close();
+    }
+
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
     delete m_state;
@@ -118,7 +125,8 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     Construct the socket and set it as connected state from llcp server side
 */
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
-    : m_symbianSocketType1(NULL),
+    : m_error(QLlcpSocket::UnknownSocketError),
+      m_symbianSocketType1(NULL),
       m_symbianSocketType2(socketType2_symbian),
       m_socketType(connectionType2)
 {
@@ -237,18 +245,24 @@ qint64 QLlcpSocketPrivate::pendingDatagramSize() const
     {
         val = m_symbianSocketType1->PendingDatagramSize();
     }
-    return -1;
+    return val;
 }
 
-CLlcpSocketType1* QLlcpSocketPrivate::newSocketType1()
+CLlcpSocketType1* QLlcpSocketPrivate::socketType1Instance()
 {
-    QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+    if (NULL == m_symbianSocketType1)
+    {
+       QT_TRAP_THROWING(m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
+    }
     return m_symbianSocketType1;
 }
 
-CLlcpSocketType2* QLlcpSocketPrivate::newSocketType2()
+CLlcpSocketType2* QLlcpSocketPrivate::socketType2Instance()
 {
-    QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+    if (NULL == m_symbianSocketType2)
+    {
+       QT_TRAP_THROWING(m_symbianSocketType2 = CLlcpSocketType2::NewL(this));
+    }
     return m_symbianSocketType2;
 }
 
@@ -281,15 +295,12 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
                                         QNearFieldTarget **target, quint8 *port)
 {
     qint64 val = -1;
-    if ( (target != NULL && *target != NULL) || port != 0){
-       Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::writeDatagram(),connectionType1, val);
+    if ( (target != NULL && *target != NULL) || port != NULL){
+       Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::readDatagram(),connectionType1, val);
     }
 
     val = m_state->ReadDatagram(data,maxSize,target,port);
 
-    if (val < 0) {
-       emit error(QLlcpSocket::UnknownSocketError);
-    }
     return val;
 }
 
@@ -304,9 +315,6 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
     }
 
     qint64 val = m_state->WriteDatagram(data,size,target,port);
-    if (val < 0) {
-        emit error(QLlcpSocket::UnknownSocketError);
-    }
 
     return val;
 }
@@ -325,12 +333,12 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
 
 QLlcpSocket::Error QLlcpSocketPrivate::error() const
 {
-    return QLlcpSocket::UnknownSocketError;
+    return m_error;
 }
 
 QLlcpSocket::State QLlcpSocketPrivate::state() const
 {
-    return QLlcpSocket::UnconnectedState;
+    return m_state->state();
 }
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
