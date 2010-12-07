@@ -60,27 +60,38 @@ public:
 
     virtual void abort() = 0;
     QVariant attribute(QBluetoothTransferRequest::Attribute code) const;
-    bool isFinished() const;
-    bool isRunning() const;
+    virtual bool isFinished() const = 0;
+    virtual bool isRunning() const = 0;
 
     QBluetoothTransferManager *manager() const;
 
     QBluetoothTransferManager::Operation operation() const;
 
-    QBluetoothTransferRequest request() const;
+//    QBluetoothTransferRequest request() const;
 
     qint64 readBufferSize() const;
     virtual void setReadBufferSize(qint64 size);
 
 signals:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-    void finished();
+    void finished(QBluetoothTransferReply *);
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 protected:
     explicit QBluetoothTransferReply(QObject *parent = 0);
     void setAttribute(QBluetoothTransferRequest::Attribute code, const QVariant &value);
     void setOperation(QBluetoothTransferManager::Operation operation);
+    void setManager(QBluetoothTransferManager &manager);
+//    void setRequest(QBluetoothTransferRequest *request);
+
+private:
+    QBluetoothTransferManager *m_manager;
+    QBluetoothTransferManager::Operation m_operation;
+    QMap<int, QVariant> m_attributes;
+//    QBluetoothTransferRequest *m_request;
+    qint64 m_buffersize;
+
+
 };
 
 QTM_END_NAMESPACE

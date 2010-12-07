@@ -168,11 +168,14 @@ inline QStringList nsarrayToQStringList(void *nsarray)
 
 bool hasIOServiceMatching(const QString &classstr)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     io_iterator_t ioIterator = NULL;
     IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceNameMatching(classstr.toAscii()), &ioIterator);
     if(ioIterator) {
+        [pool drain];
         return true;
     }
+    [pool drain];
     return false;
 }
 
@@ -424,9 +427,12 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     }
     switch(type) {
     case QSystemInfo::Os:
-        {
-            return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"]);
-        }
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        QString ver = nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductVersion"]);
+        [pool drain];
+        return ver;
+    }
         break;
     case QSystemInfo::QtCore:
        return  qVersion();
@@ -451,6 +457,7 @@ QString QSystemInfoPrivate::currentCountryCode() const
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     bool featureSupported = false;
     switch (feature) {
     case QSystemInfo::BluetoothFeature:
@@ -545,6 +552,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         featureSupported = false;
         break;
     };
+    [pool drain];
     return featureSupported;
 }
 
@@ -1302,10 +1310,12 @@ QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
     QString cmcc;
 #if defined(MAC_SDK_10_6)
     if(hasWifi) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         CWInterface *primary = [CWInterface interfaceWithName:nil];
         if([primary power]) {
             cmcc = nsstringToQString([primary countryCode]);
         }
+        [pool drain];
     }
 #endif
     return cmcc;
@@ -1408,7 +1418,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                 QString macbtMac = nsstringToQString([controller addressAsString]).replace("-",":").toUpper();
                 if(!macbtMac.isEmpty()) {
                     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-                    foreach(const QNetworkInterface thisNetInterface, interfaces) {
+                    Q_FOREACH(const QNetworkInterface thisNetInterface, interfaces) {
                         if( thisNetInterface.hardwareAddress() == macbtMac) {
                             netInterface = thisNetInterface;
                             break;
@@ -1693,17 +1703,16 @@ void unmountCallback(DADiskRef disk, void *context)
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent), daSessionThread(0),sessionThreadStarted(0)
+        : QObject(parent), daSessionThread(0),sessionThreadStarted(0), storageTimer(0)
 {
     updateVolumesMap();
-
     checkAvailableStorage();
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
-    if(daSessionThread->keepRunning) {
+    if(sessionThreadStarted) {
         daSessionThread->stop();
         delete daSessionThread;
     }
@@ -1757,14 +1766,15 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
 {
-    struct statfs64 *buf = NULL;
+    struct statfs *buf = NULL;
     unsigned i, count = 0;
 
     mountEntriesMap.clear();
 
-    count = getmntinfo64(&buf, 0);
+    count = getmntinfo(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
+
         if(buf[i].f_type != 19
            && buf[i].f_type != 20
            && !mountEntriesMap.contains(volName)) {
@@ -1789,10 +1799,10 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     getStorageState(driveVolume);
-
     qint64 totalBytes=0;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    NSString *vol = qstringToNSString(driveVolume);
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:vol error:nil];
     totalBytes = [[attr objectForKey:NSFileSystemSize] doubleValue];
     [pool release];
 
@@ -1905,6 +1915,7 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
                                                  kDADiskDescriptionWatchVolumePath, mountCallback,this);
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
+        sessionThreadStarted = true;
     }
 
     if (QLatin1String(signal) ==
@@ -1933,6 +1944,7 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
         disconnect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+        storageTimer = 0;
     }
 }
 
@@ -2261,6 +2273,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
 
 bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSArray *pairedDevices = [ IOBluetoothDevice pairedDevices];
 
     for (IOBluetoothDevice *currentBtDevice in pairedDevices) {
@@ -2269,6 +2282,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
             hasWirelessKeyboardConnected = true;
         }
     }
+    [pool drain];
     return hasWirelessKeyboardConnected;
 }
 
@@ -2289,7 +2303,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*typ
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
@@ -2306,6 +2320,21 @@ QUuid QSystemDeviceInfoPrivate::hostId()
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
+}
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
@@ -2476,8 +2505,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         }
 
         isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];
-        //        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
-        if(isCharging) {
+        if([(NSString*)[(NSDictionary*)battery objectForKey:@kIOPSPowerSourceStateKey] isEqualToString:@kIOPSACPowerValue]) {
             cType = QSystemBatteryInfo::WallCharger;
         } else {
             cType = QSystemBatteryInfo::NoCharger;
@@ -2510,11 +2538,11 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
             Q_EMIT currentFlowChanged(dischargeRate);
         }
 
-        cTime = [[(NSDictionary*)batDoctionary objectForKey:@"AvgTimeToFull"] intValue];
+        cTime = [[(NSDictionary*)batDoctionary objectForKey:@"AvgTimeToFull"] intValue]; //FIXME thats not right
+        if(!isCharging) {
+            cTime = 0;
+        }
         if (cTime != timeToFull) {
-            if(!isCharging) {
-                cTime = -1;
-            }
             timeToFull = cTime;
             Q_EMIT remainingChargingTimeChanged(timeToFull);
         }

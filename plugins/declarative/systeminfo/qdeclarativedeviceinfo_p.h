@@ -44,6 +44,8 @@
 #define QDECLARATIVEDEVICEINFO_P_H
 
 #include <QObject>
+#include "qmobilityglobal.h"
+
 #include "qsystemdeviceinfo.h"
 
 QT_BEGIN_HEADER

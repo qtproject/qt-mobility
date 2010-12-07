@@ -86,8 +86,9 @@ private slots:
     void tst_isWirelessKeyboardConnected();
     void tst_isKeyboardFlipOpen();
     void tst_keypadLightOn();
-    void tst_hostId();
+    void tst_uniqueID();
     void tst_lockStatus();
+    void tst_getActiveProfileDetails();
 
 };
 /*
@@ -286,10 +287,10 @@ void tst_QSystemDeviceInfo::tst_keypadLightOn()
 
 }
 
-void tst_QSystemDeviceInfo::tst_hostId()
+void tst_QSystemDeviceInfo::tst_uniqueID()
 {
     QSystemDeviceInfo di;
-    QUuid id = di.hostId();
+    QUuid id = di.uniqueID();
     QVERIFY(id.isNull()|| !id.isNull());
 }
 
@@ -302,6 +303,20 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
     } else {
         QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+    }
+}
+
+void tst_QSystemDeviceInfo::tst_getActiveProfileDetails()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::ActiveProfileDetails *details = di.getActiveProfileDetails();
+    int vol = details->messageRingtoneVolume();
+    int vol2 = details->voiceRingtoneVolume();
+    bool vib = details->vibrationActive();
+    if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
+        QVERIFY(vol > -1 && vol < 101);
+        QVERIFY(vol2 > -1 && vol2 < 101);
+        QVERIFY(vib || !vib);
     }
 }
 

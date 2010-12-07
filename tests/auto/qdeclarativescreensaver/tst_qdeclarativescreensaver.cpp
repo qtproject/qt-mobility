@@ -39,55 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORMAEMO_H
-#define QGEOAREAMONITORMAEMO_H
+//TESTED_COMPONENT=src/systeminfo
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtTest/QtTest>
+#include "qdeclarativescreensaver_p.h"
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
-
-extern "C"
-{
-    // The following include is needed since liblocation v. 0.102 has a bug in
-    // location-distance-utils.h
-#include <glib-object.h>
-
-#include <location/location-distance-utils.h>
-}
-
-QTM_BEGIN_NAMESPACE
-
-/**
- *  QGeoAreaMonitorMaemo
- *
- */
-class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
+QTM_USE_NAMESPACE
+class tst_QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
 
-public :
-    QGeoAreaMonitorMaemo(QObject *parent = 0);
-    ~QGeoAreaMonitorMaemo();
-    void setCenter(const QGeoCoordinate &coordinate);
-    void setRadius(qreal radius);
-
 private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
-
-private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
+    void tst_setScreenSaverDelayed();
 };
 
-QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORMAEMO_H
+void tst_QDeclarativeScreenSaver::tst_setScreenSaverDelayed()
+{
+    QDeclarativeScreenSaver si;
+    si.setScreenSaverDelayed(true);
+    bool enabled = si.screenSaverDelayed();
+    QVERIFY(enabled);
+    si.setScreenSaverDelayed(false);
+    enabled = si.screenSaverDelayed();
+    QVERIFY(!enabled);
+
+}
+
+QTEST_MAIN(tst_QDeclarativeScreenSaver)
+#include "tst_qdeclarativescreensaver.moc"

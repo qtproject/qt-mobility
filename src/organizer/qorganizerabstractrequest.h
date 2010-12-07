@@ -85,7 +85,8 @@ public:
         DetailDefinitionSaveRequest,
         CollectionFetchRequest,
         CollectionRemoveRequest,
-        CollectionSaveRequest
+        CollectionSaveRequest,
+        ItemFetchByIdRequest
     };
 
     RequestType type() const;
@@ -114,6 +115,8 @@ private:
     QOrganizerAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QOrganizerAbstractRequest)
     friend class QOrganizerManagerEngine;
+    friend class QOrganizerManagerEngineV2;
+    friend class QOrganizerManagerEngineV2Wrapper;
     friend class QOrganizerAbstractRequestPrivate;
 };
 

@@ -39,45 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOAREAMONITORSIMULATOR_H
-#define QGEOAREAMONITORSIMULATOR_H
+#ifndef QORGANIZERITEMFETCHBYIDREQUEST_H
+#define QORGANIZERITEMFETCHBYIDREQUEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qtorganizerglobal.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
 
-#include "qgeoareamonitor.h"
-#include "qgeopositioninfosource.h"
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-/**
- *  QGeoAreaMonitorSimulator
- *
- */
-class QGeoAreaMonitorSimulator : public QGeoAreaMonitor
+class QOrganizerItemFetchByIdRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemFetchByIdRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
-public :
-    QGeoAreaMonitorSimulator(QObject *parent = 0);
-    virtual ~QGeoAreaMonitorSimulator();
-    virtual void setCenter(const QGeoCoordinate &coordinate);
+public:
+    QOrganizerItemFetchByIdRequest(QObject* parent = 0);
+    ~QOrganizerItemFetchByIdRequest();
 
-private slots:
-    void positionUpdated(const QGeoPositionInfo &info);
+    /* Selection, restriction and sorting */
+    void setIds(const QList<QOrganizerItemId>& ids);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    QList<QOrganizerItemId> ids() const;
+    QOrganizerItemFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QOrganizerItem> items() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
-    bool insideArea;
-    QGeoPositionInfoSource *location;
+    Q_DISABLE_COPY(QOrganizerItemFetchByIdRequest)
+    friend class QOrganizerManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemFetchByIdRequest)
 };
 
 QTM_END_NAMESPACE
-#endif // QGEOAREAMONITORSIMULATOR_H
+
+#endif

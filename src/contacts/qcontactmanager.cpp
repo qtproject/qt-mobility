@@ -723,6 +723,24 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
     return retn;
 }
 
+
+/*!
+  Returns an observer object for the contact with id \a contactId.
+
+  The returned object will emit contactChanged and contactRemoved signals until it is deleted (eg.
+  by the pointer falling out of scope).  Note that the QContactObserver in the returned
+  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
+  is responsible for keeping a reference to the shared pointer as long as it is interested in the
+  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
+  the signals and delete the shared pointer.
+
+  \sa QContactObserver
+ */
+QSharedPointer<QContactObserver> QContactManager::observeContact(QContactLocalId contactId)
+{
+    return d->m_engine->observeContact(contactId);
+}
+
 /*!
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships

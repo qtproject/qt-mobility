@@ -59,6 +59,7 @@ class QDeclarativeContactSortOrder :public QObject, public QDeclarativeParserSta
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
     Q_ENUMS(BlankPolicy)
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
 
     enum BlankPolicy {

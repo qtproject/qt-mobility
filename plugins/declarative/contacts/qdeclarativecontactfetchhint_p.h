@@ -60,7 +60,7 @@ class QDeclarativeContactFetchHint : public QObject
     Q_PROPERTY(OptimizationHints optimizationHints READ optimizationHints WRITE setOptimizationHints NOTIFY fetchHintChanged )
     Q_PROPERTY(int imageWidth READ preferredImageWidth WRITE setPreferredImageWidth NOTIFY fetchHintChanged )
     Q_PROPERTY(int imageHeight READ preferredImageHeight WRITE setPreferredImageHeight NOTIFY fetchHintChanged )
-    Q_FLAGS(OptimizationHints);
+    Q_FLAGS(OptimizationHints)
 public:
     enum OptimizationHint {
         AllRequired = QContactFetchHint::AllRequired,
