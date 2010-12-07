@@ -39,56 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPOBJECT_H
-#define QDECLARATIVEGEOMAPOBJECT_H
-
-#include "qgeomapobject.h"
-#include "qdeclarativegeomapmousearea_p.h"
-
-#include <QtDeclarative/qdeclarativeitem.h>
+#include "qdeclarativegeomaneuver_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapObject : public QDeclarativeItem
+QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(QObject *parent)
+    : QObject(parent)
 {
-    Q_OBJECT
+    position_ = new QDeclarativeCoordinate(this);
+    waypoint_ = new QDeclarativeCoordinate(this);
+}
 
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
+QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(const QGeoManeuver &maneuver, QObject *parent)
+    : QObject(parent),
+      maneuver_(maneuver)
+{
+    position_ = new QDeclarativeCoordinate(maneuver_.position(), this);
+    waypoint_ = new QDeclarativeCoordinate(maneuver_.waypoint(), this);
+}
 
-public:
-    QDeclarativeGeoMapObject(QDeclarativeItem *parent = 0);
-    ~QDeclarativeGeoMapObject();
+QDeclarativeGeoManeuver::~QDeclarativeGeoManeuver() {}
 
-    virtual void componentComplete();
+bool QDeclarativeGeoManeuver::valid() const
+{
+    return maneuver_.isValid();
+}
 
-    void setMapObject(QGeoMapObject *object);
-    QGeoMapObject* mapObject();
+QDeclarativeCoordinate* QDeclarativeGeoManeuver::position() const
+{
+    return position_;
+}
 
-    void setVisible(bool visible);
-    bool isVisible() const;
+QString QDeclarativeGeoManeuver::instructionText() const
+{
+    return maneuver_.instructionText();
+}
 
-    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void enterEvent();
-    virtual void exitEvent();
-    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
+QDeclarativeGeoManeuver::Direction QDeclarativeGeoManeuver::direction() const
+{
+    return QDeclarativeGeoManeuver::Direction(maneuver_.direction());
+}
 
-Q_SIGNALS:
-    void visibleChanged(bool visible);
+int QDeclarativeGeoManeuver::timeToNextInstruction() const
+{
+    return maneuver_.timeToNextInstruction();
+}
 
-private Q_SLOTS:
-    void parentZChanged();
+qreal QDeclarativeGeoManeuver::distanceToNextInstruction() const
+{
+    return maneuver_.distanceToNextInstruction();
+}
 
-private:
-    QGeoMapObject *object_;
-    bool visible_;
-    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
-};
+QDeclarativeCoordinate* QDeclarativeGeoManeuver::waypoint() const
+{
+    return waypoint_;
+}
+
+#include "moc_qdeclarativegeomaneuver_p.cpp"
 
 QTM_END_NAMESPACE
-
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
-
-#endif

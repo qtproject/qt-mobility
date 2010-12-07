@@ -39,38 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
-#define QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
+#ifndef QDECLARATIVEGEOROUTESEGMENT_H
+#define QDECLARATIVEGEOROUTESEGMENT_H
 
-#include "qdeclarativegeomapobject_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomapobjectborder_p.h"
-#include "qgeomappolylineobject.h"
+#include "qdeclarativegeomaneuver_p.h"
 
-#include <QDeclarativeListProperty>
+#include <qgeoroutesegment.h>
 
-class QColor;
-class QBrush;
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
+class QDeclarativeGeoRouteSegment : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_PROPERTY(int travelTime READ travelTime CONSTANT)
+    Q_PROPERTY(qreal distance READ distance CONSTANT)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ path)
+    Q_PROPERTY(QDeclarativeGeoManeuver* maneuver READ maneuver CONSTANT)
 
 public:
-    QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);
-    ~QDeclarativeGeoMapPolylineObject();
+    QDeclarativeGeoRouteSegment(QObject *parent = 0);
+    QDeclarativeGeoRouteSegment(const QGeoRouteSegment &segment, QObject *parent = 0);
+    ~QDeclarativeGeoRouteSegment();
 
-    QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
-    QDeclarativeGeoMapObjectBorder* border();
-
-private Q_SLOTS:
-    void borderColorChanged(const QColor &color);
-    void borderWidthChanged(int width);
+    int travelTime() const;
+    qreal distance() const;
+    QDeclarativeListProperty<QDeclarativeCoordinate> path();
+    QDeclarativeGeoManeuver* maneuver() const;
 
 private:
     static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
@@ -78,13 +74,11 @@ private:
     static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
 
-    QGeoMapPolylineObject* polyline_;
+    QGeoRouteSegment segment_;
+    QDeclarativeGeoManeuver* maneuver_;
     QList<QDeclarativeCoordinate*> path_;
-    QDeclarativeGeoMapObjectBorder border_;
 };
 
 QTM_END_NAMESPACE
-
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPolylineObject));
 
 #endif
