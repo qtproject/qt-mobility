@@ -53,7 +53,8 @@ QDeclarativeGeoSearchModel::QDeclarativeGeoSearchModel(QObject* parent)
     : QAbstractListModel(parent),
       plugin_(0),
       serviceProvider_(0),
-      searchManager_(0)
+      searchManager_(0),
+      status_(QDeclarativeGeoSearchModel::Null)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
@@ -122,7 +123,7 @@ void QDeclarativeGeoSearchModel::setPlugin(QDeclarativeGeoServiceProvider *plugi
     emit pluginChanged(plugin_);
 
     serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-            plugin_->parameterMap());
+                                               plugin_->parameterMap());
 
     // check for error
 
@@ -152,6 +153,7 @@ void QDeclarativeGeoSearchModel::searchFinished(QGeoSearchReply *reply)
     setPlaces(reply->places());
 
     setError("");
+    setStatus(QDeclarativeGeoSearchModel::Ready);
 
     reply->deleteLater();
 
@@ -163,7 +165,23 @@ void QDeclarativeGeoSearchModel::searchError(QGeoSearchReply *reply,
         const QString &errorString)
 {
     setError(errorString);
+    setStatus(QDeclarativeGeoSearchModel::Error);
     reply->deleteLater();
+}
+
+QDeclarativeGeoSearchModel::Status QDeclarativeGeoSearchModel::status() const
+{
+    return status_;
+}
+
+void QDeclarativeGeoSearchModel::setStatus(QDeclarativeGeoSearchModel::Status status)
+{
+    if (status_ == status)
+        return;
+
+    status_ = status;
+
+    emit statusChanged(status_);
 }
 
 QString QDeclarativeGeoSearchModel::error() const

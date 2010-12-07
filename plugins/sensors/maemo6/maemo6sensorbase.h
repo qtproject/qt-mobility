@@ -82,16 +82,13 @@ protected:
         }
 
         initDone = true;
-
-
+        
         //metadata
-        int l = m_sensorInterface->getAvailableIntervals().size();
+        QList<DataRange> intervals = m_sensorInterface->getAvailableIntervals();
 
-
-        for (int i=0; i<l; i++){
-            qreal intervalMax = ((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).max;
-            qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
-
+        for (int i=0, l=intervals.size(); i<l; i++){
+            qreal intervalMax = ((DataRange)(intervals.at(i))).max;
+            qreal intervalMin =((DataRange)(intervals.at(i))).min;
 
             if (intervalMin==0 && intervalMax==0){
                 // 0 interval has different meanings in e.g. magge/acce
@@ -101,15 +98,11 @@ protected:
                 continue;
             }
 
-
-
             qreal rateMin = intervalMax<1 ? 1 : 1/intervalMax * 1000;
             rateMin = rateMin<1 ? 1 : rateMin;
 
             intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
             qreal rateMax = 1/intervalMin * 1000;
-
-
 
             //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
             addDataRate(rateMin, rateMax);
@@ -127,7 +120,7 @@ protected:
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;
-
+    int m_prevOutputRange;
 };
 
 #endif

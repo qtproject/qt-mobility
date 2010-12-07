@@ -89,6 +89,8 @@ int main(int argc, char **argv)
         rate_val = args.at(rate_place + 1).toInt();
 
     QMagnetometer geosensor;
+    geosensor.connectToBackend();
+
     if (rate_val > 0) {
         geosensor.setDataRate(rate_val);
     }

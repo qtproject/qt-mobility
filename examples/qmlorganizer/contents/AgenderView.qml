@@ -40,41 +40,10 @@
 
 import Qt 4.7
 
-Item {
-    id: titleBar
-    property string managerName: ""
-    property int contactsCount: 0
-    property string statusString: ""
+import QtMobility.organizer 1.1
 
-
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
-
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
-
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; right: parent.right; //leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "[" + managerName + "] Total:" + contactsCount + " " + statusString
-            font.bold: true; font.pixelSize: 15; color: "White"; style: Text.Raised; styleColor: "Black"
-        }
-
-    }
-
+Rectangle
+{
+    id:agenderView
+    anchors.fill: parent
 }

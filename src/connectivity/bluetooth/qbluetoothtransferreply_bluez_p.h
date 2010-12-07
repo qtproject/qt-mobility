@@ -77,6 +77,11 @@ public:
 
     void setAddress(const QBluetoothAddress &address);
 
+    QBluetoothTransferReply::TransferError error() const;
+    QString errorString() const;
+
+
+
 protected:
     qint64 readData(char*, qint64);
     qint64 writeData(const char*, qint64);
@@ -92,7 +97,14 @@ private:
     bool m_running;
     bool m_finished;
 
+    quint64 m_size;
+
     QBluetoothAddress address;
+
+    QBluetoothTransferReply::TransferError m_error;
+    QString m_errorStr;
+
+    QString m_agent_path;
 
     static bool copyToTempFile(QIODevice *to, QIODevice *from);
 

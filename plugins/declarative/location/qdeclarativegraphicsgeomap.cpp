@@ -49,6 +49,8 @@
 #include <qgeomapdata.h>
 #include <qgeomapobject.h>
 
+#include <QGraphicsSceneMouseEvent>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -98,7 +100,11 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     center_->setCoordinate(QGeoCoordinate(-27.0, 153.0));
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
-    
+    setAcceptsHoverEvents(true);
+    setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::LeftButton);
+    setFlag(QGraphicsItem::ItemHasNoContents, false);
+    setFlag(QGraphicsItem::ItemAcceptsInputMethod);
 }
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
@@ -177,9 +183,7 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
 
     for (int i = 0; i < objects_.size(); ++i)
-        mapData_->addMapObject(objects_.at(i));
-    objects_.clear();
-
+        mapData_->addMapObject(objects_.at(i)->mapObject());
 
     // setup signals
 
@@ -454,9 +458,9 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
     \o MapGroup
     \endlist
 */
-QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
+QDeclarativeListProperty<QDeclarativeGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
 {
-    return QDeclarativeListProperty<QGeoMapObject>(this,
+    return QDeclarativeListProperty<QDeclarativeGeoMapObject>(this,
             0,
             object_append,
             object_count,
@@ -464,44 +468,34 @@ QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
             object_clear);
 }
 
-void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject)
+void QDeclarativeGraphicsGeoMap::object_append(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, QDeclarativeGeoMapObject *mapObject)
 {
     QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
 
     if (map->mapData_)
-        map->mapData_->addMapObject(mapObject);
-    else
-        map->objects_.append(mapObject);
+        map->mapData_->addMapObject(mapObject->mapObject());
+    map->objects_.append(mapObject);
+    map->objectMap_.insert(mapObject->mapObject(), mapObject);
 }
 
-int QDeclarativeGraphicsGeoMap::object_count(QDeclarativeListProperty<QGeoMapObject> *prop)
+int QDeclarativeGraphicsGeoMap::object_count(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop)
 {
-    QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
-
-    if (map->mapData_)
-        return map->mapData_->mapObjects().size();
-    else
-        return map->objects_.size();
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->objects_.size();
 }
 
-QGeoMapObject *QDeclarativeGraphicsGeoMap::object_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index)
+QDeclarativeGeoMapObject *QDeclarativeGraphicsGeoMap::object_at(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, int index)
 {
-    QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
-
-    if (map->mapData_)
-        return map->mapData_->mapObjects().at(index);
-    else
-        return map->objects_.at(index);
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->objects_.at(index);
 }
 
-void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapObject> *prop)
+void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop)
 {
     QDeclarativeGraphicsGeoMap *map = static_cast<QDeclarativeGraphicsGeoMap*>(prop->object);
 
     if (map->mapData_)
         map->mapData_->clearMapObjects();
-    else
-        map->objects_.clear();
+    map->objects_.clear();
+    map->objectMap_.clear();
 }
 
 /*!
@@ -550,6 +544,135 @@ void QDeclarativeGraphicsGeoMap::pan(int dx, int dy)
         mapData_->pan(dx, dy);
         update();
     }
+}
+
+QDeclarativeGeoMapMouseEvent* QDeclarativeGraphicsGeoMap::createMapMouseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!event || !mapData_)
+        return 0;
+
+    QDeclarativeGeoMapMouseEvent *mouseEvent = new QDeclarativeGeoMapMouseEvent(this);
+
+    mouseEvent->setButtons(event->buttons());
+    QGeoCoordinate coordinate = mapData_->screenPositionToCoordinate(event->pos());
+    mouseEvent->setCoordinate(new QDeclarativeCoordinate(coordinate, this));
+    mouseEvent->setModifiers(event->modifiers());
+    mouseEvent->setX(event->pos().x());
+    mouseEvent->setY(event->pos().y());
+
+    return mouseEvent;
+}
+
+void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!mapData_)
+        return;
+
+    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
+
+    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+
+    for (int i = 0; i < objects.size(); ++i) {
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+        if (mapObject) {
+            mapObject->pressEvent(mouseEvent);
+            if (mouseEvent->accepted()) {
+                event->setAccepted(true);
+                return;
+            }
+        }
+    }
+}
+
+void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!mapData_)
+        return;
+
+    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
+
+    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+
+    for (int i = 0; i < objects.size(); ++i) {
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+        if (mapObject) {
+            mapObject->releaseEvent(mouseEvent);
+            if (mouseEvent->accepted()) {
+                event->setAccepted(true);
+                return;
+            }
+        }
+    }
+}
+
+void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!mapData_)
+        return;
+
+    QList<QGeoMapObject*> objects = mapData_->mapObjectsAtScreenPosition(event->pos());
+
+    QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+
+    for (int i = 0; i < objects.size(); ++i) {
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+        if (mapObject) {
+            mapObject->doubleClickEvent(mouseEvent);
+            if (mouseEvent->accepted()) {
+                event->setAccepted(true);
+                return;
+            }
+        }
+    }
+}
+
+void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!mapData_)
+        return;
+
+    QList<QGeoMapObject*> objectsThen = mapData_->mapObjectsAtScreenPosition(event->lastPos());
+    QList<QGeoMapObject*> objectsNow = mapData_->mapObjectsAtScreenPosition(event->pos());
+
+    QSet<QGeoMapObject*> enter = objectsNow.toSet();
+    enter -= objectsThen.toSet();
+
+    for (int i = 0; i < objectsNow.size(); ++i) {
+        if (!enter.contains(objectsNow.at(i)))
+            continue;
+
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsNow.at(i), 0);
+        if (mapObject)
+            mapObject->enterEvent();
+    }
+
+    QSet<QGeoMapObject*> exit = objectsThen.toSet();
+    exit -= objectsNow.toSet();
+
+    for (int i = 0; i < objectsThen.size(); ++i) {
+        if (!exit.contains(objectsThen.at(i)))
+            continue;
+
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objectsThen.at(i), 0);
+        if (mapObject)
+            mapObject->exitEvent();
+    }
+
+    QSet<QGeoMapObject*> move = objectsNow.toSet();
+    move += objectsThen.toSet();
+
+    QList<QGeoMapObject*> objects = mapData_->mapObjectsInViewport();
+    for (int i = 0; i < objects.size(); ++i) {
+        if (!move.contains(objects.at(i)))
+            continue;
+
+        QDeclarativeGeoMapMouseEvent *mouseEvent = createMapMouseEvent(event);
+
+        QDeclarativeGeoMapObject* mapObject = objectMap_.value(objects.at(i), 0);
+        if (mapObject)
+            mapObject->moveEvent(mouseEvent);
+    }
+
 }
 
 void QDeclarativeGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)

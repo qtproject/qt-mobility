@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/perl
 #############################################################################
 ##
 ## Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,7 +40,43 @@
 ##
 #############################################################################
 
-make clean
-rm -f config.pri
-find . -name "Makefile*" |xargs rm
-rm -rf build include install bin/examples lib
+# use module
+
+my $result = `sbs --query=config[armv5_urel] 2>&1`;
+my $count = length($result);
+my $idx = index($result, "arm.v5.urel.rvct");
+
+print "check sbs release armv5 default compiler...\n";
+if ($idx > 0 && $count > ($idx + 20)){
+	$version_hig = substr($result, $idx+16, 1);
+	$version_low = substr($result, $idx+18, 1);
+	print "- sbs default release armv5 compiler found: RVCT" . $version_hig . "." . $version_low . "\n";
+
+	# check if RVCT in sbs config is < 4.0
+	if($version_hig < 4 && $version_hig >= 2){
+		#check installed ARM compiler version
+		$result = `armcc 2>&1`;
+		if( index($result, "RVCT") > 0){
+			$idx = index($result, ".");
+			$rvctversion_hig = substr($result, $idx-1, 1);
+			$rvctversion_low = substr($result, $idx+1, 1);
+			print "- installed RVCT compiler: RVCT". $rvctversion_hig . "." . $rvctversion_low . "\n";
+			#check if installed RVCT is >= 4.0
+			if( $rvctversion_hig >= 4){
+				#check if the variable QT_RVCT_VERSION is set to the rvct version
+				$qtvarval = $ENV{'QT_RVCT_VERSION'};
+				$qtvarshould = $rvctversion_hig. "." .$rvctversion_low;
+				if((length($qtvarval) <= 0) || ($qtvarshould != $qtvarval)){
+					print "- Please set enviroment variable QT_RVCT_VERSION=";
+					print "$rvctversion_hig.$rvctversion_low and run configure again!!!\n";
+				}
+			}
+		}
+		else{
+			print "- OK\n";
+		}
+	}
+}
+else{
+    print "- OK\n";
+}

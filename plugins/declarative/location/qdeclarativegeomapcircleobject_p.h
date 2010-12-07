@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPCIRCLEOBJECT_H
 #define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomapcircleobject.h"
@@ -51,20 +52,24 @@ class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
+class QDeclarativeGeoMapCircleObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapCircleObject();
+    QDeclarativeGeoMapCircleObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapCircleObject();
 
-    QDeclarativeCoordinate* declarativeCenter();
-    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
+    QDeclarativeCoordinate* center();
+    void setCenter(const QDeclarativeCoordinate *center);
+
+    qreal radius() const;
+    void setRadius(qreal radius);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -72,7 +77,8 @@ public:
     QDeclarativeGeoMapObjectBorder* border();
 
 Q_SIGNALS:
-    void declarativeCenterChanged(const QDeclarativeCoordinate *center);
+    void centerChanged(const QDeclarativeCoordinate *center);
+    void radiusChanged(qreal radius);
     void colorChanged(const QColor &color);
 
 private Q_SLOTS:
@@ -83,10 +89,10 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
 
 private:
-    QDeclarativeCoordinate* m_center;
-    QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
+    QGeoMapCircleObject* circle_;
+    QDeclarativeCoordinate center_;
+    QColor color_;
+    QDeclarativeGeoMapObjectBorder border_;
 };
 
 QTM_END_NAMESPACE

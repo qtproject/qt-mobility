@@ -4,37 +4,23 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -52,12 +38,92 @@ The Connectivity API provides a set of APIs for communicating with local devices
 
 \tableofcontents
 
+\section1 Technology Preview Functionality
+
+This section describes the functionality of the Connectivity module that is expected to work in the
+technology preview and the functionality that is known not to work.
+
+The APIs are under development and subject to change between the technology preview release and
+their official release with Qt Mobility 1.2.
+
+\section2 NFC
+
+Unfortunately there currently are no functional backends for real hardware. An emulator backend is
+available, however, which is used by both the unit tests and the Qt Simulator backend. To use the
+Qt Simulator backend a modified version of the Qt Simulator is required, which can be obtained from
+http://qt.gitorious.org/?????.
+
+The \l {Qt Mobility Examples#Connectivity}{Connectivity examples} demonstrate how to use NFC
+functionality in your application.
+
+What should work:
+\list
+    \o NDEF record and message parsing
+    \o NDEF record and message creation
+    \o NDEF message notification
+\endlist
+
+\list
+    \o NFC Tag Type 1 tags are supported
+    \list
+        \o NDEF reading
+        \o NDEF writing
+        \o Tag specific commands
+        \o Supports both static and dynamic memory models
+    \endlist
+\endlist
+
+What is known \bold NOT to work:
+\list
+    \o Backends for real hardware i.e. Symbian, MeeGo
+    \o LLCP Sockets
+    \o Other common tag technologies
+    \list
+        \o NFC Tag Type 2
+        \o NFC Tag Type 3
+        \o NFC Tag Type 4
+        \o Mifare
+    \endlist
+\endlist
+
 \section1 Main Classes
 
 \section2 NFC Classes
 
 \annotatedlist connectivity-nfc
-\section2 Bluetooth Classes
+
+\section2 Bluetooth
+
+The Bluetooth API is under development and subject to change between the tech
+preview and its official release with Qt Mobility 1.2. For the technology
+preview the only functional backend is bluez.
+
+What should work:
+
+You should be able to discover devices and services, open an Rfcomm socket, or accept
+an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
+
+Classes that shoudl work:
+\list
+    \o QBluetoothAddress
+    \o QBluetoothDeviceDiscoveryAgent
+    \o QBluetoothServiceDiscoveryAgent
+    \o QBluetoothDeviceInfo
+    \o QBluetoothServiceInfo
+    \o QBluetoothSocket
+    \o QBluetoothTransferManager::put
+    \o QBluetoothUuid
+    \o QBluetoothRfcommServer
+    \o QBluetoothRfcommSocket
+\endlist
+
+What is know \bold NOT to work:
+\list
+    \o Symbian, Windows, Mac
+    \o QL2capServer and QL2capSocket
+    \o QBluetoothLocalDevice Pairing functions
+    \o QBluetoothLocalDevice power control and state functions
+    \o QBluetoothServiceDiscoveryAgent errorString
 
 \annotatedlist connectivity-bluetooth
 

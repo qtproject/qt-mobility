@@ -60,26 +60,27 @@ Item {
                     longitude: 179
                 }
 
-        MapCircle{
-            center : Coordinate {
-                                latitude : -27
-                                longitude : 179
-                                }
-            radius : 1000.0
-        }
-        MapCircle{
-            radius : 1000.0
-            color : "green"
-        }
-        MapCircle{
-            center : Coordinate {
-                                latitude : -27.2
-                                longitude : 179
-                                }
-            color : "red"
-        }
+        objects: [
+            MapCircle {
+                center : Coordinate {
+                                    latitude : -27
+                                    longitude : 179
+                                    }
+                radius : 1000.0
+                MapMouseArea {
+                    onEntered : { console.log('entered circle') }
+                    onExited : { console.log('exited circle') }
+                    onPositionChanged : { console.log('moved in circle') }
+                    onClicked : { console.log('clicked in circle') }
+                    onDoubleClicked : { console.log('double clicked in circle') }
+                    onPressed: { console.log('pressed in circle') }
+                    onReleased: { console.log('released in circle') }
+                }
+            }
+        ]
     }
 
+/*
     MouseArea {
 
         anchors.fill : parent
@@ -89,7 +90,6 @@ Item {
         property int lastY : -1
 
         hoverEnabled : true
-
         onPressed : {
             mouseDown = true 
             lastX = mouse.x
@@ -114,6 +114,7 @@ Item {
             map.zoomLevel += 1
         }
     }
+*/
 
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
