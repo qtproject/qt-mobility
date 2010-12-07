@@ -92,7 +92,38 @@ What is known \bold NOT to work:
 
 \annotatedlist connectivity-nfc
 
-\section2 Bluetooth Classes
+\section2 Bluetooth
+
+The Bluetooth API is under development and subject to change between the tech
+preview and its official release with Qt Mobility 1.2. For the technology
+preview the only functional backend is bluez.
+
+What should work:
+
+You should be able to discover devices and services, open an Rfcomm socket, or accept
+an Rfcomm connection, and transfer a file to a device using Object Push Protocol.
+
+Classes that shoudl work:
+\list
+    \o QBluetoothAddress
+    \o QBluetoothDeviceDiscoveryAgent
+    \o QBluetoothServiceDiscoveryAgent
+    \o QBluetoothDeviceInfo
+    \o QBluetoothServiceInfo
+    \o QBluetoothSocket
+    \o QBluetoothTransferManager::put
+    \o QBluetoothUuid
+    \o QBluetoothRfcommServer
+    \o QBluetoothRfcommSocket
+\endlist
+
+What is know \bold NOT to work:
+\list
+    \o Symbian, Windows, Mac
+    \o QL2capServer and QL2capSocket
+    \o QBluetoothLocalDevice Pairing functions
+    \o QBluetoothLocalDevice power control and state functions
+    \o QBluetoothServiceDiscoveryAgent errorString
 
 \annotatedlist connectivity-bluetooth
 
