@@ -413,7 +413,7 @@ qreal QCameraExposure::aperture() const
 /*!
     Returns the list of aperture values camera supports.
     The apertures list can change depending on the focal length,
-    in such a case the apertureRangeChanged() signal is emited.
+    in such a case the apertureRangeChanged() signal is emitted.
 
     If the camera supports arbitrary aperture values within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.

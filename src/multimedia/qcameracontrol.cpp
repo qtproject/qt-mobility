@@ -124,7 +124,7 @@ QCameraControl::~QCameraControl()
     Signal emitted when the camera \a state changes.
 
     In most cases the state chage is caused by QCameraControl::setState(),
-    but if critical error has occured the state changes to QCamera::UnloadedState.
+    but if critical error has occurred the state changes to QCamera::UnloadedState.
 */
 
 /*!

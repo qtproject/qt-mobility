@@ -174,7 +174,7 @@ void EventOccurrenceEditPage::saveOrNextClicked()
 
 void EventOccurrenceEditPage::showEvent(QShowEvent *event)
 {
-    window()->setWindowTitle("Edit event occurence");
+    window()->setWindowTitle("Edit event occurrence");
     QWidget::showEvent(event);
 }
 

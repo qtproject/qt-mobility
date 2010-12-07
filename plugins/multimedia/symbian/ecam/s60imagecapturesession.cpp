@@ -455,7 +455,7 @@ QCameraImageCapture::Error S60ImageCaptureSession::fromSymbianErrorToQtMultimedi
             return QCameraImageCapture::ResourceError; // No resources available
 
         default:
-            return QCameraImageCapture::ResourceError; // Other error has occured
+            return QCameraImageCapture::ResourceError; // Other error has occurred
     }
 }
 

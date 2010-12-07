@@ -251,7 +251,7 @@ void tst_itemSortFilter::filterItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    // Verify item occurences
+    // Verify item occurrences
     QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(filter);
     // Cannot use id comparison, since no ids are available for occurrences
     QCOMPARE(actualItems.count(), matchingItemsStr.count());
@@ -320,7 +320,7 @@ void tst_itemSortFilter::sortItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    // Verify item occurences
+    // Verify item occurrences
     QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
     // Cannot use id comparison, since no ids are available for occurrences
     QCOMPARE(actualItems.count(), matchingItemsStr.count());
