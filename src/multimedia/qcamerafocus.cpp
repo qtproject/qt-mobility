@@ -166,7 +166,7 @@ void QCameraFocusZone::setStatus(QCameraFocusZone::FocusZoneStatus status)
 /*!
     \class QCameraFocus
 
-    \preliminary
+    
     \brief The QCameraFocus class provides interface for
     focus and zoom related camera settings.
 

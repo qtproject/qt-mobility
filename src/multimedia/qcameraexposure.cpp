@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraExposure
 
-    \preliminary
+    
     \brief The QCameraExposure class provides interface for exposure related camera settings.
 
     \inmodule QtMultimediaKit

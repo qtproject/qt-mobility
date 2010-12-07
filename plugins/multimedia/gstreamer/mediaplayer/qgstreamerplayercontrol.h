@@ -121,6 +121,7 @@ private:
     void closeFifo();
     void playOrPause(QMediaPlayer::State state);
 
+    bool m_ownStream;
     QGstreamerPlayerSession *m_session;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;

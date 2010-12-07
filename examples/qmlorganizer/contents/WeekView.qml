@@ -117,9 +117,6 @@ Rectangle
                     anchors.fill: parent
                     onClicked: {
                         dayList.currentIndex = index
-                        weekDayDelegate.forceActiveFocus()
-                    }
-                    onDoubleClicked: {
                         calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), calendar.day.getDate() + dayList.currentIndex - weekView.day);
                         calendar.state = "DayView"
                     }

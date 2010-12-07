@@ -49,102 +49,74 @@ Rectangle
 
     anchors.fill: parent
 
-    ListView {
-        id : timeList
-        anchors.fill: parent
-        clip: true
-        focus: true
-        opacity : parent.opacity
-        currentIndex: 16
-        preferredHighlightBegin: timeList.height * 0.5
-        preferredHighlightEnd: preferredHighlightBegin
-        highlightFollowsCurrentItem : true
-        highlightMoveSpeed : 2000
-        keyNavigationWraps : true
 
+    Repeater {
         model : ListModel {
                 ListElement {hour : "0:00"}
-                ListElement {hour : "0:30"}
                 ListElement {hour : "1:00"}
-                ListElement {hour : "1:30"}
                 ListElement {hour : "2:00"}
-                ListElement {hour : "2:30"}
                 ListElement {hour : "3:00"}
-                ListElement {hour : "3:30"}
                 ListElement {hour : "4:00"}
-                ListElement {hour : "4:30"}
                 ListElement {hour : "5:00"}
-                ListElement {hour : "5:30"}
                 ListElement {hour : "6:00"}
-                ListElement {hour : "6:30"}
                 ListElement {hour : "7:00"}
-                ListElement {hour : "7:30"}
                 ListElement {hour : "8:00"}
-                ListElement {hour : "8:30"}
                 ListElement {hour : "9:00"}
-                ListElement {hour : "9:30"}
                 ListElement {hour : "10:00"}
-                ListElement {hour : "10:30"}
                 ListElement {hour : "11:00"}
-                ListElement {hour : "11:30"}
                 ListElement {hour : "12:00"}
-                ListElement {hour : "12:30"}
                 ListElement {hour : "13:00"}
-                ListElement {hour : "13:30"}
                 ListElement {hour : "14:00"}
-                ListElement {hour : "14:30"}
                 ListElement {hour : "15:00"}
-                ListElement {hour : "15:30"}
                 ListElement {hour : "16:00"}
-                ListElement {hour : "16:30"}
                 ListElement {hour : "17:00"}
-                ListElement {hour : "17:30"}
                 ListElement {hour : "18:00"}
-                ListElement {hour : "18:30"}
                 ListElement {hour : "19:00"}
-                ListElement {hour : "19:30"}
                 ListElement {hour : "20:00"}
-                ListElement {hour : "20:30"}
                 ListElement {hour : "21:00"}
-                ListElement {hour : "21:30"}
                 ListElement {hour : "22:00"}
-                ListElement {hour : "22:30"}
                 ListElement {hour : "23:00"}
-                ListElement {hour : "23:30"}
                 ListElement {hour : "0:00"}
             }
 
-        delegate :  Component {
-            Item {
-                width : timeList.width
-                height : timeList.height / 10
-                Column {
-                    Rectangle {
-                        height : 1
-                        width : timeList.width
-                        color : "black"
-                    }
-                    Text {
-                        text: hour
-                    }
+        Rectangle {
+            width : dayView.width
+            height : dayView.height / 24
+            y:index * height
+            Column {
+                Rectangle {
+                    height : 1
+                    width : dayView.width
+                    color : "lightsteelblue"
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked : timeList.currentIndex = index
+                Text {
+                    text: hour
+                    color : "steelblue"
+                    font.pointSize: 12
                 }
             }
-        }
-
-        highlight:  Component {
-
-            Rectangle {
-                width: timeList.width; height: timeList.height /10 ; color: "lightsteelblue" ;radius: 5
-            }
-        }
-
-        Component.onCompleted : {
-            positionViewAtIndex(currentIndex, ListView.Beginning);
         }
     }
 
+    Repeater {
+        model:itemIds
+        ItemView {
+            property int timePos: (startTime/(24*60))*dayView.height
+            focus: true
+            width:dayView.width - 50
+            height: endTime< startTime ? 30: dayView.height * (endTime - startTime)/(24*60)
+            x: dayView.x + 50
+            y: dayView.y + timePos
+
+
+            opacity : dayView.opacity * 0.8
+            itemId: modelData
+//            Component.onCompleted: {
+//                console.log ("startTime:" + startTime);
+//                console.log ("endTime:" + endTime);
+//                console.log ("height:" + height);
+//                console.log ("anchors.top:" + timePos);
+//            }
+        }
+    }
 }

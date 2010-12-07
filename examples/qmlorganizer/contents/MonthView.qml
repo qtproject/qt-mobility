@@ -106,11 +106,13 @@ Rectangle  {
                            anchors.fill: parent
                            onEntered: {
                                dayContainer.border.color = "#1365f3";
-                               dayContainer.border.width = 2;
+                               dayContainer.border.width = 3;
+                               dayContainer.radius = 5
                            }
                            onExited: {
                                dayContainer.border.color = "black";
                                dayContainer.border.width = 1;
+                               dayContainer.radius = 0;
                            }
                            onClicked: {
                                calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), index - startWeekday +1);
