@@ -54,6 +54,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include "qaudiodeviceinfo_win32_p.h"
+#include <dshow.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -270,7 +271,7 @@ void QAudioDeviceInfoInternal::updateLists()
 	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
 	        == MMSYSERR_NOERROR) {
                 tmp = QString::fromWCharArray(woc.szPname);
-		if(tmp.compare(device) == 0) {
+                if (device.startsWith(tmp)) {
 		    match = true;
 		    fmt = woc.dwFormats;
 		    break;
@@ -290,7 +291,7 @@ void QAudioDeviceInfoInternal::updateLists()
 	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
 	        == MMSYSERR_NOERROR) {
                 tmp = QString::fromWCharArray(woc.szPname);
-		if(tmp.compare(device) == 0) {
+                if (device.startsWith(tmp)) {
 		    match = true;
 		    fmt = woc.dwFormats;
 		    break;
@@ -396,31 +397,84 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 {
     Q_UNUSED(mode)
 
+    //enumerate device fullnames through directshow api
+    CoInitialize(NULL);
+    ICreateDevEnum *pDevEnum = NULL;
+    IEnumMoniker *pEnum = NULL;
+    // Create the System device enumerator
+    HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
+                 CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
+                 reinterpret_cast<void **>(&pDevEnum));
+
+    unsigned long iNumDevs = mode == QAudio::AudioOutput ? waveOutGetNumDevs() : waveInGetNumDevs();
+    QVector<QString> deviceNames(iNumDevs);
+    if (SUCCEEDED(hr)) {
+        // Create the enumerator for the video capture category
+        hr = pDevEnum->CreateClassEnumerator(
+             mode == QAudio::AudioOutput ? CLSID_AudioRendererCategory : CLSID_AudioInputDeviceCategory,
+             &pEnum, 0);
+        pEnum->Reset();
+        // go through and find all video capture devices
+        IMoniker *pMoniker = NULL;
+        while (pEnum->Next(1, &pMoniker, NULL) == S_OK) {
+            IPropertyBag *pPropBag;
+            hr = pMoniker->BindToStorage(0,0,IID_IPropertyBag,
+                 reinterpret_cast<void **>(&pPropBag));
+            if (FAILED(hr)) {
+                pMoniker->Release();
+                continue; // skip this one
+            }
+            // Find if it is a wave device
+            VARIANT var;
+            VariantInit(&var);
+            hr = pPropBag->Read(mode == QAudio::AudioOutput ? L"WaveOutID" : L"WaveInID", &var, 0);
+            if (SUCCEEDED(hr)) {
+                LONG waveID = var.lVal;
+                if (waveID >= 0 && waveID < deviceNames.size()) {
+                    VariantClear(&var);
+                    // Find the description
+                    hr = pPropBag->Read(L"FriendlyName", &var, 0);
+                    if (SUCCEEDED(hr)) {
+                        WCHAR str[120];
+                        StringCchCopyW(str, sizeof(str) / sizeof(str[0]), var.bstrVal);
+                        deviceNames[waveID] = QString::fromUtf16(reinterpret_cast<unsigned short *>(str));
+                    }
+                }
+            }
+
+            pPropBag->Release();
+            pMoniker->Release();
+        }
+    }
+    CoUninitialize();
+
     QList<QByteArray> devices;
 
-    if(mode == QAudio::AudioOutput) {
+    if (mode == QAudio::AudioOutput) {
         WAVEOUTCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveOutGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
+        for (unsigned long i = 0; i < iNumDevs; i++) {
+            if (waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
 	        == MMSYSERR_NOERROR) {
-                devices.append(QString::fromUtf16((const unsigned short*)woc.szPname).toLocal8Bit().constData());
+                if (deviceNames[i].isNull() || deviceNames[i].isEmpty())
+                    devices.append(QString::fromUtf16(reinterpret_cast<const unsigned short *>(woc.szPname)).toLocal8Bit());
+                else
+                    devices.append(deviceNames[i].toLocal8Bit());
 	    }
 	}
     } else {
         WAVEINCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveInGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-	        == MMSYSERR_NOERROR) {
-                devices.append(QString::fromUtf16((const unsigned short*)woc.szPname).toLocal8Bit().constData());
-	    }
-	}
+        for (unsigned long i = 0; i < iNumDevs; i++) {
+            if (waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
+                == MMSYSERR_NOERROR) {
+                if (deviceNames[i].isNull() || deviceNames[i].isEmpty())
+                    devices.append(QString::fromUtf16(reinterpret_cast<const unsigned short *>(woc.szPname)).toLocal8Bit());
+                else
+                    devices.append(deviceNames[i].toLocal8Bit());
+            }
+        }
 
     }
-    if(devices.count() > 0)
+    if (devices.count() > 0)
         devices.append("default");
 
     return devices;

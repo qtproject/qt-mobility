@@ -337,7 +337,7 @@ bool QAudioOutputPrivate::open()
 	    == MMSYSERR_NOERROR) {
 	    QString tmp;
             tmp = QString::fromWCharArray(woc.szPname);
-            if(tmp.compare(QLatin1String(m_device)) == 0) {
+            if (m_device.startsWith(tmp.toLocal8Bit())) {
 	        devId = ii;
 		break;
 	    }

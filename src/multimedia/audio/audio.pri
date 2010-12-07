@@ -42,6 +42,7 @@ win32 {
                audio/qaudioinput_win32_p.cpp
     !wince*:LIBS += -lwinmm
     wince*:LIBS += -lcoredll
+    LIBS += -lstrmiids -lole32 -loleaut32
 }
 
 symbian {
