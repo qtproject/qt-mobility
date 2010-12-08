@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPPOLYGONOBJECT_H
 #define QDECLARATIVEGEOMAPPOLYGONOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomappolygonobject.h"
@@ -53,7 +54,7 @@ class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPolygonObject : public QGeoMapPolygonObject
+class QDeclarativeGeoMapPolygonObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
@@ -61,10 +62,8 @@ class QDeclarativeGeoMapPolygonObject : public QGeoMapPolygonObject
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
-    Q_CLASSINFO("DefaultProperty", "path")
-
 public:
-    QDeclarativeGeoMapPolygonObject();
+    QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapPolygonObject();
 
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
@@ -87,10 +86,10 @@ private:
     static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
 
-    QList<QDeclarativeCoordinate*> m_path;
-    QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapPolygonObject)
+    QGeoMapPolygonObject* polygon_;
+    QList<QDeclarativeCoordinate*> path_;
+    QColor color_;
+    QDeclarativeGeoMapObjectBorder border_;
 };
 
 QTM_END_NAMESPACE

@@ -53,8 +53,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
 /*!
    \class QSystemNetworkInfo
    \ingroup systeminfo
-
   \inmodule QtSystemInfo
+
+  \brief The QSystemNetworkInfo class provides access to various networking status and signals.
+
 
 */
 

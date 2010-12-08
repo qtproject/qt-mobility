@@ -51,6 +51,7 @@
 
 #include "qorganizeritemoccurrencefetchrequest.h"
 #include "qorganizeritemfetchrequest.h"
+#include "qorganizeritemfetchbyidrequest.h"
 #include "qorganizeritemfetchforexportrequest.h"
 #include "qorganizeritemidfetchrequest.h"
 #include "qorganizeritemremoverequest.h"

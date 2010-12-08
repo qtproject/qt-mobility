@@ -82,6 +82,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(Profile)
     Q_ENUMS(LockType)
     Q_ENUMS(keypadType)
+    Q_ENUMS(ProfileDetails)
 
     Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
 
@@ -128,6 +129,7 @@ public:
         CustomProfile,
         BeepProfile
     };
+
 
     enum SimStatus {
         SimNotAvailable = 0,
@@ -186,6 +188,18 @@ public:
     QSystemDeviceInfoPrivate *priv;
 #endif
 
+    class  Q_SYSINFO_EXPORT ActiveProfileDetails  {
+    public:
+        ActiveProfileDetails();
+        ~ActiveProfileDetails();
+
+        int messageRingtoneVolume() const;
+        int voiceRingtoneVolume() const;
+        bool vibrationActive() const;
+    };
+
+    ActiveProfileDetails *getActiveProfileDetails();//1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
@@ -201,6 +215,8 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
+    ActiveProfileDetails *activeProfileDetails;
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);

@@ -58,6 +58,14 @@
 #include <QtCore/qshareddata.h>
 #include <QtDBus/qdbusabstractinterface.h>
 
+struct QGalleryTrackerGraphUpdate
+{
+    int graph;
+    int subject;
+    int predicate;
+    int object;
+};
+
 QTM_BEGIN_NAMESPACE
 
 class QM_AUTOTEST_EXPORT QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
@@ -73,9 +81,10 @@ public:
         : QDBusAbstractInterface(service, path, interface, connection, parent) {}
 
 Q_SIGNALS:
-    void IndexFinished(double elapsed);
-    void SubjectsAdded(const QStringList &subjects);
-    void SubjectsRemoved(const QStringList &subjects);
+    void GraphUpdated(
+            const QString &className,
+            const QVector<QGalleryTrackerGraphUpdate> &deletes,
+            const QVector<QGalleryTrackerGraphUpdate> &inserts);
 };
 
 typedef QExplicitlySharedDataPointer<QGalleryDBusInterface> QGalleryDBusInterfacePointer;
@@ -99,10 +108,8 @@ class QGalleryDBusInterfaceFactory
 public:
     virtual ~QGalleryDBusInterfaceFactory() {}
 
-    virtual QGalleryDBusInterfacePointer daemonInterface() = 0;
     virtual QGalleryDBusInterfacePointer metaDataInterface() = 0;
     virtual QGalleryDBusInterfacePointer statisticsInterface() = 0;
-    virtual QGalleryDBusInterfacePointer resourcesClassInterface(const QString& objectPath) = 0;
 };
 
 QTM_END_NAMESPACE

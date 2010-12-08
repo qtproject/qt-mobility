@@ -26,7 +26,10 @@ PRIVATE_HEADERS += \
     bluetooth/qbluetoothsocket_p.h\
     bluetooth/qrfcommserver_p.h \
     bluetooth/qiodevice_p.h \
-    bluetooth/qobjectpriv_p.h
+    bluetooth/qobjectpriv_p.h \
+    bluetooth/qbluetoothtransferrequest_p.h \
+    bluetooth/qbluetoothtransferreply_p.h
+    
 
 SOURCES += \
     bluetooth/qbluetoothaddress.cpp\
@@ -46,7 +49,8 @@ SOURCES += \
     bluetooth/qrfcommsocket.cpp \
     bluetooth/qbluetoothtransfermanager.cpp \
     bluetooth/qbluetoothtransferrequest.cpp \
-    bluetooth/qbluetoothtransferreply.cpp
+    bluetooth/qbluetoothtransferreply.cpp \
+    bluetooth/qbluetoothtransferreply_p.cpp
 
 symbian {
 
@@ -64,7 +68,8 @@ symbian {
         bluetooth/qbluetoothsocket_symbian.cpp\
         bluetooth/qbluetoothsocket_symbian_p.cpp\
         bluetooth/qrfcommserver_symbian.cpp \
-        bluetooth/qbluetoothlocaldevice_symbian.cpp
+        bluetooth/qbluetoothlocaldevice_symbian.cpp \
+        bluetooth/qbluetoothtransfermanager_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
 } else:contains(QT_CONFIG, dbus) {
@@ -74,7 +79,8 @@ symbian {
 
     PRIVATE_HEADERS += \
         bluetooth/qbluetoothdevicediscoveryagent_bluez_p.h \
-        bluetooth/qbluetoothsocket_bluez_p.h
+        bluetooth/qbluetoothsocket_bluez_p.h \
+        bluetooth/qbluetoothtransferreply_bluez_p.h
 
     SOURCES += \
         bluetooth/qbluetoothserviceinfo_bluez.cpp \                
@@ -83,7 +89,9 @@ symbian {
         bluetooth/qbluetoothsocket_bluez.cpp \
         bluetooth/qbluetoothsocket_bluez_p.cpp \
         bluetooth/qrfcommserver_bluez.cpp \
-        bluetooth/qbluetoothlocaldevice_bluez.cpp
+        bluetooth/qbluetoothlocaldevice_bluez.cpp \
+        bluetooth/qbluetoothtransferreply_bluez.cpp \
+        bluetooth/qbluetoothtransfermanager_bluez.cpp
 }
 
 INCLUDEPATH += $$PWD

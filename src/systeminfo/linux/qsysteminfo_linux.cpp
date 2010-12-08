@@ -717,6 +717,22 @@ QString QSystemDeviceInfoPrivate::productName()
     return QString();
 }
 
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
          : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {

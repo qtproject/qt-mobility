@@ -54,7 +54,7 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
-#include "qdeclarativegeomapobject_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qdeclarativegeomapcircleobject_p.h"
 #include "qdeclarativegeomappixmapobject_p.h"
@@ -62,6 +62,8 @@
 #include "qdeclarativegeomappolylineobject_p.h"
 #include "qdeclarativegeomaprectangleobject_p.h"
 #include "qdeclarativegeomaptextobject_p.h"
+
+#include "qdeclarativegeomapmousearea_p.h"
 
 #include "qdeclarativegeocodemodel_p.h"
 #include "qdeclarativereversegeocodemodel_p.h"
@@ -104,13 +106,16 @@ public:
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
-        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapGroup");
+        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
+        qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 1, "MapGroup");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircle");
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygon");
         qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolyline");
         qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangle");
         qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 1, "MapText");
         qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapImage");
+
+        qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 1, "MapMouseArea");
 
         qmlRegisterType<QDeclarativeGeocodeModel>(uri, 1, 1, "GeocodeModel");
         qmlRegisterType<QDeclarativeReverseGeocodeModel>(uri, 1, 1, "ReverseGeocodeModel");

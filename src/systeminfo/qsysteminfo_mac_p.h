@@ -296,6 +296,9 @@ public:
     QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

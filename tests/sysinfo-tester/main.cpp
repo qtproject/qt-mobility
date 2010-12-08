@@ -217,6 +217,7 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
+  X(deviceinfo.uniqueID());
 }
 
 /* ------------------------------------------------------------------------- *

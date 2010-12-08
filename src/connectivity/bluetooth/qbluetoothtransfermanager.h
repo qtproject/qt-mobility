@@ -69,8 +69,7 @@ public:
     explicit QBluetoothTransferManager(QObject *parent = 0);
     ~QBluetoothTransferManager();
 
-    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);
-    QBluetoothTransferReply *get(const QBluetoothTransferRequest &request);
+    QBluetoothTransferReply *put(const QBluetoothTransferRequest &request, QIODevice *data);    
 
 signals:
     void finished(QBluetoothTransferReply *reply);

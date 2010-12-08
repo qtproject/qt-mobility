@@ -103,7 +103,9 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
 
 void QGeoTiledMapRouteObjectInfo::penChanged(const QPen &pen)
 {
-    pathItem->setPen(route->pen());
+    QPen p = route->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
     updateItem();
 }
 
@@ -114,6 +116,9 @@ void QGeoTiledMapRouteObjectInfo::detailLevelChanged(quint32 detailLevel)
 
 void QGeoTiledMapRouteObjectInfo::zoomLevelChanged(qreal zoomLevel)
 {
+    QPen p = route->pen();
+    p.setWidth(p.width() * tiledMapData->zoomFactor());
+    pathItem->setPen(p);
     updateData();
 }
 

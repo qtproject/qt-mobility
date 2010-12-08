@@ -208,6 +208,7 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
   \brief The nominal battery capacity.
 
     Returns the nominal (maximum) capacity of the battery, in milliampere-hours (mAh).
+    If no battery is found, -1.
 */
 int QSystemBatteryInfo::nominalCapacity() const
 {
@@ -219,6 +220,7 @@ int QSystemBatteryInfo::nominalCapacity() const
   \brief The battery level in percent.
 
     Returns the remaining battery level of the battery in percent.
+    If no battery is found, -1.
   */
 int QSystemBatteryInfo::remainingCapacityPercent() const
 {
@@ -243,6 +245,7 @@ int QSystemBatteryInfo::remainingCapacity() const
   \brief The battery voltage.
 
     Returns the voltage of the battery, in millivolts (mV).
+    If no battery is found, -1.
   */
 int QSystemBatteryInfo::voltage() const
 {
@@ -254,7 +257,7 @@ int QSystemBatteryInfo::voltage() const
   \brief The remaining time of charging
 
     Returns the remaining time of charging in seconds if charging,
-    or -1 if not charging.
+    0 if battery is full and not charging, or -1 no battery found.
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {
@@ -290,7 +293,8 @@ int QSystemBatteryInfo::remainingCapacityBars() const
   \property QSystemBatteryInfo::maxBars
   \brief The maximum number of bars the system uses.
 
-   Returns the Maximum number of bars the system uses.
+   Returns the Maximum number of bars the system uses. In the case that the system has no
+   default number of battery bars, 0 is returned.
   */
 int QSystemBatteryInfo::maxBars() const
 {
@@ -461,9 +465,10 @@ int QSystemBatteryInfo::startCurrentMeasurement(int rate)
 }
 
 /*!
+    \property QSystemBatteryInfo::energyMeasurementUnit
+        \brief The energy unit used by the system.
   Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
   */
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
 {
     return batteryInfoPrivate()->energyMeasurementUnit();

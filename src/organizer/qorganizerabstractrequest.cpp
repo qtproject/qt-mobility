@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -135,14 +135,7 @@ QOrganizerAbstractRequest::QOrganizerAbstractRequest(QOrganizerAbstractRequestPr
 /*! Cleans up the memory used by this request */
 QOrganizerAbstractRequest::~QOrganizerAbstractRequest()
 {
-    if (d_ptr) {
-        QOrganizerManagerEngine *engine = QOrganizerManagerData::engine(d_ptr->m_manager);
-        if (engine) {
-            engine->requestDestroyed(this);
-        }
-
-        delete d_ptr;
-    }
+    delete d_ptr;
 }
 
 /*!

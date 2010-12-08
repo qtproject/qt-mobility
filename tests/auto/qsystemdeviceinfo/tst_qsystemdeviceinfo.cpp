@@ -145,6 +145,7 @@ private slots:
     void tst_keypadLightOn();
     void tst_uniqueID();
     void tst_lockStatus();
+    void tst_getActiveProfileDetails();
 
 
     void tst_batteryLevelChanged_data();
@@ -410,6 +411,7 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
     }
 }
 
+<<<<<<< HEAD
 void tst_QSystemDeviceInfo::tst_batteryLevelChanged_data()
 {
     QTest::addColumn<int>("batLevel");
@@ -730,6 +732,20 @@ void tst_QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool o
     QVERIFY(di.isDeviceLocked() == lockTypeOn);
 }
 
+
+void tst_QSystemDeviceInfo::tst_getActiveProfileDetails()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::ActiveProfileDetails *details = di.getActiveProfileDetails();
+    int vol = details->messageRingtoneVolume();
+    int vol2 = details->voiceRingtoneVolume();
+    bool vib = details->vibrationActive();
+    if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
+        QVERIFY(vol > -1 && vol < 101);
+        QVERIFY(vol2 > -1 && vol2 < 101);
+        QVERIFY(vib || !vib);
+    }
+}
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
 #include "tst_qsystemdeviceinfo.moc"

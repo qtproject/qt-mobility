@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -258,6 +258,66 @@ and stored to GConf as BASE64 encoded strings. When reading these values they ar
 converted back to the original data types. The serialization/deserialization is transparent operation
 to the API user but may cause interoperatibility issues with native applications that access the same
 data directly.
+
+\section2 ContextKit Layer (Maemo6/MeeGo)
+
+Publish and Subscribe can be used to access both "core" and "non-core" values in the MeeGo ContextKit.
+The backend by default will look for a "core" property in the registry first (dot-separated), and then
+fall back to a "non-core" property (slash-separated) if a "core" one is not found.
+
+For example, if you subscribe to the property \c /Power/Battery/Charge, Qt will first look to see if
+the name \c Power.Battery.Charge is in the registry. If so, it will subscribe to it. Otherwise, it
+will look for \c /Power/Battery/Charge instead.
+
+\section3 \bold{Organization and application name}
+
+ContextKit requires providers to register with a valid DBus service name in order to publish values.
+The ContextKit Layer automatically builds this name from QCoreApplication::organizationDomain() and 
+QCoreApplication::applicationName(). In order to publish, you will need to set these 
+values in your application. They are not necessary if your application only subscribes and does not
+publish.
+
+\code
+QCoreApplication::setOrganizationDomain("example.com");
+QCoreApplication::setApplicationName("Test Application");
+// will register with 'com.example.Test-Application'
+\endcode
+
+\section3 \bold{Declaring Value Space Paths}
+
+ContextKit also requires that an entry be present in the ContextKit Registry on the system before
+subscribers will be able to find an advertised property. The Registry is a set of XML files, normally
+saved in \c /usr/share/contextkit/providers with the \c .context file extension.
+
+For example, the following \c .context file describes a simple example service:
+\code
+<?xml version="1.0"?>
+<provider bus="session" service="com.example.Test-Application">
+  <key name="/com/example/test/value" />
+</provider>
+\endcode
+
+(note the \c service attribute must match the organization domain and application name set above)
+
+Example qmake snippet to deploy the \c .context file
+\code
+maemo6|meego {
+    contextreg.sources = example.context
+    contextreg.path = /usr/share/contextkit/providers
+    INSTALLS += contextreg
+}
+\endcode
+
+Additionally, it is common on ContextKit platforms to make use of a database cache of the registry,
+which can usually be regenerated with the command \c update-contextkit-providers. This is the case
+on Maemo, where the command should be appended to the bottom of the \c debian/postinst script
+during packaging.
+
+\section3 \bold{Limitations}
+
+Similar to both the Symbian and Gconf backends, ContextKit supports only a limited range of QVariant data
+types. Types not supported are serialized in a manner transparent to the API user, but interoperatibility
+with native ContextKit subscribers may be impacted as a result.
 
 \section1 Examples
 

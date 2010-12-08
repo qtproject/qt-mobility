@@ -80,8 +80,14 @@ void QDeclarativeGeocodeModel::componentComplete()
 
 void QDeclarativeGeocodeModel::update()
 {
-    if (searchManager() && !address_.address().isEmpty())
+    if (searchManager() && !address_.address().isEmpty()) {
+
+        setStatus(QDeclarativeGeoSearchModel::Loading);
+
         searchManager()->geocode(address_.address());
+
+        // TODO check for finished
+    }
 }
 
 QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) const

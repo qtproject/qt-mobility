@@ -436,7 +436,12 @@ void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarat
   */
 QDeclarativeListProperty<QDeclarativeContactSortOrder> QDeclarativeContactModel::sortOrders()
 {
-    return QDeclarativeListProperty<QDeclarativeContactSortOrder>(this, d->m_sortOrders);
+    return QDeclarativeListProperty<QDeclarativeContactSortOrder>(this,
+                                                                  0,
+                                                                  sortOrder_append,
+                                                                  sortOrder_count,
+                                                                  sortOrder_at,
+                                                                  sortOrder_clear);
 }
 
 void QDeclarativeContactModel::startImport(QVersitReader::State state)
@@ -469,8 +474,8 @@ void QDeclarativeContactModel::fetchContacts(const QList<QContactLocalId>& conta
 }
 void QDeclarativeContactModel::clearContacts()
 {
-    d->m_contacts.clear();
     qDeleteAll(d->m_contacts);
+    d->m_contacts.clear();
     d->m_contactMap.clear();
 }
 
@@ -582,7 +587,7 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
@@ -701,4 +706,51 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
     }
     return QVariant();
 }
+
+
+void QDeclarativeContactModel::sortOrder_append(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, QDeclarativeContactSortOrder *sortOrder)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+    if (model && sortOrder) {
+        QObject::connect(sortOrder, SIGNAL(sortOrderChanged()), model, SIGNAL(sortOrdersChanged()));
+        model->d->m_sortOrders.append(sortOrder);
+        emit model->sortOrdersChanged();
+    }
+}
+
+int  QDeclarativeContactModel::sortOrder_count(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+    if (model)
+        return model->d->m_sortOrders.size();
+    return 0;
+}
+QDeclarativeContactSortOrder * QDeclarativeContactModel::sortOrder_at(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, int idx)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+
+    QDeclarativeContactSortOrder* sortOrder = 0;
+    if (model) {
+        int i = 0;
+        foreach (QDeclarativeContactSortOrder* s, model->d->m_sortOrders) {
+            if (i == idx) {
+                sortOrder = s;
+                break;
+            } else {
+                i++;
+            }
+        }
+    }
+    return sortOrder;
+}
+void  QDeclarativeContactModel::sortOrder_clear(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+
+    if (model) {
+        model->d->m_sortOrders.clear();
+        emit model->sortOrdersChanged();
+    }
+}
+
 

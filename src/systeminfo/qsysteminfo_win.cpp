@@ -2149,6 +2149,20 @@ QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
     return QSystemDeviceInfo::UnknownLock;
 }
 
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {

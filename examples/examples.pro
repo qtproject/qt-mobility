@@ -37,11 +37,13 @@ contains(mobility_modules,location) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
                         geoservicedemo \
+                        mapsnavigator \
                         mapviewer
         }
     } else {
         SUBDIRS +=  flickrdemo \
                     geoservicedemo \
+                    mapsnavigator \
                     mapviewer
     }
 
@@ -131,11 +133,10 @@ contains(mobility_modules,gallery) {
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo \
 	       todo
-#disable qmlorganizer, as it is not completed
-#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-#        SUBDIRS += \
-#               qmlorganizer
-#    }
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        SUBDIRS += \
+               qmlorganizer
+    }
 }
 
 # Feedback API examples

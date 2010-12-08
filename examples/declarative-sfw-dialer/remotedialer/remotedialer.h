@@ -58,7 +58,7 @@ class RemoteDialer : public QObject
 public:
     RemoteDialer(QObject *parent = 0);
     
-    Q_PROPERTY(int state READ state NOTIFY stateChanged);
+    Q_PROPERTY(int state READ state NOTIFY stateChanged)
     int state() const;
 
 public slots:

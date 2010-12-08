@@ -59,11 +59,21 @@ class QDeclarativeGeoPlace;
 class QDeclarativeGeoSearchModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_ENUMS(Status)
+
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
+    enum Status {
+        Null,
+        Ready,
+        Loading,
+        Error
+    };
+
     enum Roles {
         PlaceRole = Qt::UserRole + 499,
         LandmarkRole = Qt::UserRole + 500
@@ -84,10 +94,13 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
 
+    Status status() const;
+
     QString error() const;
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
+    void statusChanged(QDeclarativeGeoSearchModel::Status status);
     void errorChanged(const QString &error);
     void placesChanged();
 
@@ -102,6 +115,8 @@ protected:
 
     QList<QGeoPlace> places() const;
 
+    void setStatus(Status status);
+
     void setError(const QString &error);
 
 private:
@@ -111,6 +126,7 @@ private:
     QGeoServiceProvider* serviceProvider_;
     QGeoSearchManager* searchManager_;
 
+    Status status_;
     QString error_;
     QList<QGeoPlace> places_;
 };

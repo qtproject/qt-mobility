@@ -40,14 +40,13 @@
 ****************************************************************************/
 
 #include "qmetaobjectbuilder_p.h"
+#include <QDebug>
 
 #ifndef Q_OS_WIN
 #include <stdint.h>
 #endif
 
-#include <QDebug>
-
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMetaObjectBuilder
@@ -1615,7 +1614,10 @@ void QMetaObjectBuilder::serialize(QDataStream& stream) const
 
     // Write the related meta objects.
 #ifdef Q_NO_DATA_RELOCATION
-    //### What do we do here?
+    //the related meta objects will be function pointers
+    //which you have to add to the builder manually.
+    //e.g.
+    //builder2.addRelatedMetaObject(QLocale::getStaticMetaObject);
 #else
     for (index = 0; index < d->relatedMetaObjects.size(); ++index) {
         const QMetaObject *meta = d->relatedMetaObjects[index];
@@ -1795,7 +1797,10 @@ void QMetaObjectBuilder::deserialize
 
     // Read the related meta objects.
 #ifdef Q_NO_DATA_RELOCATION
-    //### What do we do here
+    //the related meta objects will be function pointers
+    //which you have to add to the builder manually.
+    //e.g.
+    //builder2.addRelatedMetaObject(QLocale::getStaticMetaObject);
 #else
     for (index = 0; index < relatedMetaObjectCount; ++index) {
         if (stream.status() != QDataStream::Ok)
@@ -2574,4 +2579,4 @@ void QMetaEnumBuilder::removeKey(int index)
     }
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

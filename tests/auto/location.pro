@@ -6,6 +6,7 @@ TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
+      qgeotiledmappingmanagerengine \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \

@@ -9,7 +9,7 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += qgeomappingmanagerengine_test.h \
-           qgeoserviceproviderplugin_test.h
+            qgeoserviceproviderplugin_test.h
 
 SOURCES += qgeoserviceproviderplugin_test.cpp
 

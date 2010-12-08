@@ -58,6 +58,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
 #include "qcontacttype.h"
+#include "qcontactobserver.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -141,6 +142,8 @@ public:
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - save.
     bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap = 0); // Partial save
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - remove.
+
+    QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId);
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
     QContact compatibleContact(const QContact& original);
