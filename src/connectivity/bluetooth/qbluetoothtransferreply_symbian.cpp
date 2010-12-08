@@ -99,6 +99,16 @@ qint64 QBluetoothTransferReplySymbian::writeData(const char*, qint64)
     return 0;
 }
 
+QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
+{
+    return NoError;
+}
+
+QString QBluetoothTransferReplySymbian::errorString() const
+{
+    return QString();
+}
+
 
 #include "moc_qbluetoothtransferreply_symbian_p.cpp"
 
