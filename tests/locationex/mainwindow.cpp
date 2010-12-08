@@ -20,10 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("MapBox test");
 
     m_cleanButton = new QPushButton("Clean cache");
+    m_cleanButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_panToggle = new QPushButton("auto-pan");
+    m_panToggle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_panToggle->setCheckable(true);
     m_errorLabel = new QLabel("err");
 
     m_controlLayout = new QHBoxLayout;
     m_controlLayout->addWidget(m_cleanButton);
+    m_controlLayout->addWidget(m_panToggle);
     m_controlLayout->addWidget(m_errorLabel);
 
     m_layout = new QGridLayout;
@@ -31,19 +36,20 @@ MainWindow::MainWindow(QWidget *parent)
     centralWidget()->setLayout(m_layout);
     resize(640, 480);
 
-    startTimer(10);
+    m_panTimer = new QTimer;
+    m_panTimer->setInterval(0);
+    connect(m_panTimer, SIGNAL(timeout()), this, SLOT(panTimerHandler()));
 
     QTimer * compareImagesTimer = new QTimer(this);
     compareImagesTimer->setInterval(1000);
     connect(compareImagesTimer, SIGNAL(timeout()), this, SLOT(compareImages()));
     compareImagesTimer->start();
 
-    eventTime.start();
+    connect(m_panToggle, SIGNAL(toggled(bool)), this, SLOT(setAutoPanEnabled(bool)));
 }
 
 MainWindow::~MainWindow()
 {
-
 }
 
 void MainWindow::addBox(MapBox * box)
@@ -60,7 +66,7 @@ void MainWindow::resizeEvent(QResizeEvent * event)
     QLayoutItem *child;
     while ((child = m_layout->takeAt(0)) != 0) ;
 
-    int columns = floor(0.5+sqrt(static_cast<qreal>(m_boxes.size())));
+    int columns = floor(0.5 + sqrt(static_cast<qreal>(m_boxes.size())));
 
     m_layout->addLayout(m_controlLayout, 0, 0, 1, columns);
 
@@ -91,24 +97,28 @@ void MainWindow::networkSessionOpened()
     }
 }
 
-void MainWindow::timerEvent(QTimerEvent * event)
+void MainWindow::panTimerHandler()
 {
     const qreal speed = 0.5;
-    qreal currentMovement = speed * qMin(300, eventTime.elapsed());
+    qreal currentMovement = speed * qMin(300, panTime.restart());
 
     foreach(MapBox * box, m_boxes) {
-        //box->map()->pan(currentMovement, 0);
+        box->map()->pan(currentMovement, 0);
     }
-    eventTime.restart();
 }
 
 void MainWindow::compareImages()
 {
+    if (m_boxes.size() < 2) {
+        m_errorLabel->hide();
+        return;
+    }
+
     QImage firstBoxImage = m_boxes.first()->grab().toImage();
 
     QStringList results;
 
-    foreach(MapBox * box, m_boxes) {
+    foreach (MapBox * box, m_boxes) {
         if (results.isEmpty()) {
             results << "N/A";
             continue;
@@ -125,6 +135,21 @@ void MainWindow::compareImages()
 
         results << QString("sqerr=%1, errcnt=%2").arg(squareError).arg(errorCount);
     }
+
     results.removeFirst();
     m_errorLabel->setText(results.join(" | "));
+    m_errorLabel->show();
+}
+
+void MainWindow::setAutoPanEnabled(bool enabled)
+{
+    if (enabled != m_panTimer->isActive()) {
+        if (enabled) {
+            panTime.start();
+            m_panTimer->start();
+        }
+        else {
+            m_panTimer->stop();
+        }
+    }
 }
