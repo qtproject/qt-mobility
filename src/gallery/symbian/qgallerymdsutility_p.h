@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <QString.h>
+#include <QString>
 #include <QDateTime>
 //API
 #include "qgalleryqueryrequest.h"

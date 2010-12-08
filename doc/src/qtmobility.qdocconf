@@ -19,7 +19,7 @@ naturallanguage         = en_US
 qhp.projects            = QtMobility
 
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility.110
+qhp.QtMobility.namespace          = com.nokia.qtmobility.111
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =
@@ -57,9 +57,9 @@ qhp.QtMobility.extraFiles = index.html \
                  style/style_ie8.css \
                  style/style.css
 
-qhp.QtMobility.filterAttributes   = qtmobility 1.1.0
-qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.0
-qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.0
+qhp.QtMobility.filterAttributes   = qtmobility 1.1.1
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.1
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.1
 qhp.QtMobility.subprojects = classes overviews examples
 qhp.QtMobility.subprojects.classes.title = Classes
 qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
@@ -99,18 +99,22 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
-             ../../src/messaging \
-             ../../src/versit \
-             ../../src/sensors \
-             ../../src/gallery \
              ../../plugins/declarative/gallery \
-             ../../src/camera \
-             ../../src/organizer \
-             ../../src/versitorganizer \
              ../../plugins/declarative/serviceframework \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/messaging \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../src/messaging \
+             ../../src/versit \
+             ../../src/sensors \
+             ../../src/gallery \
+             ../../src/camera \
+             ../../src/organizer \
+             ../../src/versitorganizer \
              .
 
 sourcedirs = ../../src/global \
@@ -134,11 +138,15 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
              ../../src/versitorganizer \

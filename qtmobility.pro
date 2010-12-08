@@ -51,10 +51,10 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.1.0 >> $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.1.1 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
     system(echo MOBILITY_MINOR_VERSION = 1 >> $$PRF_CONFIG)
-    system(echo MOBILITY_PATCH_VERSION = 0 >> $$PRF_CONFIG)
+    system(echo MOBILITY_PATCH_VERSION = 1 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
@@ -91,7 +91,11 @@ contains(build_docs, yes) {
     SUBDIRS += doc
     include(doc/doc.pri)
 
-    OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
+    OTHER_FILES += \
+        doc/src/*.qdoc \
+        doc/src/legal/*.qdoc \
+        doc/src/examples/*.qdoc \
+        doc/src/plugins/*.qdoc
 }
 
 contains(build_unit_tests, yes):SUBDIRS+=tests

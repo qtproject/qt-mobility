@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -106,13 +106,13 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
         new MetaDataBinding(
                 lastAccessed, "dateTime", resultSet, QDocumentGallery::lastAccessed, this);
 
+        setLayout(layout);
+
         if (queryRequest->state() == QGalleryAbstractRequest::Active)
             connect(queryRequest, SIGNAL(finished()), this, SLOT(queryRequestFinished()));
         else if (queryRequest->state() == QGalleryAbstractRequest::Finished)
             queryRequestFinished();
     }
-
-    setLayout(layout);
 }
 
 void DocumentPropertiesWidget::queryRequestFinished()

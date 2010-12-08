@@ -25,5 +25,5 @@ maemo* {
 }
 
 symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
- }
+    LIBS += -lavkon -lcone -leikcore
+}

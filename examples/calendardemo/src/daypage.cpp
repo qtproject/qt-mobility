@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -125,7 +125,7 @@ void DayPage::refresh()
             QString time = eventTime.startDateTime().time().toString("hh:mm");
             QListWidgetItem* listItem = new QListWidgetItem();
             if (item.type() == QOrganizerItemType::TypeEventOccurrence)
-                listItem->setText(QString("Event occurance:%1-%2").arg(time).arg(item.displayLabel()));
+                listItem->setText(QString("Event occurrence:%1-%2").arg(time).arg(item.displayLabel()));
             else
                 listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
             QVariant data = QVariant::fromValue<QOrganizerItem>(item);

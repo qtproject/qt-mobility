@@ -67,6 +67,7 @@ QOrganizerItemOccurrenceFetchRequest::QOrganizerItemOccurrenceFetchRequest(QObje
 void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &item)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_generator = item;
 }
 
@@ -75,6 +76,7 @@ void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &i
 void QOrganizerItemOccurrenceFetchRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -83,6 +85,7 @@ void QOrganizerItemOccurrenceFetchRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemOccurrenceFetchRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
 }
 
@@ -90,6 +93,7 @@ void QOrganizerItemOccurrenceFetchRequest::setEndDate(const QDateTime &date)
 void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_maxOccurrences = maxCount;
 }
 
@@ -99,6 +103,7 @@ void QOrganizerItemOccurrenceFetchRequest::setMaxOccurrences(int maxCount)
 void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = hint;
 }
 
@@ -106,6 +111,7 @@ void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetc
 QOrganizerItem QOrganizerItemOccurrenceFetchRequest::parentItem() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_generator;
 }
 
@@ -113,6 +119,7 @@ QOrganizerItem QOrganizerItemOccurrenceFetchRequest::parentItem() const
 QDateTime QOrganizerItemOccurrenceFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -120,6 +127,7 @@ QDateTime QOrganizerItemOccurrenceFetchRequest::startDate() const
 QDateTime QOrganizerItemOccurrenceFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
 }
 
@@ -127,6 +135,7 @@ QDateTime QOrganizerItemOccurrenceFetchRequest::endDate() const
 int QOrganizerItemOccurrenceFetchRequest::maxOccurrences() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_maxOccurrences;
 }
 
@@ -134,6 +143,7 @@ int QOrganizerItemOccurrenceFetchRequest::maxOccurrences() const
 QList<QOrganizerItem> QOrganizerItemOccurrenceFetchRequest::itemOccurrences() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 
@@ -141,6 +151,7 @@ QList<QOrganizerItem> QOrganizerItemOccurrenceFetchRequest::itemOccurrences() co
 QOrganizerItemFetchHint QOrganizerItemOccurrenceFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
 }
 

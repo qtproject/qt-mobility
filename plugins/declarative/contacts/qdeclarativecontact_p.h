@@ -51,9 +51,9 @@ class QDeclarativeContactDetail;
 class QDeclarativeContact : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QContactLocalId contactId READ contactId NOTIFY contactIdChanged);
-    Q_PROPERTY (QString manager READ manager NOTIFY managerChanged);
-    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeContactDetail> details READ details NOTIFY detailsChanged);
+    Q_PROPERTY (QContactLocalId contactId READ contactId NOTIFY contactIdChanged)
+    Q_PROPERTY (QString manager READ manager NOTIFY managerChanged)
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeContactDetail> details READ details NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactAddress* address READ address NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactAnniversary* anniversary READ anniversary NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactAvatar* avatar READ avatar NOTIFY detailsChanged)
@@ -150,7 +150,7 @@ private:
     QDeclarativeContactMetaObject* d;
     friend class QDeclarativeContactMetaObject;
 };
-
+Q_DECLARE_METATYPE(QContactLocalId)
 QML_DECLARE_TYPE(QDeclarativeContact)
 
 #endif // QDECLARATIVECONTACT_P_H

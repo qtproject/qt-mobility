@@ -51,8 +51,8 @@
 
 #include <QString>
 #include <QList>
+#include <QXmlStreamReader>
 
-class QXmlStreamReader;
 class QIODevice;
 
 #include <qgeocoordinate.h>

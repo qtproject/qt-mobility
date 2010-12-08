@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
+
     group = static_cast<QGeoMapGroupObject*>(mapObject);
 
     connect(group,
@@ -71,17 +72,21 @@ QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapDa
     pathItem = new QGraphicsPathItem();
     graphicsItem = pathItem;
     pathItem->setPos(0.0, 0.0);
+
+    QList<QGeoMapObject*> objects = group->childObjects();
+
+    foreach(QGeoMapObject * object, objects) {
+        QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(object->info());
+
+        if (info)
+            info->graphicsItem->setParentItem(graphicsItem);
+    }
+
     updateItem();
 }
 
 QGeoTiledMapGroupObjectInfo::~QGeoTiledMapGroupObjectInfo()
 {
-    for (int i = 0; i < group->childObjects().size(); ++i) {
-        QGeoTiledMapObjectInfo* info
-                = static_cast<QGeoTiledMapObjectInfo*>(group->childObjects().at(i)->info());
-        delete info->graphicsItem;
-        info->graphicsItem = 0;
-    }
 }
 
 void QGeoTiledMapGroupObjectInfo::childAdded(QGeoMapObject *childObject)
@@ -96,8 +101,8 @@ void QGeoTiledMapGroupObjectInfo::childAdded(QGeoMapObject *childObject)
 void QGeoTiledMapGroupObjectInfo::childRemoved(QGeoMapObject *childObject)
 {
     QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
-    if (info && info->graphicsItem && info->graphicsItem->scene()) {
-        info->graphicsItem->scene()->removeItem(info->graphicsItem);
+    if (info && info->graphicsItem) {
+        tiledMapDataPrivate->removeObjectInfo(info);
         updateItem();
     }
 }

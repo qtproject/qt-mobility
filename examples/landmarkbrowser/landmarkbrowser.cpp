@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include <qlandmarkfilter.h>
+#include <qlandmarkcategoryremoverequest.h>
 #include <qlandmark.h>
 
 #include <QModelIndex>
@@ -93,12 +94,8 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
 
     landmarkRemove = new QLandmarkRemoveRequest(manager, this);
-    QObject::connect(landmarkRemove, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-                this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
-
-     landmarkSave = new QLandmarkSaveRequest(manager, this);
-     QObject::connect(landmarkSave, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-                this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
+    landmarkSave = new QLandmarkSaveRequest(manager, this);
+    categoryRemove = new QLandmarkCategoryRemoveRequest(manager, this);
 
      categoryFetch = new QLandmarkCategoryFetchRequest(manager, this);
      QObject::connect(categoryFetch, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
@@ -168,6 +165,8 @@ LandmarkBrowser::~LandmarkBrowser()
     landmarkSave =0;
     delete categoryFetch;
     categoryFetch = 0;
+    delete categoryRemove;
+    categoryRemove =0;
 
     delete progress;
     progress =0;
@@ -250,14 +249,6 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    QList<QLandmark> newLandmarks = manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount());
-
-    updateTable(newLandmarks);
-    updateRowLabels();
-    landmarks.append(newLandmarks);
-
-    if (table->rowCount() < limit)
-        nextLandmarkButton->setEnabled(false);
 }
 
 void LandmarkBrowser::on_setFilterButton_clicked()
@@ -307,13 +298,11 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
     if (deleteIds.count() == 0)
         return;
 
-    for (int i =0;i < deleteIds.count(); ++i)
-        manager->removeCategory(deleteIds.at(i));
-
-    updateCategoryTable(manager->categories(deleteIds.count(), currentCategoryOffset+categoryTable->rowCount()));
-    updateCategoryRowLabels();
-    if (categoryTable->rowCount() < limit)
-        nextCategoryButton->setEnabled(false);
+    categoryRemove->setCategoryIds(deleteIds);
+    categoryRemove->start();
+#ifdef Q_OS_SYMBIAN
+    categoryRemove->waitForFinished(30);
+#endif
 }
 
 void LandmarkBrowser::on_addLandmark_clicked()
@@ -364,6 +353,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState)
     {
+
         QLandmarkAbstractRequest *request = qobject_cast<QLandmarkAbstractRequest*> (sender());
         if (!request)
             return;

@@ -214,7 +214,9 @@ QTM_BEGIN_NAMESPACE
     \brief duration of the feedback effect, in milliseconds.
 
     In some cases the duration will be unknown, which will be reported as 0.  If the duration
-    is infinite (via looping or other means), QFeedbackEffect::Infinite will be returned.
+    is infinite, QFeedbackEffect::Infinite will be returned.  Some subclasses may have
+    more than one type of duration (for example, \l QFeedbackHapticsEffect), and this
+    property will only return the duration of the main part of the effect.
 */
 
 /*!
@@ -303,7 +305,7 @@ bool QFeedbackEffect::supportsThemeEffect()
     it can be played:
 
     \list
-        \o duration(): The duration of the effect in milliseconds.
+        \o duration(): The duration of the main part of the effect in milliseconds.
         \o intensity(): The intensity, e.g., how hard the device will vibrate.
     \endlist
 
@@ -399,7 +401,11 @@ QFeedbackHapticsEffect::~QFeedbackHapticsEffect()
     \property QFeedbackHapticsEffect::duration
     \brief the expected duration of the effect.
 
-    This property defines the duration of the feedback effect, in milliseconds.
+    This property defines the duration of the main part of feedback effect, in milliseconds.
+
+    It does not include the duration of any fade-in or fade-out parts, if any.
+
+    \sa fadeTime(), attackTime()
 */
 int QFeedbackHapticsEffect::duration() const
 {
@@ -533,6 +539,8 @@ void QFeedbackHapticsEffect::setActuator(QFeedbackActuator *actuator)
 
     It has a default value of -1, which means that it is not a periodic effect.
     You can only change the period when the effect is stopped.
+    The duration of the effect should be set to a value larger than the
+    period of the effect if you wish the periodicity to be discernable.
     \note Not all actuators support periodic effects
 */
 int QFeedbackHapticsEffect::period() const
