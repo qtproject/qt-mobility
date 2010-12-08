@@ -49,6 +49,8 @@
     \list 1
     \o \l{tutorials/mapsnavigator/part1}{The Map Widget}
     \o \l{tutorials/mapsnavigator/part2}{Searching for locations}
+    \o \l{tutorials/mapsnavigator/part3}{Stopping for directions}
+    \o \l{tutorials/mapsnavigator/part4}{Kinetic panning and tuning for mobile}
     \endlist
     
     Some more text goes here.
@@ -648,6 +650,9 @@ class Marker : public QGeoMapPixmapObject
 public:
     inline QString name() const { return m_name; }
     inline void setName(QString name) { m_name = name; }
+    
+    inline QGeoAddress address() const { return m_address; }
+    inline void setAddress(QGeoAddress addr) { m_address = addr; }
 
     inline bool moveable() const { return m_moveable; }
     inline void setMoveable(bool moveable) { m_moveable = moveable; }
@@ -656,6 +661,7 @@ private:
     ...
     QString m_name;
     bool m_moveable;
+    QGeoAddress m_address;
 };
     \endcode
     
@@ -667,12 +673,18 @@ void MarkerManager::replyFinished(QObject *obj)
     ...
     foreach (QGeoPlace place, reply->places()) {
         Marker *m = new Marker(Marker::SearchMarker);
+
         m->setCoordinate(place.coordinate());
-        m->setName(QString("%1, %2").arg(place.address().street())
-                                    .arg(place.address().city()));
+        if (place.isLandmark()) {
+            QLandmark lm(place);
+            m->setName(lm.name());
+        } else {
+            m->setName(QString("%1, %2").arg(place.address().street())
+                                        .arg(place.address().city()));
+        }
+        m->setAddress(place.address());
         m->setMoveable(false);
-        searchMarkers.append(m);
-	...
+    ...
     \endcode
     
     So now the data is available from the Marker objects. We want to show
@@ -682,12 +694,16 @@ void MarkerManager::replyFinished(QObject *obj)
     MapsWidget and GeoMap, first.
     
     We already have methods for handling mouse presses and releases over
-    the map widget, so we will modify these. Add two private fields to GeoMap:
+    the map widget, so we will modify these. Add two private fields and a 
+    signal to GeoMap:
     
     \code
 class GeoMap : public QGraphicsGeoMap
 {
     ...
+signals:
+    void clicked(Marker *marker);
+    
 private:
     ...
     bool markerPressed;
@@ -696,5 +712,285 @@ private:
 };
     \endcode
     
+    We set the \c markerPressed flag when the mouse has been pressed over a
+    map object, and set \c pressed to the map object in question.
     
+    \code
+void GeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = true;
+
+    markerPressed = false;
+    QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+    if (objects.size() > 0) {
+        pressed = objects.first();
+        markerPressed = true;
+    }
+
+    event->accept();
+}
+
+void GeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    panActive = false;
+
+    if (markerPressed) {
+        // check if we're still over the object
+        QList<QGeoMapObject*> objects = mapObjectsAtScreenPosition(event->pos());
+        if (objects.contains(pressed)) {
+            Marker *m = dynamic_cast<Marker*>(pressed);
+            if (m)
+                emit clicked(m);
+        }
+
+        markerPressed = false;
+    }
+
+    event->accept();
+}
+    \endcode
+    
+    Finally, we need to pass this clicked() signal up through MapsWidget so
+    that we can use it from outside. We do this by adding a signal and
+    connecting GeoMap's signal to the signal on MapsWidget with the same
+    name.
+    
+    \code
+class MapsWidget : public QWidget
+{
+    ...
+signals:
+    void markerClicked(Marker *m);
+    ...
+};
+
+void MapsWidget::initialize(QGeoMappingManager *manager)
+{
+    ...
+    connect(geoMap, SIGNAL(clicked(Marker*)),
+            this, SIGNAL(markerClicked(Marker*)));
+}
+    \endcode
+    
+    Now that's done, creating a dialog box to display the address information
+    is relatively trivial. The MarkerDialog class contains a QLineEdit for the
+    name field, a readonly QLabel for the address, and two QDoubleSpinBoxes
+    for latitude and longitude.
+      
+    We connect up the MapsWidget's markerClicked() signal to a slot in
+    MainWindow:
+    
+    \code
+void MainWindow::markerClicked(Marker *marker)
+{
+    MarkerDialog md(marker);
+    if (md.exec() == QDialog::Accepted) {
+        marker->setName(md.markerName());
+        QGeoCoordinate c(md.latitude(), md.longitude());
+        marker->setCoordinate(c);
+    }
+}
+    \endcode
+    
+    And now clicking on markers on the map yields a simple editing dialog box, so
+    our first task is complete.
+    
+    \section2 Limiting search area
+    
+    The QGeoSearchManager's search() method already comes with support for
+    limited search areas -- by setting up a QGeoBoundingArea we can take
+    advantage of this functionality.
+    
+    Firstly, we'll modify the MarkerManager's search() method:
+    
+    \code
+// declaration
+void search(QString query, qreal radius=-1);
+
+// implementation
+void MarkerManager::search(QString query, qreal radius)
+{
+    QGeoSearchReply *reply;
+    if (radius > 0) {
+        QGeoBoundingCircle boundingCircle(m_myLocation->coordinate(), radius);
+        reply = m_searchManager->search(query,
+                                        QGeoSearchManager::SearchAll,
+                                        -1, 0,
+                                        boundingCircle);
+    } else {
+        reply = m_searchManager->search(query);
+    }
+
+    if (reply->isFinished()) {
+      ...
+    \endcode
+    
+    And now we need to modify the UI to expose this to the user. There are
+    a few ways of doing this, but the option we'll take is to expose a
+    QComboBox with some preset distances. This is easier to use on
+    touch screen devices, especially, where entering numbers often takes
+    much more effort from the user than selecting an option.
+    
+    \code
+// in SearchDialog constructor
+whereCombo = new QComboBox();
+whereCombo->addItem(tr("Nearby (<10km)"), 10000);
+whereCombo->addItem(tr("Within 30 mins drive of me (<25km)"), 25000);
+whereCombo->addItem(tr("Within 100km of me"), 100000);
+whereCombo->addItem(tr("Anywhere in the world"), -1);
+whereCombo->setCurrentIndex(1);
+formLayout->addRow(tr("Where"), whereCombo);
+    \endcode
+    
+    Then to get the radius value to put into search, we simply take the user
+    data from the QComboBox, convert it to a qreal and pass it through.
+    
+    So we now have a searchable map, with clickable markers and the ability
+    to limit the search radius. The last feature we'll cover that relates to
+    searching is the so-called "reverse geocode" technique.
+    
+    \section2 Reverse geocode
+    
+    Currently, if you click the My Location icon on our map application, a
+    blank address is displayed. We can add the capability here to turn the
+    current coordinates of the marker into an approximate address, and the
+    technique is known as "reverse geocode" searching.
+    
+    To implement this, we'll hook into the coordinateChanged() signal of
+    the Marker object:
+    
+    \code
+MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
+    QObject(parent),
+    m_searchManager(searchManager)
+{
+    m_myLocation = new Marker(Marker::MyLocationMarker);
+    m_myLocation->setName("Me");
+
+    // hook the coordinateChanged() signal for reverse geocoding
+    connect(m_myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
+            this, SLOT(myLocationChanged(QGeoCoordinate)));
+}
+    \endcode
+    
+    Then we perform the reverse lookup in the myLocationChanged() slot. This
+    looks quite similar to the original search() method, with good reason, as
+    the reverse geocode lookup is simply a special kind of search call.
+    
+    \code
+void MarkerManager::myLocationChanged(QGeoCoordinate location)
+{
+    QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+    if (reply->isFinished()) {
+        reverseReplyFinished(reply);
+    } else {
+        revSigMap.setMapping(reply, reply);
+        connect(reply, SIGNAL(finished()),
+                &revSigMap, SLOT(map()));
+        connect(&sigMap, SIGNAL(mapped(QObject*)),
+                this, SLOT(reverseReplyFinished(QObject*)));
+    }
+}
+    \endcode
+    
+    As before, we use a QSignalMapper and a slot taking a QObject* parameter
+    to handle the replies, but this time we only extract the first result and 
+    set the address of the myLocation marker:
+    
+    \code
+void MarkerManager::reverseReplyFinished(QObject *obj)
+{
+    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
+    Q_ASSERT(reply != NULL);
+
+    if (reply->places().size() > 0) {
+        QGeoPlace place = reply->places().first();
+        m_myLocation->setAddress(place.address());
+    }
+
+    reply->deleteLater();
+}
+    \endcode
+    
+    However, this isn't going to work very well with a GPS updating myLocation 
+    on a regular basis and a slow network connection, as the requests
+    will pile up and the geocoded coordinates will lag behind the reported
+    ones by quite a margin. A simple scheme to solve this relies only
+    on two boolean flags:
+    
+    \code
+class MarkerManager : public QObject
+{
+    ...
+private:
+    ...
+    // a reverse geocode request is currently running
+    bool revGeocodeRunning;
+    // a request is currently running, and my location has changed
+    // since it started (ie, the request is stale)
+    bool myLocHasMoved;
+};
+
+void MarkerManager::myLocationChanged(QGeoCoordinate location)
+{
+    if (revGeocodeRunning) {
+        myLocHasMoved = true;
+    } else {
+        QGeoSearchReply *reply = m_searchManager->reverseGeocode(location);
+        myLocHasMoved = false;
+
+        if (reply->isFinished()) {
+            revGeocodeRunning = false;
+            reverseReplyFinished(reply);
+        } else {
+            revGeocodeRunning = true;
+
+            // <mapping and slots as before>
+        }
+    }
+}
+
+void MarkerManager::reverseReplyFinished(QObject *obj)
+{
+    QGeoSearchReply *reply = dynamic_cast<QGeoSearchReply*>(obj);
+    Q_ASSERT(reply != NULL);
+
+    // <set address as before>
+
+    revGeocodeRunning = false;
+    if (myLocHasMoved)
+        myLocationChanged(m_myLocation->coordinate());
+
+    reply->deleteLater();
+}
+    \endcode
+    
+    A reverse geocode request is only sent if the previous one has
+    finished -- if it hasn't finished, a flag is set so that the location
+    will be refreshed at the conclusion of the previous request. This is
+    far from a perfect scheme, but in practise it works quite well.
+    
+    At the end of part 2 now, we have a searchable map with a simple GUI,
+    clickable markers, the ability to limit search radius about our location,
+    and reverse geocoding to work out the address of where we are. This is
+    already quite a bit of useful functionality, but we will continue to
+    extend it further.
+    
+    In part 3, we will add the ability to fetch directions to a given
+    destination, and in part 4 we will add kinetic scrolling and cover a number
+    of points about means for achieving better performance on mobile platforms.
+*/
+
+/*!
+    \page tutorials-mapsnavigator-part3.html
+    \example tutorials/mapsnavigator/part3
+    \title Part 3 - Stopping for directions
+    
+    
+*/
+
+/*!
+    \page tutorials-mapsnavigator-part4.html
+    \example tutorials/mapsnavigator/part4
+    \title Part 4 - Kinetic panning and tuning for mobile
 */
