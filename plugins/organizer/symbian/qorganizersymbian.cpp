@@ -383,7 +383,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrencesL(
     QOrganizerManager::Error error;
     QOrganizerItem parentItem = this->item(parentItemId, QOrganizerItemFetchHint(), &error);
     if (error != QOrganizerManager::NoError)
-        return QList<QOrganizerItem>(); // return an empty occurence list if parent item is not found
+        return QList<QOrganizerItem>(); // return an empty occurrence list if parent item is not found
 
     // Verify time range
     if (periodStart.isValid() && periodEnd.isValid() && periodEnd < periodStart)
@@ -588,7 +588,7 @@ QList<QOrganizerItemId> QOrganizerItemSymbianEngine::itemIdsL(
             // Time range is not defined. So we can just return all entries. 
             // NOTE: this a lot faster than using instance view
 
-            // Get all entrys
+            // Get all entries
             TCalTime minTime;
             minTime.SetTimeUtcL(TCalTime::MinTime());
             RArray<TCalLocalUid> ids;
@@ -606,7 +606,7 @@ QList<QOrganizerItemId> QOrganizerItemSymbianEngine::itemIdsL(
 
             // Time range is defined so we need to use instance view to find
             // all entries in the range. For example an item which starts before
-            // periodStart might have an occurence in the range. We cannot catch 
+            // periodStart might have an occurrence in the range. We cannot catch 
             // that through CCalEntryView.
             // NOTE: If the client does not define periodEnd we might get
             // a huge amount of instances!
