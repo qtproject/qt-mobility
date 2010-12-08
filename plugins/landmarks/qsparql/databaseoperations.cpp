@@ -3006,6 +3006,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                     if (*error != QLandmarkManager::NoError) {
                         if (landmarkIds)
                             landmarkIds->clear();
+                        if (addedCategoryIds)
+                            addedCategoryIds->clear();
                         return false;
                     } else {
                         addedCategoryIds->append(category.categoryId());
@@ -3028,10 +3030,28 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         } else {
             saveLandmarkHelper(&(landmarks[i]),error, errorString);
         }
-
         if (*error != QLandmarkManager::NoError) {
+            for(int j=0; j < i; ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
+                qWarning() << "Remove Error String = " << *removeErrorString;
+                delete removeError;
+                delete removeErrorString;
+            }
+            for(int j=0; j<addedCategoryIds->count(); ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeCategoryHelper(addedCategoryIds->at(j), removeError, removeErrorString);
+                delete removeError;
+                delete removeErrorString;
+            }
             if(landmarkIds)
                 landmarkIds->clear();
+            if (addedLandmarkIds)
+                addedLandmarkIds->clear();
+            if (addedCategoryIds)
+                addedCategoryIds->clear();
             return false;
         } else {
             addedLandmarkIds->append(landmarks[i].landmarkId());
@@ -3089,15 +3109,21 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         } else {
             saveLandmarkHelper(&(landmarks[i]),error, errorString);
         }
-
         if (*error != QLandmarkManager::NoError) {
+            for(int j=0; j < i; ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
+                qWarning() << "Remove Error String = " << *removeErrorString;
+                delete removeError;
+                delete removeErrorString;
+            }
             if (landmarkIds)
                 landmarkIds->clear();
             return false;
         } else {
             addedLandmarkIds->append(landmarks[i].landmarkId());
         }
-
         if (landmarkIds)
             landmarkIds->append(landmarks[i].landmarkId());
     }
