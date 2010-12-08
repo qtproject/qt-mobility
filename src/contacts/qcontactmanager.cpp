@@ -459,11 +459,10 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -481,11 +480,10 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -503,11 +501,11 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contact will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
+
 
   \sa QContactFetchHint
  */
@@ -529,11 +527,10 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
   In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
