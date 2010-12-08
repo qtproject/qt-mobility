@@ -42,6 +42,51 @@
 #include "contextkitlayer_p.h"
 
 #include <QCoreApplication>
+#include <QMetaType>
+#include <QChar>
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusArgument>
+
+// dbus types
+Q_DECLARE_METATYPE(float)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const float &f)
+{
+    argument.beginStructure();
+    argument << (double)f;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, float &f)
+{
+    double d;
+    argument.beginStructure();
+    argument >> d;
+    argument.endStructure();
+    f = (float)d;
+    return argument;
+}
+
+Q_DECLARE_METATYPE(QChar)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QChar &ch)
+{
+    argument.beginStructure();
+    argument << ch.unicode();
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QChar &ch)
+{
+    ushort sh;
+    argument.beginStructure();
+    argument >> sh;
+    argument.endStructure();
+    ch = QChar(sh);
+    return argument;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,9 +119,8 @@ void ContextKitPath::initFromPath(QString path)
         parts = path.split(QLatin1Char('.'));
         m_type = DotPath;
     } else {
-        // don't know what it is?
-        qWarning("ContextKit: path doesn't seem to obey any known scheme: %s",
-                 qPrintable(path));
+        m_type = SlashPath;
+        parts.append(path);
     }
 }
 
@@ -397,6 +441,8 @@ QSet<QString> ContextKitHandle::children()
 
 ContextKitLayer::ContextKitLayer()
 {
+    qDBusRegisterMetaType<float>();
+    qDBusRegisterMetaType<QChar>();
 }
 
 ContextKitLayer::~ContextKitLayer()
