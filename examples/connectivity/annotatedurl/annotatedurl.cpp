@@ -82,10 +82,25 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
     if (!target->hasNdefMessage())
         return;
 
-    QList<QNdefMessage> messages = target->ndefMessages();
-    if (messages.isEmpty())
-        return;
+    connect(target, SIGNAL(ndefMessageRead(QNdefMessage)),
+            this, SLOT(displayNdefMessage(QNdefMessage)));
 
+    target->readNdefMessages();
+}
+
+void AnnotatedUrl::targetLost(QNearFieldTarget *target)
+{
+    target->deleteLater();
+}
+
+void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (rect().contains(event->pos()))
+        QDesktopServices::openUrl(QUrl(m_url->text()));
+}
+
+void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
+{
     enum {
         MatchedNone,
         MatchedFirst,
@@ -98,7 +113,6 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
     m_url->clear();
     m_image->clear();
 
-    const QNdefMessage &message = messages.first();
     foreach (const QNdefRecord &record, message) {
         if (record.isRecordType<QNdefNfcTextRecord>()) {
             QNdefNfcTextRecord textRecord(record);
@@ -131,10 +145,4 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
 
         }
     }
-}
-
-void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (rect().contains(event->pos()))
-        QDesktopServices::openUrl(QUrl(m_url->text()));
 }

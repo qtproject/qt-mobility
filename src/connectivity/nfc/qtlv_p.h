@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QNearFieldTarget;
-class QTlvReader
+class QM_AUTOTEST_EXPORT QTlvReader
 {
 public:
     explicit QTlvReader(QNearFieldTarget *target);
