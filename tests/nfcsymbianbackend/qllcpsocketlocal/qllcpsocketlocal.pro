@@ -5,7 +5,7 @@
 #-------------------------------------------------
 QT       += testlib
 
-TARGET = tst_qllcpsockettype1
+TARGET = tst_qllcpsocketlocal
 CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += testcase
