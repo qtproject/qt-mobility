@@ -2108,6 +2108,21 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
+QString QSystemStorageInfoLinuxCommonPrivate::getUuid(const QString &vol)
+{
+    QDir uuidDir("/dev/disk/by-uuid");
+    if (uuidDir.exists()) {
+        QFileInfoList fileList = uuidDir.entryInfoList();
+        foreach (const QFileInfo &fi, fileList) {
+            if (fi.isSymLink()) {
+                if (fi.symLinkTarget().contains(mountEntriesMap.value(vol).section("/",-1))) {
+                    return fi.baseName();
+                }
+            }
+        }
+    }
+}
+
 QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
 {
 #if !defined(QT_NO_DBUS)
@@ -2119,34 +2134,13 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         }
         return QString();
     }
-#else
-  if (halIsAvailable) {
-      QHalInterface iface;
-      QStringList list = iface.findDeviceByCapability("volume");
-      if (!list.isEmpty()) {
-          QString lastdev;
-          foreach (const QString &dev, list) {
-              halIfaceDevice = new QHalDeviceInterface(dev);
-              if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == driveVolume)) {
-                  return halIfaceDevice->getPropertyString("volume.uuid");
-              }
-          }
-      }
-}
 #endif
-#else
-    QDir uuidDir("/dev/disk/by-uuid");
-    if (uuidDir.exists()) {
-        QFileInfoList fileList = uuidDir.entryInfoList();
-        foreach (const QFileInfo &fi, fileList) {
-            if (fi.isSymLink()) {
-                if (fi.symLinkTarget().contains(mountEntriesMap.value(driveVolume).section("/",-1))) {
-                    return fi.baseName();
-                }
-            }
-        }
+#endif
+    QString driveUuid = getUuid(driveVolume);
+    if(!driveUuid.isEmpty()) {
+        return  driveUuid;
     }
-//last resort
+    //last resort
 #if defined (BLKID_SUPPORTED)
     int fd;
     blkid_probe pr = NULL;
@@ -2171,7 +2165,6 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         close(fd);
         return label;
     }
-#endif
 #endif
     return QString();
 }

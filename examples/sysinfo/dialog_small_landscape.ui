@@ -1240,6 +1240,11 @@
            <string>Available Disk Space</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Uri</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>

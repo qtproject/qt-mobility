@@ -263,7 +263,6 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
-
         if(volType == QSystemStorageInfo::RemovableDrive) {
             type = "Removable";
         }
@@ -273,11 +272,18 @@ void Dialog::updateStorage()
         if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
         }
+        if(volType == QSystemStorageInfo::InternalFlashDrive) {
+            type =  "Flash";
+        }
+        if(volType == QSystemStorageInfo::RamDrive) {
+            type =  "Ram";
+        }
         QStringList items;
         items << volName;
         items << type;
         items << QString::number(sti->totalDiskSpace(volName));
         items << QString::number(sti->availableDiskSpace(volName));
+        items << sti->uriForDrive(volName);
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }

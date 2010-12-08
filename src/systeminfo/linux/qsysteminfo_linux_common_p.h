@@ -261,6 +261,7 @@ private:
      int mtabWatchA;
      int inotifyFD;
      void checkAvailableStorage();
+     QString getUuid(const QString &vol);
 
      QTimer *storageTimer;
 
