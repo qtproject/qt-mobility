@@ -421,6 +421,8 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::HapticsFeature:
 
          break;
+     case QSystemInfo::FmTransmitterFeature:
+         break;
      default:
          featureSupported = false;
          break;

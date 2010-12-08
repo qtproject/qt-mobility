@@ -319,6 +319,11 @@
              <string>Haptics</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Fm Transmitter</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>

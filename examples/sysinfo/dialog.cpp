@@ -442,6 +442,9 @@ void Dialog::getFeature(int index)
     case 13:
         feature = QSystemInfo::HapticsFeature;
         break;
+    case 14:
+        feature = QSystemInfo::FmTransmitterFeature;
+        break;
     };
 //! [feature test]
     QSystemInfo si;
