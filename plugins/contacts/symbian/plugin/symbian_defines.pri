@@ -1,7 +1,5 @@
-include(../../../../common.pri)
-
 symbian: {
-    contains(symbiancntmodelv2_enabled, yes) {
+    exists($${EPOCROOT}epoc32/data/z/system/install/Symbianv4.0.sis) {
         message("S^3 PS3 or later platform")
         DEFINES += SYMBIAN_BACKEND_USE_SQLITE
             
