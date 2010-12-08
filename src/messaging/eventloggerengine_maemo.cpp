@@ -362,7 +362,7 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
                 } else if (service== "RTCOM_EL_SERVICE_CHAT") {
                     msg.setType(QMessage::InstantMessage);
                 } else {
-                    msg.setType(QMessage::NoType);  // Other type, as eample voice calll
+                    msg.setType(QMessage::NoType);  // Other type, as example voice calll
                 }
             }
             else if (!messageRetrieved) {

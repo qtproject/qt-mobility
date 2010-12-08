@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -70,6 +70,7 @@
   \value OrganizerItemDetailFilter A filter which matches items containing one or more details of a particular definition with a particular value
   \value OrganizerItemDetailRangeFilter A filter which matches items containing one or more details of a particular definition whose values are within a particular range
   \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
+  \omitvalue ActionFilter
   \value IntersectionFilter A filter which matches all items that are matched by all filters it includes
   \value UnionFilter A filter which matches any organizer item that is matched by any of the filters it includes
   \value IdFilter A filter which matches any organizer item whose id is contained in a particular list of organizer item ids

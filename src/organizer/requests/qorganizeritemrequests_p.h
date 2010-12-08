@@ -84,13 +84,15 @@ public:
 
     QList<QOrganizerItem> m_organizeritems;
     QMap<int, QOrganizerManager::Error> m_errors;
+    QStringList m_definitionMask;
 };
 
 class QOrganizerItemFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemFetchRequestPrivate()
-        : QOrganizerAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate(),
+        m_maxCount(-1)
     {
     }
 
@@ -111,6 +113,8 @@ public:
 
     QDateTime m_startDate;
     QDateTime m_endDate;
+
+    int m_maxCount;
 };
 
 class QOrganizerItemFetchForExportRequestPrivate : public QOrganizerAbstractRequestPrivate
@@ -138,6 +142,30 @@ public:
 
     QDateTime m_startDate;
     QDateTime m_endDate;
+};
+
+class QOrganizerItemFetchByIdRequestPrivate : public QOrganizerAbstractRequestPrivate
+{
+public:
+    QOrganizerItemFetchByIdRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerItemFetchByIdRequestPrivate()
+    {
+    }
+
+    QOrganizerAbstractRequest::RequestType type() const
+    {
+        return QOrganizerAbstractRequest::ItemFetchByIdRequest;
+    }
+
+    QList<QOrganizerItemId> m_ids;
+    QOrganizerItemFetchHint m_fetchHint;
+
+    QList<QOrganizerItem> m_items;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
 class QOrganizerItemOccurrenceFetchRequestPrivate : public QOrganizerAbstractRequestPrivate

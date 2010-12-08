@@ -60,11 +60,11 @@ public:
 
 private slots:
     void details();
-    void actions();
     void preferences();
     void relationships();
     void displayName();
     void type();
+    void tags();
     void emptiness();
     void idLessThan();
     void idHash();
@@ -399,85 +399,6 @@ void tst_QContact::details()
     QCOMPARE(c.id(), oldId); // id shouldn't change.
 }
 
-void tst_QContact::actions()
-{
-    QContact c;  // empty contact.
-    QContact c2; // contact with email saved.
-    QContact c3; // two emails
-    QContact c4; // two emails, plus a preference
-    QContact c5; // two emails, plus a preference for an unsupported detail
-    QContactEmailAddress e2;
-    QContactEmailAddress e;
-    e.setEmailAddress("test@nokia.com");
-    c2.saveDetail(&e);
-    e2.setEmailAddress("secondtest@nokia.com");
-
-    c3.saveDetail(&e);
-    c3.saveDetail(&e2);
-    c4.saveDetail(&e);
-    c4.saveDetail(&e2);
-    c5.saveDetail(&e2); // reverse order for c5
-    c5.saveDetail(&e);
-
-    c4.setPreferredDetail("SendEmail", e2);
-    c5.setPreferredDetail("SendEmail", c5.detail<QContactDisplayLabel>());
-
-    // Prior to plugin loading:
-    // first, the empty contact
-    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    // then, the email contact
-    availableActions = c2.availableActions(QString());
-    QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
-    QVERIFY(availableActions.isEmpty());
-
-    // set the correct path to look for plugins and load them
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
-    QApplication::addLibraryPath(path);
-
-    // Get our descriptor
-    QContactActionDescriptor descriptor = QContactAction::actionDescriptors("SendEmail").value(0);
-    QVERIFY(descriptor.actionName() == "SendEmail");
-
-    // available actions - should be one there now.
-    // empty contact
-    availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    // contact with email
-    availableActions = c2.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // try various combinations of version and name
-    availableActions = c2.availableActions();
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test");
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    availableActions = c2.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // Again with c3
-    availableActions = c3.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // try various combinations of version and name
-    availableActions = c3.availableActions();
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test");
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // remove the library path.
-    QApplication::removeLibraryPath(path);
-}
-
 void tst_QContact::preferences()
 {
     QContact c;
@@ -652,6 +573,32 @@ void tst_QContact::type()
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
+}
+
+void tst_QContact::tags()
+{
+    QContact c;
+    QVERIFY(c.tags().isEmpty());
+
+    c.addTag("tag 1");
+    QStringList tags;
+    tags.append("tag 1");
+    QCOMPARE(c.tags(), tags);
+    QList<QContactTag> tagDetails = c.details<QContactTag>();
+    QCOMPARE(tagDetails.size(), 1);
+    QCOMPARE(tagDetails.first().tag(), QLatin1String("tag 1"));
+
+    c.clearTags();
+    QVERIFY(c.tags().isEmpty());
+    QVERIFY(c.details<QContactTag>().isEmpty());
+
+    tags.append("tag 2"); // tags is now "tag 1", "tag 2"
+    c.setTags(tags);
+    QCOMPARE(c.tags(), tags);
+    tagDetails = c.details<QContactTag>();
+    QCOMPARE(tagDetails.size(), 2);
+    QCOMPARE(tagDetails.at(0).tag(), QLatin1String("tag 1"));
+    QCOMPARE(tagDetails.at(1).tag(), QLatin1String("tag 2"));
 }
 
 void tst_QContact::emptiness()

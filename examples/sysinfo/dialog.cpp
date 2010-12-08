@@ -44,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL),bi(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -95,7 +95,7 @@ void Dialog::tabChanged(int index)
         setupDevice();
         break;
     case 4:
-        setupDevice();
+        setupBattery();
         break;
     case 5:
         setupDisplay();
@@ -137,24 +137,7 @@ void Dialog::setupDevice()
 //! [createdi]
     di = new QSystemDeviceInfo(this);
 //! [createdi]
-//! [batteryLevel]
-    int level = di->batteryLevel();
-    batteryLevelBar->setValue(level);
-    lcdNumber->display(level);
-//! [batteryLevel]
 
-//! [sig batteryLevelChanged]
-    connect(di,SIGNAL(batteryLevelChanged(int)),
-            this,SLOT(updateBatteryStatus(int)));
-//! [sig batteryLevelChanged]
-
-    connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
-
-    connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
-
-    currentBatStat = di->batteryStatus();
 
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
@@ -174,16 +157,6 @@ void Dialog::setupDevice()
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
-    currentPowerState = di->currentPowerState();
-    if(currentPowerState == QSystemDeviceInfo::BatteryPower) {
-        radioButton_2->setChecked(true);
-    } else if(currentPowerState == QSystemDeviceInfo::WallPower) {
-        radioButton_3->setChecked(true);
-    } else if(currentPowerState == QSystemDeviceInfo::WallPowerChargingBattery) {
-        radioButton_4->setChecked(true);
-    } else {
-        radioButton->setChecked(true);
-    }
 
 //! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
@@ -212,6 +185,8 @@ void Dialog::setupDevice()
 
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
+    hostIdLabel->setText(di->hostId());
 
 }
 
@@ -511,64 +486,76 @@ void Dialog::updateBatteryStatus(int level)
     lcdNumber->display(level);
 }
 
-void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
+void Dialog::updatePowerState(QSystemDeviceInfo::PowerState /*newState*/)
 {
-    currentPowerState = newState;
-    switch (newState) {
-    case QSystemDeviceInfo::BatteryPower:
-        {
-            radioButton_2->setChecked(true);
-        }
-        break;
-    case QSystemDeviceInfo::WallPower:
-        {
-            radioButton_3->setChecked(true);
-        }
-        break;
-    case QSystemDeviceInfo::WallPowerChargingBattery:
-        {
-            radioButton_4->setChecked(true);
-        }
-        break;
-    case QSystemDeviceInfo::NoBatteryLevel:
-        {
-            radioButton->setChecked(true);
-        }
-        break;
-    };
+//    currentPowerState = newState;
+//    switch (newState) {
+//    case QSystemDeviceInfo::BatteryPower:
+//        {
+//            radioButton_2->setChecked(true);
+//        }
+//        break;
+//    case QSystemDeviceInfo::WallPower:
+//        {
+//            radioButton_3->setChecked(true);
+//        }
+//        break;
+//    case QSystemDeviceInfo::WallPowerChargingBattery:
+//        {
+//            radioButton_4->setChecked(true);
+//        }
+//        break;
+//    case QSystemDeviceInfo::NoBatteryLevel:
+//        {
+//            radioButton->setChecked(true);
+//        }
+//        break;
+//    };
 }
 
-void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
+void Dialog::displayBatteryStatus(QSystemBatteryInfo::BatteryStatus status)
 {
-    if(currentBatStat == status || currentPowerState != QSystemDeviceInfo::BatteryPower)
+    if(currentBatStat == status)
         return;
     QString msg;
         switch(status) {
-        case QSystemDeviceInfo::BatteryCritical:
+        case QSystemBatteryInfo::BatteryEmpty:
+            {
+                msg = "Battery is Empty (0%), shutting down.";
+                QMessageBox::critical(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemBatteryInfo::BatteryCritical:
             {
                 msg = "Battery is Critical (4% or less), please save your work or plug in the charger.";
                 QMessageBox::critical(this,"QSystemInfo",msg);
             }
             break;
-        case QSystemDeviceInfo::BatteryVeryLow:
+        case QSystemBatteryInfo::BatteryVeryLow:
             {
                 msg = "Battery is Very Low (10%), please plug in the charger soon";
                 QMessageBox::warning(this,"QSystemInfo",msg);
             }
             break;
-        case QSystemDeviceInfo::BatteryLow:
+        case QSystemBatteryInfo::BatteryLow:
             {
                 msg = "Battery is Low (40% or less)";
                 QMessageBox::information(this,"QSystemInfo",msg);
             }
             break;
-        case QSystemDeviceInfo::BatteryNormal:
+        case QSystemBatteryInfo::BatteryOk:
             {
                 msg = "Battery is Normal (greater than 40%)";
                 QMessageBox::information(this,"QSystemInfo",msg);
             }
             break;
-        case QSystemDeviceInfo::NoBatteryLevel:
+        case QSystemBatteryInfo::BatteryFull:
+            {
+                msg = "Battery is Full (100%)";
+                QMessageBox::information(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemBatteryInfo::BatteryUnknown:
             {
 
             }
@@ -750,7 +737,6 @@ void Dialog::updateProfile()
 
     if(di) {
         QString profilestring;
-        qDebug() << di->currentProfile();
         switch(di->currentProfile()) {
             case QSystemDeviceInfo::SilentProfile:
             {
@@ -849,3 +835,102 @@ void Dialog::bluetoothChanged(bool b)
     bluetoothPowerLabel->setText((b ? "On" : "Off"));
 }
 
+void Dialog::setupBattery()
+{
+    delete bi;
+    bi = new QSystemBatteryInfo(this);
+
+    connect(bi,SIGNAL(remainingCapacityPercentChanged(int)),
+            this,SLOT(updateBatteryStatus(int)));
+
+    connect(bi,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
+            this,SLOT(displayBatteryStatus(QSystemBatteryInfo::BatteryStatus)));
+
+    connect(bi,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
+             this,SLOT(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
+
+    connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
+            this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
+
+    connect(startMeasurementPushButton,SIGNAL(clicked()),
+            this,SLOT(startCurrentPushed()));
+
+    connect(bi,SIGNAL(nominalCapacityChanged(int)),
+            NominalCaplcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingCapacityChanged(int)),
+            remainCaplcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(voltageChanged(int)),
+            voltagelcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(currentFlowChanged(int)),
+            currentFLowlcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),
+            remainingCapBarslcdNumber,SLOT(display(int)));
+    connect(bi,SIGNAL(remainingChargingTimeChanged(int)),
+            chargeTimelcdNumber,SLOT(display(int)));
+
+    chargerTypeChanged(bi->chargerType());
+
+
+    currentBatStat = bi->batteryStatus();
+
+    chargingStateChanged(bi->chargingState());
+
+    NominalCaplcdNumber->display(bi->nominalCapacity());
+
+    int level = bi->remainingCapacityPercent();
+    batteryLevelBar->setValue(level);
+    lcdNumber->display(level);
+
+    remainCaplcdNumber->display(bi->remainingCapacity());
+
+    voltagelcdNumber->display(bi->voltage());
+    chargeTimelcdNumber->display(bi->remainingChargingTime());
+    currentFLowlcdNumber->display(bi->currentFlow());
+    remainingCapBarslcdNumber->display(bi->remainingCapacityBars());
+    maxBarslcdNumber->display(bi->maxBars());
+
+    if (bi->energyMeasurementUnit() == QSystemBatteryInfo::UnitmAh) {
+        energyMeasurementUnit->setText("mAh");
+    } else if (bi->energyMeasurementUnit() == QSystemBatteryInfo::UnitmWh) {
+        energyMeasurementUnit->setText("mWh");
+    } else {
+        energyMeasurementUnit->setText("Unknown");
+    }
+
+}
+
+void Dialog::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
+{
+    if(chargingState == QSystemBatteryInfo::Charging) {
+        chargingCheckBox->setChecked(true);
+    } else {
+        chargingCheckBox->setChecked(false);
+    }
+
+    currentChargingState = chargingState;
+}
+
+void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
+{
+    if(chargerType == QSystemBatteryInfo::NoCharger) {
+        radioButton_2->setChecked(true);
+    } else if(chargerType == QSystemBatteryInfo::WallCharger) {
+        radioButton_3->setChecked(true);
+    } else if(chargerType == QSystemBatteryInfo::USBCharger) {
+        radioButton_4->setChecked(true);
+    } else if(chargerType == QSystemBatteryInfo::USB_500mACharger) {
+        radioButton_5->setChecked(true);
+    } else if(chargerType == QSystemBatteryInfo::USB_100mACharger) {
+        radioButton_6->setChecked(true);
+    } else if(chargerType == QSystemBatteryInfo::VariableCurrentCharger) {
+        radioButton_7->setChecked(true);
+    } else {
+        radioButton->setChecked(true);
+    }
+    currentChargerType = chargerType;
+}
+
+void Dialog::startCurrentPushed()
+{
+    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
+}

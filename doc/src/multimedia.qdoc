@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -179,7 +179,7 @@ hue, saturation and full screen mode.
     player->play();
 \endcode
 
-The \l {player}{Player} example does things a bit differently to our sample code. instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
+The \l {player}{Player} example does things a bit differently to our sample code. Instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
 
 \snippet ../../demos/player/player.cpp  2
 
@@ -209,7 +209,10 @@ Basically, the idea is that to use the Multimedia API you would use these three 
     \o \l QMediaControl allows the control of the service using a known interface.
     \endlist
 
-Consider a developer creating, for example, a media player class called MyPlayer. It may have special requirements beyond ordinary media players and so may need a custom service and a custom control. We can subclass \l QMediaServiceProvider to create out MyServiceProvider class. Also we will create a MyMediaService, and the MyMediaControl to manipulate the media service.
+Consider a developer creating, for example, a media player class called MyPlayer. It may have special
+requirements beyond ordinary media players and so may need a custom service and a custom control. We can
+subclass \l QMediaServiceProvider to create our MyServiceProvider class. Also we will create a
+MyMediaService, and the MyMediaControl to manipulate the media service.
 
 The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling \l {QMediaService::requestControl()}{requestControl()} it will receive the control object derived from QMediaControl. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to requestControl() is a c-type string, \i {const char *}, for the interface.
 

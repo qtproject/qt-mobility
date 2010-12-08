@@ -43,21 +43,23 @@
 
 #include <qdeclarative.h>
 #include <QDeclarativeExtensionPlugin>
+#include <QDeclarativeParserStatus>
 
 #include "qcontactsortorder.h"
 #include "qdeclarativecontactdetail_p.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeContactSortOrder :public QObject
+class QDeclarativeContactSortOrder :public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeContactDetail::ContactDetailType detail READ detail WRITE setDetail NOTIFY sortOrderChanged)
-    Q_PROPERTY(int field READ field WRITE setField NOTIFY sortOrderChanged)
+    Q_PROPERTY(QVariant detail READ detail WRITE setDetail NOTIFY sortOrderChanged)
+    Q_PROPERTY(QVariant field READ field WRITE setField NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
     Q_ENUMS(BlankPolicy)
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
 
     enum BlankPolicy {
@@ -68,13 +70,17 @@ public:
 
     QDeclarativeContactSortOrder(QObject* parent = 0);
 
-    void setDetail(QDeclarativeContactDetail::ContactDetailType detailType);
+    void setDetail(const QVariant& detailType);
 
-    QDeclarativeContactDetail::ContactDetailType detail() const;
+    QVariant detail() const;
 
-    void setField(int fieldType);
+    void setField(const QVariant& fieldType);
 
-    int field() const;
+    QVariant field() const;
+
+    //from QDeclarativeParserStatus
+    void classBegin() {}
+    void componentComplete();
 
     BlankPolicy blankPolicy() const;
     void setBlankPolicy(BlankPolicy blankPolicy);
@@ -88,8 +94,8 @@ public:
 signals:
     void sortOrderChanged();
 private:
-    QDeclarativeContactDetail::ContactDetailType m_detailType;
-    int m_fieldType;
+    QVariant m_field;
+    QVariant m_detail;
     QContactSortOrder m_sortOrder;
 };
 

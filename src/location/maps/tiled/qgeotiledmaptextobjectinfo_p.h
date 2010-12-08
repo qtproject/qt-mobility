@@ -54,6 +54,7 @@
 //
 
 #include "qgeotiledmapobjectinfo_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QFont>
 #include <QPen>
@@ -71,6 +72,8 @@ class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 public:
     QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
+
+    QGeoBoundingBox boundingBox() const;
 
     void updateValidity();
 
@@ -91,6 +94,8 @@ public slots:
 
 private:
     void update();
+
+    QGeoBoundingBox boundingBox_;
 };
 
 QTM_END_NAMESPACE

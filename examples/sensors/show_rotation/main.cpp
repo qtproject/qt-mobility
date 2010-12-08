@@ -70,6 +70,8 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
     QRotationSensor sensor;
+    sensor.connectToBackend();
+
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
     }

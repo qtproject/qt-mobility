@@ -42,36 +42,49 @@
 #ifndef QDECLARATIVEGEOMAPOBJECT_H
 #define QDECLARATIVEGEOMAPOBJECT_H
 
-#include "qgeomapgroupobject.h"
+#include "qgeomapobject.h"
+#include "qdeclarativegeomapmousearea_p.h"
 
-#include <QtDeclarative/qdeclarative.h>
-#include <QDeclarativeListProperty>
+#include <QtDeclarative/qdeclarativeitem.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QDeclarativeGeoMapObject : public QGeoMapGroupObject
+class QDeclarativeGeoMapObject : public QDeclarativeItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> objects READ objects)
-
-    Q_CLASSINFO("DefaultProperty", "objects")
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
-    QDeclarativeGeoMapObject();
+    QDeclarativeGeoMapObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapObject();
 
-    QDeclarativeListProperty<QGeoMapObject> objects();
+    virtual void componentComplete();
+
+    void setMapObject(QGeoMapObject *object);
+    QGeoMapObject* mapObject();
+
+    void setVisible(bool visible);
+    bool isVisible() const;
+
+    virtual void clickEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
+    virtual void enterEvent();
+    virtual void exitEvent();
+    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
+
+Q_SIGNALS:
+    void visibleChanged(bool visible);
+
+private Q_SLOTS:
+    void parentZChanged();
 
 private:
-    static void child_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
-    static int child_count(QDeclarativeListProperty<QGeoMapObject> *prop);
-    static QGeoMapObject* child_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
-    static void child_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
-
-    Q_DISABLE_COPY(QDeclarativeGeoMapObject)
+    QGeoMapObject *object_;
+    bool visible_;
+    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 };
 
 QTM_END_NAMESPACE

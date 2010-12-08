@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -57,9 +57,16 @@
 
     \section2 PositionSource
 
-    We have a Position element, a Coordinate element but where do we get the data from? It is a good idea to be able to indicate alternative sources. Perhaps instead of directly picking up GPS satellites you want to do some testing using a datafile. We may also need to manage our interaction with the source.
+    We have a Position element, a Coordinate element but where do we get the
+    data from? It is a good idea to be able to indicate alternative sources.
+    Perhaps instead of directly picking up GPS satellites you want to do
+    some testing using a datafile. We may also need to manage our
+    interaction with the source.
 
-    The \l PositionSource element provides the developer with control, within the limits allowed by the platform, of the source of the geographical data. The positional data can be sourced from a logfile which is in NMEA format.
+    The \l PositionSource element provides the developer with control,
+    within the limits allowed by the platform, of the source of the
+    geographical data. The positional data can be sourced from a logfile
+    which is in NMEA format.
 
     \l {http://en.wikipedia.org/wiki/NMEA}{NMEA} is a common text-based protocol for specifying navigational data. For convenience, the \l {PositionSource::nmeaSource}{nmeaSource} property is provided to enable QML applications to read NMEA data from a log file, the source will emit updates according to the time stamp of each NMEA sentence to produce a "replay" of the recorded data.
 

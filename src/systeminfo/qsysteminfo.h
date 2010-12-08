@@ -46,4 +46,5 @@
 #include "qsystemnetworkinfo.h"
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 #endif

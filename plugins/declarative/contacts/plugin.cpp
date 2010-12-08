@@ -57,7 +57,7 @@
 
 QT_USE_NAMESPACE
 
-
+QTM_USE_NAMESPACE
 class QContactQmlPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
@@ -65,6 +65,7 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
+        qRegisterMetaType<QContactLocalId>("QContactLocalId");
         qmlRegisterType<QDeclarativeContactModel>(uri, 1, 1, "ContactModel");
         qmlRegisterType<QDeclarativeContact>(uri, 1, 1, "Contact");
         qmlRegisterType<QDeclarativeContactFetchHint>(uri, 1, 1, "FetchHint");

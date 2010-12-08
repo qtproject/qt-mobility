@@ -98,6 +98,7 @@ protected:
 private Q_SLOTS:
     void processRequests();
     void tileFinished();
+    void replyFinished(QGeoTiledMapReply *reply);
     void tileError(QGeoTiledMapReply::Error error, QString errorString);
 
 private:

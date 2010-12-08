@@ -71,6 +71,7 @@ public:
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}
+    void setUrl(const QUrl& url) {setValue(FieldUrl, url.toString());}
     QString url() const {return value(FieldUrl);}
 
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}

@@ -31,6 +31,7 @@ PUBLIC_HEADERS += \
     qorganizeritem.h \
     qorganizeritemid.h \
     qorganizeritemengineid.h \
+    qorganizeritemobserver.h \
     qorganizermanager.h \
     qorganizermanagerengine.h \
     qorganizermanagerenginefactory.h \
@@ -51,6 +52,7 @@ PRIVATE_HEADERS += \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizermanager_p.h \
+    qorganizermanagerenginev2wrapper_p.h \
     qorganizerrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
 
@@ -69,9 +71,11 @@ SOURCES += \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
     qorganizeritemengineid.cpp \
+    qorganizeritemobserver.cpp \
     qorganizermanager.cpp \
     qorganizermanagerengine.cpp \
     qorganizermanagerenginefactory.cpp \
+    qorganizermanagerenginev2wrapper_p.cpp \
     qorganizerrecurrencerule.cpp \
     qorganizeritemsortorder.cpp \
     qorganizermanager_p.cpp
@@ -84,7 +88,7 @@ maemo5 {
 }
 
 maemo6 {
-    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=maemo6
+    isEmpty(ORGANIZER_DEFAULT_ENGINE): ORGANIZER_DEFAULT_ENGINE=mkcal
 }
 
 symbian {

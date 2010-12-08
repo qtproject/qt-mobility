@@ -2868,21 +2868,35 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
  */
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
 {
-    // Default implementation is to fetch one by one
-    QList<QContact> ret;
+    QContactLocalIdFilter lif;
+    lif.setIds(localIds);
 
-    for (int i = 0; i < localIds.count(); i++) {
-        QContactManager::Error localError = QContactManager::NoError;
-        ret.append(contact(localIds.at(i), fetchHint, &localError));
+    QList<QContact> unsorted = contacts(lif, QContactSortOrder(), fetchHint, error);
 
-        if (localError != QContactManager::NoError) {
-            *error = localError;
-            if (errorMap)
-                errorMap->insert(i, localError);
+    // Build an index into the results
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
+    if (*error == QContactManager::NoError) {
+        for (int i = 0; i < unsorted.size(); i++) {
+            idMap.insert(unsorted[i].localId(), i);
         }
     }
 
-    return ret;
+    // Build up the results and errors
+    QList<QContact> results;
+    for (int i = 0; i < localIds.count(); i++) {
+        QContactLocalId id(localIds[i]);
+        if (!idMap.contains(id)) {
+            if (errorMap)
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            if (*error == QContactManager::NoError)
+                *error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(unsorted[idMap[id]]);
+        }
+    }
+
+    return results;
 }
 
 /*!
@@ -2909,6 +2923,49 @@ void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdReq
         if (emitState && ireq)
             emit ireq.data()->stateChanged(newState);
     }
+}
+
+/*!
+  \class QContactManagerEngineV3
+  \brief The QContactManagerEngineV3 class provides the interface for
+  implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+
+  \ingroup contacts-backends
+
+  Instances of this class are usually provided by a
+  \l QContactManagerEngineFactory, which is loaded from a plugin.
+
+  The default implementation of this interface provides a basic
+  level of functionality for some functions so that specific engines
+  can simply implement the functionality that is supported by
+  the specific contacts engine that is being adapted.
+
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
+
+  Engines that support the QContactManagerEngine or QContactManagerEngineV2
+  interface but not the QContactManagerEngineV2 interface will be wrapped
+  by the QContactManager by a class that emulates the extra functionality of
+  the QContactManagerEngineV3 interface.
+
+  \sa QContactManagerEngine, QContactManager, QContactManagerEngineFactory
+ */
+
+/*!
+  \fn virtual QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId) = 0;
+
+  Returns an observer object for the contact with id \a contactId.
+
+  \sa QContactObserver
+ */
+
+/*!
+  Factory function to construct a QContactObserver with given \a parent.
+ */
+QContactObserver* QContactManagerEngineV3::createContactObserver(QObject* parent)
+{
+    return new QContactObserver(parent);
 }
 
 #include "moc_qcontactmanagerengine.cpp"

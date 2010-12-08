@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -451,6 +451,38 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
 }
 
 /*!
+  Returns a list of organizer items that match the given \a filter, sorted according to the given
+  list of \a sortOrders, for any item or occurrence of an item which occurs in the range specified
+  by the given \a startDate and \a endDate, inclusive.  A default-constructed (invalid) \a startDate
+  specifies an open start date (matches anything which occurs up until the \a endDate), and a
+  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
+  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
+  return all items which match the \a filter criteria.
+
+  This function will return both persisted and generated occurrences of items which match the
+  specified criteria.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve
+  retrieving all organizer items and testing them against the supplied filter - see the \l
+  isFilterSupported() function.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details and relationships in the matching
+  organizer items will be returned.  A client should not make changes to an organizer item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
+  information loss when saving the organizer item back to the manager (as the "new" restricted
+  organizer item will replace the previously saved organizer item in the backend).
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const
+{
+    d->m_error = QOrganizerManager::NoError;
+    d->m_errorMap.clear();
+    return d->m_engine->items(startDate, endDate, maxCount, filter, fetchHint, &d->m_error);
+}
+
+/*!
   Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders,
   for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate, inclusive.
   A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
@@ -620,6 +652,23 @@ bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritem
 
     d->m_error = QOrganizerManager::NoError;
     return d->m_engine->removeItems(organizeritemIds, &d->m_errorMap, &d->m_error);
+}
+
+/*!
+  Returns an observer object for the item with id \a itemId.
+
+  The returned object will emit itemChanged and itemRemoved signals until it is deleted (eg.
+  by the pointer falling out of scope).  Note that the QOrganizerItemObserver in the returned
+  QSharedPointer may or may not be deleted when the client loses its reference to it.  The client
+  is responsible for keeping a reference to the shared pointer as long as it is interested in the
+  observer's signals.  When the client wishes to stop receiving signals, it should both disconnect
+  the signals and delete the shared pointer.
+
+  \sa QOrganizerItemObserver
+ */
+QSharedPointer<QOrganizerItemObserver> QOrganizerManager::observeItem(const QOrganizerItemId& itemId)
+{
+    return d->m_engine->observeItem(itemId);
 }
 
 /*!

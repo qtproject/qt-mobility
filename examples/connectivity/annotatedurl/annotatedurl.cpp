@@ -94,6 +94,10 @@ void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
         MatchedLanguageAndCountry
     } bestMatch = MatchedNone;
 
+    m_title->clear();
+    m_url->clear();
+    m_image->clear();
+
     const QNdefMessage &message = messages.first();
     foreach (const QNdefRecord &record, message) {
         if (record.isRecordType<QNdefNfcTextRecord>()) {

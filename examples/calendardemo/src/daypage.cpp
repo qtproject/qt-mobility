@@ -125,7 +125,7 @@ void DayPage::refresh()
             QString time = eventTime.startDateTime().time().toString("hh:mm");
             QListWidgetItem* listItem = new QListWidgetItem();
             if (item.type() == QOrganizerItemType::TypeEventOccurrence)
-                listItem->setText(QString("Event occurance:%1-%2").arg(time).arg(item.displayLabel()));
+                listItem->setText(QString("Event occurrence:%1-%2").arg(time).arg(item.displayLabel()));
             else
                 listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
             QVariant data = QVariant::fromValue<QOrganizerItem>(item);

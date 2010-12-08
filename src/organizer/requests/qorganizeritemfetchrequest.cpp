@@ -64,10 +64,17 @@ QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemFetchRequest::~QOrganizerItemFetchRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
 void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -75,6 +82,7 @@ void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -89,6 +97,7 @@ void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>
 void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = fetchHint;
 }
 
@@ -96,6 +105,7 @@ void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fet
 void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -103,13 +113,24 @@ void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
+}
+
+/*! Sets the maximum number of items to \a maxCount. Only has an effect if called prior to calling \c start()
+ *
+ * A negative value denotes that no limit will be imposed on the number of items to fetch. */
+void QOrganizerItemFetchRequest::setMaxCount(int maxCount)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_maxCount = maxCount;
 }
 
 /*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -117,6 +138,7 @@ QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -131,6 +153,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
 QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
 }
 
@@ -149,6 +172,7 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 QDateTime QOrganizerItemFetchRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -167,13 +191,28 @@ QDateTime QOrganizerItemFetchRequest::startDate() const
 QDateTime QOrganizerItemFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
+}
+
+/*!
+  Returns the maximum number of items to return for the request.
+
+  A negative value denotes that no limit will be imposed on the number of items to fetch.
+
+  The default value is -1.
+ */
+int QOrganizerItemFetchRequest::maxCount() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_maxCount;
 }
 
 /*! Returns the list of organizer items retrieved by this request */
 QList<QOrganizerItem> QOrganizerItemFetchRequest::items() const
 {
     Q_D(const QOrganizerItemFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 

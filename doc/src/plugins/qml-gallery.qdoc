@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -49,15 +49,17 @@
     \section1 Overview
 
     The QML Gallery plugin contains features that can be used to search
-    and retrieve documents from the Document Gallery.
+    for and retrieve documents from the Document Gallery.
 
     \section2 Search Filters
 
-    Searching is performed by creating a filter based on a gallery filter
-    class. Search parameters can be set by specifying property values which
-    refer to meta-data relating to the documents. For example, a meta-data
-    key might be "author". Then, for example, by setting the filter property to "author" and
-    the value to "torvalds" the filter is ready to enable a search.
+    Searching is performed by creating a filter based on a derived gallery filter
+    class. This results in a set of Gallery QML elements for filtering.
+    The Search parameters can be set by specifying property values which
+    refer to the meta-data of the documents. For example, a meta-data
+    key might be "author". Then, for example, by setting the filter property to
+    "author" and the value to "torvalds" the filter is ready to enable a search
+    for all documents authored by "torvalds".
 
     Available filters include
 
@@ -66,7 +68,7 @@
     There is nothing to prevent the developer creating a number of filters.
     Then she could use either a \l {GalleryFilterUnion} or a \l
     {GalleryFilterIntersection} to find the result of OR-ing or AND-ing the
-    criteria to create a more complex search criterion.
+    criteria respectively to create a more complex search requirement.
 
     \section2 Gallery Item
 
@@ -79,8 +81,8 @@
     contains the current status of the request including whether it is active
     or canceled.
 
-    Progress of the request is available through the \l qreal item property \l
-    {DocumentGalleryItem::progress}{progress}.
+    Progress of the request is available through the \l qreal (floating point
+    number) item property \l {DocumentGalleryItem::progress}{progress}.
 
 
     
@@ -109,6 +111,12 @@
 
         ...
     \endcode
+
+    Here we have a model using a DocumentGalleryQueryModel. Within Qt the
+    term 'model' usually refers to the Model part of a variation on the
+    Model-View-Controller design pattern. In essence it is a data-oriented
+    part of the Gallery query object, what data types are part of this query.
+    For a clearer understanding \l{http://doc.qt.nokia.com/4.7/model-view-programming.html}{see the Qt documentation}.
 
 
     \section1 Classes
