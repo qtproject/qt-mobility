@@ -2515,7 +2515,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         }
         if(currentBatStatus != stat) {
             currentBatStatus = stat;
-            emit batteryStatusChanged(stat);
+            Q_EMIT batteryStatusChanged(stat);
         }
 
         isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];
