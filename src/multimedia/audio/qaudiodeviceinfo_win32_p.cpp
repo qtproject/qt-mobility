@@ -77,7 +77,13 @@ QT_BEGIN_NAMESPACE
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray dev, QAudio::Mode mode)
 {
-    device = QLatin1String(dev);
+    if (dev == "default") {
+        device = QString::fromLatin1("default");
+    } else {
+        QDataStream ds(&dev, QIODevice::ReadOnly);
+        quint32 devID;
+        ds >> devID >> device;
+    }
     this->mode = mode;
 
     updateLists();
@@ -397,6 +403,7 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 {
     Q_UNUSED(mode)
 
+    QList<QByteArray> devices;
     //enumerate device fullnames through directshow api
     CoInitialize(NULL);
     ICreateDevEnum *pDevEnum = NULL;
@@ -407,7 +414,6 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
                  reinterpret_cast<void **>(&pDevEnum));
 
     unsigned long iNumDevs = mode == QAudio::AudioOutput ? waveOutGetNumDevs() : waveInGetNumDevs();
-    QVector<QString> deviceNames(iNumDevs);
     if (SUCCEEDED(hr)) {
         // Create the enumerator for the video capture category
         hr = pDevEnum->CreateClassEnumerator(
@@ -430,14 +436,17 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
             hr = pPropBag->Read(mode == QAudio::AudioOutput ? L"WaveOutID" : L"WaveInID", &var, 0);
             if (SUCCEEDED(hr)) {
                 LONG waveID = var.lVal;
-                if (waveID >= 0 && waveID < deviceNames.size()) {
+                if (waveID >= 0 && waveID < LONG(iNumDevs)) {
                     VariantClear(&var);
                     // Find the description
                     hr = pPropBag->Read(L"FriendlyName", &var, 0);
                     if (SUCCEEDED(hr)) {
                         WCHAR str[120];
                         StringCchCopyW(str, sizeof(str) / sizeof(str[0]), var.bstrVal);
-                        deviceNames[waveID] = QString::fromUtf16(reinterpret_cast<unsigned short *>(str));
+                        QByteArray  device;
+                        QDataStream ds(&device, QIODevice::WriteOnly);
+                        ds << quint32(waveID) << QString::fromUtf16(reinterpret_cast<unsigned short *>(str));
+                        devices.append(device);
                     }
                 }
             }
@@ -448,32 +457,6 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
     }
     CoUninitialize();
 
-    QList<QByteArray> devices;
-
-    if (mode == QAudio::AudioOutput) {
-        WAVEOUTCAPS woc;
-        for (unsigned long i = 0; i < iNumDevs; i++) {
-            if (waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
-	        == MMSYSERR_NOERROR) {
-                if (deviceNames[i].isNull() || deviceNames[i].isEmpty())
-                    devices.append(QString::fromUtf16(reinterpret_cast<const unsigned short *>(woc.szPname)).toLocal8Bit());
-                else
-                    devices.append(deviceNames[i].toLocal8Bit());
-	    }
-	}
-    } else {
-        WAVEINCAPS woc;
-        for (unsigned long i = 0; i < iNumDevs; i++) {
-            if (waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-                == MMSYSERR_NOERROR) {
-                if (deviceNames[i].isNull() || deviceNames[i].isEmpty())
-                    devices.append(QString::fromUtf16(reinterpret_cast<const unsigned short *>(woc.szPname)).toLocal8Bit());
-                else
-                    devices.append(deviceNames[i].toLocal8Bit());
-            }
-        }
-
-    }
     if (devices.count() > 0)
         devices.append("default");
 

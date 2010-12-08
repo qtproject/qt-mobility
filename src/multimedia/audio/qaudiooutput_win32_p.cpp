@@ -329,19 +329,11 @@ bool QAudioOutputPrivate::open()
 
     UINT_PTR devId = WAVE_MAPPER;
 
-    WAVEOUTCAPS woc;
-    unsigned long iNumDevs,ii;
-    iNumDevs = waveOutGetNumDevs();
-    for(ii=0;ii<iNumDevs;ii++) {
-        if(waveOutGetDevCaps(ii, &woc, sizeof(WAVEOUTCAPS))
-	    == MMSYSERR_NOERROR) {
-	    QString tmp;
-            tmp = QString::fromWCharArray(woc.szPname);
-            if (m_device.startsWith(tmp.toLocal8Bit())) {
-	        devId = ii;
-		break;
-	    }
-	}
+    if (m_device != "default") {
+        QDataStream ds(&m_device, QIODevice::ReadOnly);
+        quint32 deviceId;
+        ds >> deviceId;
+        devId = UINT_PTR(deviceId);
     }
 
     if (!surround) {
