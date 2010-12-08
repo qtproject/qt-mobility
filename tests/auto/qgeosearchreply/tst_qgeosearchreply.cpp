@@ -282,7 +282,7 @@ void tst_QGeoSearchReply::viewport()
 
     reply->callSetViewport(qgeoboundingbox);
 
-    QCOMPARE (reply->viewport(),qgeoboundingbox);
+    QCOMPARE (reply->viewport(), static_cast<QGeoBoundingArea*>(qgeoboundingbox));
 
     delete qgeocoordinate;
     delete qgeoboundingbox;
