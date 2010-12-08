@@ -65,7 +65,7 @@ QMediaBindableInterface::~QMediaBindableInterface()
 /*!
     \fn QMediaBindableInterface::mediaObject() const;
 
-    Return the currenty attached media object.
+    Return the currently attached media object.
 */
 
 

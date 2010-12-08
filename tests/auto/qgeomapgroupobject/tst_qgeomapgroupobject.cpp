@@ -335,7 +335,7 @@ void tst_QGeoMapGroupObject::clearChildObjects()
 
     list = map->mapObjects();
 
-    QCOMPARE(list.at(0),object);
+    QCOMPARE(list.at(0), static_cast<QGeoMapObject*>(object));
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), childObjectCount);

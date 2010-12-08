@@ -566,7 +566,7 @@ void QCamera::setCaptureMode(QCamera::CaptureMode mode)
     Starts the camera.
 
     State is changed to QCamera::ActiveState if camera is started
-    succesfully, otherwise error() signal is emited.
+    successfully, otherwise error() signal is emitted.
 
     While the camera state is changed to QCamera::ActiveState,
     starting the camera service can be asynchronous with the actual
@@ -700,8 +700,8 @@ QCamera::LockStatus QCamera::lockStatus(QCamera::LockType lockType) const
     The camera settings are usually locked before taking one or multiple still images,
     in responce to the shutter button being half pressed.
 
-    The QCamera::locked() signal is emited when camera settings are successfully locked,
-    otherwise QCamera::lockFailed() is emited.
+    The QCamera::locked() signal is emitted when camera settings are successfully locked,
+    otherwise QCamera::lockFailed() is emitted.
 
     QCamera also emits lockStatusChanged(QCamera::LockType, QCamera::LockStatus)
     on individual lock status changes and lockStatusChanged(QCamera::LockStatus) signal on composite status changes.
@@ -916,7 +916,7 @@ void QCamera::unlock()
 
         The locked state usually means the requested parameter stays the same,
         except of the cases when the parameter is requested to be constantly updated.
-        For example in continous focusing mode, the focus is considered locked as long
+        For example in continuous focusing mode, the focus is considered locked as long
         and the object is in focus, even while the actual focusing distance may be constantly changing.
 */
 

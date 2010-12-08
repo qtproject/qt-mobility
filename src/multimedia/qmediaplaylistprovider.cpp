@@ -130,7 +130,7 @@ bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
     Saves the contents of a playlist to a URL \a location.  If no playlist \a format is specified
     the writer will inspect the URL to guess the format.
 
-    Returns true if the playlist was saved succesfully; and false otherwise.
+    Returns true if the playlist was saved successfully; and false otherwise.
   */
 bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 {
@@ -142,7 +142,7 @@ bool QMediaPlaylistProvider::save(const QUrl &location, const char *format)
 /*!
     Saves the contents of a playlist to an I/O \a device in the specified \a format.
 
-    Returns true if the playlist was saved succesfully; and false otherwise.
+    Returns true if the playlist was saved successfully; and false otherwise.
 */
 bool QMediaPlaylistProvider::save(QIODevice * device, const char *format)
 {

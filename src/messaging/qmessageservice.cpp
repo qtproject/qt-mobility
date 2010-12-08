@@ -97,7 +97,7 @@ QTM_BEGIN_NAMESPACE
     \value InactiveState    The operation has not yet begun execution.
     \value ActiveState      The operation is currently executing.
     \value CanceledState    The operation was canceled.
-    \value FinishedState    The operation has finished execution; succesfully completed or otherwise.
+    \value FinishedState    The operation has finished execution; successfully completed or otherwise.
 */
 
 /*!

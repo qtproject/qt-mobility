@@ -140,7 +140,7 @@ Set the metering mode to \a mode.
   \value Aperture
          Lens aperture is specified as an qreal F number.
          The supported apertures list can change depending on the focal length,
-         in such a case the exposureParameterRangeChanged() signal is emited.
+         in such a case the exposureParameterRangeChanged() signal is emitted.
   \value ShutterSpeed
          Shutter speed in seconds, specified as qreal.
   \value ExposureCompensation
@@ -165,7 +165,7 @@ Set the metering mode to \a mode.
   \value ReadOnly
          Parameters are read only.
   \value ContinuousRange
-         Parameters are continous in their range.
+         Parameters are continuous in their range.
 */
 
 /*!
@@ -197,7 +197,7 @@ Set the metering mode to \a mode.
   \fn bool QCameraExposureControl::setExposureParameter(ExposureParameter parameter, const QVariant& value)
 
   Set the exposure \a parameter to \a value.
-  If a null or invalid QVariant is passed, backend should choose the value automaticaly,
+  If a null or invalid QVariant is passed, backend should choose the value automatically,
   and if possible report the actual value to user with QCameraExposureControl::exposureParameter().
 
   Returns true if parameter is supported and value is correct.

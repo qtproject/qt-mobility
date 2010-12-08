@@ -50,7 +50,6 @@
 QTM_BEGIN_NAMESPACE
 class QSensorBackend;
 
-// Plugin interface
 class Q_SENSORS_EXPORT QSensorPluginInterface
 {
 public:
@@ -59,14 +58,19 @@ protected:
     ~QSensorPluginInterface() {}
 };
 
+class Q_SENSORS_EXPORT QSensorChangesInterface
+{
+public:
+    virtual void sensorsChanged() = 0;
+protected:
+    ~QSensorChangesInterface() {}
+};
+
 QTM_END_NAMESPACE
 
-#define QSensorPluginInterface_iid \
-    "com.nokia.Qt.QSensorPluginInterface/1.0"
-
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(QtMobility::QSensorPluginInterface,
-                    QSensorPluginInterface_iid)
+Q_DECLARE_INTERFACE(QtMobility::QSensorPluginInterface, "com.nokia.Qt.QSensorPluginInterface/1.0");
+Q_DECLARE_INTERFACE(QtMobility::QSensorChangesInterface, "com.nokia.Qt.QSensorChangesInterface/1.0");
 QT_END_NAMESPACE
 
 #endif
