@@ -505,6 +505,28 @@ void QDeclarativeOrganizerModel::clearItems()
     d->m_itemMap.clear();
 }
 
+QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::createItem(const QOrganizerItem& item)
+{
+    QDeclarativeOrganizerItem* di;
+    if (item.type () == QOrganizerItemType::TypeEvent)
+        di = new QDeclarativeOrganizerEvent(this);
+    else if (item.type () == QOrganizerItemType::TypeEventOccurrence)
+        di = new QDeclarativeOrganizerEventOccurrence(this);
+    else if (item.type () == QOrganizerItemType::TypeTodo)
+        di = new QDeclarativeOrganizerTodo(this);
+    else if (item.type () == QOrganizerItemType::TypeTodoOccurrence)
+        di = new QDeclarativeOrganizerTodoOccurrence(this);
+    else if (item.type () == QOrganizerItemType::TypeJournal)
+        di = new QDeclarativeOrganizerJournal(this);
+    else if (item.type () == QOrganizerItemType::TypeNote)
+        di = new QDeclarativeOrganizerNote(this);
+    else
+        di = new QDeclarativeOrganizerItem(this);
+
+    di->setItem (item);
+    di->setDetailDefinitions (d->m_manager->detailDefinitions(item.type()));
+    return di;
+}
 
 /*!
   \qmlmethod OrganizerModel::fetchItems(list<QString> itemIds)
@@ -623,7 +645,7 @@ void QDeclarativeOrganizerModel::requestUpdated()
         if (d->m_items.isEmpty()) {
             QDeclarativeOrganizerItem* di;
             foreach (QOrganizerItem item, items) {
-                di = new QDeclarativeOrganizerItem(item, d->m_manager->detailDefinitions(item.type()), this);
+                di = createItem(item);
                 addSorted(di);
             }
         } else {
@@ -634,7 +656,7 @@ void QDeclarativeOrganizerModel::requestUpdated()
                     di = d->m_itemMap.value (item.id ().toString ());
                     di->setItem(item);
                 } else {
-                    di = new QDeclarativeOrganizerItem(item, d->m_manager->detailDefinitions(item.type()), this);
+                    di = createItem(item);
                 }
                 addSorted(di);
             }
@@ -673,7 +695,11 @@ void QDeclarativeOrganizerModel::itemsSaved()
                     di->setItem(item);
                 } else {
                     //new saved item
-                    di = new QDeclarativeOrganizerItem(item, d->m_manager->detailDefinitions(item.type()) , this);
+                    di = createItem(item);
+                    d->m_itemMap.insert(itemId, di);
+                    beginInsertRows(QModelIndex(), d->m_items.count(), d->m_items.count() + 1);
+                    d->m_items.append(di);
+                    endInsertRows();
                 }
                 addSorted(di);
             }
