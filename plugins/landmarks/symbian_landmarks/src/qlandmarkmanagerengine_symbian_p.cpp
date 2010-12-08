@@ -3507,7 +3507,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsDesc);
                 }
             }
-            else if (keyList.at(i) == "phone") {
+            else if (keyList.at(i) == "phoneNumber") {
 
                 CPosLmTextCriteria* textPhoneCriteria = CPosLmTextCriteria::NewLC();
                 afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));

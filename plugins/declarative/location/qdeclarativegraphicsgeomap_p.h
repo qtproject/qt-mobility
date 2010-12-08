@@ -45,6 +45,8 @@
 #include <qgraphicsgeomap.h>
 #include <QtDeclarative/qdeclarativeitem.h>
 
+#include "qdeclarativegeomapobject_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
@@ -68,9 +70,7 @@ class QDeclarativeGraphicsGeoMap : public QDeclarativeItem
     Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY declarativeCenterChanged)
     Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QGeoMapObject> objects READ objects)
-
-    Q_CLASSINFO("DefaultProperty", "objects")
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
 
 public:
     enum MapType {
@@ -121,7 +121,7 @@ public:
     void setConnectivityMode(ConnectivityMode connectivityMode);
     ConnectivityMode connectivityMode() const;
 
-    QDeclarativeListProperty<QGeoMapObject> objects();
+    QDeclarativeListProperty<QDeclarativeGeoMapObject> objects();
 
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
@@ -132,6 +132,11 @@ public Q_SLOTS:
 protected:
     void geometryChanged(const QRectF &newGeometry,
                          const QRectF &oldGeometry);
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
@@ -151,10 +156,12 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
 
 private:
-    static void object_append(QDeclarativeListProperty<QGeoMapObject> *prop, QGeoMapObject *mapObject);
-    static int object_count(QDeclarativeListProperty<QGeoMapObject> *prop);
-    static QGeoMapObject* object_at(QDeclarativeListProperty<QGeoMapObject> *prop, int index);
-    static void object_clear(QDeclarativeListProperty<QGeoMapObject> *prop);
+    static void object_append(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, QDeclarativeGeoMapObject *mapObject);
+    static int object_count(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
+    static QDeclarativeGeoMapObject* object_at(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, int index);
+    static void object_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
+
+    QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);
 
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
@@ -166,7 +173,9 @@ private:
     QDeclarativeGraphicsGeoMap::MapType mapType_;
     QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
-    QList<QGeoMapObject*> objects_;
+
+    QList<QDeclarativeGeoMapObject*> objects_;
+    QHash<QGeoMapObject*, QDeclarativeGeoMapObject*> objectMap_;
 
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };

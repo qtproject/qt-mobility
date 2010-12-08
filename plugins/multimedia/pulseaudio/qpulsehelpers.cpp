@@ -73,6 +73,8 @@ pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
             format.sampleType() == QAudioFormat::Float ? spec.format = PA_SAMPLE_FLOAT32LE : spec.format = PA_SAMPLE_S32LE;
             break;
         }
+    } else {
+        spec.format = PA_SAMPLE_INVALID;
     }
 
     return spec;

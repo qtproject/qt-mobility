@@ -149,6 +149,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_viewfinderInterface(0),
      m_pipeline(0),
      m_videoSrc(0),
+     m_viewfinderElement(0),
      m_viewfinderHasChanged(true),
      m_videoInputHasChanged(true),
      m_sourceCaps(0),
@@ -191,6 +192,7 @@ CameraBinSession::~CameraBinSession()
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
         gstUnref(m_pipeline);
+        gstUnref(m_viewfinderElement);
     }
 }
 
@@ -253,17 +255,21 @@ bool CameraBinSession::setupCameraBin()
 
     if (m_viewfinderInterface) {
         if (m_viewfinderHasChanged) {
-            GstElement *preview = m_viewfinderInterface->videoSink();
+            if (m_viewfinderElement)
+                gst_object_unref(GST_OBJECT(m_viewfinderElement));
+
+            m_viewfinderElement = m_viewfinderInterface->videoSink();
 #if CAMERABIN_DEBUG
             qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
 #endif
             m_viewfinderHasChanged = false;
-            if (!preview) {
+            if (!m_viewfinderElement) {
                 qWarning() << "Staring camera without viewfinder available";
-                preview = gst_element_factory_make("fakesink", NULL);
+                m_viewfinderElement = gst_element_factory_make("fakesink", NULL);
             }
+            gst_object_ref(GST_OBJECT(m_viewfinderElement));
             gst_element_set_state(m_pipeline, GST_STATE_NULL);
-            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
+            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, m_viewfinderElement, NULL);
         }
     }
 
@@ -780,6 +786,9 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                     break;
             }
         }
+
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
+            m_viewfinderInterface->handleSyncMessage(gm);
     }
 
     return false;
@@ -881,6 +890,9 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
             }
             //qDebug() << "New session state:" << ENUM_NAME(CameraBinSession,"State",m_state);
         }
+
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
+            m_viewfinderInterface->handleBusMessage(gm);
     }
 }
 

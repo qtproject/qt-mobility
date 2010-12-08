@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
 
     The QMediaPlayer class is a high level media playback class. It can be used
     to playback such content as songs, movies and internet radio. The content

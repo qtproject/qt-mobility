@@ -204,6 +204,7 @@ private:
     GstBus* m_bus;
     GstElement *m_pipeline;
     GstElement *m_videoSrc;
+    GstElement *m_viewfinderElement;
     bool m_viewfinderHasChanged;
     bool m_videoInputHasChanged;
 

@@ -993,4 +993,5 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     \page tutorials-mapsnavigator-part4.html
     \example tutorials/mapsnavigator/part4
     \title Part 4 - Kinetic panning and tuning for mobile
+
 */

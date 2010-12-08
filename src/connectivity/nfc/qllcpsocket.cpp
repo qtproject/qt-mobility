@@ -288,6 +288,16 @@ QLlcpSocket::State QLlcpSocket::state() const
 /*!
     \reimp
 */
+qint64 QLlcpSocket::bytesAvailable() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->bytesAvailable() + QIODevice::bytesAvailable();
+}
+
+/*!
+    \reimp
+*/
 bool QLlcpSocket::waitForReadyRead(int msecs)
 {
     Q_D(QLlcpSocket);
