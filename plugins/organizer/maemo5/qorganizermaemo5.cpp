@@ -1809,7 +1809,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
                             QList<QOrganizerItem> parentCandidateOccurrences =
                                     internalItemOccurrences(*parentCandidateEvent, periodStart, periodEnd, 0, error);
                             if (*error != QOrganizerManager::NoError)
-                                return QOrganizerItem(); // error occured
+                                return QOrganizerItem(); // error occurred
 
                             // Because the period was set, it's enough to just check if we got any
                             if (!parentCandidateOccurrences.isEmpty()) {

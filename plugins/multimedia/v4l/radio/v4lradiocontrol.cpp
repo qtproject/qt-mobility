@@ -434,7 +434,7 @@ bool V4LRadioControl::initRadio()
     fd = ::open("/dev/radio0", O_RDWR);
 
     if(fd != -1) {
-        // Capabilites
+        // Capabilities
         memset( &cap, 0, sizeof( cap ) );
         if(::ioctl(fd, VIDIOC_QUERYCAP, &cap ) >= 0) {
             if(((cap.capabilities & V4L2_CAP_RADIO) == 0) && ((cap.capabilities & V4L2_CAP_AUDIO) == 0))

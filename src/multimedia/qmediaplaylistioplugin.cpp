@@ -101,7 +101,7 @@ QMediaPlaylistWriter::~QMediaPlaylistWriter()
 
     Writes an item of \a media to a playlist file.
 
-    Returns true if the media was written succesfully; and false otherwise.
+    Returns true if the media was written successfully; and false otherwise.
 */
 
 /*!

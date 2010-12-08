@@ -175,7 +175,10 @@ END:VCARD\r\n\
     QTest::newRow("base64 encoded") << property << expectedResult << codec;
 
     // Characters other than ASCII:
-    expectedResult = "ORG;CHARSET=UTF-8:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
+    // Note: KATAKANA_NOKIA is defined as: QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2")
+    // The expected behaviour is to convert to UTF8, then encode with quoted-printable
+    expectedResult = "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n";
+
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
@@ -189,14 +192,6 @@ END:VCARD\r\n\
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
     QTest::newRow("JIS codec") << property << expectedResult << QByteArray("Shift-JIS");
-
-    // CHARSET and QUOTED-PRINTABLE
-    expectedResult = "EMAIL;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:john=40"
-                     + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
-    property = QVersitProperty();
-    property.setName(QLatin1String("EMAIL"));
-    property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
-    QTest::newRow("Charset and QP") << property << expectedResult << codec;
 }
 
 void tst_QVCard21Writer::testEncodeParameters()

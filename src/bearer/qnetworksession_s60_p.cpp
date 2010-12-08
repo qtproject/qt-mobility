@@ -726,7 +726,7 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
 {
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
     qDebug() << "QNS this : " << QString::number((uint)this) << " - "
-            << "roaming Error() occured, isOpen is: " << isOpen;
+            << "roaming Error() occurred, isOpen is: " << isOpen;
 #endif
     if (isOpen) {
         isOpen = false;
@@ -1018,7 +1018,7 @@ void QNetworkSessionPrivate::RunL()
             TInt error = KErrNone;
             QNetworkConfiguration newActiveConfig = activeConfiguration();
             if (!newActiveConfig.isValid()) {
-                // RConnection startup was successfull but no configuration
+                // RConnection startup was successful but no configuration
                 // was found. That indicates that user has chosen to create a
                 // new WLAN configuration (from scan results), but that new
                 // configuration does not have access to Internet (Internet

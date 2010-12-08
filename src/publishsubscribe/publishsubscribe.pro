@@ -57,7 +57,8 @@ unix:!symbian {
         SOURCES += contextkitlayer.cpp
         HEADERS += contextkitlayer_p.h
         CONFIG += link_pkgconfig
-        PKGCONFIG += contextsubscriber-1.0 contextprovider-1.0 QtDBus
+        QT += dbus
+        PKGCONFIG += contextsubscriber-1.0 contextprovider-1.0
     } else {
         QT += network
 
