@@ -75,8 +75,8 @@ void ContextKitPath::initFromPath(QString path)
         m_type = DotPath;
     } else {
         // don't know what it is?
-        qWarning() << "ContextKit: path doesn't seem to obey any known scheme: "
-                   << path;
+        qWarning("ContextKit: path doesn't seem to obey any known scheme: %s",
+                 qPrintable(path));
     }
 }
 
