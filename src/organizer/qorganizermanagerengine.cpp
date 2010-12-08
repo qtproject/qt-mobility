@@ -263,12 +263,9 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizer items will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -292,12 +289,9 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizer items will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
   exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
@@ -327,12 +321,9 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching item will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -1999,8 +1990,7 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizer
 }
 
 /*!
-  Remove the item identified by \a organizeritemId from the database,
-  and also removes any relationships in which the item was involved.
+  Remove the item identified by \a organizeritemId from the database.
   Returns true if the item was removed successfully, otherwise
   returns false.
 
@@ -2069,9 +2059,6 @@ bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, Q
   Remove every item whose id is contained in the list of organizer items ids
   \a organizeritemIds.  Returns true if all organizer items were removed successfully,
   otherwise false.
-
-  Any item that was removed successfully will have the relationships
-  in which it was involved removed also.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
   the error which occurred when saving the item at that index) for every
@@ -2162,9 +2149,8 @@ bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& col
 
 /*!
   Returns a pruned or modified version of the \a original item which is valid and can be saved in the manager.
-  The returned item might have details removed or arbitrarily changed.  The cache of relationships
-  in the item are ignored entirely when considering compatibility with the backend, as they are
-  saved and validated separately.  Any error which occurs will be saved to \a error.
+  The returned item might have details removed or arbitrarily changed.
+  Any error which occurs will be saved to \a error.
  */
 QOrganizerItem QOrganizerManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const
 {
