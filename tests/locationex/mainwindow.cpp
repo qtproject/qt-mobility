@@ -73,7 +73,7 @@ void MainWindow::networkSessionOpened()
     for (int i = 0; i < 1; ++i) {
         MapBox * box = MapBox::createOnlineMap(this);
         box->addRectangle(55.1977, 5.87586, 47.5395, 15.2802);
-        //box->addRoute(QGeoCoordinate(50, 5.87586), QGeoCoordinate(47.5395, 15.2802));
+        box->addRoute(QGeoCoordinate(50, 5.87586), QGeoCoordinate(47.5395, 15.2802));
 
         addBox(box);
     }
@@ -85,7 +85,7 @@ void MainWindow::timerEvent(QTimerEvent * event)
     qreal currentMovement = speed * qMin(300, eventTime.elapsed());
 
     foreach(MapBox * box, m_boxes) {
-        box->map()->pan(currentMovement, 0);
+        //box->map()->pan(currentMovement, 0);
     }
     eventTime.restart();
 }

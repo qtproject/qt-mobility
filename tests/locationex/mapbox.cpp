@@ -293,7 +293,7 @@ void MapBox::routeFinished()
 
     QPen pen(QColor(0, 0, 255, 127)); // blue, semi-transparent
     pen.setWidth(7);
-    pen.setCosmetic(true);
+    //pen.setCosmetic(true);
     pen.setCapStyle(Qt::RoundCap);
 
     QGeoMapRouteObject *route = new QGeoMapRouteObject(reply->routes().at(0));
