@@ -45,6 +45,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QDir>
+#include <QCryptographicHash>
 
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"
@@ -2117,7 +2118,19 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         return QString();
     }
 #else
-    Q_UNUSED(driveVolume);
+  if (halIsAvailable) {
+      QHalInterface iface;
+      QStringList list = iface.findDeviceByCapability("volume");
+      if (!list.isEmpty()) {
+          QString lastdev;
+          foreach (const QString &dev, list) {
+              halIfaceDevice = new QHalDeviceInterface(dev);
+              if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == driveVolume)) {
+                  return halIfaceDevice->getPropertyString("volume.uuid");
+              }
+          }
+      }
+}
 #endif
 #else
     QDir uuidDir("/dev/disk/by-uuid");
@@ -2863,6 +2876,30 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypa
 
 QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
 {
+#if defined(Q_WS_MAEMO_6)
+    // create one from imei and uuid of /
+    QByteArray driveuid;
+    if (halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("volume");
+        if (!list.isEmpty()) {
+            QString lastdev;
+            foreach (const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == "/")) {
+                    driveuid =  halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                    break;
+                }
+            }
+        }
+    }
+    QByteArray bytes = imei().toLocal8Bit();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(bytes);
+    hash.addData(driveuid);
+
+    return QUuid(QString(hash.result().toHex()));
+#endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
