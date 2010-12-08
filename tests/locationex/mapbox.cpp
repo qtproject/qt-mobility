@@ -101,7 +101,6 @@ void MapBox::timerEvent(QTimerEvent * event)
 
 MapBox::~MapBox()
 {
-    m_scene->removeItem(m_mapWidget); // EVIL workaround!
 }
 
 void MapBox::setProvider(const QString & providerId)
@@ -133,7 +132,7 @@ void MapBox::createProvider()
 
 void MapBox::createMapWidget()
 {
-    // delete m_mapWidget; // TODO: uncomment, since this is an EVIL workaround
+    delete m_mapWidget;
 
     m_mapWidget = new QGraphicsGeoMap(m_mapManager);
 
@@ -433,6 +432,4 @@ int MapBox::countErrors(const QImage & image1, const QImage & image2)
             - from other sources than the session, for the desktop
         - render mode
             - sw/hw, but that's pretty static, no?
-
-    remove EVIL workarounds after the "crash on deleting QGraphicsGeoMap" bug is fixed
 */
