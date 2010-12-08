@@ -231,6 +231,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
     qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
     qRegisterMetaType<QSystemDeviceInfo::KeypadType>("QSystemDeviceInfo::KeypadType");
+    qRegisterMetaType<QSystemDeviceInfo::KeyboardType>("QSystemDeviceInfo::KeyboardType");
 }
 
 /*!
