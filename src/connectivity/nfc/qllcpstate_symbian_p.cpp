@@ -111,7 +111,7 @@ bool QLLCPBind::WaitForReadyRead(int msecs)
 
 
 /*!
-    Connection-Less Mode  
+    Connection-Less Mode
 */
 qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
                                        QNearFieldTarget *target, quint8 port)
@@ -131,7 +131,7 @@ qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
 */
 qint64 QLLCPBind::WriteDatagram(const char *data, qint64 size,
                               QNearFieldTarget *target, quint8 port)
-{ 
+{
     qint64 val = -1;
     CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
     if (socketHandler != NULL)
@@ -243,7 +243,11 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget 
         // The length of the descriptor is set to zero
         // and its maximum length is set to maxSize
         TPtr8 ptr((TUint8*)data, (TInt)maxSize);
-        val = socketHandler->ReceiveData(ptr);
+
+        bool ret = socketHandler->ReceiveData(ptr);
+        if(ret)
+            val = ptr.Length();
+
     }
 
     return val;
@@ -267,7 +271,7 @@ void QLLCPClosing::DisconnectFromService()
     {
        m_socket->invokeError();
     }
-    
+
 }
 
 /*!
@@ -432,7 +436,7 @@ QLLCPClosing::QLLCPClosing(QLlcpSocketPrivate* aSocket)
 {}
 
 qint64 QLLCPSocketState::ReadDatagram(char *data, qint64 maxSize,
-        QNearFieldTarget **target, quint8 *port) 
+        QNearFieldTarget **target, quint8 *port)
 {
     Q_UNUSED(data);
     Q_UNUSED(maxSize);

@@ -41,14 +41,14 @@
 #include "nearfieldutility_symbian.h"
 #include "llcpsockettype2_symbian.h"
 
-// TODO
 #include <QDebug>
 
 #define LOG1 qDebug() <<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
-#define LOG qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__;
+#define LOG qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__ <<"Begine";
+#define LOGEND qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__ <<"End";
 #define LOG2(a) qDebug()<<"CLlcpSocketType2::"<<__FUNCTION__<<": "<<__LINE__<<a;
 // will obslete with API updated
-const TInt KInterestingSsap = 35;
+const TInt KInterestingSsap = 35;//TODO replace this with URI
 
 /*!
     CLlcpSocketType2::ContructL()
@@ -204,15 +204,16 @@ TBool CLlcpSocketType2::ReceiveData(TDes8& aData)
             }
         else
             {
-            TPtrC8 ptr(buf->Ptr(), extBufferMaxLength - extBufferLength);
+            TPtrC8 ptr(buf->Ptr() + iBufferOffset, extBufferMaxLength - extBufferLength);
             aData.Append( ptr );
-            iBufferOffset = extBufferMaxLength - extBufferLength;
+            iBufferOffset += extBufferMaxLength - extBufferLength;
+            ret = ETrue;
             break;
             }
         ret = ETrue;
         }
     //TODO unlock the buffer
-    LOG
+    LOGEND
     return ret;
     }
 
@@ -224,6 +225,10 @@ TInt64 CLlcpSocketType2::BytesAvailable()
     for (TInt i = 0; i < iReceiveBufArray.Count(); ++i)
         {
         HBufC8* buf = iReceiveBufArray[ i ];
+        if (!buf)
+            {
+                continue;
+            }
         if ( i == 0)
             {
             ret += buf->Length() - iBufferOffset;
@@ -234,7 +239,7 @@ TInt64 CLlcpSocketType2::BytesAvailable()
             }
         }
     //TODO unlock the buffer
-    LOG
+    LOGEND
     return ret;
     }
 
@@ -278,7 +283,7 @@ TBool CLlcpSocketType2::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
         delete iTimer;
         iTimer = NULL;
         }
-    LOG
+    LOGEND
     return ret;
     }
 
@@ -360,7 +365,7 @@ void CLlcpSocketType2::Cleanup()
         delete iTransporter;
         iTransporter = NULL;
         }
-    LOG
+    LOGEND
     }
 void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
     {
@@ -403,7 +408,7 @@ void CLlcpSocketType2::StateChangedL(QtMobility::QLlcpSocket::State aSocketState
         {
         QT_TRYCATCH_LEAVING(iCallback->invokeStateChanged(aSocketState));
         }
-    LOG
+    LOGEND
     }
 
 void CLlcpSocketType2::StopWaitNow(TWaitStatus aWaitStatus)
@@ -435,7 +440,7 @@ void CLlcpSocketType2::ReadyRead()
               QT_TRYCATCH_LEAVING(iCallback->invokeReadyRead());
         );
         }
-    LOG
+    LOGEND
     }
 void CLlcpSocketType2::BytesWritten(qint64 aBytes)
     {
@@ -451,7 +456,7 @@ void CLlcpSocketType2::BytesWritten(qint64 aBytes)
               QT_TRYCATCH_LEAVING(iCallback->invokeBytesWritten(aBytes));
         );
         }
-    LOG
+    LOGEND
     }
 
 // connecter implementation
@@ -508,7 +513,7 @@ void CLlcpConnecterAO::ConnectL(const TDesC8& /*aServiceName*/)
         //emit connecting signal
         iSocket.StateChangedL(QtMobility::QLlcpSocket::ConnectingState);
         }
-    LOG
+    LOGEND
     }
 
 /*!
@@ -588,7 +593,7 @@ void CLlcpConnecterAO::RunL()
             }
       break;
     }
-  LOG
+  LOGEND
   }
 void CLlcpConnecterAO::DoCancel()
   {
@@ -678,7 +683,7 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
       {
       error = KErrInUse;
       }
-    LOG
+    LOGEND
     return error;
     }
 
@@ -696,7 +701,7 @@ void CLlcpSenderAO::RunL()
         //emit error() signal
         iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
         }
-    LOG
+    LOGEND
     }
 void CLlcpSenderAO::DoCancel()
     {
@@ -769,7 +774,7 @@ TInt CLlcpReceiverAO::StartReceiveDatagram()
          // if length is 0 or negative, LLCP link is destroyed.
          error = KErrNotReady;
          }
-     LOG
+     LOGEND
      return error;
   }
 
@@ -795,12 +800,17 @@ void CLlcpReceiverAO::RunL()
       iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
       }
     }
-  else
+    else if ( error == KErrCancel )
+    {
+        //just omit the KErrCancel
+        qDebug("CLlcpReceiverAO::RunL() iStatus = KErrCancel");
+    }
+    else
     {
     //emit error() signal
     iSocket.Error(QtMobility::QLlcpSocket::UnknownSocketError);
     }
-  LOG
+  LOGEND
   }
 void CLlcpReceiverAO::DoCancel()
   {

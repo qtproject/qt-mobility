@@ -53,7 +53,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
 Q_DECLARE_METATYPE(QLlcpSocket::State)
-
+Q_DECLARE_METATYPE(QLlcpSocket::Error)
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
 class tst_qllcpsockettype2 : public QObject
@@ -67,7 +67,7 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    // ALERT£º Handshake required, do NOT¡¡change the following sequence of testcases.
+    // ALERT Handshake required, do NOT change the following sequence of testcases.
 
     // basic acceptance testcases
     void echo();   // handshake 1
@@ -90,6 +90,7 @@ private Q_SLOTS:
 tst_qllcpsockettype2::tst_qllcpsockettype2()
 {
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*");
+    qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
 }
 
 void tst_qllcpsockettype2::initTestCase()
@@ -102,7 +103,7 @@ void tst_qllcpsockettype2::initTestCase()
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    QNearFieldTarget *m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
+    m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 }
@@ -150,19 +151,27 @@ void tst_qllcpsockettype2::echo()
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << (quint16)echo.length();
+    out << (quint16)0;
     out << echo;
+    
+    qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+    qDebug("Client-- write echo string = %s", qPrintable(echo));
+    qDebug("Client-- write echo string length= %d", echo.length());
+    qDebug("Client-- write data length = %d", block.length());
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
 
     socket.write(block);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
 
+    qDebug()<<"bytesWritten signal return value = "<<written;
     while (written < echo.length())
         {
         QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
 
     //Get the echoed data from server
@@ -175,7 +184,7 @@ void tst_qllcpsockettype2::echo()
         QTRY_VERIFY(!readyRead.isEmpty());
     }
     in >> blockSize;
-
+    qDebug() << "Client-- read blockSize=" << blockSize;
     while (socket.bytesAvailable() < blockSize){
         QSignalSpy readyRead(&socket, SIGNAL(readyRead()));
         QTRY_VERIFY(!readyRead.isEmpty());
@@ -183,6 +192,7 @@ void tst_qllcpsockettype2::echo()
     QString echoed;
     in >> echoed;
 
+    qDebug() << "Client-- read echoed string =" << echoed;
     //test the echoed string is same as the original string
     QVERIFY(echo == echoed);
 
@@ -257,7 +267,7 @@ void tst_qllcpsockettype2::echo_wait()
         ret = socket.waitForBytesWritten(Timeout);
         QVERIFY(ret);
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
 
     //Get the echoed data from server

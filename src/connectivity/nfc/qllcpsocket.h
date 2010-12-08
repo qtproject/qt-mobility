@@ -74,6 +74,7 @@ public:
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
+    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
     ~QLlcpSocket();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -96,10 +97,13 @@ public:
     Error error() const;
     State state() const;
 
+    qint64 bytesAvailable() const;
+
     bool waitForReadyRead(int msecs = 30000);
     bool waitForBytesWritten(int msecs = 30000);
     virtual bool waitForConnected(int msecs = 30000);
     virtual bool waitForDisconnected(int msecs = 30000);
+    bool isSequential() const;
 
 signals:
     void connected();
@@ -112,7 +116,7 @@ protected:
     qint64 writeData(const char *data, qint64 len);
 
 private:
-    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
+    
 
     QLlcpSocketPrivate *d_ptr;
 };

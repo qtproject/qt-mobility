@@ -50,6 +50,8 @@
 QTM_USE_NAMESPACE
 
 QString TestUri("urn:nfc:xsn:nokia:symbiantest");
+
+Q_DECLARE_METATYPE(QLlcpSocket::Error)
 class tst_QLlcpServer : public QObject
 {
     Q_OBJECT
@@ -61,7 +63,7 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    // ALERT£º Handshake required, do NOT¡¡change the following sequence of testcases.
+    // ALERT Handshake required, do NOT change the following sequence of testcases.
 
     // basic acceptance test
     void newConnection(); //  handshake 1
@@ -79,6 +81,7 @@ tst_QLlcpServer::tst_QLlcpServer()
 }
 void tst_QLlcpServer::initTestCase()
 {
+	qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
 }
 
 void tst_QLlcpServer::cleanupTestCase()
@@ -133,6 +136,7 @@ void tst_QLlcpServer::newConnection()
     //Get data from client
     QTRY_VERIFY(!readyReadSpy.isEmpty());
 
+    qDebug() << "Bytes available = " << socket->bytesAvailable();
     quint16 blockSize = 0;
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_6);
@@ -141,31 +145,36 @@ void tst_QLlcpServer::newConnection()
         QTRY_VERIFY(!readyRead.isEmpty());
     }
     in >> blockSize;
-
+    qDebug()<<"Read blockSize from client: " << blockSize;
     while (socket ->bytesAvailable() < blockSize){
         QSignalSpy readyRead(socket, SIGNAL(readyRead()));
         QTRY_VERIFY(!readyRead.isEmpty());
     }
     QString echo;
     in >> echo;
+    qDebug() << "Read data from client:" << echo;
     //Send data to client
     QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << (quint16)echo.length();
+    out << (quint16)0;
     out << echo;
-
-    socket->write(block);
+    qDebug()<<"Write echoed data back to client";
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+    qint64 val = socket->write(block);
+    qDebug("Write() return value = %d", val);
+	QVERIFY(val != -1);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
-
+    qDebug()<<"Server::bytesWritten signal return value = " << written;
     while (written < echo.length())
         {
         QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
     //Now data has been sent,check the if existing error
     QVERIFY(errorSpy.isEmpty());
@@ -231,8 +240,12 @@ void tst_QLlcpServer::newConnection_wait()
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << (quint16)echo.length();
+    out << (quint16)0;
     out << echo;
+    qDebug()<<"Write echoed data back to client";
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+
 
     socket->write(block);
     ret = socket->waitForBytesWritten(Timeout);
@@ -247,9 +260,14 @@ void tst_QLlcpServer::newConnection_wait()
         bool ret = socket->waitForBytesWritten(Timeout);
         QVERIFY(ret);
         QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
-        written = bytesWrittenSpy.first().at(0).value<qint64>();
+        written += bytesWrittenSpy.first().at(0).value<qint64>();
         }
     //Now data has been sent,check the if existing error
+    if (!errorSpy.isEmpty())
+    	{
+    		QLlcpSocket::Error error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
+    		qDebug("QLlcpSocket::Error =%d", error);
+    	}
     QVERIFY(errorSpy.isEmpty());
 
     server.close();

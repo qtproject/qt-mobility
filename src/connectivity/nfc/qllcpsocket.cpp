@@ -206,6 +206,10 @@ qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
     return d->writeDatagram(data, size);
 }
 
+bool QLlcpSocket::isSequential() const
+{
+	return true;
+}
 /*!
     \overload
 
@@ -283,6 +287,16 @@ QLlcpSocket::State QLlcpSocket::state() const
     Q_D(const QLlcpSocket);
 
     return d->state();
+}
+
+/*!
+    \reimp
+*/
+qint64 QLlcpSocket::bytesAvailable() const
+{
+    Q_D(const QLlcpSocket);
+
+    return d->bytesAvailable() + QIODevice::bytesAvailable();
 }
 
 /*!

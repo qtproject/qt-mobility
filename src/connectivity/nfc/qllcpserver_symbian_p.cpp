@@ -90,7 +90,7 @@ QString QLlcpServerPrivate::serviceUri() const
 
 quint8 QLlcpServerPrivate::serverPort() const
 {
-    return -1;
+    return 0;
 }
 
 bool QLlcpServerPrivate::hasPendingConnections() const
@@ -116,7 +116,8 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (socket_symbian)
     {
         QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
-        qSocket = new QLlcpSocket(qSocket_p);
+        qSocket = new QLlcpSocket(qSocket_p,NULL);
+        qSocket_p->attachCallbackHandler(qSocket);
         socket_symbian->AttachCallbackHandler(qSocket_p);
     }
     return qSocket;

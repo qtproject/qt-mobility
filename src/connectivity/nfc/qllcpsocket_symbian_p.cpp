@@ -78,16 +78,6 @@ if (m_symbianSocketType2 == NULL) \
 
 
 
-
-QLlcpSocketPrivate::QLlcpSocketPrivate()
-   : m_error(QLlcpSocket::UnknownSocketError),
-     m_symbianSocketType1(NULL),
-     m_symbianSocketType2(NULL),
-     m_socketType(connectionUnknown)
-{
-    m_state = new QLLCPUnconnected(this);
-}
-
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
        : m_error(QLlcpSocket::UnknownSocketError),
          m_symbianSocketType1(NULL),
@@ -132,6 +122,7 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
       m_symbianSocketType2(socketType2_symbian),
       m_socketType(connectionType2)
 {
+	Q_CHECK_PTR(m_symbianSocketType2);
     m_state = new QLLCPConnected(this);
 }
 
@@ -146,19 +137,17 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     }
     Q_Q(QLlcpSocket);
     if (!q->isOpen())
-    {
-        q->open(QIODevice::ReadWrite);
-    }
+        q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
     m_state->ConnectToService(target,serviceUri);
 }
 
 void QLlcpSocketPrivate::disconnectFromService()
-{   
+{
     if( connectionType1 == m_socketType){
        invokeError();
        return;
     }
-    
+
     Q_CHECK_SOCKET_HANDLER2(QLlcpSocketPrivate::disconnectFromService());
 
     m_state->DisconnectFromService();
@@ -183,7 +172,25 @@ void QLlcpSocketPrivate::invokeReadyRead()
     emit q->readyRead();
     qDebug() << "QLlcpSocketPrivate::invokeReadyRead() end";
 }
+void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
+{
+    q_ptr = q;
+    //  Q_Q(QLlcpSocket);
+    if (!q->isOpen())
+        q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+}
+qint64 QLlcpSocketPrivate::bytesAvailable() const
+{
+        if( connectionType1 == m_socketType){
+        return 0;
+    }
 
+    if (m_symbianSocketType2 == NULL)
+        {
+        return 0;
+    }
+    return m_symbianSocketType2->BytesAvailable();
+}
 void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 {
     Q_Q(QLlcpSocket);
@@ -375,14 +382,14 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
 bool QLlcpSocketPrivate::waitForConnected(int msecs)
 {
     bool val = false;
-    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForConnected(),connectionType2, val);    
+    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForConnected(),connectionType2, val);
     return m_state->WaitForConnected(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 {
     bool val = false;
-    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForDisconnected(),connectionType2, val);     
+    Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForDisconnected(),connectionType2, val);
     return m_state->WaitForDisconnected(msecs);
 }
 

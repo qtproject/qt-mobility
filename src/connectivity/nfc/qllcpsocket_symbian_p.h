@@ -62,7 +62,7 @@ class QLlcpSocketPrivate : public QObject
     Q_DECLARE_PUBLIC(QLlcpSocket)
 
 public:
-    QLlcpSocketPrivate();
+   
     QLlcpSocketPrivate(QLlcpSocket *q);
     QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian);
     ~QLlcpSocketPrivate();
@@ -91,10 +91,13 @@ public: //Implementation of QLlcpSocket API
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 
+    qint64 bytesAvailable() const;
+
     bool waitForReadyRead(int msecs);
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
+    void attachCallbackHandler(QLlcpSocket *q);
 
 public:
     CLlcpSocketType1* socketType1Instance();
