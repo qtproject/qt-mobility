@@ -795,6 +795,9 @@ int main(int argc, char ** argv)
 {
     QApplication app(argc, argv, true);
 
+    app.setOrganizationDomain("com.nokia.qt");
+    app.setApplicationName("VSExplorer");
+
     bool manager = false;
     bool dump = false;
     for(int ii = 1; ii < argc; ++ii) {
