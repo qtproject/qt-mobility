@@ -377,6 +377,10 @@ void QDeclarativeOrganizerItem::setGuid(const QString& guid)
     }
 }
 
+bool QDeclarativeOrganizerItem::isOccurrence() const
+{
+      return itemType() == QDeclarativeOrganizerItem::EventOccurrence || itemType() == QDeclarativeOrganizerItem::TodoOccurrence;
+}
 ///////////////////////QDeclarativeOrganizerEvent////////////////////////////////////
 
 /*!

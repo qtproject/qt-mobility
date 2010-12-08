@@ -113,7 +113,7 @@ public:
     void setDescription(const QString& description);
     QString guid() const;
     void setGuid(const QString& guid);
-
+    bool isOccurrence() const;
 public slots:
     void save();
     void clearDetails();

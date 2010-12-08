@@ -51,11 +51,11 @@ Rectangle {
          property OrganizerModel organizer:OrganizerModel{
              id: organizer
              startPeriod:new Date(calendar.day.getFullYear(), 1, 1)
-             endPeriod:new Date(calendar.day.getFullYear(), 12, 31)
+             endPeriod:new Date(calendar.day.getFullYear() +1, 12, 31)
              autoUpdate:false
              Component.onCompleted : {
                  if (manager == "memory")
-                     organizer.importItems(Qt.resolvedUrl("contents/2010-FIFA-WorldCup.ics"));
+                     organizer.importItems(Qt.resolvedUrl("contents/test.ics"));
              }
          }
          onDayChanged: {
