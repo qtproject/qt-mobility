@@ -264,11 +264,8 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizer items will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details
+  in the matching organizer items will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -293,11 +290,8 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizer items will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details
+  in the matching organizer items will be returned.
 
   Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
   exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
@@ -328,11 +322,8 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching item will be returned.  A client should not make changes to an item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details
+  in the matching item will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -1718,7 +1709,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
 }
 
 /*!
-  Checks that the given item \a organizeritem does not have details which
+  Checks that the given item \a item does not have details which
   don't conform to a valid definition, violate uniqueness constraints,
   or contain values for nonexistent fields, and that the values contained are
   of the correct type for each field, and are allowable values for that field.
@@ -1727,20 +1718,20 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
   (such as CreateOnly and ReadOnly) are observed; backend specific code
   must be written if you wish to enforce these constraints.
 
-  Returns true if the \a organizeritem is valid according to the definitions for
+  Returns true if the \a item is valid according to the definitions for
   its details, otherwise returns false.
 
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerManagerEngine::validateItem(const QOrganizerItem& organizeritem, QOrganizerManager::Error* error) const
+bool QOrganizerManagerEngine::validateItem(const QOrganizerItem& item, QOrganizerManager::Error* error) const
 {
     QList<QString> uniqueDefinitionIds;
 
     // check that each detail conforms to its definition as supported by this manager.
-    foreach (const QOrganizerItemDetail& detail, organizeritem.details()) {
+    foreach (const QOrganizerItemDetail& detail, item.details()) {
         QVariantMap values = detail.variantValues();
-        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), organizeritem.type(), error);
+        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), item.type(), error);
         // check that the definition is supported
         if (*error != QOrganizerManager::NoError) {
             *error = QOrganizerManager::InvalidDetailError;
@@ -1948,15 +1939,15 @@ void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *d
 }
 
 /*!
-  Adds the given \a organizeritem to the database if \a organizeritem has a
+  Adds the given \a item to the database if \a item has a
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a id of zero, otherwise updates the organizer item in
-  the database which has the same id to be the given \a organizeritem.
+  the database which has the same id to be the given \a item.
   If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
   \c QOrganizerManager::DoesNotExistError.
 
-  The \a organizeritem will be added to the collection identified by the
+  The \a item will be added to the collection identified by the
   collectionId specified in the item (accessible via item->organizerId())
   if it exists, and the item conforms to the schema supported
   for that collection.  If the collection exists but the item does not conform
@@ -1977,12 +1968,12 @@ void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *d
 
   \sa managerUri()
  */
-bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::saveItem(QOrganizerItem* item, QOrganizerManager::Error* error)
 {
     // Convert to a list op
-    if (organizeritem) {
+    if (item) {
         QList<QOrganizerItem> list;
-        list.append(*organizeritem);
+        list.append(*item);
 
         QMap<int, QOrganizerManager::Error> errors;
         bool ret = saveItems(&list, &errors, error);
@@ -1990,7 +1981,7 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizer
         if (errors.count() > 0)
             *error = errors.begin().value();
 
-        *organizeritem = list.value(0);
+        *item = list.value(0);
         return ret;
     } else {
         *error = QOrganizerManager::BadArgumentError;
@@ -1999,8 +1990,7 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizer
 }
 
 /*!
-  Remove the item identified by \a organizeritemId from the database,
-  and also removes any relationships in which the item was involved.
+  Remove the item identified by \a organizeritemId from the database.
   Returns true if the item was removed successfully, otherwise
   returns false.
 
@@ -2024,20 +2014,20 @@ bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId
 }
 
 /*!
-  Adds the list of organizer items given by \a organizeritems list to the database.
+  Adds the list of organizer items given by \a items list to the database.
   Returns true if the organizer items were saved successfully, otherwise false.
 
-  The engine might populate \a errorMap (the map of indices of the \a organizeritems list to
+  The engine might populate \a errorMap (the map of indices of the \a items list to
   the error which occurred when saving the item at that index) for
   every index for which the item could not be saved, if it is able.
   The \l QOrganizerManager::error() function will only return \c QOrganizerManager::NoError
   if all organizer items were saved successfully.
 
   For each newly saved item that was successful, the id of the item
-  in the \a organizeritems list will be updated with the new value.  If a failure occurs
+  in the \a items list will be updated with the new value.  If a failure occurs
   when saving a new item, the id will be cleared.
 
-  Each item in the given list \a organizeritems will be added to the collection
+  Each item in the given list \a items will be added to the collection
   identified in the item (accessible via item->collectionId()) if it exists, and if
   the item conform to the schema supported for that collection.  If the collection
   exists but the item does not conform to the schema supported for that collection,
@@ -2056,9 +2046,9 @@ bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId
 
   \sa QOrganizerManager::saveItem()
  */
-bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
-    Q_UNUSED(organizeritems);
+    Q_UNUSED(items);
     Q_UNUSED(errorMap);
 
     *error = QOrganizerManager::NotSupportedError;
@@ -2069,9 +2059,6 @@ bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, Q
   Remove every item whose id is contained in the list of organizer items ids
   \a organizeritemIds.  Returns true if all organizer items were removed successfully,
   otherwise false.
-
-  Any item that was removed successfully will have the relationships
-  in which it was involved removed also.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
   the error which occurred when saving the item at that index) for every
@@ -2162,9 +2149,8 @@ bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& col
 
 /*!
   Returns a pruned or modified version of the \a original item which is valid and can be saved in the manager.
-  The returned item might have details removed or arbitrarily changed.  The cache of relationships
-  in the item are ignored entirely when considering compatibility with the backend, as they are
-  saved and validated separately.  Any error which occurs will be saved to \a error.
+  The returned item might have details removed or arbitrarily changed.
+  Any error which occurs will be saved to \a error.
  */
 QOrganizerItem QOrganizerManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const
 {
@@ -2319,11 +2305,11 @@ int QOrganizerManagerEngine::compareVariant(const QVariant& first, const QVarian
 }
 
 /*!
-  Returns true if the supplied item \a organizeritem matches the supplied filter \a filter.
+  Returns true if the supplied item \a item matches the supplied filter \a filter.
 
   This function will test each condition in the filter, possibly recursing.
  */
-bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, const QOrganizerItem &organizeritem)
+bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, const QOrganizerItem &item)
 {
     switch(filter.type()) {
         case QOrganizerItemFilter::InvalidFilter:
@@ -2336,7 +2322,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
         case QOrganizerItemFilter::IdFilter:
             {
                 const QOrganizerItemIdFilter idf(filter);
-                if (idf.ids().contains(organizeritem.id()))
+                if (idf.ids().contains(item.id()))
                     return true;
             }
             // Fall through to end
@@ -2349,7 +2335,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                     return false;
 
                 /* See if this organizer item has one of these details in it */
-                const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
+                const QList<QOrganizerItemDetail>& details = item.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
                     return false; /* can't match */
@@ -2419,7 +2405,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                     return false; /* we do not know which field to check */
 
                 /* See if this organizer item has one of these details in it */
-                const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
+                const QList<QOrganizerItemDetail>& details = item.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
                     return false; /* can't match */
@@ -2508,7 +2494,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                 QOrganizerItemChangeLogFilter ccf(filter);
 
                 // See what we can do...
-                QOrganizerItemTimestamp ts = organizeritem.detail(QOrganizerItemTimestamp::DefinitionName);
+                QOrganizerItemTimestamp ts = item.detail(QOrganizerItemTimestamp::DefinitionName);
 
                 // See if timestamps are even supported
                 if (ts.isEmpty())
@@ -2531,7 +2517,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                 const QList<QOrganizerItemFilter>& terms = bf.filters();
                 if (terms.count() > 0) {
                     for(int j = 0; j < terms.count(); j++) {
-                        if (!testFilter(terms.at(j), organizeritem)) {
+                        if (!testFilter(terms.at(j), item)) {
                             return false;
                         }
                     }
@@ -2548,7 +2534,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
                 const QList<QOrganizerItemFilter>& terms = bf.filters();
                 if (terms.count() > 0) {
                     for(int j = 0; j < terms.count(); j++) {
-                        if (testFilter(terms.at(j), organizeritem)) {
+                        if (testFilter(terms.at(j), item)) {
                             return true;
                         }
                     }
@@ -2562,7 +2548,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
             {
                 const QOrganizerItemCollectionFilter cf(filter);
                 const QSet<QOrganizerCollectionId>& ids = cf.collectionIds();
-                if (ids.contains(organizeritem.collectionId()))
+                if (ids.contains(item.collectionId()))
                     return true;
                 return false;
             }
@@ -3227,14 +3213,11 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
-  fetchHint is the default constructed hint, all existing details and relationships in the matching
-  organizer items will be returned.  A client should not make changes to an item which has been
-  retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
-  information loss when saving the item back to the manager (as the "new" restricted item will
-  replace the previously saved item in the backend).
-
   If \a sortOrders is the empty list, the returned items will be sorted by date.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching
+  organizer items will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -3246,23 +3229,18 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
 
 
 /*!
-  Returns a list of organizer items that match the given \a filter, sorted according to the given
-  list of \a sortOrders, for any item or occurrence of an item which occurs in the range specified
-  by the given \a startDate and \a endDate, inclusive.  A default-constructed (invalid) \a startDate
-  specifies an open start date (matches anything which occurs up until the \a endDate), and a
-  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
-  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
-  return all items which match the \a filter criteria.
+  Returns a list of organizer items in the range specified by the given \a startDate and \a endDate,
+  inclusive.  The list will contain the first \a maxCount such items which match the given \a
+  filter.  A default-constructed (invalid) \a startDate specifies an open start date (matches
+  anything which occurs up until the \a endDate), and a default-constructed (invalid) \a endDate
+  specifies an open end date (matches anything which occurs after the \a startDate).  The list is
+  sorted by date.
 
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
-  fetchHint is the default constructed hint, all existing details and relationships in the matching
-  organizer items will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
-  information loss when saving the organizer item back to the manager (as the "new" restricted
-  organizer item will replace the previously saved organizer item in the backend).
-
+  fetchHint is the default constructed hint, all existing details in the matching
+  organizer items will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -3435,8 +3413,8 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QDateTime&
   The overall operation error will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and
-  action preferences in the matching items will be returned.
+  If the \a fetchHint is the default constructed hint, all existing details
+  in the matching items will be returned.
 
   If a non-default fetch hint is supplied, and the client wishes to make changes to the items,
   they should ensure that only a detail definition hint is supplied and that when saving it back, a
