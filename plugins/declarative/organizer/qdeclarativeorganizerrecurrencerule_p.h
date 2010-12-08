@@ -52,15 +52,15 @@ QTM_USE_NAMESPACE
 class QDeclarativeOrganizerRecurrenceRule : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Frequency frequency READ frequency WRITE setFrequency NOTIFY valueChanged)
-    Q_PROPERTY(QVariant limit READ limit WRITE setLimit NOTIFY valueChanged)
-    Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList daysOfWeek READ daysOfWeek WRITE setDaysOfWeek NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList daysOfMonth READ daysOfMonth WRITE setDaysOfMonth NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList daysOfYear READ daysOfYear WRITE setDaysOfYear NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList monthsOfYear READ monthsOfYear WRITE setMonthsOfYear NOTIFY valueChanged)
-    Q_PROPERTY(QVariantList positions READ positions WRITE setPositions NOTIFY valueChanged)
-    Q_PROPERTY(Qt::DayOfWeek firstDayOfWeek READ firstDayOfWeek WRITE setFirstDayOfWeek NOTIFY valueChanged)
+    Q_PROPERTY(Frequency frequency READ frequency WRITE setFrequency NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariant limit READ limit WRITE setLimit NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariantList daysOfWeek READ daysOfWeek WRITE setDaysOfWeek NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariantList daysOfMonth READ daysOfMonth WRITE setDaysOfMonth NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariantList daysOfYear READ daysOfYear WRITE setDaysOfYear NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariantList monthsOfYear READ monthsOfYear WRITE setMonthsOfYear NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(QVariantList positions READ positions WRITE setPositions NOTIFY recurrenceRuleChanged)
+    Q_PROPERTY(Qt::DayOfWeek firstDayOfWeek READ firstDayOfWeek WRITE setFirstDayOfWeek NOTIFY recurrenceRuleChanged)
 
     Q_ENUMS(Frequency)
     Q_ENUMS(Month)
@@ -98,7 +98,7 @@ public:
     {
         if (freq != frequency()) {
             m_rule.setFrequency(static_cast<QOrganizerRecurrenceRule::Frequency>(freq));
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -113,13 +113,13 @@ public:
             QDate v = value.value<QDate>();
             if (v != m_rule.limitDate()) {
                 m_rule.setLimit(v);
-                emit valueChanged();
+                emit recurrenceRuleChanged();
             }
         }  else if (value.type() == QVariant::Int) {
             int v = value.value<int>();
             if (v != m_rule.limitCount()) {
                 m_rule.setLimit(v);
-                emit valueChanged();
+                emit recurrenceRuleChanged();
             }
         } else {
             qWarning() << "Invalid recurrence rule limit value:" << value;
@@ -142,7 +142,7 @@ public:
     {
         if (interval != m_rule.interval()) {
             m_rule.setInterval(interval);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -159,7 +159,7 @@ public:
         }
         if (saved != m_rule.daysOfWeek()) {
             m_rule.setDaysOfWeek(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -179,7 +179,7 @@ public:
         }
         if (saved != m_rule.daysOfMonth()) {
             m_rule.setDaysOfMonth(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -199,7 +199,7 @@ public:
         }
         if (saved != m_rule.daysOfYear()) {
             m_rule.setDaysOfYear(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -219,7 +219,7 @@ public:
         }
         if (saved != m_rule.monthsOfYear()) {
             m_rule.setMonthsOfYear(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -239,7 +239,7 @@ public:
         }
         if (saved != m_rule.weeksOfYear()) {
             m_rule.setWeeksOfYear(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -259,7 +259,7 @@ public:
                 saved << p.value<int>();
             }
             m_rule.setPositions(saved);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -275,7 +275,7 @@ public:
     {
         if (day != firstDayOfWeek()) {
             m_rule.setFirstDayOfWeek(day);
-            emit valueChanged();
+            emit recurrenceRuleChanged();
         }
     }
 
@@ -293,7 +293,7 @@ public:
         m_rule = rule;
     }
 signals:
-    void valueChanged();
+    void recurrenceRuleChanged();
 private:
     QOrganizerRecurrenceRule m_rule;
 };

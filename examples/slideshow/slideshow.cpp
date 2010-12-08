@@ -51,10 +51,9 @@ SlideShow::SlideShow(QWidget *parent)
     , imageViewer(0)
     , playlist(0)
     , statusLabel(0)
-    , countdownAction(0)
+    , countdownLabel(0)
     , playAction(0)
     , stopAction(0)
-    , viewerLayout(0)
 {
     imageViewer = new QMediaImageViewer(this);
 
@@ -76,22 +75,6 @@ SlideShow::SlideShow(QWidget *parent)
     QVideoWidget *videoWidget = new QVideoWidget;
     imageViewer->setVideoOutput(videoWidget);
 
-    statusLabel = new QLabel(tr("%1 Images").arg(0));
-    statusLabel->setAlignment(Qt::AlignCenter);
-
-    viewerLayout = new QStackedLayout;
-    viewerLayout->setStackingMode(QStackedLayout::StackAll);
-    viewerLayout->addWidget(videoWidget);
-    viewerLayout->addWidget(statusLabel);
-
-    statusLabel = new QLabel(tr("%1 Images").arg(0));
-    statusLabel->setAlignment(Qt::AlignCenter);
-
-    viewerLayout = new QStackedLayout;
-    viewerLayout->setStackingMode(QStackedLayout::StackAll);
-    viewerLayout->addWidget(videoWidget);
-    viewerLayout->addWidget(statusLabel);
-
     menuBar()->addAction(tr("Open Directory..."), this, SLOT(openDirectory()));
     menuBar()->addAction(tr("Open Playlist..."), this, SLOT(openPlaylist()));
 
@@ -112,20 +95,18 @@ SlideShow::SlideShow(QWidget *parent)
     toolBar->addAction(
             style()->standardIcon(QStyle::SP_MediaSkipForward), tr("Next"), playlist, SLOT(next()));
 
-    QToolBar *countdownToolBar = new QToolBar;
-    countdownToolBar->setMovable(false);
-    countdownToolBar->setFloatable(false);
-    countdownToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    countdownAction = countdownToolBar->addAction(QString());
-
-
     addToolBar(Qt::BottomToolBarArea, toolBar);
-    addToolBar(Qt::BottomToolBarArea, countdownToolBar);
 
-    QWidget *centralWidget = new QWidget;
-    centralWidget->setLayout(viewerLayout);
+    statusLabel = new QLabel(tr("%1 Images").arg(0));
+    statusLabel->setAlignment(Qt::AlignCenter);
 
-    setCentralWidget(centralWidget);
+    countdownLabel = new QLabel;
+    countdownLabel->setAlignment(Qt::AlignRight);
+
+    statusBar()->addPermanentWidget(statusLabel, 1);
+    statusBar()->addPermanentWidget(countdownLabel);
+
+    setCentralWidget(videoWidget);
 }
 
 void SlideShow::openPlaylist()
@@ -192,25 +173,21 @@ void SlideShow::statusChanged(QMediaImageViewer::MediaStatus status)
     switch (status) {
     case QMediaImageViewer::NoMedia:
         statusLabel->setText(tr("%1 Images").arg(playlist->mediaCount()));
-        viewerLayout->setCurrentIndex(1);
         break;
     case QMediaImageViewer::LoadingMedia:
         statusLabel->setText(tr("Image %1 of %2\nLoading...")
                 .arg(playlist->currentIndex())
                 .arg(playlist->mediaCount()));
-        viewerLayout->setCurrentIndex(1);
         break;
     case QMediaImageViewer::LoadedMedia:
         statusLabel->setText(tr("Image %1 of %2")
                 .arg(playlist->currentIndex())
                 .arg(playlist->mediaCount()));
-        viewerLayout->setCurrentIndex(0);
         break;
     case QMediaImageViewer::InvalidMedia:
         statusLabel->setText(tr("Image %1 of %2\nInvalid")
                 .arg(playlist->currentIndex())
                 .arg(playlist->mediaCount()));
-        viewerLayout->setCurrentIndex(1);
         break;
     default:
         break;
@@ -227,7 +204,6 @@ void SlideShow::playlistLoaded()
 void SlideShow::playlistLoadFailed()
 {
     statusLabel->setText(playlist->errorString());
-    viewerLayout->setCurrentIndex(1);
 
     toolBar->setEnabled(false);
 }
@@ -236,7 +212,7 @@ void SlideShow::elapsedTimeChanged(int time)
 {
     const int remaining = (imageViewer->timeout() - time) / 1000;
 
-    countdownAction->setText(tr("%1:%2")
+    countdownLabel->setText(tr("%1:%2")
             .arg(remaining / 60, 2, 10, QLatin1Char('0'))
             .arg(remaining % 60, 2, 10, QLatin1Char('0')));
 }

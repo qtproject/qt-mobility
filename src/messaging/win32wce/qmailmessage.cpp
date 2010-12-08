@@ -700,7 +700,7 @@ static QByteArray generateEncodedParameter(const QByteArray& charset, const QByt
     int index = result.indexOf('*');
     if (index != -1)
     {
-        // If no language is specfied, use the extracted part
+        // If no language is specified, use the extracted part
         if (lang.isEmpty())
             lang = result.mid(index + 1);
 
@@ -6390,7 +6390,7 @@ void QMailMessagePrivate::deserialize(Stream &stream)
     from QMailMessagePartContainer.
     
     Messages can be added to the QMailStore, or retrieved from the store via their QMailMessageId 
-    identifier.  The QMailMessage object also provides acces to any relevant meta data
+    identifier.  The QMailMessage object also provides access to any relevant meta data
     describing the message, using the functions inherited from QMailMessageMetaData.
 
     A message may be serialized to a QDataStream, or returned as a QByteArray using toRfc2822().

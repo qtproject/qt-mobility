@@ -390,7 +390,7 @@ bool QMessageServicePrivate::send(const QMessage& message, bool showComposer)
 
     QMessage outgoing(message);
 
-    //ensure the message is marked read otherwise MapiForm displays the message as incomming
+    //ensure the message is marked read otherwise MapiForm displays the message as incoming
     outgoing.setStatus(QMessage::Read,true);
 
     //set default account if unset
@@ -630,7 +630,7 @@ bool QMessageServicePrivate::markForDownload(const QMessageId& id, bool includeA
 
         mapiRelease(message);
 
-        //TODO investigate possiblity of interacting with mapi transport directly
+        //TODO investigate possibility of interacting with mapi transport directly
         /*
         QString transportName = mapiStore->transportName();
         if(transportName.isEmpty())

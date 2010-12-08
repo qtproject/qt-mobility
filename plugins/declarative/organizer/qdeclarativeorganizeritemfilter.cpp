@@ -106,8 +106,8 @@
 
 /*!
    \qmlclass DetailFilter QDeclarativeOrganizerItemDetailFilter
-   \brief The DetailFilter element provides a filter based around a detail value criterion.
-
+   \brief The \l DetailFilter element provides a filter based around a detail value criterion.
+   \qmlmodule organizer
    \ingroup qml-organizer
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
@@ -339,7 +339,7 @@ QOrganizerItemFilter QDeclarativeOrganizerItemIdFilter::filter() const
     QList<QOrganizerItemId> ids;
 
     foreach(const QVariant& id, m_ids) {
-        QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(id.value<uint>());
+        QOrganizerItemId itemId = QOrganizerItemId::fromString(id.toString());
         if (!itemId.isNull())
             ids << itemId;
     }
@@ -353,7 +353,7 @@ QOrganizerItemFilter QDeclarativeOrganizerItemCollectionFilter::filter() const
     QSet<QOrganizerCollectionId> ids;
 
     foreach(const QVariant& id, m_ids) {
-        QOrganizerCollectionId cId = QDeclarativeOrganizerModel::collectionIdFromHash(id.value<uint>());
+        QOrganizerCollectionId cId = QOrganizerCollectionId::fromString(id.toString());
         if (!cId.isNull())
             ids << cId;
     }

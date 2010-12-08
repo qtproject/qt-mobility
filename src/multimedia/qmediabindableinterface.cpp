@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaBindableInterface class is the base class for objects extending media objects functionality.
 
     \sa
@@ -65,7 +65,7 @@ QMediaBindableInterface::~QMediaBindableInterface()
 /*!
     \fn QMediaBindableInterface::mediaObject() const;
 
-    Return the currenty attached media object.
+    Return the currently attached media object.
 */
 
 

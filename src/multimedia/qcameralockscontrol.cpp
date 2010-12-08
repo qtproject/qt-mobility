@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QCameraLocksControl
 
-    \preliminary
+    
 
     \brief The QCameraLocksControl class is an abstract base class for
     classes that control still cameras or video cameras.

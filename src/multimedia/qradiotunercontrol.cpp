@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QRadioTunerControl class provides access to the radio tuning
     functionality of a QMediaService.
 
@@ -320,7 +320,7 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn void QRadioTunerControl::error(QRadioTuner::Error error)
 
-    Signals that an \a error has occured.
+    Signals that an \a error has occurred.
 */
 
 #include "moc_qradiotunercontrol.cpp"

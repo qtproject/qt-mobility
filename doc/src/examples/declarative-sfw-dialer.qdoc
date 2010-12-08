@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -39,6 +39,7 @@ service framework command line tool to add the corresponding service XML file:
 \list
     \o ./servicefw add voipdialerservice.xml
     \o ./servicefw add landlinedialerservice.xml
+    \o ./servicefw add remotedialerservice.xml
 \endlist
 
 There are 2 ways to run the example:
@@ -48,7 +49,13 @@ There are 2 ways to run the example:
 \endlist
 
 The XML files for all example services can be found in the QtMobility build directory
-under install/bin/xmldata
+under install/bin/xmldata.
+
+For Maemo and Linux platforms using D-Bus as the underlying IPC mechanism, the 
+autostart feature can be initialised by running the service framework tool:
+\code
+    servicefw dbusservice xmldata/remotedialerservice.xml dialer_service
+\endcode
 
 \bold {Explanation}
 
