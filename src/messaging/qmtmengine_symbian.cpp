@@ -1970,6 +1970,7 @@ QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& service
 
     CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(serviceEntryId);
     if (pEntry) {
+        bool searchFromMyFolders = false;
         const TMsvEntry& entry = pEntry->Entry();
         if (entry.iMtm == KUidMsgTypeSMS || entry.iMtm == KUidMsgTypeMultimedia || entry.iMtm == KUidMsgTypeSMTP) {
             // Add all Standard Folders to FolderIdList
@@ -1982,20 +1983,32 @@ QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& service
             ids.append(createQMessageFolderId(folderServiceEntryId, KMsvSentEntryId));
             ids.append(createQMessageFolderId(folderServiceEntryId, KMsvDeletedEntryFolderEntryId));
             pEntry->SetEntryL(KDocumentsEntryIdValue);
+            searchFromMyFolders = true;
         }
     
         if (entry.iMtm == KUidMsgTypePOP3) {
             ids.append(createQMessageFolderId(folderServiceEntryId, serviceEntryId));
         } else {
             CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
-            pFilter->SetService(serviceEntryId);
             pFilter->SetType(KUidMsvFolderEntry);
             CMsvEntrySelection* pSelection = new(ELeave) CMsvEntrySelection;
             CleanupStack::PushL(pSelection);
             ipMsvSession->GetChildIdsL(pEntry->Entry().Id(), *pFilter, *pSelection);
             if (pSelection->Count() > 0) {
                 for(TInt i = 0; i < pSelection->Count(); i++) {
-                    ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
+                    if (searchFromMyFolders) {
+                        pEntry->SetEntryL(pSelection->At(i));
+                        if ((pEntry->Entry().iServiceId != 0) &&
+                            (pEntry->Entry().iServiceId != KMsvLocalServiceIndexEntryIdValue)) {
+                            if (pEntry->Entry().iServiceId == serviceEntryId) {
+                                ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
+                            }
+                        } else {
+                            ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
+                        }
+                    } else {
+                        ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
+                    }
                 }
             }
             CleanupStack::PopAndDestroy(pSelection);
