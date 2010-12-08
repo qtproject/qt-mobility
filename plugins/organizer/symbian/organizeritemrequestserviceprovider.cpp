@@ -557,7 +557,7 @@ void COrganizerItemRequestsServiceProvider::DoCancel()
 // Call if RunL leaves
 TInt COrganizerItemRequestsServiceProvider::RunError(TInt aError)
 {
-    // Operation not successfull
+    // Operation not successful
     // Generate error map
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     iOrganizerItemManagerEngine.transformError(aError, &error);

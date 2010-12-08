@@ -371,7 +371,7 @@ void tst_SymbianOm::fetchItemIds()
     // Get items in the range
     actualIds = m_om->itemIds(dateTime.addDays(1), dateTime.addDays(8));
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(actualIds.contains(event.id())); // one occurence is in time range 
+    QVERIFY(actualIds.contains(event.id())); // one occurrence is in time range 
     QVERIFY(!actualIds.contains(todo.id())); // should not be found because out of time range
 }
 
@@ -857,7 +857,7 @@ void tst_SymbianOm::outOfMemory()
     event.setRecurrenceRule(rule);
     QVERIFY(m_om->saveItem(&event));
     
-    // This will produce ~2500000 occurences. No way it will fit in memory
+    // This will produce ~2500000 occurrences. No way it will fit in memory
     QList<QOrganizerItem> items = m_om->items(dateTime, QDateTime());
     QVERIFY(m_om->error() == QOrganizerManager::OutOfMemoryError);
 

@@ -320,7 +320,7 @@ QRadioTunerControl::~QRadioTunerControl()
 /*!
     \fn void QRadioTunerControl::error(QRadioTuner::Error error)
 
-    Signals that an \a error has occured.
+    Signals that an \a error has occurred.
 */
 
 #include "moc_qradiotunercontrol.cpp"
