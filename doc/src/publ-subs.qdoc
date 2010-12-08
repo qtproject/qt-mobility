@@ -265,9 +265,9 @@ Publish and Subscribe can be used to access both "core" and "non-core" values in
 The backend by default will look for a "core" property in the registry first (dot-separated), and then
 fall back to a "non-core" property (slash-separated) if a "core" one is not found.
 
-For example, if you subscribe to the property \c /Power/Battery/Charge, Qt will first look to see if
-the name \c Power.Battery.Charge is in the registry. If so, it will subscribe to it. Otherwise, it
-will look for \c /Power/Battery/Charge instead.
+You can force the selection of one or the other path scheme by passing the flags
+QValueSpace::PermanentLayer and QValueSpace::TransientLayer to the constructors of QValueSpaceSubscriber
+and QValueSpacePublisher along with the path name.
 
 \section3 \bold{Organization and application name}
 
