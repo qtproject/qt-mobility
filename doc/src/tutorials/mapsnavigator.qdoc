@@ -49,8 +49,9 @@
     \list 1
     \o \l{tutorials/mapsnavigator/part1}{The Map Widget}
     \o \l{tutorials/mapsnavigator/part2}{Searching for locations}
-    \o \l{tutorials/mapsnavigator/part3}{Stopping for directions}
-    \o \l{tutorials/mapsnavigator/part4}{Kinetic panning and tuning for mobile}
+    \o \l{tutorials/mapsnavigator/part3}{Listening to satellites}
+    \o \l{tutorials/mapsnavigator/part4}{Stopping for directions}
+    \o \l{tutorials/mapsnavigator/part5}{Kinetic panning and tuning for mobile}
     \endlist
     
     Some more text goes here.
@@ -781,7 +782,7 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     MainWindow:
     
     \code
-void MainWindow::markerClicked(Marker *marker)
+void MainWindow::on_markerClicked(Marker *marker)
 {
     MarkerDialog md(marker);
     if (md.exec() == QDialog::Accepted) {
@@ -976,15 +977,17 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
     already quite a bit of useful functionality, but we will continue to
     extend it further.
     
-    In part 3, we will add the ability to fetch directions to a given
-    destination, and in part 4 we will add kinetic scrolling and cover a number
-    of points about means for achieving better performance on mobile platforms.
+    In part 3, we will add support for using platform positioning methods such
+    as GPS, and in part 4 we will add the ability to fetch directions to a given
+    destination. Finally, in part 5 we will add kinetic scrolling and cover a 
+    number of points about means for achieving better performance on mobile 
+    platforms.
 */
 
 /*!
     \page tutorials-mapsnavigator-part3.html
     \example tutorials/mapsnavigator/part3
-    \title Part 3 - Stopping for directions
+    \title Part 3 - Listening to satellites
     
     
 */
@@ -992,6 +995,14 @@ void MarkerManager::reverseReplyFinished(QObject *obj)
 /*!
     \page tutorials-mapsnavigator-part4.html
     \example tutorials/mapsnavigator/part4
-    \title Part 4 - Kinetic panning and tuning for mobile
+    \title Part 4 - Stopping for directions
+    
+    
+*/
+
+/*!
+    \page tutorials-mapsnavigator-part5.html
+    \example tutorials/mapsnavigator/part5
+    \title Part 5 - Kinetic panning and tuning for mobile
 
 */
