@@ -576,6 +576,14 @@ void QSystemDisplayInfoPrivate::setPhysicalWidth(int v)
     }
 }
 
+void QSystemDisplayInfoPrivate::setBacklightStatus(QSystemDisplayInfo::BacklightState v)
+{
+    if (data.backlightStatus != v) {
+        data.backlightStatus = v;
+    }
+}
+
+
 //////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -602,6 +610,11 @@ void QSystemDeviceInfoPrivate::setInitialData()
     setBatteryLevel(84);
     setDeviceLocked(false);
     setKeyboardType(QSystemDeviceInfo::SoftwareKeyboard);
+    setKeypadType(QSystemDeviceInfo::SecondaryKeypad);
+    setTypeOfLock(QSystemDeviceInfo::DeviceUnlocked);
+    setMessageRingtoneVolume(55);
+    setVoiceRingtoneVolume(45);
+    setVibrationActive(true);
 }
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus() const
@@ -754,28 +767,53 @@ void QSystemDeviceInfoPrivate::setBackLightOn(bool v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setHostId(const QUuid &v)
+void QSystemDeviceInfoPrivate::setUniqueId(const QUuid &v)
 {
-    if (data.hostId != v) {
-        data.hostId = v;
+    if (data.uniqueId != v) {
+        data.uniqueId = v;
     }
 }
 
-void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v, bool on)
+void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockType v)
 {
     bool lockTypeChanged = false;
     bool deviceLockChanged = false;
     if (data.lockType != v) {
         data.lockType = v;
         lockTypeChanged = true;
+        emit lockStatusChanged(v);
     }
-    if (data.deviceLocked != on) {
-        data.deviceLocked = on;
-        setDeviceLocked(on);
-        deviceLockChanged = true;
+    if (v == QSystemDeviceInfo::DeviceUnlocked) {
+        setDeviceLocked(false);
     }
-    if(lockTypeChanged || deviceLockChanged)
-        emit lockChanged(v,on);
+}
+
+void QSystemDeviceInfoPrivate::setMessageRingtoneVolume(int v)
+{
+    if(data.messageRingtoneVolume != v) {
+        data.messageRingtoneVolume = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setVoiceRingtoneVolume(int v)
+{
+    if(data.voiceRingtoneVolume != v) {
+        data.voiceRingtoneVolume = v;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setVibrationActive(bool b)
+{
+    if(data.vibrationActive != b) {
+        data.vibrationActive = b;
+    }
+}
+
+void QSystemDeviceInfoPrivate::setKeypadType(QSystemDeviceInfo::KeypadType v)
+{
+    if(data.keypadType != v) {
+        data.keypadType = v;
+    }
 }
 
 
@@ -1118,7 +1156,8 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
 
 int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
 {
-
+    Q_UNUSED(rate);
+    return 0;
 }
 
 //QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()

@@ -93,10 +93,13 @@ public:
         d->setWirelessKeyboardConnected(keyboardConnected);
         d->setKeyboardFlipOpen(flip);
         d->setDeviceLocked(locked);
-        d->setTypeOfLock(lockType, lockTypeOn);
+        d->setTypeOfLock(lockType);
+
+        d->setMessageRingtoneVolume(messageRingtoneVolume);
+        d->setVoiceRingtoneVolume(voiceRingtoneVolume);
+        d->setVibrationActive(vibrationActive);
 
         this->exit();
-
     }
 
     QMutex mutex;
@@ -108,7 +111,9 @@ public:
     bool flip;
     bool locked;
     QSystemDeviceInfo::LockType lockType;
-    bool lockTypeOn;
+    int messageRingtoneVolume;
+    int voiceRingtoneVolume;
+    int vibrationActive;
 };
 
 class tst_QSystemDeviceInfo : public QObject
@@ -179,7 +184,7 @@ private slots:
     void wirelessKeyboardConnected(bool connected);
     void keyboardFlip(bool open);
     void deviceLocked(bool isLocked);
-    void lockChanged(QSystemDeviceInfo::LockType, bool);
+    void lockStatusChanged(QSystemDeviceInfo::LockType);
 
 private:
     int curBatLevel;
@@ -407,11 +412,10 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
         QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
                 || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
     } else {
-        QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+        QVERIFY(lock == QSystemDeviceInfo::DeviceUnlocked);
     }
 }
 
-<<<<<<< HEAD
 void tst_QSystemDeviceInfo::tst_batteryLevelChanged_data()
 {
     QTest::addColumn<int>("batLevel");
@@ -443,7 +447,6 @@ void tst_QSystemDeviceInfo::tst_batteryLevelChanged()
     QVERIFY(errorSpy.count() == 1);
 
     curBatLevel = batLevel;
-
 }
 
 void tst_QSystemDeviceInfo::tst_batteryStatusChanged_data()
@@ -655,20 +658,18 @@ void tst_QSystemDeviceInfo::tst_lockTypeChanged()
     SystemInfoConnection si;
     QFETCH(QSystemDeviceInfo::LockType, locktype);
 
-    connect(&di,SIGNAL(lockChanged(QSystemDeviceInfo::LockType,bool)),
-            this,SLOT(lockChanged(QSystemDeviceInfo::LockType,bool)));
+    connect(&di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),
+            this,SLOT(lockStatusChanged(QSystemDeviceInfo::LockType)));
 
     ChangeDeviceThread *changeDevThread = new ChangeDeviceThread();
     changeDevThread->lockType = lockType = locktype;
-    changeDevThread->lockTypeOn = lockTypeOn = false;
     changeDevThread->start();
 
-    QSignalSpy errorSpy(&di, SIGNAL(lockChanged(QSystemDeviceInfo::LockType,bool)));
-    QVERIFY(::waitForSignal(&di, SIGNAL(lockChanged(QSystemDeviceInfo::LockType,bool)), 10 * 1000));
+    QSignalSpy errorSpy(&di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+    QVERIFY(::waitForSignal(&di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)), 10 * 1000));
 
     QVERIFY(errorSpy.count() == 1);
 
-    changeDevThread->lockTypeOn = lockTypeOn = false;
     changeDevThread->start();
 }
 
@@ -724,12 +725,9 @@ void tst_QSystemDeviceInfo::deviceLocked(bool isLocked)
     QVERIFY(isLocked == deviceLock);
 }
 
-void tst_QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool on)
+void tst_QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockType type)
 {
     QVERIFY(type == lockType);
-    QVERIFY(on == lockTypeOn);
-    QSystemDeviceInfo di;
-    QVERIFY(di.isDeviceLocked() == lockTypeOn);
 }
 
 

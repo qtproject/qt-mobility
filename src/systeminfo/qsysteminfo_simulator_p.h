@@ -171,6 +171,8 @@ public:
     int physicalHeight(int screen) const { Q_UNUSED(screen); return data.physicalHeight; }
     int physicalWidth(int screen) const { Q_UNUSED(screen); return data.physicalWidth; }
 
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen) { Q_UNUSED(screen); return data.backlightStatus; }
+
     void setDisplayBrightness(int brightness);
     void setColorDepth(int depth);
 
@@ -180,6 +182,7 @@ public:
     void setDPIWidth(int v) ;
     void setPhysicalHeight(int v);
     void setPhysicalWidth(int v);
+    void setBacklightStatus(QSystemDisplayInfo::BacklightState v);
 
     void setInitialData();
 
@@ -211,16 +214,21 @@ public:
     bool currentBluetoothPowerState() const { return data.currentBluetoothPower;}
 
     QSystemDeviceInfo::KeyboardTypeFlags keyboardType()const { return data.keyboardType; }
+    QSystemDeviceInfo::KeypadType keypadType()const { return data.keypadType; }
     bool isWirelessKeyboardConnected()const { return data.wirelessConnected; }
     bool isKeyboardFlipOpen()const { return data.keyboardFlip; }
 
-    bool keypadLightOn(QSystemDeviceInfo::keypadType type)const { return data.keypadLight; }
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
-    QUuid hostId()const { return data.hostId; }
-
+    QUuid uniqueID(){ return data.uniqueId; }
     QSystemDeviceInfo::LockType lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
+
+
+    int messageRingtoneVolume() const { return data.messageRingtoneVolume; }
+    int voiceRingtoneVolume() const { return data.voiceRingtoneVolume; }
+    bool vibrationActive() const { return data.vibrationActive; }
 
     void setCurrentProfile(QSystemDeviceInfo::Profile v);
     void setCurrentPowerState(QSystemDeviceInfo::PowerState v);
@@ -239,13 +247,19 @@ public:
     void setBluetoothPower(bool v);
 
     void setKeyboardType(QSystemDeviceInfo::KeyboardType v);
+    void setKeypadType(QSystemDeviceInfo::KeypadType v);
+
     void setWirelessKeyboardConnected(bool v);
     void setKeyboardFlipOpen(bool v);
 
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
-    void setHostId(const QUuid &v);
-    void setTypeOfLock(QSystemDeviceInfo::LockType v,bool on);
+    void setUniqueId(const QUuid &v);
+    void setTypeOfLock(QSystemDeviceInfo::LockType v);
+
+    void setMessageRingtoneVolume(int v);
+    void setVoiceRingtoneVolume(int v);
+    void setVibrationActive(bool b);
 
     void setInitialData();
 
@@ -260,7 +274,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);
     void keyboardFlip(bool open);
     void deviceLocked(bool isLocked);
-    void lockChanged(QSystemDeviceInfo::LockType, bool);
+    void lockStatusChanged(QSystemDeviceInfo::LockType);
 
 private:
     QSystemDeviceInfoData data;

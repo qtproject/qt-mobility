@@ -79,25 +79,41 @@ QDataStream &operator<<(QDataStream &out, const QSystemDeviceInfoData &s)
     out << static_cast<qint32>(s.simStatus);
     out << static_cast<qint32>(s.currentProfile);
     out << static_cast<qint32>(s.currentPowerState);
+    out << static_cast<qint32>(s.keyboardType);
+    out << static_cast<qint32>(s.keypadType);
+
+    out << static_cast<qint32>(s.lockType);
+    out << static_cast<qint32>(s.batStatus);
+
     out << s.batteryLevel << s.deviceLocked;
-    out << s.wirelessConnected << s.keyboardFlip << s.backLight << s.keypadLight << s.hostId;
+    out << s.wirelessConnected << s.keyboardFlip << s.backLight << s.keypadLight << s.uniqueId;
+    out << s.messageRingtoneVolume << s.voiceRingtoneVolume << s.vibrationActive;
     return out;
 }
 QDataStream &operator>>(QDataStream &in, QSystemDeviceInfoData &s)
 {
     in >> s.imei >> s.imsi >> s.manufacturer >> s.model >> s.productName;
-    qint32 inputMethod, simStatus, profile, powerState, keyboardType, lockType;
+
+    qint32 inputMethod, simStatus, profile, powerState, keyboardType, keypadType, lockType, batStatus;
     in >> inputMethod >> simStatus >> profile >> powerState;
-    in >> keyboardType >> lockType;
+    in >> keyboardType >> keypadType >> lockType >> batStatus;
+
     s.inputMethodType = static_cast<QSystemDeviceInfo::InputMethodFlags>(inputMethod);
     s.simStatus = static_cast<QSystemDeviceInfo::SimStatus>(simStatus);
     s.currentProfile = static_cast<QSystemDeviceInfo::Profile>(profile);
     s.currentPowerState = static_cast<QSystemDeviceInfo::PowerState>(powerState);
+
     in >> s.batteryLevel >> s.deviceLocked;
     in >> s.wirelessConnected >> s.keyboardFlip >> s.backLight >> s.keypadLight;
+
     s.keyboardType = static_cast<QSystemDeviceInfo::KeyboardType>(keyboardType);
+    s.keypadType = static_cast<QSystemDeviceInfo::KeypadType>(keypadType);
     s.lockType = static_cast<QSystemDeviceInfo::LockType>(lockType);
-    s.hostId = s.hostId;
+    s.batStatus = static_cast<QSystemDeviceInfo::BatteryStatus>(batStatus);
+
+    in >> s.uniqueId;
+    in >> s.messageRingtoneVolume >> s.voiceRingtoneVolume >> s.vibrationActive;
+
     return in;
 }
 
@@ -176,12 +192,14 @@ QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
     out << static_cast<qint32>(s.dpiHeight) << static_cast<qint32>(s.dpiWidth);
     out << static_cast<qint32>(s.physicalHeight) << static_cast<qint32>(s.physicalWidth);
     out << static_cast<qint32>(s.orientation);
+    out << static_cast<qint32>(s.backlightStatus);
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
 {
-    qint32 depth, brightness, colorDepth, dpiHeight, dpiWidth, physicalHeight, physicalWidth, orientation;
+    qint32 depth, brightness, colorDepth, dpiHeight, dpiWidth, physicalHeight, physicalWidth, orientation,
+            backlightStatus;
     in >> depth >> brightness;
     in >> colorDepth >> dpiHeight >> dpiWidth;
     in >> physicalHeight >> physicalWidth;
@@ -194,6 +212,8 @@ QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
     s.dpiHeight = physicalHeight;
     s.dpiHeight = physicalWidth;
     s.orientation = static_cast<QSystemDisplayInfo::DisplayOrientation>(orientation);
+    s.backlightStatus = static_cast<QSystemDisplayInfo::BacklightState>(backlightStatus);
+
     return in;
 }
 

@@ -114,6 +114,7 @@ struct QSystemDisplayInfoData
     int dpiWidth;
     int physicalHeight;
     int physicalWidth;
+    QSystemDisplayInfo::BacklightState backlightStatus;
 
 };
 
@@ -145,7 +146,9 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::PowerState currentPowerState;
 
     QSystemDeviceInfo::KeyboardType keyboardType;
+    QSystemDeviceInfo::KeypadType keypadType;
     QSystemDeviceInfo::LockType lockType;
+    QSystemDeviceInfo::BatteryStatus batStatus;
 
     int batteryLevel;
     bool deviceLocked;
@@ -155,7 +158,11 @@ struct QSystemDeviceInfoData
     bool keyboardFlip;
     bool backLight;
     bool keypadLight;
-    QUuid hostId;
+    QUuid uniqueId;
+
+    int messageRingtoneVolume;
+    int voiceRingtoneVolume;
+    bool vibrationActive;
 
 };
 
@@ -182,7 +189,6 @@ struct QSystemBatteryInfoData
     int cumulativeCurrentFlow;
     int remainingCapacityBars;
     int maxBars;
-
 };
 
 QTM_END_NAMESPACE
