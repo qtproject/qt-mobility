@@ -50,6 +50,7 @@
 #include <qmediaplaylist.h>
 #include <qmediaservice.h>
 #include <qmediastreamscontrol.h>
+#include <qmedianetworkaccesscontrol.h>
 
 QT_USE_NAMESPACE
 
@@ -177,6 +178,38 @@ private:
     QVector<Stream> _streams;
 };
 
+class MockNetworkAccessControl : public QMediaNetworkAccessControl
+{
+    friend class MockPlayerService;
+
+public:
+    MockNetworkAccessControl() {}
+    ~MockNetworkAccessControl() {}
+
+    void setConfigurations(const QList<QString> &configurationIds)
+    {
+        _configIds = configurationIds;
+    }
+
+    QString currentConfiguration() const
+    {
+        return _currentId;
+    }
+
+private:
+    void setCurrentConfiguration(QString id)
+    {
+        if (_configIds.contains(id))
+           emit configurationChanged(_currentId = id);
+       else
+           emit configurationChanged(_currentId = QString());
+    }
+
+    QList<QString> _configIds;
+    QString _currentId;
+};
+
+
 class MockPlayerService : public QMediaService
 {
     Q_OBJECT
@@ -186,12 +219,14 @@ public:
     {
         mockControl = new MockPlayerControl;
         mockStreamsControl = new MockStreamsControl;
+        mockNetworkControl = new MockNetworkAccessControl;
     }
 
     ~MockPlayerService()
     {
         delete mockControl;
         delete mockStreamsControl;
+        delete mockNetworkControl;
     }
 
     QMediaControl* requestControl(const char *iid)
@@ -199,6 +234,8 @@ public:
         if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
             return mockControl;
 
+        if (qstrcmp(iid, QMediaNetworkAccessControl_iid) == 0)
+            return mockNetworkControl;
         return 0;
     }
 
@@ -227,6 +264,8 @@ public:
     void setError(QMediaPlayer::Error error) { mockControl->_error = error; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
     void setErrorString(QString errorString) { mockControl->_errorString = errorString; emit mockControl->error(mockControl->_error, mockControl->_errorString); }
 
+    void selectCurrentConfiguration(QString configId) { mockNetworkControl->setCurrentConfiguration(configId); }
+
     void reset()
     {
         mockControl->_state = QMediaPlayer::StoppedState;
@@ -244,10 +283,14 @@ public:
         mockControl->_stream = 0;
         mockControl->_isValid = false;
         mockControl->_errorString = QString();
+
+        mockNetworkControl->_currentId = QString();
+        mockNetworkControl->_configIds = QList<QString>();
     }
 
     MockPlayerControl *mockControl;
     MockStreamsControl *mockStreamsControl;
+    MockNetworkAccessControl *mockNetworkControl;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -300,6 +343,7 @@ private slots:
     void testStop();
     void testMediaStatus();
     void testPlaylist();
+    void testNetworkAccess();
 
 private:
     MockProvider *mockProvider;
