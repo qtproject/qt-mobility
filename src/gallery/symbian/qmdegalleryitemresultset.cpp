@@ -56,14 +56,24 @@ QMDEGalleryItemResultSet::QMDEGalleryItemResultSet(QMdeSession *session, QObject
     m_live = m_request->autoUpdate();
     m_session = session;
     m_resultObject = NULL;
+    m_cleaned = false;
+
+    if ( m_session )
+        m_session->AddTrackedResultSet( this );
 
     createQuery();
 }
 
 QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 {
-    m_session->RemoveObjectObserver( *this );
+    m_itemArray.ResetAndDestroy();
+
+    if ( m_session && !m_cleaned ) {
+        m_session->RemoveObjectObserver( *this );
+        m_session->RemoveTrackedResultSet( this );
+    }
 }
+
 #ifdef MDS_25_COMPILATION_ENABLED
 void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& aSession,
     TObserverNotificationType aType,
@@ -80,7 +90,7 @@ void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& aSession,
 }
 #else
 
-void QMDEGalleryItemResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+void QMDEGalleryItemResultSet::HandleObjectAdded(CMdESession& /*aSession*/, const RArray<TItemId>& /*aObjectIdArray*/)
 {
     //No impl needed.
 }
@@ -139,6 +149,8 @@ void QMDEGalleryItemResultSet::doHandleObjectNotificationL( CMdESession& /*aSess
 
 void QMDEGalleryItemResultSet::createQuery()
 {
+    m_itemArray.ResetAndDestroy();
+
     TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( m_request->itemId().toUInt() ) );
     // After that resultObject contains NULL or the needed item
     if (m_resultObject) {
@@ -156,6 +168,16 @@ void QMDEGalleryItemResultSet::createQuery()
     } else {
         error(QDocumentGallery::ConnectionError);
     }
+}
+
+void QMDEGalleryItemResultSet::cleanupResultSet()
+{
+    m_itemArray.ResetAndDestroy();
+
+    if (m_session)
+        m_session->RemoveObjectObserver( *this );
+
+    m_cleaned = true;
 }
 
 #include "moc_qmdegalleryitemresultset_p.cpp"
