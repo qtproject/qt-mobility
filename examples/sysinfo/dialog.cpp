@@ -186,7 +186,7 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    hostIdLabel->setText(di->hostId());
+    uniqueIDLabel->setText(di->uniqueID());
 
 }
 
