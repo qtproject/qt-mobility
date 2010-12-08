@@ -39,47 +39,31 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/systeminfo
 
-#ifndef QDECLARATIVEDEVICEINFO_P_H
-#define QDECLARATIVEDEVICEINFO_P_H
+#include <QtTest/QtTest>
+#include "qdeclarativescreensaver_p.h"
 
-#include <QObject>
-#include "qmobilityglobal.h"
-
-#include "qsystemdeviceinfo.h"
-
-QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
-
-class QDeclarativeDeviceInfo : public QSystemDeviceInfo
+class tst_QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
-public:
-    explicit QDeclarativeDeviceInfo(QObject *parent = 0);
-
-
-public slots:
-    void startBatteryLevelChanged();
-    void startBatteryStatusChanged();
-    void startPowerStateChanged();
-    void startCurrentProfileChanged();
-    void startBluetoothStateChanged();
-
-Q_SIGNALS:
-    void batteryLevelChanged(int level);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void bluetoothStateChanged(bool on);
 
 private slots:
-    void declarativeBatteryLevelChanged(int level);
-    void declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void declarativeBluetoothStateChanged(bool on);
+    void tst_setScreenSaverDelayed();
 };
 
-QT_END_NAMESPACE
-QT_END_HEADER
-#endif // QDECLARATIVEDEVICEINFO_P_H
+void tst_QDeclarativeScreenSaver::tst_setScreenSaverDelayed()
+{
+    QDeclarativeScreenSaver si;
+    si.setScreenSaverDelayed(true);
+    bool enabled = si.screenSaverDelayed();
+    QVERIFY(enabled);
+    si.setScreenSaverDelayed(false);
+    enabled = si.screenSaverDelayed();
+    QVERIFY(!enabled);
+
+}
+
+QTEST_MAIN(tst_QDeclarativeScreenSaver)
+#include "tst_qdeclarativescreensaver.moc"
