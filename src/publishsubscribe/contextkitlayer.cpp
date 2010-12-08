@@ -41,7 +41,6 @@
 
 #include "contextkitlayer_p.h"
 
-#include <QDebug>
 #include <QCoreApplication>
 
 QTM_BEGIN_NAMESPACE
@@ -110,14 +109,18 @@ bool ContextKitPath::isRegistered() const
     return false;
 }
 
-ContextKitPath ContextKitPath::operator+(const QString &str) const
+ContextKitPath ContextKitPath::operator+(const ContextKitPath &other) const
 {
     ContextKitPath p(*this);
-    ContextKitPath s(str);
-    foreach (QString pt, s.parts)
+    foreach (QString pt, other.parts)
         p.parts.append(pt);
-
     return p;
+}
+
+ContextKitPath ContextKitPath::operator+(const QString &str) const
+{
+    ContextKitPath s(str);
+    return *this + s;
 }
 
 ContextKitPath ContextKitPath::operator-(const ContextKitPath &other) const
@@ -258,6 +261,9 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
     else
         this->path = ContextKitPath(path, ContextKitPath::SlashPath);
 
+    if (parent)
+        this->path = parent->path + this->path;
+
     updateSubtrees();
     connect(ContextRegistryInfo::instance(), SIGNAL(changed()),
             this, SLOT(updateSubtrees()));
@@ -290,7 +296,7 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
         qWarning("No application name specified, registering on DBUS as "
                  "'unknown-application'");
     } else {
-        app.replace(QLatin1Char(' '), QLatin1Char('-'));
+        app.replace(QRegExp("[^0-9a-zA-Z]"), "");
         javaPackageName += app;
     }
 
@@ -324,12 +330,12 @@ bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
-        service->stop();
-
         QString pth = p.toNative();
 
         if (!p.isRegistered())
             return false;
+
+        service->stop();
 
         prop = new ContextProvider::Property(*service, pth);
         writeProps.insert(p.toQtPath(), prop);
@@ -347,12 +353,12 @@ bool ContextKitHandle::unsetValue(const QString &path)
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
-        service->stop();
-
         QString pth = p.toNative();
 
         if (!p.isRegistered())
             return false;
+
+        service->stop();
 
         prop = new ContextProvider::Property(*service, pth);
         writeProps.insert(p.toQtPath(), prop);
@@ -518,33 +524,6 @@ QSet<QString> ContextKitLayer::children(Handle handle)
     return h->children();
 }
 
-QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitCoreLayer);
-Q_GLOBAL_STATIC(ContextKitCoreLayer, contextKitCoreLayer);
-ContextKitCoreLayer *ContextKitCoreLayer::instance()
-{
-    return contextKitCoreLayer();
-}
-
-QValueSpace::LayerOptions ContextKitCoreLayer::layerOptions() const
-{
-    return WritableLayer | PermanentLayer;
-}
-
-QString ContextKitCoreLayer::name()
-{
-    return "ContextKit Core Layer";
-}
-
-unsigned int ContextKitCoreLayer::order()
-{
-    return 0;
-}
-
-QUuid ContextKitCoreLayer::id()
-{
-    return QVALUESPACE_CONTEXTKITCORE_LAYER;
-}
-
 QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitNonCoreLayer);
 Q_GLOBAL_STATIC(ContextKitNonCoreLayer, contextKitNonCoreLayer);
 ContextKitNonCoreLayer *ContextKitNonCoreLayer::instance()
@@ -564,12 +543,39 @@ QString ContextKitNonCoreLayer::name()
 
 unsigned int ContextKitNonCoreLayer::order()
 {
-    return 1;
+    return 0;
 }
 
 QUuid ContextKitNonCoreLayer::id()
 {
     return QVALUESPACE_CONTEXTKITNONCORE_LAYER;
+}
+
+QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitCoreLayer);
+Q_GLOBAL_STATIC(ContextKitCoreLayer, contextKitCoreLayer);
+ContextKitCoreLayer *ContextKitCoreLayer::instance()
+{
+    return contextKitCoreLayer();
+}
+
+QValueSpace::LayerOptions ContextKitCoreLayer::layerOptions() const
+{
+    return WritableLayer | PermanentLayer;
+}
+
+QString ContextKitCoreLayer::name()
+{
+    return "ContextKit Core Layer";
+}
+
+unsigned int ContextKitCoreLayer::order()
+{
+    return 1;
+}
+
+QUuid ContextKitCoreLayer::id()
+{
+    return QVALUESPACE_CONTEXTKITCORE_LAYER;
 }
 
 

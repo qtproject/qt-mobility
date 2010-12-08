@@ -86,6 +86,7 @@ public:
 
     ContextKitPath operator+(const QString &str) const;
     ContextKitPath operator-(const ContextKitPath &other) const;
+    ContextKitPath operator+(const ContextKitPath &other) const;
 
 private:
     QStringList parts;
