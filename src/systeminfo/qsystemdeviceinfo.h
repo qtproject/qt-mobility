@@ -82,7 +82,6 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(Profile)
     Q_ENUMS(LockType)
     Q_ENUMS(KeypadType)
-    Q_ENUMS(ProfileDetails)
 
     Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
 
