@@ -323,6 +323,9 @@ The following table shows names of the default managers for each platform.
     \o Harmattan
 \endtable
 
+These managers only store and retrieve landmark data locally.  At present there are no managers which retrieve landmark data from online
+sources.
+
 For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
 the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql
 as the \i {sparql manager}.  (Please note that there are several known issues with the sparql manager that are outlined in
