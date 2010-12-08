@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    app.setOrganizationDomain("com.nokia.qt");
+    app.setOrganizationDomain("qt.nokia.com");
     app.setApplicationName("Publish Subscribe Example");
 
     bool createDefault = true;
