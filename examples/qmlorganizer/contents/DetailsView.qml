@@ -48,24 +48,11 @@ Rectangle
     anchors.fill: parent
     property string  itemId
     property string itemType : item.type
-    property OrganizerItem item
+    property variant item
 
     onItemIdChanged : {
         if (itemId != "")
             item = calendar.organizer.item(itemId);
-    }
-
-    color: "#f1f727"
-    border.color: "#d5cbcb"
-    gradient: Gradient {
-        GradientStop {
-            position: 0.00;
-            color: "#f1f727";
-        }
-        GradientStop {
-            position: 1.00;
-            color: "#ffffff";
-        }
     }
 
    // TODOs:
@@ -73,286 +60,770 @@ Rectangle
     //  2) add recurrences
     //  3) write back
 
+    ListView {
+        anchors.fill: parent
+        model: {
+            switch (itemType) {
+                    case "Event" :
+                         return eventItemModel;
+                    case "EventOccurrence":
+                         return eventOccurrenceItemModel;
+                    case "Journal":
+                         return journalItemModel;
+                    case "Note":
+                         return noteItemModel;
+                    case "Todo":
+                         return todoItemModel;
+                    case "TodoOccurrence":
+                         return todoOccurrenceItemModel;
+                    default:
+                         break;
+            }
+            return null;
+        }
+    }
 
     //event
-    Rectangle {
-        id:eventItem
-        opacity: itemType == "Event" ? 1: 0
+    VisualItemModel {
+        id:eventItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
 
-        Grid {
-            columns: 2
-            spacing: 2
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "start:" }
+                TextInput { text:detailsView.item.startDateTime}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "end:" }
+                TextInput { text:detailsView.item.endDateTime}
+            }
+        }
 
-            Text { text: "start:" }
-            TextInput { text:detailsView.item.startDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "All day event:" }
+                TextInput { text:detailsView.item.allDay}
+            }
+        }
 
-            Text { text: "end:" }
-            TextInput { text:detailsView.item.endDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "location:" }
+                TextInput { text:detailsView.item.location}
+            }
+        }
 
-            Text { text: "All day event:" }
-            TextInput { text:detailsView.item.allDay}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "priority:" }
+                TextInput { text:detailsView.item.priority}
+            }
+        }
 
-            Text { text: "location:" }
-            TextInput { text:detailsView.item.location}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "recurrence:" }
+                Text { text: "*not implemented*"}
+            }
+        }
 
-            Text { text: "priority:" }
-            TextInput { text:detailsView.item.priority}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
 
-            Text { text: "recurrence:" }
-            Text { text: "*not implemented*"}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
 
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-            Text { text: "id:" }
-            Text { text: itemId}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
+        }
 
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
-
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
-
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
         }
     }
 
     //event occurrence
-    Rectangle {
-        id:eventOccurrenceItem
-        opacity: itemType == "EventOccurrence" ? 1: 0
+    VisualItemModel {
+        id:eventOccurrenceItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
 
-        Grid {
-            columns: 2
-            spacing: 2
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "start:" }
+                TextInput { text:detailsView.item.startDateTime}
+            }
+        }
 
-            Text { text: "start:" }
-            TextInput { text:detailsView.item.startDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "end:" }
+                TextInput { text:detailsView.item.endDateTime}
+            }
+        }
 
-            Text { text: "end:" }
-            TextInput { text:detailsView.item.endDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "parent id:" }
+                TextInput { text:detailsView.item.parentId}
+            }
+        }
 
-            Text { text: "parent id:" }
-            TextInput { text:detailsView.item.parentId}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "location:" }
+                TextInput { text:detailsView.item.location}
+            }
+        }
 
-            Text { text: "location:" }
-            TextInput { text:detailsView.item.location}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "priority:" }
+                TextInput { text:detailsView.item.priority}
+            }
+        }
 
-            Text { text: "priority:" }
-            TextInput { text:detailsView.item.priority}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "original date:" }
+                TextInput { text:detailsView.item.originalDate}
+            }
+        }
 
-            Text { text: "original date:" }
-            TextInput { text:detailsView.item.originalDate}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
+        }
 
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
 
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
 
-            Text { text: "id:" }
-            Text { text: itemId}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
         }
     }
 
     //journal
-    Rectangle {
-        id:journalItem
-        opacity: itemType == "Journal" ? 1: 0
+    VisualItemModel {
+        id:journalItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
 
-        Grid {
-            columns: 2
-            spacing: 2
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "date time:" }
+                TextInput { text:detailsView.item.startDateTime}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
 
-            Text { text: "date time:" }
-            TextInput { text:detailsView.item.startDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
 
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
-
-            Text { text: "id:" }
-            Text { text: itemId}
-
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
         }
     }
 
     //note
-    Rectangle {
-        id:noteItem
-        opacity: itemType == "Note" ? 1: 0
+    VisualItemModel {
+        id:noteItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
+        }
 
-        Grid {
-            columns: 2
-            spacing: 2
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
-
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
-
-
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
-
-            Text { text: "id:" }
-            Text { text: itemId}
-
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
         }
     }
 
     //todo
-    Rectangle {
-        id:todoItem
-        opacity: itemType == "Todo" ? 1: 0
+    VisualItemModel {
+        id:todoItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
 
-        Grid {
-            columns: 2
-            spacing: 2
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "start:" }
+                TextInput { text:detailsView.item.startDateTime}
+            }
+        }
 
-            Text { text: "start:" }
-            TextInput { text:detailsView.item.startDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "due:" }
+                TextInput { text:detailsView.item.dueDateTime}
+            }
+        }
 
-            Text { text: "due:" }
-            TextInput { text:detailsView.item.dueDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "finished:" }
+                TextInput { text:detailsView.item.finishedDateTime}
+            }
+        }
 
-            Text { text: "finished:" }
-            TextInput { text:detailsView.item.finishedDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "All day event:" }
+                TextInput { text:detailsView.item.allDay}
+            }
+        }
 
-            Text { text: "All day event:" }
-            TextInput { text:detailsView.item.allDay}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "progress(%):" }
+                TextInput { text:detailsView.item.progressPercentage}
+            }
+        }
 
-            Text { text: "progress(%):" }
-            TextInput { text:detailsView.item.progressPercentage}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "priority:" }
+                TextInput { text:detailsView.item.priority}
+            }
+        }
 
-            Text { text: "priority:" }
-            TextInput { text:detailsView.item.priority}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "status:" }
+                TextInput { text:detailsView.item.status}
+            }
+        }
 
-            Text { text: "status:" }
-            TextInput { text:detailsView.item.status}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "recurrence:" }
+                Text { text: "*not implemented*"}
+            }
+        }
 
-            Text { text: "recurrence:" }
-            Text { text: "*not implemented*"}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
+        }
 
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
 
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
 
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
 
-            Text { text: "id:" }
-            Text { text: itemId}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
         }
     }
 
     //todo occurrence
-    Rectangle {
-        id:todoOccurrenceItem
-        opacity: itemType == "TodoOccurrence" ? 1: 0
+    VisualItemModel {
+        id:todoOccurrenceItemModel
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "displayLabel:" }
+                TextInput { text:detailsView.item.displayLabel}
+            }
+        }
 
-        Grid {
-            columns: 1
-            spacing: 2
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "description:" }
+                TextInput { text:detailsView.item.description}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "start:" }
+                TextInput { text:detailsView.item.startDateTime}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "due:" }
+                TextInput { text:detailsView.item.dueDateTime}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "finished:" }
+                TextInput { text:detailsView.item.finishedDateTime}
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "All day event:" }
+                TextInput { text:detailsView.item.allDay}
+            }
+        }
 
-            Text { text: "displayLabel:" }
-            TextInput { text:detailsView.item.displayLabel}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "progress(%):" }
+                TextInput { text:detailsView.item.progressPercentage}
+            }
+        }
 
-            Text { text: "description:" }
-            TextInput { text:detailsView.item.description}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "priority:" }
+                TextInput { text:detailsView.item.priority}
+            }
+        }
 
-            Text { text: "start:" }
-            TextInput { text:detailsView.item.startDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "status:" }
+                TextInput { text:detailsView.item.status}
+            }
+        }
 
-            Text { text: "due:" }
-            TextInput { text:detailsView.item.dueDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "parent id:" }
+                TextInput { text:detailsView.item.parentId}
+            }
+        }
 
-            Text { text: "finished:" }
-            TextInput { text:detailsView.item.finishedDateTime}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "original date:" }
+                TextInput { text:detailsView.item.originalDate}
+            }
+        }
 
-            Text { text: "All day event:" }
-            TextInput { text:detailsView.item.allDay}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "timestamp:" }
+                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            }
+        }
 
-            Text { text: "progress(%):" }
-            TextInput { text:detailsView.item.progressPercentage}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "manager:" }
+                Text { text:detailsView.item.manager}
+            }
+        }
 
-            Text { text: "priority:" }
-            TextInput { text:detailsView.item.priority}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "id:" }
+                Text { text: itemId}
+            }
+        }
 
-            Text { text: "status:" }
-            TextInput { text:detailsView.item.status}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "type:" }
+                TextInput { text: itemType}
+            }
+        }
 
-            Text { text: "parent id:" }
-            TextInput { text:detailsView.item.parentId}
-
-            Text { text: "original date:" }
-            TextInput { text:detailsView.item.originalDate}
-
-            Text { text: "timestamp:" }
-            Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
-
-            Text { text: "manager:" }
-            Text { text:detailsView.item.manager}
-
-            Text { text: "id:" }
-            Text { text: itemId}
-
-            Text { text: "type:" }
-            TextInput { text: itemType}
-
-            Text { text: "guid:" }
-            TextInput { text:detailsView.item.guid}
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Row {
+                spacing: 2
+                Text { text: "guid:" }
+                TextInput { text:detailsView.item.guid}
+            }
         }
     }
 
