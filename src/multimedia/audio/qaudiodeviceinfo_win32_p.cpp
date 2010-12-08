@@ -77,13 +77,8 @@ QT_BEGIN_NAMESPACE
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray dev, QAudio::Mode mode)
 {
-    if (dev == "default") {
-        device = QString::fromLatin1("default");
-    } else {
-        QDataStream ds(&dev, QIODevice::ReadOnly);
-        quint32 devID;
-        ds >> devID >> device;
-    }
+    QDataStream ds(&dev, QIODevice::ReadOnly);
+    ds >> devId >> device;
     this->mode = mode;
 
     updateLists();
@@ -261,54 +256,21 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
 void QAudioDeviceInfoInternal::updateLists()
 {
     // redo all lists based on current settings
-    bool base = false;
     bool match = false;
     DWORD fmt = NULL;
-    QString tmp;
-
-    if(device.compare(QLatin1String("default")) == 0)
-        base = true;
 
     if(mode == QAudio::AudioOutput) {
         WAVEOUTCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveOutGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
-	        == MMSYSERR_NOERROR) {
-                tmp = QString::fromWCharArray(woc.szPname);
-                if (device.startsWith(tmp)) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-		if(base) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-	    }
-	}
+        if (waveOutGetDevCaps(devId, &woc, sizeof(WAVEOUTCAPS)) == MMSYSERR_NOERROR) {
+            match = true;
+            fmt = woc.dwFormats;
+        }
     } else {
         WAVEINCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveInGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-	        == MMSYSERR_NOERROR) {
-                tmp = QString::fromWCharArray(woc.szPname);
-                if (device.startsWith(tmp)) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-		if(base) {
-		    match = true;
-		    fmt = woc.dwFormats;
-		    break;
-		}
-	    }
-	}
+        if (waveInGetDevCaps(devId, &woc, sizeof(WAVEINCAPS)) == MMSYSERR_NOERROR) {
+            match = true;
+            fmt = woc.dwFormats;
+        }
     }
     sizez.clear();
     freqz.clear();
@@ -457,20 +419,25 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
     }
     CoUninitialize();
 
-    if (devices.count() > 0)
-        devices.append("default");
-
     return devices;
 }
 
 QByteArray QAudioDeviceInfoInternal::defaultOutputDevice()
 {
-    return QByteArray("default");
+    QList<QByteArray> list = availableDevices(QAudio::AudioOutput);
+    if (list.size() > 0)
+        return list.at(0);
+    else
+        return QByteArray();
 }
 
 QByteArray QAudioDeviceInfoInternal::defaultInputDevice()
 {
-    return QByteArray("default");
+    QList<QByteArray> list = availableDevices(QAudio::AudioInput);
+    if (list.size() > 0)
+        return list.at(0);
+    else
+        return QByteArray();
 }
 
 QT_END_NAMESPACE
