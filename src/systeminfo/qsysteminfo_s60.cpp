@@ -1223,7 +1223,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
     return false;
 }

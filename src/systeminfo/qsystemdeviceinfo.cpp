@@ -166,7 +166,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value WirelessKeyboard            Bluetooth or other wireless keyboard.
         */
 /*!
-          \enum QSystemDeviceInfo::keypadType
+          \enum QSystemDeviceInfo::KeypadType
           This enum describe the type of keypad/keyboard.
 
           \value PrimaryKeypad                 Primary keypad or keyboard used.
@@ -230,7 +230,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
     qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
-    qRegisterMetaType<QSystemDeviceInfo::keypadType>("QSystemDeviceInfo::keypadType");
+    qRegisterMetaType<QSystemDeviceInfo::KeypadType>("QSystemDeviceInfo::KeypadType");
 }
 
 /*!
@@ -561,7 +561,7 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
 
   Returns true if the key pad, indicated by \a type, light is on, otherwise false;
   */
-bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
     return deviceInfoPrivate()->keypadLightOn(type);
 }

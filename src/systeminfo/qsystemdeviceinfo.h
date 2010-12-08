@@ -81,7 +81,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
     Q_ENUMS(LockType)
-    Q_ENUMS(keypadType)
+    Q_ENUMS(KeypadType)
     Q_ENUMS(ProfileDetails)
 
     Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
@@ -148,7 +148,7 @@ public:
       };//1.2
     Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
 
-    enum keypadType {
+    enum KeypadType {
        PrimaryKeypad = 0,
        SecondaryKeypad
     }; //1.2
@@ -181,7 +181,7 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
 
-    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
