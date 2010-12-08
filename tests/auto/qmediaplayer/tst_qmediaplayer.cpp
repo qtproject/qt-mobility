@@ -786,3 +786,29 @@ void tst_QMediaPlayer::testPlaylist()
     QVERIFY(player->playlist() == 0);
     QCOMPARE(player->media(), QMediaContent());
 }
+
+
+void tst_QMediaPlayer::testNetworkAccess()
+{
+    QList<QString> configIds;
+    configIds <<"id1"<<"id2"<<"id3";
+
+    player->setNetworkConfigurations(configIds);
+
+    QSignalSpy spy1(player, SIGNAL(networkConfigurationChanged(QString)));
+    mockService->selectCurrentConfiguration("id2");
+    QVERIFY(spy1.count() == 1);
+    QList<QVariant> args1 = spy1.takeFirst();
+    QVERIFY(args1.at(0).type() == QVariant::String);
+    QVERIFY(args1.at(0) == QString("id2"));
+    QCOMPARE(player->currentNetworkConfigurationId(), QString("id2"));
+
+    QSignalSpy spy2(player, SIGNAL(networkConfigurationChanged(QString)));
+    mockService->selectCurrentConfiguration("");
+    QVERIFY(spy2.count() == 1);
+    QList<QVariant> args2 = spy2.takeFirst();
+    QVERIFY(args2.at(0).type() == QVariant::String);
+    QVERIFY(args2.at(0) == QString(""));
+    QCOMPARE(player->currentNetworkConfigurationId(), QString(""));
+}
+
