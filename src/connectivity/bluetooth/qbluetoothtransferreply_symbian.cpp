@@ -43,11 +43,13 @@
 #include "qbluetoothtransferreply_symbian_p.h"
 
 #include <QDebug>
+#include <QFile>
 
 QTM_BEGIN_NAMESPACE
 
 QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent)
-:   QBluetoothTransferReply(parent), m_source(input)
+:   QBluetoothTransferReply(parent), m_source(input), CActive(EPriorityStandard), m_client(NULL),
+    m_running(false), m_finished(false)
 {
 }
 
@@ -56,6 +58,14 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
 */
 QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
 {
+    Cancel();
+    
+    delete m_object;
+    m_object = NULL;
+
+    delete m_client;
+    m_client = NULL;
+
 }
 
 void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address)
@@ -65,6 +75,26 @@ void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address
 
 bool QBluetoothTransferReplySymbian::start()
 {
+    m_running = true;
+    
+    TObexBluetoothProtocolInfo protocolInfo;
+    TBTDevAddr deviceAddress(m_address.toUInt64());
+
+    protocolInfo.iTransport.Copy(KBTSProtocol);
+    protocolInfo.iAddr.SetBTAddr(deviceAddress);
+    //protocolInfo.iAddr.SetPort( /*set port here*/ );
+
+    if ( m_client )
+        {
+        delete m_client;
+        m_client = NULL;
+        }
+    m_client = CObexClient::NewL( protocolInfo );
+    
+    m_client->Connect( iStatus );
+
+    m_state = EConnecting;
+    SetActive();
     return true;
 }
 
@@ -107,6 +137,44 @@ QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() c
 QString QBluetoothTransferReplySymbian::errorString() const
 {
     return QString();
+}
+
+void QBluetoothTransferReplySymbian::DoCancel()
+{
+}
+
+void QBluetoothTransferReplySymbian::RunL()
+{
+    switch ( m_state ) {
+        case EConnecting:
+            m_state = ESending;
+            sendObject();
+            break;
+        case ESending:
+            break;
+        case EDisconnecting:
+            break;
+        default:
+            break;
+    }
+
+}
+
+void QBluetoothTransferReplySymbian::sendObject()
+{
+    delete m_object;
+    m_object = NULL;
+    TRAPD(err, m_object = CObexFileObject::NewL());
+    if (!err) {
+        QFile *file = qobject_cast<QFile *>(m_source);
+
+        TPtrC16 str(reinterpret_cast<const TUint16*>(file->fileName().utf16()));
+        TRAPD(error, m_object->InitFromFileL( str ));
+        if (!error) {
+            m_client->Put( *m_object, iStatus );
+            SetActive();
+        }
+    }
 }
 
 

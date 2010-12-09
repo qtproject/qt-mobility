@@ -43,16 +43,28 @@
 #define QBLUETOOTHTRANSFERREPLYSYMBIAN_H
 
 #include "qbluetoothtransferreply.h"
+#include <e32base.h>
+#include <obex.h>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothTransferReplySymbian : public QBluetoothTransferReply
+_LIT( KBTSProtocol, "RFCOMM" ); // The Bluetooth transport layer
+
+class QBluetoothTransferReplySymbian : public QBluetoothTransferReply, public CActive
 {
     Q_OBJECT
 
 public:
+    enum state
+        {
+            EIdle,
+            EConnecting,
+            ESending,
+            EDisconnecting
+        };
+
     QBluetoothTransferReplySymbian(QIODevice *input, QObject *parent = 0);
     ~QBluetoothTransferReplySymbian();
 
@@ -66,10 +78,17 @@ public:
 
     QBluetoothTransferReply::TransferError error() const;
     QString errorString() const;
-
+    
 protected:
     qint64 readData(char*, qint64);
     qint64 writeData(const char*, qint64);
+
+private:
+    void sendObject();
+
+    //From CActive
+    void DoCancel();
+    void RunL();
 
 public:
     QIODevice *m_source;
@@ -78,7 +97,12 @@ public:
 
     bool m_running;
     bool m_finished;
+
+    CObexClient* m_client;
+    CObexFileObject* m_object;
     
+    state m_state;
+
 };
 
 QTM_END_NAMESPACE
