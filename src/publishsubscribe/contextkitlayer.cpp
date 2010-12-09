@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "contextkitlayer_p.h"
+#include <contextpropertyinfo.h>
 
 #include <QCoreApplication>
 #include <QMetaType>
@@ -145,12 +146,14 @@ ContextKitPath &ContextKitPath::operator=(const ContextKitPath &other)
 
 bool ContextKitPath::isRegistered() const
 {
-    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys()) {
-        ContextKitPath p(k);
-        if (*this == p)
-            return true;
-    }
-    return false;
+    ContextPropertyInfo pi(toNative());
+    return pi.declared();
+}
+
+bool ContextKitPath::isProvided() const
+{
+    ContextPropertyInfo pi(toNative());
+    return pi.provided();
 }
 
 ContextKitPath ContextKitPath::operator+(const ContextKitPath &other) const
@@ -345,7 +348,7 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
     }
 
     service = new ContextProvider::Service(QDBusConnection::SessionBus,
-                                           javaPackageName);
+                                           javaPackageName, false);
 }
 
 ContextKitHandle::~ContextKitHandle()
@@ -357,10 +360,16 @@ ContextKitHandle::~ContextKitHandle()
 
 bool ContextKitHandle::value(const QString &path, QVariant *data)
 {
-    ContextKitPath p = this->path + path;
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
+
+    if (!p.isRegistered() || !p.isProvided())
+        return false;
 
     ContextProperty *prop = readProps.value(p.toQtPath());
     if (prop) {
+        prop->subscribe();
+        prop->waitForSubscription();
         *data = prop->value();
         return true;
     } else {
@@ -370,7 +379,8 @@ bool ContextKitHandle::value(const QString &path, QVariant *data)
 
 bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
 {
-    ContextKitPath p = this->path + path;
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
@@ -393,7 +403,8 @@ bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
 
 bool ContextKitHandle::unsetValue(const QString &path)
 {
-    ContextKitPath p = this->path + path;
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
@@ -416,8 +427,10 @@ bool ContextKitHandle::unsetValue(const QString &path)
 
 void ContextKitHandle::subscribe()
 {
-    foreach (ContextProperty *p, readProps.values())
+    foreach (ContextProperty *p, readProps.values()) {
         p->subscribe();
+        p->waitForSubscription();
+    }
 }
 
 void ContextKitHandle::unsubscribe()
@@ -589,7 +602,7 @@ QString ContextKitNonCoreLayer::name()
 
 unsigned int ContextKitNonCoreLayer::order()
 {
-    return 0;
+    return 1;
 }
 
 QUuid ContextKitNonCoreLayer::id()
@@ -616,7 +629,7 @@ QString ContextKitCoreLayer::name()
 
 unsigned int ContextKitCoreLayer::order()
 {
-    return 1;
+    return 0;
 }
 
 QUuid ContextKitCoreLayer::id()

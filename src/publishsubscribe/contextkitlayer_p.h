@@ -77,6 +77,7 @@ public:
 
     bool includes(ContextKitPath &other) const;
     bool isRegistered() const;
+    bool isProvided() const;
 
     inline int size() const { return parts.size(); }
     inline QString at(int i) const { return parts.at(i); }
@@ -160,6 +161,9 @@ public:
     void addWatch(QValueSpacePublisher *, Handle) { return; }
     void removeWatches(QValueSpacePublisher *, Handle) { return; }
     void sync();
+
+    virtual QValueSpace::LayerOptions layerOptions() const = 0;
+    virtual QUuid id() = 0;
 
 private slots:
     void contextHandleChanged();
