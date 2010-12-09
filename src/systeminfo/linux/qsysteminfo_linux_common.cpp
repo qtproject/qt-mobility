@@ -2121,6 +2121,7 @@ QString QSystemStorageInfoLinuxCommonPrivate::getUuid(const QString &vol)
             }
         }
     }
+    return QString();
 }
 
 QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
@@ -2151,7 +2152,7 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     dev.open(QIODevice::ReadOnly);
     fd = dev.handle();
     if (fd < 0) {
-        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
+//        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
        return QString();
     } else {
         pr = blkid_new_probe();
