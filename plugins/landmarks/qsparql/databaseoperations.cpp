@@ -2705,6 +2705,8 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(
             "delete { ?:category_uri nie:identifier ?ide . } "
             "WHERE { ?:category_uri nie:identifier ?ide . } "
+            "delete { ?:category_uri nie:title ?title . } "
+            "WHERE { ?:category_uri nie:title ?title . } "
             "delete { ?:category_uri a slo:LandmarkCategory . }",
              QSparqlQuery::DeleteStatement);
 
