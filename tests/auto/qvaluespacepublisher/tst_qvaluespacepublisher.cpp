@@ -326,41 +326,37 @@ void tst_QValueSpacePublisher::testBaseConstructor()
 
 void tst_QValueSpacePublisher::testSetValue_data()
 {
-    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+    QTest::addColumn<QUuid>("uuid");
 
     QTest::addColumn<QString>("value");
 
-    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-
-    for (int i = 0; i < layers.count(); ++i) {
-        QAbstractValueSpaceLayer *layer = layers.at(i);
-
-        if (layer->id() != QVALUESPACE_CONTEXTKITCORE_LAYER)
-            QTest::newRow("empty") << layer << QString::fromLatin1("/");
+    foreach (QUuid uuid, QValueSpace::availableLayers()) {
+        if (uuid != QVALUESPACE_CONTEXTKITCORE_LAYER)
+            QTest::newRow("empty") << uuid << QString::fromLatin1("/");
     }
 }
 
 void tst_QValueSpacePublisher::testSetValue()
 {
-    QFETCH(QAbstractValueSpaceLayer *, layer);
+    QFETCH(QUuid, uuid);
     QFETCH(QString, value);
 
-    QValueSpaceSubscriber subscriber(layer->id(), QLatin1String("/testSetValue"));
-    if (layer->id() != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+    QValueSpaceSubscriber subscriber(uuid, QLatin1String("/testSetValue"));
+    if (uuid != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
         QVERIFY(subscriber.subPaths().isEmpty());
 
-    QValueSpacePublisher publisher(layer->id(), QLatin1String("/testSetValue"));
+    QValueSpacePublisher publisher(uuid, QLatin1String("/testSetValue"));
 
     publisher.setValue(QLatin1String(""), QLatin1String("default data"));
     publisher.sync();
-    if (layer->id() == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
-    if (layer->id() != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
+    if (uuid != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
         QVERIFY(subscriber.subPaths().isEmpty());
     QCOMPARE(subscriber.value(QLatin1String("")).toString(), QLatin1String("default data"));
 
     publisher.setValue(QLatin1String("key"), QLatin1String("key data"));
     publisher.sync();
-    if (layer->id()  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
+    if (uuid  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
     QCOMPARE(subscriber.subPaths().count(), 1);
     QCOMPARE(subscriber.subPaths().first(), QLatin1String("key"));
     QCOMPARE(subscriber.value(QLatin1String("key")).toString(), QLatin1String("key data"));
@@ -368,7 +364,7 @@ void tst_QValueSpacePublisher::testSetValue()
     publisher.resetValue(QLatin1String("key"));
     publisher.resetValue(QLatin1String(""));
     publisher.sync();
-    if (layer->id()  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
+    if (uuid  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     QVERIFY(!subscriber.value(QLatin1String("")).isValid());
     QVERIFY(!subscriber.value(QLatin1String("key")).isValid());
