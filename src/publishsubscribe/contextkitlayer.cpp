@@ -420,9 +420,7 @@ bool ContextKitHandle::unsetValue(const QString &path)
     if (!prop)
         prop = insertWrite(p);
 
-    QVariant v(QVariant::Invalid);
-    prop->setValue(v);
-
+    prop->unsetValue();
     return true;
 }
 
@@ -466,7 +464,6 @@ void ContextKitHandle::subscribe()
 {
     foreach (ContextProperty *p, readProps.values()) {
         p->subscribe();
-        p->waitForSubscription();
         connect(p, SIGNAL(valueChanged()),
                 this, SIGNAL(valueChanged()));
     }
