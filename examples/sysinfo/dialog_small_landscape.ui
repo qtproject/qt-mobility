@@ -319,6 +319,11 @@
              <string>Haptics</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Fm Transmitter</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
@@ -501,13 +506,25 @@
         <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
           <widget class="QLabel" name="label_9">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Host ID:</string>
+            <string>Unique ID:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="hostIdLabel">
+          <widget class="QLabel" name="uniqueIDLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>.</string>
            </property>
@@ -515,7 +532,7 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="0">
+       <item row="6" column="0" colspan="2">
         <spacer name="verticalSpacer_13">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1221,6 +1238,11 @@
          <column>
           <property name="text">
            <string>Available Disk Space</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Uri</string>
           </property>
          </column>
         </widget>

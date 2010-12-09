@@ -1223,14 +1223,14 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::uniqueID()
 {
-    return 0;//gethostid();
+    return 0;//getuniqueID();
 }
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
@@ -1238,6 +1238,20 @@ QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
     return QSystemDeviceInfo::UnknownLock;
 }
 
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
 DeviceInfo *DeviceInfo::m_instance = NULL;
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
