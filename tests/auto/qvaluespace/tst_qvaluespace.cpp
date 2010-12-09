@@ -48,6 +48,7 @@
 #include <QtTest/QTest>
 #include <QSet>
 #include <QFile>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -300,6 +301,9 @@ void tst_QValueSpace::initTestCase()
     fakeLayer = new FakeLayer;
     QValueSpace::installLayer(fakeLayer);
     QValueSpace::initValueSpaceServer();
+
+    QCoreApplication::setOrganizationDomain("tests.qt.nokia.com");
+    QCoreApplication::setApplicationName("qvaluespace");
 }
 
 void tst_QValueSpace::cleanupTestCase()
@@ -330,9 +334,11 @@ void tst_QValueSpace::availableLayers()
 #endif
 
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-    QVERIFY(layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));
+    QVERIFY(layers.contains(QVALUESPACE_CONTEXTKITCORE_LAYER));
+    QVERIFY(layers.contains(QVALUESPACE_CONTEXTKITNONCORE_LAYER));
 #else
-    QVERIFY(!layers.contains(QVALUESPACE_CONTEXTKIT_LAYER));
+    QVERIFY(!layers.contains(QVALUESPACE_CONTEXTKITCORE_LAYER));
+    QVERIFY(!layers.contains(QVALUESPACE_CONTEXTKITNONCORE_LAYER));
 #endif
 
     QVERIFY(layers.contains(fakeLayer->id()));
