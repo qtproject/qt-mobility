@@ -113,7 +113,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemFilter)
 
 
 //changelog filter
-class QDeclarativeOrganizerItemChangelogFilter : public QDeclarativeOrganizerItemFilter
+class QDeclarativeOrganizerItemChangeLogFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime since READ since WRITE setSince NOTIFY valueChanged)
@@ -128,7 +128,7 @@ public:
         EventRemoved = QOrganizerItemChangeLogFilter::EventRemoved
     };
 
-    QDeclarativeOrganizerItemChangelogFilter(QObject *parent = 0)
+    QDeclarativeOrganizerItemChangeLogFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
         connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
@@ -143,7 +143,7 @@ public:
         }
     }
 
-    EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangelogFilter::EventType>(d.eventType()); }
+    EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangeLogFilter::EventType>(d.eventType()); }
     void setEventType(EventType type)
     {
         if (type != eventType()) {
@@ -164,7 +164,7 @@ private:
     QOrganizerItemChangeLogFilter d;
 
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemChangelogFilter)
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemChangeLogFilter)
 
 //collection filter
 class QDeclarativeOrganizerItemCollectionFilter : public QDeclarativeOrganizerItemFilter

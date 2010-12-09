@@ -581,7 +581,7 @@ void QDeclarativeOrganizerEvent::setLocation(const QString& loc)
 }
 
 /*!
-  \qmlproperty ItemRecurrence Event::recurrence
+  \qmlproperty Recurrence Event::recurrence
 
   This property holds the recurrence element of the event item.
   */
@@ -838,7 +838,7 @@ QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
 }
 
 /*!
-  \qmlproperty ItemRecurrence Todo::recurrence
+  \qmlproperty Recurrence Todo::recurrence
 
   This property holds the recurrence element of the todo item.
   */

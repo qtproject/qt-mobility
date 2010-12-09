@@ -266,7 +266,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty IntersectionFilter::filters
+  \qmlproperty list<filter> IntersectionFilter::filters
 
   This property holds the list of filters which form the intersection filter.
   */
@@ -284,7 +284,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty UnionFilter::filters
+  \qmlproperty list<filter> UnionFilter::filters
 
   This property holds the list of filters which form the union filter.
   */
