@@ -41,6 +41,8 @@
 
 #include "qnearfieldtagtype2.h"
 
+#include <QtCore/QVariant>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -95,7 +97,11 @@ QByteArray QNearFieldTagType2::readBlock(quint8 blockAddress)
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+        return QByteArray();
+
+    const QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return QByteArray();
@@ -123,7 +129,11 @@ bool QNearFieldTagType2::writeBlock(quint8 blockAddress, const QByteArray &data)
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+        return false;
+
+    const QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return false;
@@ -144,7 +154,11 @@ bool QNearFieldTagType2::selectSector(quint8 sector)
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
 
-    QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+        return false;
+
+    QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return false;
@@ -158,7 +172,11 @@ bool QNearFieldTagType2::selectSector(quint8 sector)
     command.append(char(sector));               // Sector number
     command.append(QByteArray(3, char(0x00)));  // RFU
 
-    response = sendCommand(command);
+    id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+        return false;
+
+    response = requestResponse(id).toByteArray();
 
     // passive ack, empty response is ack
     return response.isEmpty();

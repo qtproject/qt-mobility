@@ -117,8 +117,6 @@ void tst_QNearFieldManager::targetDetected()
 
     QVERIFY(!target->uid().isEmpty());
 
-    QCOMPARE(target->hasNdefMessage(), !target->ndefMessages().isEmpty());
-
     QTRY_VERIFY(!targetLostSpy.isEmpty());
 
     QNearFieldTarget *lostTarget = targetLostSpy.first().at(0).value<QNearFieldTarget *>();

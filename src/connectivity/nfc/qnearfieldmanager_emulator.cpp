@@ -41,13 +41,16 @@
 
 #include "qnearfieldmanager_emulator_p.h"
 #include "targetemulator_p.h"
+#include "qnearfieldtarget_p.h"
 #include "qnearfieldtagtype1.h"
 #include "qndefmessage.h"
+#include "qtlv_p.h"
 
 #include <QtCore/QDirIterator>
 #include <QtCore/QSettings>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QCoreApplication>
 
 #include <QtCore/QDebug>
 
@@ -167,6 +170,8 @@ void TagActivator::timerEvent(QTimerEvent *e)
 
 class TagType1 : public QNearFieldTagType1
 {
+    Q_OBJECT
+
 public:
     TagType1(TagBase *tag, QObject *parent);
     ~TagType1();
@@ -175,7 +180,8 @@ public:
 
     AccessMethods accessMethods() const;
 
-    QByteArray sendCommand(const QByteArray &command);
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
 private:
     TagBase *m_tag;
@@ -202,27 +208,47 @@ QNearFieldTarget::AccessMethods TagType1::accessMethods() const
     return NdefAccess | TagTypeSpecificAccess;
 }
 
-QByteArray TagType1::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
 {
     QMutexLocker locker(&tagMutex);
 
     // tag not in proximity
-    if (!tagMap.value(m_tag))
-        return QByteArray();
+    if (!tagMap.value(m_tag)) {
+        emit error(TargetOutOfRangeError);
+        return RequestId();
+    }
 
     quint16 crc = qNfcChecksum(command.constData(), command.length());
 
+    RequestIdPrivate *idPrivate = new RequestIdPrivate;
+    RequestId id(idPrivate);
+
     QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
 
-    if (response.isEmpty())
-        return QByteArray();
+    if (response.isEmpty()) {
+        emit error(NoResponseError);
+        return id;
+    }
 
     // check crc
-    if (qNfcChecksum(response.constData(), response.length()) != 0)
-        return QByteArray();
+    if (qNfcChecksum(response.constData(), response.length()) != 0) {
+        emit error(ChecksumMismatchError);
+        return id;
+    }
 
     response.chop(2);
-    return response;
+
+    QMetaObject::invokeMethod(this, "handleResponse", Qt::QueuedConnection,
+                              Q_ARG(QNearFieldTarget::RequestId, id), Q_ARG(QByteArray, response));
+
+    return id;
+}
+
+bool TagType1::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return QNearFieldTagType1::waitForRequestCompleted(id, msecs);
 }
 
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
@@ -324,62 +350,15 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
         emit targetDetected(target);
     }
 
-
     if (target->hasNdefMessage()) {
-        for (int i = 0; i < m_registeredHandlers.count(); ++i) {
-            if (m_freeIds.contains(i))
-                continue;
+        QTlvReader reader(target);
+        while (!reader.atEnd()) {
+            if (!reader.readNext())
+                break;
 
-            Callback &callback = m_registeredHandlers[i];
-
-            QList<QNdefMessage> messages = target->ndefMessages();
-            foreach (const QNdefMessage &message, messages) {
-                bool matched = true;
-
-                QList<VerifyRecord> filterRecords;
-                for (int j = 0; j < callback.filter.recordCount(); ++j) {
-                    VerifyRecord vr;
-                    vr.count = 0;
-                    vr.filterRecord = callback.filter.recordAt(j);
-
-                    filterRecords.append(vr);
-                }
-
-                foreach (const QNdefRecord &record, message) {
-                    for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-                        VerifyRecord &vr = filterRecords[j];
-
-                        if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
-                            vr.filterRecord.type == record.type()) {
-                            ++vr.count;
-                            break;
-                        } else {
-                            if (callback.filter.orderMatch()) {
-                                if (vr.filterRecord.minimum <= vr.count &&
-                                    vr.count <= vr.filterRecord.maximum) {
-                                    continue;
-                                } else {
-                                    matched = false;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-                    const VerifyRecord &vr = filterRecords.at(j);
-
-                    if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
-                        continue;
-                    else
-                        matched = false;
-                }
-
-                if (matched) {
-                    callback.method.invoke(callback.object, Q_ARG(QNdefMessage, message),
-                                                            Q_ARG(QNearFieldTarget *, target));
-                }
-            }
+            // NDEF Message TLV
+            if (reader.tag() == 0x03)
+                ndefReceived(QNdefMessage::fromByteArray(reader.data()), target);
         }
     }
 }
@@ -392,6 +371,63 @@ void QNearFieldManagerPrivateImpl::tagDeactivated(TagBase *tag)
 
     emit targetLost(target);
     QMetaObject::invokeMethod(target, "disconnected");
+}
+
+void QNearFieldManagerPrivateImpl::ndefReceived(const QNdefMessage &message,
+                                                QNearFieldTarget *target)
+{
+    for (int i = 0; i < m_registeredHandlers.count(); ++i) {
+        if (m_freeIds.contains(i))
+            continue;
+
+        Callback &callback = m_registeredHandlers[i];
+
+        bool matched = true;
+
+        QList<VerifyRecord> filterRecords;
+        for (int j = 0; j < callback.filter.recordCount(); ++j) {
+            VerifyRecord vr;
+            vr.count = 0;
+            vr.filterRecord = callback.filter.recordAt(j);
+
+            filterRecords.append(vr);
+        }
+
+        foreach (const QNdefRecord &record, message) {
+            for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+                VerifyRecord &vr = filterRecords[j];
+
+                if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
+                    vr.filterRecord.type == record.type()) {
+                    ++vr.count;
+                    break;
+                } else {
+                    if (callback.filter.orderMatch()) {
+                        if (vr.filterRecord.minimum <= vr.count &&
+                            vr.count <= vr.filterRecord.maximum) {
+                            continue;
+                        } else {
+                            matched = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+            const VerifyRecord &vr = filterRecords.at(j);
+
+            if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
+                continue;
+            else
+                matched = false;
+        }
+
+        if (matched) {
+            callback.method.invoke(callback.object, Q_ARG(QNdefMessage, message),
+                                   Q_ARG(QNearFieldTarget *, target));
+        }
+    }
 }
 
 #include "qnearfieldmanager_emulator.moc"
