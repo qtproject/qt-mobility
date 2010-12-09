@@ -90,6 +90,7 @@ public:
 
     QString error() const;
     int itemCount() const;
+
     QString manager() const;
     void setManager(const QString& managerName);
     QStringList availableManagers() const;
@@ -126,9 +127,9 @@ public:
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
     Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
-    Q_INVOKABLE bool containsItems(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE bool containsItems(QDateTime start, QDateTime end = QDateTime());
     Q_INVOKABLE QDeclarativeOrganizerItem* item(const QString& id);
-    Q_INVOKABLE QStringList itemIds(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE QStringList itemIds(QDateTime start, QDateTime end = QDateTime());
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
 

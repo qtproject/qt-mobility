@@ -381,6 +381,13 @@ void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint
         emit fetchHintChanged();
     }
 }
+/*!
+  \qmlproperty int OrganizerModel::itemCount
+
+  This property holds the size of organizer items the OrganizerModel currently holds.
+
+  This property is read only.
+  */
 int QDeclarativeOrganizerModel::itemCount() const
 {
     return d->m_items.size();
@@ -464,7 +471,6 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
 
             if (d->m_manager) {
                 if (d->m_manager->saveItems(&items)) {
-                    //qWarning() << "items imported.";
                     update();
                 }
             }
@@ -577,18 +583,35 @@ void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
     QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
 }
 
-bool QDeclarativeOrganizerModel::containsItems(const QDate& start, const QDate& end)
+/*!
+  \qmlmethod bool OrganizerModel::containsItems(date start, date end)
+  Returns true if there is at least one OrganizerItem between the given date range,
+  otherwise returns false.  The second parameter \a end is optional.
+
+  \since organizer 1.1.1
+  */
+bool QDeclarativeOrganizerModel::containsItems(QDateTime start, QDateTime end)
 {
     //TODO: quick search this
-    QDate endDate = end.isNull()? start:end;
+    end = end.isNull()? start.addDays(1):end;
     foreach (const QDeclarativeOrganizerItem* item, d->m_items) {
 
-        if ( item->itemStartTime().date() >= start && item->itemStartTime().date() <= endDate)
+        if  ( (item->itemStartTime() >= start && item->itemStartTime() <= end)
+                ||
+              (item->itemEndTime() >= start && item->itemEndTime() <= end)
+                ||
+              (item->itemEndTime() > end && item->itemStartTime() < start))
             return true;
     }
     return false;
 }
 
+/*!
+  \qmlmethod OrganizerItem OrganizerModel::item(string itemId)
+  Returns the OrganizerItem object which item id is the given \a itemId.
+
+  \since organizer 1.1.1
+  */
 QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 {
 
@@ -597,13 +620,24 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
     return 0;
 }
 
-QStringList QDeclarativeOrganizerModel::itemIds(const QDate& start, const QDate& end)
+/*!
+  \qmlmethod list<string> OrganizerModel::itemIds(date start, date end)
+  Returns the list of organizer item ids between the given date range \a start and \a end,
+  the \a end parameter is optional.
+
+  \since organizer 1.1.1
+  */
+QStringList QDeclarativeOrganizerModel::itemIds(QDateTime start, QDateTime end)
 {
     //TODO: quick search this
     QStringList ids;
-    QDate endDate = end.isNull()? start:end;
+    end = end.isNull()? start.addDays(1):end;
     foreach (QDeclarativeOrganizerItem* item, d->m_items) {
-        if ( item->itemStartTime().date() >= start && item->itemEndTime().date() <= endDate)
+        if ( (item->itemStartTime() >= start && item->itemEndTime() <= end)
+             ||
+             (item->itemEndTime() >= start && item->itemEndTime() <= end)
+             ||
+             (item->itemEndTime() > end && item->itemStartTime() < start))
             ids << item->itemId();
     }
 
@@ -642,7 +676,6 @@ void QDeclarativeOrganizerModel::fetchAgain()
 
     connect(d->m_fetchRequest, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(requestUpdated()));
     d->m_fetchRequest->start();
-
 }
 
 /*
@@ -697,7 +730,12 @@ void QDeclarativeOrganizerModel::requestUpdated()
     }
 }
 
+/*!
+  \qmlmethod OrganizerModel::saveItem(OrganizerItem item)
+  Saves the given \a item into the organizer backend.
 
+  \since organizer 1.1.1
+  */
 void QDeclarativeOrganizerModel::saveItem(QDeclarativeOrganizerItem* di)
 {
     if (di) {
@@ -741,6 +779,12 @@ void QDeclarativeOrganizerModel::itemsSaved()
 }
 
 
+/*!
+  \qmlmethod OrganizerModel::removeItem(string itemId)
+  Remove the organizer item from the organizer backend be the given \a itemId.
+
+  \since organizer 1.1.1
+  */
 void QDeclarativeOrganizerModel::removeItem(const QString& id)
 {
     QList<QString> ids;
@@ -748,6 +792,12 @@ void QDeclarativeOrganizerModel::removeItem(const QString& id)
     removeItems(ids);
 }
 
+/*!
+  \qmlmethod OrganizerModel::removeItem(list<string> itemId)
+  Remove the organizer items from the organizer backend be the given item id list \a ids.
+
+  \since organizer 1.1.1
+  */
 void QDeclarativeOrganizerModel::removeItems(const QList<QString>& ids)
 {
     QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
