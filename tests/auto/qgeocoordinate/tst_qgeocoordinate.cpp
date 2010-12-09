@@ -559,17 +559,17 @@ private slots:
     }
 */
 
-    void atAzimuth()
+    void atDistanceAndAzimuth()
     {
         QFETCH(QGeoCoordinate, origin);
         QFETCH(qreal, distance);
         QFETCH(qreal, azimuth);
         QFETCH(QGeoCoordinate, result);
 
-        QCOMPARE(result, origin.atAzimuth(distance, azimuth));
+        QCOMPARE(result, origin.atDistanceAndAzimuth(distance, azimuth));
     }
 
-    void atAzimuth_data()
+    void atDistanceAndAzimuth_data()
     {
         QTest::addColumn<QGeoCoordinate>("origin");
         QTest::addColumn<qreal>("distance");
