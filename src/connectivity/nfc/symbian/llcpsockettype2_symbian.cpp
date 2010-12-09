@@ -527,10 +527,11 @@ void CLlcpConnecterAO::DisconnectL()
         }
     else if ( iConnState == EConnecting )
         {
-        Cancel();
+        Cancel();//cancel Connect
         }
     else if ( iConnState == EConnected )
         {
+        Cancel();//cancel WaitForDisconnection
         iConnection.Disconnect();
         }
         iConnState = ENotConnected;
