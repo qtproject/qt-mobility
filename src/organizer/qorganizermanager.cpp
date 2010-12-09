@@ -406,12 +406,11 @@ QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, c
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all
   organizer items and testing them against the supplied filter - see the \l isFilterSupported() function.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer items will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
-  replace the previously saved organizer item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.  If a client makes changes to an organizer item which has been retrieved with a
+  fetch hint, they should save it back using a partial save, masked by the same set of detail names
+  in order to avoid information loss.
 
   \sa QOrganizerItemFetchHint
  */
@@ -434,12 +433,13 @@ QList<QOrganizerItem> QOrganizerManager::items(const QOrganizerItemFilter& filte
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all
   organizer items and testing them against the supplied filter - see the \l isFilterSupported() function.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer items will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
-  replace the previously saved organizer item in the backend).
+  If no sort order is provided, the list is returned sorted by date.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.  If a client makes changes to an organizer item which has been retrieved with a
+  fetch hint, they should save it back using a partial save, masked by the same set of detail names
+  in order to avoid information loss.
 
   \sa QOrganizerItemFetchHint
  */
@@ -451,13 +451,12 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
 }
 
 /*!
-  Returns a list of organizer items that match the given \a filter, sorted according to the given
-  list of \a sortOrders, for any item or occurrence of an item which occurs in the range specified
-  by the given \a startDate and \a endDate, inclusive.  A default-constructed (invalid) \a startDate
-  specifies an open start date (matches anything which occurs up until the \a endDate), and a
-  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
-  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
-  return all items which match the \a filter criteria.
+  Returns a list of organizer items in the range specified by the given \a startDate and \a endDate,
+  inclusive.  The list will contain the first \a maxCount such items which match the given \a
+  filter.  A default-constructed (invalid) \a startDate specifies an open start date (matches
+  anything which occurs up until the \a endDate), and a default-constructed (invalid) \a endDate
+  specifies an open end date (matches anything which occurs after the \a startDate).  The list is
+  sorted by date.
 
   This function will return both persisted and generated occurrences of items which match the
   specified criteria.
@@ -467,11 +466,10 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
   isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
-  fetchHint is the default constructed hint, all existing details and relationships in the matching
-  organizer items will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in
-  information loss when saving the organizer item back to the manager (as the "new" restricted
-  organizer item will replace the previously saved organizer item in the backend).
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.  If a client makes changes to an organizer item which has been retrieved with a
+  fetch hint, they should save it back using a partial save, masked by the same set of detail names
+  in order to avoid information loss.
 
   \sa QOrganizerItemFetchHint
  */
@@ -494,12 +492,11 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all
   organizer items and testing them against the supplied filter - see the \l isFilterSupported() function.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer items will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
-  replace the previously saved organizer item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.  If a client makes changes to an organizer item which has been retrieved with a
+  fetch hint, they should save it back using a partial save, masked by the same set of detail names
+  in order to avoid information loss.
 
   \sa QOrganizerItemFetchHint
  */
@@ -511,25 +508,24 @@ QList<QOrganizerItem> QOrganizerManager::itemsForExport(const QDateTime& startDa
 }
 
 /*!
-  Returns the organizer item in the database identified by \a organizeritemId.
+  Returns the organizer item in the database identified by \a itemId.
 
   If the organizer item does not exist, an empty, default constructed QOrganizerItem will be returned,
   and the error returned by \l error() will be \c QOrganizerManager::DoesNotExistError.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer item will be returned.  A client should not make changes to an organizer item which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
-  replace the previously saved organizer item in the backend).
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.  If a client makes changes to an organizer item which has been retrieved with a
+  fetch hint, they should save it back using a partial save, masked by the same set of detail names
+  in order to avoid information loss.
 
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
+QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->item(organizeritemId, fetchHint, &d->m_error);
+    return d->m_engine->item(itemId, fetchHint, &d->m_error);
 }
 
 /*!
@@ -579,15 +575,15 @@ bool QOrganizerManager::saveItem(QOrganizerItem* item)
 }
 
 /*!
-  Remove the organizer item identified by \a organizeritemId from the database.
+  Remove the organizer item identified by \a itemId from the database.
   Returns true if the organizer item was removed successfully, otherwise
   returns false.
  */
-bool QOrganizerManager::removeItem(const QOrganizerItemId& organizeritemId)
+bool QOrganizerManager::removeItem(const QOrganizerItemId& itemId)
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->removeItem(organizeritemId, &d->m_error);
+    return d->m_engine->removeItem(itemId, &d->m_error);
 }
 
 /*!

@@ -41,8 +41,52 @@
 
 #include "contextkitlayer_p.h"
 
-#include <QDebug>
 #include <QCoreApplication>
+#include <QMetaType>
+#include <QChar>
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusArgument>
+
+// dbus types
+Q_DECLARE_METATYPE(float)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const float &f)
+{
+    argument.beginStructure();
+    argument << (double)f;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, float &f)
+{
+    double d;
+    argument.beginStructure();
+    argument >> d;
+    argument.endStructure();
+    f = (float)d;
+    return argument;
+}
+
+Q_DECLARE_METATYPE(QChar)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QChar &ch)
+{
+    argument.beginStructure();
+    argument << ch.unicode();
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QChar &ch)
+{
+    ushort sh;
+    argument.beginStructure();
+    argument >> sh;
+    argument.endStructure();
+    ch = QChar(sh);
+    return argument;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,6 +98,11 @@ ContextKitPath::ContextKitPath()
 
 ContextKitPath::ContextKitPath(QString path)
 {
+    initFromPath(path);
+}
+
+void ContextKitPath::initFromPath(QString path)
+{
     bool hasSlash = path.contains(QLatin1Char('/'));
     bool hasDot = path.contains(QLatin1Char('.'));
     bool startingSlash = path.startsWith(QLatin1Char('/'));
@@ -62,55 +111,36 @@ ContextKitPath::ContextKitPath(QString path)
         path = path.mid(1);
 
     if (path == "" || path == "/") {
-        slashPath = true;
-        dotPath = false;
+        m_type = SlashPath;
     } else if ((hasSlash && !hasDot) || (hasSlash && startingSlash)) {
         parts = path.split(QLatin1Char('/'));
-        slashPath = true;
-        dotPath = false;
+        m_type = SlashPath;
     } else if (hasDot && !hasSlash) {
         parts = path.split(QLatin1Char('.'));
-        dotPath = true;
-        slashPath = false;
+        m_type = DotPath;
     } else {
-        // don't know what it is?
-        qWarning() << "ContextKit: path doesn't seem to obey any known scheme: "
-                   << path;
+        m_type = SlashPath;
+        parts.append(path);
     }
+}
+
+ContextKitPath::ContextKitPath(QString path, PathType type)
+{
+    initFromPath(path);
+    m_type = type;
 }
 
 ContextKitPath::ContextKitPath(const ContextKitPath &other)
 {
     parts = other.parts;
-    dotPath = other.dotPath;
-    slashPath = other.slashPath;
+    m_type = other.m_type;
 }
 
 ContextKitPath &ContextKitPath::operator=(const ContextKitPath &other)
 {
     parts = other.parts;
-    dotPath = other.dotPath;
-    slashPath = other.slashPath;
+    m_type = other.m_type;
     return *this;
-}
-
-QString ContextKitPath::toCKPath() const
-{
-    ContextKitPath lastPath("/nil");
-    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys()) {
-        ContextKitPath p(k);
-        if (this->includes(p)) {
-            lastPath = p;
-            if (p.wasDotPath())
-                break;
-        }
-    }
-
-    if (lastPath.wasDotPath()) {
-        return parts.join(".");
-    } else {
-        return "/" + parts.join("/");
-    }
 }
 
 bool ContextKitPath::isRegistered() const
@@ -123,14 +153,18 @@ bool ContextKitPath::isRegistered() const
     return false;
 }
 
-ContextKitPath ContextKitPath::operator+(const QString &str) const
+ContextKitPath ContextKitPath::operator+(const ContextKitPath &other) const
 {
     ContextKitPath p(*this);
-    ContextKitPath s(str);
-    foreach (QString pt, s.parts)
+    foreach (QString pt, other.parts)
         p.parts.append(pt);
-
     return p;
+}
+
+ContextKitPath ContextKitPath::operator+(const QString &str) const
+{
+    ContextKitPath s(str);
+    return *this + s;
 }
 
 ContextKitPath ContextKitPath::operator-(const ContextKitPath &other) const
@@ -149,6 +183,16 @@ ContextKitPath ContextKitPath::operator-(const ContextKitPath &other) const
     return p;
 }
 
+QString ContextKitPath::toNative() const
+{
+    if (m_type == SlashPath)
+        return "/" + parts.join("/");
+    else if (m_type == DotPath)
+        return parts.join(".");
+    else
+        return QString();
+}
+
 QString ContextKitPath::toQtPath() const
 {
     return "/" + parts.join("/");
@@ -157,6 +201,8 @@ QString ContextKitPath::toQtPath() const
 bool ContextKitPath::operator==(const ContextKitPath &other) const
 {
     if (parts.size() != other.parts.size())
+        return false;
+    if (m_type != other.m_type)
         return false;
 
     for (int i = 0; i < parts.size(); i++)
@@ -170,6 +216,10 @@ bool ContextKitPath::includes(ContextKitPath &other) const
 {
     // can't include things smaller than you
     if (other.parts.size() < parts.size())
+        return false;
+
+    // can't include paths of different type
+    if (other.m_type != m_type)
         return false;
 
     // root path includes all others
@@ -231,7 +281,7 @@ static QString comify(const QString &organization)
 void ContextKitHandle::insertRead(const ContextKitPath &path)
 {
     if (!readProps.contains(path.toQtPath())) {
-        ContextProperty *prop = new ContextProperty(path.toCKPath());
+        ContextProperty *prop = new ContextProperty(path.toNative());
         connect(prop, SIGNAL(valueChanged()),
                 this, SIGNAL(valueChanged()));
         readProps.insert(path.toQtPath(), prop);
@@ -247,9 +297,16 @@ void ContextKitHandle::updateSubtrees()
     }
 }
 
-ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path)
+ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path,
+                                   QValueSpace::LayerOptions opts)
 {
-    this->path = ContextKitPath(path);
+    if (opts & QValueSpace::PermanentLayer)
+        this->path = ContextKitPath(path, ContextKitPath::DotPath);
+    else
+        this->path = ContextKitPath(path, ContextKitPath::SlashPath);
+
+    if (parent)
+        this->path = parent->path + this->path;
 
     updateSubtrees();
     connect(ContextRegistryInfo::instance(), SIGNAL(changed()),
@@ -283,7 +340,7 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
         qWarning("No application name specified, registering on DBUS as "
                  "'unknown-application'");
     } else {
-        app.replace(QLatin1Char(' '), QLatin1Char('-'));
+        app.replace(QRegExp("[^0-9a-zA-Z]"), "");
         javaPackageName += app;
     }
 
@@ -317,14 +374,12 @@ bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
-        service->stop();
-
-        QString pth = p.toCKPath();
-        qDebug() << "creating new property with path " << pth;
+        QString pth = p.toNative();
 
         if (!p.isRegistered())
-            qCritical("ContextKit: providing an unregistered path, clients "
-                      "may not be able to connect to %s", qPrintable(pth));
+            return false;
+
+        service->stop();
 
         prop = new ContextProvider::Property(*service, pth);
         writeProps.insert(p.toQtPath(), prop);
@@ -342,14 +397,12 @@ bool ContextKitHandle::unsetValue(const QString &path)
 
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop) {
-        service->stop();
-
-        QString pth = p.toCKPath();
-        qDebug() << "creating new property with path " << pth;
+        QString pth = p.toNative();
 
         if (!p.isRegistered())
-            qCritical("ContextKit: providing an unregistered path, clients "
-                      "may not be able to connect to %s", qPrintable(pth));
+            return false;
+
+        service->stop();
 
         prop = new ContextProvider::Property(*service, pth);
         writeProps.insert(p.toQtPath(), prop);
@@ -386,20 +439,14 @@ QSet<QString> ContextKitHandle::children()
     return kids;
 }
 
-QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitLayer);
-
 ContextKitLayer::ContextKitLayer()
 {
+    qDBusRegisterMetaType<float>();
+    qDBusRegisterMetaType<QChar>();
 }
 
 ContextKitLayer::~ContextKitLayer()
 {
-}
-
-Q_GLOBAL_STATIC(ContextKitLayer, contextKitLayer);
-ContextKitLayer *ContextKitLayer::instance()
-{
-    return contextKitLayer();
 }
 
 ContextKitHandle *ContextKitLayer::handleToCKHandle(Handle handle)
@@ -415,36 +462,17 @@ void ContextKitLayer::sync()
     QCoreApplication::processEvents();
 }
 
-QString ContextKitLayer::name()
-{
-    return "ContextKit Layer";
-}
-
 bool ContextKitLayer::startup(Type)
 {
     return true;
-}
-
-QUuid ContextKitLayer::id()
-{
-    return QVALUESPACE_CONTEXTKIT_LAYER;
-}
-
-unsigned int ContextKitLayer::order()
-{
-    return 0;
-}
-
-LayerOptions ContextKitLayer::layerOptions() const
-{
-    return TransientLayer | ReadOnlyLayer;
 }
 
 QAbstractValueSpaceLayer::Handle ContextKitLayer::item(Handle parent,
                                                        const QString &subPath)
 {
     ContextKitHandle *parentHandle = handleToCKHandle(parent);
-    ContextKitHandle *h = new ContextKitHandle(parentHandle, subPath);
+    ContextKitHandle *h = new ContextKitHandle(parentHandle, subPath,
+                                               this->layerOptions());
     return reinterpret_cast<Handle>(h);
 }
 
@@ -518,8 +546,7 @@ bool ContextKitLayer::removeSubTree(QValueSpacePublisher *vsp, Handle handle)
     if (!h)
         return false;
 
-    // this is far from perfect, just removes all values inside this one
-    // can't remove sub-trees properly as there's no way to discover them
+    // TODO: fix this up
     foreach (QString kid, h->children())
         if (!h->unsetValue(kid)) return false;
 
@@ -542,6 +569,61 @@ QSet<QString> ContextKitLayer::children(Handle handle)
     ContextKitHandle *h = handleToCKHandle(handle);
     return h->children();
 }
+
+QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitNonCoreLayer);
+Q_GLOBAL_STATIC(ContextKitNonCoreLayer, contextKitNonCoreLayer);
+ContextKitNonCoreLayer *ContextKitNonCoreLayer::instance()
+{
+    return contextKitNonCoreLayer();
+}
+
+QValueSpace::LayerOptions ContextKitNonCoreLayer::layerOptions() const
+{
+    return WritableLayer | TransientLayer;
+}
+
+QString ContextKitNonCoreLayer::name()
+{
+    return "ContextKit Non-Core Layer";
+}
+
+unsigned int ContextKitNonCoreLayer::order()
+{
+    return 0;
+}
+
+QUuid ContextKitNonCoreLayer::id()
+{
+    return QVALUESPACE_CONTEXTKITNONCORE_LAYER;
+}
+
+QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitCoreLayer);
+Q_GLOBAL_STATIC(ContextKitCoreLayer, contextKitCoreLayer);
+ContextKitCoreLayer *ContextKitCoreLayer::instance()
+{
+    return contextKitCoreLayer();
+}
+
+QValueSpace::LayerOptions ContextKitCoreLayer::layerOptions() const
+{
+    return WritableLayer | PermanentLayer;
+}
+
+QString ContextKitCoreLayer::name()
+{
+    return "ContextKit Core Layer";
+}
+
+unsigned int ContextKitCoreLayer::order()
+{
+    return 1;
+}
+
+QUuid ContextKitCoreLayer::id()
+{
+    return QVALUESPACE_CONTEXTKITCORE_LAYER;
+}
+
 
 #include "moc_contextkitlayer_p.cpp"
 
