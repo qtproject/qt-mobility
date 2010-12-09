@@ -400,14 +400,14 @@ void tst_QValueSpacePublisher::testSignals_data()
         QTest::newRow("/testSignals /testSignals/key")
             << layer
             << QString("/testSignals")
-            << QString("/testSignals")
-            << QString("key");
+            << QString("/testSignals/key")
+            << QString("/key");
 
         QTest::newRow("/testSignals/key /testSignals/key")
             << layer
             << QString("/testSignals/key")
-            << QString("/testSignals")
-            << QString("key");
+            << QString("/testSignals/key")
+            << QString();
     }
 
     if (!foundSupported)
