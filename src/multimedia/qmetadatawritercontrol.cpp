@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMetaDataWriterControl class provides write access to the
     meta-data of a QMediaService's media.
 

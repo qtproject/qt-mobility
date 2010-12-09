@@ -85,18 +85,6 @@ QBluetoothTransferManager::~QBluetoothTransferManager()
 {
 }
 
-/*!
-    Sends the contents of \a data to the remote device \a request and returns a new
-    QBluetoothTransferReply, that can be used to track the request's progress.
-*/
-QBluetoothTransferReply *QBluetoothTransferManager::put(const QBluetoothTransferRequest &request,
-                                                        QIODevice *data)
-{
-    Q_UNUSED(request);
-    Q_UNUSED(data);
-
-    return 0;
-}
 
 #include "moc_qbluetoothtransfermanager.cpp"
 

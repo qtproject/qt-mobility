@@ -69,8 +69,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 {
     m_stackedWidget = new QStackedWidget(this);
 
-    m_monthPage = new MonthPage(m_stackedWidget);
     m_dayPage = new DayPage(m_stackedWidget);
+    m_monthPage = new MonthPage(m_stackedWidget);
     m_eventEditPage = new EventEditPage(m_stackedWidget);
     m_todoEditPage = new TodoEditPage(m_stackedWidget);
     m_journalEditPage = new JournalEditPage(m_stackedWidget);
@@ -149,12 +149,20 @@ void CalendarDemo::buildMenu()
     #endif
 #endif
     // Add editing options in the menu for Symbian (other platforms get buttons)
-    QAction* addEventAction = optionsMenu->addAction("Add E&vent");
-    connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
-    QAction* addTodoAction = optionsMenu->addAction("Add &Todo");
-    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
-    QAction* addJournalAction = optionsMenu->addAction("Add &Journal");
-    connect(addJournalAction, SIGNAL(triggered(bool)), this, SLOT(addNewJournal()));
+    QOrganizerManager defaultManager;
+    QStringList supportedItemTypes = defaultManager.supportedItemTypes();
+    if (supportedItemTypes.contains(QOrganizerItemType::TypeEvent)) {
+        QAction* addEventAction = optionsMenu->addAction("Add E&vent");
+        connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    }
+    if (supportedItemTypes.contains(QOrganizerItemType::TypeTodo)) {
+        QAction* addTodoAction = optionsMenu->addAction("Add &Todo");
+        connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
+    }
+    if (supportedItemTypes.contains(QOrganizerItemType::TypeJournal)) {
+        QAction* addJournalAction = optionsMenu->addAction("Add &Journal");
+        connect(addJournalAction, SIGNAL(triggered(bool)), this, SLOT(addNewJournal()));
+    }
     optionsMenu->addSeparator();
     QAction* editAction = optionsMenu->addAction("&Edit");
     connect(editAction, SIGNAL(triggered(bool)), this, SLOT(editItem()));

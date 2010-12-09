@@ -33,6 +33,7 @@ PUBLIC_HEADERS += \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
+    qcontactobserver.h \
     qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
@@ -54,6 +55,7 @@ PRIVATE_HEADERS += \
     qcontactid_p.h \
     qcontactmanager_p.h \
     qcontactmanagerenginev2wrapper_p.h \
+    qcontactmanagerenginev3wrapper_p.h \
     qcontactrelationship_p.h \
     qcontactsortorder_p.h
 
@@ -77,6 +79,8 @@ SOURCES += \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
     qcontactmanagerenginev2wrapper_p.cpp \
+    qcontactmanagerenginev3wrapper_p.cpp \
+    qcontactobserver.cpp \
     qcontactrelationship.cpp \
     qcontactsortorder.cpp
 
@@ -88,7 +92,7 @@ maemo5 {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=maemo5
 }
 
-maemo6 {
+maemo6|meego {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
 }
 
@@ -132,5 +136,5 @@ simulator {
 
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
 
-CONFIG += app
+CONFIG += middleware
 include(../../features/deploy.pri)

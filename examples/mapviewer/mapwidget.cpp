@@ -47,6 +47,7 @@ QTM_USE_NAMESPACE
 
 // TODO: Some of these could be exposed in a GUI and should probably be put elsewhere in that case (and made non-const)
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+// Devices
 static const bool enableKineticPanning = true;
 static const qreal kineticPanningHalflife = 200.0; // time until kinetic panning speed slows down to 50%, in msec
 static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
@@ -55,6 +56,7 @@ static const qreal kineticPanSpeedThreshold = 0.02; // minimum panning speed, in
 static const int kineticPanningResolution = 75; // temporal resolution. Smaller values take more CPU but improve visual quality
 static const int holdTimeThreshold = 200; // maximum time between last mouse move and mouse release for kinetic panning to kick in
 #else
+// Desktop
 static const bool enableKineticPanning = true;
 static const qreal kineticPanningHalflife = 300.0; // time until kinetic panning speed slows down to 50%, in msec
 static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
@@ -69,12 +71,15 @@ MapWidget::MapWidget(QGeoMappingManager *manager) :
         coordQueryState(false),
         panActive(false),
         kineticTimer(new QTimer),
+        m_lastHoveredMapObject(0),
         lastCircle(0)
 {
     for (int i = 0; i < 5; ++i) mouseHistory.append(MouseHistoryEntry());
 
     connect(kineticTimer, SIGNAL(timeout()), this, SLOT(kineticTimerEvent()));
     kineticTimer->setInterval(kineticPanningResolution);
+
+    setAcceptHoverEvents(true);
 }
 
 MapWidget::~MapWidget() {}
@@ -141,6 +146,48 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
     event->accept();
 }
+
+void MapWidget::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
+{
+    QGeoMapObject* objectAtCursor = 0;
+    if (event) {
+        QList<QGeoMapObject*> objectsAtCursor = mapObjectsAtScreenPosition(event->scenePos());
+        if (!objectsAtCursor.isEmpty())
+            objectAtCursor = objectsAtCursor.last();
+    }
+
+    if (m_lastHoveredMapObject == objectAtCursor)
+        return;
+
+    // unhover the old object if applicable
+    if (m_lastHoveredMapObject) {
+        disconnect(m_lastHoveredMapObject, SIGNAL(destroyed()), this, SLOT(hoveredMapObjectDestroyed()));
+
+        m_lastHoveredMapObject->setProperty("pen", m_lastHoveredMapObjectPen);
+    }
+
+    m_lastHoveredMapObject = objectAtCursor;
+
+    // hover the new object if applicable
+    if (m_lastHoveredMapObject) {
+        m_lastHoveredMapObjectPen = m_lastHoveredMapObject->property("pen").value<QPen>();
+        QPen hoverPen = m_lastHoveredMapObjectPen;
+        hoverPen.setColor(Qt::green);
+        m_lastHoveredMapObject->setProperty("pen", hoverPen);
+
+        connect(m_lastHoveredMapObject, SIGNAL(destroyed()), this, SLOT(hoveredMapObjectDestroyed()));
+    }
+}
+
+void MapWidget::hoveredMapObjectDestroyed()
+{
+    m_lastHoveredMapObject = 0;
+}
+void MapWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+    hoverMoveEvent(0);
+}
+
 
 void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {

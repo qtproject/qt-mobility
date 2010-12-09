@@ -155,11 +155,14 @@ public:
 
 Q_SIGNALS:
     void changed();
+    void propertiesChanged(QString,QVariant);
 protected:
     QString path;
     QVariant getProperty(const QString &);
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+private:
+    QDBusInterface *propertiesInterface;
 };
 
 class QUPowerDeviceInterface : public  QDBusAbstractInterface
@@ -196,11 +199,18 @@ public:
 
 Q_SIGNALS:
     void changed();
+    void propertyChanged(QString,QVariant);
+
 protected:
     QString path;
     QVariant getProperty(const QString &);
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+private:
+    QDBusInterface *propertiesInterface;
+    QVariantMap pMap;
+private Q_SLOTS:
+    void propChanged();
 };
 
 #endif

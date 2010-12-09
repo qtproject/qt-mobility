@@ -3,9 +3,12 @@ TEMPLATE = app
 TARGET = tst_qversit
 
 symbian*: {
-    VERSIT_TESTDATA.sources = testdata/*
-    VERSIT_TESTDATA.path = testdata
-    DEPLOYMENT += VERSIT_TESTDATA
+    ICAL_TESTDATA.sources = testdata_ics/*
+    ICAL_TESTDATA.path = testdata_ics
+    DEPLOYMENT += ICAL_TESTDATA
+    VCARD_TESTDATA.sources = testdata_vcf/*
+    VCARD_TESTDATA.path = testdata_vcf
+    DEPLOYMENT += VCARD_TESTDATA
 }
 
 wince* {

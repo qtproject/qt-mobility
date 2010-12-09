@@ -90,6 +90,7 @@ public:
         :m_manager(0),
         m_fetchHint(0),
         m_filter(0),
+        m_fetchRequest(0),
         m_autoUpdate(true),
         m_updatePending(false),
         m_componentCompleted(false)
@@ -108,6 +109,8 @@ public:
     QList<QDeclarativeContactSortOrder*> m_sortOrders;
     QDeclarativeContactFilter* m_filter;
 
+    QContactFetchRequest* m_fetchRequest;
+    QList<QContactLocalId> m_updatedContactIds;
     QVersitReader m_reader;
     QVersitWriter m_writer;
     QStringList m_importProfiles;
@@ -126,12 +129,11 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     roleNames.insert(ContactRole, "contact");
     setRoleNames(roleNames);
 
-    connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
-    connect(this, SIGNAL(filterChanged()), SLOT(fetchAgain()));
-    connect(this, SIGNAL(fetchHintChanged()), SLOT(fetchAgain()));
-    connect(this, SIGNAL(sortOrdersChanged()), SLOT(fetchAgain()));
+    connect(this, SIGNAL(managerChanged()), SLOT(update()));
+    connect(this, SIGNAL(filterChanged()), SLOT(update()));
+    connect(this, SIGNAL(fetchHintChanged()), SLOT(update()));
+    connect(this, SIGNAL(sortOrdersChanged()), SLOT(update()));
     
-    d->m_manager = new QContactManager();
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
@@ -155,8 +157,8 @@ void QDeclarativeContactModel::setManager(const QString& managerName)
 
     d->m_manager = new QContactManager(managerName);
 
-    connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
-    connect(d->m_manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(fetchAgain()));
+    connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(update()));
+    connect(d->m_manager, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SLOT(update()));
     connect(d->m_manager, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SLOT(contactsRemoved(QList<QContactLocalId>)));
     connect(d->m_manager, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SLOT(contactsChanged(QList<QContactLocalId>)));
     emit managerChanged();
@@ -164,14 +166,11 @@ void QDeclarativeContactModel::setManager(const QString& managerName)
 void QDeclarativeContactModel::componentComplete()
 {
     d->m_componentCompleted = true;
-    if (!d->m_manager) {
-        d->m_manager = new QContactManager();
-        //connectManager();
-    }
-    if (d->m_autoUpdate) {
-        //TODO
-        //scheduleUpdate();
-    }
+    if (!d->m_manager)
+        setManager(QString());
+
+    if (d->m_autoUpdate)
+        update();
 }
 /*!
   \qmlproperty bool ContactModel::autoUpdate
@@ -193,7 +192,20 @@ bool QDeclarativeContactModel::autoUpdate() const
 
 void QDeclarativeContactModel::update()
 {
-    //TODO
+    if (!d->m_componentCompleted || d->m_updatePending)
+        return;
+    d->m_updatePending = true; // Disallow possible duplicate request triggering
+    QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
+}
+
+void QDeclarativeContactModel::cancelUpdate()
+{
+    if (d->m_fetchRequest) {
+        d->m_fetchRequest->cancel();
+        d->m_fetchRequest->deleteLater();
+        d->m_fetchRequest = 0;
+        d->m_updatePending = false;
+    }
 }
 
 /*!
@@ -205,6 +217,8 @@ void QDeclarativeContactModel::update()
   */
 QString QDeclarativeContactModel::error() const
 {
+    if (!d->m_manager)
+        return QLatin1String("Invalid contact manager");
     switch (d->m_manager->error()) {
     case QContactManager::DoesNotExistError:
         return QLatin1String("DoesNotExist");
@@ -343,7 +357,7 @@ void QDeclarativeContactModel::setFilter(QDeclarativeContactFilter* filter)
 {
     d->m_filter = filter;
     if (d->m_filter) {
-        connect(d->m_filter, SIGNAL(valueChanged()), SLOT(fetchAgain()));
+        connect(d->m_filter, SIGNAL(filterChanged()), SLOT(update()));
         emit filterChanged();
     }
 }
@@ -378,8 +392,40 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
   */
 QDeclarativeListProperty<QDeclarativeContact> QDeclarativeContactModel::contacts()
 {
-    return QDeclarativeListProperty<QDeclarativeContact>(this, d->m_contacts);
+    return QDeclarativeListProperty<QDeclarativeContact>(this,
+                                                         0,
+                                                         contacts_append,
+                                                         contacts_count,
+                                                         contacts_at,
+                                                         contacts_clear);
 }
+
+
+
+void QDeclarativeContactModel::contacts_append(QDeclarativeListProperty<QDeclarativeContact>* prop, QDeclarativeContact* contact)
+{
+    Q_UNUSED(prop);
+    Q_UNUSED(contact);
+    qWarning() << "ContactModel: appending contacts is not currently supported";
+}
+
+int QDeclarativeContactModel::contacts_count(QDeclarativeListProperty<QDeclarativeContact>* prop)
+{
+    return static_cast<QDeclarativeContactModel*>(prop->object)->d->m_contacts.count();
+}
+
+QDeclarativeContact* QDeclarativeContactModel::contacts_at(QDeclarativeListProperty<QDeclarativeContact>* prop, int index)
+{
+    return static_cast<QDeclarativeContactModel*>(prop->object)->d->m_contacts.at(index);
+}
+
+void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarativeContact>* prop)
+{
+    QDeclarativeContactModel* model = static_cast<QDeclarativeContactModel*>(prop->object);
+    model->clearContacts();
+    emit model->contactsChanged();
+}
+
 
 /*!
   \qmlproperty QDeclarativeListProperty ContactModel::sortOrders
@@ -390,7 +436,12 @@ QDeclarativeListProperty<QDeclarativeContact> QDeclarativeContactModel::contacts
   */
 QDeclarativeListProperty<QDeclarativeContactSortOrder> QDeclarativeContactModel::sortOrders()
 {
-    return QDeclarativeListProperty<QDeclarativeContactSortOrder>(this, d->m_sortOrders);
+    return QDeclarativeListProperty<QDeclarativeContactSortOrder>(this,
+                                                                  0,
+                                                                  sortOrder_append,
+                                                                  sortOrder_count,
+                                                                  sortOrder_at,
+                                                                  sortOrder_clear);
 }
 
 void QDeclarativeContactModel::startImport(QVersitReader::State state)
@@ -406,7 +457,7 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
         if (d->m_manager) {
             if (d->m_manager->saveContacts(&contacts))
                 qWarning() << "contacts imported.";
-                fetchAgain();
+                update();
         }
     }
 }
@@ -417,65 +468,88 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
   */
 void QDeclarativeContactModel::fetchContacts(const QList<QContactLocalId>& contactIds)
 {
-    QList<QContactSortOrder> sortOrders;
-    foreach (QDeclarativeContactSortOrder* so, d->m_sortOrders) {
-        sortOrders.append(so->sortOrder());
-    }
-    QContactFetchRequest* req = new QContactFetchRequest(this);
-    req->setManager(d->m_manager);
-    req->setSorting(sortOrders);
-
-    QContactLocalIdFilter filter;
-    filter.setIds(contactIds);
-    req->setFilter(filter);
-
-    req->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QContactFetchHint());
-
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(requestUpdated()));
-
-    req->start();
+    d->m_updatedContactIds = contactIds;
+    d->m_updatePending = true;
+    QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
+}
+void QDeclarativeContactModel::clearContacts()
+{
+    qDeleteAll(d->m_contacts);
+    d->m_contacts.clear();
+    d->m_contactMap.clear();
 }
 
 void QDeclarativeContactModel::fetchAgain()
 {
-    d->m_contacts.clear();
-    d->m_contactMap.clear();
+    cancelUpdate();
+    if (d->m_updatedContactIds.isEmpty()) //fetch all contacts
+        clearContacts();
 
     QList<QContactSortOrder> sortOrders;
     foreach (QDeclarativeContactSortOrder* so, d->m_sortOrders) {
         sortOrders.append(so->sortOrder());
     }
-    QContactFetchRequest* req = new QContactFetchRequest(this);
-    req->setManager(d->m_manager);
-    req->setSorting(sortOrders);
+    d->m_fetchRequest = new QContactFetchRequest(this);
+    d->m_fetchRequest->setManager(d->m_manager);
+    d->m_fetchRequest->setSorting(sortOrders);
 
-    req->setFilter(d->m_filter? d->m_filter->filter() : QContactFilter());
-    req->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QContactFetchHint());
+    if (!d->m_updatedContactIds.isEmpty()) {
+        QContactLocalIdFilter f;
+        f.setIds(d->m_updatedContactIds);
+        d->m_fetchRequest->setFilter(f);
+        d->m_updatedContactIds.clear();
+    } else if (d->m_filter){
+        d->m_fetchRequest->setFilter(d->m_filter->filter());
+    } else {
+        d->m_fetchRequest->setFilter(QContactFilter());
+    }
 
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(requestUpdated()));
+    d->m_fetchRequest->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QContactFetchHint());
 
-    req->start();
+    connect(d->m_fetchRequest,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(requestUpdated()));
+
+    d->m_fetchRequest->start();
 }
 
 void QDeclarativeContactModel::requestUpdated()
 {
+    //Don't use d->m_fetchRequest, this pointer might be invalid if cancelUpdate() was called, use QObject::sender() instead.
     QContactFetchRequest* req = qobject_cast<QContactFetchRequest*>(QObject::sender());
     if (req && req->isFinished()) {
         QList<QContact> contacts = req->contacts();
+        if (d->m_contacts.isEmpty()) {
+            QList<QDeclarativeContact*> dcs;
+            foreach (QContact c, contacts) {
+                QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
+                dcs.append(dc);
+                d->m_contactMap.insert(c.localId(), dc);
+            }
 
-        QList<QDeclarativeContact*> dcs;
-        foreach(QContact c, contacts) {
-            QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
-            dcs.append(dc);
-            d->m_contactMap.insert(c.localId(), dc);
+            reset();
+            beginInsertRows(QModelIndex(), 0, req->contacts().count());
+            d->m_contacts = dcs;
+            endInsertRows();
+        } else {
+            //Partial updating, insert the fetched contacts into the the exist contact list.
+            QList<QDeclarativeContact*> dcs;
+            foreach (QContact c, contacts) {
+                if (d->m_contactMap.contains(c.localId())) {
+                    d->m_contactMap.value(c.localId())->setContact(c);
+                } else {
+                    QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
+                    dcs.append(dc);
+                    d->m_contactMap.insert(c.localId(), dc);
+                }
+            }
+            beginInsertRows(QModelIndex(), d->m_contacts.count(), req->contacts().count());
+            d->m_contacts.append(dcs);
+            endInsertRows();
         }
-
-        reset();
-        beginInsertRows(QModelIndex(), 0, req->contacts().count());
-        d->m_contacts = dcs;
-        endInsertRows();
         emit contactsChanged();
+        emit errorChanged();
         req->deleteLater();
+        d->m_fetchRequest = 0;
+        d->m_updatePending = false;
     }
 }
 
@@ -513,13 +587,14 @@ void QDeclarativeContactModel::contactsSaved()
                     //new saved contact
                     QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()) , this);
                     d->m_contactMap.insert(c.localId(), dc);
-                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count());
+                    beginInsertRows(QModelIndex(), d->m_contacts.count(), d->m_contacts.count() + 1);
                     d->m_contacts.append(dc);
                     endInsertRows();
                 }
             }
         }
         req->deleteLater();
+        emit errorChanged();
     }
 }
 
@@ -569,39 +644,44 @@ void QDeclarativeContactModel::contactsRemoved(const QList<QContactLocalId>& ids
             }
         }
     }
+    emit errorChanged();
     if (emitSignal)
         emit contactsChanged();
 }
 
 void QDeclarativeContactModel::contactsChanged(const QList<QContactLocalId>& ids)
 {
-    QList<QContactLocalId> updatedIds;
-    foreach (const QContactLocalId& id, ids) {
-        if (d->m_contactMap.contains(id)) {
-            updatedIds << id;
+    if (d->m_autoUpdate) {
+        QList<QContactLocalId> updatedIds;
+        foreach (const QContactLocalId& id, ids) {
+            if (d->m_contactMap.contains(id)) {
+                updatedIds << id;
+            }
         }
-    }
 
-    if (updatedIds.count() > 0)
-        fetchContacts(updatedIds);
+        if (updatedIds.count() > 0)
+            fetchContacts(updatedIds);
+    }
 }
 
 void QDeclarativeContactModel::contactsRemoved()
 {
-    QContactRemoveRequest* req = qobject_cast<QContactRemoveRequest*>(QObject::sender());
+    if (d->m_autoUpdate) {
+        QContactRemoveRequest* req = qobject_cast<QContactRemoveRequest*>(QObject::sender());
 
 
-    if (req->isFinished()) {
-        QList<QContactLocalId> ids = req->contactIds();
-        QList<int> errorIds = req->errorMap().keys();
-        QList<QContactLocalId> removedIds;
-        for( int i = 0; i < ids.count(); i++) {
-            if (!errorIds.contains(i))
-                removedIds << ids.at(i);
+        if (req->isFinished()) {
+            QList<QContactLocalId> ids = req->contactIds();
+            QList<int> errorIds = req->errorMap().keys();
+            QList<QContactLocalId> removedIds;
+            for (int i = 0; i < ids.count(); i++) {
+                if (!errorIds.contains(i))
+                    removedIds << ids.at(i);
+            }
+            if (!removedIds.isEmpty())
+                contactsRemoved(removedIds);
+            req->deleteLater();
         }
-        if (!removedIds.isEmpty())
-            contactsRemoved(removedIds);
-        req->deleteLater();
     }
 }
 
@@ -626,4 +706,51 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
     }
     return QVariant();
 }
+
+
+void QDeclarativeContactModel::sortOrder_append(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, QDeclarativeContactSortOrder *sortOrder)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+    if (model && sortOrder) {
+        QObject::connect(sortOrder, SIGNAL(sortOrderChanged()), model, SIGNAL(sortOrdersChanged()));
+        model->d->m_sortOrders.append(sortOrder);
+        emit model->sortOrdersChanged();
+    }
+}
+
+int  QDeclarativeContactModel::sortOrder_count(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+    if (model)
+        return model->d->m_sortOrders.size();
+    return 0;
+}
+QDeclarativeContactSortOrder * QDeclarativeContactModel::sortOrder_at(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p, int idx)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+
+    QDeclarativeContactSortOrder* sortOrder = 0;
+    if (model) {
+        int i = 0;
+        foreach (QDeclarativeContactSortOrder* s, model->d->m_sortOrders) {
+            if (i == idx) {
+                sortOrder = s;
+                break;
+            } else {
+                i++;
+            }
+        }
+    }
+    return sortOrder;
+}
+void  QDeclarativeContactModel::sortOrder_clear(QDeclarativeListProperty<QDeclarativeContactSortOrder> *p)
+{
+    QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(p->object);
+
+    if (model) {
+        model->d->m_sortOrders.clear();
+        emit model->sortOrdersChanged();
+    }
+}
+
 

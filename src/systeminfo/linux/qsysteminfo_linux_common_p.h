@@ -65,6 +65,7 @@
 #include "qsystemnetworkinfo.h"
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -97,7 +98,6 @@ public:
     QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemInfoLinuxCommonPrivate();
     QString currentLanguage() const;
-    QStringList availableLanguages() const {return QStringList();}
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
     QString currentCountryCode() const;
@@ -229,7 +229,7 @@ public:
     int getDPIHeight(int /*screen*/){return 0;};
     int physicalHeight(int /*screen*/){return 0;};
     int physicalWidth(int /*screen*/){return 0;};
-    bool backLightOn();
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -316,10 +316,9 @@ public:
     bool isKeyboardFlipOpen();//1.2
 
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(); //1.2
-    bool backLightOn(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
     QUuid hostId(); //1.2
-    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -332,7 +331,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 
 protected:
@@ -374,6 +373,87 @@ public:
 //    bool setScreenSaverInhibit() {return false;}
 //    bool isScreenLockEnabled() {return false;}
 //    bool isScreenSaverActive() {return false;}
+};
+
+
+class QSystemBatteryInfoLinuxCommonPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    explicit QSystemBatteryInfoLinuxCommonPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoLinuxCommonPrivate();
+
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
+    int startCurrentMeasurement(int rate);
+
+Q_SIGNALS:
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+    void batteryCurrentFlowChanged(int);
+
+    void currentFlowChanged(int);
+    void cumulativeCurrentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+    void voltageChanged(int);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+    QUDisksInterface *udisksIface;
+
+private Q_SLOTS:
+    void setConnection();
+    virtual void halChanged(int,QVariantList);
+    void getBatteryStats();
+    void timeout();
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+    void propertyChanged(const QString &, const QVariant &);
+#endif
+#endif
+private:
+
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+    QVariantMap pMap;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int  batteryLevel() const ;
+    QUPowerDeviceInterface *battery;
+
+
+
 };
 
 QTM_END_NAMESPACE

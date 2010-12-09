@@ -369,6 +369,11 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
     return writeDatagram(data,len);
 }
 
+qint64 QLlcpSocketPrivate::bytesAvailable() const
+{
+    return 0;
+}
+
 bool QLlcpSocketPrivate::waitForReadyRead(int msecs)
 {
     return m_state->WaitForReadyRead(msecs);

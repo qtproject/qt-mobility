@@ -178,7 +178,6 @@ public:
     SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const;
 
-
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
     bool isReadOnly(const QLandmarkCategoryId &id) const;

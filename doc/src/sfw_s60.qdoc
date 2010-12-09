@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -108,7 +108,7 @@ are mapped to the same database.
 
 There are different implementations for the both emulator and device because emulator doesn't support multiple
 applications running at the same time, (Known issue: \l {http://bugreports.qt.nokia.com/browse/QTBUG-2950}{QTBUG-2950})
-prior to Symbian^3. The dll approach must be used in the emulator environment and the exe approach instead of
+prior to Symbian. The dll approach must be used in the emulator environment and the exe approach instead of
 dll in the real device.
 
 Note! The greatest part of the S60 specific code is located under the symbian folder in a directory hierarchy of

@@ -44,6 +44,9 @@
 #include "qmessagecontentcontainer_symbian_p.h"
 #include <qmtmengine_symbian_p.h>
 #include <messagingutil_p.h>
+#ifdef FREESTYLEMAILUSED
+#include "qfsengine_symbian_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,9 +55,17 @@ QMessageContentContainer QMessageContentContainerPrivate::from(long int messageI
                                                                QByteArray &name,
                                                                QByteArray &mimeType,
                                                                QByteArray &mimeSubType,
+#ifdef FREESTYLEMAILUSED
+                                                               int size,
+                                                               EmailInterface::TMessageContentId fsContentId)
+#else
                                                                int size)
+#endif
 {
     QMessageContentContainer result;
+#ifdef FREESTYLEMAILUSED
+    result.d_ptr->_fsContentId = fsContentId;
+#endif
     result.d_ptr->_containingMessageId = messageId;
     result.d_ptr->_attachmentId = attachmentId;
     result.d_ptr->_name = name;
@@ -71,6 +82,11 @@ QMessageContentContainerPrivate& QMessageContentContainerPrivate::operator=(cons
     _message = other._message;
     _available = other._available;
     _size = other._size;
+#ifdef FREESTYLEMAILUSED
+    _contentRetrieved = other._contentRetrieved;
+    _freestyleAttachment = other._freestyleAttachment;
+    _fsContentId = other._fsContentId;
+#endif
     _attachments = other._attachments;
     _type = other._type;
     _subType = other._subType;
@@ -109,6 +125,10 @@ void QMessageContentContainerPrivate::clearContents()
     _filename = QByteArray();
     _available = false;
     _size = 0;
+#ifdef FREESTYLEMAILUSED
+    _contentRetrieved = true;
+    _fsContentId = EmailInterface::TMessageContentId();
+#endif
     _header.clear();
     _attachments.clear();
     _containingMessageId = 0;
@@ -150,6 +170,11 @@ void QMessageContentContainerPrivate::setHeaderField(const QByteArray &name, con
 QMessageContentContainer* QMessageContentContainerPrivate::attachment(const QMessageContentContainerId &id)
 {
     if (isMessage()) {
+#ifdef FREESTYLEMAILUSED
+        if (!_contentRetrieved) {
+            CFSEngine::instance()->retrieveMessageContentHeaders(*_message);
+        }
+#endif
         if (id == bodyContentId()) {
             return _message;
         } else {
@@ -167,6 +192,11 @@ QMessageContentContainer* QMessageContentContainerPrivate::attachment(const QMes
 const QMessageContentContainer* QMessageContentContainerPrivate::attachment(const QMessageContentContainerId &id) const
 {
     if (isMessage()) {
+#ifdef FREESTYLEMAILUSED
+        if (!_contentRetrieved) {
+            CFSEngine::instance()->retrieveMessageContentHeaders(*_message);
+        }
+#endif
         if (id == bodyContentId()) {
             return _message;
         } else {
@@ -235,6 +265,11 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
 
 QMessageContentContainerId QMessageContentContainerPrivate::appendContent(QMessageContentContainer& container)
 {
+#ifdef FREESTYLEMAILUSED
+    if ((_message != 0) && !_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*_message);
+    }
+#endif
     container.d_ptr->_id = QMessageContentContainerId(SymbianHelpers::addIdPrefix(QString::number(_attachments.count()+1),SymbianHelpers::EngineTypeMTM));
     _attachments.append(container);
     return container.d_ptr->_id;
@@ -242,6 +277,11 @@ QMessageContentContainerId QMessageContentContainerPrivate::appendContent(QMessa
 
 QMessageContentContainerId QMessageContentContainerPrivate::prependContent(QMessageContentContainer& container)
 {
+#ifdef FREESTYLEMAILUSED
+    if ((_message != 0) && !_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*_message);
+    }
+#endif
     _attachments.prepend(container);
     for (int i = 0; i < _attachments.count(); ++i) {
         _attachments[i].d_ptr->_id = QMessageContentContainerId(SymbianHelpers::addIdPrefix(QString::number(i+1),SymbianHelpers::EngineTypeMTM));
@@ -293,39 +333,92 @@ QMessageContentContainer::~QMessageContentContainer()
 
 QByteArray QMessageContentContainer::contentType() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_type;
 }
 
 QByteArray QMessageContentContainer::contentSubType() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_subType;
 }
 
 QByteArray QMessageContentContainer::contentCharset() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_charset;
 }
 
 QByteArray QMessageContentContainer::suggestedFileName() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_name;
 }
 
 bool QMessageContentContainer::isContentAvailable() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_available;
 }
 
 int QMessageContentContainer::size() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_size;
 }
 
 QString QMessageContentContainer::textContent() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentId != 0) {
+#ifdef FREESTYLEMAILUSED
+        if (d_ptr->_freestyleAttachment) {
+            CFSEngine* fsEngine = CFSEngine::instance();
+            const_cast<QString&>(d_ptr->_textContent) = fsEngine->attachmentTextContent(d_ptr->_containingMessageId,
+                                                                                        d_ptr->_fsContentId,
+                                                                                        d_ptr->_charset);
+            if (!d_ptr->_textContent.isEmpty() && d_ptr->_charset.isEmpty()) {
+                d_ptr->_charset = QMessage::preferredCharsetFor(d_ptr->_textContent);
+                if (d_ptr->_charset.isEmpty()) {
+                    d_ptr->_charset = "UTF-8";
+                }
+            }
+        } else {
+            CMTMEngine* mtmEngine = CMTMEngine::instance();
+            const_cast<QString&>(d_ptr->_textContent) = mtmEngine->attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentId, d_ptr->_charset);
+        }
+#else
         CMTMEngine* mtmEngine = CMTMEngine::instance();
         const_cast<QString&>(d_ptr->_textContent) = mtmEngine->attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentId, d_ptr->_charset);
+#endif
     }
     if (!d_ptr->_textContent.isEmpty()) {
         return d_ptr->_textContent;
@@ -341,9 +434,25 @@ QString QMessageContentContainer::textContent() const
 
 QByteArray QMessageContentContainer::content() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     if (d_ptr->_content.isEmpty() && d_ptr->_attachmentId != 0) {
+#ifdef FREESTYLEMAILUSED
+        if (d_ptr->_freestyleAttachment) {
+            CFSEngine* fsEngine = CFSEngine::instance();
+            const_cast<QByteArray&>(d_ptr->_content) = fsEngine->attachmentContent(d_ptr->_containingMessageId,
+                                                                                   d_ptr->_fsContentId );
+        } else {
+            CMTMEngine* mtmEngine = CMTMEngine::instance();
+            const_cast<QByteArray&>(d_ptr->_content) = mtmEngine->attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentId);
+        }
+#else
         CMTMEngine* mtmEngine = CMTMEngine::instance();
         const_cast<QByteArray&>(d_ptr->_content) = mtmEngine->attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentId);
+#endif
     }
 
     return d_ptr->_content;
@@ -364,6 +473,11 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
     QMessageContentContainerIdList ids;
 
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     if (d_ptr->isMessage()) {
         foreach (const QMessageContentContainer &container, d_ptr->_attachments) {
             ids.append(container.d_ptr->_id);
@@ -376,6 +490,11 @@ QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 QMessageContentContainer QMessageContentContainer::find(const QMessageContentContainerId &id) const
 {
     if (d_ptr->isMessage()) {
+#ifdef FREESTYLEMAILUSED
+        if (!d_ptr->_contentRetrieved) {
+            CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+        }
+#endif
         if (const QMessageContentContainer *container = d_ptr->attachment(id)) {
             return *container;
         }
@@ -395,6 +514,11 @@ bool QMessageContentContainer::contains(const QMessageContentContainerId &id) co
 
 QString QMessageContentContainer::headerFieldValue(const QByteArray &name) const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     if (it != d_ptr->_header.end()) {
         return it.value();
@@ -407,6 +531,11 @@ QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) 
 {
     QStringList values;
 
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     QMultiMap<QByteArray, QString>::const_iterator it = d_ptr->_header.find(name);
     while ((it != d_ptr->_header.end()) && (it.key() == name)) {
         values.append(it.value());
@@ -418,6 +547,11 @@ QStringList QMessageContentContainer::headerFieldValues(const QByteArray &name) 
 
 QList<QByteArray> QMessageContentContainer::headerFields() const
 {
+#ifdef FREESTYLEMAILUSED
+    if ((d_ptr->_message != 0) && !d_ptr->_contentRetrieved) {
+        CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
+    }
+#endif
     return d_ptr->_header.keys();
 }
 

@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -42,25 +42,47 @@
 
     \section1 Overview
 
-    The Organizer API enables a client to request calendar, schedule and personal data from local or remote backends. The QML Organizer Plugin delivers these capabilities in an easy to use form.
+    The Organizer API enables a client to request calendar, schedule and
+    personal data from local or remote backends. The QML Organizer Plugin
+    delivers these capabilities in an easy to use form.
 
     \section2 Organizer Items
-    The OrganizerItem element provides a generic interface for accessing events, todos, journals and notes. To actually access specific fields of an item, convenience sub elements of OrganizerItem are offered. These are Event, Todo, Journal and Note. Additionally, EventOccurrence and TodoOccurrence can be used for manipulating occurrences of event or todos.
+    The \l {OrganizerItem} element provides a generic interface for accessing
+    events, todos, journals and notes. To actually access specific fields
+    of an item, convenience sub elements of OrganizerItem are offered.
+    These are Event, Todo, Journal and Note. Additionally, EventOccurrence
+    and TodoOccurrence can be used for manipulating occurrences of event or
+    todos.
 
     \section2 Recurring Items
-    A recurring item is an item that occurs more than once; for example, a meeting that occurs every week for the next 10 weeks. A recurring item is created by creating an Event or Todo and setting a RecurrenceRule on it to specify the rules for when it should recur. see {ItemReccurrence} and {ReccurrenceRule} for detail references.
+    A recurring item is an item that occurs more than once; for example, a
+    meeting that occurs every week for the next 10 weeks. A recurring item
+    is created by creating an Event or Todo and setting a RecurrenceRule
+    on it to specify the rules for when it should recur. See
+    \l {Recurrence} and \l {RecurrenceRule} for detail references.
 
     \section2 Collections
-    Every item stored in a organizer store belongs to exactly one collection. A collection can have properties such as a name, a "color", a specified icon, a description, and so on. Collections may be added or removed if the backend store supports those operations, or modified. There will always be at least one collection in an organizer, and the organizer manager will always have a default collection into which items are saved if no other collection is specified.
+    Every item stored in a organizer store belongs to exactly one
+    collection. A collection can have properties such as a name, a "color",
+    a specified icon, a description, and so on. Collections may be added or
+    removed if the backend store supports those operations, or modified.
+    There will always be at least one collection in an organizer, and the
+    organizer manager will always have a default collection into which
+    items are saved if no other collection is specified.
 
     \section2 Organizer Item Details
-    Several sub elements of ItemDetail are provided as part of the Qt Mobility Organizer API. They are general in design but are intended to fulfill specific use-cases. Please note that certain backends may choose not to support one or more of these elements as they appear here; they may offer their own which provide similar functionality.
+    Several sub elements of ItemDetail are provided as part of the
+    Qt Mobility Organizer API. They are general in design but are intended
+    to fulfill specific use-cases. Please note that certain backends may
+    choose not to support one or more of these elements as they appear
+    here; they may offer their own which provide similar functionality.
 
     \section2 Organizer Filters
-    The Organizer QML plugin supplies filters to search for organizer items with particular values for various properties in the organizer item details.
+    The Organizer QML plugin supplies filters to search for organizer items
+    with particular values for various properties in the organizer item details.
 
     \section2 Organizer Elements
-    Note: At the time of the Qt Mobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
+    \note At the time of the Qt Mobility 1.1 release the QML support for the Organizer API is incomplete and likely to be refined and improved in the next patch release.
     
     \annotatedlist qml-organizer
 */

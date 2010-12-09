@@ -54,39 +54,46 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    The circle is specified in terms of a central coordinate and 
+    The circle is specified in terms of a central coordinate and
     a radius in metres.
 
-    If \l center and \l radius are not specified and valid the 
+    If \l center and \l radius are not specified and valid the
     circle will not be displayed.
 
     The MapCircle element is part of the \bold{QtMobility.location 1.1} module.
 */
 
-QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
+QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject(QDeclarativeItem *parent)
+    : QDeclarativeGeoMapObject(parent)
 {
-    m_center = new QDeclarativeCoordinate(this);
+    circle_ = new QGeoMapCircleObject();
+    setMapObject(circle_);
 
-    connect(m_center,
+    connect(circle_,
+            SIGNAL(radiusChanged(qreal)),
+            this,
+            SIGNAL(radiusChanged(qreal)));
+
+    connect(&center_,
             SIGNAL(latitudeChanged(double)),
             this,
             SLOT(centerLatitudeChanged(double)));
 
-    connect(m_center,
+    connect(&center_,
             SIGNAL(longitudeChanged(double)),
             this,
             SLOT(centerLongitudeChanged(double)));
 
-    connect(m_center,
+    connect(&center_,
             SIGNAL(altitudeChanged(double)),
             this,
             SLOT(centerAltitudeChanged(double)));
 
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(colorChanged(QColor)),
             this,
             SLOT(borderColorChanged(QColor)));
-    connect(&m_border,
+    connect(&border_,
             SIGNAL(widthChanged(int)),
             this,
             SLOT(borderWidthChanged(int)));
@@ -94,6 +101,7 @@ QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 
 QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 {
+    delete circle_;
 }
 
 /*!
@@ -104,43 +112,53 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
     The default value is an invalid coordinate.
 */
 
-void QDeclarativeGeoMapCircleObject::setDeclarativeCenter(const QDeclarativeCoordinate *center)
+void QDeclarativeGeoMapCircleObject::setCenter(const QDeclarativeCoordinate *center)
 {
-    if (m_center->coordinate() == center->coordinate())
+    if (center_.coordinate() == center->coordinate())
         return;
 
-    m_center->setCoordinate(center->coordinate());
-    setCenter(center->coordinate());
+    center_.setCoordinate(center->coordinate());
+    circle_->setCenter(center->coordinate());
 
-    emit declarativeCenterChanged(m_center);
+    emit centerChanged(&center_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::declarativeCenter()
+QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::center()
 {
-    return m_center;
+    return &center_;
 }
 
 void QDeclarativeGeoMapCircleObject::centerLatitudeChanged(double /*latitude*/)
 {
-    setCenter(m_center->coordinate());
+    circle_->setCenter(center_.coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::centerLongitudeChanged(double /*longitude*/)
 {
-    setCenter(m_center->coordinate());
+    circle_->setCenter(center_.coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::centerAltitudeChanged(double /*altitude*/)
 {
-    setCenter(m_center->coordinate());
+    circle_->setCenter(center_.coordinate());
+}
+
+void QDeclarativeGeoMapCircleObject::setRadius(qreal radius)
+{
+    circle_->setRadius(radius);
+}
+
+qreal QDeclarativeGeoMapCircleObject::radius() const
+{
+    return circle_->radius();
 }
 
 /*!
     \qmlproperty qreal MapCircle::radius
 
     This property holds the radius of the circle in metres.
-    
-    A negative value is used to indicate that the radius is invalid and 
+
+    A negative value is used to indicate that the radius is invalid and
     the default value is a radius of -1.0.
 */
 
@@ -154,18 +172,18 @@ void QDeclarativeGeoMapCircleObject::centerAltitudeChanged(double /*altitude*/)
 
 void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
 {
-    if (m_color == color)
+    if (color_ == color)
         return;
 
-    m_color = color;
+    color_ = color;
     QBrush m_brush(color);
-    setBrush(m_brush);
-    emit colorChanged(m_color);
+    circle_->setBrush(m_brush);
+    emit colorChanged(color_);
 }
 
 QColor QDeclarativeGeoMapCircleObject::color() const
 {
-    return m_color;
+    return color_;
 }
 
 /*!
@@ -182,25 +200,25 @@ QColor QDeclarativeGeoMapCircleObject::color() const
 */
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapCircleObject::border()
 {
-    return &m_border;
+    return &border_;
 }
 
 void QDeclarativeGeoMapCircleObject::borderColorChanged(const QColor &color)
 {
-    QPen p = pen();
+    QPen p = circle_->pen();
     p.setColor(color);
-    setPen(p);
+    circle_->setPen(p);
 }
 
 void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 {
-    QPen p = pen();
+    QPen p = circle_->pen();
     p.setWidth(width);
     if (width == 0)
         p.setStyle(Qt::NoPen);
     else
         p.setStyle(Qt::SolidLine);
-    setPen(p);
+    circle_->setPen(p);
 }
 
 /*!
@@ -208,21 +226,21 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 
     This property holds the z-value of the circle.
 
-    Map objects are drawn in z-value order, and objects with the 
+    Map objects are drawn in z-value order, and objects with the
     same z-value will be drawn in insertion order.
 */
 
 /*!
     \qmlproperty bool MapCircle::visible
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     circle is visible.
 */
 
 /*!
     \qmlproperty bool MapCircle::selected
 
-    This property holds a boolean corresponding to whether or not the 
+    This property holds a boolean corresponding to whether or not the
     circle is selected.
 */
 

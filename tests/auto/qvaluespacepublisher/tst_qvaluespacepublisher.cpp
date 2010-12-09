@@ -51,6 +51,7 @@
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
+#include <QCoreApplication>
 #include <QFile>
 
 #ifdef Q_OS_WIN
@@ -147,6 +148,11 @@ void tst_QValueSpacePublisher::initTestCase()
         QCOMPARE(QProcess::execute("gconftool-2 -u /value"), 0);
         QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/value"), 0);
         QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/subpath/value"), 0);
+    }
+
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_CONTEXTKITCORE_LAYER)) {
+        QCoreApplication::setOrganizationDomain("tests.qt.nokia.com");
+        QCoreApplication::setApplicationName("qvaluespacepublisher");
     }
 
 }

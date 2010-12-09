@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -208,7 +208,8 @@ classes to use.
 Since sensor backends are created on demand, the sensor plugin is loaded and asked
 to register the sensor backends it handles. The plugin should implement
 QSensorPluginInterface::registerSensors() and call QSensorManager::registerBackend()
-to register available backends. Typically the plugin will also implement
+to register available backends. Typically the plugin will also inherit from
+QSensorBackendFactory and implement
 QSensorBackendFactory::createBackend() in order to instantiate backends it has registered.
 
 The simplest plugin will have just once sensor backend although there is no reason
@@ -274,3 +275,80 @@ If Sensors.conf specifies an identifier that is not registered then the system w
 the first registered identifier as the default.
 
 */
+
+/*!
+\page dynamic-sensor-backend-registration.html
+\title Dynamic Sensor Backend Registration
+\ingroup sensors_backend_topics
+
+\section1 Static Backend Registration
+
+Sensor backends are generally registered statically. The registration happens when the sensors
+library is first used and the registration remains in effect while the program runs.
+
+\image sensors-static.png
+
+Statically registered backends may still exhibit some dynamic behaviour as the
+QSensorBackendFactory is free to return 0 to indicate that a backend cannot be created.
+
+\section1 Dynamic Backend Registration
+
+While static registration is fine for most backends there are some situations where this is
+problematic.
+
+The clearest example is backends that represent non-fixed hardware. As an example, lets consider
+a game controller that is connected via Bluetooth. As there may be more than one game controller
+in range of the phone, the program wants to record that a specific game controller should be used.
+If the backend had been registered statically there would have been no unique information about
+the controller. Instead, the registration is delayed until the controller is seen.
+
+\image sensors-dynamic.png
+
+\section1 Suggested Registration Policy
+
+A backend for fixed hardware should be registered immediately. Applications can see that the
+sensor can be used.
+
+A backend for remote hardware should not be registered immediately. Applications can see that
+the sensor cannot be used. When the remote hardware becomes available the backend should be
+registered. Applications can see that the sensor is now available.
+
+If it is necessary to return 0 from a factory for a backend that was registered, the backend
+should be unregistered. Applications can see that the sensor is no longer available. If the
+factory can create the backend again it should be registered. Applications can see that the
+sensor is available again.
+
+When the underlying hardware is no longer available, the backend should be deregistered.
+Existing instances of the backend should report error states to the application but should
+handle the situation gracefully.
+
+*/
+
+/*!
+\page qml-sensors.html
+\title Sensors QML Plugin
+\brief A QML plugin for the Mobility Project Sensors API.
+
+\section1 Overview
+
+The identifying string for this component is \i {"QtMobility.sensors"}.
+Use this in the QML \i {import} statement.
+
+The Sensors QML Plugin registers the C++ Sensors classes directly to the QML environment.
+
+See \l Sensors for more information about the Sensors API.
+
+\section1 Sensor Elements
+
+These elements represent specific types of sensors.
+
+\annotatedlist qml-sensors_type
+
+\section1 Reading Elements
+
+The data from a sensor comes through a reading class.
+
+\annotatedlist qml-sensors_reading
+
+*/
+

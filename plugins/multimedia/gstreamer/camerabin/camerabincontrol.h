@@ -48,7 +48,8 @@
 #include "camerabinsession.h"
 
 QT_USE_NAMESPACE
-QT_USE_NAMESPACE
+
+class CamerabinResourcePolicy;
 
 class CameraBinControl : public QCameraControl
 {
@@ -77,12 +78,17 @@ private slots:
     void updateStatus();
     void delayedReload();
 
+    void handleResourcesGranted();
+    void handleResourcesLost();
+
 private:
     void updateSupportedResolutions(const QString &device);
 
     CameraBinSession *m_session;
     QCamera::State m_state;
     QCamera::Status m_status;
+    CamerabinResourcePolicy *m_resourcePolicy;
+
     bool m_reloadPending;
 };
 

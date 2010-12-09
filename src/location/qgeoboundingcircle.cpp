@@ -121,7 +121,7 @@ bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
     Returns QGeoBoundingArea::CircleType to identify this as a
     QGeoBoundingCircle instance.
 
-    This funciton is provided to help find the specific type of
+    This function is provided to help find the specific type of
     aQGeoBoundingArea instance.
 */
 QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const

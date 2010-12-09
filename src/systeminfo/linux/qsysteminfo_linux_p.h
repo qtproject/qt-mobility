@@ -153,7 +153,7 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
-    bool backLightOn();
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
@@ -230,6 +230,14 @@ private:
 #ifdef Q_WS_X11
      int changeTimeout(int timeout);
 #endif
+};
+
+class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
+    ~QSystemBatteryInfoPrivate();
 };
 
 QTM_END_NAMESPACE

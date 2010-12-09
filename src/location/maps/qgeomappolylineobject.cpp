@@ -121,7 +121,7 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
     QPen newPen = pen;
-    newPen.setCosmetic(true);
+//    newPen.setCosmetic(true);
 
     if (d_ptr->pen == newPen)
         return;
@@ -158,7 +158,7 @@ QPen QGeoMapPolylineObject::pen() const
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
 {
-    pen.setCosmetic(true);
+//    pen.setCosmetic(true);
 }
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}

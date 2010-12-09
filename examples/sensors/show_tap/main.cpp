@@ -102,6 +102,7 @@ int main(int argc, char **argv)
 
 
     QTapSensor doublesensor;
+    doublesensor.connectToBackend();
     TapSensorFilter filter(&doublesensor);
 
 
@@ -117,6 +118,7 @@ int main(int argc, char **argv)
     }
 
     QTapSensor singlesensor;
+    singlesensor.connectToBackend();
     singlesensor.setProperty("returnDoubleTapEvents", false);
 
     bool isDouble = singlesensor.property("returnDoubleTapEvents").toBool();

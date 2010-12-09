@@ -188,6 +188,7 @@ private slots:
     void detailOrders();
     void relationships();
     void contactType();
+    void lateDeletion();
 
 #if defined(USE_VERSIT_PLZ)
     void partialSave();
@@ -224,6 +225,7 @@ private slots:
     void detailOrders_data() {addManagers();}
     void relationships_data() {addManagers();}
     void contactType_data() {addManagers();}
+    void lateDeletion_data() {addManagers();}
 };
 
 tst_QContactManager::tst_QContactManager()
@@ -3519,7 +3521,7 @@ void tst_QContactManager::contactType()
 void tst_QContactManager::partialSave()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     QVersitContactImporter imp;
     QVersitReader reader(QByteArray(
@@ -3643,6 +3645,15 @@ void tst_QContactManager::partialSave()
     QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
 }
 #endif
+
+void tst_QContactManager::lateDeletion()
+{
+    // Create some engines, but make them get deleted at shutdown
+    QFETCH(QString, uri);
+    QContactManager* cm = QContactManager::fromUri(uri);
+
+    cm->setParent(qApp); // now do nothing
+}
 
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

@@ -44,17 +44,9 @@
 // this should only pass on symbian platforms where the
 // in-source cntmodel is already built and deployed.
 
-public CompileTestCntModelv2 : public MContactDbObserverV2
-{
-    CompileTestCntModelv2() {}
-    void HandleDatabaseEventL(TContactDbObserverEvent aEvent) { return; }
-    void HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent) { return; }
-};
-
-
 int main(int argc, char** argv)
 {
-    CompileTestCntModelv2 test;
+    TContactDbObserverEventV2 event;
     return 0;
 }
 

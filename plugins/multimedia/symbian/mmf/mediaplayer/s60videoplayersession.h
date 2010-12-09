@@ -44,60 +44,65 @@
 
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
+
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
 #include <videoplayer2.h>
 #else
 #include <videoplayer.h>
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
+
 #include <QtGui/qwidget.h>
 #include <qvideowidget.h>
 
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
 #include <AudioOutput.h>
 #include <MAudioOutputObserver.h>
-#endif
-class QTimer;
+#endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
 
-class S60VideoPlayerSession : public S60MediaPlayerSession,
-                              public MVideoPlayerUtilityObserver,
-                              public MVideoLoadingObserver
+class QTimer;
+class S60VideoOutputInterface;
+
+class S60VideoPlayerSession : public S60MediaPlayerSession
+                            , public MVideoPlayerUtilityObserver
+                            , public MVideoLoadingObserver
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-                              , public MAudioOutputObserver
-#endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
+                            , public MAudioOutputObserver
+#endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
 {
     Q_OBJECT
 public:
     S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();
 
-    //From S60MediaPlayerSession
+    // From S60MediaPlayerSession
     bool isVideoAvailable();
     bool isAudioAvailable();
     void setVideoRenderer(QObject *renderer);
 
-    //From MVideoLoadingObserver
+    // From MVideoLoadingObserver
     void MvloLoadingStarted();
     void MvloLoadingComplete();
 
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // From MAudioOutputObserver
     void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
-        CAudioOutput::TAudioOutputPreference aNewDefault);
-#endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
-public:
+                                   CAudioOutput::TAudioOutputPreference aNewDefault);
+#endif
+
     // From S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
+
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
-    void resizeVideoWindow();
 
 protected:
-    //From S60MediaPlayerSession
+    // From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
     void doLoadUrlL(const TDesC &path);
     void doPlay();
     void doStop();
+    void doClose();
     void doPauseL();
     void doSetVolumeL(int volume);
     qint64 doGetPositionL() const;
@@ -107,16 +112,22 @@ protected:
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
 
-private slots: 
-    void resetVideoDisplay();
+private slots:
+    void windowHandleChanged();
+    void displayRectChanged();
+    void aspectRatioChanged();
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
     void suspendDirectScreenAccess();
     void resumeDirectScreenAccess();
+#endif
     
 private: 
-    bool resetNativeHandles();
-    QPair<qreal, qreal> scaleFactor();
+    S60VideoOutputInterface *videoOutput() const;
+    void applyPendingChanges(bool force = false);
+#ifndef MMF_VIDEO_SURFACES_SUPPORTED
     void startDirectScreenAccess();
     bool stopDirectScreenAccess();
+#endif
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
 #endif
@@ -129,31 +140,29 @@ private:
     void MvpuoEvent(const TMMFEvent &aEvent);
 
 private:
-    // Qwn
+    RWsSession *const m_wsSession;
+    CWsScreenDevice *const m_screenDevice;
+    QMediaService *const m_service;
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
     CVideoPlayerUtility2 *m_player;
 #else
     CVideoPlayerUtility *m_player;
-#endif // MMF_VIDEO_SURFACES_SUPPORTED
-    TRect m_rect;
-    //QVideoOutputControl::Output m_output;
-    QObject *m_videoOutput;
-    WId m_windowId;
     bool m_dsaActive;
     bool m_dsaStopped;
-    
-    //Reference
-    RWsSession &m_wsSession;
-    CWsScreenDevice &m_screenDevice;
-    RWindowBase *m_window;
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
+    QObject *m_videoOutput;
     RWindow *m_displayWindow;
-    QMediaService &m_service;
-    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput *m_audioOutput;
 #endif
     QString m_audioEndpoint;
+    enum Parameter {
+        WindowHandle = 0x1,
+        DisplayRect  = 0x2,
+        ScaleFactors = 0x4
+    };
+    QFlags<Parameter> m_pendingChanges;
 };
 
 #endif

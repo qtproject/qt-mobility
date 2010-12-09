@@ -484,22 +484,22 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->cellId();
+    return DeviceInfo::instance()->cellNetworkInfo()->cellId();
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-	return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
+    return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
@@ -508,7 +508,7 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
     if (imsi.length() >= 3) {
         return imsi.left(3);
     }
-	return QString();
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
@@ -635,10 +635,10 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 {
     bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
-		if (status)
-			emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
-		else
-			networkNameChanged();//Restore default network name, as WLAN will leave name as blank
+        if (status)
+            emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+        else
+            networkNameChanged();//Restore default network name, as WLAN will leave name as blank
 }
 
 void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()
@@ -780,9 +780,10 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
     return width;
 }
 
-bool QSystemDisplayInfoPrivate::backLightOn()
+QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
-    return false;
+    Q_UNUSED(screen)
+    return QSystemDisplayInfo::BacklightStateUnknown;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -1092,7 +1093,7 @@ QString QSystemDeviceInfoPrivate::productName()
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
     if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
-		productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
+        productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
     }
     return productname.split("\n").at(2);
 }
@@ -1222,12 +1223,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn()
-{
-    return false;
-}
-
-bool QSystemDeviceInfoPrivate::backLightOn()
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
 {
     return false;
 }
@@ -1237,7 +1233,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return 0;//gethostid();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
@@ -1273,6 +1269,134 @@ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 void QSystemScreenSaverPrivate::resetInactivityTime()
 {
     User::ResetInactivityTime();
+}
+
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
+: QObject(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
+
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
+{
+    return QSystemBatteryInfo::UnknownCharger;
+}
+
+QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
+{
+    return QSystemBatteryInfo::NotCharging;
+}
+
+
+int QSystemBatteryInfoPrivate::nominalCapacity() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacity() const
+{
+    return 0;
+}
+
+
+int QSystemBatteryInfoPrivate::voltage() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingChargingTime() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityBars() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::maxBars() const
+{
+    return 0;
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
+{
+   return QSystemBatteryInfo::BatteryUnknown;
+}
+
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargingStateChanged(QSystemBatteryInfo::ChargingState))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            chargerTypeChanged(QSystemBatteryInfo::ChargerType))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            nominalCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityPercentChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentFlowChanged(int))))) {
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingCapacityBarsChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            remainingChargingTimeChanged(int))))) {
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            voltageChanged(int))))) {
+    }
+
+
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+
+}
+
+int QSystemBatteryInfoPrivate::startCurrentMeasurement(int rate)
+{
+ return 0;
+}
+
+QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit() const
+{
+    return QSystemBatteryInfo::UnitUnknown;
+
 }
 
 #include "moc_qsysteminfo_s60_p.cpp"

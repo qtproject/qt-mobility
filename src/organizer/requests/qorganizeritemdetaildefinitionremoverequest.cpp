@@ -64,6 +64,12 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemDetailDefinitionRemoveRequest::~QOrganizerItemDetailDefinitionRemoveRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different organizer item types, and so attempting to remove definitions with certain names may fail if no such
@@ -78,6 +84,7 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names.clear();
     d->m_names.append(definitionName);
 }
@@ -91,6 +98,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QStrin
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -98,6 +106,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStri
 QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -107,6 +116,7 @@ QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_organizeritemType = organizeritemType;
 }
 
@@ -114,6 +124,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& org
 QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritemType;
 }
 
@@ -121,6 +132,7 @@ QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
 QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

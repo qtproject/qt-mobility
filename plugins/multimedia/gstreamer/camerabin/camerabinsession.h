@@ -173,6 +173,7 @@ private:
 
     QUrl m_sink;
     QUrl m_actualSink;
+    bool m_recordingActive;
     QString m_captureDevice;
     QCamera::State m_state;
     QCamera::State m_pendingState;
@@ -203,6 +204,7 @@ private:
     GstBus* m_bus;
     GstElement *m_pipeline;
     GstElement *m_videoSrc;
+    GstElement *m_viewfinderElement;
     bool m_viewfinderHasChanged;
     bool m_videoInputHasChanged;
 
