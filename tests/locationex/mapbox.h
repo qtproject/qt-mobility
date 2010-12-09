@@ -35,9 +35,13 @@ private:
 
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
+    void createProvider();
     void createMapWidget();
 
     static QNetworkSession * m_session;
+
+    QString m_providerId;
+    QMap<QString,QVariant> m_parameters;
 
 public:
     StatsWidget * m_statistics;
@@ -58,6 +62,19 @@ public:
     void addRoute(const QList<QGeoCoordinate> & waypoints);
 
     static QNetworkSession * session();
+
+    void setParameter(const QString & parameter, const QVariant & value);
+
+    QPixmap grab();
+    qreal squareError(MapBox * other);
+    qreal squareError(const QPixmap & other);
+    qreal squareError(const QImage & other);
+    static qreal squareError(const QImage & image1, const QImage & image2);
+
+    int countErrors(MapBox * other);
+    int countErrors(const QPixmap & other);
+    int countErrors(const QImage & other);
+    static int countErrors(const QImage & image1, const QImage & image2);
 
 public slots:
     void clearCache();
