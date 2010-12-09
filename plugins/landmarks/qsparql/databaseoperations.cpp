@@ -1118,7 +1118,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.chop(3);
                         queryString.append(" )");
                     } else {
-                        queryString.chop(7);
+                        queryString.chop(9);
                     }
                     queryString.append("}");
 
@@ -1239,7 +1239,7 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.chop(3);
                         queryString.append(" )");
                     } else {
-                        queryString.chop(7);
+                        queryString.chop(9);
                     }
                     queryString.append("}");
 
