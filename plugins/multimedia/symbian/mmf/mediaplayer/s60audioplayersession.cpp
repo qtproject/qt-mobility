@@ -163,6 +163,16 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
     emit metaDataChanged();
 }
 
+
+void S60AudioPlayerSession::setPlaybackRate(qreal rate)
+{
+    /*set playback rate is not supported so returning 
+    not supported error.*/
+	Q_UNUSED(rate);
+    int err = KErrNotSupported;
+    setError(err);
+}
+
 int S60AudioPlayerSession::doGetBufferStatusL() const
 {
     int progress = 0;

@@ -818,6 +818,9 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
         }
 
     } else {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "GST MSG, src =" << GST_MESSAGE_SRC(gm)->name << "type =" << GST_MESSAGE_TYPE_NAME(gm);
+#endif
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
@@ -1030,17 +1033,24 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
                     m_renderer->precessNewStream();
             }
-        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
-                // If the source has given up, so do we.
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR) {
+            GError *err;
+            gchar *debug;
+            gst_message_parse_error(gm, &err, &debug);
+            // If the source has given up, so do we.
+            if (qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
                 emit invalidMedia();
                 stop();
-                GError *err;
-                gchar *debug;
-                gst_message_parse_error(gm, &err, &debug);
                 emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
-                qWarning() << "Error:" << QString::fromUtf8(err->message);
-                g_error_free(err);
-                g_free(debug);
+            } else if (err->domain == GST_STREAM_ERROR
+                       && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
+                emit invalidMedia();
+                stop();
+                emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+            }
+            qWarning() << "Error:" << QString::fromUtf8(err->message);
+            g_error_free(err);
+            g_free(debug);
         } else if (m_usePlaybin2) {
             if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
                 GError *err;
@@ -1051,15 +1061,21 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "Warning:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
-            } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR
-                       && (QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("decodebin2"))
-                           || QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("uridecodebin")))) {
-                emit invalidMedia();
-                stop();
+            } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR) {
                 GError *err;
                 gchar *debug;
                 gst_message_parse_error(gm, &err, &debug);
-                emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                if (qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "decodebin2", 10) == 0
+                    || qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "uridecodebin", 12) == 0) {
+                    emit invalidMedia();
+                    stop();
+                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                } else if (err->domain == GST_STREAM_ERROR
+                           && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
+                    emit invalidMedia();
+                    stop();
+                    emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                }
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
