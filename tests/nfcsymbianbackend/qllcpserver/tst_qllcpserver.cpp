@@ -302,7 +302,7 @@ void tst_QLlcpServer::api_coverage()
     bool ret = server.listen(uri);
     QVERIFY(ret);
 
-    QString message("handshake 3");
+    QString message("handshake 3: api_coverage test");
     QNfcTestUtil::ShowMessage(message);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -320,6 +320,7 @@ void tst_QLlcpServer::api_coverage()
     qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
     QVERIFY(readSize != -1);
 
+    qDebug()<<"Server Uri = " << server.serviceUri();
     QCOMPARE(uri,server.serviceUri());
 
     quint8 unsupportedPort = 0;
@@ -335,7 +336,7 @@ void tst_QLlcpServer::api_coverage()
 */
 void tst_QLlcpServer::negTestCase1()
 {
-    QString message("handshake 4");
+    QString message("handshake 4: negTestCase1 test");
     QNfcTestUtil::ShowMessage(message);
 
     QString uri = TestUri;

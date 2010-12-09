@@ -91,6 +91,7 @@ tst_qllcpsockettype2::tst_qllcpsockettype2()
 {
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*");
     qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
+    qRegisterMetaType<QLlcpSocket::State>("QLlcpSocket::State");
 }
 
 void tst_qllcpsockettype2::initTestCase()
@@ -325,12 +326,12 @@ void tst_qllcpsockettype2::echo_wait_data()
 void tst_qllcpsockettype2::api_coverage()
 {
 
-    QString message("handshake 3");
+    QString message("handshake 3: api_coverage test");
     QNfcTestUtil::ShowMessage(message);
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged()));
+    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::State)));
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     socket.connectToService(m_target, TestUri);
