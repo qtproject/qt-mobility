@@ -59,7 +59,7 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
 QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
 {
     Cancel();
-    
+
     delete m_object;
     m_object = NULL;
 
@@ -76,7 +76,7 @@ void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address
 bool QBluetoothTransferReplySymbian::start()
 {
     m_running = true;
-    
+
     TObexBluetoothProtocolInfo protocolInfo;
     TBTDevAddr deviceAddress(m_address.toUInt64());
 
@@ -90,7 +90,7 @@ bool QBluetoothTransferReplySymbian::start()
         m_client = NULL;
         }
     m_client = CObexClient::NewL( protocolInfo );
-    
+
     m_client->Connect( iStatus );
 
     m_state = EConnecting;
