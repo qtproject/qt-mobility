@@ -63,7 +63,7 @@ QMDEGalleryResultSet::QMDEGalleryResultSet(QObject *parent)
 
 QMDEGalleryResultSet::~QMDEGalleryResultSet()
 {
-    m_itemArray.ResetAndDestroy();
+
 }
 
 int QMDEGalleryResultSet::propertyKey(const QString &property) const

@@ -96,6 +96,8 @@ public:
 
     void createQuery();
 
+    void cleanupResultSet();
+
     void cancel();
 
 private:
