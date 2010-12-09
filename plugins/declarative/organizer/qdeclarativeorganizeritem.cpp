@@ -104,6 +104,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QDeclarativeOrganizerItem::detailD
 void QDeclarativeOrganizerItem::setItem(const QOrganizerItem& item)
 {
    d->setItem(item);
+   emit itemChanged ();
    d->m_modified = false;
 }
 
@@ -392,6 +393,8 @@ void QDeclarativeOrganizerItem::setGuid(const QString& guid)
 QDeclarativeOrganizerEvent::QDeclarativeOrganizerEvent(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerEvent());
+    d->setMetaObject(QDeclarativeOrganizerEvent::staticMetaObject);
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 
@@ -540,6 +543,8 @@ QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerEvent::recurrence()
 QDeclarativeOrganizerEventOccurrence::QDeclarativeOrganizerEventOccurrence(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerEventOccurrence());
+    d->setMetaObject(QDeclarativeOrganizerEventOccurrence::staticMetaObject);
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 
@@ -698,6 +703,8 @@ void QDeclarativeOrganizerEventOccurrence::setLocation(const QString& loc)
 QDeclarativeOrganizerJournal::QDeclarativeOrganizerJournal(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerJournal());
+    d->setMetaObject(QDeclarativeOrganizerJournal::staticMetaObject);
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 
@@ -739,6 +746,8 @@ QDateTime QDeclarativeOrganizerJournal::dateTime() const
 QDeclarativeOrganizerNote::QDeclarativeOrganizerNote(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerNote());
+
     d->setMetaObject(QDeclarativeOrganizerNote::staticMetaObject);
 }
 
@@ -758,6 +767,8 @@ QDeclarativeOrganizerNote::QDeclarativeOrganizerNote(QObject *parent)
 QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerTodo());
+    d->setMetaObject(QDeclarativeOrganizerTodo::staticMetaObject);
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 
@@ -958,6 +969,9 @@ QDateTime QDeclarativeOrganizerTodo::finishedDateTime() const
 QDeclarativeOrganizerTodoOccurrence::QDeclarativeOrganizerTodoOccurrence(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
+    setItem (QOrganizerTodoOccurrence());
+    d->setMetaObject(QDeclarativeOrganizerTodoOccurrence::staticMetaObject);
+
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
 

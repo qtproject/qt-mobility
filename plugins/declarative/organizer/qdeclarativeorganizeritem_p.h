@@ -8,7 +8,7 @@
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
-** This file Is pre-release code and may not be distributed.
+** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
