@@ -99,6 +99,7 @@ signals:
     void error(QBluetoothServiceDiscoveryAgent::Error error);
 
 private:
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscovered(const QBluetoothDeviceInfo &info))
     Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscoveryFinished())
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished())
 #ifndef QT_NO_DBUS

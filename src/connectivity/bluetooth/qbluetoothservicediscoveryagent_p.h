@@ -94,8 +94,12 @@ public:
     void setDiscoveryState(DiscoveryState s) { state = s; }
     DiscoveryState discoveryState() { return state; }
 
+    void setDiscoveryMode(QBluetoothServiceDiscoveryAgent::DiscoveryMode m) { mode = m; }
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode DiscoveryMode() { return mode; }
+
     // private slots
     void _q_deviceDiscoveryFinished();
+    void _q_deviceDiscovered(const QBluetoothDeviceInfo &info);
     void _q_serviceDiscoveryFinished();
 #ifndef QT_NO_DBUS
     void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
@@ -115,6 +119,7 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
+    bool quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info);
     void stop();
 
 #ifdef Q_OS_SYMBIAN
@@ -135,6 +140,8 @@ private:
     QList<QBluetoothUuid> uuidFilter;
 
     QBluetoothDeviceDiscoveryAgent *deviceDiscoveryAgent;
+
+    QBluetoothServiceDiscoveryAgent::DiscoveryMode mode;
 
 #ifdef Q_OS_SYMBIAN
     CSdpAgent *sdpAgent;

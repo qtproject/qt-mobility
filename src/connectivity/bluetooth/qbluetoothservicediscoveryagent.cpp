@@ -187,6 +187,7 @@ void QBluetoothServiceDiscoveryAgent::start(DiscoveryMode mode)
     Q_D(QBluetoothServiceDiscoveryAgent);
 
     if (d->discoveryState() == QBluetoothServiceDiscoveryAgentPrivate::Inactive) {
+        d->setDiscoveryMode(mode);
         if (d->deviceAddress.isNull()) {
             d->startDeviceDiscovery();
         } else {
@@ -267,6 +268,9 @@ void QBluetoothServiceDiscoveryAgentPrivate::startDeviceDiscovery()
         deviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent;
         QObject::connect(deviceDiscoveryAgent, SIGNAL(finished()),
                          q, SLOT(_q_deviceDiscoveryFinished()));
+        QObject::connect(deviceDiscoveryAgent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)),
+                         q, SLOT(_q_deviceDiscovered(QBluetoothDeviceInfo)));
+
     }
 
     setDiscoveryState(DeviceDiscovery);
@@ -284,6 +288,9 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
     deviceDiscoveryAgent = 0;
 
     setDiscoveryState(Inactive);
+
+    Q_Q(QBluetoothServiceDiscoveryAgent);
+    emit q->finished();
 }
 
 /*!
@@ -291,6 +298,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
 */
 void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 {
+    qDebug() << "XXXXXXXXXXX Finished";
     if (deviceDiscoveryAgent->error() != QBluetoothDeviceDiscoveryAgent::NoError) {
         error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
 
@@ -299,12 +307,22 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
         return;
     }
 
-    discoveredDevices = deviceDiscoveryAgent->discoveredDevices();
+//    discoveredDevices = deviceDiscoveryAgent->discoveredDevices();
 
     delete deviceDiscoveryAgent;
     deviceDiscoveryAgent = 0;
 
     startServiceDiscovery();
+}
+
+void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscovered(const QBluetoothDeviceInfo &info)
+{
+    discoveredDevices.append(info);
+    if(mode != QBluetoothServiceDiscoveryAgent::FullDiscovery) {
+        if(!quickDiscovery(info.address(), info)){
+            discoveredDevices.append(info);
+        }
+    }
 }
 
 /*!
@@ -338,7 +356,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopServiceDiscovery()
 
 void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 {
-    discoveredDevices.removeFirst();
+    if(!discoveredDevices.isEmpty())
+        discoveredDevices.removeFirst();
 
     startServiceDiscovery();
 }

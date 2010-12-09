@@ -46,6 +46,7 @@
 
 #include "bluez/manager_p.h"
 #include "bluez/adapter_p.h"
+#include "bluez/device_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,6 +82,31 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::start()
     QObject::connect(adapter, SIGNAL(PropertyChanged(QString,QDBusVariant)),
                      this, SLOT(_q_propertyChanged(QString,QDBusVariant)));
 
+    QDBusPendingReply<QVariantMap> propertiesReply = adapter->GetProperties();
+    propertiesReply.waitForFinished();
+    if(propertiesReply.isError())
+        return;
+
+    QVariant p = propertiesReply.value()["Devices"];
+    QDBusArgument d = p.value<QDBusArgument>();
+    QStringList l; d >> l;
+    QString path;
+    foreach (path, l){
+//        qDebug() << "Device at" << path;
+        OrgBluezDeviceInterface *device = new OrgBluezDeviceInterface(QLatin1String("org.bluez"), path,
+                                                                      QDBusConnection::systemBus());
+        QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
+        deviceReply.waitForFinished();
+        if(deviceReply.isError())
+            continue;
+        QVariantMap v = deviceReply.value();
+        QString address = v.value("Address").toString();
+//        qDebug() << "Address: " << address << v.value("UUIDs").toStringList();
+        _q_deviceFound(address, v);
+    }
+
+//    qDebug() << p << d.currentSignature() << d.currentType() << l;
+
     QDBusPendingReply<> discoveryReply = adapter->StartDiscovery();
     if (discoveryReply.isError()) {
         delete adapter;
@@ -104,9 +130,19 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::_q_deviceFound(const QString &a
     const QBluetoothAddress btAddress(address);
     const QString btName = dict.value(QLatin1String("Name")).toString();
     quint32 btClass = dict.value(QLatin1String("Class")).toUInt();
-    qDebug() << "Discovered: " << address << btName << btClass << discoveredDevices.count();
+//    qDebug() << "Discovered: " << address << btName << btClass << discoveredDevices.count();
 
-    QBluetoothDeviceInfo device(btAddress, btName, btClass);
+//    QList<QString> values = dict.keys();
+//    for(int i = 0; i < values.size(); i++){
+//        qDebug() << values.at(i) << dict[values.at(i)];
+//    }
+
+    QBluetoothDeviceInfo device(btAddress, btName, btClass);    
+    for(int i = 0; i < discoveredDevices.size(); i++){
+        if(discoveredDevices[i].address() == device.address()) {
+            return;
+        }
+    }
     discoveredDevices.append(device);
     emit deviceDiscovered(device);
 }
