@@ -416,8 +416,6 @@ bool ContextKitHandle::unsetValue(const QString &path)
     if (!p.isRegistered())
         return false;
 
-    qDebug("unsetting path %s", qPrintable(path));
-
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
     if (!prop)
         prop = insertWrite(p);
@@ -452,7 +450,6 @@ ContextProvider::Property *ContextKitHandle::insertWrite(const ContextKitPath &p
 
 void ContextKitHandle::on_firstAppeared(QString key)
 {
-    qDebug("first appeared for %s", qPrintable((path + key).toNative()));
     ContextKitPath p(key, path.type());
     QString relPath = (p - path).toQtPath().mid(1);
     emit interestChanged(relPath, true);
@@ -460,7 +457,6 @@ void ContextKitHandle::on_firstAppeared(QString key)
 
 void ContextKitHandle::on_lastDisappeared(QString key)
 {
-    qDebug("last disappeared for %s", qPrintable((path + key).toNative()));
     ContextKitPath p(key, path.type());
     QString relPath = (p - path).toQtPath().mid(1);
     emit interestChanged(relPath, false);
@@ -566,7 +562,6 @@ void ContextKitLayer::contextHandleChanged()
 void ContextKitLayer::addWatch(QValueSpacePublisher *pub, Handle handle)
 {
     ContextKitHandle *h = handleToCKHandle(handle);
-    qDebug("connecting interest signal up to %s", qPrintable(h->path.toNative()));
     connect(h, SIGNAL(interestChanged(QString,bool)),
             pub, SIGNAL(interestChanged(QString,bool)));
 }
