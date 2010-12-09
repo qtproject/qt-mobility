@@ -285,15 +285,14 @@ void ContextKitHandle::insertRead(const ContextKitPath &path)
 {
     if (!readProps.contains(path.toQtPath())) {
         ContextProperty *prop = new ContextProperty(path.toNative());
-        connect(prop, SIGNAL(valueChanged()),
-                this, SIGNAL(valueChanged()));
         readProps.insert(path.toQtPath(), prop);
     }
 }
 
 void ContextKitHandle::updateSubtrees()
 {
-    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys()) {
+    QList<QString> keys = ContextRegistryInfo::instance()->listKeys();
+    foreach (const QString &k, keys) {
         ContextKitPath p(k);
         if (path.includes(p))
             insertRead(p);
@@ -303,18 +302,6 @@ void ContextKitHandle::updateSubtrees()
 ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path,
                                    QValueSpace::LayerOptions opts)
 {
-    if (opts & QValueSpace::PermanentLayer)
-        this->path = ContextKitPath(path, ContextKitPath::DotPath);
-    else
-        this->path = ContextKitPath(path, ContextKitPath::SlashPath);
-
-    if (parent)
-        this->path = parent->path + this->path;
-
-    updateSubtrees();
-    connect(ContextRegistryInfo::instance(), SIGNAL(changed()),
-            this, SLOT(updateSubtrees()));
-
     QString javaPackageName;
     int curPos = 0;
     int nextDot;
@@ -349,12 +336,34 @@ ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path
 
     service = new ContextProvider::Service(QDBusConnection::SessionBus,
                                            javaPackageName, false);
+
+    subscribed = true;
+
+    if (opts & QValueSpace::PermanentLayer)
+        this->path = ContextKitPath(path, ContextKitPath::DotPath);
+    else
+        this->path = ContextKitPath(path, ContextKitPath::SlashPath);
+
+    if (parent)
+        this->path = parent->path + this->path;
+
+    updateSubtrees();
+    connect(ContextRegistryInfo::instance(), SIGNAL(changed()),
+            this, SLOT(updateSubtrees()));
 }
 
 ContextKitHandle::~ContextKitHandle()
 {
-    foreach (ContextProperty *prop, readProps.values())
+    service->stop();
+    foreach (ContextProperty *prop, readProps.values()) {
+        prop->unsubscribe();
         delete prop;
+    }
+    foreach (ContextProvider::Property *prop, writeProps.values())
+        delete prop;
+    readProps.clear();
+    writeProps.clear();
+    service->start();
     delete service;
 }
 
@@ -368,9 +377,15 @@ bool ContextKitHandle::value(const QString &path, QVariant *data)
 
     ContextProperty *prop = readProps.value(p.toQtPath());
     if (prop) {
-        prop->subscribe();
+        if (!subscribed)
+            prop->subscribe();
+
         prop->waitForSubscription();
         *data = prop->value();
+
+        if (!subscribed)
+            prop->unsubscribe();
+
         return true;
     } else {
         return false;
@@ -382,20 +397,12 @@ bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
     ContextKitPath p = this->path;
     if (!path.isEmpty()) p = p + path;
 
+    if (!p.isRegistered())
+        return false;
+
     ContextProvider::Property *prop = writeProps.value(p.toQtPath());
-    if (!prop) {
-        QString pth = p.toNative();
-
-        if (!p.isRegistered())
-            return false;
-
-        service->stop();
-
-        prop = new ContextProvider::Property(*service, pth);
-        writeProps.insert(p.toQtPath(), prop);
-
-        service->start();
-    }
+    if (!prop)
+        prop = insertWrite(p);
 
     prop->setValue(data);
     return true;
@@ -406,23 +413,57 @@ bool ContextKitHandle::unsetValue(const QString &path)
     ContextKitPath p = this->path;
     if (!path.isEmpty()) p = p + path;
 
-    ContextProvider::Property *prop = writeProps.value(p.toQtPath());
-    if (!prop) {
-        QString pth = p.toNative();
+    if (!p.isRegistered())
+        return false;
 
-        if (!p.isRegistered())
-            return false;
+    qDebug("unsetting path %s", qPrintable(path));
+
+    ContextProvider::Property *prop = writeProps.value(p.toQtPath());
+    if (!prop)
+        prop = insertWrite(p);
+
+    QVariant v(QVariant::Invalid);
+    prop->setValue(v);
+
+    return true;
+}
+
+ContextProvider::Property *ContextKitHandle::insertWrite(const ContextKitPath &p)
+{
+    if (!writeProps.contains(p.toQtPath())) {
+        ContextProvider::Property *prop;
+        QString pth = p.toNative();
 
         service->stop();
 
         prop = new ContextProvider::Property(*service, pth);
         writeProps.insert(p.toQtPath(), prop);
+        connect(prop, SIGNAL(firstSubscriberAppeared(QString)),
+                this, SLOT(on_firstAppeared(QString)));
+        connect(prop, SIGNAL(lastSubscriberDisappeared(QString)),
+                this, SLOT(on_lastDisappeared(QString)));
 
         service->start();
-    }
 
-    prop->unsetValue();
-    return true;
+        return prop;
+    }
+    return NULL;
+}
+
+void ContextKitHandle::on_firstAppeared(QString key)
+{
+    qDebug("first appeared for %s", qPrintable((path + key).toNative()));
+    ContextKitPath p(key, path.type());
+    QString relPath = (p - path).toQtPath().mid(1);
+    emit interestChanged(relPath, true);
+}
+
+void ContextKitHandle::on_lastDisappeared(QString key)
+{
+    qDebug("last disappeared for %s", qPrintable((path + key).toNative()));
+    ContextKitPath p(key, path.type());
+    QString relPath = (p - path).toQtPath().mid(1);
+    emit interestChanged(relPath, false);
 }
 
 void ContextKitHandle::subscribe()
@@ -430,13 +471,20 @@ void ContextKitHandle::subscribe()
     foreach (ContextProperty *p, readProps.values()) {
         p->subscribe();
         p->waitForSubscription();
+        connect(p, SIGNAL(valueChanged()),
+                this, SIGNAL(valueChanged()));
     }
+    subscribed = true;
 }
 
 void ContextKitHandle::unsubscribe()
 {
-    foreach (ContextProperty *p, readProps.values())
+    foreach (ContextProperty *p, readProps.values()) {
         p->unsubscribe();
+        disconnect(p, SIGNAL(valueChanged()),
+                   this, SIGNAL(valueChanged()));
+    }
+    subscribed = false;
 }
 
 QSet<QString> ContextKitHandle::children()
@@ -513,6 +561,21 @@ void ContextKitLayer::setProperty(Handle handle, Properties properties)
 void ContextKitLayer::contextHandleChanged()
 {
     emit handleChanged(reinterpret_cast<Handle>(sender()));
+}
+
+void ContextKitLayer::addWatch(QValueSpacePublisher *pub, Handle handle)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    qDebug("connecting interest signal up to %s", qPrintable(h->path.toNative()));
+    connect(h, SIGNAL(interestChanged(QString,bool)),
+            pub, SIGNAL(interestChanged(QString,bool)));
+}
+
+void ContextKitLayer::removeWatches(QValueSpacePublisher *pub, Handle handle)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    disconnect(h, SIGNAL(interestChanged(QString,bool)),
+               pub, SIGNAL(interestChanged(QString,bool)));
 }
 
 bool ContextKitLayer::value(Handle handle, QVariant *data)
