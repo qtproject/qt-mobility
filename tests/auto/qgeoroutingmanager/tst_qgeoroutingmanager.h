@@ -53,8 +53,6 @@
 #include <qgeocoordinate.h>
 #include <qgeoroute.h>
 
-Q_IMPORT_PLUGIN(qtgeoservices_staticroutingplugin)
-
 QTM_USE_NAMESPACE
 
 class tst_QGeoRoutingManager: public QObject
