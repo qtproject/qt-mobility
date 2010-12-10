@@ -152,9 +152,26 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
 /*!
   \qmlproperty string OrganizerModel::manager
 
-  This property holds the manager uri of the organizer backend engine.
+  This property holds the manager name or manager uri of the organizer backend engine.
+  The manager uri format: qtorganizer:<managerid>:<key>=<value>&<key>=<value>.
+
+  \sa QOrganizerManager::fromUri()
   */
 QString QDeclarativeOrganizerModel::manager() const
+{
+    if (d->m_manager)
+        return d->m_manager->managerUri();
+    return QString();
+}
+
+/*!
+  \qmlproperty string OrganizerModel::managerName
+
+  This property holds the manager name of the organizer backend engine.
+  This property is read only.
+  \sa QOrganizerManager::fromUri()
+  */
+QString QDeclarativeOrganizerModel::managerName() const
 {
     if (d->m_manager)
         return d->m_manager->managerName();
@@ -203,6 +220,7 @@ void QDeclarativeOrganizerModel::update()
 {
     if (!d->m_componentCompleted || d->m_updatePending)
         return;
+
     d->m_updatePending = true; // Disallow possible duplicate request triggering
     QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
 }
@@ -315,11 +333,15 @@ int QDeclarativeOrganizerModel::rowCount(const QModelIndex &parent) const
 
 void QDeclarativeOrganizerModel::setManager(const QString& managerName)
 {
-    if (d->m_manager)
+    if (d->m_manager) {
         delete d->m_manager;
+    }
 
-
-    d->m_manager = new QOrganizerManager(managerName);
+    if (managerName.startsWith("qtorganizer:")) {
+        d->m_manager = QOrganizerManager::fromUri(managerName, this);
+    } else {
+        d->m_manager = new QOrganizerManager(managerName, QMap<QString, QString>(), this);
+    }
 
     connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(update()));
     connect(d->m_manager, SIGNAL(itemsAdded(QList<QOrganizerItemId>)), this, SLOT(update()));
@@ -327,6 +349,7 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
     connect(d->m_manager, SIGNAL(itemsChanged(QList<QOrganizerItemId>)), this, SLOT(itemsChanged(QList<QOrganizerItemId>)));
     emit managerChanged();
 }
+
 void QDeclarativeOrganizerModel::componentComplete()
 {
     d->m_componentCompleted = true;

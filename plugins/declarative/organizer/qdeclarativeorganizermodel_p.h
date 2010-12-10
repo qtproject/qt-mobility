@@ -61,6 +61,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativ
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_PROPERTY(QString managerName READ managerName  NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
@@ -92,7 +93,8 @@ public:
     int itemCount() const;
 
     QString manager() const;
-    void setManager(const QString& managerName);
+    void setManager(const QString& managerUri);
+    QString managerName() const;
     QStringList availableManagers() const;
     QDateTime startPeriod() const;
     void setStartPeriod(const QDateTime& start);
