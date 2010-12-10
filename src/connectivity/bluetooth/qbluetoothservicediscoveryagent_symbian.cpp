@@ -56,25 +56,44 @@ QTM_BEGIN_NAMESPACE
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
 : error(QBluetoothServiceDiscoveryAgent::NoError), deviceAddress(address), state(Inactive), deviceDiscoveryAgent(0)
 {
-    filter = CSdpSearchPattern::NewL();
-
-    attributes = CSdpAttrIdMatchList::NewL();
+    TRAPD(err, {
+        filter = CSdpSearchPattern::NewL();
+    
+        attributes = CSdpAttrIdMatchList::NewL();
+    });
 #if defined(MINIMAL_SERVICE_ATTRIBUTES)
-    attributes->AddL(QBluetoothServiceInfo::ServiceName);
-    attributes->AddL(QBluetoothServiceInfo::ServiceDescription);
-    attributes->AddL(QBluetoothServiceInfo::ServiceProvider);
-    attributes->AddL(QBluetoothServiceInfo::ProtocolDescriptorList);
+    if (!err) {
+        TRAP(err, {
+            attributes->AddL(QBluetoothServiceInfo::ServiceName);
+            attributes->AddL(QBluetoothServiceInfo::ServiceDescription);
+            attributes->AddL(QBluetoothServiceInfo::ServiceProvider);
+            attributes->AddL(QBluetoothServiceInfo::ProtocolDescriptorList);
+        });
+    }
 #elif defined(ALL_SERVICE_ATTRIBUTES)
-    attributes->AddL(KAttrRangeAll);
-    attributes->RemoveL(787);     //attribute id 787 from my N958GB causes parser crash
+    if (!err) {
+        TRAP(err, {
+            attributes->AddL(KAttrRangeAll);
+            attributes->RemoveL(787);     //attribute id 787 from my N958GB causes parser crash
+        });
+    }
 #endif
 }
 
 QBluetoothServiceDiscoveryAgentPrivate::~QBluetoothServiceDiscoveryAgentPrivate()
 {
+    delete filter;
+    delete attributes;
+    delete sdpAgent;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &address)
+{
+    TRAPD(err, startL(address));
+    Q_UNUSED(err);
+}
+
+void QBluetoothServiceDiscoveryAgentPrivate::startL(const QBluetoothAddress &address)
 {
     initAgent(address);
 
@@ -100,8 +119,14 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
 void QBluetoothServiceDiscoveryAgentPrivate::initAgent(const QBluetoothAddress &address)
 {
     TBTDevAddr btAddress(address.toUInt64());
+    
+    if (sdpAgent) {
+        delete sdpAgent;
+        sdpAgent = NULL;
+    }
 
-    sdpAgent = CSdpAgent::NewL(*this, btAddress);
+    TRAPD(err, sdpAgent = CSdpAgent::NewL(*this, btAddress));
+    Q_UNUSED(err);
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount)

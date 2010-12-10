@@ -115,6 +115,7 @@ public:
 
 private:
     void start(const QBluetoothAddress &address);
+    void startL(const QBluetoothAddress &address);
     void stop();
 
 #ifdef Q_OS_SYMBIAN
