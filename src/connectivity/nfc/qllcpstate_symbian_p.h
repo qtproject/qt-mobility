@@ -56,15 +56,6 @@ QTM_BEGIN_NAMESPACE
 
 class QLlcpSocketPrivate;
 
-/*
- *     enum LLCPSocketState {
-        UnconnectedState,
-        ConnectingState,
-        ConnectedState,
-        BoundState,
-        ListeningState,
-        ClosingState
- */
 /*!
     \QLLCPSocketState
 */
@@ -96,15 +87,6 @@ public:
     QLlcpSocketPrivate* m_socket;
 };
 
-/*
-UnconnectedState = QAbstractSocket::UnconnectedState,
-ConnectingState = QAbstractSocket::ConnectingState,
-ConnectedState = QAbstractSocket::ConnectedState,
-ClosingState = QAbstractSocket::ClosingState,
-BoundState = QAbstractSocket::BoundState,
-ListeningState = QAbstractSocket::ListeningState
-*/
-
 /*!
     \QLLCPUnconnected
 */
@@ -124,7 +106,6 @@ public: // from base class
                           QNearFieldTarget *target, quint8 port);
      bool WaitForBytesWritten(int);     
 };
-
 
 /*!
     \QLLCPConnecting
@@ -146,7 +127,6 @@ public: // from base class
     bool WaitForConnected(int);
 };
 
-
 /*!
     \QLLCPConnecting
 */
@@ -167,7 +147,6 @@ public: // from base class
    bool WaitForDisconnected(int);
 private:
 };
-
 
 /*!
     \QLLCPClosing

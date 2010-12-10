@@ -71,6 +71,7 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
       iConnection(NULL),
       iWait(NULL),
       iTimer(NULL),
+      iWaitStatus(ENone),
       iConnLessStarted(EFalse),
       iCallback(aCallback),
       iRemotePortNum(-1)
@@ -122,15 +123,19 @@ void CLlcpSocketType1::Cleanup()
         }  
     }
 
-bool CLlcpSocketType1::Bind(TInt8 portNum)
+bool CLlcpSocketType1::Bind(TInt8 aPortNum)
     {
+
     bool bindOK = ETrue;
     TInt error = KErrNone;
     if ( !iConnLessStarted )
         {
         // remote connection created at frame received
-        TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,portNum ));
-        iConnLessStarted = ETrue;
+        TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,aPortNum ));
+        if (KErrNone == error)
+            {
+            iConnLessStarted = ETrue;
+            }
         }   
     else
         {
@@ -168,13 +173,14 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
 TInt CLlcpSocketType1::ReadDatagram(TDes8& aData, TInt8& aRemotePortNum)
     {
     aRemotePortNum = iRemotePortNum;
-    ReadDatagram(aData);
+    TInt val = ReadDatagram(aData);
+    return val;
     }
 
 TInt CLlcpSocketType1::ReadDatagram(TDes8& aData)
     {
     TInt readSize = -1;
-    if (NULL == iConnection)
+    if (NULL != iConnection)
         {
         readSize = iConnection->ReceiveDataFromBuf(aData);
 
@@ -216,10 +222,8 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
 void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
     iRemotePortNum = aConnection->DsapL();
-    if (KErrNone == CreateConnection(aConnection))
-        {
-        iConnection->Receive(*this);
-        }
+    CreateConnection(aConnection);
+    qDebug() << " CLlcpSocketType1::FrameReceived after: " << iRemotePortNum;
     }
 
 /*!
@@ -227,6 +231,8 @@ void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
 */
 void CLlcpSocketType1::ReceiveComplete(TInt aError)
     {  
+
+    qDebug() << " CLlcpSocketType1::ReceiveComplete " << aError;
     TRAP_IGNORE(
         if (KErrNone == aError)
             {
@@ -248,7 +254,6 @@ void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
         {
         StopWaitNow(EWaitForBytesWritten);
         }
-    
     TRAP_IGNORE(
         if (KErrNone == aError)
             {
@@ -259,6 +264,7 @@ void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
             QT_TRYCATCH_LEAVING(iCallback.invokeError());
             }
     );
+
     }
 
 void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
@@ -288,7 +294,7 @@ TInt CLlcpSocketType1::CreateConnection(TInt8 portNum)
     
     if ( iConnection )
         return error;
-        
+
    TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
    
     if ( error == KErrNone )
@@ -314,6 +320,10 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
              {
              delete aConnection;
              aConnection = NULL;
+             }
+         else
+             {
+             iConnection->Receive(*this);
              }
          }
      
@@ -428,11 +438,17 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
 */
 TInt COwnLlcpConnLess::Transfer(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
     {  
+
+    qDebug() << "COwnLlcpConnLess::Transfer enter: " << iSenderAO->IsActive();
     TInt error = KErrNone;
     // Pass message on to transmit AO
     if (!iSenderAO->IsActive())
         {
         error = iSenderAO->Transfer(aLlcpSendCb, aData);
+        }
+    else
+        {
+        error = KErrInUse;
         }
     return error;
     }
@@ -470,6 +486,10 @@ TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb)
     if (!iReceiverAO->IsActive())
         {
         error = iReceiverAO->Receive(aLlcpReceiveCb);
+        }
+    else
+        {
+        error = KErrInUse;
         }
     return error;
     }
@@ -526,9 +546,11 @@ CLlcpSenderType1::~CLlcpSenderType1()
 
 TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
     {
+
     TInt error = KErrNone;
     if (!IsActive())
         {           
+
           // Copying data to internal buffer. 
           iTransmitBuf.Zero();
           error = iTransmitBuf.ReAlloc( aData.Length() );
@@ -542,10 +564,10 @@ TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
               SetActive();
               iSendObserver = &cb;
               }
-        
-        // Having issued the request for incoming data, ensure you mark this active object 
-        // as having an outstanding request.
-        SetActive();
+          else
+              {
+               error = KErrNoMemory;
+              }
         }
     else
          {
@@ -557,17 +579,15 @@ TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
 void CLlcpSenderType1::RunL(void)
     {
     TInt error = iStatus.Int();
+
     MLlcpReadWriteCb* cb = iSendObserver;
-    if ( error == KErrNone )
-       {
-       iSendObserver = NULL;           
-       }  
 
     // Call back functions of notifying the llcp sender completed.
     if (cb)
        {
        cb->WriteComplete(error,iTransmitBuf.Length());
-       }            
+       }
+
     }
 
 void CLlcpSenderType1::DoCancel(void)
@@ -628,6 +648,7 @@ TInt CLlcpReceiverType1::Receive(MLlcpReadWriteCb& cb)
 void CLlcpReceiverType1::RunL(void)
     {
     TInt error = iStatus.Int();
+    qDebug() << "receiverTyp1::RUNL bufSize:" << iReceiveBuf.Length();
     MLlcpReadWriteCb* cb = iReceiveObserver;
     if ( error == KErrNone )
        {
@@ -652,7 +673,7 @@ TInt CLlcpReceiverType1::ReceiveDataFromBuf(TDes8& aData)
     if (iReceiveBuf.Size() == 0)
         return 0;
 
-    TInt requiredLength = aData.Length();
+    TInt requiredLength = aData.MaxLength();
     TInt bufLength =  iReceiveBuf.Length();
 
     TInt readLength = requiredLength < bufLength ? requiredLength : bufLength;

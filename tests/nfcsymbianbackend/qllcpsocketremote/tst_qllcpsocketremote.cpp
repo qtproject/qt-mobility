@@ -11,10 +11,14 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QNearFieldTarget*)
+Q_DECLARE_METATYPE(QLlcpSocket::Error);
 
 class tst_qllcpsocketremote : public QObject
 {
     Q_OBJECT
+
+public:
+    tst_qllcpsocketremote();
 
 private Q_SLOTS:
 
@@ -22,12 +26,19 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void testCase1();   // handshake 1
-    void testCase1_data();
+    void testCase2(); // handshake 2
 
 private:
      QNearFieldTarget *m_target;
+     quint8 m_port;
 };
 
+
+tst_qllcpsocketremote::tst_qllcpsocketremote()
+{
+    qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
+    qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::Error");
+}
 
 /*!
  Description: Init test case for NFC LLCP connection-less mode socket - local peer
@@ -44,13 +55,15 @@ void tst_qllcpsocketremote::initTestCase()
     QSignalSpy targetDetectedSpy(nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
-    QString message("Wait for NFC device touch...");
+    QString message("Remote wait touch");
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
     m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
+
+    m_port = 35;
 }
 
 void tst_qllcpsocketremote::cleanupTestCase()
@@ -71,16 +84,14 @@ void tst_qllcpsocketremote::cleanupTestCase()
 */
 void tst_qllcpsocketremote::testCase1()
 {  
-    QString message("handshake 1");
-    QNfcTestUtil::ShowMessage(message);
-
-    QFETCH(quint8, port);
-    QFETCH(bool, enableWaiterFlag);
-
     // STEP 1:  bind the local port for current socket
     QLlcpSocket socket(this);
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(port);
+    bool ret = socket.bind(m_port);
+
+    QString message("handshake 1");
+    QNfcTestUtil::ShowMessage(message);
+
     QTRY_VERIFY(readyReadSpy.count() == 1);
     QVERIFY(ret);
 
@@ -97,14 +108,7 @@ void tst_qllcpsocketremote::testCase1()
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
 
-    socket.writeDatagram(datagram,m_target, port);
-
-    if(enableWaiterFlag)
-    {
-        const int Timeout = 10 * 1000;
-        ret = socket.waitForBytesWritten(Timeout);
-        QVERIFY(ret);
-    }
+    socket.writeDatagram(datagram,m_target, m_port);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
     QList<QVariant> arguments = bytesWrittenSpy.takeFirst(); // take the first signal
@@ -114,16 +118,35 @@ void tst_qllcpsocketremote::testCase1()
     QCOMPARE(errorSpy.count(), 0);
 }
 
-void tst_qllcpsocketremote::testCase1_data()
+
+/*!
+ Description: Unit test for NFC LLCP connection-less mode socket - remote peer (passive)
+
+ TestScenario: 1. Remote peer binds to local port
+               2. Remote peer waitForReadyRead
+
+ TestExpectedResults:
+               1. Remote peer binds to local port successfully.
+               2. waitForReadyRead return true as long as readyReadSpy not empty
+*/
+void tst_qllcpsocketremote::testCase2()
 {
-    QTest::addColumn<quint8>("port");
-    QTest::addColumn<bool>("enableWait");
-    quint8 port = 35;
-    QTest::newRow("row1") << port << false;
-    QTest::newRow("row2") << port << true;
-}
+    // STEP 1:  bind the local port for current socket
+    QLlcpSocket socket(this);
+    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
+    bool ret = socket.bind(m_port);
 
+    QString message("handshake 2");
+    QNfcTestUtil::ShowMessage(message);
 
+    QTRY_VERIFY(readyReadSpy.count() == 1);
+
+    const int Timeout = 10 * 1000;
+    ret = socket.waitForReadyRead(Timeout);
+    QVERIFY(ret == true);
+
+    QVERIFY(ret);
+ }
 
 QTEST_MAIN(tst_qllcpsocketremote);
 
