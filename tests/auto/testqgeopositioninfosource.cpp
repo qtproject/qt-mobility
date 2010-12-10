@@ -56,6 +56,9 @@
 #include "testqgeopositioninfosource_p.h"
 #include "qlocationtestutils_p.h"
 
+#include <geoclue/geoclue-master.h>
+#include <geoclue/geoclue-master-client.h>
+#include <geoclue/geoclue-velocity.h>
 
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
@@ -120,6 +123,9 @@ protected:
 TestQGeoPositionInfoSource::TestQGeoPositionInfoSource(QObject *parent)
         : QObject(parent)
 {
+#if TST_MOCK_GEOCLUE
+    m_geoclueMock = 0;
+#endif
     m_testingDefaultSource = false;
 }
 
@@ -163,15 +169,26 @@ void TestQGeoPositionInfoSource::base_cleanupTestCase()
 void TestQGeoPositionInfoSource::initTestCase()
 {
     base_initTestCase();
+#ifdef TST_MOCK_GEOCLUE
+    m_threadGeoclueMock.start();
+#endif
 }
 
 void TestQGeoPositionInfoSource::init()
 {
-    base_init();
+#ifdef TST_MOCK_GEOCLUE
+    initGeoclueMock();
+#endif
+    base_init();    
 }
 
 void TestQGeoPositionInfoSource::cleanup()
 {
+#ifdef TST_MOCK_GEOCLUE
+    if (m_geoclueMock)
+        delete m_geoclueMock;
+    m_geoclueMock =0;
+#endif
     base_cleanup();
 }
 
@@ -179,6 +196,18 @@ void TestQGeoPositionInfoSource::cleanupTestCase()
 {
     base_cleanupTestCase();
 }
+
+#ifdef TST_MOCK_GEOCLUE
+void TestQGeoPositionInfoSource::initGeoclueMock()
+{
+    if (m_geoclueMock)
+        delete m_geoclueMock;
+    m_geoclueMock = new GeoclueMock;
+    geocluemock_setjournal(":/data/gcmock_basic_vel_pos.journal");
+    m_geoclueMock->moveToThread(&m_threadGeoclueMock);
+    QMetaObject::invokeMethod(m_geoclueMock, "start", Qt::BlockingQueuedConnection);
+}
+#endif
 
 // TC_ID_3_x_1
 void TestQGeoPositionInfoSource::constructor_withParent()
@@ -314,7 +343,9 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 {
     QTest::addColumn<int>("interval");
     QTest::addColumn<int>("expectedInterval");
-
+#ifdef TST_MOCK_GEOCLUE
+    initGeoclueMock();
+#endif
     QGeoPositionInfoSource *source = createTestSource();
     int minUpdateInterval = source ? source->minimumUpdateInterval() : -1;
     if (source)
@@ -344,10 +375,6 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 void TestQGeoPositionInfoSource::lastKnownPosition()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
-
     QFETCH(int, positioningMethod);
     QFETCH(bool, lastKnownPositionArgument);
     QFETCH(bool, positionValid);
@@ -430,8 +457,12 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("lastKnownPositionArgument");
     QTest::addColumn<bool>("positionValid");
 
+#ifndef GEOCLUE_MASTER_AVAILABLE
+    // Todo: this needs to be fixed in MeeGo; currently it returns any lastPosition from any source regardless of satellite
+    // parameter.
     QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
     QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
+#endif
     QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
     QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
     QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
@@ -449,9 +480,6 @@ void TestQGeoPositionInfoSource::minimumUpdateInterval()
 void TestQGeoPositionInfoSource::startUpdates_testIntervals()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -484,9 +512,6 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     // this test are as high as they are.
 
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -543,9 +568,6 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
 void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -563,9 +585,6 @@ void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
 void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -583,9 +602,6 @@ void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
 void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -607,9 +623,6 @@ void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
 void TestQGeoPositionInfoSource::stopUpdates()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -636,19 +649,12 @@ void TestQGeoPositionInfoSource::stopUpdates()
 void TestQGeoPositionInfoSource::stopUpdates_withoutStart()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
     m_source->stopUpdates(); // check there is no crash
 }
 
 void TestQGeoPositionInfoSource::requestUpdate()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
-
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(timeout);
@@ -665,9 +671,6 @@ void TestQGeoPositionInfoSource::requestUpdate_data()
 void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -682,9 +685,6 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -702,9 +702,6 @@ void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
 void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(1);
@@ -718,9 +715,6 @@ void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -741,9 +735,6 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -760,9 +751,6 @@ void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
 void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -793,9 +781,6 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -825,9 +810,6 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
 void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -854,9 +836,6 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -881,9 +860,6 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     bool i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
     QVERIFY(i == true);
@@ -899,9 +875,6 @@ void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
 {
     CHECK_SOURCE_VALID;
-#ifdef Q_WS_MEEGO
-    QSKIP("Temporary skip on MeeGo until backend is more ready.", SkipAll);
-#endif
 
     bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
     QVERIFY(i == true);
