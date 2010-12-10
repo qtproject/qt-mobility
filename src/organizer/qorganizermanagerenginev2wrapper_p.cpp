@@ -216,13 +216,14 @@ QSharedPointer<QOrganizerItemObserver> QOrganizerManagerEngineV2Wrapper::observe
 {
     QOrganizerItemObserver* observer = createOrganizerItemObserver(this);
     connect(observer, SIGNAL(destroyed(QObject*)),
-            this, SLOT(observerDestroyed(QOrganizerItemObserver*)));
+            this, SLOT(observerDestroyed(QObject*)));
     m_observerForItem.insert(itemId, observer);
     return QSharedPointer<QOrganizerItemObserver>(observer);
 }
 
-void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QOrganizerItemObserver* observer)
+void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QObject* object)
 {
+    QOrganizerItemObserver* observer = reinterpret_cast<QOrganizerItemObserver*>(object);
     QOrganizerItemId key = m_observerForItem.key(observer);
     if (!key.isNull()) {
         m_observerForItem.remove(key, observer);

@@ -119,7 +119,7 @@ public:
 private Q_SLOTS:
     void contactsUpdated(const QList<QContactLocalId>& ids);
     void contactsDeleted(const QList<QContactLocalId>& ids);
-    void observerDestroyed(QContactObserver* object);
+    void observerDestroyed(QObject* object);
 
 private:
     QMultiHash<QContactLocalId, QContactObserver*> m_observerForContact;

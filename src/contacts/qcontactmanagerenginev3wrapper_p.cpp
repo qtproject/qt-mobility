@@ -82,13 +82,14 @@ QContactManagerEngineV3Wrapper::~QContactManagerEngineV3Wrapper()
 QSharedPointer<QContactObserver> QContactManagerEngineV3Wrapper::observeContact(QContactLocalId contactId)
 {
     QContactObserver* observer = createContactObserver(this);
-    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QContactObserver*)));
+    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QObject*)));
     m_observerForContact.insert(contactId, observer);
     return QSharedPointer<QContactObserver>(observer);
 }
 
-void QContactManagerEngineV3Wrapper::observerDestroyed(QContactObserver* observer)
+void QContactManagerEngineV3Wrapper::observerDestroyed(QObject* object)
 {
+    QContactObserver* observer = reinterpret_cast<QContactObserver*>(object);
     QContactLocalId key = m_observerForContact.key(observer);
     if (key != 0) {
         m_observerForContact.remove(key, observer);
