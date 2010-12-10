@@ -43,6 +43,8 @@
 
 #include "qnearfieldtagtype1.h"
 
+#include <QtCore/QVariant>
+
 #include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -290,7 +292,14 @@ bool QTlvReader::readMoreData(int sparseOffset)
         } else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
             quint8 segment = absOffset / 128;
 
-            data = (absOffset < 120) ? tag->readAll().mid(2) : tag->readSegment(segment);
+            QNearFieldTarget::RequestId id =
+                (absOffset < 120) ? tag->readAll() : tag->readSegment(segment);
+            if (!tag->waitForRequestCompleted(id))
+                return false;
+
+            data = tag->requestResponse(id).toByteArray();
+            if (absOffset < 120)
+                data = data.mid(2);
 
             int length = dataLength(absOffset);
 
@@ -434,14 +443,25 @@ void QTlvWriter::flush(bool all)
 
             if (fillLength && (all || m_buffer.length() - bufferIndex >= fillLength)) {
                 // sufficient data available
-                QByteArray block = tag->readBlock(currentBlock);
+                QNearFieldTarget::RequestId id = tag->readBlock(currentBlock);
+                if (!tag->waitForRequestCompleted(id))
+                    break;
+
+                QByteArray block = tag->requestResponse(id).toByteArray();
 
                 int fill = qMin(fillLength, m_buffer.length() - bufferIndex);
 
                 for (int i = m_index - currentBlockStart; i < fill; ++i)
                     block[i] = m_buffer.at(bufferIndex++);
 
-                tag->writeBlock(currentBlock, block);
+                id = tag->writeBlock(currentBlock, block);
+                if (!tag->waitForRequestCompleted(id))
+                    break;
+
+                if (!tag->requestResponse(id).toBool()) {
+                    qDebug() << "Write failed";
+                    break;
+                }
             }
 
             m_buffer = m_buffer.mid(bufferIndex);

@@ -40,10 +40,14 @@
 ****************************************************************************/
 
 #include "qnearfieldtagtype1.h"
+#include "qnearfieldtarget_p.h"
 #include "qndefmessage.h"
 #include "qtlv_p.h"
 
 #include <QtCore/QByteArray>
+#include <QtCore/QVariant>
+
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,12 +75,92 @@ QTM_BEGIN_NAMESPACE
     \reimp
 */
 
+class QNearFieldTagType1Private
+{
+public:
+    QMap<QNearFieldTarget::RequestId, QByteArray> m_pendingInternalCommands;
+};
+
+static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
+{
+    switch (command.at(0)) {
+    case 0x01:  // READ
+        if (command.at(1) == response.at(0))
+            return quint8(response.at(1));
+        break;
+    case 0x53: { // WRITE-E
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && (writeData == data));
+    }
+    case 0x1a: { // WRITE-NE
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && ((writeData & data) == data));
+    }
+    case 0x10: { // RSEG
+        quint8 segmentAddress = quint8(command.at(1)) >> 4;
+        quint8 readSegmentAddress = quint8(response.at(0)) >> 4;
+        if (readSegmentAddress == segmentAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x02: { // READ8
+        quint8 blockAddress = command.at(1);
+        quint8 readBlockAddress = response.at(0);
+        if (readBlockAddress == blockAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x54: { // WRITE-E8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        return ((writeBlockAddress == blockAddress) && (writeData == data));
+    }
+    case 0x1b: { // WRITE-NE8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        if (writeBlockAddress != blockAddress)
+            return false;
+
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+
+        return true;
+    }
+    }
+
+    return QVariant();
+}
+
 /*!
     Constructs a new tag type 1 near field target with \a parent.
 */
 QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
-:   QNearFieldTarget(parent)
+:   QNearFieldTarget(parent), d_ptr(new QNearFieldTagType1Private)
 {
+}
+
+/*!
+    Destroys the tag type 1 near field target.
+*/
+QNearFieldTagType1::~QNearFieldTagType1()
+{
+    delete d_ptr;
 }
 
 /*!
@@ -84,7 +168,11 @@ QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
 */
 bool QNearFieldTagType1::hasNdefMessage()
 {
-    const QByteArray data = readAll();
+    RequestId id = readAll();
+    if (!waitForRequestCompleted(id))
+        return false;
+
+    const QByteArray data = requestResponse(id).toByteArray();
 
     if (data.isEmpty())
         return false;
@@ -107,47 +195,61 @@ bool QNearFieldTagType1::hasNdefMessage()
 /*!
     \reimp
 */
-QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
+void QNearFieldTagType1::readNdefMessages()
 {
-    const QByteArray id = readIdentification();
+    RequestId id = readIdentification();
+    if (!waitForRequestCompleted(id))
+        return;
+
+    const QByteArray data = requestResponse(id).toByteArray();
 
     // Check if target is a NFC TagType1 tag
-    quint8 hr0 = id.at(0);
+    quint8 hr0 = data.at(0);
     if (!(hr0 & 0x10))
-        return QList<QNdefMessage>();
+        return;
 
-    if (readByte(8) != 0xe1)
-        return QList<QNdefMessage>();
+    id = readByte(8);
+    if (!waitForRequestCompleted(id))
+        return;
+
+    quint8 ndefMagicNumber = requestResponse(id).toUInt();
+    if (ndefMagicNumber != 0xe1)
+        return;
 
     QTlvReader reader(this);
-
-    QList<QNdefMessage> ndefMessages;
-
     while (!reader.atEnd()) {
         if (!reader.readNext())
             break;
 
         // NDEF Message TLV
         if (reader.tag() == 0x03)
-            ndefMessages.append(QNdefMessage::fromByteArray(reader.data()));
+            emit ndefMessageRead(QNdefMessage::fromByteArray(reader.data()));
     }
-
-    return ndefMessages;
 }
 
 /*!
     \reimp
 */
-void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType1::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
-    const QByteArray id = readIdentification();
+    RequestId id = readIdentification();
+    if (!waitForRequestCompleted(id))
+        return;
+
+    const QByteArray data = requestResponse(id).toByteArray();
 
     // Check if target is NFC TagType1 tag
-    quint8 hr0 = id.at(0);
+    quint8 hr0 = data.at(0);
     if (!(hr0 & 0x10))
         return;
 
-    if (readByte(8) != 0xe1)
+    id = readByte(8);
+    if (!waitForRequestCompleted(id))
+        return;
+
+    quint8 ndefMagicNumber = requestResponse(id).toUInt();
+
+    if (ndefMagicNumber != 0xe1)
         return;
 
     typedef QPair<quint8, QByteArray> Tlv;
@@ -177,6 +279,8 @@ void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
         writer.writeTlv(0x03, message.toByteArray());
 
     writer.writeTlv(0xfe);
+
+    emit ndefMessagesWritten();
 }
 
 /*!
@@ -184,7 +288,12 @@ void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
 */
 quint8 QNearFieldTagType1::version()
 {
-    return readByte(9);
+    RequestId id = readByte(9);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    quint8 versionNumber = requestResponse(id).toUInt();
+    return versionNumber;
 }
 
 /*!
@@ -192,7 +301,11 @@ quint8 QNearFieldTagType1::version()
 */
 int QNearFieldTagType1::memorySize()
 {
-    quint8 tms = readByte(10);
+    RequestId id = readByte(10);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    quint8 tms = requestResponse(id).toUInt();
 
     return 8 * (tms + 1);
 }
@@ -203,7 +316,7 @@ int QNearFieldTagType1::memorySize()
     The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
     is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readIdentification()
+QNearFieldTarget::RequestId QNearFieldTagType1::readIdentification()
 {
     QByteArray command;
     command.append(char(0x78));     // RID
@@ -220,7 +333,7 @@ QByteArray QNearFieldTagType1::readIdentification()
     The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
     array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readAll()
+QNearFieldTarget::RequestId QNearFieldTagType1::readAll()
 {
     QByteArray command;
     command.append(char(0x00));   // RALL
@@ -235,10 +348,10 @@ QByteArray QNearFieldTagType1::readAll()
     Reads and returns a single byte from the static memory area of the tag. The \a address
     parameter specifices the linear byte address to read.
 */
-quint8 QNearFieldTagType1::readByte(quint8 address)
+QNearFieldTarget::RequestId QNearFieldTagType1::readByte(quint8 address)
 {
     if (address & 0x80)
-        return 0;
+        return RequestId();
 
     QByteArray command;
     command.append(char(0x01));     // READ
@@ -246,15 +359,13 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return 0;
+    Q_D(QNearFieldTagType1);
 
-    if (response.at(0) != address)
-        return 0;
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.at(1);
+    return id;
 }
 
 /*!
@@ -265,10 +376,11 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
+QNearFieldTarget::RequestId QNearFieldTagType1::writeByte(quint8 address, quint8 data,
+                                                          WriteMode mode)
 {
     if (address & 0x80)
-        return false;
+        return RequestId();
 
     QByteArray command;
 
@@ -277,39 +389,29 @@ bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
     else if (mode == WriteOnly)
         command.append(char(0x1a)); // WRITE-NE
     else
-        return false;
+        return RequestId();
 
     command.append(char(address));  // Address
     command.append(char(data));     // Data
     command.append(uid().left(4));  // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType1);
 
-    quint8 writeAddress = response.at(0);
-    quint8 writeData = response.at(1);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    if (writeAddress != address)
-        return false;
-
-    if (mode == EraseAndWrite)
-        return writeData == data;
-    else if (mode == WriteOnly)
-        return (writeData & data) == data;
-    else
-        return false;
+    return id;
 }
 
 /*!
     Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
     byte array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1::readSegment(quint8 segmentAddress)
 {
     if (segmentAddress & 0xf0)
-        return QByteArray();
+        return RequestId();
 
     QByteArray command;
     command.append(char(0x10));                 // RSEG
@@ -317,23 +419,20 @@ QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return QByteArray();
+    Q_D(QNearFieldTagType1);
 
-    quint8 readSegmentAddress = response.at(0);
-    if ((readSegmentAddress >> 4) != segmentAddress)
-        return QByteArray();
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.mid(1);
+    return id;
 }
 
 /*!
     Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
     array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1::readBlock(quint8 blockAddress)
 {
     QByteArray command;
     command.append(char(0x02));                 // READ8
@@ -341,16 +440,13 @@ QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return QByteArray();
+    Q_D(QNearFieldTagType1);
 
-    quint8 readBlockAddress = response.at(0);
-    if (readBlockAddress != blockAddress)
-        return QByteArray();
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.mid(1);
+    return id;
 }
 
 /*!
@@ -362,10 +458,12 @@ QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
     Returns true on success; otherwise returns false.
 
 */
-bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data, WriteMode mode)
+QNearFieldTarget::RequestId QNearFieldTagType1::writeBlock(quint8 blockAddress,
+                                                           const QByteArray &data,
+                                                           WriteMode mode)
 {
     if (data.length() != 8)
-        return false;
+        return RequestId();
 
     QByteArray command;
 
@@ -374,34 +472,34 @@ bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data,
     else if (mode == WriteOnly)
         command.append(char(0x1b));     // WRITE-NE8
     else
-        return false;
+        return RequestId();
 
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
     command.append(uid().left(4));      // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType1);
 
-    quint8 writeBlockAddress = response.at(0);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    if (writeBlockAddress != blockAddress)
-        return false;
+    return id;
+}
 
-    if (mode == EraseAndWrite) {
-        return response.mid(1) == data;
-    } else if (mode == WriteOnly) {
-        const QByteArray writeData = response.mid(1);
-        for (int i = 0; i < writeData.length(); ++i) {
-            if ((writeData.at(i) & data.at(i)) != data.at(i))
-                return false;
-        }
+bool QNearFieldTagType1::handleResponse(const RequestId &id, const QByteArray &response)
+{
+    Q_D(QNearFieldTagType1);
+
+    if (d->m_pendingInternalCommands.contains(id)) {
+        const QByteArray command = d->m_pendingInternalCommands.take(id);
+
+        QVariant decodedResponse = decodeResponse(command, response);
+        setResponseForRequest(id, decodedResponse);
         return true;
-    } else {
-        return false;
     }
+
+    return QNearFieldTarget::handleResponse(id, response);
 }
 
 #include "moc_qnearfieldtagtype1.cpp"
