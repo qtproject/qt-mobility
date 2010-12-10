@@ -46,21 +46,12 @@ Rectangle {
          id: calendar
          width: 400
          height: 640
-         property date day: new Date()
-         property string status:day.toDateString()
-         property OrganizerModel organizer:OrganizerModel{
-             id: organizer
-             startPeriod:new Date(calendar.day.getFullYear(), 1, 1)
-             endPeriod:new Date(calendar.day.getFullYear() +1, 12, 31)
-             autoUpdate:false
-             Component.onCompleted : {
-                 if (manager == "memory")
-                     organizer.importItems(Qt.resolvedUrl("contents/test.ics"));
-             }
-         }
-         onDayChanged: {
-             calendar.status = day.toDateString();
-         }
+         property date currentDate:new Date()
+         property int year:currentDate.getFullYear()
+         property int month:currentDate.getMonth()
+         property int day:currentDate.getDate()
+         property int weekDay:currentDate.getDay()
+         property string status:currentDate.toDateString()
 
         color: "#343434";
         Image { source: "contents/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 1 }
@@ -68,6 +59,17 @@ Rectangle {
         state: "MonthView";
 
         SystemPalette { id: activePalette }
+        property OrganizerModel organizer:OrganizerModel{
+            id: organizer
+            manager:"qtorganizer:memory:id=qml"
+            startPeriod:'2009-01-01'
+            endPeriod:'2012-12-31'
+            autoUpdate:true
+            Component.onCompleted : {
+                if (managerName == "memory")
+                    organizer.importItems(Qt.resolvedUrl("contents/test.ics"));
+            }
+        }
 
 
 
@@ -76,21 +78,21 @@ Rectangle {
             id: statusBar; status:calendar.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: calendar.bottom
             onLeftClicked: {
                 if (calendar.state == "MonthView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() - 1, calendar.day.getDate());
+                    calendar.currentDate = new Date(calendar.year, calendar.month - 1, calendar.day);
                 } else if (calendar.state == "WeekView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() - 7);
+                    calendar.currentDate = new Date(calendar.year, calendar.month , calendar.day - 7);
                 } else if (calendar.state == "DayView" || calendar.state == "TimelineView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() - 1);
+                    calendar.currentDate = new Date(calendar.year, calendar.month , calendar.day - 1);
                 }
 
             }
             onRightClicked: {
                 if (calendar.state == "MonthView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() + 1, calendar.day.getDate());
+                    calendar.currentDate = new Date(calendar.year, calendar.month + 1, calendar.day);
                 } else if (calendar.state == "WeekView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() + 7);
+                    calendar.currentDate = new Date(calendar.year, calendar.month , calendar.day + 7);
                 } else if (calendar.state == "DayView" || calendar.state == "TimelineView") {
-                    calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth() , calendar.day.getDate() + 1);
+                    calendar.currentDate = new Date(calendar.year, calendar.month , calendar.day + 1);
                 }
             } //rightClick
         }
@@ -126,6 +128,8 @@ Rectangle {
                 width: calendar.width;
                 height: calendar.height - menuBar.height - statusBar.height;
                 opacity: 0;
+                month:calendar.month
+                year:calendar.year
                 anchors.fill: contentArea;
             }
             TimelineView {
