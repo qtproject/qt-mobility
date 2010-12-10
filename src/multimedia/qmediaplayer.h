@@ -42,6 +42,7 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
+
 #include "qmediaserviceprovider.h"
 #include "qmediaobject.h"
 #include "qmediacontent.h"
@@ -53,7 +54,6 @@ QT_BEGIN_NAMESPACE
 class QMediaPlaylist;
 class QVideoWidget;
 class QGraphicsVideoItem;
-
 
 class QMediaPlayerPrivate;
 class Q_MULTIMEDIA_EXPORT QMediaPlayer : public QMediaObject
@@ -148,6 +148,8 @@ public:
     Error error() const;
     QString errorString() const;
 
+    QString currentNetworkConfigurationId() const;
+
 public Q_SLOTS:
     void play();
     void pause();
@@ -161,6 +163,8 @@ public Q_SLOTS:
 
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
     void setPlaylist(QMediaPlaylist *playlist);
+
+    void setNetworkConfigurations(const QList<QString> &configurationIds);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -183,6 +187,7 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
+    void networkConfigurationChanged(const QString &configurationId);
 public:
     virtual bool bind(QObject *);
     virtual void unbind(QObject *);
