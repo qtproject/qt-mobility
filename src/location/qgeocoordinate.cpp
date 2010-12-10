@@ -401,7 +401,7 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
 
 
 /*!
-    Returns the coordinate that is reached by travelling \a distance metres 
+    Returns the coordinate that is reached by traveling \a distance metres 
     from the current coordinate at \a azimuth (or bearing) along a great-circle.
     There is an assumption that the Earth is spherical for the purpose of this
     calculation.
