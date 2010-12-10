@@ -84,12 +84,14 @@ bool QBluetoothTransferReplySymbian::start()
     protocolInfo.iAddr.SetBTAddr(deviceAddress);
     //protocolInfo.iAddr.SetPort( /*set port here*/ );
 
-    if ( m_client )
-        {
+    if ( m_client ) {
         delete m_client;
         m_client = NULL;
-        }
-    m_client = CObexClient::NewL( protocolInfo );
+    }
+    
+    TRAPD( err, m_client = CObexClient::NewL(protocolInfo));
+    if (err)
+        return false;
 
     m_client->Connect( iStatus );
 
@@ -141,6 +143,12 @@ QString QBluetoothTransferReplySymbian::errorString() const
 
 void QBluetoothTransferReplySymbian::DoCancel()
 {
+    // Deleting obexclient is the only way to cancel active requests
+    if ( m_client ) {
+        delete m_client;
+        m_client = NULL;
+        m_state = EIdle;
+    }    
 }
 
 void QBluetoothTransferReplySymbian::RunL()
@@ -156,7 +164,10 @@ void QBluetoothTransferReplySymbian::RunL()
             break;
         case EDisconnecting:
             m_state = EIdle;
+            m_finished = true;
+            m_running = false;
             break;
+        case EIdle:
         default:
             break;
     }
