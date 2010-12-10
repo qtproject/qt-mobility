@@ -49,14 +49,14 @@ SOURCES += plugin.cpp \
     qdeclarativecontact.cpp \
     qdeclarativecontactdetail.cpp \
     qdeclarativeopenmetaobject.cpp \
-    qmetaobjectbuilder.cpp \
     qdeclarativecontactfilter.cpp \
     qdeclarativecontactmetaobject.cpp \
     qdeclarativecontactimageprovider.cpp \
     qdeclarativecontactsortorder.cpp \
     qdeclarativecontactfetchhint.cpp \
     qdeclarativecontactrelationship.cpp \
-    qdeclarativecontactrelationshipmodel.cpp
+    qdeclarativecontactrelationshipmodel.cpp \
+    ../../../src/serviceframework/ipc/qmetaobjectbuilder.cpp
 
 RESOURCES += contacts.qrc
 
@@ -74,5 +74,3 @@ symbian {
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
     DEPLOYMENT = importFiles
  }
-
-

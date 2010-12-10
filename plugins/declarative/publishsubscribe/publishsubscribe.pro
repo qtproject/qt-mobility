@@ -14,8 +14,8 @@ QT += declarative
 SOURCES += publishsubscribe.cpp \
     qdeclarativevaluespacepublisher.cpp \
     qdeclarativeopenmetaobject.cpp \
-    qmetaobjectbuilder.cpp \
-    qdeclarativevaluespacepublishermetaobject.cpp
+    qdeclarativevaluespacepublishermetaobject.cpp \
+    ../../../src/serviceframework/ipc/qmetaobjectbuilder.cpp
 HEADERS += \
     qdeclarativevaluespacepublisher_p.h \
     qdeclarativeopenmetaobject_p.h \
