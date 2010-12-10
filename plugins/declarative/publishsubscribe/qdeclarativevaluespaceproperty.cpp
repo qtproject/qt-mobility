@@ -130,6 +130,7 @@ void QDeclarativeValueSpaceProperty::makePublisher()
         connect(m_publisher, SIGNAL(interestChanged(QString,bool)),
                 this, SLOT(onInterestChanged(QString, bool)));
         m_publishers.insert(path(), m_publisher);
+        m_publisher->resetValue("");
     }
 }
 
