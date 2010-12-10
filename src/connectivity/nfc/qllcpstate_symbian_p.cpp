@@ -122,12 +122,15 @@ bool QLLCPBind::WaitForReadyRead(int msecs)
 qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
                                        QNearFieldTarget *target, quint8 port)
 {
+    qDebug() << "QLLCPUnconnected::WriteDatagram() enter: ";
     qint64 val = -1;
 
     CLlcpSocketType1* socketHandler =  m_socket->socketType1Instance();
 
     TPtrC8 myDescriptor((const TUint8*)data, size);
+
     val = socketHandler->StartWriteDatagram(myDescriptor, port);
+    qDebug() << "after socketHandler::StartWriteDatagram() " << val;
 
     return val;
 }
@@ -216,9 +219,14 @@ bool QLLCPConnected::WaitForDisconnected(int msecs)
 qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
                                QNearFieldTarget **target, quint8 *port)
 {
+    qDebug() << "QLLCPBind::ReadDatagram() enter: " << data << " " << maxSize;
+
     Q_UNUSED(target);
     qint64 val = -1;
     CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
+    qDebug() << "socketHandler get: " << socketHandler;
+
+
     if (socketHandler != NULL)
     {
         TPtr8 ptr((TUint8*)data, (TInt)maxSize);
@@ -231,6 +239,8 @@ qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
         }
     }
 
+    qDebug() << "QLLCPBind::ReadDatagram() val&size: " << val << " " << maxSize;
+    qDebug() << "QLLCPBind::ReadDatagram() after: " << data << " ";
     return val;
 }
 
@@ -476,7 +486,7 @@ qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size)
 
 bool QLLCPSocketState::Bind(quint8 port)
 {
-    m_socket->invokeError();
+    Q_UNUSED(port);
     return false;
 }
 

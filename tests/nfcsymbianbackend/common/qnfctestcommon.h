@@ -59,7 +59,7 @@
 #define QTRY_VERIFY(__expr) \
     do { \
         const int __step = 50; \
-        const int __timeout = 5000; \
+        const int __timeout = 10000; \
         if (!(__expr)) { \
             QTest::qWait(0); \
         } \
