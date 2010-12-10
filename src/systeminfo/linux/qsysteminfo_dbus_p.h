@@ -57,6 +57,7 @@ static bool halAvailable()
     return false;
 }
 
+#if !defined(QT_NO_UDISKS)
 static bool udisksAvailable()
 {
 #if !defined(QT_NO_DBUS)
@@ -71,8 +72,9 @@ static bool udisksAvailable()
 #endif
     return false;
 }
+#endif
 
-
+#if !defined(QT_NO_CONNMAN)
 static bool connmanAvailable()
 {
 #if !defined(QT_NO_DBUS)
@@ -102,8 +104,9 @@ static bool ofonoAvailable()
 #endif
     return false;
 }
+#endif
 
-
+#if !defined(QT_NO_UDISKS)
 static bool uPowerAvailable()
 {
 #if !defined(QT_NO_DBUS)
@@ -118,5 +121,5 @@ static bool uPowerAvailable()
 #endif
     return false;
 }
-
+#endif
 #endif // QSYSTEMINFO_DBUS_P_H
