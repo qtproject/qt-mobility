@@ -91,6 +91,7 @@ tst_qllcpsockettype2::tst_qllcpsockettype2()
 {
     qRegisterMetaType<QNearFieldTarget*>("QNearFieldTarget*");
     qRegisterMetaType<QLlcpSocket::Error>("QLlcpSocket::Error");
+    qRegisterMetaType<QLlcpSocket::State>("QLlcpSocket::State");
 }
 
 void tst_qllcpsockettype2::initTestCase()
@@ -153,15 +154,16 @@ void tst_qllcpsockettype2::echo()
     out.setVersion(QDataStream::Qt_4_6);
     out << (quint16)0;
     out << echo;
-    
+
     qDebug("Client-- write quint16 length = %d", sizeof(quint16));
     qDebug("Client-- write echo string = %s", qPrintable(echo));
     qDebug("Client-- write echo string length= %d", echo.length());
     qDebug("Client-- write data length = %d", block.length());
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
-    socket.write(block);
+    qint64 val = socket.write(block);
+    QVERIFY( val != -1);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
@@ -207,7 +209,6 @@ void tst_qllcpsockettype2::echo_data()
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QString>("echo");
     QTest::newRow("0") << TestUri
-            << "Client: uri = echo"
             << "echo";
 }
 
@@ -247,13 +248,22 @@ void tst_qllcpsockettype2::echo_wait()
     //Send data to server
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
 
+    //Send data to server
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << (quint16)echo.length();
+    out << (quint16)0;
     out << echo;
 
-    socket.write(block);
+    qDebug("Client-- write quint16 length = %d", sizeof(quint16));
+    qDebug("Client-- write echo string = %s", qPrintable(echo));
+    qDebug("Client-- write echo string length= %d", echo.length());
+    qDebug("Client-- write data length = %d", block.length());
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    qint64 val = socket.write(block);
+    QVERIFY( val != -1);
 
     ret = socket.waitForBytesWritten(Timeout);
     QVERIFY(ret);
@@ -279,14 +289,14 @@ void tst_qllcpsockettype2::echo_wait()
         QVERIFY(ret);
     }
     in >> blockSize;
-
+    qDebug() << "Client-- read blockSize=" << blockSize;
     while (socket.bytesAvailable() < blockSize){
         ret = socket.waitForReadyRead(Timeout);
         QVERIFY(ret);
     }
     QString echoed;
     in >> echoed;
-
+    qDebug() << "Client-- read echoed string =" << echoed;
     //test the echoed string is same as the original string
     QVERIFY(echo == echoed);
 
@@ -316,12 +326,12 @@ void tst_qllcpsockettype2::echo_wait_data()
 void tst_qllcpsockettype2::api_coverage()
 {
 
-    QString message("handshake 3");
+    QString message("handshake 3: api_coverage test");
     QNfcTestUtil::ShowMessage(message);
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged()));
+    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::State)));
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     socket.connectToService(m_target, TestUri);
@@ -334,16 +344,12 @@ void tst_qllcpsockettype2::api_coverage()
     QCOMPARE(state2, QLlcpSocket::ConnectedState);
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
-    message = "Connection oriented write test string I";
+    message = "Connection oriented write test string";
     const char* data = (const char *) message.data();
-    quint64 ret = socket.writeDatagram(data,message.size());
-    QTRY_VERIFY(bytesWrittenSpy.count()==1);
+    qint64 ret = socket.writeDatagram(data,message.size());
+    QVERIFY( ret != -1);
 
-    //Write datagram using another writeDatagram API
-    QByteArray datagram("Connection oriented write test string II");
-    qint64 readSize = socket.writeDatagram(datagram);
-    QVERIFY(readSize != -1);
-    QTRY_VERIFY(bytesWrittenSpy.count()==2);
+    QTRY_VERIFY(bytesWrittenSpy.count() == 1);
 
     stateChangedSpy.clear();
     socket.disconnectFromService();
@@ -355,7 +361,6 @@ void tst_qllcpsockettype2::api_coverage()
 
     QCOMPARE(socket.error(),QLlcpSocket::UnknownSocketError);
 
-    QTRY_VERIFY(ret != -1);
 }
 
 
@@ -426,7 +431,7 @@ void tst_qllcpsockettype2::negTestCase2()
 {
     QLlcpSocket socket(this);
     QByteArray datagram("Connection oriented negTestCase2");
-    quint64 ret = socket.writeDatagram(datagram);
+    qint64 ret = socket.writeDatagram(datagram);
     QTRY_VERIFY(ret == -1);
     ret = socket.readDatagram(datagram.data(),datagram.size());
     QTRY_VERIFY(ret == -1);

@@ -80,6 +80,12 @@ bool QLLCPUnconnected::WaitForBytesWritten(int msecs)
    return isOK;
 }
 
+bool QLLCPUnconnected::WaitForDisconnected(int msecs)
+    {
+    Q_UNUSED(msecs);
+    return true;
+    }
+
 /*!
     Connection-Less Mode, same behaviour as QLLCPUnconnected::WaitForBytesWritten
 */

@@ -161,11 +161,11 @@ void tst_QLlcpServer::newConnection()
     out << (quint16)0;
     out << echo;
     qDebug()<<"Write echoed data back to client";
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
     qint64 val = socket->write(block);
     qDebug("Write() return value = %d", val);
-	QVERIFY(val != -1);
+    QVERIFY(val != -1);
 
     QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
     qint64 written = bytesWrittenSpy.first().at(0).value<qint64>();
@@ -203,14 +203,16 @@ void tst_QLlcpServer::newConnection_wait()
     QFETCH(QString, hint);
 
     QLlcpServer server;
+    qDebug() << "Create QLlcpServer completed";
+    qDebug() << "Start listening...";
     bool ret = server.listen(uri);
     QVERIFY(ret);
-
+    qDebug() << "Listen() return ok";
     QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
     QNfcTestUtil::ShowMessage(hint);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
-
+    qDebug() << "try to call nextPendingConnection()";
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
 
@@ -227,13 +229,14 @@ void tst_QLlcpServer::newConnection_wait()
     }
 
     in >> blockSize;
-
+    qDebug()<<"Read blockSize from client: " << blockSize;
     while (socket ->bytesAvailable() < blockSize){
         bool ret = socket->waitForReadyRead(Timeout);
         QVERIFY(ret);
     }
     QString echo;
     in >> echo;
+    qDebug() << "Read data from client:" << echo;
     //Send data to client
     QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
 
@@ -243,11 +246,13 @@ void tst_QLlcpServer::newConnection_wait()
     out << (quint16)0;
     out << echo;
     qDebug()<<"Write echoed data back to client";
-	out.device()->seek(0);
-	out << (quint16)(block.size() - sizeof(quint16));
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
+    qint64 val = socket->write(block);
+    qDebug("Write() return value = %d", val);
+    QVERIFY(val != -1);
 
-    socket->write(block);
     ret = socket->waitForBytesWritten(Timeout);
     QVERIFY(ret);
 
@@ -264,10 +269,10 @@ void tst_QLlcpServer::newConnection_wait()
         }
     //Now data has been sent,check the if existing error
     if (!errorSpy.isEmpty())
-    	{
-    		QLlcpSocket::Error error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
-    		qDebug("QLlcpSocket::Error =%d", error);
-    	}
+        {
+            QLlcpSocket::Error error = errorSpy.first().at(0).value<QLlcpSocket::Error>();
+            qDebug("QLlcpSocket::Error =%d", error);
+        }
     QVERIFY(errorSpy.isEmpty());
 
     server.close();
@@ -297,7 +302,7 @@ void tst_QLlcpServer::api_coverage()
     bool ret = server.listen(uri);
     QVERIFY(ret);
 
-    QString message("handshake 3");
+    QString message("handshake 3: api_coverage test");
     QNfcTestUtil::ShowMessage(message);
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
@@ -315,17 +320,10 @@ void tst_QLlcpServer::api_coverage()
     qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
     QVERIFY(readSize != -1);
 
-    QTRY_VERIFY(readyReadSpy.count() == 2);
-    // Read the second datagram
-    datagram.clear();
-    size = socket->bytesAvailable();
-    datagram.resize(size);
-    readSize = socket->readDatagram(datagram.data(), datagram.size());
-    QVERIFY(readSize != -1);
-
+    qDebug()<<"Server Uri = " << server.serviceUri();
     QCOMPARE(uri,server.serviceUri());
 
-    quint8 unsupportedPort = -1;
+    quint8 unsupportedPort = 0;
     QCOMPARE(unsupportedPort,server.serverPort());
 
     QVERIFY(server.isListening() == true);
@@ -338,7 +336,7 @@ void tst_QLlcpServer::api_coverage()
 */
 void tst_QLlcpServer::negTestCase1()
 {
-    QString message("handshake 4");
+    QString message("handshake 4: negTestCase1 test");
     QNfcTestUtil::ShowMessage(message);
 
     QString uri = TestUri;
