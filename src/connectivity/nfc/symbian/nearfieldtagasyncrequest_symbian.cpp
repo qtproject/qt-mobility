@@ -38,3 +38,40 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
+#include "nearfieldtagasyncrequest_symbian.h"
+
+MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
+{
+    iOperator = 0;
+    iProcessor = 0;
+}
+
+MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
+{
+    delete iProcessor;
+}
+ 
+void MNearFieldTagAsyncRequest::SetRespProcessor(MNearFieldTagAsyncRequestRespProcessor * aProcessor)
+{
+    if (iProcessor)
+    {
+        delete iProcessor;
+        iProcessor = 0;
+    }
+    iProcessor = aProcessor;
+}
+  
+void MNearFieldTagAsyncRequest::SetOperator(MNearFieldTargetOperation * aOperator)
+{
+    iOperator = aOperator;
+}
+
+void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
+{
+    iId = aId;
+}
+    
+QNearFieldTarget::RequestId GetRequestId()
+{
+    return iId;
+}

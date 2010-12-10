@@ -39,4 +39,42 @@
 **
 ****************************************************************************/
 
+#include "nearfieldtagndefrequest_symbian.h"
 
+void NearFieldTagNdefRequest::IssueRequest()
+{
+    if (iOperator)
+    {
+        switch(iType)
+        {
+            case EReadRequest: 
+            {
+                iOperator->DoReadNdefMessages(iMessages, this);
+                break;
+            }
+            case EWriteRequest:
+            {
+                iOperator->DoSetNdefMessages();
+                break;
+            }
+        }
+    }
+}
+
+void NearFieldTagNdefRequest::ProcessResponse()
+{
+    if (iProcessor)
+    {
+        iProcessor->ProcessResponse();
+    }
+}
+
+void NearFieldTagNdefRequest::ReadComplete(TInt aError)
+{
+    ProcessResponse();
+}
+
+void NearFieldTagNdefRequest::WriteComplete(TInt aError)
+{
+    ProcessResponse();
+}

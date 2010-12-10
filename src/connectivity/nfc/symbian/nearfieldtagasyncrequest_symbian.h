@@ -60,11 +60,15 @@ public:
         };
 
 public:
+    MNearFieldTagAsyncRequest();
+    virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;
     virtual void ProcessResponse() = 0;
+    virtual TRequestType Type() = 0;
     void SetRespProcessor(MNearFieldTagAsyncRequestRespProcessor * aProcessor);
     void SetOperator(MNearFieldTargetOperation * aOperator);
-    virtual TRequestType Type() = 0;
+    void SetRequestId(QNearFieldTarget::RequestId aId);
+    QNearFieldTarget::RequestId GetRequestId();
 protected:
     // Current async request ID.
     QNearFieldTarget::RequestId iId;

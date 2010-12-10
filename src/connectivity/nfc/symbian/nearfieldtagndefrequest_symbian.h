@@ -42,7 +42,31 @@
 #define NEARFIELDTAGNDEFREQUEST_SYMBIAN_H
 #include "nearfieldtagasyncrequest_symbian.h"
 
-class NearFieldTagNdefRequest : public MNearFieldTagAsyncRequest
+class NearFieldTagNdefRequest : public MNearFieldTagAsyncRequest,
+                                public MNearFieldNdefOperationCallback
     {
+public:
+    enum TNdefRequestType
+        {
+        EReadRequest,
+        EWriteRequest,
+        ECheckRequest
+        };
+public:
+    void IssueRequest();
+    void ProcessResponse();
+    void SetNdefRequestType(TNdefRequestType aType) { iType = aType; }
+    void SetInputNdefMessages(QList<QNdefMessage> * aMessages) { iMessages = aMessages; }
+    TNdefRequestType GetNdefRequestType() { return iType; }
+    TRequestType Type() { return ENdefRequest; }
+
+private:
+    void ReadComplete(TInt aError);
+    void WriteComplete(TInt aError);
+
+private:
+    TNdefRequestType iType;
+    // Not own
+    QList<QNdefMessage> * iMessages;
     };
 #endif
