@@ -45,7 +45,6 @@ HEADERS += qdeclarativeorganizermodel_p.h \
 SOURCES += plugin.cpp \
            qdeclarativeorganizeritem.cpp \
            qdeclarativeorganizeritemdetail.cpp \
-           qmetaobjectbuilder.cpp \
            qdeclarativeopenmetaobject.cpp \
            qdeclarativeorganizeritemmetaobject.cpp \
            qdeclarativeorganizermodel.cpp \
@@ -53,7 +52,8 @@ SOURCES += plugin.cpp \
            qdeclarativeorganizercollection.cpp \
            qdeclarativeorganizeritemsortorder.cpp \
            qdeclarativeorganizerrecurrencerule.cpp \
-           qdeclarativeorganizeritemfetchhint.cpp
+           qdeclarativeorganizeritemfetchhint.cpp \
+           ../../../src/serviceframework/ipc/qmetaobjectbuilder.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
