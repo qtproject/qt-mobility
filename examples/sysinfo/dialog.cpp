@@ -188,6 +188,53 @@ void Dialog::setupDevice()
 
     uniqueIDLabel->setText(di->uniqueID());
 
+    updateKeyboard(di->keyboardType());
+
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlipOpen());
+    wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
+
+    QString lockState;
+    QSystemDeviceInfo::LockType lock = di->lockStatus();
+    switch(lock) {
+    case QSystemDeviceInfo::UnknownLock:
+        lockState = "Unknown";
+        break;
+    case QSystemDeviceInfo::DeviceLocked:
+        lockState = "Device Locked";
+        break;
+    case QSystemDeviceInfo::DeviceUnlocked:
+        lockState = "Device unlocked";
+        break;
+    case QSystemDeviceInfo::TouchAndKeyboardLocked:
+        lockState = "Touch and keyboard locked";
+        break;
+    };
+    lockStateLabel->setText(lockState);
+
+}
+
+void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)
+{
+
+    if((type & QSystemDeviceInfo::UnknownKeyboard)) {
+        uknownKeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::SoftwareKeyboard)) {
+        softkeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::ITUKeypad)) {
+        ituRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::HalfQwertyKeyboard)) {
+        halfKeysRadioButton->setChecked(true);
+    }
+    if ((type & QSystemDeviceInfo::FullQwertyKeyboard)) {
+        qwertyKeysRadioButton->setChecked(true);
+    }
+    if((type & QSystemDeviceInfo::WirelessKeyboard)) {
+        wirelessRadioButton->setChecked(true);
+    }
+    keyboardLightCheckBox->setChecked(di->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad));
 }
 
 void Dialog::updateDeviceLockedState()
@@ -793,6 +840,11 @@ void Dialog::updateProfile()
             }
         };
         profileLabel->setText(profilestring);
+
+        QSystemDeviceInfo::ActiveProfileDetails *pDetails = di->getActiveProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails->messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails->voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails->vibrationActive());
     }
 }
 
