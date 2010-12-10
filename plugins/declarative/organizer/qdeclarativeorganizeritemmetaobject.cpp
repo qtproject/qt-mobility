@@ -244,7 +244,7 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
 
       m_details.append(itemDetail);
     }
-    if (m_item.id().isNull ()) {
+    if (m_item.type() == QOrganizerItemType::TypeEventOccurrence || m_item.type() == QOrganizerItemType::TypeTodoOccurrence ) {
         //create temporary id for occurrence items
         m_id = QString("qtorganizer:occurrence:%1").arg (QUuid::createUuid ().toString ());
     } else {

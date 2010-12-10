@@ -187,19 +187,19 @@ public:
     void setStartDateTime(const QDateTime& datetime)
     {
          if (datetime != startDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerEventTime::FieldStartDateTime, datetime);
+            m_detail.setValue(QOrganizerEventTime::FieldStartDateTime, datetime.toUTC());
             emit valueChanged();
          }
     }
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldStartDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldStartDateTime).toLocalTime();}
     void setEndDateTime(const QDateTime& datetime)
     {
         if (datetime != endDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerEventTime::FieldEndDateTime, datetime);
+            m_detail.setValue(QOrganizerEventTime::FieldEndDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime);}
+    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime).toLocalTime();}
     void setAllDay(bool allDay)
     {
         if (allDay != isAllDay() && !readOnly()) {
@@ -901,19 +901,19 @@ public:
     void setLastModified(const QDateTime& timestamp)
     {
         if (timestamp != lastModified() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemTimestamp::FieldModificationTimestamp, timestamp);
+            m_detail.setValue(QOrganizerItemTimestamp::FieldModificationTimestamp, timestamp.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime lastModified() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldModificationTimestamp);}
+    QDateTime lastModified() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldModificationTimestamp).toLocalTime();}
     void setCreated(const QDateTime& timestamp)
     {
         if (timestamp != created() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemTimestamp::FieldCreationTimestamp, timestamp);
+            m_detail.setValue(QOrganizerItemTimestamp::FieldCreationTimestamp, timestamp.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime created() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldCreationTimestamp);}
+    QDateTime created() const {return m_detail.value<QDateTime>(QOrganizerItemTimestamp::FieldCreationTimestamp).toLocalTime();}
 
 signals:
     void valueChanged();
@@ -1033,11 +1033,11 @@ public:
     void setEntryDateTime(const QDateTime& datetime)
     {
         if (datetime != entryDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerJournalTime::FieldEntryDateTime, datetime);
+            m_detail.setValue(QOrganizerJournalTime::FieldEntryDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTime::FieldEntryDateTime);}
+    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTime::FieldEntryDateTime).toLocalTime();}
 signals:
     void valueChanged();
 };
@@ -1082,11 +1082,11 @@ public:
     void setFinishedDateTime(const QDateTime& datetime)
     {
         if (datetime != finishedDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoProgress::FieldFinishedDateTime, datetime);
+            m_detail.setValue(QOrganizerTodoProgress::FieldFinishedDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime finishedDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoProgress::FieldFinishedDateTime);}
+    QDateTime finishedDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoProgress::FieldFinishedDateTime).toLocalTime();}
 
     void setPercentageComplete(int percentage)
     {
@@ -1147,19 +1147,19 @@ public:
     void setStartDateTime(const QDateTime& datetime)
     {
         if (datetime != startDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoTime::FieldStartDateTime, datetime);
+            m_detail.setValue(QOrganizerTodoTime::FieldStartDateTime, datetime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldStartDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldStartDateTime).toLocalTime();}
     void setDueDateTime(const QDateTime& dateTime)
     {
         if (dateTime != dueDateTime() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoTime::FieldDueDateTime, dateTime);
+            m_detail.setValue(QOrganizerTodoTime::FieldDueDateTime, dateTime.toUTC());
             emit valueChanged();
         }
     }
-    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime);}
+    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime).toLocalTime();}
 
     void setAllDay(bool allDay)
     {
