@@ -54,6 +54,7 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 
 QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {
+#if 0
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
@@ -73,10 +74,12 @@ QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
         return QByteArray();
 
     return response;
+#endif
 }
 
 bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
 {
+#if 0
     if (data.length() != 4)
         return false;
 
@@ -98,10 +101,12 @@ bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray
     quint8 acknack = response.at(0);
 
     return acknack == 0x0a;
+#endif
 }
 
 bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 {
+#if 0
     QByteArray command;
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
@@ -129,21 +134,16 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 
     // passive ack, empty response is ack
     return response.isEmpty();
+#endif
 }
 
-QByteArray QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
     return (_sendCommand(command));
 }
 
-QList<QByteArray> QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
+QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
 {
-    QList<QByteArray> result;
-    foreach(const QByteArray cmd, commands)
-    {
-        result.append(sendCommand(cmd));
-    }
-    return result;
 }
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
@@ -151,7 +151,7 @@ bool QNearFieldTagType2Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-QList<QNdefMessage> QNearFieldTagType2Symbian::ndefMessages()
+void QNearFieldTagType2Symbian::ndefMessages()
 {
     return _ndefMessages();
 }

@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
  **
  ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
@@ -39,30 +39,40 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDTARGET_H
-#define NEARFIELDTARGET_H
+#ifndef NEARFIELDTAGASYNCREQUEST_H
+#define NEARFIELDTAGASYNCREQUEST_H
 
-#include <e32base.h>
-#include <e32def.h> 
+#include <qnearfieldtarget.h>
 
-class CNearFieldNdefTarget;
-class CNearFieldTag;
+QTM_USE_NAMESPACE
 
-class MNearFieldTarget 
+class MNearFieldTagAsyncRequestRespProcessor;
+class MNearFieldTargetOperation;
+
+class MNearFieldTagAsyncRequest
     {
 public:
-    // Cancel and destroy
-    virtual ~MNearFieldTarget();
+    enum TRequestType
+        {
+        ENdefRequest,
+        ETagRequest,
+        ENull
+        };
 
 public:
-    virtual CNearFieldTag * CastToTag();
-    virtual CNearFieldNdefTarget * CastToNdefTarget();
+    virtual void IssueRequest() = 0;
+    virtual void ProcessResponse() = 0;
+    void SetRespProcessor(MNearFieldTagAsyncRequestRespProcessor * aProcessor);
+    void SetOperator(MNearFieldTargetOperation * aOperator);
+    virtual TRequestType Type() = 0;
+protected:
+    // Current async request ID.
+    QNearFieldTarget::RequestId iId;
+    // Own. 
+    MNearFieldTagAsyncRequestRespProcessor * iProcessor;
+    // Not own.
+    MNearFieldTargetOperation * iOperator;
 
-    virtual TInt OpenConnection() = 0;
-    virtual void CloseConnection() = 0;
-    virtual TBool IsConnectionOpened() = 0;
-
-    virtual const TDesC8& Uid() const = 0;
     };
 
-#endif // NEARFIELDTARGET_H
+#endif

@@ -64,9 +64,9 @@ bool QNearFieldTagMifareSymbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-QList<QNdefMessage> QNearFieldTagMifareSymbian::ndefMessages()
+void QNearFieldTagMifareSymbian::ndefMessages()
 {
-    return _ndefMessages();
+    _ndefMessages();
 }
 
 void QNearFieldTagMifareSymbian::setNdefMessages(const QList<QNdefMessage> &messages)
@@ -74,19 +74,13 @@ void QNearFieldTagMifareSymbian::setNdefMessages(const QList<QNdefMessage> &mess
     _setNdefMessages(messages);
 }
 
-QByteArray QNearFieldTagMifareSymbian::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId QNearFieldTagMifareSymbian::sendCommand(const QByteArray &command)
 {
     return _sendCommand(command);
 }
 
-QList<QByteArray> QNearFieldTagMifareSymbian::sendCommands(const QList<QByteArray> &commands)
+QNearFieldTarget::RequestId QNearFieldTagMifareSymbian::sendCommands(const QList<QByteArray> &commands)
 {
-    QList<QByteArray> result;
-    foreach(const QByteArray cmd, commands)
-    {
-        result.append(sendCommand(cmd));
-    }
-    return result;
 }
 
 #include "moc_qnearfieldtagmifare_symbian_p.cpp"

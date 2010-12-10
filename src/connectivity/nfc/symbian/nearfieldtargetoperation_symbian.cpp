@@ -38,14 +38,3 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
-#define NEARFIELDTAGOPERATIONCALLBACK_H
-
-class MNearFieldTagOperationCallback
-    {
-public:
-    virtual void CommandComplete(TInt aError) = 0;
-    };
-
-#endif

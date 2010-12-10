@@ -56,7 +56,7 @@ class CNdefMessage;
 class CNdefConnection;
 class MNfcTag;
 
-class MNearFieldTagOperationCallback;
+class MNearFieldNdefOperationCallback;
 
 class CNearFieldNdefTarget : public MNearFieldTarget, 
                              public MNdefHandler
@@ -92,9 +92,9 @@ public:
     TInt OpenConnection();
     void CloseConnection();
     TBool IsConnectionOpened();
-    TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout);
-    void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
-    MNearFieldTagOperationCallback * TagOperationCallback();
+    const TDesC8& Uid() const;
+    void SetNdefOperationCallback(MNearFieldNdefOperationCallback * const aCallback);
+    MNearFieldNdefOperationCallback * NdefOperationCallback();
 private:
     // C++ constructor
     CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -121,7 +121,7 @@ private:
     TOperation iCurrentOperation;
 
     // Not own
-    MNearFieldTagOperationCallback * iCallback;
+    MNearFieldNdefOperationCallback * iCallback;
     RPointerArray<CNdefMessage> * iMessages;
     };
 

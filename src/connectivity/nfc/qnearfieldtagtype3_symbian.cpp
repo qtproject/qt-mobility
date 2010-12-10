@@ -64,9 +64,9 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-QList<QNdefMessage> QNearFieldTagType3Symbian::ndefMessages()
+void QNearFieldTagType3Symbian::ndefMessages()
 {
-    return _ndefMessages();
+    _ndefMessages();
 }
 
 void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
@@ -74,19 +74,13 @@ void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messa
     _setNdefMessages(messages); 
 }
 
-QByteArray QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommand(const QByteArray &command)
 {
     return _sendCommand(command);
 }
 
-QList<QByteArray> QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
 {
-    QList<QByteArray> result;
-    foreach(const QByteArray cmd, commands)
-    {
-        result.append(sendCommand(cmd));
-    }
-    return result;
 }
 
 quint16 QNearFieldTagType3Symbian::systemCode()
@@ -119,6 +113,7 @@ void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByt
 
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
 {
+#if 0
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x06); // command code
@@ -132,10 +127,12 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, Q
     {
         return QMap<quint16, QByteArray>();
     }
+#endif
 }
 
 void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data)  
 {
+#if 0
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x08); // command code
@@ -145,6 +142,7 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
         command.append(data);
         _sendCommand(command);
     }
+#endif
 }
 
 

@@ -38,14 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef NEARFIELDTAGNDEFREQUEST_SYMBIAN_H
+#define NEARFIELDTAGNDEFREQUEST_SYMBIAN_H
+#include "nearfieldtagasyncrequest_symbian.h"
 
-#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
-#define NEARFIELDTAGOPERATIONCALLBACK_H
-
-class MNearFieldTagOperationCallback
+class NearFieldTagNdefRequest : public MNearFieldTagAsyncRequest
     {
-public:
-    virtual void CommandComplete(TInt aError) = 0;
     };
-
 #endif

@@ -65,12 +65,12 @@ public:
     bool writeBlock(quint8 blockAddress, const QByteArray &data);
     bool selectSector(quint8 sector);
     
-    QByteArray sendCommand(const QByteArray &command);
-    QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    RequestId sendCommand(const QByteArray &command);
+    RequestId sendCommands(const QList<QByteArray> &commands);
 
     bool hasNdefMessage();
 
-    QList<QNdefMessage> ndefMessages();
+    void ndefMessages();
 
     void setNdefMessages(const QList<QNdefMessage> &messages);
 

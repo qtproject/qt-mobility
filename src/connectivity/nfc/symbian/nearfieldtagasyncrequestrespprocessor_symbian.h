@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
  **
  ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
@@ -38,31 +38,13 @@
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
+#ifndef NEARFIELDTAGASYNCREQUESTRESPPROCESSOR_H
+#define NEARFIELDTAGASYNCREQUESTRESPPROCESSOR_H
 
-#ifndef NEARFIELDTARGET_H
-#define NEARFIELDTARGET_H
-
-#include <e32base.h>
-#include <e32def.h> 
-
-class CNearFieldNdefTarget;
-class CNearFieldTag;
-
-class MNearFieldTarget 
+class MNearFieldTagAsyncRequestRespProcessor
     {
 public:
-    // Cancel and destroy
-    virtual ~MNearFieldTarget();
-
-public:
-    virtual CNearFieldTag * CastToTag();
-    virtual CNearFieldNdefTarget * CastToNdefTarget();
-
-    virtual TInt OpenConnection() = 0;
-    virtual void CloseConnection() = 0;
-    virtual TBool IsConnectionOpened() = 0;
-
-    virtual const TDesC8& Uid() const = 0;
+    virtual void ProcessResponse() = 0;
     };
 
-#endif // NEARFIELDTARGET_H
+#endif

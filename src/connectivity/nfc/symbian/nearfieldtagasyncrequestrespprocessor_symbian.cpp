@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
  **
  ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
@@ -39,30 +39,3 @@
  **
  ****************************************************************************/
 
-#ifndef NEARFIELDTARGET_H
-#define NEARFIELDTARGET_H
-
-#include <e32base.h>
-#include <e32def.h> 
-
-class CNearFieldNdefTarget;
-class CNearFieldTag;
-
-class MNearFieldTarget 
-    {
-public:
-    // Cancel and destroy
-    virtual ~MNearFieldTarget();
-
-public:
-    virtual CNearFieldTag * CastToTag();
-    virtual CNearFieldNdefTarget * CastToNdefTarget();
-
-    virtual TInt OpenConnection() = 0;
-    virtual void CloseConnection() = 0;
-    virtual TBool IsConnectionOpened() = 0;
-
-    virtual const TDesC8& Uid() const = 0;
-    };
-
-#endif // NEARFIELDTARGET_H

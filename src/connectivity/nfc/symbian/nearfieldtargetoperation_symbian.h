@@ -39,13 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
-#define NEARFIELDTAGOPERATIONCALLBACK_H
+#ifndef NEARFIELDTARGETOPERATION_H
+#define NEARFIELDTARGETOPERATION_H
 
-class MNearFieldTagOperationCallback
+class MNearFieldTargetOperation
     {
 public:
-    virtual void CommandComplete(TInt aError) = 0;
+    virtual void DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback) = 0;
+    virtual void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback) = 0;
+    virtual bool DoHasNdefMessages() = 0;
+    virtual void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback) = 0;
     };
 
 #endif
+

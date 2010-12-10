@@ -79,7 +79,10 @@ symbian {
         nfc/symbian/llcpsockettype1_symbian.h \
         nfc/symbian/llcpsockettype2_symbian.h \        
         nfc/symbian/nearfieldtagimpl_symbian.h \
-        nfc/symbian/nearfieldtagoperationcallback_symbian.h
+        nfc/symbian/nearfieldtagasyncrequest_symbian.h \
+        nfc/symbian/nearfieldtagndefoperationcallback_symbian.h \
+        nfc/symbian/nearfieldtagoperationcallback_symbian.h \
+        nfc/symbian/nearfieldtargetoperation_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
@@ -101,7 +104,8 @@ symbian {
         nfc/symbian/llcpserver_symbian.cpp \
         nfc/symbian/llcpsockettype1_symbian.cpp \
         nfc/symbian/llcpsockettype2_symbian.cpp \        
-        nfc/symbian/nearfieldtagimpl_symbian.cpp
+        nfc/symbian/nearfieldtagimpl_symbian.cpp \
+        nfc/symbian/nearfieldtargetoperation_symbian.cpp
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 

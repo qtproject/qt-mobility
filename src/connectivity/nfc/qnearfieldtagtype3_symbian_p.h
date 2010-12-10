@@ -70,7 +70,7 @@ public:
     }
 
     bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
+    void ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
     quint16 systemCode();
@@ -84,8 +84,8 @@ public:
     virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
                         const QByteArray &data);  
 
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    RequestId sendCommand(const QByteArray &command);
+    RequestId sendCommands(const QList<QByteArray> &commands);
 private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks);

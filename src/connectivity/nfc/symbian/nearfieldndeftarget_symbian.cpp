@@ -47,7 +47,7 @@
 #include <qglobal.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
-#include "nearfieldtagoperationcallback_symbian.h"
+#include "nearfieldtagndefoperationcallback_symbian.h"
 
 CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
                                                                                         iNfcServer(aNfcServer)
@@ -141,6 +141,11 @@ TBool CNearFieldNdefTarget::IsConnectionOpened()
     return iNdefConnection->IsActivated();
     }
 
+const TDesC8& CNearFieldNdefTarget::Uid() const
+    {
+    return iNfcTag->Uid();
+    }
+
 void CNearFieldNdefTarget::ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ )
     {
     }
@@ -156,7 +161,7 @@ void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
             err = iMessages->Append(aMessage);
             }
         iMessages = 0;
-        QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(err));
+        QT_TRYCATCH_ERROR(errIgnore, iCallback->ReadComplete(err));
         }
     iCurrentOperation = ENull;
     }
@@ -166,7 +171,7 @@ void CNearFieldNdefTarget::WriteComplete()
     if (iCallback)
         {
         TInt errIgnore = KErrNone;
-        QT_TRYCATCH_ERROR(errIgnore, iCallback->NdefOperationComplete(KErrNone));
+        QT_TRYCATCH_ERROR(errIgnore, iCallback->WriteComplete(KErrNone));
         }
     iCurrentOperation = ENull;
     }
@@ -176,7 +181,14 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
     if (iCallback)
         {
         iMessages = 0;
-        iCallback->CommandComplete(aError);
+        if (ERead == iCurrentOperation)
+            {
+            iCallback->ReadComplete(aError);
+            }
+        else if (EWrite == iCurrentOperation)
+            {
+            iCallback->WriteComplete(aError);
+            }
         }
     }   
 
@@ -246,17 +258,12 @@ TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
     return error;
     }
 
-TInt CNearFieldNdefTarget::RawModeAccess(const TDesC8& /*aCommand*/, TDes8& /*aResponse*/, const TTimeIntervalMicroSeconds32& /*aTimeout*/)
-    {
-    return KErrNotSupported;
-    }
-
-void CNearFieldNdefTarget::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
+void CNearFieldNdefTarget::SetNdefOperationCallback(MNearFieldNdefOperationCallback * const aCallback)
     {
     iCallback = aCallback;
     }
 
-MNearFieldTagOperationCallback * CNearFieldNdefTarget::TagOperationCallback()
+MNearFieldNdefOperationCallback * CNearFieldNdefTarget::NdefOperationCallback()
     {
     return iCallback;
     }

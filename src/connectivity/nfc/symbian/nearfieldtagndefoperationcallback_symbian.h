@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef NEARFIELDTAGOPERATIONCALLBACK_H
-#define NEARFIELDTAGOPERATIONCALLBACK_H
+#ifndef NEARFIELDNDEFOPERATIONCALLBACK_H
+#define NEARFIELDNDEFOPERATIONCALLBACK_H
 
-class MNearFieldTagOperationCallback
+class MNearFieldNdefOperationCallback
     {
 public:
-    virtual void CommandComplete(TInt aError) = 0;
+    virtual void ReadComplete(TInt aError) = 0;
+    virtual void WriteComplete(TInt aError) = 0;
     };
 
 #endif

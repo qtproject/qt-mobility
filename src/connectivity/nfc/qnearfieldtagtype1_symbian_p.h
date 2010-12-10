@@ -64,26 +64,26 @@ public:
     virtual QByteArray uid() const;
 
     // DIGPROTO
-    virtual QByteArray readIdentification();
+    RequestId readIdentification();
 
     // static memory functions
-    virtual QByteArray readAll();
-    virtual quint8 readByte(quint8 address);
-    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
+    RequestId readAll();
+    RequestId readByte(quint8 address);
+    RequestId writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
 
     // dynamic memory functions
-    virtual QByteArray readSegment(quint8 segmentAddress);
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
+    RequestId readSegment(quint8 segmentAddress);
+    RequestId readBlock(quint8 blockAddress);
+    RequestId writeBlock(quint8 blockAddress, const QByteArray &data,
                             WriteMode mode = EraseAndWrite);
 
 
     bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
+    void ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    RequestId sendCommand(const QByteArray &command);
+    RequestId sendCommands(const QList<QByteArray> &commands);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

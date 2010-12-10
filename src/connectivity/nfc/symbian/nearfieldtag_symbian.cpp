@@ -56,6 +56,7 @@ CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTa
                                                                           iNfcServer(aNfcServer),
                                                                           CActive(EPriorityStandard)
     {
+    CActiveScheduler::Add(this);
     }
 
 CNearFieldTag* CNearFieldTag::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)

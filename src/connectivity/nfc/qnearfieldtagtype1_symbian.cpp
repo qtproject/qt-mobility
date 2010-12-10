@@ -76,16 +76,16 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 /*!
     \reimp
 */
-QByteArray QNearFieldTagType1Symbian::readIdentification()
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
 {
-    return _uid();
 }
 
 /*!
     \reimp
 */
-QByteArray QNearFieldTagType1Symbian::readAll()
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
 {
+#if 0
     QByteArray command;
     command.append(char(0x00)); // RALL
     command.append(char(0x00));
@@ -97,13 +97,15 @@ QByteArray QNearFieldTagType1Symbian::readAll()
     command.append(char(0x00)); // CRC2
 
     return sendCommand(command);
+#endif
 }
 
 /*!
     \reimp
 */
-quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
 {
+#if 0
     // MSB must be 0
     if (address & 0x80)
         return 0;
@@ -129,13 +131,15 @@ quint8 QNearFieldTagType1Symbian::readByte(quint8 address)
         return 0;
 
     return response.at(1);
+#endif
 }
 
 /*!
     \reimp
 */
-bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
+#if 0
     // MSB must be 0
     if (address & 0x80)
         return false;
@@ -175,13 +179,15 @@ bool QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode
         return (writeData & data) == data;
     else
         return false;
+#endif
 }
 
 /*!
     \reimp
 */
-QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
+#if 0
     if (segmentAddress & 0xf0)
         return QByteArray();
 
@@ -206,13 +212,15 @@ QByteArray QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
         return QByteArray();
 
     return response.mid(1);
+#endif
 }
 
 /*!
     \reimp
 */
-QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
+#if 0
     QByteArray command;
     command.append(char(0x02));                 // READ8
     command.append(char(blockAddress));         // Block address
@@ -234,14 +242,16 @@ QByteArray QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
         return QByteArray();
 
     return response.mid(1);
+#endif
 }
 
 /*!
     \reimp
 */
-bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
+#if 0
     if (data.length() != 8)
         return false;
 
@@ -284,6 +294,7 @@ bool QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray
     } else {
         return false;
     }
+#endif
 }
     
 bool QNearFieldTagType1Symbian::hasNdefMessage()
@@ -291,9 +302,9 @@ bool QNearFieldTagType1Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-QList<QNdefMessage> QNearFieldTagType1Symbian::ndefMessages()
+void QNearFieldTagType1Symbian::ndefMessages()
 {
-    return _ndefMessages();
+    _ndefMessages();
 }
 
 void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
@@ -304,22 +315,16 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 /*!
     \reimp
 */
-QByteArray QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
-    return (_sendCommand(command));
+    _sendCommand(command);
 }
 
 /*!
     \reimp
 */
-QList<QByteArray> QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
 {
-    QList<QByteArray> result;
-    foreach(const QByteArray cmd, commands)
-    {
-        result.append(sendCommand(cmd));
-    }
-    return result; 
 }
 
 #include "moc_qnearfieldtagtype1_symbian_p.cpp"

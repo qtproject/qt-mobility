@@ -77,12 +77,12 @@ public:
     }
     // NdefAccess
     bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
+    void ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
     // TagTypeSpecificAccess
-    QByteArray sendCommand(const QByteArray &command);
-    QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    RequestId sendCommand(const QByteArray &command);
+    RequestId sendCommands(const QList<QByteArray> &commands);
 
 signals:
     void disconnected();

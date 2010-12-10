@@ -65,14 +65,16 @@ public:
     Type type() const { return NfcTagType4; }
 
     bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
+    void ndefMessages();
     void setNdefMessages(const QList<QNdefMessage> &messages);
 
-    QByteArray sendCommand(const QByteArray &command);
-    QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
+    RequestId sendCommand(const QByteArray &command);
+    RequestId sendCommands(const QList<QByteArray> &commands);
 
+#if 0
     QByteArray sendAPDUCommand(const QByteArray &command);
     QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
+#endif
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {
