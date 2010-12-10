@@ -2214,7 +2214,7 @@ void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),hasWirelessKeyboardConnected(0)
 {
 #if !defined(QT_NO_DBUS)
     halIsAvailable = halAvailable();
@@ -2316,7 +2316,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             foreach (const QString &btdev, btList) {
                 foreach (const QString &dev, list) {
                     if (dev.contains(btdev.section("/",-1))) { //ugly, I know.
-                        //         qDebug() <<"Found wireless keyboard:"<< dev << btList;
+//                                 qDebug() <<"Found wireless keyboard:"<< dev << btList;
                      //   hasWirelessKeyboard = true;
                         halIfaceDevice = new QHalDeviceInterface(dev);
                         if (halIfaceDevice->isValid() && halIfaceDevice->setConnections()) {
