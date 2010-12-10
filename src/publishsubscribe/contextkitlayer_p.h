@@ -60,15 +60,20 @@ using namespace QValueSpace;
 class ContextKitPath
 {
 public:
+    enum PathType {
+        DotPath,
+        SlashPath
+    };
+
     ContextKitPath();
     ContextKitPath(QString path);
+    ContextKitPath(QString path, PathType type);
     ContextKitPath(const ContextKitPath &other);
 
     QString toQtPath() const;
-    QString toCKPath() const;
+    QString toNative() const;
 
-    inline bool wasDotPath() const { return dotPath; }
-    inline bool wasSlashPath() const { return slashPath; }
+    inline PathType type() const { return m_type; }
 
     bool includes(ContextKitPath &other) const;
     bool isRegistered() const;
@@ -81,11 +86,13 @@ public:
 
     ContextKitPath operator+(const QString &str) const;
     ContextKitPath operator-(const ContextKitPath &other) const;
+    ContextKitPath operator+(const ContextKitPath &other) const;
 
 private:
     QStringList parts;
-    bool dotPath;
-    bool slashPath;
+    PathType m_type;
+
+    void initFromPath(QString path);
 };
 
 class ContextKitHandle : public QObject
@@ -93,7 +100,8 @@ class ContextKitHandle : public QObject
     Q_OBJECT
 
 public:
-    ContextKitHandle(ContextKitHandle *parent, const QString &root);
+    ContextKitHandle(ContextKitHandle *parent, const QString &root,
+                     QValueSpace::LayerOptions opts);
     ~ContextKitHandle();
 
     bool value(const QString &path, QVariant *data);
@@ -128,11 +136,7 @@ public:
     virtual ~ContextKitLayer();
 
     /* ValueSpaceLayer interface - Common functions */
-    QString name();
     bool startup(Type);
-    QUuid id();
-    unsigned int order();
-    LayerOptions layerOptions() const;
 
     Handle item(Handle parent, const QString &);
     void removeHandle(Handle);
@@ -157,13 +161,37 @@ public:
     void removeWatches(QValueSpacePublisher *, Handle) { return; }
     void sync();
 
-    static ContextKitLayer *instance();
-
 private slots:
     void contextHandleChanged();
 
 private:
     static ContextKitHandle *handleToCKHandle(Handle handle);
+};
+
+class ContextKitCoreLayer : public ContextKitLayer
+{
+    Q_OBJECT
+
+public:
+    QValueSpace::LayerOptions layerOptions() const;
+    QUuid id();
+    QString name();
+    unsigned int order();
+
+    static ContextKitCoreLayer *instance();
+};
+
+class ContextKitNonCoreLayer : public ContextKitLayer
+{
+    Q_OBJECT
+
+public:
+    QValueSpace::LayerOptions layerOptions() const;
+    QUuid id();
+    QString name();
+    unsigned int order();
+
+    static ContextKitNonCoreLayer *instance();
 };
 
 QTM_END_NAMESPACE

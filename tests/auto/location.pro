@@ -39,13 +39,16 @@ SUBDIRS += qgeocoordinate \
       qgeosearchreply \
       qgeosearchmanagerplugins \
       qgeosearchmanager \
-      qgeoserviceproviderplugins \
-      qgeoserviceprovider \
       geoservicesgeomapplugin \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
       geoservicesgeotiledmap
 
+
+!symbian{
+SUBDIRS += qgeoserviceproviderplugins \
+            qgeoserviceprovider 
+}
 
 #IGNORED_UNTIL_INTEGRATED_PROPERLY += \
 #    qdeclarativeapitests
