@@ -58,7 +58,7 @@ QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(c
 {
     TRAPD(err, {
         filter = CSdpSearchPattern::NewL();
-    
+
         attributes = CSdpAttrIdMatchList::NewL();
     });
 #if defined(MINIMAL_SERVICE_ATTRIBUTES)
@@ -119,7 +119,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
 void QBluetoothServiceDiscoveryAgentPrivate::initAgent(const QBluetoothAddress &address)
 {
     TBTDevAddr btAddress(address.toUInt64());
-    
+
     if (sdpAgent) {
         delete sdpAgent;
         sdpAgent = NULL;

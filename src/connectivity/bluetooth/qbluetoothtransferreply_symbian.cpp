@@ -88,7 +88,7 @@ bool QBluetoothTransferReplySymbian::start()
         delete m_client;
         m_client = NULL;
     }
-    
+
     TRAPD( err, m_client = CObexClient::NewL(protocolInfo));
     if (err)
         return false;
@@ -148,7 +148,7 @@ void QBluetoothTransferReplySymbian::DoCancel()
         delete m_client;
         m_client = NULL;
         m_state = EIdle;
-    }    
+    }
 }
 
 void QBluetoothTransferReplySymbian::RunL()
