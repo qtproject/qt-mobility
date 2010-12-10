@@ -281,6 +281,7 @@ private:    //data
 
     CRepository *m_bluetoothRepository;
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
+    QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
 //////// QSystemScreenSaver
