@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,35 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
+#define QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QHash>
 
-#include "qvaluespacesubscriber.h"
-#include "qdeclarativevaluespacepublisher_p.h"
-
-QT_BEGIN_NAMESPACE
+#include "qdeclarativeopenmetaobject_p.h"
+#include "qvaluespace.h"
+#include "qvaluespacepublisher.h"
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
-
-class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
+class QDeclarativeValueSpacePublisherMetaObject : public QDeclarativeOpenMetaObject
 {
-    Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
-        qmlRegisterType<QDeclarativeValueSpacePublisher>(uri, 1, 2, "ValueSpacePublisher");
-    }
+public:
+    QDeclarativeValueSpacePublisherMetaObject(QObject *obj);
+
+    virtual void getValue(int id, void **a);
+    virtual void setValue(int id, void **a);
+
+    void addKey(const QString &key, bool interest=false);
+
+    QHash<int, QString> m_keyProperties;
+    QHash<int, bool> m_subsProperties;
 };
 
-QT_END_NAMESPACE
-
-#include "publishsubscribe.moc"
-
-Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
-
+#endif
