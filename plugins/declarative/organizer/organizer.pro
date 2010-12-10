@@ -18,6 +18,9 @@ PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
 
+# support headers/sources for dynamic properties
+include(../common/dynamicproperties.pri)
+
 QT += declarative
 QT += script network
 
@@ -33,8 +36,6 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 HEADERS += qdeclarativeorganizermodel_p.h \
            qdeclarativeorganizeritem_p.h \
            qdeclarativeorganizeritemdetail_p.h \
-           qmetaobjectbuilder_p.h \
-           qdeclarativeopenmetaobject_p.h \
            qdeclarativeorganizeritemfilter_p.h \
            qdeclarativeorganizeritemmetaobject_p.h \
            qdeclarativeorganizerrecurrencerule_p.h \
@@ -45,15 +46,13 @@ HEADERS += qdeclarativeorganizermodel_p.h \
 SOURCES += plugin.cpp \
            qdeclarativeorganizeritem.cpp \
            qdeclarativeorganizeritemdetail.cpp \
-           qdeclarativeopenmetaobject.cpp \
            qdeclarativeorganizeritemmetaobject.cpp \
            qdeclarativeorganizermodel.cpp \
            qdeclarativeorganizeritemfilter.cpp \
            qdeclarativeorganizercollection.cpp \
            qdeclarativeorganizeritemsortorder.cpp \
            qdeclarativeorganizerrecurrencerule.cpp \
-           qdeclarativeorganizeritemfetchhint.cpp \
-           ../../../src/serviceframework/ipc/qmetaobjectbuilder.cpp
+           qdeclarativeorganizeritemfetchhint.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

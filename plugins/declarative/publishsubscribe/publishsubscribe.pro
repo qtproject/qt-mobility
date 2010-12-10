@@ -9,17 +9,17 @@ TARGETPATH = QtMobility/publishsubscribe
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
+# support headers/sources for dynamic properties
+include(../common/dynamicproperties.pri)
+
 QT += declarative
 
 SOURCES += publishsubscribe.cpp \
     qdeclarativevaluespacepublisher.cpp \
-    qdeclarativeopenmetaobject.cpp \
-    qdeclarativevaluespacepublishermetaobject.cpp \
-    ../../../src/serviceframework/ipc/qmetaobjectbuilder.cpp
+    qdeclarativevaluespacepublishermetaobject.cpp
+
 HEADERS += \
     qdeclarativevaluespacepublisher_p.h \
-    qdeclarativeopenmetaobject_p.h \
-    qmetaobjectbuilder_p.h \
     qdeclarativevaluespacepublishermetaobject_p.h
 
 CONFIG += mobility

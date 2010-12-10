@@ -45,4 +45,4 @@ and also in the source tree of Mobility itself.
 
 So this header is just a wrapper to grab it from there.
 */
-#include "../../../src/serviceframework/ipc/qmetaobjectbuilder_p.h"
+#include "../../../../src/serviceframework/ipc/qmetaobjectbuilder_p.h"
