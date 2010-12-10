@@ -56,15 +56,6 @@ QTM_BEGIN_NAMESPACE
 
 class QLlcpSocketPrivate;
 
-/*
- *     enum LLCPSocketState {
-        UnconnectedState,
-        ConnectingState,
-        ConnectedState,
-        BoundState,
-        ListeningState,
-        ClosingState
- */
 /*!
     \QLLCPSocketState
 */
@@ -96,15 +87,6 @@ public:
     QLlcpSocketPrivate* m_socket;
 };
 
-/*
-UnconnectedState = QAbstractSocket::UnconnectedState,
-ConnectingState = QAbstractSocket::ConnectingState,
-ConnectedState = QAbstractSocket::ConnectedState,
-ClosingState = QAbstractSocket::ClosingState,
-BoundState = QAbstractSocket::BoundState,
-ListeningState = QAbstractSocket::ListeningState
-*/
-
 /*!
     \QLLCPUnconnected
 */
@@ -126,7 +108,6 @@ public: // from base class
      bool WaitForDisconnected(int);
 };
 
-
 /*!
     \QLLCPConnecting
 */
@@ -146,7 +127,6 @@ public: // from base class
     void ConnectToServiceComplete();
     bool WaitForConnected(int);
 };
-
 
 /*!
     \QLLCPConnecting
@@ -168,7 +148,6 @@ public: // from base class
    bool WaitForDisconnected(int);
 private:
 };
-
 
 /*!
     \QLLCPClosing
