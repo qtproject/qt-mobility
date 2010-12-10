@@ -263,9 +263,9 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer items will be returned.
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   \sa QOrganizerItemFetchHint
  */
@@ -289,9 +289,9 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching organizer items will be returned.
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
   exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
@@ -321,9 +321,9 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
 
   Any operation error which occurs will be saved in \a error.
 
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details
-  in the matching item will be returned.
+  The \a fetchHint parameter describes the optimization hints that a manager may take.  If the \a
+  fetchHint is the default constructed hint, all existing details in the matching organizer items
+  will be returned.
 
   \sa QOrganizerItemFetchHint
  */
