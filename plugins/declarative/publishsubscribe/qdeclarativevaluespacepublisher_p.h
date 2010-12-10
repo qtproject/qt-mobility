@@ -70,14 +70,14 @@ public:
     ~QDeclarativeValueSpacePublisher();
 
     QString path() const;
-    void setPath(QString path);
+    void setPath(const QString &path);
 
     void setValue(const QVariant &val);
-    void startServer(bool really);
+    void startServer(const bool &really);
 
     bool hasSubscribers() const;
 
-    void setKeys(QStringList keys);
+    void setKeys(const QStringList &keys);
 
 signals:
     void subscribersChanged();

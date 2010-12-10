@@ -118,7 +118,7 @@ QString QDeclarativeValueSpacePublisher::path() const
     return m_path;
 }
 
-void QDeclarativeValueSpacePublisher::setPath(QString path)
+void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 {
     if (m_pathSet) {
         qmlInfo(this) << "Path has already been set";
@@ -159,7 +159,7 @@ void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 
   This property is write only.
   */
-void QDeclarativeValueSpacePublisher::startServer(bool really)
+void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 {
     if (really) {
         QValueSpace::initValueSpaceServer();
@@ -185,7 +185,7 @@ bool QDeclarativeValueSpacePublisher::hasSubscribers() const
   Setting this property creates a set of dynamic properties allowing
   easy access to set the values of keys under this Publisher's path.
   */
-void QDeclarativeValueSpacePublisher::setKeys(QStringList keys)
+void QDeclarativeValueSpacePublisher::setKeys(const QStringList &keys)
 {
     foreach (QString key, keys) {
         d->addKey(key);

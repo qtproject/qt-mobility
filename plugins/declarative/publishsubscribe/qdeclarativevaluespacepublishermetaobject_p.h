@@ -58,7 +58,7 @@ public:
     virtual void getValue(int id, void **a);
     virtual void setValue(int id, void **a);
 
-    void addKey(QString key, bool interest=false);
+    void addKey(const QString &key, bool interest=false);
 
     QHash<int, QString> m_keyProperties;
     QHash<int, bool> m_subsProperties;

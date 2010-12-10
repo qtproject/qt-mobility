@@ -48,7 +48,7 @@ QDeclarativeValueSpacePublisherMetaObject::QDeclarativeValueSpacePublisherMetaOb
 {
 }
 
-void QDeclarativeValueSpacePublisherMetaObject::addKey(QString key, bool interest)
+void QDeclarativeValueSpacePublisherMetaObject::addKey(const QString &key, bool interest)
 {
     if (key.contains(QRegExp("[^a-zA-Z0-9]")))
         return;
