@@ -50,6 +50,11 @@ QDeclarativeValueSpacePublisherMetaObject::QDeclarativeValueSpacePublisherMetaOb
 
 void QDeclarativeValueSpacePublisherMetaObject::addKey(QString key, bool interest)
 {
+    if (key.contains(QRegExp("[^a-zA-Z0-9]")))
+        return;
+    if (key == "value" || key == "path" || key == "keys" || key == "hasSubscribers")
+        return;
+
     QString keysubs = key;
     keysubs.append("HasSubscribers");
 
