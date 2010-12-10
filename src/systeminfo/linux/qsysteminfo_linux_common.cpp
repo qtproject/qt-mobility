@@ -575,7 +575,9 @@ QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObje
         initOfono();
     }
 #endif
+#if !defined(QT_NO_UDISKS)
     uPowerIsAvailable = uPowerAvailable();
+#endif
 #endif
 }
 
@@ -1780,8 +1782,9 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+#if !defined(QT_NO_UDISKS)
     udisksIsAvailable = udisksAvailable();
-
+#endif
 
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable)
@@ -2331,7 +2334,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -2561,7 +2564,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
@@ -2650,7 +2653,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
 
@@ -2865,7 +2868,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
+bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
 {
     return false;
 }
@@ -3169,7 +3172,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
 
 }
 
-void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char */*signal*/)
 {
 
 }
@@ -3177,7 +3180,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 
 void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -3369,7 +3372,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
 
         QUPowerInterface power(this);
@@ -3511,14 +3514,14 @@ void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 rate)
+qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 /*rate*/)
 {
  return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if(uPowerAvailable() && batteryIsPresent) {
         return QSystemBatteryInfo::UnitmWh;
     }
@@ -3555,7 +3558,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
