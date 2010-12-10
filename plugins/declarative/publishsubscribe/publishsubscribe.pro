@@ -11,8 +11,16 @@ include(../../../common.pri)
 
 QT += declarative
 
-SOURCES += publishsubscribe.cpp qdeclarativevaluespaceproperty.cpp
-HEADERS += qdeclarativevaluespaceproperty.h
+SOURCES += publishsubscribe.cpp \
+    qdeclarativevaluespacepublisher.cpp \
+    qdeclarativeopenmetaobject.cpp \
+    qmetaobjectbuilder.cpp \
+    qdeclarativevaluespacepublishermetaobject.cpp
+HEADERS += \
+    qdeclarativevaluespacepublisher_p.h \
+    qdeclarativeopenmetaobject_p.h \
+    qmetaobjectbuilder_p.h \
+    qdeclarativevaluespacepublishermetaobject_p.h
 
 CONFIG += mobility
 MOBILITY += publishsubscribe

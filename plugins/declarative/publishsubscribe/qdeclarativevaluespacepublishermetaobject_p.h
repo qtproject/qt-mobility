@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,65 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QDECLARATIVEVALUESPACEPROPERTY_H
-#define QDECLARATIVEVALUESPACEPROPERTY_H
+#ifndef QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
+#define QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
 
 #include <QHash>
-#include <QStringList>
 
+#include "qdeclarativeopenmetaobject_p.h"
 #include "qvaluespace.h"
 #include "qvaluespacepublisher.h"
-#include "qvaluespacesubscriber.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeValueSpaceProperty : public QObject
+class QDeclarativeValueSpacePublisherMetaObject : public QDeclarativeOpenMetaObject
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY changed)
-    Q_PROPERTY(QString relativePath WRITE cd);
-    Q_PROPERTY(bool server WRITE startServer);
 
 public:
-    QDeclarativeValueSpaceProperty(QObject *parent=0);
+    QDeclarativeValueSpacePublisherMetaObject(QObject *obj);
 
-    QString path() const;
-    void setPath(QString path);
-    QVariant value();
-    void setValue(QVariant value);
+    virtual void getValue(int id, void **a);
+    virtual void setValue(int id, void **a);
 
-    void startServer(bool doit);
+    void addKey(QString key, bool interest=false);
 
-public slots:
-    void cd(QString relPath);
-
-Q_SIGNALS:
-    void pathChanged();
-    void changed();
-
-    void subscribers();
-    void noSubscribers();
-
-private:
-    QValueSpacePublisher *m_publisher;
-    QValueSpaceSubscriber *m_subscriber;
-
-    QStringList m_pathParts;
-    QHash<QString, QValueSpacePublisher*> m_publishers;
-
-    void makePublisher();
-    void makeSubscriber();
-
-    static bool calledStartServer;
-
-    void connectNotify(const char *signal);
-
-private slots:
-    void onInterestChanged(QString path, bool state);
-
+    QHash<int, QString> m_keyProperties;
+    QHash<int, bool> m_subsProperties;
 };
 
-#endif // QDECLARATIVEVALUESPACEPUBLISHER_H
+#endif

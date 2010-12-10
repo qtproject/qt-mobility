@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,34 +39,41 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-
-#include "qvaluespacesubscriber.h"
+#include "qdeclarativevaluespacepublishermetaobject_p.h"
 #include "qdeclarativevaluespacepublisher_p.h"
+#include <QVariant>
 
-QT_BEGIN_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
-
-class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
+QDeclarativeValueSpacePublisherMetaObject::QDeclarativeValueSpacePublisherMetaObject(QObject *obj)
+    : QDeclarativeOpenMetaObject(obj)
 {
-    Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
+}
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
-        qmlRegisterType<QDeclarativeValueSpacePublisher>(uri, 1, 2, "ValueSpacePublisher");
+void QDeclarativeValueSpacePublisherMetaObject::addKey(QString key, bool interest)
+{
+    QString keysubs = key;
+    keysubs.append("HasSubscribers");
+
+    int pid = createProperty(key.toLatin1().constData(), "QVariant");
+    int sid = createProperty(keysubs.toLatin1().constData(), "bool");
+    m_keyProperties.insert(pid, key);
+    m_subsProperties.insert(sid, interest);
+}
+
+void QDeclarativeValueSpacePublisherMetaObject::getValue(int id, void **a)
+{
+    if (m_subsProperties.contains(id)) {
+        bool subs = m_subsProperties.value(id);
+        *reinterpret_cast<bool*>(a[0]) = subs;
     }
-};
+}
 
-QT_END_NAMESPACE
+void QDeclarativeValueSpacePublisherMetaObject::setValue(int id, void **a)
+{
+    if (m_keyProperties.contains(id)) {
+        QString key = m_keyProperties.value(id);
+        QVariant &v = *reinterpret_cast<QVariant*>(a[0]);
 
-#include "publishsubscribe.moc"
-
-Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
-
+        QDeclarativeValueSpacePublisher *pub = qobject_cast<QDeclarativeValueSpacePublisher*>(object());
+        pub->m_publisher->setValue(key, v);
+    }
+}
