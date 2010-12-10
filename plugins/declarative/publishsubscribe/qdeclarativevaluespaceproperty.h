@@ -39,34 +39,64 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
+#ifndef QDECLARATIVEVALUESPACEPROPERTY_H
+#define QDECLARATIVEVALUESPACEPROPERTY_H
 
+#include <QHash>
+#include <QStringList>
+
+#include "qvaluespace.h"
+#include "qvaluespacepublisher.h"
 #include "qvaluespacesubscriber.h"
-#include "qdeclarativevaluespaceproperty.h"
-
-QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
-
-class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
+class QDeclarativeValueSpaceProperty : public QObject
 {
     Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
-        qmlRegisterType<QDeclarativeValueSpaceProperty>(uri, 1, 2, "ValueSpaceProperty");
-    }
+    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY changed)
+    Q_PROPERTY(QString relativePath WRITE cd);
+    Q_PROPERTY(bool server WRITE startServer);
+
+public:
+    QDeclarativeValueSpaceProperty(QObject *parent=0);
+
+    QString path() const;
+    void setPath(QString path);
+    QVariant value();
+    void setValue(QVariant value);
+
+    void startServer(bool doit);
+
+public slots:
+    void cd(QString relPath);
+
+Q_SIGNALS:
+    void pathChanged();
+    void changed();
+
+    void subscribers();
+    void noSubscribers();
+
+private:
+    QValueSpacePublisher *m_publisher;
+    QValueSpaceSubscriber *m_subscriber;
+
+    QStringList m_pathParts;
+    QHash<QString, QValueSpacePublisher*> m_publishers;
+
+    void makePublisher();
+    void makeSubscriber();
+
+    static bool calledStartServer;
+
+    void connectNotify(const char *signal);
+
+private slots:
+    void onInterestChanged(QString path, bool state);
+
 };
 
-QT_END_NAMESPACE
-
-#include "publishsubscribe.moc"
-
-Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
-
+#endif // QDECLARATIVEVALUESPACEPUBLISHER_H

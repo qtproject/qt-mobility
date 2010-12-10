@@ -11,7 +11,8 @@ include(../../../common.pri)
 
 QT += declarative
 
-SOURCES += publishsubscribe.cpp
+SOURCES += publishsubscribe.cpp qdeclarativevaluespaceproperty.cpp
+HEADERS += qdeclarativevaluespaceproperty.h
 
 CONFIG += mobility
 MOBILITY += publishsubscribe
