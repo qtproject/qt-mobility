@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "nearfieldtagndefrequest_symbian.h"
+#include "nearfieldtagasyncrequestrespprocessor_symbian.h"
 
 void NearFieldTagNdefRequest::IssueRequest()
 {
@@ -49,12 +50,12 @@ void NearFieldTagNdefRequest::IssueRequest()
         {
             case EReadRequest: 
             {
-                iOperator->DoReadNdefMessages(iMessages, this);
+                iOperator->DoReadNdefMessages(this);
                 break;
             }
             case EWriteRequest:
             {
-                iOperator->DoSetNdefMessages();
+                iOperator->DoSetNdefMessages(iMessages, this);
                 break;
             }
         }

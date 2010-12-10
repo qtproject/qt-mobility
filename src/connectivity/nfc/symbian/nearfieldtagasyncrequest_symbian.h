@@ -43,10 +43,12 @@
 #define NEARFIELDTAGASYNCREQUEST_H
 
 #include <qnearfieldtarget.h>
+#include "nearfieldtargetoperation_symbian.h"
 
 QTM_USE_NAMESPACE
 
 class MNearFieldTagAsyncRequestRespProcessor;
+class MNearFieldTargetOperation;
 class MNearFieldTargetOperation;
 
 class MNearFieldTagAsyncRequest

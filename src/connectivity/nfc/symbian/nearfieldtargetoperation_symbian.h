@@ -42,6 +42,14 @@
 #ifndef NEARFIELDTARGETOPERATION_H
 #define NEARFIELDTARGETOPERATION_H
 
+#include <qndefmessage.h>
+#include <QList>
+
+QTM_USE_NAMESPACE
+
+class MNearFieldNdefOperationCallback;
+class MNearFieldTagOperationCallback;
+
 class MNearFieldTargetOperation
     {
 public:

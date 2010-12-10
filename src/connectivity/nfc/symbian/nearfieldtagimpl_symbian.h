@@ -53,6 +53,8 @@
 #include "nearfieldtagoperationcallback_symbian.h"
 #include "nearfieldtagndefoperationcallback_symbian.h"
 
+#include "nearfieldtagndefrequest_symbian.h"
+#include "nearfieldtagcommandrequest_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
@@ -124,6 +126,7 @@ protected:
     RBuf8 mResponse;
 
 protected:
+    // own each async request in the list
     QList<MNearFieldTagAsyncRequest *> mPendingRequestList;
     MNearFieldTagAsyncRequest * mCurrentRequest;
 };
@@ -197,7 +200,6 @@ bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
         // ongoing request so that it can be run immediately when current request
         // finished. And Wait the request then return result.
     }
-        
 }
 
 template<typename TAGTYPE>
@@ -255,16 +257,77 @@ bool QNearFieldTagImpl<TAGTYPE>::_hasNdefMessage()
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::_ndefMessages()
 {
+    NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
+    QNearFieldTarget::RequestId requestId;
+
+    if (readNdefRequest)
+    {
+        readNdefRequest->SetRequestId(requestId);
+        readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
+        readNdefRequest->SetOperator(this);
+
+        // TODO: generate response processor for it.
+
+        if (!_isProcessingRequest())
+        {
+            // issue the request
+            mCurrentRequest = readNdefRequest;
+            readNdefRequest->IssueRequest();
+        }
+        mPendingRequestList.append(readNdefRequest);
+    }
 }
 
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::_setNdefMessages(const QList<QNdefMessage> &messages)
 {
+    NearFieldTagNdefRequest * writeNdefRequest = new NearFieldTagNdefRequest;
+    QNearFieldTarget::RequestId requestId;
+
+    if (writeNdefRequest)
+    {
+        writeNdefRequest->SetRequestId(requestId);
+        writeNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EWriteRequest);
+        writeNdefRequest->SetInputNdefMessages(messages);
+        writeNdefRequest->SetOperator(this);
+
+        // TODO: generate response processor for it.
+
+        if (!_isProcessingRequest())
+        {
+            // issue the request
+            mCurrentRequest = writeNdefRequest;
+            writeNdefRequest->IssueRequest();
+        }
+        mPendingRequestList.append(writeNdefRequest);
+    }
+    // TODO: consider else
 }
 
 template<typename TAGTYPE>
 QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByteArray &command)
 {
+    NearFieldTagCommandRequest * rawCommandRequest = new NearFieldTagCommandRequest;
+    QNearFieldTarget::RequestId requestId;
+
+    if (rawCommandRequest)
+    {
+        rawCommandRequest->SetInputCommand(command);
+        rawCommandRequest->SetRequestId(requestId);
+        rawCommandRequest->SetOperator(this);
+
+        // TODO: generate response processor for it.
+
+        if (!_isProcessingRequest())
+        {
+            // issue the request
+            mCurrentRequest = rawCommandRequest;
+            rawCommandRequest->IssueRequest();
+        }
+        mPendingRequestList.append(rawCommandRequest);
+    }
+    // TODO: consider else
+    return requestId;
 }
 
 template<typename TAGTYPE>
@@ -275,6 +338,12 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_uid() const
         mUid = QNFCNdefUtility::FromTDesCToQByteArray(mTag->Uid());
     }
     return mUid;
+}
+
+template<typename TAGTYPE>
+bool QNearFieldTagImpl<TAGTYPE>::_isProcessingRequest() const
+{
+    return mPendingRequestList.count() > 0;
 }
 
 QTM_END_NAMESPACE

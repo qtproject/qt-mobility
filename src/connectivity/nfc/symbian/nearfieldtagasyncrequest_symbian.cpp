@@ -71,7 +71,7 @@ void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
     iId = aId;
 }
     
-QNearFieldTarget::RequestId GetRequestId()
+QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::GetRequestId()
 {
     return iId;
 }
