@@ -85,7 +85,8 @@ protected:
 
 private:
     void sendObject();
-
+    void disconnect();
+    
     //From CActive
     void DoCancel();
     void RunL();

@@ -151,8 +151,11 @@ void QBluetoothTransferReplySymbian::RunL()
             sendObject();
             break;
         case ESending:
+            m_state = EDisconnecting;
+            disconnect();
             break;
         case EDisconnecting:
+            m_state = EIdle;
             break;
         default:
             break;
@@ -174,6 +177,14 @@ void QBluetoothTransferReplySymbian::sendObject()
             m_client->Put( *m_object, iStatus );
             SetActive();
         }
+    }
+}
+
+void QBluetoothTransferReplySymbian::disconnect()
+{
+    if ( m_state == ESending ) {
+        m_client->Disconnect( iStatus );
+        SetActive();
     }
 }
 
