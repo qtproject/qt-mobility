@@ -504,7 +504,7 @@ void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerRecurrenceRule* 
 bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const QDate& initialDate, QOrganizerRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const
 {
     qulonglong maxDelta = maxCount * interval;
-    Q_ASSERT(date > initialDate);
+    Q_ASSERT(date >= initialDate);
     switch (frequency) {
         case QOrganizerRecurrenceRule::Yearly: {
             uint yearsDelta = date.year() - initialDate.year();
