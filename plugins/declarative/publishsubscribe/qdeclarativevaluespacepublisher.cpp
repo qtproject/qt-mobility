@@ -189,7 +189,23 @@ void QDeclarativeValueSpacePublisher::setKeys(const QStringList &keys)
 {
     foreach (QString key, keys) {
         d->addKey(key);
+        m_keys.append(key);
     }
+}
+
+QVariant QDeclarativeValueSpacePublisher::dummyValue() const
+{
+    return QVariant();
+}
+
+bool QDeclarativeValueSpacePublisher::dummyServer() const
+{
+    return false;
+}
+
+QStringList QDeclarativeValueSpacePublisher::keys() const
+{
+    return m_keys;
 }
 
 void QDeclarativeValueSpacePublisher::onInterestChanged(QString path, bool state)
