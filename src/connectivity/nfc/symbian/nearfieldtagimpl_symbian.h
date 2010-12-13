@@ -407,9 +407,16 @@ bool QNearFieldTagImpl<TAGTYPE>::_isProcessingRequest() const
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs)
 {
-    //int index = mPendingRequestList.indexOf(id);
-    // TODO: for pass build only
-    index = 0;
+    int index = -1;
+    for (int i = 0; i < mPendingRequestList.count(); ++i)
+    {
+        if (!(id < mPendingRequestList.at(i)->GetRequestId()) && !(mPendingRequestList.at(i)->GetRequestId() < id))
+        {
+            index = i;
+            break;
+        }
+    }
+
     if (index < 0)
     {
         // request ID is not in pending list. So either it may not be issued, or has already completed
