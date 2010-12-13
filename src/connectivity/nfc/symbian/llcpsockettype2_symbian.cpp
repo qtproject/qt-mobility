@@ -176,7 +176,7 @@ TInt CLlcpSocketType2::StartWriteDatagram(const TDesC8& aData)
         {
         val =  0;
         }
-    LOG
+    LOGEND
     return val;
     }
 
@@ -403,11 +403,6 @@ void CLlcpSocketType2::StateChangedL(QtMobility::QLlcpSocket::State aSocketState
         QT_TRYCATCH_LEAVING(iCallback->invokeDisconnected());
         }
 
-    //emit stateChange
-    if ( iCallback )
-        {
-        QT_TRYCATCH_LEAVING(iCallback->invokeStateChanged(aSocketState));
-        }
     LOGEND
     }
 
