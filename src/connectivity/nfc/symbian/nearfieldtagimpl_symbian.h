@@ -199,17 +199,52 @@ template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 {
     CNearFieldNdefTarget * ndefTarget = 0;
-    if (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type())
+    if (
+       (mCurrentRequest) && (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type()) ||
+       (!mCurrentRequest) 
+       )
+
     {
         CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
         return ndefTarget ? ndefTarget->hasNdefMessage() : false;
     }
     else
     {
-        // TODO:
-        // create a new request for HasNdefMessages Operation, and INSERT it behind
-        // ongoing request so that it can be run immediately when current request
-        // finished. And Wait the request then return result.
+        NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
+
+        QNearFieldTarget::RequestId requestId;
+
+        if (readNdefRequest)
+        {
+            readNdefRequest->SetRequestId(requestId);
+            readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
+            readNdefRequest->SetOperator(this);
+            int index = mPendingRequestList.indexOf(mCurrentRequest);
+            if ((index < 0) || (index = mPendingRequestList.count() - 1))
+            {
+                // no next request
+                mPendingRequestList.append(readNdefRequest);
+            }
+            else
+            {
+                mPendingRequestList.insert(index+1, readNdefRequest);
+            }
+            readNdefRequest->WaitRequestCompleted(5000);
+            if (mMessageList.Count() == 0)
+            {
+                return false;
+            }
+            else
+            {
+                mMessageList.Reset();
+                return true;
+            }
+        }
+        else
+        {
+            // TODO: is that proper way?
+            return false;
+        }
     }
 }
 
@@ -255,6 +290,7 @@ bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
     if ((index < 0) || (index = mPendingRequestList.count() - 1))
     {
         // no next request
+        mCurrentRequest = 0;
         return false;
     }
     else
