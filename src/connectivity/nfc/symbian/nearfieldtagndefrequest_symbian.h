@@ -56,7 +56,8 @@ public:
         };
 public:
     void IssueRequest();
-    void ProcessResponse();
+    void ProcessEmitSignal(TInt aError){}
+    void HandleResponse(TInt aError){}
     void SetNdefRequestType(TNdefRequestType aType) { iType = aType; }
     void SetInputNdefMessages(QList<QNdefMessage> aMessages) { iMessages = aMessages; }
     TNdefRequestType GetNdefRequestType() { return iType; }

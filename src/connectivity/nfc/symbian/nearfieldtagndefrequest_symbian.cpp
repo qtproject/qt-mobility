@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "nearfieldtagndefrequest_symbian.h"
-#include "nearfieldtagasyncrequestrespprocessor_symbian.h"
 
 void NearFieldTagNdefRequest::IssueRequest()
 {
@@ -62,20 +61,12 @@ void NearFieldTagNdefRequest::IssueRequest()
     }
 }
 
-void NearFieldTagNdefRequest::ProcessResponse()
-{
-    if (iProcessor)
-    {
-        iProcessor->ProcessResponse();
-    }
-}
-
 void NearFieldTagNdefRequest::ReadComplete(TInt aError)
 {
-    ProcessResponse();
+    ProcessResponse(aError);
 }
 
 void NearFieldTagNdefRequest::WriteComplete(TInt aError)
 {
-    ProcessResponse();
+    ProcessResponse(aError);
 }

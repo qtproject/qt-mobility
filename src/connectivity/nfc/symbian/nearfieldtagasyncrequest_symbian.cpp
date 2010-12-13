@@ -39,28 +39,46 @@
  **
  ****************************************************************************/
 #include "nearfieldtagasyncrequest_symbian.h"
+#include <e32std.h>
+
+TInt MNearFieldTagAsyncRequest::TimeoutCallback(TAny * aObj)
+{
+    MNearFieldTagAsyncRequest * obj = static_cast<MNearFieldTagAsyncRequest *>(aObj);
+    obj->ProcessTimeout();
+    return KErrNone;
+}
+
+TInt MNearFieldTagAsyncRequest::DeleteLater(TAny * aObj)
+{
+    MNearFieldTagAsyncRequest * obj = static_cast<MNearFieldTagAsyncRequest *>(aObj);
+    delete obj;
+}
 
 MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
 {
     iOperator = 0;
-    iProcessor = 0;
+    iWait = 0;
+    iTimer = 0;
 }
 
 MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
 {
-    delete iProcessor;
+    if (iTimer)
+    {
+        delete iTimer;
+        iTimer = 0;
+    }
+
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            iWait->AsyncStop();
+        }
+        delete iWait;
+    }
 }
  
-void MNearFieldTagAsyncRequest::SetRespProcessor(MNearFieldTagAsyncRequestRespProcessor * aProcessor)
-{
-    if (iProcessor)
-    {
-        delete iProcessor;
-        iProcessor = 0;
-    }
-    iProcessor = aProcessor;
-}
-  
 void MNearFieldTagAsyncRequest::SetOperator(MNearFieldTargetOperation * aOperator)
 {
     iOperator = aOperator;
@@ -74,4 +92,78 @@ void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
 QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::GetRequestId()
 {
     return iId;
+}
+
+bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
+{
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            // the request is already waited, return false.
+            return false;
+        }
+    }
+    else
+    {
+        iWait = new(ELeave) CActiveSchedulerWait();
+    }
+
+    if (iTimer)
+    {
+        iTimer->Cancel();
+    } 
+    else
+    {
+        iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
+    }
+
+    TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
+    iTimer->Start(0, aMsecs, callback);
+    iWait->Start();
+    return true;
+}
+        
+void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
+{
+    iOperator->IssueNextRequest();
+    this->HandleResponse(aError);
+
+    if (iWait) 
+    {
+        ProcessWaitRequestCompleted(aError);
+    }
+    else
+    {
+        ProcessEmitSignal(aError);
+    }
+    
+    iOperator->RemoveRequestFromQueue(iId);
+    delete this;
+} 
+            
+void MNearFieldTagAsyncRequest::ProcessTimeout()
+{
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            ProcessResponse(KErrTimedOut);
+        }
+    }
+}
+void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
+{
+    if (iTimer)
+    {
+        delete iTimer;
+        iTimer = 0;
+    }
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            iWait->AsyncStop();
+        }
+    }
 }

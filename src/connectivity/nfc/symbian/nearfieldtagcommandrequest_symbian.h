@@ -50,7 +50,8 @@ class NearFieldTagCommandRequest : public MNearFieldTagAsyncRequest,
     {
 public:
     void IssueRequest();
-    void ProcessResponse();
+    void ProcessEmitSignal(TInt aError){}
+    void HandleResponse(TInt aError){}
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }
     QString GetRequestCommand() { return iCommand; }
     TRequestType Type() { return ETagRequest; }
