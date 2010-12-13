@@ -84,8 +84,6 @@ public:
 
     QString itemType() const;
 
-//    static QString uriFromItemId(QDocumentGallery::Error *error, const QVariant &itemId);
-
     static int serviceUpdateId(const QString &service);
     static QString serviceForType( const QString &galleryType );
 
