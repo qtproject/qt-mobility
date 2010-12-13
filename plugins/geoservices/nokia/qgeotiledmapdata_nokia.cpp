@@ -183,7 +183,7 @@ void QGeoTiledMapDataNokia::paint(QPainter *painter, const QStyleOptionGraphicsI
 {
     QGeoTiledMapData::paint(painter, option);
 
-    QRect viewport = painter->viewport();
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
 
     painter->drawPixmap(
         viewport.bottomLeft()+QPoint(5,-5-watermark.height()),
