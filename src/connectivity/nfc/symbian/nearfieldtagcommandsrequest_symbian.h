@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#if 0
 #ifndef NEARFIELDTAGCOMMANDSREQUEST_SYMBIAN_H
 #define NEARFIELDTAGCOMMANDSREQUEST_SYMBIAN_H
 
@@ -55,14 +54,13 @@ public:
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
     void SetInputCommands(QList<QByteArray> aCommands) { iCommands = aCommands; }
-    void SetResponseBuffer(const TDesC8& aResponse) { iResponse.Set(aResponse); }
-    TRequestType Type() { return ETagRequest; }
+    void SetResponseBuffer(RBuf8 * aResponse) { iResponse = aResponse; }
+    TRequestType Type() { return ETagCommandsRequest; }
 private:
     void CommandComplete(TInt aError);
     QList<QByteArray> iCommands;
-    QList<QByteArray> iResponses;
-    TPtrC8 iResponse;
+    // Not own
+    RBuf8 * iResponse;
     int iCurrentCommand;
     };
-#endif
 #endif

@@ -55,7 +55,7 @@ public:
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }
     void SetResponseBuffer(const TDesC8& aResponse) { iResponse.Set(aResponse); }
     QString GetRequestCommand() { return iCommand; }
-    TRequestType Type() { return ETagRequest; }
+    TRequestType Type() { return ETagCommandRequest; }
 private:
     void CommandComplete(TInt aError);
     QByteArray iCommand;
