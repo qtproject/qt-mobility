@@ -147,7 +147,7 @@ public:
                 savedList << QContactOnlineAccount::SubTypeVideoShare;
                 break;
             default:
-                //qWarning unkown subtype
+                //qWarning unknown subtype
                 break;
 
             }

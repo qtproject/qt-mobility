@@ -368,8 +368,13 @@ void tst_QSystemDeviceInfo::tst_keyboardType()
              || (flags && QSystemDeviceInfo::SoftwareKeyboard ==  QSystemDeviceInfo::SoftwareKeyboard)
              || (flags && QSystemDeviceInfo::ITUKeypad ==  QSystemDeviceInfo::ITUKeypad)
              || (flags && QSystemDeviceInfo::HalfQwertyKeyboard == QSystemDeviceInfo::HalfQwertyKeyboard)
-             || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard)
-             || (flags && QSystemDeviceInfo::WirelessKeyboard ==  QSystemDeviceInfo::WirelessKeyboard));
+            || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard));
+
+    if(di.isWirelessKeyboardConnected()) {
+        QVERIFY((flags & QSystemDeviceInfo::WirelessKeyboard));
+    } else {
+        QVERIFY((flags & ~QSystemDeviceInfo::WirelessKeyboard));
+    }
 }
 
 void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()

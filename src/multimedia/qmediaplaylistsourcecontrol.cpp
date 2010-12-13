@@ -116,7 +116,7 @@ QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl()
 /*!
   \fn QMediaPlaylistSourceControl::playlistChanged(QMediaPlaylist* playlist)
 
-  Signal emited when the playlist has changed to \a playlist.
+  Signal emitted when the playlist has changed to \a playlist.
 */
 
 #include "moc_qmediaplaylistsourcecontrol.cpp"

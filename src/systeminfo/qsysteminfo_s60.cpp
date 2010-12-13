@@ -914,6 +914,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
     DeviceInfo::instance()->chargingStatus()->addObserver(this);
+    m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1106,14 +1107,23 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
-    if(batteryLevel < 4) {
-        return QSystemDeviceInfo::BatteryCritical;
-    }   else if (batteryLevel < 11) {
-        return QSystemDeviceInfo::BatteryVeryLow;
-    }  else if (batteryLevel < 41) {
-        return QSystemDeviceInfo::BatteryLow;
-    }   else if (batteryLevel > 40) {
-        return QSystemDeviceInfo::BatteryNormal;
+    QSystemDeviceInfo::PowerState currentpwrstate = currentPowerState();
+    if (batteryLevel < 15 ) {
+        if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
+                return QSystemDeviceInfo::BatteryLow;
+        }   else  {
+                return QSystemDeviceInfo::BatteryVeryLow;
+        }
+    }   else if (batteryLevel < 29) {
+            return QSystemDeviceInfo::BatteryLow;
+    }   else if (batteryLevel < 43) {
+            if( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ){
+                return QSystemDeviceInfo::BatteryNormal;
+            }  else {
+                return QSystemDeviceInfo::BatteryLow;
+            }
+    }   else if (batteryLevel > 42) {
+            return QSystemDeviceInfo::BatteryNormal;
     }
 
     return QSystemDeviceInfo::NoBatteryLevel;
@@ -1158,20 +1168,11 @@ void QSystemDeviceInfoPrivate::batteryLevelChanged()
 {
     emit batteryLevelChanged(batteryLevel());
 
-    int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
-    QSystemDeviceInfo::BatteryStatus status(batteryStatus());
-
-    if(batteryLevel < 4 && status != QSystemDeviceInfo::BatteryCritical) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
-    } else if (batteryLevel < 11 && status != QSystemDeviceInfo::BatteryVeryLow) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
-    } else if (batteryLevel < 41 && status != QSystemDeviceInfo::BatteryLow) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
-    } else if (batteryLevel > 40 && status != QSystemDeviceInfo::BatteryNormal) {
-        emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
-    } else {
-        emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+    QSystemDeviceInfo::BatteryStatus currentstatus(batteryStatus());
+    if (currentstatus != m_previousBatteryStatus) {
+        emit batteryStatusChanged(currentstatus);
     }
+    m_previousBatteryStatus = currentstatus;
 }
 
 void QSystemDeviceInfoPrivate::chargingStatusChanged()

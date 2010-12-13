@@ -83,7 +83,7 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
                 mEffects.insert(effect, fi);
                 mEffectMap.insert(fi.soundEffect, effect);
 
-                connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectLoaded()));
+                connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectStatusChanged()));
                 connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
                 fi.soundEffect->setSource(effect->source());
             }
@@ -155,15 +155,33 @@ QStringList QFeedbackMMK::supportedMimeTypes()
     return QSoundEffect::supportedMimeTypes();
 }
 
-void QFeedbackMMK::soundEffectLoaded()
+void QFeedbackMMK::soundEffectStatusChanged()
 {
     QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
-    if (se && se->status() == QSoundEffect::Error) {
+    if (se) {
         // Hmm, now look up the right sound effect
         QFeedbackFileEffect* fe = mEffectMap.value(se);
+        if (!fe)
+            return;
 
-        if (fe && fe->state() == QFeedbackEffect::Loading) {
-            reportLoadFinished(fe, false);
+        switch(se->status()) {
+            case QSoundEffect::Error:
+                if (fe->state() == QFeedbackEffect::Loading) {
+                    reportLoadFinished(fe, false);
+                } else {
+                    reportError(fe, QFeedbackEffect::UnknownError);
+                }
+                break;
+
+            case QSoundEffect::Ready:
+                if (fe->state() == QFeedbackEffect::Loading) {
+                    reportLoadFinished(fe, true);
+                }
+                break;
+
+            default:
+                // Nothing to handle here?
+                break;
         }
     }
 }

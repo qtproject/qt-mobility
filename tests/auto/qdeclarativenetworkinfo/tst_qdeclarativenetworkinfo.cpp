@@ -1,5 +1,5 @@
 /****************************************************************************
-**
+184**
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
@@ -181,7 +181,7 @@ void  tst_QDeclarativeNetworkInfo::tst_currentMobileCountryCode()
         ) {
         QVERIFY(!ni.currentMobileCountryCode().isEmpty());
         bool ok;
-        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        ni.currentMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
         QVERIFY(ni.currentMobileCountryCode().count() == 3);
     } else {
@@ -205,7 +205,7 @@ void  tst_QDeclarativeNetworkInfo::tst_currentMobileNetworkCode()
         ) {
         QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
         bool ok;
-        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        ni.currentMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
         QVERIFY((ni.currentMobileCountryCode().count() == 3)
                 || (ni.currentMobileCountryCode().count() == 2));
@@ -231,7 +231,7 @@ void  tst_QDeclarativeNetworkInfo::tst_homeMobileCountryCode()
         ) {
         QVERIFY(!ni.homeMobileCountryCode().isEmpty());
         bool ok;
-        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        ni.currentMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
         QVERIFY(ni.currentMobileCountryCode().count() == 3);
     } else {
@@ -255,7 +255,7 @@ void  tst_QDeclarativeNetworkInfo::tst_homeMobileNetworkCode()
         ) {
         QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
         bool ok;
-        int cc = ni.currentMobileCountryCode().toInt(&ok);
+        ni.currentMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
         QVERIFY((ni.currentMobileCountryCode().count() == 3)
                 || (ni.currentMobileCountryCode().count() == 2));
