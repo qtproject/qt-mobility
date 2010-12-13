@@ -1,9 +1,9 @@
 INCLUDEPATH += ../../../src/messaging
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_messaging)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_messaging)
 TARGETPATH = QtMobility/messaging
 PLUGIN_TYPE = declarative
 

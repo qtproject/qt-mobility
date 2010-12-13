@@ -1,6 +1,6 @@
-TARGET  = $$qtLibraryTarget(declarative_location)
 TEMPLATE = lib
 CONFIG += qt plugin mobility
+TARGET  = $$qtLibraryTarget(declarative_location)
 MOBILITY += location
 PLUGIN_TYPE = declarative
 QT += declarative network

@@ -8,11 +8,11 @@ INCLUDEPATH += . \
                ../../../src/versit
 DEPENDPATH += ../../../src/contacts
 
+TEMPLATE = lib
+CONFIG += plugin
 TARGET = $$qtLibraryTarget(declarative_contacts)
 TARGETPATH = QtMobility/contacts
 
-TEMPLATE = lib
-CONFIG += plugin
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
