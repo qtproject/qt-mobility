@@ -338,15 +338,16 @@ void tst_qllcpsockettype2::api_coverage()
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
     QVERIFY(stateChangedSpy.count() == 2);
-    QLlcpSocket::State  state1 = stateChangedSpy.first().at(0).value<QLlcpSocket::State>();
-    QLlcpSocket::State  state2 = stateChangedSpy.first().at(1).value<QLlcpSocket::State>();
+    QLlcpSocket::State  state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::State>();
+    QLlcpSocket::State  state2 = stateChangedSpy.at(1).at(0).value<QLlcpSocket::State>();
     QCOMPARE(state1, QLlcpSocket::ConnectingState);
     QCOMPARE(state2, QLlcpSocket::ConnectedState);
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
     message = "Connection oriented write test string";
-    const char* data = (const char *) message.data();
-    qint64 ret = socket.writeDatagram(data,message.size());
+    QByteArray array;
+    array.append(message);
+    qint64 ret = socket.writeDatagram(array.constData(),array.size());
     QVERIFY( ret != -1);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
@@ -354,8 +355,9 @@ void tst_qllcpsockettype2::api_coverage()
     stateChangedSpy.clear();
     socket.disconnectFromService();
     QVERIFY(stateChangedSpy.count() == 2);
-    state1 = stateChangedSpy.first().at(0).value<QLlcpSocket::State>();
-    state2 = stateChangedSpy.first().at(1).value<QLlcpSocket::State>();
+    state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::State>();
+    state2 = stateChangedSpy.at(1).at(0).value<QLlcpSocket::State>();
+
     QCOMPARE(state1, QLlcpSocket::ClosingState);
     QCOMPARE(state2, QLlcpSocket::UnconnectedState);
 

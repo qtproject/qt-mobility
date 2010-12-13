@@ -61,10 +61,20 @@ QLlcpServerPrivate::~QLlcpServerPrivate()
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     qDebug() << "QLlcpServerPrivate::listen() begin";
-    TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
-    qDebug() << "QLlcpServerPrivate::listen() FromQStringToTptrC8";
-    bool ret =  m_symbianbackend->Listen(serviceName);
+   TPtrC wide(static_cast<const TUint16*>(serviceUri.utf16()),serviceUri.length());
+    RBuf8 narrow;
+
+    TInt val = narrow.CreateMax(wide.Length());
+    if( val != KErrNone)
+    {
+        return false;
+    }
+    narrow.Copy(wide);
+
+    bool ret =  m_symbianbackend->Listen(narrow);
+
     qDebug() << "QLlcpServerPrivate::listen() end";
+    narrow.Close();
     return ret;
 }
 
@@ -84,8 +94,19 @@ void QLlcpServerPrivate::close()
 QString QLlcpServerPrivate::serviceUri() const
 {
     const TDesC8& theDescriptor= m_symbianbackend->serviceUri();
-    QString serviceName = QNFCNdefUtility::FromDesC8ToQString(theDescriptor);
-    return serviceName;
+
+    RBuf wide;
+    TInt val = wide.CreateMax(theDescriptor.Length());
+    if( val != KErrNone)
+    {
+        return false;
+    }
+    wide.Copy(theDescriptor);
+    QString ret = QString::fromUtf16(wide.Ptr(),wide.Length());
+    qDebug()<<"QLlcpServerPrivate::serviceUri() ret="<<ret;
+    wide.Close();
+    return ret;
+
 }
 
 quint8 QLlcpServerPrivate::serverPort() const
