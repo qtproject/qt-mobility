@@ -45,7 +45,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistReader
-    \preliminary
+    
     \brief The QMediaPlaylistReader class provides an interface for reading a playlist file.
     \inmodule QtMultimediaKit
 
@@ -83,7 +83,7 @@ QMediaPlaylistReader::~QMediaPlaylistReader()
 
 /*!
     \class QMediaPlaylistWriter
-    \preliminary
+    
     \brief The QMediaPlaylistWriter class provides an interface for writing a playlist file.
 
     \sa QMediaPlaylistIOPlugin
@@ -101,7 +101,7 @@ QMediaPlaylistWriter::~QMediaPlaylistWriter()
 
     Writes an item of \a media to a playlist file.
 
-    Returns true if the media was written succesfully; and false otherwise.
+    Returns true if the media was written successfully; and false otherwise.
 */
 
 /*!

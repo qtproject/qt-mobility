@@ -145,8 +145,7 @@ void QOrganizerItemFetchHint::setDetailDefinitionsHint(const QStringList& defini
 /*!
   Returns the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
-  the full set of information accessible in an organizer item, including
-  relationships and binary blobs.
+  the full set of information accessible in an organizer item.
 
   \sa setOptimizationHints()
  */
@@ -158,8 +157,7 @@ QOrganizerItemFetchHint::OptimizationHints QOrganizerItemFetchHint::optimization
 /*!
   Sets the optimization hint flags specified by the client to \a hints.
   These hints may be ignored by the backend, in which case it will return
-  the full set of information accessible in an organizer item, including
-  relationships and binary blobs.
+  the full set of information accessible in an organizer item.
 
   \sa optimizationHints()
  */

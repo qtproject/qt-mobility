@@ -39,33 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef TESTHELPER_H_
-#define TESTHELPER_H_
+#ifndef CAMERARESOURCEPOLICY_H
+#define CAMERARESOURCEPOLICY_H
 
-#include <qgeoserviceprovider.h>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-class QString;
+#include <QtCore/qobject.h>
+#include <QtCore/qlist.h>
 
-QTM_BEGIN_NAMESPACE
-class QGraphicsGeoMap;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-class TestHelper
-{
-public:
-    TestHelper();
-    ~TestHelper();
-    QGraphicsGeoMap* map();
-
-private:
-    QGeoServiceProvider m_serviceProvider;
-    QGraphicsGeoMap* m_map;
-    QGraphicsScene m_scene;
-    QGraphicsView m_view;
-
+namespace ResourcePolicy {
+class ResourceSet;
 };
 
-#endif /* TESTHELPER_H_ */
+class CamerabinResourcePolicy : public QObject
+{
+    Q_OBJECT
+public:
+    enum ResourceSet {
+        NoResources,
+        LoadedResources,
+        ImageCaptureResources,
+        VideoCaptureResources
+    };
+
+    CamerabinResourcePolicy(QObject *parent);
+    ~CamerabinResourcePolicy();
+
+    ResourceSet resourceSet() const;
+    void setResourceSet(ResourceSet set);
+
+    bool isResourcesGranted() const;
+
+Q_SIGNALS:
+    void resourcesDenied();
+    void resourcesGranted();
+    void resourcesLost();
+
+private Q_SLOTS:
+    void handleResourcesGranted();
+    void handleResourcesDenied();
+    void handleResourcesLost();
+
+private:
+    ResourceSet m_resourceSet;
+
+    enum ResourceStatus {
+        Initial = 0,
+        RequestedResource,
+        GrantedResource
+    };
+
+    enum {
+        LoadedResourcesSet = 0,
+        ImageResourcesSet,
+        VideoResouresSet
+    };
+
+    QList<ResourcePolicy::ResourceSet *> m_resources;
+    QList<ResourceStatus> m_resourceStatuses;
+    QList<int> m_requestedSets;
+};
+
+#endif

@@ -594,7 +594,7 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    // Every other Month on first and last Sunday for 10 occurances
+    // Every other Month on first and last Sunday for 10 occurrences
     rrule = QOrganizerRecurrenceRule(); // reset
     rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(10);
@@ -606,14 +606,14 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
     positions.insert(1);
     positions.insert(-1);
     rrule.setPositions(positions);
-    QTest::newRow(QString("[%1] Every other Month on first and last Sunday for 10 occurances").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] Every other Month on first and last Sunday for 10 occurrences").arg(managerName).toLatin1().constData())
         << managerName
         << QString("monthly 2")
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    // Every third Month on first and third Sunday for 10 occurances
+    // Every third Month on first and third Sunday for 10 occurrences
     rrule = QOrganizerRecurrenceRule(); // reset
     rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(10);
@@ -625,7 +625,7 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
     positions.insert(1);
     positions.insert(3);
     rrule.setPositions(positions);
-    QTest::newRow(QString("[%1] Every third Month on first and third Sunday for 10 occurances").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] Every third Month on first and third Sunday for 10 occurrences").arg(managerName).toLatin1().constData())
         << managerName
         << QString("monthly 3")
         << itemType
@@ -789,7 +789,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    // Every year for 3 occurances
+    // Every year for 3 occurrences
     rrule = QOrganizerRecurrenceRule();
     rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(3);
@@ -896,7 +896,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
 
 /*  TODO: Enable the following test cases and implement them on symbian backend
 
-    //Every year in january and march for 4 occurances
+    //Every year in january and march for 4 occurrences
     // TODO: Symbian calendar server does not allow setting a yearly recurring
     // event with "months" set but without setting "day of month"
     rrule = QOrganizerRecurrenceRule();
@@ -913,7 +913,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    //Every other year in january,feburary and march for 4 occurances
+    //Every other year in january,feburary and march for 4 occurrences
     rrule = QOrganizerRecurrenceRule();
     rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(4);
@@ -930,7 +930,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    //Every 3rd year on 1st,100th and 200th day for 10 occurances
+    //Every 3rd year on 1st,100th and 200th day for 10 occurrences
     rrule = QOrganizerRecurrenceRule();
     rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(10);
@@ -940,7 +940,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     daysOfYear.insert(100);
     daysOfYear.insert(200);
     rrule.setDaysOfYear(daysOfYear);
-    QTest::newRow(QString("[%1] every 3rd year on 1st,100th and 200th day for 10 occurances").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] every 3rd year on 1st,100th and 200th day for 10 occurrences").arg(managerName).toLatin1().constData())
         << managerName
         << QString("yearly 8")
         << itemType
@@ -999,7 +999,7 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     daysOfMonth.insert(1);
     rrule.setDaysOfMonth(daysOfMonth);
     rrule.setLimit(4);
-    //Occurs every 1st day of the month for 4 occurances
+    //Occurs every 1st day of the month for 4 occurrences
     QTest::newRow(QString("[%1] Days of Month=1, Count=4").arg(managerName).toLatin1().constData())
         << managerName
         << QString("yearly 12")

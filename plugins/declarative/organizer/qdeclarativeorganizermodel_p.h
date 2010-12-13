@@ -169,6 +169,10 @@ private slots:
 
 private:
     void clearItems();
+    int itemIndex(const QDeclarativeOrganizerItem* item);
+    void addSorted(QDeclarativeOrganizerItem* item);
+    void removeItemsFromModel(const QList<QString>& ids);
+    QDeclarativeOrganizerItem* createItem(const QOrganizerItem& item);
     static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
     static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);

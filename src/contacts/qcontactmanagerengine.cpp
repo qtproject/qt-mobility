@@ -267,11 +267,10 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contact will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */

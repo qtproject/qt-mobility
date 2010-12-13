@@ -100,6 +100,8 @@ public: //MDS spesific
 
     virtual void createQuery() = 0;
 
+    virtual void cleanupResultSet() = 0;
+
     // Signals to send
     //        void currentIndexChanged(int index);
     //        void currentItemChanged();
@@ -120,6 +122,7 @@ protected:
     bool m_isValid;
 
     RPointerArray<CMdEObject> m_itemArray;
+    bool m_cleaned;
 
 };
 
