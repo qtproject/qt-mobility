@@ -87,4 +87,14 @@ void NearFieldTagCommandsRequest::CommandComplete(TInt aError)
     ProcessResponse(aError);
 }
 
-
+void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
+{
+    if (aError != KErrNone)
+    {
+        iOperator->EmitError(aError);
+    }
+    else
+    {
+        iOperator->EmitRequestCompleted(iId);
+    }
+}

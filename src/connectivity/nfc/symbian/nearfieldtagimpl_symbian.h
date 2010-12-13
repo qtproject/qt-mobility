@@ -55,6 +55,7 @@
 
 #include "nearfieldtagndefrequest_symbian.h"
 #include "nearfieldtagcommandrequest_symbian.h"
+#include "nearfieldtagcommandsrequest_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
@@ -121,6 +122,7 @@ public:
     }
 
     QNearFieldTarget::RequestId _sendCommand(const QByteArray &command);
+    QNearFieldTarget::RequestId _sendCommands(const QList<QByteArray> &command);
     bool _waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs = 5000);
 
     QByteArray _uid() const;
@@ -419,6 +421,30 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
             rawCommandRequest->IssueRequest();
         }
         mPendingRequestList.append(rawCommandRequest);
+    }
+    // TODO: consider else
+    return requestId;
+}
+
+template<typename TAGTYPE>
+QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommands(const QList<QByteArray> &commands)
+{
+    NearFieldTagCommandsRequest * rawCommandsRequest = new NearFieldTagCommandsRequest;
+    QNearFieldTarget::RequestId requestId;
+
+    if (rawCommandsRequest)
+    {
+        rawCommandsRequest->SetInputCommands(commands);
+        rawCommandsRequest->SetRequestId(requestId);
+        rawCommandsRequest->SetOperator(this);
+
+        if (!_isProcessingRequest())
+        {
+            // issue the request
+            mCurrentRequest = rawCommandsRequest;
+            rawCommandsRequest->IssueRequest();
+        }
+        mPendingRequestList.append(rawCommandsRequest);
     }
     // TODO: consider else
     return requestId;
