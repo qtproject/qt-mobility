@@ -87,17 +87,9 @@ void QGalleryTrackerResultSetPrivate::query()
     iCache.cutoff = 0;
 
     qSwap(rCache.values, iCache.values);
-    QString sparqlStatement = queryArguments.at(0).toString();
-    if (queryLimit > 0)
-        sparqlStatement += QLatin1String(" LIMIT ") + QString::number(queryLimit);
-    if (queryOffset > 0)
-        sparqlStatement += QLatin1String(" OFFSET ") + QString::number(queryOffset);
-
-    QVariantList arguments(queryArguments);
-    arguments.replace(0, sparqlStatement);
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, arguments);
+            QLatin1String("SparqlQuery"), QVariantList() << sparql);
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -472,15 +464,8 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 }
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
-        QGalleryTrackerResultSetArguments *arguments,
-        bool autoUpdate,
-        int cursorPosition,
-        int minimumPagedItems,
-        QObject *parent)
-    : QGalleryResultSet(
-            *new QGalleryTrackerResultSetPrivate(
-                    arguments, autoUpdate, cursorPosition, minimumPagedItems),
-            parent)
+        QGalleryTrackerResultSetArguments *arguments, bool autoUpdate, QObject *parent)
+    : QGalleryResultSet(*new QGalleryTrackerResultSetPrivate(arguments, autoUpdate), parent)
 {
     Q_D(QGalleryTrackerResultSet);
 

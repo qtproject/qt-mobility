@@ -991,7 +991,7 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareItemResponse(
 {
     if (m_itemIndex >= 0) {
         QString query( "FILTER(?x=<" + qt_galleryItemTypeList[m_itemIndex].prefix.strip( itemId ).toString() + ">)" );
-        populateItemArguments(arguments, dbus, query, propertyNames, QStringList());
+        populateItemArguments(arguments, dbus, query, propertyNames, QStringList(), 0, 0);
 
         return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
@@ -1002,7 +1002,7 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareItemResponse(
                        + qt_galleryAggregateTypeList[m_aggregateIndex].prefix.strip(itemId) .toString()
                        + "\")"
                      );
-        populateAggregateArguments(arguments, dbus, query, propertyNames, QStringList());
+        populateAggregateArguments(arguments, dbus, query, propertyNames, QStringList(), 0, 0);
 
         return QDocumentGallery::NoError;
     }
@@ -1017,7 +1017,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
         const QString &rootItemId,
         const QGalleryFilter &filter,
         const QStringList &propertyNames,
-        const QStringList &sortPropertyNames) const
+        const QStringList &sortPropertyNames,
+        int offset,
+        int limit) const
 {
     QString query;
 
@@ -1026,11 +1028,13 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
     if (error != QDocumentGallery::NoError) {
         return error;
     } else if (m_itemIndex >= 0) {
-        populateItemArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+        populateItemArguments(
+                arguments, dbus, query, propertyNames, sortPropertyNames, offset, limit);
 
         return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
-        populateAggregateArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+        populateAggregateArguments(
+                arguments, dbus, query, propertyNames, sortPropertyNames, offset, limit);
 
         return QDocumentGallery::NoError;
     } else {
@@ -1071,10 +1075,9 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         arguments->queryMethod = QLatin1String("SparqlQuery");
 
         if (type.service == "nfo:Media") {
-            arguments->queryArguments = QVariantList()
-                    << QLatin1String(
-                            "SELECT COUNT(DISTINCT ?x) "
-                            "WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}");
+            arguments->queryArguments = QVariantList() << QLatin1String(
+                    "SELECT COUNT(DISTINCT ?x) "
+                    "WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}");
         }
 
         return QDocumentGallery::NoError;
@@ -1356,7 +1359,9 @@ void QGalleryTrackerSchema::populateItemArguments(
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,
-        const QStringList &sortPropertyNames) const
+        const QStringList &sortPropertyNames,
+        int offset,
+        int limit) const
 {
     const QString service = qt_galleryItemTypeList[m_itemIndex].service;
 
@@ -1446,15 +1451,19 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->tableWidth =  arguments->valueOffset + arguments->fieldNames.count();
     arguments->compositeOffset = arguments->valueOffset + valueNames.count();
     arguments->queryInterface = dbus->metaDataInterface();
-    arguments->queryMethod = QLatin1String("SparqlQuery");
-    arguments->queryArguments = QVariantList()
-            << QLatin1String("SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) ")
+    arguments->sparql
+            = QLatin1String("SELECT DISTINCT ?x nie:url(?x) rdf:type(?x) ")
             + qt_writePropertyFunctions(arguments->fieldNames, QLatin1String("x"))
             + QLatin1String(" WHERE {")
             + qt_galleryItemTypeList[m_itemIndex].typeFragment
             + query
             + QLatin1String("}")
             + qt_writeSorting(sortPropertyNames, itemProperties);
+
+    if (offset > 0)
+        arguments->sparql += QString::fromLatin1(" OFFSET %1").arg(offset);
+    if (limit > 0)
+        arguments->sparql += QString::fromLatin1(" LIMIT %1").arg(limit);
 
     arguments->urlColumn.reset(new QGalleryTrackerFileUrlColumn(QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL));
     if (qt_galleryItemTypeList[m_itemIndex].updateId & FileMask) {
@@ -1483,7 +1492,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,
-        const QStringList &sortPropertyNames) const
+        const QStringList &sortPropertyNames,
+        int offset,
+        int limit) const
 {
     QStringList identityFields;
     QStringList aggregateFields;
@@ -1588,14 +1599,18 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->tableWidth = identityColumns.count() + aggregates.count();
     arguments->compositeOffset = arguments->tableWidth;
     arguments->queryInterface = dbus->metaDataInterface();
-    arguments->queryMethod = QLatin1String("SparqlQuery");
-    arguments->queryArguments = QVariantList()
-            << QLatin1String("SELECT DISTINCT ")
+    arguments->sparql
+            = QLatin1String("SELECT DISTINCT ")
             + qt_writePropertyFunctions(identityFields, QLatin1String("x"))
             + QLatin1String(" WHERE{ ?x rdf:type ") + type.service + QLatin1String(" ")
             + query
             + QLatin1String("}")
             + qt_writeSorting(sortPropertyNames, properties);
+
+    if (offset > 0)
+        arguments->sparql += QString::fromLatin1(" OFFSET %1").arg(offset);
+    if (limit > 0)
+        arguments->sparql += QString::fromLatin1(" LIMIT %1").arg(limit);
 
     if (type.identity.count == 1)
         arguments->idColumn.reset(new QGalleryTrackerPrefixColumn(0, type.prefix));

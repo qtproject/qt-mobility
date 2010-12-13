@@ -105,8 +105,7 @@ struct QGalleryTrackerResultSetArguments
     int valueOffset;
     int compositeOffset;
     QGalleryDBusInterfacePointer queryInterface;
-    QString queryMethod;
-    QVariantList queryArguments;
+    QString sparql;
     QStringList propertyNames;
     QStringList fieldNames;
     QVector<QGalleryProperty::Attributes> propertyAttributes;
@@ -123,11 +122,7 @@ class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
     Q_OBJECT
 public:
     QGalleryTrackerResultSet(
-            QGalleryTrackerResultSetArguments *arguments,
-            bool autoUpdate,
-            int cursorPosition,
-            int minimumPagedItems,
-            QObject *parent = 0);
+            QGalleryTrackerResultSetArguments *arguments, bool autoUpdate, QObject *parent = 0);
     ~QGalleryTrackerResultSet();
 
     QStringList propertyNames() const;

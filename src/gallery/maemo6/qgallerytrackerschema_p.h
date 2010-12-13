@@ -103,7 +103,9 @@ public:
             const QString &rootItem,
             const QGalleryFilter &filter,
             const QStringList &propertyNames,
-            const QStringList &sortPropertyNames) const;
+            const QStringList &sortPropertyNames,
+            int offset,
+            int limit) const;
 
     QDocumentGallery::Error prepareTypeResponse(
             QGalleryTrackerTypeResultSetArguments *arguments,
@@ -124,13 +126,17 @@ private:
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,
-            const QStringList &sortPropertyNames) const;
+            const QStringList &sortPropertyNames,
+            int offset,
+            int limit) const;
     void populateAggregateArguments(
             QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,
-            const QStringList &sortPropertyNames) const;
+            const QStringList &sortPropertyNames,
+            int offset,
+            int limit) const;
 
     const int m_itemIndex;
     const int m_aggregateIndex;

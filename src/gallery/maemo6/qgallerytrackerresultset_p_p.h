@@ -248,11 +248,7 @@ public:
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
-    QGalleryTrackerResultSetPrivate(
-            QGalleryTrackerResultSetArguments *arguments,
-            bool autoUpdate,
-            int offset,
-            int limit)
+    QGalleryTrackerResultSetPrivate(QGalleryTrackerResultSetArguments *arguments, bool autoUpdate)
         : m_service( arguments->service )
         , idColumn(arguments->idColumn.take())
         , urlColumn(arguments->urlColumn.take())
@@ -264,15 +260,12 @@ public:
         , compositeOffset(arguments->compositeOffset)
         , aliasOffset(compositeOffset + arguments->compositeColumns.count())
         , columnCount(aliasOffset + arguments->aliasColumns.count())
-        , queryOffset(offset)
-        , queryLimit(limit)
         , currentRow(0)
         , currentIndex(-1)
         , rowCount(0)
         , progressMaximum(0)
         , queryInterface(arguments->queryInterface)
-        , queryMethod(arguments->queryMethod)
-        , queryArguments(arguments->queryArguments)
+        , sparql(arguments->sparql)
         , propertyNames(arguments->propertyNames)
         , propertyAttributes(arguments->propertyAttributes)
         , propertyTypes(arguments->propertyTypes)
@@ -307,15 +300,12 @@ public:
     const int compositeOffset;
     const int aliasOffset;
     const int columnCount;
-    const int queryOffset;
-    const int queryLimit;
     QVector<QVariant>::const_iterator currentRow;
     int currentIndex;
     int rowCount;
     int progressMaximum;
     const QGalleryDBusInterfacePointer queryInterface;
-    const QString queryMethod;
-    const QVariantList queryArguments;
+    const QString sparql;
     const QStringList propertyNames;
     const QList<int> propertyKeys;
     const QVector<QGalleryProperty::Attributes> propertyAttributes;
