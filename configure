@@ -690,4 +690,5 @@ if $QMAKE_EXEC -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
 else
     echo ""
     echo "configure failed."
+    exit 1
 fi

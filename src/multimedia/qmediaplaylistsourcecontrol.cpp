@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtMultimediaKit
     \ingroup multimedia
 
-    \preliminary
+    
     \brief The QMediaPlaylistSourceControl class provides access to the playlist playback
     functionality of a QMediaService.
 
@@ -116,7 +116,7 @@ QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl()
 /*!
   \fn QMediaPlaylistSourceControl::playlistChanged(QMediaPlaylist* playlist)
 
-  Signal emited when the playlist has changed to \a playlist.
+  Signal emitted when the playlist has changed to \a playlist.
 */
 
 #include "moc_qmediaplaylistsourcecontrol.cpp"

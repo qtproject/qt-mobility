@@ -387,7 +387,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
     QStringList returnList;
     for(int i = 0; i < langList.count(); i++) {
-     QString language = langList.at(i).left(2);
+     QString language = langList.at(i).left(2).toLower();
      if(!returnList.contains(language))
          returnList << language;
     }
@@ -451,7 +451,14 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
-    return QLocale::system().name().mid(3,2);
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSString* nslocale = [defs objectForKey:@"AppleLocale"];
+    QString qtlocale = nsstringToQString(nslocale);
+
+    [pool drain];
+    return qtlocale.mid(3,2);
 }
 
 
@@ -1307,18 +1314,7 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    QString cmcc;
-#if defined(MAC_SDK_10_6)
-    if(hasWifi) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        CWInterface *primary = [CWInterface interfaceWithName:nil];
-        if([primary power]) {
-            cmcc = nsstringToQString([primary countryCode]);
-        }
-        [pool drain];
-    }
-#endif
-    return cmcc;
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
@@ -2298,7 +2294,7 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::keypadType /*type*/)
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
 {
     return false;
 }
@@ -2502,6 +2498,24 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         if(cLevel != currentBatLevelPercent) {
             currentBatLevelPercent = cLevel;
             Q_EMIT remainingCapacityPercentChanged(currentBatLevelPercent);
+        }
+
+        QSystemBatteryInfo::BatteryStatus stat = QSystemBatteryInfo::BatteryUnknown;
+
+        if (currentBatLevelPercent < 4) {
+            stat = QSystemBatteryInfo::BatteryCritical;
+        } else if (currentBatLevelPercent < 11) {
+             stat = QSystemBatteryInfo::BatteryVeryLow;
+        } else if (currentBatLevelPercent < 41) {
+             stat =  QSystemBatteryInfo::BatteryLow;
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+             stat = QSystemBatteryInfo::BatteryOk;
+        } else if (currentBatLevelPercent == 100) {
+             stat = QSystemBatteryInfo::BatteryFull;
+        }
+        if(currentBatStatus != stat) {
+            currentBatStatus = stat;
+            Q_EMIT batteryStatusChanged(stat);
         }
 
         isCharging = [[(NSDictionary*)batDoctionary objectForKey:@"IsCharging"] boolValue];

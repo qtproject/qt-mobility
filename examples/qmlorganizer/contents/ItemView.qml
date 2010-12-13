@@ -39,47 +39,39 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "month.js" as Month
-Item {
-    id:monthView
-    property int month: 9
-    property int year: 2010
-    property date startDay:new Date(year, month, 1)
-    property int startWeekday:startDay.getDay()
-    property int today
 
-    anchors.fill: parent
+import QtMobility.organizer 1.1
 
-    Component.onCompleted : {
+Rectangle
+{
+    id:itemView
+    property string  itemId
+    property OrganizerItem item
+    property int startTime
+    property int endTime
+    onItemIdChanged :{
+        if (itemId != "") {
+            item = calendar.organizer.item(itemId);
+            startTime = item.itemStartTime.getHours() * 60 + item.itemStartTime.getMinutes();
+            endTime = item.itemEndTime.getHours() * 60 + item.itemEndTime.getMinutes();
+            itemLabel.text = item.displayLabel;
+            itemDesc.text = item.description;
+        }
+    }
+    radius: 5
+    color: "steelblue"
+
+    Column {
+        spacing: 2
+        Text { id: itemLabel; color: "yellow"; wrapMode: Text.Wrap;  font.bold: true; horizontalAlignment: Text.AlignHCenter; style: Text.Raised; verticalAlignment: Text.AlignVCenter; font.pointSize: 12 }
+        Text { id: itemDesc; color: "white"; wrapMode: Text.Wrap;  font.pointSize: 10}
     }
 
-    Grid {
-        id:container
+    MouseArea {
         anchors.fill: parent
-        columns: 7
-        Repeater {
-            model:["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-            Rectangle { width: container.width / 7
-                        height: container.height / 7
-                        color: "lightgray"
-                        border.color: "#3f4947"
-                        Text { text: modelData
-                               font.pointSize: 10
-                               anchors.centerIn: parent
-                        }
-            }
-        }
-
-        Repeater { model: 42
-                   Rectangle { width: container.width / 7
-                               height: container.height / 7
-                               color: Month.getColorOfDay(startDay,   index - startWeekday +1)
-                               border.color: "black"
-                               Text { text: Month.getDayOfMonth(startDay,   index - startWeekday +1)
-                                      font.pointSize: 10
-                                      anchors.centerIn: parent
-                               }
-                   }
+        onClicked : {
+            detailsView.itemId = itemId
+            calendar.state = "DetailsView"
         }
     }
 }

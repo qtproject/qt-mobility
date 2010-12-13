@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -265,9 +265,9 @@ Publish and Subscribe can be used to access both "core" and "non-core" values in
 The backend by default will look for a "core" property in the registry first (dot-separated), and then
 fall back to a "non-core" property (slash-separated) if a "core" one is not found.
 
-For example, if you subscribe to the property \c /Power/Battery/Charge, Qt will first look to see if
-the name \c Power.Battery.Charge is in the registry. If so, it will subscribe to it. Otherwise, it
-will look for \c /Power/Battery/Charge instead.
+You can force the selection of one or the other path scheme by passing the flags
+QValueSpace::PermanentLayer and QValueSpace::TransientLayer to the constructors of QValueSpaceSubscriber
+and QValueSpacePublisher along with the path name.
 
 \section3 \bold{Organization and application name}
 

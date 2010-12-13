@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
 #define QDECLARATIVEGEOMAPPOLYLINEOBJECT_H
 
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomappolylineobject.h"
@@ -53,23 +54,19 @@ class QBrush;
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapPolylineObject : public QGeoMapPolylineObject
+class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath)
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
-    Q_CLASSINFO("DefaultProperty", "path")
-
 public:
-    QDeclarativeGeoMapPolylineObject();
+    QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);
     ~QDeclarativeGeoMapPolylineObject();
 
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
-
     QDeclarativeGeoMapObjectBorder* border();
-
 
 private Q_SLOTS:
     void borderColorChanged(const QColor &color);
@@ -81,9 +78,9 @@ private:
     static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
 
-    QList<QDeclarativeCoordinate*> m_path;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapPolylineObject)
+    QGeoMapPolylineObject* polyline_;
+    QList<QDeclarativeCoordinate*> path_;
+    QDeclarativeGeoMapObjectBorder border_;
 };
 
 QTM_END_NAMESPACE

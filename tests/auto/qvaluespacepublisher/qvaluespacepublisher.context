@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<provider bus="session" service="com.nokia.qt.tests.qvaluespacepublisher">
+<key name="/value" />
+<key name="/testConstructor/value" />
+<key name="/testConstructor/subpath/value" />
+<key name="/valuePermanence/value" />
+
+<key name="/threads/thread0/key0" />
+<key name="/threads/thread0/key1" />
+<key name="/threads/thread0/key2" />
+<key name="/threads/thread0/key3" />
+<key name="/threads/thread0/key4" />
+<key name="/threads/thread0/key5" />
+<key name="/threads/thread0/key6" />
+<key name="/threads/thread0/key7" />
+<key name="/threads/thread0/key8" />
+<key name="/threads/thread0/key9" />
+
+<key name="/threads/thread1/key0" />
+<key name="/threads/thread1/key1" />
+<key name="/threads/thread1/key2" />
+<key name="/threads/thread1/key3" />
+<key name="/threads/thread1/key4" />
+<key name="/threads/thread1/key5" />
+<key name="/threads/thread1/key6" />
+<key name="/threads/thread1/key7" />
+<key name="/threads/thread1/key8" />
+<key name="/threads/thread1/key9" />
+</provider>

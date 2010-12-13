@@ -53,6 +53,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QThread>
+#include <QCoreApplication>
 #include <QTimer>
 #include <math.h>
 
@@ -115,6 +116,9 @@ void tst_QValueSpaceSubscriber::initTestCase()
     qRegisterMetaType<QVariant>("QVariant");
     qRegisterMetaType<QValueSpace::LayerOptions>("QValueSpace::LayerOptions");
 
+    QCoreApplication::setOrganizationDomain("tests.qt.nokia.com");
+    QCoreApplication::setApplicationName("qvaluespacesubscriber");
+
 #ifdef Q_OS_WIN
     HKEY key;
     long result = RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Nokia",
@@ -170,6 +174,10 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
         busys.insert(layers.at(i), busy);
     }
+
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    QTest::qWait(1000);
+#endif
 }
 
 void tst_QValueSpaceSubscriber::cleanupTestCase()
@@ -270,6 +278,9 @@ void tst_QValueSpaceSubscriber::dataVersatility()
     QValueSpacePublisher publisher(layer->id(), "/usr/data");
     publisher.setValue(typeString, data);
     publisher.sync();
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    QTest::qWait(1000);
+#endif
     QValueSpaceSubscriber subscriber(layer->id(), "/usr/data");
     QVariant v = subscriber.value(typeString);
 
@@ -1131,6 +1142,9 @@ void WriteThread::run()
         publisher.setValue("value", value);
         publisher.sync();
         QTest::qWait(100);
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    QTest::qWait(1000);
+#endif
         value += 100;
     }
 }

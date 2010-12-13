@@ -45,6 +45,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QDir>
+#include <QCryptographicHash>
 
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"
@@ -420,6 +421,8 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::HapticsFeature:
 
          break;
+     case QSystemInfo::FmTransmitterFeature:
+         break;
      default:
          featureSupported = false;
          break;
@@ -458,74 +461,96 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  }
  #endif
 
-QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
-                                    const QString &parameter)
-{
-    QString errorStr = QLatin1String("Not Available");
+ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
+                                                const QString &parameter)
+ {
+     QString errorStr = QLatin1String("Not Available");
 
-    bool useDate = false;
-    if (parameter == QLatin1String("versionDate")) {
-        useDate = true;
-    }
+     bool useDate = false;
+     if (parameter == QLatin1String("versionDate")) {
+         useDate = true;
+     }
 
-    switch(type) {
-        case QSystemInfo::Firmware :
-        {
+     switch(type) {
+     case QSystemInfo::Firmware :
+     {
 #if !defined(QT_NO_DBUS)
-            QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-            if (!sysinfodValue.isEmpty()) {
-                return sysinfodValue;
-            }
-            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-                if (!str.isEmpty()) {
-                    return str;
-                }
-                if (useDate) {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
-                    if (!str.isEmpty()) {
-                        return str;
-                    }
-                } else {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.version"));
-                    if (str.isEmpty()) {
-                        if (!str.isEmpty()) {
-                            return str;
-                        }
-                    }
-                }
-            }
-            break;
+         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
+         if (!sysinfodValue.isEmpty()) {
+             return sysinfodValue;
+         }
+         QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
+         QString str;
+         if (iface.isValid()) {
+             str = iface.getPropertyString(QLatin1String("system.kernel.version"));
+             if (!str.isEmpty()) {
+                 return str;
+             }
+             if (useDate) {
+                 str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
+                 if (!str.isEmpty()) {
+                     return str;
+                 }
+             } else {
+                 str = iface.getPropertyString(QLatin1String("system.firmware.version"));
+                 if (str.isEmpty()) {
+                     if (!str.isEmpty()) {
+                         return str;
+                     }
+                 }
+             }
+         }
+         break;
 #endif
+     }
+     case QSystemInfo::Os :
+    {
+
+        if(QFileInfo("/usr/bin/lsb_release").exists()) {
+            QProcess syscall;
+            QString program = "/usr/bin/lsb_release";
+            QStringList arguments;
+            arguments << "-d";
+            syscall.start(program, arguments);
+            syscall.waitForFinished();
+            QString desc = syscall.readAllStandardOutput();
+            desc = desc.section(":",1,1);
+            return desc.simplified();
         }
-        case QSystemInfo::Os :
-        {
-#if !defined(QT_NO_DBUS)
-            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-                if (!str.isEmpty()) {
-                    return str;
-                }
-            }
-#endif
-            const QString versionPath = QLatin1String("/proc/version");
-            QFile versionFile(versionPath);
-            if (!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug() << "File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = QLatin1String(versionFile.readAll().trimmed());
-                strvalue = strvalue.split(QLatin1String(" ")).at(2);
-                versionFile.close();
+
+        QFile versionFile2(QLatin1String("/etc/issue"));
+        if(!versionFile2.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "File not opened";
+        } else {
+            QString line;
+            QString strvalue;
+            QTextStream in(&versionFile2);
+            do {
+                line = in.readLine();
+                qDebug() << line;
+                line.remove("\\n");
+                line.remove("\\l");
+                strvalue = line.simplified();
+                break;
+            } while (!line.isNull());
+            versionFile2.close();
+            if(!strvalue.isEmpty()) {
                 return strvalue;
             }
-            break;
         }
-        case QSystemInfo::QtCore :
+
+        QFile versionFile3(QLatin1String("/proc/version"));
+        if(!versionFile3.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "File not opened";
+        } else {
+            QString  strvalue;
+            strvalue = QLatin1String(versionFile3.readAll().trimmed());
+            versionFile3.close();
+            return strvalue;
+        }
+        break;
+    }
+    case QSystemInfo::QtCore :
             return QLatin1String(qVersion());
             break;
         default:
@@ -572,7 +597,9 @@ QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObje
         initOfono();
     }
 #endif
+#if !defined(QT_NO_UDISKS)
     uPowerIsAvailable = uPowerAvailable();
+#endif
 #endif
 }
 
@@ -1777,8 +1804,9 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+#if !defined(QT_NO_UDISKS)
     udisksIsAvailable = udisksAvailable();
-
+#endif
 
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable)
@@ -2105,6 +2133,22 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
+QString QSystemStorageInfoLinuxCommonPrivate::getUuid(const QString &vol)
+{
+    QDir uuidDir("/dev/disk/by-uuid");
+    if (uuidDir.exists()) {
+        QFileInfoList fileList = uuidDir.entryInfoList();
+        foreach (const QFileInfo &fi, fileList) {
+            if (fi.isSymLink()) {
+                if (fi.symLinkTarget().contains(mountEntriesMap.value(vol).section("/",-1))) {
+                    return fi.baseName();
+                }
+            }
+        }
+    }
+    return QString();
+}
+
 QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
 {
 #if !defined(QT_NO_DBUS)
@@ -2116,22 +2160,13 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         }
         return QString();
     }
-#else
-    Q_UNUSED(driveVolume);
 #endif
-#else
-    QDir uuidDir("/dev/disk/by-uuid");
-    if (uuidDir.exists()) {
-        QFileInfoList fileList = uuidDir.entryInfoList();
-        foreach (const QFileInfo &fi, fileList) {
-            if (fi.isSymLink()) {
-                if (fi.symLinkTarget().contains(mountEntriesMap.value(driveVolume).section("/",-1))) {
-                    return fi.baseName();
-                }
-            }
-        }
+#endif
+    QString driveUuid = getUuid(driveVolume);
+    if(!driveUuid.isEmpty()) {
+        return  driveUuid;
     }
-//last resort
+    //last resort
 #if defined (BLKID_SUPPORTED)
     int fd;
     blkid_probe pr = NULL;
@@ -2142,7 +2177,7 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
     dev.open(QIODevice::ReadOnly);
     fd = dev.handle();
     if (fd < 0) {
-        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
+//        qDebug() << "XXXXXXXXXXXXXXXXXXXXXXXXXXXX" << mountEntriesMap.value(driveVolume);
        return QString();
     } else {
         pr = blkid_new_probe();
@@ -2156,7 +2191,6 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         close(fd);
         return label;
     }
-#endif
 #endif
     return QString();
 }
@@ -2205,7 +2239,7 @@ void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),hasWirelessKeyboardConnected(0)
 {
 #if !defined(QT_NO_DBUS)
     halIsAvailable = halAvailable();
@@ -2307,7 +2341,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             foreach (const QString &btdev, btList) {
                 foreach (const QString &dev, list) {
                     if (dev.contains(btdev.section("/",-1))) { //ugly, I know.
-                        //         qDebug() <<"Found wireless keyboard:"<< dev << btList;
+//                                 qDebug() <<"Found wireless keyboard:"<< dev << btList;
                      //   hasWirelessKeyboard = true;
                         halIfaceDevice = new QHalDeviceInterface(dev);
                         if (halIfaceDevice->isValid() && halIfaceDevice->setConnections()) {
@@ -2322,7 +2356,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -2552,7 +2586,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
@@ -2641,7 +2675,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
 
@@ -2856,13 +2890,37 @@ void QSystemDeviceInfoLinuxCommonPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::keypadType type)
+bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
 {
     return false;
 }
 
 QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
 {
+#if defined(Q_WS_MAEMO_6)
+    // create one from imei and uuid of /
+    QByteArray driveuid;
+    if (halIsAvailable) {
+        QHalInterface iface;
+        QStringList list = iface.findDeviceByCapability("volume");
+        if (!list.isEmpty()) {
+            QString lastdev;
+            foreach (const QString &dev, list) {
+                halIfaceDevice = new QHalDeviceInterface(dev);
+                if (halIfaceDevice->isValid() && (halIfaceDevice->getPropertyString("volume.mount_point") == "/")) {
+                    driveuid =  halIfaceDevice->getPropertyString("volume.uuid").toLocal8Bit();
+                    break;
+                }
+            }
+        }
+    }
+    QByteArray bytes = imei().toLocal8Bit();
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(bytes);
+    hash.addData(driveuid);
+
+    return QUuid(QString(hash.result().toHex()));
+#endif
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
@@ -3136,7 +3194,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
 
 }
 
-void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char */*signal*/)
 {
 
 }
@@ -3144,7 +3202,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 
 void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -3336,7 +3394,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
 
         QUPowerInterface power(this);
@@ -3478,14 +3536,14 @@ void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 rate)
+qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 /*rate*/)
 {
  return 0;
 }
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if(uPowerAvailable() && batteryIsPresent) {
         return QSystemBatteryInfo::UnitmWh;
     }
@@ -3522,7 +3580,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {

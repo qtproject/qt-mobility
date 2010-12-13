@@ -82,7 +82,7 @@ void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 /*!
     \qmlproperty string ScreenSaver::screenSaverDelayed
 
-    Returns whether the screensaver has been supressed, or not.
+    Returns whether the screensaver has been suppressed, or not.
 */
 
 bool QDeclarativeScreenSaver::screenSaverDelayed()

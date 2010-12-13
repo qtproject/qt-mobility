@@ -80,6 +80,8 @@ private:
     QSystemBatteryInfo::ChargerType currentChargerType;
     QSystemBatteryInfo::ChargingState currentChargingState;
 
+    void updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type);
+
 private slots:
     void tabChanged(int index);
     void getVersion(int index);

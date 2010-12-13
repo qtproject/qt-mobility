@@ -58,20 +58,20 @@ Q_DECLARE_METATYPE(QSystemBatteryInfo::EnergyUnit);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
-static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
-{
-    QEventLoop loop;
-    QObject::connect(obj, signal, &loop, SLOT(quit()));
-    QTimer timer;
-    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    if (timeout > 0) {
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.setSingleShot(true);
-        timer.start(timeout);
-    }
-    loop.exec();
-    return timeoutSpy.isEmpty();
-}
+//static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+//{
+//    QEventLoop loop;
+//    QObject::connect(obj, signal, &loop, SLOT(quit()));
+//    QTimer timer;
+//    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+//    if (timeout > 0) {
+//        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+//        timer.setSingleShot(true);
+//        timer.start(timeout);
+//    }
+//    loop.exec();
+//    return timeoutSpy.isEmpty();
+//}
 
 //class ChangeBatteryThread : public QThread
 //{
@@ -298,7 +298,7 @@ void tst_QDeclarativeBatteryInfo::tst_currentFlow()
 void tst_QDeclarativeBatteryInfo::tst_remainingCapacityBars()
 {
     QDeclarativeBatteryInfo bi;
-    int rem = bi.remainingCapacityBars();
+    bi.remainingCapacityBars();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
    //     QVERIFY(rem == 0);
     } else {
@@ -309,7 +309,7 @@ void tst_QDeclarativeBatteryInfo::tst_remainingCapacityBars()
 void tst_QDeclarativeBatteryInfo::tst_maxBars()
 {
     QDeclarativeBatteryInfo bi;
-    int max = bi.maxBars();
+    bi.maxBars();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
     } else {
 

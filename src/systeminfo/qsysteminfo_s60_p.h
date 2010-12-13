@@ -251,7 +251,7 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QUuid uniqueID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
@@ -304,7 +304,7 @@ private:
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 
     bool hasWirelessKeyboardConnected;
-
+    QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
 //////// QSystemScreenSaver

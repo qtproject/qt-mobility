@@ -58,20 +58,20 @@ Q_DECLARE_METATYPE(QSystemBatteryInfo::EnergyUnit);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
-static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
-{
-    QEventLoop loop;
-    QObject::connect(obj, signal, &loop, SLOT(quit()));
-    QTimer timer;
-    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    if (timeout > 0) {
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.setSingleShot(true);
-        timer.start(timeout);
-    }
-    loop.exec();
-    return timeoutSpy.isEmpty();
-}
+//static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+//{
+//    QEventLoop loop;
+//    QObject::connect(obj, signal, &loop, SLOT(quit()));
+//    QTimer timer;
+//    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+//    if (timeout > 0) {
+//        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+//        timer.setSingleShot(true);
+//        timer.start(timeout);
+//    }
+//    loop.exec();
+//    return timeoutSpy.isEmpty();
+//}
 
 //class ChangeBatteryThread : public QThread
 //{
@@ -180,6 +180,7 @@ void tst_QSystemBatteryInfo::tst_chargerType()
 {
     QSystemBatteryInfo bi;
     QSystemBatteryInfo::ChargerType cType = bi.chargerType();
+
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
      QVERIFY(cType == QSystemBatteryInfo::NoCharger
              || cType == QSystemBatteryInfo::UnknownCharger);
@@ -190,8 +191,9 @@ void tst_QSystemBatteryInfo::tst_chargerType()
                     || cType == QSystemBatteryInfo::USB_500mACharger
                     || cType == QSystemBatteryInfo::USB_100mACharger
                     || cType == QSystemBatteryInfo::VariableCurrentCharger);
-        } else {
-            if(bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
+        } else { //not charging
+            if(bi.batteryStatus() != QSystemBatteryInfo::BatteryFull
+                    && bi.chargingState() == QSystemBatteryInfo::NotCharging) {
                 QVERIFY(cType == QSystemBatteryInfo::NoCharger
                         || cType == QSystemBatteryInfo::UnknownCharger);
             } else {
@@ -298,7 +300,7 @@ void tst_QSystemBatteryInfo::tst_currentFlow()
 void tst_QSystemBatteryInfo::tst_remainingCapacityBars()
 {
     QSystemBatteryInfo bi;
-    int rem = bi.remainingCapacityBars();
+    bi.remainingCapacityBars();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
    //     QVERIFY(rem == 0);
     } else {
@@ -309,7 +311,7 @@ void tst_QSystemBatteryInfo::tst_remainingCapacityBars()
 void tst_QSystemBatteryInfo::tst_maxBars()
 {
     QSystemBatteryInfo bi;
-    int max = bi.maxBars();
+    bi.maxBars();
     if (bi.batteryStatus() == QSystemBatteryInfo::BatteryUnknown) {
     } else {
 
