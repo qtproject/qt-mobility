@@ -181,9 +181,6 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_cameraFocusControl = new CameraBinFocus(this);
     m_imageProcessingControl = new CameraBinImageProcessing(this);
     m_cameraLocksControl = new CameraBinLocks(this);
-
-    connect(m_cameraLocksControl, SIGNAL(lockStatusChanged(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)),
-            m_cameraFocusControl, SLOT(_q_updateLockStatus(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)));
 }
 
 CameraBinSession::~CameraBinSession()
@@ -567,10 +564,6 @@ void CameraBinSession::setState(QCamera::State newState)
 
     switch (newState) {
     case QCamera::UnloadedState:
-        //focus is lost at least on n900 when the state is changed from Active to Idle
-        if (m_state == QCamera::ActiveState)
-            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
-
         if (m_recordingActive)
             stopVideoRecording();
 
@@ -579,10 +572,6 @@ void CameraBinSession::setState(QCamera::State newState)
         emit stateChanged(m_state);
         break;
     case QCamera::LoadedState:
-        //focus is lost at least on n900 when the state is changed from Active to Idle
-        if (m_state == QCamera::ActiveState)
-            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
-
         if (m_recordingActive)
             stopVideoRecording();
 
@@ -766,26 +755,8 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
             return true;
         }
 
-        if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE)) {
-            gint status = GST_PHOTOGRAPHY_FOCUS_STATUS_NONE;
-            gst_structure_get_int (gm->structure, "status", &status);
-            switch (status) {
-                case GST_PHOTOGRAPHY_FOCUS_STATUS_FAIL:
-                emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
-                    break;
-                case GST_PHOTOGRAPHY_FOCUS_STATUS_SUCCESS:
-                    emit focusStatusChanged(QCamera::Locked, QCamera::UserRequest);
-                    break;
-                case GST_PHOTOGRAPHY_FOCUS_STATUS_NONE:
-                    emit focusStatusChanged(QCamera::Unlocked, QCamera::UserRequest);
-                    break;
-                case GST_PHOTOGRAPHY_FOCUS_STATUS_RUNNING:
-                    emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
-                    break;
-                default:
-                    break;
-            }
-        }
+        if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE))
+            m_cameraFocusControl->handleFocusMessage(gm);
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_viewfinderElement))
             m_viewfinderInterface->handleSyncMessage(gm);
@@ -903,8 +874,6 @@ void CameraBinSession::processSavedImage(const QString &filename)
                                              Qt::QueuedConnection,
                                              Q_ARG(int,m_requestId),
                                              Q_ARG(QString,filename));
-
-    emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 }
 
 static gboolean imgCaptured(GstElement *camera,
