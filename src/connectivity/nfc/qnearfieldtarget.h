@@ -93,6 +93,7 @@ public:
         ChecksumMismatchError,
         InvalidParametersError,
         NdefReadError,
+        NdefWriteError
     };
 
     class RequestIdPrivate;

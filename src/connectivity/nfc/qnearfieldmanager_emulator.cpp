@@ -124,7 +124,7 @@ void TagActivator::initialize()
 
     m_current = tagMap.end();
 
-    timerId = startTimer(100);
+    timerId = startTimer(1000);
 }
 
 void TagActivator::reset()

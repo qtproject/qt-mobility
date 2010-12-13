@@ -99,18 +99,23 @@ public:
 
     void writeTlv(quint8 tag, const QByteArray &data = QByteArray());
 
-private:
-    void flush(bool all = false);
+    bool process(bool all = false);
 
+    QNearFieldTarget::RequestId requestId() const;
+
+private:
     int moveToNextAvailable();
 
     QNearFieldTarget *m_target;
     QByteArray *m_rawData;
 
     int m_index;
+    int m_tagMemorySize;
     QMap<int, int> m_reservedMemory;
 
     QByteArray m_buffer;
+
+    QNearFieldTarget::RequestId m_requestId;
 };
 
 QPair<int, int> qParseReservedMemoryControlTlv(const QByteArray &tlvData);
