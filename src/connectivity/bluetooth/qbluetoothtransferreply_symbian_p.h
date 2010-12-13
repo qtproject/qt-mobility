@@ -107,7 +107,7 @@ private:
 
     CObexClient* m_client;
     CObexFileObject* m_object;
-    
+
     state m_state;
 
 };
