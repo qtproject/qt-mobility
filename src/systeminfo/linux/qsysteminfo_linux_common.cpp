@@ -461,74 +461,96 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  }
  #endif
 
-QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
-                                    const QString &parameter)
-{
-    QString errorStr = QLatin1String("Not Available");
+ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
+                                                const QString &parameter)
+ {
+     QString errorStr = QLatin1String("Not Available");
 
-    bool useDate = false;
-    if (parameter == QLatin1String("versionDate")) {
-        useDate = true;
-    }
+     bool useDate = false;
+     if (parameter == QLatin1String("versionDate")) {
+         useDate = true;
+     }
 
-    switch(type) {
-        case QSystemInfo::Firmware :
-        {
+     switch(type) {
+     case QSystemInfo::Firmware :
+     {
 #if !defined(QT_NO_DBUS)
-            QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-            if (!sysinfodValue.isEmpty()) {
-                return sysinfodValue;
-            }
-            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-                if (!str.isEmpty()) {
-                    return str;
-                }
-                if (useDate) {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
-                    if (!str.isEmpty()) {
-                        return str;
-                    }
-                } else {
-                    str = iface.getPropertyString(QLatin1String("system.firmware.version"));
-                    if (str.isEmpty()) {
-                        if (!str.isEmpty()) {
-                            return str;
-                        }
-                    }
-                }
-            }
-            break;
+         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
+         if (!sysinfodValue.isEmpty()) {
+             return sysinfodValue;
+         }
+         QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
+         QString str;
+         if (iface.isValid()) {
+             str = iface.getPropertyString(QLatin1String("system.kernel.version"));
+             if (!str.isEmpty()) {
+                 return str;
+             }
+             if (useDate) {
+                 str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
+                 if (!str.isEmpty()) {
+                     return str;
+                 }
+             } else {
+                 str = iface.getPropertyString(QLatin1String("system.firmware.version"));
+                 if (str.isEmpty()) {
+                     if (!str.isEmpty()) {
+                         return str;
+                     }
+                 }
+             }
+         }
+         break;
 #endif
+     }
+     case QSystemInfo::Os :
+    {
+
+        if(QFileInfo("/usr/bin/lsb_release").exists()) {
+            QProcess syscall;
+            QString program = "/usr/bin/lsb_release";
+            QStringList arguments;
+            arguments << "-d";
+            syscall.start(program, arguments);
+            syscall.waitForFinished();
+            QString desc = syscall.readAllStandardOutput();
+            desc = desc.section(":",1,1);
+            return desc.simplified();
         }
-        case QSystemInfo::Os :
-        {
-#if !defined(QT_NO_DBUS)
-            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-                if (!str.isEmpty()) {
-                    return str;
-                }
-            }
-#endif
-            const QString versionPath = QLatin1String("/proc/version");
-            QFile versionFile(versionPath);
-            if (!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug() << "File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = QLatin1String(versionFile.readAll().trimmed());
-                strvalue = strvalue.split(QLatin1String(" ")).at(2);
-                versionFile.close();
+
+        QFile versionFile2(QLatin1String("/etc/issue"));
+        if(!versionFile2.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "File not opened";
+        } else {
+            QString line;
+            QString strvalue;
+            QTextStream in(&versionFile2);
+            do {
+                line = in.readLine();
+                qDebug() << line;
+                line.remove("\\n");
+                line.remove("\\l");
+                strvalue = line.simplified();
+                break;
+            } while (!line.isNull());
+            versionFile2.close();
+            if(!strvalue.isEmpty()) {
                 return strvalue;
             }
-            break;
         }
-        case QSystemInfo::QtCore :
+
+        QFile versionFile3(QLatin1String("/proc/version"));
+        if(!versionFile3.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "File not opened";
+        } else {
+            QString  strvalue;
+            strvalue = QLatin1String(versionFile3.readAll().trimmed());
+            versionFile3.close();
+            return strvalue;
+        }
+        break;
+    }
+    case QSystemInfo::QtCore :
             return QLatin1String(qVersion());
             break;
         default:
