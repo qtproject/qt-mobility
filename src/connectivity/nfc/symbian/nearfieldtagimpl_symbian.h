@@ -96,7 +96,7 @@ public: // From MNearFieldTargetOperation
     bool IssueNextRequest();
     void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId AllocateRequestId();
-    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
+    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
 
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
@@ -330,7 +330,7 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::AllocateRequestId()
 } 
 
 template<typename TAGTYPE>
-bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response)
+bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
     return tag->handleResponse(id, response);

@@ -65,7 +65,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
         result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
     }
     iResponse->Zero();
-    iOperator->HandleResponse(iId, result);
+    iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
 
     if (iCurrentCommand < iCommands.count())
     {
