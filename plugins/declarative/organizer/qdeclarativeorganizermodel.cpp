@@ -138,12 +138,12 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     roleNames.insert(OrganizerItemRole, "item");
     setRoleNames(roleNames);
 
-    connect(this, SIGNAL(managerChanged()), SLOT(update()));
-    connect(this, SIGNAL(filterChanged()), SLOT(update()));
-    connect(this, SIGNAL(fetchHintChanged()), SLOT(update()));
-    connect(this, SIGNAL(sortOrdersChanged()), SLOT(update()));
-    connect(this, SIGNAL(startPeriodChanged()), SLOT(update()));
-    connect(this, SIGNAL(endPeriodChanged()), SLOT(update()));
+    connect(this, SIGNAL(managerChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(filterChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(fetchHintChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(sortOrdersChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(startPeriodChanged()), SLOT(doUpdate()));
+    connect(this, SIGNAL(endPeriodChanged()), SLOT(doUpdate()));
 
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
@@ -223,6 +223,12 @@ void QDeclarativeOrganizerModel::update()
 
     d->m_updatePending = true; // Disallow possible duplicate request triggering
     QMetaObject::invokeMethod(this, "fetchAgain", Qt::QueuedConnection);
+}
+
+void QDeclarativeOrganizerModel::doUpdate()
+{
+    if (d->m_autoUpdate)
+        update();
 }
 
 /*!
@@ -568,7 +574,8 @@ int QDeclarativeOrganizerModel::itemIndex(const QDeclarativeOrganizerItem* item)
 
 void QDeclarativeOrganizerModel::clearItems()
 {
-    qDeleteAll(d->m_items);
+    foreach (QDeclarativeOrganizerItem* di, d->m_items)
+        di->deleteLater();
     d->m_items.clear();
     d->m_itemMap.clear();
 }
@@ -608,25 +615,16 @@ void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
 
 /*!
   \qmlmethod bool OrganizerModel::containsItems(date start, date end)
-  Returns true if there is at least one OrganizerItem between the given date range,
-  otherwise returns false.  The second parameter \a end is optional.
-
+  Returns true if there is at least one OrganizerItem between the given date range.
+  Both the \a start and  \a end parameters are optional, if no \a end parameter, returns true
+  if there are item(s) after \a start, if neither start nor end date time provided, returns true if
+  items in the current model is not empty, otherwise return false.
   \since organizer 1.1.1
+  \sa itemIds()
   */
 bool QDeclarativeOrganizerModel::containsItems(QDateTime start, QDateTime end)
 {
-    //TODO: quick search this
-    end = end.isNull()? start.addDays(1):end;
-    foreach (const QDeclarativeOrganizerItem* item, d->m_items) {
-
-        if  ( (item->itemStartTime() >= start && item->itemStartTime() <= end)
-                ||
-              (item->itemEndTime() >= start && item->itemEndTime() <= end)
-                ||
-              (item->itemEndTime() > end && item->itemStartTime() < start))
-            return true;
-    }
-    return false;
+    return !itemIds(start, end).isEmpty();
 }
 
 /*!
@@ -646,24 +644,38 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 /*!
   \qmlmethod list<string> OrganizerModel::itemIds(date start, date end)
   Returns the list of organizer item ids between the given date range \a start and \a end,
-  the \a end parameter is optional.
+  Both the \a start and  \a end parameters are optional, if no \a end parameter, returns all
+  item ids from \a start, if neither start nor end date time provided, returns all item ids in the
+  current model.
 
   \since organizer 1.1.1
+  \sa containsItems()
   */
 QStringList QDeclarativeOrganizerModel::itemIds(QDateTime start, QDateTime end)
 {
     //TODO: quick search this
     QStringList ids;
-    end = end.isNull()? start.addDays(1):end;
-    foreach (QDeclarativeOrganizerItem* item, d->m_items) {
-        if ( (item->itemStartTime() >= start && item->itemEndTime() <= end)
-             ||
-             (item->itemEndTime() >= start && item->itemEndTime() <= end)
-             ||
-             (item->itemEndTime() > end && item->itemStartTime() < start))
+    if (!end.isNull()){
+        // both start date and end date are valid
+        foreach (QDeclarativeOrganizerItem* item, d->m_items) {
+            if ( (item->itemStartTime() >= start && item->itemStartTime() <= end)
+                 ||
+                 (item->itemEndTime() >= start && item->itemEndTime() <= end)
+                 ||
+                 (item->itemEndTime() > end && item->itemStartTime() < start))
+                ids << item->itemId();
+        }
+    }else if (!start.isNull()){
+        // only a valid start date is valid
+            foreach (QDeclarativeOrganizerItem* item, d->m_items) {
+                if (item->itemStartTime() >= start)
+                        ids << item->itemId();
+            }
+    }else{
+        // neither start nor end date is valid
+        foreach (QDeclarativeOrganizerItem* item, d->m_items)
             ids << item->itemId();
     }
-
     return ids;
 }
 
@@ -748,7 +760,8 @@ void QDeclarativeOrganizerModel::requestUpdated()
                 addSorted(di);
             }
         }
-        emit itemsChanged();
+
+        emit modelChanged();
         emit errorChanged();
     }
 }
@@ -796,6 +809,7 @@ void QDeclarativeOrganizerModel::itemsSaved()
                 addSorted(di);
             }
         }
+
         req->deleteLater();
         emit errorChanged();
     }
@@ -904,7 +918,7 @@ void QDeclarativeOrganizerModel::removeItemsFromModel(const QList<QString>& ids)
     }
     emit errorChanged();
     if (emitSignal)
-        emit itemsChanged();
+        emit modelChanged();
 }
 
 void QDeclarativeOrganizerModel::itemsRemoved(const QList<QOrganizerItemId>& ids)
@@ -1109,7 +1123,7 @@ void  QDeclarativeOrganizerModel::item_clear(QDeclarativeListProperty<QDeclarati
         } else {
             model->d->m_items.clear();
         }
-        emit model->itemsChanged();
+        emit model->modelChanged();
     }
 }
 

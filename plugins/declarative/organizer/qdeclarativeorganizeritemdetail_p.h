@@ -142,8 +142,10 @@ public:
         return ok;
     }
 
+    static QString detailName(ItemDetailType type) ;
     static QString definitionName(ItemDetailType type) ;
-    static ItemDetailType detailType(const QString& definitionName) ;
+    static ItemDetailType detailTypeByDefinitionName(const QString& definitionName) ;
+    static ItemDetailType detailTypeByDetailName(const QString& definitionName) ;
     static QString fieldName(ItemDetailType detailType, int fieldType);
 
 signals:
@@ -369,7 +371,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemGuid)
 class QDeclarativeOrganizerItemParent : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
+    Q_PROPERTY(QString parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
     Q_ENUMS(FieldType)
@@ -393,16 +395,16 @@ public:
         return QDeclarativeOrganizerItemDetail::Parent;
     }
 
-    void setParentId(uint newParentId)
+    void setParentId(const QString& newParentId)
     {
         if (newParentId != parentId() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemParent::FieldParentId, newParentId);
+            m_detail.setValue(QOrganizerItemParent::FieldParentId, QVariant::fromValue(QOrganizerItemId::fromString(newParentId)));
             emit valueChanged();
         }
     }
-    uint parentId() const
+    QString parentId() const
     {
-        return m_detail.variantValue(QOrganizerItemParent::FieldParentId).toInt();
+        return m_detail.variantValue(QOrganizerItemParent::FieldParentId).value<QOrganizerItemId>().toString();
     }
 
 
@@ -636,10 +638,10 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrence)
 class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY valueChanged)
-    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY valueChanged)
-    Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY valueChanged)
-    Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
+    Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY reminderChanged)
+    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY reminderChanged)
+    Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY reminderChanged)
+    Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY reminderChanged)
     Q_ENUMS(ReminderType)
     Q_ENUMS(FieldType)
 public:
@@ -664,7 +666,7 @@ public:
         :QDeclarativeOrganizerItemDetail(parent)
     {
         setDetail(QOrganizerItemReminder());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
+        connect(this, SIGNAL(reminderChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -689,7 +691,7 @@ public:
     {
         if (seconds != secondsBeforeStart() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldSecondsBeforeStart, seconds);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     int secondsBeforeStart() const {return m_detail.value<int>(QOrganizerItemReminder::FieldSecondsBeforeStart);}
@@ -698,21 +700,21 @@ public:
     {
         if (delaySeconds != repetitionDelay() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldRepetitionDelay, delaySeconds);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     void setRepetitionCount(int count)
     {
         if (count != repetitionCount() && !readOnly()) {
             m_detail.setValue(QOrganizerItemReminder::FieldRepetitionCount, count);
-            emit valueChanged();
+            emit reminderChanged();
         }
     }
     int repetitionDelay() const {return m_detail.value<int>(QOrganizerItemReminder::FieldRepetitionDelay);}
     int repetitionCount() const {return m_detail.value<int>(QOrganizerItemReminder::FieldRepetitionCount);}
 
 signals:
-    void valueChanged();
+    void reminderChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemReminder)
 

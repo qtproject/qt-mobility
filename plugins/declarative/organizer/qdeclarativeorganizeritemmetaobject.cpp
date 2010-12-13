@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <QString>
-#include <QDebug>
 
 #include "qdeclarativeorganizeritem_p.h"
 #include "qorganizeritemdetails.h"
@@ -141,7 +140,7 @@ OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataB
 
 OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataByDefinitionName(const char * name)
 {
-    return detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::detailType(name));
+    return detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(name));
 }
 
 OrganizerItemDetailNameMap* QDeclarativeOrganizerItemMetaObject::detailMetaDataByDetailType(QDeclarativeOrganizerItemDetail::ItemDetailType type)
@@ -182,7 +181,6 @@ int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  cons
     return -1;
 }
 
-
 QVariant QDeclarativeOrganizerItemMetaObject::detail(QDeclarativeOrganizerItemDetail::ItemDetailType type)
 {
     foreach(QDeclarativeOrganizerItemDetail* itemDetail, m_details) {
@@ -193,7 +191,7 @@ QVariant QDeclarativeOrganizerItemMetaObject::detail(QDeclarativeOrganizerItemDe
 
     //Check should we create a new detail for this type
     //XXX:TODO check mutable detail definition feature in manager?
-    if (m_defs.isEmpty() || !m_defs.value(QDeclarativeOrganizerItemDetail::definitionName(type)).isEmpty()) {
+    if (m_defs.isEmpty() || !m_defs.value(QDeclarativeOrganizerItemDetail::detailName(type)).isEmpty()) {
         QDeclarativeOrganizerItemDetail* itemDetail = createItemDetail(type, object());
         m_details.append(itemDetail);
         return QVariant::fromValue(itemDetail);
@@ -204,7 +202,7 @@ QVariant QDeclarativeOrganizerItemMetaObject::detail(QDeclarativeOrganizerItemDe
 
 QVariant QDeclarativeOrganizerItemMetaObject::detail(const QString& name)
 {
-    return detail(QDeclarativeOrganizerItemDetail::detailType(name));
+    return detail(QDeclarativeOrganizerItemDetail::detailTypeByDetailName(name));
 }
 
 QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
@@ -228,7 +226,7 @@ QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
 
 QVariant QDeclarativeOrganizerItemMetaObject::details(QDeclarativeOrganizerItemDetail::ItemDetailType type)
 {
-    return details(QDeclarativeOrganizerItemDetail::definitionName(type));
+    return details(QDeclarativeOrganizerItemDetail::detailName(type));
 }
 
 void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
@@ -237,11 +235,9 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& item)
     QList<QOrganizerItemDetail> details = m_item.details();
     m_details.clear();
     foreach (const QOrganizerItemDetail& detail, details) {
-      QDeclarativeOrganizerItemDetail* itemDetail = new QDeclarativeOrganizerItemDetail(object());
+      QDeclarativeOrganizerItemDetail* itemDetail = createItemDetail(QDeclarativeOrganizerItemDetail::detailTypeByDefinitionName(detail.definitionName()), object());
 
       itemDetail->setDetail(detail);
-      itemDetail->connect(itemDetail, SIGNAL(detailChanged()), object(), SIGNAL(itemChanged()));
-
       m_details.append(itemDetail);
     }
     if (m_item.type() == QOrganizerItemType::TypeEventOccurrence || m_item.type() == QOrganizerItemType::TypeTodoOccurrence ) {
@@ -330,46 +326,68 @@ void  QDeclarativeOrganizerItemMetaObject::detail_clear(QDeclarativeListProperty
 
 QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItemMetaObject::createItemDetail(QDeclarativeOrganizerItemDetail::ItemDetailType type, QObject* parent)
 {
+    Q_ASSERT(qobject_cast<QDeclarativeOrganizerItem*>(parent));
+    QDeclarativeOrganizerItemDetail* detail;
     switch (type) {
     case QDeclarativeOrganizerItemDetail::EventTime:
-        return new QDeclarativeOrganizerEventTime(parent);
+        detail = new QDeclarativeOrganizerEventTime(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::JournalTime:
-        return new QDeclarativeOrganizerJournalTime(parent);
+        detail = new QDeclarativeOrganizerJournalTime(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::TodoTime:
-        return new QDeclarativeOrganizerTodoTime(parent);
+        detail = new QDeclarativeOrganizerTodoTime(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::TodoProgress:
-        return new QDeclarativeOrganizerTodoProgress(parent);
+        detail = new QDeclarativeOrganizerTodoProgress(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Reminder:
-        return new QDeclarativeOrganizerItemReminder(parent);
+        detail = new QDeclarativeOrganizerItemReminder(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::AudibleReminder:
-        return new QDeclarativeOrganizerItemAudibleReminder(parent);
+        detail = new QDeclarativeOrganizerItemAudibleReminder(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::VisualReminder:
-        return new QDeclarativeOrganizerItemVisualReminder(parent);
+        detail = new QDeclarativeOrganizerItemVisualReminder(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::EmailReminder:
-        return new QDeclarativeOrganizerItemEmailReminder(parent);
+        detail = new QDeclarativeOrganizerItemEmailReminder(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Comment:
-        return new QDeclarativeOrganizerItemComment(parent);
+        detail = new QDeclarativeOrganizerItemComment(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Description:
-        return new QDeclarativeOrganizerItemDescription(parent);
+        detail = new QDeclarativeOrganizerItemDescription(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::DisplayLabel:
-        return new QDeclarativeOrganizerItemDisplayLabel(parent);
+        detail = new QDeclarativeOrganizerItemDisplayLabel(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Guid:
-        return new QDeclarativeOrganizerItemGuid(parent);
+        detail = new QDeclarativeOrganizerItemGuid(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Location:
-        return new QDeclarativeOrganizerItemLocation(parent);
+        detail = new QDeclarativeOrganizerItemLocation(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Parent:
-        return new QDeclarativeOrganizerItemParent(parent);
+        detail = new QDeclarativeOrganizerItemParent(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Priority:
-        return new QDeclarativeOrganizerItemPriority(parent);
+        detail = new QDeclarativeOrganizerItemPriority(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Recurrence:
-        return new QDeclarativeOrganizerItemRecurrence(parent);
+        detail = new QDeclarativeOrganizerItemRecurrence(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Timestamp:
-        return new QDeclarativeOrganizerItemTimestamp(parent);
+        detail = new QDeclarativeOrganizerItemTimestamp(parent);
+        break;
     case QDeclarativeOrganizerItemDetail::Type:
-        return new QDeclarativeOrganizerItemType(parent);
+        detail = new QDeclarativeOrganizerItemType(parent);
+        break;
     default:
+        //customized
+        detail = new QDeclarativeOrganizerItemDetail(parent);
         break;
     }
-    //customized
-    return new QDeclarativeOrganizerItemDetail(parent);
+    QObject::connect(detail, SIGNAL(detailChanged()), parent, SIGNAL(itemChanged()));
+    return detail;
 }
