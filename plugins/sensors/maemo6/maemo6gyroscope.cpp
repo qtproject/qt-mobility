@@ -42,7 +42,7 @@
 #include "maemo6gyroscope.h"
 
 char const * const maemo6gyroscope::id("maemo6.gyroscope");
-qreal const maemo6gyroscope::MILLI = 0.001;
+const float maemo6gyroscope::MILLI = 0.001;
 bool maemo6gyroscope::m_initDone = false;
 
 maemo6gyroscope::maemo6gyroscope(QSensor *sensor)

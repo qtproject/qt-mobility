@@ -20,7 +20,7 @@ public:
 private:
     QGyroscopeReading m_reading;
     static bool m_initDone;
-    static qreal const MILLI;
+    static const float MILLI;
 private slots:
     void slotDataAvailable(const XYZ& data);
 };
