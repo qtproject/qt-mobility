@@ -527,7 +527,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
             QTextStream in(&versionFile2);
             do {
                 line = in.readLine();
-                qDebug() << line;
                 line.remove("\\n");
                 line.remove("\\l");
                 strvalue = line.simplified();
