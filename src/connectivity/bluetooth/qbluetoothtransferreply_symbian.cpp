@@ -154,19 +154,29 @@ void QBluetoothTransferReplySymbian::DoCancel()
 void QBluetoothTransferReplySymbian::RunL()
 {
     switch ( m_state ) {
-        case EConnecting:
+        case EConnecting: {
             m_state = ESending;
-            sendObject();
+            QFile *file = qobject_cast<QFile *>(m_source);
+
+            if (file) {
+                sendObject(file->fileName());
+            } else {
+               if (copyToTempFile(m_tempfile, m_source))
+                   sendObject(m_tempfile->fileName());
+            }
             break;
-        case ESending:
+        }
+        case ESending: {
             m_state = EDisconnecting;
             disconnect();
             break;
-        case EDisconnecting:
+        }
+        case EDisconnecting: {
             m_state = EIdle;
             m_finished = true;
             m_running = false;
             break;
+        }
         case EIdle:
         default:
             break;
@@ -174,15 +184,13 @@ void QBluetoothTransferReplySymbian::RunL()
 
 }
 
-void QBluetoothTransferReplySymbian::sendObject()
+void QBluetoothTransferReplySymbian::sendObject(QString filename)
 {
     delete m_object;
     m_object = NULL;
     TRAPD(err, m_object = CObexFileObject::NewL());
     if (!err) {
-        QFile *file = qobject_cast<QFile *>(m_source);
-
-        TPtrC16 str(reinterpret_cast<const TUint16*>(file->fileName().utf16()));
+        TPtrC16 str(reinterpret_cast<const TUint16*>(filename.utf16()));
         TRAPD(error, m_object->InitFromFileL( str ));
         if (!error) {
             m_client->Put( *m_object, iStatus );
@@ -199,6 +207,20 @@ void QBluetoothTransferReplySymbian::disconnect()
     }
 }
 
+bool QBluetoothTransferReplySymbian::copyToTempFile(QIODevice *to, QIODevice *from)
+{
+    char *block = new char[4096];
+    int size;
+
+    while ((size = from->read(block, 4096))) {
+        if (size != to->write(block, size)) {
+            return false;
+        }
+    }
+
+    delete[] block;
+    return true;
+}
 
 #include "moc_qbluetoothtransferreply_symbian_p.cpp"
 
