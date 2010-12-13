@@ -21,7 +21,6 @@ private:
     QGyroscopeReading m_reading;
     static bool m_initDone;
     static qreal const MILLI;
-                          
 private slots:
     void slotDataAvailable(const XYZ& data);
 };
