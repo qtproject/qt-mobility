@@ -40,6 +40,12 @@
 ****************************************************************************/
 
 #include "nearfieldtagndefrequest_symbian.h"
+#include "nearfieldutility_symbian.h"
+
+NearFieldTagNdefRequest::NearFieldTagNdefRequest()
+{
+    iReadMessages = 0;
+}
 
 void NearFieldTagNdefRequest::IssueRequest()
 {
@@ -61,12 +67,41 @@ void NearFieldTagNdefRequest::IssueRequest()
     }
 }
 
-void NearFieldTagNdefRequest::ReadComplete(TInt aError)
+void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessage> * aMessage)
 {
+    iReadMessages = aMessage;
     ProcessResponse(aError);
 }
 
 void NearFieldTagNdefRequest::WriteComplete(TInt aError)
 {
     ProcessResponse(aError);
+}
+
+void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
+{
+    if (aError != KErrNone)
+    {
+        iOperator->EmitError(aError);
+    }
+    else
+    {
+        if (EReadRequest == iType)
+        {
+            // since there is no error, iReadMessages can't be NULL.
+            for(int i = 0; i < iReadMessages->Count(); ++i)
+            {
+                QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*(*iReadMessages)[i]);
+                iOperator->EmitNdefMessageRead(message);
+            }
+        }
+        else if (EWriteRequest == iType)
+        {
+            iOperator->EmitNdefMessagesWritten();
+        }
+    }
+}
+
+void NearFieldTagNdefRequest::HandleResponse(TInt /*aError*/)
+{
 }

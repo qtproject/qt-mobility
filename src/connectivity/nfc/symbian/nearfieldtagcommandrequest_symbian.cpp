@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "nearfieldtagcommandrequest_symbian.h"
+#include "nearfieldutility_symbian.h"
 
 void NearFieldTagCommandRequest::IssueRequest()
 {
@@ -51,4 +52,31 @@ void NearFieldTagCommandRequest::IssueRequest()
 void NearFieldTagCommandRequest::CommandComplete(TInt aError)
 {
     ProcessResponse(aError);
+}
+
+
+void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
+{
+    if (aError != KErrNone)
+    {
+        iOperator->EmitError(aError);
+    }
+    else
+    {
+        iOperator->EmitRequestCompleted(iId);
+    }
+}
+
+void NearFieldTagCommandRequest::HandleResponse(TInt aError)
+{
+    if (aError != KErrNone)
+    {
+        QByteArray emptyResult;
+        iOperator->HandleResponse(iId, emptyResult);
+    }
+    else
+    {
+        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
+        iOperator->HandleResponse(iId, result);
+    }
 }

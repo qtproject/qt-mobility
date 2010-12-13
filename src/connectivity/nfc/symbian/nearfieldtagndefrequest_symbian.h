@@ -55,21 +55,24 @@ public:
         ECheckRequest
         };
 public:
+    NearFieldTagNdefRequest();
     void IssueRequest();
-    void ProcessEmitSignal(TInt aError){}
-    void HandleResponse(TInt aError){}
+    void ProcessEmitSignal(TInt aError);
+    void HandleResponse(TInt aError);
     void SetNdefRequestType(TNdefRequestType aType) { iType = aType; }
     void SetInputNdefMessages(QList<QNdefMessage> aMessages) { iMessages = aMessages; }
     TNdefRequestType GetNdefRequestType() { return iType; }
     TRequestType Type() { return ENdefRequest; }
 
 private:
-    void ReadComplete(TInt aError);
+    void ReadComplete(TInt aError, RPointerArray<CNdefMessage> * aMessages);
     void WriteComplete(TInt aError);
 
 private:
     TNdefRequestType iType;
-    // Not own
     QList<QNdefMessage> iMessages;
+
+    // Not own
+    RPointerArray<CNdefMessage> * iReadMessages;
     };
 #endif

@@ -63,6 +63,11 @@ public:
     virtual void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId) = 0;
     virtual QNearFieldTarget::RequestId AllocateRequestId() = 0;
     virtual bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response) = 0;
+
+    virtual void EmitNdefMessageRead(const QNdefMessage &message) = 0;
+    virtual void EmitNdefMessagesWritten() = 0;
+    virtual void EmitRequestCompleted(const QNearFieldTarget::RequestId &id) = 0;
+    virtual void EmitError(int error) = 0;
     };
 
 #endif
