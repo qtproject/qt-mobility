@@ -220,10 +220,17 @@ private:
     MLlcpConnOrientedTransporter& iConnection; //Not Own
 
     CLlcpSocketType2& iSocket;
+    enum TSendBuffer
+        {
+        EBuffer0,
+        EBuffer1
+        };
     /*!
     * Buffered data for sending data.
     */
-    RBuf8 iSendBuf;
+    RBuf8 iSendBuf0;
+    RBuf8 iSendBuf1;
+    TSendBuffer iCurrentBuffer;
 };
 class CLlcpReceiverAO : public CActive
 {
