@@ -77,9 +77,102 @@ QTM_BEGIN_NAMESPACE
 
 class QNearFieldTagType1Private
 {
+    Q_DECLARE_PUBLIC(QNearFieldTagType1)
+
 public:
+    QNearFieldTagType1Private(QNearFieldTagType1 *q)
+    :   q_ptr(q), m_readNdefMessageState(NotReadingNdefMessage),
+        m_tlvReader(0)
+    { }
+
+    QNearFieldTagType1 *q_ptr;
+
     QMap<QNearFieldTarget::RequestId, QByteArray> m_pendingInternalCommands;
+
+    enum ReadNdefMessageState {
+        NotReadingNdefMessage,
+        CheckingIdentification,
+        CheckingNdefMagicNumber,
+        ReadingTlv
+    };
+
+    void progressToNextNdefReadMessageState();
+    ReadNdefMessageState m_readNdefMessageState;
+
+    QTlvReader *m_tlvReader;
+    QNearFieldTarget::RequestId m_nextExpectedRequestId;
 };
+
+void QNearFieldTagType1Private::progressToNextNdefReadMessageState()
+{
+    Q_Q(QNearFieldTagType1);
+
+    switch (m_readNdefMessageState) {
+    case NotReadingNdefMessage:
+        m_readNdefMessageState = CheckingIdentification;
+        m_nextExpectedRequestId = q->readAll();
+        break;
+    case CheckingIdentification: {
+        const QByteArray data = q->requestResponse(m_nextExpectedRequestId).toByteArray();
+
+        if (data.isEmpty()) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        quint8 hr0 = data.at(0);
+
+        // Check if target is a NFC TagType1 tag
+        if (!(hr0 & 0x10)) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        m_readNdefMessageState = CheckingNdefMagicNumber;
+        m_nextExpectedRequestId = q->readByte(8);
+        break;
+    }
+    case CheckingNdefMagicNumber: {
+        quint8 ndefMagicNumber = q->requestResponse(m_nextExpectedRequestId).toUInt();
+        m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+
+        if (ndefMagicNumber != 0xe1) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        m_readNdefMessageState = ReadingTlv;
+        m_tlvReader = new QTlvReader(q);
+
+        // fall through
+    }
+    case ReadingTlv:
+        while (!m_tlvReader->atEnd()) {
+            if (!m_tlvReader->readNext())
+                break;
+
+            // NDEF Message TLV
+            if (m_tlvReader->tag() == 0x03) {
+                Q_Q(QNearFieldTagType1);
+
+                emit q->ndefMessageRead(QNdefMessage::fromByteArray(m_tlvReader->data()));
+            }
+        }
+
+        m_nextExpectedRequestId = m_tlvReader->requestId();
+        if (!m_nextExpectedRequestId.isValid()) {
+            delete m_tlvReader;
+            m_tlvReader = 0;
+            m_readNdefMessageState = NotReadingNdefMessage;
+        }
+        break;
+    }
+}
 
 static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
 {
@@ -151,7 +244,7 @@ static QVariant decodeResponse(const QByteArray &command, const QByteArray &resp
     Constructs a new tag type 1 near field target with \a parent.
 */
 QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
-:   QNearFieldTarget(parent), d_ptr(new QNearFieldTagType1Private)
+:   QNearFieldTarget(parent), d_ptr(new QNearFieldTagType1Private(this))
 {
 }
 
@@ -197,34 +290,9 @@ bool QNearFieldTagType1::hasNdefMessage()
 */
 void QNearFieldTagType1::readNdefMessages()
 {
-    RequestId id = readIdentification();
-    if (!waitForRequestCompleted(id))
-        return;
+    Q_D(QNearFieldTagType1);
 
-    const QByteArray data = requestResponse(id).toByteArray();
-
-    // Check if target is a NFC TagType1 tag
-    quint8 hr0 = data.at(0);
-    if (!(hr0 & 0x10))
-        return;
-
-    id = readByte(8);
-    if (!waitForRequestCompleted(id))
-        return;
-
-    quint8 ndefMagicNumber = requestResponse(id).toUInt();
-    if (ndefMagicNumber != 0xe1)
-        return;
-
-    QTlvReader reader(this);
-    while (!reader.atEnd()) {
-        if (!reader.readNext())
-            break;
-
-        // NDEF Message TLV
-        if (reader.tag() == 0x03)
-            emit ndefMessageRead(QNdefMessage::fromByteArray(reader.data()));
-    }
+    d->progressToNextNdefReadMessageState();
 }
 
 /*!
@@ -491,15 +559,26 @@ bool QNearFieldTagType1::handleResponse(const RequestId &id, const QByteArray &r
 {
     Q_D(QNearFieldTagType1);
 
+    bool handled;
+
     if (d->m_pendingInternalCommands.contains(id)) {
         const QByteArray command = d->m_pendingInternalCommands.take(id);
 
         QVariant decodedResponse = decodeResponse(command, response);
         setResponseForRequest(id, decodedResponse);
-        return true;
+
+        handled = true;
+    } else {
+        handled = QNearFieldTarget::handleResponse(id, response);
     }
 
-    return QNearFieldTarget::handleResponse(id, response);
+    // continue reading NDEF message
+    if (d->m_readNdefMessageState != QNearFieldTagType1Private::NotReadingNdefMessage &&
+        d->m_nextExpectedRequestId == id) {
+        d->progressToNextNdefReadMessageState();
+    }
+
+    return handled;
 }
 
 #include "moc_qnearfieldtagtype1.cpp"

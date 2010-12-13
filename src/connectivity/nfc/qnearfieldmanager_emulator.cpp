@@ -353,8 +353,12 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
     if (target->hasNdefMessage()) {
         QTlvReader reader(target);
         while (!reader.atEnd()) {
-            if (!reader.readNext())
-                break;
+            if (!reader.readNext()) {
+                if (!target->waitForRequestCompleted(reader.requestId()))
+                    break;
+                else
+                    continue;
+            }
 
             // NDEF Message TLV
             if (reader.tag() == 0x03)

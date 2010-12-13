@@ -231,6 +231,14 @@ bool QNearFieldTarget::RequestId::operator<(const RequestId &other) const
 }
 
 /*!
+    \internal
+*/
+bool QNearFieldTarget::RequestId::operator==(const RequestId &other) const
+{
+    return d == other.d;
+}
+
+/*!
     Assigns a copy of \a other to this request id and returns a reference to this request id.
 */
 QNearFieldTarget::RequestId &QNearFieldTarget::RequestId::operator=(const RequestId &other)

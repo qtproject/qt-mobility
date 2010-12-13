@@ -165,11 +165,22 @@ int QTlvReader::reservedMemorySize() const
 }
 
 /*!
+    Returns the request id that the TLV reader is currently waiting on.
+*/
+QNearFieldTarget::RequestId QTlvReader::requestId() const
+{
+    return m_requestId;
+}
+
+/*!
     Returns true if the TLV reader is at the end of the list of TLVs; otherwise returns false.
 */
 bool QTlvReader::atEnd() const
 {
     if (m_index == -1)
+        return false;
+
+    if (m_requestId.isValid())
         return false;
 
     return (m_index == m_tlvData.length()) || (tag() == 0xfe);
@@ -186,6 +197,8 @@ bool QTlvReader::readNext()
     // Move to next TLV
     if (m_index == -1) {
         m_index = 0;
+    } else if (m_requestId.isValid()) {
+        // do nothing
     } else if (tag() == 0x00 || tag() == 0xfe) {
         ++m_index;
     } else {
@@ -292,18 +305,26 @@ bool QTlvReader::readMoreData(int sparseOffset)
         } else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
             quint8 segment = absOffset / 128;
 
-            QNearFieldTarget::RequestId id =
-                (absOffset < 120) ? tag->readAll() : tag->readSegment(segment);
-            if (!tag->waitForRequestCompleted(id))
+            if (m_requestId.isValid()) {
+                QVariant v = m_target->requestResponse(m_requestId);
+                if (!v.isValid())
+                    return false;
+
+                m_requestId = QNearFieldTarget::RequestId();
+
+                data = v.toByteArray();
+
+                if (absOffset < 120)
+                    data = data.mid(2);
+
+                int length = dataLength(absOffset);
+
+                data = data.mid(absOffset - (segment * 128), length);
+            } else {
+                m_requestId = (absOffset < 120) ? tag->readAll() : tag->readSegment(segment);
+
                 return false;
-
-            data = tag->requestResponse(id).toByteArray();
-            if (absOffset < 120)
-                data = data.mid(2);
-
-            int length = dataLength(absOffset);
-
-            data = data.mid(absOffset - (segment * 128), length);
+            }
         }
 
         if (data.isEmpty() && sparseOffset >= m_tlvData.length())

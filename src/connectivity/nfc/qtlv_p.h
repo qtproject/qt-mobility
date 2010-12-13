@@ -44,6 +44,8 @@
 
 #include <qmobilityglobal.h>
 
+#include "qnearfieldtarget.h"
+
 #include <QtCore/QByteArray>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
@@ -62,6 +64,8 @@ public:
     void addReservedMemory(int offset, int length);
     int reservedMemorySize() const;
 
+    QNearFieldTarget::RequestId requestId() const;
+
     bool atEnd() const;
 
     bool readNext();
@@ -77,6 +81,7 @@ private:
 
     QNearFieldTarget *m_target;
     QByteArray m_rawData;
+    QNearFieldTarget::RequestId m_requestId;
 
     QByteArray m_tlvData;
     int m_index;
