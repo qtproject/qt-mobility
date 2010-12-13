@@ -71,9 +71,10 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent) :
 
 */
 
-QTime QSystemAlignedTimer::requestTimer(QTime minInterval, QTime maxInterval)
+QTime QSystemAlignedTimer::requestTimer(QTime minTime, QTime maxTime)
 {
-
+    Q_UNUSED(minTime);
+    Q_UNUSED(maxTime);
 }
 
 /*!

@@ -65,7 +65,7 @@ public:
 
     explicit QSystemAlignedTimer(QObject *parent = 0);
 
-    Q_INVOKABLE bool requestTimer(QTime minInterval, QTime maxInterval);
+    Q_INVOKABLE bool requestTimer(QTime minTime, QTime maxTime);
     Q_INVOKABLE bool requestTimer(uint optimalInterval, uint timerWindow);
 
     bool wokeUp();
