@@ -98,6 +98,11 @@ public: // From MNearFieldTargetOperation
     QNearFieldTarget::RequestId AllocateRequestId();
     bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 
+    void EmitNdefMessageRead(const QNdefMessage &message);
+    void EmitNdefMessagesWritten();
+    void EmitRequestCompleted(const QNearFieldTarget::RequestId &id);
+    void EmitError(int error);
+
 public:
     QNearFieldTagImpl(MNearFieldTarget *tag);
     virtual ~QNearFieldTagImpl();
@@ -122,6 +127,8 @@ public:
 
     bool _isProcessingRequest() const;
 
+protected:
+    QNearFieldTarget::Error SymbianError2QtError(int error);
 protected:
     MNearFieldTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
@@ -150,7 +157,7 @@ void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallb
     if (KErrNone != error)
     {
         // This means the aysnc request doesn't issued. Directly invoke callback with the errore
-        aCallback->ReadComplete(error);
+        aCallback->ReadComplete(error, 0);
     }
 }
 
@@ -411,5 +418,39 @@ bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget
     request->WaitRequestCompleted(msecs);
 }
 
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessageRead(const QNdefMessage &message)
+{
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    emit tag->ndefMessageRead(message);
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessagesWritten()
+{
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    emit tag->ndefMessagesWritten();
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitRequestCompleted(const QNearFieldTarget::RequestId &id)
+{
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    emit tag->requestCompleted(id);
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitError(int error)
+{
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    emit tag->error(SymbianError2QtError(error));
+}
+
+template<typename TAGTYPE>
+QNearFieldTarget::Error QNearFieldTagImpl<TAGTYPE>::SymbianError2QtError(int error)
+{
+    // TODO: need do map between symbian error and Qt error
+    return QNearFieldTarget::NoError;
+}
 QTM_END_NAMESPACE
 #endif // QNEARFIELDTAGIMPL_H

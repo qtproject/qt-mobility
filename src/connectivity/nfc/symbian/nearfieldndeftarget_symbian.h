@@ -76,7 +76,6 @@ public:
 
     // Two-phased constructor.
     static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
-
 public: // New functions
     void SetRealTarget(MNearFieldTarget * aRealTarget);
 

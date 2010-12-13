@@ -42,10 +42,12 @@
 #ifndef NEARFIELDNDEFOPERATIONCALLBACK_H
 #define NEARFIELDNDEFOPERATIONCALLBACK_H
 
+#include <e32cmn.h>
+#include <ndefmessage.h>
 class MNearFieldNdefOperationCallback
     {
 public:
-    virtual void ReadComplete(TInt aError) = 0;
+    virtual void ReadComplete(TInt aError, RPointerArray<CNdefMessage> * aMessages) = 0;
     virtual void WriteComplete(TInt aError) = 0;
     };
 
