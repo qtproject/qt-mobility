@@ -46,6 +46,9 @@
 #include <e32base.h>
 #include <obex.h>
 
+#include <QTemporaryFile>
+#include <QIODevice>
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -84,16 +87,19 @@ protected:
     qint64 writeData(const char*, qint64);
 
 private:
-    void sendObject();
+    void sendObject(QString filename);
     void disconnect();
 
     //From CActive
     void DoCancel();
     void RunL();
 
-public:
+    static bool copyToTempFile(QIODevice *to, QIODevice *from);
+
+private:
     QIODevice *m_source;
-    
+    QTemporaryFile *m_tempfile;
+
     QBluetoothAddress m_address;
 
     bool m_running;
