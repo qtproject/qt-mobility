@@ -93,6 +93,10 @@ public: // From MNearFieldTargetOperation
     void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback);
     bool DoHasNdefMessages();
     void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback);
+    bool IssueNextRequest();
+    void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
+    QNearFieldTarget::RequestId AllocateRequestId();
+    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 
 public:
     QNearFieldTagImpl(MNearFieldTarget *tag);
@@ -237,6 +241,59 @@ void QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearF
 }
 
 template<typename TAGTYPE>
+bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
+{
+    // find the request after current request
+    int index = mPendingRequestList.indexOf(mCurrentRequest);
+    if ((index < 0) || (index = mPendingRequestList.count() - 1))
+    {
+        // no next request
+        return false;
+    }
+    else
+    {
+        mCurrentRequest = mPendingRequestList.at(index + 1);
+        mCurrentRequest->IssueRequest();
+        return true;
+    }
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::RemoveRequestFromQueue(QNearFieldTarget::RequestId aId)
+{
+    for(int i = 0; i < mPendingRequestList.count(); ++i)
+    {
+        MNearFieldTagAsyncRequest * request = mPendingRequestList.at(i);
+        // TODO: operator ==
+        //if (request->GetRequestId() == aId)
+        if (!(aId < request->GetRequestId()) && !(request->GetRequestId() < aId))
+        {
+            mPendingRequestList.removeAt(i);
+            break;
+        }
+    }
+} 
+
+template<typename TAGTYPE>
+QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::AllocateRequestId()
+{
+#if 0
+    QNearFieldTarget::RequestIdPrivate *idPrivate = new QNearFieldTarget::RequestIdPrivate;
+    QNearFieldTarget::RequestId id(idPrivate);
+#endif
+    // TODO: allcate id
+    QNearFieldTarget::RequestId id;
+    return id;
+} 
+
+template<typename TAGTYPE>
+bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response)
+{
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    return tag->handleResponse(id, response);
+}
+
+template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)
 {
 }
@@ -266,8 +323,6 @@ void QNearFieldTagImpl<TAGTYPE>::_ndefMessages()
         readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
         readNdefRequest->SetOperator(this);
 
-        // TODO: generate response processor for it.
-
         if (!_isProcessingRequest())
         {
             // issue the request
@@ -291,8 +346,6 @@ void QNearFieldTagImpl<TAGTYPE>::_setNdefMessages(const QList<QNdefMessage> &mes
         writeNdefRequest->SetInputNdefMessages(messages);
         writeNdefRequest->SetOperator(this);
 
-        // TODO: generate response processor for it.
-
         if (!_isProcessingRequest())
         {
             // issue the request
@@ -315,8 +368,6 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
         rawCommandRequest->SetInputCommand(command);
         rawCommandRequest->SetRequestId(requestId);
         rawCommandRequest->SetOperator(this);
-
-        // TODO: generate response processor for it.
 
         if (!_isProcessingRequest())
         {
@@ -344,6 +395,20 @@ template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::_isProcessingRequest() const
 {
     return mPendingRequestList.count() > 0;
+}
+
+template<typename TAGTYPE>
+bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs)
+{
+    int index = mPendingRequestList.indexOf(id);
+    if (index < 0)
+    {
+        // request ID is not in pending list. So either it may not be issued, or has already completed
+        return false; 
+    }
+
+    MNearFieldTagAsyncRequest * request = mPendingRequestList.at(index);
+    request->WaitRequestCompleted(msecs);
 }
 
 QTM_END_NAMESPACE

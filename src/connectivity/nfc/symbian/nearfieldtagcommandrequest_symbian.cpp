@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "nearfieldtagcommandrequest_symbian.h"
-#include "nearfieldtagasyncrequestrespprocessor_symbian.h"
 
 void NearFieldTagCommandRequest::IssueRequest()
 {
@@ -49,15 +48,7 @@ void NearFieldTagCommandRequest::IssueRequest()
     }
 }
 
-void NearFieldTagCommandRequest::ProcessResponse()
-{
-    if (iProcessor)
-    {
-        iProcessor->ProcessResponse();
-    }
-}
-
 void NearFieldTagCommandRequest::CommandComplete(TInt aError)
 {
-    ProcessResponse();
+    ProcessResponse(aError);
 }

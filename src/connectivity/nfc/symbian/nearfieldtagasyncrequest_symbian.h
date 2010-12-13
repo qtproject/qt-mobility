@@ -43,12 +43,11 @@
 #define NEARFIELDTAGASYNCREQUEST_H
 
 #include <qnearfieldtarget.h>
+#include <e32base.h>
 #include "nearfieldtargetoperation_symbian.h"
 
 QTM_USE_NAMESPACE
 
-class MNearFieldTagAsyncRequestRespProcessor;
-class MNearFieldTargetOperation;
 class MNearFieldTargetOperation;
 
 class MNearFieldTagAsyncRequest
@@ -63,22 +62,39 @@ public:
 
 public:
     MNearFieldTagAsyncRequest();
+
     virtual ~MNearFieldTagAsyncRequest();
     virtual void IssueRequest() = 0;
-    virtual void ProcessResponse() = 0;
+    virtual void ProcessResponse(TInt aError);
+    virtual void ProcessTimeout();
+    virtual void ProcessWaitRequestCompleted(TInt aError);
+
+    // emit signal defined in QNearFieldTarget
+    virtual void ProcessEmitSignal(TInt aError) = 0;
+
+    // should call iOperator->handleResponse(id, response)
+    virtual void HandleResponse(TInt aError) = 0;
+
     virtual TRequestType Type() = 0;
-    void SetRespProcessor(MNearFieldTagAsyncRequestRespProcessor * aProcessor);
+
+    virtual bool WaitRequestCompleted(int aMsec);
     void SetOperator(MNearFieldTargetOperation * aOperator);
     void SetRequestId(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId GetRequestId();
 protected:
     // Current async request ID.
     QNearFieldTarget::RequestId iId;
-    // Own. 
-    MNearFieldTagAsyncRequestRespProcessor * iProcessor;
     // Not own.
     MNearFieldTargetOperation * iOperator;
 
+    // Own.
+    CActiveSchedulerWait * iWait;
+    // Own.
+    CPeriodic * iTimer;
+
+private:
+    static TInt TimeoutCallback(TAny * aObj);
+    static TInt DeleteLater(TAny * aObj);
     };
 
 #endif
