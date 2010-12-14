@@ -215,7 +215,7 @@ contains(build_demos, yes):SUBDIRS+=demos
     qtmAppHeaders = include/QtContacts/* \
                        include/QtVersit/* \
                        include/QtVersitOrganizer/* \
-                       include/Organizer/*
+                       include/QtOrganizer/*
 
     qtmMwHeaders = include/QtBearer/* \
                        include/QtLocation/* \
