@@ -24,3 +24,4 @@ INCLUDEPATH += ../common
 HEADERS += ../common/qnfctagtestcommon.h
 SOURCES += tst_qnearfieldtagtype3.cpp \
            ../common/qnfctagtestcommon.cpp
+symbian:TARGET.CAPABILITY = ALL -TCB
