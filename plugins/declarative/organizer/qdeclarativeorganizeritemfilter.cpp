@@ -116,18 +116,20 @@
  */
 
 /*!
-  \qmlproperty enumeration DetailFilter::detail
+  \qmlproperty variant DetailFilter::detail
 
   This property holds the detail type of which details will be matched to.
-
+  The property value could be either the enumeration value of ItemDetail::ItemDetailType
+  or detail names.
   \sa ItemDetail::type
   */
 
 /*!
-  \qmlproperty int DetailFilter::field
+  \qmlproperty variant DetailFilter::field
 
   This property holds the detail field type of which detail fields will be matched to.
-  Detail field types are enumeration values defined in each detail elements.
+  Detail field types are enumeration values defined in each detail elements, you can also
+  set the value to be detail field names.
 
   \sa EventTime
   \sa JournalTime
@@ -183,20 +185,22 @@
  */
 
 /*!
-  \qmlproperty enumeration DetailRangeFilter::detail
+  \qmlproperty variant DetailRangeFilter::detail
 
   This property holds the detail type of which details will be matched to.
-
+  The property value could be either the enumeration value of ItemDetail::ItemDetailType
+  or detail names.
   \sa ItemDetail::type
   \sa DetailFilter::detail
 
   */
 
 /*!
-  \qmlproperty int DetailRangeFilter::field
+  \qmlproperty variant DetailRangeFilter::field
 
   This property holds the detail field type of which detail fields will be matched to.
-  Detail field types are enumeration values defined in each detail elements.
+  Detail field types are enumeration values defined in each detail elements, you can also
+  set the value to be detail field names.
 
   \sa EventTime
   \sa JournalTime
@@ -262,7 +266,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty IntersectionFilter::filters
+  \qmlproperty list<filter> IntersectionFilter::filters
 
   This property holds the list of filters which form the intersection filter.
   */
@@ -280,7 +284,7 @@
  */
 
 /*!
-  \qmlproperty QDeclarativeListProperty UnionFilter::filters
+  \qmlproperty list<filter> UnionFilter::filters
 
   This property holds the list of filters which form the union filter.
   */
