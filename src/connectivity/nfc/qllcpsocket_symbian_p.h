@@ -56,13 +56,12 @@ QTM_BEGIN_NAMESPACE
 
 class QLLCPSocketState;
 
-class QLlcpSocketPrivate : public QObject
+class QLlcpSocketPrivate
 {
-    Q_OBJECT
     Q_DECLARE_PUBLIC(QLlcpSocket)
 
 public:
-   
+
     QLlcpSocketPrivate(QLlcpSocket *q);
     QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian);
     ~QLlcpSocketPrivate();
@@ -130,19 +129,6 @@ public:
     void invokeError();
     void invokeDisconnected();
     void invokeConnected();
-signals:
-     /*  From QIODevice
-      */
-     void readyRead();
-     void bytesWritten(qint64 bytes);
-
-     /*  From QLlcpSocket
-      */
-     void error(QLlcpSocket::Error socketError) const;
-     void stateChanged(QLlcpSocket::State socketState);
-     void connected();
-     void disconnected();
-
 
 // state machine part
 
@@ -164,6 +150,9 @@ private:
     QLLCPSocketState* m_bindState; // own
 
     QLlcpSocket *q_ptr;
+
+    bool m_emittedReadyRead;
+    bool m_emittedBytesWritten;
 };
 
 

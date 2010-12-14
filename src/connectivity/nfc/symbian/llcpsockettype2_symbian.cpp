@@ -336,7 +336,10 @@ void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCa
                 return;
                 }
             }
-        iReceiver->StartReceiveDatagram();
+        if (iReceiver->StartReceiveDatagram() != KErrNone)
+          {
+          Error(QtMobility::QLlcpSocket::UnknownSocketError);
+          }
         }
     }
 /*!
@@ -651,7 +654,8 @@ void CLlcpSenderAO::ConstructL()
 CLlcpSenderAO::~CLlcpSenderAO()
     {
     Cancel();
-    iSendBuf.Close();
+    iSendBuf0.Close();
+    iSendBuf1.Close();
     }
 /*!
  * Transfer given data to remote device.
@@ -663,21 +667,37 @@ TInt CLlcpSenderAO::Send( const TDesC8& aData )
     if ( !IsActive() )
         {
         // Copying data to internal buffer.
-        iSendBuf.Zero();
-        error = iSendBuf.ReAlloc( aData.Length() );
+        iSendBuf0.Zero();
+        error = iSendBuf0.ReAlloc( aData.Length() );
 
         if ( error == KErrNone )
           {
-          iSendBuf.Append( aData );
+          iSendBuf0.Append( aData );
 
           // Sending data
-          iConnection.Transmit( iStatus, iSendBuf );
+          iConnection.Transmit( iStatus, iSendBuf0 );
           SetActive();
+          iCurrentBuffer = EBuffer0;
           }
         }
     else
       {
-      error = KErrInUse;
+        if (iCurrentBuffer == EBuffer0)
+            {
+            error = iSendBuf1.ReAlloc( iSendBuf1.Length() + aData.Length() );
+            if (error == KErrNone)
+                {
+                iSendBuf1.Append(aData);
+                }
+            }
+        else
+            {
+            error = iSendBuf0.ReAlloc( iSendBuf0.Length() + aData.Length() );
+            if (error == KErrNone)
+                {
+                iSendBuf0.Append(aData);
+                }
+            }
       }
     LOGEND
     return error;
@@ -689,8 +709,28 @@ void CLlcpSenderAO::RunL()
     TInt error = iStatus.Int();
     if ( error == KErrNone )
         {
-        //emit bytesWritten(qint64 bytes) signal
-        iSocket.BytesWritten(iSendBuf.Length());
+        if (iCurrentBuffer == EBuffer0)
+            {
+            iSocket.BytesWritten(iSendBuf0.Length());
+            iSendBuf0.Zero();
+            if(iSendBuf1.Length() > 0)
+                {
+                iCurrentBuffer = EBuffer1;
+                iConnection.Transmit( iStatus, iSendBuf1 );
+                SetActive();
+                }
+            }
+        else //buffer1
+            {
+            iSocket.BytesWritten(iSendBuf1.Length());
+            iSendBuf1.Zero();
+            if(iSendBuf0.Length() > 0)
+                {
+                iCurrentBuffer = EBuffer0;
+                iConnection.Transmit( iStatus, iSendBuf0 );
+                SetActive();
+                }
+            }
         }
     else
         {
