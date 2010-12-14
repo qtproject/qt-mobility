@@ -61,6 +61,9 @@ QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)
 Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateFormat)
 Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateType)
+Q_DECLARE_METATYPE(QGeoMappingManagerEngine*)
+Q_DECLARE_METATYPE(QGeoMapData*)
+Q_DECLARE_METATYPE(QGeoMapPixmapObject*)
 
 class tst_QGeoTiledMapData : public QObject
 {
@@ -68,67 +71,175 @@ class tst_QGeoTiledMapData : public QObject
 
 private slots:
     void initTestCase();
-    void cleanupTestCase();
 
-    void pixmapObject_data();
-    void pixmapObject();
-    void pixmapDateline();
+    void pixmapDraw_data();
+    void pixmapDraw();
+
+    void objectsAtPoint_data();
+    void objectsAtPoint();
+
+    void pixmapAtDateline_data();
+    void pixmapAtDateline();
 
 private:
-    QGeoMapData *gmd;
-    QGeoMappingManagerEngine *mgr;
-    QPixmap indexed50;
+    void makeFixtures(QGeoMapData *&gmd, QGeoMapPixmapObject *&obj,
+                      const QGeoCoordinate &center, const QGeoCoordinate &pixmap,
+                      const qreal &zoom, const QPixmap &targetPixmap,
+                      QGeoMappingManagerEngine *mgr, const QSize &window,
+                      const QSize &target);
+
 };
 
 void tst_QGeoTiledMapData::initTestCase()
 {
-    QMap<QString, QVariant> params;
-    mgr = new WhiteTileEngine(params);
+    qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
+    qRegisterMetaType<QGeoMappingManagerEngine*>("QGeoMappingManagerEngine*");
+    qRegisterMetaType<QGeoMapData*>("QGeoMapData*");
+    qRegisterMetaType<QGeoMapPixmapObject*>("QGeoMapPixmapObject*");
+    qRegisterMetaType<QPixmap>("QPixmap");
+}
+
+void tst_QGeoTiledMapData::makeFixtures(QGeoMapData *&gmd,
+                                        QGeoMapPixmapObject *&obj,
+                                        const QGeoCoordinate &center,
+                                        const QGeoCoordinate &pixmap,
+                                        const qreal &zoom,
+                                        const QPixmap &targetPixmap,
+                                        QGeoMappingManagerEngine *mgr,
+                                        const QSize &window,
+                                        const QSize &target)
+{
     gmd = mgr->createMapData();
     gmd->init();
-
-    indexed50 = indexedPixmap(50, 50);
-}
-
-void tst_QGeoTiledMapData::cleanupTestCase()
-{
-    delete gmd;
-    delete mgr;
-}
-
-void tst_QGeoTiledMapData::pixmapObject_data()
-{
-    QTest::addColumn<qreal>("zoom");
-    QTest::addColumn<qreal>("centerLat");
-    QTest::addColumn<qreal>("centerLon");
-    QTest::addColumn<QPixmap>("targetPixmap");
-
-    QTest::newRow("Brisbane @z=3") << 3.0 << -27.58 << 153.10
-                                   << indexed50;
-    QTest::newRow("At 0,0") << 1.0 << 0.0 << 0.0 << indexed50;
-    QTest::newRow("Positive dateline") << 2.0 << 0.0 << 179.99 << indexed50;
-    QTest::newRow("Negative dateline") << 2.0 << 0.0 << -180.0 << indexed50;
-}
-
-void tst_QGeoTiledMapData::pixmapObject()
-{
-    QFETCH(qreal, zoom);
-    QFETCH(qreal, centerLat);
-    QFETCH(qreal, centerLon);
-    QFETCH(QPixmap, targetPixmap);
-
-    QGeoCoordinate center(centerLat, centerLon);
-    gmd->setWindowSize(QSizeF(500, 500));
+    gmd->setWindowSize(window);
     gmd->setZoomLevel(zoom);
     gmd->setCenter(center);
-
-    QGeoMapPixmapObject *obj = new QGeoMapPixmapObject();
+    obj = new QGeoMapPixmapObject();
     obj->setPixmap(targetPixmap);
-    obj->setCoordinate(center);
+    obj->setCoordinate(pixmap);
     gmd->addMapObject(obj);
     obj->setVisible(true);
+}
 
-    QPixmap pm(500, 500);
+void tst_QGeoTiledMapData::pixmapDraw_data()
+{
+    QTest::addColumn<QGeoMappingManagerEngine*>("mgr");
+    QTest::addColumn<QGeoMapData*>("gmd");
+    QTest::addColumn<QGeoMapPixmapObject*>("obj");
+    QTest::addColumn<QSize>("windowSize");
+    QTest::addColumn<QSize>("targetSize");
+    QTest::addColumn<QPoint>("offset");
+
+    QMap<QString, QVariant> params;
+    QGeoMappingManagerEngine *mgr = new WhiteTileEngine(params, this);
+
+    QSize window = QSize(500, 500);
+    QSize target = QSize(50, 50);
+    QPoint offset = QPoint(0, 0);
+    QPixmap targetPixmap = indexedPixmap(target.width(), target.height());
+
+    QGeoMapData *gmd;
+    QGeoCoordinate center;
+    QGeoMapPixmapObject *obj;
+
+    center = QGeoCoordinate(-27.58, 153.10);
+    makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Brisbane @z=3") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(45.6, -160.2);
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Somewhere up north") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(0.0, 0.0);
+    makeFixtures(gmd, obj, center, center, 1.0, targetPixmap, mgr, window, target);
+    QTest::newRow("At 0,0") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(0.0, 179.9);
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Positive dateline") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(0.0, -180.0);
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Negative dateline") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(-27.58, 153.10);
+    makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
+    offset = QPoint(5,5);
+    obj->setOffset(offset);
+    QTest::newRow("Brisbane with offset") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(-27.58, 153.10);
+    makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
+    offset = QPoint(-5,-5);
+    obj->setOffset(offset);
+    QTest::newRow("Brisbane with -ve offset") << mgr << gmd << obj << window << target << offset;
+
+    center = QGeoCoordinate(0.0, -180.0);
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    offset = QPoint(-20, 0);
+    obj->setOffset(offset);
+    QTest::newRow("Negative dateline with offset") << mgr << gmd << obj << window << target << offset;
+}
+
+void tst_QGeoTiledMapData::objectsAtPoint_data()
+{
+    QTest::addColumn<QGeoMappingManagerEngine*>("mgr");
+    QTest::addColumn<QGeoMapData*>("gmd");
+    QTest::addColumn<QGeoMapPixmapObject*>("obj");
+    QTest::addColumn<QGeoCoordinate>("center");
+
+    QMap<QString, QVariant> params;
+    QGeoMappingManagerEngine *mgr = new WhiteTileEngine(params, this);
+
+    QSize window = QSize(500, 500);
+    QSize target = QSize(50, 50);
+    QPixmap targetPixmap = indexedPixmap(target.width(), target.height());
+
+    QGeoMapData *gmd;
+    QGeoCoordinate center;
+    QGeoCoordinate pixmap;
+    QGeoMapPixmapObject *obj;
+
+    center = QGeoCoordinate(-27.58, 153.10);
+    makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Brisbane @z=3") << mgr << gmd << obj << center;
+
+    center = QGeoCoordinate(0.0, 0.0);
+    makeFixtures(gmd, obj, center, center, 1.0, targetPixmap, mgr, window, target);
+    QTest::newRow("At 0,0") << mgr << gmd << obj << center;
+
+    center = QGeoCoordinate(0.0, 179.9);
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Positive dateline") << mgr << gmd << obj << center;
+
+    center = QGeoCoordinate(0.0, -179.9);
+    pixmap = QGeoCoordinate(3.0, 175.0);
+    makeFixtures(gmd, obj, center, pixmap, 3.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Crossing dateline") << mgr << gmd << obj << center;
+}
+
+void tst_QGeoTiledMapData::objectsAtPoint()
+{
+    QFETCH(QGeoMappingManagerEngine*, mgr);
+    QFETCH(QGeoMapData*, gmd);
+    QFETCH(QGeoMapPixmapObject*, obj);
+    QFETCH(QGeoCoordinate, center);
+
+    QVERIFY(gmd->mapObjectsInViewport().contains(obj));
+    QPointF centerPt = gmd->coordinateToScreenPosition(center);
+    QVERIFY(gmd->mapObjectsAtScreenPosition(centerPt).contains(obj));
+}
+
+void tst_QGeoTiledMapData::pixmapDraw()
+{
+    QFETCH(QGeoMappingManagerEngine*, mgr);
+    QFETCH(QGeoMapData*, gmd);
+    QFETCH(QGeoMapPixmapObject*, obj);
+    QFETCH(QSize, windowSize);
+    QFETCH(QSize, targetSize);
+    QFETCH(QPoint, offset);
+
+    QPixmap pm(windowSize);
     QPainter *painter = new QPainter(&pm);
     pm.fill(Qt::black);
 
@@ -137,17 +248,14 @@ void tst_QGeoTiledMapData::pixmapObject()
     gmd->paint(painter, NULL);
     painter->end();
 
-    gmd->removeMapObject(obj);
-    delete obj;
-
     QImage im = pm.toImage();
 
     uint px = 0;
-    uint x = 250;
-    for (; px < targetPixmap.width(); px++, x++) {
+    uint x = windowSize.width()/2 + offset.x();
+    for (; px < targetSize.width(); px++, x++) {
         uint py = 0;
-        uint y = 250;
-        for (; py < targetPixmap.height(); py++, y++) {
+        uint y = windowSize.height()/2 + offset.y();
+        for (; py < targetSize.height(); py++, y++) {
             TilePixelValue tpv(im.pixel(x, y));
             QCOMPARE(tpv.px(), px);
             QCOMPARE(tpv.py(), py);
@@ -156,20 +264,48 @@ void tst_QGeoTiledMapData::pixmapObject()
     }
 }
 
-void tst_QGeoTiledMapData::pixmapDateline()
+void tst_QGeoTiledMapData::pixmapAtDateline_data()
 {
-    QGeoCoordinate center(0.0, -179.9);
-    gmd->setWindowSize(QSizeF(500, 500));
-    gmd->setZoomLevel(3.0);
-    gmd->setCenter(center);
+    QTest::addColumn<QGeoMappingManagerEngine*>("mgr");
+    QTest::addColumn<QGeoMapData*>("gmd");
+    QTest::addColumn<QGeoMapPixmapObject*>("obj");
+    QTest::addColumn<QSize>("windowSize");
+    QTest::addColumn<QSize>("targetSize");
 
-    QGeoMapPixmapObject *obj = new QGeoMapPixmapObject();
-    obj->setPixmap(indexed50);
-    obj->setCoordinate(QGeoCoordinate(3.0, 175.0));
-    gmd->addMapObject(obj);
-    obj->setVisible(true);
+    QMap<QString, QVariant> params;
+    QGeoMappingManagerEngine *mgr = new WhiteTileEngine(params, this);
 
-    QPixmap pm(500, 500);
+    QSize window = QSize(500, 500);
+    QSize target = QSize(50, 50);
+    QPixmap targetPixmap = indexedPixmap(target.width(), target.height());
+
+    QGeoMapData *gmd;
+    QGeoCoordinate center, pixmap;
+    QGeoMapPixmapObject *obj;
+    QPoint offset;
+
+    center = QGeoCoordinate(0.0, -179.9);
+    pixmap = QGeoCoordinate(3.0, 175.0);
+    makeFixtures(gmd, obj, center, pixmap, 3.0, targetPixmap, mgr, window, target);
+    QTest::newRow("east to west") << mgr << gmd << obj << window << target;
+
+    center = QGeoCoordinate(0.0, 179.0);
+    pixmap = QGeoCoordinate(0.0, -179.0);
+    makeFixtures(gmd, obj, center, pixmap, 3.0, targetPixmap, mgr, window, target);
+    offset = QPoint(-20, -5);
+    obj->setOffset(offset);
+    QTest::newRow("west to east") << mgr << gmd << obj << window << target;
+}
+
+void tst_QGeoTiledMapData::pixmapAtDateline()
+{
+    QFETCH(QGeoMappingManagerEngine*, mgr);
+    QFETCH(QGeoMapData*, gmd);
+    QFETCH(QGeoMapPixmapObject*, obj);
+    QFETCH(QSize, windowSize);
+    QFETCH(QSize, targetSize);
+
+    QPixmap pm(windowSize);
     QPainter *painter = new QPainter(&pm);
     pm.fill(Qt::black);
 
@@ -178,16 +314,13 @@ void tst_QGeoTiledMapData::pixmapDateline()
     gmd->paint(painter, NULL);
     painter->end();
 
-    gmd->removeMapObject(obj);
-    delete obj;
-
     QImage im = pm.toImage();
-    TilePixelValue tpv(im.pixel(250, 250));
+    TilePixelValue tpv(im.pixel(windowSize.width()/2, windowSize.height()/2));
     QCOMPARE(tpv.zoom(), 1u);
-    QVERIFY(tpv.px() < 50);
-    QVERIFY(tpv.py() < 50);
-    QVERIFY(tpv.px() > 5);
-    QVERIFY(tpv.py() > 5);
+    QVERIFY(tpv.px() < targetSize.width());
+    QVERIFY(tpv.py() < targetSize.height());
+    QVERIFY(tpv.px() > 1);
+    QVERIFY(tpv.py() > 1);
 }
 
 QTEST_MAIN(tst_QGeoTiledMapData)
