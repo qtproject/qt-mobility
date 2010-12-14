@@ -85,7 +85,8 @@ symbian {
         nfc/symbian/nearfieldtargetoperation_symbian.h \
         nfc/symbian/nearfieldtagndefrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandrequest_symbian.h \
-        nfc/symbian/nearfieldtagcommandsrequest_symbian.h
+        nfc/symbian/nearfieldtagcommandsrequest_symbian.h \
+        nfc/symbian/debug.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
