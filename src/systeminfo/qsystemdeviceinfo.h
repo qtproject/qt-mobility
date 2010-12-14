@@ -44,6 +44,8 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QExplicitlySharedDataPointer>
+
 #include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
@@ -187,14 +189,21 @@ public:
     class  Q_SYSINFO_EXPORT ActiveProfileDetails  {
     public:
         ActiveProfileDetails();
+        ActiveProfileDetails(const ActiveProfileDetails &);
+        ActiveProfileDetails &operator=(const ActiveProfileDetails &);
+
         ~ActiveProfileDetails();
 
         int messageRingtoneVolume() const;
         int voiceRingtoneVolume() const;
         bool vibrationActive() const;
+    private:
+       //  QExplicitlySharedDataPointer<QSystemDeviceInfoPrivate> d;
+         friend class QSystemDeviceInfo;
+
     };
 
-    ActiveProfileDetails *getActiveProfileDetails();//1.2
+    ActiveProfileDetails getActiveProfileDetails();//1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -211,7 +220,7 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
-    ActiveProfileDetails *activeProfileDetails;
+    QSystemDeviceInfo::ActiveProfileDetails activeProfileDetails;
 
 protected:
     void connectNotify(const char *signal);
