@@ -143,7 +143,6 @@ private slots:
 //    void nominalCapacityChanged(int);
 //    void remainingCapacityPercentChanged(int);
 //    void remainingCapacityChanged(int);
-//    void voltageChanged(int);
 
 //    void currentFlowChanged(int);
 //    void cumulativeCurrentFlowChanged(int);
@@ -441,11 +440,6 @@ void tst_QDeclarativeBatteryInfo::tst_energyMeasurementUnit()
 //}
 
 //void tst_QDeclarativeBatteryInfo::remainingCapacityChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::voltageChanged(int)
 //{
 
 //}

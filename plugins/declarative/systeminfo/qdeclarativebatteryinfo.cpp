@@ -92,7 +92,6 @@ void QDeclarativeBatteryInfo::startConnections()
     startCurrentFlowChanged();
     startRemainingCapacityBarsChanged();
     startRemainingChargingTimeChanged();
-    startVoltageChanged();
 }
 
 void QDeclarativeBatteryInfo::startBatteryStatusChanged()
@@ -148,11 +147,5 @@ void QDeclarativeBatteryInfo::startRemainingChargingTimeChanged()
 {
     connect(batteryInfo(),SIGNAL(remainingChargingTimeChanged(int)),
             this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
-}
-
-void QDeclarativeBatteryInfo::startVoltageChanged()
-{
-    connect(batteryInfo(),SIGNAL(voltageChanged(int)),
-            this,SIGNAL(voltageChanged(int)),Qt::UniqueConnection);
 }
 

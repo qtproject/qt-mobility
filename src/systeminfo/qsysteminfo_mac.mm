@@ -2542,7 +2542,6 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
         cVoltage = [[(NSDictionary*)batDoctionary objectForKey:@"Voltage"] intValue];
         if (cVoltage != currentVoltage ) {
             currentVoltage = cVoltage;
-            Q_EMIT voltageChanged(currentVoltage);
         }
 
         int amp = [[legacyDict objectForKey:@"Current"] intValue];

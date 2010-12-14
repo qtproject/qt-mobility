@@ -418,7 +418,6 @@ Q_SIGNALS:
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
     void remainingChargingTimeChanged(int);
-    void voltageChanged(int);
 
 protected:
     void connectNotify(const char *signal);
