@@ -210,7 +210,7 @@ TBool CNearFieldNdefTarget::hasNdefMessage()
     if (result)
         {
         TRAPD(err, result = iNdefConnection->IsEmptyL());
-        result = (KErrNone == err) ? result : EFalse;
+        result = (KErrNone == err) ? !result : EFalse;
         }
     return result;
     }
