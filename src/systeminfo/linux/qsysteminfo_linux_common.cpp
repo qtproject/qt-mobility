@@ -1011,8 +1011,6 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             const QDir eDir(baseSysDir);
             const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
-            foreach (const QString dir, dirs) {
-            foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/carrier");
                 if (fi.exists()) {
