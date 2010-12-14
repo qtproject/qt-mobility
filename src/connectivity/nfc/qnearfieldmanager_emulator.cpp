@@ -40,197 +40,21 @@
 ****************************************************************************/
 
 #include "qnearfieldmanager_emulator_p.h"
-#include "targetemulator_p.h"
-#include "qnearfieldtagtype1.h"
-#include "qndefmessage.h"
+#include "qnearfieldtarget_emulator_p.h"
 
-#include <QtCore/QDirIterator>
-#include <QtCore/QSettings>
-#include <QtCore/QMutex>
-#include <QtCore/QMutexLocker>
+#include "qndefmessage.h"
+#include "qtlv_p.h"
 
 #include <QtCore/QDebug>
 
-static QMutex tagMutex;
-static QMap<TagBase *, bool> tagMap;
-
-class TagActivator : public QObject
-{
-    Q_OBJECT
-
-public:
-    TagActivator();
-    ~TagActivator();
-
-    void initialize();
-    void reset();
-
-protected:
-    void timerEvent(QTimerEvent *e);
-
-signals:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
-
-private:
-    QMap<TagBase *, bool>::Iterator m_current;
-    int timerId;
-} tagActivator;
-
-TagActivator::TagActivator()
-:   timerId(-1)
-{
-
-}
-
-TagActivator::~TagActivator()
-{
-    QMutexLocker locker(&tagMutex);
-    qDeleteAll(tagMap.keys());
-    tagMap.clear();
-}
-
-void TagActivator::initialize()
-{
-    QMutexLocker locker(&tagMutex);
-
-    if (!tagMap.isEmpty())
-        return;
-
-    QDirIterator nfcTargets(QDir::currentPath(), QStringList(QLatin1String("*.nfc")), QDir::Files);
-    while (nfcTargets.hasNext()) {
-        const QString targetFilename = nfcTargets.next();
-
-        QSettings target(targetFilename, QSettings::IniFormat);
-
-        target.beginGroup(QLatin1String("Target"));
-
-        const QString tagType = target.value(QLatin1String("Type")).toString();
-
-        target.endGroup();
-
-        if (tagType == QLatin1String("TagType1")) {
-            NfcTagType1 *tag = new NfcTagType1;
-            tag->load(&target);
-
-            tagMap.insert(tag, false);
-        } else {
-            qWarning("Unknown tag type %s\n", qPrintable(tagType));
-        }
-    }
-
-    m_current = tagMap.end();
-
-    timerId = startTimer(100);
-}
-
-void TagActivator::reset()
-{
-    QMutexLocker locker(&tagMutex);
-
-    killTimer(timerId);
-    timerId = -1;
-
-    qDeleteAll(tagMap.keys());
-    tagMap.clear();
-}
-
-void TagActivator::timerEvent(QTimerEvent *e)
-{
-    Q_UNUSED(e);
-
-    tagMutex.lock();
-
-    if (m_current != tagMap.end()) {
-        *m_current = false;
-
-        tagMutex.unlock();
-        emit tagDeactivated(m_current.key());
-        tagMutex.lock();
-    }
-
-    ++m_current;
-    if (m_current == tagMap.end())
-        m_current = tagMap.begin();
-
-    if (m_current != tagMap.end()) {
-        *m_current = true;
-
-        tagMutex.unlock();
-
-        emit tagActivated(m_current.key());
-        tagMutex.lock();
-    }
-
-    tagMutex.unlock();
-}
-
-class TagType1 : public QNearFieldTagType1
-{
-public:
-    TagType1(TagBase *tag, QObject *parent);
-    ~TagType1();
-
-    QByteArray uid() const;
-
-    AccessMethods accessMethods() const;
-
-    QByteArray sendCommand(const QByteArray &command);
-
-private:
-    TagBase *m_tag;
-};
-
-TagType1::TagType1(TagBase *tag, QObject *parent)
-:   QNearFieldTagType1(parent), m_tag(tag)
-{
-}
-
-TagType1::~TagType1()
-{
-}
-
-QByteArray TagType1::uid() const
-{
-    QMutexLocker locker(&tagMutex);
-
-    return m_tag->uid();
-}
-
-QNearFieldTarget::AccessMethods TagType1::accessMethods() const
-{
-    return NdefAccess | TagTypeSpecificAccess;
-}
-
-QByteArray TagType1::sendCommand(const QByteArray &command)
-{
-    QMutexLocker locker(&tagMutex);
-
-    // tag not in proximity
-    if (!tagMap.value(m_tag))
-        return QByteArray();
-
-    quint16 crc = qNfcChecksum(command.constData(), command.length());
-
-    QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
-
-    if (response.isEmpty())
-        return QByteArray();
-
-    // check crc
-    if (qNfcChecksum(response.constData(), response.length()) != 0)
-        return QByteArray();
-
-    response.chop(2);
-    return response;
-}
-
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
-    tagActivator.initialize();
+    TagActivator *tagActivator = TagActivator::instance();
 
-    connect(&tagActivator, SIGNAL(tagActivated(TagBase*)), this, SLOT(tagActivated(TagBase*)));
-    connect(&tagActivator, SIGNAL(tagDeactivated(TagBase*)), this, SLOT(tagDeactivated(TagBase*)));
+    tagActivator->initialize();
+
+    connect(tagActivator, SIGNAL(tagActivated(TagBase*)), this, SLOT(tagActivated(TagBase*)));
+    connect(tagActivator, SIGNAL(tagDeactivated(TagBase*)), this, SLOT(tagDeactivated(TagBase*)));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
@@ -239,7 +63,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 
 void QNearFieldManagerPrivateImpl::reset()
 {
-    tagActivator.reset();
+    TagActivator::instance()->reset();
 }
 
 void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
@@ -324,62 +148,19 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
         emit targetDetected(target);
     }
 
-
     if (target->hasNdefMessage()) {
-        for (int i = 0; i < m_registeredHandlers.count(); ++i) {
-            if (m_freeIds.contains(i))
-                continue;
-
-            Callback &callback = m_registeredHandlers[i];
-
-            QList<QNdefMessage> messages = target->ndefMessages();
-            foreach (const QNdefMessage &message, messages) {
-                bool matched = true;
-
-                QList<VerifyRecord> filterRecords;
-                for (int j = 0; j < callback.filter.recordCount(); ++j) {
-                    VerifyRecord vr;
-                    vr.count = 0;
-                    vr.filterRecord = callback.filter.recordAt(j);
-
-                    filterRecords.append(vr);
-                }
-
-                foreach (const QNdefRecord &record, message) {
-                    for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-                        VerifyRecord &vr = filterRecords[j];
-
-                        if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
-                            vr.filterRecord.type == record.type()) {
-                            ++vr.count;
-                            break;
-                        } else {
-                            if (callback.filter.orderMatch()) {
-                                if (vr.filterRecord.minimum <= vr.count &&
-                                    vr.count <= vr.filterRecord.maximum) {
-                                    continue;
-                                } else {
-                                    matched = false;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                for (int j = 0; matched && (j < filterRecords.count()); ++j) {
-                    const VerifyRecord &vr = filterRecords.at(j);
-
-                    if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
-                        continue;
-                    else
-                        matched = false;
-                }
-
-                if (matched) {
-                    callback.method.invoke(callback.object, Q_ARG(QNdefMessage, message),
-                                                            Q_ARG(QNearFieldTarget *, target));
-                }
+        QTlvReader reader(target);
+        while (!reader.atEnd()) {
+            if (!reader.readNext()) {
+                if (!target->waitForRequestCompleted(reader.requestId()))
+                    break;
+                else
+                    continue;
             }
+
+            // NDEF Message TLV
+            if (reader.tag() == 0x03)
+                ndefReceived(QNdefMessage::fromByteArray(reader.data()), target);
         }
     }
 }
@@ -394,4 +175,59 @@ void QNearFieldManagerPrivateImpl::tagDeactivated(TagBase *tag)
     QMetaObject::invokeMethod(target, "disconnected");
 }
 
-#include "qnearfieldmanager_emulator.moc"
+void QNearFieldManagerPrivateImpl::ndefReceived(const QNdefMessage &message,
+                                                QNearFieldTarget *target)
+{
+    for (int i = 0; i < m_registeredHandlers.count(); ++i) {
+        if (m_freeIds.contains(i))
+            continue;
+
+        Callback &callback = m_registeredHandlers[i];
+
+        bool matched = true;
+
+        QList<VerifyRecord> filterRecords;
+        for (int j = 0; j < callback.filter.recordCount(); ++j) {
+            VerifyRecord vr;
+            vr.count = 0;
+            vr.filterRecord = callback.filter.recordAt(j);
+
+            filterRecords.append(vr);
+        }
+
+        foreach (const QNdefRecord &record, message) {
+            for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+                VerifyRecord &vr = filterRecords[j];
+
+                if (vr.filterRecord.typeNameFormat == record.typeNameFormat() &&
+                    vr.filterRecord.type == record.type()) {
+                    ++vr.count;
+                    break;
+                } else {
+                    if (callback.filter.orderMatch()) {
+                        if (vr.filterRecord.minimum <= vr.count &&
+                            vr.count <= vr.filterRecord.maximum) {
+                            continue;
+                        } else {
+                            matched = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; matched && (j < filterRecords.count()); ++j) {
+            const VerifyRecord &vr = filterRecords.at(j);
+
+            if (vr.filterRecord.minimum <= vr.count && vr.count <= vr.filterRecord.maximum)
+                continue;
+            else
+                matched = false;
+        }
+
+        if (matched) {
+            callback.method.invoke(callback.object, Q_ARG(QNdefMessage, message),
+                                   Q_ARG(QNearFieldTarget *, target));
+        }
+    }
+}
