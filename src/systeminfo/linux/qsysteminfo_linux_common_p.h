@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-qsysteminfo_linux_common_p.h
 #include <QObject>
 #include <QSize>
 #include <QHash>
