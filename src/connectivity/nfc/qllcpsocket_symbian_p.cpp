@@ -111,6 +111,7 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     delete m_connectedState;
     delete m_closingState;
     delete m_bindState;
+    qDebug() << " QLlcpSocketPrivate::~QLlcpSocketPrivate exit";
 }
 
 /*!
@@ -128,6 +129,7 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
+    qDebug() << "connectToService enter " << m_socketType;
     if( connectionType1 == m_socketType){
        invokeError();
        return;
@@ -135,6 +137,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     else if (connectionUnknown == m_socketType){
        m_socketType = connectionType2;
     }
+
     Q_Q(QLlcpSocket);
     if (!q->isOpen())
         q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
@@ -167,7 +170,7 @@ void QLlcpSocketPrivate::invokeConnected()
 
 void QLlcpSocketPrivate::invokeReadyRead()
 {
-    //qDebug() << "QLlcpSocketPrivate::invokeReadyRead() begin";
+    qDebug() << "QLlcpSocketPrivate::invokeReadyRead() begin";
     Q_Q(QLlcpSocket);
     emit q->readyRead();
     qDebug() << "QLlcpSocketPrivate::invokeReadyRead() end";

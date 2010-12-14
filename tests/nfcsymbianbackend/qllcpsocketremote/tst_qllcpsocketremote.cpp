@@ -143,8 +143,9 @@ void tst_qllcpsocketremote::testCase2()
 
     const int Timeout = 10 * 1000;
     ret = socket.waitForReadyRead(Timeout);
-    QVERIFY(ret == true);
 
+    QString message2("handshake 3");
+    QNfcTestUtil::ShowMessage(message2);
     QVERIFY(ret);
  }
 

@@ -103,9 +103,16 @@ CLlcpSocketType1::~CLlcpSocketType1()
         iLlcp = NULL;
         }
     iNfcServer.Close();
-   
-    delete iWait;
-    delete iTimer;
+    if (iTimer)
+        {
+        delete iTimer;
+        iTimer = NULL;
+        }
+    if ( iWait )
+        {
+        delete iWait;
+        iWait = NULL;
+        }
     }
 
 /*!
@@ -338,6 +345,7 @@ TBool CLlcpSocketType1::WaitForBytesWritten(TInt aMilliSeconds)
 
 TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMilliSeconds)
     {
+    qDebug() << "WaitForOperationReady: " << iWait;
     TBool ret = EFalse;
     if (iWaitStatus != ENone || iWait->IsStarted())
         {
@@ -360,6 +368,7 @@ TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
         iTimer->Start(aMilliSeconds);
         }
     iWait->Start();
+
     //control is back here when iWait->AsyncStop() is called by the timer or the callback function
     iWaitStatus = ENone;
 
@@ -374,6 +383,8 @@ TBool CLlcpSocketType1::WaitForOperationReady(TWaitStatus aWaitStatus,TInt aMill
         delete iTimer;
         iTimer = NULL;
         }
+
+   qDebug() <<"WaitForOperationReady finished" << iTimer;
     return ret;
     }
 
