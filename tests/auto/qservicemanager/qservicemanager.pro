@@ -21,6 +21,9 @@ symbian|wince* {
     symbian {
         TARGET.CAPABILITY = ALL -TCB
         LIBS += -lefsrv
+        contains(S60_VERSION, 5.2){
+            DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
+        }
     }
     wince* {
         SFWTEST_PLUGIN_DEPLOY.sources = \
