@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qsysteminfodata_simulator_p.h"
-aqfgw
 #include <QtCore/QDataStream>
 
 QTM_BEGIN_NAMESPACE
