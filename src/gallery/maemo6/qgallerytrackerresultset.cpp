@@ -63,18 +63,15 @@ public:
     QGalleryTrackerResultSetParser(
             QVector<QVariant> &values,
             const QVector<QGalleryTrackerValueColumn *> &valueColumns,
-            int valueOffset,
             int tableWidth)
         : values(values)
         , valueColumns(valueColumns)
-        , valueOffset(valueOffset)
         , tableWidth(tableWidth)
     {
     }
 
     QVector<QVariant> &values;
     const QVector<QGalleryTrackerValueColumn *> &valueColumns;
-    const int valueOffset;
     const int tableWidth;
 };
 
@@ -89,13 +86,9 @@ const QDBusArgument &operator >>(
         argument.beginArray();
 
         int i = 0;
-        for (; !argument.atEnd() && i < parser.valueOffset; ++i) {
-            argument >> string;
-            parser.values.append(QVariant(string));
-        }
         for (; !argument.atEnd() && i < parser.tableWidth; ++i) {
             argument >> string;
-            parser.values.append(parser.valueColumns.at(i - parser.valueOffset)->toVariant(string));
+            parser.values.append(parser.valueColumns.at(i)->toVariant(string));
         }
         for (; i < parser.tableWidth; ++i)
             parser.values.append(variant);
@@ -194,7 +187,7 @@ void QGalleryTrackerResultSetPrivate::parseRows(const QDBusPendingCall &call)
 {
     iCache.values.clear();
 
-    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, valueOffset, tableWidth);
+    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, tableWidth);
 
     QDBusArgument argument = call.reply().arguments().at(0).value<QDBusArgument>();
     argument >> parser;

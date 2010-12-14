@@ -769,11 +769,19 @@ public:
     QVariant value(QVector<QVariant>::const_iterator row) const;
 };
 
+class QGalleryTrackerServiceIndexColumn : public QGalleryTrackerValueColumn
+{
+public:
+    QGalleryTrackerServiceIndexColumn() {}
+
+    QVariant toVariant(const QString &string) const;
+};
+
 QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iterator row) const
 {
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-    const int index = itemTypes.indexOfRdfTypes((row + 2)->toString().split(QLatin1Char(',')));
+    const int index = (row + 2)->toInt();
 
     return index != -1
             ? QVariant(itemTypes[index].prefix + row->toString())
@@ -784,12 +792,18 @@ QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterat
 {
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-    const int index = itemTypes.indexOfRdfTypes((row + 2)->toString().split(QLatin1Char(',')));
+    const int index = (row + 2)->toInt();
 
     return index != -1
             ? QVariant(itemTypes[index].itemType)
             : QVariant(QLatin1String("File"));
+}
 
+QVariant QGalleryTrackerServiceIndexColumn::toVariant(const QString &string) const
+{
+    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
+
+    return itemTypes.indexOfRdfTypes(string.split(QLatin1Char(',')));
 }
 
 QGalleryTrackerSchema::QGalleryTrackerSchema(const QString &itemType)
@@ -1395,7 +1409,11 @@ void QGalleryTrackerSchema::populateItemArguments(
         arguments->typeColumn.reset(
                 new QGalleryTrackerStaticColumn(qt_galleryItemTypeList[m_itemIndex].itemType));
     }
-    arguments->valueColumns = qt_createValueColumns(valueTypes + extendedValueTypes);
+    arguments->valueColumns = QVector<QGalleryTrackerValueColumn *>()
+            << new QGalleryTrackerStringColumn
+            << new QGalleryTrackerStringColumn
+            << new QGalleryTrackerServiceIndexColumn
+            << qt_createValueColumns(valueTypes + extendedValueTypes);
     arguments->propertyNames = valueNames + compositeNames + aliasNames;
     arguments->propertyAttributes = valueAttributes + compositeAttributes + aliasAttributes;
     arguments->propertyTypes = valueTypes + compositeTypes + aliasTypes;
