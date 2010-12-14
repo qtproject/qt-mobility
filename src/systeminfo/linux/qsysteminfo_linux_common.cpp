@@ -3102,43 +3102,43 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfoLinuxCommonPrivate::charging
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
+int QSystemBatteryInfoLinuxCommonPrivate::nominalCapacity() const
 {
     return capacity;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityPercent() const
 {
     return currentBatLevelPercent;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacity() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacity() const
 {
     return remainingEnergy;
 }
 
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::voltage() const
+int QSystemBatteryInfoLinuxCommonPrivate::voltage() const
 {
     return currentVoltage;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingChargingTime() const
 {
     return timeToFull;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
+int QSystemBatteryInfoLinuxCommonPrivate::currentFlow() const
 {
     return dischargeRate;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
+int QSystemBatteryInfoLinuxCommonPrivate::remainingCapacityBars() const
 {
     return 0;
 }
 
-qint32 QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
+int QSystemBatteryInfoLinuxCommonPrivate::maxBars() const
 {
     return 0;
 }
