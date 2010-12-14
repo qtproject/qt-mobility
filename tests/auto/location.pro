@@ -3,8 +3,10 @@ include(../../staticconfig.pri)
 requires(contains(mobility_modules,location))
 
 TEMPLATE = subdirs
+CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
+      qgeotiledmappingmanagerengine \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
@@ -15,7 +17,41 @@ SUBDIRS += qgeocoordinate \
       qlandmarkmanagerengine \
       qlandmark \
       qlandmarkcategory \
-      qlandmarkmanager
+      qlandmarkmanager \
+      qgeoaddress \
+      qgeomaneuver \
+      qgeomapobjectplugin \
+      qgeomapcircleobject \
+      qgeomapgroupobject \
+      qgeomappixmapobject \
+      qgeomappolygonobject \
+      qgeomappolylineobject \
+      qgeomaprectangleobject \
+      qgeomaprouteobject \
+      qgeomaptextobject \
+      qgeoplace \
+      qgeoroute \
+      qgeoroutingmanagerplugins \
+      qgeoroutingmanager \
+      qgeoroutereply \
+      qgeorouterequest \
+      qgeoroutesegment \
+      qgeosearchreply \
+      qgeosearchmanagerplugins \
+      qgeosearchmanager \
+      geoservicesgeomapplugin \
+      geoservicesgeomap \
+      geoservicesgeotiledmapplugin \
+      geoservicesgeotiledmap
+
+
+!symbian{
+SUBDIRS += qgeoserviceproviderplugins \
+            qgeoserviceprovider 
+}
+
+#IGNORED_UNTIL_INTEGRATED_PROPERLY += \
+#    qdeclarativeapitests
 
 
 !symbian:SUBDIRS +=qlandmarkmanagerplugins

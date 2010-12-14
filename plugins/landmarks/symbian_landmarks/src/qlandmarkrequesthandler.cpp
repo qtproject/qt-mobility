@@ -4,7 +4,6 @@
  ** All rights reserved.
  ** Contact: Nokia Corporation (qt-info@nokia.com)
  **
- **  
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
@@ -34,7 +33,7 @@
  **
  **
  **
- ** 
+ **
  **
  ** $QT_END_LICENSE$
  **

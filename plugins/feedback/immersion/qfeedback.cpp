@@ -182,7 +182,7 @@ VibeInt32 QFeedbackImmersion::handleForActuator(int actId)
         if (VIBE_IS_INVALID_DEVICE_HANDLE(actuatorHandles.at(actId))) {
             ImmVibeOpenDevice(actId, &actuatorHandles[actId] );
 
-            //temporary solution: provide a proto dev licence key
+            //temporary solution: provide a proto dev license key
             ImmVibeSetDevicePropertyString(actuatorHandles.at(actId), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
         }
     }

@@ -341,7 +341,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     Q_D(QGeoTiledMapData);
 
     QPixmap oldImage(windowSize().toSize());
-    if (d->zoomLevel != -1.0) {
+    if (!oldImage.isNull()) {
         // grab the old image
         QPainter painter1(&oldImage);
         d->paintMap(&painter1, 0);
@@ -368,7 +368,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->updateScreenRect();
 
-    if (oldZoomLevel == -1.0) {
+    if (oldImage.isNull()) {
         d->updateMapImage();
         emit zoomLevelChanged(d->zoomLevel);
         return;
@@ -636,6 +636,9 @@ void QGeoTiledMapData::processRequests()
         d->replies.insert(reply);
         d->replyRects.insert(reply->request().tileRect());
 
+        if (reply->isFinished())
+            replyFinished(reply);
+
         if (reply->isCached())
             break;
     }
@@ -651,7 +654,14 @@ void QGeoTiledMapData::tileFinished()
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
         return;
+    } else {
+        replyFinished(reply);
     }
+}
+
+void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
+{
+    Q_D(QGeoTiledMapData);
 
     d->replyRects.remove(reply->request().tileRect());
     d->replies.remove(reply);
