@@ -4,7 +4,9 @@ QT = core network
 
 INCLUDEPATH += ../../../src/systeminfo
 SOURCES  += tst_qsystemdeviceinfo.cpp
+contains(test_sim, yes) {
 DEFINES += TESTR
+}
 include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = systeminfo

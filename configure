@@ -110,6 +110,7 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
+TEST_SIM=
 
 usage() 
 {
@@ -158,6 +159,8 @@ usage()
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+    echo "-test-sim           Use simulator backend for testing"
+
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
@@ -281,6 +284,9 @@ while [ "$#" -gt 0 ]; do
             PLATFORM_CONFIG=$2
             shift
             ;;
+        -test-sim)
+            TEST_SIM="yes"
+            ;; 
         *)
             echo "Unknown option: $1"
             usage
@@ -477,6 +483,12 @@ if [ -z "$BUILD_TOOLS" ]; then
     echo "build_tools = no" >> "$CONFIG_IN"
 else
     echo "build_tools = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$TEST_SIM" ]; then
+    echo "test_sim = no" >> "$CONFIG_IN"
+else
+    echo "test_sim = yes" >> "$CONFIG_IN"
 fi
 
 echo "Configuring Qt Mobility"

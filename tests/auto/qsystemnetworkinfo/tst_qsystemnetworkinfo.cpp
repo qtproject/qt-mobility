@@ -73,6 +73,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
+#ifdef TESTR
 class ChangeNetworkThread : public QThread
 {
 public:
@@ -96,6 +97,7 @@ public:
     QString str;
     QMutex mutex;
 };
+#endif
 
 class tst_QSystemNetworkInfo : public QObject
 {
@@ -138,6 +140,8 @@ private slots:
 
     void tst_currentMode();
 
+
+#ifdef TESTR
     void tst_networkStatusChanged_data();
     void tst_networkStatusChanged();
 
@@ -162,10 +166,14 @@ private slots:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
     void cellIdChanged(int);
+#endif
 
 
 private:
+
+#ifdef TESTR
     QSystemNetworkInfo::NetworkMode testMode;
+#endif
 };
 
 //tst_QSystemNetworkInfo::tst_QSystemNetworkInfo()
@@ -430,6 +438,7 @@ void tst_QSystemNetworkInfo::tst_currentMode()
              );
 }
 
+#ifdef TESTR
 void tst_QSystemNetworkInfo::tst_networkStatusChanged_data()
 {
     tst_mode_data();
@@ -641,6 +650,7 @@ void tst_QSystemNetworkInfo::cellIdChanged(int id)
 {
     QVERIFY(id == 206555390);
 }
+#endif
 
 
 QTEST_MAIN(tst_QSystemNetworkInfo)

@@ -6,7 +6,6 @@ QT = core network
 
 SOURCES  += tst_qsystemstorageinfo.cpp
 INCLUDEPATH += ../../../src/systeminfo
-DEFINES += TESTR
 include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = systeminfo
@@ -16,3 +15,8 @@ symbian {
 }
 
 
+
+
+contains(test_sim, yes) {
+ DEFINES += TESTR
+}

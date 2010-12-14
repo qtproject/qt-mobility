@@ -78,6 +78,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
     return timeoutSpy.isEmpty();
 }
 
+#ifdef TESTR
 class ChangeDeviceThread : public QThread
 {
 public:
@@ -115,6 +116,7 @@ public:
     int voiceRingtoneVolume;
     int vibrationActive;
 };
+#endif
 
 class tst_QSystemDeviceInfo : public QObject
 {
@@ -153,6 +155,7 @@ private slots:
     void tst_getActiveProfileDetails();
 
 
+#ifdef TESTR
     void tst_batteryLevelChanged_data();
     void tst_batteryLevelChanged();
 
@@ -185,8 +188,11 @@ private slots:
     void keyboardFlip(bool open);
     void deviceLocked(bool isLocked);
     void lockStatusChanged(QSystemDeviceInfo::LockType);
+#endif
 
 private:
+
+#ifdef TESTR
     int curBatLevel;
     QSystemDeviceInfo::PowerState curPowerState;
     QSystemDeviceInfo::Profile curProfile;
@@ -196,6 +202,7 @@ private:
     bool deviceLock;
     QSystemDeviceInfo::LockType lockType;
     bool lockTypeOn;
+#endif
 };
 
 void tst_QSystemDeviceInfo::initTestCase()
@@ -421,6 +428,7 @@ void tst_QSystemDeviceInfo::tst_lockStatus()
     }
 }
 
+#ifdef TESTR
 void tst_QSystemDeviceInfo::tst_batteryLevelChanged_data()
 {
     QTest::addColumn<int>("batLevel");
@@ -735,6 +743,7 @@ void tst_QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockType type)
     QVERIFY(type == lockType);
 }
 
+#endif
 
 void tst_QSystemDeviceInfo::tst_getActiveProfileDetails()
 {

@@ -78,6 +78,7 @@ static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
 //    QSystemInfoPrivate *s = getSystemInfoPrivate();
 //    s->setCurrentLanguage(lang);
 //}
+#ifdef TESTR
 
 class ChangeLanguageThread : public QThread
 {
@@ -90,7 +91,7 @@ public:
     }
      QString lang;
 };
-
+#endif
 class tst_QSystemInfo : public QObject
 {
     Q_OBJECT
@@ -117,22 +118,29 @@ private slots:
 
     void tst_detailFeatures_data();
     void tst_detailFeatures();
+#ifdef TESTR
     void currentLanguageChanged();
 
     void slotCurrentLanguageChanged(const QString &);
-
+#endif
 private:
+#ifdef TESTR
     ChangeLanguageThread *changeLangThread;
+#endif
 };
 
 tst_QSystemInfo::tst_QSystemInfo()
 {
+#ifdef TESTR
     changeLangThread = new ChangeLanguageThread();
+#endif
 }
 
 tst_QSystemInfo::~tst_QSystemInfo()
 {
+#ifdef TESTR
     delete changeLangThread, changeLangThread = 0;
+#endif
 }
 
 void tst_QSystemInfo::initTestCase()
@@ -144,7 +152,9 @@ void tst_QSystemInfo::initTestCase()
 void tst_QSystemInfo::tst_currentLanguage()
 {
     QSystemInfo si;
+#ifdef TESTR
     si.priv->setInitialData();
+#endif
     QVERIFY(!si.currentLanguage().isEmpty());
     QCOMPARE(si.currentLanguage().length(), 2);
     QVERIFY(si.currentLanguage() == si.currentLanguage().toLower());
@@ -154,7 +164,9 @@ void tst_QSystemInfo::tst_currentLanguage()
 void tst_QSystemInfo::tst_availableLanguages()
 {
     QSystemInfo si;
+#ifdef TESTR
     si.priv->setInitialData();
+#endif
     QVERIFY(!si.availableLanguages().isEmpty());
     QStringList available = si.availableLanguages();
     foreach(QString lang, available) {
@@ -180,7 +192,9 @@ void tst_QSystemInfo::tst_versions()
         QFETCH(QSystemInfo::Version, version);
         QFETCH(QString, parameter);
         QSystemInfo si;
+#ifdef TESTR
         si.priv->setInitialData();
+#endif
         QString vers = si.version(version, parameter);
         QVERIFY(!vers.isEmpty()
             || vers.isEmpty());
@@ -190,7 +204,9 @@ void tst_QSystemInfo::tst_versions()
 void tst_QSystemInfo::tst_countryCode()
 {
     QSystemInfo si;
+#ifdef TESTR
     si.priv->setInitialData();
+#endif
     QVERIFY(!si.currentCountryCode().isEmpty());
     QCOMPARE(si.currentCountryCode().length(),2);
     QVERIFY(si.currentCountryCode() == si.currentCountryCode().toUpper());
@@ -220,7 +236,9 @@ void tst_QSystemInfo::tst_hasFeatures()
     {
         QFETCH(QSystemInfo::Feature, feature);
         QSystemInfo si;
+#ifdef TESTR
         si.priv->setInitialData();
+#endif
         QVERIFY(si.hasFeatureSupported(feature) == false
                 || si.hasFeatureSupported(feature) == true);
     }
@@ -239,6 +257,7 @@ void tst_QSystemInfo::tst_detailFeatures()
 //        QVERIFY(!si.getDetailOfFeature(feature).isEmpty());
 //    }
 }
+#ifdef TESTR
 
 void tst_QSystemInfo::currentLanguageChanged()
 {
@@ -257,7 +276,7 @@ void tst_QSystemInfo::slotCurrentLanguageChanged(const QString &lang)
 {
     QVERIFY(lang == "kl");
 }
-
+#endif
 
 QTEST_MAIN(tst_QSystemInfo)
 #include "tst_qsysteminfo.moc"

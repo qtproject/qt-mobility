@@ -84,6 +84,7 @@ private slots:
     void tst_typeForDrive();
 
     void tst_getStorageState();
+#ifdef TESTR
 
     void tst_storageStateChanged_data();
     void tst_storageStateChanged();
@@ -93,13 +94,15 @@ private slots:
 
     void logicalDriveChanged(bool added,const QString &vol);
     void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
-
+#endif
 private:
+#ifdef TESTR
     void newDrives();
     QSystemStorageInfo::StorageState sstate;
     QSystemStorageInfo::DriveType driveType;
     bool driveAdded;
     QString dName;
+#endif
 };
 
 void tst_QSystemStorageInfo::initTestCase()
@@ -162,6 +165,7 @@ void tst_QSystemStorageInfo::tst_getStorageState()
                 || state == QSystemStorageInfo::CriticalStorageState);
     }
 }
+#ifdef TESTR
 
 void tst_QSystemStorageInfo::tst_storageStateChanged_data()
 {
@@ -285,7 +289,7 @@ void tst_QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStor
     QVERIFY(vol == dName);
     QVERIFY(state == sstate);
 }
-
+#endif
 
 QTEST_MAIN(tst_QSystemStorageInfo)
 #include "tst_qsystemstorageinfo.moc"
