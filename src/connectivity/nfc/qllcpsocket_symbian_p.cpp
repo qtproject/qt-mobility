@@ -401,6 +401,5 @@ void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
     m_state = state;
 }
 
-#include "moc_qllcpsocket_symbian_p.cpp"
 
 QTM_END_NAMESPACE

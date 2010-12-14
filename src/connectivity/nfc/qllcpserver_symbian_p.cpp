@@ -61,7 +61,7 @@ QLlcpServerPrivate::~QLlcpServerPrivate()
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
     qDebug() << "QLlcpServerPrivate::listen() begin";
-   TPtrC wide(static_cast<const TUint16*>(serviceUri.utf16()),serviceUri.length());
+    TPtrC wide(static_cast<const TUint16*>(serviceUri.utf16()),serviceUri.length());
     RBuf8 narrow;
 
     TInt val = narrow.CreateMax(wide.Length());
@@ -127,7 +127,6 @@ void QLlcpServerPrivate::invokeNewConnection()
 
 void QLlcpServerPrivate::invokeError() const
 {
-    emit error(QLlcpServer::UnknownSocketError);
 }
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
@@ -148,7 +147,6 @@ QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {
     return QLlcpServer::UnknownSocketError;
 }
-#include "moc_qllcpserver_symbian_p.cpp"
 
 QTM_END_NAMESPACE
 
