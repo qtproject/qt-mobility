@@ -232,6 +232,7 @@ void tst_QGeoTiledMapData::panTest_data()
     QTest::addColumn<QPoint>("pxCenter");
     QTest::addColumn<QPoint>("pan");
     QTest::addColumn<qreal>("dist");
+    QTest::addColumn<QPoint>("pxFinal");
 
     QMap<QString, QVariant> params;
     QGeoMappingManagerEngine *mgr = new WhiteTileEngine(params, this);
@@ -239,6 +240,7 @@ void tst_QGeoTiledMapData::panTest_data()
     QSize window = QSize(500, 500);
     QSize target = QSize(50, 50);
     QPoint pxCenter = QPoint(250, 250);
+    QPoint pxFinal = pxCenter;
     QPixmap targetPixmap = indexedPixmap(target.width(), target.height());
 
     QGeoMapData *gmd;
@@ -249,24 +251,39 @@ void tst_QGeoTiledMapData::panTest_data()
 
     center = QGeoCoordinate(-27.58, 153.10);
     pan = QPoint(30, 50);
+    pxFinal = pxCenter - pan;
     dist = 1800e3;
     makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
     QTest::newRow("Brisbane, pan +ve") << mgr << gmd << obj <<
-                                          center << pxCenter << pan << dist;
+                                          center << pxCenter << pan << dist << pxFinal;
 
     center = QGeoCoordinate(0.0, 0.0);
     pan = QPoint(-30, 0);
+    pxFinal = pxCenter - pan;
     dist = 4700e3;
     makeFixtures(gmd, obj, center, center, 1.0, targetPixmap, mgr, window, target);
     QTest::newRow("At 0,0, pan -ve x") << mgr << gmd << obj <<
-                                          center << pxCenter << pan << dist;
+                                          center << pxCenter << pan << dist << pxFinal;
 
+    window = QSize(200, 200);
+    pxCenter = QPoint(100, 100);
     center = QGeoCoordinate(0.0, 179.9);
     pan = QPoint(50, -10);
+    pxFinal = pxCenter - pan;
     dist = 3900e3;
     makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
     QTest::newRow("Positive dateline, pan +ve") << mgr << gmd << obj << center
-                                                << pxCenter << pan << dist;
+                                                << pxCenter << pan << dist << pxFinal;
+
+    center = QGeoCoordinate(0.0, 10.0);
+    pan = QPoint(0, -30);
+    pxFinal = pxCenter;
+    dist = 0;
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    gmd->pan(0, -500);
+    center = gmd->screenPositionToCoordinate(pxCenter);
+    QTest::newRow("Clipping at north pole") << mgr << gmd << obj << center
+                                            << pxCenter << pan << dist << pxFinal;
 }
 
 void tst_QGeoTiledMapData::panTest()
@@ -276,22 +293,25 @@ void tst_QGeoTiledMapData::panTest()
     QFETCH(QGeoMapPixmapObject*, obj);
     QFETCH(QGeoCoordinate, center);
     QFETCH(QPoint, pxCenter);
+    QFETCH(QPoint, pxFinal);
     QFETCH(QPoint, pan);
     QFETCH(qreal, dist);
 
     QPointF c = gmd->coordinateToScreenPosition(center);
-    QCOMPARE(int(c.x()), pxCenter.x());
-    QCOMPARE(int(c.y()), pxCenter.y());
+    QCOMPARE(int(c.x()+0.5), pxCenter.x());
+    QCOMPARE(int(c.y()+0.5), pxCenter.y());
 
     gmd->pan(pan.x(), pan.y());
 
     QPointF c2 = gmd->coordinateToScreenPosition(center);
-    QCOMPARE(int(c2.x()), pxCenter.x() - pan.x());
-    QCOMPARE(int(c2.y()), pxCenter.y() - pan.y());
+    QCOMPARE(int(c2.x()+0.5), pxFinal.x());
+    QCOMPARE(int(c2.y()+0.5), pxFinal.y());
 
-    QGeoCoordinate nc = gmd->screenPositionToCoordinate(pxCenter);
-    qreal d = nc.distanceTo(center);
-    QVERIFY(d > 0.9*dist && d < 1.1*dist);
+    if (dist > 1e-5) {
+        QGeoCoordinate nc = gmd->screenPositionToCoordinate(pxCenter);
+        qreal d = nc.distanceTo(center);
+        QVERIFY(d > 0.9*dist && d < 1.1*dist);
+    }
 }
 
 void tst_QGeoTiledMapData::objectsAtPoint()
