@@ -81,6 +81,9 @@ private slots:
     void pixmapAtDateline_data();
     void pixmapAtDateline();
 
+    void panTest_data();
+    void panTest();
+
 private:
     void makeFixtures(QGeoMapData *&gmd, QGeoMapPixmapObject *&obj,
                       const QGeoCoordinate &center, const QGeoCoordinate &pixmap,
@@ -110,6 +113,8 @@ void tst_QGeoTiledMapData::makeFixtures(QGeoMapData *&gmd,
                                         const QSize &target)
 {
     gmd = mgr->createMapData();
+    // this call shouldn't be necessary?
+    // but you get a nice happy sigsegv without it
     gmd->init();
     gmd->setWindowSize(window);
     gmd->setZoomLevel(zoom);
@@ -218,6 +223,77 @@ void tst_QGeoTiledMapData::objectsAtPoint_data()
     QTest::newRow("Crossing dateline") << mgr << gmd << obj << center;
 }
 
+void tst_QGeoTiledMapData::panTest_data()
+{
+    QTest::addColumn<QGeoMappingManagerEngine*>("mgr");
+    QTest::addColumn<QGeoMapData*>("gmd");
+    QTest::addColumn<QGeoMapPixmapObject*>("obj");
+    QTest::addColumn<QGeoCoordinate>("center");
+    QTest::addColumn<QPoint>("pxCenter");
+    QTest::addColumn<QPoint>("pan");
+    QTest::addColumn<qreal>("dist");
+
+    QMap<QString, QVariant> params;
+    QGeoMappingManagerEngine *mgr = new WhiteTileEngine(params, this);
+
+    QSize window = QSize(500, 500);
+    QSize target = QSize(50, 50);
+    QPoint pxCenter = QPoint(250, 250);
+    QPixmap targetPixmap = indexedPixmap(target.width(), target.height());
+
+    QGeoMapData *gmd;
+    QGeoCoordinate center;
+    QPoint pan;
+    qreal dist;
+    QGeoMapPixmapObject *obj;
+
+    center = QGeoCoordinate(-27.58, 153.10);
+    pan = QPoint(30, 50);
+    dist = 1800e3;
+    makeFixtures(gmd, obj, center, center, 3.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Brisbane, pan +ve") << mgr << gmd << obj <<
+                                          center << pxCenter << pan << dist;
+
+    center = QGeoCoordinate(0.0, 0.0);
+    pan = QPoint(-30, 0);
+    dist = 4700e3;
+    makeFixtures(gmd, obj, center, center, 1.0, targetPixmap, mgr, window, target);
+    QTest::newRow("At 0,0, pan -ve x") << mgr << gmd << obj <<
+                                          center << pxCenter << pan << dist;
+
+    center = QGeoCoordinate(0.0, 179.9);
+    pan = QPoint(50, -10);
+    dist = 3900e3;
+    makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
+    QTest::newRow("Positive dateline, pan +ve") << mgr << gmd << obj << center
+                                                << pxCenter << pan << dist;
+}
+
+void tst_QGeoTiledMapData::panTest()
+{
+    QFETCH(QGeoMappingManagerEngine*, mgr);
+    QFETCH(QGeoMapData*, gmd);
+    QFETCH(QGeoMapPixmapObject*, obj);
+    QFETCH(QGeoCoordinate, center);
+    QFETCH(QPoint, pxCenter);
+    QFETCH(QPoint, pan);
+    QFETCH(qreal, dist);
+
+    QPointF c = gmd->coordinateToScreenPosition(center);
+    QCOMPARE(int(c.x()), pxCenter.x());
+    QCOMPARE(int(c.y()), pxCenter.y());
+
+    gmd->pan(pan.x(), pan.y());
+
+    QPointF c2 = gmd->coordinateToScreenPosition(center);
+    QCOMPARE(int(c2.x()), pxCenter.x() - pan.x());
+    QCOMPARE(int(c2.y()), pxCenter.y() - pan.y());
+
+    QGeoCoordinate nc = gmd->screenPositionToCoordinate(pxCenter);
+    qreal d = nc.distanceTo(center);
+    QVERIFY(d > 0.9*dist && d < 1.1*dist);
+}
+
 void tst_QGeoTiledMapData::objectsAtPoint()
 {
     QFETCH(QGeoMappingManagerEngine*, mgr);
@@ -225,6 +301,7 @@ void tst_QGeoTiledMapData::objectsAtPoint()
     QFETCH(QGeoMapPixmapObject*, obj);
     QFETCH(QGeoCoordinate, center);
 
+    QVERIFY(gmd->mapObjects().contains(obj));
     QVERIFY(gmd->mapObjectsInViewport().contains(obj));
     QPointF centerPt = gmd->coordinateToScreenPosition(center);
     QVERIFY(gmd->mapObjectsAtScreenPosition(centerPt).contains(obj));
