@@ -145,7 +145,7 @@ struct QSystemDeviceInfoData
     QSystemDeviceInfo::Profile currentProfile;
     QSystemDeviceInfo::PowerState currentPowerState;
 
-    QSystemDeviceInfo::KeyboardType keyboardType;
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes;
     QSystemDeviceInfo::KeypadType keypadType;
     QSystemDeviceInfo::LockType lockType;
     QSystemDeviceInfo::BatteryStatus batStatus;
@@ -155,10 +155,10 @@ struct QSystemDeviceInfoData
     bool currentBluetoothPower;
 
     bool wirelessConnected;
-    bool keyboardFlip;
+    bool keyboardFlipped;
     bool backLight;
     bool keypadLight;
-    QUuid uniqueId;
+    QUuid uniqueDeviceId;
 
     int messageRingtoneVolume;
     int voiceRingtoneVolume;

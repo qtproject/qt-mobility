@@ -609,7 +609,7 @@ void QSystemDeviceInfoPrivate::setInitialData()
     setProductName("simulator product name");
     setBatteryLevel(84);
     setDeviceLocked(false);
-    setKeyboardType(QSystemDeviceInfo::SoftwareKeyboard);
+    setKeyboardTypes(QSystemDeviceInfo::SoftwareKeyboard);
     setKeypadType(QSystemDeviceInfo::SecondaryKeypad);
     setTypeOfLock(QSystemDeviceInfo::DeviceUnlocked);
     setMessageRingtoneVolume(55);
@@ -729,10 +729,10 @@ void QSystemDeviceInfoPrivate::setBluetoothPower(bool v)
 }
 
 
-void QSystemDeviceInfoPrivate::setKeyboardType(QSystemDeviceInfo::KeyboardType v)
+void QSystemDeviceInfoPrivate::setKeyboardTypes(QSystemDeviceInfo::KeyboardTypeFlags v)
 {
-    if (data.keyboardType != v) {
-        data.keyboardType = v;
+    if (data.keyboardTypes != v) {
+        data.keyboardTypes = v;
     }
 }
 
@@ -744,11 +744,11 @@ void QSystemDeviceInfoPrivate::setWirelessKeyboardConnected(bool v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setKeyboardFlipOpen(bool v)
+void QSystemDeviceInfoPrivate::setKeyboardFlippedOpen(bool v)
 {
-    if (data.keyboardFlip != v) {
-        data.keyboardFlip = v;
-        emit keyboardFlip(v);
+    if (data.keyboardFlipped != v) {
+        data.keyboardFlipped = v;
+        emit keyboardFlipped(v);
     }
 }
 
@@ -767,10 +767,10 @@ void QSystemDeviceInfoPrivate::setBackLightOn(bool v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setUniqueId(const QUuid &v)
+void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
 {
-    if (data.uniqueId != v) {
-        data.uniqueId = v;
+    if (data.uniqueDeviceId != v) {
+        data.uniqueDeviceId = v;
     }
 }
 

@@ -213,14 +213,14 @@ public:
 
     bool currentBluetoothPowerState() const { return data.currentBluetoothPower;}
 
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType()const { return data.keyboardType; }
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes()const { return data.keyboardTypes; }
     QSystemDeviceInfo::KeypadType keypadType()const { return data.keypadType; }
     bool isWirelessKeyboardConnected()const { return data.wirelessConnected; }
-    bool isKeyboardFlipOpen()const { return data.keyboardFlip; }
+    bool isKeyboardFlippedOpen()const { return data.keyboardFlipped; }
 
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type)const { Q_UNUSED(type);return data.keypadLight; }
     bool backLightOn()const { return data.backLight; }
-    QUuid uniqueID(){ return data.uniqueId; }
+    QUuid uniqueDeviceID(){ return data.uniqueDeviceId; }
     QSystemDeviceInfo::LockType lockStatus()const { return data.lockType; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
@@ -246,15 +246,15 @@ public:
 
     void setBluetoothPower(bool v);
 
-    void setKeyboardType(QSystemDeviceInfo::KeyboardType v);
+    void setKeyboardTypes(QSystemDeviceInfo::KeyboardTypeFlags v);
     void setKeypadType(QSystemDeviceInfo::KeypadType v);
 
     void setWirelessKeyboardConnected(bool v);
-    void setKeyboardFlipOpen(bool v);
+    void setKeyboardFlippedOpen(bool v);
 
     void setKeypadLightOn(bool v);
     void setBackLightOn(bool v);
-    void setUniqueId(const QUuid &v);
+    void setUniqueDeviceId(const QUuid &v);
     void setTypeOfLock(QSystemDeviceInfo::LockType v);
 
     void setMessageRingtoneVolume(int v);
@@ -272,7 +272,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool) const;
 
     void wirelessKeyboardConnected(bool connected);
-    void keyboardFlip(bool open);
+    void keyboardFlipped(bool open);
     void deviceLocked(bool isLocked);
     void lockStatusChanged(QSystemDeviceInfo::LockType);
 

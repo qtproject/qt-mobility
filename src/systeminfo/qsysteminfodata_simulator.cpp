@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsysteminfodata_simulator_p.h"
-
+aqfgw
 #include <QtCore/QDataStream>
 
 QTM_BEGIN_NAMESPACE
@@ -79,14 +79,14 @@ QDataStream &operator<<(QDataStream &out, const QSystemDeviceInfoData &s)
     out << static_cast<qint32>(s.simStatus);
     out << static_cast<qint32>(s.currentProfile);
     out << static_cast<qint32>(s.currentPowerState);
-    out << static_cast<qint32>(s.keyboardType);
+    out << static_cast<qint32>(s.keyboardTypes);
     out << static_cast<qint32>(s.keypadType);
 
     out << static_cast<qint32>(s.lockType);
     out << static_cast<qint32>(s.batStatus);
 
     out << s.batteryLevel << s.deviceLocked;
-    out << s.wirelessConnected << s.keyboardFlip << s.backLight << s.keypadLight << s.uniqueId;
+    out << s.wirelessConnected << s.keyboardFlipped << s.backLight << s.keypadLight << s.uniqueDeviceId;
     out << s.messageRingtoneVolume << s.voiceRingtoneVolume << s.vibrationActive;
     return out;
 }
@@ -94,9 +94,9 @@ QDataStream &operator>>(QDataStream &in, QSystemDeviceInfoData &s)
 {
     in >> s.imei >> s.imsi >> s.manufacturer >> s.model >> s.productName;
 
-    qint32 inputMethod, simStatus, profile, powerState, keyboardType, keypadType, lockType, batStatus;
+    qint32 inputMethod, simStatus, profile, powerState, keyboardTypes, keypadType, lockType, batStatus;
     in >> inputMethod >> simStatus >> profile >> powerState;
-    in >> keyboardType >> keypadType >> lockType >> batStatus;
+    in >> keyboardTypes >> keypadType >> lockType >> batStatus;
 
     s.inputMethodType = static_cast<QSystemDeviceInfo::InputMethodFlags>(inputMethod);
     s.simStatus = static_cast<QSystemDeviceInfo::SimStatus>(simStatus);
@@ -104,14 +104,14 @@ QDataStream &operator>>(QDataStream &in, QSystemDeviceInfoData &s)
     s.currentPowerState = static_cast<QSystemDeviceInfo::PowerState>(powerState);
 
     in >> s.batteryLevel >> s.deviceLocked;
-    in >> s.wirelessConnected >> s.keyboardFlip >> s.backLight >> s.keypadLight;
+    in >> s.wirelessConnected >> s.keyboardFlipped >> s.backLight >> s.keypadLight;
 
-    s.keyboardType = static_cast<QSystemDeviceInfo::KeyboardType>(keyboardType);
+    s.keyboardTypes = static_cast<QSystemDeviceInfo::KeyboardType>(keyboardTypes);
     s.keypadType = static_cast<QSystemDeviceInfo::KeypadType>(keypadType);
     s.lockType = static_cast<QSystemDeviceInfo::LockType>(lockType);
     s.batStatus = static_cast<QSystemDeviceInfo::BatteryStatus>(batStatus);
 
-    in >> s.uniqueId;
+    in >> s.uniqueDeviceId;
     in >> s.messageRingtoneVolume >> s.voiceRingtoneVolume >> s.vibrationActive;
 
     return in;
