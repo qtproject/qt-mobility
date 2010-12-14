@@ -72,6 +72,7 @@ private slots:
 
     void pixmapObject_data();
     void pixmapObject();
+    void pixmapDateline();
 
 private:
     QGeoMapData *gmd;
@@ -105,8 +106,8 @@ void tst_QGeoTiledMapData::pixmapObject_data()
     QTest::newRow("Brisbane @z=3") << 3.0 << -27.58 << 153.10
                                    << indexed50;
     QTest::newRow("At 0,0") << 1.0 << 0.0 << 0.0 << indexed50;
-    QTest::newRow("Positive dateline") << 2.0 << 0.0 << 179.9 << indexed50;
-    QTest::newRow("Negative dateline") << 2.0 << 0.0 << -180.1 << indexed50;
+    QTest::newRow("Positive dateline") << 2.0 << 0.0 << 179.99 << indexed50;
+    QTest::newRow("Negative dateline") << 2.0 << 0.0 << -180.0 << indexed50;
 }
 
 void tst_QGeoTiledMapData::pixmapObject()
@@ -150,8 +151,43 @@ void tst_QGeoTiledMapData::pixmapObject()
             TilePixelValue tpv(im.pixel(x, y));
             QCOMPARE(tpv.px(), px);
             QCOMPARE(tpv.py(), py);
+            QCOMPARE(tpv.zoom(), 1u);
         }
     }
+}
+
+void tst_QGeoTiledMapData::pixmapDateline()
+{
+    QGeoCoordinate center(0.0, -179.9);
+    gmd->setWindowSize(QSizeF(500, 500));
+    gmd->setZoomLevel(3.0);
+    gmd->setCenter(center);
+
+    QGeoMapPixmapObject *obj = new QGeoMapPixmapObject();
+    obj->setPixmap(indexed50);
+    obj->setCoordinate(QGeoCoordinate(3.0, 175.0));
+    gmd->addMapObject(obj);
+    obj->setVisible(true);
+
+    QPixmap pm(500, 500);
+    QPainter *painter = new QPainter(&pm);
+    pm.fill(Qt::black);
+
+    QApplication::processEvents();
+
+    gmd->paint(painter, NULL);
+    painter->end();
+
+    gmd->removeMapObject(obj);
+    delete obj;
+
+    QImage im = pm.toImage();
+    TilePixelValue tpv(im.pixel(250, 250));
+    QCOMPARE(tpv.zoom(), 1u);
+    QVERIFY(tpv.px() < 50);
+    QVERIFY(tpv.py() < 50);
+    QVERIFY(tpv.px() > 5);
+    QVERIFY(tpv.py() > 5);
 }
 
 QTEST_MAIN(tst_QGeoTiledMapData)
