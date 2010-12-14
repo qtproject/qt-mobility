@@ -179,10 +179,8 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 /*!
  \reimp
  */
-void QGeoTiledMapDataNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    QGeoTiledMapData::paint(painter, option);
-
     QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
 
     painter->drawPixmap(
