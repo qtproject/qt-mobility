@@ -49,7 +49,7 @@ const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
