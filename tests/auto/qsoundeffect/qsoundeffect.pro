@@ -17,9 +17,11 @@ MOBILITY = multimedia
 QT += declarative
 
 wince*|symbian {
-    deploy.sources = test.wav
+    deploy.files = test.wav
     DEPLOYMENT = deploy
-    !symbian:DEFINES += SRCDIR=\\\"\\\"
+    DEFINES += QT_QSOUNDEFFECT_USEAPPLICATIONPATH
+} else:maemo* {
+    DEFINES += QT_QSOUNDEFFECT_USEAPPLICATIONPATH
 } else {
     DEFINES += SRCDIR=\\\"$$PWD/\\\"
 }
