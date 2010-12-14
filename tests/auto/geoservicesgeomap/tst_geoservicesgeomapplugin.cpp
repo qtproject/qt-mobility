@@ -51,8 +51,6 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-Q_IMPORT_PLUGIN( qtgeoservices_staticgeomapplugin)
-
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCoordinate)

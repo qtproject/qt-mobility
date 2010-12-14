@@ -47,7 +47,9 @@
 
 class MapBox;
 class QGridLayout;
+class QLayout;
 class QPushButton;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -55,9 +57,13 @@ class MainWindow : public QMainWindow
 private:
     QList<MapBox *> m_boxes;
     QGridLayout * m_layout;
+    QLayout * m_controlLayout;
     void addBox(MapBox * box);
-    QTime eventTime;
+    QTime panTime;
     QPushButton * m_cleanButton;
+    QPushButton * m_panToggle;
+    QLabel * m_errorLabel;
+    QTimer * m_panTimer;
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -65,9 +71,11 @@ public:
 
 private slots:
     void networkSessionOpened();
+    void compareImages();
+    void setAutoPanEnabled(bool enabled);
+    void panTimerHandler();
 
 protected:
-    void timerEvent(QTimerEvent * event);
     void resizeEvent(QResizeEvent * event);
 };
 
