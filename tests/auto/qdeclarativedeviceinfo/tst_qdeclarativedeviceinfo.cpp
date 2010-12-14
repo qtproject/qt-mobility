@@ -311,10 +311,10 @@ void tst_QDeclarativeDeviceInfo::tst_lockStatus()
 void tst_QDeclarativeDeviceInfo::tst_getActiveProfileDetails()
 {
     QDeclarativeDeviceInfo di;
-    QSystemDeviceInfo::ActiveProfileDetails *details = di.getActiveProfileDetails();
-    int vol = details->messageRingtoneVolume();
-    int vol2 = details->voiceRingtoneVolume();
-    bool vib = details->vibrationActive();
+    QSystemDeviceInfo::ActiveProfileDetails details = di.getActiveProfileDetails();
+    int vol = details.messageRingtoneVolume();
+    int vol2 = details.voiceRingtoneVolume();
+    bool vib = details.vibrationActive();
     if(di.currentProfile() != QSystemDeviceInfo::UnknownProfile) {
         QVERIFY(vol > -1 && vol < 101);
         QVERIFY(vol2 > -1 && vol2 < 101);

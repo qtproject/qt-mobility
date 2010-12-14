@@ -222,7 +222,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
    */
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
-    : QObject(parent), d(deviceInfoPrivate()),activeProfileDetails(0)
+    : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
@@ -239,8 +239,6 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
-    if(activeProfileDetails != NULL)
-        delete activeProfileDetails;
 }
 
 
@@ -620,10 +618,9 @@ QSystemDeviceInfo::LockType QSystemDeviceInfo::lockStatus()
 /*!
   Returns a QSystemDeviceInfo::ActiveProfileDetails for the currently active profile.
   */
-QSystemDeviceInfo::ActiveProfileDetails *QSystemDeviceInfo::getActiveProfileDetails()
+QSystemDeviceInfo::ActiveProfileDetails QSystemDeviceInfo::getActiveProfileDetails()
 {
-    if(activeProfileDetails == NULL)
-        activeProfileDetails = new QSystemDeviceInfo::ActiveProfileDetails();
+  //  QSystemDeviceInfo::ActiveProfileDetails activeProfileDetails;
     return activeProfileDetails;
 }
 
@@ -633,9 +630,25 @@ QSystemDeviceInfo::ActiveProfileDetails *QSystemDeviceInfo::getActiveProfileDeta
 */
 QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails()
 {
-
+  //   d = new QSystemDeviceInfoPrivate;
 }
 
+/*!
+    Constructs the ActiveProfileDetails that is a copy of \a other.
+*/
+QSystemDeviceInfo::ActiveProfileDetails::ActiveProfileDetails(const ActiveProfileDetails& other)
+//    : d(other.d)
+{
+}
+
+/*!
+    Assigns \a other to this ActiveProfileDetails and returns a reference to it.
+*/
+QSystemDeviceInfo::ActiveProfileDetails &QSystemDeviceInfo::ActiveProfileDetails::operator=(const ActiveProfileDetails& other)
+{
+   // d = other.d;
+    return *this;
+}
 /*!
     Destroys the ActiveProfileDetails.
 */

@@ -101,6 +101,8 @@ public:
     qreal distanceTo(const QGeoCoordinate &other) const;
     qreal azimuthTo(const QGeoCoordinate &other) const;
 
+    QGeoCoordinate atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp = 0.0) const;
+
     QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:

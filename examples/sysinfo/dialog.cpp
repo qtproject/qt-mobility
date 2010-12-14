@@ -841,10 +841,10 @@ void Dialog::updateProfile()
         };
         profileLabel->setText(profilestring);
 
-        QSystemDeviceInfo::ActiveProfileDetails *pDetails = di->getActiveProfileDetails();
-        messageRingtonVolumeLcdNumber->display(pDetails->messageRingtoneVolume());
-        voiceRingtoneVolumeLcdNumber->display(pDetails->voiceRingtoneVolume());
-        vibrationActiveRadioButton->setChecked(pDetails->vibrationActive());
+        QSystemDeviceInfo::ActiveProfileDetails pDetails = di->getActiveProfileDetails();
+        messageRingtonVolumeLcdNumber->display(pDetails.messageRingtoneVolume());
+        voiceRingtoneVolumeLcdNumber->display(pDetails.voiceRingtoneVolume());
+        vibrationActiveRadioButton->setChecked(pDetails.vibrationActive());
     }
 }
 
