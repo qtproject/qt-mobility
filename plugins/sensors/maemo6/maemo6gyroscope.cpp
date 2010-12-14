@@ -49,7 +49,8 @@ maemo6gyroscope::maemo6gyroscope(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
     const QString sensorName = "gyroscopesensor";
-    initSensor<GyroscopeSensorChannelInterface>(sensorName, m_initDone);
+//    initSensor<GyroscopeSensorChannelInterface>(sensorName, m_initDone);
+    setDescription(QLatin1String("angular velocity in "));
     setRanges(MILLI);
 
     if (m_sensorInterface){

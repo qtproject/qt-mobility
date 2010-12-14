@@ -44,8 +44,8 @@
 
 #include "maemo6sensorbase.h"
 #include <qgyroscope.h>
-#include <gyroscopesensor_i.h>
 #include <datatypes/xyz.h>
+//#include <gyroscopesensor_i.h>
 
 
 QTM_USE_NAMESPACE
