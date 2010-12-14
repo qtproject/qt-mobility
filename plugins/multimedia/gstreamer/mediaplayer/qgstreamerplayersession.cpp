@@ -153,6 +153,10 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         double volume = 1.0;
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
         m_volume = int(volume*100);
+
+        g_signal_connect(G_OBJECT(m_playbin), "notify::volume", G_CALLBACK(handleVolumeChange), this);
+        if (m_usePlaybin2)
+            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleVolumeChange), this);
     }
 
 #ifdef Q_WS_MAEMO_6
@@ -809,14 +813,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             m_lastPosition = newPos/1000;
             emit positionChanged(newPos);
         }
-
-        double volume = 1.0;
-        g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
-        if (m_volume != int(volume*100)) {
-            m_volume = int(volume*100);
-            emit volumeChanged(m_volume);
-        }
-
     } else {
 #ifdef DEBUG_PLAYBIN
         qDebug() << "GST MSG, src =" << GST_MESSAGE_SRC(gm)->name << "type =" << GST_MESSAGE_TYPE_NAME(gm);
@@ -1389,3 +1385,29 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     // should be functional.
 }
 
+void QGstreamerPlayerSession::handleVolumeChange(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(o);
+    Q_UNUSED(p);
+    QGstreamerPlayerSession *session = reinterpret_cast<QGstreamerPlayerSession *>(d);
+    QMetaObject::invokeMethod(session, "updateVolume", Qt::QueuedConnection);
+}
+
+void QGstreamerPlayerSession::updateVolume()
+{
+    double volume = 1.0;
+    g_object_get(m_playbin, "volume", &volume, NULL);
+    if (m_volume != int(volume*100)) {
+        m_volume = int(volume*100);
+        emit volumeChanged(m_volume);
+    }
+
+    if (m_usePlaybin2) {
+        bool muted = false;
+        g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
+        if (m_muted != muted) {
+            m_muted = muted;
+            emit mutedStateChanged(muted);
+        }
+    }
+}
