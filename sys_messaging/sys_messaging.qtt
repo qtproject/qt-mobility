@@ -53,6 +53,19 @@ function automatedTestEnvironment(){
 
 testcase = {
 
+    serviceAction_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Write Message: Start and Quit
+    1. Launch *serviceaction* application
+    1. Verify that the UI is shown
+    1. Verify that the UI layout is proper and usable on the specific device
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
+
+
     serviceAction_sendplainTextMessage: function (){
         if (automatedTestEnvironment()){
         }else{
@@ -95,67 +108,261 @@ testcase = {
         }
     },
 
-    write_message : function() {
+    writeMessage_startQuit : function() {
         if (automatedTestEnvironment()){
         }else{
-            prompt(twiki('---++++ Write Message 
+            prompt(twiki('---++++ Write Message: Start and Quit
     1. Launch *writemessage* application
-    1. Fill in To, Subject, Content
-    1. Click "Add attachment" menu item and select file(s) to attach
-    1. Click on "Send" menu entry
-    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
+    1. Verify that the UI is shown
+    1. Verify that the UI layout is proper and usable on the specific device
+    1. Exit the application, verify it exits properly without error
         '));
         }
     },
 
 
-    query_messages : function() {
+    writeMessage_sendSMS : function() {
         if (automatedTestEnvironment()){
         }else{
-            prompt(twiki('---++++ Query Messages
-    For WinCE start the example in Visual Studio since query messages only produces output to the console.
-
-    1. Send an email to the test account
-    1. Launch querymessages
-    1. Verify that the message is retrieved and displayed to the console. 
+            prompt(twiki('---++++ Write Message: Send SMS
+    1. Launch *writemessage* application
+    1. Choose *SMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Verify that the *Subject* field is disabled
+    1. Fill in some random text to the body text area
+    1. Verify that the *Add*/*Remove* buttons are disabled for SMS
+    1. Click on *Send*
+    1. On the recever mobile phone, verify the correct SMS is received
         '));
         }
     },
 
-    keep_in_touch : function() {
+    writeMessage_sendMMS : function() {
         if (automatedTestEnvironment()){
         }else{
-            prompt(twiki('---++++ Keep In Touch
-    For WinCE ensure that Microsoft Active Sync has enabled the syncing of the Inbox and Sent Email folders
-
-    1. Send messages using SendMessage
-    1. Change system date to other months and years, and send more messages
-    1. Repeat 1, 2 for several times
-    1. Launch keepintouch
-    1. Select an item from *Contacted within the last* combo box
-    1. Click on Search
-    1. Select from Addresses list box
-    1. Verify the correct messages are shown in Messages list box 
+            prompt(twiki('---++++ Write Message: Send MMS
+    1. Launch *writemessage* application
+    1. Choose *MMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove* to remove it
+    1. Click on *Add* button to add two more attachments file to the message
+    1. Click on *Send*
+    1. On the recever mobile phone, verify the correct MMS is received with attachments
         '));
         }
     },
 
-     messagingEx : function() {
+    writeMessage_sendEmail : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Write Message: Send Email
+    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
+    1. Launch *writemessage* application
+    1. Choose *Email* in *Account* field
+    1. Fill in a known email address to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove* to remove it
+    1. Click on *Add* button to add two more attachments file to the message
+    1. Click on *Send*
+    1. On the recever email client, verify the correct Email is received with attachments
+        '));
+        }
+    },
 
-         if (automatedTestEnvironment()){
-         }else{
-             prompt(twiki('---++++ Messaging Ex
+    queryMessage_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Query Message: Start and Quit
+    Note: *querymessage* is a console application, it must be launched from command line, and the results are shown on command line only
+    
+    1. Launch *querymessage* application using command line
+    1. Verify the application runs with no crash
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
 
-     1. Start messagingEx application
-     1. For each supportted backend, fill in the receiver, title, body, and select attachment
-     1. Click on "store" button and verify the message has been stored to the system
-     1. For each supportted backend, fill in the receiver, title, body, and select attachment
-     1. Click on "send" and verify the message has been sent correctly
-                          '));
-         }
-     },
+    queryMessage_queryMessage : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Query Message: Start and Quit
+    Note: *querymessage* is a console application, it must be launched from command line, and the results are shown on command line only
+    Currently the test is not available for Symbian platforms.
 
-     declarativeMessaging : function() {
+    1. Synchronize a set of test messages to the phone using Nokia Ovi Suite or an equal tool
+    1. Launch *querymessage* application using command line
+    1. Verify that the messages are properly queried and results are correct
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
+
+    keepInTouch_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Query Message: Start and Quit
+    
+    1. Launch *keepintouch* application using command line
+    1. Verify the application runs with no crash
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
+
+
+    keepInTouch_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Query Message: Start and Quit
+    
+    1. Synchronize a set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool
+    1. Launch *keepintouch* application using command line
+    1. Select *Year* from *Contacted within the last* combo box
+    1. Click on *Search*
+    1. Verify that all contacts contacted in the last year are displayed
+    1. Select *3 Months* from *Contacted within the last* combo box
+    1. Click on *Search*
+    1. Verify that all contacts contacted in the last three months are displayed
+    1. Check the *But not in the last* checkbox
+    1. Choose *Month* in the combo box next to the checkbox
+    1. click on *Search*
+    1. Verify that the contacts contacted in the last three months but not in the last month are shown
+        '));
+        }
+    },
+
+    messagingEx_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ MessageEx: Start and Quit
+    1. Launch *messagingex* application
+    1. Verify that the UI is shown
+    1. Verify that the UI layout is proper and usable on the specific device
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
+
+    messagingEx_sendSMS : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ MessagingEx: Send SMS
+    1. Launch *messagingEx* application
+    1. Choose *SMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Fill in some random text to the body text area
+    1. Click on *Send Message*
+    1. On the recever mobile phone, verify the correct SMS is received
+        '));
+        }
+    },
+
+    messagingEx_storeSMS : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ MessagingEx: Store SMS
+    1. Launch *messagingEx* application
+    1. Choose *SMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Fill in some random text to the body text area
+    1. Click on *Store Message*
+    1. Verify the correct SMS is stored in the system
+        '));
+        }
+    },
+
+    messagingEx_sendMMS : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ MessagingEx: Send MMS
+    1. Launch *messagingex* application
+    1. Choose *MMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add Attachment* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove Attachment* to remove it
+    1. Click on *Add Attachment* button to add two more attachments file to the message
+    1. Click on *Send Message*
+    1. On the recever mobile phone, verify the correct MMS is received with attachments
+        '));
+        }
+    },
+
+    messagingEx_storeMMS : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ MessagingEx: Store MMS
+    1. Launch *messagingex* application
+    1. Choose *MMS* in *Account* field
+    1. Fill in a known mobile phone number to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add Attachment* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove Attachment* to remove it
+    1. Click on *Add Attachment* button to add two more attachments file to the message
+    1. Click on *Store Message*
+    1. Verify the correct MMS is stored with attachments
+        '));
+        }
+    },
+
+    messagingEx_sendEmail : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ messagingEx: Send Email
+    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
+    1. Launch *messagingex* application
+    1. Choose *Email* in *Account* field
+    1. Fill in a known email address to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add Attachment* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove Attachment* to remove it
+    1. Click on *Add Attachment* button to add two more attachments file to the message
+    1. Click on *Send Message*
+    1. On the recever email client, verify the correct Email is received with attachments
+        '));
+        }
+    },
+
+    messagingEx_storeEmail : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ messagingEx: Store Email
+    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
+    1. Launch *messagingex* application
+    1. Choose *Email* in *Account* field
+    1. Fill in a known email address to *To* field
+    1. Fill in some random subject to *Subject* field
+    1. Fill in some random text to the body text area
+    1. Click on *Add Attachment* button to add an attachment file to the message
+    1. Choose the attachment just added, click on *Remove Attachment* to remove it
+    1. Click on *Add Attachment* button to add two more attachments file to the message
+    1. Click on *Store Message*
+    1. Verify the correct Email is stored with attachments
+        '));
+        }
+    },
+
+    declarativeMessaging_startQuit : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Declarative Messaging: Start and Quit
+    1. Launch *declarativemessaging* application
+    1. Verify that the UI is shown
+    1. Verify that the UI layout is proper and usable on the specific device
+    1. Exit the application, verify it exits properly without error
+        '));
+        }
+    },
+
+     declarativeMessaging_ShowDetails : function() {
           if (automatedTestEnvironment()){
           }else{
               prompt(twiki('---++++ Declarative Messaging
@@ -164,7 +371,7 @@ testcase = {
       1. Verify that the sample messages are listed
       1. Randomly click on a sample message
       1. Verify that the message details are shown
-                           '));
+          '));
           }
       },
 
