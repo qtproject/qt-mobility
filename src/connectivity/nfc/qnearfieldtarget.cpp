@@ -126,6 +126,7 @@ QTM_BEGIN_NAMESPACE
     \value ChecksumMismatchError    The checksum has detected a corrupted response.
     \value InvalidParametersError   Invalid parameters were passed to a tag type specific function.
     \value NdefReadError            Failed to read NDEF messages from the target.
+    \value NdefWriteError           Failed to write NDEF messages to the target.
 */
 
 /*!
@@ -228,6 +229,14 @@ int QNearFieldTarget::RequestId::refCount() const
 bool QNearFieldTarget::RequestId::operator<(const RequestId &other) const
 {
     return d < other.d;
+}
+
+/*!
+    \internal
+*/
+bool QNearFieldTarget::RequestId::operator==(const RequestId &other) const
+{
+    return d == other.d;
 }
 
 /*!
