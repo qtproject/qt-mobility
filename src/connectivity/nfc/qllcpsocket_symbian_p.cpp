@@ -83,7 +83,9 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
          m_symbianSocketType1(NULL),
          m_symbianSocketType2(NULL),
          m_socketType(connectionUnknown),
-         q_ptr(q)
+         q_ptr(q),
+         m_emittedReadyRead(false),
+         m_emittedBytesWritten(false)
 {
     qDebug() << "QLlcpSocketPrivate::QLlcpSocketPrivate() begin";
     m_unconnectedState = new QLLCPUnconnected(this);
@@ -120,7 +122,9 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_error(QLlcpSocket::UnknownSocketError),
       m_symbianSocketType1(NULL),
       m_symbianSocketType2(socketType2_symbian),
-      m_socketType(connectionType2)
+      m_socketType(connectionType2),
+      m_emittedReadyRead(false),
+      m_emittedBytesWritten(false)
 {
 	Q_CHECK_PTR(m_symbianSocketType2);
     m_state = new QLLCPConnected(this);
@@ -169,7 +173,13 @@ void QLlcpSocketPrivate::invokeReadyRead()
 {
     //qDebug() << "QLlcpSocketPrivate::invokeReadyRead() begin";
     Q_Q(QLlcpSocket);
-    emit q->readyRead();
+    //If called from within a slot connected to the readyRead() signal, readyRead() will not be reemitted.
+    if (!m_emittedReadyRead){
+        m_emittedReadyRead = true;
+        emit q->readyRead();
+        m_emittedReadyRead = false;
+    }
+
     qDebug() << "QLlcpSocketPrivate::invokeReadyRead() end";
 }
 void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
@@ -194,7 +204,11 @@ qint64 QLlcpSocketPrivate::bytesAvailable() const
 void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 {
     Q_Q(QLlcpSocket);
-    emit q->bytesWritten(bytes);
+    if (!m_emittedBytesWritten){
+        m_emittedBytesWritten = true;
+        emit q->bytesWritten(bytes);
+        m_emittedBytesWritten = false;
+    }
 }
 
 void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
