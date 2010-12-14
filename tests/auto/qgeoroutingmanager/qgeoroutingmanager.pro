@@ -19,10 +19,4 @@ MOBILITY = location
 symbian {
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
     TARGET.CAPABILITY = ALL -TCB
-
-    LIBS           += -lqtgeoservices_staticroutingplugin
-} else {
-    LIBS           += -L../../../build/tests/bin/plugins/geoservices
-    LIBS           += -l$$mobilityDeployFilename(qtgeoservices_staticroutingplugin)
-    TESTDLLS = $$mobilityDeployFilename(qtgeoservices_staticroutingplugin)
 }
