@@ -104,6 +104,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished())
 #ifndef QT_NO_DBUS
     Q_PRIVATE_SLOT(d_func(), void _q_discoveredServices(QDBusPendingCallWatcher*))
+    Q_PRIVATE_SLOT(d_func(), void _q_createdDevice(QDBusPendingCallWatcher*))
 #endif
 };
 

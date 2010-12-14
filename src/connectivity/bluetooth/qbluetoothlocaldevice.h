@@ -117,6 +117,7 @@ public:
 Q_SIGNALS:    
     void hostModeStateChanged(HostMode state);
     void pairingFinished(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
+    void pairingDisplayPinCode(const QBluetoothAddress &address, QString pin);
 
 private:
     QBluetoothLocalDevicePrivate *d_ptr;

@@ -103,6 +103,7 @@ public:
     void _q_serviceDiscoveryFinished();
 #ifndef QT_NO_DBUS
     void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
+    void _q_createdDevice(QDBusPendingCallWatcher *watcher);
 #endif
 
 #ifdef Q_OS_SYMBIAN

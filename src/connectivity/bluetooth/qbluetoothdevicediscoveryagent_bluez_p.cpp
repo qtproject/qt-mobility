@@ -91,8 +91,7 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::start()
     QDBusArgument d = p.value<QDBusArgument>();
     QStringList l; d >> l;
     QString path;
-    foreach (path, l){
-//        qDebug() << "Device at" << path;
+    foreach (path, l){        
         OrgBluezDeviceInterface *device = new OrgBluezDeviceInterface(QLatin1String("org.bluez"), path,
                                                                       QDBusConnection::systemBus());
         QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
@@ -101,6 +100,7 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::start()
             continue;
         QVariantMap v = deviceReply.value();
         QString address = v.value("Address").toString();
+//        qDebug() << "Already know: " << address;
 //        qDebug() << "Address: " << address << v.value("UUIDs").toStringList();
         _q_deviceFound(address, v);
     }
@@ -131,11 +131,6 @@ void QBluetoothDeviceDiscoveryAgentPrivateBluez::_q_deviceFound(const QString &a
     const QString btName = dict.value(QLatin1String("Name")).toString();
     quint32 btClass = dict.value(QLatin1String("Class")).toUInt();
 //    qDebug() << "Discovered: " << address << btName << btClass << discoveredDevices.count();
-
-//    QList<QString> values = dict.keys();
-//    for(int i = 0; i < values.size(); i++){
-//        qDebug() << values.at(i) << dict[values.at(i)];
-//    }
 
     QBluetoothDeviceInfo device(btAddress, btName, btClass);    
     for(int i = 0; i < discoveredDevices.size(); i++){
