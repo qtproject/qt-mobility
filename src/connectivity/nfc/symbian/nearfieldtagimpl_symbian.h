@@ -55,6 +55,7 @@
 
 #include "nearfieldtagndefrequest_symbian.h"
 #include "nearfieldtagcommandrequest_symbian.h"
+#include "nearfieldtagcommandsrequest_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
@@ -96,7 +97,7 @@ public: // From MNearFieldTargetOperation
     bool IssueNextRequest();
     void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId AllocateRequestId();
-    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
+    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
 
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
@@ -121,6 +122,7 @@ public:
     }
 
     QNearFieldTarget::RequestId _sendCommand(const QByteArray &command);
+    QNearFieldTarget::RequestId _sendCommands(const QList<QByteArray> &command);
     bool _waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs = 5000);
 
     QByteArray _uid() const;
@@ -199,17 +201,52 @@ template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 {
     CNearFieldNdefTarget * ndefTarget = 0;
-    if (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type())
+    if (
+       (mCurrentRequest) && (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type()) ||
+       (!mCurrentRequest) 
+       )
+
     {
         CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
         return ndefTarget ? ndefTarget->hasNdefMessage() : false;
     }
     else
     {
-        // TODO:
-        // create a new request for HasNdefMessages Operation, and INSERT it behind
-        // ongoing request so that it can be run immediately when current request
-        // finished. And Wait the request then return result.
+        NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
+
+        QNearFieldTarget::RequestId requestId;
+
+        if (readNdefRequest)
+        {
+            readNdefRequest->SetRequestId(requestId);
+            readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
+            readNdefRequest->SetOperator(this);
+            int index = mPendingRequestList.indexOf(mCurrentRequest);
+            if ((index < 0) || (index = mPendingRequestList.count() - 1))
+            {
+                // no next request
+                mPendingRequestList.append(readNdefRequest);
+            }
+            else
+            {
+                mPendingRequestList.insert(index+1, readNdefRequest);
+            }
+            readNdefRequest->WaitRequestCompleted(5000);
+            if (mMessageList.Count() == 0)
+            {
+                return false;
+            }
+            else
+            {
+                mMessageList.Reset();
+                return true;
+            }
+        }
+        else
+        {
+            // TODO: is that proper way?
+            return false;
+        }
     }
 }
 
@@ -255,6 +292,7 @@ bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
     if ((index < 0) || (index = mPendingRequestList.count() - 1))
     {
         // no next request
+        mCurrentRequest = 0;
         return false;
     }
     else
@@ -294,7 +332,7 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::AllocateRequestId()
 } 
 
 template<typename TAGTYPE>
-bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response)
+bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
     return tag->handleResponse(id, response);
@@ -383,6 +421,30 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
             rawCommandRequest->IssueRequest();
         }
         mPendingRequestList.append(rawCommandRequest);
+    }
+    // TODO: consider else
+    return requestId;
+}
+
+template<typename TAGTYPE>
+QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommands(const QList<QByteArray> &commands)
+{
+    NearFieldTagCommandsRequest * rawCommandsRequest = new NearFieldTagCommandsRequest;
+    QNearFieldTarget::RequestId requestId;
+
+    if (rawCommandsRequest)
+    {
+        rawCommandsRequest->SetInputCommands(commands);
+        rawCommandsRequest->SetRequestId(requestId);
+        rawCommandsRequest->SetOperator(this);
+
+        if (!_isProcessingRequest())
+        {
+            // issue the request
+            mCurrentRequest = rawCommandsRequest;
+            rawCommandsRequest->IssueRequest();
+        }
+        mPendingRequestList.append(rawCommandsRequest);
     }
     // TODO: consider else
     return requestId;

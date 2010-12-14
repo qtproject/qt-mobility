@@ -39,11 +39,77 @@
 **
 ****************************************************************************/
 #include <nfctag.h>
+#include <QVariant>
 #include "nearfieldutility_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
+static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
+{
+    switch (command.at(0)) {
+    case 0x01:  // READ
+        if (command.at(1) == response.at(0))
+            return quint8(response.at(1));
+        break;
+    case 0x53: { // WRITE-E
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && (writeData == data));
+    }
+    case 0x1a: { // WRITE-NE
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && ((writeData & data) == data));
+    }
+    case 0x10: { // RSEG
+        quint8 segmentAddress = quint8(command.at(1)) >> 4;
+        quint8 readSegmentAddress = quint8(response.at(0)) >> 4;
+        if (readSegmentAddress == segmentAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x02: { // READ8
+        quint8 blockAddress = command.at(1);
+        quint8 readBlockAddress = response.at(0);
+        if (readBlockAddress == blockAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x54: { // WRITE-E8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        return ((writeBlockAddress == blockAddress) && (writeData == data));
+    }
+    case 0x1b: { // WRITE-NE8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        if (writeBlockAddress != blockAddress)
+            return false;
+
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+
+        return true;
+    }
+    }
+
+    return QVariant();
+}
 /*!
     \class QNearFieldTagType1Symbian
     \brief The QNearFieldTagType1Symbian class provides symbian backend implementation for communicating with an NFC Tag
@@ -78,6 +144,17 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
 {
+    QByteArray command;
+    command.append(char(0x78));     // RID
+    command.append(char(0x00));     // Address (unused)
+    command.append(char(0x00));     // Data (unused)
+    command.append(uid().left(4));  // 4 bytes of UID
+    // Hardware will append CRC bytes. The CRC value appended 
+    // to the command will be ignored.
+    command.append(char(0x00)); // CRC1
+    command.append(char(0x00)); // CRC2
+
+    return sendCommand(command);
 }
 
 /*!
@@ -85,7 +162,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
 {
-#if 0
     QByteArray command;
     command.append(char(0x00)); // RALL
     command.append(char(0x00));
@@ -97,7 +173,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
     command.append(char(0x00)); // CRC2
 
     return sendCommand(command);
-#endif
 }
 
 /*!
@@ -105,7 +180,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
 {
-#if 0
     // MSB must be 0
     if (address & 0x80)
         return 0;
@@ -121,8 +195,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
-
+    return sendCommand(command);
+#if 0
     if (response.isEmpty())
         return 0;
 
@@ -139,7 +213,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
-#if 0
     // MSB must be 0
     if (address & 0x80)
         return false;
@@ -162,8 +235,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
-
+    return sendCommand(command);
+#if 0
     if (response.isEmpty())
         return false;
 
@@ -187,9 +260,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
-#if 0
     if (segmentAddress & 0xf0)
-        return QByteArray();
+        return QNearFieldTarget::RequestId();
 
     QByteArray command;
     command.append(char(0x10));                 // RSEG
@@ -202,8 +274,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
-
+    return sendCommand(command);
+#if 0
     if (response.isEmpty())
         return QByteArray();
 
@@ -220,7 +292,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
-#if 0
     QByteArray command;
     command.append(char(0x02));                 // READ8
     command.append(char(blockAddress));         // Block address
@@ -232,8 +303,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
-
+    return sendCommand(command);
+#if 0
     if (response.isEmpty())
         return QByteArray();
 
@@ -251,7 +322,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
-#if 0
     if (data.length() != 8)
         return false;
 
@@ -272,8 +342,8 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-    const QByteArray response = sendCommand(command);
-
+    return sendCommand(command);
+#if 0
     if (response.isEmpty())
         return false;
 
@@ -317,7 +387,7 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
-    _sendCommand(command);
+    return _sendCommand(command);
 }
 
 /*!
@@ -325,6 +395,41 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteAr
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    return _sendCommands(commands);
+}
+
+bool QNearFieldTagType1Symbian::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    return _waitForRequestCompleted(id, msecs);
+}
+
+bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    QVariant decodedResponse = decodeResponse(command, response);
+    // to handle commands
+    QVariant existResponse = requestResponse(id);
+    if (existResponse.isValid())
+    {
+        // there is existed id. So it must be a sendcommands request response.
+        if (existResponse.type() == QVariant::List)
+        {
+            QVariantList list = existResponse.toList();
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+        else
+        {
+            QVariantList list;
+            list.append(existResponse);
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+    }
+    else
+    {
+        setResponseForRequest(id, decodedResponse);
+    }
+    return true;
 }
 
 #include "moc_qnearfieldtagtype1_symbian_p.cpp"

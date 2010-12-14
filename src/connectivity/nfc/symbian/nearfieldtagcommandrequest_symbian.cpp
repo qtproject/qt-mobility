@@ -72,11 +72,11 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     if (aError != KErrNone)
     {
         QByteArray emptyResult;
-        iOperator->HandleResponse(iId, emptyResult);
+        iOperator->HandleResponse(iId, iCommand, emptyResult);
     }
     else
     {
         QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
-        iOperator->HandleResponse(iId, result);
+        iOperator->HandleResponse(iId, iCommand, result);
     }
 }

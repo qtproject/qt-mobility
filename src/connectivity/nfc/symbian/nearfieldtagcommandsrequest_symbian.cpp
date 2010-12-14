@@ -38,8 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#if 0
 #include "nearfieldtagcommandsrequest_symbian.h"
+#include "nearfieldutility_symbian.h"
+
+QTM_USE_NAMESPACE
 
 NearFieldTagCommandsRequest::NearFieldTagCommandsRequest()
 {
@@ -51,24 +53,48 @@ void NearFieldTagCommandsRequest::IssueRequest()
     if (iCurrentCommand < iCommands.count())
     {       
         iOperator->DoSendCommand(iCommands.at(iCurrentCommand), this);
+        ++iCurrentCommand;
     }
 }
 
 void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
 {
-    if (++iCurrentCommand < iCommands.count())
+    QByteArray result;
+    if (KErrNone == aError)
     {
-        QByteArray result;
-        // store the commands into the list 
-        if (KErrNone == aError)
-        {
-            result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
-        }
-        iResponses.append(result);
-        //iResponse
+        result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
+    }
+    iResponse->Zero();
+    iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
+
+    if (iCurrentCommand < iCommands.count())
+    {
+        IssueRequest();
     }
     else
     {
         // all commands finished
-        
-#endif
+        MNearFieldTagAsyncRequest::ProcessResponse(aError);
+    }
+}
+
+void NearFieldTagCommandsRequest::HandleResponse(TInt /*aError*/)
+{
+}
+
+void NearFieldTagCommandsRequest::CommandComplete(TInt aError)
+{
+    ProcessResponse(aError);
+}
+
+void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
+{
+    if (aError != KErrNone)
+    {
+        iOperator->EmitError(aError);
+    }
+    else
+    {
+        iOperator->EmitRequestCompleted(iId);
+    }
+}

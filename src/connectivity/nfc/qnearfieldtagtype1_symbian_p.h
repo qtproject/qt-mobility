@@ -75,8 +75,7 @@ public:
     RequestId readSegment(quint8 segmentAddress);
     RequestId readBlock(quint8 blockAddress);
     RequestId writeBlock(quint8 blockAddress, const QByteArray &data,
-                            WriteMode mode = EraseAndWrite);
-
+                         WriteMode mode = EraseAndWrite);
 
     bool hasNdefMessage();
     void ndefMessages();
@@ -84,6 +83,7 @@ public:
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {
@@ -95,6 +95,8 @@ public:
         return _accessMethods();
     }
     
+    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    // bool handleResponse(const RequestId &id, const QByteArray &response);
     friend class QNearFieldTagImpl<QNearFieldTagType1Symbian>;
 };
 

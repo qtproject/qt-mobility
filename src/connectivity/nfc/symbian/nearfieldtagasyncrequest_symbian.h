@@ -56,7 +56,8 @@ public:
     enum TRequestType
         {
         ENdefRequest,
-        ETagRequest,
+        ETagCommandRequest,
+        ETagCommandsRequest,
         ENull
         };
 

@@ -85,6 +85,7 @@ symbian {
         nfc/symbian/nearfieldtargetoperation_symbian.h \
         nfc/symbian/nearfieldtagndefrequest_symbian.h \
         nfc/symbian/nearfieldtagcommandrequest_symbian.h \
+        nfc/symbian/nearfieldtagcommandsrequest_symbian.h
 
     SOURCES += \
         nfc/qnearfieldmanager_symbian.cpp \
@@ -111,6 +112,7 @@ symbian {
         nfc/symbian/nearfieldtargetoperation_symbian.cpp \
         nfc/symbian/nearfieldtagndefrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandrequest_symbian.cpp \
+        nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp 
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
