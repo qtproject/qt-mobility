@@ -57,6 +57,7 @@
 #include "nearfieldtagndefrequest_symbian.h"
 #include "nearfieldtagcommandrequest_symbian.h"
 #include "nearfieldtagcommandsrequest_symbian.h"
+#include "debug.h"
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
@@ -148,13 +149,16 @@ protected:
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback)
 {
+    BEGIN
     int error = KErrGeneral;
     CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
     if (ndefTarget)
     {
+        LOG("switched to ndef connection");
         ndefTarget->SetNdefOperationCallback(aCallback);        
         mMessageList.Reset();
         error = ndefTarget->ndefMessages(mMessageList);
+        LOG("error code is"<<error);
     }
 
     if (KErrNone != error)
@@ -162,6 +166,7 @@ void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallb
         // This means the aysnc request doesn't issued. Directly invoke callback with the errore
         aCallback->ReadComplete(error, 0);
     }
+    END
 }
 
 template<typename TAGTYPE>
@@ -201,17 +206,21 @@ void QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &me
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 {
+    BEGIN
     if (
        (mCurrentRequest) && (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type()) ||
        (!mCurrentRequest) 
        )
 
     {
+        LOG("create ndefTarget connection");
         CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
+        END
         return ndefTarget ? ndefTarget->hasNdefMessage() : false;
     }
     else
     {
+        LOG("currentRequest is ongoing, use async request to check ndef message");
         NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
 
         QNearFieldTarget::RequestId requestId;
@@ -234,17 +243,21 @@ bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
             readNdefRequest->WaitRequestCompleted(5000);
             if (mMessageList.Count() == 0)
             {
+                END
                 return false;
             }
             else
             {
                 mMessageList.Reset();
+                END
                 return true;
             }
         }
         else
         {
             // TODO: is that proper way?
+            LOG("unexpect error to create async request");
+            END
             return false;
         }
     }
@@ -337,6 +350,7 @@ bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestI
 template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)
 {
+    mCurrentRequest = 0;
 }
 
 template<typename TAGTYPE>

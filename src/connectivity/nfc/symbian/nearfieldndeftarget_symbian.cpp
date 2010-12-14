@@ -71,6 +71,7 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag, RNfcServer& 
 
 void CNearFieldNdefTarget::ConstructL()
     {
+    iNdefConnection = CNdefConnection::NewL(iNfcServer, *this);
     }
 
 void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
@@ -109,19 +110,25 @@ CNearFieldTag * CNearFieldNdefTarget::CastToTag()
 
 CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
     {
+    BEGIN
     TInt error = KErrNone;
     if (iTagConnection)
         {
+        LOG("Check if Tag Connection is opened");
         if (iTagConnection->IsConnectionOpened())
             {
+            LOG("Close tag connection");
             iTagConnection->CloseConnection();
             }
         }
     
     if (!IsConnectionOpened())
         {
+        LOG("Open ndef connection")
         error = OpenConnection();
+        LOG("error code is"<<error);
         }
+    END
     return (error == KErrNone) ? const_cast<CNearFieldNdefTarget *>(this)
                                : reinterpret_cast<CNearFieldNdefTarget *>(0);
     }

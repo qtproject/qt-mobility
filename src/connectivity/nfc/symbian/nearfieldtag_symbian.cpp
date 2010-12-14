@@ -43,7 +43,7 @@
 #include <nfcconnection.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
-
+#include "debug.h"
 /*!
     \class CNearFieldTag
     \brief The CNearFieldTag class provides ways to access tag type1
@@ -94,17 +94,29 @@ CNearFieldTag * CNearFieldTag::CastToTag()
 
 TInt CNearFieldTag::OpenConnection()
     {
-    return iNfcTag->OpenConnection(*iTagConnection);
+    BEGIN
+    TInt error = iNfcTag->OpenConnection(*iTagConnection);
+    LOG(error);
+    END
+    return error;
     }
 
 void CNearFieldTag::CloseConnection()
     {
-    return iNfcTag->CloseConnection(*iTagConnection);
+    BEGIN
+    iNfcTag->CloseConnection(*iTagConnection);
+    END
     }
 
 TBool CNearFieldTag::IsConnectionOpened()
     {
-    return iTagConnection->IsActivated();
+    BEGIN
+    LOG((int)iTagConnection);
+    LOG("check if connection is opened");
+    TBool result = iTagConnection->IsActivated();
+    LOG("result is "<<result);
+    END
+    return result;
     }
 
 const TDesC8& CNearFieldTag::Uid() const
