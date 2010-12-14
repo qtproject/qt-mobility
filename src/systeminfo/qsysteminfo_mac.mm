@@ -2252,7 +2252,7 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     return false;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -2282,7 +2282,7 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
     return hasWirelessKeyboardConnected;
 }
 
-bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
     return false;
 }
@@ -2299,7 +2299,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*typ
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueID()
+QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
     io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,

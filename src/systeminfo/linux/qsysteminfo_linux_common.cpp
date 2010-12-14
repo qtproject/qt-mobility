@@ -2857,7 +2857,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  }
 
 
- QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardType()
+ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes()
  {
      QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
      QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
@@ -2877,7 +2877,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
      return hasWirelessKeyboardConnected;
  }
 
- bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlipOpen()
+ bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlippedOpen()
  {
      return false;
  }
@@ -2894,7 +2894,7 @@ bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::Keypa
     return false;
 }
 
-QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueID()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 {
 #if defined(Q_WS_MAEMO_6)
     // create one from imei and uuid of /

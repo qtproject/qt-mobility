@@ -182,15 +182,15 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.imsi());
   X(deviceinfo.inputMethodType());
   X(deviceinfo.isDeviceLocked());
-  X(deviceinfo.isKeyboardFlipOpen());
+  X(deviceinfo.isKeyboardFlippedOpen());
   X(deviceinfo.isWirelessKeyboardConnected());
-  X(deviceinfo.keyboardType());
+  X(deviceinfo.keyboardTypes());
   X(deviceinfo.manufacturer());
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
   X(deviceinfo.lockStatus());
-  X(deviceinfo.uniqueID());
+  X(deviceinfo.uniqueDeviceID());
 }
 
 /* ------------------------------------------------------------------------- *
