@@ -69,9 +69,9 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked NOTIFY deviceLocked)
     Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
 
-    Q_PROPERTY(KeyboardTypeFlags keyboardType READ keyboardType)//1.2
+    Q_PROPERTY(KeyboardTypeFlags keyboardTypes READ keyboardTypes)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
-    Q_PROPERTY(bool isKeyboardFlipOpen READ isKeyboardFlipOpen NOTIFY keyboardFlip)//1.2
+    Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
     Q_PROPERTY(QSystemDeviceInfo::LockType lockStatus READ lockStatus NOTIFY lockStatusChanged)
     Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
 
@@ -176,12 +176,12 @@ public:
 
     bool currentBluetoothPowerState();
 
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlipOpen();//1.2
+    bool isKeyboardFlippedOpen();//1.2
 
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueID(); //1.2
+    QUuid uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 #ifdef TESTR
     QSystemDeviceInfoPrivate *priv;
@@ -207,7 +207,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool on);
 
     void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlip(bool open);//1.2
+    void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 

@@ -186,11 +186,11 @@ void Dialog::setupDevice()
     bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
 
-    uniqueIDLabel->setText(di->uniqueID());
+    uniqueIDLabel->setText(di->uniqueDeviceID());
 
-    updateKeyboard(di->keyboardType());
+    updateKeyboard(di->keyboardTypes());
 
-    keyboardFlipRadioButton->setChecked(di->isKeyboardFlipOpen());
+    keyboardFlipRadioButton->setChecked(di->isKeyboardFlippedOpen());
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;

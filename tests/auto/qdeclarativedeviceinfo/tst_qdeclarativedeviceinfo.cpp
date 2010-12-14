@@ -253,7 +253,7 @@ void tst_QDeclarativeDeviceInfo::tst_currentBluetoothPowerState()
 void tst_QDeclarativeDeviceInfo::tst_keyboardType()
 {
     QDeclarativeDeviceInfo di;
-    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardType();
+    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardTypes();
 
     QVERIFY( (flags && QSystemDeviceInfo::UnknownKeyboard == QSystemDeviceInfo::UnknownKeyboard)
              || (flags && QSystemDeviceInfo::SoftwareKeyboard ==  QSystemDeviceInfo::SoftwareKeyboard)
@@ -273,7 +273,7 @@ void tst_QDeclarativeDeviceInfo::tst_isWirelessKeyboardConnected()
 void tst_QDeclarativeDeviceInfo::tst_isKeyboardFlipOpen()
 {
     QDeclarativeDeviceInfo di;
-    bool on = di.isKeyboardFlipOpen();
+    bool on = di.isKeyboardFlippedOpen();
     QVERIFY(on || !on);
 }
 
@@ -291,7 +291,7 @@ void tst_QDeclarativeDeviceInfo::tst_keypadLightOn()
 void tst_QDeclarativeDeviceInfo::tst_uniqueID()
 {
     QDeclarativeDeviceInfo di;
-    QUuid id = di.uniqueID();
+    QUuid id = di.uniqueDeviceID();
     QVERIFY(id.isNull()|| !id.isNull());
 }
 

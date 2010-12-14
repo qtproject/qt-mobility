@@ -439,7 +439,7 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 }
 
 /*!
-  Starts battery current measurement with given \a rate.
+  Starts battery current measurement for the polling \a rate.
   Return value is actual rate used by the system.
   */
 int QSystemBatteryInfo::startCurrentMeasurement(int rate)
