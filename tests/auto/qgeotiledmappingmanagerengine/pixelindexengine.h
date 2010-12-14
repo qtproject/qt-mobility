@@ -90,6 +90,8 @@ private:
     unsigned int data_;
 };
 
+QPixmap indexedPixmap(int width, int height);
+
 /*!
   A tiled map reply subclass that is constructed already finished, with
   a given QPixmap as its content (saved in PNG format).
@@ -119,6 +121,19 @@ public:
 
     QGeoTiledMapReply *getTileImage(const QGeoTiledMapRequest &request);
 
+};
+
+/*!
+  Returns pure white tiles.
+  */
+class WhiteTileEngine : public QGeoTiledMappingManagerEngine
+{
+    Q_OBJECT
+public:
+    WhiteTileEngine(const QMap<QString, QVariant> &parameters,
+                    QObject *parent=0);
+
+    QGeoTiledMapReply *getTileImage(const QGeoTiledMapRequest &request);
 };
 
 #endif // PIXELINDEXENGINE_H
