@@ -51,9 +51,60 @@
 #include <qgalleryresource.h>
 
 
+#include <QtCore/qdebug.h>
+
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
+
+class QGalleryTrackerResultSetParser
+{
+public:
+    QGalleryTrackerResultSetParser(
+            QVector<QVariant> &values,
+            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
+            int valueOffset,
+            int tableWidth)
+        : values(values)
+        , valueColumns(valueColumns)
+        , valueOffset(valueOffset)
+        , tableWidth(tableWidth)
+    {
+    }
+
+    QVector<QVariant> &values;
+    const QVector<QGalleryTrackerValueColumn *> &valueColumns;
+    const int valueOffset;
+    const int tableWidth;
+};
+
+const QDBusArgument &operator >>(
+        const QDBusArgument &argument, QGalleryTrackerResultSetParser &parser)
+{
+    QString string;
+    const QVariant variant;
+
+    argument.beginArray();
+    while (!argument.atEnd()) {
+        argument.beginArray();
+
+        int i = 0;
+        for (; !argument.atEnd() && i < parser.valueOffset; ++i) {
+            argument >> string;
+            parser.values.append(QVariant(string));
+        }
+        for (; !argument.atEnd() && i < parser.tableWidth; ++i) {
+            argument >> string;
+            parser.values.append(parser.valueColumns.at(i - parser.valueOffset)->toVariant(string));
+        }
+        for (; i < parser.tableWidth; ++i)
+            parser.values.append(variant);
+        argument.endArray();
+    }
+    argument.endArray();
+
+    return argument;
+}
 
 void QGalleryTrackerResultSetPrivate::update()
 {
@@ -141,29 +192,14 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
 void QGalleryTrackerResultSetPrivate::parseRows(const QDBusPendingCall &call)
 {
-    QDBusReply<QVector<QStringList> > reply(call);
+    iCache.values.clear();
 
-    typedef QVector<QStringList>::const_iterator iterator;
+    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, valueOffset, tableWidth);
 
-    const QVector<QStringList> resultSet = reply.value();
+    QDBusArgument argument = call.reply().arguments().at(0).value<QDBusArgument>();
+    argument >> parser;
 
-    iCache.count = resultSet.count();
-
-    QVector<QVariant> &values = iCache.values;
-    values.clear();
-    values.reserve(iCache.count * tableWidth);
-
-    for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
-            values.append(it->at(i));
-
-        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
-            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
-
-        // The rows should all have a count equal to tableWidth, but check just in case.
-        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
-            values.append(QVariant());
-    }
+    iCache.count = iCache.values.count() / tableWidth;
 
     synchronize();
 }

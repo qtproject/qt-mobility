@@ -55,6 +55,55 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
+class QGalleryTrackerResultSetParser
+{
+public:
+    QGalleryTrackerResultSetParser(
+            QVector<QVariant> &values,
+            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
+            int valueOffset,
+            int tableWidth)
+        : values(values)
+        , valueColumns(valueColumns)
+        , valueOffset(valueOffset)
+        , tableWidth(tableWidth)
+    {
+    }
+
+    QVector<QVariant> &values;
+    const QVector<QGalleryTrackerValueColumn *> &valueColumns;
+    const int valueOffset;
+    const int tableWidth;
+};
+
+const QDBusArgument &operator >>(
+        const QDBusArgument &argument, QGalleryTrackerResultSetParser &parser)
+{
+    QString string;
+    const QVariant variant;
+
+    argument.beginArray();
+    while (!argument.atEnd()) {
+        argument.beginArray();
+
+        int i = 0;
+        for (; !argument.atEnd() && i < parser.valueOffset; ++i) {
+            argument >> string;
+            parser.values.append(QVariant(string));
+        }
+        for (; !argument.atEnd() && i < parser.tableWidth; ++i) {
+            argument >> string;
+            parser.values.append(parser.valueColumns.at(i - parser.valueOffset)->toVariant(string));
+        }
+        for (; i < parser.tableWidth; ++i)
+            parser.values.append(variant);
+        argument.endArray();
+    }
+    argument.endArray();
+
+    return argument;
+}
+
 void QGalleryTrackerResultSetPrivate::update()
 {
     flags &= ~UpdateRequested;
@@ -150,40 +199,25 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 bool QGalleryTrackerResultSetPrivate::parseRows(
         const QDBusPendingCall &call, int limit, bool reset)
 {
-    QDBusReply<QVector<QStringList> > reply(call);
-
-    typedef QVector<QStringList>::const_iterator iterator;
-
-    const QVector<QStringList> resultSet = reply.value();
-
-    QVector<QVariant> &values = iCache.values;
-
     if (reset) {
-        values.clear();
+        iCache.values.clear();
         iCache.count = 0;
     }
 
-    iCache.count += resultSet.count();
+    const int previousCount = iCache.count;
 
-    values.reserve(iCache.count * tableWidth);
+    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, valueOffset, tableWidth);
 
-    for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
-            values.append(it->at(i));
+    QDBusArgument argument = call.reply().arguments().at(0).value<QDBusArgument>();
+    argument >> parser;
 
-        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
-            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
+    iCache.count += iCache.values.count() / tableWidth;
 
-        // The rows should all have a count equal to tableWidth, but check just in case.
-        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
-            values.append(QVariant());
-    }
-
-    if (resultSet.count() <= limit) {
-        if (!values.isEmpty() && !sortCriteria.isEmpty()) {
+    if (previousCount - iCache.count <= limit) {
+        if (!iCache.values.isEmpty() && !sortCriteria.isEmpty()) {
             correctRows(
-                    row_iterator(values.begin(), tableWidth),
-                    row_iterator(values.end(), tableWidth),
+                    row_iterator(iCache.values.begin(), tableWidth),
+                    row_iterator(iCache.values.end(), tableWidth),
                     sortCriteria.constBegin(),
                     sortCriteria.constEnd());
         }
