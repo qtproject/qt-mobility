@@ -91,6 +91,9 @@ void QGeoTiledMapDataNokia::copyrightReplyFinished(QNetworkReply * reply)
     JSONParser jp(reply->readAll());
     QVariant root = jp.parse();
 
+    if (!root.isValid())
+        return;
+
     copyrights.clear();
 
     QVariantHash rootHash = root.toHash();

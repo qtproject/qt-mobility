@@ -57,10 +57,7 @@
 #include <qgeocoordinate.h>
 
 
-Q_IMPORT_PLUGIN(qtgeoservices_staticsearchplugin)
-
 QTM_USE_NAMESPACE
-
 
 class SubLandmarkManager :public QLandmarkManager
 {
@@ -100,7 +97,6 @@ private:
 Q_DECLARE_METATYPE( QGeoSearchReply*);
 Q_DECLARE_METATYPE( QGeoSearchReply::Error);
 Q_DECLARE_METATYPE( QGeoSearchManager::SearchType);
-
 
 #endif
 
