@@ -52,9 +52,9 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
-                                                                          iNfcServer(aNfcServer),
-                                                                          CActive(EPriorityStandard)
+CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) :  CActive(EPriorityStandard),
+                                                                           iNfcTag(aNfcTag),
+                                                                           iNfcServer(aNfcServer)
     {
     CActiveScheduler::Add(this);
     }
@@ -146,7 +146,7 @@ void CNearFieldTag::RunL()
         }
     }
 
-TInt CNearFieldTag::RunError(TInt aError)
+TInt CNearFieldTag::RunError(TInt /*aError*/)
     {
     // Can't do anything
     return KErrNone;

@@ -95,7 +95,6 @@ protected:
 
 private:
     static TInt TimeoutCallback(TAny * aObj);
-    static TInt DeleteLater(TAny * aObj);
     };
 
 #endif

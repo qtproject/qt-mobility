@@ -201,7 +201,6 @@ void QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &me
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 {
-    CNearFieldNdefTarget * ndefTarget = 0;
     if (
        (mCurrentRequest) && (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type()) ||
        (!mCurrentRequest) 
@@ -223,7 +222,7 @@ bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
             readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
             readNdefRequest->SetOperator(this);
             int index = mPendingRequestList.indexOf(mCurrentRequest);
-            if ((index < 0) || (index = mPendingRequestList.count() - 1))
+            if ((index < 0) || (index == mPendingRequestList.count() - 1))
             {
                 // no next request
                 mPendingRequestList.append(readNdefRequest);
@@ -290,7 +289,7 @@ bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
 {
     // find the request after current request
     int index = mPendingRequestList.indexOf(mCurrentRequest);
-    if ((index < 0) || (index = mPendingRequestList.count() - 1))
+    if ((index < 0) || (index == mPendingRequestList.count() - 1))
     {
         // no next request
         mCurrentRequest = 0;

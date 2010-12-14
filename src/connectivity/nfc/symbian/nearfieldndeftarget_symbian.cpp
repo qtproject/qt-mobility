@@ -154,14 +154,14 @@ void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
     {
     if (iCallback)
         {
-        TInt errIgnore = KErrNone;
         TInt err = KErrNone;
         if (iMessages)
             {
             err = iMessages->Append(aMessage);
             }
         iMessages = 0;
-        QT_TRYCATCH_ERROR(errIgnore, iCallback->ReadComplete(err, iMessages));
+        QT_TRYCATCH_ERROR(err, iCallback->ReadComplete(err, iMessages));
+        // avoid warning
         }
     iCurrentOperation = ENull;
     }
@@ -172,6 +172,7 @@ void CNearFieldNdefTarget::WriteComplete()
         {
         TInt errIgnore = KErrNone;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->WriteComplete(KErrNone));
+        Q_UNUSED(errIgnore);
         }
     iCurrentOperation = ENull;
     }

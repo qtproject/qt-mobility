@@ -48,12 +48,6 @@ TInt MNearFieldTagAsyncRequest::TimeoutCallback(TAny * aObj)
     return KErrNone;
 }
 
-TInt MNearFieldTagAsyncRequest::DeleteLater(TAny * aObj)
-{
-    MNearFieldTagAsyncRequest * obj = static_cast<MNearFieldTagAsyncRequest *>(aObj);
-    delete obj;
-}
-
 MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
 {
     iOperator = 0;
