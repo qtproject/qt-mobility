@@ -71,7 +71,7 @@ Rectangle
                 ListElement {day : "Tuesday"}
                 ListElement {day : "Wednesday"}
                 ListElement {day : "Thursday"}
-                ListElement {day : "Fridady"}
+                ListElement {day : "Friday"}
                 ListElement {day : "Saturday"}
          }
 

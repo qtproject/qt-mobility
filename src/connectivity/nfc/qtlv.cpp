@@ -165,11 +165,22 @@ int QTlvReader::reservedMemorySize() const
 }
 
 /*!
+    Returns the request id that the TLV reader is currently waiting on.
+*/
+QNearFieldTarget::RequestId QTlvReader::requestId() const
+{
+    return m_requestId;
+}
+
+/*!
     Returns true if the TLV reader is at the end of the list of TLVs; otherwise returns false.
 */
 bool QTlvReader::atEnd() const
 {
     if (m_index == -1)
+        return false;
+
+    if (m_requestId.isValid())
         return false;
 
     return (m_index == m_tlvData.length()) || (tag() == 0xfe);
@@ -186,6 +197,8 @@ bool QTlvReader::readNext()
     // Move to next TLV
     if (m_index == -1) {
         m_index = 0;
+    } else if (m_requestId.isValid()) {
+        // do nothing
     } else if (tag() == 0x00 || tag() == 0xfe) {
         ++m_index;
     } else {
@@ -292,18 +305,26 @@ bool QTlvReader::readMoreData(int sparseOffset)
         } else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
             quint8 segment = absOffset / 128;
 
-            QNearFieldTarget::RequestId id =
-                (absOffset < 120) ? tag->readAll() : tag->readSegment(segment);
-            if (!tag->waitForRequestCompleted(id))
+            if (m_requestId.isValid()) {
+                QVariant v = m_target->requestResponse(m_requestId);
+                if (!v.isValid())
+                    return false;
+
+                m_requestId = QNearFieldTarget::RequestId();
+
+                data = v.toByteArray();
+
+                if (absOffset < 120)
+                    data = data.mid(2);
+
+                int length = dataLength(absOffset);
+
+                data = data.mid(absOffset - (segment * 128), length);
+            } else {
+                m_requestId = (absOffset < 120) ? tag->readAll() : tag->readSegment(segment);
+
                 return false;
-
-            data = tag->requestResponse(id).toByteArray();
-            if (absOffset < 120)
-                data = data.mid(2);
-
-            int length = dataLength(absOffset);
-
-            data = data.mid(absOffset - (segment * 128), length);
+            }
         }
 
         if (data.isEmpty() && sparseOffset >= m_tlvData.length())
@@ -347,7 +368,7 @@ int QTlvReader::dataLength(int startOffset) const
 
 
 QTlvWriter::QTlvWriter(QNearFieldTarget *target)
-:   m_target(target), m_rawData(0), m_index(0)
+:   m_target(target), m_rawData(0), m_index(0), m_tagMemorySize(-1)
 {
     if (qobject_cast<QNearFieldTagType1 *>(m_target)) {
         addReservedMemory(0, 12);   // skip uid, cc
@@ -358,13 +379,14 @@ QTlvWriter::QTlvWriter(QNearFieldTarget *target)
 }
 
 QTlvWriter::QTlvWriter(QByteArray *data)
-:   m_target(0), m_rawData(data), m_index(0)
+:   m_target(0), m_rawData(data), m_index(0), m_tagMemorySize(-1)
 {
 }
 
 QTlvWriter::~QTlvWriter()
 {
-    flush(true);
+    if (m_rawData)
+        process(true);
 }
 
 void QTlvWriter::addReservedMemory(int offset, int length)
@@ -389,7 +411,7 @@ void QTlvWriter::writeTlv(quint8 tagType, const QByteArray &data)
         m_buffer.append(data);
     }
 
-    flush();
+    process();
 
     switch (tagType) {
     case 0x01: {    // Lock Control TLV
@@ -405,12 +427,40 @@ void QTlvWriter::writeTlv(quint8 tagType, const QByteArray &data)
     }
 }
 
-void QTlvWriter::flush(bool all)
+/*!
+    Processes more of the TLV writer process. Returns true if the TLVs have been successfully
+    written to the target or buffer; otherwise returns false.
+
+    A false return value indicates that an NFC request is pending (if requestId() returns a valid
+    request identifier) or the write process has failed (requestId() returns an invalid request
+    identifier).
+*/
+bool QTlvWriter::process(bool all)
 {
+    if (m_requestId.isValid()) {
+        QVariant v = m_target->requestResponse(m_requestId);
+        if (!v.isValid())
+            return false;
+    }
+
+    if (m_tagMemorySize == -1) {
+        if (m_rawData)
+            m_tagMemorySize = m_rawData->length();
+        else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target)) {
+            if (m_requestId.isValid()) {
+                m_tagMemorySize = 8 * (tag->requestResponse(m_requestId).toUInt() + 1);
+                m_requestId = QNearFieldTarget::RequestId();
+            } else {
+                m_requestId = tag->readByte(10);
+                return false;
+            }
+        }
+    }
+
     while (!m_buffer.isEmpty()) {
         int spaceRemaining = moveToNextAvailable();
         if (spaceRemaining < 1)
-            break;
+            return false;
 
         int length = qMin(spaceRemaining, m_buffer.length());
 
@@ -422,18 +472,41 @@ void QTlvWriter::flush(bool all)
             int bufferIndex = 0;
 
             // static memory - can only use writeByte()
-            while (m_index < 120 && bufferIndex < length)
-                tag->writeByte(m_index++, m_buffer.at(bufferIndex++));
+            while (m_index < 120 && bufferIndex < length) {
+                if (m_requestId.isValid()) {
+                    if (!m_target->requestResponse(m_requestId).toBool())
+                        return false;
+
+                    m_requestId = QNearFieldTarget::RequestId();
+
+                    ++m_index;
+                    ++bufferIndex;
+                } else {
+                    m_requestId = tag->writeByte(m_index, m_buffer.at(bufferIndex));
+                    m_buffer = m_buffer.mid(bufferIndex);
+                    return false;
+                }
+            }
+
 
             // dynamic memory - writeBlock() full
             while (m_index >= 120 && (m_index % 8 == 0) && bufferIndex + 8 < length) {
-                tag->writeBlock(m_index / 8, m_buffer.mid(bufferIndex, 8));
-                m_index += 8;
-                bufferIndex += 8;
+                if (m_requestId.isValid()) {
+                    if (!m_target->requestResponse(m_requestId).toBool())
+                        return false;
+
+                    m_requestId = QNearFieldTarget::RequestId();
+
+                    m_index += 8;
+                    bufferIndex += 8;
+                } else {
+                    m_requestId = tag->writeBlock(m_index / 8, m_buffer.mid(bufferIndex, 8));
+                    m_buffer = m_buffer.mid(bufferIndex);
+                    return false;
+                }
             }
 
             // partial block
-
             int currentBlock = m_index / 8;
             int nextBlock = currentBlock + 1;
             int currentBlockStart = currentBlock * 8;
@@ -441,35 +514,50 @@ void QTlvWriter::flush(bool all)
 
             int fillLength = qMin(nextBlockStart - m_index, spaceRemaining - bufferIndex);
 
-            if (fillLength && (all || m_buffer.length() - bufferIndex >= fillLength)) {
+            if (fillLength && (all || m_buffer.length() - bufferIndex >= fillLength) &&
+                (m_buffer.length() != bufferIndex)) {
                 // sufficient data available
-                QNearFieldTarget::RequestId id = tag->readBlock(currentBlock);
-                if (!tag->waitForRequestCompleted(id))
-                    break;
+                if (m_requestId.isValid()) {
+                    const QVariant v = tag->requestResponse(m_requestId);
+                    if (v.type() == QVariant::ByteArray) {
+                        // read in block
+                        QByteArray block = v.toByteArray();
 
-                QByteArray block = tag->requestResponse(id).toByteArray();
+                        int fill = qMin(fillLength, m_buffer.length() - bufferIndex);
 
-                int fill = qMin(fillLength, m_buffer.length() - bufferIndex);
+                        for (int i = m_index - currentBlockStart; i < fill; ++i)
+                            block[i] = m_buffer.at(bufferIndex++);
 
-                for (int i = m_index - currentBlockStart; i < fill; ++i)
-                    block[i] = m_buffer.at(bufferIndex++);
+                        // now write block
+                        m_requestId = tag->writeBlock(currentBlock, block);
+                        return false;
+                    } else if (v.type() == QVariant::Bool) {
+                        m_requestId = QNearFieldTarget::RequestId();
+                        int fill = qMin(fillLength, m_buffer.length() - bufferIndex);
+                        bufferIndex = fill - (m_index - currentBlockStart);
 
-                id = tag->writeBlock(currentBlock, block);
-                if (!tag->waitForRequestCompleted(id))
-                    break;
-
-                if (!tag->requestResponse(id).toBool()) {
-                    qDebug() << "Write failed";
-                    break;
+                        // write complete
+                        if (!v.toBool())
+                            return false;
+                    }
+                } else {
+                    // read in block
+                    m_requestId = tag->readBlock(currentBlock);
+                    m_buffer = m_buffer.mid(bufferIndex);
+                    return false;
                 }
             }
 
             m_buffer = m_buffer.mid(bufferIndex);
-
-            if (m_buffer.length() < fillLength)
-                break;
         }
     }
+
+    return true;
+}
+
+QNearFieldTarget::RequestId QTlvWriter::requestId() const
+{
+    return m_requestId;
 }
 
 int QTlvWriter::moveToNextAvailable()
@@ -489,12 +577,8 @@ int QTlvWriter::moveToNextAvailable()
         }
     }
 
-    if (length == -1) {
-        if (m_rawData)
-            return m_rawData->length() - m_index;
-        else if (QNearFieldTagType1 *tag = qobject_cast<QNearFieldTagType1 *>(m_target))
-            return tag->memorySize() - m_index;
-    }
+    if (length == -1)
+        return m_tagMemorySize - m_index;
 
     Q_ASSERT(length != -1);
 

@@ -59,6 +59,8 @@ class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
     Q_OBJECT
     Q_DECLARE_PRIVATE(QLlcpSocket)
 
+    friend class QLlcpServerPrivate;
+
 public:
     enum Error {
         UnknownSocketError = QAbstractSocket::UnknownSocketError
@@ -74,7 +76,6 @@ public:
     };
 
     explicit QLlcpSocket(QObject *parent = 0);
-    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
     ~QLlcpSocket();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);
@@ -116,7 +117,7 @@ protected:
     qint64 writeData(const char *data, qint64 len);
 
 private:
-    
+    QLlcpSocket(QLlcpSocketPrivate *d, QObject *parent);
 
     QLlcpSocketPrivate *d_ptr;
 };
