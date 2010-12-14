@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <nfctag.h>
+#include <QVariant>
 #include "qnearfieldtagmifare_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -81,8 +82,38 @@ QNearFieldTarget::RequestId QNearFieldTagMifareSymbian::sendCommand(const QByteA
 
 QNearFieldTarget::RequestId QNearFieldTagMifareSymbian::sendCommands(const QList<QByteArray> &commands)
 {
+    return _sendCommands(commands);
 }
 
+bool QNearFieldTagMifareSymbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    Q_UNUSED(command);
+    QVariant decodedResponse(response);
+    // to handle commands
+    QVariant existResponse = requestResponse(id);
+    if (existResponse.isValid())
+    {
+        // there is existed id. So it must be a sendcommands request response.
+        if (existResponse.type() == QVariant::List)
+        {
+            QVariantList list = existResponse.toList();
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+        else
+        {
+            QVariantList list;
+            list.append(existResponse);
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+    }
+    else
+    {
+        setResponseForRequest(id, decodedResponse);
+    }
+    return true;
+}
 #include "moc_qnearfieldtagmifare_symbian_p.cpp"
 
 QTM_END_NAMESPACE

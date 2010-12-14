@@ -43,6 +43,7 @@
 #define QNEARFIELDTAGIMPL_H
 
 #include <qnearfieldtarget.h>
+#include <qnearfieldtarget_p.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldutility_symbian.h"
@@ -309,7 +310,7 @@ void QNearFieldTagImpl<TAGTYPE>::RemoveRequestFromQueue(QNearFieldTarget::Reques
     for(int i = 0; i < mPendingRequestList.count(); ++i)
     {
         MNearFieldTagAsyncRequest * request = mPendingRequestList.at(i);
-        // TODO: operator ==
+        // TODO:  need Aaron agree to add operator ==.
         //if (request->GetRequestId() == aId)
         if (!(aId < request->GetRequestId()) && !(request->GetRequestId() < aId))
         {
@@ -322,12 +323,8 @@ void QNearFieldTagImpl<TAGTYPE>::RemoveRequestFromQueue(QNearFieldTarget::Reques
 template<typename TAGTYPE>
 QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::AllocateRequestId()
 {
-#if 0
-    QNearFieldTarget::RequestIdPrivate *idPrivate = new QNearFieldTarget::RequestIdPrivate;
-    QNearFieldTarget::RequestId id(idPrivate);
-#endif
-    // TODO: allcate id
-    QNearFieldTarget::RequestId id;
+    QNearFieldTarget::RequestIdPrivate * p = new QNearFieldTarget::RequestIdPrivate;
+    QNearFieldTarget::RequestId id(p);
     return id;
 } 
 
@@ -335,7 +332,7 @@ template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-    return tag->handleResponse(id, response);
+    return tag->handleTagOperationResponse(id, command, response);
 }
 
 template<typename TAGTYPE>
@@ -354,6 +351,7 @@ QNearFieldTagImpl<TAGTYPE>::~QNearFieldTagImpl()
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::_hasNdefMessage()
 {
+    return DoHasNdefMessages();
 }
 
 template<typename TAGTYPE>
@@ -486,7 +484,7 @@ bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget
     }
 
     MNearFieldTagAsyncRequest * request = mPendingRequestList.at(index);
-    request->WaitRequestCompleted(msecs);
+    return request->WaitRequestCompleted(msecs);
 }
 
 template<typename TAGTYPE>
@@ -520,8 +518,69 @@ void QNearFieldTagImpl<TAGTYPE>::EmitError(int error)
 template<typename TAGTYPE>
 QNearFieldTarget::Error QNearFieldTagImpl<TAGTYPE>::SymbianError2QtError(int error)
 {
-    // TODO: need do map between symbian error and Qt error
-    return QNearFieldTarget::NoError;
+    // TODO: refactor. 
+    QNearFieldTarget::Error qtError;
+    switch(error)
+    {    
+        case KErrNone:
+        {
+            qtError = QNearFieldTarget::NoError;
+            break;
+        }
+        case KErrNotSupported:
+        {
+            qtError = QNearFieldTarget::UnsupportedError;
+            break;
+        }
+        case KErrTimedOut:
+        {
+            qtError = QNearFieldTarget::NoResponseError;
+            break;
+        }
+        case KErrAccessDenied:
+        case KErrEof:
+        case KErrServerTerminated:
+        {
+            if (mCurrentRequest)
+            {
+                if(mCurrentRequest->Type() == MNearFieldTagAsyncRequest::ENdefRequest)
+                {
+                    NearFieldTagNdefRequest * req = static_cast<NearFieldTagNdefRequest *>(mCurrentRequest);
+                    if (req->GetNdefRequestType() == NearFieldTagNdefRequest::EReadRequest)
+                    {
+                        qtError = QNearFieldTarget::NdefReadError;
+                        break;
+                    }
+                    else
+                    {
+                        qtError = QNearFieldTarget::InvalidParametersError;
+                        break;
+                    }
+                }
+                else
+                {
+                    qtError = QNearFieldTarget::InvalidParametersError;
+                    break;
+                }
+            }
+            else
+            {
+                qtError = QNearFieldTarget::InvalidParametersError;
+                break;
+            }
+        }
+        case KErrTooBig:
+        {
+            qtError = QNearFieldTarget::TargetOutOfRangeError;
+            break;
+        } 
+        default:
+        {
+            qtError = QNearFieldTarget::InvalidParametersError;
+            break;
+        }
+    }
+    return qtError;
 }
 QTM_END_NAMESPACE
 #endif // QNEARFIELDTAGIMPL_H

@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <nfctag.h>
+#include <QVariant>
 #include "nearfieldutility_symbian.h"
 #include "qnearfieldtagtype4_symbian_p.h"
 
@@ -75,11 +76,52 @@ void QNearFieldTagType4Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 
 QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)
 {
-    _sendCommand(command);
+    return _sendCommand(command);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    return _sendCommands(commands);
+}
+
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
+{
+    return _sendCommand(command);
+}
+
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
+{
+    return _sendCommands(commands);
+}
+
+bool QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    Q_UNUSED(command);
+    QVariant decodedResponse =  response;
+    // to handle commands
+    QVariant existResponse = requestResponse(id);
+    if (existResponse.isValid())
+    {
+        // there is existed id. So it must be a sendcommands request response.
+        if (existResponse.type() == QVariant::List)
+        {
+            QVariantList list = existResponse.toList();
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+        else
+        {
+            QVariantList list;
+            list.append(existResponse);
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+    }
+    else
+    {
+        setResponseForRequest(id, decodedResponse);
+    }
+    return true;
 }
 
 #include "moc_qnearfieldtagtype4_symbian_p.cpp"

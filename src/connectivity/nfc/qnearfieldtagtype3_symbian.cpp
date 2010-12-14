@@ -42,12 +42,15 @@
 #include "qnearfieldtagtype3_symbian_p.h"
 #include <nfctype3connection.h>
 #include <QtEndian>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
 QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
                                 : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
 {
+    // It's silly, but easy.
+    getIDm();
 }
 
 QNearFieldTagType3Symbian::~QNearFieldTagType3Symbian()
@@ -81,6 +84,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommand(const QByteAr
 
 QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    return _sendCommands(commands);
 }
 
 quint16 QNearFieldTagType3Symbian::systemCode()
@@ -113,26 +117,28 @@ void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByt
 
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
 {
-#if 0
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x06); // command code
     command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
     if (command.count() > 1)
     {
-        //return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command, 100*1000, 12+16*numberOfBlocks)); 
-        return  checkResponse2ServiceBlockList(serviceBlockList ,_sendCommand(command)); 
+        RequestId id = _sendCommand(command);
+        if (!waitForRequestCompleted(id))
+        {
+            return  checkResponse2ServiceBlockList(serviceBlockList , QByteArray()); 
+        }
+        QByteArray response = requestResponse(id).toByteArray();
+        return  checkResponse2ServiceBlockList(serviceBlockList , response); 
     }
     else
     {
         return QMap<quint16, QByteArray>();
     }
-#endif
 }
 
 void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data)  
 {
-#if 0
     quint8 numberOfBlocks;
     QByteArray command;
     command.append(0x08); // command code
@@ -140,14 +146,15 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
     if (command.count() > 1)
     {
         command.append(data);
-        _sendCommand(command);
+        waitForRequestCompleted(_sendCommand(command));
     }
-#endif
 }
-
 
 const QByteArray& QNearFieldTagType3Symbian::getIDm()
 {
+    // TODO: this should be done before any async request
+    // otherwise, it will cancel ndef async request due to connection switch!
+    // we can also handle it as we do for hasNdefMessage.
     if (mIDm.isEmpty())
     {
         // this is the first time to get IDm
@@ -261,7 +268,37 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
     }
     return result;
 }
-     
+
+bool QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    Q_UNUSED(command);
+    QVariant decodedResponse =  response;
+    // to handle commands
+    QVariant existResponse = requestResponse(id);
+    if (existResponse.isValid())
+    {
+        // there is existed id. So it must be a sendcommands request response.
+        if (existResponse.type() == QVariant::List)
+        {
+            QVariantList list = existResponse.toList();
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+        else
+        {
+            QVariantList list;
+            list.append(existResponse);
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+    }
+    else
+    {
+        setResponseForRequest(id, decodedResponse);
+    }
+    return true;
+}    
+
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"
 
 QTM_END_NAMESPACE
