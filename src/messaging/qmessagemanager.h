@@ -127,7 +127,7 @@ Q_SIGNALS:
     void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
 
-    void accountRemoved(const QMessageId &id);
+    void accountRemoved(const QMessageAccountId &id);
 
 private:
     QMessageStore *store;
