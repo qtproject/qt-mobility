@@ -1249,7 +1249,7 @@ void tst_QLandmarkManager::cleanup() {
 
 void tst_QLandmarkManager::cleanupTestCase() {
     QFile::remove(exportFile);
-    if (QFile::exists("nopermfile"));
+    if (QFile::exists("nopermfile"))
         QFile::remove("nopermfile");
 }
 
@@ -2090,8 +2090,11 @@ void tst_QLandmarkManager::saveCategory() {
     QVERIFY(doSingleCategorySave(type,&cat1,QLandmarkManager::NoError));
     cat1Initial.setCategoryId(cat1.categoryId());
     QCOMPARE(cat1, cat1Initial);
-
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
     QCOMPARE(spyChange.count(), 0);
@@ -2102,8 +2105,11 @@ void tst_QLandmarkManager::saveCategory() {
     QLandmarkCategory cat2;
     cat2.setName("CAT2");
     QVERIFY(doSingleCategorySave(type, &cat2, QLandmarkManager::NoError));
-
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat2.categoryId());
     QCOMPARE(spyChange.count(), 0);
@@ -2188,7 +2194,11 @@ void tst_QLandmarkManager::saveCategory() {
    QCOMPARE(m_manager->category(cat2OriginalId).name(), QString("CAT2Modified"));
    QCOMPARE(m_manager->category(cat2OriginalId).iconUrl(), QUrl("cat2 url modified"));
 
-   QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
    QCOMPARE(spyAdd.count(), 0);
    QCOMPARE(spyChange.count(), 1);
    QCOMPARE(spyRemove.count(), 0);
@@ -2239,7 +2249,11 @@ void tst_QLandmarkManager::saveCategory() {
        QCOMPARE(catBad, saveCategoryRequest.categories().at(1));
        QCOMPARE(catChange, saveCategoryRequest.categories().at(2));
 
-       QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
        QCOMPARE(spyAdd.count(), 1);
        QCOMPARE(spyChange.count(), 1);
        QCOMPARE(spyRemove.count(), 0);
@@ -2283,13 +2297,17 @@ void tst_QLandmarkManager::saveCategory() {
        QCOMPARE(catNew2, saveCategoryRequest.categories().at(1));
        QCOMPARE(catNew3, saveCategoryRequest.categories().at(2));
 
-       QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
        QCOMPARE(spyAdd.count(), 1);
        QCOMPARE(spyChange.count(), 0);
        QCOMPARE(spyRemove.count(), 0);
-       QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), firstCategoryId);
-       QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(1), secondCategoryId);
-       QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(2), thirdCategoryId);
+       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
+       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
+       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
        spyAdd.clear();
 
        //try changing multiple categories
@@ -2317,13 +2335,17 @@ void tst_QLandmarkManager::saveCategory() {
        QCOMPARE(catNew2, saveCategoryRequest.categories().at(1));
        QCOMPARE(catNew3, saveCategoryRequest.categories().at(2));
 
-       QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
        QCOMPARE(spyAdd.count(), 0);
        QCOMPARE(spyChange.count(), 1);
        QCOMPARE(spyRemove.count(), 0);
-       QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), firstCategoryId);
-       QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(1), secondCategoryId);
-       QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(2), thirdCategoryId);
+       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
+       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
+       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
        spyChange.clear();
    }
 
@@ -2387,7 +2409,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(doSingleLandmarkSave(type, &emptyLandmark,QLandmarkManager::NoError));
     QVERIFY(checkLandmarkCount(originalLandmarkCount + 1));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(),0);
@@ -2443,17 +2469,21 @@ void tst_QLandmarkManager::saveLandmark() {
     lm1Initial.setLandmarkId(lm1.landmarkId());
     QCOMPARE(lm1,lm1Initial);
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(),0);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
 
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if !defined(Q_OS_SYMBIAN)
     QCOMPARE(spyCatAdd.count(), 1);
-    QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
-    QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(1), cat2.categoryId());
-    QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(2), cat3.categoryId());
+    QVERIFY(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(cat1.categoryId()));
+    QVERIFY(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(cat2.categoryId()));
+    QVERIFY(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(cat3.categoryId()));
 #else
     QCOMPARE(spyCatAdd.count(), 3);
     QCOMPARE(spyCatAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
@@ -2500,7 +2530,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(lm1ChangedInitial, m_manager->landmark(lm1.landmarkId()));
     QCOMPARE(lm1ChangedInitial, lm1Changed);
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(),0);
@@ -2517,7 +2551,11 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(checkLandmarkCount(newLandmarkCount));
     QCOMPARE(m_manager->landmark(lm1Changed.landmarkId()).phoneNumber(),QString());
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(),0);
@@ -2613,22 +2651,37 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(m_manager->landmark(lm2.landmarkId()).categoryIds().contains(cat2.categoryId()));
     newLandmarkCount = newLandmarkCount +1;
     lm2.removeCategoryId(cat2.categoryId());
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#endif
     QVERIFY(doSingleLandmarkSave(type, &lm2, QLandmarkManager::NoError));
     QCOMPARE(m_manager->landmark(lm2.landmarkId()).categoryIds().count(), 0);
-
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     if (type == "sync") {
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_OS_SYMBIAN)
         QCOMPARE(spyAdd.count(), 2);
         QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lmOutOfRange.landmarkId()));
         QVERIFY(spyAdd.at(1).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
 
 #else
         QCOMPARE(spyAdd.count(), 1);
+        QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lmOutOfRange.landmarkId()));
+        QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
 #endif
     }
-    else if (type == "async")
+    else if (type == "async") {
+#if defined(Q_WS_MAEMO_6)
+        QCOMPARE(spyAdd.count(), 1);
+        QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lmOutOfRange.landmarkId()));
+        QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
+#else
         QCOMPARE(spyAdd.count(), 2);
+#endif
+    }
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(),0);
     QCOMPARE(spyCatAdd.count(), 0);
@@ -2682,7 +2735,11 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
     QLandmark lm;
     lm.setName("LM");
     QVERIFY(m_manager->saveLandmark(&lm));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     spyAdd.clear();
 
     //try saving multiple landamrks the first is new, the second should fail and the third is an update
@@ -2732,7 +2789,11 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
     QCOMPARE(lmBad, lms.at(1));
     QCOMPARE(lmChange, lms.at(2));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(), 0);
@@ -2784,13 +2845,17 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
     QCOMPARE(lmNew2, lms.at(1));
     QCOMPARE(lmNew3, lms.at(2));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(), 0);
-    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), firstLandmarkId);
-    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), secondLandmarkId);
-    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), thirdLandmarkId);
+    QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(firstLandmarkId));
+    QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(secondLandmarkId));
+    QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(thirdLandmarkId));
     QCOMPARE(spyCatAdd.count(), 0);
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
@@ -2821,13 +2886,17 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
     QCOMPARE(lmNew2, lms.at(1));
     QCOMPARE(lmNew3, lms.at(2));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(), 0);
-    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), firstLandmarkId);
-    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), secondLandmarkId);
-    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), thirdLandmarkId);
+    QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(firstLandmarkId));
+    QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(secondLandmarkId));
+    QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(thirdLandmarkId));
     QCOMPARE(spyCatAdd.count(), 0);
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
@@ -2849,12 +2918,14 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
         QCOMPARE(lmSaveRequest.errorMap().value(1), QLandmarkManager::LandmarkDoesNotExistError);
         QCOMPARE(spyResults.count(), 1);
         spyResults.clear();
-
+#if (defined(Q_WS_MAEMO_6))
+        QTest::qWait(2000);
+#endif
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
         QCOMPARE(spyRemove.count(), 0);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lmNew.landmarkId());
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lmChange.landmarkId());
+        QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lmNew.landmarkId()));
+        QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lmChange.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         QCOMPARE(spyCatRemove.count(), 0);
@@ -2868,12 +2939,16 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
         QVERIFY(waitForAsync(spy, &lmSaveRequest, QLandmarkManager::NoError));
         QCOMPARE(lmSaveRequest.errorMap().count(), 0);
         QCOMPARE(spyResults.count(), 1);
-
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lmNew1.landmarkId());
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lmNew2.landmarkId());
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lmNew3.landmarkId());
+        QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lmNew1.landmarkId()));
+        QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lmNew2.landmarkId()));
+        QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lmNew3.landmarkId()));
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
@@ -2950,7 +3025,11 @@ void tst_QLandmarkManager::removeCategory() {
     id1.setManagerUri("different.manager");
     id1.setLocalId("100");
     QVERIFY(doSingleCategoryRemove(type,id1,QLandmarkManager::CategoryDoesNotExistError));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
@@ -2961,12 +3040,18 @@ void tst_QLandmarkManager::removeCategory() {
     QLandmarkCategory cat1;
     cat1.setName("CAT1");
     QVERIFY(m_manager->saveCategory(&cat1));
-
+#if (defined(Q_WS_MAEMO_6))
+        QTest::qWait(2000);
+#endif
     QVERIFY(doSingleCategoryRemove(type, cat1.categoryId(),QLandmarkManager::NoError));
     QCOMPARE(m_manager->category(cat1.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->error(), QLandmarkManager::CategoryDoesNotExistError);
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
@@ -2997,7 +3082,9 @@ void tst_QLandmarkManager::removeCategory() {
     lm1.addCategoryId(cat3.categoryId());
     lm1.addCategoryId(cat2.categoryId());
     lm1.addCategoryId(cat1.categoryId());
-
+#if (defined(Q_WS_MAEMO_6))
+    QTest::qWait(2000);
+#endif
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
     QCOMPARE(lm1.categoryIds().count(), 3);
@@ -3013,9 +3100,15 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
     QCOMPARE(lm2.categoryIds().count(), 1);
     QVERIFY(lm2.categoryIds().contains(cat2.categoryId()));
-
+#if (defined(Q_WS_MAEMO_6))
+    QTest::qWait(2000);
+#endif
     QVERIFY(doSingleCategoryRemove(type, cat2.categoryId(),QLandmarkManager::NoError));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
     QCOMPARE(spyLmAdd.count(), 2);
 #else
@@ -3026,7 +3119,7 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 1);
     QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
     QCOMPARE(spyLmRemove.count(), 0);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3084,7 +3177,9 @@ void tst_QLandmarkManager::removeCategory() {
 
     query.finish();
 #endif
-
+#if (defined(Q_WS_MAEMO_6))
+    QTest::qWait(2000);
+#endif
     QVERIFY(m_manager->removeCategory(cat5));
     QCOMPARE(m_manager->category(cat4.categoryId()),cat4);
     QCOMPARE(m_manager->category(cat5.categoryId()), QLandmarkCategory());
@@ -3101,11 +3196,15 @@ void tst_QLandmarkManager::removeCategory() {
     QSqlDatabase::removeDatabase("testing");
 #endif
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3139,7 +3238,9 @@ void tst_QLandmarkManager::removeCategory() {
     QLandmarkCategoryId catIdNotExist2;
     QList<QLandmarkCategoryId> catIds;
     catIds << catA.categoryId() << catIdNotExist << catC.categoryId() << catIdNotExist2;
-
+#if (defined(Q_WS_MAEMO_6))
+    QTest::qWait(2000);
+#endif
     QLandmarkCategoryRemoveRequest removeRequest(m_manager);
     QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
     QSignalSpy spyResult(&removeRequest, SIGNAL(resultsAvailable()));
@@ -3159,20 +3260,23 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyResult.count(), 1);
     spyResult.clear();
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
-
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(spyCatAdd.count(), 3);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
 #endif
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatRemove.count(), 1);
-    QCOMPARE(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), catA.categoryId());
-    QCOMPARE(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(1), catC.categoryId());
+    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catA.categoryId()));
+    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catC.categoryId()));
     spyCatAdd.clear();
     spyCatRemove.clear();
 
@@ -3181,6 +3285,9 @@ void tst_QLandmarkManager::removeCategory() {
     catC.setCategoryId(QLandmarkCategoryId());
     QVERIFY(m_manager->saveCategory(&catA));
     QVERIFY(m_manager->saveCategory(&catC));
+#if (defined(Q_WS_MAEMO_6))
+    QTest::qWait(2000);
+#endif
     catIds.clear();
     catIds << catC.categoryId() << catB.categoryId() << catA.categoryId();
     removeRequest.setCategoryIds(catIds);
@@ -3191,12 +3298,15 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(m_manager->category(catB.categoryId()), QLandmarkCategory());
     QCOMPARE(m_manager->category(catC.categoryId()), QLandmarkCategory());
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
-
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(spyCatAdd.count(), 2);
 #else
     QCOMPARE(spyCatAdd.count(), 1);
@@ -3264,7 +3374,11 @@ void tst_QLandmarkManager::removeLandmark()
     id1.setManagerUri("different.manager");
     id1.setLocalId("100");
     QVERIFY(doSingleLandmarkRemove(type,id1,QLandmarkManager::LandmarkDoesNotExistError));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 0);
@@ -3275,11 +3389,18 @@ void tst_QLandmarkManager::removeLandmark()
     QLandmark lm1;
     lm1.setName("LM1");
     QVERIFY(m_manager->saveLandmark(&lm1));
+#if (defined(Q_WS_MAEMO_6))
+        QTest::qWait(2000);
+#endif
     QVERIFY(doSingleLandmarkRemove(type, lm1.landmarkId(), QLandmarkManager::NoError));
     QCOMPARE(m_manager->landmark(lm1.landmarkId()), QLandmark());
     QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyLmAdd.count(), 1);
     QCOMPARE(spyLmChange.count(), 0);
     QCOMPARE(spyLmRemove.count(), 1);
@@ -3309,8 +3430,12 @@ void tst_QLandmarkManager::removeLandmark()
     lm4.setName("LM4");
     QVERIFY(m_manager->saveLandmark(&lm4));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#endif
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(spyLmAdd.count(), 4);
 #else
     QCOMPARE(spyLmAdd.count(), 1);
@@ -3343,14 +3468,18 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(m_manager->landmark(lm3.landmarkId()), QLandmark());
         QCOMPARE(m_manager->landmark(lm4.landmarkId()), QLandmark());
 
-        QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
         QCOMPARE(spyLmRemove.count(), 1);
         QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm3.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm4.landmarkId());
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
 
@@ -3364,7 +3493,9 @@ void tst_QLandmarkManager::removeLandmark()
         QVERIFY(m_manager->saveLandmark(&lm3));
         lm4.setLandmarkId(QLandmarkId());
         QVERIFY(m_manager->saveLandmark(&lm4));
-
+#if (defined(Q_WS_MAEMO_6))
+        QTest::qWait(2000);
+#endif
         lmIds.clear();
         lmIds << lm1.landmarkId() << lmIdNotExist << lm3.landmarkId() << lmIdNotExist2 << lm4.landmarkId();
 
@@ -3382,8 +3513,12 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(errorMap.value(1), QLandmarkManager::LandmarkDoesNotExistError);
         QCOMPARE(errorMap.value(3), QLandmarkManager::LandmarkDoesNotExistError);
 
-        QTest::qWait(10);
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
+#if defined(Q_OS_SYMBIAN)
         QCOMPARE(spyLmAdd.count(), 3);
         QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         QCOMPARE(spyLmAdd.at(1).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
@@ -3391,18 +3526,17 @@ void tst_QLandmarkManager::removeLandmark()
 #else
         QCOMPARE(spyLmAdd.count(), 1);
         QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm3.landmarkId());
-        QCOMPARE(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm4.landmarkId());
+        QVERIFY(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
+        QVERIFY(spyLmAdd.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
 #endif
 
         QCOMPARE(spyLmChange.count(), 0);
         QCOMPARE(spyLmRemove.count(), 1);
         QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm3.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm4.landmarkId());
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         QCOMPARE(spyCatRemove.count(), 0);
@@ -3426,14 +3560,18 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(m_manager->landmark(lm3.landmarkId()), QLandmark());
         QCOMPARE(m_manager->landmark(lm4.landmarkId()), QLandmark());
 
-        QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
         QCOMPARE(spyLmRemove.count(), 1);
         QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm3.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm4.landmarkId());
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lm4.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         spyLmRemove.clear();
@@ -3450,7 +3588,11 @@ void tst_QLandmarkManager::removeLandmark()
     QLandmark lmC;
     lmB.setName("LM-C");
     QVERIFY(m_manager->saveLandmark(&lmC));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     spyLmAdd.clear();
 
     lmIds.clear();
@@ -3466,14 +3608,18 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(m_manager->landmark(lmB.landmarkId()), QLandmark());
         QCOMPARE(m_manager->landmark(lmC.landmarkId()), QLandmark());
 
-        QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
         QCOMPARE(spyLmRemove.count(), 1);
         QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lmA.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lmB.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lmC.landmarkId());
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmA.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmB.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmC.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         QCOMPARE(spyCatRemove.count(), 0);
@@ -3491,14 +3637,18 @@ void tst_QLandmarkManager::removeLandmark()
         QCOMPARE(m_manager->landmark(lmB.landmarkId()), QLandmark());
         QCOMPARE(m_manager->landmark(lmC.landmarkId()), QLandmark());
 
-        QTest::qWait(10);
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
+    QTest::qWait(10);
+#endif
         QCOMPARE(spyLmAdd.count(), 0);
         QCOMPARE(spyLmChange.count(), 0);
         QCOMPARE(spyLmRemove.count(), 1);
         QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lmA.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lmB.landmarkId());
-        QCOMPARE(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().at(2), lmC.landmarkId());
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmA.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmB.landmarkId()));
+        QVERIFY(spyLmRemove.at(0).at(0).value<QList<QLandmarkId> >().contains(lmC.landmarkId()));
         QCOMPARE(spyCatAdd.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         QCOMPARE(spyCatRemove.count(), 0);
@@ -6891,8 +7041,14 @@ void tst_QLandmarkManager::importGpx() {
     if (type == "asyncAttachSingleCategory")
         QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
 #endif
+#if defined(Q_WS_MAEMO_6)
+    if (type == "async" || type == "asyncAttachSingleCategory")
+        QCOMPARE(dataChanged.count(),3);
+    else
+        QCOMPARE(dataChanged.count(),1);
+#else
     QCOMPARE(dataChanged.count(),1);
-
+#endif
     spyAdd.clear();
     dataChanged.clear();
 
@@ -6965,7 +7121,11 @@ void tst_QLandmarkManager::importGpx() {
         qFatal("Unknown test row type");
     }
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
 
@@ -7914,7 +8074,11 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     //needed to complete the operation
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
+#if (defined(Q_WS_MAEMO_6))
+    QVERIFY(fetchRequest.waitForFinished(10000));
+#else
     QVERIFY(fetchRequest.waitForFinished(1000));
+#endif
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 }
 
@@ -8195,7 +8359,11 @@ void tst_QLandmarkManager::notificationCheck()
     lm1.setName("LM1");
     m_manager->saveLandmark(&lm1);
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyCatAdd.count(),0);
     QCOMPARE(spyLmAdd.count(),1);
     delete m_manager;
@@ -8213,7 +8381,11 @@ void tst_QLandmarkManager::notificationCheck()
      cat1.setName("CAT1");
      QVERIFY(m_manager->saveCategory(&cat1));
 
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyCatAdd2.count(),1);
     QCOMPARE(spyLmAdd2.count(),0);
 
@@ -8851,7 +9023,11 @@ void tst_QLandmarkManager::testSignals()
     lm1.setName("lm 1");
     lm1.addCategoryId(cat1.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(), 0);
@@ -8865,7 +9041,11 @@ void tst_QLandmarkManager::testSignals()
     spyCatAdd.clear();
 
     QVERIFY(m_manager->saveLandmark(&lm1));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
+#endif
     QCOMPARE(spyAdd.count(), 0);
 
     QCOMPARE(spyChange.count(), 1);
@@ -8885,8 +9065,11 @@ void tst_QLandmarkManager::testSignals()
     lm1.removeCategoryId(cat1.categoryId());
     lm1.addCategoryId(cat2.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
+#if defined(Q_WS_MAEMO_6)
+    QTest::qWait(2000);
+#else
     QTest::qWait(10);
-
+#endif
     QCOMPARE(spyAdd.count(), 0);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(), 0);
