@@ -920,8 +920,6 @@ void Dialog::setupBattery()
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
             remainCaplcdNumber,SLOT(display(int)));
-    connect(bi,SIGNAL(voltageChanged(int)),
-            voltagelcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(currentFlowChanged(int)),
             currentFLowlcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityBarsChanged(int)),

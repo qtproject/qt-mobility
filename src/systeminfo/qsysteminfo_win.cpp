@@ -2314,10 +2314,6 @@ void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
-
 }
 
 void QSystemBatteryInfoPrivate::setConnection()
@@ -2514,7 +2510,6 @@ void QSystemBatteryInfoPrivate::getBatteryStatus()
                                                 cVoltage = batteryStatus.Voltage;
                                                 if(cVoltage != currentVoltage) {
                                                     currentVoltage= cVoltage;
-                                                    emit voltageChanged(currentVoltage);
                                                 }
                                             }
                                         }

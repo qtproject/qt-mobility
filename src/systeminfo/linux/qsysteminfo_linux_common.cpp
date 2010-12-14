@@ -3189,9 +3189,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             remainingChargingTimeChanged(int))))) {
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-    }
 
 }
 
@@ -3342,7 +3339,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
 
             if (mapS == "battery.voltage.current") {
                 currentVoltage = ifaceDevice.getPropertyInt("battery.voltage.current");
-                Q_EMIT voltageChanged(currentVoltage);
             }
 
             if (mapS == "battery.charge_level.rate") {
@@ -3674,7 +3670,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop,
 
     } else if (prop == QLatin1String("Voltage")) {
         currentVoltage = v.toDouble() * 1000;
-        emit voltageChanged(currentVoltage);
     } else if (prop == QLatin1String("State")) {
         switch(v.toUInt()) {
         case 1: // charging

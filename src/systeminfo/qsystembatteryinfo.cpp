@@ -139,12 +139,6 @@ This signal is emitted when the charger type has changed, such as when a phone g
  */
 
 /*!
-  \fn void QSystemBatteryInfo::voltageChanged(int level)
-
-  This signal is emitted when battery voltage level has changed, in millivolts (mV).
-  \a level is the new level.
- */
-/*!
   \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int level)
 
   This signal is emitted when remianing charge time has changed.
@@ -367,11 +361,6 @@ void QSystemBatteryInfo::connectNotify(const char *signal)
         connect(d,SIGNAL(remainingChargingTimeChanged(int)),
                 this,SIGNAL(remainingChargingTimeChanged(int)),Qt::UniqueConnection);
     }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-        connect(d,SIGNAL(voltageChanged(int)),
-                this,SIGNAL(voltageChanged(int)),Qt::UniqueConnection);
-    }
 }
 
 /*!
@@ -435,11 +424,6 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
             remainingChargingTimeChanged(int))))) {
         disconnect(d,SIGNAL(remainingChargingTimeChanged(int)),
                 this,SIGNAL(remainingChargingTimeChanged(int)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            voltageChanged(int))))) {
-        disconnect(d,SIGNAL(voltageChanged(int)),
-                this,SIGNAL(voltageChanged(int)));
     }
 }
 

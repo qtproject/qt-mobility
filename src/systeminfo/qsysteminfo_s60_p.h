@@ -481,8 +481,6 @@ Q_SIGNALS:
     void remainingCapacityPercentChanged(int);
     void remainingCapacitymAhChanged(int);
     void batteryCurrentFlowChanged(int);
-    void voltageChanged(int);
-
     void currentFlowChanged(int);
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
