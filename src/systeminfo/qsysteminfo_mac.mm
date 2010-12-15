@@ -2508,7 +2508,7 @@ void QSystemBatteryInfoPrivate::getBatteryInfo()
              stat = QSystemBatteryInfo::BatteryVeryLow;
         } else if (currentBatLevelPercent < 41) {
              stat =  QSystemBatteryInfo::BatteryLow;
-        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
              stat = QSystemBatteryInfo::BatteryOk;
         } else if (currentBatLevelPercent == 100) {
              stat = QSystemBatteryInfo::BatteryFull;

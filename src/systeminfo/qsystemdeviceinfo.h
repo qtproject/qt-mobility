@@ -140,12 +140,13 @@ public:
     };
 
     enum KeyboardType {
-        UnknownKeyboard = 0,
+        UnknownKeyboard = 0xfffffff,
         SoftwareKeyboard= 0x0000001,
         ITUKeypad = 0x0000002,
         HalfQwertyKeyboard = 0x0000004,
         FullQwertyKeyboard = 0x0000008,
-        WirelessKeyboard = 0x0000010
+        WirelessKeyboard = 0x0000010,
+        FlipKeyboard = 0x0000020
       };//1.2
     Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
 

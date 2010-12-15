@@ -3308,7 +3308,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::halChanged(int count,QVariantList map
                     stat = QSystemBatteryInfo::BatteryVeryLow;
                 } else if (currentBatLevelPercent < 41) {
                     stat =  QSystemBatteryInfo::BatteryLow;
-                } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+                } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
                     stat = QSystemBatteryInfo::BatteryOk;
                 } else if (currentBatLevelPercent == 100) {
                     stat = QSystemBatteryInfo::BatteryFull;
@@ -3656,7 +3656,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::propertyChanged(const QString & prop,
              stat = QSystemBatteryInfo::BatteryVeryLow;
         } else if (currentBatLevelPercent < 41) {
              stat =  QSystemBatteryInfo::BatteryLow;
-        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 99) {
+        } else if (currentBatLevelPercent > 40 && currentBatLevelPercent < 100) {
              stat = QSystemBatteryInfo::BatteryOk;
         } else if (currentBatLevelPercent == 100) {
              stat = QSystemBatteryInfo::BatteryFull;
