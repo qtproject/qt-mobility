@@ -275,7 +275,7 @@ void tst_QGeoTiledMapData::panTest_data()
 
     window = QSize(200, 200);
     pxCenter = QPoint(100, 100);
-    center = QGeoCoordinate(0.0, 179.9);
+    center = QGeoCoordinate(0.0, 179.8);
     pan = QPoint(50, -10);
     pxFinal = pxCenter - pan;
     dist = 3900e3;
