@@ -92,7 +92,7 @@ public:
         d->setCurrentProfile(profile);
         d->setBluetoothPower(btPower);
         d->setWirelessKeyboardConnected(keyboardConnected);
-        d->setKeyboardFlipOpen(flip);
+        d->setKeyboardFlippedOpen(flip);
         d->setDeviceLocked(locked);
         d->setTypeOfLock(lockType);
 
@@ -171,7 +171,7 @@ private slots:
     void tst_bluetoothStateChanged();
 
     void tst_wirelessKeyboardConnected();
-    void tst_keyboardFlip();
+    void tst_keyboardFlipped();
     void tst_deviceLocked();
 
     void tst_lockTypeChanged_data();
@@ -185,7 +185,7 @@ private slots:
     void bluetoothStateChanged(bool on);
 
     void wirelessKeyboardConnected(bool connected);
-    void keyboardFlip(bool open);
+    void keyboardFlipped(bool open);
     void deviceLocked(bool isLocked);
     void lockStatusChanged(QSystemDeviceInfo::LockType);
 #endif
@@ -607,21 +607,21 @@ void tst_QSystemDeviceInfo::tst_wirelessKeyboardConnected()
 
 }
 
-void tst_QSystemDeviceInfo::tst_keyboardFlip()
+void tst_QSystemDeviceInfo::tst_keyboardFlipped()
 {
     QSystemDeviceInfo di;
 
     SystemInfoConnection si;
     ChangeDeviceThread *changeDevThread = new ChangeDeviceThread();
 
-    connect(&di,SIGNAL(keyboardFlip(bool)),
-            this,SLOT(keyboardFlip(bool)));
+    connect(&di,SIGNAL(keyboardFlipped(bool)),
+            this,SLOT(keyboardFlipped(bool)));
 
     changeDevThread->flip = keyFLip = true;
     changeDevThread->start();
 
-    QSignalSpy errorSpy(&di, SIGNAL(keyboardFlip(bool)));
-    QVERIFY(::waitForSignal(&di, SIGNAL(keyboardFlip(bool)), 10 * 1000));
+    QSignalSpy errorSpy(&di, SIGNAL(keyboardFlipped(bool)));
+    QVERIFY(::waitForSignal(&di, SIGNAL(keyboardFlipped(bool)), 10 * 1000));
 
     QVERIFY(errorSpy.count() == 1);
 
@@ -728,7 +728,7 @@ void tst_QSystemDeviceInfo::wirelessKeyboardConnected(bool connected)
     QVERIFY(connected == keyboardConnect);
 }
 
-void tst_QSystemDeviceInfo::keyboardFlip(bool open)
+void tst_QSystemDeviceInfo::keyboardFlipped(bool open)
 {
     QVERIFY(open == keyFLip);
 }

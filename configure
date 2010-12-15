@@ -110,7 +110,7 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
-TEST_SIM=
+TEST_USE_SIMULATOR=
 
 usage() 
 {
@@ -285,7 +285,7 @@ while [ "$#" -gt 0 ]; do
             shift
             ;;
         -test-sim)
-            TEST_SIM="yes"
+            TEST_USE_SIMULATOR="yes"
             ;; 
         *)
             echo "Unknown option: $1"
@@ -485,10 +485,10 @@ else
     echo "build_tools = yes" >> "$CONFIG_IN"
 fi
 
-if [ -z "$TEST_SIM" ]; then
-    echo "test_sim = no" >> "$CONFIG_IN"
+if [ -z "$TEST_USE_SIMULATOR" ]; then
+    echo "test_use_sim = no" >> "$CONFIG_IN"
 else
-    echo "test_sim = yes" >> "$CONFIG_IN"
+    echo "test_use_sim = yes" >> "$CONFIG_IN"
 fi
 
 echo "Configuring Qt Mobility"

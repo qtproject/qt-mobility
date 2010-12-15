@@ -15,8 +15,6 @@ symbian {
 }
 
 
-
-
-contains(test_sim, yes) {
- DEFINES += TESTR
+contains(test_use_sim, yes) {
+DEFINES += TESTR QT_SIMULATOR
 }
