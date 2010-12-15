@@ -55,7 +55,7 @@
 #include <QtGui>
 #include <QPixmap>
 
-#include "../qgeotiledmappingmanagerengine/pixelindexengine.h"
+#include "../pixelindex/pixelindexengine.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)

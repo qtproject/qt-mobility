@@ -53,7 +53,7 @@
 #include <QDebug>
 #include <QtGui>
 
-#include "pixelindexengine.h"
+#include "../pixelindex/pixelindexengine.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)

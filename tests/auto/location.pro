@@ -43,7 +43,8 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeomapplugin \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
-      geoservicesgeotiledmap
+      geoservicesgeotiledmap \
+      pixelindex
 
 
 !symbian{
