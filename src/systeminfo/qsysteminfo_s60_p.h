@@ -247,14 +247,17 @@ public:
 
     bool currentBluetoothPowerState();
 
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlipOpen();//1.2
+    bool isKeyboardFlippedOpen();//1.2
     void keyboardConnected(bool connect);//1.2
-    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
-    QUuid hostId(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    QUuid uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockType lockStatus(); //1.2
 
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
@@ -263,7 +266,7 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlip(bool open);//1.2
+    void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
@@ -301,7 +304,7 @@ private:
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 
     bool hasWirelessKeyboardConnected;
-
+    QSystemDeviceInfo::BatteryStatus m_previousBatteryStatus;
 };
 
 //////// QSystemScreenSaver
@@ -478,8 +481,6 @@ Q_SIGNALS:
     void remainingCapacityPercentChanged(int);
     void remainingCapacitymAhChanged(int);
     void batteryCurrentFlowChanged(int);
-    void voltageChanged(int);
-
     void currentFlowChanged(int);
     void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);

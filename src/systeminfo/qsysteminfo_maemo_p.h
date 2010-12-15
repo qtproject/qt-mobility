@@ -250,6 +250,10 @@ public:
     QString model();
     QString productName();
 
+    int messageRingtoneVolume();//1.2
+    int voiceRingtoneVolume();//1.2
+    bool vibrationActive();//1.2
+
 protected:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
