@@ -14,6 +14,7 @@ QNfcTagTestCommon::QNfcTagTestCommon()
     target = 0;
     qRegisterMetaType<QNdefMessage>("QNdefMessage");
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*"); 
+    qRegisterMetaType<QNearFieldTarget::Error>("QNearFieldTarget::Error"); 
 }
 
 QNfcTagTestCommon::~QNfcTagTestCommon()

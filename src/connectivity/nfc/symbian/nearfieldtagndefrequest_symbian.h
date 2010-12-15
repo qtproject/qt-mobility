@@ -56,6 +56,7 @@ public:
         };
 public:
     NearFieldTagNdefRequest();
+    ~NearFieldTagNdefRequest();
     void IssueRequest();
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
@@ -72,7 +73,6 @@ private:
     TNdefRequestType iType;
     QList<QNdefMessage> iMessages;
 
-    // Not own
-    RPointerArray<CNdefMessage> * iReadMessages;
+    RPointerArray<CNdefMessage> iReadMessages;
     };
 #endif

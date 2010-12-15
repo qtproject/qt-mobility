@@ -278,6 +278,7 @@ void QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearF
 
         if (tag)
         {
+            tag->SetTagOperationCallback(aCallback);
             TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
             TRAP( error, 
                 // Lazy creation
