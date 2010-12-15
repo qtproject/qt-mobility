@@ -53,12 +53,15 @@ class QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed)
+    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited CONSTANT)
 
 public:
     explicit QDeclarativeScreenSaver(QObject *parent = 0);
     virtual ~QDeclarativeScreenSaver();
 
     bool screenSaverDelayed();
+    bool screenSaverInhibited();
+    Q_INVOKABLE bool setScreenSaverInhibit();
 
 signals:
 
