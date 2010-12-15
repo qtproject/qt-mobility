@@ -221,7 +221,7 @@ void tst_QGeoTiledMapData::objectsAtPoint_data()
     makeFixtures(gmd, obj, center, center, 0.0, targetPixmap, mgr, window, target);
     QTest::newRow("Zoom level 0") << mgr << gmd << obj << center;
 
-    center = QGeoCoordinate(0.0, 179.9);
+    center = QGeoCoordinate(0.0, 179.8);
     makeFixtures(gmd, obj, center, center, 2.0, targetPixmap, mgr, window, target);
     QTest::newRow("Positive dateline") << mgr << gmd << obj << center;
 
