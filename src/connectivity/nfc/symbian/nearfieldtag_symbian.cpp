@@ -82,12 +82,15 @@ CNearFieldTag::~CNearFieldTag()
 
 CNearFieldTag * CNearFieldTag::CastToTag()
     {
+    BEGIN
     TInt error = KErrNone;
     
     if (!IsConnectionOpened())
         {
         error = OpenConnection();
+        LOG("open connection, error is "<<error);
         }
+    END
     return (error == KErrNone) ? const_cast<CNearFieldTag *>(this) 
                                : reinterpret_cast<CNearFieldTag *>(0);
     }
@@ -121,56 +124,75 @@ TBool CNearFieldTag::IsConnectionOpened()
 
 const TDesC8& CNearFieldTag::Uid() const
     {
+    BEGIN
+    END
     return iNfcTag->Uid();
     }
 
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
+    BEGIN
     TInt error = KErrInUse;
     if (!IsActive())
         {
+        LOG("AO is not active");
         // No ongoing request
         if (IsConnectionOpened())
             {
+            LOG("Connection is open");
             error = KErrNone;
             iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
             SetActive();
             }
         }
+    END
     return error;
     }
 
 void CNearFieldTag::DoCancel()
     {
-    //CancelRawModeAccess();
+    BEGIN
+
+    //TODO: CancelRawModeAccess();
     if (iCallback)
         {
+        LOG("call back command complete with KErrCancel");
         // TODO: Can't leave!
         QT_TRYCATCH_LEAVING(iCallback->CommandComplete(KErrCancel));
         }
+    END
     }
 
 void CNearFieldTag::RunL()
     {
+    BEGIN
     if (iCallback)
         {
+        LOG("call back command complete with error"<<iStatus.Int());
         QT_TRYCATCH_LEAVING(iCallback->CommandComplete(iStatus.Int()));
         }
+    END
     }
 
 TInt CNearFieldTag::RunError(TInt /*aError*/)
     {
+    BEGIN
     // Can't do anything
+    END
     return KErrNone;
     }
 
 
 void CNearFieldTag::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
     {
+    BEGIN
     iCallback = aCallback;
+    END
     }
 
 MNearFieldTagOperationCallback * CNearFieldTag::TagOperationCallback()
     {
+    BEGIN
+    END
     return iCallback;
     }

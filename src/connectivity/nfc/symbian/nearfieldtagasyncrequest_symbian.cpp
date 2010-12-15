@@ -40,11 +40,14 @@
  ****************************************************************************/
 #include "nearfieldtagasyncrequest_symbian.h"
 #include <e32std.h>
+#include "debug.h"
 
 TInt MNearFieldTagAsyncRequest::TimeoutCallback(TAny * aObj)
 {
+    BEGIN
     MNearFieldTagAsyncRequest * obj = static_cast<MNearFieldTagAsyncRequest *>(aObj);
     obj->ProcessTimeout();
+    END
     return KErrNone;
 }
 
@@ -57,8 +60,10 @@ MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
 
 MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
 {
+    BEGIN
     if (iTimer)
     {
+        LOG("delete timer");
         delete iTimer;
         iTimer = 0;
     }
@@ -69,57 +74,76 @@ MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
         {
             iWait->AsyncStop();
         }
+        LOG("delete waiter");
         delete iWait;
     }
+    END
 }
  
 void MNearFieldTagAsyncRequest::SetOperator(MNearFieldTargetOperation * aOperator)
 {
+    BEGIN
     iOperator = aOperator;
+    END
 }
 
 void MNearFieldTagAsyncRequest::SetRequestId(QNearFieldTarget::RequestId aId)
 {
+    BEGIN
     iId = aId;
+    END
 }
     
 QNearFieldTarget::RequestId MNearFieldTagAsyncRequest::GetRequestId()
 {
+    BEGIN
+    END
     return iId;
 }
 
 bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
 {
+    BEGIN
     if (iWait)
     {
         if (iWait->IsStarted())
         {
+            LOG("waiter has already started");
             // the request is already waited, return false.
             return false;
         }
     }
     else
     {
+        LOG("new a new waiter");
         iWait = new(ELeave) CActiveSchedulerWait();
     }
 
     if (iTimer)
     {
+        LOG("cancel previous timer");
         iTimer->Cancel();
     } 
     else
     {
+        LOG("create a new timer");
         iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
     }
 
     TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
+    LOG("Start timer");
     iTimer->Start(0, aMsecs, callback);
+    LOG("Start waiter");
     iWait->Start();
+    LOG("Waiting completed");
+    END
     return true;
 }
         
 void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
 {
+    BEGIN
+    LOG("Error is "<<aError);
     iOperator->IssueNextRequest();
     this->HandleResponse(aError);
 
@@ -131,25 +155,33 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     {
         ProcessEmitSignal(aError);
     }
-    
+   
+    LOG("remove the request from queue"); 
     iOperator->RemoveRequestFromQueue(iId);
+    LOG("delete the request");
     delete this;
+    END
 } 
             
 void MNearFieldTagAsyncRequest::ProcessTimeout()
 {
+    BEGIN
     if (iWait)
     {
         if (iWait->IsStarted())
         {
+            LOG("wait timeout");
             ProcessResponse(KErrTimedOut);
         }
     }
+    END
 }
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
+    BEGIN
     if (iTimer)
     {
+        LOG("cancel timer");
         delete iTimer;
         iTimer = 0;
     }
@@ -157,7 +189,9 @@ void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
     {
         if (iWait->IsStarted())
         {
+            LOG("async stop waiter");
             iWait->AsyncStop();
         }
     }
+    END
 }

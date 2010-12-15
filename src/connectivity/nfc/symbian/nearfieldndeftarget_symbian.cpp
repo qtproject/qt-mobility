@@ -48,6 +48,7 @@
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagndefoperationcallback_symbian.h"
+#include "debug.h"
 
 CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
                                                                                         iNfcServer(aNfcServer)
@@ -81,13 +82,20 @@ void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
 
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
+    BEGIN
     if (ERead == iCurrentOperation)
         {
+        LOG("cancel ndef read");
         iNdefConnection->CancelRead();
         }
     else if (EWrite == iCurrentOperation)
         {
+        LOG("cancel ndef write");
         iNdefConnection->CancelWrite();
+        }
+    if (iNdefConnection)
+        {
+        delete iNdefConnection;
         }
     if (iTagConnection)
         {
@@ -97,14 +105,18 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         {
         delete iNfcTag;
         }
+    END
     }
 
 CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {
+    BEGIN
     if (IsConnectionOpened())
         {
+        LOG("Ndef connection will be closed");
         CloseConnection();
         }
+    BEGIN
     return iTagConnection ? iTagConnection->CastToTag() : reinterpret_cast<CNearFieldTag *>(0);
     }
 
@@ -135,59 +147,81 @@ CNearFieldNdefTarget * CNearFieldNdefTarget::CastToNdefTarget()
 
 TInt CNearFieldNdefTarget::OpenConnection()
     {
+    BEGIN
+    END
     return iNfcTag->OpenConnection(*iNdefConnection);
     }
 
 void CNearFieldNdefTarget::CloseConnection()
     {
+    BEGIN
+    END
     return iNfcTag->CloseConnection(*iNdefConnection);
     }
 
 TBool CNearFieldNdefTarget::IsConnectionOpened()
     {
-    return iNdefConnection->IsActivated();
+    BEGIN
+    TBool result = iNdefConnection->IsActivated();
+    LOG(result);
+    END
+    return result;
     }
 
 const TDesC8& CNearFieldNdefTarget::Uid() const
     {
+    BEGIN
+    END
     return iNfcTag->Uid();
     }
 
 void CNearFieldNdefTarget::ReadComplete( CNdefRecord* /*aRecord*/, CNdefRecord::TNdefMessagePart /*aPart*/ )
     {
+    BEGIN
+    END
     }
 
 void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
     {
+    BEGIN
     if (iCallback)
         {
         TInt err = KErrNone;
         if (iMessages)
             {
             err = iMessages->Append(aMessage);
+            LOG("append message, err = "<<err);
             }
         iMessages = 0;
-        QT_TRYCATCH_ERROR(err, iCallback->ReadComplete(err, iMessages));
-        // avoid warning
+        TInt errIgnore = KErrNone;
+        QT_TRYCATCH_ERROR(errIgnore, iCallback->ReadComplete(err, iMessages));
+        LOG("callback error is "<<errIgnore);
         }
     iCurrentOperation = ENull;
+    LOG(iCurrentOperation);
+    END
     }
 
 void CNearFieldNdefTarget::WriteComplete()
     {
+    BEGIN
     if (iCallback)
         {
         TInt errIgnore = KErrNone;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->WriteComplete(KErrNone));
-        Q_UNUSED(errIgnore);
+        LOG("callback error is "<<errIgnore);
         }
     iCurrentOperation = ENull;
+    LOG(iCurrentOperation);
+    END
     }
 
 void CNearFieldNdefTarget::HandleError( TInt aError )
     {
+    BEGIN
     if (iCallback)
         {
+        LOG(iCurrentOperation);
         iMessages = 0;
         if (ERead == iCurrentOperation)
             {
@@ -198,26 +232,34 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
             iCallback->WriteComplete(aError);
             }
         }
+    END
     }   
 
 TBool CNearFieldNdefTarget::hasNdefMessage()
     {
+    BEGIN
     TBool result = EFalse;
     if (!IsConnectionOpened())
         {
+        LOG("Open Connection");
         result = (KErrNone == OpenConnection());
         }
     if (result)
         {
+        LOG("Check if tag is empty");
         TRAPD(err, result = iNdefConnection->IsEmptyL());
         result = (KErrNone == err) ? !result : EFalse;
+        LOG(result);
         }
+    END
     return result;
     }
 
 TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
     {
+    BEGIN
     TInt error = KErrNone;
+    LOG("iCurrentOperation = "<<iCurrentOperation);
     if (iCurrentOperation != ENull)
         {
         error = KErrInUse;
@@ -227,21 +269,27 @@ TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
         if (!IsConnectionOpened())
             {
             error = OpenConnection();
+            LOG("Open connection, err = "<<error);
             }
         if (KErrNone == error)
             {
+            LOG("begin to read message");
             iMessages = &aMessages;
             error = iNdefConnection->ReadMessage();
+            LOG("read message err = "<<error);
             iCurrentOperation = (KErrNone == error) ? ERead : ENull;
             }
         }
+    END
     return error;
     }
 
 TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aMessages)
     {
+    BEGIN
     TInt error = KErrNone;
     CNdefMessage * message;
+    LOG("iCurrentOperation = "<<iCurrentOperation);
     if (iCurrentOperation != ENull)
         {
         error = KErrInUse;
@@ -250,28 +298,37 @@ TInt CNearFieldNdefTarget::setNdefMessages(const RPointerArray<CNdefMessage>& aM
         {
         if (aMessages.Count() > 0)
             {
+            LOG("message count > 0");
             // current only support single ndef message
             message = aMessages[0];
             if (!IsConnectionOpened())
                 {
                 error = OpenConnection();
+                LOG("Open connection, err = "<<error);
                 }
             if (KErrNone == error)
                 {
+                LOG("begin to write message"); 
                 error = iNdefConnection->WriteMessage(*message);
+                LOG("write message err = "<<error);
                 iCurrentOperation = (KErrNone == error) ? EWrite : ENull;
                 }
             }
         }
+    END
     return error;
     }
 
 void CNearFieldNdefTarget::SetNdefOperationCallback(MNearFieldNdefOperationCallback * const aCallback)
     {
+    BEGIN
     iCallback = aCallback;
+    END
     }
 
 MNearFieldNdefOperationCallback * CNearFieldNdefTarget::NdefOperationCallback()
     {
+    BEGIN
+    END
     return iCallback;
     }

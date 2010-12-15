@@ -40,23 +40,30 @@
 ****************************************************************************/
 #include "nearfieldtagcommandrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "debug.h"
 
 void NearFieldTagCommandRequest::IssueRequest()
 {
+    BEGIN
     if (iOperator)
     {
         iOperator->DoSendCommand(iCommand, this);
     }
+    END
 }
 
 void NearFieldTagCommandRequest::CommandComplete(TInt aError)
 {
+    BEGIN
     ProcessResponse(aError);
+    END
 }
 
 
 void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
 {
+    BEGIN
+    LOG(aError);
     if (aError != KErrNone)
     {
         iOperator->EmitError(aError);
@@ -65,10 +72,13 @@ void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
     {
         iOperator->EmitRequestCompleted(iId);
     }
+    END
 }
 
 void NearFieldTagCommandRequest::HandleResponse(TInt aError)
 {
+    BEGIN
+    LOG(aError);
     if (aError != KErrNone)
     {
         QByteArray emptyResult;
@@ -79,4 +89,5 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
         QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
         iOperator->HandleResponse(iId, iCommand, result);
     }
+    END
 }

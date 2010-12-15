@@ -41,6 +41,7 @@
 
 #include "nearfieldtagndefrequest_symbian.h"
 #include "nearfieldutility_symbian.h"
+#include "debug.h"
 
 NearFieldTagNdefRequest::NearFieldTagNdefRequest()
 {
@@ -49,8 +50,10 @@ NearFieldTagNdefRequest::NearFieldTagNdefRequest()
 
 void NearFieldTagNdefRequest::IssueRequest()
 {
+    BEGIN
     if (iOperator)
     {
+        LOG(iType);
         switch(iType)
         {
             case EReadRequest: 
@@ -65,21 +68,29 @@ void NearFieldTagNdefRequest::IssueRequest()
             }
         }
     }
+    END
 }
 
 void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessage> * aMessage)
 {
+    BEGIN
+    LOG(aError);
     iReadMessages = aMessage;
     ProcessResponse(aError);
+    END
 }
 
 void NearFieldTagNdefRequest::WriteComplete(TInt aError)
 {
+    BEGIN
     ProcessResponse(aError);
+    END
 }
 
 void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
 {
+    BEGIN
+    LOG("error code is "<<aError<<" request type is "<<iType);
     if (aError != KErrNone)
     {
         iOperator->EmitError(aError);
@@ -100,8 +111,11 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
             iOperator->EmitNdefMessagesWritten();
         }
     }
+    END
 }
 
 void NearFieldTagNdefRequest::HandleResponse(TInt /*aError*/)
 {
+    BEGIN
+    END
 }

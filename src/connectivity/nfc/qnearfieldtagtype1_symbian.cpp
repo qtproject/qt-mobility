@@ -42,11 +42,14 @@
 #include <QVariant>
 #include "nearfieldutility_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
+#include "debug.h"
 
 QTM_BEGIN_NAMESPACE
 
 static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
 {
+    BEGIN
+    END
     switch (command.at(0)) {
     case 0x01:  // READ
         if (command.at(1) == response.at(0))
@@ -144,6 +147,7 @@ QByteArray QNearFieldTagType1Symbian::uid() const
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
 {
+    BEGIN
     QByteArray command;
     command.append(char(0x78));     // RID
     command.append(char(0x00));     // Address (unused)
@@ -153,7 +157,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 }
 
@@ -162,6 +166,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readIdentification()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
 {
+    BEGIN
     QByteArray command;
     command.append(char(0x00)); // RALL
     command.append(char(0x00));
@@ -171,7 +176,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 }
 
@@ -180,6 +185,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readAll()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
 {
+    BEGIN
     // MSB must be 0
     if (address & 0x80)
         return 0;
@@ -194,7 +200,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 #if 0
     if (response.isEmpty())
@@ -213,6 +219,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address, quint8 data, WriteMode mode)
 {
+    BEGIN
     // MSB must be 0
     if (address & 0x80)
         return false;
@@ -234,7 +241,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 #if 0
     if (response.isEmpty())
@@ -260,6 +267,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmentAddress)
 {
+    BEGIN
     if (segmentAddress & 0xf0)
         return QNearFieldTarget::RequestId();
 
@@ -273,7 +281,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 #if 0
     if (response.isEmpty())
@@ -292,6 +300,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAddress)
 {
+    BEGIN
     QByteArray command;
     command.append(char(0x02));                 // READ8
     command.append(char(blockAddress));         // Block address
@@ -302,7 +311,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
-
+    END
     return sendCommand(command);
 #if 0
     if (response.isEmpty())
@@ -322,6 +331,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAddress, const QByteArray &data,
                         WriteMode mode)
 {
+    BEGIN
     if (data.length() != 8)
         return false;
 
@@ -342,6 +352,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     // to the command will be ignored.
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
+    END
     return sendCommand(command);
 #if 0
     if (response.isEmpty())
@@ -369,17 +380,23 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     
 bool QNearFieldTagType1Symbian::hasNdefMessage()
 {
+    BEGIN
+    END
     return _hasNdefMessage();
 }
 
 void QNearFieldTagType1Symbian::ndefMessages()
 {
+    BEGIN
     _ndefMessages();
+    END
 }
 
 void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
 {
+    BEGIN
     _setNdefMessages(messages);
+    END
 }
 
 /*!
@@ -387,6 +404,8 @@ void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteArray &command)
 {
+    BEGIN
+    END
     return _sendCommand(command);
 }
 
@@ -395,30 +414,38 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommand(const QByteAr
 */
 QNearFieldTarget::RequestId QNearFieldTagType1Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    BEGIN
+    END
     return _sendCommands(commands);
 }
 
 bool QNearFieldTagType1Symbian::waitForRequestCompleted(const RequestId &id, int msecs)
 {
+    BEGIN
+    END
     return _waitForRequestCompleted(id, msecs);
 }
 
 bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
+    BEGIN
     QVariant decodedResponse = decodeResponse(command, response);
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())
     {
+        LOG("this is one command response in sendCommands");
         // there is existed id. So it must be a sendcommands request response.
         if (existResponse.type() == QVariant::List)
         {
+            LOG("already has some commands response");
             QVariantList list = existResponse.toList();
             list.append(decodedResponse);
             setResponseForRequest(id, list);
         }
         else
         {
+            LOG("second command response of sendCommands"); 
             QVariantList list;
             list.append(existResponse);
             list.append(decodedResponse);
@@ -427,8 +454,10 @@ bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, 
     }
     else
     {
+        LOG("normal command response");
         setResponseForRequest(id, decodedResponse);
     }
+    END
     return true;
 }
 
