@@ -39,22 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef PERFORMANCE_H
-#define PERFORMANCE_H
+#include "maemo6gyroscope.h"
 
-#include <QtGlobal>
+char const * const maemo6gyroscope::id("maemo6.gyroscope");
+const float maemo6gyroscope::MILLI = 0.001;
+bool maemo6gyroscope::m_initDone = false;
 
-#ifdef WIN32
-#include <windows.h>
-typedef LARGE_INTEGER perf_t;
-#else
-#include <QTime>
-typedef QTime perf_t;
-#endif
+maemo6gyroscope::maemo6gyroscope(QSensor *sensor)
+    : maemo6sensorbase(sensor)
+{
+    const QString sensorName = "gyroscopesensor";
+//    initSensor<GyroscopeSensorChannelInterface>(sensorName, m_initDone);
+    setDescription(QLatin1String("angular velocity in "));
+    setRanges(MILLI);
 
-perf_t perf_currentTime();
-double perf_diffTime(perf_t start, perf_t end);
-quint64 perf_diffTimeNative(perf_t start, perf_t end);
-quint64 perf_currentMemUsage();
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
+                               this, SLOT(slotDataAvailable(const XYZ&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
+    setReading<QGyroscopeReading>(&m_reading);
+}
 
-#endif // PERFORMANCE_H
+void maemo6gyroscope::slotDataAvailable(const XYZ& data)
+{
+    m_reading.setX((qreal)(data.x()*MILLI));
+    m_reading.setY((qreal)(data.y()*MILLI));
+    m_reading.setZ((qreal)(data.z()*MILLI));
+    m_reading.setTimestamp(data.XYZData().timestamp_);
+    newReadingAvailable();
+}
+
