@@ -94,6 +94,7 @@ public:
 
     bool m_modified;
     QOrganizerItem m_item;
+    QString m_id;
     QMap<QString, QOrganizerItemDetailDefinition> m_defs;
     QList<QDeclarativeOrganizerItemDetail*> m_details;
     QHash<int, OrganizerItemDetailNameMap*> m_properties;

@@ -150,6 +150,9 @@ private:
     QLLCPSocketState* m_bindState; // own
 
     QLlcpSocket *q_ptr;
+
+    bool m_emittedReadyRead;
+    bool m_emittedBytesWritten;
 };
 
 

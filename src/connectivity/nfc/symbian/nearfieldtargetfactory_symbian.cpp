@@ -68,32 +68,39 @@
 */
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
+    BEGIN
     QNearFieldTarget * tag = 0;
     if (!aNfcTag)
         {
+        LOG("llcp device created");
         tag = new (ELeave)QNearFieldLlcpDeviceSymbian(aNfcServer, aParent); 
         }
     else if(aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType1))
         {
+        LOG("tag type 1 created");
         tag = CreateTagTypeL<CNfcType1Connection, QNearFieldTagType1Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType2))
         {
+        LOG("tag type 2 created");
         tag = CreateTagTypeL<CNfcType2Connection, QNearFieldTagType2Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcType3))
         {
+        LOG("tag type 3 created");
         tag = CreateTagTypeL<CNfcType3Connection, QNearFieldTagType3Symbian>(aNfcTag, aNfcServer, aParent); 
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfc14443P4))
         {
+        LOG("tag type 4 created");
         tag = CreateTagTypeL<CIso14443Connection, QNearFieldTagType4Symbian>(aNfcTag, aNfcServer, aParent);
         }
     else if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcMifareStd))
         {
+        LOG("tag type mifare created");
         tag = CreateTagTypeL<CMifareClassicConnection, QNearFieldTagMifareSymbian>(aNfcTag, aNfcServer, aParent);
         }
-
+    END
     return tag;
     }
 
@@ -104,43 +111,65 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
 template <typename CTAGCONNECTION, typename QTAGTYPE>
 QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
+    BEGIN
     // ownership of aNfcTag transferred.
     CTAGCONNECTION * connection = CTAGCONNECTION::NewLC(aNfcServer);
     CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
     tagType->SetConnection(connection);
     QTAGTYPE * tag= new(ELeave)QTAGTYPE(WrapNdefAccessL(aNfcTag, aNfcServer, tagType), aParent);
-    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag));
+    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
+    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
     CleanupStack::Pop(tagType);
     CleanupStack::Pop(connection);
+    END
     return tag;
     }
 
    
 MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget)
     {
+    BEGIN
+    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
+#if 0
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
         {
+        LOG("Wrap NDEF Access to the tag");
         CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
         ndefTarget->SetRealTarget(aTarget);
         CleanupStack::Pop(ndefTarget);
+        END
         return ndefTarget;
         }
     else
         {
+        LOG("No NDEF Access for the tag");
+        END
         return aTarget;
         }
+#endif
+    LOG("Wrap NDEF Access to the tag");
+    
+    CNearFieldNdefTarget * ndefTarget = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
+    ndefTarget->SetRealTarget(aTarget);
+    CleanupStack::Pop(ndefTarget);
+    END
+    return ndefTarget;
     }
            
 QNearFieldTarget::AccessMethods TNearFieldTargetFactory::ConnectionMode2AccessMethods(MNfcTag * aNfcTag)
     {
+    BEGIN
     QNearFieldTarget::AccessMethods accessMethod;
     if (aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENdefConnection))
         {
+        LOG("the tag has NDefConnection");
         accessMethod |= QNearFieldTarget::NdefAccess;
         }
     if (!aNfcTag->HasConnectionMode(TNfcConnectionInfo::ENfcUnknownConnectionMode))
         {
+        LOG("the tag has tag specified access");
         accessMethod |= QNearFieldTarget::TagTypeSpecificAccess;
         }
+    END
     return accessMethod;
     }

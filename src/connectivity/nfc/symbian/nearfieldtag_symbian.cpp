@@ -43,7 +43,7 @@
 #include <nfcconnection.h>
 #include "nearfieldtag_symbian.h"
 #include "nearfieldtagoperationcallback_symbian.h"
-
+#include "debug.h"
 /*!
     \class CNearFieldTag
     \brief The CNearFieldTag class provides ways to access tag type1
@@ -52,9 +52,9 @@
     \inmodule QtConnectivity
 */
 
-CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
-                                                                          iNfcServer(aNfcServer),
-                                                                          CActive(EPriorityStandard)
+CNearFieldTag::CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer) :  CActive(EPriorityStandard),
+                                                                           iNfcTag(aNfcTag),
+                                                                           iNfcServer(aNfcServer)
     {
     CActiveScheduler::Add(this);
     }
@@ -82,84 +82,117 @@ CNearFieldTag::~CNearFieldTag()
 
 CNearFieldTag * CNearFieldTag::CastToTag()
     {
+    BEGIN
     TInt error = KErrNone;
     
     if (!IsConnectionOpened())
         {
         error = OpenConnection();
+        LOG("open connection, error is "<<error);
         }
+    END
     return (error == KErrNone) ? const_cast<CNearFieldTag *>(this) 
                                : reinterpret_cast<CNearFieldTag *>(0);
     }
 
 TInt CNearFieldTag::OpenConnection()
     {
-    return iNfcTag->OpenConnection(*iTagConnection);
+    BEGIN
+    TInt error = iNfcTag->OpenConnection(*iTagConnection);
+    LOG(error);
+    END
+    return error;
     }
 
 void CNearFieldTag::CloseConnection()
     {
-    return iNfcTag->CloseConnection(*iTagConnection);
+    BEGIN
+    iNfcTag->CloseConnection(*iTagConnection);
+    END
     }
 
 TBool CNearFieldTag::IsConnectionOpened()
     {
-    return iTagConnection->IsActivated();
+    BEGIN
+    LOG((int)iTagConnection);
+    LOG("check if connection is opened");
+    TBool result = iTagConnection->IsActivated();
+    LOG("result is "<<result);
+    END
+    return result;
     }
 
 const TDesC8& CNearFieldTag::Uid() const
     {
+    BEGIN
+    END
     return iNfcTag->Uid();
     }
 
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
+    BEGIN
     TInt error = KErrInUse;
     if (!IsActive())
         {
+        LOG("AO is not active");
         // No ongoing request
         if (IsConnectionOpened())
             {
-            error = iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
-            if (KErrNone == error)
-                {
-                SetActive();
-                }
+            LOG("Connection is open");
+            error = KErrNone;
+            iTagConnection->RawModeAccess(iStatus, aCommand, aResponse, aTimeout);
+            SetActive();
             }
         }
+    END
     return error;
     }
 
 void CNearFieldTag::DoCancel()
     {
-    // TODO: need invoke CancelRawModeAccess to cancel the request
+    BEGIN
+
+    //TODO: CancelRawModeAccess();
     if (iCallback)
         {
+        LOG("call back command complete with KErrCancel");
+        // TODO: Can't leave!
         QT_TRYCATCH_LEAVING(iCallback->CommandComplete(KErrCancel));
         }
+    END
     }
 
 void CNearFieldTag::RunL()
     {
+    BEGIN
     if (iCallback)
         {
+        LOG("call back command complete with error"<<iStatus.Int());
         QT_TRYCATCH_LEAVING(iCallback->CommandComplete(iStatus.Int()));
         }
+    END
     }
 
-TInt CNearFieldTag::RunError(TInt aError)
+TInt CNearFieldTag::RunError(TInt /*aError*/)
     {
+    BEGIN
     // Can't do anything
+    END
     return KErrNone;
     }
 
 
 void CNearFieldTag::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
     {
+    BEGIN
     iCallback = aCallback;
+    END
     }
 
 MNearFieldTagOperationCallback * CNearFieldTag::TagOperationCallback()
     {
+    BEGIN
+    END
     return iCallback;
     }

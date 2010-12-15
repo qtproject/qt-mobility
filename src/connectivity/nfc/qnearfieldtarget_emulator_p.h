@@ -39,33 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef TESTHELPER_H_
-#define TESTHELPER_H_
+#ifndef QNEARFIELDTARGET_EMULATOR_P_H
+#define QNEARFIELDTARGET_EMULATOR_P_H
 
-#include <qgeoserviceprovider.h>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-class QString;
+#include "qnearfieldtagtype1.h"
+#include "targetemulator_p.h"
 
-QTM_BEGIN_NAMESPACE
-class QGraphicsGeoMap;
-QTM_END_NAMESPACE
+#include <QtCore/QMap>
 
 QTM_USE_NAMESPACE
 
-class TestHelper
+class TagType1 : public QNearFieldTagType1
 {
+    Q_OBJECT
+
 public:
-    TestHelper();
-    ~TestHelper();
-    QGraphicsGeoMap* map();
+    TagType1(TagBase *tag, QObject *parent);
+    ~TagType1();
+
+    QByteArray uid() const;
+
+    AccessMethods accessMethods() const;
+
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
 private:
-    QGeoServiceProvider m_serviceProvider;
-    QGraphicsGeoMap* m_map;
-    QGraphicsScene m_scene;
-    QGraphicsView m_view;
-
+    TagBase *m_tag;
 };
 
-#endif /* TESTHELPER_H_ */
+class TagActivator : public QObject
+{
+    Q_OBJECT
+
+public:
+    TagActivator();
+    ~TagActivator();
+
+    void initialize();
+    void reset();
+
+    static TagActivator *instance();
+
+protected:
+    void timerEvent(QTimerEvent *e);
+
+signals:
+    void tagActivated(TagBase *tag);
+    void tagDeactivated(TagBase *tag);
+
+private:
+    QMap<TagBase *, bool>::Iterator m_current;
+    int timerId;
+};
+
+#endif // QNEARFIELDTARGET_EMULATOR_P_H

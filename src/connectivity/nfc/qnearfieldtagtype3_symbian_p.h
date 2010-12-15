@@ -90,6 +90,7 @@ private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks);
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response);
+    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
 private:
     QByteArray mIDm;
     

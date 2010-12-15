@@ -44,7 +44,7 @@
 QTM_BEGIN_NAMESPACE
 
 QNearFieldLlcpDeviceSymbian::QNearFieldLlcpDeviceSymbian(RNfcServer& nfcServer, QObject *parent)
-                                  : mNfcServer(nfcServer), QNearFieldTarget(parent)
+                                  : QNearFieldTarget(parent), mNfcServer(nfcServer) 
 {
 }
 

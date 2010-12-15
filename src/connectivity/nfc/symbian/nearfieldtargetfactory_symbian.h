@@ -43,6 +43,7 @@
 #define NEARFIELDTARGETFACTORY_H_
 
 #include <qnearfieldtarget.h>
+#include "debug.h"
 
 class MNfcTag;
 class RNfcServer;

@@ -24,6 +24,8 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void queuedWrittenTest();
+
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void testCase1();   // handshake 1
     void testCase2();   // handshake 2
@@ -77,6 +79,44 @@ void tst_qllcpsocketlocal::initTestCase()
 
 void tst_qllcpsocketlocal::cleanupTestCase()
 {
+}
+
+
+/*!
+ Description:  NFC LLCP connection-less mode socket - queued written buffer
+
+ TestScenario:
+                1. Local peer sends the "string1" message to the remote peer
+                2. Local peer sends the "string2" message to the remote peer
+
+ TestExpectedResults:
+               1. Local peer write datagram successfully twice
+*/
+void tst_qllcpsocketlocal::queuedWrittenTest()
+{
+    QString message("string1");
+    QString message2("string2");
+    QLlcpSocket socket(this);
+
+    bool ret = socket.bind(m_port);
+    QVERIFY(ret);
+
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(val != -1);
+
+    QByteArray tmpArray2(message2.toAscii());
+    const char* data2 =  tmpArray2.data();
+    qint64 strSize2 = message2.size();
+    qDebug() << "begin write the second time";
+    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
+    qDebug() << "end write the second time" << val2;
+    QVERIFY(val2 != -1);
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
 }
 
 /*!

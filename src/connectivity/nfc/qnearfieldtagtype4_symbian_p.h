@@ -71,10 +71,8 @@ public:
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
 
-#if 0
-    QByteArray sendAPDUCommand(const QByteArray &command);
-    QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
-#endif
+    RequestId sendAPDUCommand(const QByteArray &command);
+    RequestId sendAPDUCommands(const QList<QByteArray> &commands);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {
@@ -85,7 +83,8 @@ public:
     {
         return _accessMethods();
     }
-    
+
+    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     friend class QNearFieldTagImpl<QNearFieldTagType4Symbian>;
 };
 

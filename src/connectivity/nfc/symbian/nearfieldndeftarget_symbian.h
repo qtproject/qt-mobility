@@ -49,6 +49,7 @@
 #include <ndefhandler.h>
 
 #include "nearfieldtarget_symbian.h"
+#include "debug.h"
 
 class CNearFieldTag;
 class CNdefMessage;

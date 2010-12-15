@@ -93,6 +93,7 @@ public:
         ChecksumMismatchError,
         InvalidParametersError,
         NdefReadError,
+        NdefWriteError
     };
 
     class RequestIdPrivate;
@@ -109,6 +110,7 @@ public:
         int refCount() const;
 
         bool operator<(const RequestId &other) const;
+        bool operator==(const RequestId &other) const;
         RequestId &operator=(const RequestId &other);
 
         QSharedDataPointer<RequestIdPrivate> d;

@@ -39,33 +39,13 @@
 **
 ****************************************************************************/
 
-#ifndef TESTHELPER_H_
-#define TESTHELPER_H_
+#ifndef DEBUG_H_
+#define DEBUG_H_
+#include <QDebug>
 
-#include <qgeoserviceprovider.h>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-class QString;
+#define SYMBIAN_NFC_DEBUG
 
-QTM_BEGIN_NAMESPACE
-class QGraphicsGeoMap;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-class TestHelper
-{
-public:
-    TestHelper();
-    ~TestHelper();
-    QGraphicsGeoMap* map();
-
-private:
-    QGeoServiceProvider m_serviceProvider;
-    QGraphicsGeoMap* m_map;
-    QGraphicsScene m_scene;
-    QGraphicsView m_view;
-
-};
-
-#endif /* TESTHELPER_H_ */
+#define BEGIN qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
+#define END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" End";
+#define LOG(a) qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<a;
+#endif /* DEBUG_H_ */

@@ -307,21 +307,29 @@ To implment your own plugin, you need to subclass QLandmarkManagerEngine and pro
 for the virtual functions, and then create a QLandmarkMangerEngineFactory subclass that will instantiate
 your particular engine implementation.
 
-The following table shows names of the default managers for each platform.
+The following table shows names of the default managers for each platform and where the landmarks are stored.
 \table
 \header
     \o Manager name
     \o Platform
+    \o Landmark storage
 \row
     \o com.nokia.qt.landmarks.engines.symbian
     \o S60 3.1,3.2,5.0, Symbian
+    \o Uses the S60 Platform Landmarks API to store data into the default/global landmark database.
 \row
     \o com.nokia.qt.landmarks.engines.sqlite
     \o Maemo5, Windows Xp/Vista,Linux, Mac OS X
+    \o Landmarks are stored in an SQLite database.
 \row
     \o com.nokia.qt.landmarks.engines.qsparql
     \o Harmattan
+    \o Landmarks are stored in Tracker using SPARQL queries.
 \endtable
+
+These managers only store and retrieve landmark data locally.  This landmark data is available to any application which accesses the manager
+and is thus shared between all applications.  At present there are no managers which retrieve landmark data from online
+sources.
 
 For convenience, this documentations refers to the manager corresponding to \c com.nokia.qt.landmarks.engines.symbian as the \i {symbian manager},
 the manager corresponding to \c com.nokia.qt.landmarks.engines.sqlite as the \i{sqlite manager}, and the manager corresponding to \c com.nokia.qt.landmarks.engines.sparql

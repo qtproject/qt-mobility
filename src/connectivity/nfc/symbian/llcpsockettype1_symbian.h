@@ -206,7 +206,9 @@ public:
    /*!
     * Transfer given data to remote device.
     */
-   TInt Transfer(MLlcpReadWriteCb&, const TDesC8& aData );
+   TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );
+   
+   bool TransferQueuedL(MLlcpReadWriteCb& aLlcpSendCb);
    
    /*!
     * Cancels COwnLlcpConnection::Tranfer() request.
@@ -226,6 +228,7 @@ public:
    TInt ReceiveDataFromBuf(TDes8& aData);
    bool HasPendingDatagrams() const;
    TInt64 PendingDatagramSize() const;
+   bool HasQueuedWrittenDatagram() const;
 
 private:
 
@@ -238,6 +241,7 @@ private:
     MLlcpConnLessTransporter* iConnection;  
     CLlcpSenderType1*      iSenderAO;
     CLlcpReceiverType1*    iReceiverAO;  
+    RPointerArray<HBufC8> iSendBufArray;
     };
 
     

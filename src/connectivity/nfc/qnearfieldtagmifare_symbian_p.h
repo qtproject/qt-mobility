@@ -84,6 +84,7 @@ public:
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
 
+    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
 signals:
     void disconnected();
     

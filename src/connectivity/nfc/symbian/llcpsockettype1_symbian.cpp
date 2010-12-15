@@ -42,6 +42,12 @@
 #include "nearfieldutility_symbian.h"
 #include "llcpsockettype1_symbian.h"
 
+#include <QDebug>
+#define LOG1 qDebug() <<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
+#define LOG qDebug()<<"CLlcpSocketType1::"<<__FUNCTION__<<": "<<__LINE__ <<"Begine";
+#define LOGEND qDebug()<<"CLlcpSocketType1::"<<__FUNCTION__<<": "<<__LINE__ <<"End";
+#define LOG2(a) qDebug()<<"CLlcpSocketType1::"<<__FUNCTION__<<": "<<__LINE__<<a;
+
 /*!
     CLlcpSocketType1::NewL()
 */
@@ -167,7 +173,10 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
     
     if (KErrNone == CreateConnection(aPortNum))
         {
-        error = iConnection->Transfer(*this, aData);
+        TRAP_IGNORE(
+             QT_TRYCATCH_LEAVING( error = iConnection->TransferL(*this, aData));
+         );
+        
         if (KErrNone == error)
             {
             val =  0;
@@ -257,21 +266,26 @@ void CLlcpSocketType1::ReceiveComplete(TInt aError)
 */
 void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
     {
+    LOG
     if (iWaitStatus == EWaitForBytesWritten)
         {
         StopWaitNow(EWaitForBytesWritten);
         }
     TRAP_IGNORE(
-        if (KErrNone == aError)
-            {
+        if (KErrNone == aError) {
             QT_TRYCATCH_LEAVING(iCallback.invokeBytesWritten(aSize));
             }
-        else
-            {
+        else {
             QT_TRYCATCH_LEAVING(iCallback.invokeError());
             }
+    
+        if ( iConnection != NULL && iConnection->HasQueuedWrittenDatagram())
+             {
+             qDebug() << "TransferQueued transfer ";
+             QT_TRYCATCH_LEAVING(iConnection->TransferQueuedL(*this));
+             }
     );
-
+    LOGEND
     }
 
 void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
@@ -434,6 +448,8 @@ void COwnLlcpConnLess::ConstructL()
 */
 COwnLlcpConnLess::~COwnLlcpConnLess()
     {
+    iSendBufArray.ResetAndDestroy();
+    
     if ( iConnection )
         {
         delete iConnection;
@@ -443,24 +459,59 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
     delete iSenderAO;
     delete iReceiverAO;
     }
-   
+  
+
+/*!
+    Send data from queued buffer
+*/
+bool COwnLlcpConnLess::TransferQueuedL(MLlcpReadWriteCb& aLlcpSendCb)
+    {
+    LOG
+    bool ret = false;
+    if (iSendBufArray.Count() == 0 || iSenderAO->IsActive())
+        return ret;
+    
+    HBufC8* bufRef = iSendBufArray[0];
+    //HBufC8* buf = HBufC8::NewLC(bufRef->Length());
+    //buf->Des().Copy( *bufRef );
+    //iSocket.GetAndLockBuffer().AppendL( buf );
+    TPtrC8 ptr(bufRef->Ptr(), bufRef->Length());
+    if(iSenderAO->Transfer(aLlcpSendCb, ptr) == KErrNone)
+        {
+        ret = true;
+        }
+    iSendBufArray.Remove( 0 );
+    
+    LOGEND
+    return ret;
+    }
+
 /*!
     Send data from local peer to remote peer via connectionLess transport
 */
-TInt COwnLlcpConnLess::Transfer(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
+TInt COwnLlcpConnLess::TransferL(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aData )
     {  
-
-    qDebug() << "COwnLlcpConnLess::Transfer enter: " << iSenderAO->IsActive();
+    LOG
     TInt error = KErrNone;
     // Pass message on to transmit AO
     if (!iSenderAO->IsActive())
         {
         error = iSenderAO->Transfer(aLlcpSendCb, aData);
         }
-    else
+    else if (aData.Length() > 0)
         {
-        error = KErrInUse;
+        qDebug() << "TransferL buffered";
+        HBufC8* buf = HBufC8::NewLC(aData.Length());
+        buf->Des().Copy(aData );
+        error = iSendBufArray.Append(buf);
+        CleanupStack::Pop( buf );
+        qDebug() << "TransferL buffered finished" << error;
         }
+    
+    //David debug // do sth
+    qDebug() << "David check ok " << aData.Length();
+    
+    //LOGEND
     return error;
     }
 
@@ -517,12 +568,17 @@ bool COwnLlcpConnLess::HasPendingDatagrams() const
     {
     return iReceiverAO->HasPendingDatagrams();
     }
+
+bool COwnLlcpConnLess::HasQueuedWrittenDatagram() const
+    {
+    bool hasData = iSendBufArray.Count() > 0 ? true : false;
+    return hasData;
+    }
    
 TInt64 COwnLlcpConnLess::PendingDatagramSize() const
     {
     return iReceiverAO->PendingDatagramSize();
     }
-
 
 /*!
     Start of implementation of Sender AO for connection less mode (type1) - CLlcpSenderType1
@@ -557,11 +613,10 @@ CLlcpSenderType1::~CLlcpSenderType1()
 
 TInt CLlcpSenderType1::Transfer(MLlcpReadWriteCb& cb, const TDesC8& aData)
     {
-
+     
     TInt error = KErrNone;
     if (!IsActive())
         {           
-
           // Copying data to internal buffer. 
           iTransmitBuf.Zero();
           error = iTransmitBuf.ReAlloc( aData.Length() );
@@ -591,6 +646,7 @@ void CLlcpSenderType1::RunL(void)
     {
     TInt error = iStatus.Int();
 
+    qDebug() << "CLlcpSenderType1::RunL: " << iTransmitBuf.Length();
     MLlcpReadWriteCb* cb = iSendObserver;
 
     // Call back functions of notifying the llcp sender completed.

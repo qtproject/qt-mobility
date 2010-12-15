@@ -40,223 +40,21 @@
 ****************************************************************************/
 
 #include "qnearfieldmanager_emulator_p.h"
-#include "targetemulator_p.h"
-#include "qnearfieldtarget_p.h"
-#include "qnearfieldtagtype1.h"
+#include "qnearfieldtarget_emulator_p.h"
+
 #include "qndefmessage.h"
 #include "qtlv_p.h"
 
-#include <QtCore/QDirIterator>
-#include <QtCore/QSettings>
-#include <QtCore/QMutex>
-#include <QtCore/QMutexLocker>
-#include <QtCore/QCoreApplication>
-
 #include <QtCore/QDebug>
-
-static QMutex tagMutex;
-static QMap<TagBase *, bool> tagMap;
-
-class TagActivator : public QObject
-{
-    Q_OBJECT
-
-public:
-    TagActivator();
-    ~TagActivator();
-
-    void initialize();
-    void reset();
-
-protected:
-    void timerEvent(QTimerEvent *e);
-
-signals:
-    void tagActivated(TagBase *tag);
-    void tagDeactivated(TagBase *tag);
-
-private:
-    QMap<TagBase *, bool>::Iterator m_current;
-    int timerId;
-} tagActivator;
-
-TagActivator::TagActivator()
-:   timerId(-1)
-{
-
-}
-
-TagActivator::~TagActivator()
-{
-    QMutexLocker locker(&tagMutex);
-    qDeleteAll(tagMap.keys());
-    tagMap.clear();
-}
-
-void TagActivator::initialize()
-{
-    QMutexLocker locker(&tagMutex);
-
-    if (!tagMap.isEmpty())
-        return;
-
-    QDirIterator nfcTargets(QDir::currentPath(), QStringList(QLatin1String("*.nfc")), QDir::Files);
-    while (nfcTargets.hasNext()) {
-        const QString targetFilename = nfcTargets.next();
-
-        QSettings target(targetFilename, QSettings::IniFormat);
-
-        target.beginGroup(QLatin1String("Target"));
-
-        const QString tagType = target.value(QLatin1String("Type")).toString();
-
-        target.endGroup();
-
-        if (tagType == QLatin1String("TagType1")) {
-            NfcTagType1 *tag = new NfcTagType1;
-            tag->load(&target);
-
-            tagMap.insert(tag, false);
-        } else {
-            qWarning("Unknown tag type %s\n", qPrintable(tagType));
-        }
-    }
-
-    m_current = tagMap.end();
-
-    timerId = startTimer(100);
-}
-
-void TagActivator::reset()
-{
-    QMutexLocker locker(&tagMutex);
-
-    killTimer(timerId);
-    timerId = -1;
-
-    qDeleteAll(tagMap.keys());
-    tagMap.clear();
-}
-
-void TagActivator::timerEvent(QTimerEvent *e)
-{
-    Q_UNUSED(e);
-
-    tagMutex.lock();
-
-    if (m_current != tagMap.end()) {
-        *m_current = false;
-
-        tagMutex.unlock();
-        emit tagDeactivated(m_current.key());
-        tagMutex.lock();
-    }
-
-    ++m_current;
-    if (m_current == tagMap.end())
-        m_current = tagMap.begin();
-
-    if (m_current != tagMap.end()) {
-        *m_current = true;
-
-        tagMutex.unlock();
-
-        emit tagActivated(m_current.key());
-        tagMutex.lock();
-    }
-
-    tagMutex.unlock();
-}
-
-class TagType1 : public QNearFieldTagType1
-{
-    Q_OBJECT
-
-public:
-    TagType1(TagBase *tag, QObject *parent);
-    ~TagType1();
-
-    QByteArray uid() const;
-
-    AccessMethods accessMethods() const;
-
-    RequestId sendCommand(const QByteArray &command);
-    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
-
-private:
-    TagBase *m_tag;
-};
-
-TagType1::TagType1(TagBase *tag, QObject *parent)
-:   QNearFieldTagType1(parent), m_tag(tag)
-{
-}
-
-TagType1::~TagType1()
-{
-}
-
-QByteArray TagType1::uid() const
-{
-    QMutexLocker locker(&tagMutex);
-
-    return m_tag->uid();
-}
-
-QNearFieldTarget::AccessMethods TagType1::accessMethods() const
-{
-    return NdefAccess | TagTypeSpecificAccess;
-}
-
-QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
-{
-    QMutexLocker locker(&tagMutex);
-
-    // tag not in proximity
-    if (!tagMap.value(m_tag)) {
-        emit error(TargetOutOfRangeError);
-        return RequestId();
-    }
-
-    quint16 crc = qNfcChecksum(command.constData(), command.length());
-
-    RequestIdPrivate *idPrivate = new RequestIdPrivate;
-    RequestId id(idPrivate);
-
-    QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
-
-    if (response.isEmpty()) {
-        emit error(NoResponseError);
-        return id;
-    }
-
-    // check crc
-    if (qNfcChecksum(response.constData(), response.length()) != 0) {
-        emit error(ChecksumMismatchError);
-        return id;
-    }
-
-    response.chop(2);
-
-    QMetaObject::invokeMethod(this, "handleResponse", Qt::QueuedConnection,
-                              Q_ARG(QNearFieldTarget::RequestId, id), Q_ARG(QByteArray, response));
-
-    return id;
-}
-
-bool TagType1::waitForRequestCompleted(const RequestId &id, int msecs)
-{
-    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
-
-    return QNearFieldTagType1::waitForRequestCompleted(id, msecs);
-}
 
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
-    tagActivator.initialize();
+    TagActivator *tagActivator = TagActivator::instance();
 
-    connect(&tagActivator, SIGNAL(tagActivated(TagBase*)), this, SLOT(tagActivated(TagBase*)));
-    connect(&tagActivator, SIGNAL(tagDeactivated(TagBase*)), this, SLOT(tagDeactivated(TagBase*)));
+    tagActivator->initialize();
+
+    connect(tagActivator, SIGNAL(tagActivated(TagBase*)), this, SLOT(tagActivated(TagBase*)));
+    connect(tagActivator, SIGNAL(tagDeactivated(TagBase*)), this, SLOT(tagDeactivated(TagBase*)));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
@@ -265,7 +63,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 
 void QNearFieldManagerPrivateImpl::reset()
 {
-    tagActivator.reset();
+    TagActivator::instance()->reset();
 }
 
 void QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
@@ -353,8 +151,12 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
     if (target->hasNdefMessage()) {
         QTlvReader reader(target);
         while (!reader.atEnd()) {
-            if (!reader.readNext())
-                break;
+            if (!reader.readNext()) {
+                if (!target->waitForRequestCompleted(reader.requestId()))
+                    break;
+                else
+                    continue;
+            }
 
             // NDEF Message TLV
             if (reader.tag() == 0x03)
@@ -429,5 +231,3 @@ void QNearFieldManagerPrivateImpl::ndefReceived(const QNdefMessage &message,
         }
     }
 }
-
-#include "qnearfieldmanager_emulator.moc"

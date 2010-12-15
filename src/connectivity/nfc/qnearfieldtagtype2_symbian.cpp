@@ -39,7 +39,9 @@
 **
 ****************************************************************************/
 #include <nfctag.h>
+#include <QVariant>
 #include "qnearfieldtagtype2_symbian_p.h"
+#include <qnearfieldtarget_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,7 +56,6 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 
 QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {
-#if 0
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
@@ -63,7 +64,13 @@ QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+    {
+        return QByteArray();
+    }
+
+    const QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return QByteArray();
@@ -74,12 +81,10 @@ QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
         return QByteArray();
 
     return response;
-#endif
 }
 
 bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
 {
-#if 0
     if (data.length() != 4)
         return false;
 
@@ -93,7 +98,13 @@ bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+    if (!waitForRequestCompleted(id))
+    {
+        return false;
+    }
+    
+    const QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return false;
@@ -101,12 +112,10 @@ bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray
     quint8 acknack = response.at(0);
 
     return acknack == 0x0a;
-#endif
 }
 
 bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 {
-#if 0
     QByteArray command;
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
@@ -116,7 +125,14 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
+
+    if (!waitForRequestCompleted(id))
+    {
+        return false;
+    }
+
+    QByteArray response = requestResponse(id).toByteArray();
 
     if (response.isEmpty())
         return false;
@@ -130,20 +146,25 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
     command.append(char(sector));               // Sector number
     command.append(QByteArray(3, char(0x00)));  // RFU
 
-    response = sendCommand(command);
+    id = sendCommand(command);
+
+    if (!waitForRequestCompleted(id))
+    {
+        return false;
+    }
 
     // passive ack, empty response is ack
     return response.isEmpty();
-#endif
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
-    return (_sendCommand(command));
+    return _sendCommand(command);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    return _sendCommands(commands);
 }
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
@@ -164,6 +185,36 @@ void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messa
 QByteArray QNearFieldTagType2Symbian::uid() const
 {
     return _uid();
+}
+
+bool QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    Q_UNUSED(command);
+    QVariant decodedResponse =  response;
+    // to handle commands
+    QVariant existResponse = requestResponse(id);
+    if (existResponse.isValid())
+    {
+        // there is existed id. So it must be a sendcommands request response.
+        if (existResponse.type() == QVariant::List)
+        {
+            QVariantList list = existResponse.toList();
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+        else
+        {
+            QVariantList list;
+            list.append(existResponse);
+            list.append(decodedResponse);
+            setResponseForRequest(id, list);
+        }
+    }
+    else
+    {
+        setResponseForRequest(id, decodedResponse);
+    }
+    return true;
 }
 
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"
