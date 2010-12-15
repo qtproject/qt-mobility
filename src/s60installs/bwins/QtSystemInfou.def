@@ -86,10 +86,10 @@ EXPORTS
 	?inputMethodType@QSystemDeviceInfo@QtMobility@@QAE?AV?$QFlags@W4InputMethod@QSystemDeviceInfo@QtMobility@@@@XZ @ 85 NONAME ; class QFlags<enum QtMobility::QSystemDeviceInfo::InputMethod> QtMobility::QSystemDeviceInfo::inputMethodType(void)
 	?interfaceForMode@QSystemNetworkInfo@QtMobility@@QAE?AVQNetworkInterface@@W4NetworkMode@12@@Z @ 86 NONAME ; class QNetworkInterface QtMobility::QSystemNetworkInfo::interfaceForMode(enum QtMobility::QSystemNetworkInfo::NetworkMode)
 	?isDeviceLocked@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 87 NONAME ; bool QtMobility::QSystemDeviceInfo::isDeviceLocked(void)
-	?isKeyboardFlipOpen@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 88 NONAME ; bool QtMobility::QSystemDeviceInfo::isKeyboardFlipOpen(void)
+	?isKeyboardFlippedOpen@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 88 NONAME ; bool QtMobility::QSystemDeviceInfo::isKeyboardFlippedOpen(void)
 	?isWirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@QAE_NXZ @ 89 NONAME ; bool QtMobility::QSystemDeviceInfo::isWirelessKeyboardConnected(void)
-	?keyboardFlip@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 90 NONAME ; void QtMobility::QSystemDeviceInfo::keyboardFlip(bool)
-	?keyboardType@QSystemDeviceInfo@QtMobility@@QAE?AV?$QFlags@W4KeyboardType@QSystemDeviceInfo@QtMobility@@@@XZ @ 91 NONAME ; class QFlags<enum QtMobility::QSystemDeviceInfo::KeyboardType> QtMobility::QSystemDeviceInfo::keyboardType(void)
+	?keyboardFlipped@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 90 NONAME ; void QtMobility::QSystemDeviceInfo::keyboardFlipped(bool)
+	?keyboardTypes@QSystemDeviceInfo@QtMobility@@QAE?AV?$QFlags@W4KeyboardType@QSystemDeviceInfo@QtMobility@@@@XZ @ 91 NONAME ; class QFlags<enum QtMobility::QSystemDeviceInfo::KeyboardType> QtMobility::QSystemDeviceInfo::keyboardTypes(void)
 	?keypadLightOn@QSystemDeviceInfo@QtMobility@@QAE_NW4KeypadType@12@@Z @ 92 NONAME ; bool QtMobility::QSystemDeviceInfo::keypadLightOn(enum QtMobility::QSystemDeviceInfo::KeypadType)
 	?locationAreaCode@QSystemNetworkInfo@QtMobility@@QAEHXZ @ 93 NONAME ; int QtMobility::QSystemNetworkInfo::locationAreaCode(void)
 	?lockStatus@QSystemDeviceInfo@QtMobility@@QAE?AW4LockType@12@XZ @ 94 NONAME ; enum QtMobility::QSystemDeviceInfo::LockType QtMobility::QSystemDeviceInfo::lockStatus(void)
@@ -178,19 +178,18 @@ EXPORTS
 	?trUtf8@QSystemStorageInfo@QtMobility@@SA?AVQString@@PBD0@Z @ 177 NONAME ; class QString QtMobility::QSystemStorageInfo::trUtf8(char const *, char const *)
 	?trUtf8@QSystemStorageInfo@QtMobility@@SA?AVQString@@PBD0H@Z @ 178 NONAME ; class QString QtMobility::QSystemStorageInfo::trUtf8(char const *, char const *, int)
 	?typeForDrive@QSystemStorageInfo@QtMobility@@QAE?AW4DriveType@12@ABVQString@@@Z @ 179 NONAME ; enum QtMobility::QSystemStorageInfo::DriveType QtMobility::QSystemStorageInfo::typeForDrive(class QString const &)
-	?uniqueID@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 180 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::uniqueID(void)
+	?uniqueDeviceID@QSystemDeviceInfo@QtMobility@@QAE?AUQUuid@@XZ @ 180 NONAME ; struct QUuid QtMobility::QSystemDeviceInfo::uniqueDeviceID(void)
 	?uriForDrive@QSystemStorageInfo@QtMobility@@QAE?AVQString@@ABV3@@Z @ 181 NONAME ; class QString QtMobility::QSystemStorageInfo::uriForDrive(class QString const &)
 	?version@QSystemInfo@QtMobility@@QAE?AVQString@@W4Version@12@ABV3@@Z @ 182 NONAME ; class QString QtMobility::QSystemInfo::version(enum QtMobility::QSystemInfo::Version, class QString const &)
 	?vibrationActive@ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QBE_NXZ @ 183 NONAME ; bool QtMobility::QSystemDeviceInfo::ActiveProfileDetails::vibrationActive(void) const
 	?voiceRingtoneVolume@ActiveProfileDetails@QSystemDeviceInfo@QtMobility@@QBEHXZ @ 184 NONAME ; int QtMobility::QSystemDeviceInfo::ActiveProfileDetails::voiceRingtoneVolume(void) const
 	?voltage@QSystemBatteryInfo@QtMobility@@QBEHXZ @ 185 NONAME ; int QtMobility::QSystemBatteryInfo::voltage(void) const
-	?voltageChanged@QSystemBatteryInfo@QtMobility@@IAEXH@Z @ 186 NONAME ; void QtMobility::QSystemBatteryInfo::voltageChanged(int)
-	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 187 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
-	?staticMetaObject@QSystemDisplayInfo@QtMobility@@2UQMetaObject@@B @ 188 NONAME ; struct QMetaObject const QtMobility::QSystemDisplayInfo::staticMetaObject
-	?staticMetaObject@QSystemScreenSaver@QtMobility@@2UQMetaObject@@B @ 189 NONAME ; struct QMetaObject const QtMobility::QSystemScreenSaver::staticMetaObject
-	?staticMetaObject@QSystemNetworkInfo@QtMobility@@2UQMetaObject@@B @ 190 NONAME ; struct QMetaObject const QtMobility::QSystemNetworkInfo::staticMetaObject
-	?staticMetaObject@QSystemDeviceInfo@QtMobility@@2UQMetaObject@@B @ 191 NONAME ; struct QMetaObject const QtMobility::QSystemDeviceInfo::staticMetaObject
-	?staticMetaObject@QSystemInfo@QtMobility@@2UQMetaObject@@B @ 192 NONAME ; struct QMetaObject const QtMobility::QSystemInfo::staticMetaObject
-	?staticMetaObject@QSystemStorageInfo@QtMobility@@2UQMetaObject@@B @ 193 NONAME ; struct QMetaObject const QtMobility::QSystemStorageInfo::staticMetaObject
-	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 194 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
+	?wirelessKeyboardConnected@QSystemDeviceInfo@QtMobility@@IAEX_N@Z @ 186 NONAME ; void QtMobility::QSystemDeviceInfo::wirelessKeyboardConnected(bool)
+	?staticMetaObject@QSystemDisplayInfo@QtMobility@@2UQMetaObject@@B @ 187 NONAME ; struct QMetaObject const QtMobility::QSystemDisplayInfo::staticMetaObject
+	?staticMetaObject@QSystemScreenSaver@QtMobility@@2UQMetaObject@@B @ 188 NONAME ; struct QMetaObject const QtMobility::QSystemScreenSaver::staticMetaObject
+	?staticMetaObject@QSystemNetworkInfo@QtMobility@@2UQMetaObject@@B @ 189 NONAME ; struct QMetaObject const QtMobility::QSystemNetworkInfo::staticMetaObject
+	?staticMetaObject@QSystemDeviceInfo@QtMobility@@2UQMetaObject@@B @ 190 NONAME ; struct QMetaObject const QtMobility::QSystemDeviceInfo::staticMetaObject
+	?staticMetaObject@QSystemInfo@QtMobility@@2UQMetaObject@@B @ 191 NONAME ; struct QMetaObject const QtMobility::QSystemInfo::staticMetaObject
+	?staticMetaObject@QSystemStorageInfo@QtMobility@@2UQMetaObject@@B @ 192 NONAME ; struct QMetaObject const QtMobility::QSystemStorageInfo::staticMetaObject
+	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 193 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
 
