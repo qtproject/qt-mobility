@@ -69,10 +69,8 @@ public:
     RequestId sendCommands(const QList<QByteArray> &commands);
 
     bool hasNdefMessage();
-
-    void ndefMessages();
-
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

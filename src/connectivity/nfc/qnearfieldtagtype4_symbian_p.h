@@ -65,8 +65,8 @@ public:
     Type type() const { return NfcTagType4; }
 
     bool hasNdefMessage();
-    void ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);

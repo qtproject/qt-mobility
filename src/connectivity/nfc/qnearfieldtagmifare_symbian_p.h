@@ -77,8 +77,8 @@ public:
     }
     // NdefAccess
     bool hasNdefMessage();
-    void ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     // TagTypeSpecificAccess
     RequestId sendCommand(const QByteArray &command);

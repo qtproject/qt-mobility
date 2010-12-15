@@ -100,9 +100,13 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
         if (EReadRequest == iType)
         {
             // since there is no error, iReadMessages can't be NULL.
+            LOG("iReadMessage should not be NULL"<<(int)iReadMessages);
+            LOG("message count is "<<iReadMessages->Count());
             for(int i = 0; i < iReadMessages->Count(); ++i)
             {
-                QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*(*iReadMessages)[i]);
+                LOG("begin convert cndef message to qndefmessage");
+                QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*((*iReadMessages)[i]));
+                LOG("emit signal ndef message read");
                 iOperator->EmitNdefMessageRead(message);
             }
         }

@@ -385,14 +385,14 @@ bool QNearFieldTagType1Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType1Symbian::ndefMessages()
+void QNearFieldTagType1Symbian::readNdefMessages()
 {
     BEGIN
     _ndefMessages();
     END
 }
 
-void QNearFieldTagType1Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType1Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     BEGIN
     _setNdefMessages(messages);

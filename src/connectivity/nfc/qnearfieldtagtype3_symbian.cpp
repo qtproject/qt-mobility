@@ -67,12 +67,12 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType3Symbian::ndefMessages()
+void QNearFieldTagType3Symbian::readNdefMessages()
 {
     _ndefMessages();
 }
 
-void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType3Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages); 
 }

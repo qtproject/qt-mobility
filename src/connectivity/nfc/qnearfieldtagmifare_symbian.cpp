@@ -65,12 +65,12 @@ bool QNearFieldTagMifareSymbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagMifareSymbian::ndefMessages()
+void QNearFieldTagMifareSymbian::readNdefMessages()
 {
     _ndefMessages();
 }
 
-void QNearFieldTagMifareSymbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagMifareSymbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages);
 }

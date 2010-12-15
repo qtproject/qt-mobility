@@ -59,7 +59,8 @@ class MNfcTag;
 
 class MNearFieldNdefOperationCallback;
 
-class CNearFieldNdefTarget : public MNearFieldTarget, 
+class CNearFieldNdefTarget : public CBase,
+                             public MNearFieldTarget, 
                              public MNdefHandler
     {
     enum TOperation

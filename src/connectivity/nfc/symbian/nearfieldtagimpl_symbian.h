@@ -156,6 +156,7 @@ void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallb
     {
         LOG("switched to ndef connection");
         ndefTarget->SetNdefOperationCallback(aCallback);        
+        // TODO: consider re-entry, since signal is emit one by one
         mMessageList.Reset();
         error = ndefTarget->ndefMessages(mMessageList);
         LOG("error code is"<<error);
