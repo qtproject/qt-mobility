@@ -148,7 +148,6 @@ signals:
     void imageExposed(int requestId);
     void imageCaptured(int requestId, const QImage &img);
     void imageSaved(int requestId, const QString &fileName);
-    void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void mutedChanged(bool);
     void viewfinderChanged();
     void readyChanged(bool);
