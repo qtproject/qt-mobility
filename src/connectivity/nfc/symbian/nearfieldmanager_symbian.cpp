@@ -45,6 +45,7 @@
 #include "nearfieldutility_symbian.h"
 
 #include <ndefmessage.h>
+#include "debug.h"
 
 /*!
     \class CNearFieldManager
@@ -61,12 +62,13 @@
 */
 void CNearFieldManager::ConstructL()
     {
+    BEGIN
     User::LeaveIfError(iServer.Open());
 
     //create LLCP provider api
     iLlcpProvider = CLlcpProvider::NewL( iServer );
     iLlcpProvider->AddLlcpLinkListenerL( *this );
-
+    END
     }
 
 /*!
@@ -74,6 +76,7 @@ void CNearFieldManager::ConstructL()
 */
 void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type> &aTargetTypes)
     {
+    BEGIN
     if (aTargetTypes.size() > 0)
         {
         if (!iNfcTagDiscovery)
@@ -130,7 +133,8 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
                 }
             }
         }
-        iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+    iNfcTagDiscovery->AddTagSubscriptionL( *iTagSubscription );
+    END
     }
 
 /*!
@@ -138,6 +142,7 @@ void CNearFieldManager::StartTargetDetectionL(const QList<QNearFieldTarget::Type
 */
 void CNearFieldManager::stopTargetDetection()
     {
+    BEGIN
     if (iNfcTagDiscovery)
         {
         iNfcTagDiscovery->RemoveTagConnectionListener();
@@ -150,6 +155,7 @@ void CNearFieldManager::stopTargetDetection()
             iTagSubscription = NULL;
             }
         }
+    END
     }
 
 /*!
@@ -158,23 +164,27 @@ void CNearFieldManager::stopTargetDetection()
 TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
                                        const QByteArray& aType )
     {
+    BEGIN
     TInt err = KErrNone;
     if ( !iNdefDiscovery )
         {
         TRAP(err, iNdefDiscovery = CNdefDiscovery::NewL( iServer ));
         if (err != KErrNone)
             {
+            END
             return err;
             }
         err = iNdefDiscovery->AddNdefMessageListener( *this );
         if (err != KErrNone)
             {
+            END
             return err;
             }
 
         }
     TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
     err = iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
+    END
     return err;
     }
 
@@ -184,11 +194,13 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
 void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameFormat aTnf,
                                           const QByteArray& aType )
     {
+    BEGIN
     if ( iNdefDiscovery )
         {
         TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
         iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
         }
+    END
     }
 
 /*!
@@ -196,6 +208,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
 */
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     {
+    BEGIN
     TRAP_IGNORE(
         if (aNfcTag)
             {
@@ -205,6 +218,7 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
             CleanupStack::Pop(tag);
             }
             );
+    END
     }
 
 /*!
@@ -212,9 +226,11 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
 */
 void CNearFieldManager::TagLost()
     {
+    BEGIN
     TRAP_IGNORE(
             QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
         );
+    END
     }
 
 /*!
@@ -222,12 +238,14 @@ void CNearFieldManager::TagLost()
 */
 void CNearFieldManager::LlcpRemoteFound()
     {
+    BEGIN
     TRAP_IGNORE(
         QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
         CleanupStack::PushL(tag);
         QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
         CleanupStack::Pop(tag);
         );
+    END
     }
 
 /*!
@@ -235,9 +253,11 @@ void CNearFieldManager::LlcpRemoteFound()
 */
 void CNearFieldManager::LlcpRemoteLost()
     {
+    BEGIN
     TRAP_IGNORE(
             QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
         );
+    END
     }
 
 /*!
@@ -245,6 +265,7 @@ void CNearFieldManager::LlcpRemoteLost()
 */
 void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     {
+    BEGIN
     if ( aMessage )
         {
         TRAP_IGNORE(
@@ -253,6 +274,7 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
            delete aMessage;
         );
         }
+    END
     }
 
 /*!
@@ -268,8 +290,10 @@ CNearFieldManager::CNearFieldManager( QtMobility::QNearFieldManagerPrivateImpl& 
 */
 CNearFieldManager* CNearFieldManager::NewL( QtMobility::QNearFieldManagerPrivateImpl& aCallback)
     {
+    BEGIN
     CNearFieldManager* self = NewLC(aCallback);
     CleanupStack::Pop( self );
+    END
     return self;
     }
 
@@ -289,6 +313,7 @@ CNearFieldManager* CNearFieldManager::NewLC( QtMobility::QNearFieldManagerPrivat
 */
 CNearFieldManager::~CNearFieldManager()
     {
+    BEGIN
     if ( iNfcTagDiscovery )
         {
         iNfcTagDiscovery->RemoveTagConnectionListener();
@@ -311,4 +336,6 @@ CNearFieldManager::~CNearFieldManager()
     delete iNdefDiscovery;
 
     iServer.Close();
+    END
     }
+//EOF

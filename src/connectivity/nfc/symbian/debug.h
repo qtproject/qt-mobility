@@ -45,7 +45,8 @@
 
 #define SYMBIAN_NFC_DEBUG
 
-#define BEGIN qDebug()<<__FILE__<<" "<<__FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
-#define END qDebug()<<__FILE__<<" "<<__FUNCTION__<<" Line: "<<__LINE__ <<" End";
-#define LOG(a) qDebug()<<__FILE__<<" "<<__FUNCTION__<<" Line: "<<__LINE__ <<a;
+#define BEGIN qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
+#define END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" End";
+#define LOG(a) qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<a;
+
 #endif /* DEBUG_H_ */

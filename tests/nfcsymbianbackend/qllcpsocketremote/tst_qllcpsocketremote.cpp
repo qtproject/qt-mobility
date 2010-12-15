@@ -25,6 +25,7 @@ private Q_SLOTS:
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void initTestCase();
     void cleanupTestCase();
+    void queuedWrittenTest();
     void testCase1();   // handshake 1
     void testCase2(); // handshake 2
 
@@ -39,6 +40,7 @@ tst_qllcpsocketremote::tst_qllcpsocketremote()
     qRegisterMetaType<QNearFieldTarget *>("QNearFieldTarget*");
     qRegisterMetaType<QNearFieldTarget *>("QLlcpSocket::Error");
 }
+
 
 /*!
  Description: Init test case for NFC LLCP connection-less mode socket - local peer
@@ -68,6 +70,23 @@ void tst_qllcpsocketremote::initTestCase()
 
 void tst_qllcpsocketremote::cleanupTestCase()
 {
+}
+
+/*!
+ Description: testCase 1 for NFC LLCP connection-less mode socket - local peer
+
+ TestScenario:
+               1. Local peer binds to the remote peer
+               2. Local peer receives the datagram  sending from the remote peer
+
+ TestExpectedResults:
+               1. Local peer binds to local port successfully.
+               2. Local peer receives the  datagram successfully
+*/
+void tst_qllcpsocketremote::queuedWrittenTest()
+{
+    QString box("queuedWrittenTest 1");
+    QNfcTestUtil::ShowMessage(box);
 }
 
 /*!
@@ -143,8 +162,9 @@ void tst_qllcpsocketremote::testCase2()
 
     const int Timeout = 10 * 1000;
     ret = socket.waitForReadyRead(Timeout);
-    QVERIFY(ret == true);
 
+    QString message2("handshake 3");
+    QNfcTestUtil::ShowMessage(message2);
     QVERIFY(ret);
  }
 

@@ -24,14 +24,14 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void queuedWrittenTest();
+
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void testCase1();   // handshake 1
     void testCase2();   // handshake 2
     void testCase3();
-    //void testCase3();
 
     void negTestCase1();
-    void negTestCase1_data();
     void negTestCase2();
     void negTestCase3();
     void negTestCase4();
@@ -79,6 +79,44 @@ void tst_qllcpsocketlocal::initTestCase()
 
 void tst_qllcpsocketlocal::cleanupTestCase()
 {
+}
+
+
+/*!
+ Description:  NFC LLCP connection-less mode socket - queued written buffer
+
+ TestScenario:
+                1. Local peer sends the "string1" message to the remote peer
+                2. Local peer sends the "string2" message to the remote peer
+
+ TestExpectedResults:
+               1. Local peer write datagram successfully twice
+*/
+void tst_qllcpsocketlocal::queuedWrittenTest()
+{
+    QString message("string1");
+    QString message2("string2");
+    QLlcpSocket socket(this);
+
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(val != -1);
+
+    QByteArray tmpArray2(message2.toAscii());
+    const char* data2 =  tmpArray2.data();
+    qint64 strSize2 = message2.size();
+    qDebug() << "begin write the second time";
+    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
+    qDebug() << "end write the second time" << val2;
+    QVERIFY(val2 != -1);
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
+
+    QString box("queuedWrittenTest 1");
+    QNfcTestUtil::ShowMessage(box);
 }
 
 /*!
@@ -153,20 +191,14 @@ void tst_qllcpsocketlocal::testCase2()
     QString messageBox("handshake 2");
     QNfcTestUtil::ShowMessage(messageBox);
 
-    // STEP 2: Local peer sends the  message to the remote peer
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
-
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    socket.writeDatagram(data,strSize,m_target, m_port);
-
-    const int Timeout = 10 * 1000;
+    // STEP 2:
+    //qDebug() << "waitForBytesWritten begin: " << val;
+    const int Timeout = 2 * 1000;
     ret = socket.waitForBytesWritten(Timeout);
-    QVERIFY(ret);
-}
+    qDebug() << "waitForBytesWritten after: " << ret;
 
+    QVERIFY(ret == false);
+}
 
 /*!
  Description:  connection-less state change checking
@@ -184,34 +216,16 @@ void tst_qllcpsocketlocal::testCase3()
     QCOMPARE(socket.state(), QLlcpSocket::BoundState);
 }
 
-
-
 /*!
  Description: bind negative test -invalid port
 */
 void tst_qllcpsocketlocal::negTestCase1()
 {
     QLlcpSocket socket(this);
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret == true);
-    // bind again will cause failure
-    ret = socket.bind(m_port);
+    bool ret = socket.bind(65);
     QVERIFY(ret == false);
-    // bind invalid port cause failure
-    quint8 unknownPort = -1;
-}
-
-void tst_qllcpsocketlocal::negTestCase1_data()
-{
-    QTest::addColumn<quint8>("port");
-
-    quint8 sdpPort = 14;
-    quint8 tooBigPort = 65;
-    quint8 invalidPort = -1;
-
-    QTest::newRow("row1") << sdpPort;
-    QTest::newRow("row2") << tooBigPort;
-    QTest::newRow("row3") << invalidPort;
+    ret = socket.bind(-1);
+    QVERIFY(ret == false);
 }
 
 /*!
@@ -223,11 +237,9 @@ void tst_qllcpsocketlocal::negTestCase2()
     bool ret = socket.bind(m_port);
     QVERIFY(ret == true);
 
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     // bind again will cause failure
     ret = socket.bind(m_port);
     QVERIFY(ret == false);
-    QVERIFY(!errorSpy.isEmpty());
 }
 
 
@@ -265,22 +277,29 @@ void tst_qllcpsocketlocal::negTestCase4()
 void tst_qllcpsocketlocal::negTestCase5()
 {
     QLlcpSocket socket(this);
+    qDebug() << "negTestCase5: " <<m_port;
+    bool bindOk = socket.bind(m_port);
+    QVERIFY(bindOk == true);
+    qDebug() << "negTestCase5 bindOk";
 
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     socket.connectToService(m_target,"uri");
-    QVERIFY(errorSpy.count() == 1);
+    QTRY_VERIFY(errorSpy.count() == 1);
 
     socket.disconnectFromService();
-    QVERIFY(errorSpy.count() == 2);
+    QTRY_VERIFY(errorSpy.count() == 2);
 
     QVERIFY(socket.waitForConnected() == false);
     QVERIFY(socket.waitForDisconnected() == false);
 
+     qDebug() << "negTestCase5 writeDatagram";
     QString message = "Oops, must follow a port parameter";
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
     qint64 ret = socket.writeDatagram(data,strSize);
+
+     qDebug() << "negTestCase5 writeDatagram end";
     QVERIFY(ret == -1);
 }
 
