@@ -44,42 +44,48 @@
 #include "symbian/llcpsockettype2_symbian.h"
 #include "symbian/nearfieldutility_symbian.h"
 
+#include "symbian/debug.h"
 QTM_BEGIN_NAMESPACE
 
 QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
     :q_ptr(q)
 {
-    qDebug() << "QLlcpServerPrivate() begin";
+    BEGIN
     QT_TRAP_THROWING(m_symbianbackend = CLlcpServer::NewL(*this));
-    qDebug() << "QLlcpServerPrivate() end";
+    END
 }
 QLlcpServerPrivate::~QLlcpServerPrivate()
 {
+    BEGIN
     delete m_symbianbackend;
+    END
 }
 
 bool QLlcpServerPrivate::listen(const QString &serviceUri)
 {
-    qDebug() << "QLlcpServerPrivate::listen() begin";
+    BEGIN
     TPtrC wide(static_cast<const TUint16*>(serviceUri.utf16()),serviceUri.length());
     RBuf8 narrow;
 
     TInt val = narrow.CreateMax(wide.Length());
     if( val != KErrNone)
     {
+        END
         return false;
     }
     narrow.Copy(wide);
 
     bool ret =  m_symbianbackend->Listen(narrow);
 
-    qDebug() << "QLlcpServerPrivate::listen() end";
     narrow.Close();
+    END
     return ret;
 }
 
 bool QLlcpServerPrivate::isListening() const
 {
+    BEGIN
+    END
     return m_symbianbackend->isListening();
 }
 
@@ -88,49 +94,63 @@ bool QLlcpServerPrivate::isListening() const
 */
 void QLlcpServerPrivate::close()
 {
+    BEGIN
     m_symbianbackend->StopListening();
+    END
 }
 
 QString QLlcpServerPrivate::serviceUri() const
 {
+    BEGIN
     const TDesC8& theDescriptor= m_symbianbackend->serviceUri();
 
     RBuf wide;
     TInt val = wide.CreateMax(theDescriptor.Length());
     if( val != KErrNone)
     {
+        END
         return false;
     }
     wide.Copy(theDescriptor);
     QString ret = QString::fromUtf16(wide.Ptr(),wide.Length());
-    qDebug()<<"QLlcpServerPrivate::serviceUri() ret="<<ret;
+    LOG("QLlcpServerPrivate::serviceUri() ret="<<ret);
     wide.Close();
+    END
     return ret;
 
 }
 
 quint8 QLlcpServerPrivate::serverPort() const
 {
+    BEGIN
+    END
     return 0;
 }
 
 bool QLlcpServerPrivate::hasPendingConnections() const
 {
+    BEGIN
+    END
     return m_symbianbackend->hasPendingConnections();
 }
 
 void QLlcpServerPrivate::invokeNewConnection()
 {
+    BEGIN
     Q_Q(QLlcpServer);
     emit q->newConnection();
+    END
 }
 
 void QLlcpServerPrivate::invokeError() const
 {
+    BEGIN
+    END
 }
 
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
+    BEGIN
     QLlcpSocket* qSocket  = NULL;
     CLlcpSocketType2* socket_symbian = m_symbianbackend->nextPendingConnection();
     if (socket_symbian)
@@ -140,13 +160,17 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
         qSocket_p->attachCallbackHandler(qSocket);
         socket_symbian->AttachCallbackHandler(qSocket_p);
     }
+    END
     return qSocket;
 }
 
 QLlcpServer::Error QLlcpServerPrivate::serverError() const
 {
+    BEGIN
+    END
     return QLlcpServer::UnknownSocketError;
 }
 
 QTM_END_NAMESPACE
+//EOF
 

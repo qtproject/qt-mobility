@@ -44,10 +44,7 @@
 #include "../qllcpserver_symbian_p.h"
 #include "nearfieldutility_symbian.h"
 
-#include <QDebug>
-
-#define LOG1 qDebug()<<__FUNCTION__<<": "<<__LINE__<<":"<<  __FILE__;
-#define LOG qDebug()<<"CLlcpServer::"<<__FUNCTION__<<": "<<__LINE__;
+#include "debug.h"
 
 // TODO
 // will obslete with API updated
@@ -58,10 +55,10 @@ const TInt KInterestingSsap = 35;
 */
 CLlcpServer* CLlcpServer::NewL(QtMobility::QLlcpServerPrivate& aCallback)
     {
-    LOG
+    BEGIN
     CLlcpServer* self = CLlcpServer::NewLC(aCallback);
     CleanupStack::Pop( self );
-    LOG
+    END
     return self;
     }
 
@@ -91,8 +88,10 @@ CLlcpServer::CLlcpServer(QtMobility::QLlcpServerPrivate& aCallback)
 */
 void CLlcpServer::ConstructL()
     {
+    BEGIN
     User::LeaveIfError(iNfcServer.Open());
     iLlcp = CLlcpProvider::NewL( iNfcServer );
+    END
     }
 
 /*!
@@ -100,13 +99,13 @@ void CLlcpServer::ConstructL()
 */
 CLlcpServer::~CLlcpServer()
     {
-    LOG
+    BEGIN
     delete iLlcp;
     iLlcpSocketArray.ResetAndDestroy();
     iLlcpSocketArray.Close();
     iServiceName.Close();
     iNfcServer.Close();
-    LOG
+    END
     }
 
 /*!
@@ -121,24 +120,28 @@ CLlcpServer::~CLlcpServer()
 CLlcpSocketType2* CLlcpServer::nextPendingConnection()
     {
     // take first element
-    LOG
+    BEGIN
     CLlcpSocketType2 *llcpSocket = NULL;
     if (iLlcpSocketArray.Count() > 0)
         {
         llcpSocket = iLlcpSocketArray[0];
         iLlcpSocketArray.Remove(0);
         }
-    LOG
+    END
     return llcpSocket;
     }
 
 TBool CLlcpServer::hasPendingConnections() const
     {
+    BEGIN
+    END
     return iLlcpSocketArray.Count() > 0 ? ETrue: EFalse;
     }
 
 const TDesC8&  CLlcpServer::serviceUri() const
     {
+    BEGIN
+    END
     return iServiceName;
     }
 
@@ -147,7 +150,7 @@ const TDesC8&  CLlcpServer::serviceUri() const
 */
 TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     {
-    LOG
+    BEGIN
     TInt error = KErrNone;
 
     // TODO
@@ -156,6 +159,7 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     iServiceName.Zero();
     if (iServiceName.Create(aServiceName.Size()) < 0)
         {
+        END
         return EFalse;
         }
     iServiceName.Append(aServiceName);
@@ -163,23 +167,27 @@ TBool CLlcpServer::Listen( const TDesC8& aServiceName)
     TRAP(error,iLlcp->StartListeningConnOrientedRequestL( *this, KInterestingSsap ));
 
     error == KErrNone ? iSocketListening = ETrue : iSocketListening = EFalse;
-    LOG
+    END
     return iSocketListening;
     }
 
 void CLlcpServer::StopListening( )
     {
+    BEGIN
     // TODO
     // will updated to
     //TRAP(error,iLlcp->StopListeningConnOrientedRequest(iServiceName));
     iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
 
     iSocketListening = EFalse;
+    END
     }
 
 
 TBool CLlcpServer::isListening() const
     {
+    BEGIN
+    END
     return iSocketListening;
     }
 
@@ -188,9 +196,12 @@ TBool CLlcpServer::isListening() const
 */
 void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnection )
     {
-    LOG
+    BEGIN
     if (aConnection == NULL)
+        {
+        END
         return;
+        }
 
     TInt error = KErrNone;
 
@@ -213,6 +224,6 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         TRAP_IGNORE(
                 QT_TRYCATCH_LEAVING(iCallback.invokeError()));
         }
-    LOG
+    END
     }
 //EOF

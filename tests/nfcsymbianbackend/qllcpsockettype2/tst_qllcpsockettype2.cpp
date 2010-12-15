@@ -76,6 +76,7 @@ private Q_SLOTS:
     void echo_wait_data();
     void api_coverage();  // handshake 3
     void connectTest();   // handshake 4
+    void multipleWrite();
 
     // nagetive testcases
     void negTestCase1();
@@ -96,6 +97,7 @@ tst_qllcpsockettype2::tst_qllcpsockettype2()
 
 void tst_qllcpsockettype2::initTestCase()
 {
+    qDebug()<<"tst_qllcpsockettype2::initTestCase() Begin";
     QString message("Please touch a NFC device with llcp client enabled");
     QNearFieldManager nfcManager;
     QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
@@ -103,10 +105,14 @@ void tst_qllcpsockettype2::initTestCase()
 
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
-
+    if(targetDetectedSpy.count()!=1)
+        {
+        qDebug()<<"!!Several LLCP target found!!"
+        }
     m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
+    qDebug()<<"tst_qllcpsockettype2::initTestCase()   End";
 }
 
 
@@ -407,7 +413,62 @@ void tst_qllcpsockettype2::connectTest()
      QVERIFY(ret == -1);
 }
 
+void tst_qllcpsockettype2::multipleWrite()
+    {
+    QString message("handshake 5: multipleWrite");
+    QNfcTestUtil::ShowMessage(message);
+    QLlcpSocket socket(this);
 
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    socket.connectToService(m_target, TestUri);
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    message = "1234567890";
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)0;
+    out << message;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    qint64 ret = socket.writeDatagram(block.constData(), block.size()/2);
+    QVERIFY( ret != -1);
+    ret = socket.writeDatagram(block.constData() + block.size()/2, block.size()/2);
+    QVERIFY( ret != -1);
+
+    QTRY_VERIFY(bytesWrittenSpy.count() > 0);
+    while (bytesWrittenSpy.count() < 2)
+        {
+        QTRY_VERIFY(bytesWrittenSpy.count() == 2);
+        }
+    qint64 written1 = bytesWrittenSpy.at(0).at(0).value<qint64>();
+    qint64 written2 = bytesWrittenSpy.at(1).at(0).value<qint64>();
+    QCOMPARE(written1 + written2, (qint64)block.size());
+    //Get the echoed data from server
+    const int Timeout = 10 * 1000;
+    quint16 blockSize = 0;
+    QDataStream in(&socket);
+    in.setVersion(QDataStream::Qt_4_6);
+    while (socket.bytesAvailable() < (int)sizeof(quint16)){
+        ret = socket.waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+    in >> blockSize;
+    qDebug() << "Client-- read blockSize=" << blockSize;
+    while (socket.bytesAvailable() < blockSize){
+        ret = socket.waitForReadyRead(Timeout);
+        QVERIFY(ret);
+    }
+    QString echoed;
+    in >> echoed;
+    qDebug() << "Client-- read echoed string =" << echoed;
+    //test the echoed string is same as the original string
+    QCOMPARE(echoed, message);
+    socket.disconnectFromService();
+    ret = socket.waitForDisconnected(Timeout);
+    QVERIFY(ret);
+    }
 /*!
  Description:  negative test - connect to an invalid service
  TODO: this test can not be realized,since the port num is hardcode at this time
