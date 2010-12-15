@@ -1,0 +1,24 @@
+#--------------------------------------------------------------
+# Satellite data, the keywords are:
+# START_REGULAR_SAT_UPDATE // starts marking group of satellites
+# repeats(i) timeout(i)
+# SATELLITE
+# elevation(u) azimuth(u) prn(i) snr(u) inuse(b)
+# END_REGULAR_SAT_UPDATE  //  ends marking group of satellites
+#--------------------------------------------------------------
+
+START_REGULAR_SAT_UPDATE
+5 500
+SATELLITE
+1 12 13 14 1
+SATELLITE
+2 22 23 24 0
+SATELLITE
+3 32 33 34 1
+SATELLITE
+4 42 43 44 0
+#SATELLITE
+#5 52 53 54 1
+#SATELLITE
+#6 62 63 64 0
+END_REGULAR_SAT_UPDATE

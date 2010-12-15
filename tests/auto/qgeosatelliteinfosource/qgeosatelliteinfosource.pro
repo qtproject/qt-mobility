@@ -1,22 +1,13 @@
-TEMPLATE = app
-CONFIG+=testcase
-TARGET=tst_qgeosatelliteinfosource
+TEMPLATE = subdirs
 
 include (../../../common.pri)
-
-INCLUDEPATH += ../../../src/location
+include (../../../staticconfig.pri)
         
-# Input 
-SOURCES += tst_qgeosatelliteinfosource.cpp \
-        ../testqgeosatelliteinfosource.cpp \
-        ../qlocationtestutils.cpp
-HEADERS += ../testqgeosatelliteinfosource_p.h \
-        ../qlocationtestutils_p.h
+SUBDIRS += test
 
-CONFIG += mobility
-MOBILITY = location
 
-symbian {
-        TARGET.CAPABILITY = ALL -TCB
+meego: contains(gypsy_enabled, yes) {
+       message(Building also gypsy mock library)
+       SUBDIRS +=  gypsymock
 }
 

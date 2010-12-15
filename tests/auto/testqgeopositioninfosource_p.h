@@ -135,14 +135,11 @@ private:
 #ifdef TST_MOCK_GEOCLUE
     GeoclueMock* m_geoclueMock;
     QThread m_threadGeoclueMock;
+    void initGeoclueMock();
 #endif
     QGeoPositionInfoSource *m_source;
     bool m_testingDefaultSource;
     bool m_testSlot2Called;
-#ifdef TST_MOCK_GEOCLUE
-    private:
-        void initGeoclueMock();
-#endif
 };
 
 #endif

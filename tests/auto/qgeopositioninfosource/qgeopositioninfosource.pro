@@ -16,8 +16,13 @@ SOURCES += ../qlocationtestutils.cpp \
            tst_qgeopositioninfosource.cpp
 
 # With geoclue mock the underlying layers. For this purpose do not
-# link against the mobility location library.
-meego: contains (geoclue-master_enabled, yes) {
+# link against the mobility location library. To override this behavior and link
+# against real libraries (to execute tests against real stack, define the env variable
+# e.g. type
+# TODO does not work!
+# qmake TST_DISABLE_GEOCLUE_MOCK=1  // to disable mock
+# qmake TST_DISABLE_GEOCLUE_MOCK=   // to enable mock
+$TST_DISABLE_GEOCLUE_MOCK: meego: contains (geoclue-master_enabled, yes) {
     message("Mocking GeoClue libraries (real libraries will not be used)")
     DEFINES += TST_MOCK_GEOCLUE=1
     DEFINES += GEOCLUE_MASTER_AVAILABLE=1
@@ -38,6 +43,9 @@ meego: contains (geoclue-master_enabled, yes) {
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 } else {
+    meego: {
+        message(Not mocking GeoClue libraries (real libraries will be used))
+    }
     CONFIG += mobility
     MOBILITY = location
 }

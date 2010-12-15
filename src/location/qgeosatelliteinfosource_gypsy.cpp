@@ -31,12 +31,20 @@ QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent) : QG
 
 QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
 {
+    GError* error = NULL;
+    gypsy_device_stop (m_device, &error);
+    if (error != NULL) {
+        g_warning ("Error stopping the device: %s", error->message);
+        g_object_unref(m_device);
+        g_error_free (error);
+    }
 }
 
 void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
                                                      GPtrArray* satellites)
 {
-    Q_UNUSED(satellite)
+    if (!satellite || !satellites)
+        return;
     // We have satellite data and assume it is valid.
     // If a single updateRequest was active, send signals right away.
     // If a periodic timer was running (meaning that the client wishes

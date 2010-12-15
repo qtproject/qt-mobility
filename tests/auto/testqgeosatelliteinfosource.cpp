@@ -60,6 +60,7 @@ Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 // Must provide a valid source, unless testing the source
 // returned by QGeoSatelliteInfoSource::createDefaultSource() on a system
 // that has no default source
+// todo is a mock check useful here?
 #define CHECK_SOURCE_VALID { \
         if (!m_source) { \
             if (m_testingDefaultSource && QGeoSatelliteInfoSource::createDefaultSource(0) == 0) \
@@ -186,6 +187,8 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
+#elif defined(Q_WS_MEEGO)
+    QVERIFY(source != 0);
 #else    
     QVERIFY(source == 0);
 #endif
@@ -205,6 +208,8 @@ void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 #elif defined(Q_WS_MAEMO_5)
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_6)
+    QVERIFY(source != 0);
+#elif defined(Q_WS_MEEGO)
     QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
