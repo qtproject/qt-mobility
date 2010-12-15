@@ -107,7 +107,7 @@ void tst_qllcpsockettype2::initTestCase()
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
     if(targetDetectedSpy.count()!=1)
         {
-        qDebug()<<"!!Several LLCP target found!!"
+        qDebug()<<"!!Several LLCP target found!!";
         }
     m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
     QVERIFY(m_target!=NULL);
@@ -392,7 +392,7 @@ void tst_qllcpsockettype2::connectTest()
 
     //connect to the service again when previous one is connecting
     socket.connectToService(m_target, TestUri);
-    QVERIFY(!errorSpy.isEmpty());
+    QTRY_VERIFY(!errorSpy.isEmpty());
 
     errorSpy.clear();
     // make sure it is still connecting
@@ -400,19 +400,33 @@ void tst_qllcpsockettype2::connectTest()
     {
        socket.disconnectFromService();
     }
-     QVERIFY(errorSpy.isEmpty());
+    QTRY_VERIFY(errorSpy.isEmpty());
 
-     //double disconnect should not cause error
-     socket.disconnectFromService();
-     QVERIFY(errorSpy.isEmpty());
+    //double disconnect should not cause error
+    socket.disconnectFromService();
+    QTRY_VERIFY(errorSpy.isEmpty());
 
-     // readDatagram must be called before successul connection to server
-     QByteArray datagram;
-     datagram.resize(127);
-     qint64 ret = socket.readDatagram(datagram.data(), datagram.size());
-     QVERIFY(ret == -1);
+    // readDatagram must be called before successul connection to server
+    QByteArray datagram;
+    datagram.resize(127);
+    qint64 ret = socket.readDatagram(datagram.data(), datagram.size());
+    QVERIFY(ret == -1);
 }
 
+/*!
+ Description: Unit test for NFC LLCP socket write several times
+
+ TestScenario:
+               1. Echo client will connect to the Echo server
+               2. Echo client will send the "echo" message to the server
+               3. Echo client will receive the same message echoed from the server
+               4. Echo client will disconnect the connection.
+
+ TestExpectedResults:
+               2. The message has be sent to server.
+               3. The echoed message has been received from server.
+               4. Connection disconnected and NO error signals emitted.
+*/
 void tst_qllcpsockettype2::multipleWrite()
     {
     QString message("handshake 5: multipleWrite");
