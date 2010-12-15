@@ -33,7 +33,7 @@
 
 /*!
     \page qml-publishsubscribe.html
-    \title Publish and Subscribe API QML Plugin
+    \title Publish and Subscribe QML Plugin
     \brief A QML plugin for the QtMobility Project Publish and Subscribe API.
 
     \section1 Overview

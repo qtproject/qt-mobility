@@ -38,58 +38,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDECLARATIVEOPENMETAOBJECT_H
-#define QDECLARATIVEOPENMETAOBJECT_H
 
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include "qdeclarativevaluespacepublishermetaobject_p.h"
+#include "qdeclarativevaluespacepublisher_p.h"
+#include <QVariant>
 
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-// Copied from qobject_p.h
-struct QAbstractDynamicMetaObject : public QMetaObject
+QDeclarativeValueSpacePublisherMetaObject::QDeclarativeValueSpacePublisherMetaObject(QObject *obj)
+    : QDeclarativeOpenMetaObject(obj)
 {
-    virtual ~QAbstractDynamicMetaObject() {}
-    virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; }
-    virtual int createProperty(const char *, const char *) { return -1; }
-};
+}
 
-
-class QDeclarativeOpenMetaObjectPrivate;
-class QDeclarativeOpenMetaObject : public QAbstractDynamicMetaObject
+void QDeclarativeValueSpacePublisherMetaObject::addKey(const QString &key, bool interest)
 {
-public:
-    QDeclarativeOpenMetaObject(QObject *);
+    if (key.contains(QRegExp("[^a-zA-Z0-9]")))
+        return;
+    if (key == "value" || key == "path" || key == "keys" || key == "hasSubscribers")
+        return;
 
-    ~QDeclarativeOpenMetaObject();
+    QString keysubs = key;
+    keysubs.append("HasSubscribers");
 
-    virtual void getValue(int id, void **a);
-    virtual void setValue(int id, void **a);
+    int pid = createProperty(key.toLatin1().constData(), "QVariant");
+    int sid = createProperty(keysubs.toLatin1().constData(), "bool");
+    m_keyProperties.insert(pid, key);
+    m_subsProperties.insert(sid, interest);
+}
 
-    virtual int createProperty(const char *,  const char *);
+void QDeclarativeValueSpacePublisherMetaObject::getValue(int id, void **a)
+{
+    if (m_subsProperties.contains(id)) {
+        bool subs = m_subsProperties.value(id);
+        *reinterpret_cast<bool*>(a[0]) = subs;
+    }
+}
 
-    QObject *object() const;
+void QDeclarativeValueSpacePublisherMetaObject::setValue(int id, void **a)
+{
+    if (m_keyProperties.contains(id)) {
+        QString key = m_keyProperties.value(id);
+        QVariant &v = *reinterpret_cast<QVariant*>(a[0]);
 
-
-protected:
-    virtual int metaCall(QMetaObject::Call _c, int _id, void **_a);
-
-    virtual void propertyRead(int);
-    virtual void propertyWrite(int);
-    virtual void propertyWritten(int);
-
-    QAbstractDynamicMetaObject *parent() const;
-
-private:
-
-    QDeclarativeOpenMetaObjectPrivate *d;
-    friend class QDeclarativeOpenMetaObjectType;
-};
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QDECLARATIVEOPENMETAOBJECT_H
+        QDeclarativeValueSpacePublisher *pub = qobject_cast<QDeclarativeValueSpacePublisher*>(object());
+        pub->m_publisher->setValue(key, v);
+    }
+}
