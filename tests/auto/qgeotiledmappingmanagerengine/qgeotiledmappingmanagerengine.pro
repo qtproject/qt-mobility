@@ -10,10 +10,10 @@ INCLUDEPATH += ../../../src/location \
 
 # Input
 HEADERS += ../qlocationtestutils_p.h \
-           pixelindexengine.h
+           ../pixelindex/pixelindexengine.h
 
 SOURCES += tst_qgeotiledmappingmanagerengine.cpp \
-           pixelindexengine.cpp \
+           ../pixelindex/pixelindexengine.cpp \
            ../qlocationtestutils.cpp
 
 CONFIG += mobility
