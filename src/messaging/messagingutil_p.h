@@ -83,6 +83,7 @@ namespace MessagingUtil
     QString addIdPrefix(const QString& id);
     QString stripIdPrefix(const QString& id);
     QString idPrefix();
+    bool globMatch(const QString &pattern, const QString &value);
 }
 
 QTM_END_NAMESPACE
