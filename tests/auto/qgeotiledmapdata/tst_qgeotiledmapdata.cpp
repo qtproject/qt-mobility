@@ -421,11 +421,11 @@ void tst_QGeoTiledMapData::pixmapAtDateline()
 
     QImage im = pm.toImage();
     TilePixelValue tpv(im.pixel(windowSize.width()/2, windowSize.height()/2));
-    QCOMPARE(tpv.zoom(), 1u);
     QVERIFY(tpv.px() < targetSize.width());
     QVERIFY(tpv.py() < targetSize.height());
     QVERIFY(tpv.px() > 1);
     QVERIFY(tpv.py() > 1);
+    QCOMPARE(tpv.zoom(), 1u);
 }
 
 QTEST_MAIN(tst_QGeoTiledMapData)

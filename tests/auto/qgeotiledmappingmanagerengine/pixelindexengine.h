@@ -87,7 +87,7 @@ public:
     unsigned int py() const;
 
 private:
-    unsigned int data_;
+    quint32 data_;
 };
 
 QPixmap indexedPixmap(int width, int height);
