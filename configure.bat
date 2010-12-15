@@ -570,6 +570,7 @@ call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
 call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
 call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
 call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest CHWRMHaptics chwrmhaptics
 call :compileTest MDS mds
 call :compileTest MDS_25 mds_25
 call :compileTest MDS_25_92MCL mds_25_92mcl
