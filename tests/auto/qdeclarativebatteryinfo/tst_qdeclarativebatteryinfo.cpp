@@ -44,6 +44,9 @@
 #include <QtTest/QtTest>
 #include "qdeclarativebatteryinfo_p.h"
 #include <QDebug>
+#ifdef TESTR
+#include "qsysteminfo_simulator_p.h"
+#endif
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemBatteryInfo::BatteryStatus);
@@ -58,31 +61,63 @@ Q_DECLARE_METATYPE(QSystemBatteryInfo::EnergyUnit);
  * \return \p true if the requested signal was received
  *         \p false on timeout
  */
-//static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
-//{
-//    QEventLoop loop;
-//    QObject::connect(obj, signal, &loop, SLOT(quit()));
-//    QTimer timer;
-//    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-//    if (timeout > 0) {
-//        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-//        timer.setSingleShot(true);
-//        timer.start(timeout);
-//    }
-//    loop.exec();
-//    return timeoutSpy.isEmpty();
-//}
+static bool waitForSignal(QObject *obj, const char *signal, int timeout = 0)
+{
+    QEventLoop loop;
+    QObject::connect(obj, signal, &loop, SLOT(quit()));
+    QTimer timer;
+    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
+    if (timeout > 0) {
+        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        timer.setSingleShot(true);
+        timer.start(timeout);
+    }
+    loop.exec();
+    return timeoutSpy.isEmpty();
+}
 
-//class ChangeBatteryThread : public QThread
-//{
-//public:
-//    void run()
-//    {
-//        QDeclarativeBatteryInfo bi;
-//        QSystemBatteryInfoPrivate *bip = bi.priv;
-//      }
 
-//};
+class ChangeBatteryThread : public QThread
+{
+public:
+    void run()
+    {
+        QMutexLocker locker(&mutex);
+        SystemInfoConnection si;
+        QSystemBatteryInfoPrivate *d = si.batteryInfoPrivate();
+
+        d->setBatteryStatus(currentBatStatus);
+        d->setChargerType(curChargeType);
+        d->setChargingState(curChargeState);
+
+        d->setNominalCapacity(capacity);
+        d->setRemainingCapacityPercent(currentBatLevelPercent);
+        d->setRemainingCapacity(remainingCapacity);
+
+        d->setVoltage(currentVoltage);
+        d->setRemainingChargingTime(remainingEnergy);
+        d->setCurrentFlow(dischargeRate);
+//        d->setRemainingCapacityBars(int v);
+//        d->setMaxBars(int v);
+
+
+        this->exit();
+      }
+    QMutex mutex;
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+    QVariantMap pMap;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int remainingCapacity;
+//    int capBars;
+};
 
 class tst_QDeclarativeBatteryInfo : public QObject
 {
@@ -113,60 +148,74 @@ private slots:
     void tst_energyMeasurementUnit();
 
 
+#ifdef TESTR
     //signal tests
-//    void tst_batteryLevelChanged();
-//    void tst_batteryStatusChanged();
+    void tst_batteryStatusChanged_data();
+    void tst_batteryStatusChanged();
+
+    void tst_chargingStateChanged_data();
+    void tst_chargingStateChanged();
+
+    void tst_chargerTypeChanged_data();
+    void tst_chargerTypeChanged();
+
+    void tst_nominalCapacityChanged_data();
+    void tst_nominalCapacityChanged();
+
+    void tst_remainingCapacityPercentChanged_data();
+    void tst_remainingCapacityPercentChanged();
+
+    void tst_remainingCapacityChanged_data();
+    void tst_remainingCapacityChanged();
+
+    void tst_currentFlowChanged_data();
+    void tst_currentFlowChanged();
+
+    void tst_remainingCapacityBarsChanged();
+    void tst_remainingChargingTimeChanged();
 
 
-//    void tst_chargingStateChanged();
-//    void tst_chargerTypeChanged();
-
-//    void tst_nominalCapacityChanged();
-//    void tst_remainingCapacityPercentChanged();
-//    void tst_remainingCapacityChanged();
-//    void tst_voltageChanged();
-
-//    void tst_currentFlowChanged();
-//    void tst_cumulativeCurrentFlowChanged();
-//    void tst_remainingCapacityBarsChanged();
-//    void tst_remainingChargingTimeChanged();
+    //signals
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
 
-//    //signals
-//    void batteryLevelChanged(int level);
-//    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
 
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
 
-//    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-//    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
-
-//    void nominalCapacityChanged(int);
-//    void remainingCapacityPercentChanged(int);
-//    void remainingCapacityChanged(int);
-
-//    void currentFlowChanged(int);
-//    void cumulativeCurrentFlowChanged(int);
+    void currentFlowChanged(int);
 //    void remainingCapacityBarsChanged(int);
 //    void remainingChargingTimeChanged(int);
+#endif
 
+private:
 
-//    ChangeBatteryThread *changeBatteryThread;
+#ifdef TESTR
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
+    int remainingCapacity;
+//    int capBars;
+#endif
 };
 
 tst_QDeclarativeBatteryInfo::tst_QDeclarativeBatteryInfo()
 {
-  //  changeBatteryThread = new ChangeBatteryThread();
 }
 
 tst_QDeclarativeBatteryInfo::~tst_QDeclarativeBatteryInfo()
 {
-    //delete changeBatteryThread, changeBatteryThread = 0;
 }
-/*
-    SystemInfoConnection si;
-    QSystemBatteryInfoPrivate *bip = si.batteryInfoPrivate();
-*/
-
 void tst_QDeclarativeBatteryInfo::initTestCase()
 {
     qRegisterMetaType<QSystemBatteryInfo::BatteryStatus>("QSystemBatteryInfo::BatteryStatus");
@@ -335,134 +384,285 @@ void tst_QDeclarativeBatteryInfo::tst_energyMeasurementUnit()
     }
 }
 
-////signal tests
-//void tst_QDeclarativeBatteryInfo::tst_batteryLevelChanged()
+
+#ifdef TESTR
+//signal tests
+void tst_QDeclarativeBatteryInfo::tst_batteryStatusChanged_data()
+{
+    QTest::addColumn<QSystemBatteryInfo::BatteryStatus>("batterystatus");
+
+    QTest::newRow("BatteryUnknown") << QSystemBatteryInfo::BatteryUnknown;
+    QTest::newRow("BatteryEmpty") << QSystemBatteryInfo::BatteryEmpty;
+    QTest::newRow("BatteryCritical") << QSystemBatteryInfo::BatteryCritical;
+    QTest::newRow("BatteryVeryLow") << QSystemBatteryInfo::BatteryVeryLow;
+
+    QTest::newRow("BatteryLow") << QSystemBatteryInfo::BatteryLow;
+    QTest::newRow("BatteryOk") << QSystemBatteryInfo::BatteryOk;
+    QTest::newRow("BatteryFull") << QSystemBatteryInfo::BatteryFull;
+}
+
+void tst_QDeclarativeBatteryInfo::tst_batteryStatusChanged()
+{
+    QDeclarativeBatteryInfo bi;
+
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
+            this,SLOT(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
+
+    QFETCH(QSystemBatteryInfo::BatteryStatus, batterystatus);
+
+    changeBatThread->currentBatStatus = currentBatStatus = batterystatus;
+    changeBatThread->start();
+
+//    QSignalSpy errorSpy(&bi, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
+//    QVERIFY(::waitForSignal(&bi, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)), 10 * 1000));
+
+//    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_chargingStateChanged_data()
+{
+    QTest::addColumn<QSystemBatteryInfo::ChargingState>("chargingstate");
+
+    QTest::newRow("ChargingError") << QSystemBatteryInfo::ChargingError;
+    QTest::newRow("NotCharging") << QSystemBatteryInfo::NotCharging;
+    QTest::newRow("Charging") << QSystemBatteryInfo::Charging;
+}
+
+void tst_QDeclarativeBatteryInfo::tst_chargingStateChanged()
+{
+    QDeclarativeBatteryInfo bi;
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)),
+            this,SLOT(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
+
+    QFETCH(QSystemBatteryInfo::ChargingState, chargingstate);
+
+    changeBatThread->curChargeState = curChargeState = chargingstate;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(chargingStateChanged(QSystemBatteryInfo::ChargingState)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_chargerTypeChanged_data()
+{
+    QTest::addColumn<QSystemBatteryInfo::ChargerType>("chargertype");
+
+    QTest::newRow("UnknownCharger") << QSystemBatteryInfo::UnknownCharger;
+    QTest::newRow("NoCharger") << QSystemBatteryInfo::NoCharger;
+    QTest::newRow("WallCharger") << QSystemBatteryInfo::WallCharger;
+
+    QTest::newRow("USBCharger") << QSystemBatteryInfo::USBCharger;
+    QTest::newRow("USB_500mACharger") << QSystemBatteryInfo::USB_500mACharger;
+    QTest::newRow("USB_100mACharger") << QSystemBatteryInfo::USB_100mACharger;
+
+    QTest::newRow("VariableCurrentCharger") << QSystemBatteryInfo::VariableCurrentCharger;
+}
+
+void tst_QDeclarativeBatteryInfo::tst_chargerTypeChanged()
+{
+    QDeclarativeBatteryInfo bi;
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
+            this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
+
+    QFETCH(QSystemBatteryInfo::ChargerType, chargertype);
+
+    changeBatThread->curChargeType = curChargeType = chargertype;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_nominalCapacityChanged_data()
+{
+    QTest::addColumn<int>("intdata");
+
+    QTest::newRow("1") << 1;
+    QTest::newRow("2") << 1234;
+    QTest::newRow("3") << 4321;
+    QTest::newRow("4") << 9990;
+    QTest::newRow("5") << -1;
+}
+
+void tst_QDeclarativeBatteryInfo::tst_nominalCapacityChanged()
+{
+    QDeclarativeBatteryInfo bi;
+
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(nominalCapacityChanged(int)),
+            this,SLOT(nominalCapacityChanged(int)));
+
+    QFETCH(int, intdata);
+
+    changeBatThread->capacity = capacity = intdata;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(nominalCapacityChanged(int)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(nominalCapacityChanged(int)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_remainingCapacityPercentChanged_data()
+{
+    QTest::addColumn<int>("batPercent");
+
+    QTest::newRow("1") << 1;
+    QTest::newRow("2") << 3;
+    QTest::newRow("3") << 5;
+    QTest::newRow("4") << 10;
+    QTest::newRow("5") << 12;
+    QTest::newRow("6") << 40;
+
+    QTest::newRow("4") << 41;
+    QTest::newRow("5") << 98;
+    QTest::newRow("6") << 99;
+    QTest::newRow("7") << 100;
+
+}
+void tst_QDeclarativeBatteryInfo::tst_remainingCapacityPercentChanged()
+{
+    QDeclarativeBatteryInfo bi;
+
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(remainingCapacityPercentChanged(int)),
+            this,SLOT(remainingCapacityPercentChanged(int)));
+
+    QFETCH(int, batPercent);
+
+    changeBatThread->currentBatLevelPercent = currentBatLevelPercent = batPercent;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(remainingCapacityPercentChanged(int)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(remainingCapacityPercentChanged(int)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_remainingCapacityChanged_data()
+{
+ tst_nominalCapacityChanged_data();
+}
+
+void tst_QDeclarativeBatteryInfo::tst_remainingCapacityChanged()
+{
+    QDeclarativeBatteryInfo bi;
+
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(remainingCapacityChanged(int)),
+            this,SLOT(remainingCapacityChanged(int)));
+
+    QFETCH(int, intdata);
+
+    changeBatThread->remainingCapacity = remainingCapacity = intdata;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(remainingCapacityChanged(int)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(remainingCapacityChanged(int)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+
+}
+
+void tst_QDeclarativeBatteryInfo::tst_currentFlowChanged_data()
+{
+ tst_nominalCapacityChanged_data();
+}
+
+void tst_QDeclarativeBatteryInfo::tst_currentFlowChanged()
+{
+    QDeclarativeBatteryInfo bi;
+
+    ChangeBatteryThread *changeBatThread = new ChangeBatteryThread();
+
+    connect(&bi,SIGNAL(currentFlowChanged(int)),
+            this,SLOT(currentFlowChanged(int)));
+
+    QFETCH(int, intdata);
+
+    changeBatThread->dischargeRate = dischargeRate = intdata;
+    changeBatThread->start();
+
+    QSignalSpy errorSpy(&bi, SIGNAL(currentFlowChanged(int)));
+    QVERIFY(::waitForSignal(&bi, SIGNAL(currentFlowChanged(int)), 10 * 1000));
+
+    QVERIFY(errorSpy.count() == 1);
+}
+
+void tst_QDeclarativeBatteryInfo::tst_remainingCapacityBarsChanged()
+{
+  //  QDeclarativeBatteryInfo bi;
+
+}
+
+void tst_QDeclarativeBatteryInfo::tst_remainingChargingTimeChanged()
+{
+  //  QDeclarativeBatteryInfo bi;
+
+}
+
+//signals
+void tst_QDeclarativeBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batStatus)
+{
+    QVERIFY(batStatus == currentBatStatus);
+}
+
+void tst_QDeclarativeBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargState)
+{
+    QVERIFY(chargState == curChargeState);
+
+}
+
+void tst_QDeclarativeBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargType)
+{
+    QVERIFY(chargType == curChargeType);
+}
+
+void tst_QDeclarativeBatteryInfo::nominalCapacityChanged(int cap)
+{
+    QVERIFY(cap == capacity);
+}
+
+void tst_QDeclarativeBatteryInfo::remainingCapacityPercentChanged(int cap)
+{
+    QVERIFY(cap == currentBatLevelPercent);
+}
+
+void tst_QDeclarativeBatteryInfo::remainingCapacityChanged(int cap)
+{
+    QVERIFY(cap == remainingCapacity);
+}
+
+void tst_QDeclarativeBatteryInfo::currentFlowChanged(int flow)
+{
+    QVERIFY(flow == dischargeRate);
+}
+
+//void tst_QDeclarativeBatteryInfo::remainingCapacityBarsChanged(int cap)
 //{
-//    QDeclarativeBatteryInfo bi;
+//    QVERIFY(cap == currentBatStatus);
 
 //}
 
-//void tst_QDeclarativeBatteryInfo::tst_batteryStatusChanged()
+//void tst_QDeclarativeBatteryInfo::remainingChargingTimeChanged(int time)
 //{
-//    QDeclarativeBatteryInfo bi;
+//    QVERIFY(time == currentBatStatus);
 
 //}
-
-//void tst_QDeclarativeBatteryInfo::tst_chargingStateChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_chargerTypeChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_nominalCapacityChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_remainingCapacityPercentChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_remainingCapacityChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_voltageChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_currentFlowChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_cumulativeCurrentFlowChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_remainingCapacityBarsChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::tst_remainingChargingTimeChanged()
-//{
-//    QDeclarativeBatteryInfo bi;
-
-//}
-
-////signals
-//void tst_QDeclarativeBatteryInfo::batteryLevelChanged(int level)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::nominalCapacityChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::remainingCapacityPercentChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::remainingCapacityChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::currentFlowChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::cumulativeCurrentFlowChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::remainingCapacityBarsChanged(int)
-//{
-
-//}
-
-//void tst_QDeclarativeBatteryInfo::remainingChargingTimeChanged(int)
-//{
-
-//}
+#endif
 
 
 QTEST_MAIN(tst_QDeclarativeBatteryInfo)

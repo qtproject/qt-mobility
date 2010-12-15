@@ -89,6 +89,11 @@ QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
     return getSystemStorageInfoPrivate();
 }
 
+QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
+{
+    return getSystemBatteryInfoPrivate();
+}
+
 #include "qsysteminfo_simulator.moc"
 #endif
 
@@ -1064,7 +1069,6 @@ void QSystemBatteryInfoPrivate::setInitialData()
     setVoltage(24);
     setRemainingChargingTime(45);
     setCurrentFlow(14);
-    setCumulativeCurrentFlow(87);
     setRemainingCapacityBars(3);
     setMaxBars(7);
 }
@@ -1073,6 +1077,7 @@ void QSystemBatteryInfoPrivate::setBatteryStatus(QSystemBatteryInfo::BatteryStat
 {
     if (data.batteryStatus != v) {
         data.batteryStatus = v;
+        Q_EMIT batteryStatusChanged(v);
     }
 }
 
@@ -1080,6 +1085,7 @@ void QSystemBatteryInfoPrivate::setChargerType(QSystemBatteryInfo::ChargerType v
 {
     if (data.chargerType != v) {
         data.chargerType = v;
+        Q_EMIT chargerTypeChanged(v);
     }
 }
 
@@ -1087,6 +1093,7 @@ void QSystemBatteryInfoPrivate::setChargingState(QSystemBatteryInfo::ChargingSta
 {
     if (data.chargingState != v) {
         data.chargingState = v;
+        Q_EMIT chargingStateChanged(v);
     }
 }
 
@@ -1094,6 +1101,7 @@ void QSystemBatteryInfoPrivate::setNominalCapacity(int v)
 {
     if (data.nominalCapacity != v) {
         data.nominalCapacity = v;
+        Q_EMIT nominalCapacityChanged(v);
     }
 }
 
@@ -1101,6 +1109,7 @@ void QSystemBatteryInfoPrivate::setRemainingCapacityPercent(int v)
 {
     if (data.remainingCapacityPercent != v) {
         data.remainingCapacityPercent = v;
+        Q_EMIT remainingCapacityPercentChanged(v);
     }
 }
 
@@ -1108,6 +1117,7 @@ void QSystemBatteryInfoPrivate::setRemainingCapacity(int v)
 {
     if (data.remainingCapacity != v) {
         data.remainingCapacity = v;
+        Q_EMIT remainingCapacityChanged(v);
     }
 }
 
@@ -1130,13 +1140,7 @@ void QSystemBatteryInfoPrivate::setCurrentFlow(int v)
 {
     if (data.currentFlow != v) {
         data.currentFlow = v;
-    }
-}
-
-void QSystemBatteryInfoPrivate::setCumulativeCurrentFlow(int v)
-{
-    if (data.cumulativeCurrentFlow != v) {
-        data.cumulativeCurrentFlow = v;
+        Q_EMIT currentFlowChanged(v);
     }
 }
 
@@ -1144,6 +1148,7 @@ void QSystemBatteryInfoPrivate::setRemainingCapacityBars(int v)
 {
     if (data.remainingCapacityBars != v) {
         data.remainingCapacityBars = v;
+        Q_EMIT remainingCapacityBarsChanged(v);
     }
 }
 

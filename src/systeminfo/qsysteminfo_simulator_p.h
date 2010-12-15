@@ -378,11 +378,24 @@ public:
     void  setVoltage(int v);
     void  setRemainingChargingTime(int v);
     void  setCurrentFlow(int v);
-    void  setCumulativeCurrentFlow(int v);
     void  setRemainingCapacityBars(int v);
     void  setMaxBars(int v);
 
     void setInitialData();
+Q_SIGNALS:
+//    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+
+    void currentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
 
 private:
     QSystemBatteryInfoData data;
@@ -398,6 +411,7 @@ public:
     QSystemNetworkInfoPrivate *networkInfoPrivate();
     QSystemDeviceInfoPrivate *deviceInfoPrivate();
     QSystemStorageInfoPrivate *storageInfoPrivate();
+    QSystemBatteryInfoPrivate *batteryInfoPrivate();
 };
 #endif
 

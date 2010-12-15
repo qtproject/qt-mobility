@@ -115,7 +115,6 @@ public:
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
 
-
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
     int remainingCapacity() const;
@@ -129,6 +128,9 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
+#ifdef TESTR
+    QSystemBatteryInfoPrivate *priv;
+#endif
 
 Q_SIGNALS:
 //    void batteryLevelChanged(int level);

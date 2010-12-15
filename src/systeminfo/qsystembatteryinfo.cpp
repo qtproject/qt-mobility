@@ -309,6 +309,7 @@ void QSystemBatteryInfo::connectNotify(const char *signal)
 //        connect(d,SIGNAL(batteryLevelChanged(int)),
 //                this,SIGNAL(batteryLevelChanged(int)),Qt::UniqueConnection);
 //    }
+
     if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
             batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))))) {
         connect(d,SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),

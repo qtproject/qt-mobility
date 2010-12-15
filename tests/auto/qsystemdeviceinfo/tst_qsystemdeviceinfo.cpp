@@ -44,7 +44,10 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 #include "../qsysteminfotestcommon.h"
+
+#ifdef TESTR
 #include "qsysteminfo_simulator_p.h"
+#endif
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemDeviceInfo::BatteryStatus);

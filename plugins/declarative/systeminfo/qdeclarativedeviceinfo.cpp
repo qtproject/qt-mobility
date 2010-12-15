@@ -141,8 +141,6 @@ void QDeclarativeDeviceInfo::startBatteryStatusChanged()
 */
 void QDeclarativeDeviceInfo::startPowerStateChanged()
 {
-    qDebug() << Q_FUNC_INFO;
-
     connect(deviceInfo(),SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(declarativePowerStateChanged(QSystemDeviceInfo::PowerState)),Qt::UniqueConnection);
 }

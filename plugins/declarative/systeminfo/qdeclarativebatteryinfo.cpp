@@ -75,7 +75,7 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
 QDeclarativeBatteryInfo::QDeclarativeBatteryInfo(QObject *parent) :
     QSystemBatteryInfo(parent)
 {
-   startConnections();
+  // startConnections();
 }
 
 void QDeclarativeBatteryInfo::startConnections()
