@@ -101,6 +101,8 @@ public:
 
     void addObjectInfo(QGeoTiledMapObjectInfo* object);
 
+    QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+
     int zoomFactor;
 
     QPoint worldReferenceViewportCenter;

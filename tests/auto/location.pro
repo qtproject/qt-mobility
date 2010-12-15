@@ -7,6 +7,7 @@ CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
       qgeotiledmappingmanagerengine \
+      qgeotiledmapdata \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
