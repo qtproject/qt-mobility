@@ -9,11 +9,11 @@ symbian: {
         # for S^3 PS3+ platform. However enabling this will cause some problems
         # with signals concerning adding/removing groups/group participants. 
         DEFINES += SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
-    #} else {
-    #    message("S^3 PS2 or older platform")
-    #}
+    } else {
+        message("S^3 PS2 or older platform")
+    }
     
-    #contains(S60_VERSION, 3.2) {
-    #	DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
-    #}
+    contains(S60_VERSION, 3.2) {
+        DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
+    }
 }
