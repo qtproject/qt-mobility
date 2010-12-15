@@ -754,6 +754,11 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
     qWarning() << errorString;
 }
 
+static bool zComparator(const QGraphicsItem *a, const QGraphicsItem *b)
+{
+    return a->zValue() < b->zValue();
+}
+
 /*!
     \reimp
 */
@@ -765,24 +770,34 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
     QGeoCoordinate coordLow(coord.latitude(), coord.longitude() + 360.0);
     QGeoCoordinate coordHigh(coord.latitude(), coord.longitude() - 360.0);
 
-    QSet<QGraphicsItem*> items;
+    QList<QGraphicsItem*> items;
 
     QPointF topLeft = d->screenPositionToWorldReferencePosition(screenPosition - QPointF(1.5,1.5));
     QPointF bottomRight = d->screenPositionToWorldReferencePosition(screenPosition + QPointF(1.5,1.5));
     if (bottomRight.x() < topLeft.x()) {
         // wrapped around
         QRectF rect(topLeft, QSizeF(3*d->zoomFactor, 3*d->zoomFactor));
-        items.unite(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder).toSet());
+        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
         QRectF rect2(QPointF(0, topLeft.y()), bottomRight);
-        items.unite(d->scene->items(rect2, Qt::IntersectsItemShape, Qt::AscendingOrder).toSet());
+        items.append(d->scene->items(rect2, Qt::IntersectsItemShape, Qt::AscendingOrder));
+
+        qStableSort(items.begin(), items.end(), zComparator);
+        QList<QGraphicsItem*> uniq;
+
+        Q_FOREACH (QGraphicsItem *item, items)
+            if (!uniq.contains(item))
+                uniq.append(item);
+
+        items = uniq;
+
     } else {
         QRectF rect(topLeft, bottomRight);
-        items.unite(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder).toSet());
+        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
     }
 
     QList<QGeoMapObject*> results;
 
-    Q_FOREACH(QGraphicsItem* item, items) {
+    Q_FOREACH (QGraphicsItem* item, items) {
         if (!d->itemMap.contains(item))
             continue;
         QGeoMapObject *result = d->itemMap.value(item);
