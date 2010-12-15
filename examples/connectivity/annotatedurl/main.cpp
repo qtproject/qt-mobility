@@ -59,7 +59,8 @@ int main(int argc, char *argv[])
     AnnotatedUrl annotatedUrl;
     annotatedUrl.connect(&manager, SIGNAL(targetDetected(QNearFieldTarget*)),
                          SLOT(targetDetected(QNearFieldTarget*)));
-
+    annotatedUrl.connect(&manager, SIGNAL(targetLost(QNearFieldTarget*)),
+                         SLOT(targetLost(QNearFieldTarget*)));
 
     manager.startTargetDetection();
 

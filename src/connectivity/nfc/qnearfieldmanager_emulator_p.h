@@ -84,6 +84,7 @@ private:
     };
 
     int getFreeId();
+    void ndefReceived(const QNdefMessage &message, QNearFieldTarget *target);
 
     QList<Callback> m_registeredHandlers;
     QList<int> m_freeIds;

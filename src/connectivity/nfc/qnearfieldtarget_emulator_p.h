@@ -39,28 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTARGET_P_H
-#define QNEARFIELDTARGET_P_H
+#ifndef QNEARFIELDTARGET_EMULATOR_P_H
+#define QNEARFIELDTARGET_EMULATOR_P_H
 
-#include <qmobilityglobal.h>
-
-#include "qnearfieldtarget.h"
+#include "qnearfieldtagtype1.h"
+#include "targetemulator_p.h"
 
 #include <QtCore/QMap>
-#include <QtCore/QSharedData>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QNearFieldTarget::RequestIdPrivate : public QSharedData
+class TagType1 : public QNearFieldTagType1
 {
-};
+    Q_OBJECT
 
-class QNearFieldTargetPrivate
-{
 public:
-    QMap<QNearFieldTarget::RequestId, QVariant> m_decodedResponses;
+    TagType1(TagBase *tag, QObject *parent);
+    ~TagType1();
+
+    QByteArray uid() const;
+
+    AccessMethods accessMethods() const;
+
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
+
+private:
+    TagBase *m_tag;
 };
 
-QTM_END_NAMESPACE
+class TagActivator : public QObject
+{
+    Q_OBJECT
 
-#endif // QNEARFIELDTARGET_P_H
+public:
+    TagActivator();
+    ~TagActivator();
+
+    void initialize();
+    void reset();
+
+    static TagActivator *instance();
+
+protected:
+    void timerEvent(QTimerEvent *e);
+
+signals:
+    void tagActivated(TagBase *tag);
+    void tagDeactivated(TagBase *tag);
+
+private:
+    QMap<TagBase *, bool>::Iterator m_current;
+    int timerId;
+};
+
+#endif // QNEARFIELDTARGET_EMULATOR_P_H
