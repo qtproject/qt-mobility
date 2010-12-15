@@ -61,6 +61,7 @@ class QDeclarativeOrganizerModel : public QAbstractListModel, public QDeclarativ
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_PROPERTY(QString managerName READ managerName  NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
@@ -90,8 +91,10 @@ public:
 
     QString error() const;
     int itemCount() const;
+
     QString manager() const;
-    void setManager(const QString& managerName);
+    void setManager(const QString& managerUri);
+    QString managerName() const;
     QStringList availableManagers() const;
     QDateTime startPeriod() const;
     void setStartPeriod(const QDateTime& start);
@@ -126,9 +129,9 @@ public:
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
     Q_INVOKABLE void fetchItems(const QList<QString>& ids);
 
-    Q_INVOKABLE bool containsItems(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE bool containsItems(QDateTime start, QDateTime end = QDateTime());
     Q_INVOKABLE QDeclarativeOrganizerItem* item(const QString& id);
-    Q_INVOKABLE QStringList itemIds(const QDate& start, const QDate& end = QDate());
+    Q_INVOKABLE QStringList itemIds(QDateTime start, QDateTime end = QDateTime());
     bool autoUpdate() const;
     void setAutoUpdate(bool autoUpdate);
 
@@ -172,6 +175,8 @@ private:
     int itemIndex(const QDeclarativeOrganizerItem* item);
     void addSorted(QDeclarativeOrganizerItem* item);
     void removeItemsFromModel(const QList<QString>& ids);
+    bool itemHasReccurence(const QOrganizerItem& oi) const;
+    void fetchOccurrences(const QOrganizerItem& item);
     QDeclarativeOrganizerItem* createItem(const QOrganizerItem& item);
     static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);

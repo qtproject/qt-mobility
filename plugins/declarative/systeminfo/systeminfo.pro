@@ -2,9 +2,9 @@ INCLUDEPATH += ../../../src/systeminfo
 DEPENDPATH += ../../../src/systeminfo
 INCLUDEPATH += ../../../src/global
 
-TARGET  = $$qtLibraryTarget(declarative_systeminfo)
 TEMPLATE = lib
 CONFIG += plugin
+TARGET  = $$qtLibraryTarget(declarative_systeminfo)
 TARGETPATH = QtMobility/systeminfo
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
