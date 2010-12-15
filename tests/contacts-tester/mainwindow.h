@@ -38,72 +38,27 @@
 **
 ****************************************************************************/
 
-#ifndef CONTACTEDITOR_H
-#define CONTACTEDITOR_H
-
+#include <QtGui>
 #include "qtcontacts.h"
-
-#include <QWidget>
-#include <QMap>
-#include <QPlainTextEdit>
-
-QT_BEGIN_NAMESPACE
-class QScrollArea;
-class QPushButton;
-class QLineEdit;
-class QLabel;
-QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class ContactEditor : public QWidget
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
-    ContactEditor(QWidget *parent = 0);
-    ~ContactEditor();
+    public:
+        MainWindow();
+    private slots:
+        void reloadClicked();
+        void nameSaveClicked();
+        void phoneSaveClicked();
+        void emailSaveClicked();
+    private:
+        void updateContact();
 
-signals:
-    void showListPage();
-
-public slots:
-    void setCurrentContact(QContactManager* manager, QContactLocalId currentId);
-
-private slots:
-    void saveClicked();
-    void cancelClicked();
-    void avatarClicked();
-    void clearAvatarClicked();
-    void contactChanged();
-
-private:
-    void updateUi(const QContact& contact);
-    QString nameField();
-    void setAvatarPixmap(const QPixmap& pixmap);
-
-#ifdef Q_OS_SYMBIAN
-    QAction* m_saveBtn;
-    QAction* m_cancelBtn;
-#else
-    QPushButton *m_saveBtn;
-    QPushButton *m_cancelBtn;
-#endif
-
-    QLineEdit *m_nameEdit;
-    QLineEdit *m_phoneEdit;
-    QLineEdit *m_emailEdit;
-    QLineEdit *m_addrEdit;
-    QPushButton *m_avatarBtn;
-    QPushButton *m_clearAvatarBtn;
-    QLabel *m_avatarView;
-
-    // data
-    QContactManager *m_manager;
-    QContactLocalId m_contactId;
-    QString m_newAvatarPath;
-    QImage m_thumbnail;
-    QSharedPointer<QContactObserver> m_observer;
+        QContactManager m_manager;
+        QContact m_contact;
+        QLineEdit* m_nameEdit;
+        QLineEdit* m_phoneEdit;
+        QLineEdit* m_emailEdit;
 };
-
-#endif // CONTACTEDITOR_H
