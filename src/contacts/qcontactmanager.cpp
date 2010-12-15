@@ -760,10 +760,9 @@ void QContactManager::observerDestroyed(QObject* object)
 void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
 {
     foreach (QContactLocalId id, ids) {
-        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
-        while (it != d->m_observerForContact.end()) {
-            (*it)->emitContactChanged();
-            it++;
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactChanged();
         }
     }
 }
@@ -771,10 +770,9 @@ void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
 void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
 {
     foreach (QContactLocalId id, ids) {
-        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
-        while (it != d->m_observerForContact.end()) {
-            (*it)->emitContactRemoved();
-            it++;
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactRemoved();
         }
     }
 }

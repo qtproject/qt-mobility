@@ -2493,12 +2493,17 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemId(arg.at(0)), cid);
 
+    QSharedPointer<QOrganizerItemObserver> todo1Observer = m1->observeItem(cid);
+    QScopedPointer<QSignalSpy> spyObserverModified1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved1(new QSignalSpy(todo1Observer.data(), SIGNAL(itemRemoved())));
+
     // verify save modified emits signal changed
     nc.setLabel("label me that");
     QVERIFY(todo.saveDetail(&nc));
     QVERIFY(m1->saveItem(&todo));
     modSigCount += 1;
     QTRY_COMPARE(spyModified.count(), modSigCount);
+    QTRY_COMPARE(spyObserverModified1->count(), 1);
     args = spyModified.takeFirst();
     modSigCount -= 1;
     arg = args.first().value<QList<QOrganizerItemId> >();
@@ -2509,6 +2514,7 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(m1->removeItem(todo.id()));
     remSigCount += 1;
     QTRY_COMPARE(spyRemoved.count(), remSigCount);
+    QTRY_COMPARE(spyObserverRemoved1->count(), 1);
     args = spyRemoved.takeFirst();
     remSigCount -= 1;
     arg = args.first().value<QList<QOrganizerItemId> >();
@@ -2529,6 +2535,15 @@ void tst_QOrganizerManager::signalEmission()
     QTRY_COMPARE(spyModified.count(), modSigCount);
     QTRY_COMPARE(spyAdded.count(), addSigCount);
 
+    spyObserverModified1->clear();
+    spyObserverRemoved1->clear();
+    QSharedPointer<QOrganizerItemObserver> todo2Observer = m1->observeItem(todo2.id());
+    QSharedPointer<QOrganizerItemObserver> todo3Observer = m1->observeItem(todo3.id());
+    QScopedPointer<QSignalSpy> spyObserverModified2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverModified3(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved2(new QSignalSpy(todo2Observer.data(), SIGNAL(itemRemoved())));
+    QScopedPointer<QSignalSpy> spyObserverRemoved3(new QSignalSpy(todo3Observer.data(), SIGNAL(itemRemoved())));
+
     // verify multiple modifies works as advertised
     nc2.setLabel("M.");
     QVERIFY(todo2.saveDetail(&nc2));
@@ -2543,6 +2558,9 @@ void tst_QOrganizerManager::signalEmission()
     QVERIFY(m1->saveItem(&todo3));
     modSigCount += 1;
     QTRY_COMPARE(spyModified.count(), modSigCount);
+    QTRY_COMPARE(spyObserverModified2->count(), 2);
+    QTRY_COMPARE(spyObserverModified3->count(), 1);
+    QCOMPARE(spyObserverModified1->count(), 0);
 
     // verify multiple removes works as advertised
     m1->removeItem(todo3.id());
@@ -2550,6 +2568,9 @@ void tst_QOrganizerManager::signalEmission()
     m1->removeItem(todo2.id());
     remSigCount += 1;
     QTRY_COMPARE(spyRemoved.count(), remSigCount);
+    QTRY_COMPARE(spyObserverRemoved2->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved3->count(), 1);
+    QCOMPARE(spyObserverRemoved1->count(), 0);
 
     QVERIFY(!m1->removeItem(todo.id())); // not saved.
 
@@ -2577,6 +2598,16 @@ void tst_QOrganizerManager::signalEmission()
 
     QTRY_WAIT( while(spyAdded.size() > 0) {sigids += spyAdded.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
     QTRY_COMPARE(spyModified.count(), 0);
+
+    todo1Observer = m1->observeItem(todo.id());
+    todo2Observer = m1->observeItem(todo2.id());
+    todo3Observer = m1->observeItem(todo3.id());
+    spyObserverModified1.reset(new QSignalSpy(todo1Observer.data(), SIGNAL(itemChanged())));
+    spyObserverModified2.reset(new QSignalSpy(todo2Observer.data(), SIGNAL(itemChanged())));
+    spyObserverModified3.reset(new QSignalSpy(todo3Observer.data(), SIGNAL(itemChanged())));
+    spyObserverRemoved1.reset(new QSignalSpy(todo1Observer.data(), SIGNAL(itemRemoved())));
+    spyObserverRemoved2.reset(new QSignalSpy(todo2Observer.data(), SIGNAL(itemRemoved())));
+    spyObserverRemoved3.reset(new QSignalSpy(todo3Observer.data(), SIGNAL(itemRemoved())));
     QTRY_COMPARE(spyRemoved.count(), 0);
 
     /* Batch modifies */
@@ -2594,6 +2625,9 @@ void tst_QOrganizerManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyModified.size() > 0) {sigids += spyModified.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
+    QTRY_COMPARE(spyObserverModified1->count(), 1);
+    QTRY_COMPARE(spyObserverModified2->count(), 1);
+    QTRY_COMPARE(spyObserverModified3->count(), 1);
 
     /* Batch removes */
     batchRemove << todo.id() << todo2.id() << todo3.id();
@@ -2602,6 +2636,9 @@ void tst_QOrganizerManager::signalEmission()
 
     sigids.clear();
     QTRY_WAIT( while(spyRemoved.size() > 0) {sigids += spyRemoved.takeFirst().at(0).value<QList<QOrganizerItemId> >(); }, sigids.contains(todo.id()) && sigids.contains(todo2.id()) && sigids.contains(todo3.id()));
+    QTRY_COMPARE(spyObserverRemoved1->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved2->count(), 1);
+    QTRY_COMPARE(spyObserverRemoved3->count(), 1);
 
     QTRY_COMPARE(spyAdded.count(), 0);
     QTRY_COMPARE(spyModified.count(), 0);
