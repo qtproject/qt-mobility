@@ -85,30 +85,8 @@ void tst_qllcpsocketremote::cleanupTestCase()
 */
 void tst_qllcpsocketremote::queuedWrittenTest()
 {
-    QString message("string1");
-    QString message2("string2");
-    QLlcpSocket socket(this);
-
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(m_port);
-
-    QString box("handshake 1");
+    QString box("queuedWrittenTest 1");
     QNfcTestUtil::ShowMessage(box);
-
-    qDebug() << "readspy count: " << readyReadSpy.count();
-    QTRY_VERIFY(readyReadSpy.count() == 2);
-    QVERIFY(ret);
-
-    // STEP 2: Receive data from the peer which send messages to
-    QByteArray datagram;
-    while (socket.hasPendingDatagrams())
-    {
-       datagram.resize(socket.pendingDatagramSize());
-       qint64 readSize = socket.readDatagram(datagram.data(), datagram.size());
-       qDebug() << "readStr:" << datagram.data();
-       QVERIFY(readSize != -1);
-    }
-
 }
 
 /*!

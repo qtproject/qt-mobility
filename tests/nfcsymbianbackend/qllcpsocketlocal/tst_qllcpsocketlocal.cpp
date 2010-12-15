@@ -98,9 +98,6 @@ void tst_qllcpsocketlocal::queuedWrittenTest()
     QString message2("string2");
     QLlcpSocket socket(this);
 
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret);
-
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
@@ -117,6 +114,9 @@ void tst_qllcpsocketlocal::queuedWrittenTest()
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
     QTRY_VERIFY(bytesWrittenSpy.count() == 2);
+
+    QString box("queuedWrittenTest 1");
+    QNfcTestUtil::ShowMessage(box);
 }
 
 /*!
