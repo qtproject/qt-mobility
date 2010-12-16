@@ -50,24 +50,47 @@ class CLlcpTimer : public CTimer
     {
 public:
 
-    static CLlcpTimer* NewL(CActiveSchedulerWait & aWait); 
+    static CLlcpTimer* NewL(CActiveSchedulerWait & aWait);
     virtual ~CLlcpTimer();
-      
+
     void Start(TInt aMSecs);
-    
+
 private: // From CTimer
 
     void RunL();
-    
+
 private:
 
     CLlcpTimer(CActiveSchedulerWait & aWait);
-    void ConstructL();    
+    void ConstructL();
 
 private:
-    
+
     CActiveSchedulerWait& iWait; //not own
     };
+
+template <class T>
+class CleanupQDelete
+    {
+public:
+    inline static void PushL(T* aPtr);
+private:
+    static void Delete(TAny *aPtr);
+    };
+template <class T> inline void CleanupQDelete<T>::PushL(T* aRef)
+    {
+    CleanupStack::PushL(TCleanupItem(&Delete,aRef));
+    }
+
+template <class T> void CleanupQDelete<T>::Delete(TAny *aPtr)
+    {
+    delete (static_cast<T*>(aPtr));
+    }
+
+template <class T> inline void CleanupQDeletePushL(T* aRef)
+    {
+    CleanupQDelete<T>::PushL(aRef);
+    }
 
 QTM_BEGIN_NAMESPACE
 class QNdefMessage;
@@ -84,15 +107,15 @@ public:
      */
     static CNdefMessage* FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg );
     static QNdefMessage FromCNdefMsgToQndefMsgL( const CNdefMessage& msg );
-     
+
     static TPtrC8 FromQByteArrayToTPtrC8(const QByteArray& qbytearray);
     static void FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8& buf);
     static QByteArray FromTDesCToQByteArray( const TDesC8& des);
-    
+
     static TPtrC FromQStringToTptrC(const QString& qstring);
     static TPtrC8 FromQStringToTptrC8(const QString& qstring);
     static QString FromDesC8ToQString(const TDesC8&);
-    
+
 };
 
 QTM_END_NAMESPACE

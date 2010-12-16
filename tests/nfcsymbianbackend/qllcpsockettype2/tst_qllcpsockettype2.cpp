@@ -109,7 +109,7 @@ void tst_qllcpsockettype2::initTestCase()
         {
         qDebug()<<"!!Several LLCP target found!!";
         }
-    m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget*>();
+    m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget*>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
     qDebug()<<"tst_qllcpsockettype2::initTestCase()   End";
@@ -385,7 +385,7 @@ void tst_qllcpsockettype2::connectTest()
 
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy errorSpy(&socket, SIGNAL(error()));
+    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
 
     QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
     socket.connectToService(m_target, TestUri);
@@ -523,6 +523,8 @@ void tst_qllcpsockettype2::negTestCase3()
     QLlcpSocket socket(this);
 
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    socket.connectToService(m_target, TestUri);
+
     bool ret = socket.bind(35);
     QVERIFY(ret == false);
 
@@ -544,6 +546,7 @@ void tst_qllcpsockettype2::negTestCase3()
     quint8 port = 35;
     size = socket.readDatagram(datagram.data(),datagram.size(),&m_target, &port);
     QVERIFY(size == -1);
+
 }
 
 QTEST_MAIN(tst_qllcpsockettype2);
