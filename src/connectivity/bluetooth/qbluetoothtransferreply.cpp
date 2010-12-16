@@ -71,10 +71,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QBluetoothTransferReply::abort() = 0
+    \fn QBluetoothTransferReply::abort()
 
     Aborts this reply.
 */
+void QBluetoothTransferReply::abort()
+{
+
+}
 
 /*!
     \fn void QBluetoothTransferReply::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)

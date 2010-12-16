@@ -43,6 +43,7 @@
 #define CONTEXTKITLAYER_P_H
 
 #include "qvaluespace.h"
+#include "qvaluespacepublisher.h"
 #include "qvaluespace_p.h"
 
 #include <QSet>
@@ -77,6 +78,7 @@ public:
 
     bool includes(ContextKitPath &other) const;
     bool isRegistered() const;
+    bool isProvided() const;
 
     inline int size() const { return parts.size(); }
     inline QString at(int i) const { return parts.at(i); }
@@ -111,19 +113,26 @@ public:
     void unsubscribe();
     QSet<QString> children();
 
+    ContextKitPath path;
+
 signals:
     void valueChanged();
+    void interestChanged(QString path, bool status);
 
 private:
-    ContextKitPath path;
     QHash<QString, ContextProperty*> readProps;
     QHash<QString, ContextProvider::Property*> writeProps;
     ContextProvider::Service *service;
 
+    bool subscribed;
+
     void insertRead(const ContextKitPath &path);
+    ContextProvider::Property *insertWrite(const ContextKitPath &path);
 
 private slots:
     void updateSubtrees();
+    void on_firstAppeared(QString key);
+    void on_lastDisappeared(QString key);
 };
 
 
@@ -157,9 +166,12 @@ public:
                      const QString &path);
     bool removeSubTree(QValueSpacePublisher *vsp, Handle handle);
 
-    void addWatch(QValueSpacePublisher *, Handle) { return; }
-    void removeWatches(QValueSpacePublisher *, Handle) { return; }
+    void addWatch(QValueSpacePublisher *, Handle);
+    void removeWatches(QValueSpacePublisher *, Handle);
     void sync();
+
+    virtual QValueSpace::LayerOptions layerOptions() const = 0;
+    virtual QUuid id() = 0;
 
 private slots:
     void contextHandleChanged();

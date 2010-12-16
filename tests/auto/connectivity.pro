@@ -8,6 +8,7 @@ SUBDIRS += \
         qndefrecord \
         qndefmessage \
         qnearfieldtagtype1 \
+        qnearfieldtagtype2 \
         qnearfieldmanager
 
 #!win32:SUBDIRS += \

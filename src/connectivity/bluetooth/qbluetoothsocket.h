@@ -66,6 +66,8 @@ class Q_CONNECTIVITY_EXPORT QBluetoothSocket : public QIODevice
     friend class QBluetoothSocketSymbianPrivate;
     friend class QRfcommServer;
     friend class QRfcommServerPrivate;
+    friend class QL2capServer;
+    friend class QL2capServerPrivate;
 
 public:
     enum SocketType {

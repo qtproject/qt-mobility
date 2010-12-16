@@ -1837,7 +1837,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         QCOMPARE(lms.at(0), lm2);
         QCOMPARE(lms.at(0).landmarkId().isValid(), true);
     } else {
-        qFatal("Unkown test row type");
+        qFatal("Unknown test row type");
     }
 
     //try retrieving a landmark with a category
@@ -4094,7 +4094,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
-    QCOMPARE(lms.count(), 11); //backend specifc behaviour of returning all results if
+    QCOMPARE(lms.count(), 11); //backend specific behaviour of returning all results if
                                //empty name is used
 #else
     QCOMPARE(lms.count(),2);
@@ -4364,7 +4364,7 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder()
 
     qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
     proximityFilter.setRadius(radius);
-    //TODO: Symbian proximity filter not maching landmarks which exactly lie on the edge of the radius
+    //TODO: Symbian proximity filter not matching landmarks which exactly lie on the edge of the radius
 
 QVERIFY(doFetch(type, proximityFilter,&lms,QLandmarkManager::NoError));
 #ifdef Q_OS_SYMBIAN

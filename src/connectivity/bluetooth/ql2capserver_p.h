@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,58 +38,58 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDECLARATIVEOPENMETAOBJECT_H
-#define QDECLARATIVEOPENMETAOBJECT_H
 
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#ifndef QL2CAPSERVER_P_H
+#define QL2CAPSERVER_P_H
+
+#include <QtGlobal>
+#include <QList>
+
+#ifndef QT_NO_DBUS
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+#endif
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-// Copied from qobject_p.h
-struct QAbstractDynamicMetaObject : public QMetaObject
+class QBluetoothAddress;
+class QBluetoothSocket;
+
+#ifdef Q_OS_SYMBIAN
+class QBluetoothSocketSymbianPrivate;
+#endif
+
+class QL2capServer;
+
+class QL2capServerPrivate
 {
-    virtual ~QAbstractDynamicMetaObject() {}
-    virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; }
-    virtual int createProperty(const char *, const char *) { return -1; }
-};
+    Q_DECLARE_PUBLIC(QL2capServer)
 
-
-class QDeclarativeOpenMetaObjectPrivate;
-class QDeclarativeOpenMetaObject : public QAbstractDynamicMetaObject
-{
 public:
-    QDeclarativeOpenMetaObject(QObject *);
+    QL2capServerPrivate();
+    ~QL2capServerPrivate();
 
-    ~QDeclarativeOpenMetaObject();
+#ifndef QT_NO_DBUS
+    void _q_newConnection();
+#endif
 
-    virtual void getValue(int id, void **a);
-    virtual void setValue(int id, void **a);
+public:
+    QBluetoothSocket *socket;
 
-    virtual int createProperty(const char *,  const char *);
-
-    QObject *object() const;
-
+    int maxPendingConnections;
 
 protected:
-    virtual int metaCall(QMetaObject::Call _c, int _id, void **_a);
-
-    virtual void propertyRead(int);
-    virtual void propertyWrite(int);
-    virtual void propertyWritten(int);
-
-    QAbstractDynamicMetaObject *parent() const;
+    QL2capServer *q_ptr;
 
 private:
-
-    QDeclarativeOpenMetaObjectPrivate *d;
-    friend class QDeclarativeOpenMetaObjectType;
+#ifndef QT_NO_DBUS
+    QSocketNotifier *socketNotifier;
+#endif
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QDECLARATIVEOPENMETAOBJECT_H
+#endif
