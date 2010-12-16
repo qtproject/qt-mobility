@@ -267,6 +267,7 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_currentCodec(QString()),
     m_captureSize(QSize()),
     m_symbianImageQuality(QtMultimediaKit::HighQuality * KSymbianImageQualityCoefficient),
+    m_captureSettingsSet(false),
     m_stillCaptureFileName(QString()),
     m_requestedStillCaptureFileName(QString()),
     m_currentImageId(0),
@@ -276,6 +277,8 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
 {
     // Define supported image codecs
     m_supportedImageCodecs << "image/jpg";
+
+    initializeImageCaptureSettings();
 
     // Install ActiveScheduler if needed
     if (!CActiveScheduler::Current()) {
@@ -362,6 +365,11 @@ void S60ImageCaptureSession::setCameraHandle(CCameraEngine* camerahandle)
 void S60ImageCaptureSession::setCurrentDevice(TInt deviceindex)
 {
     m_activeDeviceIndex = deviceindex;
+}
+
+void S60ImageCaptureSession::notifySettingsSet()
+{
+    m_captureSettingsSet = true;
 }
 
 void S60ImageCaptureSession::resetSession()
@@ -465,12 +473,23 @@ int S60ImageCaptureSession::currentImageId() const
 
 void S60ImageCaptureSession::initializeImageCaptureSettings()
 {
+    if (m_captureSettingsSet)
+        return;
+
     m_currentCodec = KDefaultImageCodec;
+    m_captureSize = QSize(-1, -1);
     m_currentFormat = defaultImageFormat();
 
-    QList<QSize> resolutions = supportedCaptureSizesForCodec(imageCaptureCodec());
-    if (resolutions.size() > 0)
-        m_captureSize = resolutions[0]; // First is the maximum
+    // Resolution
+    if (m_cameraEngine) {
+        QList<QSize> resolutions = supportedCaptureSizesForCodec(imageCaptureCodec());
+        foreach (QSize reso, resolutions) {
+            if ((reso.width() * reso.height()) > (m_captureSize.width() * m_captureSize.height()))
+                m_captureSize = reso;
+        }
+    } else {
+        m_captureSize = KDefaultImageResolution;
+    }
 
     m_symbianImageQuality = KDefaultImageQuality;
 }
@@ -909,7 +928,9 @@ QSize S60ImageCaptureSession::maximumCaptureSize()
 
 void S60ImageCaptureSession::setCaptureSize(const QSize &size)
 {
-    if (m_captureSize.isNull() || size.isEmpty()) {
+    if (size.isNull() ||
+        size.isEmpty() ||
+        size == QSize(-1,-1)) {
         // An empty QSize indicates the encoder should make an optimal choice based on what is
         // available from the image source and the limitations of the codec.
         m_captureSize = supportedCaptureSizesForCodec(formatMap().key(m_currentFormat)).last();
@@ -1023,9 +1044,13 @@ void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
         if (supportedImageCaptureCodecs().contains(codecName, Qt::CaseInsensitive)) {
             m_currentCodec = codecName;
             m_currentFormat = selectFormatForCodec(m_currentCodec);
+        } else {
+            setError(KErrNotSupported, QString("Requested image codec is not supported"));
         }
+    } else {
+        m_currentCodec = KDefaultImageCodec;
+        m_currentFormat = selectFormatForCodec(m_currentCodec);
     }
-    setError(KErrNotSupported, QString("Requested image codec is not supported"));
 }
 
 QString S60ImageCaptureSession::imageCaptureCodecDescription(const QString &codecName)

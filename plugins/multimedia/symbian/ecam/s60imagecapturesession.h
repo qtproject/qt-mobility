@@ -192,6 +192,7 @@ public: // Methods
     bool isDeviceReady();
     void setCameraHandle(CCameraEngine* camerahandle);
     void setCurrentDevice(TInt deviceindex);
+    void notifySettingsSet();
 
     // Ecam Advanced Settings
     S60CameraSettings* advancedSettings();
@@ -332,6 +333,7 @@ private: // Data
     CCamera::TFormat        m_currentFormat;
     QSize                   m_captureSize;
     int                     m_symbianImageQuality;
+    bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;
     mutable int             m_currentImageId;

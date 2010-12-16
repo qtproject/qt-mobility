@@ -67,7 +67,13 @@
 #define KDefaultImageFileName           QString("image.jpg")
 #define KDefaultImageCodec              QString("image/jpg")
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
+#ifdef SYMBIAN_3_PLATFORM
+#define KDefaultImageFormatSecondaryCam CCamera::EFormatExif
+#define KDefaultImageResolution         QSize(3264, 2448)
+#else // Pre-Symbian3 Platforms
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatFbsBitmapColor64K
+#define KDefaultImageResolution         QSize(2048, 1536)
+#endif // SYMBIAN_3_PLATFORM
 #define KSymbianImageQualityCoefficient 25
 // This must be divisible by 4 and creater or equal to 8
 #define KSnapshotDownScaleFactor        8

@@ -96,9 +96,13 @@ QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 }
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
     if (!settings.isNull()) {
         if (!settings.codec().isEmpty()) {
-            if (settings.resolution() != QSize()) { // Codec, Resolution & Quality
+            if (settings.resolution() != QSize(-1,-1)) { // Codec, Resolution & Quality
                 m_session->setImageCaptureCodec(settings.codec());
                 m_session->setCaptureSize(settings.resolution());
                 m_session->setCaptureQuality(settings.quality());
@@ -107,7 +111,7 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
                 m_session->setCaptureQuality(settings.quality());
             }
         } else {
-            if (settings.resolution() != QSize()) { // Resolution & Quality
+            if (settings.resolution() != QSize(-1,-1)) { // Resolution & Quality
                 m_session->setCaptureSize(settings.resolution());
                 m_session->setCaptureQuality(settings.quality());
             }
