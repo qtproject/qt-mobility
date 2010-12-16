@@ -373,6 +373,12 @@ template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::~QNearFieldTagImpl()
 {
     BEGIN
+    for (int i = 0; i < mPendingRequestList.count(); ++i)
+    {
+        delete mPendingRequestList[i];
+    }
+    mPendingRequestList.clear();
+    mCurrentRequest = 0;
     delete mTag;
     mMessageList.Close();
     mResponse.Close();
