@@ -200,6 +200,7 @@ public: // Methods
 
     // Controls
     int prepareImageCapture();
+    void releaseImageCapture();
     int capture(const QString &fileName);
     void cancelCapture();
     void releaseImageBuffer();

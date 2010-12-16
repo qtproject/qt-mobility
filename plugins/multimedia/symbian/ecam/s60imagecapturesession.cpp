@@ -550,6 +550,12 @@ int S60ImageCaptureSession::prepareImageCapture()
     return KErrGeneral;
 }
 
+void S60ImageCaptureSession::releaseImageCapture()
+{
+    // Make sure ImageCapture is prepared the next time it is being activated
+    m_icState = EImageCaptureNotPrepared;
+}
+
 int S60ImageCaptureSession::capture(const QString &fileName)
 {
     if (!m_cameraStarted) {

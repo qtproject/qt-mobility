@@ -68,6 +68,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     m_inactivityTimer(NULL),
     m_captureMode(QCamera::CaptureStillImage),  // Default CaptureMode
     m_requestedCaptureMode(QCamera::CaptureStillImage),
+    m_settingCaptureModeInternally(false),
     m_internalState(QCamera::UnloadedStatus),   // Default Status
     m_requestedState(QCamera::UnloadedState),   // Default State
     m_deviceIndex(KDefaultCameraDevice),
@@ -268,12 +269,21 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
         return;
     }
 
-    // If capturemode change was requested earlier, but was postponed due
-    // to backend being busy, m_changeCaptureModeWhenReady flag is set when
-    // trying to set the capturemode again internally.
-    if (m_requestedCaptureMode == mode && !m_changeCaptureModeWhenReady) {
+    if (m_captureMode == mode)
         return;
+
+    // Setting CaptureMode Internally or Externally (Client)
+    if (!m_settingCaptureModeInternally) {
+        // Save the requested mode
+        m_requestedCaptureMode = mode;
+
+        // CaptureMode change pending (backend busy), wait
+        if (m_changeCaptureModeWhenReady)
+            return;
+    } else {
+        m_changeCaptureModeWhenReady = false; // Reset
     }
+    m_settingCaptureModeInternally = false; // Reset
 
     if (!isCaptureModeSupported(mode)) {
         setError(KErrNotSupported, QString("Requested capture mode is not supported."));
@@ -290,7 +300,6 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             switch (mode) {
                 case QCamera::CaptureStillImage:
                     m_videoSession->releaseVideoRecording();
-                    m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
                     if (m_internalState == QCamera::LoadedStatus)
                         m_inactivityTimer->start(KInactivityTimerTimeout);
@@ -298,9 +307,13 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
                         loadCamera();
                     break;
                 case QCamera::CaptureVideo:
-                    m_requestedCaptureMode = QCamera::CaptureVideo;
+                    m_imageSession->releaseImageCapture();
                     m_captureMode = QCamera::CaptureVideo;
                     if (m_internalState == QCamera::LoadedStatus) {
+                        // Revet InternalState as we need to wait for the video
+                        // side initialization to complete
+                        m_internalState = QCamera::LoadingStatus;
+                        emit statusChanged(m_internalState);
                         int prepareSuccess = m_videoSession->initializeVideoRecording();
                         setError(prepareSuccess, QString("Loading video capture failed."));
                     } else if (m_internalState == QCamera::StandbyStatus)
@@ -310,7 +323,6 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             break;
         case QCamera::LoadingStatus:
         case QCamera::StartingStatus:
-            m_requestedCaptureMode = mode;
             m_changeCaptureModeWhenReady = true;
             return;
         case QCamera::ActiveStatus:
@@ -319,15 +331,18 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
             switch (mode) {
                 case QCamera::CaptureStillImage:
                     m_videoSession->releaseVideoRecording();
-                    m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
                     startCamera();
                     break;
                 case QCamera::CaptureVideo:
-                    m_requestedCaptureMode = QCamera::CaptureVideo;
+                    m_imageSession->releaseImageCapture();
                     m_captureMode = QCamera::CaptureVideo;
+                    // Revet InternalState as we need to wait for the video
+                    // side initialization to complete
+                    m_internalState = QCamera::LoadingStatus;
+                    emit statusChanged(m_internalState);
                     int prepareSuccess = m_videoSession->initializeVideoRecording();
-                    setError(prepareSuccess, QString("Loading video capture failed."));
+                    setError(prepareSuccess, QString("Loading video recorder failed."));
                     break;
             }
             break;
@@ -496,22 +511,22 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
                 stopCamera();
                 unloadCamera();
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 break;
             case QCamera::LoadedState:
                 stopCamera();
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
             case QCamera::ActiveState:
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 startCamera();
                 break;
@@ -565,8 +580,8 @@ void S60CameraControl::MceoCameraReady()
                 unloadCamera();
 
                 if (m_changeCaptureModeWhenReady) {
+                    m_settingCaptureModeInternally = true;
                     setCaptureMode(m_requestedCaptureMode);
-                    m_changeCaptureModeWhenReady = false; // Reset
                 }
                 break;
 
