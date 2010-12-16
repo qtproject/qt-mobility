@@ -414,8 +414,12 @@ void S60MediaPlayerSession::loaded()
 
 void S60MediaPlayerSession::endOfMedia()
 {
+    m_state = QMediaPlayer::StoppedState;
     setMediaStatus(QMediaPlayer::EndOfMedia);
-    setState(QMediaPlayer::StoppedState);
+    //there is a chance that user might have called play from EOF callback
+    //if we are already in playing state, do not send state change callback
+    if(m_state == QMediaPlayer::StoppedState)
+        emit stateChanged(QMediaPlayer::StoppedState);
     emit positionChanged(0);
 }
 

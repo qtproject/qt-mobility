@@ -93,6 +93,7 @@ public:
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
     void setAudioEndpoint(const QString& audioEndpoint);
+    virtual void setPlaybackRate(qreal rate) = 0;
     
 protected:    
     virtual void doLoadL(const TDesC &path) = 0;
