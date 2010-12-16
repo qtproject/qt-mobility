@@ -62,7 +62,7 @@ void QNfcTagTestCommon::touchTarget(QNearFieldTarget::Type targetType)
     hint += " with NDef Message inside";
     QNfcTestUtil::ShowMessage(hint);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty()); 
-    target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    target = targetDetectedSpy.at(targetDetectedSpy.count()-1).at(0).value<QNearFieldTarget *>();
     QVERIFY(target);
 
     QVERIFY(!target->uid().isEmpty());

@@ -124,6 +124,7 @@ void tst_qnearfieldtagtype1::testDeleteTagBeforeAsyncRequestCompleted()
     
     qDebug()<<"delete tag, should be no panic"<<endl;
     delete tagType1;
+    tester.getTarget() = 0;
     
     QTRY_VERIFY(readAllSpy.isEmpty());
     QTRY_VERIFY(ndefMessageReadSpy.isEmpty());

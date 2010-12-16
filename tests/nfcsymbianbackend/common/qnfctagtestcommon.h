@@ -58,7 +58,7 @@ public:
 
     void NdefCheck();
 
-    QNearFieldTarget* getTarget() { return target; }
+    QNearFieldTarget*& getTarget() { return target; }
 private:
     QNearFieldManager manager;
     QNearFieldTarget* target;
