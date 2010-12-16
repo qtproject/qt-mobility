@@ -39,6 +39,11 @@
 **
 ****************************************************************************/
 #include <qgeopositioninfosource.h>
+#include "qgeopositioninfosourcefactory.h"
+
+#include <QPluginLoader>
+#include <QStringList>
+#include "qmobilitypluginsearch.h"
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeopositioninfosource_s60_p.h"
@@ -116,8 +121,90 @@ class QGeoPositionInfoSourcePrivate
 public:
     int interval;
     QGeoPositionInfoSource::PositioningMethods methods;
+
+    static QList<QGeoPositionInfoSourceFactory*> pluginsSorted();
+    static QHash<QString, QGeoPositionInfoSourceFactory*> plugins(bool reload = false);
+    static void loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory*> &plugins);
+    static void loadStaticPlugins(QHash<QString, QGeoPositionInfoSourceFactory*> &plugins);
 };
 
+QHash<QString, QGeoPositionInfoSourceFactory*> QGeoPositionInfoSourcePrivate::plugins(bool reload)
+{
+    static QHash<QString, QGeoServiceProviderFactory*> plugins;
+    static bool alreadyDiscovered = false;
+
+    if (reload == true)
+        alreadyDiscovered = false;
+
+    if (!alreadyDiscovered) {
+        loadStaticPlugins(plugins);
+        loadDynamicPlugins(plugins);
+        alreadyDiscovered = true;
+    }
+    return plugins;
+}
+
+static bool pluginComparator(const QGeoPositionInfoSourceFactory *p1, const QGeoPositionInfoSourceFactory *p2)
+{
+    return (p1->sourcePriority() > p2->sourcePriority());
+}
+
+QList<QGeoPositionInfoSourceFactory*> QGeoPositionInfoSourcePrivate::pluginsSorted()
+{
+    QList<QGeoPositionInfoSourceFactory*> list = plugins().values();
+    qStableSort(list.begin(), list.end(), pluginComparator);
+    return list;
+}
+
+void QGeoPositionInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
+{
+    QStringList paths;
+    paths << mobilityPlugins(QLatin1String("position"));
+
+    QPluginLoader qpl;
+    for (int i = 0; i < paths.count(); ++i) {
+        qpl.setFileName(paths.at(i));
+
+        QGeoPositionInfoSourceFactory *f =
+                qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
+        if (f) {
+            QString name = f->providerName();
+
+#if !defined QT_NO_DEBUG
+            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+            if (showDebug)
+                qDebug() << "Dynamic: found a service provider plugin with name" << name;
+#endif
+            plugins->insertMulti(name, f);
+        }
+    }
+}
+
+void QGeoPositionInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
+{
+#if !defined QT_NO_DEBUG
+    const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+#endif
+
+    QObjectList staticPlugins = QPluginLoader::staticInstances();
+    for (int i = 0; i < staticPlugins.count(); ++i) {
+        QGeoPositionInfoSourceFactory *f =
+                qobject_cast<QGeoPositionInfoSourceFactory*>(staticPlugins.at(i));
+
+        if (f) {
+            QString name = f->providerName();
+
+#if !defined QT_NO_DEBUG
+            if (showDebug)
+                qDebug() << "Static: found a service provider plugin with name" << name;
+#endif
+            if (!name.isEmpty()) {
+                plugins->insertMulti(name, f);
+            }
+        }
+
+    }
+}
 
 /*!
     Creates a position source with the specified \a parent.
@@ -213,22 +300,19 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
     TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
-    if (error != KErrNone)
-        return 0;
-    return ret;
+    if (error == KErrNone)
+        return ret;
 #elif defined(QT_SIMULATOR)
     return new QGeoPositionInfoSourceSimulator(parent);
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
 #elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
     QGeoPositionInfoSourceMaemo *source = new QGeoPositionInfoSourceMaemo(parent);
-
     int status = source->init();
-    if (status == -1) {
+    if (status != -1)
+        return source;
+    else
         delete source;
-        return 0;
-    }
-    return source;
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if its available, otherwise use Geoclue backend
     QSettings settings(QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
@@ -246,17 +330,46 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #ifdef GEOCLUE_MASTER_AVAILABLE
     QGeoPositionInfoSourceGeoclueMaster *geoclueSource = new QGeoPositionInfoSourceGeoclueMaster(parent);
     int status = geoclueSource->init();
-    if (status == -1) {
-       delete geoclueSource;
-       return 0;
-    }
-    return geoclueSource;
+    if (status > 0)
+       return geoclueSource;
+    delete geoclueSource;
 #endif // GEOCLUE_MASTER_AVAILABLE
-#else
-    qWarning("no default source");
-    Q_UNUSED(parent);
-    return 0;
 #endif
+    // no good platform source, try plugins
+    foreach (QGeoPositionInfoSourceFactory *f, d->pluginsSorted()) {
+        QGeoPositionInfoSource *src = f->positionInfoSource(parent);
+        if (src)
+            return src;
+    }
+
+    return 0;
+}
+
+
+/*!
+    Creates and returns a position source with the given \a parent,
+    by loading the plugin named \a sourceName.
+
+    Returns 0 if the plugin cannot be found.
+*/
+QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sourceName, QObject *parent)
+{
+    QGeoPositionInfoSourceFactory *f = d->plugins().value(sourceName);
+    if (f) {
+        QGeoPositionInfoSource *src = f->positionInfoSource(parent);
+        if (src)
+            return src;
+    }
+    return 0;
+}
+
+
+/*!
+    Returns a list of available source plugins.
+*/
+QStringList QGeoPositionInfoSource::availableSources()
+{
+    return d->plugins().keys();
 }
 
 /*!
