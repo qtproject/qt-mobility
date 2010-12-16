@@ -141,6 +141,7 @@ public:
     int sourceVersion() const;
 
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
+    QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
 };
 
 QString QGeoPositionInfoSourceFactoryTest::sourceName() const
@@ -156,6 +157,12 @@ int QGeoPositionInfoSourceFactoryTest::sourceVersion() const
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTest::positionInfoSource(QObject *parent)
 {
     return new DummySource(parent);
+}
+
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryTest::satelliteInfoSource(QObject *parent)
+{
+    // not implemented
+    return 0;
 }
 
 Q_EXPORT_PLUGIN2(qtposition_testplugin, QGeoPositionInfoSourceFactoryTest)

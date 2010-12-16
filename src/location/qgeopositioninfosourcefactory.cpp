@@ -48,12 +48,6 @@ int QGeoPositionInfoSourceFactory::sourcePriority() const
     return 0;
 }
 
-QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
-{
-    Q_UNUSED(parent);
-    return 0;
-}
-
 QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
 {}
 

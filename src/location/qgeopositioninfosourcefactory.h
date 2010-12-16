@@ -59,7 +59,7 @@ public:
     virtual int sourcePriority() const;
 
     virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
-    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
+    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
 };
 
 QTM_END_NAMESPACE
