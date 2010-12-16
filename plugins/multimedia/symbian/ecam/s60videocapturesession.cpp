@@ -41,6 +41,7 @@
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdir.h>
+#include <QtCore/qtimer.h>
 
 #include "s60videocapturesession.h"
 #include "s60cameraconstants.h"
@@ -56,6 +57,7 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
     m_videoRecorder(NULL),
+    m_position(0),
     m_error(KErrNone),
     m_cameraStarted(false),
     m_captureState(ENotInitialized),    // Default state
@@ -79,6 +81,10 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     TRAPD(err, doPopulateVideoCodecsDataL());
     setError(err, QString("Failed to gather video codec information."));
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
+
+    m_durationTimer = new QTimer;
+    m_durationTimer->setInterval(KDurationChangedInterval);
+    connect(m_durationTimer, SIGNAL(timeout()), this, SLOT(durationTimerTriggered()));
 }
 
 S60VideoCaptureSession::~S60VideoCaptureSession()
@@ -92,6 +98,11 @@ S60VideoCaptureSession::~S60VideoCaptureSession()
     if (m_videoRecorder) {
         delete m_videoRecorder;
         m_videoRecorder = NULL;
+    }
+
+    if (m_durationTimer) {
+        delete m_durationTimer;
+        m_durationTimer = NULL;
     }
 
     // Clear all data structures
@@ -136,6 +147,8 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
 
         // Reset state
         if (m_captureState != ENotInitialized) {
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
             m_captureState = ENotInitialized;
             emit stateChanged(m_captureState);
         }
@@ -265,6 +278,8 @@ void S60VideoCaptureSession::resetSession()
     }
 
     if (m_captureState != ENotInitialized) {
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
     }
@@ -585,14 +600,14 @@ QUrl S60VideoCaptureSession::outputLocation() const
 
 qint64 S60VideoCaptureSession::position()
 {
-    qint64 position = 0;
     // Update position only if recording is ongoing
     if ((m_captureState == ERecording) && m_videoRecorder) {
-        TRAPD(err, position = m_videoRecorder->DurationL().Int64() / 1000);
+        // Signal will be automatically emitted of position changes
+        TRAPD(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
         setError(err, QString("Cannot retrieve video position."));
     }
 
-    return position;
+    return m_position;
 }
 
 S60VideoCaptureSession::TVideoCaptureState S60VideoCaptureSession::state() const
@@ -924,6 +939,8 @@ void S60VideoCaptureSession::releaseVideoRecording()
 {
     if (m_captureState >= ERecording) {
         m_videoRecorder->Stop();
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
     }
 
     if (m_captureState >= EInitialized)
@@ -1011,6 +1028,7 @@ void S60VideoCaptureSession::startRecording()
         m_videoRecorder->Record();
         m_captureState = ERecording;
         emit stateChanged(m_captureState);
+        m_durationTimer->start();
     }
     else
         setError(KErrNotReady, QString("Unexpected camera error."));
@@ -1024,6 +1042,8 @@ void S60VideoCaptureSession::pauseRecording()
             setError(err, QString("Pausing video recording failed."));
             m_captureState = EPaused;
             emit stateChanged(m_captureState);
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
         }
         else
             setError(KErrNotReady, QString("Unexpected camera error."));
@@ -1041,6 +1061,9 @@ void S60VideoCaptureSession::stopRecording(const bool reInitialize)
 
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
+
+        if (m_durationTimer->isActive())
+            m_durationTimer->stop();
 
         // VideoRecording will be re-initialized unless explicitly requested not to do so
         if (reInitialize) {
@@ -1670,6 +1693,8 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
         if (m_captureState != ENotInitialized) {
             m_captureState = ENotInitialized;
             emit stateChanged(m_captureState);
+            if (m_durationTimer->isActive())
+                m_durationTimer->stop();
         }
 
         if (m_cameraEngine->IsCameraReady())
@@ -1842,6 +1867,18 @@ void S60VideoCaptureSession::cameraStatusChanged(QCamera::Status status)
         releaseVideoRecording();
 
     m_cameraStarted = false;
+}
+
+void S60VideoCaptureSession::durationTimerTriggered()
+{
+    // Update position only if recording is ongoing
+    if ((m_captureState == ERecording) && m_videoRecorder) {
+        // Signal will be automatically emitted of position changes
+        TRAPD(err, m_position = m_videoRecorder->DurationL().Int64() / 1000);
+        setError(err, QString("Cannot retrieve video position."));
+
+        emit positionChanged(m_position);
+    }
 }
 
 void S60VideoCaptureSession::doPopulateAudioCodecsL()

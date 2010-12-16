@@ -59,6 +59,8 @@
 
 QT_USE_NAMESPACE
 
+class QTimer;
+
 /*
  * VideoSession is the main class handling all video recording related
  * operations. It uses mainly CVideoRecorderUtility to do it's tasks, but if
@@ -72,7 +74,6 @@ class S60VideoCaptureSession : public QObject,
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(Error)
     Q_ENUMS(EcamErrors)
     Q_ENUMS(TVideoCaptureState)
@@ -255,6 +256,7 @@ Q_SIGNALS: // Notification Signals
 private Q_SLOTS: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
+    void durationTimerTriggered();
 
 private: // Structs
 
@@ -325,6 +327,8 @@ private: // Data
 
     CCameraEngine               *m_cameraEngine;
     CVideoRecorderUtility       *m_videoRecorder;
+    QTimer                      *m_durationTimer;
+    qint64                      m_position;
     // Symbian ErrorCode
     mutable int                 m_error;
     // This defines whether Camera is in ActiveStatus or not

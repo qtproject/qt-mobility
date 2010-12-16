@@ -97,6 +97,7 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 #define KMimeTypeDefaultContainer   QString("video/mp4")
 #define KDefaultVideoPath           QString("c:\\Data\\Videos")
 #define KDefaultVideoFileName       QString("video.mp4")
+#define KDurationChangedInterval    1000 // 1 second
 
 // ==============
 // Audio Settings
