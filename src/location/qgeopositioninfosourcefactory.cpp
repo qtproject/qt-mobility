@@ -43,6 +43,62 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+  \class QGeoPositionInfoSourceFactory
+
+  \brief The QGeoPositionInfoSourceFactory class is a factory class used
+  as the plugin interface for external providers of positioning data.
+
+  \inmodule QtLocation
+
+  Implementers must provide a unique combination of sourceName() and
+  sourceVersion() per plugin.
+
+  The other functions must be overridden by all plugins, other than
+  sourcePriority() which defaults to returning 0. Higher values of
+  priority will be preferred to lower ones.
+  */
+
+/*!
+  \fn QGeoPositionInfoSource *QGeoPositionInfoSourceFactory::positionInfoSource(QObject *parent)
+
+  Returns a new QGeoPositionInfoSource associated with this plugin. Can
+  also return 0, in which case the factory with the next highest priority
+  will be used instead.
+  */
+
+/*!
+  \fn QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
+
+  Returns a new QGeoSatelliteInfoSource associated with this plugin. Can
+  also return 0, in which case the factory with the next highest priority
+  will be used instead.
+  */
+
+/*!
+  \fn QString QGeoPositionInfoSourceFactory::sourceName() const
+
+  Returns the string used to identify the position provider behind this
+  implementation.
+
+  The combination of sourceName() and sourceVersion() should be unique
+  amongst the plugins.
+  */
+
+/*!
+  \fn int QGeoPositionInfoSourceFactory::sourceVersion() const
+
+  Returns the version of the plugin.
+
+  The combination of sourceName() and sourceVersion() should be unique
+  amongst the plugins.
+  */
+
+/*!
+  Returns the priority of this factory in the list of available
+  factories. Factories with higher values of priority will be preferred
+  to those with lower values.
+  */
 int QGeoPositionInfoSourceFactory::sourcePriority() const
 {
     return 0;
