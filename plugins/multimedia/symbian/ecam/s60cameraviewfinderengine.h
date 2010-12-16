@@ -77,6 +77,7 @@ public: // Methods
     void setVideoWidgetControl(QObject *viewfinderOutput);
     void setVideoRendererControl(QObject *viewfinderOutput);
     void setVideoWindowControl(QObject *viewfinderOutput);
+    void releaseCurrentControl();
 
     // Controls
     void startViewfinder(const bool internalStart = false);
@@ -116,7 +117,7 @@ private: // Enums
         OutputTypeNotSet = 0,   // No viewfinder output connected
         OutputTypeVideoWidget,  // Using QVideoWidget
         OutputTypeRenderer,     // Using QGraphicsVideoItem
-        OutputTypevideoWindow   // Using QVideoWindow
+        OutputTypeVideoWindow   // Using QVideoWindow
     };
 
     /*
