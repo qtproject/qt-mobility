@@ -42,7 +42,9 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
       geoservicesgeotiledmap \
-      pixelindex
+      pixelindex \
+      positionplugin \
+      positionplugintest
 
 # With MeeGo, by default use mock backend for autotesting.
 meego: {
