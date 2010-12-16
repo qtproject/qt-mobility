@@ -126,6 +126,15 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
+QMediaServiceProviderHint::Features QGstreamerServicePlugin::supportedFeatures(
+        const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
+        return QMediaServiceProviderHint::StreamPlayback;
+    else
+        return QMediaServiceProviderHint::Features();
+}
+
 QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_CAMERA) {
