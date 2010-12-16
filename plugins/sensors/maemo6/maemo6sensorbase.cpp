@@ -108,6 +108,7 @@ void maemo6sensorbase::stop()
 }
 
 void maemo6sensorbase::setRanges(qreal correctionFactor){
+    if (!m_sensorInterface) return;
 
     QList<DataRange> ranges = m_sensorInterface->getAvailableDataRanges();
 

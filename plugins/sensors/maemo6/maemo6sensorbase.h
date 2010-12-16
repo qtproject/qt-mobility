@@ -70,7 +70,10 @@ protected:
     {
 
         if (!initDone) {
-            m_remoteSensorManager->loadPlugin(sensorName);
+            if (!m_remoteSensorManager->loadPlugin(sensorName)){
+
+                return;
+            }
             m_remoteSensorManager->registerSensorInterface<T>(sensorName);
         }
         m_sensorInterface = T::controlInterface(sensorName);
