@@ -928,39 +928,34 @@ EXPORTS
 	_ZN10QtMobilitylsER11QDataStreamRKNS_20QContactActionTargetE @ 927 NONAME
 	_ZN10QtMobilityrsER11QDataStreamRNS_20QContactActionTargetE @ 928 NONAME
 	_ZN10QtMobility15QContactManager14observeContactEj @ 929 NONAME
-	_ZN10QtMobility16QContactObserver11qt_metacallEN11QMetaObject4CallEiPPv @ 930 NONAME
-	_ZN10QtMobility16QContactObserver11qt_metacastEPKc @ 931 NONAME
-	_ZN10QtMobility16QContactObserver14contactChangedEv @ 932 NONAME
-	_ZN10QtMobility16QContactObserver14contactRemovedEv @ 933 NONAME
-	_ZN10QtMobility16QContactObserver16staticMetaObjectE @ 934 NONAME DATA 16
-	_ZN10QtMobility16QContactObserver18emitContactChangedEv @ 935 NONAME
-	_ZN10QtMobility16QContactObserver18emitContactRemovedEv @ 936 NONAME
-	_ZN10QtMobility16QContactObserver19getStaticMetaObjectEv @ 937 NONAME
-	_ZN10QtMobility16QContactObserverC1EP7QObject @ 938 NONAME
-	_ZN10QtMobility16QContactObserverC2EP7QObject @ 939 NONAME
-	_ZN10QtMobility17QContactFetchHint11setMaxCountEi @ 940 NONAME
-	_ZN10QtMobility21QContactOnlineAccount10ServiceAimE @ 941 NONAME DATA 4
-	_ZN10QtMobility21QContactOnlineAccount10ServiceIcqE @ 942 NONAME DATA 4
-	_ZN10QtMobility21QContactOnlineAccount10ServiceIrcE @ 943 NONAME DATA 4
-	_ZN10QtMobility21QContactOnlineAccount10ServiceMsnE @ 944 NONAME DATA 4
-	_ZN10QtMobility21QContactOnlineAccount12ServiceSkypeE @ 945 NONAME DATA 6
-	_ZN10QtMobility21QContactOnlineAccount12ServiceYahooE @ 946 NONAME DATA 6
-	_ZN10QtMobility21QContactOnlineAccount13ServiceJabberE @ 947 NONAME DATA 7
-	_ZN10QtMobility21QContactOnlineAccount9ServiceQqE @ 948 NONAME DATA 3
-	_ZN10QtMobility23QContactManagerEngineV311qt_metacallEN11QMetaObject4CallEiPPv @ 949 NONAME
-	_ZN10QtMobility23QContactManagerEngineV311qt_metacastEPKc @ 950 NONAME
-	_ZN10QtMobility23QContactManagerEngineV316staticMetaObjectE @ 951 NONAME DATA 16
-	_ZN10QtMobility23QContactManagerEngineV319getStaticMetaObjectEv @ 952 NONAME
-	_ZN10QtMobility23QContactManagerEngineV321createContactObserverEP7QObject @ 953 NONAME
-	_ZN10QtMobility8QContact6addTagERK7QString @ 954 NONAME
-	_ZN10QtMobility8QContact7setTagsERK11QStringList @ 955 NONAME
-	_ZN10QtMobility8QContact9clearTagsEv @ 956 NONAME
-	_ZNK10QtMobility16QContactObserver10metaObjectEv @ 957 NONAME
-	_ZNK10QtMobility17QContactFetchHint8maxCountEv @ 958 NONAME
-	_ZNK10QtMobility23QContactManagerEngineV310metaObjectEv @ 959 NONAME
-	_ZNK10QtMobility8QContact4tagsEv @ 960 NONAME
-	_ZTIN10QtMobility16QContactObserverE @ 961 NONAME
-	_ZTIN10QtMobility23QContactManagerEngineV3E @ 962 NONAME
-	_ZTVN10QtMobility16QContactObserverE @ 963 NONAME
-	_ZTVN10QtMobility23QContactManagerEngineV3E @ 964 NONAME
+	_ZN10QtMobility15QContactManager15contactsDeletedERK5QListIjE @ 930 NONAME
+	_ZN10QtMobility15QContactManager15contactsUpdatedERK5QListIjE @ 931 NONAME
+	_ZN10QtMobility15QContactManager17observerDestroyedEP7QObject @ 932 NONAME
+	_ZN10QtMobility16QContactObserver11qt_metacallEN11QMetaObject4CallEiPPv @ 933 NONAME
+	_ZN10QtMobility16QContactObserver11qt_metacastEPKc @ 934 NONAME
+	_ZN10QtMobility16QContactObserver14contactChangedEv @ 935 NONAME
+	_ZN10QtMobility16QContactObserver14contactRemovedEv @ 936 NONAME
+	_ZN10QtMobility16QContactObserver16staticMetaObjectE @ 937 NONAME DATA 16
+	_ZN10QtMobility16QContactObserver18emitContactChangedEv @ 938 NONAME
+	_ZN10QtMobility16QContactObserver18emitContactRemovedEv @ 939 NONAME
+	_ZN10QtMobility16QContactObserver19getStaticMetaObjectEv @ 940 NONAME
+	_ZN10QtMobility16QContactObserverC1EP7QObject @ 941 NONAME
+	_ZN10QtMobility16QContactObserverC2EP7QObject @ 942 NONAME
+	_ZN10QtMobility17QContactFetchHint11setMaxCountEi @ 943 NONAME
+	_ZN10QtMobility21QContactOnlineAccount10ServiceAimE @ 944 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount10ServiceIcqE @ 945 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount10ServiceIrcE @ 946 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount10ServiceMsnE @ 947 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount12ServiceSkypeE @ 948 NONAME DATA 6
+	_ZN10QtMobility21QContactOnlineAccount12ServiceYahooE @ 949 NONAME DATA 6
+	_ZN10QtMobility21QContactOnlineAccount13ServiceJabberE @ 950 NONAME DATA 7
+	_ZN10QtMobility21QContactOnlineAccount9ServiceQqE @ 951 NONAME DATA 3
+	_ZN10QtMobility8QContact6addTagERK7QString @ 952 NONAME
+	_ZN10QtMobility8QContact7setTagsERK11QStringList @ 953 NONAME
+	_ZN10QtMobility8QContact9clearTagsEv @ 954 NONAME
+	_ZNK10QtMobility16QContactObserver10metaObjectEv @ 955 NONAME
+	_ZNK10QtMobility17QContactFetchHint8maxCountEv @ 956 NONAME
+	_ZNK10QtMobility8QContact4tagsEv @ 957 NONAME
+	_ZTIN10QtMobility16QContactObserverE @ 958 NONAME
+	_ZTVN10QtMobility16QContactObserverE @ 959 NONAME
 
