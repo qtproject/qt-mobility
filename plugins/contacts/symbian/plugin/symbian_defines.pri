@@ -14,6 +14,6 @@ symbian: {
     }
     
     contains(S60_VERSION, 3.2) {
-    	DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
+        DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
     }
 }

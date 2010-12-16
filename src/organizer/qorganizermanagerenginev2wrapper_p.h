@@ -242,7 +242,7 @@ public:
 private Q_SLOTS:
     void itemsUpdated(const QList<QOrganizerItemId>& ids);
     void itemsDeleted(const QList<QOrganizerItemId>& ids);
-    void observerDestroyed(QOrganizerItemObserver* observer);
+    void observerDestroyed(QObject* object);
 
 private Q_SLOTS:
     void requestStateChanged(QOrganizerAbstractRequest::State state);
