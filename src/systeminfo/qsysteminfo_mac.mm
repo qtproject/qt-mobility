@@ -2315,7 +2315,10 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
 
 QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
 {
-    return QSystemDeviceInfo::UnknownLock;
+    if(isDeviceLocked()) {
+        return QSystemDeviceInfo::DeviceLocked;
+    }
+    return QSystemDeviceInfo::DeviceUnlocked;
 }
 
 int QSystemDeviceInfoPrivate::messageRingtoneVolume()
