@@ -41,6 +41,12 @@
 
 #include "qnearfieldtagtype2.h"
 
+#include <QtCore/QVariant>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QElapsedTimer>
+
+#include <QtCore/QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -57,12 +63,78 @@ QTM_BEGIN_NAMESPACE
     \reimp
 */
 
+struct SectorSelectState {
+    int timerId;    // id of timer used for passive ack
+    quint8 sector;  // sector being selected
+};
+
+class QNearFieldTagType2Private
+{
+public:
+    QNearFieldTagType2Private() : m_currentSector(0) { }
+
+    QMap<QNearFieldTarget::RequestId, QByteArray> m_pendingInternalCommands;
+
+    quint8 m_currentSector;
+
+    QMap<QNearFieldTarget::RequestId, SectorSelectState> m_pendingSectorSelectCommands;
+};
+
+static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
+{
+    quint8 opcode = command.at(0);
+
+    switch (opcode) {
+    case 0xa2:  // WRITE
+        return quint8(response.at(0)) == 0x0a;
+    case 0xc2:  // SECTOR SELECT (Command Packet 1)
+        return quint8(response.at(0)) == 0x0a;
+    }
+
+    return QVariant();
+}
+
 /*!
     Constructs a new tag type 2 near field target with \a parent.
 */
 QNearFieldTagType2::QNearFieldTagType2(QObject *parent)
-:   QNearFieldTarget(parent)
+:   QNearFieldTarget(parent), d_ptr(new QNearFieldTagType2Private)
 {
+}
+
+/*!
+    Destroys the tag type 2 near field target.
+*/
+QNearFieldTagType2::~QNearFieldTagType2()
+{
+    delete d_ptr;
+}
+
+/*!
+    \reimp
+*/
+bool QNearFieldTagType2::hasNdefMessage()
+{
+    qDebug() << Q_FUNC_INFO << "is unimplemeted";
+    return false;
+}
+
+/*!
+    \reimp
+*/
+void QNearFieldTagType2::readNdefMessages()
+{
+    qDebug() << Q_FUNC_INFO << "is unimplemeted";
+    emit error(QNearFieldTarget::UnsupportedError);
+}
+
+/*!
+    \reimp
+*/
+void QNearFieldTagType2::writeNdefMessages(const QList<QNdefMessage> &messages)
+{
+    qDebug() << Q_FUNC_INFO << "is unimplemeted";
+    emit error(QNearFieldTarget::UnsupportedError);
 }
 
 /*!
@@ -70,8 +142,18 @@ QNearFieldTagType2::QNearFieldTagType2(QObject *parent)
 */
 quint8 QNearFieldTagType2::version()
 {
-    selectSector(0);
-    QByteArray data = readBlock(0);
+    Q_D(QNearFieldTagType2);
+    if (d->m_currentSector != 0) {
+        RequestId id = selectSector(0);
+        if (!waitForRequestCompleted(id))
+            return 0;
+    }
+
+    RequestId id = readBlock(0);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    const QByteArray data = requestResponse(id).toByteArray();
     return data.at(13);
 }
 
@@ -80,32 +162,32 @@ quint8 QNearFieldTagType2::version()
 */
 int QNearFieldTagType2::memorySize()
 {
-    selectSector(0);
-    QByteArray data = readBlock(0);
-    return 8 * data.at(14);
+    Q_D(QNearFieldTagType2);
+    if (d->m_currentSector != 0) {
+        RequestId id = selectSector(0);
+        if (!waitForRequestCompleted(id))
+            return 0;
+    }
+
+    RequestId id = readBlock(0);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    const QByteArray data = requestResponse(id).toByteArray();
+    return 8 * quint8(data.at(14));
 }
 
 /*!
     Reads and returns 4 bytes of data from the block specified by \a blockAddress. An empty byte
     array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType2::readBlock(quint8 blockAddress)
+QNearFieldTarget::RequestId QNearFieldTagType2::readBlock(quint8 blockAddress)
 {
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
 
-    const QByteArray response = sendCommand(command);
-
-    if (response.isEmpty())
-        return QByteArray();
-
-    quint8 acknack = response.at(0);
-
-    if (acknack != 0x0a)
-        return QByteArray();
-
-    return response;
+    return sendCommand(command);
 }
 
 /*!
@@ -113,55 +195,130 @@ QByteArray QNearFieldTagType2::readBlock(quint8 blockAddress)
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldTagType2::writeBlock(quint8 blockAddress, const QByteArray &data)
+QNearFieldTarget::RequestId QNearFieldTagType2::writeBlock(quint8 blockAddress,
+                                                           const QByteArray &data)
 {
     if (data.length() != 4)
-        return false;
+        return RequestId();
 
     QByteArray command;
     command.append(char(0xa2));         // WRITE
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType2);
 
-    quint8 acknack = response.at(0);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return acknack == 0x0a;
+    return id;
 }
 
 /*!
     Selects the \a sector upon which subsequent readBlock() and writeBlock() operations will act.
 
-    Returns true on success; otherwise returns false.
+    \note the has a passive acknowledgement mechanism. The operation is deemed successful if no
+    response is received for 1ms. It will therefore take a minimum of 1ms for the
+    requestCompleted() signal to be emitted and calling waitForRequestCompleted() on the returned
+    request id may cause the current thread to block for up to 1ms.
 */
-bool QNearFieldTagType2::selectSector(quint8 sector)
+QNearFieldTarget::RequestId QNearFieldTagType2::selectSector(quint8 sector)
 {
     QByteArray command;
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
 
-    QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType2);
 
-    quint8 acknack = response.at(0);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    if (acknack != 0x0a)
-        return false;
+    SectorSelectState state;
+    state.timerId = -1;
+    state.sector = sector;
 
-    command.clear();
-    command.append(char(sector));               // Sector number
-    command.append(QByteArray(3, char(0x00)));  // RFU
+    d->m_pendingSectorSelectCommands.insert(id, state);
 
-    response = sendCommand(command);
+    return id;
+}
 
-    // passive ack, empty response is ack
-    return response.isEmpty();
+bool QNearFieldTagType2::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    Q_D(QNearFieldTagType2);
+
+    QElapsedTimer timer;
+    timer.start();
+    while (d->m_pendingSectorSelectCommands.contains(id)) {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents, 1);
+
+        // detect passive ack
+        if (timer.elapsed() >= 1)
+            break;
+    }
+
+    return QNearFieldTarget::waitForRequestCompleted(id, msecs);
+}
+
+bool QNearFieldTagType2::handleResponse(const RequestId &id, const QByteArray &response)
+{
+    Q_D(QNearFieldTagType2);
+
+    if (d->m_pendingInternalCommands.contains(id)) {
+        const QByteArray command = d->m_pendingInternalCommands.take(id);
+
+        QVariant decodedResponse = decodeResponse(command, response);
+        if (quint8(command.at(0)) == 0xc2 && decodedResponse.toBool()) {
+            // SECTOR SELECT (Command Packet 2)
+            SectorSelectState &state = d->m_pendingSectorSelectCommands[id];
+
+            QByteArray packet2;
+            packet2.append(char(state.sector));
+            packet2.append(QByteArray(3, 0x00));
+
+            sendCommand(packet2);
+
+            state.timerId = startTimer(1);
+        } else {
+            setResponseForRequest(id, decodedResponse);
+        }
+
+        return true;
+    } else if (d->m_pendingSectorSelectCommands.contains(id)) {
+        if (!response.isEmpty()) {
+            d->m_pendingSectorSelectCommands.remove(id);
+            setResponseForRequest(id, false);
+
+            return true;
+        }
+    }
+
+    return QNearFieldTarget::handleResponse(id, response);
+}
+
+void QNearFieldTagType2::timerEvent(QTimerEvent *event)
+{
+    Q_D(QNearFieldTagType2);
+
+    killTimer(event->timerId());
+
+    QMutableMapIterator<QNearFieldTarget::RequestId, SectorSelectState> i(d->m_pendingSectorSelectCommands);
+    while (i.hasNext()) {
+        i.next();
+
+        SectorSelectState &state = i.value();
+
+        if (state.timerId == event->timerId()) {
+            d->m_currentSector = state.sector;
+
+            setResponseForRequest(i.key(), true);
+
+            i.remove();
+
+            break;
+        }
+    }
 }
 
 #include "moc_qnearfieldtagtype2.cpp"

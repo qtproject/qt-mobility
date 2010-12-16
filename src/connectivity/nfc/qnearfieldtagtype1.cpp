@@ -40,10 +40,14 @@
 ****************************************************************************/
 
 #include "qnearfieldtagtype1.h"
+#include "qnearfieldtarget_p.h"
 #include "qndefmessage.h"
 #include "qtlv_p.h"
 
 #include <QtCore/QByteArray>
+#include <QtCore/QVariant>
+
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,12 +75,309 @@ QTM_BEGIN_NAMESPACE
     \reimp
 */
 
+class QNearFieldTagType1Private
+{
+    Q_DECLARE_PUBLIC(QNearFieldTagType1)
+
+public:
+    QNearFieldTagType1Private(QNearFieldTagType1 *q)
+    :   q_ptr(q), m_readNdefMessageState(NotReadingNdefMessage),
+        m_tlvReader(0),
+        m_writeNdefMessageState(NotWritingNdefMessage)
+    { }
+
+    QNearFieldTagType1 *q_ptr;
+
+    QMap<QNearFieldTarget::RequestId, QByteArray> m_pendingInternalCommands;
+
+    enum ReadNdefMessageState {
+        NotReadingNdefMessage,
+        NdefReadCheckingIdentification,
+        NdefReadCheckingNdefMagicNumber,
+        NdefReadReadingTlv
+    };
+
+    void progressToNextNdefReadMessageState();
+    ReadNdefMessageState m_readNdefMessageState;
+
+    QTlvReader *m_tlvReader;
+    QNearFieldTarget::RequestId m_nextExpectedRequestId;
+
+    enum WriteNdefMessageState {
+        NotWritingNdefMessage,
+        NdefWriteCheckingIdentification,
+        NdefWriteCheckingNdefMagicNumber,
+        NdefWriteReadingTlv,
+        NdefWriteWritingTlv,
+        NdefWriteWritingTlvFlush
+    };
+
+    void progressToNextNdefWriteMessageState();
+    WriteNdefMessageState m_writeNdefMessageState;
+    QList<QNdefMessage> m_ndefWriteMessages;
+
+    QTlvWriter *m_tlvWriter;
+
+    typedef QPair<quint8, QByteArray> Tlv;
+    QList<Tlv> m_tlvs;
+};
+
+void QNearFieldTagType1Private::progressToNextNdefReadMessageState()
+{
+    Q_Q(QNearFieldTagType1);
+
+    switch (m_readNdefMessageState) {
+    case NotReadingNdefMessage:
+        m_readNdefMessageState = NdefReadCheckingIdentification;
+        m_nextExpectedRequestId = q->readIdentification();
+        break;
+    case NdefReadCheckingIdentification: {
+        const QByteArray data = q->requestResponse(m_nextExpectedRequestId).toByteArray();
+
+        if (data.isEmpty()) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        quint8 hr0 = data.at(0);
+
+        // Check if target is a NFC TagType1 tag
+        if (!(hr0 & 0x10)) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        m_readNdefMessageState = NdefReadCheckingNdefMagicNumber;
+        m_nextExpectedRequestId = q->readByte(8);
+        break;
+    }
+    case NdefReadCheckingNdefMagicNumber: {
+        quint8 ndefMagicNumber = q->requestResponse(m_nextExpectedRequestId).toUInt();
+        m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+
+        if (ndefMagicNumber != 0xe1) {
+            m_readNdefMessageState = NotReadingNdefMessage;
+            emit q->error(QNearFieldTarget::NdefReadError);
+            break;
+        }
+
+        m_readNdefMessageState = NdefReadReadingTlv;
+        m_tlvReader = new QTlvReader(q);
+
+        // fall through
+    }
+    case NdefReadReadingTlv:
+        while (!m_tlvReader->atEnd()) {
+            if (!m_tlvReader->readNext())
+                break;
+
+            // NDEF Message TLV
+            if (m_tlvReader->tag() == 0x03) {
+                Q_Q(QNearFieldTagType1);
+
+                emit q->ndefMessageRead(QNdefMessage::fromByteArray(m_tlvReader->data()));
+            }
+        }
+
+        m_nextExpectedRequestId = m_tlvReader->requestId();
+        if (!m_nextExpectedRequestId.isValid()) {
+            delete m_tlvReader;
+            m_tlvReader = 0;
+            m_readNdefMessageState = NotReadingNdefMessage;
+        }
+        break;
+    }
+}
+
+void QNearFieldTagType1Private::progressToNextNdefWriteMessageState()
+{
+    Q_Q(QNearFieldTagType1);
+
+    switch (m_writeNdefMessageState) {
+    case NotWritingNdefMessage:
+        m_writeNdefMessageState = NdefWriteCheckingIdentification;
+        m_nextExpectedRequestId = q->readIdentification();
+        break;
+    case NdefWriteCheckingIdentification: {
+        const QByteArray data = q->requestResponse(m_nextExpectedRequestId).toByteArray();
+
+        if (data.isEmpty()) {
+            m_writeNdefMessageState = NotWritingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefWriteError);
+            break;
+        }
+
+        quint8 hr0 = data.at(0);
+
+        // Check if target is a NFC TagType1 tag
+        if (!(hr0 & 0x10)) {
+            m_writeNdefMessageState = NotWritingNdefMessage;
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            emit q->error(QNearFieldTarget::NdefWriteError);
+            break;
+        }
+
+        m_writeNdefMessageState = NdefWriteCheckingNdefMagicNumber;
+        m_nextExpectedRequestId = q->readByte(8);
+        break;
+    }
+    case NdefWriteCheckingNdefMagicNumber: {
+        quint8 ndefMagicNumber = q->requestResponse(m_nextExpectedRequestId).toUInt();
+        m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+
+        if (ndefMagicNumber != 0xe1) {
+            m_writeNdefMessageState = NotWritingNdefMessage;
+            emit q->error(QNearFieldTarget::NdefWriteError);
+            break;
+        }
+
+        m_writeNdefMessageState = NdefWriteReadingTlv;
+        m_tlvReader = new QTlvReader(q);
+
+        // fall through
+    }
+    case NdefWriteReadingTlv:
+        while (!m_tlvReader->atEnd()) {
+            if (!m_tlvReader->readNext())
+                break;
+
+            quint8 tag = m_tlvReader->tag();
+            if (tag == 0x01 || tag == 0x02 || tag == 0xfd)
+                m_tlvs.append(qMakePair(tag, m_tlvReader->data()));
+        }
+
+        m_nextExpectedRequestId = m_tlvReader->requestId();
+        if (m_nextExpectedRequestId.isValid())
+            break;
+
+        delete m_tlvReader;
+        m_tlvReader = 0;
+        m_writeNdefMessageState = NdefWriteWritingTlv;
+
+        // fall through
+    case NdefWriteWritingTlv:
+        m_tlvWriter = new QTlvWriter(q);
+
+        // write old TLVs
+        foreach (const Tlv &tlv, m_tlvs)
+            m_tlvWriter->writeTlv(tlv.first, tlv.second);
+
+        // write new NDEF message TLVs
+        foreach (const QNdefMessage &message, m_ndefWriteMessages)
+            m_tlvWriter->writeTlv(0x03, message.toByteArray());
+
+        // write terminator TLV
+        m_tlvWriter->writeTlv(0xfe);
+
+        m_writeNdefMessageState = NdefWriteWritingTlvFlush;
+
+        // fall through
+    case NdefWriteWritingTlvFlush:
+        // flush the writer
+        if (m_tlvWriter->process(true)) {
+            m_nextExpectedRequestId = QNearFieldTarget::RequestId();
+            m_writeNdefMessageState = NotWritingNdefMessage;
+            delete m_tlvWriter;
+            m_tlvWriter = 0;
+            emit q->ndefMessagesWritten();
+        } else {
+            m_nextExpectedRequestId = m_tlvWriter->requestId();
+            if (!m_nextExpectedRequestId.isValid()) {
+                m_writeNdefMessageState = NotWritingNdefMessage;
+                delete m_tlvWriter;
+                m_tlvWriter = 0;
+                emit q->error(QNearFieldTarget::NdefWriteError);
+            }
+        }
+        break;
+    }
+}
+
+static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
+{
+    switch (command.at(0)) {
+    case 0x01:  // READ
+        if (command.at(1) == response.at(0))
+            return quint8(response.at(1));
+        break;
+    case 0x53: { // WRITE-E
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && (writeData == data));
+    }
+    case 0x1a: { // WRITE-NE
+        quint8 address = command.at(1);
+        quint8 data = command.at(2);
+        quint8 writeAddress = response.at(0);
+        quint8 writeData = response.at(1);
+
+        return ((writeAddress == address) && ((writeData & data) == data));
+    }
+    case 0x10: { // RSEG
+        quint8 segmentAddress = quint8(command.at(1)) >> 4;
+        quint8 readSegmentAddress = quint8(response.at(0)) >> 4;
+        if (readSegmentAddress == segmentAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x02: { // READ8
+        quint8 blockAddress = command.at(1);
+        quint8 readBlockAddress = response.at(0);
+        if (readBlockAddress == blockAddress)
+            return response.mid(1);
+        break;
+    }
+    case 0x54: { // WRITE-E8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        return ((writeBlockAddress == blockAddress) && (writeData == data));
+    }
+    case 0x1b: { // WRITE-NE8
+        quint8 blockAddress = command.at(1);
+        QByteArray data = command.mid(2, 8);
+        quint8 writeBlockAddress = response.at(0);
+        QByteArray writeData = response.mid(1);
+
+        if (writeBlockAddress != blockAddress)
+            return false;
+
+        for (int i = 0; i < writeData.length(); ++i) {
+            if ((writeData.at(i) & data.at(i)) != data.at(i))
+                return false;
+        }
+
+        return true;
+    }
+    }
+
+    return QVariant();
+}
+
 /*!
     Constructs a new tag type 1 near field target with \a parent.
 */
 QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
-:   QNearFieldTarget(parent)
+:   QNearFieldTarget(parent), d_ptr(new QNearFieldTagType1Private(this))
 {
+}
+
+/*!
+    Destroys the tag type 1 near field target.
+*/
+QNearFieldTagType1::~QNearFieldTagType1()
+{
+    delete d_ptr;
 }
 
 /*!
@@ -84,7 +385,11 @@ QNearFieldTagType1::QNearFieldTagType1(QObject *parent)
 */
 bool QNearFieldTagType1::hasNdefMessage()
 {
-    const QByteArray data = readAll();
+    RequestId id = readAll();
+    if (!waitForRequestCompleted(id))
+        return false;
+
+    const QByteArray data = requestResponse(id).toByteArray();
 
     if (data.isEmpty())
         return false;
@@ -107,76 +412,30 @@ bool QNearFieldTagType1::hasNdefMessage()
 /*!
     \reimp
 */
-QList<QNdefMessage> QNearFieldTagType1::ndefMessages()
+void QNearFieldTagType1::readNdefMessages()
 {
-    const QByteArray id = readIdentification();
+    Q_D(QNearFieldTagType1);
 
-    // Check if target is a NFC TagType1 tag
-    quint8 hr0 = id.at(0);
-    if (!(hr0 & 0x10))
-        return QList<QNdefMessage>();
-
-    if (readByte(8) != 0xe1)
-        return QList<QNdefMessage>();
-
-    QTlvReader reader(this);
-
-    QList<QNdefMessage> ndefMessages;
-
-    while (!reader.atEnd()) {
-        if (!reader.readNext())
-            break;
-
-        // NDEF Message TLV
-        if (reader.tag() == 0x03)
-            ndefMessages.append(QNdefMessage::fromByteArray(reader.data()));
-    }
-
-    return ndefMessages;
+    if (d->m_readNdefMessageState == QNearFieldTagType1Private::NotReadingNdefMessage)
+        d->progressToNextNdefReadMessageState();
+    else
+        emit error(NdefReadError);
 }
 
 /*!
     \reimp
 */
-void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType1::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
-    const QByteArray id = readIdentification();
+    Q_D(QNearFieldTagType1);
 
-    // Check if target is NFC TagType1 tag
-    quint8 hr0 = id.at(0);
-    if (!(hr0 & 0x10))
-        return;
-
-    if (readByte(8) != 0xe1)
-        return;
-
-    typedef QPair<quint8, QByteArray> Tlv;
-    QList<Tlv> tlvs;
-
-    QTlvReader reader(this);
-    while (!reader.atEnd()) {
-        if (!reader.readNext())
-            break;
-
-        switch (reader.tag()) {
-        case 0x01:
-        case 0x02:
-        case 0xfd:
-            tlvs.append(qMakePair(reader.tag(), reader.data()));
-            break;
-        default:
-            ;
-        }
+    if (d->m_readNdefMessageState == QNearFieldTagType1Private::NotReadingNdefMessage &&
+        d->m_writeNdefMessageState == QNearFieldTagType1Private::NotWritingNdefMessage) {
+        d->m_ndefWriteMessages = messages;
+        d->progressToNextNdefWriteMessageState();
+    } else {
+        emit error(NdefWriteError);
     }
-
-    QTlvWriter writer(this);
-    foreach (const Tlv &tlv, tlvs)
-        writer.writeTlv(tlv.first, tlv.second);
-
-    foreach (const QNdefMessage &message, messages)
-        writer.writeTlv(0x03, message.toByteArray());
-
-    writer.writeTlv(0xfe);
 }
 
 /*!
@@ -184,7 +443,12 @@ void QNearFieldTagType1::setNdefMessages(const QList<QNdefMessage> &messages)
 */
 quint8 QNearFieldTagType1::version()
 {
-    return readByte(9);
+    RequestId id = readByte(9);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    quint8 versionNumber = requestResponse(id).toUInt();
+    return versionNumber;
 }
 
 /*!
@@ -192,7 +456,11 @@ quint8 QNearFieldTagType1::version()
 */
 int QNearFieldTagType1::memorySize()
 {
-    quint8 tms = readByte(10);
+    RequestId id = readByte(10);
+    if (!waitForRequestCompleted(id))
+        return 0;
+
+    quint8 tms = requestResponse(id).toUInt();
 
     return 8 * (tms + 1);
 }
@@ -203,7 +471,7 @@ int QNearFieldTagType1::memorySize()
     The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
     is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readIdentification()
+QNearFieldTarget::RequestId QNearFieldTagType1::readIdentification()
 {
     QByteArray command;
     command.append(char(0x78));     // RID
@@ -220,7 +488,7 @@ QByteArray QNearFieldTagType1::readIdentification()
     The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
     array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readAll()
+QNearFieldTarget::RequestId QNearFieldTagType1::readAll()
 {
     QByteArray command;
     command.append(char(0x00));   // RALL
@@ -235,10 +503,10 @@ QByteArray QNearFieldTagType1::readAll()
     Reads and returns a single byte from the static memory area of the tag. The \a address
     parameter specifices the linear byte address to read.
 */
-quint8 QNearFieldTagType1::readByte(quint8 address)
+QNearFieldTarget::RequestId QNearFieldTagType1::readByte(quint8 address)
 {
     if (address & 0x80)
-        return 0;
+        return RequestId();
 
     QByteArray command;
     command.append(char(0x01));     // READ
@@ -246,15 +514,13 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
     command.append(char(0x00));     // Data (unused)
     command.append(uid().left(4));  // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return 0;
+    Q_D(QNearFieldTagType1);
 
-    if (response.at(0) != address)
-        return 0;
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.at(1);
+    return id;
 }
 
 /*!
@@ -265,10 +531,11 @@ quint8 QNearFieldTagType1::readByte(quint8 address)
 
     Returns true on success; otherwise returns false.
 */
-bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
+QNearFieldTarget::RequestId QNearFieldTagType1::writeByte(quint8 address, quint8 data,
+                                                          WriteMode mode)
 {
     if (address & 0x80)
-        return false;
+        return RequestId();
 
     QByteArray command;
 
@@ -277,39 +544,29 @@ bool QNearFieldTagType1::writeByte(quint8 address, quint8 data, WriteMode mode)
     else if (mode == WriteOnly)
         command.append(char(0x1a)); // WRITE-NE
     else
-        return false;
+        return RequestId();
 
     command.append(char(address));  // Address
     command.append(char(data));     // Data
     command.append(uid().left(4));  // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType1);
 
-    quint8 writeAddress = response.at(0);
-    quint8 writeData = response.at(1);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    if (writeAddress != address)
-        return false;
-
-    if (mode == EraseAndWrite)
-        return writeData == data;
-    else if (mode == WriteOnly)
-        return (writeData & data) == data;
-    else
-        return false;
+    return id;
 }
 
 /*!
     Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
     byte array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1::readSegment(quint8 segmentAddress)
 {
     if (segmentAddress & 0xf0)
-        return QByteArray();
+        return RequestId();
 
     QByteArray command;
     command.append(char(0x10));                 // RSEG
@@ -317,23 +574,20 @@ QByteArray QNearFieldTagType1::readSegment(quint8 segmentAddress)
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return QByteArray();
+    Q_D(QNearFieldTagType1);
 
-    quint8 readSegmentAddress = response.at(0);
-    if ((readSegmentAddress >> 4) != segmentAddress)
-        return QByteArray();
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.mid(1);
+    return id;
 }
 
 /*!
     Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
     array is returned if an error occurs.
 */
-QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
+QNearFieldTarget::RequestId QNearFieldTagType1::readBlock(quint8 blockAddress)
 {
     QByteArray command;
     command.append(char(0x02));                 // READ8
@@ -341,16 +595,13 @@ QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
     command.append(QByteArray(8, char(0x00)));  // Data (unused)
     command.append(uid().left(4));              // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return QByteArray();
+    Q_D(QNearFieldTagType1);
 
-    quint8 readBlockAddress = response.at(0);
-    if (readBlockAddress != blockAddress)
-        return QByteArray();
+    d->m_pendingInternalCommands.insert(id, command);
 
-    return response.mid(1);
+    return id;
 }
 
 /*!
@@ -362,10 +613,12 @@ QByteArray QNearFieldTagType1::readBlock(quint8 blockAddress)
     Returns true on success; otherwise returns false.
 
 */
-bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data, WriteMode mode)
+QNearFieldTarget::RequestId QNearFieldTagType1::writeBlock(quint8 blockAddress,
+                                                           const QByteArray &data,
+                                                           WriteMode mode)
 {
     if (data.length() != 8)
-        return false;
+        return RequestId();
 
     QByteArray command;
 
@@ -374,34 +627,47 @@ bool QNearFieldTagType1::writeBlock(quint8 blockAddress, const QByteArray &data,
     else if (mode == WriteOnly)
         command.append(char(0x1b));     // WRITE-NE8
     else
-        return false;
+        return RequestId();
 
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
     command.append(uid().left(4));      // 4 bytes of UID
 
-    const QByteArray response = sendCommand(command);
+    RequestId id = sendCommand(command);
 
-    if (response.isEmpty())
-        return false;
+    Q_D(QNearFieldTagType1);
 
-    quint8 writeBlockAddress = response.at(0);
+    d->m_pendingInternalCommands.insert(id, command);
 
-    if (writeBlockAddress != blockAddress)
-        return false;
+    return id;
+}
 
-    if (mode == EraseAndWrite) {
-        return response.mid(1) == data;
-    } else if (mode == WriteOnly) {
-        const QByteArray writeData = response.mid(1);
-        for (int i = 0; i < writeData.length(); ++i) {
-            if ((writeData.at(i) & data.at(i)) != data.at(i))
-                return false;
-        }
-        return true;
+bool QNearFieldTagType1::handleResponse(const RequestId &id, const QByteArray &response)
+{
+    Q_D(QNearFieldTagType1);
+
+    bool handled;
+
+    if (d->m_pendingInternalCommands.contains(id)) {
+        const QByteArray command = d->m_pendingInternalCommands.take(id);
+
+        QVariant decodedResponse = decodeResponse(command, response);
+        setResponseForRequest(id, decodedResponse);
+
+        handled = true;
     } else {
-        return false;
+        handled = QNearFieldTarget::handleResponse(id, response);
     }
+
+    // continue reading / writing NDEF message
+    if (d->m_nextExpectedRequestId == id) {
+        if (d->m_readNdefMessageState != QNearFieldTagType1Private::NotReadingNdefMessage)
+            d->progressToNextNdefReadMessageState();
+        else if (d->m_writeNdefMessageState != QNearFieldTagType1Private::NotWritingNdefMessage)
+            d->progressToNextNdefWriteMessageState();
+    }
+
+    return handled;
 }
 
 #include "moc_qnearfieldtagtype1.cpp"

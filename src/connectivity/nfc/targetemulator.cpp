@@ -43,6 +43,8 @@
 
 #include <QtCore/QSettings>
 
+#include <QtCore/QDebug>
+
 // Implementation of qNfcChecksum
 #include "checksum_p.h"
 
@@ -265,6 +267,99 @@ QByteArray NfcTagType1::processCommand(const QByteArray &command)
             response.append(memory.mid(address * 8, 8));
             break;
         }
+    }
+
+    if (!response.isEmpty()) {
+        quint16 crc = qNfcChecksum(response.constData(), response.length());
+        response.append(quint8(crc & 0xff));
+        response.append(quint8(crc >> 8));
+    }
+
+    return response;
+}
+
+
+NfcTagType2::NfcTagType2()
+:   memory(64, 0x00), currentSector(0), expectPacket2(false)
+{
+}
+
+void NfcTagType2::load(QSettings *settings)
+{
+    settings->beginGroup(QLatin1String("TagType2"));
+
+    memory = settings->value(QLatin1String("Data")).toByteArray();
+
+    settings->endGroup();
+}
+
+QByteArray NfcTagType2::uid() const
+{
+    return memory.left(3) + memory.mid(4, 4);
+}
+
+#define NACK QByteArray("\x05")
+#define ACK QByteArray("\x0a")
+
+QByteArray NfcTagType2::processCommand(const QByteArray &command)
+{
+    QByteArray response;
+
+    // check checksum
+    if (qNfcChecksum(command.constData(), command.length()) != 0)
+        return QByteArray();
+
+    if (expectPacket2) {
+        expectPacket2 = false;
+        quint8 sector = command.at(0);
+        if (sector * 1024 > memory.length())
+            return NACK;
+        else {
+            currentSector = sector;
+            return QByteArray();
+        }
+    }
+
+    quint8 opcode = command.at(0);
+
+    switch (opcode) {
+    case 0x30: {    // READ BLOCK
+        quint8 block = command.at(1);
+        int absoluteBlock = currentSector * 256 + block;
+
+        response.append(memory.mid(absoluteBlock * 4, 16));
+        if (response.length() != 16)
+            response.append(QByteArray(16 - response.length(), '\0'));
+
+        break;
+    }
+    case 0xa2: {    // WRITE BLOCK
+        quint8 block = command.at(1);
+        int absoluteBlock = currentSector * 256 + block;
+
+        // locked blocks
+        if (absoluteBlock == 0 || absoluteBlock == 1)
+            return NACK;
+
+        const QByteArray data = command.mid(2, 4);
+
+        memory.replace(absoluteBlock * 4, 4, data);
+
+        return ACK;
+    }
+    case 0xc2:  // SECTOR SELECT - Packet 1
+        if (memory.length() > 1024) {
+            expectPacket2 = true;
+            return ACK;
+        }
+
+        return NACK;
+    default:
+        qDebug() << "Unknown opcode for Tag Type 2" << hex << opcode;
+        qDebug() << "command:" << command.toHex();
+
+        return NACK;
+        ;
     }
 
     if (!response.isEmpty()) {
