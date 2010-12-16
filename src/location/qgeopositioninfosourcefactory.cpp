@@ -54,4 +54,7 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObj
     return 0;
 }
 
+QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
+{}
+
 QTM_END_NAMESPACE
