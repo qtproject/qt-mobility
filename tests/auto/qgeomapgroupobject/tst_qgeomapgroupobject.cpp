@@ -642,9 +642,15 @@ void tst_QGeoMapGroupObject::removeFromMap()
     QPixmap pm(20, 20);
     pm.fill(Qt::blue);
 
+    QPixmap pm2(":/poimarker.png");
+
     QPointer<QGeoMapPixmapObject> pixmap = new QGeoMapPixmapObject(
                 QGeoCoordinate(0,0), QPoint(10,10), pm);
     pixmap->setZValue(1);
+
+    QPointer<QGeoMapPixmapObject> pixmap2 = new QGeoMapPixmapObject(
+                QGeoCoordinate(0,0), QPoint(10,10), pm2);
+    pixmap->setZValue(0);
 
     QPointer<QGeoMapCircleObject> circle = new QGeoMapCircleObject(
                 QGeoCoordinate(0,0), 1000);
@@ -658,6 +664,7 @@ void tst_QGeoMapGroupObject::removeFromMap()
 
     QPointer<QGeoMapGroupObject> group = new QGeoMapGroupObject();
     group->addChildObject(pixmap);
+    group->addChildObject(pixmap2);
     group->addChildObject(circle);
     group->addChildObject(rect);
 
@@ -679,7 +686,7 @@ void tst_QGeoMapGroupObject::removeFromMap()
     QVERIFY(map->mapObjects().size() == 0);
     QVERIFY(map->mapObjectsInViewport().size() == 0);
 
-    pixmap = new QGeoMapPixmapObject(QGeoCoordinate(0,0), QPoint(10,10), pm);
+    pixmap = new QGeoMapPixmapObject(QGeoCoordinate(0,0), QPoint(10,10), pm2);
     pixmap->setZValue(1);
     group = new QGeoMapGroupObject();
     group->addChildObject(pixmap);
