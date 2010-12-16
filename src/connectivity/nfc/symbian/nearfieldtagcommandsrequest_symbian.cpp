@@ -47,6 +47,15 @@ QTM_USE_NAMESPACE
 NearFieldTagCommandsRequest::NearFieldTagCommandsRequest()
 {
     iCurrentCommand = 0;
+    iRequestCancelled = EFalse;
+}
+
+NearFieldTagCommandsRequest::~NearFieldTagCommandsRequest()
+{
+    BEGIN
+    iRequestCancelled = ETrue;
+    iOperator->DoCancelSendCommand();
+    END
 }
 
 void NearFieldTagCommandsRequest::IssueRequest()
@@ -54,6 +63,7 @@ void NearFieldTagCommandsRequest::IssueRequest()
     BEGIN
     LOG("current command index = "<<iCurrentCommand);
     LOG("commands count = "<<iCommands.count());
+    iRequestIssued = ETrue;
     if (iCurrentCommand < iCommands.count())
     {       
         iOperator->DoSendCommand(iCommands.at(iCurrentCommand), this);
@@ -75,7 +85,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
     iResponse->Zero();
     iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
 
-    if (iCurrentCommand < iCommands.count())
+    if (!iRequestCancelled && (iCurrentCommand < iCommands.count()))
     {
         IssueRequest();
     }

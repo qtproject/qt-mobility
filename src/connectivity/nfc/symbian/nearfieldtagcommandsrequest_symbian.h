@@ -49,6 +49,7 @@ class NearFieldTagCommandsRequest : public MNearFieldTagAsyncRequest,
     {
 public:
     NearFieldTagCommandsRequest();
+    ~NearFieldTagCommandsRequest();
     void IssueRequest();
     void ProcessResponse(TInt aError);
     void ProcessEmitSignal(TInt aError);
@@ -62,5 +63,6 @@ private:
     // Not own
     RBuf8 * iResponse;
     int iCurrentCommand;
+    TBool iRequestCancelled;
     };
 #endif

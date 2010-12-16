@@ -49,7 +49,10 @@ NearFieldTagNdefRequest::NearFieldTagNdefRequest()
 
 NearFieldTagNdefRequest::~NearFieldTagNdefRequest()
 {
+    BEGIN
+    iOperator->DoCancelNdefAccess();
     iReadMessages.Close();
+    END
 }
 
 void NearFieldTagNdefRequest::IssueRequest()
@@ -57,6 +60,7 @@ void NearFieldTagNdefRequest::IssueRequest()
     BEGIN
     if (iOperator)
     {
+        iRequestIssued = ETrue;
         LOG(iType);
         switch(iType)
         {
@@ -68,6 +72,11 @@ void NearFieldTagNdefRequest::IssueRequest()
             case EWriteRequest:
             {
                 iOperator->DoSetNdefMessages(iMessages, this);
+                break;
+            }
+            default:
+            {
+                iRequestIssued = EFalse;
                 break;
             }
         }

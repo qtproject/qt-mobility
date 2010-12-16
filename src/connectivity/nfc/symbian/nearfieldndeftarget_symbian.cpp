@@ -84,16 +84,7 @@ void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
     BEGIN
-    if (ERead == iCurrentOperation)
-        {
-        LOG("cancel ndef read");
-        iNdefConnection->CancelRead();
-        }
-    else if (EWrite == iCurrentOperation)
-        {
-        LOG("cancel ndef write");
-        iNdefConnection->CancelWrite();
-        }
+    // when connection is closed, cancel for each specific connection will be done.
     if (iNdefConnection)
         {
         delete iNdefConnection;
@@ -108,6 +99,22 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         }
     END
     }
+    
+void CNearFieldNdefTarget::Cancel()
+{
+    BEGIN
+    if (ERead == iCurrentOperation)
+    {
+        iNdefConnection->CancelRead();
+    }
+    else if (EWrite == iCurrentOperation)
+    {
+        iNdefConnection->CancelWrite();
+    }
+    
+    iCurrentOperation = ENull;
+    END
+}
 
 CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {

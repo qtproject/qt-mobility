@@ -85,6 +85,7 @@ public: // New functions
     TBool hasNdefMessage();
     TInt ndefMessages(RPointerArray<CNdefMessage>& aMessages);
     TInt setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
+    void Cancel();
 
 public:
     CNearFieldTag * CastToTag();

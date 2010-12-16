@@ -12,7 +12,10 @@ TEMPLATE = app
 
 INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
-HEADERS += ../common/qnfctagtestcommon.h
+HEADERS += ../common/qnfctagtestcommon.h \
+           qdummyslot.h
+
 SOURCES += tst_qnearfieldtagtype1.cpp \
+           qdummyslot.cpp \
            ../common/qnfctagtestcommon.cpp
 symbian:TARGET.CAPABILITY = ALL -TCB

@@ -92,6 +92,7 @@ protected:
     CActiveSchedulerWait * iWait;
     // Own.
     CPeriodic * iTimer;
+    TBool iRequestIssued;
 
 private:
     static TInt TimeoutCallback(TAny * aObj);

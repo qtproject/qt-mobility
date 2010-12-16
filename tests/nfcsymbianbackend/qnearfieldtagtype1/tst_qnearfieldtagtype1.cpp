@@ -4,6 +4,7 @@
 #include "qnfctagtestcommon.h"
 #include <qnearfieldtagtype1.h>
 #include "qnfctestcommon.h"
+#include "qdummyslot.h"
 
 class tst_qnearfieldtagtype1 : public QObject
 {
@@ -20,6 +21,7 @@ private Q_SLOTS:
     //void testSendAsyncRequestInSlot();
     //void testWaitAsyncRequestInSlot();
     void testRemoveTagBeforeAsyncRequestCompleted();
+    void testDeleteTagBeforeAsyncRequestCompleted();
 private:
     QNfcTagTestCommon tester;
     // Not Own
@@ -84,7 +86,7 @@ void tst_qnearfieldtagtype1::testRemoveTagBeforeAsyncRequestCompleted()
     tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
     QVERIFY(tagType1);
 
-    QSignalSpy readAllSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
+    QSignalSpy commandSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
     QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
 
     qDebug()<<"send readAll async request"<<endl;
@@ -98,11 +100,32 @@ void tst_qnearfieldtagtype1::testRemoveTagBeforeAsyncRequestCompleted()
 
     tester.removeTarget();
 
-    qDebug()<<"wait readIdentification request"<<endl;
-    QVERIFY(!tagType1->waitForRequestCompleted(id2));
+    qDebug()<<"command signals count is "<<commandSpy.count()<<endl;
+    qDebug()<<"ndef message signals count is "<<ndefMessageReadSpy.count()<<endl;
+}
 
-    qDebug()<<"check signals"<<endl;
-    QTRY_VERIFY(!readAllSpy.isEmpty());
+void tst_qnearfieldtagtype1::testDeleteTagBeforeAsyncRequestCompleted()
+{
+    tester.touchTarget(QNearFieldTarget::NfcTagType1);
+    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
+    QVERIFY(tagType1);
+    
+    QSignalSpy readAllSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
+    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
+    
+    qDebug()<<"send readAll async request"<<endl;
+    QNearFieldTarget::RequestId id1 = tagType1->readAll();
+    
+    qDebug()<<"send readIdentification request"<<endl;
+    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
+    
+    qDebug()<<"read ndef message async request"<<endl;
+    tagType1->readNdefMessages();
+    
+    qDebug()<<"delete tag, should be no panic"<<endl;
+    delete tagType1;
+    
+    QTRY_VERIFY(readAllSpy.isEmpty());
     QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
 }
 
