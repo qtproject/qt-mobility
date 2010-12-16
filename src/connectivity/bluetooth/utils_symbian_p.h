@@ -53,6 +53,11 @@ inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &addres
     return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
 }
 
+inline QString s60DescToQString(const TDesC &desc)
+{
+    return QString::fromUtf16(desc.Ptr(), desc.Length());
+}
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER
