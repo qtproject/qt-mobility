@@ -64,13 +64,27 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
-#include <QtCore/qfuturewatcher.h>
+#include <QtCore/qmutex.h>
 #include <QtCore/qqueue.h>
+#include <QtCore/qrunnable.h>
+#include <QtCore/qthread.h>
 #include <QtCore/qwaitcondition.h>
+#include <QtDBus/qdbusargument.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate
+class QGalleryTrackerResultSetThread : public QThread
+{
+public:
+    QGalleryTrackerResultSetThread(QRunnable *runnable) : runnable(runnable) {}
+
+    void run() { runnable->run(); }
+
+private:
+    QRunnable *runnable;
+};
+
+class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate, public QRunnable
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerResultSet)
 public:
@@ -273,6 +287,7 @@ public:
         , compositeColumns(arguments->compositeColumns)
         , aliasColumns(arguments->aliasColumns)
         , resourceKeys(arguments->resourceKeys)
+        , parserThread(this)
     {
         arguments->clear();
 
@@ -318,7 +333,8 @@ public:
     Cache iCache;   // Insert cache.
 
     QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
-    QFutureWatcher<void> parseWatcher;
+    QDBusArgument queryReply;
+    QGalleryTrackerResultSetThread parserThread;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
@@ -340,7 +356,7 @@ public:
     void query();
 
     void queryFinished(const QDBusPendingCall &call);
-    void parseRows(const QDBusPendingCall &call);
+    void run();
 
     void synchronize();
 

@@ -43,13 +43,11 @@
 
 #include "qgallerytrackermetadataedit_p.h"
 
-#include <QtCore/qtconcurrentrun.h>
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
 #include <qdocumentgallery.h>
 #include <qgalleryresource.h>
-
 
 #include <QtCore/qdebug.h>
 
@@ -176,21 +174,21 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
-        parseWatcher.setFuture(QtConcurrent::run(
-                this, &QGalleryTrackerResultSetPrivate::parseRows, call));
+        queryReply = call.reply().arguments().at(0).value<QDBusArgument>();
+
+        parserThread.start(QThread::LowPriority);
 
         emit q_func()->progressChanged(progressMaximum - 1, progressMaximum);
     }
 }
 
-void QGalleryTrackerResultSetPrivate::parseRows(const QDBusPendingCall &call)
+void QGalleryTrackerResultSetPrivate::run()
 {
     iCache.values.clear();
 
     QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, tableWidth);
 
-    QDBusArgument argument = call.reply().arguments().at(0).value<QDBusArgument>();
-    argument >> parser;
+    queryReply >> parser;
 
     iCache.count = iCache.values.count() / tableWidth;
 
@@ -469,6 +467,8 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
+    queryReply = QDBusArgument();
+
     Q_ASSERT(rCache.offset == rCache.count);
     Q_ASSERT(iCache.cutoff == iCache.count);
 
@@ -498,7 +498,7 @@ QGalleryTrackerResultSet::QGalleryTrackerResultSet(
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -510,7 +510,7 @@ QGalleryTrackerResultSet::QGalleryTrackerResultSet(
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -523,7 +523,7 @@ QGalleryTrackerResultSet::~QGalleryTrackerResultSet()
     for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
         (*it)->commit();
 
-    d->parseWatcher.waitForFinished();
+    d->parserThread.wait();
 }
 
 QStringList QGalleryTrackerResultSet::propertyNames() const
@@ -689,7 +689,7 @@ bool QGalleryTrackerResultSet::waitForFinished(int msecs)
                 return true;
         } else if (d->flags & QGalleryTrackerResultSetPrivate::Active) {
             if (d->waitForSyncFinish(msecs)) {
-                d->parseWatcher.waitForFinished();
+                d->parserThread.wait();
 
                 d->_q_parseFinished();
 
