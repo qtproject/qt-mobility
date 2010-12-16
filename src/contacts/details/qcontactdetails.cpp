@@ -258,6 +258,21 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
    Sets the index of the favorite contact to \a index.
  */
 
+/*!
+    Returns a filter suitable for finding contacts which are marked
+    as favorite contacts.
+*/
+QContactFilter QContactFavorite::match()
+{
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(QContactFavorite::DefinitionName,
+                              QContactFavorite::FieldFavorite);
+    f.setValue(true);
+    f.setMatchFlags(QContactFilter::MatchExactly);
+
+    return f;
+}
+
 /* ==================== QContactAnniversary ======================= */
 
 /*!
@@ -681,6 +696,51 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
    \fn QContactAddress::subTypes() const
    Returns the list of subtypes that this detail implements.
  */
+
+/*!
+    Returns a filter suitable for finding contacts with an address which
+    contains the given \a subString in any of its fields.
+*/
+QContactFilter QContactAddress::match(const QString &subString)
+{
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldStreet);
+    f1.setValue(subString);
+    f1.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldLocality);
+    f2.setValue(subString);
+    f2.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f3;
+    f3.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldRegion);
+    f3.setValue(subString);
+    f3.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f4;
+    f4.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldPostcode);
+    f4.setValue(subString);
+    f4.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f5;
+    f5.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldCountry);
+    f5.setValue(subString);
+    f5.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f6;
+    f6.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldPostOfficeBox);
+    f6.setValue(subString);
+    f6.setMatchFlags(QContactFilter::MatchContains);
+
+    return (f1 | f2 | f3 | f4 | f5 | f6);
+}
 
 /* ==================== QContactUrl ======================= */
 
@@ -1606,6 +1666,21 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
    \fn QContactTag::tag() const
    Returns the tag associated with a contact which is stored in this detail.
  */
+
+/*!
+    Returns a filter suitable for finding contacts which have a tag which
+    contains the specified \a subString.
+*/
+QContactFilter QContactTag::match(const QString &subString)
+{
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(QContactTag::DefinitionName,
+                              QContactTag::FieldTag);
+    f.setValue(subString);
+    f.setMatchFlags(QContactFilter::MatchContains);
+
+    return f;
+}
 
 /* ==================== QContactThumbnail ======================= */
 
@@ -2604,6 +2679,21 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 
    Returns the last-known status image url of the contact.
  */
+
+/*!
+  Returns a filter which matches any contact whose global presence state
+  is listed as \a state.
+ */
+QContactFilter QContactGlobalPresence::match(QContactPresence::PresenceState state)
+{
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(QContactGlobalPresence::DefinitionName,
+                              QContactGlobalPresence::FieldPresenceState);
+    f.setValue(state);
+    f.setMatchFlags(QContactFilter::MatchExactly);
+
+    return f;
+}
 
 
 
