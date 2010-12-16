@@ -119,7 +119,7 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         int prepareSuccess = m_session->prepareImageCapture();
 
         // Preparation fails with KErrNotReady if camera has not been started.
-		// That can be ignored since settings are set internally in that case.
+        // That can be ignored since settings are set internally in that case.
         if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
             m_session->setError(prepareSuccess, QString("Failure in preparation of image capture."));
     }

@@ -70,9 +70,9 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
     // According to ForumNokia MMF camcorder plugin supports AAC, AMR and QCELP
     // QCELP is speech codec and can be discarded
-	if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
+    if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
         return QString("Advanced Audio Coding");
-	else if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/amr") == 0)
+    else if (qstrcmp(codecName.toLocal8Bit().constData(), "audio/amr") == 0)
         return QString("Adaptive Multi-Rate Audio Codec");
 
     return QString();

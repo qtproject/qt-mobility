@@ -85,7 +85,7 @@ public: // Methods
     // Start using new CameraEngine
     void setNewCameraEngine(CCameraEngine *engine);
 
-protected: // MCameraViewfinderObserver (Bitmap ViewFinder)
+protected: // MCameraViewfinderObserver
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
 

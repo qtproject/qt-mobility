@@ -74,7 +74,6 @@ class S60ImageCaptureSession;
  */
 class S60ImageCaptureDecoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureDecoder* FileNewL(S60ImageCaptureSession *imageSession = 0,
@@ -124,7 +123,6 @@ private: // Data
  */
 class S60ImageCaptureEncoder : public CActive
 {
-
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,

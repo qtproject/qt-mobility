@@ -235,15 +235,15 @@ private: // Internal
     void doPopulateVideoCodecsDataL();
     void doPopulateVideoCodecsL();
 #ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
-	void doPopulateMaxVideoParameters();
+    void doPopulateMaxVideoParameters();
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
-	void doPopulateAudioCodecsL();
+    void doPopulateAudioCodecsL();
 
-	QList<int> doGetSupportedSampleRatesL(const QAudioEncoderSettings &settings,
+    QList<int> doGetSupportedSampleRatesL(const QAudioEncoderSettings &settings,
                                           bool *continuous);
-	QSize maximumResolutionForMimeType(const QString &mimeType) const;
-	qreal maximumFrameRateForMimeType(const QString &mimeType) const;
-	int maximumBitRateForMimeType(const QString &mimeType) const;
+    QSize maximumResolutionForMimeType(const QString &mimeType) const;
+    qreal maximumFrameRateForMimeType(const QString &mimeType) const;
+    int maximumBitRateForMimeType(const QString &mimeType) const;
 
 Q_SIGNALS: // Notification Signals
 
@@ -357,9 +357,9 @@ private: // Data
     // Maximum ClipSize in Bytes
     int                         m_maxClipSize;
     // List of supported video codec mime types
-    QStringList                 m_videoCodeclist;
+    QStringList                 m_videoCodecList;
     // Hash of supported video codec mime types and corresponding FourCC codes
-    QHash<QString, TFourCC>     m_audioCodeclist;
+    QHash<QString, TFourCC>     m_audioCodecList;
     // Map of video capture controllers information. It is populated during
     // doUpdateVideoCaptureContainersL().
     //

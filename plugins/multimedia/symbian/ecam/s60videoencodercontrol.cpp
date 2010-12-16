@@ -103,20 +103,19 @@ QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &code
 
 QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
+    Q_UNUSED(codec);
+
     // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
     // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
 
     QVariant returnValue;
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
+    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         returnValue.setValue(m_session->pixelAspectRatio());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         returnValue.setValue((int)m_session->gain());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0) {
+    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         returnValue.setValue(m_session->maxClipSizeInBytes());
-    }
 
     return returnValue;
 }
@@ -127,15 +126,12 @@ void S60VideoEncoderControl::setEncodingOption(
     // Set the codec first if not already set
     m_session->setVideoCaptureCodec(codec);
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
+    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         m_session->setPixelAspectRatio(value.toSize());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         m_session->setGain(value.toInt());
-    }
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0) {
+    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
-    }
     else {
         m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
     }

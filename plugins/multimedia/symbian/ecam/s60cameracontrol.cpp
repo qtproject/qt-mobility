@@ -92,14 +92,12 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_inactivityTimer->setSingleShot(true);
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, KECamCameraPriority, this));
-    if (err) {
+    if (err)
         m_error = err;
-    }
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
-    if (m_viewfinderEngine == NULL) {
+    if (m_viewfinderEngine == NULL)
         m_error = KErrNoMemory;
-    }
 
     // Connect signals
     connect(m_inactivityTimer, SIGNAL(timeout()), this, SLOT(toStandByStatus()));
@@ -147,9 +145,8 @@ void S60CameraControl::setState(QCamera::State state)
         return;
     }
 
-    if (m_requestedState == state) {
+    if (m_requestedState == state)
         return;
-    }
 
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
@@ -295,9 +292,8 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
                     m_videoSession->releaseVideoRecording();
                     m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
-                    if (m_internalState == QCamera::LoadedStatus) {
+                    if (m_internalState == QCamera::LoadedStatus)
                         m_inactivityTimer->start(KInactivityTimerTimeout);
-                    }
                     else if (m_internalState == QCamera::StandbyStatus)
                         loadCamera();
                     break;
@@ -380,6 +376,7 @@ bool S60CameraControl::canChangeProperty(QCameraControl::PropertyChangeType chan
             returnValue = false;
             break;
     }
+
     return returnValue;
 }
 
@@ -469,9 +466,8 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
 
     if (m_rotateCameraWhenReady) {
         if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
-            m_videoCaptureState != S60VideoCaptureSession::EPaused) {
+            m_videoCaptureState != S60VideoCaptureSession::EPaused)
             resetCameraOrientation();
-        }
     }
 
     if (state == S60VideoCaptureSession::EInitialized) {
@@ -767,9 +763,8 @@ void S60CameraControl::resetCamera()
     emit devicesChanged();
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine);
-    if (m_viewfinderEngine == NULL) {
+    if (m_viewfinderEngine == NULL)
         setError(KErrNoMemory, QString("Viewfinder device creation failed."));
-    }
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
 
     setCameraHandles();
