@@ -56,6 +56,7 @@
 #include <qmediaplaylistcontrol.h>
 #include <qmediaplaylistsourcecontrol.h>
 #include <qvideowidget.h>
+#include <qvideosurfaceoutput_p.h>
 #include <qgraphicsvideoitem.h>
 #include <qmedianetworkaccesscontrol.h>
 
@@ -144,6 +145,7 @@ public:
     QPointer<QObject> videoOutput;
     QMediaPlaylist *playlist;
     QMediaNetworkAccessControl *networkAccessControl;
+    QVideoSurfaceOutput surfaceOutput;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -258,6 +260,9 @@ static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProv
 
         if (flags & QMediaPlayer::StreamPlayback)
             features |= QMediaServiceProviderHint::StreamPlayback;
+
+        if (flags & QMediaPlayer::VideoSurface)
+            features |= QMediaServiceProviderHint::VideoSurface;
 
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
                                         QMediaServiceProviderHint(features));
@@ -759,6 +764,27 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 
     if (d->videoOutput)
         bind(d->videoOutput);
+}
+
+/*!
+    Sets a video \a surface as the video output of a media player.
+
+    If a video output has already been set on the media player the new surface
+    will replace it.
+*/
+
+void QMediaPlayer::setVideoOutput(QAbstractVideoSurface *surface)
+{
+    Q_D(QMediaPlayer);
+
+    d->surfaceOutput.setVideoSurface(surface);
+
+    if (d->videoOutput != &d->surfaceOutput) {
+        if (d->videoOutput)
+            unbind(d->videoOutput);
+
+        d->videoOutput = bind(&d->surfaceOutput) ? &d->surfaceOutput : 0;
+    }
 }
 
 // Enums

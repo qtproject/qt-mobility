@@ -51,6 +51,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractVideoSurface;
 class QMediaPlaylist;
 class QVideoWidget;
 class QGraphicsVideoItem;
@@ -100,7 +101,8 @@ public:
     enum Flag
     {
         LowLatency = 0x01,
-        StreamPlayback = 0x02
+        StreamPlayback = 0x02,
+        VideoSurface = 0x04
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -124,6 +126,7 @@ public:
 
     void setVideoOutput(QVideoWidget *);
     void setVideoOutput(QGraphicsVideoItem *);
+    void setVideoOutput(QAbstractVideoSurface *surface);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;

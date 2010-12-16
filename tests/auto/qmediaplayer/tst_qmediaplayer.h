@@ -45,12 +45,15 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qbuffer.h>
 
+#include <qabstractvideosurface.h>
 #include <qmediaplayer.h>
 #include <qmediaplayercontrol.h>
 #include <qmediaplaylist.h>
 #include <qmediaservice.h>
 #include <qmediastreamscontrol.h>
 #include <qmedianetworkaccesscontrol.h>
+#include <qvideorenderercontrol.h>
+#include <qvideowindowcontrol.h>
 
 QT_USE_NAMESPACE
 
@@ -147,6 +150,52 @@ public:
     QString _errorString;
 };
 
+class MockVideoSurface : public QAbstractVideoSurface
+{
+public:
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            const QAbstractVideoBuffer::HandleType) const
+    {
+        return QList<QVideoFrame::PixelFormat>();
+    }
+
+    bool present(const QVideoFrame &) { return false; }
+};
+
+class MockVideoRendererControl : public QVideoRendererControl
+{
+public:
+    MockVideoRendererControl() : m_surface(0) {}
+
+    QAbstractVideoSurface *surface() const { return m_surface; }
+    void setSurface(QAbstractVideoSurface *surface) { m_surface = surface; }
+
+    QAbstractVideoSurface *m_surface;
+};
+
+class MockVideoWindowControl : public QVideoWindowControl
+{
+public:
+    WId winId() const { return 0; }
+    void setWinId(WId) {}
+    QRect displayRect() const { return QRect(); }
+    void setDisplayRect(const QRect &) {}
+    bool isFullScreen() const { return false; }
+    void setFullScreen(bool) {}
+    void repaint() {}
+    QSize nativeSize() const { return QSize(); }
+    Qt::AspectRatioMode aspectRatioMode() const { return Qt::KeepAspectRatio; }
+    void setAspectRatioMode(Qt::AspectRatioMode) {}
+    int brightness() const { return 0; }
+    void setBrightness(int) {}
+    int contrast() const { return 0; }
+    void setContrast(int) {}
+    int hue() const { return 0; }
+    void setHue(int) {}
+    int saturation() const { return 0; }
+    void setSaturation(int) {}
+};
+
 class MockStreamsControl : public QMediaStreamsControl
 {
 public:
@@ -220,6 +269,10 @@ public:
         mockControl = new MockPlayerControl;
         mockStreamsControl = new MockStreamsControl;
         mockNetworkControl = new MockNetworkAccessControl;
+        rendererControl = new MockVideoRendererControl;
+        windowControl = new MockVideoWindowControl;
+        rendererRef = 0;
+        windowRef = 0;
     }
 
     ~MockPlayerService()
@@ -227,20 +280,38 @@ public:
         delete mockControl;
         delete mockStreamsControl;
         delete mockNetworkControl;
+        delete rendererControl;
+        delete windowControl;
     }
 
     QMediaControl* requestControl(const char *iid)
     {
-        if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
+        if (qstrcmp(iid, QMediaPlayerControl_iid) == 0) {
             return mockControl;
+        } else if (qstrcmp(iid, QVideoRendererControl_iid) == 0) {
+            if (rendererRef == 0) {
+                rendererRef += 1;
+                return rendererControl;
+            }
+        } else if (qstrcmp(iid, QVideoWindowControl_iid) == 0) {
+            if (windowRef == 0) {
+                windowRef += 1;
+                return windowControl;
+            }
+        }
+
 
         if (qstrcmp(iid, QMediaNetworkAccessControl_iid) == 0)
             return mockNetworkControl;
         return 0;
     }
 
-    void releaseControl(QMediaControl *)
+    void releaseControl(QMediaControl *control)
     {
+        if (control == rendererControl)
+            rendererRef -= 1;
+        else if (control == windowControl)
+            windowRef -= 1;
     }
 
     void setState(QMediaPlayer::State state) { emit mockControl->stateChanged(mockControl->_state = state); }
@@ -291,25 +362,26 @@ public:
     MockPlayerControl *mockControl;
     MockStreamsControl *mockStreamsControl;
     MockNetworkAccessControl *mockNetworkControl;
+    MockVideoRendererControl *rendererControl;
+    MockVideoWindowControl *windowControl;
+    int rendererRef;
+    int windowRef;
 };
 
 class MockProvider : public QMediaServiceProvider
 {
 public:
-    MockProvider(MockPlayerService *service):mockService(service) {}
+    MockProvider(MockPlayerService *service):mockService(service), deleteServiceOnRelease(true) {}
     QMediaService *requestService(const QByteArray &, const QMediaServiceProviderHint &)
     {
         return mockService;
     }
 
-    void releaseService(QMediaService *service) { delete service; }
+    void releaseService(QMediaService *service) { if (deleteServiceOnRelease) delete service; }
 
     MockPlayerService *mockService;
+    bool deleteServiceOnRelease;
 };
-
-
-
-
 
 class tst_QMediaPlayer: public QObject
 {
@@ -344,6 +416,10 @@ private slots:
     void testMediaStatus();
     void testPlaylist();
     void testNetworkAccess();
+    void testSetVideoOutput();
+    void testSetVideoOutputNoService();
+    void testSetVideoOutputNoControl();
+    void testSetVideoOutputDestruction();
 
 private:
     MockProvider *mockProvider;

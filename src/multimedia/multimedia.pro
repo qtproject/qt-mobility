@@ -22,7 +22,8 @@ PRIVATE_HEADERS += \
     qmediaimageviewerservice_p.h \
     qvideowidget_p.h \
     qmediapluginloader_p.h \
-    qpaintervideosurface_p.h
+    qpaintervideosurface_p.h \
+    qvideosurfaceoutput_p.h
 
 PUBLIC_HEADERS += \
     qmediacontrol.h \
@@ -107,7 +108,8 @@ SOURCES += qmediacontrol.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp \
-    qmedianetworkaccesscontrol.cpp
+    qmedianetworkaccesscontrol.cpp \
+    qvideosurfaceoutput.cpp
 
 #Camera
 PUBLIC_HEADERS += \
