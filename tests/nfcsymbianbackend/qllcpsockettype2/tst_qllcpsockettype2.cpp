@@ -523,8 +523,12 @@ void tst_qllcpsockettype2::negTestCase3()
     QLlcpSocket socket(this);
 
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
+    socket.connectToService(m_target, TestUri);
 
-    bool ret = socket.hasPendingDatagrams();
+    bool ret = socket.bind(35);
+    QVERIFY(ret == false);
+
+    ret = socket.hasPendingDatagrams();
     QVERIFY(ret == false);
 
     qint64 size = socket.pendingDatagramSize();
@@ -543,10 +547,6 @@ void tst_qllcpsockettype2::negTestCase3()
     size = socket.readDatagram(datagram.data(),datagram.size(),&m_target, &port);
     QVERIFY(size == -1);
 
-    socket.connectToService(m_target, TestUri);
-
-    ret = socket.bind(35);
-    QVERIFY(ret == false);
 }
 
 QTEST_MAIN(tst_qllcpsockettype2);
