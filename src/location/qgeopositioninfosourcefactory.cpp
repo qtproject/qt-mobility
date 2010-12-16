@@ -41,7 +41,17 @@
 
 #include "qgeopositioninfosourcefactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 int QGeoPositionInfoSourceFactory::sourcePriority() const
 {
     return 0;
 }
+
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactory::satelliteInfoSource(QObject *parent)
+{
+    Q_UNUSED(parent);
+    return 0;
+}
+
+QTM_END_NAMESPACE
