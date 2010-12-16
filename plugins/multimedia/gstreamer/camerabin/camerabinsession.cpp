@@ -129,7 +129,7 @@
 
 //using GST_STATE_READY for QCamera::LoadedState
 //doesn't work reliably at least with some webcams.
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_5)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #define USE_READY_STATE_ON_LOADED
 #endif
 
