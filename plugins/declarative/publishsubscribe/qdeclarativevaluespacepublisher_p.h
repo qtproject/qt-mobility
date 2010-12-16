@@ -39,34 +39,69 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
+#ifndef QDECLARATIVEVALUESPACEPUBLISHER_H
+#define QDECLARATIVEVALUESPACEPUBLISHER_H
 
+#include <QHash>
+#include <QStringList>
+
+#include "qvaluespace.h"
+#include "qvaluespacepublisher.h"
 #include "qvaluespacesubscriber.h"
-#include "qdeclarativevaluespacepublisher_p.h"
 
-QT_BEGIN_NAMESPACE
+#include <QDeclarativeListProperty>
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
+class QDeclarativeValueSpacePublisherMetaObject;
 
-class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
+class QDeclarativeValueSpacePublisher : public QObject
 {
     Q_OBJECT
-public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
-        qmlRegisterType<QDeclarativeValueSpacePublisher>(uri, 1, 2, "ValueSpacePublisher");
-    }
+    Q_PROPERTY(QString path READ path WRITE setPath)
+    Q_PROPERTY(bool hasSubscribers READ hasSubscribers NOTIFY subscribersChanged)
+    Q_PROPERTY(QStringList keys READ keys WRITE setKeys)
+
+    // these should be write-only
+    // but MSVC can't cope with write-only Q_PROPERTYs?
+    Q_PROPERTY(QVariant value READ dummyValue WRITE setValue)
+    Q_PROPERTY(bool server READ dummyServer WRITE startServer)
+
+public:
+    QDeclarativeValueSpacePublisher(QObject *parent=0);
+    ~QDeclarativeValueSpacePublisher();
+
+    QString path() const;
+    void setPath(const QString &path);
+
+    void setValue(const QVariant &val);
+    void startServer(const bool &really);
+    bool dummyServer() const;
+
+    QStringList keys() const;
+    QVariant dummyValue() const;
+
+    bool hasSubscribers() const;
+
+    void setKeys(const QStringList &keys);
+
+signals:
+    void subscribersChanged();
+
+private:
+    QDeclarativeValueSpacePublisherMetaObject *d;
+    friend class QDeclarativeValueSpacePublisherMetaObject;
+
+    bool m_hasSubscribers;
+    QValueSpacePublisher *m_publisher;
+    QString m_path;
+    QStringList m_keys;
+    bool m_pathSet;
+
+private slots:
+    void onInterestChanged(QString path, bool state);
+
 };
 
-QT_END_NAMESPACE
-
-#include "publishsubscribe.moc"
-
-Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
-
+#endif // QDECLARATIVEVALUESPACEPUBLISHER_H
