@@ -624,8 +624,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */
@@ -661,8 +660,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */

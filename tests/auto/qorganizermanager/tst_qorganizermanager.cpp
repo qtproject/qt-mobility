@@ -181,6 +181,7 @@ private slots:
     void recurrence();
     void idComparison();
     void emptyItemManipulation();
+    void partialSave();
 
     /* Tests that take no data */
     void itemValidation();
@@ -222,6 +223,7 @@ private slots:
     void recurrence_data() {addManagers();}
     void idComparison_data() {addManagers();}
     void emptyItemManipulation_data() {addManagers();}
+    void partialSave_data() {addManagers();}
 };
 
 class BasicItemLocalId : public QOrganizerItemEngineId
@@ -3848,6 +3850,116 @@ void tst_QOrganizerManager::emptyItemManipulation()
     QVERIFY(!cm->removeItem(invalidId)); // null id
     invalidId = makeItemId(50);
     QVERIFY(!cm->removeItem(invalidId)); // id from different manager
+}
+
+void tst_QOrganizerManager::partialSave()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    QList<QOrganizerItem> items;
+    QOrganizerEvent event = QOrganizerEvent();
+    event.setDisplayLabel("One");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(1, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(1, 30, 0)));
+    event.setDescription("One description");
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Two");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(2, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(2, 30, 0)));
+    event.setDescription("Two description");
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Three");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(3, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(3, 30, 0)));
+    items.append(event);
+
+    event = QOrganizerEvent();
+    event.setDisplayLabel("Four");
+    event.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(4, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 12, 25), QTime(4, 30, 0)));
+    items.append(event);
+
+    // First save these items
+    QVERIFY(cm->saveItems(&items));
+    QList<QOrganizerItem> originalItems = items;
+
+    items[0].setDescription("One changed description");
+
+    // 0) empty mask == full save
+    QVERIFY(cm->saveItems(&items, QStringList()));
+
+    // That should have updated everything
+    QOrganizerItem a = cm->item(originalItems[0].id());
+    QVERIFY(a.description() == "One changed description");
+
+    // 1) Change the description for b, mask it out
+    items[1].setDescription("Two changed description");
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerEventTime::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+
+    QOrganizerItem b = cm->item(originalItems[1].id());
+    QCOMPARE(b.description(), QString("Two description"));
+
+    // 2) save a modified detail in the mask
+    items[1].setDescription("Two changed description");
+
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDescription::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.description(), QString("Two changed description"));
+
+    // 3) Remove a description
+    QOrganizerItemDescription desc = items[1].detail<QOrganizerItemDescription>();
+    QVERIFY(items[1].removeDetail(&desc));
+    // Mask it out, so it shouldn't work.
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerEventTime::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.details<QOrganizerItemDescription>().count(), 1);
+    // Now include it in the mask
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDescription::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    b = cm->item(originalItems[1].id());
+    QCOMPARE(b.details<QOrganizerItemDescription>().count(), 0);
+
+    // 4 - New item, no details in the mask
+    QOrganizerItem newItem = originalItems[3];
+    newItem.setId(QOrganizerItemId());
+
+    items.append(newItem); // this is items[4]
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemTag::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    QVERIFY(!items[4].id().isNull()); // Saved
+    b = cm->item(items[4].id());
+    QCOMPARE(b.details<QOrganizerItemDisplayLabel>().count(), 0); // not saved
+    QCOMPARE(b.details<QOrganizerEventTime>().count(), 0); // not saved
+
+    // 5 - New item, some details in the mask
+    newItem = originalItems[2];
+    newItem.setId(QOrganizerItemId());
+    items.append(newItem); // this is items[5]
+    QVERIFY(cm->saveItems(&items, QStringList(QOrganizerItemDisplayLabel::DefinitionName)));
+    QVERIFY(cm->errorMap().isEmpty());
+    QVERIFY(!items[5].id().isNull()); // Saved
+    b = cm->item(items[5].id());
+    QCOMPARE(b.details<QOrganizerItemDisplayLabel>().count(), 1);
+    QCOMPARE(b.details<QOrganizerEventTime>().count(), 0); // not saved
+
+    // 6 Have a non existing item in the middle followed by a save error
+    cm->removeItem(items[4].id());
+    QOrganizerItemDetail badDetail("BadDetail");
+    badDetail.setValue("BadField", "BadValue");
+    items[5].saveDetail(&badDetail);
+    QVERIFY(!cm->saveItems(&items, QStringList("BadDetail")));
+    QMap<int, QOrganizerManager::Error> errorMap = cm->errorMap();
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[4], QOrganizerManager::DoesNotExistError);
+    QCOMPARE(errorMap[5], QOrganizerManager::InvalidDetailError);
 }
 
 void tst_QOrganizerManager::dateRange()
