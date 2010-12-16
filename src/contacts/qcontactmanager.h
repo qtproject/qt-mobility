@@ -200,6 +200,11 @@ Q_SIGNALS:
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
     void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId); // need both? or just new?
 
+private Q_SLOTS:
+    void contactsUpdated(const QList<QContactLocalId>& ids);
+    void contactsDeleted(const QList<QContactLocalId>& ids);
+    void observerDestroyed(QObject* object);
+
 private:
     friend class QContactManagerData;
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 

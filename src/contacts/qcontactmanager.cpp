@@ -292,6 +292,12 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
     connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 
+    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
+            this, SLOT(contactsUpdated(QList<QContactLocalId>)));
+    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
+            this, SLOT(contactsDeleted(QList<QContactLocalId>)));
+
+
     QContactManagerData::m_aliveEngines.insert(this);
 }
 
@@ -735,7 +741,42 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
  */
 QSharedPointer<QContactObserver> QContactManager::observeContact(QContactLocalId contactId)
 {
-    return d->m_engine->observeContact(contactId);
+    QContactObserver* observer = new QContactObserver(this);
+    connect(observer, SIGNAL(destroyed(QObject*)), this, SLOT(observerDestroyed(QObject*)));
+    d->m_observerForContact.insert(contactId, observer);
+    return QSharedPointer<QContactObserver>(observer);
+}
+
+// Some private slots for observing contacts
+void QContactManager::observerDestroyed(QObject* object)
+{
+    QContactObserver* observer = reinterpret_cast<QContactObserver*>(object);
+    QContactLocalId key = d->m_observerForContact.key(observer);
+    if (key != 0) {
+        d->m_observerForContact.remove(key, observer);
+    }
+}
+
+void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
+        while (it != d->m_observerForContact.end()) {
+            (*it)->emitContactChanged();
+            it++;
+        }
+    }
+}
+
+void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
+{
+    foreach (QContactLocalId id, ids) {
+        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
+        while (it != d->m_observerForContact.end()) {
+            (*it)->emitContactRemoved();
+            it++;
+        }
+    }
 }
 
 /*!
