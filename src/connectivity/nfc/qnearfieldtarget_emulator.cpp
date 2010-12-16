@@ -47,6 +47,8 @@
 #include <QtCore/QMutex>
 #include <QtCore/QCoreApplication>
 
+#include <QtCore/QDebug>
+
 static QMutex tagMutex;
 static QMap<TagBase *, bool> tagMap;
 static TagActivator tagActivator;
@@ -116,6 +118,72 @@ bool TagType1::waitForRequestCompleted(const RequestId &id, int msecs)
     return QNearFieldTagType1::waitForRequestCompleted(id, msecs);
 }
 
+
+TagType2::TagType2(TagBase *tag, QObject *parent)
+:   QNearFieldTagType2(parent), m_tag(tag)
+{
+}
+
+TagType2::~TagType2()
+{
+}
+
+QByteArray TagType2::uid() const
+{
+    QMutexLocker locker(&tagMutex);
+
+    return m_tag->uid();
+}
+
+QNearFieldTarget::AccessMethods TagType2::accessMethods() const
+{
+    return NdefAccess | TagTypeSpecificAccess;
+}
+
+QNearFieldTarget::RequestId TagType2::sendCommand(const QByteArray &command)
+{
+    QMutexLocker locker(&tagMutex);
+
+    // tag not in proximity
+    if (!tagMap.value(m_tag)) {
+        emit error(TargetOutOfRangeError);
+        return RequestId();
+    }
+
+    quint16 crc = qNfcChecksum(command.constData(), command.length());
+
+    QByteArray response = m_tag->processCommand(command + char(crc & 0xff) + char(crc >> 8));
+
+    if (response.isEmpty())
+        return RequestId();
+
+    RequestIdPrivate *idPrivate = new RequestIdPrivate;
+    RequestId id(idPrivate);
+
+    if (response.length() > 1) {
+        // check crc
+        if (qNfcChecksum(response.constData(), response.length()) != 0) {
+            emit error(ChecksumMismatchError);
+            return id;
+        }
+
+        response.chop(2);
+    }
+
+    QMetaObject::invokeMethod(this, "handleResponse", Qt::QueuedConnection,
+                              Q_ARG(QNearFieldTarget::RequestId, id), Q_ARG(QByteArray, response));
+
+    return id;
+}
+
+bool TagType2::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return QNearFieldTagType2::waitForRequestCompleted(id, msecs);
+}
+
+
 TagActivator::TagActivator()
 :   timerId(-1)
 {
@@ -149,7 +217,14 @@ void TagActivator::initialize()
         target.endGroup();
 
         if (tagType == QLatin1String("TagType1")) {
+            qDebug() << "loading" << targetFilename << "as NfcTagType1";
             NfcTagType1 *tag = new NfcTagType1;
+            tag->load(&target);
+
+            tagMap.insert(tag, false);
+        } else if (tagType == QLatin1String("TagType2")) {
+            qDebug() << "loading" << targetFilename << "as NfcTagType2";
+            NfcTagType2 *tag = new NfcTagType2;
             tag->load(&target);
 
             tagMap.insert(tag, false);
@@ -208,3 +283,4 @@ void TagActivator::timerEvent(QTimerEvent *e)
 
     tagMutex.unlock();
 }
+

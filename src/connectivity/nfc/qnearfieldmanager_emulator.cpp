@@ -47,6 +47,12 @@
 
 #include <QtCore/QDebug>
 
+static inline bool matchesTarget(QNearFieldTarget::Type type,
+                                 const QList<QNearFieldTarget::Type> &types)
+{
+    return types.contains(type) || types.contains(QNearFieldTarget::AnyTarget);
+}
+
 QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 {
     TagActivator *tagActivator = TagActivator::instance();
@@ -139,14 +145,18 @@ void QNearFieldManagerPrivateImpl::tagActivated(TagBase *tag)
 {
     QNearFieldTarget *target = m_targets.value(tag);
     if (!target) {
-        target = new TagType1(tag, this);
+        if (dynamic_cast<NfcTagType1 *>(tag))
+            target = new TagType1(tag, this);
+        else if (dynamic_cast<NfcTagType2 *>(tag))
+            target = new TagType2(tag, this);
+        else
+            qFatal("Unknown emulator tag type");
+
         m_targets.insert(tag, target);
     }
 
-    if (m_detectTargetTypes.contains(QNearFieldTarget::NfcTagType1) ||
-        m_detectTargetTypes.contains(QNearFieldTarget::AnyTarget)) {
+    if (matchesTarget(target->type(), m_detectTargetTypes))
         emit targetDetected(target);
-    }
 
     if (target->hasNdefMessage()) {
         QTlvReader reader(target);
