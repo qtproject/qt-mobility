@@ -187,25 +187,37 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &scree
 {
     Q_D(const QGeoTiledMapData);
 
-    qreal offsetX = ((d->windowSize.width() * d->zoomFactor) - d->worldReferenceViewportRect.width()) / 2.0;
+    QPoint worldRef = d->screenPositionToWorldReferencePosition(screenPosition);
+
+    if (worldRef.isNull())
+        return QGeoCoordinate();
+
+    return worldReferencePositionToCoordinate(worldRef);
+}
+
+// this belongs to QGeoTiledMapDataPrivate in order to avoid
+// breaking B.C.
+QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPointF &screenPosition) const
+{
+    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
     if (offsetX < 0.0)
         offsetX = 0.0;
-    offsetX /= d->zoomFactor;
-    qreal offsetY = ((d->windowSize.height() * d->zoomFactor) - d->worldReferenceViewportRect.height()) / 2.0;
+    offsetX /= zoomFactor;
+    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
     if (offsetY < 0.0)
         offsetY = 0.0;
-    offsetY /= d->zoomFactor;
+    offsetY /= zoomFactor;
 
     QPointF pos(screenPosition.x() - offsetX, screenPosition.y() - offsetY);
 
-    QRectF bounds = QRectF(QPointF(0.0, 0.0), d->windowSize);
+    QRectF bounds = QRectF(QPointF(0.0, 0.0), windowSize);
     if (!bounds.contains(pos))
-        return QGeoCoordinate();
+        return QPoint();
 
-    int worldX = int(d->worldReferenceViewportRect.left() + pos.x() * d->zoomFactor) % d->worldReferenceSize.width();
-    int worldY = int(d->worldReferenceViewportRect.top() + pos.y() * d->zoomFactor) % d->worldReferenceSize.height();
+    int worldX = int(worldReferenceViewportRect.left() + pos.x() * zoomFactor + 0.5) % worldReferenceSize.width();
+    int worldY = int(worldReferenceViewportRect.top() + pos.y() * zoomFactor + 0.5) % worldReferenceSize.height();
 
-    return worldReferencePositionToCoordinate(QPoint(worldX, worldY));
+    return QPoint(worldX, worldY);
 }
 
 /*!
@@ -227,8 +239,8 @@ QPoint QGeoTiledMapData::coordinateToWorldReferencePosition(const QGeoCoordinate
     lat = qMax(0.0, lat);
     lat = qMin(1.0, lat);
 
-    return QPoint(int(lng * d->worldReferenceSize.width()),
-                  int(lat * d->worldReferenceSize.height()));
+    return QPoint(int(lng * d->worldReferenceSize.width() + 0.5),
+                  int(lat * d->worldReferenceSize.height() + 0.5));
 }
 
 qreal rmod(const qreal a, const qreal b)
@@ -742,6 +754,11 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
     qWarning() << errorString;
 }
 
+static bool zComparator(const QGraphicsItem *a, const QGraphicsItem *b)
+{
+    return a->zValue() < b->zValue();
+}
+
 /*!
     \reimp
 */
@@ -750,21 +767,43 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
     Q_D(const QGeoTiledMapData);
 
     QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
+    QGeoCoordinate coordLow(coord.latitude(), coord.longitude() + 360.0);
+    QGeoCoordinate coordHigh(coord.latitude(), coord.longitude() - 360.0);
 
-    QRectF rect(d->worldReferenceViewportRect.x() + (screenPosition.x() - 1) * d->zoomFactor,
-                d->worldReferenceViewportRect.y() + (screenPosition.y() - 1) * d->zoomFactor,
-                2 * d->zoomFactor,
-                2 * d->zoomFactor);
+    QList<QGraphicsItem*> items;
 
-    QList<QGraphicsItem*> items = d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder);
+    QPointF topLeft = d->screenPositionToWorldReferencePosition(screenPosition - QPointF(1.5,1.5));
+    QPointF bottomRight = d->screenPositionToWorldReferencePosition(screenPosition + QPointF(1.5,1.5));
+    if (bottomRight.x() < topLeft.x()) {
+        // wrapped around
+        QRectF rect(topLeft, QSizeF(3*d->zoomFactor, 3*d->zoomFactor));
+        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
+        QRectF rect2(QPointF(0, topLeft.y()), bottomRight);
+        items.append(d->scene->items(rect2, Qt::IntersectsItemShape, Qt::AscendingOrder));
+
+        qStableSort(items.begin(), items.end(), zComparator);
+        QList<QGraphicsItem*> uniq;
+
+        Q_FOREACH (QGraphicsItem *item, items)
+            if (!uniq.contains(item))
+                uniq.append(item);
+
+        items = uniq;
+
+    } else {
+        QRectF rect(topLeft, bottomRight);
+        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
+    }
 
     QList<QGeoMapObject*> results;
 
-    for (int i = 0; i < items.size(); ++i) {
-        if (!d->itemMap.contains(items.at(i)))
+    Q_FOREACH (QGraphicsItem* item, items) {
+        if (!d->itemMap.contains(item))
             continue;
-        QGeoMapObject *result = d->itemMap.value(items.at(i));
-        if (result->contains(coord))
+        QGeoMapObject *result = d->itemMap.value(item);
+        if (result->isVisible() && (result->contains(coord) ||
+                                    result->contains(coordLow) ||
+                                    result->contains(coordHigh)))
             results.append(result);
     }
 

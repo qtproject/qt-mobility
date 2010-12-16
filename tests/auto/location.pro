@@ -7,6 +7,7 @@ CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
       qgeotiledmappingmanagerengine \
+      qgeotiledmapdata \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
@@ -42,7 +43,8 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeomapplugin \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
-      geoservicesgeotiledmap
+      geoservicesgeotiledmap \
+      pixelindex
 
 
 !symbian{
