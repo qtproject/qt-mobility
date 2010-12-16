@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,65 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
+#define QDECLARATIVEVALUESPACEPUBLISHERMETAOBJECT_H
 
-//TESTED_COMPONENT=src/location
+#include <QHash>
 
-#ifndef TST_QGEOSEARCHMANAGER_H
-#define TST_QGEOSEARCHMANAGER_H
-
-#include <QLocale>
-#include <QtTest/QtTest>
-#include <QSignalSpy>
-
-#include <qgeoserviceprovider.h>
-#include <qgeosearchmanager.h>
-#include <qlandmarkmanager.h>
-#include <qgeosearchreply.h>
-#include <qgeoboundingbox.h>
-#include <qgeoaddress.h>
-#include <qgeocoordinate.h>
-
+#include "qdeclarativeopenmetaobject_p.h"
+#include "qvaluespace.h"
+#include "qvaluespacepublisher.h"
 
 QTM_USE_NAMESPACE
 
-class SubLandmarkManager :public QLandmarkManager
+class QDeclarativeValueSpacePublisherMetaObject : public QDeclarativeOpenMetaObject
 {
-    Q_OBJECT
+
 public:
-    SubLandmarkManager (QString name):QLandmarkManager(){this->name=name;}
-    QString name;
+    QDeclarativeValueSpacePublisherMetaObject(QObject *obj);
+
+    virtual void getValue(int id, void **a);
+    virtual void setValue(int id, void **a);
+
+    void addKey(const QString &key, bool interest=false);
+
+    QHash<int, QString> m_keyProperties;
+    QHash<int, bool> m_subsProperties;
 };
-
-class tst_QGeoSearchManager: public QObject
-{
-    Q_OBJECT
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-    void supports();
-    void landmarkManager();
-    void locale();
-    void name();
-    void version();
-    void search();
-    void search_data();
-    void geocode();
-    void reverseGeocode();
-
-private:
-    QGeoServiceProvider *qgeoserviceprovider;
-    QGeoSearchManager *qgeosearchmanager;
-    QSignalSpy *signalerror;
-    QSignalSpy *signalfinished;
-    void loadSearchManager();
-
-};
-Q_DECLARE_METATYPE( QGeoSearchReply*);
-Q_DECLARE_METATYPE( QGeoSearchReply::Error);
-Q_DECLARE_METATYPE( QGeoSearchManager::SearchType);
 
 #endif
-
