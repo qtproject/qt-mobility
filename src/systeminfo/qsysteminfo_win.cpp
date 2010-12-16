@@ -2353,11 +2353,6 @@ void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
 
 }
 
-qint32 QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 rate)
-{
- return 0;
-}
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {
    return QSystemBatteryInfo::UnitmWh;

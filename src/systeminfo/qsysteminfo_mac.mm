@@ -2444,10 +2444,6 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() con
     return currentBatStatus;
 }
 
-int QSystemBatteryInfoPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
-    return 0;
-}
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
 {

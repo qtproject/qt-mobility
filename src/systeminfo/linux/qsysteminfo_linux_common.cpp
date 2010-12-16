@@ -3530,12 +3530,6 @@ void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 
 }
 
-
-qint32 QSystemBatteryInfoLinuxCommonPrivate::startCurrentMeasurement(qint32 /*rate*/)
-{
- return 0;
-}
-
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
 {
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)

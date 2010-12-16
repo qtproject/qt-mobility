@@ -913,9 +913,6 @@ void Dialog::setupBattery()
     connect(bi,SIGNAL(chargerTypeChanged(QSystemBatteryInfo::ChargerType)),
             this,SLOT(chargerTypeChanged(QSystemBatteryInfo::ChargerType)));
 
-    connect(startMeasurementPushButton,SIGNAL(clicked()),
-            this,SLOT(startCurrentPushed()));
-
     connect(bi,SIGNAL(nominalCapacityChanged(int)),
             NominalCaplcdNumber,SLOT(display(int)));
     connect(bi,SIGNAL(remainingCapacityChanged(int)),
@@ -989,7 +986,4 @@ void Dialog::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
     currentChargerType = chargerType;
 }
 
-void Dialog::startCurrentPushed()
-{
-    bi->startCurrentMeasurement(currentMeasurementSpinBox->value());
-}
+

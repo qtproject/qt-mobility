@@ -468,7 +468,6 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
-    int startCurrentMeasurement(int rate);
     void getBatteryInfo();
 
 Q_SIGNALS:

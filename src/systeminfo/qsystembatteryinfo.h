@@ -123,7 +123,6 @@ public:
     int voltage() const;
     int remainingChargingTime() const;
     int currentFlow() const;
-    int startCurrentMeasurement(int rate);
 
     int remainingCapacityBars() const;
     int maxBars() const;
@@ -131,7 +130,6 @@ public:
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-//    void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
 
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
