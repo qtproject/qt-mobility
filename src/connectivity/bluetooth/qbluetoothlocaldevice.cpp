@@ -110,27 +110,6 @@ bool QBluetoothLocalDevice::isValid() const
 }
 
 /*!
-    Sets pairing of this local Bluetooth device and the remote Bluetooth device with \a address to
-    \a pairing.
-*/
-void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
-{
-    Q_UNUSED(address);
-    Q_UNUSED(pairing);
-}
-
-/*!
-    Returns the current pairing between this local Bluetooth device and the remote Bluetooth device
-    with \a address.
-*/
-QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
-{
-    Q_UNUSED(address);
-
-    return Unpaired;
-}
-
-/*!
     \fn void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 
     Sets the host mode the this local Bluetooth device to \a mode.
