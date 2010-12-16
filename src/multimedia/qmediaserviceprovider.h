@@ -94,6 +94,8 @@ private:
     QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMediaServiceProviderHint::Features)
+
 class Q_MULTIMEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
