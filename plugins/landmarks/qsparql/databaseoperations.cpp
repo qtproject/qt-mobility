@@ -1022,17 +1022,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         "OPTIONAL { ?g nie:title ?name }");
                 break;
             } else {
+                queryString = QString("select ?u {?u a slo:Landmark . ?u slo:hasContact ?pc . ?u slo:location ?g . "
+                    "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . "
+                    "OPTIONAL { ?g slo:postalAddress ?pa } . "
+                    "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
+                    "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
+                    "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
+                    "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
+                    "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . "
+                    "OPTIONAL { ?pa nco:postalcode ?postcode }. FILTER ( ");
                 if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                     QStringList lmLocalIds;
                     bool filterAdded = false;
-                    queryString = QString("select ?u {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "?g slo:postalAddress ?pa ."
-                        "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
-                        "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
-                        "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
-                        "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
-                        "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . FILTER ( ");
-
                     if (attributeFilter.attributeKeys().contains("name")) {
                         QString regexVariable = createRegex(attributeFilter, "name");
                         QString nameString;
@@ -1113,7 +1114,33 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.append(streetString);
                         filterAdded = true;
                     }
-
+                    if (attributeFilter.attributeKeys().contains("postcode")) {
+                        QString regexVariable = createRegex(attributeFilter, "postcode");
+                        QString postcodeString;
+                        if (attributeFilter.matchFlags("postcode") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("postcode") == QLandmarkFilter::MatchExactly)
+                            postcodeString = QString("regex( ?postcode, '%1' ) && ").arg(regexVariable);
+                        else
+                            postcodeString = QString("regex( ?postcode, '%1', 'i' ) && ").arg(regexVariable);
+                        queryString.append(postcodeString);
+                        filterAdded = true;
+                    }
+                    if (attributeFilter.attributeKeys().contains("phoneNumber")) {
+                        QString regexVariable = createRegex(attributeFilter, "phoneNumber");
+                        QString phoneNumberString;
+                        if (attributeFilter.matchFlags("phoneNumber") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("phoneNumber") == QLandmarkFilter::MatchExactly)
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1' ) && ").arg(regexVariable);
+                        else
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1', 'i' ) && ").arg(regexVariable);
+                        queryString.append(phoneNumberString);
+                        if (!attributeFilter.attribute("phoneNumber").toString().isEmpty()) {
+                            queryString.replace( "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . "
+                                "OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . ", "?pc nco:hasPhoneNumber ?pn . "
+                                "?pn nco:phoneNumber ?phoneNumber . ");
+                        }
+                        filterAdded = true;
+                    }
                     if (filterAdded) {
                         queryString.chop(3);
                         queryString.append(" )");
@@ -1134,7 +1161,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     while(qsparqlResult->next()) {
                         if (!qsparqlResult->value(0).toString().isEmpty()) {
-                            lmLocalIds << qsparqlResult->value(0).toString();
+                            if(!lmLocalIds.contains(qsparqlResult->value(0).toString()))
+                                lmLocalIds << qsparqlResult->value(0).toString();
                         }
                     }
                     QLandmarkId id;
@@ -1146,14 +1174,6 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 } else {
                     QStringList lmLocalIds;
                     bool filterAdded = false;
-                    queryString = QString("select ?u {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "?g slo:postalAddress ?pa ."
-                        "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
-                        "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
-                        "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
-                        "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
-                        "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . FILTER ( ");
-
                     if (attributeFilter.attributeKeys().contains("name")) {
                         QString regexVariable = createRegex(attributeFilter, "name");
                         QString nameString;
@@ -1234,7 +1254,33 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.append(streetString);
                         filterAdded = true;
                     }
-
+                    if (attributeFilter.attributeKeys().contains("postcode")) {
+                        QString regexVariable = createRegex(attributeFilter, "postcode");
+                        QString postcodeString;
+                        if (attributeFilter.matchFlags("postcode") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("postcode") == QLandmarkFilter::MatchExactly)
+                            postcodeString = QString("regex( ?postcode, '%1' ) || ").arg(regexVariable);
+                        else
+                            postcodeString = QString("regex( ?postcode, '%1', 'i' ) || ").arg(regexVariable);
+                        queryString.append(postcodeString);
+                        filterAdded = true;
+                    }
+                    if (attributeFilter.attributeKeys().contains("phoneNumber")) {
+                        QString regexVariable = createRegex(attributeFilter, "phoneNumber");
+                        QString phoneNumberString;
+                        if (attributeFilter.matchFlags("phoneNumber") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("phoneNumber") == QLandmarkFilter::MatchExactly)
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1' ) || ").arg(regexVariable);
+                        else
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1', 'i' ) || ").arg(regexVariable);
+                        queryString.append(phoneNumberString);
+                        if (!attributeFilter.attribute("phoneNumber").toString().isEmpty()) {
+                            queryString.replace( "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . "
+                                "OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . ", "?pc nco:hasPhoneNumber ?pn . "
+                                "?pn nco:phoneNumber ?phoneNumber . ");
+                        }
+                        filterAdded = true;
+                    }
                     if (filterAdded) {
                         queryString.chop(3);
                         queryString.append(" )");
@@ -1255,7 +1301,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     while(qsparqlResult->next()) {
                         if (!qsparqlResult->value(0).toString().isEmpty()) {
-                            lmLocalIds << qsparqlResult->value(0).toString();
+                            if(!lmLocalIds.contains(qsparqlResult->value(0).toString()))
+                                lmLocalIds << qsparqlResult->value(0).toString();
                         }
                     }
 
@@ -2710,7 +2757,6 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
             "delete { ?:category_uri a slo:LandmarkCategory . }",
              QSparqlQuery::DeleteStatement);
 
-    //"delete { ?:category_uri a rdfs:Resource . }",
     qsparqlDeleteQuery.unbindValues();
     qsparqlDeleteQuery.bindValue("category_uri", QUrl(categoryId.localId()));
     QSparqlResult* deleteResult = m_conn->exec(qsparqlDeleteQuery);
@@ -3037,7 +3083,6 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                 QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
                 QString *removeErrorString = new QString();
                 removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
-                qWarning() << "Remove Error String = " << *removeErrorString;
                 delete removeError;
                 delete removeErrorString;
             }
@@ -3116,7 +3161,6 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
                 QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
                 QString *removeErrorString = new QString();
                 removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
-                qWarning() << "Remove Error String = " << *removeErrorString;
                 delete removeError;
                 delete removeErrorString;
             }
@@ -3877,7 +3921,7 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                       << "city"
                                                       << "district"
                                                       << "street"
-                                                      << "postCode"
+                                                      << "postcode"
                                                       << "phoneNumber"
                                                       << "url";
 
@@ -3890,7 +3934,7 @@ const QStringList DatabaseOperations::supportedSearchableAttributes = QStringLis
                                                      << "city"
                                                      << "district"
                                                      << "street"
-                                                     << "postCode"
+                                                     << "postcode"
                                                      << "phoneNumber";
 
 const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()

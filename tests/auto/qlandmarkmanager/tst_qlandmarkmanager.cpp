@@ -6155,11 +6155,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm1.setName("aaabbbccc");
     lm1.setDescription("aaabbbccc");
     lm1.setPhoneNumber("aaabbbccc");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("aaabbbccc");
-    address.setCountry("aaabbbccc");
     address.setState("aaabbbccc");
-    address.setCity("aaabbbccc");
     address.setDistrict("aaabbbccc");
+#endif
+    address.setCountry("aaabbbccc");
+    address.setCity("aaabbbccc");  
     address.setStreet("aaabbbccc");
     address.setPostcode("aaabbbccc");
     lm1.setAddress(address);
@@ -6171,11 +6173,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm2.setName("bbbaaaccc");
     lm2.setDescription("bbbaaaccc");
     lm2.setPhoneNumber("bbbaaaccc");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("bbbaaaccc");
-    address.setCountry("bbbaaaccc");
     address.setState("bbbaaaccc");
-    address.setCity("bbbaaaccc");
     address.setDistrict("bbbaaaccc");
+#endif
+    address.setCountry("bbbaaaccc");
+    address.setCity("bbbaaaccc");
     address.setStreet("bbbaaaccc");
     address.setPostcode("bbbaaaccc");
     lm2.setAddress(address);
@@ -6187,11 +6191,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm3.setName("bbbcccaaa");
     lm3.setDescription("bbbcccaaa");
     lm3.setPhoneNumber("bbbcccaaa");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("bbbcccaaa");
-    address.setCountry("bbbcccaaa");
     address.setState("bbbcccaaa");
-    address.setCity("bbbcccaaa");
     address.setDistrict("bbbcccaaa");
+#endif
+    address.setCity("bbbcccaaa");
+    address.setCountry("bbbcccaaa");
     address.setStreet("bbbcccaaa");
     address.setPostcode("bbbcccaaa");
     lm3.setAddress(address);
@@ -6203,11 +6209,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm4.setName("aaaabbbbcccc");
     lm4.setDescription("aaaabbbbcccc");
     lm4.setPhoneNumber("aaaabbbbcccc");
-    address.setCountryCode("aaaabbbbcccc");
-    address.setCountry("aaaabbbbcccc");
+#ifndef Q_WS_MAEMO_6
+    address.setCountryCode("aaaabbbbcccc"); 
     address.setState("aaaabbbbcccc");
-    address.setCity("aaaabbbbcccc");
     address.setDistrict("aaaabbbbcccc");
+#endif
+    address.setCity("aaaabbbbcccc");
+    address.setCountry("aaaabbbbcccc");
     address.setStreet("aaaabbbbcccc");
     address.setPostcode("aaaabbbbcccc");
     lm4.setAddress(address);
@@ -6219,11 +6227,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm5.setName("ccccaaaabbbb");
     lm5.setDescription("ccccaaaabbbb");
     lm5.setPhoneNumber("ccccaaaabbbb");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("ccccaaaabbbb");
-    address.setCountry("ccccaaaabbbb");
-    address.setState("ccccaaaabbbb");
-    address.setCity("ccccaaaabbbb");
+    address.setState("ccccaaaabbbb"); 
     address.setDistrict("ccccaaaabbbb");
+#endif
+     address.setCity("ccccaaaabbbb");
+    address.setCountry("ccccaaaabbbb");
     address.setStreet("ccccaaaabbbb");
     address.setPostcode("ccccaaaabbbb");
     lm5.setAddress(address);
@@ -6235,11 +6245,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm6.setName("ccccbbbbaaaa");
     lm6.setDescription("ccccbbbbaaaa");
     lm6.setPhoneNumber("ccccbbbbaaaa");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("ccccbbbbaaaa");
-    address.setCountry("ccccbbbbaaaa");
     address.setState("ccccbbbbaaaa");
-    address.setCity("ccccbbbbaaaa");
     address.setDistrict("ccccbbbbaaaa");
+#endif
+    address.setCountry("ccccbbbbaaaa");
+    address.setCity("ccccbbbbaaaa");
     address.setStreet("ccccbbbbaaaa");
     address.setPostcode("ccccbbbbaaaa");
     lm6.setAddress(address);
@@ -6251,11 +6263,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm7.setName("AAABBBCCC");
     lm7.setDescription("AAABBBCCC");
     lm7.setPhoneNumber("AAABBBCCC");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("AAABBBCCC");
-    address.setCountry("AAABBBCCC");
     address.setState("AAABBBCCC");
-    address.setCity("AAABBBCCC");
     address.setDistrict("AAABBBCCC");
+#endif
+    address.setCity("AAABBBCCC");
+    address.setCountry("AAABBBCCC");
     address.setStreet("AAABBBCCC");
     address.setPostcode("AAABBBCCC");
     lm7.setAddress(address);
@@ -6267,11 +6281,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm8.setName("BBBAAACCC");
     lm8.setDescription("BBBAAACCC");
     lm8.setPhoneNumber("BBBAAACCC");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("BBBAAACCC");
-    address.setCountry("BBBAAACCC");
     address.setState("BBBAAACCC");
-    address.setCity("BBBAAACCC");
     address.setDistrict("BBBAAACCC");
+#endif
+    address.setCountry("BBBAAACCC");
+    address.setCity("BBBAAACCC");
     address.setStreet("BBBAAACCC");
     address.setPostcode("BBBAAACCC");
     lm8.setAddress(address);
@@ -6283,11 +6299,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm9.setName("BBBCCCAAA");
     lm9.setDescription("BBBCCCAAA");
     lm9.setPhoneNumber("BBBCCCAAA");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("BBBCCCAAA");
-    address.setCountry("BBBCCCAAA");
     address.setState("BBBCCCAAA");
-    address.setCity("BBBCCCAAA");
     address.setDistrict("BBBCCCAAA");
+#endif
+    address.setCity("BBBCCCAAA");
+    address.setCountry("BBBCCCAAA");
     address.setStreet("BBBCCCAAA");
     address.setPostcode("BBBCCCAAA");
     lm9.setAddress(address);
@@ -6299,11 +6317,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm10.setName("AAAABBBBCCCC");
     lm10.setDescription("AAAABBBBCCCC");
     lm10.setPhoneNumber("AAAABBBBCCCC");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("AAAABBBBCCCC");
-    address.setCountry("AAAABBBBCCCC");
     address.setState("AAAABBBBCCCC");
-    address.setCity("AAAABBBBCCCC");
     address.setDistrict("AAAABBBBCCCC");
+#endif
+    address.setCity("AAAABBBBCCCC");
+    address.setCountry("AAAABBBBCCCC");
     address.setStreet("AAAABBBBCCCC");
     address.setPostcode("AAAABBBBCCCC");
     lm10.setAddress(address);
@@ -6315,11 +6335,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm11.setName("CCCCAAAABBBB");
     lm11.setDescription("CCCCAAAABBBB");
     lm11.setPhoneNumber("CCCCAAAABBBB");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("CCCCAAAABBBB");
-    address.setCountry("CCCCAAAABBBB");
     address.setState("CCCCAAAABBBB");
-    address.setCity("CCCCAAAABBBB");
     address.setDistrict("CCCCAAAABBBB");
+#endif
+    address.setCity("CCCCAAAABBBB");
+    address.setCountry("CCCCAAAABBBB");
     address.setStreet("CCCCAAAABBBB");
     address.setPostcode("CCCCAAAABBBB");
     lm11.setAddress(address);
@@ -6331,11 +6353,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm12.setName("CCCCBBBBAAAA");
     lm12.setDescription("CCCCBBBBAAAA");
     lm12.setPhoneNumber("CCCCBBBBAAAA");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("CCCCBBBBAAAA");
-    address.setCountry("CCCCBBBBAAAA");
     address.setState("CCCCBBBBAAAA");
-    address.setCity("CCCCBBBBAAAA");
     address.setDistrict("CCCCBBBBAAAA");
+#endif
+    address.setCity("CCCCBBBBAAAA");
+    address.setCountry("CCCCBBBBAAAA");
     address.setStreet("CCCCBBBBAAAA");
     address.setPostcode("CCCCBBBBAAAA");
     lm12.setAddress(address);
@@ -6347,11 +6371,13 @@ void tst_QLandmarkManager::filterAttribute2()
     lm13.setName("xxxyyyzzz");
     lm13.setDescription("xxxyyyzzz");
     lm13.setPhoneNumber("xxxyyyzzz");
+#ifndef Q_WS_MAEMO_6
     address.setCountryCode("xxxyyyzzz");
-    address.setCountry("xxxyyyzzz");
     address.setState("xxxyyyzzz");
-    address.setCity("xxxyyyzzz");
     address.setDistrict("xxxyyyzzz");
+#endif
+    address.setCity("xxxyyyzzz");
+    address.setCountry("xxxyyyzzz");
     address.setStreet("xxxyyyzzz");
     address.setPostcode("xxxyyyzzz");
     lm13.setAddress(address);
@@ -6360,7 +6386,6 @@ void tst_QLandmarkManager::filterAttribute2()
 
     QLandmark lm14;
     m_manager->saveLandmark(&lm14);
-
     QLandmarkAttributeFilter attributeFilter;
     attributeFilter.setAttribute(field, "aaa",QLandmarkFilter::MatchStartsWith);
 
@@ -6426,20 +6451,22 @@ void tst_QLandmarkManager::filterAttribute2_data()
     QTest::newRow("description async") << "description" << "async";
     QTest::newRow("phone number sync") << "phoneNumber" << "sync";
     QTest::newRow("phone number async") << "phoneNumber" << "async";
-    QTest::newRow("countryCode sync") << "countryCode" << "sync";
-    QTest::newRow("countryCode async") << "countryCode" << "async";
     QTest::newRow("country sync") << "country" << "sync";
     QTest::newRow("country async") << "country" << "async";
-    QTest::newRow("state sync") << "state" << "sync";
-    QTest::newRow("state sync") << "state" << "async";
     QTest::newRow("city sync") << "city" << "sync";
     QTest::newRow("city async") << "city" << "async";
-    QTest::newRow("district sync") << "district" << "sync";
-    QTest::newRow("district async") << "district" << "async";
     QTest::newRow("street sync") << "street" << "sync";
     QTest::newRow("street async") << "street" << "async";
     QTest::newRow("postcode sync") << "postcode" << "sync";
     QTest::newRow("postcode async") << "postcode" << "async";
+#ifndef Q_WS_MAEMO_6
+    QTest::newRow("countryCode sync") << "countryCode" << "sync";
+    QTest::newRow("countryCode async") << "countryCode" << "async";
+    QTest::newRow("state sync") << "state" << "sync";
+    QTest::newRow("state sync") << "state" << "async";
+    QTest::newRow("district sync") << "district" << "sync";
+    QTest::newRow("district async") << "district" << "async";
+#endif
 }
 
 #endif
