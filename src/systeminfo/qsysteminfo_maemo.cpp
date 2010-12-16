@@ -833,8 +833,8 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     int newCellId = var3;
     QString newMobileCountryCode;
     QString newMobileNetworkCode;
-    newMobileCountryCode.setNum(var4);
-    newMobileNetworkCode.setNum(var5);
+    newMobileCountryCode.setNum(var5);
+    newMobileNetworkCode.setNum(var4);
 
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
@@ -1390,6 +1390,21 @@ QString QSystemDeviceInfoPrivate::productName()
 }
 
 #endif
+
+int QSystemDeviceInfoPrivate::messageRingtoneVolume()
+{
+    return 0;
+}
+
+int QSystemDeviceInfoPrivate::voiceRingtoneVolume()
+{
+    return 0;
+}
+
+bool QSystemDeviceInfoPrivate::vibrationActive()
+{
+    return false;
+}
 
 //////////////
 ///////
