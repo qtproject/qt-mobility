@@ -123,7 +123,7 @@ protected:
 TestQGeoPositionInfoSource::TestQGeoPositionInfoSource(QObject *parent)
         : QObject(parent)
 {
-#if TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
     m_geoclueMock = 0;
 #endif
     m_testingDefaultSource = false;
@@ -169,14 +169,14 @@ void TestQGeoPositionInfoSource::base_cleanupTestCase()
 void TestQGeoPositionInfoSource::initTestCase()
 {
     base_initTestCase();
-#ifdef TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
     m_threadGeoclueMock.start();
 #endif
 }
 
 void TestQGeoPositionInfoSource::init()
 {
-#ifdef TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
     initGeoclueMock();
 #endif
     base_init();    
@@ -184,7 +184,7 @@ void TestQGeoPositionInfoSource::init()
 
 void TestQGeoPositionInfoSource::cleanup()
 {
-#ifdef TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
     if (m_geoclueMock)
         delete m_geoclueMock;
     m_geoclueMock =0;
@@ -197,7 +197,7 @@ void TestQGeoPositionInfoSource::cleanupTestCase()
     base_cleanupTestCase();
 }
 
-#ifdef TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
 void TestQGeoPositionInfoSource::initGeoclueMock()
 {
     if (m_geoclueMock)
@@ -343,7 +343,7 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 {
     QTest::addColumn<int>("interval");
     QTest::addColumn<int>("expectedInterval");
-#ifdef TST_MOCK_GEOCLUE
+#ifdef TST_GEOCLUEMOCK_ENABLED
     initGeoclueMock();
 #endif
     QGeoPositionInfoSource *source = createTestSource();

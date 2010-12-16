@@ -50,7 +50,7 @@
 #   include "qgeosatelliteinfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeosatelliteinfosource_maemo5_p.h"
-#elif defined(Q_WS_MEEGO)
+#elif (defined(Q_WS_MEEGO)) && (defined(GYPSY_AVAILABLE))
 #   include "qgeosatelliteinfosource_gypsy_p.h"
 #endif
 
@@ -114,7 +114,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return source;
 #elif defined(QT_SIMULATOR)
     return new QGeoSatelliteInfoSourceSimulator(parent);
-#elif defined(Q_WS_MEEGO) && (defined(GYPSY_AVAILABLE))
+#elif (defined(Q_WS_MEEGO)) && (defined(GYPSY_AVAILABLE))
     QGeoSatelliteInfoSourceGypsy *source = new QGeoSatelliteInfoSourceGypsy(parent);
     int status = source->init();
     if (status == -1) {

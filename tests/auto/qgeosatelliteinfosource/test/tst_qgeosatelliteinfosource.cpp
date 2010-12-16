@@ -41,56 +41,10 @@
 
 #include "../../testqgeosatelliteinfosource_p.h"
 #include <QDebug>
-#include <QProcess>
-#include <QProcessEnvironment>
-
-// #ifdef TST_GYPSY_MOCK todo
-
-// Temporary define to test the concept
-#define MOCK_LIB_DIR "/QT/meego-location-qt-mobility/tests/auto/qgeosatelliteinfosource/gypsymock/libgypsy.so.0"
-
-static bool gypsyMockDisabled()
-{
-    QByteArray v = qgetenv("TST_DISABLE_GYPSY_MOCK");
-    return (!v.isEmpty() && v != "0" && v != "false");
-}
-// #endif // todo
-
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-
-    qDebug() << "*** running the main in pid: " <<  app.applicationPid();
-    qDebug() << "*** applicationFilePath is: " << QCoreApplication::applicationFilePath ();
-
-    if (gypsyMockDisabled()) {
-        qDebug("*** Gypsy mock is disabled, executing against real libraries.");
-        return QTest::qExec(test, argc, argv);
-    } else {
-        // Reinvoke the testprogram, this time preloaded with mocked library
-        QProcess process;
-        QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-
-        if (environment.contains("TST_QGEOSATELLITEINFOSOURCE_ALREADY_LAUNCHED")) {
-            qDebug("*** I am a relaunched executable, launching the actual testcase.");
-            return QTest::qExec(test, argc, argv);
-        } else {
-            qDebug("*** I am a fresh executable, relaunching myself.");
-            environment.insert("TST_QGEOSATELLITEINFOSOURCE_ALREADY_LAUNCHED", "true");
-            environment.insert("LD_PRELOAD", "/QT/meego-location-qt-mobility/tests/auto/qgeosatelliteinfosource/gypsymock/libgypsy.so.0");
-            process.setProcessEnvironment(environment);
-            process.setProcessChannelMode(QProcess::ForwardedChannels);
-            process.start(QCoreApplication::applicationFilePath ());
-            qDebug() << "*** laundched from pid: " <<  app.applicationPid();
-            qDebug() << "*** the pid of the new process is: " <<  process.pid();
-            if (process.waitForFinished(-1))
-                qDebug() << "*** The process finished ok.";
-            else
-                qDebug("*** The process failed to finish.");
-            qDebug() << "*** The testcases return value is: " << process.exitCode();
-            return process.exitCode(); // this is the return value of the actual testcase
-        }
-    }
+    return QTest::qExec(test, argc, argv);
 }
