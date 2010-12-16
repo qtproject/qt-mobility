@@ -25,6 +25,7 @@ PRIVATE_HEADERS += \
     bluetooth/qbluetoothservicediscoveryagent_p.h\
     bluetooth/qbluetoothsocket_p.h\
     bluetooth/qrfcommserver_p.h \
+    bluetooth/ql2capserver_p.h \
     bluetooth/qiodevice_p.h \
     bluetooth/qobjectpriv_p.h \
     bluetooth/qbluetoothtransferrequest_p.h \
@@ -91,7 +92,8 @@ symbian {
         bluetooth/qrfcommserver_bluez.cpp \
         bluetooth/qbluetoothlocaldevice_bluez.cpp \
         bluetooth/qbluetoothtransferreply_bluez.cpp \
-        bluetooth/qbluetoothtransfermanager_bluez.cpp
+        bluetooth/qbluetoothtransfermanager_bluez.cpp \
+        bluetooth/ql2capserver_bluez.cpp
 }
 
 INCLUDEPATH += $$PWD

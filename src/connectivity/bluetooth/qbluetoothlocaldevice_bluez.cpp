@@ -50,7 +50,6 @@
 #include "bluez/agent_p.h"
 #include "bluez/device_p.h"
 
-
 QTM_BEGIN_NAMESPACE
 
 #define AGENT_PATH "/qt/agent"
@@ -86,7 +85,6 @@ signals:
 
 };
 
-
 /*!
     Constructs a QBluetoothLocalDevice.
 */
@@ -119,7 +117,7 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
     this->d_ptr->agent_path = AGENT_PATH;
     this->d_ptr->agent_path.append(QString("/%1").arg(qrand()));
 
-
+    qRegisterMetaType<QBluetoothLocalDevice::Pairing>("QBluetoothLocalDevice::Pairing");
 }
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
@@ -291,7 +289,6 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
         d_ptr->pairing = pairing;
 
         if(!d_ptr->agent){
-            qDebug() << "Register agent: " << d_ptr->agent_path;
             d_ptr->agent = new OrgBluezAgentAdaptor(d_ptr);
             bool res = QDBusConnection::systemBus().registerObject(d_ptr->agent_path, d_ptr);
             if(!res){
@@ -301,10 +298,10 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
         }
 
         Pairing current_pairing = pairingStatus(address);
-        qDebug() << "Current pairing" << current_pairing;
         if(current_pairing == Paired && pairing == AuthorizedPaired){
-            qDebug() << "Setting trusted";
             OrgBluezDeviceInterface *device = getDevice(address, d_ptr);
+            if(!device)
+                return;
             QDBusPendingReply<> deviceReply = device->SetProperty(QLatin1String("Trusted"), QDBusVariant(true));
             deviceReply.waitForFinished();
             if(deviceReply.isError()){
@@ -312,11 +309,13 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
                 return;
             }
             delete device;
-            emit pairingFinished(address, QBluetoothLocalDevice::AuthorizedPaired);
+            QMetaObject::invokeMethod(this, "pairingFinished", Qt::QueuedConnection, Q_ARG(QBluetoothAddress, address),
+                                      Q_ARG(QBluetoothLocalDevice::Pairing, QBluetoothLocalDevice::AuthorizedPaired));
         }
         else if(current_pairing == AuthorizedPaired && pairing == Paired){
-            qDebug() << "Removing trusted";
             OrgBluezDeviceInterface *device = getDevice(address, d_ptr);
+            if(!device)
+                return;
             QDBusPendingReply<> deviceReply = device->SetProperty(QLatin1String("Trusted"), QDBusVariant(false));
             deviceReply.waitForFinished();
             if(deviceReply.isError()){
@@ -324,7 +323,8 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
                 return;
             }
             delete device;
-            emit pairingFinished(address, QBluetoothLocalDevice::Paired);
+            QMetaObject::invokeMethod(this, "pairingFinished", Qt::QueuedConnection, Q_ARG(QBluetoothAddress, address),
+                                      Q_ARG(QBluetoothLocalDevice::Pairing, QBluetoothLocalDevice::Paired));
         }
         else {
             QDBusPendingReply<QDBusObjectPath> reply =
@@ -359,6 +359,9 @@ void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pai
 QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
 {
     OrgBluezDeviceInterface *device = getDevice(address, d_ptr);
+
+    if(!device)
+        return Unpaired;
 
     QDBusPendingReply<QVariantMap> deviceReply = device->GetProperties();
     deviceReply.waitForFinished();
@@ -428,7 +431,6 @@ QString QBluetoothLocalDevicePrivate::RequestPinCode(const QDBusObjectPath &in0)
 
 void QBluetoothLocalDevicePrivate::pairingCompleted(QDBusPendingCallWatcher *watcher)
 {
-    qDebug() << "Pairing message returned";
     QDBusPendingReply<> reply = *watcher;
 
     if(reply.isError()) {

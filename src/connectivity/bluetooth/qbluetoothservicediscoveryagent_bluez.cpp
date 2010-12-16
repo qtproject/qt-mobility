@@ -130,7 +130,7 @@ bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddr
     if(deviceReply.isError())
         return false;
     QVariantMap v = deviceReply.value();
-    QStringList device_uuids = v.value("UUIDs").toStringList();    
+    QStringList device_uuids = v.value("UUIDs").toStringList();
 
     if(device_uuids.empty() && !uuidFilter.isEmpty()){
         return false;
@@ -154,9 +154,9 @@ done:
     if(foundDevice) {
         QBluetoothServiceInfo serviceInfo;
 
-        serviceInfo.setServiceName(v.value("Name").toString());
-        serviceInfo.setServiceDescription(v.value("Alias").toString());
         serviceInfo.setDevice(info);
+        serviceInfo.setAttribute(QBluetoothServiceInfo::ProtocolDescriptorList,
+                                 QBluetoothServiceInfo::Sequence(v.values("UUIDs")));
 
         Q_Q(QBluetoothServiceDiscoveryAgent);
 
@@ -166,7 +166,7 @@ done:
         return true;
     }    
 
-qDebug() << "Device did not match UUID fitler" << address.toString() << device_uuids.count();
+//    qDebug() << "Device did not match UUID fitler" << address.toString() << device_uuids.count();
     return true; // no uuid
 }
 

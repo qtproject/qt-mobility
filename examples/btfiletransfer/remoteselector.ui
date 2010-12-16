@@ -80,6 +80,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="pairingBusy">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="stopButton">
          <property name="enabled">
           <bool>false</bool>

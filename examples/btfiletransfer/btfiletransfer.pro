@@ -30,7 +30,8 @@ symbian {
 }
 
 OTHER_FILES += \
-    busy.gif
+    busy.gif \
+    pairing.gif
 
 RESOURCES += \
     btfiletransfer.qrc

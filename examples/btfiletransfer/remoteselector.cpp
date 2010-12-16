@@ -79,6 +79,10 @@ RemoteSelector::RemoteSelector(QWidget *parent)
 
     ui->busyWidget->setMovie(new QMovie(":/icons/busy.gif"));
     ui->busyWidget->movie()->start();
+
+    ui->pairingBusy->setMovie(new QMovie(":/icons/pairing.gif"));
+    ui->pairingBusy->hide();
+
 }
 
 RemoteSelector::~RemoteSelector()
@@ -136,7 +140,6 @@ void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo)
 //                                                             serviceInfo.device().name(), serviceInfo.serviceName()));
 
     int row = ui->remoteDevices->rowCount();
-    QBrush b = QBrush(QColor("light cyan"));
     ui->remoteDevices->insertRow(row);
     QTableWidgetItem *item = new QTableWidgetItem(serviceInfo.device().address().toString());
     ui->remoteDevices->setItem(row, 0, item);
@@ -189,6 +192,7 @@ void RemoteSelector::startDiscovery()
 void RemoteSelector::on_refreshPB_clicked()
 {
     startDiscovery();
+    ui->stopButton->setDisabled(false);
 }
 
 void RemoteSelector::on_fileSelectPB_clicked()
@@ -229,7 +233,6 @@ void RemoteSelector::on_stopButton_clicked()
 
 void RemoteSelector::displayPin(const QBluetoothAddress &address, QString pin)
 {
-    qDebug() << "Display for" << address.toString() << pin;
     m_pindisplay = new pinDisplay(QString("Enter pairing pin on: %1").arg(address.toString()), pin, this);
     m_pindisplay->show();
 }
@@ -243,6 +246,9 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
     QBluetoothServiceInfo service;
     int row = 0;
 
+    ui->pairingBusy->hide();
+    ui->pairingBusy->movie()->stop();
+
     ui->remoteDevices->blockSignals(true);
 
     for(int i = 0; i < m_discoveredServices.count(); i++){
@@ -255,9 +261,6 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
 
     if(m_pindisplay)
         delete m_pindisplay;
-
-    qDebug() << "Pairing finished: " << address.toString() << status << service.isValid();
-
 
     QMessageBox msgBox;
     if(status == QBluetoothLocalDevice::Paired ||
@@ -282,15 +285,16 @@ void RemoteSelector::pairingFinished(const QBluetoothAddress &address, QBluetoot
             ui->remoteDevices->item(row, 4)->setCheckState(Qt::Unchecked);
         }
     }
-    ui->remoteDevices->blockSignals(false);
 
     msgBox.exec();
+
+    ui->remoteDevices->blockSignals(false);
+
 
 }
 
 void RemoteSelector::on_remoteDevices_cellClicked(int row, int column)
 {
-
     m_service = m_discoveredServices.value(row);
     if(!ui->fileName->text().isEmpty()) {
         ui->sendButton->setDisabled(false);
@@ -307,24 +311,21 @@ void RemoteSelector::on_remoteDevices_itemChanged(QTableWidgetItem* item)
         return;
 
     if(item->checkState() == Qt::Unchecked && column == 3){
-        qDebug() << "Unpairing";
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Unpaired);
     }
     else if(item->checkState() == Qt::Checked && column == 3 ||
             item->checkState() == Qt::Unchecked && column == 4){
-        qDebug() << "Pairing";
-        qDebug() << "Pair with" << m_service.device().address().toString();
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::Paired);
         ui->remoteDevices->blockSignals(true);
-        item->setCheckState(Qt::PartiallyChecked);
+        ui->remoteDevices->item(row, column)->setCheckState(Qt::PartiallyChecked);
         ui->remoteDevices->blockSignals(false);
     }
     else if(item->checkState() == Qt::Checked && column == 4){
-        qDebug() << "Paid & Auth";
-        qDebug() << "Pair Auth with" << m_service.device().address().toString();
         m_localDevice->requestPairing(m_service.device().address(), QBluetoothLocalDevice::AuthorizedPaired);
         ui->remoteDevices->blockSignals(true);
-        item->setCheckState(Qt::PartiallyChecked);
+        ui->remoteDevices->item(row, column)->setCheckState(Qt::PartiallyChecked);
         ui->remoteDevices->blockSignals(false);
     }
+    ui->pairingBusy->show();
+    ui->pairingBusy->movie()->start();
 }
