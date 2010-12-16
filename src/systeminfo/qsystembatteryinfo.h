@@ -144,7 +144,6 @@ Q_SIGNALS:
     void currentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
     void remainingChargingTimeChanged(int);
-    void voltageChanged(int);
 
 private:
     QSystemBatteryInfoPrivate *d;
