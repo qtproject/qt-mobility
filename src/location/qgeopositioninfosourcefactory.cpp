@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,49 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOSATELLITEINFOSOURCE_H
-#define QGEOSATELLITEINFOSOURCE_H
 
-#include "qmobilityglobal.h"
-#include "qgeosatelliteinfo.h"
+#include "qgeopositioninfosourcefactory.h"
 
-#include <QObject>
-#include <QList>
-
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoSatelliteInfoSourcePrivate;
-class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
+int QGeoPositionInfoSourceFactory::sourcePriority() const
 {
-    Q_OBJECT
-public:
-    explicit QGeoSatelliteInfoSource(QObject *parent);
-
-    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
-    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
-    static QStringList availableSources();
-
-public Q_SLOTS:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
-
-    virtual void requestUpdate(int timeout = 0) = 0;
-
-Q_SIGNALS:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+    return 0;
+}

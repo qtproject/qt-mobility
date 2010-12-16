@@ -148,7 +148,8 @@ SOURCES += \
             qgeosatelliteinfosource.cpp \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
-            qgeoareamonitor_polling.cpp
+            qgeoareamonitor_polling.cpp \
+    qgeopositioninfosourcefactory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,49 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOSATELLITEINFOSOURCE_H
-#define QGEOSATELLITEINFOSOURCE_H
+
+#ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
+#define QGEOPOSITIONINFOSOURCEFACTORY_H
 
 #include "qmobilityglobal.h"
-#include "qgeosatelliteinfo.h"
-
-#include <QObject>
+#include "qgeopositioninfosource.h"
+#include "qgeosatelliteinfosource.h"
 #include <QList>
-
-
-QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourcePrivate;
-class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
+class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
 {
-    Q_OBJECT
 public:
-    explicit QGeoSatelliteInfoSource(QObject *parent);
+    virtual ~QGeoPositionInfoSourceFactory();
 
-    static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
-    static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
-    static QStringList availableSources();
+    virtual QString sourceName() const = 0;
+    virtual int sourceVersion() const = 0;
+    virtual int sourcePriority() const;
 
-public Q_SLOTS:
-    virtual void startUpdates() = 0;
-    virtual void stopUpdates() = 0;
-
-    virtual void requestUpdate(int timeout = 0) = 0;
-
-Q_SIGNALS:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSource)
-    QGeoSatelliteInfoSourcePrivate *d;
+    virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
+    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
+QT_BEGIN_NAMESPACE
+#define QT_POSITION_SOURCE_INTERFACE "com.nokia.qt.mobility.position.sourcefactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QGeoPositionInfoSourceFactory, QT_POSITION_SOURCE_INTERFACE);
+QT_END_NAMESPACE
 
-#endif
+#endif // QGEOPOSITIONINFOSOURCEFACTORY_H
