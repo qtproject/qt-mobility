@@ -37,31 +37,37 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "inputcontroller.h"
-#include "view.h"
+#include "gyroscopecontroller.h"
 
-const QString InputController::QGYROSCOPE = "QGyroscope";
-const QString InputController::QACCELEROMETER="QAccelerometer";
-const QString InputController::QORIENTATIONSENSOR = "QOrientationSensor";
-const QString InputController::QMAGNETOMETER = "QMagnetometer";
-const QString InputController::QROTATIONSENSOR = "QRotationSensor";
-const QString InputController::QTAPSENSOR = "QTapSensor";
-const QString InputController::QCOMPASS = "QCompass";
-const QString InputController::QKEYS = "Keys";
+GyroscopeController::GyroscopeController(): InputController(){
+    m_gyroscope.connectToBackend();
+    m_gyroscope.start();
+    connect(&m_gyroscope, SIGNAL(readingChanged()), this, SLOT(update()));
+}
 
-int InputController::m_x =0;
-int InputController::m_y =0;
+GyroscopeController::~GyroscopeController(){
+    m_gyroscope.stop();
+    disconnect(&m_gyroscope);
+}
 
-InputController::InputController() {}
 
-void InputController::keyPressEvent(QKeyEvent*){}
+void GyroscopeController::update()
+{
+    qreal x = m_gyroscope.reading()->x();
+    qreal y= m_gyroscope.reading()->y();
+    m_dx = x;
+    m_dy= y;
+    updateCoordinates();
 
-int InputController::getX(){return m_x;}
+}
 
-int InputController::getY() {return m_y;}
 
-void InputController::setX(int x){m_x = x;}
+void GyroscopeController::updateCoordinates(){
+    m_x +=m_dx;
+    m_y +=m_dy;
 
-void InputController::setY(int y){m_y = y;}
+}
 
-void InputController::updateCoordinates(){}
+
