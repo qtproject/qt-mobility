@@ -76,7 +76,7 @@ public:
 
 QHash<QString, QGeoPositionInfoSourceFactory*> QGeoSatelliteInfoSourcePrivate::plugins(bool reload)
 {
-    static QHash<QString, QGeoServiceProviderFactory*> plugins;
+    static QHash<QString, QGeoPositionInfoSourceFactory*> plugins;
     static bool alreadyDiscovered = false;
 
     if (reload == true)
@@ -114,14 +114,14 @@ void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPosit
         QGeoPositionInfoSourceFactory *f =
                 qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
         if (f) {
-            QString name = f->providerName();
+            QString name = f->sourceName();
 
 #if !defined QT_NO_DEBUG
             const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
-                qDebug() << "Dynamic: found a service provider plugin with name" << name;
+                qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
 #endif
-            plugins->insertMulti(name, f);
+            plugins.insertMulti(name, f);
         }
     }
 }
@@ -138,14 +138,14 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
                 qobject_cast<QGeoPositionInfoSourceFactory*>(staticPlugins.at(i));
 
         if (f) {
-            QString name = f->providerName();
+            QString name = f->sourceName();
 
 #if !defined QT_NO_DEBUG
             if (showDebug)
-                qDebug() << "Static: found a service provider plugin with name" << name;
+                qDebug("Static: found a service provider plugin with name %s", qPrintable(name));
 #endif
             if (!name.isEmpty()) {
-                plugins->insertMulti(name, f);
+                plugins.insertMulti(name, f);
             }
         }
 
@@ -229,7 +229,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     delete gypsySource;
 #endif // GYPSY_AVAILABLE
 #endif
-    foreach (QGeoPositionInfoSourceFactory *f, d->pluginsSorted()) {
+    foreach (QGeoPositionInfoSourceFactory *f, QGeoSatelliteInfoSourcePrivate::pluginsSorted()) {
         QGeoSatelliteInfoSource *src = f->satelliteInfoSource(parent);
         if (src)
             return src;
@@ -246,7 +246,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
-    QGeoPositionInfoSourceFactory *f = d->plugins().value(sourceName);
+    QGeoPositionInfoSourceFactory *f = QGeoSatelliteInfoSourcePrivate::plugins().value(sourceName);
     if (f) {
         QGeoSatelliteInfoSource *src = f->satelliteInfoSource(parent);
         if (src)
@@ -260,7 +260,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 */
 QStringList QGeoSatelliteInfoSource::availableSources()
 {
-    return d->plugins().keys();
+    return QGeoSatelliteInfoSourcePrivate::plugins().keys();
 }
 
 /*!
