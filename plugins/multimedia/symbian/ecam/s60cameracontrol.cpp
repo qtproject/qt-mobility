@@ -548,6 +548,12 @@ void S60CameraControl::advancedSettingsCreated()
 
 void S60CameraControl::MceoCameraReady()
 {
+    // Rotate camera if requested
+    if (m_rotateCameraWhenReady) {
+        resetCameraOrientation();
+        return;
+    }
+
     if (m_internalState != QCamera::LoadedStatus) {
 
         switch (m_requestedState) {
@@ -796,9 +802,12 @@ void S60CameraControl::resetCamera()
  */
 void S60CameraControl::resetCameraOrientation()
 {
+    // If camera has not been created, it will be created automatically to correct orientation
+    if (!m_cameraEngine)
+        return;
+
     // Check Image/VideoCapture allow rotation
-    if (!m_cameraEngine ||
-        (!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
+    if ((!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
         m_videoCaptureState == S60VideoCaptureSession::ERecording ||
         m_videoCaptureState == S60VideoCaptureSession::EPaused) {
 
@@ -808,7 +817,8 @@ void S60CameraControl::resetCameraOrientation()
         // Obs! If preview creation is changed to be synchnonously done during
         // the image capture this implementation needs to be changed)
         if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
-            m_videoCaptureState != S60VideoCaptureSession::EPaused)
+            m_videoCaptureState != S60VideoCaptureSession::EPaused &&
+            m_internalState == QCamera::ActiveStatus)
             connect(m_imageSession, SIGNAL(imageCaptured(const int, const QImage&)),
                 this, SLOT(imageCaptured(const int, const QImage&)));
 
