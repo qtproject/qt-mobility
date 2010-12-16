@@ -162,8 +162,8 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default
     satellite data source that is appropriate for the platform, if one is
-    available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an
-    appropriate custom source of satellite data.
+    available. Otherwise, available QGeoPositionInfoSourceFactory plugins will
+    be checked for one that has a satellite data source available.
 
     Call startUpdates() and stopUpdates() to start and stop regular updates,
     or requestUpdate() to request a single update.
@@ -184,9 +184,11 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 
 /*!
     Creates and returns a source with the specified \a parent that reads
-    from the system's default source of satellite update information.
+    from the system's default source of satellite update information, or the
+    highest priority available plugin.
 
-    Returns 0 if the system has no default source.
+    Returns 0 if the system has no default source and no valid plugins
+    could be found.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
@@ -256,7 +258,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 }
 
 /*!
-    Returns a list of available source plugins.
+    Returns a list of available source plugins. Note that this does not
+    include the default system backend, if one is available.
 */
 QStringList QGeoSatelliteInfoSource::availableSources()
 {

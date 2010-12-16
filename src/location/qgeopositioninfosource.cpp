@@ -76,8 +76,8 @@ QTM_BEGIN_NAMESPACE
 
     The static function QGeoPositionInfoSource::createDefaultSource() creates a default
     position source that is appropriate for the platform, if one is available.
-    Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate
-    custom source of position data.
+    Otherwise, QGeoPositionInfoSource will check for available plugins that
+    implement the QGeoPositionInfoSourceFactory interface.
 
     Users of a QGeoPositionInfoSource subclass can request the current position using
     requestUpdate(), or start and stop regular position updates using
@@ -290,9 +290,11 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
 /*!
     Creates and returns a position source with the given \a parent that
-    reads from the system's default sources of location data.
+    reads from the system's default sources of location data, or the plugin
+    with the highest available priority.
 
-    Returns 0 if the system has no default position source.
+    Returns 0 if the system has no default position source and no valid plugins
+    could be found.
 */
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
@@ -365,7 +367,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
 
 
 /*!
-    Returns a list of available source plugins.
+    Returns a list of available source plugins. Note that this list does not
+    include the default platform backend, if one is available.
 */
 QStringList QGeoPositionInfoSource::availableSources()
 {
