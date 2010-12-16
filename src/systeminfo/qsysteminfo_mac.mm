@@ -2313,7 +2313,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     if(isDeviceLocked()) {
         return QSystemDeviceInfo::DeviceLocked;

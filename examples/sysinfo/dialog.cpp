@@ -194,23 +194,17 @@ void Dialog::setupDevice()
     wirelessKeyboardConnectedRadioButton->setChecked(di->isWirelessKeyboardConnected());
 
     QString lockState;
-    QSystemDeviceInfo::LockType lock = di->lockStatus();
-    switch(lock) {
-    case QSystemDeviceInfo::UnknownLock:
+    QSystemDeviceInfo::LockTypeFlags lock = di->lockStatus();
+    if((lock & QSystemDeviceInfo::UnknownLock)){
         lockState = "Unknown";
-        break;
-    case QSystemDeviceInfo::DeviceLocked:
-        lockState = "Device Locked";
-        break;
-    case QSystemDeviceInfo::DeviceUnlocked:
-        lockState = "Device unlocked";
-        break;
-    case QSystemDeviceInfo::TouchAndKeyboardLocked:
+    }
+    if((lock & QSystemDeviceInfo::PinLocked)){
+        lockState = "Pin Locked";
+    }
+    if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
         lockState = "Touch and keyboard locked";
-        break;
-    };
+    }
     lockStateLabel->setText(lockState);
-
 }
 
 void Dialog::updateKeyboard(QSystemDeviceInfo::KeyboardTypeFlags type)

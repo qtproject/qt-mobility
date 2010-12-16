@@ -2144,7 +2144,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return  QUuid(wHelper->getWMIData().toString());
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }

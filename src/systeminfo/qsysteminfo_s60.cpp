@@ -1234,7 +1234,7 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     return 0;//getuniqueID();
 }
 
-QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::lockStatus()
+QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
