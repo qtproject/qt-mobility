@@ -39,41 +39,11 @@
 **
 ****************************************************************************/
 
+#include <hwrmhaptics.h>
+#include <hwrmlogicalactuators.h>
 
-#ifndef QDECLARATIVESCREENSAVERINFO_H
-#define QDECLARATIVESCREENSAVERINFO_H
-
-#include <QObject>
-#include <qsystemscreensaver.h>
-
-QT_BEGIN_HEADER
-QTM_USE_NAMESPACE
-
-class QDeclarativeScreenSaver : public QObject
+int main(int, char**)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed)
-    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited CONSTANT)
-
-public:
-    explicit QDeclarativeScreenSaver(QObject *parent = 0);
-    virtual ~QDeclarativeScreenSaver();
-
-    bool screenSaverDelayed();
-    bool screenSaverInhibited();
-    Q_INVOKABLE bool setScreenSaverInhibit();
-
-signals:
-
-public slots:
-    void setScreenSaverDelayed(bool on);
-
-private:
-    QSystemScreenSaver *screensaverInfo;
-    bool screenSaverDelay;
-
-};
-QT_END_NAMESPACE
-QT_END_HEADER
-
-#endif // QDECLARATIVESCREENSAVERINFO_H
+    CHWRMHaptics *haptics = CHWRMHaptics::NewL( NULL, NULL );
+    return 0;
+}

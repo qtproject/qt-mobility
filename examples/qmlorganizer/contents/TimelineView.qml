@@ -46,20 +46,18 @@ Rectangle {
     id : timelineView
     anchors.fill : parent
     opacity : parent.opacity
-    property int year
-    property int month
-    property int day
+    property int year:calendar.year
+    property int month:calendar.month
+    property int day:calendar.day
     Connections {
         target: calendar
-        onDayChanged : {
-            year = calendar.day.getFullYear();
-            month = calendar.day.getMonth();
-            day = calendar.day.getDate();
+        onCurrentDateChanged : {
             dayList.currentIndex = day - 1;
             monthList.currentIndex = month;
             yearList.currentIndex = year - yearModel.start;
         }
     }
+
     //Day view
     Rectangle {
         id: dayView
@@ -97,11 +95,11 @@ Rectangle {
             keyNavigationWraps : true
 
             onCurrentIndexChanged : {
-                calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), currentIndex + 1);
-                timelineView.month = calendar.day.getMonth();
-                timelineView.day = calendar.day.getDate();
-                monthList.currentIndex = timelineView.month;
-                currentIndex = timelineView.day - 1;
+                if (timelineView.opacity > 0) {
+                    calendar.currentDate = new Date(timelineView.year, timelineView.month, currentIndex + 1);
+                    monthList.currentIndex = timelineView.month;
+                    currentIndex = timelineView.day - 1;
+                }
             }
 
         }
@@ -131,9 +129,7 @@ Rectangle {
                     }
                     Repeater {
                         focus: true
-                        model:calendar.organizer.itemIds(new Date(calendar.day.getFullYear(),
-                                                                                                        calendar.day.getMonth(),
-                                                                                                        index + 1))
+                        model:calendar.organizer.itemIds(new Date(timelineView.year,timelineView.month, index + 1))
 
                         Text {
                             clip: true
@@ -222,11 +218,11 @@ Rectangle {
                var  d = Date.parse("Feb 31, 2010");
             }
             onCurrentIndexChanged : {
-                calendar.day = new Date(calendar.day.getFullYear(), currentIndex, calendar.day.getDate());
-                timelineView.month = calendar.day.getMonth();
-                timelineView.day = calendar.day.getDate();
-                currentIndex = timelineView.month;
-                dayList.currentIndex = timelineView.day - 1;
+                if (timelineView.opacity > 0) {
+                    calendar.currentDate = new Date(timelineView.year, currentIndex, timelineView.day);
+                    currentIndex = timelineView.month;
+                    dayList.currentIndex = timelineView.day - 1;
+                }
             }
         }
 
@@ -333,12 +329,11 @@ Rectangle {
             Component.onCompleted: Timeline.extendYearModel(true);
             onCurrentIndexChanged: {
                 Timeline.extendYearModel(false);
-                calendar.day = new Date(yearModel.start + currentIndex,  calendar.day.getMonth(), calendar.day.getDate());
-                timelineView.year = calendar.day.getFullYear();
-                timelineView.month = calendar.day.getMonth();
-                timelineView.day = calendar.day.getDate();
-                monthList.currentIndex = timelineView.month;
-                dayList.currentIndex = timelineView.day - 1;
+                if (timelineView.opacity > 0) {
+                    calendar.currentDate = new Date(yearModel.start + currentIndex,  timelineView.month, timelineView.day);
+                    monthList.currentIndex = timelineView.month;
+                    dayList.currentIndex = timelineView.day - 1;
+                }
             }
 
         ListModel {
