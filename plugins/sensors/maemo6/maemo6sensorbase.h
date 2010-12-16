@@ -111,6 +111,7 @@ protected:
         if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
         if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+        if (sensorName=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
 
         setDescription(m_sensorInterface->property("description").toString());
 
