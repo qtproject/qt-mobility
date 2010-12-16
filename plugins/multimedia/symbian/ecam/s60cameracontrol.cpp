@@ -413,6 +413,9 @@ void S60CameraControl::unloadCamera()
     m_internalState = QCamera::LoadingStatus;
     emit statusChanged(m_internalState);
 
+    if (m_inactivityTimer->isActive())
+        m_inactivityTimer->stop();
+
     m_cameraEngine->ReleaseAndPowerOff();
 
     m_internalState = QCamera::UnloadedStatus;
@@ -425,6 +428,10 @@ void S60CameraControl::startCamera()
     emit statusChanged(m_internalState);
 
     emit cameraReadyChanged(true);
+
+    if (m_inactivityTimer->isActive())
+        m_inactivityTimer->stop();
+
     if (m_viewfinderEngine)
         m_viewfinderEngine->startViewfinder();
     else

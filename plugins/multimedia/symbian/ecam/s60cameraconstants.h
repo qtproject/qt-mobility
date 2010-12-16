@@ -48,7 +48,7 @@
 
 #define KDefaultCameraDevice            0
 #define KECamCameraPriority             0
-#define KInactivityTimerTimeout         20000   // msec
+#define KInactivityTimerTimeout         30000   // msec
 #define KSymbianFineResolutionFactor    100.0
 #define KDefaultOpticalZoom             1.0
 #define KDefaultDigitalZoom             1.0
