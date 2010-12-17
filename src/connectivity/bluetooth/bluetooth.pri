@@ -81,7 +81,8 @@ symbian {
             bluetooth/qbluetoothtransfermanager_symbian.cpp
 
         contains(S60_VERSION, 5.0) {
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex -lbteng
+            DEFINES += S60_50_PLATFORM
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex
             
         } else {
             LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
