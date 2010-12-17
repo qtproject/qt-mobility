@@ -92,6 +92,7 @@ private slots:
     void zvalue();
     void isSelected();
     void isVisible();
+    void removeFromMap();
 
 private:
     TestHelper *m_helper;
@@ -634,6 +635,78 @@ void tst_QGeoMapGroupObject::contains()
     QCOMPARE(spy1.count(), 0);
     QCOMPARE(spy2.count(), 0);
 
+}
+
+void tst_QGeoMapGroupObject::removeFromMap()
+{
+    QPixmap pm(20, 20);
+    pm.fill(Qt::blue);
+
+    QPixmap pm2(":/poimarker.png");
+
+    QPointer<QGeoMapPixmapObject> pixmap = new QGeoMapPixmapObject(
+                QGeoCoordinate(0,0), QPoint(10,10), pm);
+    pixmap->setZValue(1);
+
+    QPointer<QGeoMapPixmapObject> pixmap2 = new QGeoMapPixmapObject(
+                QGeoCoordinate(0,0), QPoint(10,10), pm2);
+    pixmap->setZValue(0);
+
+    QPointer<QGeoMapCircleObject> circle = new QGeoMapCircleObject(
+                QGeoCoordinate(0,0), 1000);
+    circle->setZValue(2);
+    circle->setPen(QPen((QColor(255, 0, 0, 90))));
+    circle->setBrush(QBrush(QColor(255, 0, 0, 90)));
+
+    QPointer<QGeoMapRectangleObject> rect = new QGeoMapRectangleObject(
+                QGeoCoordinate(0,0), QGeoCoordinate(10,10));
+    rect->setZValue(3);
+
+    QPointer<QGeoMapGroupObject> group = new QGeoMapGroupObject();
+    group->addChildObject(pixmap);
+    group->addChildObject(pixmap2);
+    group->addChildObject(circle);
+    group->addChildObject(rect);
+
+    QPointer<QGraphicsGeoMap> map = m_helper->map();
+    map->setCenter(QGeoCoordinate(0,0));
+    map->addMapObject(group);
+
+    QTest::qWait(500);
+
+    QVERIFY(map->mapObjects().size() == 1);
+    QVERIFY(map->mapObjects().contains(group));
+    QVERIFY(map->mapObjectsInViewport().size() > 0);
+
+    map->clearMapObjects();
+
+    QVERIFY(!group);
+    QVERIFY(!circle);
+    QVERIFY(!rect);
+    QVERIFY(map->mapObjects().size() == 0);
+    QVERIFY(map->mapObjectsInViewport().size() == 0);
+
+    pixmap = new QGeoMapPixmapObject(QGeoCoordinate(0,0), QPoint(10,10), pm2);
+    pixmap->setZValue(1);
+    group = new QGeoMapGroupObject();
+    group->addChildObject(pixmap);
+
+    map->addMapObject(group);
+
+    QTest::qWait(500);
+
+    QVERIFY(map->mapObjects().size() == 1);
+    QVERIFY(map->mapObjects().contains(group));
+
+    map->removeMapObject(group);
+
+    QVERIFY(group);
+    QVERIFY(pixmap);
+    QVERIFY(map->mapObjects().size() == 0);
+
+    delete group;
+    QVERIFY(!group);
+    QVERIFY(!pixmap);
 }
 
 void tst_QGeoMapGroupObject::boundingBox_data()

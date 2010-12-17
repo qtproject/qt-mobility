@@ -54,6 +54,7 @@ SENSORS=\
     qrotationsensor\
     qtapsensor\
     qgyroscope\
+    qirproximitysensor\
 
 for(s,SENSORS) {
     # Client API

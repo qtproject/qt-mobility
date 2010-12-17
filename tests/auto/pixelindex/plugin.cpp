@@ -39,57 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORBACKEND_H
-#define QSENSORBACKEND_H
+#include "pixelindexengine.h"
+#include <qgeoserviceproviderfactory.h>
+#include <QObject>
 
-#include "qsensor.h"
-#include "qsensormanager.h"
+#include <QtPlugin>
 
-QTM_BEGIN_NAMESPACE
-
-class Q_SENSORS_EXPORT QSensorBackend : public QObject
+class PixelIndexPlugin: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QSensorBackend(QSensor *sensor);
-    virtual ~QSensorBackend();
+    PixelIndexPlugin();
+    ~PixelIndexPlugin();
 
-    virtual void start() = 0;
-    virtual void stop() = 0;
+    QString providerName() const;
+    int providerVersion() const;
 
-    // used by the backend to set metadata properties
-    void addDataRate(qreal min, qreal max);
-    void setDataRates(const QSensor *otherSensor);
-    void addOutputRange(qreal min, qreal max, qreal accuracy);
-    void setDescription(const QString &description);
-    void setPowerSavingPolicy(QSensor::PowerSavingPolicy powerSavingPolicy);
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const;
 
-    template <typename T>
-    T *setReading(T *reading)
-    {
-        if (!reading)
-            reading = new T(this);
-        setReadings(reading, new T(this), new T(this));
-        return reading;
-    }
-
-    QSensorReading *reading() const;
-    QSensor *sensor() const { return m_sensor; }
-
-    // used by the backend to inform us of events
-    void newReadingAvailable();
-    void sensorStopped();
-    void sensorBusy();
-    void sensorError(int error);
-
-private:
-    void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);
-
-    QSensor *m_sensor;
-    Q_DISABLE_COPY(QSensorBackend)
 };
 
-QTM_END_NAMESPACE
+PixelIndexPlugin::PixelIndexPlugin()
+{}
 
-#endif
+PixelIndexPlugin::~PixelIndexPlugin()
+{}
 
+QString PixelIndexPlugin::providerName() const
+{
+    return "pixelindex.plugin";
+}
+
+int PixelIndexPlugin::providerVersion() const
+{
+    return 1;
+}
+
+QGeoMappingManagerEngine* PixelIndexPlugin::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
+    return new PixelIndexEngine(parameters);
+}
+
+Q_EXPORT_PLUGIN2(qtgeoservices_pixelindexplugin, PixelIndexPlugin)
+
+#include "plugin.moc"

@@ -86,6 +86,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
+    Q_ENUMS(PowerSavingPolicy)
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type)
     Q_PROPERTY(bool connectedToBackend READ isConnectedToBackend)
@@ -98,7 +99,14 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
+    Q_PROPERTY(PowerSavingPolicy powerSavingPolicy READ powerSavingPolicy)
+    Q_PROPERTY(bool alwaysOn READ alwaysOn WRITE setAlwaysOn)
 public:
+    enum PowerSavingPolicy {
+        NoPolicy = 0,
+        SupportsAlwaysOn   = 0x01,
+        SystemStopsSensors = 0x02,
+    };
     explicit QSensor(const QByteArray &type, QObject *parent = 0);
     virtual ~QSensor();
 
@@ -106,6 +114,10 @@ public:
     void setIdentifier(const QByteArray &identifier);
 
     QByteArray type() const;
+
+    PowerSavingPolicy powerSavingPolicy() const;
+    bool alwaysOn() const;
+    void setAlwaysOn(bool alwaysOn);
 
     Q_INVOKABLE bool connectToBackend();
     bool isConnectedToBackend() const;

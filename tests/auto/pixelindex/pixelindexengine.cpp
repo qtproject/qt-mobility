@@ -134,6 +134,40 @@ PixelIndexEngine::PixelIndexEngine(const QMap<QString, QVariant> &parameters, QO
     setSupportedConnectivityModes(modes);
 }
 
+WhiteTileEngine::WhiteTileEngine(const QMap<QString, QVariant> &parameters, QObject *parent) :
+    QGeoTiledMappingManagerEngine(parameters, parent)
+{
+    setTileSize(QSize(128,128));
+    setMinimumZoomLevel(0.0);
+    setMaximumZoomLevel(3.0);
+
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::TerrainMap;
+    setSupportedMapTypes(types);
+
+    QList<QGraphicsGeoMap::ConnectivityMode> modes;
+    modes << QGraphicsGeoMap::OfflineMode;
+    setSupportedConnectivityModes(modes);
+}
+
+QPixmap indexedPixmap(int width, int height)
+{
+    QImage im(width, height, QImage::Format_RGB888);
+    im.fill(0);
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            TilePixelValue tpv;
+            tpv.setPy(y);
+            tpv.setPx(x);
+            tpv.setZoom(1);
+            im.setPixel(x, y, tpv.rgb());
+        }
+    }
+    return QPixmap::fromImage(im);
+}
+
 QGeoTiledMapReply *PixelIndexEngine::getTileImage(const QGeoTiledMapRequest &request)
 {
     QImage im(128, 128, QImage::Format_RGB888);
@@ -148,6 +182,15 @@ QGeoTiledMapReply *PixelIndexEngine::getTileImage(const QGeoTiledMapRequest &req
             im.setPixel(x, y, tpv.rgb());
         }
     }
+
+    QPixmap pm = QPixmap::fromImage(im);
+    return new PixmapTiledMapReply(pm, request);
+}
+
+QGeoTiledMapReply *WhiteTileEngine::getTileImage(const QGeoTiledMapRequest &request)
+{
+    QImage im(128, 128, QImage::Format_RGB888);
+    im.fill(0xffffffff);
 
     QPixmap pm = QPixmap::fromImage(im);
     return new PixmapTiledMapReply(pm, request);
