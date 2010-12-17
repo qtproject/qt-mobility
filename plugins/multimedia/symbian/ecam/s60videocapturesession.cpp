@@ -223,11 +223,14 @@ void S60VideoCaptureSession::applyAllSettings()
         return;
     }
 
-    // Commit settings - State is now either OpenComplete or Prepared
+    // Commit settings - State is now OpenComplete (possibly reverted from Prepared)
     commitVideoEncoderSettings();
 
-    // If capture state has been reset, a different container was requested
-    if (m_captureState == EOpening)
+    // If capture state has been changed to:
+    // * Opening: A different media container has been requested
+    // * Other: Failure during the setting committing
+    // ==> Return
+    if (m_captureState != EOpenComplete)
         return;
 
     // Start preparing
@@ -967,11 +970,6 @@ void S60VideoCaptureSession::startRecording()
         return;
     }
 
-    if (!m_cameraStarted) {
-        setError(KErrNotReady, QString("Camera is not started."));
-        return;
-    }
-
     switch (m_captureState) {
         case ENotInitialized:
         case EInitializing:
@@ -994,16 +992,10 @@ void S60VideoCaptureSession::startRecording()
             // Revert state internally, since logically applying settings means going
             // from OpenComplete ==> Preparing ==> Prepared.
             m_captureState = EOpenComplete;
-            commitVideoEncoderSettings();
+            m_startAfterPrepareComplete = true;
 
-            // Start preparing
-            m_captureState = EPreparing;
-            emit stateChanged(m_captureState);
-
-            if (m_cameraEngine->IsCameraReady()) {
-                m_startAfterPrepareComplete = true;
-                m_videoRecorder->Prepare();
-            }
+            // Commit settings and prepare with them
+            applyAllSettings();
             return;
         case ERecording:
             // Discard
@@ -1019,6 +1011,11 @@ void S60VideoCaptureSession::startRecording()
 
     // State should now be either Prepared with no Uncommitted Settings or Paused
 
+    if (!m_cameraStarted) {
+        m_startAfterPrepareComplete = true;
+        return;
+    }
+
     if (m_cameraEngine && !m_cameraEngine->IsCameraReady()) {
         setError(KErrNotReady, QString("Camera not ready to start video recording."));
         return;
@@ -1029,9 +1026,14 @@ void S60VideoCaptureSession::startRecording()
         m_captureState = ERecording;
         emit stateChanged(m_captureState);
         m_durationTimer->start();
-    }
-    else
+
+        // Reset all flags
+        m_openWhenReady = false;
+        m_prepareAfterOpenComplete = false;
+        m_startAfterPrepareComplete = false;
+    } else {
         setError(KErrNotReady, QString("Unexpected camera error."));
+    }
 }
 
 void S60VideoCaptureSession::pauseRecording()
@@ -1604,7 +1606,7 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
             m_captureState = EInitialized;
             emit stateChanged(m_captureState);
 
-            if (m_openWhenReady == true) {
+            if (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete) {
                 setOutputLocation(m_requestedSink);
                 m_openWhenReady = false; // Reset
             }
@@ -1622,10 +1624,9 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
             // Prepare right away
             if (m_startAfterPrepareComplete || m_prepareAfterOpenComplete) {
                 m_prepareAfterOpenComplete = false; // Reset
-                commitVideoEncoderSettings();
-                if (m_cameraEngine->IsCameraReady()) {
-                    m_videoRecorder->Prepare();
-                }
+
+                // Commit settings and prepare with them
+                applyAllSettings();
             }
             return;
 
@@ -1861,12 +1862,24 @@ void S60VideoCaptureSession::cameraStatusChanged(QCamera::Status status)
 {
     if (status == QCamera::ActiveStatus) {
         m_cameraStarted = true;
-        return;
-    }
-    else if (status == QCamera::UnloadedStatus)
-        releaseVideoRecording();
 
-    m_cameraStarted = false;
+        // Continue preparation or start recording if previously requested
+        if (m_captureState == EInitialized
+            && (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
+            setOutputLocation(m_requestedSink);
+            m_openWhenReady = false; // Reset
+        } else if ((m_captureState == EOpenComplete || m_captureState == EPrepared)
+            && (m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
+            startRecording();
+            m_prepareAfterOpenComplete = false; // Reset
+        }
+
+    } else if (status == QCamera::UnloadedStatus) {
+        m_cameraStarted = false;
+        releaseVideoRecording();
+    } else {
+        m_cameraStarted = false;
+    }
 }
 
 void S60VideoCaptureSession::durationTimerTriggered()
