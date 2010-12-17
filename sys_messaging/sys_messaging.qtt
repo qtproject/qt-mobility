@@ -130,7 +130,7 @@ testcase = {
     1. Fill in a known mobile phone number to *To* field
     1. Verify that the *Subject* field is disabled
     1. Fill in some random text to the body text area
-    1. Verify that the *Add*/*Remove* buttons are disabled for SMS
+    1. Verify that the *Add*/ *Remove* buttons are disabled for SMS
     1. Click on *Send*
     1. On the recever mobile phone, verify the correct SMS is received
         '));
@@ -205,7 +205,7 @@ testcase = {
     keepInTouch_startQuit : function() {
         if (automatedTestEnvironment()){
         }else{
-            prompt(twiki('---++++ Query Message: Start and Quit
+            prompt(twiki('---++++ Keep In Touch: Start and Quit
     
     1. Launch *keepintouch* application using command line
     1. Verify the application runs with no crash
@@ -215,10 +215,10 @@ testcase = {
     },
 
 
-    keepInTouch_startQuit : function() {
+    keepInTouch_queryContacts : function() {
         if (automatedTestEnvironment()){
         }else{
-            prompt(twiki('---++++ Query Message: Start and Quit
+            prompt(twiki('---++++ Keep In Touch: query contacts
     
     1. Synchronize a set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool
     1. Launch *keepintouch* application using command line
