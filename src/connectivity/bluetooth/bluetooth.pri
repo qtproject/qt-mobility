@@ -53,9 +53,9 @@ SOURCES += \
 symbian {
 
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
+    include(symbian/symbian.pri)
 
     PRIVATE_HEADERS += \
-        bluetooth/utils_symbian_p.h\
         bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h \
         bluetooth/qbluetoothsocket_symbian_p.h \
 		bluetooth/qbluetoothtransferreply_symbian_p.h

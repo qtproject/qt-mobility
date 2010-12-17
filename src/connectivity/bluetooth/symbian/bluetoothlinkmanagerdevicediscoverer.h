@@ -39,22 +39,77 @@
 **
 ****************************************************************************/
 
-#ifndef UTILS_SYMBIAN_P_H
-#define UTILS_SYMBIAN_P_H
+#ifndef BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
+#define BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H
 
-#include <bttypes.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qmobilityglobal.h>
+#include <QtCore/QObject>
+#include <qstring.h>
+
+//#include "qbluetoothdeviceinfo.h"
+#include <es_sock.h>
+#include <e32base.h>
+#include <btdevice.h>
+#include <bt_sock.h>
+#include <btsdp.h>
+
+
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &address)
+class QBluetoothDeviceInfo;
+
+class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
 {
-    return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
-}
+    Q_OBJECT
+public:
+
+//    static CBluetoothDeviceDiscoverer* NewL(RSocketServ& aSocketServ);
+    BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
+    ~BluetoothLinkManagerDeviceDiscoverer();
+
+    void StartDiscoveryL(const uint discoveryType);
+    void Stop();
+
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+
+private: // private helper functions
+
+    QBluetoothDeviceInfo currentDeviceDataToQBluetoothDeviceInfo() const;
+signals:
+    void deviceDiscoveryComplete(int aError);
+    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+    void linkManagerError(int error);
+
+private:
+
+    //  socket server handle
+    RSocketServ &m_socketServer;
+
+    RHostResolver m_hostResolver;
+    TInquirySockAddr m_addr;
+    TNameEntry m_entry;
+
+    TBool m_LIAC;
+};
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif //BLUETOOTHLINKMANAGERDEVICEDISCOVERER_H

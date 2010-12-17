@@ -39,42 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_SYMBIAN_P_H
+#ifndef UTILS_SYMBIAN_P_H
+#define UTILS_SYMBIAN_P_H
 
-#include "qbluetoothdevicediscoveryagent_p.h"
-#include "symbian/bluetoothlinkmanagerdevicediscoverer.h"
+#include <bttypes.h>
+#include <bt_sock.h>
 
-#include <es_sock.h>
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothDeviceDiscoveryAgentPrivateSymbian : public QBluetoothDeviceDiscoveryAgentPrivate
+inline QBluetoothAddress qTBTDevAddrToQBluetoothAddress(const TBTDevAddr &address)
 {
-  Q_OBJECT
-public:
-    QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent);
-    virtual ~QBluetoothDeviceDiscoveryAgentPrivateSymbian();
+    return QBluetoothAddress(QString(QByteArray((const char *)address.Des().Ptr(), 6).toHex().toUpper()));
+}
+inline quint32 qTPackSymbianDeviceClass(const TInquirySockAddr &address)
+{
+    TUint8 minorClass = address.MinorClassOfDevice();
+    TUint8 majorClass = address.MajorClassOfDevice();
+    TUint16 serviceClass = address.MajorServiceClass();
 
-    virtual void start();
-    virtual void stop();
-    virtual bool isActive() const;
-    
-
-private:
-    uint inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type);
-
-protected slots:
-    void setError(int errorCode, QString errorDescription);
-    void newDeviceFound(const QBluetoothDeviceInfo &device);
-private:
-    // shared socket servet among RHostResolvers
-    RSocketServ m_socketServer;
-    // active object for device discovery
-    BluetoothLinkManagerDeviceDiscoverer *m_deviceDiscovery;
-
-};
-
+    quint32 deviceClass = (0 << 2) | (minorClass << 6 ) | (majorClass <<5) | serviceClass;
+    return deviceClass;
+}
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

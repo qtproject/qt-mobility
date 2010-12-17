@@ -41,108 +41,118 @@
 
 #include "qbluetoothdevicediscoveryagent_symbian_p.h"
 #include "qbluetoothaddress.h"
-#include "utils_symbian_p.h"
+
+#include <bttypes.h>
 
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-_LIT(KBTLinkManagerTxt,"BTLinkManager");
-
 QBluetoothDeviceDiscoveryAgentPrivateSymbian::QBluetoothDeviceDiscoveryAgentPrivateSymbian(QObject *parent)
-: QBluetoothDeviceDiscoveryAgentPrivate(parent), CActive(EPriorityStandard)
+    : QBluetoothDeviceDiscoveryAgentPrivate(parent)
+    , m_deviceDiscovery(0)
 {
     TInt result;
-
     /* connect to socker server */
-    result = socketServer.Connect();
+    result = m_socketServer.Connect();
     if (result != KErrNone) {
-        qWarning("RSocketServ.Connect() failed with error %d", result);
+        setError(result,QString("RSocketServ.Connect() failed with error"));
         return;
     }
-
-    /* find Bluetooth protocol */
-    TProtocolDesc protocol;
-    TRAPD(error, socketServer.FindProtocol(KBTLinkManagerTxt(), protocol));
-    if (error) {
-        qWarning("RSocketServ.FindProtocol() failed with error %d", error);
-        return;
-    }
-
-    /* open host resolver */
-    TRAP(error, result = hostResolver.Open(socketServer, protocol.iAddrFamily, protocol.iProtocol));
-    if (error || result != KErrNone) {
-        qWarning("RHostResolver.Open() failed with errors %d %d", error, result);
-        return;
-    }
-
-    /* add this active object to scheduler */
-    CActiveScheduler::Add(this);
 }
 
 QBluetoothDeviceDiscoveryAgentPrivateSymbian::~QBluetoothDeviceDiscoveryAgentPrivateSymbian()
 {
-    /* cancel active object */
-    Cancel();
-
-    /* close resolver */
-    hostResolver.Close();
+    disconnect(m_deviceDiscovery);
+    delete m_deviceDiscovery;
+    m_deviceDiscovery = NULL;
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivateSymbian::start()
 {
-    if (!IsActive()) {
-        TInquirySockAddr address;
-
-        if (inquiryType == QBluetoothDeviceDiscoveryAgent::LimitedInquiry)
-            address.SetIAC(KLIAC);
-        else
-            address.SetIAC(KGIAC);
-
-        address.SetAction(KHostResInquiry|KHostResName|KHostResIgnoreCache);
-
-        hostResolver.GetByAddress(address, entry, iStatus);
-        SetActive();
+    // we need to delete previous discovery as only one query could be active a one time
+    if (m_deviceDiscovery) {
+        disconnect(m_deviceDiscovery);
+        delete m_deviceDiscovery;
+        m_deviceDiscovery = NULL;
     }
+    // clear list of found devices
+    discoveredDevices.clear();
+    // create new active object for querying devices
+    m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
+    //TODO fix signal
+    connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete(int)), this, SIGNAL(finished()));
+    connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+        this, SLOT(newDeviceFound(const QBluetoothDeviceInfo&)));
+    connect(m_deviceDiscovery, SIGNAL(linkManagerError(int)), this, SLOT(setError(int)));
+    // startup the device discovery. Discovery results are obtained from signal connected above.
+    TRAPD(errorCode, m_deviceDiscovery->StartDiscoveryL(inquiryTypeToIAC(inquiryType)))
+    setError(errorCode, "KErrNotReady"); // user should call stop / or wait to get by this.
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivateSymbian::stop()
 {
-    DoCancel();
+    disconnect(m_deviceDiscovery);
+    delete m_deviceDiscovery;
+    m_deviceDiscovery = NULL;
 }
 
 bool QBluetoothDeviceDiscoveryAgentPrivateSymbian::isActive() const
 {
-  return IsActive();
+    bool returnValue = false;
+    if (m_deviceDiscovery)
+        returnValue =  m_deviceDiscovery->IsActive();
+
+    return returnValue;
 }
-
-void QBluetoothDeviceDiscoveryAgentPrivateSymbian::RunL()
-{    
-    if (iStatus == KErrNone) {
-        QString deviceName = QString::fromUtf16(entry().iName.Ptr(), entry().iName.Length());
-
-        QBluetoothDeviceInfo device(qTBTDevAddrToQBluetoothAddress(static_cast<TBTSockAddr>(entry().iAddr).BTAddr()), deviceName, 0);
-        discoveredDevices.append(device);
-
-        emit deviceDiscovered(device);
-
-        hostResolver.Next(entry, iStatus);
-
-        SetActive();
-    } else if (iStatus == KErrEof) {
-        emit finished();
-    } else {
-        qWarning("Bluetooth device scan error %d", iStatus.Int());
-        emit finished();
-    }
-}
-
-void QBluetoothDeviceDiscoveryAgentPrivateSymbian::DoCancel()
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode, QString errorDescription)
 {
-    hostResolver.Cancel();
+    QString errorString;
+    //TODO missing error string from base classes
+    switch (errorCode) {
+        case KLinkManagerErrBase:
+            errorString.append("Link manager base error value or Insufficient baseband resources error value");
+            break;
+        case KErrProxyWriteNotAvailable:
+            errorString.append("Proxy write not available error value");
+            break;
+        case KErrReflexiveBluetoothLink:
+            errorString.append("Reflexive BT link error value");
+            break;
+        case KErrPendingPhysicalLink:
+            errorString.append("Physical link connection already pending when trying to connect the physical link");
+            break;
+        case KErrRemoteDeviceIndicatedNoBonding:
+            errorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
+            break;
+        default:
+            break;
+    }
+    emit error(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }
 
-QBluetoothDeviceDiscoveryAgentPrivate* QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(QBluetoothDeviceDiscoveryAgent *parent){
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::newDeviceFound(const QBluetoothDeviceInfo &device)
+{
+    // add found device to the list of devices
+    discoveredDevices.append(device);
+    emit deviceDiscovered(device);
+}
+
+uint QBluetoothDeviceDiscoveryAgentPrivateSymbian::inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type)
+{
+    if (type == QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry)
+        return KGIAC;
+    else if (type == QBluetoothDeviceDiscoveryAgent::LimitedInquiry)
+        return KLIAC;
+
+    ASSERT(0); //enum has changed and not handled
+    return KGIAC; // to get rid of compiler warning
+}
+
+
+QBluetoothDeviceDiscoveryAgentPrivate* QBluetoothDeviceDiscoveryAgentPrivate::constructPrivateObject(
+    QBluetoothDeviceDiscoveryAgent *parent)
+{
   QBluetoothDeviceDiscoveryAgentPrivateSymbian *d = new QBluetoothDeviceDiscoveryAgentPrivateSymbian(parent);
   d->q = parent;
   return d;
