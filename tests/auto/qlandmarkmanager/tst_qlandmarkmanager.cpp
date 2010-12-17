@@ -952,8 +952,13 @@ private:
                 QVERIFY(m_manager->removeCategory(catIds.at(i)));
         }
 
-        QTest::qWait(20);//try ensure notifications for these deletions
-                         //are made prior to each test function
+            //try ensure notifications for these deletions
+            //are made prior to each test function
+#ifdef Q_OS_SYMBIAN
+            QTest::qWait(100);
+#else
+            QTest::qWait(20);
+#endif
     }
 #endif
 
