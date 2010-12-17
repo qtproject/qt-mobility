@@ -109,12 +109,8 @@ QString checkSensor( QSensor *sensor )
 int main( int argc, char **argv )
 {
     QCoreApplication app(argc, argv);
-
     QStringList args = app.arguments();
     QString fileName = args.size()>1?args.at(1):"metadata.csv";
-    QTextStream out2(stdout);
-    out2<<fileName;
-
     QFile file(fileName);
 
     bool result = true;
