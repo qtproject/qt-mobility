@@ -37,31 +37,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "inputcontroller.h"
-#include "view.h"
 
-const QString InputController::QGYROSCOPE = "QGyroscope";
-const QString InputController::QACCELEROMETER="QAccelerometer";
-const QString InputController::QORIENTATIONSENSOR = "QOrientationSensor";
-const QString InputController::QMAGNETOMETER = "QMagnetometer";
-const QString InputController::QROTATIONSENSOR = "QRotationSensor";
-const QString InputController::QTAPSENSOR = "QTapSensor";
-const QString InputController::QCOMPASS = "QCompass";
-const QString InputController::QKEYS = "Keys";
+#include <QtCore>
+#include <qgyroscope.h>
 
-int InputController::m_x =0;
-int InputController::m_y =0;
+QTM_USE_NAMESPACE
 
-InputController::InputController() {}
+class GyroscopeFilter : public QGyroscopeFilter
+{
+public:
+    bool filter(QGyroscopeReading *reading)
+    {
+        int diff = ( reading->timestamp() - stamp );
+        stamp = reading->timestamp();
+        QTextStream out(stdout);
+        out << QString("Angular velocity: %1 x").arg(reading->x(), 5, 'f', 1)
+            << QString(" %1 y").arg(reading->y(), 5, 'f', 1)
+            << QString(" %1 z deg/s").arg(reading->z(), 5, 'f', 1)
+            << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( 1000000.0 / diff, 5, 'f', 1) << endl;
+        return false; // don't store the reading in the sensor
+    }
+private:
+    qtimestamp stamp;
+};
 
-void InputController::keyPressEvent(QKeyEvent*){}
+int main(int argc, char **argv)
+{
+    QCoreApplication app(argc, argv);
+    QStringList args = app.arguments();
+    int rate_place = args.indexOf("-r");
+    int rate_val = 0;
+    if (rate_place != -1)
+        rate_val = args.at(rate_place + 1).toInt();
 
-int InputController::getX(){return m_x;}
+    QGyroscope sensor;
+    sensor.connectToBackend();
 
-int InputController::getY() {return m_y;}
+    if (rate_val > 0) {
+        sensor.setDataRate(rate_val);
+    }
+    GyroscopeFilter filter;
+    sensor.addFilter(&filter);
+    sensor.start();
+    if (!sensor.isActive()) {
+        qWarning("Gyroscopesensor didn't start!");
+        return 1;
+    }
 
-void InputController::setX(int x){m_x = x;}
-
-void InputController::setY(int y){m_y = y;}
-
-void InputController::updateCoordinates(){}
+    return app.exec();
+}

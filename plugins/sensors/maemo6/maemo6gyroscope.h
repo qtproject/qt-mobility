@@ -39,22 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef PERFORMANCE_H
-#define PERFORMANCE_H
+#ifndef MAEMO6GYROSCOPE_H
+#define MAEMO6GYROSCOPE_H
 
-#include <QtGlobal>
+#include "maemo6sensorbase.h"
+#include <qgyroscope.h>
+#include <datatypes/xyz.h>
+//#include <gyroscopesensor_i.h>
 
-#ifdef WIN32
-#include <windows.h>
-typedef LARGE_INTEGER perf_t;
-#else
-#include <QTime>
-typedef QTime perf_t;
-#endif
 
-perf_t perf_currentTime();
-double perf_diffTime(perf_t start, perf_t end);
-quint64 perf_diffTimeNative(perf_t start, perf_t end);
-quint64 perf_currentMemUsage();
+QTM_USE_NAMESPACE
 
-#endif // PERFORMANCE_H
+class maemo6gyroscope : public maemo6sensorbase
+{
+    Q_OBJECT
+
+public:
+    static char const * const id;
+    maemo6gyroscope(QSensor *sensor);
+
+private:
+    QGyroscopeReading m_reading;
+    static bool m_initDone;
+    static const float MILLI;
+private slots:
+    void slotDataAvailable(const XYZ& data);
+};
+
+
+#endif // MAEMO6GYROSCOPE_H
