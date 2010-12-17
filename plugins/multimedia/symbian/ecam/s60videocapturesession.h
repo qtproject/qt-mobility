@@ -221,6 +221,7 @@ private: // Internal
     void initializeVideoCaptureSettings();
     void doInitializeVideoRecorderL();
     void commitVideoEncoderSettings();
+    void validateRequestedCodecs();
     void resetSession();
 
     void doSetCodecsL(const QString &aCodec, const QString &vCodec);

@@ -223,7 +223,12 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 #define KBiR_MPEG4_PLID_1   int(64000);
 #define KBiR_MPEG4_PLID_2   int(128000);
 #define KBiR_MPEG4_PLID_3   int(384000);
+// This is a workaround for a known platform bug
+#if (defined(S60_31_PLATFORM) | defined(S60_32_PLATFORM))
+#define KBiR_MPEG4_PLID_4   int(2000000);
+#else // All other platforms
 #define KBiR_MPEG4_PLID_4   int(4000000);
+#endif // S60 3.1 or 3.2
 #define KBiR_MPEG4_PLID_5   int(8000000);
 #define KBiR_MPEG4_PLID_6   int(12000000);
 #define KBiR_MPEG4_PLID_8   int(64000);
