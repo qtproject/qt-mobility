@@ -113,9 +113,9 @@ _LIT(KDummyVideoFile, "c:\\data\\temp");
 #define KMimeTypeDefaultAudioCodec  QString("audio/aac")
 
 // Default audio settings for video recording
-#define KDefaultChannelCount  2
+#define KDefaultChannelCount  -1 // Not Supported on Symbian
 #define KDefaultBitRate       32000 // 32kbps
-#define KDefaultSampleRate    16000 // 16000 Hz
+#define KDefaultSampleRate    -1 // Not Supported on Symbian
 
 // ==============
 // Video Settings

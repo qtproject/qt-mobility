@@ -63,7 +63,7 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     m_captureState(ENotInitialized),    // Default state
     m_sink(QUrl()),
     m_requestedSink(QUrl()),
-    m_videoQuality(QtMultimediaKit::VeryHighQuality * KSymbianImageQualityCoefficient),   // Default video quality
+    m_captureSettingsSet(false),
     m_container(QString()),
     m_requestedContainer(QString()),
     m_muted(false),
@@ -81,6 +81,8 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     TRAPD(err, doPopulateVideoCodecsDataL());
     setError(err, QString("Failed to gather video codec information."));
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
+
+    initializeVideoCaptureSettings();
 
     m_durationTimer = new QTimer;
     m_durationTimer->setInterval(KDurationChangedInterval);
@@ -245,7 +247,15 @@ void S60VideoCaptureSession::setCameraHandle(CCameraEngine* cameraHandle)
 {
     m_cameraEngine = cameraHandle;
 
+    // Initialize settings for the new camera
+    initializeVideoCaptureSettings();
+
     resetSession();
+}
+
+void S60VideoCaptureSession::notifySettingsSet()
+{
+    m_captureSettingsSet = true;
 }
 
 void S60VideoCaptureSession::doInitializeVideoRecorderL()
@@ -1459,63 +1469,105 @@ void S60VideoCaptureSession::setAudioEncodingMode(const QtMultimediaKit::Encodin
 
 void S60VideoCaptureSession::initializeVideoCaptureSettings()
 {
-    // Codecs - Use ones defined in constants if supported
-    if (m_videoCodecList.count() > 0) {
-        if (m_videoCodecList.contains(KMimeTypeDefaultVideoCodec, Qt::CaseInsensitive)) {
+    // Check if user has already requested some settings
+    if (m_captureSettingsSet)
+        return;
+
+    QSize resolution(-1, -1);
+    qreal frameRate(0);
+    int bitRate(-1);
+
+    if (m_cameraEngine) {
+
+        if (m_videoRecorder && m_captureState >= EInitialized) {
+
+            // Resolution
+            QList<QSize> resos = supportedVideoResolutions(NULL);
+            foreach (QSize reso, resos) {
+                if ((reso.width() * reso.height()) > (resolution.width() * resolution.height()))
+                    resolution = reso;
+            }
+
+            // Needed to query supported framerates for this codec/resolution pair
             m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+            m_videoSettings.setResolution(resolution);
+
+            // FrameRate
+            QList<qreal> fRates = supportedVideoFrameRates(m_videoSettings, NULL);
+            foreach (qreal rate, fRates) {
+                if (rate > frameRate)
+                    frameRate = rate;
+            }
+
+            // BitRate
+#ifdef SYMBIAN_3_PLATFORM
+            if (m_cameraEngine->currentCameraIndex() == 0)
+                bitRate = KBiR_H264_PLID_42801F    // 14Mbps
+            else
+                bitRate = KBiR_H264_PLID_428016    // 4Mbps
+#else // Other platforms
+            if (m_cameraEngine->currentCameraIndex() == 0)
+                bitRate = KBiR_MPEG4_PLID_4        // 2/4Mbps
+            else
+                bitRate = KBiR_MPEG4_PLID_3        // 384kbps
+#endif // SYMBIAN_3_PLATFORM
+
         } else {
-            if (m_videoCodecList.size() > 0)
-                m_videoSettings.setCodec(m_videoCodecList[m_videoCodecList.size()-1]);
+#ifdef SYMBIAN_3_PLATFORM
+            if (m_cameraEngine->currentCameraIndex() == 0) {
+                // Primary camera
+                resolution = KResH264_PLID_42801F;  // 1280x720
+                frameRate = KFrR_H264_PLID_42801F;  // 30fps
+                bitRate = KBiR_H264_PLID_42801F;    // 14Mbps
+            } else {
+                // Other cameras
+                resolution = KResH264_PLID_42801E;  // 640x480
+                frameRate = KFrR_H264_PLID_428014;  // 30fps
+                bitRate = KBiR_H264_PLID_428016;    // 4Mbps
+            }
+#else // Other platforms
+            if (m_cameraEngine->currentCameraIndex() == 0) {
+                // Primary camera
+                resolution = KResMPEG4_PLID_4;      // 640x480
+                frameRate = KFrR_MPEG4_PLID_4;      // 15/30fps
+                bitRate = KBiR_MPEG4_PLID_4;        // 2/4Mbps
+            } else {
+                // Other cameras
+                resolution = KResMPEG4_PLID_3;      // 352x288
+                frameRate = KFrR_MPEG4;             // 15fps
+                bitRate = KBiR_MPEG4_PLID_3;        // 384kbps
+            }
+#endif // SYMBIAN_3_PLATFORM
         }
+    } else {
+#ifdef SYMBIAN_3_PLATFORM
+        resolution = KResH264_PLID_42801F;
+        frameRate = KFrR_H264_PLID_42801F;
+        bitRate = KBiR_H264_PLID_42801F;
+#else // Pre-Symbian3 Platforms
+        resolution = KResMPEG4_PLID_4;
+        frameRate = KFrR_MPEG4_PLID_4;
+        bitRate = KBiR_MPEG4_PLID_4;
+#endif // SYMBIAN_3_PLATFORM
     }
 
-    QStringList aCodecs = m_audioCodecList.keys();
-    if (aCodecs.count() > 0) {
-        if (aCodecs.contains(KMimeTypeDefaultAudioCodec, Qt::CaseInsensitive)) {
-            m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
-        } else {
-            if (aCodecs.size() > 0)
-                m_audioSettings.setCodec(aCodecs[0]);
-        }
-    }
+    // Set specified settings (Resolution, FrameRate and BitRate)
+    m_videoSettings.setResolution(resolution);
+    m_videoSettings.setFrameRate(frameRate);
+    m_videoSettings.setBitRate(bitRate);
 
-    // Video Settings
-    m_videoSettings.setBitRate(maximumBitRateForMimeType(m_videoSettings.codec())); // Use max supported
-    m_videoSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    // Video Settings: Codec, EncodingMode and Quality
+    m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+    m_videoSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
     m_videoSettings.setQuality(QtMultimediaKit::VeryHighQuality);
 
-    // Use maximum resolution and framerate supported
-    bool continuous = false;
-    QList<QSize> sizes = supportedVideoResolutions(m_videoSettings, &continuous);
-    QSize maxSize = QSize();
-    foreach (QSize size, sizes) {
-        if ((size.width() * size.height()) > (maxSize.width() * maxSize.height()))
-            maxSize = size;
-    }
-    m_videoSettings.setResolution(maxSize);
-
-    QList<qreal> rates = supportedVideoFrameRates(m_videoSettings, &continuous);
-    qreal maxRate = 0.0;
-    foreach (qreal rate, rates)
-        maxRate = qMax(maxRate, rate);
-    m_videoSettings.setFrameRate(maxRate);
-
     // Audio Settings
-    m_audioSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
     m_audioSettings.setBitRate(KDefaultBitRate);
+    m_audioSettings.setSampleRate(KDefaultSampleRate);
     m_audioSettings.setChannelCount(KDefaultChannelCount);
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
     m_audioSettings.setQuality(QtMultimediaKit::VeryHighQuality);
-
-    QList<int> sampleRates = supportedSampleRates(m_audioSettings, &continuous);
-    if (sampleRates.count() > 0) {
-        if (sampleRates.indexOf(KDefaultSampleRate) != -1)
-            m_audioSettings.setSampleRate(KDefaultSampleRate);
-        else
-            m_audioSettings.setSampleRate(sampleRates[0]);
-    }
-    else
-        m_audioSettings.setSampleRate(-1); // Setting SampleRate is not supported
-
 }
 
 QSize S60VideoCaptureSession::pixelAspectRatio()
@@ -1601,10 +1653,11 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
             doPopulateMaxVideoParameters();
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 
-            initializeVideoCaptureSettings();
-
             m_captureState = EInitialized;
             emit stateChanged(m_captureState);
+
+            // Initialize settings if not already done
+            initializeVideoCaptureSettings();
 
             if (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete) {
                 setOutputLocation(m_requestedSink);

@@ -110,11 +110,11 @@ QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QStr
 
     QVariant returnValue;
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
+    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         returnValue.setValue(m_session->pixelAspectRatio());
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
+    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         returnValue.setValue((int)m_session->gain());
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
+    else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         returnValue.setValue(m_session->maxClipSizeInBytes());
 
     return returnValue;
@@ -126,15 +126,14 @@ void S60VideoEncoderControl::setEncodingOption(
     // Set the codec first if not already set
     m_session->setVideoCaptureCodec(codec);
 
-    if(qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
+    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         m_session->setPixelAspectRatio(value.toSize());
-    else if(qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
+    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
         m_session->setGain(value.toInt());
-    else if(qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
+    else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
-    else {
+    else
         m_session->setError(KErrNotSupported, QString("Requested encoding option is not supported"));
-    }
 }
 
 QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const
@@ -147,6 +146,10 @@ QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const
 
 void S60VideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &settings)
 {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
     if (settings.codec().isEmpty()) {
         m_session->setVideoCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyVideoQuality);
     } else if (settings.resolution() != QSize() && settings.frameRate() == 0 && settings.bitRate() == -1) { // Only Resolution

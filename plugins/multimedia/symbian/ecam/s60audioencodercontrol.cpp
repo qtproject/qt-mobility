@@ -122,6 +122,10 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
+    // Notify that settings have been implicitly set and there's no need to
+    // initialize them in case camera is changed
+    m_session->notifySettingsSet();
+
     // Quality defines SampleRate/BitRate combination if either or both are missing
     if (settings.codec().isEmpty()) { // Empty settings
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);

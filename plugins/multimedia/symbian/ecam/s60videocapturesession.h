@@ -139,6 +139,7 @@ public: // Methods
 
     void setError(const TInt error, const QString &description);
     void setCameraHandle(CCameraEngine* cameraHandle);
+    void notifySettingsSet();
 
     qint64 position();
     TVideoCaptureState state() const;
@@ -347,8 +348,8 @@ private: // Data
     // Requested audioSettings. The may not be active settings before those are
     // committed (with commitVideoEncoderSettings())
     QAudioEncoderSettings       m_audioSettings;
-    // Symbian Video Quality
-    int                         m_videoQuality;
+    // Tells whether settings should be initialized when changing the camera
+    bool                        m_captureSettingsSet;
     // Active container
     QString                     m_container;
     // Requested container, this may be different from m_container if
