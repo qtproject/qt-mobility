@@ -466,10 +466,14 @@ int QNearFieldTagType1::memorySize()
 }
 
 /*!
-    Returns identification information read from the tag.
+    Requests the identification bytes from the target. Returns a request id which can be used to
+    track the completion status of the request.
 
-    The returned byte array contains HR0, HR1, UID0, UID1, UID2, UID3 in order. An empty byte array
-    is returned if an error occurs.
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray containing: HR0,
+    HR1, UID0, UID1, UID2 and UID3 in order.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::readIdentification()
 {
@@ -483,10 +487,14 @@ QNearFieldTarget::RequestId QNearFieldTagType1::readIdentification()
 }
 
 /*!
-    Reads and returns HR0, HR1 and all data in the static memory area of the tag.
+    Requests all data in the static memory area of the target. Returns a request id which can be
+    used to track the completion status of the request.
 
-    The returned byte array contains HR0, HR1 followed by 120 bytes of static data. An empty byte
-    array is returned if an error occurs.
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray containing: HR0
+    and HR1 followed by the 120 bytes of data stored in the static memory area of the target.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::readAll()
 {
@@ -500,8 +508,14 @@ QNearFieldTarget::RequestId QNearFieldTagType1::readAll()
 }
 
 /*!
-    Reads and returns a single byte from the static memory area of the tag. The \a address
-    parameter specifices the linear byte address to read.
+    Requests a single byte from the static memory area of the tag. The \a address parameter
+    specifices the linear byte address to read. Returns a request id which can be used to track
+    the completion status of the request.
+
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a quint8.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::readByte(quint8 address)
 {
@@ -525,11 +539,16 @@ QNearFieldTarget::RequestId QNearFieldTagType1::readByte(quint8 address)
 
 /*!
     Writes a single \a data byte to the linear byte \a address on the tag. If \a mode is
-    EraseAndWrite the byte is erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
+    EraseAndWrite the byte will be erased before writing. If \a mode is WriteOnly the contents will
+    not be erased before writing. This is equivelant to writing the result of the bitwise OR of
+    \a data and the original value.
 
-    Returns true on success; otherwise returns false.
+    Returns a request id which can be used to track the completion status of the request.
+
+    Once the request completes the response can be retrieved from the requestResponse() function.
+    The response of this request will be a boolean value, true for success; otherwise false.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::writeByte(quint8 address, quint8 data,
                                                           WriteMode mode)
@@ -560,8 +579,13 @@ QNearFieldTarget::RequestId QNearFieldTagType1::writeByte(quint8 address, quint8
 }
 
 /*!
-    Reads and returns 120 bytes of data from the segment specified by \a segmentAddress. An empty
-    byte array is returned if an error occurs.
+    Requests 128 bytes of data from the segment specified by \a segmentAddress. Returns a request
+    id which can be used to track the completion status of the request.
+
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::readSegment(quint8 segmentAddress)
 {
@@ -584,8 +608,13 @@ QNearFieldTarget::RequestId QNearFieldTagType1::readSegment(quint8 segmentAddres
 }
 
 /*!
-    Reads and returns 8 bytes of data from the block specified by \a blockAddress. An empty byte
-    array is returned if an error occurs.
+    Requests 8 bytes of data from the block specified by \a blockAddress. Returns a request id
+    which can be used to track the completion status of the request.
+
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::readBlock(quint8 blockAddress)
 {
@@ -606,12 +635,16 @@ QNearFieldTarget::RequestId QNearFieldTagType1::readBlock(quint8 blockAddress)
 
 /*!
     Writes 8 bytes of \a data to the block specified by \a blockAddress. If \a mode is
-    EraseAndWrite the bytes are erased before writing. If \a mode is WriteOnly the contents are not
-    earsed before writing. This is equivelant to writing the result of the bitwise or of \a data
-    and the original value.
+    EraseAndWrite the bytes will be erased before writing. If \a mode is WriteOnly the contents
+    will not be erased before writing. This is equivelant to writing the result of the bitwise OR
+    of \a data and the original value.
 
-    Returns true on success; otherwise returns false.
+    Returns a request id which can be used to track the completion status of the request.
 
+    Once the request completes the response can be retrieved from the requestResponse() function.
+    The response of this request will be a boolean value, true for success; otherwise false.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType1::writeBlock(quint8 blockAddress,
                                                            const QByteArray &data,
@@ -642,7 +675,11 @@ QNearFieldTarget::RequestId QNearFieldTagType1::writeBlock(quint8 blockAddress,
     return id;
 }
 
-bool QNearFieldTagType1::handleResponse(const RequestId &id, const QByteArray &response)
+/*!
+    \reimp
+*/
+bool QNearFieldTagType1::handleResponse(const QNearFieldTarget::RequestId &id,
+                                        const QByteArray &response)
 {
     Q_D(QNearFieldTagType1);
 

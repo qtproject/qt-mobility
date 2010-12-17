@@ -38,51 +38,53 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "pixelindexengine.h"
+#include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
-class CntSymbianEngine;
+#include <QtPlugin>
 
-class TestSymbianEngine : public QObject
+class PixelIndexPlugin: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
+public:
+    PixelIndexPlugin();
+    ~PixelIndexPlugin();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContactWithFavoriteDetail();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void retrieveLimitedAmountContacts();
-    void retrieveName();
-    void retrieveNames();
-    void updateContact();
-    void updateContactByUid();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    void asyncRequests();
-    
-private:
-    void removeAllContacts();
+    QString providerName() const;
+    int providerVersion() const;
 
-private:
-    CntSymbianEngine   *m_engine;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const;
+
 };
+
+PixelIndexPlugin::PixelIndexPlugin()
+{}
+
+PixelIndexPlugin::~PixelIndexPlugin()
+{}
+
+QString PixelIndexPlugin::providerName() const
+{
+    return "pixelindex.plugin";
+}
+
+int PixelIndexPlugin::providerVersion() const
+{
+    return 1;
+}
+
+QGeoMappingManagerEngine* PixelIndexPlugin::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
+    return new PixelIndexEngine(parameters);
+}
+
+Q_EXPORT_PLUGIN2(qtgeoservices_pixelindexplugin, PixelIndexPlugin)
+
+#include "plugin.moc"

@@ -38,51 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QNEARFIELDTAGTYPE3_H
+#define QNEARFIELDTAGTYPE3_H
 
-class TestSymbianEngine : public QObject
+#include <qnearfieldtarget.h>
+
+#include <QtCore/QList>
+#include <QtCore/QMap>
+
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
+
+class QNearFieldTagType3 : public QNearFieldTarget
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContactWithFavoriteDetail();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void retrieveLimitedAmountContacts();
-    void retrieveName();
-    void retrieveNames();
-    void updateContact();
-    void updateContactByUid();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    void asyncRequests();
-    
-private:
-    void removeAllContacts();
+public:
+    explicit QNearFieldTagType3(QObject *parent = 0);
 
-private:
-    CntSymbianEngine   *m_engine;
+    Type type() const { return NfcTagType3; }
+
+    quint16 systemCode();
+    QList<quint16> services();
+    int serviceMemorySize(quint16 serviceCode);
+
+    virtual RequestId serviceData(quint16 serviceCode);
+    virtual RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
+
+    virtual RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
+    virtual RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
+                             const QByteArray &data);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 };
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE3_H
