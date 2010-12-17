@@ -95,6 +95,15 @@ maemo6 {
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }
+meego {
+    CONFIG += qdbus link_pkgconfig
+    PKGCONFIG += geoclue gypsy gconf-2.0
+    SOURCES += qgeopositioninfosource_meego.cpp \
+               qgeosatelliteinfosource_meego.cpp \
+
+    HEADERS += qgeopositioninfosource_meego_p.h \
+               qgeosatelliteinfosource_meego_p.h
+}
 
 maemo5 {
     CONFIG += qdbus link_pkgconfig

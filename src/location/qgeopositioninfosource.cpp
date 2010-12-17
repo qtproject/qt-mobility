@@ -50,6 +50,8 @@
 #   include "qgeopositioninfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeopositioninfosource_maemo5_p.h"
+#elif defined(Q_WS_MEEGO)
+#   include "qgeopositioninfosource_meego_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -223,7 +225,16 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     }
 
     return source;
+#elif (defined(Q_WS_MEEGO))
+    QGeoPositionInfoSourceMeego *source = new QGeoPositionInfoSourceMeego(parent);
+    int status = source->init();
+    if (status == -1) {
+        delete source;
+        return 0;
+    }
+    return source;
 #else
+    qWarning("no default source");
     Q_UNUSED(parent);
     return 0;
 #endif
