@@ -1,13 +1,13 @@
 EXPORTS
-	_ZN10QtMobility10QTlvReader12readMoreDataEi @ 1 NONAME
-	_ZN10QtMobility10QTlvReader17addReservedMemoryEii @ 2 NONAME
-	_ZN10QtMobility10QTlvReader4dataEv @ 3 NONAME
-	_ZN10QtMobility10QTlvReader6lengthEv @ 4 NONAME
-	_ZN10QtMobility10QTlvReader8readNextEv @ 5 NONAME
-	_ZN10QtMobility10QTlvReaderC1EPNS_16QNearFieldTargetE @ 6 NONAME
-	_ZN10QtMobility10QTlvReaderC1ERK10QByteArray @ 7 NONAME
-	_ZN10QtMobility10QTlvReaderC2EPNS_16QNearFieldTargetE @ 8 NONAME
-	_ZN10QtMobility10QTlvReaderC2ERK10QByteArray @ 9 NONAME
+	_ZN10QtMobility10QTlvReader12readMoreDataEi @ 1 NONAME ABSENT
+	_ZN10QtMobility10QTlvReader17addReservedMemoryEii @ 2 NONAME ABSENT
+	_ZN10QtMobility10QTlvReader4dataEv @ 3 NONAME ABSENT
+	_ZN10QtMobility10QTlvReader6lengthEv @ 4 NONAME ABSENT
+	_ZN10QtMobility10QTlvReader8readNextEv @ 5 NONAME ABSENT
+	_ZN10QtMobility10QTlvReaderC1EPNS_16QNearFieldTargetE @ 6 NONAME ABSENT
+	_ZN10QtMobility10QTlvReaderC1ERK10QByteArray @ 7 NONAME ABSENT
+	_ZN10QtMobility10QTlvReaderC2EPNS_16QNearFieldTargetE @ 8 NONAME ABSENT
+	_ZN10QtMobility10QTlvReaderC2ERK10QByteArray @ 9 NONAME ABSENT
 	_ZN10QtMobility11QLlcpServer11qt_metacallEN11QMetaObject4CallEiPPv @ 10 NONAME
 	_ZN10QtMobility11QLlcpServer11qt_metacastEPKc @ 11 NONAME
 	_ZN10QtMobility11QLlcpServer13newConnectionEv @ 12 NONAME
@@ -308,12 +308,12 @@ EXPORTS
 	_ZN10QtMobility23QBluetoothTransferReplyD0Ev @ 307 NONAME
 	_ZN10QtMobility23QBluetoothTransferReplyD1Ev @ 308 NONAME
 	_ZN10QtMobility23QBluetoothTransferReplyD2Ev @ 309 NONAME
-	_ZN10QtMobility24QNearFieldManagerPrivate10targetLostEPNS_16QNearFieldTargetE @ 310 NONAME
-	_ZN10QtMobility24QNearFieldManagerPrivate11qt_metacallEN11QMetaObject4CallEiPPv @ 311 NONAME
-	_ZN10QtMobility24QNearFieldManagerPrivate11qt_metacastEPKc @ 312 NONAME
-	_ZN10QtMobility24QNearFieldManagerPrivate14targetDetectedEPNS_16QNearFieldTargetE @ 313 NONAME
-	_ZN10QtMobility24QNearFieldManagerPrivate16staticMetaObjectE @ 314 NONAME DATA 16
-	_ZN10QtMobility24QNearFieldManagerPrivate19getStaticMetaObjectEv @ 315 NONAME
+	_ZN10QtMobility24QNearFieldManagerPrivate10targetLostEPNS_16QNearFieldTargetE @ 310 NONAME ABSENT
+	_ZN10QtMobility24QNearFieldManagerPrivate11qt_metacallEN11QMetaObject4CallEiPPv @ 311 NONAME ABSENT
+	_ZN10QtMobility24QNearFieldManagerPrivate11qt_metacastEPKc @ 312 NONAME ABSENT
+	_ZN10QtMobility24QNearFieldManagerPrivate14targetDetectedEPNS_16QNearFieldTargetE @ 313 NONAME ABSENT
+	_ZN10QtMobility24QNearFieldManagerPrivate16staticMetaObjectE @ 314 NONAME DATA 16 ABSENT
+	_ZN10QtMobility24QNearFieldManagerPrivate19getStaticMetaObjectEv @ 315 NONAME ABSENT
 	_ZN10QtMobility25QBluetoothTransferManager11qt_metacallEN11QMetaObject4CallEiPPv @ 316 NONAME
 	_ZN10QtMobility25QBluetoothTransferManager11qt_metacastEPKc @ 317 NONAME
 	_ZN10QtMobility25QBluetoothTransferManager16staticMetaObjectE @ 318 NONAME DATA 16
@@ -364,12 +364,12 @@ EXPORTS
 	_ZN10QtMobilitylsE6QDebugNS_16QBluetoothSocket11SocketErrorE @ 363 NONAME
 	_ZN10QtMobilitylsE6QDebugNS_16QBluetoothSocket11SocketStateE @ 364 NONAME
 	_ZN10QtMobilitylsE6QDebugRKNS_21QBluetoothServiceInfoE @ 365 NONAME
-	_ZNK10QtMobility10QTlvReader10dataLengthEi @ 366 NONAME
-	_ZNK10QtMobility10QTlvReader14absoluteOffsetEi @ 367 NONAME
-	_ZNK10QtMobility10QTlvReader18reservedMemorySizeEv @ 368 NONAME
-	_ZNK10QtMobility10QTlvReader3tagEv @ 369 NONAME
-	_ZNK10QtMobility10QTlvReader5atEndEv @ 370 NONAME
-	_ZNK10QtMobility10QTlvReader9requestIdEv @ 371 NONAME
+	_ZNK10QtMobility10QTlvReader10dataLengthEi @ 366 NONAME ABSENT
+	_ZNK10QtMobility10QTlvReader14absoluteOffsetEi @ 367 NONAME ABSENT
+	_ZNK10QtMobility10QTlvReader18reservedMemorySizeEv @ 368 NONAME ABSENT
+	_ZNK10QtMobility10QTlvReader3tagEv @ 369 NONAME ABSENT
+	_ZNK10QtMobility10QTlvReader5atEndEv @ 370 NONAME ABSENT
+	_ZNK10QtMobility10QTlvReader9requestIdEv @ 371 NONAME ABSENT
 	_ZNK10QtMobility11QLlcpServer10metaObjectEv @ 372 NONAME
 	_ZNK10QtMobility11QLlcpServer10serverPortEv @ 373 NONAME
 	_ZNK10QtMobility11QLlcpServer10serviceUriEv @ 374 NONAME
@@ -475,7 +475,7 @@ EXPORTS
 	_ZNK10QtMobility23QBluetoothTransferReply7managerEv @ 474 NONAME
 	_ZNK10QtMobility23QBluetoothTransferReply9attributeENS_25QBluetoothTransferRequest9AttributeE @ 475 NONAME
 	_ZNK10QtMobility23QBluetoothTransferReply9operationEv @ 476 NONAME
-	_ZNK10QtMobility24QNearFieldManagerPrivate10metaObjectEv @ 477 NONAME
+	_ZNK10QtMobility24QNearFieldManagerPrivate10metaObjectEv @ 477 NONAME ABSENT
 	_ZNK10QtMobility25QBluetoothTransferManager10metaObjectEv @ 478 NONAME
 	_ZNK10QtMobility25QBluetoothTransferRequest7addressEv @ 479 NONAME
 	_ZNK10QtMobility25QBluetoothTransferRequest9attributeENS0_9AttributeERK8QVariant @ 480 NONAME
@@ -504,7 +504,7 @@ EXPORTS
 	_ZTIN10QtMobility18QNearFieldTagType2E @ 503 NONAME
 	_ZTIN10QtMobility21QBluetoothLocalDeviceE @ 504 NONAME
 	_ZTIN10QtMobility23QBluetoothTransferReplyE @ 505 NONAME
-	_ZTIN10QtMobility24QNearFieldManagerPrivateE @ 506 NONAME
+	_ZTIN10QtMobility24QNearFieldManagerPrivateE @ 506 NONAME ABSENT
 	_ZTIN10QtMobility25QBluetoothTransferManagerE @ 507 NONAME
 	_ZTIN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 508 NONAME
 	_ZTIN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 509 NONAME
@@ -519,7 +519,7 @@ EXPORTS
 	_ZTVN10QtMobility18QNearFieldTagType2E @ 518 NONAME
 	_ZTVN10QtMobility21QBluetoothLocalDeviceE @ 519 NONAME
 	_ZTVN10QtMobility23QBluetoothTransferReplyE @ 520 NONAME
-	_ZTVN10QtMobility24QNearFieldManagerPrivateE @ 521 NONAME
+	_ZTVN10QtMobility24QNearFieldManagerPrivateE @ 521 NONAME ABSENT
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 522 NONAME
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 523 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 524 NONAME
