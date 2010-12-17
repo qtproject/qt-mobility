@@ -178,8 +178,13 @@ int QNearFieldTagType2::memorySize()
 }
 
 /*!
-    Reads and returns 4 bytes of data from the block specified by \a blockAddress. An empty byte
-    array is returned if an error occurs.
+    Requests 16 bytes of data starting at \a blockAddress. Returns a request id which can be used
+    to track the completion status of the request.
+
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTagType2::readBlock(quint8 blockAddress)
 {
@@ -191,7 +196,11 @@ QNearFieldTarget::RequestId QNearFieldTagType2::readBlock(quint8 blockAddress)
 }
 
 /*!
-    Writes 4 bytes of \a data to the block specified by \a blockAddress.
+    Writes 4 bytes of \a data to the block at \a blockAddress. Returns a request id which can be
+    used to track the completion status of the request.
+
+    Once the request completes the response can be retrieved from the requestResponse() function.
+    The response of this request will be a boolean value, true for success; otherwise false.
 
     Returns true on success; otherwise returns false.
 */
@@ -218,10 +227,15 @@ QNearFieldTarget::RequestId QNearFieldTagType2::writeBlock(quint8 blockAddress,
 /*!
     Selects the \a sector upon which subsequent readBlock() and writeBlock() operations will act.
 
-    \note the has a passive acknowledgement mechanism. The operation is deemed successful if no
-    response is received for 1ms. It will therefore take a minimum of 1ms for the
-    requestCompleted() signal to be emitted and calling waitForRequestCompleted() on the returned
-    request id may cause the current thread to block for up to 1ms.
+    Returns a request id which can be used to track the completion status of the request.
+
+    Once the request completes the response can be retrieved from the requestResponse() function.
+    The response of this request will be a boolean value, true for success; otherwise false.
+
+    \note this request has a passive acknowledgement mechanism. The operation is deemed successful
+    if no response is received within 1ms. It will therefore take a minimum of 1 millisecond for
+    the requestCompleted() signal to be emitted and calling waitForRequestCompleted() on the
+    returned request id may cause the current thread to block for up to 1 millisecond.
 */
 QNearFieldTarget::RequestId QNearFieldTagType2::selectSector(quint8 sector)
 {
@@ -244,6 +258,9 @@ QNearFieldTarget::RequestId QNearFieldTagType2::selectSector(quint8 sector)
     return id;
 }
 
+/*!
+    \reimp
+*/
 bool QNearFieldTagType2::waitForRequestCompleted(const RequestId &id, int msecs)
 {
     Q_D(QNearFieldTagType2);
@@ -261,7 +278,11 @@ bool QNearFieldTagType2::waitForRequestCompleted(const RequestId &id, int msecs)
     return QNearFieldTarget::waitForRequestCompleted(id, msecs);
 }
 
-bool QNearFieldTagType2::handleResponse(const RequestId &id, const QByteArray &response)
+/*!
+    \reimp
+*/
+bool QNearFieldTagType2::handleResponse(const QNearFieldTarget::RequestId &id,
+                                        const QByteArray &response)
 {
     Q_D(QNearFieldTagType2);
 
@@ -297,6 +318,9 @@ bool QNearFieldTagType2::handleResponse(const RequestId &id, const QByteArray &r
     return QNearFieldTarget::handleResponse(id, response);
 }
 
+/*!
+    \internal
+*/
 void QNearFieldTagType2::timerEvent(QTimerEvent *event)
 {
     Q_D(QNearFieldTagType2);
