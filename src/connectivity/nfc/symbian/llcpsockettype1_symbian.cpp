@@ -281,20 +281,20 @@ void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
         {
         StopWaitNow(EWaitForBytesWritten);
         }
-    TRAP_IGNORE(
-        if (KErrNone == aError) {
-            QT_TRYCATCH_LEAVING(iCallback.invokeBytesWritten(aSize));
-            }
-        else {
-            QT_TRYCATCH_LEAVING(iCallback.invokeError());
-            }
-    
-        if ( iConnection != NULL && iConnection->HasQueuedWrittenDatagram())
-             {
-             qDebug() << "TransferQueued transfer ";
-             QT_TRYCATCH_LEAVING(iConnection->TransferQueuedL(*this));
-             }
-    );
+
+    TInt err = KErrNone;
+    if (KErrNone == aError) {
+        QT_TRYCATCH_ERROR(err,iCallback.invokeBytesWritten(aSize));
+        }
+    else {
+        QT_TRYCATCH_ERROR(err,iCallback.invokeError());
+        }
+
+    if ( iConnection != NULL && iConnection->HasQueuedWrittenDatagram())
+         {
+         iConnection->TransferQueued(*this);
+         }
+
     END
     }
 
@@ -481,7 +481,7 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
 /*!
     Send data from queued buffer
 */
-bool COwnLlcpConnLess::TransferQueuedL(MLlcpReadWriteCb& aLlcpSendCb)
+bool COwnLlcpConnLess::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
     {
     BEGIN
     bool ret = false;
@@ -489,15 +489,14 @@ bool COwnLlcpConnLess::TransferQueuedL(MLlcpReadWriteCb& aLlcpSendCb)
         return ret;
     
     HBufC8* bufRef = iSendBufArray[0];
-    //HBufC8* buf = HBufC8::NewLC(bufRef->Length());
-    //buf->Des().Copy( *bufRef );
-    //iSocket.GetAndLockBuffer().AppendL( buf );
     TPtrC8 ptr(bufRef->Ptr(), bufRef->Length());
     if(iSenderAO->Transfer(aLlcpSendCb, ptr) == KErrNone)
         {
         ret = true;
         }
     iSendBufArray.Remove( 0 );
+    delete bufRef;
+    bufRef = NULL;
     
     END
     return ret;
