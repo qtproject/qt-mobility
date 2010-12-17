@@ -76,13 +76,11 @@ if (m_symbianSocketType2 == NULL) \
     return; \
     } } while (0)
 
-
-
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
-       : m_error(QLlcpSocket::UnknownSocketError),
-         m_symbianSocketType1(NULL),
+       : m_symbianSocketType1(NULL),
          m_symbianSocketType2(NULL),
          m_socketType(connectionUnknown),
+         m_error(QLlcpSocket::UnknownSocketError),
          q_ptr(q),
          m_emittedReadyRead(false),
          m_emittedBytesWritten(false)
@@ -96,7 +94,6 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
     m_state = m_unconnectedState;
     END
 }
-
 
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
 {

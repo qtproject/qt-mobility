@@ -110,17 +110,6 @@ public:
     enum State {
         ListeningState = QAbstractSocket::ListeningState,
     };
-private:
-    enum SocketType
-    {
-       connectionType1 = 1, // ConnectionLess mode
-       connectionType2 = 2, // ConnectionOriented mode
-       connectionUnknown = -1
-    };
-
-    CLlcpSocketType1* m_symbianSocketType1;
-    CLlcpSocketType2* m_symbianSocketType2;
-    SocketType m_socketType;
 
 public:
     void invokeReadyRead();
@@ -131,7 +120,6 @@ public:
     void invokeConnected();
 
 // state machine part
-
 public:
     void changeState(QLLCPSocketState* state);
     QLLCPSocketState* getUnconnectedState() { return m_unconnectedState;}
@@ -140,6 +128,17 @@ public:
     QLLCPSocketState* getBindState() { return m_bindState;}
     QLLCPSocketState* getClosingState() { return m_closingState;}
 
+private:
+    enum SocketType
+    {
+       connectionType1 = 1, // ConnectionLess mode
+       connectionType2 = 2, // ConnectionOriented mode
+       connectionUnknown = -1
+    };
+    CLlcpSocketType1* m_symbianSocketType1;
+    CLlcpSocketType2* m_symbianSocketType2;
+    SocketType m_socketType;
+    
 private:
     QLlcpSocket::Error m_error;
     QLLCPSocketState* m_state;  // own

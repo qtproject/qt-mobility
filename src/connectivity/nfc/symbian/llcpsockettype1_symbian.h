@@ -208,7 +208,7 @@ public:
     */
    TInt TransferL(MLlcpReadWriteCb&, const TDesC8& aData );
    
-   bool TransferQueuedL(MLlcpReadWriteCb& aLlcpSendCb);
+   bool TransferQueued(MLlcpReadWriteCb& aLlcpSendCb);
    
    /*!
     * Cancels COwnLlcpConnection::Tranfer() request.
