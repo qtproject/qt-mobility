@@ -447,7 +447,7 @@ int QDeclarativeMediaBase::position() const
 
 void QDeclarativeMediaBase::setPosition(int position)
 {
-    if (m_position == position)
+    if (this->position() == position)
         return;
 
     m_position = position;
