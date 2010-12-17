@@ -183,8 +183,8 @@ public: // Methods
     QStringList supportedAudioCaptureCodecs();
 
     // Encoder Settings
-    void videoEncoderSettings(QVideoEncoderSettings &videoSettings) const;
-    void audioEncoderSettings(QAudioEncoderSettings &audioSettings) const;
+    void videoEncoderSettings(QVideoEncoderSettings &videoSettings);
+    void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
 
     // Quality
     void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
@@ -221,6 +221,8 @@ private: // Internal
     void initializeVideoCaptureSettings();
     void doInitializeVideoRecorderL();
     void commitVideoEncoderSettings();
+    void queryAudioEncoderSettings();
+    void queryVideoEncoderSettings();
     void validateRequestedCodecs();
     void resetSession();
 

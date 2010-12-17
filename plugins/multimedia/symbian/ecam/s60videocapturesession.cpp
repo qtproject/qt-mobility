@@ -798,13 +798,220 @@ void S60VideoCaptureSession::commitVideoEncoderSettings()
     }
 }
 
-void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSettings) const
+void S60VideoCaptureSession::queryAudioEncoderSettings()
 {
+    if (!m_videoRecorder)
+        return;
+
+    switch (m_captureState) {
+    case ENotInitialized:
+    case EInitializing:
+    case EOpening:
+    case EPreparing:
+        return;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EInitialized:
+    case EOpenComplete:
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        break;
+
+    default:
+        return;
+    }
+
+    TInt err = KErrNone;
+
+    // Codec
+    TFourCC audioCodec;
+    TRAP(err, audioCodec = m_videoRecorder->AudioTypeL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying audio codec failed."));
+    }
+    QString codec = "";
+    foreach (TFourCC aCodec, m_audioCodecList) {
+        if (audioCodec == aCodec)
+            codec = m_audioCodecList.key(aCodec);
+    }
+    m_audioSettings.setCodec(codec);
+
+#ifndef S60_31_PLATFORM
+    // Samplerate
+    TInt sampleRate = -1;
+    TRAP(err, sampleRate = m_videoRecorder->AudioSampleRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying audio sample rate failed."));
+    }
+    m_audioSettings.setSampleRate(int(sampleRate));
+#endif // S60_31_PLATFORM
+
+    // BitRate
+    TInt bitRate = -1;
+    TRAP(err, bitRate = m_videoRecorder->AudioBitRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying audio bitrate failed."));
+    }
+    m_audioSettings.setBitRate(int(bitRate));
+
+#ifndef S60_31_PLATFORM
+    // ChannelCount
+    TUint channelCount = 0;
+    TRAP(err, channelCount = m_videoRecorder->AudioChannelsL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying audio channel count failed."));
+    }
+    if (channelCount != 0)
+        m_audioSettings.setChannelCount(int(channelCount));
+    else
+        m_audioSettings.setChannelCount(-1);
+#endif // S60_31_PLATFORM
+
+    // EncodingMode
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+
+    // IsMuted
+    TBool isEnabled = ETrue;
+    TRAP(err, isEnabled = m_videoRecorder->AudioEnabledL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying whether audio is muted failed."));
+    }
+    m_muted = bool(!isEnabled);
+}
+
+void S60VideoCaptureSession::queryVideoEncoderSettings()
+{
+    if (!m_videoRecorder)
+        return;
+
+    switch (m_captureState) {
+    case ENotInitialized:
+    case EInitializing:
+    case EOpening:
+    case EPreparing:
+        return;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EInitialized:
+    case EOpenComplete:
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        break;
+
+    default:
+        return;
+    }
+
+    TInt err = KErrNone;
+
+    // Codec
+    const TDesC8 &videoMimeType = m_videoRecorder->VideoFormatMimeType();
+    QString videoMimeTypeString = "";
+    if (videoMimeType.Length() > 0) {
+        // First convert the 8-bit descriptor to Unicode
+        HBufC16* videoCodec;
+        videoCodec = CnvUtfConverter::ConvertToUnicodeFromUtf8L(videoMimeType);
+        CleanupStack::PushL(videoCodec);
+
+        // Then deep copy QString from that
+        videoMimeTypeString = QString::fromUtf16(videoCodec->Ptr(), videoCodec->Length());
+        m_videoSettings.setCodec(videoMimeTypeString);
+
+        CleanupStack::PopAndDestroy(videoCodec);
+    }
+
+    // Resolution
+    TSize symbianResolution;
+    TRAP(err, m_videoRecorder->GetVideoFrameSizeL(symbianResolution));
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying video resolution failed."));
+    }
+    QSize resolution = QSize(symbianResolution.iWidth, symbianResolution.iHeight);
+    m_videoSettings.setResolution(resolution);
+
+    // FrameRate
+    TReal32 frameRate = 0;
+    TRAP(err, frameRate = m_videoRecorder->VideoFrameRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying video framerate failed."));
+    }
+    m_videoSettings.setFrameRate(qreal(frameRate));
+
+    // BitRate
+    TInt bitRate = -1;
+    TRAP(err, bitRate = m_videoRecorder->VideoBitRateL());
+    if (err) {
+        if (err != KErrNotSupported)
+            setError(err, QString("Querying video bitrate failed."));
+    }
+    m_videoSettings.setBitRate(int(bitRate));
+
+    // EncodingMode
+    m_audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+}
+
+void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSettings)
+{
+    switch (m_captureState) {
+    // CVideoRecorderUtility, return requested settings
+    case ENotInitialized:
+    case EInitializing:
+    case EInitialized:
+    case EOpening:
+    case EOpenComplete:
+    case EPreparing:
+        break;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        queryVideoEncoderSettings();
+        break;
+
+    default:
+        videoSettings = QVideoEncoderSettings();
+        setError(KErrGeneral, QString("Unexpected video error."));
+        return;
+    }
+
     videoSettings = m_videoSettings;
 }
 
-void S60VideoCaptureSession::audioEncoderSettings(QAudioEncoderSettings &audioSettings) const
+void S60VideoCaptureSession::audioEncoderSettings(QAudioEncoderSettings &audioSettings)
 {
+    switch (m_captureState) {
+    // CVideoRecorderUtility, return requested settings
+    case ENotInitialized:
+    case EInitializing:
+    case EInitialized:
+    case EOpening:
+    case EOpenComplete:
+    case EPreparing:
+        break;
+
+    // Possible to query settings from CVideoRecorderUtility
+    case EPrepared:
+    case ERecording:
+    case EPaused:
+        queryAudioEncoderSettings();
+        break;
+
+    default:
+        audioSettings = QAudioEncoderSettings();
+        setError(KErrGeneral, QString("Unexpected video error."));
+        return;
+    }
+
     audioSettings = m_audioSettings;
 }
 
@@ -1912,6 +2119,10 @@ void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
 
         m_captureState = EPrepared;
         emit stateChanged(EPrepared);
+
+        // Check the actual active settings
+        queryAudioEncoderSettings();
+        queryVideoEncoderSettings();
 
         if (m_openWhenReady == true) {
             setOutputLocation(m_requestedSink);
