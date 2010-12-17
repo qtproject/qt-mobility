@@ -94,7 +94,7 @@ EXPORTS
 	?keypadLightOn@QSystemDeviceInfo@QtMobility@@QAE_NW4KeypadType@12@@Z @ 93 NONAME ; bool QtMobility::QSystemDeviceInfo::keypadLightOn(enum QtMobility::QSystemDeviceInfo::KeypadType)
 	?locationAreaCode@QSystemNetworkInfo@QtMobility@@QAEHXZ @ 94 NONAME ; int QtMobility::QSystemNetworkInfo::locationAreaCode(void)
 	?lockStatus@QSystemDeviceInfo@QtMobility@@QAE?AV?$QFlags@W4LockType@QSystemDeviceInfo@QtMobility@@@@XZ @ 95 NONAME ; class QFlags<enum QtMobility::QSystemDeviceInfo::LockType> QtMobility::QSystemDeviceInfo::lockStatus(void)
-	?lockStatusChanged@QSystemDeviceInfo@QtMobility@@IAEXV?$QFlags@W4LockType@QSystemDeviceInfo@QtMobility@@@@@Z @ 96 NONAME ; void QtMobility::QSystemDeviceInfo::lockStatusChanged(class QFlags<enum QtMobility::QSystemDeviceInfo::LockType>)
+	?lockStatusChanged@QSystemDeviceInfo@QtMobility@@IAEXW4LockType@12@@Z @ 96 NONAME ; void QtMobility::QSystemDeviceInfo::lockStatusChanged(enum QtMobility::QSystemDeviceInfo::LockType)
 	?logicalDriveChanged@QSystemStorageInfo@QtMobility@@IAEX_NABVQString@@@Z @ 97 NONAME ; void QtMobility::QSystemStorageInfo::logicalDriveChanged(bool, class QString const &)
 	?logicalDrives@QSystemStorageInfo@QtMobility@@SA?AVQStringList@@XZ @ 98 NONAME ; class QStringList QtMobility::QSystemStorageInfo::logicalDrives(void)
 	?macAddress@QSystemNetworkInfo@QtMobility@@QAE?AVQString@@W4NetworkMode@12@@Z @ 99 NONAME ; class QString QtMobility::QSystemNetworkInfo::macAddress(enum QtMobility::QSystemNetworkInfo::NetworkMode)

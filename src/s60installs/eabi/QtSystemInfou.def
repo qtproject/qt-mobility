@@ -34,7 +34,7 @@ EXPORTS
 	_ZN10QtMobility17QSystemDeviceInfo16disconnectNotifyEPKc @ 33 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo16staticMetaObjectE @ 34 NONAME DATA 16
 	_ZN10QtMobility17QSystemDeviceInfo17currentPowerStateEv @ 35 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo17lockStatusChangedE6QFlagsINS0_8LockTypeEE @ 36 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo17lockStatusChangedENS0_8LockTypeE @ 36 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo17powerStateChangedENS0_10PowerStateE @ 37 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo19batteryLevelChangedEi @ 38 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo19getStaticMetaObjectEv @ 39 NONAME
