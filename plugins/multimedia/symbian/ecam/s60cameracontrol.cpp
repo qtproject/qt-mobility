@@ -684,7 +684,7 @@ void S60CameraControl::setError(const TInt error, const QString &description)
     m_error = error;
     QCamera::Error cameraError = fromSymbianErrorToQtMultimediaError(m_error);
 
-    emit this->error(cameraError, description);
+    emit this->error(int(cameraError), description);
 
     // Reset everything, if other than not supported error or resource loss
     if (error != KErrNotSupported && error != KErrHardwareNotAvailable)
@@ -736,8 +736,12 @@ int S60CameraControl::selectedDevice() const
 void S60CameraControl::setSelectedDevice(const int index)
 {
     if (m_deviceIndex != index) {
-        m_deviceIndex = index;
-        resetCamera();
+        if (index >= 0 && index < deviceCount()) {
+            m_deviceIndex = index;
+            resetCamera();
+        } else {
+            setError(KErrNotSupported, QString("Requested camera is not available."));
+        }
     }
 }
 
