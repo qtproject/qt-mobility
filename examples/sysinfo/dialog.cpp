@@ -199,7 +199,7 @@ void Dialog::setupDevice()
         lockState = "Unknown";
     }
     if((lock & QSystemDeviceInfo::PinLocked)){
-        lockState = "Pin Locked";
+        lockState = "Pin/Password Locked";
     }
     if((lock & QSystemDeviceInfo::TouchAndKeyboardLocked)){
         lockState = "Touch and keyboard locked";

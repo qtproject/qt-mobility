@@ -178,9 +178,9 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This enum describes the type of lock.
 
           \value UnknownLock                    Lock type is unknown, or error.
-          \value DeviceLocked                   Device is PIN locked.
-          \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
-
+          \value SimLocked                      SIM is locked.
+          \value PinLocked                      Device is PIN or password locked.
+          \value TouchAndKeyboardLocked         Touch and/or keyboard is locked.
           */
 
 
@@ -581,9 +581,10 @@ QUuid QSystemDeviceInfo::uniqueDeviceID()
 
 /*!
   \property QSystemDeviceInfo::lockStatus
- \brief Type of lock.
+  \brief Type of lock.
 
- Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
+  Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
+  The LockType must be currently active not just enabled.
  */
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {

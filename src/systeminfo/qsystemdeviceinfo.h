@@ -60,7 +60,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(PowerState powerState READ currentPowerState NOTIFY powerStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
-    Q_PROPERTY(InputMethodFlags inputMethodType READ inputMethodType)
+    Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType)
 
     Q_PROPERTY(QString imei READ imei CONSTANT)
     Q_PROPERTY(QString imsi READ imsi CONSTANT)
@@ -216,7 +216,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-    void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
 
 
 private:
