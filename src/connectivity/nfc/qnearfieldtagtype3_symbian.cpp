@@ -67,12 +67,12 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType3Symbian::ndefMessages()
+void QNearFieldTagType3Symbian::readNdefMessages()
 {
     _ndefMessages();
 }
 
-void QNearFieldTagType3Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType3Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages); 
 }
@@ -100,22 +100,24 @@ QList<quint16> QNearFieldTagType3Symbian::services()
 int QNearFieldTagType3Symbian::serviceMemorySize(quint16 serviceCode)
 {
     Q_UNUSED(serviceCode);
-    return -1;
+    return 0;
 }
 
-QByteArray QNearFieldTagType3Symbian::serviceData(quint16 serviceCode)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::serviceData(quint16 serviceCode)
 {
     Q_UNUSED(serviceCode);
-    return QByteArray();
+    return QNearFieldTarget::RequestId();
 }
 
-void QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByteArray &data)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::writeServiceData(quint16 serviceCode, const QByteArray &data)
 {
     Q_UNUSED(serviceCode);
     Q_UNUSED(data);
+
+    return RequestId();
 }
 
-QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, QList<unsigned int> > &serviceBlockList)
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::check(const QMap<quint16, QList<quint16> > &serviceBlockList)
 {
     quint8 numberOfBlocks;
     QByteArray command;
@@ -123,21 +125,23 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::check(const QMap<quint16, Q
     command.append(serviceBlockList2CmdParam(serviceBlockList, numberOfBlocks));
     if (command.count() > 1)
     {
-        RequestId id = _sendCommand(command);
+        return (_sendCommand(command));
+#if 0
         if (!waitForRequestCompleted(id))
         {
             return  checkResponse2ServiceBlockList(serviceBlockList , QByteArray()); 
         }
         QByteArray response = requestResponse(id).toByteArray();
         return  checkResponse2ServiceBlockList(serviceBlockList , response); 
+#endif
     }
     else
     {
-        return QMap<quint16, QByteArray>();
+        return QNearFieldTarget::RequestId();
     }
 }
 
-void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data)  
+QNearFieldTarget::RequestId QNearFieldTagType3Symbian::update(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray &data)  
 {
     quint8 numberOfBlocks;
     QByteArray command;
@@ -146,7 +150,11 @@ void QNearFieldTagType3Symbian::update(const QMap<quint16, QList<unsigned int> >
     if (command.count() > 1)
     {
         command.append(data);
-        waitForRequestCompleted(_sendCommand(command));
+        return (_sendCommand(command));
+    }
+    else
+    {
+        return QNearFieldTarget::RequestId();
     }
 }
 
@@ -174,7 +182,7 @@ const QByteArray& QNearFieldTagType3Symbian::getIDm()
     return mIDm;
 }
 
-QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks)
+QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks)
 {
     QByteArray command;
     command.append(getIDm());
@@ -212,7 +220,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
             return QByteArray();
         }
 
-        foreach(const unsigned int blockNumber, serviceBlockList.value(serviceCode))
+        foreach(const quint16 blockNumber, serviceBlockList.value(serviceCode))
         {
             if (blockNumber > 255)
             {
@@ -245,7 +253,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     return command;
 }
 
-QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response)
+QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response)
 {
     QMap<quint16, QByteArray> result;
     // at least, the response should contain resp code + IDM + status flags
@@ -272,7 +280,7 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
 bool QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse =  response;
+    QVariant decodedResponse = response;
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())

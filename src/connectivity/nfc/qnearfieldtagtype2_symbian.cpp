@@ -54,7 +54,19 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 {
 }
 
-QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
+static QVariant decodeResponse(const QByteArray &response)
+{
+    if (!response.isEmpty())
+    {
+        return quint8(response.at(0)) == 0x0a;
+    }
+    else
+    {
+        return QVariant();
+    }
+}
+
+QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {
     QByteArray command;
     command.append(char(0x30));         // READ
@@ -64,26 +76,10 @@ QByteArray QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    RequestId id = sendCommand(command);
-    if (!waitForRequestCompleted(id))
-    {
-        return QByteArray();
-    }
-
-    const QByteArray response = requestResponse(id).toByteArray();
-
-    if (response.isEmpty())
-        return QByteArray();
-
-    quint8 acknack = response.at(0);
-
-    if (acknack != 0x0a)
-        return QByteArray();
-
-    return response;
+    return sendCommand(command);
 }
 
-bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
+QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
 {
     if (data.length() != 4)
         return false;
@@ -98,23 +94,10 @@ bool QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
-    RequestId id = sendCommand(command);
-    if (!waitForRequestCompleted(id))
-    {
-        return false;
-    }
-    
-    const QByteArray response = requestResponse(id).toByteArray();
-
-    if (response.isEmpty())
-        return false;
-
-    quint8 acknack = response.at(0);
-
-    return acknack == 0x0a;
+    return sendCommand(command);
 }
 
-bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
+QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 sector)
 {
     QByteArray command;
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
@@ -127,34 +110,29 @@ bool QNearFieldTagType2Symbian::selectSector(quint8 sector)
 
     RequestId id = sendCommand(command);
 
-    if (!waitForRequestCompleted(id))
+    quint8 acknack = 0;
+    if (waitForRequestCompleted(id))
     {
-        return false;
+        QByteArray response = requestResponse(id).toByteArray();
+        if (!response.isEmpty())
+        {
+            acknack = response.at(0);
+        }
     }
-
-    QByteArray response = requestResponse(id).toByteArray();
-
-    if (response.isEmpty())
-        return false;
-
-    quint8 acknack = response.at(0);
 
     if (acknack != 0x0a)
-        return false;
-
-    command.clear();
-    command.append(char(sector));               // Sector number
-    command.append(QByteArray(3, char(0x00)));  // RFU
-
-    id = sendCommand(command);
-
-    if (!waitForRequestCompleted(id))
     {
-        return false;
+        // first command of selectSector failed
+        return QNearFieldTarget::RequestId();
     }
+    else
+    {
+        command.clear();
+        command.append(char(sector));               // Sector number
+        command.append(QByteArray(3, char(0x00)));  // RFU
 
-    // passive ack, empty response is ack
-    return response.isEmpty();
+        return sendCommand(command);
+    }
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
@@ -172,12 +150,12 @@ bool QNearFieldTagType2Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType2Symbian::ndefMessages()
+void QNearFieldTagType2Symbian::readNdefMessages()
 {
     return _ndefMessages();
 }
 
-void QNearFieldTagType2Symbian::setNdefMessages(const QList<QNdefMessage> &messages)
+void QNearFieldTagType2Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     _setNdefMessages(messages);
 }
@@ -190,7 +168,7 @@ QByteArray QNearFieldTagType2Symbian::uid() const
 bool QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse =  response;
+    QVariant decodedResponse = decodeResponse(response);
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())

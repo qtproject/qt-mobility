@@ -43,6 +43,7 @@
 #include <e32base.h>
 #include "../qndefmessage.h"
 #include "nearfieldutility_symbian.h"
+#include "debug.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,16 +67,21 @@ CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg 
 
 QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
     {
+        BEGIN
         QNdefMessage result;
+        LOG("CNdefMessage size is "<<msg.SizeL());
         HBufC8* newBuf = HBufC8::NewL(msg.SizeL());
         RBuf8 buf;
         buf.Assign(newBuf);
         buf.CleanupClosePushL();
+        LOG("export msg to raw data");
         msg.ExportRawDataL(buf,0);
+        LOG("import raw data to msg");
         QByteArray qtArray;
         qtArray.fromRawData(reinterpret_cast<const char*>(newBuf->Ptr()),newBuf->Size());
         result.fromByteArray(qtArray);
         CleanupStack::Pop(&buf);
+        END
         return result;
     }
 

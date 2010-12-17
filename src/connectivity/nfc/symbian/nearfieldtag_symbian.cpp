@@ -153,7 +153,7 @@ void CNearFieldTag::DoCancel()
     {
     BEGIN
 
-    //TODO: CancelRawModeAccess();
+    iTagConnection->CancelRawModeAccess();
     if (iCallback)
         {
         LOG("call back command complete with KErrCancel");

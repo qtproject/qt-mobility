@@ -70,30 +70,33 @@ public:
     }
 
     bool hasNdefMessage();
-    void ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     quint16 systemCode();
     QList<quint16> services();
     int serviceMemorySize(quint16 serviceCode);
 
-    QByteArray serviceData(quint16 serviceCode);
-    void writeServiceData(quint16 serviceCode, const QByteArray &data);
 
-    virtual QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList);
-    virtual void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList,
-                        const QByteArray &data);  
+    RequestId serviceData(quint16 serviceCode);
+    RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
+
+    RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
+    RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
+                                 const QByteArray &data);
+
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
 private:
     const QByteArray& getIDm();
-    QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<unsigned int> > &serviceBlockList, quint8& numberOfBlocks);
-    QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray& response);
+    QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks);
+
+    // TODO: need serviceBlockList as an input parameter, this information can be rebuild from command binary
+    QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
     bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
 private:
     QByteArray mIDm;
-    
     friend class QNearFieldTagImpl<QNearFieldTagType3Symbian>;
 };
     

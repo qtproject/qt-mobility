@@ -59,7 +59,8 @@ class MNfcTag;
 
 class MNearFieldNdefOperationCallback;
 
-class CNearFieldNdefTarget : public MNearFieldTarget, 
+class CNearFieldNdefTarget : public CBase,
+                             public MNearFieldTarget, 
                              public MNdefHandler
     {
     enum TOperation
@@ -84,6 +85,7 @@ public: // New functions
     TBool hasNdefMessage();
     TInt ndefMessages(RPointerArray<CNdefMessage>& aMessages);
     TInt setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
+    void Cancel();
 
 public:
     CNearFieldTag * CastToTag();

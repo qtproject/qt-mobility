@@ -45,7 +45,14 @@
 
 NearFieldTagNdefRequest::NearFieldTagNdefRequest()
 {
-    iReadMessages = 0;
+}
+
+NearFieldTagNdefRequest::~NearFieldTagNdefRequest()
+{
+    BEGIN
+    iOperator->DoCancelNdefAccess();
+    iReadMessages.Close();
+    END
 }
 
 void NearFieldTagNdefRequest::IssueRequest()
@@ -53,6 +60,7 @@ void NearFieldTagNdefRequest::IssueRequest()
     BEGIN
     if (iOperator)
     {
+        iRequestIssued = ETrue;
         LOG(iType);
         switch(iType)
         {
@@ -66,6 +74,11 @@ void NearFieldTagNdefRequest::IssueRequest()
                 iOperator->DoSetNdefMessages(iMessages, this);
                 break;
             }
+            default:
+            {
+                iRequestIssued = EFalse;
+                break;
+            }
         }
     }
     END
@@ -75,7 +88,17 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
 {
     BEGIN
     LOG(aError);
-    iReadMessages = aMessage;
+    if (aMessage != 0)
+    {
+        for(int i = 0; i < aMessage->Count(); ++i)
+        {
+        iReadMessages.Append((*aMessage)[i]);
+        }
+    }
+    else
+    {
+        iReadMessages.Reset();
+    }
     ProcessResponse(aError);
     END
 }
@@ -100,9 +123,13 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
         if (EReadRequest == iType)
         {
             // since there is no error, iReadMessages can't be NULL.
-            for(int i = 0; i < iReadMessages->Count(); ++i)
+            
+            LOG("message count is "<<iReadMessages.Count());
+            for(int i = 0; i < iReadMessages.Count(); ++i)
             {
-                QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*(*iReadMessages)[i]);
+                LOG("begin convert cndef message to qndefmessage");
+                QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*(iReadMessages[i]));
+                LOG("emit signal ndef message read");
                 iOperator->EmitNdefMessageRead(message);
             }
         }

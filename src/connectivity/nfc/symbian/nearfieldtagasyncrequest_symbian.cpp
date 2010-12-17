@@ -56,6 +56,7 @@ MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
     iOperator = 0;
     iWait = 0;
     iTimer = 0;
+    iRequestIssued = EFalse;
 }
 
 MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
@@ -144,7 +145,8 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
 {
     BEGIN
     LOG("Error is "<<aError);
-    iOperator->IssueNextRequest();
+    
+    iOperator->IssueNextRequest(iId);
     this->HandleResponse(aError);
 
     if (iWait) 
@@ -159,6 +161,7 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     LOG("remove the request from queue"); 
     iOperator->RemoveRequestFromQueue(iId);
     LOG("delete the request");
+    iRequestIssued = EFalse;
     delete this;
     END
 } 
@@ -179,6 +182,7 @@ void MNearFieldTagAsyncRequest::ProcessTimeout()
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN
+    Q_UNUSED(aError);
     if (iTimer)
     {
         LOG("cancel timer");

@@ -49,6 +49,8 @@ class NearFieldTagCommandRequest : public MNearFieldTagAsyncRequest,
                                    public MNearFieldTagOperationCallback 
     {
 public:
+    NearFieldTagCommandRequest();
+    ~NearFieldTagCommandRequest();
     void IssueRequest();
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);

@@ -57,9 +57,12 @@ public:
     virtual void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback) = 0;
     virtual bool DoHasNdefMessages() = 0;
     virtual void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback) = 0;
+    
+    virtual void DoCancelSendCommand() = 0;
+    virtual void DoCancelNdefAccess() = 0;
 
     // Return true if next pending request is issued. 
-    virtual bool IssueNextRequest() = 0;
+    virtual bool IssueNextRequest(QNearFieldTarget::RequestId aId) = 0;
     virtual void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId) = 0;
     virtual QNearFieldTarget::RequestId AllocateRequestId() = 0;
     virtual bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response) = 0;

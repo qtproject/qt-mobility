@@ -53,8 +53,6 @@
 #include <QGraphicsView>
 #include <QStyleOptionGraphicsItem>
 
-Q_IMPORT_PLUGIN( qtgeoservices_statictiledgeomapplugin)
-
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoCoordinate)

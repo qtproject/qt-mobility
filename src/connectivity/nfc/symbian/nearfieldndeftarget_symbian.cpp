@@ -51,7 +51,8 @@
 #include "debug.h"
 
 CNearFieldNdefTarget::CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer) : iNfcTag(aNfcTag),
-                                                                                        iNfcServer(aNfcServer)
+                                                                                        iNfcServer(aNfcServer),
+                                                                                        iCurrentOperation(ENull)
     {
     }
 
@@ -83,16 +84,7 @@ void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
 CNearFieldNdefTarget::~CNearFieldNdefTarget()
     {
     BEGIN
-    if (ERead == iCurrentOperation)
-        {
-        LOG("cancel ndef read");
-        iNdefConnection->CancelRead();
-        }
-    else if (EWrite == iCurrentOperation)
-        {
-        LOG("cancel ndef write");
-        iNdefConnection->CancelWrite();
-        }
+    // when connection is closed, cancel for each specific connection will be done.
     if (iNdefConnection)
         {
         delete iNdefConnection;
@@ -107,6 +99,22 @@ CNearFieldNdefTarget::~CNearFieldNdefTarget()
         }
     END
     }
+    
+void CNearFieldNdefTarget::Cancel()
+{
+    BEGIN
+    if (ERead == iCurrentOperation)
+    {
+        iNdefConnection->CancelRead();
+    }
+    else if (EWrite == iCurrentOperation)
+    {
+        iNdefConnection->CancelWrite();
+    }
+    
+    iCurrentOperation = ENull;
+    END
+}
 
 CNearFieldTag * CNearFieldNdefTarget::CastToTag()
     {
@@ -192,9 +200,11 @@ void CNearFieldNdefTarget::ReadComplete( CNdefMessage* aMessage )
             err = iMessages->Append(aMessage);
             LOG("append message, err = "<<err);
             }
-        iMessages = 0;
+        
         TInt errIgnore = KErrNone;
         QT_TRYCATCH_ERROR(errIgnore, iCallback->ReadComplete(err, iMessages));
+        //TODO: consider it carefully
+        //iMessages = 0;
         LOG("callback error is "<<errIgnore);
         }
     iCurrentOperation = ENull;
@@ -222,7 +232,7 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
     if (iCallback)
         {
         LOG(iCurrentOperation);
-        iMessages = 0;
+        
         if (ERead == iCurrentOperation)
             {
             iCallback->ReadComplete(aError, iMessages);
@@ -231,6 +241,8 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
             {
             iCallback->WriteComplete(aError);
             }
+        //TODO: consider it carefully 
+        //iMessages = 0;
         }
     END
     }   
@@ -238,7 +250,7 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
 TBool CNearFieldNdefTarget::hasNdefMessage()
     {
     BEGIN
-    TBool result = EFalse;
+    TBool result = ETrue;
     if (!IsConnectionOpened())
         {
         LOG("Open Connection");

@@ -61,7 +61,7 @@ void tst_qllcpsocketremote::initTestCase()
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget *>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
@@ -102,7 +102,7 @@ void tst_qllcpsocketremote::queuedWrittenTest()
                3. The message has be sent to l peer.
 */
 void tst_qllcpsocketremote::testCase1()
-{  
+{
     // STEP 1:  bind the local port for current socket
     QLlcpSocket socket(this);
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));

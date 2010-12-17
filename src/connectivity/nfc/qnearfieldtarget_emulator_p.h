@@ -43,6 +43,7 @@
 #define QNEARFIELDTARGET_EMULATOR_P_H
 
 #include "qnearfieldtagtype1.h"
+#include "qnearfieldtagtype2.h"
 #include "targetemulator_p.h"
 
 #include <QtCore/QMap>
@@ -56,6 +57,25 @@ class TagType1 : public QNearFieldTagType1
 public:
     TagType1(TagBase *tag, QObject *parent);
     ~TagType1();
+
+    QByteArray uid() const;
+
+    AccessMethods accessMethods() const;
+
+    RequestId sendCommand(const QByteArray &command);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
+
+private:
+    TagBase *m_tag;
+};
+
+class TagType2 : public QNearFieldTagType2
+{
+    Q_OBJECT
+
+public:
+    TagType2(TagBase *tag, QObject *parent);
+    ~TagType2();
 
     QByteArray uid() const;
 

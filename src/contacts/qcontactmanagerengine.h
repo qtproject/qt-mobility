@@ -205,18 +205,6 @@ public:
     static void updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State);
 };
 
-class Q_CONTACTS_EXPORT QContactManagerEngineV3 : public QContactManagerEngineV2
-{
-    Q_OBJECT
-public:
-    QContactManagerEngineV3() : QContactManagerEngineV2() {}
-
-    virtual QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId) = 0;
-
-protected:
-    static QContactObserver* createContactObserver(QObject* parent = 0);
-};
-
 QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE

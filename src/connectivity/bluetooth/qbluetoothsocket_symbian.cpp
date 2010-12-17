@@ -77,6 +77,13 @@ QString QBluetoothSocket::localName() const
     return localAddress().toString();
 }
 
+void QBluetoothSocket::disconnectFromService()
+{
+    // TODO: is this all we need to do?
+    close();
+    emit disconnected();
+}
+
 QBluetoothAddress QBluetoothSocket::localAddress() const
 {
     TBTSockAddr address;

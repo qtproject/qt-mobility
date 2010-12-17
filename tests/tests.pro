@@ -4,6 +4,7 @@ TEMPLATE = subdirs
 SUBDIRS += auto benchmarks
 
 contains(mobility_modules,serviceframework): SUBDIRS += testservice2 sampleserviceplugin sampleserviceplugin2
+contains(mobility_modules,contacts): SUBDIRS += contacts-tester
 contains(mobility_modules,bearer) {
     symbian:SUBDIRS += bearerex
 }

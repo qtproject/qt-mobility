@@ -101,7 +101,6 @@ void MapBox::timerEvent(QTimerEvent * event)
 
 MapBox::~MapBox()
 {
-    m_scene->removeItem(m_mapWidget); // EVIL workaround!
 }
 
 void MapBox::setProvider(const QString & providerId)
@@ -133,7 +132,7 @@ void MapBox::createProvider()
 
 void MapBox::createMapWidget()
 {
-    // delete m_mapWidget; // TODO: uncomment, since this is an EVIL workaround
+    delete m_mapWidget;
 
     m_mapWidget = new QGraphicsGeoMap(m_mapManager);
 
@@ -294,7 +293,7 @@ void MapBox::routeFinished()
 
     QPen pen(QColor(0, 0, 255, 127)); // blue, semi-transparent
     pen.setWidth(7);
-    pen.setCosmetic(true);
+    //pen.setCosmetic(true);
     pen.setCapStyle(Qt::RoundCap);
 
     QGeoMapRouteObject *route = new QGeoMapRouteObject(reply->routes().at(0));
@@ -362,7 +361,7 @@ qreal MapBox::squareError(const QImage & otherImage)
 
 qreal MapBox::squareError(const QImage & image1, const QImage & image2)
 {
-    qreal delta;
+    qreal delta = 0.0;
 
     for (int y = 0; y < image1.height(); ++y) {
         for (int x = 0; x < image1.width(); ++x) {
@@ -377,7 +376,7 @@ qreal MapBox::squareError(const QImage & image1, const QImage & image2)
         }
     }
 
-    return std::sqrt(delta);
+    return std::sqrt(delta / (image1.height()*image1.width()));
 }
 
 int MapBox::countErrors(MapBox * other)
@@ -401,7 +400,7 @@ int MapBox::countErrors(const QImage & otherImage)
 
 int MapBox::countErrors(const QImage & image1, const QImage & image2)
 {
-    int errors;
+    int errors = 0;
 
     for (int y = 0; y < image1.height(); ++y) {
         for (int x = 0; x < image1.width(); ++x) {
@@ -431,8 +430,8 @@ int MapBox::countErrors(const QImage & image1, const QImage & image2)
             more plattforms?
         - network traffic
             - from other sources than the session, for the desktop
+                - Windows: Network Monitor
+                    http://blogs.technet.com/netmon/archive/2008/09/17/network-monitor-3-2-has-arrived.aspx
         - render mode
             - sw/hw, but that's pretty static, no?
-
-    remove EVIL workarounds after the "crash on deleting QGraphicsGeoMap" bug is fixed
 */

@@ -152,16 +152,16 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
 bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 {
     BEGIN
-    if (id < 0 || id >= m_registeredHandlers.count())
+    if (id < 0 || id >= m_registeredHandlers.count() || m_freeIds.contains(id))
         return false;
 
     m_freeIds.append(id);
 
     for ( int i = 0; i < m_registeredHandlers[id].filter.recordCount(); ++i)
       {
-    QNdefRecord::TypeNameFormat tnf = m_registeredHandlers[id].filter.recordAt(i).typeNameFormat;
-    QByteArray type = m_registeredHandlers[id].filter.recordAt(i).type;
-    m_symbianbackend->RemoveNdefSubscription( tnf, type );
+        QNdefRecord::TypeNameFormat tnf = m_registeredHandlers[id].filter.recordAt(i).typeNameFormat;
+        QByteArray type = m_registeredHandlers[id].filter.recordAt(i).type;
+        m_symbianbackend->RemoveNdefSubscription( tnf, type );
       }
 
     while (m_freeIds.contains(m_registeredHandlers.count() - 1)) {

@@ -7,6 +7,7 @@ CONFIG += ordered
 SUBDIRS += qgeocoordinate \
       qgeoboundingbox \
       qgeotiledmappingmanagerengine \
+      qgeotiledmapdata \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
@@ -39,13 +40,17 @@ SUBDIRS += qgeocoordinate \
       qgeosearchreply \
       qgeosearchmanagerplugins \
       qgeosearchmanager \
-      qgeoserviceproviderplugins \
-      qgeoserviceprovider \
       geoservicesgeomapplugin \
       geoservicesgeomap \
       geoservicesgeotiledmapplugin \
-      geoservicesgeotiledmap
+      geoservicesgeotiledmap \
+      pixelindex
 
+
+!symbian{
+SUBDIRS += qgeoserviceproviderplugins \
+            qgeoserviceprovider 
+}
 
 #IGNORED_UNTIL_INTEGRATED_PROPERLY += \
 #    qdeclarativeapitests

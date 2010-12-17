@@ -73,11 +73,17 @@ public:
     }
 
     char peek() const {
-        return data[pos].toLatin1();
+        if (pos < data.size())
+            return data[pos].toLatin1();
+        else
+            return -1;
     }
 
     QChar peekQ() const {
-        return data[pos];
+        if (pos < data.size())
+            return data[pos];
+        else
+            return QChar(short(-1));
     }
 
     bool next() {
@@ -118,6 +124,10 @@ public:
         case '9':
         case '.':
             ret = parseNumber();
+            break;
+        case -1:
+            // we went off the end of the string
+            // return an invalid QVariant
             break;
         default:
             ret = parseUnknown();

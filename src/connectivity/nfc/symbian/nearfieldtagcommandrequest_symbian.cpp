@@ -42,12 +42,27 @@
 #include "nearfieldutility_symbian.h"
 #include "debug.h"
 
+NearFieldTagCommandRequest::NearFieldTagCommandRequest()
+{
+}
+
+NearFieldTagCommandRequest::~NearFieldTagCommandRequest()
+{
+    BEGIN
+    if (iRequestIssued)
+    {    
+        iOperator->DoCancelSendCommand();
+    }
+    END
+}
+
 void NearFieldTagCommandRequest::IssueRequest()
 {
     BEGIN
     if (iOperator)
     {
         iOperator->DoSendCommand(iCommand, this);
+        iRequestIssued = ETrue;
     }
     END
 }

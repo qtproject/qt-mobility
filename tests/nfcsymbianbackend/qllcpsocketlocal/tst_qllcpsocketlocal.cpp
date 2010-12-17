@@ -70,7 +70,7 @@ void tst_qllcpsocketlocal::initTestCase()
     QNfcTestUtil::ShowMessage(message);
     QTRY_VERIFY(!targetDetectedSpy.isEmpty());
 
-    m_target = targetDetectedSpy.first().at(0).value<QNearFieldTarget *>();
+    m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget *>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
