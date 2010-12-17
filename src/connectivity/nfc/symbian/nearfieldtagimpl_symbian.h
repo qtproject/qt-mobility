@@ -96,7 +96,7 @@ public: // From MNearFieldTargetOperation
     void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback);
     bool DoHasNdefMessages();
     void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback);
-    bool IssueNextRequest();
+    bool IssueNextRequest(QNearFieldTarget::RequestId aId);
     void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId AllocateRequestId();
     bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
@@ -307,7 +307,7 @@ void QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearF
 }
 
 template<typename TAGTYPE>
-bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
+bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest(QNearFieldTarget::RequestId aId)
 {
     BEGIN
     // find the request after current request
@@ -322,8 +322,16 @@ bool QNearFieldTagImpl<TAGTYPE>::IssueNextRequest()
     }
     else
     {
-        mCurrentRequest = mPendingRequestList.at(index + 1);
-        mCurrentRequest->IssueRequest();
+        if (aId == mCurrentRequest->GetRequestId())
+        {
+            mCurrentRequest = mPendingRequestList.at(index + 1);
+            mCurrentRequest->IssueRequest();
+        }
+        else
+        {
+            LOG("re-entry happened");
+        }
+
         END
         return true;
     }
@@ -535,7 +543,7 @@ bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget
     int index = -1;
     for (int i = 0; i < mPendingRequestList.count(); ++i)
     {
-        if (!(id < mPendingRequestList.at(i)->GetRequestId()) && !(mPendingRequestList.at(i)->GetRequestId() < id))
+        if (id == mPendingRequestList.at(i)->GetRequestId())
         {
             index = i;
             break;

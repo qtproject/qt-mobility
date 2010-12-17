@@ -3,14 +3,17 @@
 QDummySlot::QDummySlot(QObject *parent) :
     QObject(parent)
 {
-    tester = 0;
+    tag = 0;
 }
 
 void QDummySlot::errorHandling(QNearFieldTarget::Error error)
 {
-    QVERIFY(error == QNearFieldTarget::UnsupportedError);
-    if (tester)
+    if (tag)
     {
-        tester->removeTarget();
+        QVERIFY(error == QNearFieldTarget::UnsupportedError);
+        qDebug()<<"get the error signal, wait for request"<<endl;
+        QVERIFY(tag->waitForRequestCompleted(id));
+        qDebug()<<"waited request completed"<<endl;
+        tag = 0;
     }
 }

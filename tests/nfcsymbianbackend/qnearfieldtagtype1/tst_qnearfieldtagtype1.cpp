@@ -14,14 +14,11 @@ public:
     tst_qnearfieldtagtype1();
 
 private Q_SLOTS:
-    void init();
-    void cleanup();
     void testNdefAccess();
     void testMixRawCommandAndNdefAccess();
-    //void testSendAsyncRequestInSlot();
-    //void testWaitAsyncRequestInSlot();
     void testRemoveTagBeforeAsyncRequestCompleted();
     void testDeleteTagBeforeAsyncRequestCompleted();
+    void testWaitCommandInSlot();
 private:
     QNfcTagTestCommon tester;
     // Not Own
@@ -31,14 +28,6 @@ private:
 tst_qnearfieldtagtype1::tst_qnearfieldtagtype1()
 {
     tagType1 = 0;
-}
-
-void tst_qnearfieldtagtype1::init()
-{
-}
-
-void tst_qnearfieldtagtype1::cleanup()
-{
 }
 
 void tst_qnearfieldtagtype1::testNdefAccess()
@@ -128,6 +117,39 @@ void tst_qnearfieldtagtype1::testDeleteTagBeforeAsyncRequestCompleted()
     
     QTRY_VERIFY(readAllSpy.isEmpty());
     QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
+    
+    QNfcTestUtil::ShowMessage("please remove the tag");
+}
+
+void tst_qnearfieldtagtype1::testWaitCommandInSlot()
+{
+    tester.touchTarget(QNearFieldTarget::NfcTagType1);
+    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
+    QVERIFY(tagType1);
+    
+    QDummySlot dummySlot;
+    dummySlot.tag = tagType1;
+    QObject::connect(tagType1, SIGNAL(error(QNearFieldTarget::Error)), &dummySlot, SLOT(errorHandling(QNearFieldTarget::Error)));
+    
+    qDebug()<<"send readAll async request"<<endl;
+    QNearFieldTarget::RequestId id1 = tagType1->readAll();
+    
+    qDebug()<<"send readIdentification request"<<endl;
+    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
+    
+    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
+    qDebug()<<"read ndef message async request"<<endl;
+    tagType1->readNdefMessages();
+    
+    qDebug()<<"send readAll async request"<<endl;
+    QNearFieldTarget::RequestId id3 = tagType1->readAll();
+    
+    dummySlot.id = id3;
+    
+    QVERIFY(tagType1->waitForRequestCompleted(id2));
+    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+    
+    tester.removeTarget();
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype1);
