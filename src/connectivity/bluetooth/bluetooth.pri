@@ -28,7 +28,7 @@ PRIVATE_HEADERS += \
     bluetooth/qiodevice_p.h \
     bluetooth/qobjectpriv_p.h \
     bluetooth/qbluetoothtransferrequest_p.h
-    
+
 
 SOURCES += \
     bluetooth/qbluetoothaddress.cpp\
@@ -51,31 +51,39 @@ SOURCES += \
     bluetooth/qbluetoothtransferreply.cpp
 
 symbian {
+    contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) {
+        DEFINES += DO_NOT_BUILD_BLUETOOTH_SYMBIAN_BACKEND
+        message("S60 3.1 or 3.2 sdk not supported by bluetooth)
+    }
+}
 
-    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-    include(symbian/symbian.pri)
+symbian {
+    !contains(DEFINES, DO_NOT_BUILD_BLUETOOTH_SYMBIAN_BACKEND) {
+        INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
+        include(symbian/symbian.pri)
 
-    PRIVATE_HEADERS += \
-        bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h \
-        bluetooth/qbluetoothsocket_symbian_p.h \
-		bluetooth/qbluetoothtransferreply_symbian_p.h
+        PRIVATE_HEADERS += \
+            bluetooth/qbluetoothdevicediscoveryagent_symbian_p.h \
+            bluetooth/qbluetoothsocket_symbian_p.h \
+            bluetooth/qbluetoothtransferreply_symbian_p.h
 
 
-    SOURCES += \
-        bluetooth/qbluetoothserviceinfo_symbian.cpp\     
-        bluetooth/qbluetoothdevicediscoveryagent_symbian_p.cpp\        
-        bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
-        bluetooth/qbluetoothsocket_symbian.cpp\
-        bluetooth/qbluetoothsocket_symbian_p.cpp\
-        bluetooth/qrfcommserver_symbian.cpp \
-        bluetooth/qbluetoothlocaldevice_symbian.cpp \
-        bluetooth/qbluetoothtransferreply_symbian.cpp \
-        bluetooth/qbluetoothtransfermanager_symbian.cpp
-        
-    contains(S60_VERSION, 5.0) {
-        LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex
-    } else {
-        LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex
+        SOURCES += \
+            bluetooth/qbluetoothserviceinfo_symbian.cpp\
+            bluetooth/qbluetoothdevicediscoveryagent_symbian_p.cpp\
+            bluetooth/qbluetoothservicediscoveryagent_symbian.cpp\
+            bluetooth/qbluetoothsocket_symbian.cpp\
+            bluetooth/qbluetoothsocket_symbian_p.cpp\
+            bluetooth/qrfcommserver_symbian.cpp \
+            bluetooth/qbluetoothlocaldevice_symbian.cpp \
+            bluetooth/qbluetoothtransferreply_symbian.cpp \
+            bluetooth/qbluetoothtransfermanager_symbian.cpp
+
+        contains(S60_VERSION, 5.0) {
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex
+        } else {
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex
+        }
     }
 } else:contains(QT_CONFIG, dbus) {
     QT *= dbus
@@ -88,7 +96,7 @@ symbian {
         bluetooth/qbluetoothtransferreply_bluez_p.h
 
     SOURCES += \
-        bluetooth/qbluetoothserviceinfo_bluez.cpp \                
+        bluetooth/qbluetoothserviceinfo_bluez.cpp \
         bluetooth/qbluetoothdevicediscoveryagent_bluez_p.cpp\
         bluetooth/qbluetoothservicediscoveryagent_bluez.cpp \
         bluetooth/qbluetoothsocket_bluez.cpp \
