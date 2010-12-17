@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#include "../../testqgeosatelliteinfosource_p.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
