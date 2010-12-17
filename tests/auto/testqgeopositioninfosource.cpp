@@ -181,7 +181,7 @@ void TestQGeoPositionInfoSource::init()
 #ifdef TST_GEOCLUEMOCK_ENABLED
     initGeoclueMock();
 #endif
-    base_init();    
+    base_init();
 }
 
 void TestQGeoPositionInfoSource::cleanup()

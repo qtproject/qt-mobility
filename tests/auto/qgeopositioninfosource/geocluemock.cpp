@@ -17,12 +17,12 @@ static QString lg_currentJournal;
 // force loading of the shim library. For CI system, you will also need to reimplement the main()
 // of the testcase so that it can actually set one of those variables and then restart
 // the application.
-gulong	 g_signal_connect_data		      (gpointer		  instance,
-                                               const gchar	 *detailed_signal,
-                                               GCallback	  c_handler,
-                                               gpointer		  data,
-                                               GClosureNotify	  destroy_data = NULL,
-                                               GConnectFlags	  connect_flags = (GConnectFlags)0)
+gulong g_signal_connect_data      (gpointer  instance,
+                                               const gchar *detailed_signal,
+                                               GCallback  c_handler,
+                                               gpointer  data,
+                                               GClosureNotify  destroy_data = NULL,
+                                               GConnectFlags  connect_flags = (GConnectFlags)0)
 {
     Q_UNUSED(instance)
     Q_UNUSED(destroy_data)
@@ -40,13 +40,13 @@ gulong	 g_signal_connect_data		      (gpointer		  instance,
     return 1; // dummy
 }
 
-guint	 g_signal_handlers_disconnect_matched (gpointer		  instance,
-                                               GSignalMatchType	  mask,
-                                               guint		  signal_id = guint(0),
-                                               GQuark		  detail = GQuark(0),
-                                               GClosure		 *closure = NULL,
-                                               gpointer		  func = NULL,
-                                               gpointer		  data = NULL)
+guint	 g_signal_handlers_disconnect_matched (gpointer	  instance,
+                                               GSignalMatchType  mask,
+                                               guint  signal_id = guint(0),
+                                               GQuark detail = GQuark(0),
+                                               GClosure *closure = NULL,
+                                               gpointer  func = NULL,
+                                               gpointer  data = NULL)
 {
     Q_UNUSED(instance)
     Q_UNUSED(mask)

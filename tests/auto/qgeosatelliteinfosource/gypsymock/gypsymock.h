@@ -40,7 +40,7 @@ class GypsyMock: public QObject
     Q_OBJECT
 public:
     explicit GypsyMock();
-    ~GypsyMock();    
+    ~GypsyMock(); 
     void disconnectSignal(gpointer callback, gpointer positionSource);
     void setSatellitesChangedCallback(void (*callback)());
     void singleUpdate();

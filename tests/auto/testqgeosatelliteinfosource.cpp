@@ -653,12 +653,12 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
-	QSignalSpy spyTimeout(m_source,
+    QSignalSpy spyTimeout(m_source,
                       SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(0);
     m_source->requestUpdate(1);
-	
+
     QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
@@ -732,16 +732,16 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 
 void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
-	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	
-	m_source->requestUpdate(-1);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    QVERIFY(i==true);
+    i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+    QVERIFY(i==true);
+    i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    QVERIFY(i==true);
+    
+    m_source->requestUpdate(-1);
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
 }
 

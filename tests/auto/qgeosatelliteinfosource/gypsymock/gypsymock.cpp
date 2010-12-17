@@ -50,7 +50,7 @@ void GypsyMock::stop()
     m_regular.timerId = 0;
     if (m_currentJournalFile.isOpen())
         m_currentJournalFile.close();
-    m_satellitesChangedCallback = 0;    
+    m_satellitesChangedCallback = 0;
 }
 
 void GypsyMock::timerEvent(QTimerEvent *event)
@@ -96,7 +96,7 @@ GypsyMock::UPDATE_TYPE GypsyMock::readNextEntry()
             continue;
         }
         else if (line == "START_REGULAR_SAT_UPDATE\n") {
-            line = m_currentJournalFile.readLine();            
+            line = m_currentJournalFile.readLine();
             stream.setString(&line);
             // initialize datastructs (release any previous data)
             if (m_regular.satellites)
@@ -134,7 +134,7 @@ void GypsyMock::parseRegularUpdate(QTextStream& stream)
 void GypsyMock::parseSatelliteData(QTextStream& stream)
 {
     TRACE0;
-    // create new satellite struct    
+    // create new satellite struct
     GypsySatelliteDetails* details = new GypsySatelliteDetails;
     int in_use;
     stream >> details->elevation >> details->azimuth >> details->satellite_id >> details->snr >> in_use;
