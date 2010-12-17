@@ -43,7 +43,7 @@
 
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
-#include <QtCore/QElapsedTimer>
+#include <QtCore/QTime>
 
 #include <QtCore/QDebug>
 
@@ -265,7 +265,7 @@ bool QNearFieldTagType2::waitForRequestCompleted(const RequestId &id, int msecs)
 {
     Q_D(QNearFieldTagType2);
 
-    QElapsedTimer timer;
+    QTime timer;
     timer.start();
     while (d->m_pendingSectorSelectCommands.contains(id)) {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents, 1);
