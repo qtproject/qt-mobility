@@ -56,9 +56,11 @@
 #include "testqgeopositioninfosource_p.h"
 #include "qlocationtestutils_p.h"
 
+#ifdef TST_GEOCLUEMOCK_ENABLED
 #include <geoclue/geoclue-master.h>
 #include <geoclue/geoclue-master-client.h>
 #include <geoclue/geoclue-velocity.h>
+#endif
 
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
