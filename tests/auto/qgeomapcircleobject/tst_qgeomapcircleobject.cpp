@@ -461,6 +461,8 @@ void tst_QGeoMapCircleObject::zvalue()
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),3);
 
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)!=object2);
+    QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)!=object3);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(0)==object1);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(1)==object2);
     QVERIFY(map->mapObjectsAtScreenPosition(point).at(2)==object3);

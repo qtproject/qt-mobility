@@ -61,10 +61,10 @@ public:
     
     QByteArray uid() const;
 
-    QByteArray readBlock(quint8 blockAddress);
-    bool writeBlock(quint8 blockAddress, const QByteArray &data);
-    bool selectSector(quint8 sector);
-    
+    RequestId readBlock(quint8 blockAddress);
+    RequestId writeBlock(quint8 blockAddress, const QByteArray &data);
+    RequestId selectSector(quint8 sector);
+
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
 

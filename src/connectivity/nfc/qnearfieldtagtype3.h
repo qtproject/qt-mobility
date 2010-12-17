@@ -64,11 +64,15 @@ public:
     QList<quint16> services();
     int serviceMemorySize(quint16 serviceCode);
 
-    QByteArray serviceData(quint16 serviceCode);
-    void writeServiceData(quint16 serviceCode, const QByteArray &data);
+    virtual RequestId serviceData(quint16 serviceCode);
+    virtual RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
 
-    QMap<quint16, QByteArray> check(const QMap<quint16, QList<unsigned int> > &serviceBlockList);
-    void update(const QMap<quint16, QList<unsigned int> > &serviceBlockList, const QByteArray &data);
+    virtual RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
+    virtual RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
+                             const QByteArray &data);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 };
 
 QTM_END_NAMESPACE
@@ -76,4 +80,3 @@ QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif // QNEARFIELDTAGTYPE3_H
-

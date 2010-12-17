@@ -61,7 +61,7 @@ private:
     QContactObserver(QObject* parent = 0);
 
     Q_DISABLE_COPY(QContactObserver)
-    friend class QContactManagerEngineV3;
+    friend class QContactManager;
 };
 
 QTM_END_NAMESPACE

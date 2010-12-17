@@ -182,6 +182,7 @@ void MNearFieldTagAsyncRequest::ProcessTimeout()
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN
+    Q_UNUSED(aError);
     if (iTimer)
     {
         LOG("cancel timer");

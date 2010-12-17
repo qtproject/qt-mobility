@@ -123,6 +123,7 @@ What is know \bold NOT to work:
     \o QBluetoothLocalDevice Pairing functions
     \o QBluetoothLocalDevice power control and state functions
     \o QBluetoothServiceDiscoveryAgent errorString
+\endlist
 
 \annotatedlist connectivity-bluetooth
 

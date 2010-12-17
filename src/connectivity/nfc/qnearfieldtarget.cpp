@@ -284,6 +284,14 @@ QUrl QNearFieldTarget::url() const
 */
 
 /*!
+    Returns true if the target is processing commands; otherwise returns false.
+*/
+bool QNearFieldTarget::isProcessingCommand() const
+{
+    return false;
+}
+
+/*!
     Returns true if at least one NDEF message is stored on the near field target; otherwise returns
     false.
 */
@@ -415,13 +423,14 @@ void QNearFieldTarget::setResponseForRequest(const QNearFieldTarget::RequestId &
     Handles the \a response received for the request \a id. Returns true if the response is
     handled; otherwise returns false.
 
-    Class reimplementing this virtual function should call the base class implementation to ensure
-    that requests initiated by those classes are handled correctly.
+    Classes reimplementing this virtual function should call the base class implementation to
+    ensure that requests initiated by those classes are handled correctly.
 
     The default implementation stores the response such that it can be retrieved by
     requestResponse().
 */
-bool QNearFieldTarget::handleResponse(const RequestId &id, const QByteArray &response)
+bool QNearFieldTarget::handleResponse(const QNearFieldTarget::RequestId &id,
+                                      const QByteArray &response)
 {
     setResponseForRequest(id, response);
 
