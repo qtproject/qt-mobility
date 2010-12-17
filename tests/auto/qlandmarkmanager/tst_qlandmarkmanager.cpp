@@ -4369,22 +4369,12 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder()
     //TODO: Symbian proximity filter not maching landmarks which exactly lie on the edge of the radius
 
 QVERIFY(doFetch(type, proximityFilter,&lms,QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1735: On symbian proximity filter doesn't detect landark right on edge of radius", Continue);
-#endif
     QCOMPARE(lms.count(),4);
 
-#ifdef Q_OS_SYMBIAN
-    //TODO: REMOVE WORKAROUND FOR MOBILITY-1735
-    QCOMPARE(lms.at(0), lm1);
-    QCOMPARE(lms.at(1), lm3);
-    QCOMPARE(lms.at(2), lm4);
-#else
     QCOMPARE(lms.at(0), lm1);
     QCOMPARE(lms.at(1), lm3);
     QCOMPARE(lms.at(2), lm4);
     QCOMPARE(lms.at(3), lm2);
-#endif
 
     //try a radius of less than -1
     proximityFilter.setRadius(-5);
@@ -9011,9 +9001,6 @@ void tst_QLandmarkManager::testProximityRadius()
     proximityFilter.setRadius(lm1.coordinate().distanceTo(QGeoCoordinate(0,0)));
     QList<QLandmark> lms;
     QVERIFY(doFetch(type,proximityFilter,&lms,QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1735: symbian backend does not return landmark right on edge of radius of proximity filter", Continue);
-#endif
     QCOMPARE(lms.count(), 1);
 }
 
