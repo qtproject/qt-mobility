@@ -160,6 +160,8 @@ private slots:
     void testFolder_data();
     void testFolder();
 
+    void testRemoveAccount();
+
     void testMessage_data();
     void testMessage();
 
@@ -535,6 +537,23 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<int>() << 512 << 4096 )
         << customData
         << "byFilter";
+}
+
+void tst_QMessageStore::testRemoveAccount()
+{
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+
+    Support::Parameters p;
+    p.insert("name", "Mr. Temp");
+    p.insert("fromAddress", "anaddress@example.com");
+    QMessageAccountId id(Support::addAccount(p));
+    QVERIFY(id.isValid());
+
+    QVERIFY(!QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+    QVERIFY(QMessageManager().removeAccount(id));
+
+    QTest::qWait(4000);
+    QVERIFY(QMessageManager().queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
 }
 
 void tst_QMessageStore::testMessage()

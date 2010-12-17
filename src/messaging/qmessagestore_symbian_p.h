@@ -85,6 +85,8 @@ public:
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
+
+    bool removeAccount(const QMessageAccountId &id);
     
     QMessage message(const QMessageId& id) const;
     
