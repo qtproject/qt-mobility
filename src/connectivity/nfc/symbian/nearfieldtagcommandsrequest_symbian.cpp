@@ -82,16 +82,19 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
         result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
         LOG("result is "<<result);
     }
+    LOG("clear the buffer");
     iResponse->Zero();
     iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
 
     if (!iRequestCancelled && (iCurrentCommand < iCommands.count()))
     {
+        LOG("issue another command in command list");
         IssueRequest();
     }
     else
     {
         // all commands finished
+        LOG("all commands completed");
         MNearFieldTagAsyncRequest::ProcessResponse(aError);
     }
     END

@@ -19,6 +19,7 @@ private Q_SLOTS:
     void testRemoveTagBeforeAsyncRequestCompleted();
     void testDeleteTagBeforeAsyncRequestCompleted();
     void testWaitCommandInSlot();
+    void testSendCommands();
 private:
     QNfcTagTestCommon tester;
     // Not Own
@@ -149,6 +150,32 @@ void tst_qnearfieldtagtype1::testWaitCommandInSlot()
     QVERIFY(tagType1->waitForRequestCompleted(id2));
     QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
     
+    tester.removeTarget();
+}
+
+
+void tst_qnearfieldtagtype1::testSendCommands()
+{
+    tester.touchTarget(QNearFieldTarget::NfcTagType1);
+    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
+    QVERIFY(tagType1);
+    
+    QSignalSpy errorSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
+
+    QList<QByteArray> commands;
+    for(int i = 0; i < 10; ++i)
+    {
+        QByteArray cmd;
+        cmd.setNum(i);
+        commands.append(cmd);
+    }
+
+    QNearFieldTarget::RequestId id1 = tagType1->readAll();
+    QNearFieldTarget::RequestId id2 = tagType1->sendCommands(commands);
+    QNearFieldTarget::RequestId id3 = tagType1->sendCommands(commands);
+    QVERIFY(tagType1->waitForRequestCompleted(id3));
+    
+    QTRY_VERIFY(errorSpy.count() == 2);
     tester.removeTarget();
 }
 

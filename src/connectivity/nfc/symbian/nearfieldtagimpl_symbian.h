@@ -468,6 +468,7 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
         LOG("send command request created");
         rawCommandRequest->SetInputCommand(command);
         rawCommandRequest->SetRequestId(requestId);
+        rawCommandRequest->SetResponseBuffer(mResponse);
         rawCommandRequest->SetOperator(this);
 
         if (!_isProcessingRequest())
@@ -497,6 +498,7 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommands(const QLis
         rawCommandsRequest->SetInputCommands(commands);
         rawCommandsRequest->SetRequestId(requestId);
         rawCommandsRequest->SetOperator(this);
+        rawCommandsRequest->SetResponseBuffer(&mResponse);
 
         if (!_isProcessingRequest())
         {
