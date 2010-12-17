@@ -100,6 +100,7 @@ Q_SIGNALS:
     void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
 
+    void accountRemoved(const QMessageAccount &id);
 private:
     friend class QGlobalStaticDeleter<QMessageStore>;
     QMessageStore(QObject *parent = 0);
