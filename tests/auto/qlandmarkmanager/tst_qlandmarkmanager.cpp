@@ -195,27 +195,19 @@ private:
                     QLandmarkManager::Error error = QLandmarkManager::NoError,
                     int ms=1500, QLandmarkAbstractRequest::State state = QLandmarkAbstractRequest::FinishedState) {
         bool ret = true;
-        bool stateVerified = true;
+
         int msWaitedSoFar =0;
         while(msWaitedSoFar < ms) {
-#if defined(Q_WS_MAEMO_6)
-            QTest::qWait(300);
-            msWaitedSoFar +=300;
-#else
-            QTest::qWait(100);
-            msWaitedSoFar +=100;
-#endif
+            QTest::qWait(50);
+            msWaitedSoFar +=50;
             if (spy.count() ==2)
                 break;
-            if (!request->isActive())
-                stateVerified = false;
         }
 
-        if (!stateVerified)
-            qWarning() << "The state was not verified to be active when it was supposed to be";
-
-        if (!request->isFinished()) {
-            stateVerified = false;
+        bool stateVerified = false;
+        if (request->isFinished()) {
+            stateVerified = true;
+        } else {
             qWarning() << "The state was not verified to be finished when it was supposed to be";
         }
 
@@ -762,7 +754,7 @@ private:
 #if defined(Q_WS_MAEMO_6)
             result = waitForAsync(spy, &importRequest,error,4000);
 #else
-            result = waitForAsync(spy, &importRequest,error,150);
+            result = waitForAsync(spy, &importRequest,error,1500);
 #endif
         } else {
             qFatal("Unknown test row type");

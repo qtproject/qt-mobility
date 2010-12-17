@@ -1521,7 +1521,6 @@ int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
 
 QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
 {
-    //TODO: remove compile warnings
     switch( key )
     {
     case EUri:
@@ -3473,32 +3472,47 @@ int QDocumentGalleryMDSUtility::InsertStringPropertyCondition( CMdELogicConditio
     if (!text)
         return QDocumentGallery::NoError; 
 
-    CleanupStack::PushL(text);
     switch (filter.comparator()) {
     case QGalleryFilter::Equals:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareEquals,
                 *text) );
+        if ( err != KErrNone ) {
+            delete text;
+            text = NULL;
+        }
         break;
     case QGalleryFilter::Contains:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareContains,
                 *text) );
+        if ( err != KErrNone ) {
+            delete text;
+            text = NULL;
+        }
         break;
     case QGalleryFilter::StartsWith:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareBeginsWith,
                 *text));
+        if ( err != KErrNone ) {
+            delete text;
+            text = NULL;
+        }
         break;
     case QGalleryFilter::EndsWith:
         TRAP(err, rootCond.AddPropertyConditionL(*propDef,
                 ETextPropertyConditionCompareEndsWith,
                 *text));
+        if ( err != KErrNone ) {
+            delete text;
+            text = NULL;
+        }
         break;
     default:
         returnValue = QDocumentGallery::FilterError;
     }
-    CleanupStack::PopAndDestroy(text);
+
     if (err)
         returnValue = QDocumentGallery::FilterError;
     
@@ -3518,18 +3532,25 @@ int QDocumentGalleryMDSUtility::InsertUriPropertyCondition( CMdELogicCondition &
     if (!buffer)
         return QDocumentGallery::FilterError;
 
-    CleanupStack::PushL(buffer);
     switch (filter.comparator()) {
     case QGalleryFilter::Equals:
         TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUri, *buffer));
+        if ( err != KErrNone ) {
+            delete buffer;
+            buffer = NULL;
+        }
         break;
     case QGalleryFilter::StartsWith:
         TRAP(err, rootCond.AddObjectConditionL(EObjectConditionCompareUriBeginsWith, *buffer));
+        if ( err != KErrNone ) {
+            delete buffer;
+            buffer = NULL;
+        }
         break;
     default:
         returnValue = QDocumentGallery::FilterError;
     }
-    CleanupStack::PopAndDestroy(buffer);
+
     if (err)
         returnValue = QDocumentGallery::FilterError;
     return returnValue;

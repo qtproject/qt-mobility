@@ -49,10 +49,12 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QThread>
+#include <QScopedPointer>
 
 #define private public
 #include <qlandmarkmanager.h>
 #include "qlandmarkfilehandler_gpx_p.h"
+#include "qlandmarkmanagerdataholder.h"
 
 
 QTM_USE_NAMESPACE
@@ -81,32 +83,42 @@ private:
     QLandmarkManager *m_manager;
     QLandmarkFileHandlerGpx *m_handler;
     QString m_exportFile;
+    QScopedPointer<QLandmarkManagerDataHolder> managerDataHolder;
+
+    void clean() {
+        QList<QLandmarkId> lmIds = m_manager->landmarkIds();
+        for(int i=0; i < lmIds.count(); ++i) {
+            QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
+        }
+
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for (int i=0; i < catIds.count(); ++i) {
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                QVERIFY(m_manager->removeCategory(catIds.at(i)));
+        }
+        QTest::qWait(20);//try ensure notifications for these
+                         //deletions are made prior to each test function.
+    }
 
 private slots:
 
     void init() {
-        QMap<QString, QString> map;
-        map["filename"] = "test.db";
-        m_exportFile = "exportfile";
-        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
-
+        m_manager = new QLandmarkManager;
         m_handler = new QLandmarkFileHandlerGpx;
+        clean();
     }
 
     void cleanup() {
+        clean();
         delete m_handler;
         delete m_manager;
 
-        QFile file("test.db");
-        file.remove();
-        QFile::remove(m_exportFile);
+        if (QFile::exists(m_exportFile))
+            QFile::remove(m_exportFile);
     }
 
-    void cleanupTestCase() {
-        QFile file("test.db");
-        file.remove();
-        QFile::remove(m_exportFile);
-    }
+    void initTestCase();
+    void cleanupTestCase();
 
     void fileImport() {
         QFETCH(QString, fileIn);
@@ -500,6 +512,17 @@ private:
         << r;
     }
 };
+
+void tst_QLandmarkFileHandler_Gpx::initTestCase()
+{
+    managerDataHolder.reset(new QLandmarkManagerDataHolder());
+}
+
+void tst_QLandmarkFileHandler_Gpx::cleanupTestCase() {
+    managerDataHolder.reset(0);
+    if (QFile::exists(m_exportFile))
+        QFile::remove(m_exportFile);
+}
 
 QTEST_MAIN(tst_QLandmarkFileHandler_Gpx)
 #include "tst_qlandmarkfilehandler_gpx.moc"

@@ -60,8 +60,19 @@ QMdeSession::QMdeSession(QObject *parent)
 
 QMdeSession::~QMdeSession()
 {
+    int count( m_resultSetList.Count() );
+    for ( int i = 0; i < count; i++ )
+        {
+        m_resultSetList[i]->cleanupResultSet();
+        m_resultSetList.Remove( i );
+        count--;
+        i--;
+        }
+    m_resultSetList.Close();
+
     if (m_cmdeSession) {
         delete m_cmdeSession;
+        m_cmdeSession = NULL;
     }
 }
 
@@ -208,7 +219,6 @@ void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<
 #ifdef MDS_25_COMPILATION_ENABLED
     m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
 #else
-    // TODO: check whether default namespace is ok (NULL -> default used)
     m_cmdeSession->AddObjectObserverL( observer, condition, NULL );
 #endif //MDS_25_COMPILATION_ENABLED
 }
@@ -221,6 +231,23 @@ void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
 #else
         m_cmdeSession->RemoveObjectObserver(observer);
 #endif //MDS_25_COMPILATION_ENABLED
+    }
+}
+
+void QMdeSession::AddTrackedResultSet( QMDEGalleryResultSet* aResultSet )
+{
+    m_resultSetList.Append( aResultSet );
+}
+
+void QMdeSession::RemoveTrackedResultSet( QMDEGalleryResultSet* aResultSet )
+{
+    int count( m_resultSetList.Count() );
+    for ( int i = 0; i < count; i++ ) {
+        if ( aResultSet == m_resultSetList[i] ) {
+            m_resultSetList.Remove(i);
+            count--;
+            i--;
+        }
     }
 }
 
