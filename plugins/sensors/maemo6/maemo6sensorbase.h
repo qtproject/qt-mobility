@@ -62,6 +62,7 @@ protected:
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+    static const int KErrNotFound;
 
     void setRanges(qreal correctionFactor=1);
 
@@ -71,7 +72,7 @@ protected:
 
         if (!initDone) {
             if (!m_remoteSensorManager->loadPlugin(sensorName)){
-
+                sensorError(KErrNotFound);
                 return;
             }
             m_remoteSensorManager->registerSensorInterface<T>(sensorName);
@@ -81,6 +82,7 @@ protected:
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
         if (!m_sensorInterface) {
+            sensorError(KErrNotFound);
             return;
         }
 
