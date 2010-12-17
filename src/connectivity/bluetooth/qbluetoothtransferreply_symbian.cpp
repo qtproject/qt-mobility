@@ -51,6 +51,8 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
 :   QBluetoothTransferReply(parent), m_source(input), CActive(EPriorityStandard), m_client(NULL),
     m_running(false), m_finished(false)
 {
+    //add this active object to scheduler
+    CActiveScheduler::Add(this);
 }
 
 /*!
