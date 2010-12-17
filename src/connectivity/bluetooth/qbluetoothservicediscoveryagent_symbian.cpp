@@ -54,7 +54,8 @@ QTM_BEGIN_NAMESPACE
 #define ALL_SERVICE_ATTRIBUTES
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
-: error(QBluetoothServiceDiscoveryAgent::NoError), deviceAddress(address), state(Inactive), deviceDiscoveryAgent(0)
+: error(QBluetoothServiceDiscoveryAgent::NoError), deviceAddress(address), state(Inactive), deviceDiscoveryAgent(0),
+  mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery)
 {
     TRAPD(err, {
         filter = CSdpSearchPattern::NewL();
@@ -127,6 +128,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::initAgent(const QBluetoothAddress &
 
     TRAPD(err, sdpAgent = CSdpAgent::NewL(*this, btAddress));
     Q_UNUSED(err);
+}
+
+bool QBluetoothServiceDiscoveryAgentPrivate::quickDiscovery(const QBluetoothAddress &address, const QBluetoothDeviceInfo &info)
+{
+    return false;
 }
 
 void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aError, TSdpServRecordHandle aHandle, TInt aTotalRecordsCount)

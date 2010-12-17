@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,58 +38,53 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDECLARATIVEOPENMETAOBJECT_H
-#define QDECLARATIVEOPENMETAOBJECT_H
 
-#include <QtCore/QMetaObject>
-#include <QtCore/QObject>
+#include "pixelindexengine.h"
+#include <qgeoserviceproviderfactory.h>
+#include <QObject>
 
-QT_BEGIN_HEADER
+#include <QtPlugin>
 
-QT_BEGIN_NAMESPACE
-
-// Copied from qobject_p.h
-struct QAbstractDynamicMetaObject : public QMetaObject
+class PixelIndexPlugin: public QObject, public QGeoServiceProviderFactory
 {
-    virtual ~QAbstractDynamicMetaObject() {}
-    virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; }
-    virtual int createProperty(const char *, const char *) { return -1; }
-};
-
-
-class QDeclarativeOpenMetaObjectPrivate;
-class QDeclarativeOpenMetaObject : public QAbstractDynamicMetaObject
-{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QDeclarativeOpenMetaObject(QObject *);
+    PixelIndexPlugin();
+    ~PixelIndexPlugin();
 
-    ~QDeclarativeOpenMetaObject();
+    QString providerName() const;
+    int providerVersion() const;
 
-    virtual void getValue(int id, void **a);
-    virtual void setValue(int id, void **a);
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const;
 
-    virtual int createProperty(const char *,  const char *);
-
-    QObject *object() const;
-
-
-protected:
-    virtual int metaCall(QMetaObject::Call _c, int _id, void **_a);
-
-    virtual void propertyRead(int);
-    virtual void propertyWrite(int);
-    virtual void propertyWritten(int);
-
-    QAbstractDynamicMetaObject *parent() const;
-
-private:
-
-    QDeclarativeOpenMetaObjectPrivate *d;
-    friend class QDeclarativeOpenMetaObjectType;
 };
 
-QT_END_NAMESPACE
+PixelIndexPlugin::PixelIndexPlugin()
+{}
 
-QT_END_HEADER
+PixelIndexPlugin::~PixelIndexPlugin()
+{}
 
-#endif // QDECLARATIVEOPENMETAOBJECT_H
+QString PixelIndexPlugin::providerName() const
+{
+    return "pixelindex.plugin";
+}
+
+int PixelIndexPlugin::providerVersion() const
+{
+    return 1;
+}
+
+QGeoMappingManagerEngine* PixelIndexPlugin::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
+    return new PixelIndexEngine(parameters);
+}
+
+Q_EXPORT_PLUGIN2(qtgeoservices_pixelindexplugin, PixelIndexPlugin)
+
+#include "plugin.moc"

@@ -44,6 +44,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 
 QTM_BEGIN_NAMESPACE
 
@@ -160,12 +161,20 @@ void QBluetoothTransferReplySymbian::RunL()
             m_state = ESending;
             QFile *file = qobject_cast<QFile *>(m_source);
 
+            QString filename;
             if (file) {
-                sendObject(file->fileName());
+                QFileInfo info(*file);
+                filename = info.absoluteFilePath();
             } else {
-               if (copyToTempFile(m_tempfile, m_source))
-                   sendObject(m_tempfile->fileName());
+                if (copyToTempFile(m_tempfile, m_source)) {
+                   QFileInfo info(*m_tempfile);
+                   filename = info.absoluteFilePath();
+                } else {
+                    m_state = EDisconnecting;
+                    disconnect();
+                }
             }
+            sendObject(filename);
             break;
         }
         case ESending: {

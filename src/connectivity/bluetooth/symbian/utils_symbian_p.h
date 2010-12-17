@@ -58,10 +58,14 @@ inline quint32 qTPackSymbianDeviceClass(const TInquirySockAddr &address)
     TUint8 minorClass = address.MinorClassOfDevice();
     TUint8 majorClass = address.MajorClassOfDevice();
     TUint16 serviceClass = address.MajorServiceClass();
-
     quint32 deviceClass = (0 << 2) | (minorClass << 6 ) | (majorClass <<5) | serviceClass;
     return deviceClass;
 }
+inline QString s60DescToQString(const TDesC &desc)
+{
+    return QString::fromUtf16(desc.Ptr(), desc.Length());
+}
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

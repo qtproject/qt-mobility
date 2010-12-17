@@ -10,6 +10,7 @@ HEADERS += \
     nfc/qndefnfcurirecord.h \
     nfc/qnearfieldtagtype1.h \
     nfc/qnearfieldtagtype2.h \
+    nfc/qnearfieldtagtype3.h \
     nfc/qllcpserver.h
 
 PRIVATE_HEADERS += \
@@ -31,6 +32,7 @@ SOURCES += \
     nfc/qndefnfcurirecord.cpp \
     nfc/qnearfieldtagtype1.cpp \
     nfc/qnearfieldtagtype2.cpp \
+    nfc/qnearfieldtagtype3.cpp \
     nfc/qtlv.cpp \
     nfc/qllcpserver.cpp
 

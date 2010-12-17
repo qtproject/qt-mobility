@@ -1,0 +1,14 @@
+This is a little app for testing the partial save functionality of the
+QContactManager.
+
+If you click Reload, the first contact in the manager will be loaded into the
+UI.
+
+Change some text in the fields and click one of the Save buttons.  Only the
+field that was saved should be persisted.  You can verify this by clicking
+Reload again.
+
+Note that the app updates the QContact with the contents of every field in the
+UI, and the entire QContact is passed into the manager when Save is clicked.  It
+therefore relies on the partial save functionality of the manager to ensure that
+only one of the fields is persisted.

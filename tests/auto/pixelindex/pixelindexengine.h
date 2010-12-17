@@ -87,8 +87,10 @@ public:
     unsigned int py() const;
 
 private:
-    unsigned int data_;
+    quint32 data_;
 };
+
+QPixmap indexedPixmap(int width, int height);
 
 /*!
   A tiled map reply subclass that is constructed already finished, with
@@ -119,6 +121,19 @@ public:
 
     QGeoTiledMapReply *getTileImage(const QGeoTiledMapRequest &request);
 
+};
+
+/*!
+  Returns pure white tiles.
+  */
+class WhiteTileEngine : public QGeoTiledMappingManagerEngine
+{
+    Q_OBJECT
+public:
+    WhiteTileEngine(const QMap<QString, QVariant> &parameters,
+                    QObject *parent=0);
+
+    QGeoTiledMapReply *getTileImage(const QGeoTiledMapRequest &request);
 };
 
 #endif // PIXELINDEXENGINE_H

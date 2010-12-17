@@ -25,6 +25,7 @@ PRIVATE_HEADERS += \
     bluetooth/qbluetoothservicediscoveryagent_p.h\
     bluetooth/qbluetoothsocket_p.h\
     bluetooth/qrfcommserver_p.h \
+    bluetooth/ql2capserver_p.h \
     bluetooth/qiodevice_p.h \
     bluetooth/qobjectpriv_p.h \
     bluetooth/qbluetoothtransferrequest_p.h
@@ -80,9 +81,10 @@ symbian {
             bluetooth/qbluetoothtransfermanager_symbian.cpp
 
         contains(S60_VERSION, 5.0) {
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex -lbteng
+            
         } else {
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
         }
     }
 } else:contains(QT_CONFIG, dbus) {
@@ -104,9 +106,12 @@ symbian {
         bluetooth/qrfcommserver_bluez.cpp \
         bluetooth/qbluetoothlocaldevice_bluez.cpp \
         bluetooth/qbluetoothtransferreply_bluez.cpp \
-        bluetooth/qbluetoothtransfermanager_bluez.cpp
+        bluetooth/qbluetoothtransfermanager_bluez.cpp \
+        bluetooth/ql2capserver_bluez.cpp
 }
 
 INCLUDEPATH += $$PWD
 INCLUDEPATH += ..
 INCLUDEPATH += $${QMAKE_INCDIR_QT}/QtNetwork
+
+OTHER_FILES +=

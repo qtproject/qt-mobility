@@ -75,8 +75,10 @@ private slots:
     void cancelClicked();
     void avatarClicked();
     void clearAvatarClicked();
+    void contactChanged();
 
 private:
+    void updateUi(const QContact& contact);
     QString nameField();
     void setAvatarPixmap(const QPixmap& pixmap);
 
@@ -101,6 +103,7 @@ private:
     QContactLocalId m_contactId;
     QString m_newAvatarPath;
     QImage m_thumbnail;
+    QSharedPointer<QContactObserver> m_observer;
 };
 
 #endif // CONTACTEDITOR_H
