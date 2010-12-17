@@ -702,8 +702,13 @@ bool S60VideoCaptureSession::isMuted() const
 void S60VideoCaptureSession::setMuted(const bool muted)
 {
     // CVideoRecorderUtility can mute/unmute only if not recording
-    if (m_captureState > EPrepared)
+    if (m_captureState > EPrepared) {
+        if (muted)
+            setError(KErrNotSupported, QString("Muting audio is not supported during recording."));
+        else
+            setError(KErrNotSupported, QString("Unmuting audio is not supported during recording."));
         return;
+    }
 
     // Check if request is already active
     if (muted == isMuted())
@@ -747,15 +752,19 @@ void S60VideoCaptureSession::commitVideoEncoderSettings()
             setError(err, QString("Setting audio channel count failed."));
 #endif // S60_31_PLATFORM
 
-        // Note difference between muted and isEnabled (true for the other means false for the other)
-        TBool isAudioEnabled = EFalse;
-        TRAP(err, isAudioEnabled = m_videoRecorder->AudioEnabledL());
-        setError(err, QString("Failure when checking if audio is enabled."));
-        if (m_muted == (bool)isAudioEnabled) {
-            TRAP(err, m_videoRecorder->SetAudioEnabledL((TBool)!m_muted));
+        TBool isAudioMuted = EFalse;
+        TRAP(err, isAudioMuted = !m_videoRecorder->AudioEnabledL());
+        if (err != KErrNotSupported && err != KErrNone)
+            setError(err, QString("Failure when checking if audio is enabled."));
+
+        if (m_muted != (bool)isAudioMuted) {
+            TRAP(err, m_videoRecorder->SetAudioEnabledL(TBool(!m_muted)));
             if (err) {
-                if (err != KErrNotSupported)
+                if (err != KErrNotSupported) {
                     setError(err, QString("Failed to mute/unmute audio."));
+                } else {
+                    setError(err, QString("Muting/unmuting audio is not supported."));
+                }
             }
             else
                 emit mutedChanged(m_muted);
@@ -1121,6 +1130,10 @@ void S60VideoCaptureSession::stopRecording(const bool reInitialize)
     if (m_videoRecorder) {
         m_videoRecorder->Stop();
         m_videoRecorder->Close();
+
+        // Notify muting is disabled if needed
+        if (m_muted)
+            emit mutedChanged(false);
 
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
@@ -1806,6 +1819,10 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
             initializeVideoRecording();
     }
     m_videoRecorder->Close();
+
+    // Notify muting is disabled if needed
+    if (m_muted)
+        emit mutedChanged(false);
 
     if (aError == KErrDiskFull)
         setError(aError, QString("Not enough space for video, recording stopped."));
