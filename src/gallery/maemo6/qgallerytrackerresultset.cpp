@@ -43,19 +43,59 @@
 
 #include "qgallerytrackermetadataedit_p.h"
 
-#include <QtCore/qtconcurrentrun.h>
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
 #include <qdocumentgallery.h>
 #include <qgalleryresource.h>
 
+#include <QtCore/qdebug.h>
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
-#define TRACKER_QUERY_MAX_LIMIT 1024
+class QGalleryTrackerResultSetParser
+{
+public:
+    QGalleryTrackerResultSetParser(
+            QVector<QVariant> &values,
+            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
+            int tableWidth)
+        : values(values)
+        , valueColumns(valueColumns)
+        , tableWidth(tableWidth)
+    {
+    }
+
+    QVector<QVariant> &values;
+    const QVector<QGalleryTrackerValueColumn *> &valueColumns;
+    const int tableWidth;
+};
+
+const QDBusArgument &operator >>(
+        const QDBusArgument &argument, QGalleryTrackerResultSetParser &parser)
+{
+    QString string;
+    const QVariant variant;
+
+    argument.beginArray();
+    while (!argument.atEnd()) {
+        argument.beginArray();
+
+        int i = 0;
+        for (; !argument.atEnd() && i < parser.tableWidth; ++i) {
+            argument >> string;
+            parser.values.append(parser.valueColumns.at(i)->toVariant(string));
+        }
+        for (; i < parser.tableWidth; ++i)
+            parser.values.append(variant);
+        argument.endArray();
+    }
+    argument.endArray();
+
+    return argument;
+}
 
 void QGalleryTrackerResultSetPrivate::update()
 {
@@ -79,7 +119,6 @@ void QGalleryTrackerResultSetPrivate::query()
 {
     flags &= ~(Refresh | SyncFinished);
     flags |= Active;
-    flags |= Reset;
 
     updateTimer.stop();
 
@@ -90,22 +129,9 @@ void QGalleryTrackerResultSetPrivate::query()
     iCache.cutoff = 0;
 
     qSwap(rCache.values, iCache.values);
-    const int limit = queryLimit < 1 || queryLimit > TRACKER_QUERY_MAX_LIMIT
-            ? TRACKER_QUERY_MAX_LIMIT
-            : queryLimit;
-    QString sparqlStatement = queryArguments.at( 0 ).toString();
-    sparqlStatement += " LIMIT " + QString::number(limit);
-    if (queryOffset > 0) {
-        sparqlStatement += (queryOffset > 0
-                ? QLatin1String(" OFFSET ") + QString::number(queryOffset)
-                : QLatin1String(""));
-    }
-
-    QVariantList arguments(queryArguments);
-    arguments.replace(0, sparqlStatement);
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, arguments);
+            QLatin1String("SparqlQuery"), QVariantList() << sparql);
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -148,116 +174,25 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
-        const int limit = queryLimit < 1 ? TRACKER_QUERY_MAX_LIMIT-1 : queryLimit - iCache.count;
-        const bool reset = flags & Reset;
+        queryReply = call.reply().arguments().at(0).value<QDBusArgument>();
 
-        flags &= ~Reset;
-
-        parseWatcher.setFuture(QtConcurrent::run(
-                this, &QGalleryTrackerResultSetPrivate::parseRows, call, limit, reset));
+        parserThread.start(QThread::LowPriority);
 
         emit q_func()->progressChanged(progressMaximum - 1, progressMaximum);
     }
 }
 
-bool QGalleryTrackerResultSetPrivate::parseRows(
-        const QDBusPendingCall &call, int limit, bool reset)
+void QGalleryTrackerResultSetPrivate::run()
 {
-    QDBusReply<QVector<QStringList> > reply(call);
+    iCache.values.clear();
 
-    typedef QVector<QStringList>::const_iterator iterator;
+    QGalleryTrackerResultSetParser parser(iCache.values, valueColumns, tableWidth);
 
-    const QVector<QStringList> resultSet = reply.value();
+    queryReply >> parser;
 
-    QVector<QVariant> &values = iCache.values;
+    iCache.count = iCache.values.count() / tableWidth;
 
-    if (reset) {
-        values.clear();
-        iCache.count = 0;
-    }
-
-    iCache.count += resultSet.count();
-
-    values.reserve(iCache.count * tableWidth);
-
-    for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
-            values.append(it->at(i));
-
-        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
-            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
-
-        // The rows should all have a count equal to tableWidth, but check just in case.
-        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
-            values.append(QVariant());
-    }
-
-    if (resultSet.count() <= limit) {
-        if (!values.isEmpty() && !sortCriteria.isEmpty()) {
-            correctRows(
-                    row_iterator(values.begin(), tableWidth),
-                    row_iterator(values.end(), tableWidth),
-                    sortCriteria.constBegin(),
-                    sortCriteria.constEnd());
-        }
-
-        synchronize();
-
-        return true;
-    } else {
-        return false;
-    }
-}
-
-void QGalleryTrackerResultSetPrivate::correctRows(
-        row_iterator begin,
-        row_iterator end,
-        sort_iterator sortCriteria,
-        sort_iterator sortEnd,
-        bool reversed) const
-{
-    int column = sortCriteria->column;
-
-    const int sortFlags = sortCriteria->flags;
-
-    if (sortFlags & QGalleryTrackerSortCriteria::Sorted) {
-        if (reversed) {
-            QAlgorithmsPrivate::qReverse(begin, end);
-
-            reversed = false;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } else do {
-            column = sortCriteria->column;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } while(sortCriteria->flags & QGalleryTrackerSortCriteria::Sorted);
-    } else if (sortFlags & QGalleryTrackerSortCriteria::ReverseSorted) {
-        if (!reversed) {
-            QAlgorithmsPrivate::qReverse(begin, end);
-
-            reversed = true;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } else do {
-            column = sortCriteria->column;
-
-            if (++sortCriteria == sortEnd)
-                return;
-        } while(sortCriteria->flags & QGalleryTrackerSortCriteria::ReverseSorted);
-    }
-
-    for (row_iterator upper, lower = begin; lower != end; lower = upper) {
-        int count = 1;
-
-        for (upper = lower + 1; upper != end && lower[column] == upper[column]; ++upper, ++count) {}
-
-        if (count > 1)
-            correctRows(lower, upper, sortCriteria, sortEnd, reversed);
-    }
+    synchronize();
 }
 
 void QGalleryTrackerResultSetPrivate::synchronize()
@@ -532,57 +467,22 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
-    if (parseWatcher.result()) {
-        Q_ASSERT(rCache.offset == rCache.count);
-        Q_ASSERT(iCache.cutoff == iCache.count);
+    queryReply = QDBusArgument();
 
-        rCache.values.clear();
-        rCache.count = 0;
+    Q_ASSERT(rCache.offset == rCache.count);
+    Q_ASSERT(iCache.cutoff == iCache.count);
 
-        flags &= ~Active;
+    rCache.values.clear();
+    rCache.count = 0;
 
-        if (flags & Refresh)
-            update();
-        else
-            emit q_func()->progressChanged(progressMaximum, progressMaximum);
+    flags &= ~Active;
 
-        q_func()->finish(flags & Live);
-    } else if (flags & Cancelled) {
-        iCache.count = 0;
+    if (flags & Refresh)
+        update();
+    else
+        emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
-        flags &= ~Active;
-
-        q_func()->QGalleryAbstractResponse::cancel();
-    } else {
-        const int offset = queryOffset + iCache.count;
-        const int limit = queryLimit < 1 || queryLimit - iCache.count > TRACKER_QUERY_MAX_LIMIT
-                ? TRACKER_QUERY_MAX_LIMIT
-                : queryLimit - iCache.count;
-
-        QString sparqlStatement = queryArguments.at( 0 ).toString();
-        sparqlStatement += QLatin1String(" LIMIT ") + QString::number(limit);
-        sparqlStatement += QLatin1String(" OFFSET ") + QString::number(offset);
-
-        QVariantList arguments( queryArguments );
-        arguments.replace( 0, sparqlStatement );
-
-        QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-                queryMethod, arguments);
-
-        if (call.isFinished()) {
-            queryFinished(call);
-        } else {
-            queryWatcher.reset(new QDBusPendingCallWatcher(call));
-
-            QObject::connect(
-                    queryWatcher.data(), SIGNAL(finished(QDBusPendingCallWatcher*)),
-                    q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
-
-            progressMaximum += 2;
-
-            emit q_func()->progressChanged(progressMaximum - 2, progressMaximum);
-        }
-    }
+    q_func()->finish(flags & Live);
 }
 
 void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit *edit)
@@ -593,19 +493,12 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 }
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
-        QGalleryTrackerResultSetArguments *arguments,
-        bool autoUpdate,
-        int cursorPosition,
-        int minimumPagedItems,
-        QObject *parent)
-    : QGalleryResultSet(
-            *new QGalleryTrackerResultSetPrivate(
-                    arguments, autoUpdate, cursorPosition, minimumPagedItems),
-            parent)
+        QGalleryTrackerResultSetArguments *arguments, bool autoUpdate, QObject *parent)
+    : QGalleryResultSet(*new QGalleryTrackerResultSetPrivate(arguments, autoUpdate), parent)
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -617,7 +510,7 @@ QGalleryTrackerResultSet::QGalleryTrackerResultSet(
 {
     Q_D(QGalleryTrackerResultSet);
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->parserThread, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
     d_func()->query();
 }
@@ -630,7 +523,7 @@ QGalleryTrackerResultSet::~QGalleryTrackerResultSet()
     for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
         (*it)->commit();
 
-    d->parseWatcher.waitForFinished();
+    d->parserThread.wait();
 }
 
 QStringList QGalleryTrackerResultSet::propertyNames() const
@@ -796,7 +689,7 @@ bool QGalleryTrackerResultSet::waitForFinished(int msecs)
                 return true;
         } else if (d->flags & QGalleryTrackerResultSetPrivate::Active) {
             if (d->waitForSyncFinish(msecs)) {
-                d->parseWatcher.waitForFinished();
+                d->parserThread.wait();
 
                 d->_q_parseFinished();
 
