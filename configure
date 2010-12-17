@@ -580,6 +580,15 @@ if [ -z "$PLATFORM_CONFIG" ]; then
         compileTest connman connman
     fi
 
+if [ "$LINUX_TARGET" = meego ]; then
+    compileTest "Location GeoClue master provider" geoclue-master
+    compileTest "Location Gypsy provider" gypsy
+else
+    echo "geoclue-master_enabled = no" >> "$CONFIG_IN"
+    echo "gypsy_enabled = no" >> "$CONFIG_IN"
+fi
+if [ "$LINUX_TARGET" = maemo6 ]; then
+    compileTest sensord sensord
 else
     echo "Skipping configure tests"
     echo "Loading ... features/platformconfig/$PLATFORM_CONFIG.pri"

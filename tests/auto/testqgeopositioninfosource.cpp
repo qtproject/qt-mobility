@@ -56,6 +56,9 @@
 #include "testqgeopositioninfosource_p.h"
 #include "qlocationtestutils_p.h"
 
+#include <geoclue/geoclue-master.h>
+#include <geoclue/geoclue-master-client.h>
+#include <geoclue/geoclue-velocity.h>
 
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethods)
@@ -120,6 +123,9 @@ protected:
 TestQGeoPositionInfoSource::TestQGeoPositionInfoSource(QObject *parent)
         : QObject(parent)
 {
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    m_geoclueMock = 0;
+#endif
     m_testingDefaultSource = false;
 }
 
@@ -163,15 +169,26 @@ void TestQGeoPositionInfoSource::base_cleanupTestCase()
 void TestQGeoPositionInfoSource::initTestCase()
 {
     base_initTestCase();
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    m_threadGeoclueMock.start();
+#endif
 }
 
 void TestQGeoPositionInfoSource::init()
 {
-    base_init();
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    initGeoclueMock();
+#endif
+    base_init();    
 }
 
 void TestQGeoPositionInfoSource::cleanup()
 {
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    if (m_geoclueMock)
+        delete m_geoclueMock;
+    m_geoclueMock =0;
+#endif
     base_cleanup();
 }
 
@@ -179,6 +196,18 @@ void TestQGeoPositionInfoSource::cleanupTestCase()
 {
     base_cleanupTestCase();
 }
+
+#ifdef TST_GEOCLUEMOCK_ENABLED
+void TestQGeoPositionInfoSource::initGeoclueMock()
+{
+    if (m_geoclueMock)
+        delete m_geoclueMock;
+    m_geoclueMock = new GeoclueMock;
+    geocluemock_setjournal(":/data/gcmock_basic_vel_pos.journal");
+    m_geoclueMock->moveToThread(&m_threadGeoclueMock);
+    QMetaObject::invokeMethod(m_geoclueMock, "start", Qt::BlockingQueuedConnection);
+}
+#endif
 
 // TC_ID_3_x_1
 void TestQGeoPositionInfoSource::constructor_withParent()
@@ -290,6 +319,8 @@ void TestQGeoPositionInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
+#elif defined(Q_WS_MEEGO)
+    QVERIFY(source != 0);
 #else 
     QVERIFY(source == 0);
 #endif
@@ -312,7 +343,9 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 {
     QTest::addColumn<int>("interval");
     QTest::addColumn<int>("expectedInterval");
-
+#ifdef TST_GEOCLUEMOCK_ENABLED
+    initGeoclueMock();
+#endif
     QGeoPositionInfoSource *source = createTestSource();
     int minUpdateInterval = source ? source->minimumUpdateInterval() : -1;
     if (source)
@@ -342,7 +375,6 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 void TestQGeoPositionInfoSource::lastKnownPosition()
 {
     CHECK_SOURCE_VALID;
-
     QFETCH(int, positioningMethod);
     QFETCH(bool, lastKnownPositionArgument);
     QFETCH(bool, positionValid);
@@ -425,12 +457,16 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("lastKnownPositionArgument");
     QTest::addColumn<bool>("positionValid");
 
-    QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
-    QTest::newRow("satellite - true") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << true << true;
+#ifndef GEOCLUE_MASTER_AVAILABLE
+    // Todo: this needs to be fixed in MeeGo; currently it returns any lastPosition from any source regardless of satellite
+    // parameter.
     QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
     QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
+#endif
     QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
     QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
+    QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
+    QTest::newRow("satellite - true") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << true << true;
 }
 
 void TestQGeoPositionInfoSource::minimumUpdateInterval()
@@ -613,14 +649,12 @@ void TestQGeoPositionInfoSource::stopUpdates()
 void TestQGeoPositionInfoSource::stopUpdates_withoutStart()
 {
     CHECK_SOURCE_VALID;
-
     m_source->stopUpdates(); // check there is no crash
 }
 
 void TestQGeoPositionInfoSource::requestUpdate()
 {
     CHECK_SOURCE_VALID;
-
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(timeout);
