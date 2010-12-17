@@ -133,6 +133,8 @@ void QNearFieldTagType2::readNdefMessages()
 */
 void QNearFieldTagType2::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
+    Q_UNUSED(messages);
+
     qDebug() << Q_FUNC_INFO << "is unimplemeted";
     emit error(QNearFieldTarget::UnsupportedError);
 }
