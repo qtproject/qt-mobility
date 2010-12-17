@@ -144,6 +144,12 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
         m_session->setAudioEncodingMode(settings.encodingMode());
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndBitRate);
 
+    } else if (settings.bitRate() == -1 && settings.sampleRate() == -1) { // No BitRate or SampleRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
+
     } else { // Both SampleRate and BitRate set
         m_session->setAudioCaptureCodec(settings.codec());
         m_session->setAudioChannelCount(settings.channelCount());
