@@ -239,6 +239,8 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     bool isFiltered = true;
     bool isSorted = true;
 
+    d_ptr->error = QMessageManager::NoError;
+
     accountIds = TelepathyEngine::instance()->queryAccounts(filter, sortOrder, limit, offset, isFiltered, isSorted);
 
     if (!isFiltered) {
@@ -254,8 +256,6 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     }
 
     MessagingHelper::applyOffsetAndLimitToAccountIdList(accountIds, limit, offset);
-
-    d_ptr->error = QMessageManager::NoError;
 
     return accountIds;
 }
