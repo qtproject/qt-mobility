@@ -121,8 +121,8 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KAllLandmarks -1
 #define KDefaultIndex 0
 #define KExtrachars 3
-#define KMaxRetryWait 100 // micro-seconds
-#define KMaxRetry 10
+#define KMaxRetryWait 120 // micro-seconds
+#define KMaxRetry 12
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
