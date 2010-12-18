@@ -8098,7 +8098,6 @@ void tst_QLandmarkManager::filterSupportLevel() {
 #else
     QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 #endif
-    QCOMPARE(m_manager->filterSupportLevel(attributeFilter), QLandmarkManager::NativeSupport);
 
     //try a landmark id filter
     QLandmarkIdFilter idFilter;
