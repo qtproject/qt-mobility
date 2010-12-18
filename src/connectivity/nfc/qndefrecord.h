@@ -115,6 +115,8 @@ private:
     } \
     QTM_END_NAMESPACE
 
+uint qHash(const QNdefRecord &key);
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

@@ -48,9 +48,13 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QNearFieldTagType1Private;
+
 class Q_CONNECTIVITY_EXPORT QNearFieldTagType1 : public QNearFieldTarget
 {
     Q_OBJECT
+
+    Q_DECLARE_PRIVATE(QNearFieldTagType1)
 
 public:
     enum WriteMode {
@@ -59,29 +63,36 @@ public:
     };
 
     explicit QNearFieldTagType1(QObject *parent = 0);
+    ~QNearFieldTagType1();
 
     Type type() const { return NfcTagType1; }
 
     bool hasNdefMessage();
-    QList<QNdefMessage> ndefMessages();
-    void setNdefMessages(const QList<QNdefMessage> &messages);
+    void readNdefMessages();
+    void writeNdefMessages(const QList<QNdefMessage> &messages);
 
     quint8 version();
     int memorySize();
 
     // DIGPROTO
-    virtual QByteArray readIdentification();
+    virtual RequestId readIdentification();
 
     // static memory functions
-    virtual QByteArray readAll();
-    virtual quint8 readByte(quint8 address);
-    virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
+    virtual RequestId readAll();
+    virtual RequestId readByte(quint8 address);
+    virtual RequestId writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
 
     // dynamic memory functions
-    virtual QByteArray readSegment(quint8 segmentAddress);
-    virtual QByteArray readBlock(quint8 blockAddress);
-    virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
-                            WriteMode mode = EraseAndWrite);
+    virtual RequestId readSegment(quint8 segmentAddress);
+    virtual RequestId readBlock(quint8 blockAddress);
+    virtual RequestId writeBlock(quint8 blockAddress, const QByteArray &data,
+                                 WriteMode mode = EraseAndWrite);
+
+protected:
+    bool handleResponse(const RequestId &id, const QByteArray &response);
+
+private:
+    QNearFieldTagType1Private *d_ptr;
 };
 
 QTM_END_NAMESPACE
