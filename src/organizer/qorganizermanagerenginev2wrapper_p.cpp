@@ -232,22 +232,20 @@ void QOrganizerManagerEngineV2Wrapper::observerDestroyed(QObject* object)
 
 void QOrganizerManagerEngineV2Wrapper::itemsUpdated(const QList<QOrganizerItemId>& ids)
 {
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemChanged();
-            it++;
+    foreach (const QOrganizerItemId& id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            observer->emitItemChanged();
         }
     }
 }
 
 void QOrganizerManagerEngineV2Wrapper::itemsDeleted(const QList<QOrganizerItemId>& ids)
 {
-    foreach (QOrganizerItemId id, ids) {
-        QHash<QOrganizerItemId, QOrganizerItemObserver*>::iterator it = m_observerForItem.find(id);
-        while (it != m_observerForItem.end()) {
-            (*it)->emitItemRemoved();
-            it++;
+    foreach (const QOrganizerItemId& id, ids) {
+        QList<QOrganizerItemObserver*> observers = m_observerForItem.values(id);
+        foreach (QOrganizerItemObserver* observer, observers) {
+            observer->emitItemRemoved();
         }
     }
 }

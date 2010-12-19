@@ -1006,4 +1006,5 @@ EXPORTS
 	_ZTIN10QtMobility30QOrganizerItemFetchByIdRequestE @ 1005 NONAME
 	_ZTVN10QtMobility22QOrganizerItemObserverE @ 1006 NONAME
 	_ZTVN10QtMobility30QOrganizerItemFetchByIdRequestE @ 1007 NONAME
+	_ZN10QtMobility17QOrganizerManager9saveItemsEP5QListINS_14QOrganizerItemEERK11QStringList @ 1008 NONAME
 

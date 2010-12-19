@@ -58,10 +58,8 @@ public:
     QGalleryTrackerEditableResultSetPrivate(
             QGalleryTrackerResultSetArguments *arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
-            bool autoUpdate,
-            int cursorPosition,
-            int minimumPagedItems)
-        : QGalleryTrackerResultSetPrivate(arguments, autoUpdate, cursorPosition, minimumPagedItems)
+            bool autoUpdate)
+        : QGalleryTrackerResultSetPrivate(arguments, autoUpdate)
         , metaDataInterface(metaDataInterface)
         , fieldNames(arguments->fieldNames)
     {
@@ -75,12 +73,9 @@ QGalleryTrackerEditableResultSet::QGalleryTrackerEditableResultSet(
         QGalleryTrackerResultSetArguments *arguments,
         const QGalleryDBusInterfacePointer &metaDataInterface,
         bool autoUpdate,
-        int cursorPosition,
-        int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerResultSet(
-            *new QGalleryTrackerEditableResultSetPrivate(
-                    arguments, metaDataInterface, autoUpdate, cursorPosition, minimumPagedItems),
+            *new QGalleryTrackerEditableResultSetPrivate(arguments, metaDataInterface, autoUpdate),
             parent)
 {
 }
