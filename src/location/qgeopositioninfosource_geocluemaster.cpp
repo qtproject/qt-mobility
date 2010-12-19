@@ -400,7 +400,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdateTimeout()
 {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
-    qDebug() << "QGeoPositionInfoSourceGeoclueMaster requestUpdate timeout occured.";
+    qDebug() << "QGeoPositionInfoSourceGeoclueMaster requestUpdate timeout occurred.";
 #endif
     // If we end up here, there has not been valid position update.
     emit updateTimeout();
@@ -409,7 +409,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdateTimeout()
 void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
 {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
-    qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates timeout occured.";
+    qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates timeout occurred.";
 #endif
     // Check if there are position updates since last positionUpdated().
     // Do not however send timeout, that's reserved for signaling errors.

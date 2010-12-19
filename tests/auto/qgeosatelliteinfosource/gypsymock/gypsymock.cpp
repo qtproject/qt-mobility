@@ -179,7 +179,7 @@ void GypsyMock::parseSatelliteData(QTextStream& stream)
     GypsySatelliteDetails* details = new GypsySatelliteDetails;
     int in_use;
     stream >> details->elevation >> details->azimuth >> details->satellite_id >> details->snr >> in_use;
-    details->in_use = (bool)in_use; // stream doesnt support bools
+    details->in_use = (bool)in_use; // stream doesn't support bools
     // qDebug() << "parsed values: " << details->elevation << details->azimuth << details->satellite_id << details->snr << details->in_use;
     // add it to the struct
     g_ptr_array_add(m_regular.satellites, (gpointer)details);

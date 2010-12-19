@@ -310,7 +310,7 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
 void QGeoSatelliteInfoSourceGypsy::requestUpdateTimeout()
 {
 #ifdef Q_LOCATION_GYPSY_DEBUG
-    qDebug("QGeoSatelliteInfoSourceGypsy request update timeout occured.");
+    qDebug("QGeoSatelliteInfoSourceGypsy request update timeout occurred.");
 #endif
     // If we end up here, there has not been valid satellite update.
     // Emit timeout and disconnect from signal if regular updates are not
