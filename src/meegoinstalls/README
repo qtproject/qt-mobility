@@ -1,0 +1,16 @@
+This directory contains the MeeGo.com packaging metadata for Qt Mobility,
+for use with the MeeGo.com OpenSuSE Build Service (OBS).
+
+Please see http://build.meego.com/ for more information.
+
+PATCHES
+=======
+
+At the time of writing, there are some MeeGo-specific patches hosted
+on the MeeGo OBS.  These patches are unable to be hosted in the Mobility
+git repository at this time.
+
+In order to successfully build Mobility for MeeGo, you must also obtain
+these patches.
+
+Please do not add any more patches.
