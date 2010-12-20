@@ -624,8 +624,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */
@@ -661,8 +660,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   if all contacts were saved successfully.
 
   For each newly saved contact that was successful, the id of the contact
-  in the \a contacts list will be updated with the new value.  If a failure occurs
-  when saving a new contact, the id will be cleared.
+  in the \a contacts list will be updated with the new value.
 
   \sa QContactManager::saveContact()
  */
@@ -760,10 +758,9 @@ void QContactManager::observerDestroyed(QObject* object)
 void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
 {
     foreach (QContactLocalId id, ids) {
-        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
-        while (it != d->m_observerForContact.end()) {
-            (*it)->emitContactChanged();
-            it++;
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactChanged();
         }
     }
 }
@@ -771,10 +768,9 @@ void QContactManager::contactsUpdated(const QList<QContactLocalId>& ids)
 void QContactManager::contactsDeleted(const QList<QContactLocalId>& ids)
 {
     foreach (QContactLocalId id, ids) {
-        QHash<QContactLocalId, QContactObserver*>::iterator it = d->m_observerForContact.find(id);
-        while (it != d->m_observerForContact.end()) {
-            (*it)->emitContactRemoved();
-            it++;
+        QList<QContactObserver*> observers = d->m_observerForContact.values(id);
+        foreach (QContactObserver* observer, observers) {
+            observer->emitContactRemoved();
         }
     }
 }

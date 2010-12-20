@@ -68,23 +68,6 @@ class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerSchema;
 
-struct QGalleryTrackerSortCriteria
-{
-    enum Flag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x02,
-        Ascending     = 0x04,
-        Descending    = 0x08
-    };
-
-    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
-    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
-
-    short column;
-    short flags;
-};
-
 class QGalleryTrackerResultSetPrivate;
 
 struct QGalleryTrackerResultSetArguments
@@ -122,8 +105,7 @@ struct QGalleryTrackerResultSetArguments
     int valueOffset;
     int compositeOffset;
     QGalleryDBusInterfacePointer queryInterface;
-    QString queryMethod;
-    QVariantList queryArguments;
+    QString sparql;
     QStringList propertyNames;
     QStringList fieldNames;
     QVector<QGalleryProperty::Attributes> propertyAttributes;
@@ -131,7 +113,6 @@ struct QGalleryTrackerResultSetArguments
     QVector<QGalleryTrackerValueColumn *> valueColumns;
     QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     QVector<int> aliasColumns;
-    QVector<QGalleryTrackerSortCriteria> sortCriteria;
     QVector<int> resourceKeys;
     QString service;
 };
@@ -141,11 +122,7 @@ class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
     Q_OBJECT
 public:
     QGalleryTrackerResultSet(
-            QGalleryTrackerResultSetArguments *arguments,
-            bool autoUpdate,
-            int cursorPosition,
-            int minimumPagedItems,
-            QObject *parent = 0);
+            QGalleryTrackerResultSetArguments *arguments, bool autoUpdate, QObject *parent = 0);
     ~QGalleryTrackerResultSet();
 
     QStringList propertyNames() const;

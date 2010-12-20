@@ -106,8 +106,6 @@ private:
 
     QGalleryAbstractResponse *createItemListResponse(
             QGalleryTrackerResultSetArguments *arguments,
-            int offset,
-            int limit,
             bool isItemType,
             bool autoUpdate,
             QGalleryTrackerChangeNotifier* notifier);
@@ -216,8 +214,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     } else {
         return createItemListResponse(
                 &arguments,
-                0,
-                1,
                 schema.isItemType(),
                 request->autoUpdate(),
                 getChangeNotifier(schema.itemType()));
@@ -275,20 +271,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         QGalleryTrackerResultSetArguments *arguments,
-        int offset,
-        int limit,
         bool isItemType,
         bool autoUpdate,
         QGalleryTrackerChangeNotifier* notifier)
 {
-    QGalleryTrackerResultSet *response = 0;
-
-    if (isItemType) {
-        response = new QGalleryTrackerEditableResultSet(
-                arguments, metaDataInterface(), autoUpdate, offset, limit);
-    } else {
-        response = new QGalleryTrackerResultSet(arguments, autoUpdate, offset, limit);
-    }
+    QGalleryTrackerResultSet *response = isItemType
+            ? new QGalleryTrackerEditableResultSet(arguments, metaDataInterface(), autoUpdate)
+            : new QGalleryTrackerResultSet(arguments, autoUpdate);
 
     if (autoUpdate) {
         if (notifier) {
@@ -318,15 +307,15 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             request->rootItem().toString(),
             request->filter(),
             request->propertyNames(),
-            request->sortPropertyNames());
+            request->sortPropertyNames(),
+            request->offset(),
+            request->limit());
 
     if (error != QDocumentGallery::NoError) {
         return new QGalleryAbstractResponse(error);
     } else {
         return createItemListResponse(
                 &arguments,
-                request->offset(),
-                request->limit(),
                 schema.isItemType(),
                 request->autoUpdate(),
                 getChangeNotifier(request->rootType()) );

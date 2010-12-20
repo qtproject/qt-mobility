@@ -39,37 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QNEARFIELDTAGTYPE3_H
-#define QNEARFIELDTAGTYPE3_H
+#ifndef QNEARFIELDTAGTYPE4_H
+#define QNEARFIELDTAGTYPE4_H
 
 #include <qnearfieldtarget.h>
-
-#include <QtCore/QList>
-#include <QtCore/QMap>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QNearFieldTagType3 : public QNearFieldTarget
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType4 : public QNearFieldTarget
 {
     Q_OBJECT
 
 public:
-    explicit QNearFieldTagType3(QObject *parent = 0);
+    explicit QNearFieldTagType4(QObject *parent = 0);
+    ~QNearFieldTagType4();
 
-    Type type() const { return NfcTagType3; }
+    Type type() const { return NfcTagType4; }
 
-    quint16 systemCode();
-    QList<quint16> services();
-    int serviceMemorySize(quint16 serviceCode);
+    quint8 version();
 
-    virtual RequestId serviceData(quint16 serviceCode);
-    virtual RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
+    virtual RequestId select(const QByteArray &name);
+    virtual RequestId select(quint16 fileIdentifier);
 
-    virtual RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
-    virtual RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
-                             const QByteArray &data);
+    virtual RequestId read(quint16 length = 0, quint16 startOffset = 0);
+    virtual RequestId write(const QByteArray &data, quint16 startOffset = 0);
 
 protected:
     bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
@@ -79,4 +74,4 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNEARFIELDTAGTYPE3_H
+#endif // QNEARFIELDTAGTYPE4_H

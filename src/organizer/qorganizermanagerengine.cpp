@@ -2024,8 +2024,7 @@ bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId
   if all organizer items were saved successfully.
 
   For each newly saved item that was successful, the id of the item
-  in the \a items list will be updated with the new value.  If a failure occurs
-  when saving a new item, the id will be cleared.
+  in the \a items list will be updated with the new value.
 
   Each item in the given list \a items will be added to the collection
   identified in the item (accessible via item->collectionId()) if it exists, and if
@@ -3275,8 +3274,7 @@ bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem>* items, QMap<int
   items were saved successfully.
 
   For each newly saved item that was successful, the id of the item in the \a items list
-  will be updated with the new value.  If a failure occurs when saving a new item, the id will be
-  cleared.
+  will be updated with the new value.
 
   Any errors encountered during this operation should be stored to \a error.
  */
