@@ -104,6 +104,9 @@ public:
     virtual void setMapData(QGeoMapData *mapData);
     virtual QGeoMapData* mapData() const;
 
+    QGeoCoordinate origin() const;
+    void setOrigin(const QGeoCoordinate &origin);
+
     QGraphicsItem* graphicsItem() const;
     void setGraphicsItem(QGraphicsItem *item);
 
@@ -112,6 +115,7 @@ Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
+    void originChanged(QGeoCoordinate origin);
 
 private:
     QGeoMapObjectPrivate *d_ptr;

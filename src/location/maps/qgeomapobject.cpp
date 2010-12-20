@@ -263,6 +263,16 @@ void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
     d_ptr->graphicsItem = item;
 }
 
+QGeoCoordinate QGeoMapObject::origin() const
+{
+    return d_ptr->origin;
+}
+
+void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
+{
+    d_ptr->origin = origin;
+}
+
 /*!
 \fn void QGeoMapObject::zValueChanged(int zValue)
 

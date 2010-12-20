@@ -55,6 +55,8 @@
 
 #include "qgeomapgroupobject.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsItem>
 #include "qgeocoordinate.h"
 #include <QList>
 
@@ -81,6 +83,15 @@ public:
     QList<QGeoMapOverlay*> overlays;
 
     bool blockPropertyChangeSignals;
+
+    QGraphicsScene *scaleIndepScene;
+    void updateScaleIndepScene();
+
+    QHash<QGraphicsItem*, QGeoMapObject*> scaleIndepMap;
+
+    void addObject(QGeoMapObject *object);
+    void removeObject(QGeoMapObject *object);
+    void clearObjects();
 
     QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
