@@ -189,9 +189,11 @@ void QBluetoothServiceDiscoveryAgent::start(DiscoveryMode mode)
     if (d->discoveryState() == QBluetoothServiceDiscoveryAgentPrivate::Inactive) {
         d->setDiscoveryMode(mode);
         if (d->deviceAddress.isNull()) {
+//            qDebug() << "Doing device discovery";
             d->startDeviceDiscovery();
         } else {
             d->discoveredDevices << QBluetoothDeviceInfo(d->deviceAddress, QString(), 0);
+//            qDebug() << "Doing service discovery" << d->discoveredDevices.count();
             d->startServiceDiscovery();
         }
     }
@@ -298,7 +300,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
 */
 void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 {
-    qDebug() << "XXXXXXXXXXX Finished" << discoveredDevices.count();
+//    qDebug() << "XXXXXXXXXXX Finished" << discoveredDevices.count();
     if (deviceDiscoveryAgent->error() != QBluetoothDeviceDiscoveryAgent::NoError) {
         error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
 
@@ -318,9 +320,16 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscovered(const QBluetoothDeviceInfo &info)
 {
 //    discoveredDevices.append(info);
-    if(mode != QBluetoothServiceDiscoveryAgent::FullDiscovery) {
+//    if(info.address() != QBluetoothAddress("00:21:86:E8:0F:8D"))
+//        return;
+
+    if(mode == QBluetoothServiceDiscoveryAgent::FullDiscovery) {
+//        qDebug() << "Full service dsicovery on" << info.address().toString();
+        discoveredDevices.prepend(info);
+    }
+    else {
         if(!quickDiscovery(info.address(), info)){
-            qDebug() << "Must do full discovery on" << info.address().toString();
+//            qDebug() << "Must do full discovery on" << info.address().toString();
             discoveredDevices.prepend(info);
         }
     }
@@ -358,7 +367,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopServiceDiscovery()
 void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 {
     if(!discoveredDevices.isEmpty()) {
-        qDebug() << "Deleting: " << discoveredDevices.at(0).address().toString();
+//        qDebug() << "Deleting: " << discoveredDevices.at(0).address().toString();
         discoveredDevices.removeFirst();
     }
 
