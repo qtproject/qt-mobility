@@ -84,7 +84,7 @@ void NfcTagType1::load(QSettings *settings)
 
     memory = settings->value(QLatin1String("Data")).toByteArray();
 
-    quint8 nmn = memory.at(8);
+    //quint8 nmn = memory.at(8);
 
     quint8 vno = memory.at(9);
     if (vno != 0x10)
@@ -116,8 +116,8 @@ void NfcTagType1::load(QSettings *settings)
         ;
     }
 
-    quint16 lock = (quint8(memory[blockByteToAddress(0x0e, 1)]) << 8) |
-                   quint8(memory[blockByteToAddress(0x0e, 0)]);
+    //quint16 lock = (quint8(memory[blockByteToAddress(0x0e, 1)]) << 8) |
+    //               quint8(memory[blockByteToAddress(0x0e, 0)]);
 
     settings->endGroup();
 }

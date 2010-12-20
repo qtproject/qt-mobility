@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-    NFC LLCP protocol is a peer-to-peer communication protocol between two NFC complient devices.
+    NFC LLCP protocol is a peer-to-peer communication protocol between two NFC compliant devices.
 */
 
 /*!

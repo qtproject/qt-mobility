@@ -39,46 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKEREDITABLERESULTSET_P_H
-#define QGALLERYTRACKEREDITABLERESULTSET_P_H
+#ifndef QNEARFIELDTAGTYPE4_H
+#define QNEARFIELDTAGTYPE4_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qnearfieldtarget.h>
 
-#include "qgallerytrackerresultset_p.h"
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerMetaDataEdit;
-
-class QGalleryTrackerEditableResultSetPrivate;
-
-class QGalleryTrackerEditableResultSet : public QGalleryTrackerResultSet
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType4 : public QNearFieldTarget
 {
     Q_OBJECT
+
 public:
-    QGalleryTrackerEditableResultSet(
-            QGalleryTrackerResultSetArguments *arguments,
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            bool autoUpdate,
-            QObject *parent = 0);
-    ~QGalleryTrackerEditableResultSet();
+    explicit QNearFieldTagType4(QObject *parent = 0);
+    ~QNearFieldTagType4();
 
-    bool setMetaData(int key, const QVariant &value);
+    Type type() const { return NfcTagType4; }
 
-private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerEditableResultSet)
-    Q_PRIVATE_SLOT(d_func(), void _q_editFinished(QGalleryTrackerMetaDataEdit *))
+    quint8 version();
+
+    virtual RequestId select(const QByteArray &name);
+    virtual RequestId select(quint16 fileIdentifier);
+
+    virtual RequestId read(quint16 length = 0, quint16 startOffset = 0);
+    virtual RequestId write(const QByteArray &data, quint16 startOffset = 0);
+
+protected:
+    bool handleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &response);
 };
 
 QTM_END_NAMESPACE
 
-#endif
+QT_END_HEADER
+
+#endif // QNEARFIELDTAGTYPE4_H
