@@ -111,7 +111,10 @@ QGeoMapObject::~QGeoMapObject()
 */
 QGeoMapObject::Type QGeoMapObject::type() const
 {
-    return QGeoMapObject::NullType;
+    if (d_ptr->graphicsItem)
+        return QGeoMapObject::CustomType;
+    else
+        return QGeoMapObject::NullType;
 }
 
 /*!
@@ -179,10 +182,7 @@ bool QGeoMapObject::isSelected() const
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
-    if (!d_ptr->info)
-        return QGeoBoundingBox();
-
-    return d_ptr->info->boundingBox();
+    // TODO: reimplement
 }
 
 /*!
@@ -191,10 +191,7 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
-    if (!d_ptr->info)
-        return false;
-
-    return d_ptr->info->contains(coordinate);
+    // TODO: reimplement
 }
 
 /*!
@@ -222,21 +219,13 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 */
 void QGeoMapObject::setMapData(QGeoMapData *mapData)
 {
+    // TODO: any necessary callbacks here
+
     if (d_ptr->mapData == mapData)
         return;
 
-    if (d_ptr->info) {
-        delete d_ptr->info;
-        d_ptr->info = 0;
-    }
-
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
-        return;
-
-    d_ptr->info = mapData->createMapObjectInfo(this);
-
-    if (!d_ptr->info)
         return;
 
     connect(d_ptr->mapData,
@@ -252,21 +241,6 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
             d_ptr->info,
             SLOT(centerChanged(QGeoCoordinate)));
 
-    connect(this,
-            SIGNAL(zValueChanged(int)),
-            d_ptr->info,
-            SLOT(zValueChanged(int)));
-    connect(this,
-            SIGNAL(visibleChanged(bool)),
-            d_ptr->info,
-            SLOT(visibleChanged(bool)));
-    connect(this,
-            SIGNAL(selectedChanged(bool)),
-            d_ptr->info,
-            SLOT(selectedChanged(bool)));
-
-    d_ptr->info->init();
-
 }
 
 /*!
@@ -279,16 +253,14 @@ QGeoMapData* QGeoMapObject::mapData() const
     return d_ptr->mapData;
 }
 
-/*!
-    Returns the QGeoMapObjectInfo instance which implements the
-    QGeoMapData specific behaviours of this map object.
-
-    This will mostly be useful when implementing custom QGeoMapData
-    subclasses.
-*/
-QGeoMapObjectInfo* QGeoMapObject::info() const
+QGraphicsItem *QGeoMapObject::graphicsItem() const
 {
-    return d_ptr->info;
+    return d_ptr->graphicsItem;
+}
+
+void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
+{
+    d_ptr->graphicsItem = item;
 }
 
 /*!
@@ -326,7 +298,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
       isVisible(true),
       isSelected(false),
       mapData(0),
-      info(0) {}
+      graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {

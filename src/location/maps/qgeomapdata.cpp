@@ -473,6 +473,8 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 {
     Q_UNUSED(painter)
     Q_UNUSED(option)
+
+    // TODO: add default impl here
 }
 
 /*!

@@ -286,7 +286,7 @@ QGeoCoordinate QGeoTiledMapData::worldReferencePositionToCoordinate(const QPoint
 
     lng = lng * 360.0f - 180.0f;
 
-    return QGeoCoordinate(lat, lng);
+    return QGeoCoordinate(lat, lng, 0.0);
 }
 
 /*!
@@ -766,13 +766,20 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 {
     Q_D(const QGeoTiledMapData);
 
-    QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
-    QGeoCoordinate coordLow(coord.latitude(), coord.longitude() + 360.0);
-    QGeoCoordinate coordHigh(coord.latitude(), coord.longitude() - 360.0);
+    QList<QGeoCoordinate> coords;
+    coords.append(screenPositionToCoordinate(screenPosition));
+    //coords.append(screenPositionToCoordinate(screenPosition - QPointF(1, 1)));
+    //coords.append(screenPositionToCoordinate(screenPosition + QPointF(1, 1)));
+    QGeoCoordinate c = QGeoCoordinate(coords.at(0).latitude(), coords.at(0).longitude() + 360.0);
+    if (!isnan(c.latitude()) && !isnan(c.longitude()))
+        coords.append(c);
+    c = QGeoCoordinate(coords.at(0).latitude(), coords.at(0).longitude() - 360.0);
+    if (!isnan(c.latitude()) && !isnan(c.longitude()))
+        coords.append(c);
 
     QList<QGraphicsItem*> items;
-
-    QPointF topLeft = d->screenPositionToWorldReferencePosition(screenPosition - QPointF(1.5,1.5));
+;
+    /*QPointF topLeft = d->screenPositionToWorldReferencePosition(screenPosition - QPointF(1.5,1.5));
     QPointF bottomRight = d->screenPositionToWorldReferencePosition(screenPosition + QPointF(1.5,1.5));
     if (bottomRight.x() < topLeft.x()) {
         // wrapped around
@@ -793,18 +800,24 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
     } else {
         QRectF rect(topLeft, bottomRight);
         items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
-    }
-
+    }*/
+    items.append(d->itemMap.keys());
+    qStableSort(items.begin(), items.end(), zComparator);
+    qDebug("checking amongst %d items", items.size());
     QList<QGeoMapObject*> results;
 
     Q_FOREACH (QGraphicsItem* item, items) {
         if (!d->itemMap.contains(item))
             continue;
         QGeoMapObject *result = d->itemMap.value(item);
-        if (result->isVisible() && (result->contains(coord) ||
-                                    result->contains(coordLow) ||
-                                    result->contains(coordHigh)))
-            results.append(result);
+        if (result->isVisible()) {
+            Q_FOREACH (QGeoCoordinate coord, coords) {
+                if (result->contains(coord)) {
+                    results.append(result);
+                    break;
+                }
+            }
+        }
     }
 
     return results;
@@ -1213,8 +1226,10 @@ void QGeoTiledMapDataPrivate::removeObjectInfo(QGeoTiledMapObjectInfo* object)
 
 void QGeoTiledMapDataPrivate::addObjectInfo(QGeoTiledMapObjectInfo* object)
 {
-    scene->addItem(object->graphicsItem);
-    itemMap.insert(object->graphicsItem, object->mapObject());
+    if (object != containerObject->info()) {
+        scene->addItem(object->graphicsItem);
+        itemMap.insert(object->graphicsItem, object->mapObject());
+    }
 }
 
 QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRect &rect, bool translateToScreen) const

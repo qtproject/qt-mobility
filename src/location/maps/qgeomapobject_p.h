@@ -73,7 +73,7 @@ public:
     bool isSelected;
 
     QGeoMapData *mapData;
-    mutable QGeoMapObjectInfo *info;
+    mutable QGraphicsItem *graphicsItem;
 
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };
