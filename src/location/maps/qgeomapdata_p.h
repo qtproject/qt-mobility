@@ -65,8 +65,9 @@ QTM_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 class QGeoMapOverlay;
 
-class QGeoMapDataPrivate
+class QGeoMapDataPrivate : public QObject
 {
+    Q_OBJECT
 public:
     QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine);
     virtual ~QGeoMapDataPrivate();
@@ -93,6 +94,15 @@ public:
     void removeObject(QGeoMapObject *object);
     void clearObjects();
 
+    bool sceneOutOfDate;
+
+public slots:
+    void forceUpdate(const QRectF &target = QRectF());
+    void forceUpdate(const QGeoMapObject *obj);
+
+    void updateSender();
+
+public:
     QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:

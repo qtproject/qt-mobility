@@ -153,6 +153,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
         return;
 
     d_ptr->windowSize = size;
+    d_ptr->sceneOutOfDate = true;
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit windowSizeChanged(d_ptr->windowSize);
@@ -188,11 +189,10 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
         return;
 
     d_ptr->zoomLevel = zoomLevel;
+    d_ptr->sceneOutOfDate = true;
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit zoomLevelChanged(d_ptr->zoomLevel);
-
-    d_ptr->updateScaleIndepScene();
 }
 
 /*!
@@ -234,11 +234,10 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
         return;
 
     d_ptr->center = center;
+    d_ptr->sceneOutOfDate = true;
 
     if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
-
-    d_ptr->updateScaleIndepScene();
 }
 
 /*!
@@ -371,6 +370,11 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
 
     QList<QGraphicsItem*> items;
+
+    d_ptr->updateScaleIndepScene();
+    if (!d_ptr->scaleIndepScene)
+        return results;
+
     items = d_ptr->scaleIndepScene->items(screenPosition, Qt::IntersectsItemShape,
                                           Qt::AscendingOrder);
 
@@ -393,6 +397,11 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     QList<QGeoMapObject*> results;
 
     QList<QGraphicsItem*> items;
+
+    d_ptr->updateScaleIndepScene();
+    if (!d_ptr->scaleIndepScene)
+        return results;
+
     items = d_ptr->scaleIndepScene->items(screenRect, Qt::IntersectsItemShape,
                                           Qt::AscendingOrder);
 
@@ -479,7 +488,12 @@ void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *op
 */
 void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
-    d_ptr->scaleIndepScene->render(painter, option->rect, option->rect);
+    QRectF target = option? option->rect : QRectF(QPointF(0,0), d_ptr->windowSize);
+
+    d_ptr->updateScaleIndepScene();
+
+    if (d_ptr->scaleIndepScene)
+        d_ptr->scaleIndepScene->render(painter, target, target);
 }
 
 /*!
@@ -627,12 +641,15 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
-    : q_ptr(parent),
+    : QObject(0),
+      q_ptr(parent),
       engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
       scaleIndepScene(0),
-      blockPropertyChangeSignals(false) {}
+      blockPropertyChangeSignals(false),
+      sceneOutOfDate(true)
+{}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
@@ -643,21 +660,33 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 
 void QGeoMapDataPrivate::updateScaleIndepScene()
 {
-    if (scaleIndepScene)
-        delete scaleIndepScene;
+    if (!q_ptr || !containerObject)
+        return;
 
-    scaleIndepMap.clear();
+    if (sceneOutOfDate) {
+        sceneOutOfDate = false;
 
-    scaleIndepScene = new QGraphicsScene(QRectF(QPointF(0,0), windowSize));
-    const QGeoBoundingBox bounds = q_ptr->viewport();
-    foreach (QGeoMapObject *obj, containerObject->childObjects()) {
-        if (obj->graphicsItem() && bounds.intersects(obj->boundingBox())) {
-            const QPointF p = q_ptr->coordinateToScreenPosition(obj->origin());
+        if (scaleIndepScene) {
+            QList<QGraphicsItem*> items = scaleIndepScene->items();
+            foreach (QGraphicsItem *item, items) {
+                scaleIndepScene->removeItem(item);
+            }
+            delete scaleIndepScene;
+        }
 
-            obj->graphicsItem()->setPos(p);
-            scaleIndepScene->addItem(obj->graphicsItem());
+        scaleIndepMap.clear();
 
-            scaleIndepMap.insert(obj->graphicsItem(), obj);
+        scaleIndepScene = new QGraphicsScene(QRectF(QPointF(0,0), windowSize));
+        const QGeoBoundingBox bounds = q_ptr->viewport();
+        foreach (QGeoMapObject *obj, containerObject->childObjects()) {
+            if (obj->graphicsItem() && bounds.intersects(obj->boundingBox())) {
+                const QPointF p = q_ptr->coordinateToScreenPosition(obj->origin());
+
+                scaleIndepScene->addItem(obj->graphicsItem());
+                obj->graphicsItem()->setPos(p);
+
+                scaleIndepMap.insert(obj->graphicsItem(), obj);
+            }
         }
     }
 }
@@ -665,13 +694,13 @@ void QGeoMapDataPrivate::updateScaleIndepScene()
 void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
 {
     containerObject->addChildObject(object);
-    updateScaleIndepScene();
+    sceneOutOfDate = true;
 }
 
 void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
 {
     containerObject->removeChildObject(object);
-    updateScaleIndepScene();
+    sceneOutOfDate = true;
 }
 
 void QGeoMapDataPrivate::clearObjects()
@@ -682,8 +711,32 @@ void QGeoMapDataPrivate::clearObjects()
         delete scaleIndepScene;
         scaleIndepScene = 0;
     }
+    sceneOutOfDate = true;
+}
+
+void QGeoMapDataPrivate::forceUpdate(const QRectF &target)
+{
+    sceneOutOfDate = true;
+    emit q_ptr->updateMapDisplay(target);
+}
+
+void QGeoMapDataPrivate::forceUpdate(const QGeoMapObject *obj)
+{
+    const QGeoBoundingBox bounds = q_ptr->viewport();
+    if (obj->graphicsItem() && bounds.intersects(obj->boundingBox())) {
+        sceneOutOfDate = true;
+        emit q_ptr->updateMapDisplay(QRectF());
+    }
+}
+
+void QGeoMapDataPrivate::updateSender()
+{
+    QGeoMapObject *obj = qobject_cast<QGeoMapObject*>(sender());
+    if (obj)
+        forceUpdate(obj);
 }
 
 #include "moc_qgeomapdata.cpp"
+#include "moc_qgeomapdata_p.cpp"
 
 QTM_END_NAMESPACE

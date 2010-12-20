@@ -42,6 +42,7 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 #include "qgeomapdata.h"
+#include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 
@@ -96,6 +97,17 @@ QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     : d_ptr(new QGeoMapObjectPrivate())
 {
     setMapData(mapData);
+
+    connect(this, SIGNAL(originChanged(QGeoCoordinate)),
+            this, SIGNAL(mapNeedsUpdate()));
+    connect(this, SIGNAL(selectedChanged(bool)),
+            this, SIGNAL(mapNeedsUpdate()));
+    connect(this, SIGNAL(visibleChanged(bool)),
+            this, SIGNAL(mapNeedsUpdate()));
+    connect(this, SIGNAL(zValueChanged(int)),
+            this, SIGNAL(mapNeedsUpdate()));
+    connect(this, SIGNAL(graphicsItemChanged(QGraphicsItem*)),
+            this, SIGNAL(mapNeedsUpdate()));
 }
 
 /*!
@@ -132,6 +144,8 @@ void QGeoMapObject::setZValue(int zValue)
 {
     if (d_ptr->zValue != zValue) {
         d_ptr->zValue = zValue;
+        if (d_ptr->graphicsItem)
+            d_ptr->graphicsItem->setZValue(zValue);
         emit zValueChanged(d_ptr->zValue);
     }
 }
@@ -139,6 +153,16 @@ void QGeoMapObject::setZValue(int zValue)
 int QGeoMapObject::zValue() const
 {
     return d_ptr->zValue;
+}
+
+bool QGeoMapObject::isScaleDependent()
+{
+    return d_ptr->isScaleDependent;
+}
+
+void QGeoMapObject::setScaleDependent(bool s)
+{
+    d_ptr->isScaleDependent = s;
 }
 
 /*!
@@ -183,8 +207,19 @@ bool QGeoMapObject::isSelected() const
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
-    // TODO: reimplement
-    return QGeoBoundingBox();
+    if (!d_ptr->graphicsItem || !d_ptr->mapData)
+        return QGeoBoundingBox();
+
+    QPointF originPoint = d_ptr->mapData->coordinateToScreenPosition(origin());
+    QRectF bounds = d_ptr->graphicsItem->shape().boundingRect();
+    bounds.translate(originPoint);
+
+    QGeoCoordinate topLeft = d_ptr->mapData->screenPositionToCoordinate(
+                bounds.topLeft());
+    QGeoCoordinate bottomRight = d_ptr->mapData->screenPositionToCoordinate(
+                bounds.bottomRight());
+
+    return QGeoBoundingBox(topLeft, bottomRight);
 }
 
 /*!
@@ -193,8 +228,13 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
-    // TODO: reimplement
-    return false;
+    if (!d_ptr->graphicsItem || !d_ptr->mapData)
+        return false;
+
+    QPointF point = d_ptr->mapData->coordinateToScreenPosition(coordinate);
+    point = d_ptr->graphicsItem->mapFromScene(point);
+
+    return d_ptr->graphicsItem->contains(point);
 }
 
 /*!
@@ -222,14 +262,20 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 */
 void QGeoMapObject::setMapData(QGeoMapData *mapData)
 {
-    // TODO: any necessary callbacks here
-
     if (d_ptr->mapData == mapData)
         return;
+
+    if (d_ptr->mapData) {
+        disconnect(this, SIGNAL(mapNeedsUpdate()),
+                   d_ptr->mapData->d_ptr, SLOT(updateSender()));
+    }
 
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
         return;
+
+    connect(this, SIGNAL(mapNeedsUpdate()),
+            d_ptr->mapData->d_ptr, SLOT(updateSender()));
 }
 
 /*!
@@ -249,7 +295,12 @@ QGraphicsItem *QGeoMapObject::graphicsItem() const
 
 void QGeoMapObject::setGraphicsItem(QGraphicsItem *item)
 {
+    if (item == d_ptr->graphicsItem)
+        return;
+
     d_ptr->graphicsItem = item;
+    item->setZValue(this->zValue());
+    emit graphicsItemChanged(item);
 }
 
 QGeoCoordinate QGeoMapObject::origin() const
@@ -259,7 +310,11 @@ QGeoCoordinate QGeoMapObject::origin() const
 
 void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 {
+    if (origin == d_ptr->origin)
+        return;
+
     d_ptr->origin = origin;
+    emit originChanged(origin);
 }
 
 /*!
@@ -296,6 +351,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
     : zValue(0),
       isVisible(true),
       isSelected(false),
+      isScaleDependent(false),
       mapData(0),
       graphicsItem(0) {}
 

@@ -113,12 +113,16 @@ public:
     QGraphicsItem* graphicsItem() const;
     void setGraphicsItem(QGraphicsItem *item);
 
+    bool isScaleDependent() const;
+    void setScaleDependent(bool s);
 
 Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
     void originChanged(QGeoCoordinate origin);
+    void graphicsItemChanged(QGraphicsItem *item);
+    void mapNeedsUpdate();
 
 private:
     QGeoMapObjectPrivate *d_ptr;

@@ -123,4 +123,6 @@ QGeoMapObject* QGeoMapObjectInfo::mapObject()
     return 0;
 }
 
+#include "moc_qgeomapobjectinfo.cpp"
+
 QTM_END_NAMESPACE
