@@ -41,9 +41,7 @@
 
 #include "qbluetoothlocaldevice.h"
 #include "utils_symbian_p.h"
-#ifndef S60_50_PLATFORM
 #include <btengsettings.h>
-#endif
 #include <bttypes.h>
 #include <bt_subscribe.h>
 
@@ -55,16 +53,12 @@ class QBluetoothLocalDevicePrivate
 {
     ~QBluetoothLocalDevicePrivate();
 public:
-#ifndef S60_50_PLATFORM
     CBTEngSettings *m_settings;
-#endif
 };
 
 QBluetoothLocalDevicePrivate::~QBluetoothLocalDevicePrivate()
 {
-#ifndef S60_50_PLATFORM
     delete m_settings;
-#endif
 }
 
 
@@ -75,20 +69,17 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(QObject *parent)
 :   QObject(parent)
 {
     this->d_ptr = new QBluetoothLocalDevicePrivate;
-#ifndef S60_50_PLATFORM
     CBTEngSettings *settings = NULL;
     TRAPD(err, settings = CBTEngSettings::NewL());
     if (!err) {
         this->d_ptr->m_settings = settings;
     }
-#endif
 }
 
 QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, QObject *parent)
 : QObject(parent)
 {
     this->d_ptr = new QBluetoothLocalDevicePrivate;
-#ifndef S60_50_PLATFORM
     CBTEngSettings *settings = NULL;
     TRAPD(err, settings = CBTEngSettings::NewL());
     if (!err) {
@@ -102,14 +93,12 @@ QBluetoothLocalDevice::QBluetoothLocalDevice(const QBluetoothAddress &address, Q
         if (address == QBluetoothAddress(s60DescToQString(bluetoothAddress)))
             this->d_ptr->m_settings = settings;
     }
-#endif
 }
 
 QString QBluetoothLocalDevice::name() const
 {
     if (!d_ptr)
         return QString();
-#ifndef S60_50_PLATFORM
     QString name = QString();
     TBuf<256> localName;
     TInt errorCode = this->d_ptr->m_settings->GetLocalName(localName);
@@ -117,7 +106,6 @@ QString QBluetoothLocalDevice::name() const
         name = s60DescToQString(localName);
     }
     return name;
-#endif
 }
 
 QBluetoothAddress QBluetoothLocalDevice::address() const
@@ -136,19 +124,16 @@ void QBluetoothLocalDevice::powerOn()
 {
     if (!d_ptr)
         return;
-#ifndef S60_50_PLATFORM
     TBTPowerStateValue powerState;
     this->d_ptr->m_settings->GetPowerState(powerState);
     if (powerState == EBTPowerOff)
         this->d_ptr->m_settings->SetPowerState(EBTPowerOn);
-#endif
 }
 
 void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 {
     if (!d_ptr)
         return;
-#ifndef S60_50_PLATFORM
     switch (mode) {
         case HostPoweredOff:
             this->d_ptr->m_settings->SetPowerState(EBTPowerOff);
@@ -172,14 +157,13 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
             break;
         }
     }
-#endif
 }
 
 QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
 {
     if (!d_ptr)
         return HostPoweredOff;
-#ifndef S60_50_PLATFORM
+
     TBTVisibilityMode visibilityMode;
     this->d_ptr->m_settings->GetVisibilityMode(visibilityMode);
 
@@ -188,19 +172,20 @@ QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
             return HostConnectable;
         case EBTVisibilityModeGeneral:
             return HostDiscoverable;
-        case EBTVisibilityModeNoScans:
         case EBTVisibilityModeTemporary:
-        case EBTVisibilityModeInquiryScanOnly:
             return HostPoweredOff;
+        default:
+            // default value, also includes these new values from Symbian^3 onwards
+            // case EBTVisibilityModeNoScans:
+            // case EBTVisibilityModeInquiryScanOnly:
+        return HostPoweredOff;
     }
-#endif
 }
 
 QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
 {
     QList<QBluetoothHostInfo> localDevices;
     QBluetoothHostInfo hostInfo;
-#ifndef S60_50_PLATFORM
     CBTEngSettings *settings = NULL;
     TRAPD(err, settings = CBTEngSettings::NewL());
     if (!err) {
@@ -217,7 +202,6 @@ QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
     hostInfo.setAddress(QBluetoothAddress(s60DescToQString(bluetoothAddress)));
 
     localDevices.append(hostInfo);
-#endif
     return localDevices;
 }
 

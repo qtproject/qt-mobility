@@ -81,9 +81,10 @@ symbian {
             bluetooth/qbluetoothtransfermanager_symbian.cpp
 
         contains(S60_VERSION, 5.0) {
-            DEFINES += S60_50_PLATFORM
-            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex
-            
+            message("NOTICE - START")
+            message("Bluetooth backend needs SDK plugin from Forum Nokia for 5.0 SDK")
+            message("NOTICE - END")
+            LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lirobex -lbtengsettings
         } else {
             LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib -lobex -lbtengsettings
         }
