@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPixmapObject::QGeoMapPixmapObject()
     : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
-    setGraphicsItem(d_ptr->parentItem);
+    setGraphicsItem(d_ptr->item);
 }
 
 /*!
@@ -77,10 +77,10 @@ QGeoMapPixmapObject::QGeoMapPixmapObject()
 QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap)
     : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
-    setGraphicsItem(d_ptr->parentItem);
+    setGraphicsItem(d_ptr->item);
     setOrigin(coordinate);
-    d_ptr->pixmapItem->setPixmap(pixmap);
-    d_ptr->pixmapItem->setPos(offset);
+    d_ptr->item->setPixmap(pixmap);
+    d_ptr->item->setPos(offset);
 }
 
 /*!
@@ -134,20 +134,22 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 */
 QPixmap QGeoMapPixmapObject::pixmap() const
 {
-    return d_ptr->pixmapItem->pixmap();
+    return d_ptr->item->pixmap();
 }
 
 void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 {
-    const QPixmap curPixmap = d_ptr->pixmapItem->pixmap();
+    const QPixmap curPixmap = d_ptr->item->pixmap();
     if (curPixmap.isNull() && pixmap.isNull())
         return;
 
     if ((curPixmap.isNull() && !pixmap.isNull())
             || (!curPixmap.isNull() && pixmap.isNull())
             || (curPixmap.toImage() != pixmap.toImage())) {
-        d_ptr->pixmapItem->setPixmap(pixmap);
+        d_ptr->item->setPixmap(pixmap);
+        d_ptr->item->setScale(1.0);
         emit pixmapChanged(pixmap);
+        emit mapNeedsUpdate();
     }
 }
 
@@ -166,15 +168,21 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 */
 QPoint QGeoMapPixmapObject::offset() const
 {
-    QPointF pt = d_ptr->pixmapItem->pos();
-    return QPoint(int(pt.x()+0.5), int(pt.y()+0.5));
+    QPointF pt = d_ptr->item->offset();
+
+    QPoint rounded;
+    rounded.setX(int(pt.x() > 0 ? pt.x() + 0.5 : pt.x() - 0.5));
+    rounded.setY(int(pt.y() > 0 ? pt.y() + 0.5 : pt.y() - 0.5));
+
+    return rounded;
 }
 
 void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 {
-    if (d_ptr->pixmapItem->pos() != offset) {
-        d_ptr->pixmapItem->setPos(offset);
+    if (d_ptr->item->offset() != offset) {
+        d_ptr->item->setOffset(offset);
         emit offsetChanged(offset);
+        emit mapNeedsUpdate();
     }
 }
 
@@ -210,14 +218,12 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 
 QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate()
 {
-    parentItem = new QGraphicsItemGroup();
-    pixmapItem = new QGraphicsPixmapItem(parentItem);
+    item = new QGraphicsPixmapItem();
 }
 
 QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate()
 {
-    delete pixmapItem;
-    delete parentItem;
+    delete item;
 }
 
 #include "moc_qgeomappixmapobject.cpp"

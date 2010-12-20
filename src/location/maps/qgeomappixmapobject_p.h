@@ -57,8 +57,7 @@ public:
     QGeoMapPixmapObjectPrivate();
     ~QGeoMapPixmapObjectPrivate();
 
-    QGraphicsItem *parentItem;
-    QGraphicsPixmapItem *pixmapItem;
+    QGraphicsPixmapItem *item;
 };
 
 QTM_END_NAMESPACE
