@@ -31,7 +31,10 @@ SOURCES += servicemetadata.cpp \
     qservicefilter.cpp \
     dberror.cpp \
     qremoteserviceregister.cpp
-symbian { 
+symbian {
+    contains(S60_VERSION, 5.2):contains(MOBILITY_SD_MCL_BUILD, yes){
+        DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
+    }
     INCLUDEPATH += ./databasemanagerserver_symbian
     PRIVATE_HEADERS += databasemanager_symbian_p.h
     SOURCES += databasemanager_symbian.cpp

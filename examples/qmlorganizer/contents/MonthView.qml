@@ -44,11 +44,10 @@ import QtMobility.organizer 1.1
 
 Rectangle  {
     id:monthView
-    property int month: calendar.day.getMonth()
-    property int year: calendar.day.getFullYear()
+    property int month
+    property int year
     property date startDay:new Date(year, month, 1)
     property int startWeekday:startDay.getDay()
-
     anchors.fill: parent
 
     Grid {
@@ -115,7 +114,7 @@ Rectangle  {
                                dayContainer.radius = 0;
                            }
                            onClicked: {
-                               calendar.day = new Date(calendar.day.getFullYear(), calendar.day.getMonth(), index - startWeekday +1);
+                               calendar.currentDate = new Date(calendar.year, calendar.month, index - startWeekday +1);
                                calendar.state = "DayView";
                            }
                        }

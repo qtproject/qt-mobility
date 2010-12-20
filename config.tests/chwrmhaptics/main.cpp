@@ -38,42 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TESTRELATIONSHIP_H
-#define TESTRELATIONSHIP_H
 
-#include <QObject>
-#include "cntsymbianengine.h"
+#include <hwrmhaptics.h>
+#include <hwrmlogicalactuators.h>
 
-class CContactDatabase;
-class CntRelationship;
-
-class TestCntRelationship : public QObject
+int main(int, char**)
 {
-    Q_OBJECT
-
-private slots:
-	void initTestCase();
-	void cleanupTestCase();
-
-	void init();
-	void cleanup();
-
-	void invalidRelationship();
-	void validGroupRelationship();
-	void validGroupRelationships();
-	void invalidGroupRelationship();
-	void invalidFirstContactGroupRelationship();
-	void invalidSecondContactGroupRelationship();
-	void invalidFirstAndSecondContactGroupRelationship();
-	void batchOperationGroupRelationship();
-
-private:
-    bool validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
-
-private:
-     CntSymbianEngine *m_manager;
-     CContactDatabase *m_database;
-     CntRelationship  *m_relationship;
-};
-
-#endif
+    CHWRMHaptics *haptics = CHWRMHaptics::NewL( NULL, NULL );
+    return 0;
+}
