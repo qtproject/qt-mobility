@@ -62,6 +62,7 @@ protected:
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+    static const int KErrNotFound;
 
     void setRanges(qreal correctionFactor=1);
 
@@ -70,7 +71,10 @@ protected:
     {
 
         if (!initDone) {
-            m_remoteSensorManager->loadPlugin(sensorName);
+            if (!m_remoteSensorManager->loadPlugin(sensorName)){
+                sensorError(KErrNotFound);
+                return;
+            }
             m_remoteSensorManager->registerSensorInterface<T>(sensorName);
         }
         m_sensorInterface = T::controlInterface(sensorName);
@@ -78,6 +82,7 @@ protected:
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
         if (!m_sensorInterface) {
+            sensorError(KErrNotFound);
             return;
         }
 
@@ -111,6 +116,7 @@ protected:
         if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
         if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+        if (sensorName=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
 
         setDescription(m_sensorInterface->property("description").toString());
 

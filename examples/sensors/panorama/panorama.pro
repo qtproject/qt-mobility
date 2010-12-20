@@ -13,7 +13,8 @@ HEADERS += inputcontroller.h \
     magnetometercontroller.h \
     orientationcontroller.h \
     rotationcontroller.h \
-    tapcontroller.h
+    tapcontroller.h \
+    gyroscopecontroller.h
 SOURCES += main.cpp \
     inputcontroller.cpp \
     keycontroller.cpp \
@@ -24,6 +25,7 @@ SOURCES += main.cpp \
     magnetometercontroller.cpp \
     orientationcontroller.cpp \
     rotationcontroller.cpp \
-    tapcontroller.cpp
+    tapcontroller.cpp \
+    gyroscopecontroller.cpp
 RESOURCES += panorama.qrc
 TARGET = panorama

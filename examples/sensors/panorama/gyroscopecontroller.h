@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -37,31 +37,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef GYROSCOPECONTROLLER_H
+#define GYROSCOPECONTROLLER_H
+
 #include "inputcontroller.h"
-#include "view.h"
+#include <qgyroscope.h>
 
-const QString InputController::QGYROSCOPE = "QGyroscope";
-const QString InputController::QACCELEROMETER="QAccelerometer";
-const QString InputController::QORIENTATIONSENSOR = "QOrientationSensor";
-const QString InputController::QMAGNETOMETER = "QMagnetometer";
-const QString InputController::QROTATIONSENSOR = "QRotationSensor";
-const QString InputController::QTAPSENSOR = "QTapSensor";
-const QString InputController::QCOMPASS = "QCompass";
-const QString InputController::QKEYS = "Keys";
+QTM_USE_NAMESPACE
 
-int InputController::m_x =0;
-int InputController::m_y =0;
+class GyroscopeController : public InputController
+{
+    Q_OBJECT
 
-InputController::InputController() {}
+public:
+    GyroscopeController();
+    virtual ~GyroscopeController();
+    virtual void updateCoordinates();
 
-void InputController::keyPressEvent(QKeyEvent*){}
+private slots:
+    void update();
 
-int InputController::getX(){return m_x;}
+private:
+    QGyroscope m_gyroscope;
+    int m_dx, m_dy;
 
-int InputController::getY() {return m_y;}
+};
 
-void InputController::setX(int x){m_x = x;}
-
-void InputController::setY(int y){m_y = y;}
-
-void InputController::updateCoordinates(){}
+#endif // GYROSCOPECONTROLLER_H

@@ -48,6 +48,7 @@
 #include <qrotationsensor.h>
 #include <qtapsensor.h>
 #include <QFile>
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 
@@ -68,12 +69,12 @@ QString checkSensor( QSensor *sensor )
 
     for( int i = 0; i < sen_datarates.size(); ++i )
     {
-       datarates.append("[");
-       QString num;
-       datarates.append(num.setNum(sen_datarates[i].first));
-       datarates.append("..");
-       datarates.append(num.setNum(sen_datarates[i].second));
-       datarates.append("] ");
+        datarates.append("[");
+        QString num;
+        datarates.append(num.setNum(sen_datarates[i].first));
+        datarates.append("..");
+        datarates.append(num.setNum(sen_datarates[i].second));
+        datarates.append("] ");
     }
 
 
@@ -108,12 +109,8 @@ QString checkSensor( QSensor *sensor )
 int main( int argc, char **argv )
 {
     QCoreApplication app(argc, argv);
-
     QStringList args = app.arguments();
     QString fileName = args.size()>1?args.at(1):"metadata.csv";
-    QTextStream out2(stdout);
-    out2<<fileName;
-
     QFile file(fileName);
 
     bool result = true;
@@ -122,35 +119,25 @@ int main( int argc, char **argv )
 
     QTextStream out(&file);
 
-
-//    QTextStream out(stdout);
-
-    QSensor *sensors[8];
-    sensors[0] = new QAccelerometer;
-    sensors[1] = new QAmbientLightSensor;
-    sensors[2] = new QCompass;
-    sensors[3] = new QMagnetometer;
-    sensors[4] = new QOrientationSensor;
-    sensors[5] = new QProximitySensor;
-    sensors[6] = new QRotationSensor;
-    sensors[7] = new QTapSensor;
-
-
     out <<"Identifier,Type,Description,OutputRanges,DataRates"<<endl;
 
-    for( int i = 0; i < 8; ++i )
-    {
-        if( ! sensors[i] )
+    QList<QByteArray> types = QSensor::sensorTypes();
+    for (int j=0, l= types.size();j<l; j++ ){
+
+        const QByteArray type = types.at(j);
+        QList<QByteArray> ids = QSensor::sensorsForType(type);
+
+        for( int i = 0, ll=ids.size(); i < ll; ++i )
         {
-            out << "sensor number " << i << " unavailable" << endl;
-            continue;
-        }
-        if( ! sensors[i]->connectToBackend() )
-        {
-            out << "connectToBackend failed" << endl;
-            result = false;
-        } else {
-            out << checkSensor(sensors[i] );
+            QSensor sensor(type);
+            sensor.setIdentifier(ids.at(i));
+            if( ! sensor.connectToBackend() )
+            {
+                qDebug() << "connectToBackend failed" << ids.at(i) <<endl;
+                result = false;
+            } else {
+                out << checkSensor(&sensor);
+            }
         }
     }
 
