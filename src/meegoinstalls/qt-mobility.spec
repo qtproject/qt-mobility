@@ -671,7 +671,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 %{_includedir}/QtContacts/QContactManagerEngine
 %{_includedir}/QtContacts/QContactManagerEngineFactory
 %{_includedir}/QtContacts/QContactManagerEngineV2
-%{_includedir}/QtContacts/QContactManagerEngineV3
 %{_includedir}/QtContacts/QContactName
 %{_includedir}/QtContacts/QContactNickname
 %{_includedir}/QtContacts/QContactNote
