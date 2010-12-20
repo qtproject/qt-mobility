@@ -155,16 +155,11 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 
     QPoint pos(coordinateToWorldReferencePosition(coordinate));
 
-    if (!d->containedInScreen(pos))
-        return QPointF();
-
     int x = pos.x() - d->worldReferenceViewportRect.left();
     if (x < 0)
         x += d->worldReferenceSize.width();
 
     int y = pos.y() - d->worldReferenceViewportRect.top();
-    if (y < 0)
-        y = 0;
 
     QPointF posF(offsetX + qreal(x) / d->zoomFactor, offsetY + qreal(y) / d->zoomFactor);
 
@@ -200,10 +195,6 @@ QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPo
     offsetY /= zoomFactor;
 
     QPointF pos(screenPosition.x() - offsetX, screenPosition.y() - offsetY);
-
-    QRectF bounds = QRectF(QPointF(0.0, 0.0), windowSize);
-    if (!bounds.contains(pos))
-        return QPoint();
 
     int worldX = int(worldReferenceViewportRect.left() + pos.x() * zoomFactor + 0.5) % worldReferenceSize.width();
     int worldY = int(worldReferenceViewportRect.top() + pos.y() * zoomFactor + 0.5) % worldReferenceSize.height();

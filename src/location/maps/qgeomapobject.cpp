@@ -155,7 +155,7 @@ int QGeoMapObject::zValue() const
     return d_ptr->zValue;
 }
 
-bool QGeoMapObject::isScaleDependent()
+bool QGeoMapObject::isScaleDependent() const
 {
     return d_ptr->isScaleDependent;
 }
