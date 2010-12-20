@@ -451,7 +451,6 @@ void CLlcpSocketType2::ReadyRead()
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error,iCallback->invokeReadyRead());
         //can do nothing if there is an error,so just ignore it
-        );
         }
     END
     }
@@ -468,7 +467,6 @@ void CLlcpSocketType2::BytesWritten(qint64 aBytes)
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error,iCallback->invokeBytesWritten(aBytes));
         //can do nothing if there is an error,so just ignore it
-        );
         }
     END
     }
