@@ -576,7 +576,7 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
     Q_D(QGeoTiledMapData);
-    d->paintObjects(painter, option);
+    QGeoMapData::paintObjects(painter, option);
 }
 
 void QGeoTiledMapData::processRequests()
@@ -757,61 +757,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 {
     Q_D(const QGeoTiledMapData);
 
-    QList<QGeoCoordinate> coords;
-    coords.append(screenPositionToCoordinate(screenPosition));
-    //coords.append(screenPositionToCoordinate(screenPosition - QPointF(1, 1)));
-    //coords.append(screenPositionToCoordinate(screenPosition + QPointF(1, 1)));
-    QGeoCoordinate c = QGeoCoordinate(coords.at(0).latitude(), coords.at(0).longitude() + 360.0);
-    if (!isnan(c.latitude()) && !isnan(c.longitude()))
-        coords.append(c);
-    c = QGeoCoordinate(coords.at(0).latitude(), coords.at(0).longitude() - 360.0);
-    if (!isnan(c.latitude()) && !isnan(c.longitude()))
-        coords.append(c);
-
-    QList<QGraphicsItem*> items;
-;
-    /*QPointF topLeft = d->screenPositionToWorldReferencePosition(screenPosition - QPointF(1.5,1.5));
-    QPointF bottomRight = d->screenPositionToWorldReferencePosition(screenPosition + QPointF(1.5,1.5));
-    if (bottomRight.x() < topLeft.x()) {
-        // wrapped around
-        QRectF rect(topLeft, QSizeF(3*d->zoomFactor, 3*d->zoomFactor));
-        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
-        QRectF rect2(QPointF(0, topLeft.y()), bottomRight);
-        items.append(d->scene->items(rect2, Qt::IntersectsItemShape, Qt::AscendingOrder));
-
-        qStableSort(items.begin(), items.end(), zComparator);
-        QList<QGraphicsItem*> uniq;
-
-        Q_FOREACH (QGraphicsItem *item, items)
-            if (!uniq.contains(item))
-                uniq.append(item);
-
-        items = uniq;
-
-    } else {
-        QRectF rect(topLeft, bottomRight);
-        items.append(d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder));
-    }*/
-    items.append(d->itemMap.keys());
-    qStableSort(items.begin(), items.end(), zComparator);
-    qDebug("checking amongst %d items", items.size());
-    QList<QGeoMapObject*> results;
-
-    Q_FOREACH (QGraphicsItem* item, items) {
-        if (!d->itemMap.contains(item))
-            continue;
-        QGeoMapObject *result = d->itemMap.value(item);
-        if (result->isVisible()) {
-            Q_FOREACH (QGeoCoordinate coord, coords) {
-                if (result->contains(coord)) {
-                    results.append(result);
-                    break;
-                }
-            }
-        }
-    }
-
-    return results;
+    return QGeoMapData::mapObjectsAtScreenPosition(screenPosition);
 }
 
 /*!
@@ -821,17 +767,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 {
     Q_D(const QGeoTiledMapData);
 
-    QRectF rect(d->worldReferenceViewportRect.topLeft() + screenRect.topLeft() * d->zoomFactor, screenRect.size() * d->zoomFactor);
-
-    QList<QGraphicsItem*> items = d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder);
-    QList<QGeoMapObject*> results;
-
-    for (int i = 0; i < items.size(); ++i) {
-        if (d->itemMap.contains(items.at(i)))
-            results.append(d->itemMap.value(items.at(i)));
-    }
-
-    return results;
+    return QGeoMapData::mapObjectsInScreenRect(screenRect);
 }
 
 /*!
@@ -889,7 +825,9 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-      scene(0) {}
+      scene(0)
+{
+}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -1015,70 +953,6 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
         }
     }
 }
-
-void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/)
-{
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
-    QPainter::RenderHints hints = painter->renderHints();
-    painter->setRenderHint(QPainter::Antialiasing, true);
-#endif
-    updateScreenRect();
-
-    qreal targetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
-    Q_ASSERT(targetX >= 0.0); // This should not be possible
-    targetX /= zoomFactor;
-
-    qreal targetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
-    Q_ASSERT(targetY >= 0.0); // This should not be possible
-    targetY /= zoomFactor;
-
-    qreal targetW = qreal(worldReferenceViewportRect.width()) / zoomFactor;
-    qreal targetH = qreal(worldReferenceViewportRect.height()) / zoomFactor;
-
-    QRect worldRect = QRect(QPoint(0.0, 0.0), worldReferenceSize);
-
-    if (worldRect.contains(worldReferenceViewportRect)) {
-        // the screen is completely contained inside the map, which means we can just draw once and be done.
-        scene->render(painter,
-                      QRectF(targetX, targetY, targetW, targetH),
-                      worldReferenceViewportRect,
-                      Qt::IgnoreAspectRatio);
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
-        painter->setRenderHints(hints);
-#endif
-        return;
-    }
-
-    // cut off the part east of the dateline
-    QRect westside = worldReferenceViewportRect.intersected(worldRect);
-
-    qreal westsideWidth = floor(qreal(westside.width()) / zoomFactor);
-
-    westside.setWidth(westsideWidth * zoomFactor);
-    westside.setHeight(worldReferenceViewportRect.height());
-
-    scene->render(painter,
-                  QRectF(targetX, targetY, westsideWidth, targetH),
-                  westside,
-                  Qt::IgnoreAspectRatio);
-
-    qreal eastsideWidth = targetW - westsideWidth;
-
-    QRect eastside = QRect(0,
-                           worldReferenceViewportRect.y(),
-                           eastsideWidth * zoomFactor,
-                           worldReferenceViewportRect.height());
-
-    scene->render(painter,
-                  QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
-                  eastside,
-                  Qt::IgnoreAspectRatio);
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
-    painter->setRenderHints(hints);
-#endif
-    // TODO: call this recursively to draw more than 2 sets of objects
-}
-
 
 void QGeoTiledMapDataPrivate::cleanupCaches()
 {

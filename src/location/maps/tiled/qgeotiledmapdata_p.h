@@ -82,7 +82,6 @@ public:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     void cleanupCaches();
 
