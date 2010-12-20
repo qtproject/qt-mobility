@@ -54,13 +54,13 @@
 //
 
 #include "qgeomapobject.h"
-#include "qgeomapobjectinfo.h"
 
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
 class QGeoMapData;
+class QGraphicsItem;
 
 class QGeoMapObjectPrivate
 {

@@ -93,8 +93,6 @@ protected:
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
     void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *mapObject);
-
 private Q_SLOTS:
     void processRequests();
     void tileFinished();
@@ -105,7 +103,6 @@ private:
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
-    friend class QGeoTiledMapObjectInfo;
 };
 
 QTM_END_NAMESPACE

@@ -547,17 +547,6 @@ void QGeoMapData::clearMapOverlays()
     d_ptr->overlays.clear();
 }
 
-/*!
-    Creates a QGeoMapObjectInfo instance which implements the behaviours of
-    the map object \a object which are specific to this QGeoMapData.
-
-    The default implementation returns 0.
-*/
-QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
-{
-    Q_UNUSED(object)
-    return 0;
-}
 
 /*!
     Sets whether changes to properties will trigger their corresponding signals to \a block.

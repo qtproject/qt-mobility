@@ -57,8 +57,6 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 
-#include "qgeotiledmapobjectinfo_p.h"
-
 #include <QRectF>
 #include <QHash>
 #include <QCache>
@@ -96,10 +94,6 @@ public:
     bool containedInScreen(const QPoint &point) const;
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
-
-    void removeObjectInfo(QGeoTiledMapObjectInfo* object);
-
-    void addObjectInfo(QGeoTiledMapObjectInfo* object);
 
     QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
 

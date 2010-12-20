@@ -61,8 +61,6 @@
 QTM_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
-
-class QGeoMapObjectInfo;
 class QGeoMapOverlay;
 
 class QGeoMapDataPrivate

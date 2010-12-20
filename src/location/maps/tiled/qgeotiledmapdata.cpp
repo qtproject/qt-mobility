@@ -49,15 +49,6 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
 
-#include "qgeotiledmapgroupobjectinfo_p.h"
-#include "qgeotiledmapcircleobjectinfo_p.h"
-#include "qgeotiledmaprectangleobjectinfo_p.h"
-#include "qgeotiledmappolylineobjectinfo_p.h"
-#include "qgeotiledmappolygonobjectinfo_p.h"
-#include "qgeotiledmappixmapobjectinfo_p.h"
-#include "qgeotiledmaptextobjectinfo_p.h"
-#include "qgeotiledmaprouteobjectinfo_p.h"
-
 #include <QTimer>
 #include <QImage>
 #include <QGraphicsScene>
@@ -844,33 +835,6 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 }
 
 /*!
-    \reimp
-*/
-QGeoMapObjectInfo* QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
-{
-    switch (mapObject->type()) {
-        case QGeoMapObject::GroupType:
-            return new QGeoTiledMapGroupObjectInfo(this, mapObject);
-        case QGeoMapObject::RectangleType:
-            return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
-        case QGeoMapObject::CircleType:
-            return  new QGeoTiledMapCircleObjectInfo(this, mapObject);
-        case QGeoMapObject::PolylineType:
-            return  new QGeoTiledMapPolylineObjectInfo(this, mapObject);
-        case QGeoMapObject::PolygonType:
-            return  new QGeoTiledMapPolygonObjectInfo(this, mapObject);
-        case QGeoMapObject::PixmapType:
-            return  new QGeoTiledMapPixmapObjectInfo(this, mapObject);
-        case QGeoMapObject::TextType:
-            return  new QGeoTiledMapTextObjectInfo(this, mapObject);
-        case QGeoMapObject::RouteType:
-            return  new QGeoTiledMapRouteObjectInfo(this, mapObject);
-        default:
-            return 0;
-    }
-}
-
-/*!
     Returns the center of the viewport, in pixels on the entire
     map as a pixmap at the maximum zoom level.
 */
@@ -1215,21 +1179,6 @@ bool QGeoTiledMapDataPrivate::intersectsScreen(const QRect &rect) const
     return (worldReferenceViewportRectLeft.intersects(rect)
             || (worldReferenceViewportRectRight.isValid()
                 && worldReferenceViewportRectRight.intersects(rect)));
-}
-
-void QGeoTiledMapDataPrivate::removeObjectInfo(QGeoTiledMapObjectInfo* object)
-{
-    if (object && object->graphicsItem && object->graphicsItem->scene())
-        scene->removeItem(object->graphicsItem);
-    itemMap.remove(object->graphicsItem);
-}
-
-void QGeoTiledMapDataPrivate::addObjectInfo(QGeoTiledMapObjectInfo* object)
-{
-    if (object != containerObject->info()) {
-        scene->addItem(object->graphicsItem);
-        itemMap.insert(object->graphicsItem, object->mapObject());
-    }
 }
 
 QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRect &rect, bool translateToScreen) const
