@@ -84,5 +84,8 @@ SOURCES += \
             maps/qgeosearchreply.cpp \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
-            maps/qgraphicsgeomap.cpp
+            maps/qgraphicsgeomap.cpp \
+    maps/qgeomapobjectinfo.cpp
 
+PUBLIC_HEADERS += \
+    maps/qgeomapobjectinfo.h

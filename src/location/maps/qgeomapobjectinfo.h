@@ -39,95 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECT_H
-#define QGEOMAPOBJECT_H
+#ifndef QGEOMAPOBJECTINFO_H
+#define QGEOMAPOBJECTINFO_H
 
 #include "qmobilityglobal.h"
 
-#include <QList>
 #include <QObject>
-
-class QPainter;
-class QRectF;
-class QGraphicsItem;
+#include <QSizeF>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoBoundingBox;
-class QGeoMapObjectPrivate;
-class QGeoMapContainer;
-class QGeoMapObjectInfo;
 
 class QGeoMapData;
+class QGeoMapObject;
+class QGeoMapObjectInfoPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapObject : public QObject
+/* This class is only here for binary compatiblity reasons and
+  is no longer in actual use. */
+
+class Q_LOCATION_EXPORT QGeoMapObjectInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int zValue READ zValue WRITE setZValue NOTIFY zValueChanged)
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(bool selected READ isSelected WRITE setSelected NOTIFY selectedChanged)
-
 public:
-    enum Type {
-        NullType,
-        GroupType,
-        RectangleType,
-        CircleType,
-        PolylineType,
-        PolygonType,
-        PixmapType,
-        TextType,
-        RouteType,
-        CustomType
-    };
+    QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    virtual ~QGeoMapObjectInfo();
 
-    QGeoMapObject(QGeoMapData *mapData = 0);
-    virtual ~QGeoMapObject();
-
-    virtual Type type() const;
-
-    void setZValue(int zValue);
-    int zValue() const;
-
-    void setVisible(bool visible);
-    bool isVisible() const;
-
-    void setSelected(bool selected);
-    bool isSelected() const;
+    virtual void init();
 
     virtual QGeoBoundingBox boundingBox() const;
     virtual bool contains(const QGeoCoordinate &coordinate) const;
 
-    bool operator<(const QGeoMapObject &other) const;
-    bool operator>(const QGeoMapObject &other) const;
+public slots:
+    virtual void windowSizeChanged(const QSizeF &windowSize);
+    virtual void zoomLevelChanged(qreal zoomLevel);
+    virtual void centerChanged(const QGeoCoordinate &coordinate);
 
-    virtual void setMapData(QGeoMapData *mapData);
-    virtual QGeoMapData* mapData() const;
+    virtual void zValueChanged(int zValue);
+    virtual void visibleChanged(bool visible);
+    virtual void selectedChanged(bool selected);
 
-    QGeoMapObjectInfo *info() const;
-
-    QGeoCoordinate origin() const;
-    void setOrigin(const QGeoCoordinate &origin);
-
-    QGraphicsItem* graphicsItem() const;
-    void setGraphicsItem(QGraphicsItem *item);
-
-
-Q_SIGNALS:
-    void zValueChanged(int zValue);
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
-    void originChanged(QGeoCoordinate origin);
+protected:
+    QGeoMapData* mapData();
+    QGeoMapObject* mapObject();
 
 private:
-    QGeoMapObjectPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapObject)
-    Q_DISABLE_COPY(QGeoMapObject)
-
-    friend class QGeoMapDataPrivate;
+    QGeoMapObjectInfoPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoMapObjectInfo)
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOMAPOBJECTINFO_H
