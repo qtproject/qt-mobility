@@ -82,7 +82,7 @@ public:
     // From MVideoLoadingObserver
     void MvloLoadingStarted();
     void MvloLoadingComplete();
-
+    void setPlaybackRate(qreal rate);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // From MAudioOutputObserver
     void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
