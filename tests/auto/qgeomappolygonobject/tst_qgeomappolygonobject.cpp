@@ -146,12 +146,10 @@ void tst_QGeoMapPolygonObject::qgeomappolygonobject()
 
     QVERIFY(list.at(0)==object);
 
-    QVERIFY2(object->info(),"info object not created");
     QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
 
-    QVERIFY2(!object->info(),"info object not deleted");
     QVERIFY2(!object->mapData(),"no map data still set");
 
     delete (object);

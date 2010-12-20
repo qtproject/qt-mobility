@@ -161,12 +161,10 @@ void tst_QGeoMapGroupObject::qgeomapgroupobject()
 
     QList<QGeoMapObject *> list = map->mapObjects();
 
-    QVERIFY2(object->info(),"info object not created");
     QVERIFY2(object->mapData(),"no map data set");
 
     map->removeMapObject(object);
 
-    QVERIFY2(!object->info(),"info object not deleted");
     QVERIFY2(!object->mapData(),"no map data still set");
     delete (object);
 }
@@ -419,14 +417,10 @@ void tst_QGeoMapGroupObject::setMapData()
 
     QCOMPARE(list.count(),1);
 
-    foreach (QGeoMapObject* o, object->childObjects()) {
-        QVERIFY2(o->info()!=0,"missing info object");
-    }
-
     object->setMapData(0);
 
     foreach (QGeoMapObject* o, object->childObjects()) {
-        QVERIFY2(o->info()==0,"info object not deleted");
+        QVERIFY2(o->mapData()==0,"map data not set");
     }
 
 }
