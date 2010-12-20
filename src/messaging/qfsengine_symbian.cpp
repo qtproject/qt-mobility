@@ -3281,16 +3281,16 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(MEmailFolder& folder, 
     CleanupClosePushL(sortCriteriaArray);
     sortCriteriaArray.Append(sortCriteria);
 
+    // TODO: Bug in CMessageIterator implementation
+    //       CMessageIterator constructor does not call iPluginData.ClaimInstance()
+    //       BUT CMessageIterator destructor calls iPluginData.ReleaseInstance()
+    //       => BUG results crash sooner or later
+    //
+    // => Take reference count and make sure that reference count
+    //    will be restored to its original value after iteration
+    unsigned int refCount1 = pluginReferenceCount(&folder);
     MMessageIterator* msgIterator = folder.MessagesL(sortCriteriaArray);
     if (msgIterator) {
-        // TODO: Bug in CMessageIterator implementation
-        //       CMessageIterator constructor does not call iPluginData.ClaimInstance()
-        //       BUT CMessageIterator destructor calls iPluginData.ReleaseInstance()
-        //       => BUG results crash sooner or later
-        //
-        // => Take reference count and make sure that reference count
-        //    will be restored to its original value after iteration
-        unsigned int refCount1 = pluginReferenceCount(&folder);
         MEmailMessage* msg = NULL;
         while ( NULL != (msg = msgIterator->NextL())) {
             QMessageId messageId = CFSEngine::qMessageIdFromFsMessageId(msg->MessageId());;
