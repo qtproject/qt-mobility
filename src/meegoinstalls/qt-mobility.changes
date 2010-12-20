@@ -1,3 +1,7 @@
+* Tue Dec 21 2010 Rohan McGovern <rohan.mcgovern@nokia.com> - 1.1.0+git2438
+- Remove patch:
+  add_location_api_meego_implementation_using_geoclue.patch - merged upstream
+
 * Tue Dec 14 2010 Rohan McGovern <rohan.mcgovern@nokia.com> - 1.1.0+git2438
 - Fixed hardcoded version in pkgconfig scriptlet
 
