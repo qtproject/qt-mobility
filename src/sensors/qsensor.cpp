@@ -173,62 +173,6 @@ QSensor::~QSensor()
 }
 
 /*!
-    \enum QSensor::PowerSavingPolicy
-
-    This enum represents the possible policies the system has regarding power saving.
-
-    \value NoPolicy   The system has no policy regarding power saving. Sensors will always run
-                      normally unless the application intervenes.
-    \value SupportsAlwaysOn   The system supports the alwaysOn property to prevent its default
-                              power saving measures from having an effect.
-    \value SystemStopsSensors The system will stop sensors to save power.
-*/
-
-/*!
-    \property QSensor::powerSavingPolicy
-    \brief a set of flags indicating the system's power saving policy.
-
-    Some platforms may automatically stop sensors from running under certain conditions (eg. when the
-    screen turns off). The flags in this property indicate the ways in which the system will try to
-    save power than the ways in which the application can prevent that from happening.
-
-    \sa QSensor::PowerSavingPolicy, QSensor::alwaysOn
-*/
-
-QSensor::PowerSavingPolicy QSensor::powerSavingPolicy() const
-{
-    return static_cast<QSensor::PowerSavingPolicy>(d->powerSavingPolicy);
-}
-
-/*!
-    \property QSensor::alwaysOn
-    \brief a value indicating if the sensor should keep running.
-
-    Some platforms may automatically stop sensors under certain conditions (eg. when the
-    screen turns off). This property allows an application to request that the sensor
-    continue to run.
-
-    Note that the platform or backend may not allow this. The \l QSensor::powerSavingPolicy
-    property can be checked to determine if the backend will honour this request (and if
-    this property needs to be set to keep the sensor running).
-
-    This should be set before calling start() because the sensor may not
-    notice changes to this value while it is running.
-
-    \sa QSensor::powerSavingPolicy
-*/
-
-bool QSensor::alwaysOn() const
-{
-    return d->alwaysOn;
-}
-
-void QSensor::setAlwaysOn(bool alwaysOn)
-{
-    d->alwaysOn = alwaysOn;
-}
-
-/*!
     \property QSensor::connectedToBackend
     \brief a value indicating if the sensor has connected to a backend.
 

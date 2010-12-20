@@ -274,22 +274,6 @@ void QSensorBackend::setDescription(const QString &description)
 }
 
 /*!
-    Set the \a powerSavingPolicy value for the sensor.
-
-    Note that this function should be called from the constructor so that the information
-    is available immediately.
-*/
-void QSensorBackend::setPowerSavingPolicy(QSensor::PowerSavingPolicy powerSavingPolicy)
-{
-    QSensorPrivate *d = m_sensor->d_func();
-    if (powerSavingPolicy >= 0 && powerSavingPolicy < 0x04) {
-        d->powerSavingPolicy = powerSavingPolicy;
-    } else {
-        d->powerSavingPolicy = QSensor::NoPolicy;
-    }
-}
-
-/*!
     Inform the front end that the sensor has stopped.
     This can be due to start() failing or for some
     unexpected reason (eg. hardware failure).

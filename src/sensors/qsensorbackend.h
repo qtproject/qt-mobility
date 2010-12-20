@@ -62,7 +62,6 @@ public:
     void setDataRates(const QSensor *otherSensor);
     void addOutputRange(qreal min, qreal max, qreal accuracy);
     void setDescription(const QString &description);
-    void setPowerSavingPolicy(QSensor::PowerSavingPolicy powerSavingPolicy);
 
     template <typename T>
     T *setReading(T *reading)
