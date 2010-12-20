@@ -49,6 +49,7 @@
 
 class QPainter;
 class QRectF;
+class QGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,7 +57,6 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
-class QGraphicsItem;
 
 class QGeoMapData;
 

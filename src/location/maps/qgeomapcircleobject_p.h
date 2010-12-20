@@ -44,6 +44,7 @@
 
 #include <QPen>
 #include <QBrush>
+#include <QGraphicsEllipseItem>
 
 #include "qgeoboundingcircle.h"
 
@@ -55,9 +56,8 @@ public:
     QGeoMapCircleObjectPrivate();
     ~QGeoMapCircleObjectPrivate();
 
+    QGraphicsEllipseItem item;
     QGeoBoundingCircle circle;
-    QPen pen;
-    QBrush brush;
 };
 
 QTM_END_NAMESPACE

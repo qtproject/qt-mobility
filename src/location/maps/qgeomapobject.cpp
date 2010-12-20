@@ -43,6 +43,7 @@
 #include "qgeomapobject_p.h"
 #include "qgeomapdata.h"
 #include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
 
 #include <QtAlgorithms>
 
@@ -183,6 +184,7 @@ bool QGeoMapObject::isSelected() const
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
     // TODO: reimplement
+    return QGeoBoundingBox();
 }
 
 /*!
@@ -192,6 +194,7 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
     // TODO: reimplement
+    return false;
 }
 
 /*!
@@ -227,20 +230,6 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     d_ptr->mapData = mapData;
     if (!d_ptr->mapData)
         return;
-
-    connect(d_ptr->mapData,
-            SIGNAL(windowSizeChanged(QSizeF)),
-            d_ptr->info,
-            SLOT(windowSizeChanged(QSizeF)));
-    connect(d_ptr->mapData,
-            SIGNAL(zoomLevelChanged(qreal)),
-            d_ptr->info,
-            SLOT(zoomLevelChanged(qreal)));
-    connect(d_ptr->mapData,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            d_ptr->info,
-            SLOT(centerChanged(QGeoCoordinate)));
-
 }
 
 /*!
@@ -312,8 +301,6 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {
-    if (info)
-        delete info;
 }
 
 /*******************************************************************************
