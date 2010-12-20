@@ -153,7 +153,7 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
         case HostPoweredOff:
             this->d_ptr->m_settings->SetPowerState(EBTPowerOff);
             break;
-        case HostConnectable:
+        case HostConnectable: {
             TBTPowerStateValue powerState;
             this->d_ptr->m_settings->GetPowerState(powerState);
             if (powerState == EBTPowerOff)
@@ -161,7 +161,8 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 
             this->d_ptr->m_settings->SetVisibilityMode(EBTVisibilityModeHidden);
             break;
-        case HostDiscoverable:
+        }
+        case HostDiscoverable: {
             TBTPowerStateValue powerState;
             this->d_ptr->m_settings->GetPowerState(powerState);
             if (powerState == EBTPowerOff)
@@ -169,6 +170,7 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 
             this->d_ptr->m_settings->SetVisibilityMode(EBTVisibilityModeGeneral);
             break;
+        }
     }
 #endif
 }
