@@ -116,7 +116,7 @@
 // constants
 _LIT(KDefaultTextCriteria,"*");
 _LIT(KDefaultSpaceTextSearch,"* ");
-_LIT8(KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollection+xml" );
+_LIT8(KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollection+xml");
 
 #define KAllLandmarks -1
 #define KDefaultIndex 0
