@@ -829,6 +829,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             emit tagsChanged();
         }
 
+        bool handlePlaybin2 = false;
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_STATE_CHANGED:
@@ -1043,11 +1044,18 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 emit invalidMedia();
                 stop();
                 emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+            } else {
+                handlePlaybin2 = m_usePlaybin2;
             }
-            qWarning() << "Error:" << QString::fromUtf8(err->message);
+            if (!handlePlaybin2)
+                qWarning() << "Error:" << QString::fromUtf8(err->message);
             g_error_free(err);
             g_free(debug);
-        } else if (m_usePlaybin2) {
+        } else {
+            handlePlaybin2 = m_usePlaybin2;
+        }
+
+        if (handlePlaybin2) {
             if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
                 GError *err;
                 gchar *debug;
