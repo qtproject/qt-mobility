@@ -194,7 +194,6 @@ TInt CLlcpSocketType2::StartWriteDatagram(const TDesC8& aData)
 TBool CLlcpSocketType2::ReceiveData(TDes8& aData)
     {
     //fetch data from internal buffer
-    //TODO lock the buffer
     BEGIN
     TBool ret = EFalse;
     HBufC8* buf = NULL;
@@ -223,14 +222,12 @@ TBool CLlcpSocketType2::ReceiveData(TDes8& aData)
             }
         ret = ETrue;
         }
-    //TODO unlock the buffer
     END
     return ret;
     }
 
 TInt64 CLlcpSocketType2::BytesAvailable()
     {
-    //TODO lock the buffer
     BEGIN
     TInt64 ret = 0;
     for (TInt i = 0; i < iReceiveBufArray.Count(); ++i)
@@ -249,7 +246,6 @@ TInt64 CLlcpSocketType2::BytesAvailable()
             ret += buf->Length();
             }
         }
-    //TODO unlock the buffer
     END
     return ret;
     }
@@ -333,15 +329,6 @@ TBool CLlcpSocketType2::WaitForDisconnected(TInt /*aMilliSeconds*/)
     return ETrue;//disconnect is a sync method
     }
 
-RPointerArray<HBufC8>& CLlcpSocketType2::GetAndLockBuffer()
-    {
-    //TODO lock the buffer
-    return iReceiveBufArray;
-    }
-void CLlcpSocketType2::UnlockBuffer()
-    {
-    //TODO unlock buffer
-    }
 void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback)
     {
     BEGIN
@@ -399,9 +386,9 @@ void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
     //emit error
     if ( iCallback )
         {
-        TRAP_IGNORE(
-                QT_TRYCATCH_LEAVING(iCallback->invokeError());
-        );
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error,iCallback->invokeError());
+        //can do nothing if there is an error,so just ignore it
         }
     END
     }
@@ -461,8 +448,9 @@ void CLlcpSocketType2::ReadyRead()
     //emit readyRead()
     if ( iCallback )
         {
-        TRAP_IGNORE(
-              QT_TRYCATCH_LEAVING(iCallback->invokeReadyRead());
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error,iCallback->invokeReadyRead());
+        //can do nothing if there is an error,so just ignore it
         );
         }
     END
@@ -477,8 +465,9 @@ void CLlcpSocketType2::BytesWritten(qint64 aBytes)
     //emit bytesWritten signal;
     if ( iCallback )
         {
-        TRAP_IGNORE(
-              QT_TRYCATCH_LEAVING(iCallback->invokeBytesWritten(aBytes));
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error,iCallback->invokeBytesWritten(aBytes));
+        //can do nothing if there is an error,so just ignore it
         );
         }
     END
@@ -884,8 +873,7 @@ void CLlcpReceiverAO::RunL()
         HBufC8* buf = NULL;
         buf = HBufC8::NewLC( iReceiveBuf.Length() );
         buf->Des().Copy( iReceiveBuf );
-        iSocket.GetAndLockBuffer().AppendL( buf );
-        iSocket.UnlockBuffer();
+        iSocket.iReceiveBufArray.AppendL( buf );
         CleanupStack::Pop( buf );
 
         //emit readyRead() signal

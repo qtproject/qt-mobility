@@ -100,6 +100,7 @@ void CLlcpServer::ConstructL()
 CLlcpServer::~CLlcpServer()
     {
     BEGIN
+    StopListening();
     delete iLlcp;
     iLlcpSocketArray.ResetAndDestroy();
     iLlcpSocketArray.Close();
@@ -177,9 +178,11 @@ void CLlcpServer::StopListening( )
     // TODO
     // will updated to
     //TRAP(error,iLlcp->StopListeningConnOrientedRequest(iServiceName));
-    iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
-
-    iSocketListening = EFalse;
+    if (iSocketListening)
+        {
+        iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
+        iSocketListening = EFalse;
+        }
     END
     }
 

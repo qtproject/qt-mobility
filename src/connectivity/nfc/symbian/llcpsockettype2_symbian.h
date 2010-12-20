@@ -95,9 +95,6 @@ public:
     TBool WaitForConnected(TInt aMilliSeconds);
     TBool WaitForDisconnected(TInt aMilliSeconds);
 
-    RPointerArray<HBufC8>& GetAndLockBuffer();
-    void UnlockBuffer();
-
     void AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback);
 private:
     // Constructor
@@ -118,6 +115,7 @@ private:
     TBool WaitForOperationReady(TWaitStatus aWaitStatus,TInt aSeconds);
     void StopWaitNow(TWaitStatus aWaitStatus);
 private:
+    friend class CLlcpReceiverAO;
     /*!
     * Handle to NFC-server.
     * Own.

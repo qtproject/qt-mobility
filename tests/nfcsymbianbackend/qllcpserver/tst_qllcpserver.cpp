@@ -307,6 +307,8 @@ void tst_QLlcpServer::api_coverage()
 
     QTRY_VERIFY(!connectionSpy.isEmpty());
 
+    bool hasPending = server.hasPendingConnections();
+    QVERIFY(hasPending);
     QLlcpSocket *socket = server.nextPendingConnection();
     QVERIFY(socket != NULL);
     QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
@@ -328,6 +330,7 @@ void tst_QLlcpServer::api_coverage()
 
     QVERIFY(server.isListening() == true);
     QVERIFY(server.serverError() == QLlcpServer::UnknownSocketError);
+    server.close();
 }
 
 
