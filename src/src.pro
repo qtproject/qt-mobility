@@ -20,7 +20,7 @@ contains(mobility_modules,bearer){
 }
     
 contains(mobility_modules,location) {
-	SUBDIRS += location 3rdparty/proj
+	SUBDIRS += location
 }
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 

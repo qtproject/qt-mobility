@@ -13,6 +13,10 @@ DEPENDPATH += .
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
 
+contains(proj_enabled, no) {
+  include($$PWD/../3rdparty/proj.pri)
+}
+
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \

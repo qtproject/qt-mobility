@@ -1,8 +1,6 @@
 INCLUDEPATH += $$PWD/proj/include
 
-SOURCES += $$PWD/proj/projects.h \
-        $$PWD/proj/pj_list.h \
-        $$PWD/proj/PJ_aeqd.c \
+SOURCES += $$PWD/proj/PJ_aeqd.c \
         $$PWD/proj/PJ_gnom.c \
         $$PWD/proj/PJ_laea.c \
         $$PWD/proj/PJ_mod_ster.c \
@@ -132,26 +130,23 @@ SOURCES += $$PWD/proj/projects.h \
         $$PWD/proj/nad_init.c \
         $$PWD/proj/nad_intr.c \
         $$PWD/proj/emess.c \
-        $$PWD/proj/emess.h \
         $$PWD/proj/pj_apply_gridshift.c \
         $$PWD/proj/pj_datums.c \
         $$PWD/proj/pj_datum_set.c \
         $$PWD/proj/pj_transform.c \
         $$PWD/proj/geocent.c \
-        $$PWD/proj/geocent.h \
         $$PWD/proj/pj_utils.c \
         $$PWD/proj/pj_gridinfo.c \
         $$PWD/proj/pj_gridlist.c \
-        $$PWD/proj/jniproj.c \
         $$PWD/proj/pj_mutex.c \
         $$PWD/proj/pj_initcache.c
 
 unix {
-  DEFINES += -DMUTEX_pthread
+  DEFINES += MUTEX_pthread
 }
 
 win32 {
-  DEFINES += -DMUTEX_win32
+  DEFINES += MUTEX_win32
 }
 
 RESOURCES += $$PWD/proj/data.qrc
