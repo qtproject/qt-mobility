@@ -290,7 +290,8 @@ void CLlcpSocketType1::WriteComplete(TInt aError, TInt aSize)
         QT_TRYCATCH_ERROR(err,iCallback.invokeError());
         }
 
-    if ( iConnection != NULL && iConnection->HasQueuedWrittenDatagram())
+    if ( err == KErrNone && iConnection != NULL
+         && iConnection->HasQueuedWrittenDatagram())
          {
          iConnection->TransferQueued(*this);
          }

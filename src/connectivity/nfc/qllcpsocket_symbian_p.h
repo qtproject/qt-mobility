@@ -126,18 +126,19 @@ public:
     QLLCPSocketState* getConnectedState() { return m_connectedState;}
     QLLCPSocketState* getConnectingState() { return m_connectingState;}
     QLLCPSocketState* getBindState() { return m_bindState;}
-    QLLCPSocketState* getClosingState() { return m_closingState;}
 
 private:
+    /*
     enum SocketType
     {
        connectionType1 = 1, // ConnectionLess mode
        connectionType2 = 2, // ConnectionOriented mode
        connectionUnknown = -1
     };
+    */
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
-    SocketType m_socketType;
+    //SocketType m_socketType;
     
 private:
     QLlcpSocket::Error m_error;
@@ -145,7 +146,6 @@ private:
     QLLCPSocketState* m_unconnectedState; // own
     QLLCPSocketState* m_connectedState; // own
     QLLCPSocketState* m_connectingState; // own
-    QLLCPSocketState* m_closingState; // own
     QLLCPSocketState* m_bindState; // own
 
     QLlcpSocket *q_ptr;
