@@ -127,6 +127,7 @@
 #define IMPORT_LMX
 #define IMPORT_FILE
 #define EXPORT_LMX
+#define SIMPLE_WAIT_FOR_FINISHED
 #define WAIT_FOR_FINISHED
 #define MISC
 #define TEST_SIGNALS
@@ -1157,11 +1158,14 @@ private slots:
     void sortLandmarksName_data();
 #endif
 
+#ifdef SIMPLE_WAIT_FOR_FINISHED
+	void simpleWaitForFinished();
+#endif
+
 #ifdef WAIT_FOR_FINISHED
     void importWaitForFinished();
     void fetchWaitForFinished();
 #endif
-
 
 #ifdef MISC
     void supportedFormats();
@@ -7824,6 +7828,21 @@ void tst_QLandmarkManager::exportLmx_data()
 }
 #endif
 
+#ifdef SIMPLE_WAIT_FOR_FINISHED
+void tst_QLandmarkManager::simpleWaitForFinished()
+{
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QLandmarkFetchRequest fetchRequest(m_manager);
+    QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
+    QVERIFY(fetchRequest.start());
+    QVERIFY(waitForActive(spy, &fetchRequest,100));
+    QVERIFY(fetchRequest.waitForFinished(10000));
+    QTest::qWait(100);
+    QVERIFY(fetchRequest.landmarks().count() > 0 );
+}
+#endif
+
 #ifdef WAIT_FOR_FINISHED
 void tst_QLandmarkManager::importWaitForFinished()
 {
@@ -7906,7 +7925,6 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(fetchRequest.waitForFinished(10000));
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
 }
-
 
 #endif
 

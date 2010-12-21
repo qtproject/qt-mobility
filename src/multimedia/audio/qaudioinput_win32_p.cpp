@@ -280,24 +280,11 @@ bool QAudioInputPrivate::open()
     wfx.nBlockAlign = (wfx.wBitsPerSample >> 3) * wfx.nChannels;
     wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-    UINT_PTR devId = WAVE_MAPPER;
+    QDataStream ds(&m_device, QIODevice::ReadOnly);
+    quint32 deviceId;
+    ds >> deviceId;
 
-    WAVEINCAPS wic;
-    unsigned long iNumDevs,ii;
-    iNumDevs = waveInGetNumDevs();
-    for(ii=0;ii<iNumDevs;ii++) {
-        if(waveInGetDevCaps(ii, &wic, sizeof(WAVEINCAPS))
-	    == MMSYSERR_NOERROR) {
-	    QString tmp;
-            tmp = QString::fromWCharArray(wic.szPname);
-	    if(tmp.compare(QLatin1String(m_device)) == 0) {
-	        devId = ii;
-		break;
-	    }
-	}
-    }
-
-    if(waveInOpen(&hWaveIn, devId, &wfx,
+    if (waveInOpen(&hWaveIn, UINT_PTR(deviceId), &wfx,
                 (DWORD_PTR)&waveInProc,
                 (DWORD_PTR) this,
                 CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
