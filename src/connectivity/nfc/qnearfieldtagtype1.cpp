@@ -137,7 +137,7 @@ void QNearFieldTagType1Private::progressToNextNdefReadMessageState()
         if (data.isEmpty()) {
             m_readNdefMessageState = NotReadingNdefMessage;
             m_nextExpectedRequestId = QNearFieldTarget::RequestId();
-            emit q->error(QNearFieldTarget::NdefReadError);
+            emit q->error(QNearFieldTarget::NdefReadError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -147,7 +147,7 @@ void QNearFieldTagType1Private::progressToNextNdefReadMessageState()
         if (!(hr0 & 0x10)) {
             m_readNdefMessageState = NotReadingNdefMessage;
             m_nextExpectedRequestId = QNearFieldTarget::RequestId();
-            emit q->error(QNearFieldTarget::NdefReadError);
+            emit q->error(QNearFieldTarget::NdefReadError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -161,7 +161,7 @@ void QNearFieldTagType1Private::progressToNextNdefReadMessageState()
 
         if (ndefMagicNumber != 0xe1) {
             m_readNdefMessageState = NotReadingNdefMessage;
-            emit q->error(QNearFieldTarget::NdefReadError);
+            emit q->error(QNearFieldTarget::NdefReadError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -208,7 +208,7 @@ void QNearFieldTagType1Private::progressToNextNdefWriteMessageState()
         if (data.isEmpty()) {
             m_writeNdefMessageState = NotWritingNdefMessage;
             m_nextExpectedRequestId = QNearFieldTarget::RequestId();
-            emit q->error(QNearFieldTarget::NdefWriteError);
+            emit q->error(QNearFieldTarget::NdefWriteError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -218,7 +218,7 @@ void QNearFieldTagType1Private::progressToNextNdefWriteMessageState()
         if (!(hr0 & 0x10)) {
             m_writeNdefMessageState = NotWritingNdefMessage;
             m_nextExpectedRequestId = QNearFieldTarget::RequestId();
-            emit q->error(QNearFieldTarget::NdefWriteError);
+            emit q->error(QNearFieldTarget::NdefWriteError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -232,7 +232,7 @@ void QNearFieldTagType1Private::progressToNextNdefWriteMessageState()
 
         if (ndefMagicNumber != 0xe1) {
             m_writeNdefMessageState = NotWritingNdefMessage;
-            emit q->error(QNearFieldTarget::NdefWriteError);
+            emit q->error(QNearFieldTarget::NdefWriteError, QNearFieldTarget::RequestId());
             break;
         }
 
@@ -291,7 +291,7 @@ void QNearFieldTagType1Private::progressToNextNdefWriteMessageState()
                 m_writeNdefMessageState = NotWritingNdefMessage;
                 delete m_tlvWriter;
                 m_tlvWriter = 0;
-                emit q->error(QNearFieldTarget::NdefWriteError);
+                emit q->error(QNearFieldTarget::NdefWriteError, QNearFieldTarget::RequestId());
             }
         }
         break;
@@ -419,7 +419,7 @@ void QNearFieldTagType1::readNdefMessages()
     if (d->m_readNdefMessageState == QNearFieldTagType1Private::NotReadingNdefMessage)
         d->progressToNextNdefReadMessageState();
     else
-        emit error(NdefReadError);
+        emit error(NdefReadError, RequestId());
 }
 
 /*!
@@ -434,7 +434,7 @@ void QNearFieldTagType1::writeNdefMessages(const QList<QNdefMessage> &messages)
         d->m_ndefWriteMessages = messages;
         d->progressToNextNdefWriteMessageState();
     } else {
-        emit error(NdefWriteError);
+        emit error(NdefWriteError, RequestId());
     }
 }
 

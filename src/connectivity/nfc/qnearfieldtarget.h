@@ -79,7 +79,6 @@ public:
 
     enum AccessMethod {
         NdefAccess,
-        ApduAccess,
         TagTypeSpecificAccess,
         LlcpAccess
     };
@@ -131,10 +130,6 @@ public:
     virtual void readNdefMessages();
     virtual void writeNdefMessages(const QList<QNdefMessage> &messages);
 
-    // ApduAccess
-    virtual void sendApduCommand(const QByteArray &command);
-    virtual void sendApduCommands(const QList<QByteArray> &commands);
-
     // TagTypeSpecificAccess
     virtual RequestId sendCommand(const QByteArray &command);
     virtual RequestId sendCommands(const QList<QByteArray> &commands);
@@ -156,7 +151,7 @@ signals:
 
     void requestCompleted(const QNearFieldTarget::RequestId &id);
 
-    void error(QNearFieldTarget::Error error);
+    void error(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
 
 private:
     QNearFieldTargetPrivate *d_ptr;
