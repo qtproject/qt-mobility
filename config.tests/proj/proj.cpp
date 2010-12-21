@@ -45,6 +45,7 @@ int main(int argc, char **argv)
 {
     projPJ pj_merc, pj_latlong;
     double x, y;
+    int p;
 
     if (!(pj_merc = pj_init_plus("+proj=tmerc +lat_0=-27.5796 +lon_0=153.1 +k=1.0 +x_0=0 +y_0=0")))
         return 1;
