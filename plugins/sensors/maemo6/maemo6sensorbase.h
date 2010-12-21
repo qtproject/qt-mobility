@@ -59,6 +59,7 @@ protected:
     virtual void start();
     virtual void stop();
     AbstractSensorChannelInterface* m_sensorInterface;
+    static const char* ALWAYS_ON;
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
@@ -127,6 +128,7 @@ protected:
 private:
     static SensorManagerInterface* m_remoteSensorManager;
     int m_prevOutputRange;
+
 };
 
 #endif
