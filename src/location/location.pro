@@ -15,6 +15,8 @@ include(maps/maps.pri)
 
 contains(proj_enabled, no) {
   include($$PWD/../3rdparty/proj.pri)
+} else {
+  LIBS += -lproj
 }
 
 PUBLIC_HEADERS += \
