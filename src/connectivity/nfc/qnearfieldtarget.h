@@ -79,7 +79,6 @@ public:
 
     enum AccessMethod {
         NdefAccess,
-        ApduAccess,
         TagTypeSpecificAccess,
         LlcpAccess
     };
@@ -130,10 +129,6 @@ public:
     virtual bool hasNdefMessage();
     virtual void readNdefMessages();
     virtual void writeNdefMessages(const QList<QNdefMessage> &messages);
-
-    // ApduAccess
-    virtual void sendApduCommand(const QByteArray &command);
-    virtual void sendApduCommands(const QList<QByteArray> &commands);
 
     // TagTypeSpecificAccess
     virtual RequestId sendCommand(const QByteArray &command);

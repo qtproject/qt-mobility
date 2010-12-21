@@ -72,10 +72,6 @@ QTM_BEGIN_NAMESPACE
     stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
     the NDEF message.
 
-    If the target supports ApduAccess, sendApduCommand() can be used to send a single APDU command
-    to the target and retrieve the response.  sendApduCommands() can be used to send
-    multiple APDU commands to the target and retrieve all of the responses.
-
     If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
     send multiple proprietary commands to the target and retrieve all of the responses.
@@ -106,8 +102,6 @@ QTM_BEGIN_NAMESPACE
 
     \value NdefAccess               The target supports NDEF records using ndefMessages() and
                                     setNdefMessages().
-    \value ApduAccess               The target supports APDU access using sendApduCommand() and
-                                    sendApduCommands().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
@@ -318,29 +312,6 @@ void QNearFieldTarget::readNdefMessages()
 void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     Q_UNUSED(messages);
-
-    emit error(UnsupportedError, RequestId());
-}
-
-/*!
-    Sends the APDU \a command to the near field target. The apduCommandCompleted() signal will be
-    emitted if the command completes sucessfully; otherwise the error() signal will be emitted.
-*/
-void QNearFieldTarget::sendApduCommand(const QByteArray &command)
-{
-    Q_UNUSED(command);
-
-    emit error(UnsupportedError, RequestId());
-}
-
-/*!
-    Sends multiple APDU \a commands to the near field target. The apduCommandsCompleted() signal
-    will be emitted if the command completes sucessfully; otherwise the error() signal will be
-    emitted.
-*/
-void QNearFieldTarget::sendApduCommands(const QList<QByteArray> &commands)
-{
-    Q_UNUSED(commands);
 
     emit error(UnsupportedError, RequestId());
 }
