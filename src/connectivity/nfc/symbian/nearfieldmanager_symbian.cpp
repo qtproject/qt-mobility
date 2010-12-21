@@ -209,15 +209,15 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
 void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
     {
     BEGIN
-    TRAP_IGNORE(
-        if (aNfcTag)
-            {
-            QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
-            CleanupQDeletePushL(tag);
-            QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
-            CleanupStack::Pop(tag);
-            }
-            );
+    if (aNfcTag)
+        {
+        QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(aNfcTag, iServer, &iCallback);
+        CleanupQDeletePushL(tag);
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error, iCallback.targetFound(tag));
+        Q_UNUSED(error);//just skip the error
+        CleanupStack::Pop(tag);
+        }
     END
     }
 
@@ -227,9 +227,9 @@ void CNearFieldManager::TagDetected( MNfcTag* aNfcTag )
 void CNearFieldManager::TagLost()
     {
     BEGIN
-    TRAP_IGNORE(
-            QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
-        );
+    TInt error = KErrNone;
+    QT_TRYCATCH_ERROR(error, iCallback.targetDisconnected());//just skip the error
+    Q_UNUSED(error);//just skip the error
     END
     }
 
@@ -239,12 +239,12 @@ void CNearFieldManager::TagLost()
 void CNearFieldManager::LlcpRemoteFound()
     {
     BEGIN
-    TRAP_IGNORE(
-        QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
-        CleanupQDeletePushL(tag);
-        QT_TRYCATCH_LEAVING( iCallback.targetFound(tag) );
-        CleanupStack::Pop(tag);
-        );
+    QNearFieldTarget* tag = TNearFieldTargetFactory::CreateTargetL(NULL, iServer, &iCallback);
+    CleanupQDeletePushL(tag);
+    TInt error = KErrNone;
+    QT_TRYCATCH_ERROR(error, iCallback.targetFound(tag) );
+    Q_UNUSED(error);//just skip the error
+    CleanupStack::Pop(tag);
     END
     }
 
@@ -254,9 +254,9 @@ void CNearFieldManager::LlcpRemoteFound()
 void CNearFieldManager::LlcpRemoteLost()
     {
     BEGIN
-    TRAP_IGNORE(
-            QT_TRYCATCH_LEAVING(iCallback.targetDisconnected());
-        );
+    TInt error = KErrNone;
+    QT_TRYCATCH_ERROR(error, iCallback.targetDisconnected());
+    Q_UNUSED(error);//just skip the error
     END
     }
 
@@ -268,11 +268,11 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     BEGIN
     if ( aMessage )
         {
-        TRAP_IGNORE(
-                QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
-           QT_TRYCATCH_LEAVING(iCallback.invokeTargetDetectedHandler(msg));
+           QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+           TInt error = KErrNone;
+           QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
+           Q_UNUSED(error);//just skip the error
            delete aMessage;
-        );
         }
     END
     }
