@@ -168,7 +168,7 @@ application.
     \o \l{hapticsplayer}{Haptics Player}
 \endlist
 
-\section1 QML support
+\section1 QML Elements
 
 For details on the QML support provided for the Feedback API see the documentation for the \l {Feedback QML Plugin}.
 

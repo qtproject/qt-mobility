@@ -106,7 +106,8 @@ public:
         LimitReachedError,
         InvalidItemTypeError,
         InvalidCollectionError,
-        InvalidOccurrenceError
+        InvalidOccurrenceError,
+        TimeoutError
     };
 
     /* Error reporting */

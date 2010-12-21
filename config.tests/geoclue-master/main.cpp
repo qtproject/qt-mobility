@@ -39,11 +39,14 @@
 **
 ****************************************************************************/
 
-#include "../testqgeosatelliteinfosource_p.h"
+#include <geoclue/geoclue-master.h>
+#include <gconf/gconf-client.h>
 
-int main(int argc, char *argv[])
+int main(int, char**)
 {
-    QCoreApplication app(argc, argv);
-    TestQGeoSatelliteInfoSource *test = TestQGeoSatelliteInfoSource::createDefaultSourceTest();
-    return QTest::qExec(test, argc, argv);
+    GeoclueMaster *master(0);
+    GConfClient* client(0);
+    GError *error(0);
+    g_type_init ();
+    return 0;
 }

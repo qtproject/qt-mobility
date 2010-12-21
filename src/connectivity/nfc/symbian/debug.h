@@ -47,6 +47,7 @@
 
 #define BEGIN qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
 #define END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" End";
+#define BEGIN_END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" BEGIN_End";
 #define LOG(a) qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<a;
 
 #endif /* DEBUG_H_ */
