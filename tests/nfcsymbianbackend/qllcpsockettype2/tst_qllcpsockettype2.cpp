@@ -360,12 +360,9 @@ void tst_qllcpsockettype2::api_coverage()
 
     stateChangedSpy.clear();
     socket.disconnectFromService();
-    QVERIFY(stateChangedSpy.count() == 2);
+    QVERIFY(stateChangedSpy.count() == 1);
     state1 = stateChangedSpy.at(0).at(0).value<QLlcpSocket::State>();
-    state2 = stateChangedSpy.at(1).at(0).value<QLlcpSocket::State>();
-
-    QCOMPARE(state1, QLlcpSocket::ClosingState);
-    QCOMPARE(state2, QLlcpSocket::UnconnectedState);
+    QCOMPARE(state1, QLlcpSocket::UnconnectedState);
 
     QCOMPARE(socket.error(),QLlcpSocket::UnknownSocketError);
 

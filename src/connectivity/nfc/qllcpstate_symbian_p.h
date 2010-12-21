@@ -67,9 +67,11 @@ public:
 public:
 
     virtual QLlcpSocket::State state() const = 0;
-    // all the following default implementation will emit errors.
+    virtual bool WaitForBytesWritten(int) = 0;
+
+public:
     virtual qint64 ReadDatagram(char *data, qint64 maxSize,
-                        QNearFieldTarget **target = 0, quint8 *port = 0);
+                        QNearFieldTarget **target = NULL, quint8 *port = NULL);
     virtual qint64 WriteDatagram(const char *data, qint64 size,
                                  QNearFieldTarget *target, quint8 port);
     virtual qint64 WriteDatagram(const char *data, qint64 size);
@@ -77,8 +79,6 @@ public:
     virtual bool Bind(quint8 port);
     virtual void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
     virtual void DisconnectFromService();
-    virtual void ConnectToServiceComplete();
-    virtual bool WaitForBytesWritten(int);
     virtual bool WaitForReadyRead(int);
     virtual bool WaitForConnected(int);
     virtual bool WaitForDisconnected(int);
@@ -100,12 +100,20 @@ public: // from base class
      bool Bind(quint8 port);
      void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
      void DisconnectFromService();
-    // simple return, already unconnected
-     void DisconnectFromHost();
      qint64 WriteDatagram(const char *data, qint64 size,
                           QNearFieldTarget *target, quint8 port);
      bool WaitForBytesWritten(int);
      bool WaitForDisconnected(int);
+
+public:
+public:
+    enum SocketType
+    {
+       connectionType1 = 1, // ConnectionLess mode
+       connectionType2 = 2, // ConnectionOriented mode
+       connectionUnknown = -1
+    };
+    SocketType m_socketType;
 };
 
 /*!
@@ -118,14 +126,14 @@ public:
 
 public:
      QLLCPSocketState* Instance(QLlcpSocketPrivate* aSocket);
+     void ConnectToServiceComplete();
 
 public: // from base class
     QLlcpSocket::State state() const {return QLlcpSocket::ConnectingState;}
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    void DisconnectFromHost() {};
     void DisconnectFromService();
-    void ConnectToServiceComplete();
     bool WaitForConnected(int);
+    bool WaitForBytesWritten(int);
 };
 
 /*!
@@ -139,27 +147,12 @@ public:
 public: // from base class
     QLlcpSocket::State state() const {return QLlcpSocket::ConnectedState;}
     void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    void DisconnectFromHost();
     void DisconnectFromService();
-   qint64 WriteDatagram(const char *data, qint64 size);
-   qint64 ReadDatagram(char *data, qint64 maxSize, QNearFieldTarget **target = 0, quint8 *port = 0);
-   bool WaitForBytesWritten(int msecs);
-   bool WaitForReadyRead(int msecs);
-   bool WaitForDisconnected(int);
-private:
-};
-
-/*!
-    \QLLCPClosing
-*/
-class QLLCPClosing: public QLLCPSocketState
-{
-public:
-    explicit QLLCPClosing(QLlcpSocketPrivate*);
-public: // from base class
-    QLlcpSocket::State state() const {return QLlcpSocket::ClosingState;}
-    void ConnectToService(QNearFieldTarget *target, const QString &serviceUri);
-    void DisconnectFromService();
+    qint64 WriteDatagram(const char *data, qint64 size);
+    qint64 ReadDatagram(char *data, qint64 maxSize, QNearFieldTarget **target = NULL, quint8 *port = NULL);
+    bool WaitForBytesWritten(int msecs);
+    bool WaitForReadyRead(int msecs);
+    bool WaitForDisconnected(int);
 };
 
 /*!

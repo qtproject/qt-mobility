@@ -24,21 +24,22 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
-    void queuedWrittenTest();
-
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void testCase1();   // handshake 1
     void testCase2();   // handshake 2
     void testCase3();
+    void testCase4();
 
     void negTestCase1();
     void negTestCase2();
     void negTestCase3();
     void negTestCase4();
-    void negTestCase5();
+
+    void coverageTest1();
 
 
 private:
+     QNearFieldManager *m_nfcManager; //own
      QNearFieldTarget *m_target; // not own
      quint8 m_port;
 };
@@ -62,9 +63,9 @@ tst_qllcpsocketlocal::tst_qllcpsocketlocal()
 */
 void tst_qllcpsocketlocal::initTestCase()
 {
-    QNearFieldManager nfcManager;
-    QSignalSpy targetDetectedSpy(&nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    nfcManager.startTargetDetection(QNearFieldTarget::AnyTarget);
+    QNearFieldManager *m_nfcManager = new QNearFieldManager;
+    QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
+    m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
     QString message("Local Wait touch");
     QNfcTestUtil::ShowMessage(message);
@@ -79,52 +80,15 @@ void tst_qllcpsocketlocal::initTestCase()
 
 void tst_qllcpsocketlocal::cleanupTestCase()
 {
-}
-
-
-/*!
- Description:  NFC LLCP connection-less mode socket - queued written buffer
-
- TestScenario:
-                1. Local peer sends the "string1" message to the remote peer
-                2. Local peer sends the "string2" message to the remote peer
-
- TestExpectedResults:
-               1. Local peer write datagram successfully twice
-*/
-void tst_qllcpsocketlocal::queuedWrittenTest()
-{
-    QString message("string1");
-    QString message2("string2");
-    QLlcpSocket socket(this);
-
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(val != -1);
-
-    QByteArray tmpArray2(message2.toAscii());
-    const char* data2 =  tmpArray2.data();
-    qint64 strSize2 = message2.size();
-    qDebug() << "begin write the second time";
-    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
-    qDebug() << "end write the second time" << val2;
-    QVERIFY(val2 != -1);
-
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
-    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
-
-    QString box("queuedWrittenTest 1");
-    QNfcTestUtil::ShowMessage(box);
+    delete m_nfcManager;
 }
 
 /*!
- Description: testCase 1 for NFC LLCP connection-less mode socket - local peer
+ Description: Send the message and Receive the acknowledged identical message
 
  TestScenario:
                1. Local peer binds to the remote peer
-               2. Local peer sends the "connect-less unit test string" message to the remote peer
+               2. Local peer sends the "testcase1 string" message to the remote peer
                3. Local peer receives the above message sending from the remote peer
 
  TestExpectedResults:
@@ -177,27 +141,42 @@ void tst_qllcpsocketlocal::testCase1()
     QVERIFY(errorSpy.isEmpty());
 }
 
+/*!
+ Description: waitForBytesWritten test
 
+ TestScenario:
+               1. Spy bytes written signal
+               2. Local peer sends the "testcase1 string" message to the remote peer
+               3. Local peer receives the above message sending from the remote peer
+
+ TestExpectedResults:
+               1. The message is sending to remote peer
+               2. Did not spy bytes written signal during the sending
+               3. call waitForBytesWritten successfully
+*/
 void tst_qllcpsocketlocal::testCase2()
 {
     QString message("testcase2 string");
     QLlcpSocket socket(this);
 
-    // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret);
+    // STEP1:
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+
+    // STEP2:
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    socket.writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(bytesWrittenSpy.isEmpty());
+
+    // STEP3:
+    const int Timeout = 2 * 1000;
+    bool ret = socket.waitForBytesWritten(Timeout);
 
     QString messageBox("handshake 2");
     QNfcTestUtil::ShowMessage(messageBox);
 
-    // STEP 2:
-    //qDebug() << "waitForBytesWritten begin: " << val;
-    const int Timeout = 2 * 1000;
-    ret = socket.waitForBytesWritten(Timeout);
-    qDebug() << "waitForBytesWritten after: " << ret;
-
-    QVERIFY(ret == false);
+    QVERIFY(ret == true);
 }
 
 /*!
@@ -205,8 +184,6 @@ void tst_qllcpsocketlocal::testCase2()
 */
 void tst_qllcpsocketlocal::testCase3()
 {
-    QString message("testcase3");
-    QNfcTestUtil::ShowMessage(message);
     QLlcpSocket socket(this);
     QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
     QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::State)));
@@ -216,6 +193,44 @@ void tst_qllcpsocketlocal::testCase3()
     QCOMPARE(socket.state(), QLlcpSocket::BoundState);
 }
 
+
+
+/*!
+ Description:  NFC LLCP connection-less mode socket - queued written buffer
+
+ TestScenario:
+                1. Local peer sends the "string1" message to the remote peer
+                2. Local peer sends the "string2" message to the remote peer
+
+ TestExpectedResults:
+               1. Local peer write datagram successfully twice
+*/
+void tst_qllcpsocketlocal::testCase4()
+{
+    QString message("string1");
+    QString message2("string2");
+    QLlcpSocket socket(this);
+
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    QVERIFY(val != -1);
+
+    QByteArray tmpArray2(message2.toAscii());
+    const char* data2 =  tmpArray2.data();
+    qint64 strSize2 = message2.size();
+    qDebug() << "begin write the second time";
+    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
+    qDebug() << "end write the second time" << val2;
+    QVERIFY(val2 != -1);
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QTRY_VERIFY(bytesWrittenSpy.count() == 2);
+}
+
+
+
 /*!
  Description: bind negative test -invalid port
 */
@@ -224,8 +239,9 @@ void tst_qllcpsocketlocal::negTestCase1()
     QLlcpSocket socket(this);
     bool ret = socket.bind(65);
     QVERIFY(ret == false);
-    ret = socket.bind(-1);
-    QVERIFY(ret == false);
+    //int invalidPort = -1;
+    //ret = socket.bind(invalidPort);
+    //QVERIFY(ret == false);
 }
 
 /*!
@@ -274,13 +290,13 @@ void tst_qllcpsocketlocal::negTestCase4()
 /*!
  Description: negative testcase II - invalid usage of connection-oriented API
 */
-void tst_qllcpsocketlocal::negTestCase5()
+void tst_qllcpsocketlocal::coverageTest1()
 {
     QLlcpSocket socket(this);
-    qDebug() << "negTestCase5: " <<m_port;
+    qDebug() << "coverageTest1: " <<m_port;
     bool bindOk = socket.bind(m_port);
     QVERIFY(bindOk == true);
-    qDebug() << "negTestCase5 bindOk";
+    qDebug() << "coverageTest1 bindOk";
 
     QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
     socket.connectToService(m_target,"uri");
@@ -292,16 +308,17 @@ void tst_qllcpsocketlocal::negTestCase5()
     QVERIFY(socket.waitForConnected() == false);
     QVERIFY(socket.waitForDisconnected() == false);
 
-     qDebug() << "negTestCase5 writeDatagram";
+    qDebug() << "coverageTest1 writeDatagram";
     QString message = "Oops, must follow a port parameter";
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
     qint64 ret = socket.writeDatagram(data,strSize);
 
-     qDebug() << "negTestCase5 writeDatagram end";
+    qDebug() << "coverageTest1 writeDatagram end";
     QVERIFY(ret == -1);
 }
+
 
 QTEST_MAIN(tst_qllcpsocketlocal);
 

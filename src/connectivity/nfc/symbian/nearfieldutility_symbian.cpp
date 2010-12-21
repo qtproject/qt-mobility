@@ -130,10 +130,12 @@ QTM_END_NAMESPACE
 // timer implementation
 CLlcpTimer* CLlcpTimer::NewL(CActiveSchedulerWait & aWait)
     {
-  CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
+    BEGIN
+    CLlcpTimer* self = new (ELeave) CLlcpTimer(aWait);
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop(self);
+    END
     return self;
     }
 
@@ -142,7 +144,9 @@ Destructor.
 */
 CLlcpTimer::~CLlcpTimer()
     {
+    BEGIN
     Cancel();
+    END
     }
 
 /**
@@ -150,16 +154,20 @@ Starts the shutdown timer.
 */
 void CLlcpTimer::Start(TInt aMSecs)
     {
+    BEGIN
     const TUint KDelay = (1000 * aMSecs);
     After(KDelay);
+    END
     }
 
 void CLlcpTimer::RunL()
     {
+    BEGIN
     if (iWait.IsStarted())
         {
         iWait.AsyncStop();
         }
+    END
     }
 
 /**
@@ -176,8 +184,10 @@ Second phase constructor.
 */
 void CLlcpTimer::ConstructL()
     {
+    BEGIN
     CTimer::ConstructL();
     CActiveScheduler::Add(this);
+    END
     }
 
 
