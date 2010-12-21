@@ -7550,6 +7550,10 @@ void tst_QLandmarkManager::importLmx() {
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
         QCOMPARE(originalLandmarksCount + 16, m_manager->landmarks().count());
 
+#if defined (Q_WS_MAEMO_6)
+	QTest::qWait(2000);
+#endif
+
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 1);
