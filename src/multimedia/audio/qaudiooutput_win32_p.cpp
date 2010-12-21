@@ -327,25 +327,12 @@ bool QAudioOutputPrivate::open()
     wfx.nBlockAlign = (wfx.wBitsPerSample >> 3) * wfx.nChannels;
     wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-    UINT_PTR devId = WAVE_MAPPER;
-
-    WAVEOUTCAPS woc;
-    unsigned long iNumDevs,ii;
-    iNumDevs = waveOutGetNumDevs();
-    for(ii=0;ii<iNumDevs;ii++) {
-        if(waveOutGetDevCaps(ii, &woc, sizeof(WAVEOUTCAPS))
-	    == MMSYSERR_NOERROR) {
-	    QString tmp;
-            tmp = QString::fromWCharArray(woc.szPname);
-            if(tmp.compare(QLatin1String(m_device)) == 0) {
-	        devId = ii;
-		break;
-	    }
-	}
-    }
+    QDataStream ds(&m_device, QIODevice::ReadOnly);
+    quint32 deviceId;
+    ds >> deviceId;
 
     if (!surround) {
-        if(waveOutOpen(&hWaveOut, devId, &wfx,
+        if (waveOutOpen(&hWaveOut, UINT_PTR(deviceId), &wfx,
                     (DWORD_PTR)&waveOutProc,
                     (DWORD_PTR) this,
                     CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
@@ -377,7 +364,7 @@ bool QAudioOutputPrivate::open()
         if (settings.channels() == 8)
             wfex.dwChannelMask |= SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT;
 
-        if(waveOutOpen(&hWaveOut, devId, &wfex.Format,
+        if (waveOutOpen(&hWaveOut, UINT_PTR(deviceId), &wfex.Format,
                     (DWORD_PTR)&waveOutProc,
                     (DWORD_PTR) this,
                     CALLBACK_FUNCTION) != MMSYSERR_NOERROR) {
