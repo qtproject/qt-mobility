@@ -169,9 +169,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNearFieldTarget::error(QNearFieldTarget::Error error)
+    \fn void QNearFieldTarget::error(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id)
 
-    This signal is emitted when an error occurs. The \a error parameter describes the error.
+    This signal is emitted when an error occurs while processing request \a id. The \a error
+    parameter describes the error.
 */
 
 /*!
@@ -306,7 +307,7 @@ bool QNearFieldTarget::hasNdefMessage()
 */
 void QNearFieldTarget::readNdefMessages()
 {
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
@@ -318,7 +319,7 @@ void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     Q_UNUSED(messages);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
@@ -329,7 +330,7 @@ void QNearFieldTarget::sendApduCommand(const QByteArray &command)
 {
     Q_UNUSED(command);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
@@ -341,7 +342,7 @@ void QNearFieldTarget::sendApduCommands(const QList<QByteArray> &commands)
 {
     Q_UNUSED(commands);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 }
 
 /*!
@@ -352,7 +353,7 @@ QNearFieldTarget::RequestId QNearFieldTarget::sendCommand(const QByteArray &comm
 {
     Q_UNUSED(command);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 
     return RequestId();
 }
@@ -365,7 +366,7 @@ QNearFieldTarget::RequestId QNearFieldTarget::sendCommands(const QList<QByteArra
 {
     Q_UNUSED(commands);
 
-    emit error(UnsupportedError);
+    emit error(UnsupportedError, RequestId());
 
     return RequestId();
 }

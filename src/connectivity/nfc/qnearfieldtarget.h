@@ -156,7 +156,7 @@ signals:
 
     void requestCompleted(const QNearFieldTarget::RequestId &id);
 
-    void error(QNearFieldTarget::Error error);
+    void error(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
 
 private:
     QNearFieldTargetPrivate *d_ptr;
