@@ -40,13 +40,14 @@
 ****************************************************************************/
 #include <nfctag.h>
 #include <QVariant>
+#include <QtEndian>
 #include "nearfieldutility_symbian.h"
 #include "qnearfieldtagtype4_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent)
-                                : QNearFieldTarget(parent), QNearFieldTagImpl(tag)
+                                : QNearFieldTagType4(parent), QNearFieldTagImpl(tag)
 {
 }
 
@@ -84,14 +85,77 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendCommands(const QList<
     return _sendCommands(commands);
 }
 
-QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendAPDUCommand(const QByteArray &command)
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::select(const QByteArray &name)
 {
+    BEGIN
+    QByteArray command;
+    command.append(char(0x00)); // CLA
+    command.append(char(0xA4)); // INS
+    command.append(char(0x04)); // P1, select by name
+    command.append(char(0x00)); // First or only occurrence
+    command.append(char(0x07)); // Lc
+    command.append(name);
+    END
     return _sendCommand(command);
 }
 
-QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendAPDUCommands(const QList<QByteArray> &commands)
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::select(quint16 fileIdentifier)
 {
-    return _sendCommands(commands);
+    BEGIN
+    QByteArray command;
+    command.append(char(0x00)); // CLA
+    command.append(char(0xA4)); // INS
+    command.append(char(0x00)); // P1, select by file identifier
+    command.append(char(0x00)); // First or only occurrence
+    command.append(char(0x02)); // Lc
+    quint16 temp = qToBigEndian<quint16>(fileIdentifier);
+    command.append(reinterpret_cast<const char*>(&temp), 
+                   sizeof(quint16));
+    END
+    return _sendCommand(command);    
+}
+
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::read(quint16 length, quint16 startOffset)
+{
+    BEGIN
+    QByteArray command;
+    command.append(char(0x00)); // CLA
+    command.append(char(0xB0)); // INS
+    quint16 temp = qToBigEndian<quint16>(startOffset);
+    command.append(reinterpret_cast<const char*>(&temp), 
+                   sizeof(quint16)); // P1/P2 offset
+    temp = qToBigEndian<quint16>(length);
+    command.append(reinterpret_cast<const char*>(&temp),
+                   sizeof(quint16)); // Le
+    END
+    return _sendCommand(command);
+}
+
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &data, quint16 startOffset)
+{
+    BEGIN
+    QByteArray command;
+    command.append(char(0x00)); // CLA
+    command.append(char(0xD6)); // INS
+    quint16 temp = qToBigEndian<quint16>(startOffset);
+    command.append(reinterpret_cast<const char *>(&temp), sizeof(quint16));
+    quint16 length = data.count();
+    if ((length > 0xFF) || (length < 0x01))
+    {
+        END
+        return QNearFieldTarget::RequestId();
+    }
+    else
+    {
+        quint16 temp = qToBigEndian<quint16>(length);
+        command.append(reinterpret_cast<const char *>(&temp), 
+                       sizeof(quint16));
+    }
+    
+    command.append(data);
+    END
+    return _sendCommand(command);
+                       
 }
 
 bool QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
