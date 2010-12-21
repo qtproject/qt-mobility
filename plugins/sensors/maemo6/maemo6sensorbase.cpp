@@ -48,6 +48,7 @@ SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 const int maemo6sensorbase::KErrNotFound=-1;
+const char* maemo6sensorbase::ALWAYS_ON = "alwaysOn";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
     : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1)
@@ -92,6 +93,14 @@ void maemo6sensorbase::start()
             m_sensorInterface->requestDataRange(range1);
             m_prevOutputRange = currentRange;
         }
+
+
+        // TODO: always on
+        QVariant alwaysOn = sensor()->property(ALWAYS_ON);
+        alwaysOn.isValid()?
+                m_sensorInterface->setStandbyOverride(alwaysOn.toBool()):
+                m_sensorInterface->setStandbyOverride(false);
+
 
         // TODO: buffer, if changed between starts
         
