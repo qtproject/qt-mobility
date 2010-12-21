@@ -1,15 +1,15 @@
 /******************************************************************************
- * $Id: pj_open_lib.c 1504 2009-01-06 02:11:57Z warmerdam $
- *
  * Project:  PROJ.4
  * Purpose:  Implementation of pj_open_lib(), and pj_set_finder().  These
  *           provide a standard interface for opening projections support
  *           data files.
- * Author:   Gerald Evenden, Frank Warmerdam <warmerdam@pobox.com>
+ * Author:   Gerald Evenden, Frank Warmerdam <warmerdam@pobox.com>,
+ *           Nokia Corporation (qt-info@nokia.com)
  *
  ******************************************************************************
  * Copyright (c) 1995, Gerald Evenden
  * Copyright (c) 2002, Frank Warmerdam <warmerdam@pobox.com>
+ * Copyright (c) 2010, Nokia Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,12 +31,15 @@
  *****************************************************************************/
 
 #define PJ_LIB__
+extern "C" {
 #include <projects.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+}
 
-PJ_CVSID("$Id: pj_open_lib.c 1504 2009-01-06 02:11:57Z warmerdam $");
+#include <QString>
+#include <QFile>
 
 static const char *(*pj_finder)(const char *) = NULL;
 static int path_count = 0;
@@ -130,6 +133,12 @@ pj_open_lib(char *name, char *mode) {
              || (!strncmp(name, "..", 2) && strchr(dir_chars,name[2]))
              || (name[1] == ':' && strchr(dir_chars,name[2])) )
         sysname = name;
+    
+    else if (QFile::exists(QString(":/proj_data/%1").arg(name))) {
+        QFile *f = new QFile(QString(":/proj_data/%1").arg(name));
+        f->open(QIODevice::ReadOnly);
+        return fdopen(f->handle(), "r");
+    }
 
     /* or try to use application provided file finder */
     else if( pj_finder != NULL && pj_finder( name ) != NULL )

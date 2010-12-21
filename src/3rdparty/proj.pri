@@ -1,41 +1,150 @@
 INCLUDEPATH += $$PWD/proj/include
 
-SOURCES += projects.h pj_list.h \
-        PJ_aeqd.c PJ_gnom.c PJ_laea.c PJ_mod_ster.c \
-        PJ_nsper.c PJ_nzmg.c PJ_ortho.c PJ_stere.c PJ_sterea.c \
-        PJ_aea.c PJ_bipc.c PJ_bonne.c PJ_eqdc.c \
-        PJ_imw_p.c PJ_krovak.c PJ_lcc.c PJ_poly.c \
-        PJ_rpoly.c PJ_sconics.c proj_rouss.c \
-        PJ_cass.c PJ_cc.c PJ_cea.c PJ_eqc.c \
-        PJ_gall.c PJ_labrd.c PJ_lsat.c PJ_merc.c \
-        PJ_mill.c PJ_ocea.c PJ_omerc.c PJ_somerc.c \
-        PJ_tcc.c PJ_tcea.c PJ_tmerc.c \
-        PJ_airy.c PJ_aitoff.c PJ_august.c PJ_bacon.c \
-        PJ_chamb.c PJ_hammer.c PJ_lagrng.c PJ_larr.c \
-        PJ_lask.c PJ_nocol.c PJ_ob_tran.c PJ_oea.c \
-        PJ_tpeqd.c PJ_vandg.c PJ_vandg2.c PJ_vandg4.c \
-        PJ_wag7.c PJ_lcca.c PJ_geos.c \
-        PJ_boggs.c PJ_collg.c PJ_crast.c PJ_denoy.c \
-        PJ_eck1.c PJ_eck2.c PJ_eck3.c PJ_eck4.c \
-        PJ_eck5.c PJ_fahey.c PJ_fouc_s.c PJ_gins8.c PJ_gstmerc.c \
-        PJ_gn_sinu.c PJ_goode.c PJ_hatano.c PJ_loxim.c \
-        PJ_mbt_fps.c PJ_mbtfpp.c PJ_mbtfpq.c PJ_moll.c \
-        PJ_nell.c PJ_nell_h.c PJ_putp2.c PJ_putp3.c \
-        PJ_putp4p.c PJ_putp5.c PJ_putp6.c PJ_robin.c \
-        PJ_sts.c PJ_urm5.c PJ_urmfps.c PJ_wag2.c \
-        PJ_wag3.c PJ_wink1.c PJ_wink2.c pj_latlong.c pj_geocent.c \
-        aasincos.c adjlon.c bch2bps.c bchgen.c \
-        biveval.c dmstor.c mk_cheby.c pj_auth.c \
-        pj_deriv.c pj_ell_set.c pj_ellps.c pj_errno.c \
-        pj_factors.c pj_fwd.c pj_init.c pj_inv.c \
-        pj_list.c pj_malloc.c pj_mlfn.c pj_msfn.c proj_mdist.c \
-        pj_open_lib.c pj_param.c pj_phi2.c pj_pr_list.c \
-        pj_qsfn.c pj_strerrno.c pj_tsfn.c pj_units.c \
-        pj_zpoly1.c rtodms.c vector1.c pj_release.c pj_gauss.c \
-        nad_cvt.c nad_init.c nad_intr.c emess.c emess.h \
-        pj_apply_gridshift.c pj_datums.c pj_datum_set.c pj_transform.c \
-        geocent.c geocent.h pj_utils.c pj_gridinfo.c pj_gridlist.c \
-        jniproj.c pj_mutex.c pj_initcache.c
+SOURCES += $$PWD/proj/projects.h \
+        $$PWD/proj/pj_list.h \
+        $$PWD/proj/PJ_aeqd.c \
+        $$PWD/proj/PJ_gnom.c \
+        $$PWD/proj/PJ_laea.c \
+        $$PWD/proj/PJ_mod_ster.c \
+        $$PWD/proj/PJ_nsper.c \
+        $$PWD/proj/PJ_nzmg.c \
+        $$PWD/proj/PJ_ortho.c \
+        $$PWD/proj/PJ_stere.c \
+        $$PWD/proj/PJ_sterea.c \
+        $$PWD/proj/PJ_aea.c \
+        $$PWD/proj/PJ_bipc.c \
+        $$PWD/proj/PJ_bonne.c \
+        $$PWD/proj/PJ_eqdc.c \
+        $$PWD/proj/PJ_imw_p.c \
+        $$PWD/proj/PJ_krovak.c \
+        $$PWD/proj/PJ_lcc.c \
+        $$PWD/proj/PJ_poly.c \
+        $$PWD/proj/PJ_rpoly.c \
+        $$PWD/proj/PJ_sconics.c \
+        $$PWD/proj/proj_rouss.c \
+        $$PWD/proj/PJ_cass.c \
+        $$PWD/proj/PJ_cc.c \
+        $$PWD/proj/PJ_cea.c \
+        $$PWD/proj/PJ_eqc.c \
+        $$PWD/proj/PJ_gall.c \
+        $$PWD/proj/PJ_labrd.c \
+        $$PWD/proj/PJ_lsat.c \
+        $$PWD/proj/PJ_merc.c \
+        $$PWD/proj/PJ_mill.c \
+        $$PWD/proj/PJ_ocea.c \
+        $$PWD/proj/PJ_omerc.c \
+        $$PWD/proj/PJ_somerc.c \
+        $$PWD/proj/PJ_tcc.c \
+        $$PWD/proj/PJ_tcea.c \
+        $$PWD/proj/PJ_tmerc.c \
+        $$PWD/proj/PJ_airy.c \
+        $$PWD/proj/PJ_aitoff.c \
+        $$PWD/proj/PJ_august.c \
+        $$PWD/proj/PJ_bacon.c \
+        $$PWD/proj/PJ_chamb.c \
+        $$PWD/proj/PJ_hammer.c \
+        $$PWD/proj/PJ_lagrng.c \
+        $$PWD/proj/PJ_larr.c \
+        $$PWD/proj/PJ_lask.c \
+        $$PWD/proj/PJ_nocol.c \
+        $$PWD/proj/PJ_ob_tran.c \
+        $$PWD/proj/PJ_oea.c \
+        $$PWD/proj/PJ_tpeqd.c \
+        $$PWD/proj/PJ_vandg.c \
+        $$PWD/proj/PJ_vandg2.c \
+        $$PWD/proj/PJ_vandg4.c \
+        $$PWD/proj/PJ_wag7.c \
+        $$PWD/proj/PJ_lcca.c \
+        $$PWD/proj/PJ_geos.c \
+        $$PWD/proj/PJ_boggs.c \
+        $$PWD/proj/PJ_collg.c \
+        $$PWD/proj/PJ_crast.c \
+        $$PWD/proj/PJ_denoy.c \
+        $$PWD/proj/PJ_eck1.c \
+        $$PWD/proj/PJ_eck2.c \
+        $$PWD/proj/PJ_eck3.c \
+        $$PWD/proj/PJ_eck4.c \
+        $$PWD/proj/PJ_eck5.c \
+        $$PWD/proj/PJ_fahey.c \
+        $$PWD/proj/PJ_fouc_s.c \
+        $$PWD/proj/PJ_gins8.c \
+        $$PWD/proj/PJ_gstmerc.c \
+        $$PWD/proj/PJ_gn_sinu.c \
+        $$PWD/proj/PJ_goode.c \
+        $$PWD/proj/PJ_hatano.c \
+        $$PWD/proj/PJ_loxim.c \
+        $$PWD/proj/PJ_mbt_fps.c \
+        $$PWD/proj/PJ_mbtfpp.c \
+        $$PWD/proj/PJ_mbtfpq.c \
+        $$PWD/proj/PJ_moll.c \
+        $$PWD/proj/PJ_nell.c \
+        $$PWD/proj/PJ_nell_h.c \
+        $$PWD/proj/PJ_putp2.c \
+        $$PWD/proj/PJ_putp3.c \
+        $$PWD/proj/PJ_putp4p.c \
+        $$PWD/proj/PJ_putp5.c \
+        $$PWD/proj/PJ_putp6.c \
+        $$PWD/proj/PJ_robin.c \
+        $$PWD/proj/PJ_sts.c \
+        $$PWD/proj/PJ_urm5.c \
+        $$PWD/proj/PJ_urmfps.c \
+        $$PWD/proj/PJ_wag2.c \
+        $$PWD/proj/PJ_wag3.c \
+        $$PWD/proj/PJ_wink1.c \
+        $$PWD/proj/PJ_wink2.c \
+        $$PWD/proj/pj_latlong.c \
+        $$PWD/proj/pj_geocent.c \
+        $$PWD/proj/aasincos.c \
+        $$PWD/proj/adjlon.c \
+        $$PWD/proj/bch2bps.c \
+        $$PWD/proj/bchgen.c \
+        $$PWD/proj/biveval.c \
+        $$PWD/proj/dmstor.c \
+        $$PWD/proj/mk_cheby.c \
+        $$PWD/proj/pj_auth.c \
+        $$PWD/proj/pj_deriv.c \
+        $$PWD/proj/pj_ell_set.c \
+        $$PWD/proj/pj_ellps.c \
+        $$PWD/proj/pj_errno.c \
+        $$PWD/proj/pj_factors.c \
+        $$PWD/proj/pj_fwd.c \
+        $$PWD/proj/pj_init.c \
+        $$PWD/proj/pj_inv.c \
+        $$PWD/proj/pj_list.c \
+        $$PWD/proj/pj_malloc.c \
+        $$PWD/proj/pj_mlfn.c \
+        $$PWD/proj/pj_msfn.c \
+        $$PWD/proj/proj_mdist.c \
+        $$PWD/proj/pj_open_lib_qt.cpp \
+	$$PWD/proj/pj_param.c \
+        $$PWD/proj/pj_phi2.c \
+        $$PWD/proj/pj_pr_list.c \
+        $$PWD/proj/pj_qsfn.c \
+        $$PWD/proj/pj_strerrno.c \
+        $$PWD/proj/pj_tsfn.c \
+        $$PWD/proj/pj_units.c \
+        $$PWD/proj/pj_zpoly1.c \
+        $$PWD/proj/rtodms.c \
+        $$PWD/proj/vector1.c \
+        $$PWD/proj/pj_release.c \
+        $$PWD/proj/pj_gauss.c \
+        $$PWD/proj/nad_cvt.c \
+        $$PWD/proj/nad_init.c \
+        $$PWD/proj/nad_intr.c \
+        $$PWD/proj/emess.c \
+        $$PWD/proj/emess.h \
+        $$PWD/proj/pj_apply_gridshift.c \
+        $$PWD/proj/pj_datums.c \
+        $$PWD/proj/pj_datum_set.c \
+        $$PWD/proj/pj_transform.c \
+        $$PWD/proj/geocent.c \
+        $$PWD/proj/geocent.h \
+        $$PWD/proj/pj_utils.c \
+        $$PWD/proj/pj_gridinfo.c \
+        $$PWD/proj/pj_gridlist.c \
+        $$PWD/proj/jniproj.c \
+        $$PWD/proj/pj_mutex.c \
+        $$PWD/proj/pj_initcache.c
 
 unix {
   DEFINES += -DMUTEX_pthread
