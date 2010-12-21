@@ -81,4 +81,22 @@ private:
     QByteArray memory;
 };
 
+class NfcTagType2 : public TagBase
+{
+public:
+    NfcTagType2();
+    ~NfcTagType2();
+
+    void load(QSettings *settings);
+
+    QByteArray processCommand(const QByteArray &command);
+
+    QByteArray uid() const;
+
+private:
+    QByteArray memory;
+    quint8 currentSector;
+    bool expectPacket2;
+};
+
 #endif // TARGETEMULATOR_P_H

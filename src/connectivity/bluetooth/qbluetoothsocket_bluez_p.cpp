@@ -115,6 +115,7 @@ void QBluetoothSocketBluezPrivate::connectToService(const QBluetoothAddress &add
     if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
 
+        memset(&addr, 0, sizeof(addr));
         addr.rc_family = AF_BLUETOOTH;
         addr.rc_channel = port;
 
@@ -124,6 +125,7 @@ void QBluetoothSocketBluezPrivate::connectToService(const QBluetoothAddress &add
     } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
 
+        memset(&addr, 0, sizeof(addr));
         addr.l2_family = AF_BLUETOOTH;
         addr.l2_psm = port;
 

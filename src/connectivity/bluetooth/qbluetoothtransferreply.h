@@ -60,13 +60,13 @@ public:
         NoError = 0,
         UnknownError,
         FileNotFoundError,
-        HostNotFoundError
+        HostNotFoundError,
+        UserCancelledTransferError
     };
 
 
     ~QBluetoothTransferReply();
 
-    virtual void abort() = 0;
     QVariant attribute(QBluetoothTransferRequest::Attribute code) const;
     virtual bool isFinished() const = 0;
     virtual bool isRunning() const = 0;
@@ -82,6 +82,9 @@ public:
 
     virtual TransferError error() const = 0;
     virtual QString errorString() const = 0;
+
+public Q_SLOTS:
+    void abort();
 
 signals:
     void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
