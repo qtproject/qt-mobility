@@ -268,11 +268,11 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     BEGIN
     if ( aMessage )
         {
-           QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
-           TInt error = KErrNone;
-           QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
-           Q_UNUSED(error);//just skip the error
-           delete aMessage;
+        QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
+        Q_UNUSED(error);//just skip the error
+        delete aMessage;
         }
     END
     }
