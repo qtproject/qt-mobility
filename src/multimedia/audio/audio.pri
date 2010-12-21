@@ -42,11 +42,12 @@ win32 {
                audio/qaudioinput_win32_p.cpp
     !wince*:LIBS += -lwinmm
     wince*:LIBS += -lcoredll
+    LIBS += -lstrmiids -lole32 -loleaut32
 }
 
 symbian {
-    INCLUDEPATH += /epoc32/include/mmf/common
-    INCLUDEPATH += /epoc32/include/mmf/server
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/mmf/common
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/mmf/server
 
     PRIVATE_HEADERS += audio/qaudio_symbian_p.h \
                audio/qaudiodeviceinfo_symbian_p.h \

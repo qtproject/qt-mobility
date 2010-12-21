@@ -155,6 +155,7 @@ protected:
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;
 
+    QObject *m_qmlObject;
     QMediaObject *m_mediaObject;
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataReaderControl *m_metaDataControl;
