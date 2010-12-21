@@ -70,8 +70,9 @@
 #include <qlandmarkimportrequest.h>
 #include <qlandmarkexportrequest.h>
 
-#include <QFile>
+#include <QDateTime>
 #include <QDebug>
+#include <QFile>
 #include <math.h>
 #include <QUuid>
 #include <QSet>
@@ -100,6 +101,7 @@ namespace DatabaseOperationsHelpers{
 #endif
 
 static const double EARTH_MEAN_RADIUS = 6371.0072;
+static QHash<QString, QString> countryCodes;
 
 bool isValidLat(double lat)
 {
@@ -420,6 +422,258 @@ bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory 
     return (cat1.name() < cat2.name());
 }
 
+void fillCountryCodesTable() {
+    countryCodes.insertMulti("AFG","Afghanistan");
+    countryCodes.insertMulti("ALA","land Islands");
+    countryCodes.insertMulti("ALB","Albania");
+    countryCodes.insertMulti("DZA","Algeria");
+    countryCodes.insertMulti("ASM","American Samoa");
+    countryCodes.insertMulti("AND","Andorra");
+    countryCodes.insertMulti("AGO","Angola");
+    countryCodes.insertMulti("AIA","Anguilla");
+    countryCodes.insertMulti("ATA","Antarctica");
+    countryCodes.insertMulti("ATG","Antigua and Barbuda");
+    countryCodes.insertMulti("ARG","Argentina");
+    countryCodes.insertMulti("ARM","Armenia");
+    countryCodes.insertMulti("ABW","Aruba");
+    countryCodes.insertMulti("AUS","Australia");
+    countryCodes.insertMulti("AUT","Austria");
+    countryCodes.insertMulti("AZE","Azerbaijan");
+    countryCodes.insertMulti("BHS","Bahamas");
+    countryCodes.insertMulti("BHR","Bahrain");
+    countryCodes.insertMulti("BGD","Bangladesh");
+    countryCodes.insertMulti("BRB","Barbados");
+    countryCodes.insertMulti("BLR","Belarus");
+    countryCodes.insertMulti("BEL","Belgium");
+    countryCodes.insertMulti("BLZ","Belize");
+    countryCodes.insertMulti("BEN","Benin");
+    countryCodes.insertMulti("BMU","Bermuda");
+    countryCodes.insertMulti("BTN","Bhutan");
+    countryCodes.insertMulti("BOL","Bolivia");
+    countryCodes.insertMulti("BIH","Bosnia and Herzegovina");
+    countryCodes.insertMulti("BWA","Botswana");
+    countryCodes.insertMulti("BVT","Bouvet Island");
+    countryCodes.insertMulti("BRA","Brazil");
+    countryCodes.insertMulti("IOT","British Indian Ocean Territory");
+    countryCodes.insertMulti("BRN","Brunei Darussalam");
+    countryCodes.insertMulti("BGR","Bulgaria");
+    countryCodes.insertMulti("BFA","Burkina Faso");
+    countryCodes.insertMulti("BDI","Burundi");
+    countryCodes.insertMulti("KHM","Cambodia");
+    countryCodes.insertMulti("CMR","Cameroon");
+    countryCodes.insertMulti("CAN","Canada");
+    countryCodes.insertMulti("CPV","Cape Verde");
+    countryCodes.insertMulti("CYM","Cayman Islands");
+    countryCodes.insertMulti("CAF","Central African Republic");
+    countryCodes.insertMulti("TCD","Chad");
+    countryCodes.insertMulti("CHL","Chile");
+    countryCodes.insertMulti("CHN","China");
+    countryCodes.insertMulti("CXR","Christmas Island");
+    countryCodes.insertMulti("CCK","Cocos (Keeling) Islands");
+    countryCodes.insertMulti("COL","Colombia");
+    countryCodes.insertMulti("COM","Comoros");
+    countryCodes.insertMulti("COG","Congo");
+    countryCodes.insertMulti("COD","Congo, the Democratic Republic of the");
+    countryCodes.insertMulti("COK","Cook Islands");
+    countryCodes.insertMulti("CRI","Costa Rica");
+    countryCodes.insertMulti("CIV","Cte d'Ivoire");
+    countryCodes.insertMulti("HRV","Croatia");
+    countryCodes.insertMulti("CUB","Cuba");
+    countryCodes.insertMulti("CYP","Cyprus");
+    countryCodes.insertMulti("CZE","Czech Republic");
+    countryCodes.insertMulti("DNK","Denmark");
+    countryCodes.insertMulti("DJI","Djibouti");
+    countryCodes.insertMulti("DMA","Dominica");
+    countryCodes.insertMulti("DOM","Dominican Republic");
+    countryCodes.insertMulti("ECU","Ecuador");
+    countryCodes.insertMulti("EGY","Egypt");
+    countryCodes.insertMulti("SLV","El Salvador");
+    countryCodes.insertMulti("GNQ","Equatorial Guinea");
+    countryCodes.insertMulti("ERI","Eritrea");
+    countryCodes.insertMulti("EST","Estonia");
+    countryCodes.insertMulti("ETH","Ethiopia");
+    countryCodes.insertMulti("FLK","Falkland Islands (Malvinas)");
+    countryCodes.insertMulti("FRO","Faroe Islands");
+    countryCodes.insertMulti("FJI","Fiji");
+    countryCodes.insertMulti("FIN","Finland");
+    countryCodes.insertMulti("FRA","France");
+    countryCodes.insertMulti("GUF","French Guiana");
+    countryCodes.insertMulti("PYF","French Polynesia");
+    countryCodes.insertMulti("ATF","French Southern Territories");
+    countryCodes.insertMulti("GAB","Gabon");
+    countryCodes.insertMulti("GMB","Gambia");
+    countryCodes.insertMulti("GEO","Georgia");
+    countryCodes.insertMulti("DEU","Germany");
+    countryCodes.insertMulti("GHA","Ghana");
+    countryCodes.insertMulti("GIB","Gibraltar");
+    countryCodes.insertMulti("GRC","Greece");
+    countryCodes.insertMulti("GRL","Greenland");
+    countryCodes.insertMulti("GRD","Grenada");
+    countryCodes.insertMulti("GLP","Guadeloupe");
+    countryCodes.insertMulti("GUM","Guam");
+    countryCodes.insertMulti("GTM","Guatemala");
+    countryCodes.insertMulti("GGY","Guernsey");
+    countryCodes.insertMulti("GIN","Guinea");
+    countryCodes.insertMulti("GNB","Guinea-Bissau");
+    countryCodes.insertMulti("GUY","Guyana");
+    countryCodes.insertMulti("HTI","Haiti");
+    countryCodes.insertMulti("HMD","Heard Island and McDonald Islands");
+    countryCodes.insertMulti("VAT","Holy See (Vatican City State)");
+    countryCodes.insertMulti("HND","Honduras");
+    countryCodes.insertMulti("HKG","Hong Kong");
+    countryCodes.insertMulti("HUN","Hungary");
+    countryCodes.insertMulti("ISL","Iceland");
+    countryCodes.insertMulti("IND","India");
+    countryCodes.insertMulti("IDN","Indonesia");
+    countryCodes.insertMulti("*IW","International Waters (WOUDC assigned code)");
+    countryCodes.insertMulti("IRN","Iran, Islamic Republic of");
+    countryCodes.insertMulti("IRQ","Iraq");
+    countryCodes.insertMulti("IRL","Ireland");
+    countryCodes.insertMulti("IMN","Isle of Man");
+    countryCodes.insertMulti("ISR","Israel");
+    countryCodes.insertMulti("ITA","Italy");
+    countryCodes.insertMulti("JAM","Jamaica");
+    countryCodes.insertMulti("JPN","Japan");
+    countryCodes.insertMulti("JEY","Jersey");
+    countryCodes.insertMulti("JOR","Jordan");
+    countryCodes.insertMulti("KAZ","Kazakhstan");
+    countryCodes.insertMulti("KEN","Kenya");
+    countryCodes.insertMulti("KIR","Kiribati");
+    countryCodes.insertMulti("PRK","Korea, Democratic People's Republic of");
+    countryCodes.insertMulti("PRK","Democratic People's Republic of Korea");
+    countryCodes.insertMulti("PRK","North Korea");
+    countryCodes.insertMulti("KOR","Korea, Republic of");
+    countryCodes.insertMulti("KOR","South Korea");
+    countryCodes.insertMulti("KWT","Kuwait");
+    countryCodes.insertMulti("KGZ","Kyrgyzstan");
+    countryCodes.insertMulti("LAO","Lao People's Democratic Republic");
+    countryCodes.insertMulti("LVA","Latvia");
+    countryCodes.insertMulti("LBN","Lebanon");
+    countryCodes.insertMulti("LSO","Lesotho");
+    countryCodes.insertMulti("LBR","Liberia");
+    countryCodes.insertMulti("LBY","Libyan Arab Jamahiriya");
+    countryCodes.insertMulti("LIE","Liechtenstein");
+    countryCodes.insertMulti("LTU","Lithuania");
+    countryCodes.insertMulti("LUX","Luxembourg");
+    countryCodes.insertMulti("MAC","Macao");
+    countryCodes.insertMulti("MKD","Macedonia, the former Yugoslav Republic of");
+    countryCodes.insertMulti("MDG","Madagascar");
+    countryCodes.insertMulti("MWI","Malawi");
+    countryCodes.insertMulti("MYS","Malaysia");
+    countryCodes.insertMulti("MDV","Maldives");
+    countryCodes.insertMulti("MLI","Mali");
+    countryCodes.insertMulti("MLT","Malta");
+    countryCodes.insertMulti("MHL","Marshall Islands");
+    countryCodes.insertMulti("MTQ","Martinique");
+    countryCodes.insertMulti("MRT","Mauritania");
+    countryCodes.insertMulti("MUS","Mauritius");
+    countryCodes.insertMulti("MYT","Mayotte");
+    countryCodes.insertMulti("MEX","Mexico");
+    countryCodes.insertMulti("FSM","Micronesia, Federated States of");
+    countryCodes.insertMulti("MDA","Moldova, Republic of");
+    countryCodes.insertMulti("MCO","Monaco");
+    countryCodes.insertMulti("MNG","Mongolia");
+    countryCodes.insertMulti("MNE","Montenegro");
+    countryCodes.insertMulti("MSR","Montserrat");
+    countryCodes.insertMulti("MAR","Morocco");
+    countryCodes.insertMulti("MOZ","Mozambique");
+    countryCodes.insertMulti("MMR","Myanmar");
+    countryCodes.insertMulti("NAM","Namibia");
+    countryCodes.insertMulti("NRU","Nauru");
+    countryCodes.insertMulti("NPL","Nepal");
+    countryCodes.insertMulti("NLD","Netherlands");
+    countryCodes.insertMulti("ANT","Netherlands Antilles");
+    countryCodes.insertMulti("NCL","New Caledonia");
+    countryCodes.insertMulti("NZL","New Zealand");
+    countryCodes.insertMulti("NIC","Nicaragua");
+    countryCodes.insertMulti("NER","Niger");
+    countryCodes.insertMulti("NGA","Nigeria");
+    countryCodes.insertMulti("NIU","Niue");
+    countryCodes.insertMulti("NFK","Norfolk Island");
+    countryCodes.insertMulti("MNP","Northern Mariana Islands");
+    countryCodes.insertMulti("NOR","Norway");
+    countryCodes.insertMulti("OMN","Oman");
+    countryCodes.insertMulti("PAK","Pakistan");
+    countryCodes.insertMulti("PLW","Palau");
+    countryCodes.insertMulti("PSE","Palestinian Territory, Occupied");
+    countryCodes.insertMulti("PAN","Panama");
+    countryCodes.insertMulti("PNG","Papua New Guinea");
+    countryCodes.insertMulti("PRY","Paraguay");
+    countryCodes.insertMulti("PER","Peru");
+    countryCodes.insertMulti("PHL","Philippines");
+    countryCodes.insertMulti("PCN","Pitcairn");
+    countryCodes.insertMulti("POL","Poland");
+    countryCodes.insertMulti("PRT","Portugal");
+    countryCodes.insertMulti("PRI","Puerto Rico");
+    countryCodes.insertMulti("QAT","Qatar");
+    countryCodes.insertMulti("REU","Runion");
+    countryCodes.insertMulti("ROU","Romania");
+    countryCodes.insertMulti("RUS","Russian Federation");
+    countryCodes.insertMulti("RWA","Rwanda");
+    countryCodes.insertMulti("BLM","Saint Barthlemy");
+    countryCodes.insertMulti("SHN","Saint Helena");
+    countryCodes.insertMulti("KNA","Saint Kitts and Nevis");
+    countryCodes.insertMulti("LCA","Saint Lucia");
+    countryCodes.insertMulti("MAF","Saint Martin (French part)");
+    countryCodes.insertMulti("SPM","Saint Pierre and Miquelon");
+    countryCodes.insertMulti("VCT","Saint Vincent and the Grenadines");
+    countryCodes.insertMulti("WSM","Samoa");
+    countryCodes.insertMulti("SMR","San Marino");
+    countryCodes.insertMulti("STP","Sao Tome and Principe");
+    countryCodes.insertMulti("SAU","Saudi Arabia");
+    countryCodes.insertMulti("SEN","Senegal");
+    countryCodes.insertMulti("SRB","Serbia");
+    countryCodes.insertMulti("SYC","Seychelles");
+    countryCodes.insertMulti("SLE","Sierra Leone");
+    countryCodes.insertMulti("SGP","Singapore");
+    countryCodes.insertMulti("SVK","Slovakia");
+    countryCodes.insertMulti("SVN","Slovenia");
+    countryCodes.insertMulti("SLB","Solomon Islands");
+    countryCodes.insertMulti("SOM","Somalia");
+    countryCodes.insertMulti("ZAF","South Africa");
+    countryCodes.insertMulti("SGS","South Georgia and the South Sandwich Islands");
+    countryCodes.insertMulti("ESP","Spain");
+    countryCodes.insertMulti("LKA","Sri Lanka");
+    countryCodes.insertMulti("SDN","Sudan");
+    countryCodes.insertMulti("SUR","Suriname");
+    countryCodes.insertMulti("SJM","Svalbard and Jan Mayen");
+    countryCodes.insertMulti("SWZ","Swaziland");
+    countryCodes.insertMulti("SWE","Sweden");
+    countryCodes.insertMulti("CHE","Switzerland");
+    countryCodes.insertMulti("SYR","Syrian Arab Republic");
+    countryCodes.insertMulti("TWN","Taiwan, Province of China");
+    countryCodes.insertMulti("TJK","Tajikistan");
+    countryCodes.insertMulti("TZA","Tanzania, United Republic of");
+    countryCodes.insertMulti("THA","Thailand");
+    countryCodes.insertMulti("TLS","Timor-Leste");
+    countryCodes.insertMulti("TGO","Togo");
+    countryCodes.insertMulti("TKL","Tokelau");
+    countryCodes.insertMulti("TON","Tonga");
+    countryCodes.insertMulti("TTO","Trinidad and Tobago");
+    countryCodes.insertMulti("TUN","Tunisia");
+    countryCodes.insertMulti("TUR","Turkey");
+    countryCodes.insertMulti("TKM","Turkmenistan");
+    countryCodes.insertMulti("TCA","Turks and Caicos Islands");
+    countryCodes.insertMulti("TUV","Tuvalu");
+    countryCodes.insertMulti("UGA","Uganda");
+    countryCodes.insertMulti("UKR","Ukraine");
+    countryCodes.insertMulti("ARE","United Arab Emirates");
+    countryCodes.insertMulti("GBR","United Kingdom");
+    countryCodes.insertMulti("USA","United States");
+    countryCodes.insertMulti("UMI","United States Minor Outlying Islands");
+    countryCodes.insertMulti("URY","Uruguay");
+    countryCodes.insertMulti("UZB","Uzbekistan");
+    countryCodes.insertMulti("VUT","Vanuatu");
+    countryCodes.insertMulti("VEN","Venezuela");
+    countryCodes.insertMulti("VNM","Viet Nam");
+    countryCodes.insertMulti("VGB","Virgin Islands, British");
+    countryCodes.insertMulti("VIR","Virgin Islands, U.S.");
+    countryCodes.insertMulti("WLF","Wallis and Futuna");
+    countryCodes.insertMulti("ESH","Western Sahara");
+    countryCodes.insertMulti("YEM","Yemen");
+    countryCodes.insertMulti("ZMB","Zambia");
+    countryCodes.insertMulti("ZWE","Zimbabwe");
+}
 }
 
 /////////////////////////////////////////////////////////////
@@ -435,6 +689,9 @@ DatabaseOperations::DatabaseOperations()
     queryRun(0)
 {
     m_conn = new QSparqlConnection("QTRACKER");
+    if (countryCodes.size() == 0) {
+        fillCountryCodesTable();
+    }
 }
 
 DatabaseOperations::~DatabaseOperations()
@@ -635,8 +892,12 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         if(!queryResult->hasError()) {
             QGeoAddress address = lm.address();
             queryResult->next();
-            if (!queryResult->value(0).toString().isEmpty())
+            if (!queryResult->value(0).toString().isEmpty()) {
                 address.setCountry(queryResult->value(0).toString());
+                QString countryCode = countryCodes.key(queryResult->value(0).toString(), QString());
+                if (!countryCode.isEmpty())
+                    address.setCountryCode(countryCode);
+            }
             if (!queryResult->value(1).toString().isEmpty())
                 address.setState(queryResult->value(1).toString());
             if (!queryResult->value(2).toString().isEmpty())
@@ -761,17 +1022,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         "OPTIONAL { ?g nie:title ?name }");
                 break;
             } else {
+                queryString = QString("select ?u {?u a slo:Landmark . ?u slo:hasContact ?pc . ?u slo:location ?g . "
+                    "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . "
+                    "OPTIONAL { ?g slo:postalAddress ?pa } . "
+                    "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
+                    "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
+                    "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
+                    "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
+                    "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . "
+                    "OPTIONAL { ?pa nco:postalcode ?postcode }. FILTER ( ");
                 if (attributeFilter.operationType() == QLandmarkAttributeFilter::AndOperation) {
                     QStringList lmLocalIds;
                     bool filterAdded = false;
-                    queryString = QString("select ?u {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "?g slo:postalAddress ?pa ."
-                        "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
-                        "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
-                        "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
-                        "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
-                        "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . FILTER ( ");
-
                     if (attributeFilter.attributeKeys().contains("name")) {
                         QString regexVariable = createRegex(attributeFilter, "name");
                         QString nameString;
@@ -852,12 +1114,38 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.append(streetString);
                         filterAdded = true;
                     }
-
+                    if (attributeFilter.attributeKeys().contains("postcode")) {
+                        QString regexVariable = createRegex(attributeFilter, "postcode");
+                        QString postcodeString;
+                        if (attributeFilter.matchFlags("postcode") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("postcode") == QLandmarkFilter::MatchExactly)
+                            postcodeString = QString("regex( ?postcode, '%1' ) && ").arg(regexVariable);
+                        else
+                            postcodeString = QString("regex( ?postcode, '%1', 'i' ) && ").arg(regexVariable);
+                        queryString.append(postcodeString);
+                        filterAdded = true;
+                    }
+                    if (attributeFilter.attributeKeys().contains("phoneNumber")) {
+                        QString regexVariable = createRegex(attributeFilter, "phoneNumber");
+                        QString phoneNumberString;
+                        if (attributeFilter.matchFlags("phoneNumber") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("phoneNumber") == QLandmarkFilter::MatchExactly)
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1' ) && ").arg(regexVariable);
+                        else
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1', 'i' ) && ").arg(regexVariable);
+                        queryString.append(phoneNumberString);
+                        if (!attributeFilter.attribute("phoneNumber").toString().isEmpty()) {
+                            queryString.replace( "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . "
+                                "OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . ", "?pc nco:hasPhoneNumber ?pn . "
+                                "?pn nco:phoneNumber ?phoneNumber . ");
+                        }
+                        filterAdded = true;
+                    }
                     if (filterAdded) {
                         queryString.chop(3);
                         queryString.append(" )");
                     } else {
-                        queryString.chop(7);
+                        queryString.chop(9);
                     }
                     queryString.append("}");
 
@@ -873,7 +1161,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     while(qsparqlResult->next()) {
                         if (!qsparqlResult->value(0).toString().isEmpty()) {
-                            lmLocalIds << qsparqlResult->value(0).toString();
+                            if(!lmLocalIds.contains(qsparqlResult->value(0).toString()))
+                                lmLocalIds << qsparqlResult->value(0).toString();
                         }
                     }
                     QLandmarkId id;
@@ -885,14 +1174,6 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                 } else {
                     QStringList lmLocalIds;
                     bool filterAdded = false;
-                    queryString = QString("select ?u {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "?g slo:postalAddress ?pa ."
-                        "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
-                        "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
-                        "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
-                        "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
-                        "OPTIONAL { ?pa nco:locality ?locality } . OPTIONAL { ?pa nco:streetAddress ?street } . FILTER ( ");
-
                     if (attributeFilter.attributeKeys().contains("name")) {
                         QString regexVariable = createRegex(attributeFilter, "name");
                         QString nameString;
@@ -973,12 +1254,38 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                         queryString.append(streetString);
                         filterAdded = true;
                     }
-
+                    if (attributeFilter.attributeKeys().contains("postcode")) {
+                        QString regexVariable = createRegex(attributeFilter, "postcode");
+                        QString postcodeString;
+                        if (attributeFilter.matchFlags("postcode") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("postcode") == QLandmarkFilter::MatchExactly)
+                            postcodeString = QString("regex( ?postcode, '%1' ) || ").arg(regexVariable);
+                        else
+                            postcodeString = QString("regex( ?postcode, '%1', 'i' ) || ").arg(regexVariable);
+                        queryString.append(postcodeString);
+                        filterAdded = true;
+                    }
+                    if (attributeFilter.attributeKeys().contains("phoneNumber")) {
+                        QString regexVariable = createRegex(attributeFilter, "phoneNumber");
+                        QString phoneNumberString;
+                        if (attributeFilter.matchFlags("phoneNumber") & QLandmarkFilter::MatchCaseSensitive ||
+                            attributeFilter.matchFlags("phoneNumber") == QLandmarkFilter::MatchExactly)
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1' ) || ").arg(regexVariable);
+                        else
+                            phoneNumberString = QString("regex( ?phoneNumber, '%1', 'i' ) || ").arg(regexVariable);
+                        queryString.append(phoneNumberString);
+                        if (!attributeFilter.attribute("phoneNumber").toString().isEmpty()) {
+                            queryString.replace( "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . "
+                                "OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . ", "?pc nco:hasPhoneNumber ?pn . "
+                                "?pn nco:phoneNumber ?phoneNumber . ");
+                        }
+                        filterAdded = true;
+                    }
                     if (filterAdded) {
                         queryString.chop(3);
                         queryString.append(" )");
                     } else {
-                        queryString.chop(7);
+                        queryString.chop(9);
                     }
                     queryString.append("}");
 
@@ -994,7 +1301,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     }
                     while(qsparqlResult->next()) {
                         if (!qsparqlResult->value(0).toString().isEmpty()) {
-                            lmLocalIds << qsparqlResult->value(0).toString();
+                            if(!lmLocalIds.contains(qsparqlResult->value(0).toString()))
+                                lmLocalIds << qsparqlResult->value(0).toString();
                         }
                     }
 
@@ -1602,6 +1910,13 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
             return false;
         }
     }
+    queryString.append("; nie:identifier \"");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    qint64 timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    QString timeStampString;
+    queryString.append(timeStampString.setNum(timeStamp));
+    queryString.append("\" ");
+
     if (!landmark->description().isEmpty()) {
         queryString.append("; nie:description \"");
         queryString.append(landmark->description());
@@ -1660,18 +1975,17 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append("; nco:country \"");
         queryString.append(landmark->address().country());
         queryString.append("\" ");
+    } else {
+        QString countryCode = landmark->address().countryCode();
+        if (!countryCode.isEmpty()) {
+            QString country = countryCodes.value(countryCode, QString());
+            if (!country.isEmpty()) {
+                queryString.append("; nco:country \"");
+                queryString.append(country);
+                queryString.append("\" ");
+            }
+        }
     }
-    /*
-    if (!landmark->address().state().isEmpty()) {
-        queryString.append("; nco:region \"");
-        queryString.append(landmark->address().state());
-        queryString.append("\" ");
-    } else if (!landmark->address().county().isEmpty()) {
-        queryString.append("; nco:region \'");
-        queryString.append(landmark->address().county());
-        queryString.append("\' ");
-    }
-    */
     if (!landmark->address().city().isEmpty()) {
         queryString.append("; nco:locality \"");
         queryString.append(landmark->address().city());
@@ -1758,20 +2072,9 @@ bool DatabaseOperations::saveLandmark(QLandmark* landmark,
 {
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
-    bool update = landmark->landmarkId().isValid();
     bool result = saveLandmarkHelper(landmark, error, errorString);
 
-    if (result) {
-        if(update) {
-            changedIds << landmark->landmarkId();
-            emit landmarksChanged(changedIds);
-        }
-        else {
-            addedIds << landmark->landmarkId();
-            emit landmarksAdded(addedIds);
-        }
-    }
-   return result;
+    return result;
 }
 
 bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
@@ -1834,19 +2137,6 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             *error = lastError;
         if (errorString)
             *errorString = lastErrorString;
-    }
-
-    if (addedIds->size() != 0) {
-        if (addedIds->size() < 50)
-            emit landmarksAdded(*addedIds);
-        else
-            emit dataChanged();
-    }
-    if (changedIds->size() != 0) {
-        if (changedIds->size() < 50)
-            emit landmarksChanged(*changedIds);
-        else
-            emit dataChanged();
     }
     return noErrors;
 }
@@ -1913,6 +2203,8 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
                "WHERE { ?:landmark_uri slo:location ?g . } "
                "delete { ?:landmark_uri nie:description ?des . } "
                "WHERE { ?:landmark_uri nie:description ?des . } "
+               "delete { ?:landmark_uri nie:identifier ?ide . } "
+               "WHERE { ?:landmark_uri nie:identifier ?ide . } "
                "delete { ?:landmark_uri a slo:Landmark . }");
 
     if (!otherContactHasSameNumber) {
@@ -1950,10 +2242,6 @@ bool DatabaseOperations::removeLandmark(const QLandmarkId &landmarkId,
     QList<QLandmarkId> removedIds;
     bool result = removeLandmarkHelper(landmarkId, error, errorString, managerUri);
 
-    if (result) {
-        removedIds.append(landmarkId);
-        emit landmarksRemoved(removedIds);
-    }
     return result;
 }
 
@@ -2011,9 +2299,6 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (removedIds->size() != 0)
-        emit landmarksRemoved(*removedIds);
-
     return noErrors;
 }
 
@@ -2301,6 +2586,13 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         queryString.append(category->name());
         queryString.append("\' ");
     }
+    queryString.append("; nie:identifier \"");
+    QDateTime dateTime = QDateTime::currentDateTime();
+    qint64 timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    QString timeStampString;
+    queryString.append(timeStampString.setNum(timeStamp));
+    queryString.append("\" ");
+
     if (!category->iconUrl().toString().isEmpty()) {
         queryString.append("; slo:categoryIconUrl \'");
         queryString.append(category->iconUrl().toString());
@@ -2348,19 +2640,8 @@ bool DatabaseOperations::saveCategory(QLandmarkCategory *category,
 {
     QList<QLandmarkCategoryId> addedIds;
     QList<QLandmarkCategoryId> changedIds;
-    bool update = category->categoryId().isValid();
     bool result = saveCategoryHelper(category, error, errorString);
 
-    if (result) {
-        if(update) {
-            changedIds << category->categoryId();
-            emit categoriesChanged(changedIds);
-        }
-        else {
-            addedIds << category->categoryId();
-            emit categoriesAdded(addedIds);
-        }
-    }
    return result;
 }
 
@@ -2413,18 +2694,6 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (addedIds->size() != 0) {
-        if (addedIds->size() < 50)
-            emit categoriesAdded(*addedIds);
-        else
-            emit dataChanged();
-    }
-    if (changedIds->size() != 0) {
-        if (changedIds->size() < 50)
-            emit categoriesChanged(*changedIds);
-        else
-            emit dataChanged();
-    }
     return noErrors;
 }
 
@@ -2434,10 +2703,6 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
     QList<QLandmarkCategoryId> removedIds;
     bool result = removeCategoryHelper(categoryId, error, errorString);
 
-    if (result) {
-        removedIds.append(categoryId);
-        emit categoriesRemoved(removedIds);
-    }
     return result;
 }
 
@@ -2485,11 +2750,15 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     }
 
     QSparqlQuery qsparqlDeleteQuery = QSparqlQuery(
-            "delete { ?:category_uri a rdfs:Resource . }",
+            "delete { ?:category_uri nie:identifier ?ide . } "
+            "WHERE { ?:category_uri nie:identifier ?ide . } "
+            "delete { ?:category_uri nie:title ?title . } "
+            "WHERE { ?:category_uri nie:title ?title . } "
+            "delete { ?:category_uri a slo:LandmarkCategory . }",
              QSparqlQuery::DeleteStatement);
 
     qsparqlDeleteQuery.unbindValues();
-    qsparqlDeleteQuery.bindValue("category_uri", categoryId.localId());
+    qsparqlDeleteQuery.bindValue("category_uri", QUrl(categoryId.localId()));
     QSparqlResult* deleteResult = m_conn->exec(qsparqlDeleteQuery);
 
     deleteResult->waitForFinished();
@@ -2550,9 +2819,6 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
         if (errorString)
             *errorString = lastErrorString;
     }
-    if (removedIds->size() != 0)
-        emit categoriesRemoved(*removedIds);
-
     return noErrors;
 }
 
@@ -2588,7 +2854,6 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
                 *errorString = QString("Import operation failed, file does not exist: %1").arg(file->fileName());
             return false;
         }
-
         if (!file->open(QIODevice::ReadOnly)) {
             if (file->error() == QFile::OpenError) {
                 if (error)
@@ -2644,25 +2909,11 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
         result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
                                     addedLandmarkIds, addedCategoryIds);
         device->close();
-        if (addedLandmarkIds->size() + addedCategoryIds->size() > 50) {
-            emit dataChanged();
-        } else {
-            if (addedLandmarkIds->size() != 0)
-                emit landmarksAdded(*addedLandmarkIds);
-            if (addedCategoryIds->size() != 0)
-                emit categoriesAdded(*addedCategoryIds);
-        }
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
         result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
                                     addedLandmarkIds);
         device->close();
-        if (addedLandmarkIds->size() > 50) {
-            emit dataChanged();
-        } else {
-            if (addedLandmarkIds->size() != 0)
-                emit landmarksAdded(*addedLandmarkIds);
-        }
         return result;
     } else {
         if (error)
@@ -2693,7 +2944,6 @@ bool DatabaseOperations::exportLandmarks( QIODevice *device,
 
     QFile *file = qobject_cast<QFile *>(device);
     if (file) {
-
         if (!file->open(QIODevice::WriteOnly)) {
             if (file->error() == QFile::OpenError) {
                 if (error)
@@ -2804,6 +3054,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                     if (*error != QLandmarkManager::NoError) {
                         if (landmarkIds)
                             landmarkIds->clear();
+                        if (addedCategoryIds)
+                            addedCategoryIds->clear();
                         return false;
                     } else {
                         addedCategoryIds->append(category.categoryId());
@@ -2826,10 +3078,27 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         } else {
             saveLandmarkHelper(&(landmarks[i]),error, errorString);
         }
-
         if (*error != QLandmarkManager::NoError) {
+            for(int j=0; j < i; ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
+                delete removeError;
+                delete removeErrorString;
+            }
+            for(int j=0; j<addedCategoryIds->count(); ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeCategoryHelper(addedCategoryIds->at(j), removeError, removeErrorString);
+                delete removeError;
+                delete removeErrorString;
+            }
             if(landmarkIds)
                 landmarkIds->clear();
+            if (addedLandmarkIds)
+                addedLandmarkIds->clear();
+            if (addedCategoryIds)
+                addedCategoryIds->clear();
             return false;
         } else {
             addedLandmarkIds->append(landmarks[i].landmarkId());
@@ -2887,15 +3156,20 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         } else {
             saveLandmarkHelper(&(landmarks[i]),error, errorString);
         }
-
         if (*error != QLandmarkManager::NoError) {
+            for(int j=0; j < i; ++j) {
+                QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
+                QString *removeErrorString = new QString();
+                removeLandmarkHelper(landmarks[j].landmarkId(), removeError, removeErrorString, managerUri);
+                delete removeError;
+                delete removeErrorString;
+            }
             if (landmarkIds)
                 landmarkIds->clear();
             return false;
         } else {
             addedLandmarkIds->append(landmarks[i].landmarkId());
         }
-
         if (landmarkIds)
             landmarkIds->append(landmarks[i].landmarkId());
     }
@@ -3305,14 +3579,6 @@ void QueryRun::run()
                 QList<QLandmarkId> addedIds;
                 QList<QLandmarkId> changedIds;
                 databaseOperations.saveLandmarks(&lms, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                if (addedIds.size() + changedIds.size() > 50) {
-                    engine->dataChanging();
-                } else {
-                    if (addedIds.size() != 0)
-                        engine->landmarksAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->landmarksChanging(changedIds);
-                }
             }
             ml.unlock();
         }
@@ -3347,13 +3613,6 @@ void QueryRun::run()
                 ml.unlock();
                 QList<QLandmarkId> removedIds;
                 databaseOperations.removeLandmarks(lmIds, &errorMap, &error, &errorString, &removedIds);
-                if (removedIds.size() != 0) {
-                    if (removedIds.size() > 50) {
-                        engine->dataChanging();
-                    } else {
-                        engine->landmarksRemoving(removedIds);
-                    }
-                }
             }
             ml.unlock();
         }
@@ -3499,14 +3758,6 @@ void QueryRun::run()
                 QList<QLandmarkCategoryId> addedIds;
                 QList<QLandmarkCategoryId> changedIds;
                 databaseOperations.saveCategories( &categories, &errorMap, &error, &errorString, &addedIds, &changedIds);
-                if (addedIds.size() + changedIds.size() > 50) {
-                    engine->dataChanging();
-                } else {
-                    if (addedIds.size() != 0)
-                        engine->categoriesAdding(addedIds);
-                    if (changedIds.size() != 0)
-                        engine->categoriesChanging(changedIds);
-                }
             }
             ml.unlock();
         }
@@ -3548,13 +3799,6 @@ void QueryRun::run()
                     databaseOperations.removeCategories(categoryIds,
                                                         &errorMap, &error,
                                                         &errorString, &removedIds);
-                    if (removedIds.size() != 0) {
-                        if (removedIds.size() > 50) {
-                            engine->dataChanging();
-                        } else {
-                            engine->categoriesRemoving(removedIds);
-                        }
-                    }
                 }
                 ml.unlock();
             }
@@ -3601,14 +3845,6 @@ void QueryRun::run()
                                                       &error, &errorString,
                                                       &addedLandmarkIds, &addedCategoryIds,
                                                       this, &landmarkIds);
-                   if (addedLandmarkIds.size() + addedCategoryIds.size()  > 50) {
-                       engine->dataChanging();
-                   } else {
-                       if (addedLandmarkIds.size() != 0)
-                           engine->landmarksAdding(addedLandmarkIds);
-                       if (addedCategoryIds.size() != 0)
-                           engine->categoriesAdding(addedCategoryIds);
-                   }
                }
                ml.unlock();
            }
@@ -3685,7 +3921,7 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                       << "city"
                                                       << "district"
                                                       << "street"
-                                                      << "postCode"
+                                                      << "postcode"
                                                       << "phoneNumber"
                                                       << "url";
 
@@ -3698,7 +3934,7 @@ const QStringList DatabaseOperations::supportedSearchableAttributes = QStringLis
                                                      << "city"
                                                      << "district"
                                                      << "street"
-                                                     << "postCode"
+                                                     << "postcode"
                                                      << "phoneNumber";
 
 const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()

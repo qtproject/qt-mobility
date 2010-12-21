@@ -3,10 +3,9 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 
-LIBS += -lQtSparql
+LIBS += -lQtSparql \
+           -lqtsparqltrackerextensions
 
 # Input
 SOURCES += main.cpp
 
-# CONFIG += link_pkgconfig
-# PKGCONFIG += 
