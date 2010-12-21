@@ -97,7 +97,11 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendAPDUCommands(const QL
 bool QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse =  response;
+    QVariant decodedResponse;
+    if (!response.isNull())
+    {
+        decodedResponse =  response;
+    }
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())

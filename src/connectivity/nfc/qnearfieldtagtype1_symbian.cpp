@@ -429,7 +429,11 @@ bool QNearFieldTagType1Symbian::waitForRequestCompleted(const RequestId &id, int
 bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     BEGIN
-    QVariant decodedResponse = decodeResponse(command, response);
+    QVariant decodedResponse;
+    if (!response.isNull())
+    {
+        decodedResponse = decodeResponse(command, response);
+    }
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())

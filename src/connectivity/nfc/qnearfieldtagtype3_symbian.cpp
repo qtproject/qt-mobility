@@ -280,7 +280,11 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
 bool QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse = response;
+    QVariant decodedResponse;
+    if (!response.isNull())
+    {
+        decodedResponse =  response;
+    }
     // to handle commands
     QVariant existResponse = requestResponse(id);
     if (existResponse.isValid())

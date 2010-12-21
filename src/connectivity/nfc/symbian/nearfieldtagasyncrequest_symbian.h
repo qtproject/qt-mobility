@@ -93,7 +93,8 @@ protected:
     // Own.
     CPeriodic * iTimer;
     TBool iRequestIssued;
-
+    
+    TBool iCurrentRequestResult;
 private:
     static TInt TimeoutCallback(TAny * aObj);
     };
