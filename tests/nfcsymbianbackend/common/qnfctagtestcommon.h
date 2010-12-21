@@ -197,6 +197,8 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
     QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(const QNdefMessage&)));
 
     QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<const QNdefMessage&>());
+    QVERIFY(ndefMessage.count()>0);
 #if 0
     QNdefNfcTextRecord textRecord;
     textRecord.setText(QLatin1String("nfc tag test"));
@@ -224,4 +226,54 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
     QVERIFY(messages == storedMessages);
 #endif
 }
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testSendCommand(const QByteArray& command)
+{
+}
+   
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testSendCommands(const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testWaitCommand(const QByteArray& command)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testWaitCommands(const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testMixRawAccessAndNdefAccess(const QList<QByteArray>& commandList, const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testMultipleWait(const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testSendCommandInSlot(const QList<QByteArray>& commands, const QByteArray& command)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testWaitInSlot(const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands)
+{
+}
+
+template<typename TAG>
+void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands)
+{
+}
+
 #endif // QNFCTAGTESTCOMMON_H
