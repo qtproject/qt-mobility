@@ -42,7 +42,7 @@
 #ifndef QNEARFIELDTAGTYPE4SYMBIAN_H
 #define QNEARFIELDTAGTYPE4SYMBIAN_H
 
-#include <qnearfieldtarget.h>
+#include <qnearfieldtagtype4.h>
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtag_symbian.h"
 #include "nearfieldtagimpl_symbian.h"
@@ -51,7 +51,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNearFieldTagType4Symbian : public QNearFieldTarget, private QNearFieldTagImpl<QNearFieldTagType4Symbian>
+class QNearFieldTagType4Symbian : public QNearFieldTagType4, private QNearFieldTagImpl<QNearFieldTagType4Symbian>
 {
     Q_OBJECT
 
@@ -70,9 +70,12 @@ public:
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
-
-    RequestId sendAPDUCommand(const QByteArray &command);
-    RequestId sendAPDUCommands(const QList<QByteArray> &commands);
+    
+    RequestId select(const QByteArray &name);
+    RequestId select(quint16 fileIdentifier);
+    
+    RequestId read(quint16 length = 0, quint16 startOffset = 0);
+    RequestId write(const QByteArray &data, quint16 startOffset = 0);
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

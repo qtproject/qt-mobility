@@ -134,6 +134,8 @@ void tst_qllcpsockettype2::cleanupTestCase()
                2. The message has be sent to server.
                3. The echoed message has been received from server.
                4. Connection disconnected and NO error signals emitted.
+
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
 */
 void tst_qllcpsockettype2::echo()
 {
@@ -232,6 +234,8 @@ void tst_qllcpsockettype2::echo_data()
                2. The message has be sent to server.
                3. The echoed message has been received from server.
                4. Connection disconnected and NO error signals emitted.
+
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
 */
 void tst_qllcpsockettype2::echo_wait()
     {
@@ -328,6 +332,8 @@ void tst_qllcpsockettype2::echo_wait_data()
  TestScenario:
      Covered API: state(), error(), writeDatagram(const char *data, qint64 size);
                   writeDatagram(const QByteArray &datagram);
+
+ CounterPart test: tst_QLlcpServer::api_coverage()
  */
 void tst_qllcpsockettype2::api_coverage()
 {
@@ -374,6 +380,8 @@ void tst_qllcpsockettype2::api_coverage()
  TestScenario:  1) double connect cause failure
                 2) disconnect the connecting socket should not cause failure
                 3) readDatagram after disconnection will cause failure.
+
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
  */
 void tst_qllcpsockettype2::connectTest()
 {
@@ -423,6 +431,8 @@ void tst_qllcpsockettype2::connectTest()
                2. The message has be sent to server.
                3. The echoed message has been received from server.
                4. Connection disconnected and NO error signals emitted.
+
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
 */
 void tst_qllcpsockettype2::multipleWrite()
     {
@@ -500,6 +510,8 @@ void tst_qllcpsockettype2::negTestCase1_data()
 
 /*!
  Description: readDatagram/writeDatagram negative test - read/write without connectToService
+
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
 */
 void tst_qllcpsockettype2::negTestCase2()
 {
@@ -514,6 +526,7 @@ void tst_qllcpsockettype2::negTestCase2()
 
 /*!
  Description: negative testcase II - invalid usage of connection-less API
+ CounterPart test: tst_QLlcpServer::newConnection() or newConnection_wait()
 */
 void tst_qllcpsockettype2::negTestCase3()
 {

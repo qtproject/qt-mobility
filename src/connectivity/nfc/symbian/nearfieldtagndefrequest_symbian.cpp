@@ -116,7 +116,7 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
     LOG("error code is "<<aError<<" request type is "<<iType);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError);
+        iOperator->EmitError(aError, QNearFieldTarget::RequestId());
     }
     else
     {

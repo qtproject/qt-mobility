@@ -92,6 +92,7 @@ contains(build_unit_tests, yes) {
     !plugin {
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
             symbian:DEF_FILE=../s60installs
             VERSION = 1.2.0
         } else {

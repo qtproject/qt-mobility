@@ -83,7 +83,14 @@ public:
     }
     
     bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
+    
+protected Q_SLOTS:
+    void selectSectorError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
+    
+private:
+    QMap<QNearFieldTarget::RequestId, bool> mSelectSectorRequests;
 };
 
 QTM_END_NAMESPACE

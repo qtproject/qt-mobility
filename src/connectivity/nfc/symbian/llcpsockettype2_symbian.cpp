@@ -389,6 +389,7 @@ void CLlcpSocketType2::Error(QtMobility::QLlcpSocket::Error /*aSocketError*/)
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error,iCallback->invokeError());
         //can do nothing if there is an error,so just ignore it
+        Q_UNUSED(error);
         }
     END
     }
@@ -451,6 +452,7 @@ void CLlcpSocketType2::ReadyRead()
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error,iCallback->invokeReadyRead());
         //can do nothing if there is an error,so just ignore it
+        Q_UNUSED(error);
         }
     END
     }
@@ -467,6 +469,7 @@ void CLlcpSocketType2::BytesWritten(qint64 aBytes)
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error,iCallback->invokeBytesWritten(aBytes));
         //can do nothing if there is an error,so just ignore it
+        Q_UNUSED(error);
         }
     END
     }

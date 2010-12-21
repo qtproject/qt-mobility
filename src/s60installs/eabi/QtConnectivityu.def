@@ -149,17 +149,17 @@ EXPORTS
 	_ZN10QtMobility16QNearFieldTarget14hasNdefMessageEv @ 148 NONAME
 	_ZN10QtMobility16QNearFieldTarget15ndefMessageReadERKNS_12QNdefMessageE @ 149 NONAME
 	_ZN10QtMobility16QNearFieldTarget15requestResponseERKNS0_9RequestIdE @ 150 NONAME
-	_ZN10QtMobility16QNearFieldTarget15sendApduCommandERK10QByteArray @ 151 NONAME
+	_ZN10QtMobility16QNearFieldTarget15sendApduCommandERK10QByteArray @ 151 NONAME ABSENT
 	_ZN10QtMobility16QNearFieldTarget16readNdefMessagesEv @ 152 NONAME
 	_ZN10QtMobility16QNearFieldTarget16requestCompletedERKNS0_9RequestIdE @ 153 NONAME
-	_ZN10QtMobility16QNearFieldTarget16sendApduCommandsERK5QListI10QByteArrayE @ 154 NONAME
+	_ZN10QtMobility16QNearFieldTarget16sendApduCommandsERK5QListI10QByteArrayE @ 154 NONAME ABSENT
 	_ZN10QtMobility16QNearFieldTarget16staticMetaObjectE @ 155 NONAME DATA 16
 	_ZN10QtMobility16QNearFieldTarget17writeNdefMessagesERK5QListINS_12QNdefMessageEE @ 156 NONAME
 	_ZN10QtMobility16QNearFieldTarget19getStaticMetaObjectEv @ 157 NONAME
 	_ZN10QtMobility16QNearFieldTarget19ndefMessagesWrittenEv @ 158 NONAME
 	_ZN10QtMobility16QNearFieldTarget21setResponseForRequestERKNS0_9RequestIdERK8QVariant @ 159 NONAME
 	_ZN10QtMobility16QNearFieldTarget23waitForRequestCompletedERKNS0_9RequestIdEi @ 160 NONAME
-	_ZN10QtMobility16QNearFieldTarget5errorENS0_5ErrorE @ 161 NONAME
+	_ZN10QtMobility16QNearFieldTarget5errorENS0_5ErrorE @ 161 NONAME ABSENT
 	_ZN10QtMobility16QNearFieldTarget9RequestIdC1EPNS0_16RequestIdPrivateE @ 162 NONAME
 	_ZN10QtMobility16QNearFieldTarget9RequestIdC1ERKS1_ @ 163 NONAME
 	_ZN10QtMobility16QNearFieldTarget9RequestIdC1Ev @ 164 NONAME
@@ -533,5 +533,6 @@ EXPORTS
 	_ZTVN10QtMobility25QBluetoothTransferManagerE @ 532 NONAME
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 533 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 534 NONAME
-	_ZNK10QtMobility11QLlcpSocket12isSequentialEv @ 535 NONAME
+	_ZN10QtMobility16QNearFieldTarget5errorENS0_5ErrorERKNS0_9RequestIdE @ 535 NONAME
+	_ZNK10QtMobility11QLlcpSocket12isSequentialEv @ 536 NONAME
 

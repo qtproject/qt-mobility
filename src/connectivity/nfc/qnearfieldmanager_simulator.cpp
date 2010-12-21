@@ -96,8 +96,7 @@ QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
 {
     quint16 crc = qNfcChecksum(command.constData(), command.length());
 
-    RequestIdPrivate *idPrivate = new RequestIdPrivate;
-    RequestId id(idPrivate);
+    RequestId id(new RequestIdPrivate);
 
     MobilityConnection *connection = MobilityConnection::instance();
     QByteArray response =
@@ -105,13 +104,17 @@ QNearFieldTarget::RequestId TagType1::sendCommand(const QByteArray &command)
                                          command + char(crc & 0xff) + char(crc >> 8));
 
     if (response.isEmpty()) {
-        emit error(NoResponseError);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, NoResponseError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
         return id;
     }
 
     // check crc
     if (qNfcChecksum(response.constData(), response.length()) != 0) {
-        emit error(ChecksumMismatchError);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, ChecksumMismatchError),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
         return id;
     }
 
