@@ -46,10 +46,13 @@
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtag_symbian.h"
 #include "nearfieldtagimpl_symbian.h"
+#include "debug.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+
 
 class QNearFieldTagType4Symbian : public QNearFieldTagType4, private QNearFieldTagImpl<QNearFieldTagType4Symbian>
 {

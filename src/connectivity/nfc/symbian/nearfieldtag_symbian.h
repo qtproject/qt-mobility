@@ -75,6 +75,7 @@ public:
     const TDesC8& Uid() const;
 
     MNfcConnection * TagConnection() { return iTagConnection;}
+    TRequestStatus& AOStatus() { return iStatus; }
 
     void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
     MNearFieldTagOperationCallback * TagOperationCallback();
