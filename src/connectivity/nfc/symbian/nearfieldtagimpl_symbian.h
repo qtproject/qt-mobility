@@ -104,7 +104,7 @@ public: // From MNearFieldTargetOperation
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
     void EmitRequestCompleted(const QNearFieldTarget::RequestId &id);
-    void EmitError(int error);
+    void EmitError(int error, const QNearFieldTarget::RequestId &id);
     
     void DoCancelSendCommand();
     void DoCancelNdefAccess();
@@ -593,11 +593,11 @@ void QNearFieldTagImpl<TAGTYPE>::EmitRequestCompleted(const QNearFieldTarget::Re
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::EmitError(int error)
+void QNearFieldTagImpl<TAGTYPE>::EmitError(int error, const QNearFieldTarget::RequestId &id)
 {
     BEGIN
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-    emit tag->error(SymbianError2QtError(error));
+    emit tag->error(SymbianError2QtError(error), id);
     END
 }
 

@@ -534,4 +534,5 @@ EXPORTS
 	_ZTVN10QtMobility30QBluetoothDeviceDiscoveryAgentE @ 533 NONAME
 	_ZTVN10QtMobility31QBluetoothServiceDiscoveryAgentE @ 534 NONAME
 	_ZN10QtMobility16QNearFieldTarget5errorENS0_5ErrorERKNS0_9RequestIdE @ 535 NONAME
+	_ZNK10QtMobility11QLlcpSocket12isSequentialEv @ 536 NONAME
 

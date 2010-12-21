@@ -70,7 +70,7 @@ public:
     virtual void EmitNdefMessageRead(const QNdefMessage &message) = 0;
     virtual void EmitNdefMessagesWritten() = 0;
     virtual void EmitRequestCompleted(const QNearFieldTarget::RequestId &id) = 0;
-    virtual void EmitError(int error) = 0;
+    virtual void EmitError(int error, const QNearFieldTarget::RequestId &id) = 0;
     };
 
 #endif
