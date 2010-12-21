@@ -149,7 +149,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn void QNearFieldTarget::ndefMessagesWritten()
 
-    This signal is emitted when NDEF messages have been sucessfully written to the target.
+    This signal is emitted when NDEF messages have been successfully written to the target.
 
     \sa writeNdefMessages()
 */
@@ -306,7 +306,7 @@ void QNearFieldTarget::readNdefMessages()
 
 /*!
     Writes the NDEF messages in \a messages to the target. The ndefMessagesWritten() signal will be
-    emitted when the write operation completes sucessfully; otherwise the error() signal is
+    emitted when the write operation completes successfully; otherwise the error() signal is
     emitted.
 */
 void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
@@ -363,7 +363,7 @@ QNearFieldTarget::RequestId QNearFieldTarget::sendCommands(const QList<QByteArra
 
 /*!
     Waits up to \a msecs milliseconds for the request \a id to complete. Returns true if the
-    request completes sucessfully and the requestCompeted() signal is emitted; otherwise returns
+    request completes successfully and the requestCompeted() signal is emitted; otherwise returns
     false.
 */
 bool QNearFieldTarget::waitForRequestCompleted(const RequestId &id, int msecs)
