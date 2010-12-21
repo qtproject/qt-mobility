@@ -40,7 +40,8 @@ PRIVATE_HEADERS += \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
-                    qgeoareamonitor_polling_p.h
+                    qgeoareamonitor_polling_p.h \
+                    projwrapper_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -166,7 +167,8 @@ SOURCES += \
             qgeosatelliteinfosource.cpp \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
-            qgeoareamonitor_polling.cpp
+            qgeoareamonitor_polling.cpp \
+            projwrapper_p.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
