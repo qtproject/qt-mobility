@@ -6,7 +6,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
     qfeedbackactuator \
     qfeedbackhapticseffect \
-    qfeedbackplugin
+    qfeedbackplugin \
+    qfeedbacknoplugins
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativefeedback

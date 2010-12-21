@@ -265,6 +265,13 @@ void tst_QFeedbackHapticsEffect::startStop()
     QCOMPARE(effect.state(), QFeedbackHapticsEffect::Stopped);
     QCOMPARE(effect.actuator(), actuators.at(0));
 
+    // Double set a few properties (shouldn't call the backend)
+    effect.setAttackTime(attackTime);
+    QVERIFY(effect.attackTime() == attackTime);
+
+    effect.setFadeTime(fadeTime);
+    QVERIFY(effect.fadeTime() == fadeTime);
+
     // Test setting to a non default actuator and then back again
     if (actuators.count() > 1) {
         effect.setActuator(actuators.at(1));
@@ -293,6 +300,9 @@ void tst_QFeedbackHapticsEffect::startStop()
     QCOMPARE(stateSpy.count(), 2);
 
     // Now try to change a few properties (should be refused because of !Stopped)
+    effect.setPeriod(period + 100);
+    QVERIFY(effect.period() == period);
+
     QFeedbackActuator* actuator = effect.actuator();
     effect.setActuator(0);
     QVERIFY(effect.actuator() == actuator);
