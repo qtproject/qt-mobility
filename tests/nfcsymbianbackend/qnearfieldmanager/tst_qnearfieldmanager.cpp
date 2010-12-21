@@ -203,7 +203,8 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 
     QNdefFilter filter;
 
-    QTest::newRow("Empty") << filter << "Please touch a tag with NDef message";
+    filter.appendRecord(QNdefRecord::NfcRtd, "Sp");
+    QTest::newRow("SP") << filter << "Please touch a tag with 'SP' NDef message";
 
     filter.clear();
     filter.setOrderMatch(true);
@@ -266,6 +267,11 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_negtive_data()
     QTest::addColumn<QString>("hint");
     //negtive test
     QNdefFilter filter;
+
+
+    QTest::newRow("Empty") << filter << "Please touch a tag without NDef message";
+
+    filter.clear();
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("URI") << filter << "Please touch a tag without 'URI' NDef message";
 
