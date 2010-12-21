@@ -346,8 +346,17 @@ void QNearFieldTarget::sendApduCommands(const QList<QByteArray> &commands)
 }
 
 /*!
-    Sends \a command to the near field target. The commandCompleted() signal will be emitted if the
-    command completes sucessfully; otherwise the error() signal will be emitted.
+    Sends \a command to the near field target. Returns a request id which can be used to track the
+    completion status of the request. An invalid request id will be returned if the target does not
+    support sending tag type specific commands.
+
+    The requestCompleted() signal will be emitted on successful completion of the request;
+    otherwise the error() signal will be emitted.
+
+    Once the request completes successfully the response can be retrieved from the
+    requestResponse() function. The response of this request will be a QByteArray.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTarget::sendCommand(const QByteArray &command)
 {
@@ -359,8 +368,18 @@ QNearFieldTarget::RequestId QNearFieldTarget::sendCommand(const QByteArray &comm
 }
 
 /*!
-    Sends multiple \a commands to the near field target. The commandsCompleted() signal will be
-    emitted if the commands complete sucessfully; otherwise the error() signal will be emitted.
+    Sends multiple \a commands to the near field target. Returns a request id which can be used to
+    track the completion status of the request. An invalid request id will be returned if the
+    target does not support sending tag type specific commands.
+
+    If all commands complete successfully the requestCompleted() signal will be emitted; otherwise
+    the error() signal will be emitted. If a command fails succeeding commands from this call will
+    not be processed.
+
+    Once the request completes the response for successfully completed requests can be retrieved
+    from the requestResponse() function. The response of this request will be a QList<QByteArray>.
+
+    \sa requestCompleted(), waitForRequestCompleted()
 */
 QNearFieldTarget::RequestId QNearFieldTarget::sendCommands(const QList<QByteArray> &commands)
 {
