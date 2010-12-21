@@ -56,6 +56,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
+#include "projwrapper_p.h"
 
 #include <QRectF>
 #include <QHash>
@@ -113,6 +114,9 @@ public:
 
     QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
+
+    ProjCoordinateSystem spherical;
+    ProjCoordinateSystem wgs84;
 
 
     Q_DECLARE_PUBLIC(QGeoTiledMapData)

@@ -48,6 +48,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
+#include "projwrapper_p.h"
 
 #include <QTimer>
 #include <QImage>
@@ -140,9 +141,13 @@ QGeoTiledMapData::~QGeoTiledMapData()
 /*!
     \reimp
 */
-QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordwgs) const
 {
     Q_D(const QGeoTiledMapData);
+
+    ProjCoordinate c(coordwgs.longitude(), coordwgs.latitude(), 0.0, d->wgs84);
+    c.convert(d->spherical);
+    const QGeoCoordinate coordinate(c.y(), c.x(), c.z());
 
     qreal offsetX = ((d->windowSize.width() * d->zoomFactor) - d->worldReferenceViewportRect.width()) / 2.0;
     if (offsetX < 0.0)
@@ -178,7 +183,11 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &scree
     if (worldRef.isNull())
         return QGeoCoordinate();
 
-    return worldReferencePositionToCoordinate(worldRef);
+    const QGeoCoordinate insph = worldReferencePositionToCoordinate(worldRef);
+
+    ProjCoordinate c(insph.longitude(), insph.latitude(), 0.0, d->spherical);
+    c.convert(d->wgs84);
+    return QGeoCoordinate(c.y(), c.x(), c.z());
 }
 
 // this belongs to QGeoTiledMapDataPrivate in order to avoid
@@ -816,7 +825,9 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
-      scene(0)
+      scene(0),
+      spherical("+proj=laton +ellps=sphere"),
+      wgs84("+proj=laton +ellps=WGS84")
 {
 }
 
