@@ -171,6 +171,12 @@ void QGstreamerServicePlugin::updateDevices() const
     return;
 #endif
 
+#ifdef Q_WS_MAEMO_6
+    m_cameraDevices << "primary" << "secondary";
+    m_cameraDescriptions << tr("Main camera") << tr("Front camera");
+    return;
+#endif
+
     QDir devDir("/dev");
     devDir.setFilter(QDir::System);
 

@@ -380,8 +380,20 @@ GstElement *CameraBinSession::buildVideoSrc()
         if (!videoSrc)
             gst_element_factory_make("autovideosrc", "camera_source");
 
-        if (videoSrc && !m_inputDevice.isEmpty() )
+        if (videoSrc && !m_inputDevice.isEmpty()) {
+#if CAMERABIN_DEBUG
+            qDebug() << "set camera device" << m_inputDevice;
+#endif
+
+#ifdef Q_WS_MAEMO_6
+            if (m_inputDevice == QLatin1String("secondary"))
+                g_object_set(G_OBJECT(videoSrc), "camera-device", 1, NULL);
+            else
+                g_object_set(G_OBJECT(videoSrc), "camera-device", 0, NULL);
+#else
             g_object_set(G_OBJECT(videoSrc), "device", m_inputDevice.toLocal8Bit().constData(), NULL);
+#endif
+        }
     }
 
     return videoSrc;
