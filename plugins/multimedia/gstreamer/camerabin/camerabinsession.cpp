@@ -142,6 +142,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_recordingActive(false),
      m_pendingResolutionUpdate(false),
      m_muted(false),
+     m_busy(false),
      m_captureMode(QCamera::CaptureStillImage),
      m_audioInputFactory(0),
      m_videoInputFactory(0),
@@ -163,6 +164,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_pipeline = gst_element_factory_make("camerabin", "camerabin");
 
     g_signal_connect(G_OBJECT(m_pipeline), IMAGE_DONE_SIGNAL, G_CALLBACK(imgCaptured), this);
+    g_signal_connect(G_OBJECT(m_pipeline), "notify::idle", G_CALLBACK(updateBusyStatus), this);
 
     gstRef(m_pipeline);
 
@@ -581,6 +583,9 @@ void CameraBinSession::setState(QCamera::State newState)
 
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
+        if (m_busy)
+            emit busyChanged(m_busy = false);
+
         emit stateChanged(m_state);
         break;
     case QCamera::LoadedState:
@@ -617,6 +622,28 @@ void CameraBinSession::setState(QCamera::State newState)
                 gst_element_set_state(m_pipeline, GST_STATE_READY);
             }
         }
+    }
+}
+
+bool CameraBinSession::isBusy() const
+{
+    return m_busy;
+}
+
+void CameraBinSession::updateBusyStatus(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(p);
+    CameraBinSession *session = reinterpret_cast<CameraBinSession *>(d);
+
+    bool idle = false;
+    g_object_get(o, "idle", &idle, NULL);
+    bool busy = !idle;
+
+    if (session->m_busy != busy) {
+        session->m_busy = busy;
+        QMetaObject::invokeMethod(session, "busyChanged",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(bool, busy));
     }
 }
 
