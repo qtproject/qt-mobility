@@ -117,6 +117,7 @@ void maemo6sensorbase::stop()
 {
     if (m_sensorInterface)
         m_sensorInterface->stop();
+    m_exBufferSize = -1;
 }
 
 void maemo6sensorbase::setRanges(qreal correctionFactor){
