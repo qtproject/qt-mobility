@@ -87,6 +87,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
     }
     else
     {
+        iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
         // error occured, don't execute rest commands
         for (; iCurrentCommand < iCommands.count(); ++iCurrentCommand)
         {

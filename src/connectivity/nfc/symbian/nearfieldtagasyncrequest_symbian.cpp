@@ -148,8 +148,8 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     BEGIN
     LOG("Error is "<<aError);
     
+    HandleResponse(aError);
     iOperator->IssueNextRequest(iId);
-    this->HandleResponse(aError);
 
     if (iWait) 
     {

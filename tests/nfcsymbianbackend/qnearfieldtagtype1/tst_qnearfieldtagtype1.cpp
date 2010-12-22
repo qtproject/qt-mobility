@@ -104,9 +104,9 @@ void tst_qnearfieldtagtype1::testRawCommand()
 
 void tst_qnearfieldtagtype1::testRawCommand_data()
 {
-    QTest::addColumn<QStringList>("discription");
-    QTest::addColumn<QVariantList>("command");
-    QTest::addColumn<QVariantList>("response");
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
 
     QStringList dsp;
     QVariantList cmd;

@@ -49,12 +49,12 @@
 #include <qndefmessage.h>
 #include <qndefnfctextrecord.h>
 #include <qndefnfcurirecord.h>
+#include <qnearfieldtagtype1.h>
+#include <qnearfieldtagtype2.h>
+#include <qnearfieldtagtype3.h>
+#include <qnearfieldtagtype4.h>
 
 QTM_USE_NAMESPACE
-class QNearFieldTagType1;
-class QNearFieldTagType2;
-class QNearFieldTagType3;
-class QNearFieldTagType4;
 
 template<typename TAG>
 struct TagTrait
@@ -64,28 +64,28 @@ struct TagTrait
 };
 
 template<>
-struct TagTrait<QNearFieldTagType1>
+    struct TagTrait<QtMobility::QNearFieldTagType1>
 {
     static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType1; }
     static QString info(){ return QString("tag type 1"); }
 };
 
 template<>
-struct TagTrait<QNearFieldTagType2>
+struct TagTrait<QtMobility::QNearFieldTagType2>
 {
     static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType2; }
     static QString info(){ return QString("tag type 2"); }
 };
 
 template<>
-struct TagTrait<QNearFieldTagType3>
+struct TagTrait<QtMobility::QNearFieldTagType3>
 {
     static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType3; }
     static QString info(){ return QString("tag type 3"); }
 };
 
 template<>
-struct TagTrait<QNearFieldTagType4>
+struct TagTrait<QtMobility::QNearFieldTagType4>
 {
     static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType4; }
     static QString info(){ return QString("tag type 4"); }
@@ -162,9 +162,11 @@ void QNfcTagTestCommon<TAG>::touchTarget()
     QSignalSpy targetDetectedSpy(&manager, SIGNAL(targetDetected(QNearFieldTarget*)));
     QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
 
+    qDebug()<<"start detect tag type "<<TagTrait<TAG>::type()<<endl;
     manager.startTargetDetection(TagTrait<TAG>::type());
 
-    QString hint(TagTrait<TAG>::info());
+    QString hint("please touch ");
+    hint += TagTrait<TAG>::info();
     hint += " with NDef Message inside";
     QNfcTestUtil::ShowMessage(hint);
 
@@ -239,6 +241,7 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
 
     QVERIFY(messages == storedMessages);
 #endif
+    removeTarget();
 }
 
 template<typename TAG>
