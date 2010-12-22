@@ -103,7 +103,7 @@ private:
     QContactLocalId m_contactId;
     QString m_newAvatarPath;
     QImage m_thumbnail;
-    QSharedPointer<QContactObserver> m_observer;
+    QContactObserver* m_observer;
 };
 
 #endif // CONTACTEDITOR_H

@@ -84,13 +84,6 @@ public:
         *error =  QOrganizerManager::NotSupportedError;
         return QOrganizerItem();
     }
-
-    /*! \reimp */
-    virtual QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId)
-    {
-        Q_UNUSED(itemId);
-        return QSharedPointer<QOrganizerItemObserver>(createOrganizerItemObserver(this));
-    }
 };
 
 QTM_END_NAMESPACE
