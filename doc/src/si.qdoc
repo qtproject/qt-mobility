@@ -106,12 +106,11 @@ multitouch etc)
 
 To build the library, run \tt configure and \tt make.
 
-
 \section1 Main Classes
 \annotatedlist systeminfo
 
 
-\section1 QML Classes
+\section1 QML Elements
 The Qt SystemInfo offers access to system information through declarative
 UI by providing systeminfo elements. Detailed information can be found
 at \l{QML System Information Plugin}.

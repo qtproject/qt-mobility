@@ -148,6 +148,8 @@ QMessageManager::QMessageManager(QObject *parent)
     connect(store, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)));
     connect(store, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)));
     connect(store, SIGNAL(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)), this, SIGNAL(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)));
+
+    connect(store, SIGNAL(accountRemoved(QMessageAccountId)), this, SIGNAL(accountRemoved(QMessageAccountId)));
 }
 
 /*!
@@ -466,6 +468,18 @@ bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::Remov
 bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     return store->removeMessages(filter, option);
+}
+
+
+/*!
+  \fn QMessageManager::removeAccount(const QMessageAccountId &id)
+
+  Remove account \a id and all associated information (folders, messages etc.)
+
+*/
+bool QMessageManager::removeAccount(const QMessageAccountId &id)
+{
+    return store->removeAccount(id);
 }
 
 /*!

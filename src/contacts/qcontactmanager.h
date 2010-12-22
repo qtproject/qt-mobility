@@ -103,7 +103,6 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
-    /* The values of the Error enum are still to be decided! */
     enum Error {
         NoError = 0,
         DoesNotExistError,
@@ -119,7 +118,8 @@ public:
         UnspecifiedError,
         VersionMismatchError,
         LimitReachedError,
-        InvalidContactTypeError
+        InvalidContactTypeError,
+        TimeoutError
     };
 
     /* Error reporting */

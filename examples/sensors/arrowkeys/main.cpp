@@ -79,6 +79,10 @@ int main(int argc, char **argv)
         qWarning("No Accelerometer available!");
         return EXIT_FAILURE;
     }
+
+    const char* alwaysOn = "alwaysOn";
+    sensor.setProperty(alwaysOn, true);
+
     AccelerometerFilter filter;
     sensor.addFilter(&filter);
 
