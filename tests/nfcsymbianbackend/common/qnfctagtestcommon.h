@@ -95,17 +95,27 @@ public:
     ~QNfcTagTestCommon();
     void touchTarget();
     void removeTarget(); 
+    
+    // ndef access 
     void testNdefAccess();
-    void testSendCommand(const QByteArray& command);
-    void testSendCommands(const QList<QByteArray>& commands);
-    void testWaitCommand(const QByteArray& command);
-    void testWaitCommands(const QList<QByteArray>& commands);
-    void testMixRawAccessAndNdefAccess(const QList<QByteArray>& commandList, const QList<QByteArray>& commands);
-    void testMultipleWait(const QList<QByteArray>& commands);
-    void testSendCommandInSlot(const QList<QByteArray>& commands, const QByteArray& command);
-    void testWaitInSlot(const QList<QByteArray>& commands);
-    void testDeleteTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands);
-    void testRemoveTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands);
+
+    // raw command/commands
+    void testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+
+#if 0
+    void testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+
+    // mix ndef access and raw command 
+    void testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+
+    // multiple wait
+    void testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, const QString& commandDiscriptionInSlot, const QByteArray& commandInSlot, const QVariant& responseInSlot);
+
+    // delete and remove tag before async request completed
+    void testDeleteTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    void testRemoveTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+#endif
 
     TAG*& getTarget() { return target; }
 private:
@@ -226,54 +236,95 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
     QVERIFY(messages == storedMessages);
 #endif
 }
+
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testSendCommand(const QByteArray& command)
+void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
+    Q_ASSERT_X(discription.count() == commandSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(discription.count() == responseSet.count(), "testRawCommand", "count mismatch");
+    Q_ASSERT_X(discription.count() > 0, "testRawCommand", "list is empty");
+
+    touchTarget();
+    int okCount = 0;
+    int errCount = 0;
+    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+
+    QList<QNearFieldTarget::RequestId> requests;
+
+    for(int i = 0; i < responseSet.count(); ++i)
+    {
+        (responseSet.at(i).isValid()) ? ++okCount : ++errCount;
+    } 
+
+    for (int i = 0; i < discription.count(); ++i)
+    {
+        qDebug()<<"test "<<discription.at(i)<<endl;
+        // sendCommand
+        if (commandSet.at(i).type() == QVariant::ByteArray)
+        {
+            QByteArray command = commandSet.at(i).toByteArray();
+            QNearFieldTarget::RequestId id = target->sendCommand(command);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        else // sendCommands
+        {
+            QVariantList lists = commandSet.at(i).toList();
+            QList<QByteArray> commands;
+            for (int j = 0; j < lists.count(); ++j)
+            {
+                commands.append(lists.at(j).toByteArray());
+            }
+            QNearFieldTarget::RequestId id = target->sendCommands(commands);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+    }
+
+    qDebug()<<"signal count check"<<endl;
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+
+    qDebug()<<"response check"<<endl;
+    for(int i = 0; i < requests.count(); ++i)
+    {
+        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
+    }
+
+    removeTarget();
 }
-   
+
+#if 0
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testSendCommands(const QList<QByteArray>& commands)
+void QNfcTagTestCommon<TAG>::testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitCommand(const QByteArray& command)
+void QNfcTagTestCommon<TAG>::testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitCommands(const QList<QByteArray>& commands)
+void QNfcTagTestCommon<TAG>::testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testMixRawAccessAndNdefAccess(const QList<QByteArray>& commandList, const QList<QByteArray>& commands)
+void QNfcTagTestCommon<TAG>::testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, const QString& commandDiscriptionInSlot, const QByteArray& commandInSlot, const QVariant& responseInSlot)
 {
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testMultipleWait(const QList<QByteArray>& commands)
+void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
 }
 
 template<typename TAG>
-void QNfcTagTestCommon<TAG>::testSendCommandInSlot(const QList<QByteArray>& commands, const QByteArray& command)
+void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
 }
-
-template<typename TAG>
-void QNfcTagTestCommon<TAG>::testWaitInSlot(const QList<QByteArray>& commands)
-{
-}
-
-template<typename TAG>
-void QNfcTagTestCommon<TAG>::testDeleteTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands)
-{
-}
-
-template<typename TAG>
-void QNfcTagTestCommon<TAG>::testRemoveTargetBeforeAsyncRequestComplete(const QList<QByteArray>& commands)
-{
-}
-
+#endif
 #endif // QNFCTAGTESTCOMMON_H

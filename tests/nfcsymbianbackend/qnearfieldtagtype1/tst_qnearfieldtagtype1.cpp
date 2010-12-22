@@ -15,20 +15,20 @@ public:
 
 private Q_SLOTS:
     void testNdefAccess();
-    void testMixRawCommandAndNdefAccess();
-    void testRemoveTagBeforeAsyncRequestCompleted();
-    void testDeleteTagBeforeAsyncRequestCompleted();
-    void testWaitCommandInSlot();
-    void testSendCommands();
+
+    void testRawCommand();
+    void testRawCommand_data();
 private:
-    QNfcTagTestCommon tester;
-    // Not Own
-    QNearFieldTagType1 * tagType1;
+    QNfcTagTestCommon<QNearFieldTagType1> tester;
+    QMap<QString, QPair<QVariant, QVariant> > dataPool;
 };
 
 tst_qnearfieldtagtype1::tst_qnearfieldtagtype1()
 {
-    tagType1 = 0;
+    // prepare data
+    {
+        QString name = "read all";
+        const char data[] = {0x00, 0x00, 0x00, 
 }
 
 void tst_qnearfieldtagtype1::testNdefAccess()
