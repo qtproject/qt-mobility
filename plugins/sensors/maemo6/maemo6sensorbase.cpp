@@ -52,7 +52,7 @@ const char* const maemo6sensorbase::ALWAYS_ON = "alwaysOn";
 const char* const maemo6sensorbase::BUFFER_SIZE = "bufferSize";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1), m_bufferSize(1), m_exBufferSize(-1)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1), m_bufferSize(-1), m_exBufferSize(-1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -117,7 +117,7 @@ void maemo6sensorbase::stop()
 {
     if (m_sensorInterface)
         m_sensorInterface->stop();
-    m_exBufferSize = -1;
+    m_bufferSize= m_exBufferSize = -1;
 }
 
 void maemo6sensorbase::setRanges(qreal correctionFactor){
