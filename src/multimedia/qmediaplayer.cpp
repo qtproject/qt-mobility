@@ -56,7 +56,9 @@
 #include <qmediaplaylistcontrol.h>
 #include <qmediaplaylistsourcecontrol.h>
 #include <qvideowidget.h>
+#include <qvideosurfaceoutput_p.h>
 #include <qgraphicsvideoitem.h>
+#include <qmedianetworkaccesscontrol.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -142,6 +144,8 @@ public:
 
     QPointer<QObject> videoOutput;
     QMediaPlaylist *playlist;
+    QMediaNetworkAccessControl *networkAccessControl;
+    QVideoSurfaceOutput surfaceOutput;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -257,6 +261,9 @@ static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProv
         if (flags & QMediaPlayer::StreamPlayback)
             features |= QMediaServiceProviderHint::StreamPlayback;
 
+        if (flags & QMediaPlayer::VideoSurface)
+            features |= QMediaServiceProviderHint::VideoSurface;
+
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
                                         QMediaServiceProviderHint(features));
     } else
@@ -285,7 +292,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
     } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->requestControl(QMediaPlayerControl_iid));
         d->playlistSourceControl = qobject_cast<QMediaPlaylistSourceControl*>(d->service->requestControl(QMediaPlaylistSourceControl_iid));
-
+        d->networkAccessControl = qobject_cast<QMediaNetworkAccessControl*>(d->service->requestControl(QMediaNetworkAccessControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -307,6 +314,10 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             if (d->control->mediaStatus() == StalledMedia || d->control->mediaStatus() == BufferingMedia)
                 addPropertyWatch("bufferStatus");
+        }
+        if (d->networkAccessControl != 0) {
+            connect(d->networkAccessControl, SIGNAL(configurationChanged(QString)),
+            this, SIGNAL(networkConfigurationChanged(QString)));
         }
     }
 }
@@ -396,6 +407,23 @@ void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
         }
 
     }
+}
+
+/*!
+    Sets the network access point via it's Id for remote media playback.
+    \a configurationIds contains, in ascending preferential order, a list of
+    configiuration Id's that can be used for network access.
+
+    This will invalidate the choice of previous configurations.
+    Note: For Qt 4.7 and above the id's can be extracted from QNetworkConfiguration::identifier()
+    \sa QMediaplayer networkConfigurationChanged()
+*/
+void QMediaPlayer::setNetworkConfigurations(const QList<QString> &configurationIds)
+{
+    Q_D(QMediaPlayer);
+
+    if (d->networkAccessControl)
+        d->networkAccessControl->setConfigurations(configurationIds);
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -515,6 +543,23 @@ QMediaPlayer::Error QMediaPlayer::error() const
 QString QMediaPlayer::errorString() const
 {
     return d_func()->errorString;
+}
+
+/*!
+    Returns the current network access point id in use.
+    An empty string indicates
+    that this feature is not available or that none of the
+    current supplied id's are in use.
+    Note: for Qt 4.7 and above the id is equivalent to QNetworkConfiguration::identifier()
+*/
+QString QMediaPlayer::currentNetworkConfigurationId() const
+{
+    Q_D(const QMediaPlayer);
+
+    if (d->networkAccessControl)
+        return d_func()->networkAccessControl->currentConfiguration();
+
+    return QString();
 }
 
 //public Q_SLOTS:
@@ -719,6 +764,27 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 
     if (d->videoOutput)
         bind(d->videoOutput);
+}
+
+/*!
+    Sets a video \a surface as the video output of a media player.
+
+    If a video output has already been set on the media player the new surface
+    will replace it.
+*/
+
+void QMediaPlayer::setVideoOutput(QAbstractVideoSurface *surface)
+{
+    Q_D(QMediaPlayer);
+
+    d->surfaceOutput.setVideoSurface(surface);
+
+    if (d->videoOutput != &d->surfaceOutput) {
+        if (d->videoOutput)
+            unbind(d->videoOutput);
+
+        d->videoOutput = bind(&d->surfaceOutput) ? &d->surfaceOutput : 0;
+    }
 }
 
 // Enums
@@ -1007,6 +1073,13 @@ void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
     \fn void QMediaPlayer::bufferStatusChanged(int percentFilled)
 
     Signal the amount of the local buffer filled as a percentage by \a percentFilled.
+*/
+
+/*!
+   \fn void QMediaPlayer::networkConfigurationChanged(const QString &configurationId)
+
+    Signal that the active in use network access point Id has been changed to \a configurationId and all subsequent network access will this use \a configurationId.
+    note: For Qt 4.7 and above a \v configurationId is equivalent to QNetworkConfiguration::identifier()
 */
 
 /*!

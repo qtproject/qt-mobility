@@ -60,6 +60,7 @@
 #include <qvideowidget.h>
 #include <qvideowidgetcontrol.h>
 
+#include <QtCore/qpointer.h>
 #include <QtGui/qimage.h>
 
 QT_BEGIN_NAMESPACE
@@ -131,7 +132,7 @@ Q_SIGNALS:
     void surfaceChanged(QAbstractVideoSurface *surface);
 
 private:
-    QAbstractVideoSurface *m_surface;
+    QPointer<QAbstractVideoSurface> m_surface;
     QImage m_image;
 };
 
