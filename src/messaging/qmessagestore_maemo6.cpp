@@ -157,6 +157,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     bool useHelpers(false);
     QMessageIdList messageIds;
 
+    d_ptr->error = QMessageManager::NoError;
+
     QMessageFilter handledFilter = filter;
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
 
@@ -174,9 +176,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     if (useHelpers) {
 	MessagingHelper::orderMessages(messageIds, sortOrder);        
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);    
-    }
-
-    d_ptr->error = QMessageManager::NoError;
+    }    
 
     return messageIds;
 }
@@ -185,6 +185,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 {
     bool useHelpers(false);
     QMessageIdList messageIds;
+
+    d_ptr->error = QMessageManager::NoError;
 
     QMessageFilter handledFilter = filter;
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
@@ -203,9 +205,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     if (useHelpers) {
 	MessagingHelper::orderMessages(messageIds, sortOrder);
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
-    }
-
-    d_ptr->error = QMessageManager::NoError;
+    }    
 
     return messageIds;
 }
@@ -214,6 +214,9 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 {
     QMessageFolderIdList folderIds;
     QMessageFolderFilter handledFilter = filter;
+
+    d_ptr->error = QMessageManager::NoError;
+
     MessagingHelper::handleNestedFiltersFromFolderFilter(handledFilter);
 
     folderIds = QMFStore::instance()->queryFolders(handledFilter, sortOrder, limit, offset, d_ptr->error);
@@ -224,9 +227,7 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     // we have to sort the list after concatenation
     MessagingHelper::orderFolders(folderIds, sortOrder);
 
-    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);
-    
-    d_ptr->error = QMessageManager::NoError;
+    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);        
 
     return folderIds;
 }
