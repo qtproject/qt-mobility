@@ -239,6 +239,7 @@ private:
         if (p->backendUsed >= subBackends.count()) {
             //the file couldn't be loaded
             p->loadFinished(false);
+            reportError(effect, QFeedbackEffect::UnknownError);
             return;
         }
 
