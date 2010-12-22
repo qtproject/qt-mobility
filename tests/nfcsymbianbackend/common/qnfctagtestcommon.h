@@ -57,34 +57,38 @@ class QNearFieldTagType3;
 class QNearFieldTagType4;
 
 template<typename TAG>
-struct TagTrait;
+struct TagTrait
+{
+    static QNearFieldTarget::Type type() { return QNearFieldTarget::ProprietaryTag; }
+    static QString info(){ return QString("unknow tag"); }
+};
 
 template<>
 struct TagTrait<QNearFieldTagType1>
 {
-    enum { TagType = QNearFieldTarget::NfcTagType1; } 
-    static const char * const info = "tag type 1";
+    static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType1; }
+    static QString info(){ return QString("tag type 1"); }
 };
 
 template<>
 struct TagTrait<QNearFieldTagType2>
 {
-    enum { TagType = QNearFieldTarget::NfcTagType2; } 
-    static const char * const info = "tag type 2";
+    static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType2; }
+    static QString info(){ return QString("tag type 2"); }
 };
 
 template<>
 struct TagTrait<QNearFieldTagType3>
 {
-    enum { TagType = QNearFieldTarget::NfcTagType3; } 
-    static const char * const info = "tag type 3";
+    static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType3; }
+    static QString info(){ return QString("tag type 3"); }
 };
 
 template<>
 struct TagTrait<QNearFieldTagType4>
 {
-    enum { TagType = QNearFieldTarget::NfcTagType4; } 
-    static const char * const info = "tag type 4";
+    static QNearFieldTarget::Type type() { return QNearFieldTarget::NfcTagType4; }
+    static QString info(){ return QString("tag type 4"); }
 };
 
 template <typename TAG>
@@ -118,7 +122,7 @@ public:
 #endif
 
     TAG*& getTarget() { return target; }
-private:
+public:
     QNearFieldManager manager;
     TAG* target;
 };
@@ -158,9 +162,9 @@ void QNfcTagTestCommon<TAG>::touchTarget()
     QSignalSpy targetDetectedSpy(&manager, SIGNAL(targetDetected(QNearFieldTarget*)));
     QSignalSpy targetLostSpy(&manager, SIGNAL(targetLost(QNearFieldTarget*)));
 
-    manager.startTargetDetection(targetType);
+    manager.startTargetDetection(TagTrait<TAG>::type());
 
-    QString hint(TagTrait<TAG>::info);
+    QString hint(TagTrait<TAG>::info());
     hint += " with NDef Message inside";
     QNfcTestUtil::ShowMessage(hint);
 
@@ -172,7 +176,7 @@ void QNfcTagTestCommon<TAG>::touchTarget()
     // make sure target uid is not empty
     QVERIFY(!target->uid().isEmpty());
 
-    QCOMPARE(target->type(), TagTrait<TAG>::TagType);
+    QCOMPARE(target->type(), TagTrait<TAG>::type());
 }
 
 template<typename TAG>
@@ -187,7 +191,7 @@ void QNfcTagTestCommon<TAG>::removeTarget()
 
     QTRY_VERIFY(!targetLostSpy.isEmpty());
     
-    TAG *lostTarget = qt_cast<TAG*>(targetLostSpy.first().at(0).value<QNearFieldTarget *>());
+    TAG *lostTarget = qobject_cast<TAG*>(targetLostSpy.first().at(0).value<QNearFieldTarget *>());
 
     QCOMPARE(target, lostTarget);
 
@@ -204,10 +208,10 @@ void QNfcTagTestCommon<TAG>::testNdefAccess()
     QVERIFY(target->hasNdefMessage());
 
     target->readNdefMessages();
-    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(const QNdefMessage&)));
+    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage)));
 
     QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
-    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<const QNdefMessage&>());
+    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
     QVERIFY(ndefMessage.count()>0);
 #if 0
     QNdefNfcTextRecord textRecord;

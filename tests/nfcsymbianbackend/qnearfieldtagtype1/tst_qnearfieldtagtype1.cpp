@@ -1,11 +1,13 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 #include <QtCore/QCoreApplication>
+#include <QVariant>
+#include <QVariantList>
 #include "qnfctagtestcommon.h"
 #include <qnearfieldtagtype1.h>
 #include "qnfctestcommon.h"
-#include "qdummyslot.h"
 
+QTM_USE_NAMESPACE
 class tst_qnearfieldtagtype1 : public QObject
 {
     Q_OBJECT
@@ -14,169 +16,110 @@ public:
     tst_qnearfieldtagtype1();
 
 private Q_SLOTS:
+    void initTestCase();
+
     void testNdefAccess();
 
-    void testRawCommand();
     void testRawCommand_data();
+    void testRawCommand();
+    void cleanupTestCase(){}
 private:
-    QNfcTagTestCommon<QNearFieldTagType1> tester;
+    QNfcTagTestCommon<QtMobility::QNearFieldTagType1> tester;
     QMap<QString, QPair<QVariant, QVariant> > dataPool;
 };
 
+
 tst_qnearfieldtagtype1::tst_qnearfieldtagtype1()
 {
+}
+
+void tst_qnearfieldtagtype1::initTestCase()
+{
+    tester.touchTarget();
+    QByteArray uid = tester.target->uid();
+    QVERIFY(!uid.isEmpty());
+
+    tester.removeTarget();
+
     // prepare data
     {
-        QString name = "read all";
-        const char data[] = {0x00, 0x00, 0x00, 
+        QString name = "RID";
+        QByteArray command;
+        command.append(char(0x78));     // RID
+        command.append(char(0x00));     // Address (unused)
+        command.append(char(0x00));     // Data (unused)
+        command.append(uid.left(4));  // 4 bytes of UID
+        // Hardware will append CRC bytes. The CRC value appended 
+        // to the command will be ignored.
+        command.append(char(0x00)); // CRC1
+        command.append(char(0x00)); // CRC2
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+    }
+
+    {
+        QString name = "READ ALL";
+        QByteArray command;
+        command.append(char(0x00)); // RALL
+        command.append(char(0x00));
+        command.append(char(0x00));
+        command.append(uid.left(4)); // UID
+        // Hardware will append CRC bytes. The CRC value appended 
+        // to the command will be ignored.
+        command.append(char(0x00)); // CRC1
+        command.append(char(0x00)); // CRC2
+
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+    }
+    
+    {
+        QString name = "INVALID";
+        QByteArray command;
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+        command.append(1);
+
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+    }
 }
 
 void tst_qnearfieldtagtype1::testNdefAccess()
 {
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
-    QCOMPARE(tagType1->type(), QNearFieldTarget::NfcTagType1);
-
-    tester.NdefCheck();
-    tester.removeTarget();
+    tester.testNdefAccess();
 }
 
-void tst_qnearfieldtagtype1::testMixRawCommandAndNdefAccess()
+void tst_qnearfieldtagtype1::testRawCommand()
 {
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
-
-    QSignalSpy readAllSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
-    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
-
-    qDebug()<<"send readAll async request"<<endl;
-    QNearFieldTarget::RequestId id1 = tagType1->readAll();
-    qDebug()<<"send readIdentification request"<<endl;
-    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
-    qDebug()<<"read ndef message async request"<<endl;
-    tagType1->readNdefMessages();
-    qDebug()<<"wait readIdentification request"<<endl;
-    QVERIFY(tagType1->waitForRequestCompleted(id2));
-
-    qDebug()<<"check signals"<<endl;
-    QTRY_VERIFY(!readAllSpy.isEmpty());
-    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
-
-    qDebug()<<"send readAll async request and wait"<<endl;
-    QNearFieldTarget::RequestId id3 = tagType1->readAll();
-    QVERIFY(tagType1->waitForRequestCompleted(id3));
-    tester.removeTarget();
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testRawCommand(dsp, cmd, rsp); 
 }
 
-void tst_qnearfieldtagtype1::testRemoveTagBeforeAsyncRequestCompleted()
+void tst_qnearfieldtagtype1::testRawCommand_data()
 {
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
+    QTest::addColumn<QStringList>("discription");
+    QTest::addColumn<QVariantList>("command");
+    QTest::addColumn<QVariantList>("response");
 
-    QSignalSpy commandSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
-    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
-
-    qDebug()<<"send readAll async request"<<endl;
-    QNearFieldTarget::RequestId id1 = tagType1->readAll();
-
-    qDebug()<<"send readIdentification request"<<endl;
-    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
-
-    qDebug()<<"read ndef message async request"<<endl;
-    tagType1->readNdefMessages();
-
-    tester.removeTarget();
-
-    qDebug()<<"command signals count is "<<commandSpy.count()<<endl;
-    qDebug()<<"ndef message signals count is "<<ndefMessageReadSpy.count()<<endl;
-}
-
-void tst_qnearfieldtagtype1::testDeleteTagBeforeAsyncRequestCompleted()
-{
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
     
-    QSignalSpy readAllSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
-    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
-    
-    qDebug()<<"send readAll async request"<<endl;
-    QNearFieldTarget::RequestId id1 = tagType1->readAll();
-    
-    qDebug()<<"send readIdentification request"<<endl;
-    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
-    
-    qDebug()<<"read ndef message async request"<<endl;
-    tagType1->readNdefMessages();
-    
-    qDebug()<<"delete tag, should be no panic"<<endl;
-    delete tagType1;
-    tester.getTarget() = 0;
-    
-    QTRY_VERIFY(readAllSpy.isEmpty());
-    QTRY_VERIFY(ndefMessageReadSpy.isEmpty());
-    
-    QNfcTestUtil::ShowMessage("please remove the tag");
-}
-
-void tst_qnearfieldtagtype1::testWaitCommandInSlot()
-{
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
-    
-    QDummySlot dummySlot;
-    dummySlot.tag = tagType1;
-    QObject::connect(tagType1, SIGNAL(error(QNearFieldTarget::Error)), &dummySlot, SLOT(errorHandling(QNearFieldTarget::Error)));
-    
-    qDebug()<<"send readAll async request"<<endl;
-    QNearFieldTarget::RequestId id1 = tagType1->readAll();
-    
-    qDebug()<<"send readIdentification request"<<endl;
-    QNearFieldTarget::RequestId id2 = tagType1->readIdentification();
-    
-    QSignalSpy ndefMessageReadSpy(tagType1, SIGNAL(ndefMessageRead(const QNdefMessage&)));
-    qDebug()<<"read ndef message async request"<<endl;
-    tagType1->readNdefMessages();
-    
-    qDebug()<<"send readAll async request"<<endl;
-    QNearFieldTarget::RequestId id3 = tagType1->readAll();
-    
-    dummySlot.id = id3;
-    
-    QVERIFY(tagType1->waitForRequestCompleted(id2));
-    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
-    
-    tester.removeTarget();
-}
-
-
-void tst_qnearfieldtagtype1::testSendCommands()
-{
-    tester.touchTarget(QNearFieldTarget::NfcTagType1);
-    tagType1 = qobject_cast<QNearFieldTagType1 *>(tester.getTarget());
-    QVERIFY(tagType1);
-    
-    QSignalSpy errorSpy(tagType1, SIGNAL(error(QNearFieldTarget::Error)));
-
-    QList<QByteArray> commands;
-    for(int i = 0; i < 10; ++i)
-    {
-        QByteArray cmd;
-        cmd.setNum(i);
-        commands.append(cmd);
-    }
-
-    QNearFieldTarget::RequestId id1 = tagType1->readAll();
-    QNearFieldTarget::RequestId id2 = tagType1->sendCommands(commands);
-    QNearFieldTarget::RequestId id3 = tagType1->sendCommands(commands);
-    QVERIFY(tagType1->waitForRequestCompleted(id3));
-    
-    QTRY_VERIFY(errorSpy.count() == 2);
-    tester.removeTarget();
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype1);
