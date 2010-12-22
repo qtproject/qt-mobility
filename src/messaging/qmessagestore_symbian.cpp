@@ -290,6 +290,12 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
     return retVal;
 }
 
+bool QMessageStorePrivate::removeAccount(const QMessageAccountId &id)
+{
+#warning TODO: implementation
+    return false;
+}
+
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
 {
     switch (idType(id)) {
@@ -426,6 +432,11 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     return messageStorePrivate()->removeMessages(filter, option);
+}
+
+bool QMessageStore::removeAccount(const QMessageAccountId &id)
+{
+    return messageStorePrivate()->removeAccount(id);
 }
 
 bool QMessageStore::addMessage(QMessage *m)

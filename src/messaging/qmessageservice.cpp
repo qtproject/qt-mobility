@@ -301,6 +301,16 @@ QTM_BEGIN_NAMESPACE
     
     \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
+
+/*!
+    \fn QMessageService::moveMessages(const QMessageIdList &messageIds, const QMessageFolderId &toFolderId)
+
+    Initiate a request to move messages \a messageIds to the folder \toFolderId
+
+    The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
+
+    Returns true if the operation can be initiated; otherwise returns false.
+*/
     
 /*!
     \fn QMessageService::state() const

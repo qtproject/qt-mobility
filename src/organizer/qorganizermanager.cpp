@@ -332,6 +332,7 @@ QOrganizerManager::~QOrganizerManager()
   \value InvalidItemTypeError The most recent operation failed because the item given was of an invalid type for the operation
   \value InvalidCollectionError The most recent operation failed because the collection is invalid
   \value InvalidOccurrenceError The most recent operation failed because it was an attempt to save an occurrence without a correct InstanceOrigin detail
+  \value TimeoutError The most recent operation failed because it took longer than expected.  It may be possible to try again.
  */
 
 /*! Return the error code of the most recent operation */
