@@ -48,8 +48,6 @@
 
 #include "qcontactmanager.h"
 
-
-
 /*!
   \class QContactFilter
   \brief The QContactFilter class is used to select contacts made available
