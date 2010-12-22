@@ -173,8 +173,8 @@ public:
     {
         if (QFeedbackFileInterface *subBackend = getBackend(effect))
             subBackend->setEffectState(effect, state);
-
-        QFeedbackInterface::reportError(effect, QFeedbackEffect::UnknownError);
+        else
+            QFeedbackInterface::reportError(effect, QFeedbackEffect::UnknownError);
     }
 
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *effect)
