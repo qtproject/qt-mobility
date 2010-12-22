@@ -49,15 +49,7 @@ maemo6als::maemo6als(QSensor *sensor)
 {
     const QString sensorName = "alssensor";
     initSensor<ALSSensorChannelInterface>(sensorName, m_initDone);
-
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
-                               this, SLOT(slotDataAvailable(const Unsigned&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
+    doConnect(sensorName);
     setReading<QAmbientLightReading>(&m_reading);
     // metadata
     addOutputRange(0, 5, 1);
@@ -88,4 +80,15 @@ void maemo6als::slotDataAvailable(const Unsigned& data)
         m_reading.setTimestamp(data.UnsignedData().timestamp_);
         newReadingAvailable();
     }
+}
+
+void maemo6als::doConnect(QString sensorName){
+    if (m_sensorInterface){
+        if (m_bufferSize == m_exBufferSize) return;
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
 }

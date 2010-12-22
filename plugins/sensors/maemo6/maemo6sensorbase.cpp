@@ -48,10 +48,11 @@ SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 const int maemo6sensorbase::KErrNotFound=-1;
-const char* maemo6sensorbase::ALWAYS_ON = "alwaysOn";
+const char* const maemo6sensorbase::ALWAYS_ON = "alwaysOn";
+const char* const maemo6sensorbase::BUFFER_SIZE = "bufferSize";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1), m_bufferSize(1), m_exBufferSize(-1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -68,9 +69,7 @@ maemo6sensorbase::~maemo6sensorbase()
 
 void maemo6sensorbase::start()
 {
-
     if (m_sensorInterface) {
-
         // dataRate
         int dataRate = sensor()->dataRate();
         if (dataRate > 0) {
@@ -94,15 +93,18 @@ void maemo6sensorbase::start()
             m_prevOutputRange = currentRange;
         }
 
-
-        // TODO: always on
+        // always on
         QVariant alwaysOn = sensor()->property(ALWAYS_ON);
         alwaysOn.isValid()?
                 m_sensorInterface->setStandbyOverride(alwaysOn.toBool()):
                 m_sensorInterface->setStandbyOverride(false);
 
-
-        // TODO: buffer, if changed between starts
+        // buffer size
+        QVariant bufferSize = sensor()->property(BUFFER_SIZE);
+        m_exBufferSize = m_bufferSize;
+        m_bufferSize = bufferSize.isValid()?bufferSize.toInt():1;
+        m_sensorInterface->setBufferSize(m_bufferSize);
+        doConnect("");
         
         int returnCode = m_sensorInterface->start().error().type();
         if (returnCode==0) return;
@@ -130,3 +132,5 @@ void maemo6sensorbase::setRanges(qreal correctionFactor){
         addOutputRange(rangeMin, rangeMax, resolution);
     }
 }
+
+void maemo6sensorbase::doConnect(QString ){}
