@@ -54,6 +54,7 @@
 #include <qvideodevicecontrol.h>
 #include <qvideowidget.h>
 #include <qgraphicsvideoitem.h>
+#include <qvideosurfaceoutput_p.h>
 
 QT_USE_NAMESPACE
 
@@ -158,6 +159,8 @@ public:
     bool supressLockChangedSignal;
 
     bool restartPending;
+
+    QVideoSurfaceOutput surfaceViewfinder;
 
     void _q_error(int error, const QString &errorString);
     void unsetError() { error = QCamera::NoError; errorString.clear(); }
@@ -503,6 +506,27 @@ void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
 
     if (d->viewfinder)
         bind(d->viewfinder);
+}
+
+/*!
+    Sets a video \a surface as the viewfinder of a camera.
+
+    If a viewfinder has already been set on the camera the new surface
+    will replace it.
+*/
+
+void QCamera::setViewfinder(QAbstractVideoSurface *surface)
+{
+    Q_D(QCamera);
+
+    d->surfaceViewfinder.setVideoSurface(surface);
+
+    if (d->viewfinder != &d->surfaceViewfinder) {
+        if (d->viewfinder)
+            unbind(d->viewfinder);
+
+        d->viewfinder = bind(&d->surfaceViewfinder) ? &d->surfaceViewfinder : 0;
+    }
 }
 
 /*!

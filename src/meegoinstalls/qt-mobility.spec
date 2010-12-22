@@ -889,6 +889,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 %{_includedir}/QtMultimediaKit/QVideoWidget
 %{_includedir}/QtMultimediaKit/QVideoWidgetControl
 %{_includedir}/QtMultimediaKit/QVideoWindowControl
+%{_includedir}/QtMultimediaKit/QMediaNetworkAccessControl
 %{_includedir}/QtOrganizer/*.h
 %{_includedir}/QtOrganizer/QOrganizerAbstractRequest
 %{_includedir}/QtOrganizer/QOrganizerCollection
