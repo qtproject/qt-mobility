@@ -44,6 +44,7 @@
 #include "qorganizeritemsaverequest.h"
 #include "qorganizeritemidfilter.h"
 #include "qorganizeritem_p.h"
+#include "qmalgorithms.h"
 
 QOrganizerManagerEngineV2Wrapper::QOrganizerManagerEngineV2Wrapper(QOrganizerManagerEngine *wrappee)
     : m_engine(wrappee)
@@ -108,8 +109,8 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
 {
     QList<QOrganizerItem> list = m_engine->items(
             startDate, endDate, filter, QList<QOrganizerItemSortOrder>(), fetchHint, error);
-    // TODO: optimize this by using the quick select algorithm
-    qSort(list.begin(), list.end(), itemLessThan);
+    qPartialSort(list.begin(), list.end(), list.begin(), list.begin()+maxCount,
+            QOrganizerManagerEngine::itemLessThan);
     return list.mid(0, maxCount);
 }
 
@@ -336,12 +337,16 @@ void ItemFetchRequestController::handleFinishedSubRequest(QOrganizerAbstractRequ
     QOrganizerManager::Error error = subRequest->error();
 
     QOrganizerItemFetchRequest* request(static_cast<QOrganizerItemFetchRequest*>(m_request.data()));
+    int maxCount = request->maxCount();
+    if (maxCount < 0)
+        maxCount = items.size();
 
     // Sort and limit the number of items
-    // TODO: optimize this with the quick select algorithm if maxCount is set
-    if (subRequest->sorting().isEmpty()) // sort by date if no sort order is given
-        qSort(items.begin(), items.end(), QOrganizerManagerEngine::itemLessThan);
-    int maxCount = request->maxCount();
+    if (subRequest->sorting().isEmpty()) { // sort by date if no sort order is given
+        qPartialSort(items.begin(), items.end(), items.begin(), items.begin()+maxCount,
+                QOrganizerManagerEngine::itemLessThan);
+    }
+
     if (maxCount >= 0)
         items = items.mid(0, maxCount);
 
