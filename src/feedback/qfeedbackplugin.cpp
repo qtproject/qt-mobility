@@ -173,8 +173,8 @@ public:
     {
         if (QFeedbackFileInterface *subBackend = getBackend(effect))
             subBackend->setEffectState(effect, state);
-
-        QFeedbackInterface::reportError(effect, QFeedbackEffect::UnknownError);
+        else
+            QFeedbackInterface::reportError(effect, QFeedbackEffect::UnknownError);
     }
 
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *effect)
@@ -239,6 +239,7 @@ private:
         if (p->backendUsed >= subBackends.count()) {
             //the file couldn't be loaded
             p->loadFinished(false);
+            reportError(effect, QFeedbackEffect::UnknownError);
             return;
         }
 
@@ -253,7 +254,12 @@ class BackendManager
 public:
     BackendManager()
     {
-        const QStringList pluginPaths = mobilityPlugins(QLatin1String("feedback"));
+        QStringList pluginPaths = mobilityPlugins(QLatin1String("feedback"));
+        // Testing hook to force "no plugin mode"
+#ifdef QTM_BUILD_UNITTESTS
+        if (qApp->property("QFEEDBACK_TEST_NO_PLUGINS").isValid())
+            pluginPaths.clear();
+#endif
         foreach (const QString& pluginPath, pluginPaths) {
             QPluginLoader loader(pluginPath);
 

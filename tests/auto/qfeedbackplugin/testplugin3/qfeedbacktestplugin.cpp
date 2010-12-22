@@ -39,54 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QFEEDBACKPLUGIN_P_H
-#define QFEEDBACKPLUGIN_P_H
-
-#include <qmobilityglobal.h>
-#include "qfeedbackactuator.h"
-#include "qfeedbackeffect.h"
-#include "qfeedbackplugininterfaces.h"
-
+#include <qfeedbackactuator.h>
+#include "qfeedbacktestplugin.h"
+#include <QtCore/QtPlugin>
+#include <QtCore/QDebug>
+#include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 #include <QtCore/QVariant>
+#include <QDebug>
 
+Q_EXPORT_PLUGIN2(feedback_testplugin3, QFeedbackTestPlugin)
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of Qt Feedback framework.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QDummyBackend : QObject, public QFeedbackHapticsInterface
+QFeedbackTestPlugin::QFeedbackTestPlugin()
+    : QObject(qApp)
 {
-public:
-    QDummyBackend() : QObject(qApp) { pluginPriority(); }
+}
 
-    QList<QFeedbackActuator*> actuators() { return QList<QFeedbackActuator*>(); }
-
-    void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
-    QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
-    bool isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability) { return false; }
-
-    void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { }
-    void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) { }
-    QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::Stopped; }
-
-    virtual PluginPriority pluginPriority() { return PluginLowPriority; }
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+QFeedbackTestPlugin::~QFeedbackTestPlugin()
+{
+}

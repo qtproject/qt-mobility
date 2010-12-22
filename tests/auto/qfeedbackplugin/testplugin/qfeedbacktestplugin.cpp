@@ -215,6 +215,8 @@ bool QFeedbackTestPlugin::play(QFeedbackEffect::ThemeEffect themeEffect)
 {
     if (themeEffect == QFeedbackEffect::ThemeBasic)
         return true;
-    else
+    else {
+        reportError(0, QFeedbackEffect::UnknownError);
         return false;
+    }
 }
