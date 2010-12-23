@@ -3446,15 +3446,6 @@ void QueryRun::run()
     error = QLandmarkManager::NoError;
     errorString ="";
     errorMap.clear();
-    isCanceled = false;
-
-    if (!isDeleted) {
-        QMetaObject::invokeMethod(engine, "updateRequestState",
-                                  Qt::QueuedConnection,
-                                  Q_ARG(QLandmarkAbstractRequest *, request),
-                                  Q_ARG(QLandmarkAbstractRequest::State, QLandmarkAbstractRequest::ActiveState),
-                                  Q_ARG(unsigned int, runId));
-    }
 
     switch(requestType){
     case QLandmarkAbstractRequest::LandmarkIdFetchRequest: {

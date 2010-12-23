@@ -1155,7 +1155,7 @@ private slots:
 #endif
 
 #ifdef SIMPLE_WAIT_FOR_FINISHED
-	void simpleWaitForFinished();
+        void simpleWaitForFinished();
 #endif
 
 #ifdef WAIT_FOR_FINISHED
@@ -4992,8 +4992,6 @@ void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
      //test canceling of a landmark fetch
      fetchRequest.setFilter(unionFilter);
      fetchRequest.start();
-     QVERIFY(waitForActive(spy, &fetchRequest));
-     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
      fetchRequest.cancel();
      QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
      QCOMPARE(fetchRequest.landmarks().count(), 0);
@@ -6154,7 +6152,7 @@ void tst_QLandmarkManager::filterAttribute2()
     address.setDistrict("aaabbbccc");
 #endif
     address.setCountry("aaabbbccc");
-    address.setCity("aaabbbccc");  
+    address.setCity("aaabbbccc");
     address.setStreet("aaabbbccc");
     address.setPostcode("aaabbbccc");
     lm1.setAddress(address);
@@ -6203,7 +6201,7 @@ void tst_QLandmarkManager::filterAttribute2()
     lm4.setDescription("aaaabbbbcccc");
     lm4.setPhoneNumber("aaaabbbbcccc");
 #ifndef Q_WS_MAEMO_6
-    address.setCountryCode("aaaabbbbcccc"); 
+    address.setCountryCode("aaaabbbbcccc");
     address.setState("aaaabbbbcccc");
     address.setDistrict("aaaabbbbcccc");
 #endif
@@ -6222,7 +6220,7 @@ void tst_QLandmarkManager::filterAttribute2()
     lm5.setPhoneNumber("ccccaaaabbbb");
 #ifndef Q_WS_MAEMO_6
     address.setCountryCode("ccccaaaabbbb");
-    address.setState("ccccaaaabbbb"); 
+    address.setState("ccccaaaabbbb");
     address.setDistrict("ccccaaaabbbb");
 #endif
      address.setCity("ccccaaaabbbb");
@@ -7551,7 +7549,7 @@ void tst_QLandmarkManager::importLmx() {
         QCOMPARE(originalLandmarksCount + 16, m_manager->landmarks().count());
 
 #if defined (Q_WS_MAEMO_6)
-	QTest::qWait(2000);
+        QTest::qWait(2000);
 #endif
 
         QCOMPARE(spyRemove.count(), 0);
@@ -8144,6 +8142,18 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(fetchRequest.waitForFinished(10000));
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
+
+
+#ifdef Q_OS_SYMBIAN
+    QList<QLandmarkId> ids = m_manager->landmarkIds();
+    QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+    QVERIFY(m_manager->removeLandmarks(ids));
+
+    //need to workaround deletion of these landmarks for symbian
+    for (int i=0; i < 20; ++i) {
+        m_manager->removeLandmarks(ids);
+    }
+#endif
 }
 
 #endif
