@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,51 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeengine.h>
-#include <QtDeclarative/qdeclarativecomponent.h>
-#include "qsoundeffect_p.h"
+#ifndef PLAYERRESOURCEPOLICY_H
+#define PLAYERRESOURCEPOLICY_H
 
-#include "qdeclarativevideo_p.h"
-#include "qdeclarativeaudio_p.h"
-#include "qdeclarativemediametadata_p.h"
-#include "qdeclarativecamera_p.h"
-#include "qdeclarativecamerapreviewprovider_p.h"
+#include <QtCore/qobject.h>
 
-QML_DECLARE_TYPE(QSoundEffect)
+namespace ResourcePolicy {
+class ResourceSet;
+};
 
-QT_BEGIN_NAMESPACE
-
-class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
+class PlayerResourcePolicy : public QObject
 {
     Q_OBJECT
 public:
-    virtual void registerTypes(const char *uri)
-    {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
+    PlayerResourcePolicy(QObject *parent = 0);
+    ~PlayerResourcePolicy();
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-        qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-        qmlRegisterType<QDeclarativeMediaMetaData>();
-    }
+    bool isVideoEnabled() const;
+    bool isGranted() const;
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
-    {
-        Q_UNUSED(uri);
-        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
-    }
+Q_SIGNALS:
+    void resourcesDenied();
+    void resourcesGranted();
+    void resourcesLost();
+
+public Q_SLOTS:
+    void acquire();
+    void release();
+
+    void setVideoEnabled(bool enabled);
+
+private Q_SLOTS:
+    void handleResourcesGranted();
+    void handleResourcesDenied();
+    void handleResourcesLost();
+
+private:
+    enum ResourceStatus {
+        Initial = 0,
+        RequestedResource,
+        GrantedResource
+    };
+
+    bool m_videoEnabled;
+    ResourcePolicy::ResourceSet *m_resourceSet;
+    ResourceStatus m_status;
 };
 
-QT_END_NAMESPACE
-
-#include "multimedia.moc"
-
-Q_EXPORT_PLUGIN2(qmultimediadeclarativemodule, QT_PREPEND_NAMESPACE(QMultimediaDeclarativeModule));
-
+#endif
