@@ -100,7 +100,7 @@ private:
     QPair<QString, QString> definitionAndField(QContactManager *cm, QVariant::Type type, bool *nativelyFilterable);
     QList<QContactLocalId> prepareModel(QContactManager* cm); // add the standard contacts
 
-    QString convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids); // convert back to "abcd"
+    QString convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids, QChar minimumContact = 'a', QChar maximumContact = 'z'); // convert back to "abcd"
     QContact createContact(QContactManager* cm, QString type, QString name);
 
     QMap<QContactManager*, QMap<QString, QPair<QString, QString> > > defAndFieldNamesForTypePerManager;
@@ -146,6 +146,9 @@ private slots:
 
     void idListFiltering();
     void idListFiltering_data();
+
+    void convenienceFiltering();
+    void convenienceFiltering_data();
 
     void sorting(); // XXX should take all managers
     void sorting_data();
@@ -271,13 +274,17 @@ void tst_QContactManagerFiltering::cleanupTestCase()
     }
 }
 
-QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)
+QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids, QChar minimumContact, QChar maximumContact)
 {
     QString ret;
     /* Expected is of the form "abcd".. it's possible that there are some extra contacts */
     for (int i = 0; i < ids.size(); i++) {
-        if (allIds.indexOf(ids.at(i)) >= 0)
-            ret += ('a' + allIds.indexOf(ids.at(i)));
+        if (allIds.indexOf(ids.at(i)) >= 0) {
+            QChar curr = ('a' + allIds.indexOf(ids.at(i)));
+            if (curr >= minimumContact && curr <= maximumContact) {
+                ret += curr;
+            }
+        }
     }
 
     return ret;
@@ -434,7 +441,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     ids = cm->contactIds(df);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QEXPECT_FAIL("integer == 20", "Not sure if this should pass or fail", Continue);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -551,7 +558,7 @@ void tst_QContactManagerFiltering::detailPhoneNumberFiltering()
 
     ids = cm->contactIds(df);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     //QSKIP("TODO: fix default implementation of phone number matching!", SkipSingle);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -819,7 +826,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     ids = cm->contactIds(df);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 }
 
@@ -984,7 +991,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
     }
     ids = cm->contactIds(drf);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 }
 
@@ -1423,7 +1430,7 @@ void tst_QContactManagerFiltering::intersectionFiltering()
 
     ids = cm->contactIds(resultFilter);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 
     delete x;
@@ -1866,7 +1873,7 @@ void tst_QContactManagerFiltering::unionFiltering()
 
     ids = cm->contactIds(resultFilter);
 
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 
     delete x;
@@ -2016,7 +2023,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     contacts.append(contactA.localId());
     contacts.append(contactB.localId());
     QList<QContactLocalId> ids = cm->contactIds(crf);
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
 
     // 5. Remove the created relationship and contacts
     if(succeeded) {
@@ -2138,7 +2145,7 @@ void tst_QContactManagerFiltering::sorting()
     s.setCaseSensitivity(casesensitivity);
 
     ids = cm->contactIds(s);
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
 
     // It's possible to get some contacts back in an arbitrary order (since we single sort)
     if (unstable.length() > 1) {
@@ -2183,7 +2190,7 @@ void tst_QContactManagerFiltering::sorting()
 
     ids = cm->contactIds(presenceName, s);
 
-    output = convertIds(contacts, ids);
+    output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
 
     // It's possible to get some contacts back in an arbitrary order (since we single sort)
     if (unstable.length() > 1) {
@@ -2352,7 +2359,7 @@ void tst_QContactManagerFiltering::multiSorting()
         sortOrders.append(ss);
 
     QList<QContactLocalId> ids = cm->contactIds(sortOrders);
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
 
     // Remove the display label tests
     output.remove('h');
@@ -2485,7 +2492,7 @@ void tst_QContactManagerFiltering::actionFiltering()
 
 qDebug() << "   actionName =" << actionName;
 
-        QString output = convertIds(contacts, ids);
+        QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
         QCOMPARE_UNSORTED(output, expected);
     }
 }
@@ -2548,8 +2555,188 @@ void tst_QContactManagerFiltering::idListFiltering()
 
     /* Retrieve contacts matching the filter, and compare (unsorted) output */
     ids = cm->contactIds(idf);
-    QString output = convertIds(contacts, ids);
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
+}
+
+void tst_QContactManagerFiltering::convenienceFiltering_data()
+{
+    QTest::addColumn<QContactManager *>("cm");
+    QTest::addColumn<QString>("addressSubString");
+    QTest::addColumn<bool>("addressEnabled");
+    QTest::addColumn<QString>("emailAddressSubString");
+    QTest::addColumn<bool>("emailEnabled");
+    QTest::addColumn<QString>("phoneSubString");
+    QTest::addColumn<bool>("phoneEnabled");
+    QTest::addColumn<QString>("displayLabelSubString");
+    QTest::addColumn<bool>("displayLabelEnabled");
+    QTest::addColumn<QString>("nameSubString");
+    QTest::addColumn<bool>("nameEnabled");
+    QTest::addColumn<bool>("favoriteEnabled");
+    QTest::addColumn<QString>("tagSubString");
+    QTest::addColumn<bool>("tagEnabled");
+    QTest::addColumn<QString>("expected");
+
+    QString es; // empty string
+
+    for (int i = 0; i < managers.size(); i++) {
+        QContactManager *manager = managers.at(i);
+        QMap<QString, QContactDetailDefinition> allDefs = manager->detailDefinitions();
+        if (allDefs.contains(QContactAddress::DefinitionName)) {
+            newMRow("address matching only", manager) << manager
+                                                      << "streetstring" << true
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << false // Favorite has no substring associated.
+                                                      << es << false
+                                                      << "l";
+        }
+        if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+            newMRow("emailAddress matching only", manager) << manager
+                                                      << es << false
+                                                      << "@test.com" << true
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << false
+                                                      << es << false
+                                                      << "m";
+        }
+        if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+            newMRow("phone matching only", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << "12345" << true
+                                                      << es << false
+                                                      << es << false
+                                                      << false
+                                                      << es << false
+                                                      << "n";
+        }
+        if (allDefs.contains(QContactDisplayLabel::DefinitionName)) {
+            newMRow("displayLabel matching only", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << "Freddy" << true
+                                                      << es << false
+                                                      << false
+                                                      << es << false
+                                                      << "o";
+        }
+        if (allDefs.contains(QContactName::DefinitionName)) {
+            newMRow("name matching only", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << "Frederic" << true
+                                                      << false
+                                                      << es << false
+                                                      << "p";
+        }
+        if (allDefs.contains(QContactFavorite::DefinitionName)) {
+            newMRow("favorite matching only", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << true
+                                                      << es << false
+                                                      << "q";
+        }
+        if (allDefs.contains(QContactTag::DefinitionName)) {
+            newMRow("tag matching only", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << false
+                                                      << "Football" << true
+                                                      << "r";
+        }
+        if (allDefs.contains(QContactAddress::DefinitionName) &&
+                allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+            newMRow("address or phone matching", manager) << manager
+                                                      << "streetstring" << true
+                                                      << es << false
+                                                      << "12345" << true
+                                                      << es << false
+                                                      << es << false
+                                                      << false
+                                                      << es << false
+                                                      << "ln";
+        }
+        if (allDefs.contains(QContactFavorite::DefinitionName)
+                && allDefs.contains(QContactTag::DefinitionName)) {
+            newMRow("favorite or tag matching", manager) << manager
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << es << false
+                                                      << true
+                                                      << "Football" << true
+                                                      << "qr";
+        }
+    }
+}
+
+void tst_QContactManagerFiltering::convenienceFiltering()
+{
+    QFETCH(QContactManager*, cm);
+    QFETCH(QString, addressSubString);
+    QFETCH(bool, addressEnabled);
+    QFETCH(QString, emailAddressSubString);
+    QFETCH(bool, emailEnabled);
+    QFETCH(QString, phoneSubString);
+    QFETCH(bool, phoneEnabled);
+    QFETCH(QString, displayLabelSubString);
+    QFETCH(bool, displayLabelEnabled);
+    QFETCH(QString, nameSubString);
+    QFETCH(bool, nameEnabled);
+    QFETCH(bool, favoriteEnabled);
+    QFETCH(QString, tagSubString);
+    QFETCH(bool, tagEnabled);
+    QFETCH(QString, expected);
+
+    QContactFilter af = QContactAddress::match(addressSubString);
+    QContactFilter ef = QContactEmailAddress::match(emailAddressSubString);
+    QContactFilter pf = QContactPhoneNumber::match(phoneSubString);
+    QContactFilter df = QContactDisplayLabel::match(displayLabelSubString);
+    QContactFilter nf = QContactName::match(nameSubString);
+    QContactFilter ff = QContactFavorite::match();
+    QContactFilter tf = QContactTag::match(tagSubString);
+
+    QList<QContactFilter> convenienceFilters;
+    if (addressEnabled) convenienceFilters << af;
+    if (emailEnabled) convenienceFilters << ef;
+    if (phoneEnabled) convenienceFilters << pf;
+    if (displayLabelEnabled) convenienceFilters << df;
+    if (nameEnabled) convenienceFilters << nf;
+    if (favoriteEnabled) convenienceFilters << ff;
+    if (tagEnabled) convenienceFilters << tf;
+
+    QContactFilter finalFilter;
+    finalFilter = convenienceFilters.at(0);
+    if (convenienceFilters.size() > 1) {
+        for (int i = 1; i < convenienceFilters.size(); ++i) {
+            // if more than one filter, we union them.
+            finalFilter = (finalFilter | convenienceFilters.at(i));
+        }
+    }
+
+    /* Retrieve contacts matching the filter, and ensure that the results are expected */
+    QList<QContactLocalId> ids = cm->contactIds(finalFilter);
+
+    // build a string containing letters corresponding to the ids we retrieved.
+    QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+    QString resultString = convertIds(contacts, ids, 'l', 'r'); // just the convenience filtering contacts (L->R)
+    QCOMPARE(resultString, expected);
 }
 
 void tst_QContactManagerFiltering::invalidFiltering_data()
@@ -2597,17 +2784,17 @@ void tst_QContactManagerFiltering::allFiltering()
     QContactFilter f; // default = permissive
     QList<QContactLocalId> ids = cm->contactIds(f);
     QVERIFY(ids.count() == contacts.size());
-    QString output = convertIds(contacts, ids);
-    QString expected = convertIds(contacts, contacts); // :)
+    QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
+    QString expected = convertIds(contacts, contacts, 'a', 'k'); // :)
     QCOMPARE_UNSORTED(output, expected);
 
     // Try unions/intersections of defaults
     ids = cm->contactIds(f | f);
-    output = convertIds(contacts, ids);
+    output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 
     ids = cm->contactIds(f & f);
-    output = convertIds(contacts, ids);
+    output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
     QCOMPARE_UNSORTED(output, expected);
 }
 
@@ -2696,7 +2883,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
 
         ids = cm->contactIds(clf);
 
-        QString output = convertIds(contacts, ids);
+        QString output = convertIds(contacts, ids, 'a', 'k'); // don't include the convenience filtering contacts
         QCOMPARE(output, expected); // unsorted? or sorted?
     } else {
         QSKIP("Changelogs not supported by this manager.", SkipSingle);
@@ -2974,7 +3161,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     defAndFieldNames.second = QString();
 
     /* Add some contacts */
-    QContact a, b, c, d;
+    QContact contactA, contactB, contactC, contactD;
     QContactName name;
     QContactPhoneNumber number;
     QContactDetail string(definitionDetails.value("String").first);
@@ -3010,24 +3197,24 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     date.setValue(definitionDetails.value("Date").second, QDate(1988, 1, 26));
     time.setValue(definitionDetails.value("Time").second, QTime(16,52,23,0));
 
-    a.saveDetail(&name);
-    a.saveDetail(&nick);
-    a.saveDetail(&emailAddr);
-    a.saveDetail(&number);
+    contactA.saveDetail(&name);
+    contactA.saveDetail(&nick);
+    contactA.saveDetail(&emailAddr);
+    contactA.saveDetail(&number);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        a.saveDetail(&string);
+        contactA.saveDetail(&string);
     if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
-        a.saveDetail(&integer);
+        contactA.saveDetail(&integer);
     if (!definitionDetails.value("DateTime").first.isEmpty() && !definitionDetails.value("DateTime").second.isEmpty())
-        a.saveDetail(&datetime);
+        contactA.saveDetail(&datetime);
     if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
-        a.saveDetail(&boool);
+        contactA.saveDetail(&boool);
     if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
-        a.saveDetail(&ullong);
+        contactA.saveDetail(&ullong);
     if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
-        a.saveDetail(&date);
+        contactA.saveDetail(&date);
     if (!definitionDetails.value("Time").first.isEmpty() && !definitionDetails.value("Time").second.isEmpty())
-        a.saveDetail(&time);
+        contactA.saveDetail(&time);
 
     name = QContactName();
     name.setFirstName("Bob");
@@ -3044,27 +3231,27 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     time.setValue(definitionDetails.value("Time").second, QTime(15,52,23,0));
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
-    b.saveDetail(&name);
-    b.saveDetail(&nick);
-    b.saveDetail(&number);
+    contactB.saveDetail(&name);
+    contactB.saveDetail(&nick);
+    contactB.saveDetail(&number);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        b.saveDetail(&string);
+        contactB.saveDetail(&string);
     if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
-        b.saveDetail(&integer);
+        contactB.saveDetail(&integer);
     if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
-        b.saveDetail(&dubble);
+        contactB.saveDetail(&dubble);
     if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
-        b.saveDetail(&boool);
+        contactB.saveDetail(&boool);
     if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
-        b.saveDetail(&ullong);
+        contactB.saveDetail(&ullong);
     if (!definitionDetails.value("UInt").first.isEmpty() && !definitionDetails.value("UInt").second.isEmpty())
-        b.saveDetail(&uintt);
+        contactB.saveDetail(&uintt);
     if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
-        b.saveDetail(&date);
+        contactB.saveDetail(&date);
     if (!definitionDetails.value("Time").first.isEmpty() && !definitionDetails.value("Time").second.isEmpty())
-        b.saveDetail(&time);
+        contactB.saveDetail(&time);
     if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
-        b.saveDetail(&charr);
+        contactB.saveDetail(&charr);
 
     name.setFirstName("Boris");
     name.setLastName("Aaronsun");
@@ -3074,23 +3261,23 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)8000000000LL); // 8B
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('c')));
 
-    c.saveDetail(&name);
+    contactC.saveDetail(&name);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        c.saveDetail(&string);
+        contactC.saveDetail(&string);
     if (!definitionDetails.value("Integer").first.isEmpty() && !definitionDetails.value("Integer").second.isEmpty())
-        c.saveDetail(&integer);
+        contactC.saveDetail(&integer);
     if (!definitionDetails.value("DateTime").first.isEmpty() && !definitionDetails.value("DateTime").second.isEmpty())
-        c.saveDetail(&datetime);
+        contactC.saveDetail(&datetime);
     if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
-        c.saveDetail(&dubble);
+        contactC.saveDetail(&dubble);
     if (!definitionDetails.value("Bool").first.isEmpty() && !definitionDetails.value("Bool").second.isEmpty())
-        c.saveDetail(&boool);
+        contactC.saveDetail(&boool);
     if (!definitionDetails.value("LongLong").first.isEmpty() && !definitionDetails.value("LongLong").second.isEmpty())
-        c.saveDetail(&llong);
+        contactC.saveDetail(&llong);
     if (!definitionDetails.value("ULongLong").first.isEmpty() && !definitionDetails.value("ULongLong").second.isEmpty())
-        c.saveDetail(&ullong);
+        contactC.saveDetail(&ullong);
     if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
-        c.saveDetail(&charr);
+        contactC.saveDetail(&charr);
 
     name.setFirstName("Dennis");
     name.setLastName("FitzMacintyre");
@@ -3100,155 +3287,417 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     uintt.setValue(definitionDetails.value("UInt").second, 3000000000u); // 3B
     date.setValue(definitionDetails.value("Date").second, QDate(2770, 10, 1));
 
-    d.saveDetail(&name);
+    contactD.saveDetail(&name);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        d.saveDetail(&string);
+        contactD.saveDetail(&string);
     if (!definitionDetails.value("Double").first.isEmpty() && !definitionDetails.value("Double").second.isEmpty())
-        d.saveDetail(&dubble);
+        contactD.saveDetail(&dubble);
     if (!definitionDetails.value("LongLong").first.isEmpty() && !definitionDetails.value("LongLong").second.isEmpty())
-        d.saveDetail(&llong);
+        contactD.saveDetail(&llong);
     if (!definitionDetails.value("UInt").first.isEmpty() && !definitionDetails.value("UInt").second.isEmpty())
-        d.saveDetail(&uintt);
+        contactD.saveDetail(&uintt);
     if (!definitionDetails.value("Date").first.isEmpty() && !definitionDetails.value("Date").second.isEmpty())
-        d.saveDetail(&date);
+        contactD.saveDetail(&date);
 
     qDebug() << "Generating contacts with different timestamps, please wait..";
     int originalContactCount = cm->contactIds().count();
-    bool successfulSave = cm->saveContact(&a);
+    bool successfulSave = cm->saveContact(&contactA);
     Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&b);
+    successfulSave = cm->saveContact(&contactB);
     Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&c);
+    successfulSave = cm->saveContact(&contactC);
     Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
-    successfulSave = cm->saveContact(&d);
+    successfulSave = cm->saveContact(&contactD);
     Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
 
     /* Now add some contacts specifically for multisorting */
-    QContact e,f,g;
+    QContact contactE,contactF,contactG;
     QContactName n;
     n.setFirstName("John");
     n.setLastName("Smithee");
     string.setValue(definitionDetails.value("String").second, "");
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        e.saveDetail(&string);
-    e.saveDetail(&n);
+        contactE.saveDetail(&string);
+    contactE.saveDetail(&n);
     n = QContactName();
     n.setFirstName("John");
     n.setLastName("Smithey");
-    f.saveDetail(&n);
+    contactF.saveDetail(&n);
     n = QContactName();
     n.setFirstName("John");
     n.setLastName("Smithy");
     string.setValue(definitionDetails.value("String").second, "zzz");
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
-        g.saveDetail(&string);
-    g.saveDetail(&n);
-    successfulSave = cm->saveContact(&e);
+        contactG.saveDetail(&string);
+    contactG.saveDetail(&n);
+    successfulSave = cm->saveContact(&contactE);
     Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&f);
+    successfulSave = cm->saveContact(&contactF);
     Q_ASSERT(successfulSave);
-    successfulSave = cm->saveContact(&g);
+    successfulSave = cm->saveContact(&contactG);
     Q_ASSERT(successfulSave);
     originalContactCount += 7;
     Q_ASSERT(cm->contactIds().count() == originalContactCount);
 
     /* Now some for the locale aware sorting */
-    QContact h, i, j, k;
+    QContact contactH, contactI, contactJ, contactK;
     QContactName n2;
     n2.setFirstName("xander");
     n2.setCustomLabel("xander");
-    h.saveDetail(&n2);
+    contactH.saveDetail(&n2);
     n2.setFirstName("Xander");
     n2.setCustomLabel("Xander");
-    i.saveDetail(&n2);
+    contactI.saveDetail(&n2);
     n2.setFirstName("xAnder");
     n2.setCustomLabel("xAnder");
-    j.saveDetail(&n2);
+    contactJ.saveDetail(&n2);
     n2.setFirstName("Yarrow");
     n2.setCustomLabel("Yarrow");
-    k.saveDetail(&n2);
+    contactK.saveDetail(&n2);
 
     // XXX add &aumlaut; or &acircum; etc to test those sort orders
-    h = cm->compatibleContact(h);
-    i = cm->compatibleContact(i);
-    j = cm->compatibleContact(j);
-    k = cm->compatibleContact(k);
-    Q_ASSERT(cm->saveContact(&h));
-    Q_ASSERT(cm->saveContact(&i));
-    Q_ASSERT(cm->saveContact(&j));
-    Q_ASSERT(cm->saveContact(&k));
+    contactH = cm->compatibleContact(contactH);
+    contactI = cm->compatibleContact(contactI);
+    contactJ = cm->compatibleContact(contactJ);
+    contactK = cm->compatibleContact(contactK);
+    Q_ASSERT(cm->saveContact(&contactH));
+    Q_ASSERT(cm->saveContact(&contactI));
+    Q_ASSERT(cm->saveContact(&contactJ));
+    Q_ASSERT(cm->saveContact(&contactK));
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
-    QContactName modifiedName = c.detail(QContactName::DefinitionName);
+    QContactName modifiedName = contactC.detail(QContactName::DefinitionName);
     modifiedName.setCustomLabel("Clarence");
-    c.saveDetail(&modifiedName);
-    cm->saveContact(&c);
+    contactC.saveDetail(&modifiedName);
+    cm->saveContact(&contactC);
     QTest::qSleep(napTime);
-    modifiedName = b.detail(QContactName::DefinitionName);
+    modifiedName = contactB.detail(QContactName::DefinitionName);
     modifiedName.setCustomLabel("Boris");
-    b.saveDetail(&modifiedName);
-    cm->saveContact(&b);
+    contactB.saveDetail(&modifiedName);
+    cm->saveContact(&contactB);
     QTest::qSleep(napTime);
-    modifiedName = a.detail(QContactName::DefinitionName);
+    modifiedName = contactA.detail(QContactName::DefinitionName);
     modifiedName.setCustomLabel("Albert");
-    a.saveDetail(&modifiedName);
-    cm->saveContact(&a);
+    contactA.saveDetail(&modifiedName);
+    cm->saveContact(&contactA);
     QTest::qSleep(napTime);
+
+    /* Now some for convenience filtering */
+    QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitions();
+    // Contact L ----------------------------------------
+    QContact contactL;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress ladr;
+        ladr.setStreet("streetstring road"); // Contact L matches streetstring.
+        ladr.setLocality("testplace");
+        ladr.setRegion("somewhere");
+        contactL.saveDetail(&ladr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress led;
+        led.setEmailAddress("frad@test.domain");
+        contactL.saveDetail(&led);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber lp;
+        lp.setNumber("11111");
+        contactL.saveDetail(&lp);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName ln;
+        ln.setFirstName("Fradarick");
+        ln.setLastName("Gumboots");
+        contactL.saveDetail(&ln);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag lt;
+        lt.setTag("Soccer");
+        contactL.saveDetail(&lt);
+    }
+    // Contact M ----------------------------------------
+    QContact contactM;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress madr;
+        madr.setStreet("some road");
+        madr.setLocality("testplace");
+        madr.setRegion("somewhere");
+        contactM.saveDetail(&madr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress med;
+        med.setEmailAddress("frbd@test.com"); // Contact M matches @test.com
+        contactM.saveDetail(&med);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber mp;
+        mp.setNumber("22222");
+        contactM.saveDetail(&mp);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName mn;
+        mn.setFirstName("Frbdbrick");
+        mn.setLastName("Gumboots");
+        contactM.saveDetail(&mn);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag mt;
+        mt.setTag("Soccer");
+        contactM.saveDetail(&mt);
+    }
+    // Contact N ----------------------------------------
+    QContact contactN;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress nadr;
+        nadr.setStreet("some road");
+        nadr.setLocality("testplace");
+        nadr.setRegion("somewhere");
+        contactN.saveDetail(&nadr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress ned;
+        ned.setEmailAddress("frcd@test.domain");
+        contactN.saveDetail(&ned);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber np;
+        np.setNumber("12345"); // Contact N matches 12345
+        contactN.saveDetail(&np);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName nn;
+        nn.setFirstName("Frcdcrick");
+        nn.setLastName("Gumboots");
+        contactN.saveDetail(&nn);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag nt;
+        nt.setTag("Soccer");
+        contactN.saveDetail(&nt);
+    }
+    // Contact O ----------------------------------------
+    QContact contactO;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress oadr;
+        oadr.setStreet("some road");
+        oadr.setLocality("testplace");
+        oadr.setRegion("somewhere");
+        contactO.saveDetail(&oadr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress oed;
+        oed.setEmailAddress("frdd@test.domain");
+        contactO.saveDetail(&oed);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber op;
+        op.setNumber("44444");
+        contactO.saveDetail(&op);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName on;
+        on.setFirstName("Freddy"); // Contact O matches Freddy
+        on.setLastName("Gumboots");
+        contactO.saveDetail(&on);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag ot;
+        ot.setTag("Soccer");
+        contactO.saveDetail(&ot);
+    }
+    // Contact P ----------------------------------------
+    QContact contactP;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress padr;
+        padr.setStreet("some road");
+        padr.setLocality("testplace");
+        padr.setRegion("somewhere");
+        contactP.saveDetail(&padr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress ped;
+        ped.setEmailAddress("fred@test.domain");
+        contactP.saveDetail(&ped);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber pp;
+        pp.setNumber("55555");
+        contactP.saveDetail(&pp);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName pn;
+        pn.setFirstName("Frederick"); // Contact P matches Frederic (contains).
+        pn.setLastName("Gumboots");
+        contactP.saveDetail(&pn);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag pt;
+        pt.setTag("Soccer");
+        contactP.saveDetail(&pt);
+    }
+    // Contact Q ----------------------------------------
+    QContact contactQ;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress qadr;
+        qadr.setStreet("some road");
+        qadr.setLocality("testplace");
+        qadr.setRegion("somewhere");
+        contactQ.saveDetail(&qadr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress qed;
+        qed.setEmailAddress("frfd@test.domain");
+        contactQ.saveDetail(&qed);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber qp;
+        qp.setNumber("66666");
+        contactQ.saveDetail(&qp);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName qn;
+        qn.setFirstName("Frfdfrick");
+        qn.setLastName("Gumboots");
+        contactQ.saveDetail(&qn);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag qt;
+        qt.setTag("Soccer");
+        contactQ.saveDetail(&qt);
+    }
+    if (allDefs.contains(QContactFavorite::DefinitionName)) {
+        QContactFavorite qf;
+        qf.setFavorite(true); // Contact Q matches favorite = true
+        contactQ.saveDetail(&qf);
+    }
+    // Contact R ----------------------------------------
+    QContact contactR;
+    if (allDefs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress radr;
+        radr.setStreet("some road");
+        radr.setLocality("testplace");
+        radr.setRegion("somewhere");
+        contactR.saveDetail(&radr);
+    }
+    if (allDefs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress red;
+        red.setEmailAddress("frgd@test.domain");
+        contactR.saveDetail(&red);
+    }
+    if (allDefs.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactPhoneNumber rp;
+        rp.setNumber("77777");
+        contactR.saveDetail(&rp);
+    }
+    if (allDefs.contains(QContactName::DefinitionName)) {
+        QContactName rn;
+        rn.setFirstName("Frgdgrick");
+        rn.setLastName("Gumboots");
+        contactR.saveDetail(&rn);
+    }
+    if (allDefs.contains(QContactTag::DefinitionName)) {
+        QContactTag rt;
+        rt.setTag("Football"); // Contact R matches Football
+        contactR.saveDetail(&rt);
+    }
+    // --------------------- save.
+    contactL = cm->compatibleContact(contactL);
+    contactM = cm->compatibleContact(contactM);
+    contactN = cm->compatibleContact(contactN);
+    contactO = cm->compatibleContact(contactO);
+    contactP = cm->compatibleContact(contactP);
+    contactQ = cm->compatibleContact(contactQ);
+    contactR = cm->compatibleContact(contactR);
+    Q_ASSERT(cm->saveContact(&contactL));
+    Q_ASSERT(cm->saveContact(&contactM));
+    Q_ASSERT(cm->saveContact(&contactN));
+    Q_ASSERT(cm->saveContact(&contactO));
+    Q_ASSERT(cm->saveContact(&contactP));
+    Q_ASSERT(cm->saveContact(&contactQ));
+    Q_ASSERT(cm->saveContact(&contactR));
+    // --------------------- end.
 
     /* Add our newly saved contacts to our internal list of added contacts */
-    contactsAddedToManagers.insert(cm, k.id().localId());
-    contactsAddedToManagers.insert(cm, j.id().localId());
-    contactsAddedToManagers.insert(cm, i.id().localId());
-    contactsAddedToManagers.insert(cm, h.id().localId());
-    contactsAddedToManagers.insert(cm, g.id().localId());
-    contactsAddedToManagers.insert(cm, f.id().localId());
-    contactsAddedToManagers.insert(cm, e.id().localId());
-    contactsAddedToManagers.insert(cm, d.id().localId());
-    contactsAddedToManagers.insert(cm, c.id().localId());
-    contactsAddedToManagers.insert(cm, b.id().localId());
-    contactsAddedToManagers.insert(cm, a.id().localId());
+    contactsAddedToManagers.insert(cm, contactR.id().localId());
+    contactsAddedToManagers.insert(cm, contactQ.id().localId());
+    contactsAddedToManagers.insert(cm, contactP.id().localId());
+    contactsAddedToManagers.insert(cm, contactO.id().localId());
+    contactsAddedToManagers.insert(cm, contactN.id().localId());
+    contactsAddedToManagers.insert(cm, contactM.id().localId());
+    contactsAddedToManagers.insert(cm, contactL.id().localId());
+    contactsAddedToManagers.insert(cm, contactK.id().localId());
+    contactsAddedToManagers.insert(cm, contactJ.id().localId());
+    contactsAddedToManagers.insert(cm, contactI.id().localId());
+    contactsAddedToManagers.insert(cm, contactH.id().localId());
+    contactsAddedToManagers.insert(cm, contactG.id().localId());
+    contactsAddedToManagers.insert(cm, contactF.id().localId());
+    contactsAddedToManagers.insert(cm, contactE.id().localId());
+    contactsAddedToManagers.insert(cm, contactD.id().localId());
+    contactsAddedToManagers.insert(cm, contactC.id().localId());
+    contactsAddedToManagers.insert(cm, contactB.id().localId());
+    contactsAddedToManagers.insert(cm, contactA.id().localId());
 
     /* Reload the contacts to pick up any changes */
-    a = cm->contact(a.id().localId());
-    b = cm->contact(b.id().localId());
-    c = cm->contact(c.id().localId());
-    d = cm->contact(d.id().localId());
-    e = cm->contact(e.id().localId());
-    f = cm->contact(f.id().localId());
-    g = cm->contact(g.id().localId());
-    h = cm->contact(h.id().localId());
-    i = cm->contact(i.id().localId());
-    j = cm->contact(j.id().localId());
-    k = cm->contact(k.id().localId());
+    contactA = cm->contact(contactA.id().localId());
+    contactB = cm->contact(contactB.id().localId());
+    contactC = cm->contact(contactC.id().localId());
+    contactD = cm->contact(contactD.id().localId());
+    contactE = cm->contact(contactE.id().localId());
+    contactF = cm->contact(contactF.id().localId());
+    contactG = cm->contact(contactG.id().localId());
+    contactH = cm->contact(contactH.id().localId());
+    contactI = cm->contact(contactI.id().localId());
+    contactJ = cm->contact(contactJ.id().localId());
+    contactK = cm->contact(contactK.id().localId());
+    contactL = cm->contact(contactL.id().localId());
+    contactM = cm->contact(contactM.id().localId());
+    contactN = cm->contact(contactN.id().localId());
+    contactO = cm->contact(contactO.id().localId());
+    contactP = cm->contact(contactP.id().localId());
+    contactQ = cm->contact(contactQ.id().localId());
+    contactR = cm->contact(contactR.id().localId());
 
     QList<QContactLocalId> list;
-    if (!a.isEmpty())
-        list << a.id().localId();
-    if (!b.isEmpty())
-        list << b.id().localId();
-    if (!c.isEmpty())
-        list << c.id().localId();
-    if (!d.isEmpty())
-        list << d.id().localId();
-    if (!e.isEmpty())
-        list << e.id().localId();
-    if (!f.isEmpty())
-        list << f.id().localId();
-    if (!g.isEmpty())
-        list << g.id().localId();
-    if (!h.isEmpty())
-        list << h.id().localId();
-    if (!i.isEmpty())
-        list << i.id().localId();
-    if (!j.isEmpty())
-        list << j.id().localId();
-    if (!k.isEmpty())
-        list << k.id().localId();
+    if (!contactA.isEmpty())
+        list << contactA.id().localId();
+    if (!contactB.isEmpty())
+        list << contactB.id().localId();
+    if (!contactC.isEmpty())
+        list << contactC.id().localId();
+    if (!contactD.isEmpty())
+        list << contactD.id().localId();
+    if (!contactE.isEmpty())
+        list << contactE.id().localId();
+    if (!contactF.isEmpty())
+        list << contactF.id().localId();
+    if (!contactG.isEmpty())
+        list << contactG.id().localId();
+    if (!contactH.isEmpty())
+        list << contactH.id().localId();
+    if (!contactI.isEmpty())
+        list << contactI.id().localId();
+    if (!contactJ.isEmpty())
+        list << contactJ.id().localId();
+    if (!contactK.isEmpty())
+        list << contactK.id().localId();
+    if (!contactL.isEmpty())
+        list << contactL.id().localId();
+    if (!contactM.isEmpty())
+        list << contactM.id().localId();
+    if (!contactN.isEmpty())
+        list << contactN.id().localId();
+    if (!contactO.isEmpty())
+        list << contactO.id().localId();
+    if (!contactP.isEmpty())
+        list << contactP.id().localId();
+    if (!contactQ.isEmpty())
+        list << contactQ.id().localId();
+    if (!contactR.isEmpty())
+        list << contactR.id().localId();
 
     return list;
 }

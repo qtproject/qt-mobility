@@ -689,6 +689,8 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
+    o1.setProtocol(QContactOnlineAccount::ProtocolJabber);
+    QCOMPARE(o1.protocol(), QLatin1String(QContactOnlineAccount::ProtocolJabber));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
