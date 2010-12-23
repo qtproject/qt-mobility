@@ -553,6 +553,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest NetworkManager networkmanager
     compileTest "CoreWLAN (MacOS 10.6)" corewlan
     compileTest Immersion immersion
+    compileTest "MeegoTouch Feedback" meegotouchfeedback
     compileTest "Maemo ICD" maemo-icd
     compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
