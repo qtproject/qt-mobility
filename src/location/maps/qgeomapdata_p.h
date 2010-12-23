@@ -102,6 +102,8 @@ public:
     virtual void updatePixelTransform(QGeoMapObject *object);
     void clearObjects();
 
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
+
     QPolygonF latLonViewport();
 
     bool pixelsOutOfDate;

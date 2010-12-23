@@ -800,6 +800,7 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
 
         QPolygonF local(object->graphicsItem()->boundingRect());
         QPolygonF wgs;
+
         foreach (QPointF pt, local) {
             ProjCoordinate c(pt.x(), pt.y(), 0.0, localSys);
             c.convert(wgs84);
@@ -809,6 +810,17 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         // QTransform expects the last vertex (closing vertex) to be dropped
         local.remove(4);
         wgs.remove(4);
+
+        // perform wrapping
+        if (wgs.at(2).x() < wgs.at(3).x()) {
+            QPointF topRight = wgs.at(1);
+            topRight.setX(topRight.x() + 360.0);
+            wgs.replace(1, topRight);
+
+            QPointF bottomRight = wgs.at(2);
+            bottomRight.setX(bottomRight.x() + 360.0);
+            wgs.replace(2, bottomRight);
+        }
 
         bool ok = QTransform::quadToQuad(local, wgs, latLon);
         if (!ok)
@@ -939,6 +951,12 @@ void QGeoMapDataPrivate::updatePixelTransforms(QGeoMapGroupObject *group)
     }
 }
 
+QPointF QGeoMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
+{
+    QGeoCoordinate c(lat, lon);
+    return q_ptr->coordinateToScreenPosition(c);
+}
+
 void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
 {
     QGeoCoordinate origin = object->origin();
@@ -952,26 +970,36 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
         delete item;
     }
 
+    QList<QPolygonF> polys;
+
     pixelTrans.remove(object);
-    foreach (QTransform latLon, latLons) {
-        QTransform pixel;
+    if (object->units() == QGeoMapObject::PixelUnit) {
+        // compute the transform as an origin shift
 
-        QPolygonF latLonPoly = latLon.map(object->graphicsItem()->boundingRect());
+        QList<QPointF> origins;
+        origins << QPointF(origin.longitude(), origin.latitude());
+        origins << QPointF(origin.longitude() + 360.0, origin.latitude());
+        origins << QPointF(origin.longitude() - 360.0, origin.latitude());
 
-        if (object->units() == QGeoMapObject::PixelUnit) {
-            QPointF pixelOrigin = q_ptr->coordinateToScreenPosition(origin);
+        foreach (QPointF o, origins) {
+            QTransform pixel;
+            QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
             pixel.translate(pixelOrigin.x(), pixelOrigin.y());
+            pixelTrans.insertMulti(object, pixel);
+            polys << pixel.map(object->graphicsItem()->boundingRect());
+        }
 
-        } else {
+    } else {
+        // compute the transform by linearising from the lat/lon space
+        foreach (QTransform latLon, latLons) {
+            QTransform pixel;
+
+            QPolygonF latLonPoly = latLon.map(object->graphicsItem()->boundingRect());
             QPolygonF pixelPoly;
-            foreach (QPointF pt, latLonPoly) {
-                if (pt.x() > 180.0)
-                    pt.setX(pt.x() - 180.0);
-                if (pt.x() < -180.0)
-                    pt.setX(pt.x() + 180.0);
 
-                const QGeoCoordinate coord(pt.y(), pt.x());
-                pixelPoly.append(q_ptr->coordinateToScreenPosition(coord));
+            foreach (QPointF pt, latLonPoly) {
+                QPointF pixel = this->coordinateToScreenPosition(pt.x(), pt.y());
+                pixelPoly.append(pixel);
             }
 
             // QTransform expects the last vertex (closing vertex) to be dropped
@@ -979,14 +1007,18 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
             pixelPoly.remove(4);
 
             bool ok = QTransform::quadToQuad(latLonPoly, pixelPoly, pixel);
-            Q_ASSERT(ok);
+            if (!ok)
+                continue;
 
             pixel = latLon * pixel;
+
+            pixelTrans.insertMulti(object, pixel);
+
+            polys << pixel.map(object->graphicsItem()->boundingRect());
         }
+    }
 
-        pixelTrans.insertMulti(object, pixel);
-
-        QPolygonF poly = pixel.map(object->graphicsItem()->boundingRect());
+    foreach (QPolygonF poly, polys) {
         QGraphicsPolygonItem *item = new QGraphicsPolygonItem(poly);
         item->setZValue(object->zValue());
         item->setVisible(true);

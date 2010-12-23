@@ -138,6 +138,30 @@ QGeoTiledMapData::~QGeoTiledMapData()
 {
 }
 
+QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
+{
+    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= zoomFactor;
+    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= zoomFactor;
+
+    QPoint pos(coordinateToWorldReferencePosition(lon, lat));
+
+    int x = pos.x() - worldReferenceViewportRect.left();
+    //if (x < 0)
+    //    x += worldReferenceSize.width();
+
+    int y = pos.y() - worldReferenceViewportRect.top();
+
+    QPointF posF(offsetX + qreal(x) / zoomFactor, offsetY + qreal(y) / zoomFactor);
+
+    return posF;
+}
+
 /*!
     \reimp
 */
@@ -147,28 +171,8 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 
     ProjCoordinate c(coordwgs.longitude(), coordwgs.latitude(), 0.0, d->wgs84);
     c.convert(d->spherical);
-    const QGeoCoordinate coordinate(c.y(), c.x(), c.z());
 
-    qreal offsetX = ((d->windowSize.width() * d->zoomFactor) - d->worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= d->zoomFactor;
-    qreal offsetY = ((d->windowSize.height() * d->zoomFactor) - d->worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= d->zoomFactor;
-
-    QPoint pos(coordinateToWorldReferencePosition(coordinate));
-
-    int x = pos.x() - d->worldReferenceViewportRect.left();
-    //if (x < 0)
-    //    x += d->worldReferenceSize.width();
-
-    int y = pos.y() - d->worldReferenceViewportRect.top();
-
-    QPointF posF(offsetX + qreal(x) / d->zoomFactor, offsetY + qreal(y) / d->zoomFactor);
-
-    return posF;
+    return d->coordinateToScreenPosition(c.x(), c.y());
 }
 
 /*!
@@ -211,6 +215,21 @@ QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPo
     return QPoint(worldX, worldY);
 }
 
+QPoint QGeoTiledMapDataPrivate::coordinateToWorldReferencePosition(double lng, double lat) const
+{
+    lng = lng / 360.0 + 0.5;
+
+    lat = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * lat / 180.0)) / PI) / 2.0;
+    lat = qMax(0.0, lat);
+    lat = qMin(1.0, lat);
+
+    double x = lng * worldReferenceSize.width();
+    double y = lat * worldReferenceSize.height();
+
+    return QPoint(int(x > 0 ? x + 0.5 : x - 0.5),
+                  int(y > 0 ? y + 0.5 : y - 0.5));
+}
+
 /*!
     Converts the coordinate \a coordinate to a pixel position on the entire
     map at the maximum zoom level.
@@ -220,18 +239,8 @@ QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPo
 QPoint QGeoTiledMapData::coordinateToWorldReferencePosition(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoTiledMapData);
-
-    double lng = coordinate.longitude(); //x
-    double lat = coordinate.latitude(); //y
-
-    lng = lng / 360.0 + 0.5;
-
-    lat = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * lat / 180.0)) / PI) / 2.0;
-    lat = qMax(0.0, lat);
-    lat = qMin(1.0, lat);
-
-    return QPoint(int(lng * d->worldReferenceSize.width() + 0.5),
-                  int(lat * d->worldReferenceSize.height() + 0.5));
+    return d->coordinateToWorldReferencePosition(coordinate.longitude(),
+                                                 coordinate.latitude());
 }
 
 qreal rmod(const qreal a, const qreal b)

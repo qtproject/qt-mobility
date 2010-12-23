@@ -95,7 +95,9 @@ public:
     bool intersectsScreen(const QRect &rect) const;
     QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
 
-    QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual QPoint screenPositionToWorldReferencePosition(const QPointF &screenPosition) const;
+    virtual QPoint coordinateToWorldReferencePosition(double lon, double lat) const;
+    virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
 
     int zoomFactor;
 
