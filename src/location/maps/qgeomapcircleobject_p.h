@@ -56,7 +56,7 @@ public:
     QGeoMapCircleObjectPrivate();
     ~QGeoMapCircleObjectPrivate();
 
-    QGraphicsEllipseItem item;
+    QGraphicsEllipseItem *item;
     QGeoBoundingCircle circle;
 };
 

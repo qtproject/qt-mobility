@@ -66,9 +66,11 @@ class ProjCoordinateSystemPrivate;
 class ProjCoordinateSystem
 {
 public:
-    ProjCoordinateSystem(const QString &projection = QString("+proj=latlon +ellps=WGS84"));
+    ProjCoordinateSystem(const QString &projection = QString("+proj=latlon +ellps=WGS84"), bool latLon=true);
     ProjCoordinateSystem(const ProjCoordinateSystem &other);
     ~ProjCoordinateSystem();
+
+    bool isLatLon() const;
 
 private:
     QSharedDataPointer<ProjCoordinateSystemPrivate> d;

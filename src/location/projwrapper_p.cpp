@@ -49,17 +49,19 @@ QTM_BEGIN_NAMESPACE
 class ProjCoordinateSystemPrivate : public QSharedData
 {
 public:
-    ProjCoordinateSystemPrivate(const QString &projection);
+    ProjCoordinateSystemPrivate(const QString &projection, bool latLon);
     ProjCoordinateSystemPrivate(const ProjCoordinateSystemPrivate &other);
     ~ProjCoordinateSystemPrivate();
 
     projPJ projection;
+    bool latLon;
 };
 
-ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const QString &projStr)
+ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const QString &projStr, bool isLatLon)
 {
     projection = pj_init_plus(projStr.toLatin1().constData());
     Q_ASSERT_X(projection, "pj_init_plus", "invalid projection string");
+    latLon = isLatLon;
 }
 
 ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const ProjCoordinateSystemPrivate &other) :
@@ -69,8 +71,8 @@ ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const ProjCoordinateSys
 ProjCoordinateSystemPrivate::~ProjCoordinateSystemPrivate()
 {}
 
-ProjCoordinateSystem::ProjCoordinateSystem(const QString &projection) :
-    d(new ProjCoordinateSystemPrivate(projection))
+ProjCoordinateSystem::ProjCoordinateSystem(const QString &projection, bool latLon) :
+    d(new ProjCoordinateSystemPrivate(projection, latLon))
 {}
 
 ProjCoordinateSystem::ProjCoordinateSystem(const ProjCoordinateSystem &other) :
@@ -79,6 +81,11 @@ ProjCoordinateSystem::ProjCoordinateSystem(const ProjCoordinateSystem &other) :
 
 ProjCoordinateSystem::~ProjCoordinateSystem()
 {}
+
+bool ProjCoordinateSystem::isLatLon() const
+{
+    return d->latLon;
+}
 
 class ProjCoordinatePrivate
 {
@@ -129,12 +136,22 @@ bool ProjCoordinate::convert(const ProjCoordinateSystem &system)
 {
     int result;
     double x = d->x, y = d->y, z = d->z;
+
+    if (d->currentSystem.isLatLon()) {
+        x *= DEG_TO_RAD;
+        y *= DEG_TO_RAD;
+    }
+
     result = pj_transform(d->currentSystem.d->projection,
                           system.d->projection,
                           1, 1, &x, &y, &z);
     if (result) {
         return false;
     } else {
+        if (system.isLatLon()) {
+            x *= RAD_TO_DEG;
+            y *= RAD_TO_DEG;
+        }
         d->x = x;
         d->y = y;
         d->z = z;

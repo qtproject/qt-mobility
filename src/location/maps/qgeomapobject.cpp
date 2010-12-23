@@ -172,6 +172,7 @@ void QGeoMapObject::setVisible(bool visible)
 {
     if (d_ptr->isVisible != visible) {
         d_ptr->isVisible = visible;
+        d_ptr->graphicsItem->setVisible(visible);
         emit visibleChanged(d_ptr->isVisible);
     }
 }
