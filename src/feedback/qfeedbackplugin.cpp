@@ -240,6 +240,8 @@ private:
             //the file couldn't be loaded
             p->loadFinished(false);
             reportError(effect, QFeedbackEffect::UnknownError);
+            // Do a state change as well, (to stopped)
+            QMetaObject::invokeMethod(effect, "stateChanged");
             return;
         }
 

@@ -95,7 +95,7 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
         // Time to unload.
         if (fi.soundEffect) {
             mEffectMap.remove(fi.soundEffect);
-            delete fi.soundEffect;
+            fi.soundEffect->deleteLater();
         }
         mEffects.remove(effect);
     }
