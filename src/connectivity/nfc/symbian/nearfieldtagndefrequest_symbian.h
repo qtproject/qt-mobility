@@ -73,6 +73,6 @@ private:
     TNdefRequestType iType;
     QList<QNdefMessage> iMessages;
 
-    RPointerArray<CNdefMessage> iReadMessages;
+    QList<QNdefMessage> iReadMessages;
     };
 #endif

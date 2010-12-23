@@ -83,16 +83,15 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
         LOG("result is "<<result);
         LOG("clear the buffer");
         iResponse->Zero();
-        iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
+        iDecodedResponses.append(iOperator->decodeResponse(iCommands.at(iCurrentCommand - 1), result)); 
     }
     else
     {
-        iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
-        // error occured, don't execute rest commands
-        for (; iCurrentCommand < iCommands.count(); ++iCurrentCommand)
+        // error occurs
+        LOG("error occurs, append QVariant() to rest list");
+        for (--iCurrentCommand; iCurrentCommand < iCommands.count(); ++iCurrentCommand)
         {
-            QByteArray nullResult;
-            iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand), nullResult);
+            iDecodedResponses.append(QVariant());
         }
     }
 
@@ -113,6 +112,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
 void NearFieldTagCommandsRequest::HandleResponse(TInt /*aError*/)
 {
     BEGIN
+    iOperator->HandleResponse(iId, iDecodedResponses);
     END
 }
 
@@ -130,10 +130,6 @@ void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
     if (aError != KErrNone)
     {
         iOperator->EmitError(aError, iId);
-    }
-    else
-    {
-        iOperator->EmitRequestCompleted(iId);
     }
     END
 }

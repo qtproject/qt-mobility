@@ -277,38 +277,11 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
     return result;
 }
 
-bool QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse;
-    if (!response.isNull())
-    {
-        decodedResponse =  response;
-    }
-    // to handle commands
-    QVariant existResponse = requestResponse(id);
-    if (existResponse.isValid())
-    {
-        // there is existed id. So it must be a sendcommands request response.
-        if (existResponse.type() == QVariant::List)
-        {
-            QVariantList list = existResponse.toList();
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-        else
-        {
-            QVariantList list;
-            list.append(existResponse);
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-    }
-    else
-    {
-        setResponseForRequest(id, decodedResponse);
-    }
-    return true;
+    QVariant decodedResponse = decodeResponse(command, response);
+    setResponseForRequest(id, decodedResponse);
 }    
 
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"

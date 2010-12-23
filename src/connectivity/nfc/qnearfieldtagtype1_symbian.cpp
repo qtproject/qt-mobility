@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-static QVariant decodeResponse(const QByteArray &command, const QByteArray &response)
+QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, const QByteArray &response)
 {
     BEGIN
     END
@@ -111,7 +111,7 @@ static QVariant decodeResponse(const QByteArray &command, const QByteArray &resp
     }
     }
 
-    return QVariant();
+    return response;
 }
 /*!
     \class QNearFieldTagType1Symbian
@@ -426,7 +426,7 @@ bool QNearFieldTagType1Symbian::waitForRequestCompleted(const RequestId &id, int
     return _waitForRequestCompleted(id, msecs);
 }
 
-bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     BEGIN
     QVariant decodedResponse;
@@ -434,35 +434,13 @@ bool QNearFieldTagType1Symbian::handleTagOperationResponse(const RequestId &id, 
     {
         decodedResponse = decodeResponse(command, response);
     }
-    // to handle commands
-    QVariant existResponse = requestResponse(id);
-    if (existResponse.isValid())
-    {
-        LOG("this is one command response in sendCommands");
-        // there is existed id. So it must be a sendcommands request response.
-        if (existResponse.type() == QVariant::List)
-        {
-            LOG("already has some commands response");
-            QVariantList list = existResponse.toList();
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-        else
-        {
-            LOG("second command response of sendCommands"); 
-            QVariantList list;
-            list.append(existResponse);
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-    }
     else
     {
-        LOG("normal command response");
-        setResponseForRequest(id, decodedResponse);
+        decodedResponse = response;
     }
+
+    setResponseForRequest(id, decodedResponse);
     END
-    return true;
 }
 
 #include "moc_qnearfieldtagtype1_symbian_p.cpp"

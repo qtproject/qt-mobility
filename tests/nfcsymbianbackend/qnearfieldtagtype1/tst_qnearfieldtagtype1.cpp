@@ -22,6 +22,16 @@ private Q_SLOTS:
 
     void testRawCommand_data();
     void testRawCommand();
+    
+    void testWaitRawCommand_data();
+    void testWaitRawCommand();
+    
+    void testMixRawCommandAndNdefAccess_data();
+    void testMixRawCommandAndNdefAccess();
+    
+    void testWaitMixRawCommandAndNdefAccess_data();
+    void testWaitMixRawCommandAndNdefAccess();
+    
     void cleanupTestCase(){}
 private:
     QNfcTagTestCommon<QtMobility::QNearFieldTagType1> tester;
@@ -94,20 +104,12 @@ void tst_qnearfieldtagtype1::testNdefAccess()
     tester.testNdefAccess();
 }
 
-void tst_qnearfieldtagtype1::testRawCommand()
-{
-    QFETCH(QStringList, dsp);
-    QFETCH(QVariantList, cmd);
-    QFETCH(QVariantList, rsp);
-    tester.testRawCommand(dsp, cmd, rsp); 
-}
-
 void tst_qnearfieldtagtype1::testRawCommand_data()
 {
     QTest::addColumn<QStringList>("dsp");
     QTest::addColumn<QVariantList>("cmd");
     QTest::addColumn<QVariantList>("rsp");
-
+    
     QStringList dsp;
     QVariantList cmd;
     QVariantList rsp;
@@ -120,6 +122,96 @@ void tst_qnearfieldtagtype1::testRawCommand_data()
     rsp.append(dataPool["READ ALL"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+void tst_qnearfieldtagtype1::testRawCommand()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testRawCommand(dsp, cmd, rsp); 
+}
+
+void tst_qnearfieldtagtype1::testWaitRawCommand_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+
+void tst_qnearfieldtagtype1::testWaitRawCommand()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testWaitRawCommand(dsp, cmd, rsp);
+}
+
+void tst_qnearfieldtagtype1::testMixRawCommandAndNdefAccess_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+void tst_qnearfieldtagtype1::testMixRawCommandAndNdefAccess()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testMixRawCommandAndNdefAccess(dsp, cmd, rsp);
+}
+
+void tst_qnearfieldtagtype1::testWaitMixRawCommandAndNdefAccess_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+
+void tst_qnearfieldtagtype1::testWaitMixRawCommandAndNdefAccess()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testWaitMixRawCommandAndNdefAccess(dsp, cmd, rsp);
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype1);

@@ -82,7 +82,8 @@ public:
         return _accessMethods();
     }
     
-    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
 
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
     

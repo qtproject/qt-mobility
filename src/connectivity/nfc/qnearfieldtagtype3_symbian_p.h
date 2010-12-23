@@ -94,7 +94,8 @@ private:
 
     // TODO: need serviceBlockList as an input parameter, this information can be rebuild from command binary
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
-    bool handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
+    QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }
 private:
     QByteArray mIDm;
     friend class QNearFieldTagImpl<QNearFieldTagType3Symbian>;

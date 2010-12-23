@@ -106,13 +106,16 @@ public:
     // raw command/commands
     void testRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
 
-#if 0
+
     void testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+
 
     // mix ndef access and raw command 
     void testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
-    void testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+    
 
+    void testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet);
+#if 0
     // multiple wait
     void testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, const QString& commandDiscriptionInSlot, const QByteArray& commandInSlot, const QVariant& responseInSlot);
 
@@ -257,6 +260,9 @@ void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& discription, cons
     QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
     QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
 
+    okSpy.clear();
+    errSpy.clear();
+    
     QList<QNearFieldTarget::RequestId> requests;
 
     for(int i = 0; i < responseSet.count(); ++i)
@@ -303,22 +309,229 @@ void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& discription, cons
     removeTarget();
 }
 
-#if 0
+
 template<typename TAG>
 void QNfcTagTestCommon<TAG>::testWaitRawCommand(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
+    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitRawCommand", "count mismatch");
+    Q_ASSERT_X(discription.count() > 0, "testWaitRawCommand", "list is empty");
+    
+    touchTarget();
+    int okCount = 0;
+    int errCount = 0;
+    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    
+    okSpy.clear();
+    errSpy.clear();
+    
+    QList<QNearFieldTarget::RequestId> requests;
+    
+    for(int i = 0; i < responseSet.count(); ++i)
+    {
+        (responseSet.at(i).isValid()) ? ++okCount : ++errCount;
+    } 
+    
+    for (int i = 0; i < discription.count(); ++i)
+    {
+        qDebug()<<"test "<<discription.at(i)<<endl;
+        // sendCommand
+        if (commandSet.at(i).type() == QVariant::ByteArray)
+        {
+            QByteArray command = commandSet.at(i).toByteArray();
+            QNearFieldTarget::RequestId id = target->sendCommand(command);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        else // sendCommands
+        {
+            QVariantList lists = commandSet.at(i).toList();
+            QList<QByteArray> commands;
+            for (int j = 0; j < lists.count(); ++j)
+            {
+                commands.append(lists.at(j).toByteArray());
+            }
+            QNearFieldTarget::RequestId id = target->sendCommands(commands);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+    }
+    
+    // wait first request id.
+    if (responseSet.first().isValid())
+    {
+        QVERIFY(target->waitForRequestCompleted(requests.first()));
+    }
+    else
+    {
+        QVERIFY(!(target->waitForRequestCompleted(requests.first())));
+    }
+    
+    QVERIFY(!(target->waitForRequestCompleted(requests.first())));
+    qDebug()<<"signal count check"<<endl;
+    
+    QTRY_COMPARE(errSpy.count(), errCount);
+    qDebug()<<"get "<<errSpy.count()<<" err signal"<<endl;
+    //QTRY_COMPARE(okSpy.count(), okCount);
+    qDebug()<<"get "<<okSpy.count()<<" ok signal"<<endl;
+    
+    qDebug()<<"response check"<<endl;
+    for(int i = 0; i < requests.count(); ++i)
+    {
+        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
+    }
+    
+    removeTarget();    
 }
+
 
 template<typename TAG>
 void QNfcTagTestCommon<TAG>::testMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
+    Q_ASSERT_X(discription.count() == commandSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(discription.count() == responseSet.count(), "testMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(discription.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    
+    touchTarget();
+    int okCount = 0;
+    int errCount = 0;
+    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage))); 
+    QList<QNearFieldTarget::RequestId> requests;
+    
+    for(int i = 0; i < responseSet.count(); ++i)
+    {
+        (responseSet.at(i).isValid()) ? ++okCount : ++errCount;
+    } 
+    
+    for (int i = 0; i < discription.count(); ++i)
+    {
+        qDebug()<<"test "<<discription.at(i)<<endl;
+        // sendCommand
+        if (commandSet.at(i).type() == QVariant::ByteArray)
+        {
+            QByteArray command = commandSet.at(i).toByteArray();
+            QNearFieldTarget::RequestId id = target->sendCommand(command);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        else // sendCommands
+        {
+            QVariantList lists = commandSet.at(i).toList();
+            QList<QByteArray> commands;
+            for (int j = 0; j < lists.count(); ++j)
+            {
+                commands.append(lists.at(j).toByteArray());
+            }
+            QNearFieldTarget::RequestId id = target->sendCommands(commands);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        
+        if (0 == i)
+        {
+            target->readNdefMessages();
+        }
+    }
+    
+    qDebug()<<"signal count check"<<endl;
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
+    QVERIFY(ndefMessage.count()>0);
+    
+    qDebug()<<"response check"<<endl;
+    for(int i = 0; i < requests.count(); ++i)
+    {
+        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
+    }
+    
+    removeTarget();
 }
 
 template<typename TAG>
 void QNfcTagTestCommon<TAG>::testWaitMixRawCommandAndNdefAccess(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet)
 {
+    Q_ASSERT_X(discription.count() == commandSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
+    Q_ASSERT_X(discription.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
+    
+    touchTarget();
+    int okCount = 0;
+    int errCount = 0;
+    QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    QSignalSpy ndefMessageReadSpy(target, SIGNAL(ndefMessageRead(QNdefMessage))); 
+    QList<QNearFieldTarget::RequestId> requests;
+    
+    for(int i = 0; i < responseSet.count(); ++i)
+    {
+        (responseSet.at(i).isValid()) ? ++okCount : ++errCount;
+    } 
+    
+    for (int i = 0; i < discription.count(); ++i)
+    {
+        qDebug()<<"test "<<discription.at(i)<<endl;
+        // sendCommand
+        if (commandSet.at(i).type() == QVariant::ByteArray)
+        {
+            QByteArray command = commandSet.at(i).toByteArray();
+            QNearFieldTarget::RequestId id = target->sendCommand(command);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        else // sendCommands
+        {
+            QVariantList lists = commandSet.at(i).toList();
+            QList<QByteArray> commands;
+            for (int j = 0; j < lists.count(); ++j)
+            {
+                commands.append(lists.at(j).toByteArray());
+            }
+            QNearFieldTarget::RequestId id = target->sendCommands(commands);
+            QVERIFY(id.isValid());
+            requests.append(id);
+        }
+        
+        if (0 == i)
+        {
+            target->readNdefMessages();
+        }
+    }
+    
+    // wait first request id.
+    if (responseSet.first().isValid())
+    {
+        QVERIFY(target->waitForRequestCompleted(requests.first()));
+    }
+    else
+    {
+        QVERIFY(!(target->waitForRequestCompleted(requests.first())));
+    }
+    
+    qDebug()<<"signal count check"<<endl;
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+    QTRY_VERIFY(!ndefMessageReadSpy.isEmpty());
+    const QNdefMessage& ndefMessage(ndefMessageReadSpy.first().at(0).value<QNdefMessage>());
+    QVERIFY(ndefMessage.count()>0);
+    
+    qDebug()<<"response check"<<endl;
+    for(int i = 0; i < requests.count(); ++i)
+    {
+        qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
+        QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
+    }
+    
+    removeTarget();
 }
 
+#if 0
 template<typename TAG>
 void QNfcTagTestCommon<TAG>::testWaitInSlot(const QStringList& discription, const QVariantList& commandSet, const QVariantList& responseSet, const QString& commandDiscriptionInSlot, const QByteArray& commandInSlot, const QVariant& responseInSlot)
 {

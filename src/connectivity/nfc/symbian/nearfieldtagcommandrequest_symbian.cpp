@@ -83,10 +83,6 @@ void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
     {
         iOperator->EmitError(aError, iId);
     }
-    else
-    {
-        iOperator->EmitRequestCompleted(iId);
-    }
     END
 }
 
@@ -94,12 +90,7 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
 {
     BEGIN
     LOG(aError);
-    if (aError != KErrNone)
-    {
-        QByteArray emptyResult;
-        iOperator->HandleResponse(iId, iCommand, emptyResult);
-    }
-    else
+    if (aError == KErrNone)
     {
         QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
         iOperator->HandleResponse(iId, iCommand, result);

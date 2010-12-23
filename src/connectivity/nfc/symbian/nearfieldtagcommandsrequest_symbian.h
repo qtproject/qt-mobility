@@ -60,6 +60,7 @@ public:
 private:
     void CommandComplete(TInt aError);
     QList<QByteArray> iCommands;
+    QVariantList iDecodedResponses;
     // Not own
     RBuf8 * iResponse;
     int iCurrentCommand;

@@ -54,15 +54,16 @@ QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 {
 }
 
-static QVariant decodeResponse(const QByteArray &response)
+QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, const QByteArray& response)
 {
+    Q_UNUSED(command);
     if (!response.isEmpty())
     {
         return quint8(response.at(0)) == 0x0a;
     }
     else
     {
-        return QVariant();
+        return response;
     }
 }
 
@@ -189,34 +190,11 @@ QByteArray QNearFieldTagType2Symbian::uid() const
     return _uid();
 }
 
-bool QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
     Q_UNUSED(command);
-    QVariant decodedResponse = decodeResponse(response);
-    // to handle commands
-    QVariant existResponse = requestResponse(id);
-    if (existResponse.isValid())
-    {
-        // there is existed id. So it must be a sendcommands request response.
-        if (existResponse.type() == QVariant::List)
-        {
-            QVariantList list = existResponse.toList();
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-        else
-        {
-            QVariantList list;
-            list.append(existResponse);
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-    }
-    else
-    {
-        setResponseForRequest(id, decodedResponse);
-    }
-    return true;
+    QVariant decodedResponse = decodeResponse(command, response);
+    setResponseForRequest(id, decodedResponse);
 }
 
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"

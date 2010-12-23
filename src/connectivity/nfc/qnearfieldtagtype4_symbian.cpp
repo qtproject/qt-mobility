@@ -158,38 +158,13 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
                        
 }
 
-bool QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
+    BEGIN
     Q_UNUSED(command);
-    QVariant decodedResponse;
-    if (!response.isNull())
-    {
-        decodedResponse =  response;
-    }
-    // to handle commands
-    QVariant existResponse = requestResponse(id);
-    if (existResponse.isValid())
-    {
-        // there is existed id. So it must be a sendcommands request response.
-        if (existResponse.type() == QVariant::List)
-        {
-            QVariantList list = existResponse.toList();
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-        else
-        {
-            QVariantList list;
-            list.append(existResponse);
-            list.append(decodedResponse);
-            setResponseForRequest(id, list);
-        }
-    }
-    else
-    {
-        setResponseForRequest(id, decodedResponse);
-    }
-    return true;
+    QVariant decodedResponse = decodeResponse(command, response);
+    setResponseForRequest(id, decodedResponse);
+    END
 }
 
 #include "moc_qnearfieldtagtype4_symbian_p.cpp"

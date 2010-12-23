@@ -101,7 +101,9 @@ public: // From MNearFieldTargetOperation
     bool IssueNextRequest(QNearFieldTarget::RequestId aId);
     void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId AllocateRequestId();
-    bool HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
+    void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response);
+    void HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList& response);
+    QVariant decodeResponse(const QByteArray& command, const QByteArray& response);
 
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
@@ -420,14 +422,31 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::AllocateRequestId()
 } 
 
 template<typename TAGTYPE>
-bool QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
+void QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response)
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    tag->handleTagOperationResponse(id, command, response);
+    END
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList& response) 
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+    tag->setResponseForRequest(id, response);
+    END
+}
+
+template<typename TAGTYPE>
+QVariant QNearFieldTagImpl<TAGTYPE>::decodeResponse(const QByteArray& command, const QByteArray& response)
 {
     BEGIN
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
     END
-    return tag->handleTagOperationResponse(id, command, response);
+    return tag->decodeResponse(command, response);
 }
-
 
 template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)

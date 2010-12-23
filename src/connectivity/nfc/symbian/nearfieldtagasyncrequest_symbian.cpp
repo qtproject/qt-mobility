@@ -149,6 +149,7 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     LOG("Error is "<<aError);
     
     HandleResponse(aError);
+
     iOperator->IssueNextRequest(iId);
 
     if (iWait) 
@@ -184,7 +185,6 @@ void MNearFieldTagAsyncRequest::ProcessTimeout()
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN
-    Q_UNUSED(aError);
     if (iTimer)
     {
         LOG("cancel timer");
