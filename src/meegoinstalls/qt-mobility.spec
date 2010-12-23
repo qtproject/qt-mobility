@@ -16,8 +16,7 @@ Source0:    http://get.qt.nokia.com/qt/add-ons/%{name}-opensource-src-%{version}
 Source100:  qt-mobility.yaml
 Patch0:     no_rpath.patch
 Patch1:     fix_translations_install_path.patch
-Patch2:     enable_pkgconfig_support.patch
-Patch3:     enable_camerabin_with_meego_target.patch
+Patch2:     enable_camerabin_with_meego_target.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -441,10 +440,8 @@ This package contains Qt Mobility translations.
 %patch0 -p1
 # fix_translations_install_path.patch
 %patch1 -p1
-# enable_pkgconfig_support.patch
-%patch2 -p1
 # enable_camerabin_with_meego_target.patch
-%patch3 -p1
+%patch2 -p1
 # >> setup
 # << setup
 
