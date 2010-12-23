@@ -207,18 +207,29 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return QGeoBoundingBox();
 
+    d_ptr->mapData->d_ptr->updateTransforms();
     QTransform trans = d_ptr->mapData->d_ptr->latLonTrans.value(this);
 
     QRectF bounds = d_ptr->graphicsItem->boundingRect();
     QPolygonF poly = bounds * trans;
+
     QRectF latLonBounds = poly.boundingRect();
+    QPointF topLeft = latLonBounds.bottomLeft();
+    if (topLeft.x() > 180.0)
+        topLeft.setX(topLeft.x() - 360.0);
+    if (topLeft.x() < -180.0)
+        topLeft.setX(topLeft.x() + 360.0);
 
-    QGeoCoordinate topLeft(latLonBounds.topLeft().y(),
-                           latLonBounds.topLeft().x());
-    QGeoCoordinate bottomRight(latLonBounds.bottomRight().y(),
-                               latLonBounds.bottomRight().x());
+    QPointF bottomRight = latLonBounds.topRight();
+    if (bottomRight.x() > 180.0)
+        bottomRight.setX(bottomRight.x() - 360.0);
+    if (bottomRight.x() < -180.0)
+        bottomRight.setX(bottomRight.x() + 360.0);
 
-    return QGeoBoundingBox(topLeft, bottomRight);
+    QGeoCoordinate tlc(topLeft.y(), topLeft.x());
+    QGeoCoordinate brc(bottomRight.y(), bottomRight.x());
+
+    return QGeoBoundingBox(tlc, brc);
 }
 
 /*!
@@ -230,16 +241,22 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return false;
 
-    QTransform trans = d_ptr->mapData->d_ptr->latLonTrans.value(this);
-    bool ok;
-    QTransform inv = trans.inverted(&ok);
-    if (!ok)
-        return false;
-
+    d_ptr->mapData->d_ptr->updateTransforms();
     QPointF latLonPoint(coordinate.longitude(), coordinate.latitude());
-    QPointF localPoint = latLonPoint * inv;
 
-    return d_ptr->graphicsItem->contains(localPoint);
+    QList<QTransform> transList = d_ptr->mapData->d_ptr->latLonTrans.values(this);
+    foreach (QTransform trans, transList) {
+        bool ok;
+        QTransform inv = trans.inverted(&ok);
+        if (!ok)
+            continue;
+
+        QPointF localPoint = latLonPoint * inv;
+
+        if (d_ptr->graphicsItem->contains(localPoint))
+            return true;
+    }
+    return false;
 }
 
 /*!

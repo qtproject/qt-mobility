@@ -101,6 +101,7 @@ public:
     virtual void updateLatLonTransform(QGeoMapObject *object);
     virtual void updatePixelTransform(QGeoMapObject *object);
     void clearObjects();
+    void updateTransforms();
 
     virtual QPointF coordinateToScreenPosition(double lon, double lat) const;
 

@@ -372,6 +372,8 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     QList<QGeoMapObject*> results;
     QSet<QGeoMapObject*> considered;
 
+    d_ptr->updateTransforms();
+
     QList<QGraphicsItem*> pixelItems;
     pixelItems = d_ptr->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
                                                  screenPosition + QPointF(1,1)),
@@ -382,7 +384,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
         QGeoMapObject *object = d_ptr->pixelItems.value(item);
         Q_ASSERT(object);
 
-        if (!considered.contains(object)) {
+        if (object->isVisible() && !considered.contains(object)) {
             QList<QTransform> trans = d_ptr->pixelTrans.values(object);
             bool contains = false;
 
@@ -415,6 +417,9 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     QList<QGeoMapObject*> results;
+    QSet<QGeoMapObject*> considered;
+
+    d_ptr->updateTransforms();
 
     QList<QGraphicsItem*> pixelItems = d_ptr->pixelScene->items(screenRect,
                                                                 Qt::IntersectsItemShape,
@@ -424,24 +429,28 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
         QGeoMapObject *object = d_ptr->pixelItems.value(item);
         Q_ASSERT(object);
 
-        QList<QTransform> trans = d_ptr->pixelTrans.values(object);
-        bool contains = false;
+        if (object->isVisible() && !considered.contains(object)) {
+            QList<QTransform> trans = d_ptr->pixelTrans.values(object);
+            bool contains = false;
 
-        foreach (QTransform t, trans) {
-            bool ok;
-            QTransform inv = t.inverted(&ok);
-            if (ok) {
-                QPolygonF testPoly = screenRect * inv;
-                QPainterPath testPath;
-                testPath.addPolygon(testPoly);
+            foreach (QTransform t, trans) {
+                bool ok;
+                QTransform inv = t.inverted(&ok);
+                if (ok) {
+                    QPolygonF testPoly = screenRect * inv;
+                    QPainterPath testPath;
+                    testPath.addPolygon(testPoly);
 
-                if (object->graphicsItem()->shape().intersects(testPath))
-                    contains = true;
+                    if (object->graphicsItem()->shape().intersects(testPath))
+                        contains = true;
+                }
             }
-        }
 
-        if (contains)
-            results << object;
+            if (contains)
+                results << object;
+
+            considered.insert(object);
+        }
     }
 
     return results;
@@ -524,13 +533,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
 
     QRectF target = option ? option->rect : QRectF(QPointF(0,0), d_ptr->windowSize);
 
-    if (d_ptr->zoomOutOfDate)
-        d_ptr->updateLatLonTransforms();
-    if (d_ptr->pixelsOutOfDate)
-        d_ptr->updatePixelTransforms();
-
-    d_ptr->zoomOutOfDate = false;
-    d_ptr->pixelsOutOfDate = false;
+    d_ptr->updateTransforms();
 
     QList<QGraphicsItem*> items = d_ptr->pixelScene->items(target, Qt::IntersectsItemShape,
                                                            Qt::DescendingOrder);
@@ -541,7 +544,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
     foreach (QGraphicsItem *item, items) {
         QGeoMapObject *object = d_ptr->pixelItems.value(item);
         Q_ASSERT(object);
-        if (!objsDone.contains(object)) {
+        if (object->isVisible() && !objsDone.contains(object)) {
             foreach (QTransform trans, d_ptr->pixelTrans.values(object)) {
                 painter->setTransform(baseTrans * trans);
 
@@ -721,13 +724,10 @@ void QGeoMapDataPrivate::addObject(QGeoMapObject *object)
 {
     containerObject->addChildObject(object);
     QGeoMapGroupObject *group = qobject_cast<QGeoMapGroupObject*>(object);
-    if (group) {
-        zoomOutOfDate = true;
-        pixelsOutOfDate = true;
-        emit q_ptr->updateMapDisplay();
-    } else {
-        forceUpdate(object);
-    }
+
+    zoomOutOfDate = true;
+    pixelsOutOfDate = true;
+    emit q_ptr->updateMapDisplay();
 }
 
 void QGeoMapDataPrivate::removeObject(QGeoMapObject *object)
@@ -829,16 +829,8 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     } else if (object->units() == QGeoMapObject::DegreeUnit) {
         latLon.translate(origin.longitude(), origin.latitude());
     } else if (object->units() == QGeoMapObject::PixelUnit) {
-        QPointF pixelOrigin = q_ptr->coordinateToScreenPosition(origin);
-        bool panned = false;
-        QGeoCoordinate oldCenter = q_ptr->center();
-
-        if (!QRectF(QPointF(0,0),windowSize).contains(pixelOrigin)) {
-            // nasty hack here!
-            q_ptr->setCenter(origin);
-            pixelOrigin = q_ptr->coordinateToScreenPosition(origin);
-            panned = true;
-        }
+        QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
+                                                               origin.latitude());
 
         QPolygonF local(object->graphicsItem()->boundingRect());
         QPolygonF wgs;
@@ -853,12 +845,20 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         local.remove(4);
         wgs.remove(4);
 
+        // perform wrapping
+        if (wgs.at(2).x() < wgs.at(3).x()) {
+            QPointF topRight = wgs.at(1);
+            topRight.setX(topRight.x() + 360.0);
+            wgs.replace(1, topRight);
+
+            QPointF bottomRight = wgs.at(2);
+            bottomRight.setX(bottomRight.x() + 360.0);
+            wgs.replace(2, bottomRight);
+        }
+
         bool ok = QTransform::quadToQuad(local, wgs, latLon);
         if (!ok)
             return;
-
-        if (panned)
-            q_ptr->setCenter(oldCenter);
     }
 
     latLonTrans.remove(object);
@@ -1061,6 +1061,17 @@ void QGeoMapDataPrivate::forceUpdate(QGeoMapObject *obj)
         foreach (QRectF rect, rectsToUpdate)
             emit q_ptr->updateMapDisplay(rect);
     }
+}
+
+void QGeoMapDataPrivate::updateTransforms()
+{
+    if (zoomOutOfDate)
+        updateLatLonTransforms();
+    if (pixelsOutOfDate)
+        updatePixelTransforms();
+
+    zoomOutOfDate = false;
+    pixelsOutOfDate = false;
 }
 
 void QGeoMapDataPrivate::updateSender()

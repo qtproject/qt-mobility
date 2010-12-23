@@ -73,6 +73,8 @@ public:
     QGeoBoundingCircle circle() const;
     void setCircle(const QGeoBoundingCircle &circle);
 
+    bool contains(const QGeoCoordinate &coordinate) const;
+
     QGeoCoordinate center() const;
     void setCenter(const QGeoCoordinate &center);
 

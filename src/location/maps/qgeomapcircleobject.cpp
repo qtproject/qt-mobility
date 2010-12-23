@@ -149,6 +149,14 @@ QPen QGeoMapCircleObject::pen() const
 }
 
 /*!
+  \reimp
+  */
+bool QGeoMapCircleObject::contains(const QGeoCoordinate &coordinate) const
+{
+    return d_ptr->circle.contains(coordinate);
+}
+
+/*!
     \property QGeoMapCircleObject::brush
     \brief This property holds the brush that will be used to draw this object.
 
