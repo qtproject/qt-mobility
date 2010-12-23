@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
   int median = list2[mid];
   */
 template<typename RandomAccessIterator, typename LessThan>
-QM_AUTOTEST_EXPORT inline void qPartialSort(RandomAccessIterator start, RandomAccessIterator end,
+inline void qPartialSort(RandomAccessIterator start, RandomAccessIterator end,
         RandomAccessIterator from, RandomAccessIterator to, LessThan lessThan)
 {
     // This code is based on qSort
@@ -154,14 +154,14 @@ inline void qPartialSortHelper(RandomAccessIterator start, RandomAccessIterator 
 }
 
 template<typename RandomAccessIterator>
-QM_AUTOTEST_EXPORT inline void qPartialSort(RandomAccessIterator start, RandomAccessIterator end,
+inline void qPartialSort(RandomAccessIterator start, RandomAccessIterator end,
         RandomAccessIterator from, RandomAccessIterator to)
 {
     qPartialSortHelper(start, end, from, to, *start);
 }
 
 template<typename Container>
-QM_AUTOTEST_EXPORT inline void qPartialSort(Container& container, int from, int to)
+inline void qPartialSort(Container& container, int from, int to)
 {
     qPartialSort(container.begin(), container.end(), container.begin()+from, container.begin()+to);
 }
