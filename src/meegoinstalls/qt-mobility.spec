@@ -17,8 +17,7 @@ Source100:  qt-mobility.yaml
 Patch0:     no_rpath.patch
 Patch1:     fix_translations_install_path.patch
 Patch2:     enable_pkgconfig_support.patch
-Patch3:     add_location_api_meego_implementation_using_geoclue.patch
-Patch4:     enable_camerabin_with_meego_target.patch
+Patch3:     enable_camerabin_with_meego_target.patch
 Requires:   libqtconnectivity1 = %{version}
 Requires:   libqtcontacts1 = %{version}
 Requires:   libqtfeedback1 = %{version}
@@ -444,10 +443,8 @@ This package contains Qt Mobility translations.
 %patch1 -p1
 # enable_pkgconfig_support.patch
 %patch2 -p1
-# add_location_api_meego_implementation_using_geoclue.patch
-%patch3 -p1
 # enable_camerabin_with_meego_target.patch
-%patch4 -p1
+%patch3 -p1
 # >> setup
 # << setup
 
@@ -674,7 +671,6 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 %{_includedir}/QtContacts/QContactManagerEngine
 %{_includedir}/QtContacts/QContactManagerEngineFactory
 %{_includedir}/QtContacts/QContactManagerEngineV2
-%{_includedir}/QtContacts/QContactManagerEngineV3
 %{_includedir}/QtContacts/QContactName
 %{_includedir}/QtContacts/QContactNickname
 %{_includedir}/QtContacts/QContactNote
