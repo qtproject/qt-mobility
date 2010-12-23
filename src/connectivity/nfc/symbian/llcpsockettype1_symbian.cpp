@@ -74,7 +74,9 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
       iWait(NULL),
       iTimer(NULL),
       iWaitStatus(ENone),
-      iConnLessStarted(EFalse),
+      iPortBinded(EFalse),
+      iLocalPort(0),
+      iRemotePort(0),
       iCallback(aCallback),
       iRemotePortNum(-1)
     {
@@ -101,6 +103,13 @@ CLlcpSocketType1::~CLlcpSocketType1()
     
     if ( iLlcp )
         {
+        /*
+        if (iPortBinded)
+            {
+            iLlcp->StopListeningConnLessRequest(iLocalPort);
+            }
+        */
+        iLlcp->StopListeningConnLessRequest(iLocalPort);
         delete iLlcp;
         iLlcp = NULL;
         }
@@ -135,30 +144,29 @@ void CLlcpSocketType1::Cleanup()
     END
     }
 
-bool CLlcpSocketType1::Bind(TInt8 aPortNum)
+bool CLlcpSocketType1::Bind(TUint8 aPortNum)
     {
     BEGIN
-    bool bindOK = ETrue;
+    bool bindOK = EFalse;
     TInt error = KErrNone;
-    if ( !iConnLessStarted )
+    qDebug() << "iPortBinded value: " << iPortBinded;
+    if ( !iPortBinded )
         {
         // remote connection created at frame received
+        
+        // David comment this out for debug
         TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,aPortNum ));
+        qDebug() << "StartListeningConnLessRequestL result: " << error;
         if (KErrNone == error)
             {
-            iConnLessStarted = ETrue;
+            iPortBinded = ETrue;
+            iLocalPort = aPortNum;
+            bindOK = ETrue;
             }
         }   
-    else
-        {
-        bindOK = EFalse;
-        }
-    
-    if (bindOK)
-        {
-        error == KErrNone ? bindOK =  ETrue :  bindOK =  EFalse;
-        }
     END
+    qDebug() << "PortNum & PortBinded: " << aPortNum 
+             << " & " << iPortBinded << " $ " << bindOK;
     return bindOK;
     }
  
@@ -166,11 +174,17 @@ bool CLlcpSocketType1::Bind(TInt8 aPortNum)
     Sends the datagram at aData  to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
-TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TInt8 aPortNum)
+TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
     {
     BEGIN
     TInt val = -1;
     TInt error = KErrNone;
+
+    bool ok = iConnection != NULL && iRemotePort != aPortNum;
+    qDebug() << "iConnection: " << iConnection << " " << iRemotePort << " "
+             << aPortNum << " " << ok;
+    if (iConnection != NULL && iRemotePort != aPortNum)
+        return val;
     
     if (KErrNone == CreateConnection(aPortNum))
         {
@@ -321,7 +335,7 @@ void CLlcpSocketType1::StopWaitNow(TWaitStatus aWaitStatus)
     Creating MLlcpConnLessTransporter object if  connection type connectionless,
     Creating Creating wrapper for local peer connection.
 */
-TInt CLlcpSocketType1::CreateConnection(TInt8 portNum)
+TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
     {
     BEGIN
     TInt error = KErrNone;
@@ -332,9 +346,9 @@ TInt CLlcpSocketType1::CreateConnection(TInt8 portNum)
 
     TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
    
-    if ( error == KErrNone )
+    if ( error == KErrNone && KErrNone ==  CreateConnection(connType1))
         {
-        error = CreateConnection(connType1);
+          iRemotePort = portNum;
         }
     END
     return error;        

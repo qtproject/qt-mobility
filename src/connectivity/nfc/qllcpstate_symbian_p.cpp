@@ -506,7 +506,6 @@ qint64 QLLCPSocketState::ReadDatagram(char *data, qint64 maxSize,
     Q_UNUSED(maxSize);
     Q_UNUSED(target);
     Q_UNUSED(port);
-    m_socket->invokeError();
     BEGIN_END
     return -1;
 }
@@ -521,7 +520,6 @@ qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size,
     Q_UNUSED(size);
     Q_UNUSED(target);
     Q_UNUSED(port);
-    //m_socket->invokeError();
     BEGIN_END
     return -1;
 }
@@ -530,7 +528,6 @@ qint64 QLLCPSocketState::WriteDatagram(const char *data, qint64 size)
 {
     Q_UNUSED(data);
     Q_UNUSED(size);
-    //m_socket->invokeError();
     BEGIN_END
     return -1;
 }
