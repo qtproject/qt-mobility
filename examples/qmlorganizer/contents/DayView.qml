@@ -45,7 +45,7 @@ import QtMobility.organizer 1.1
 Rectangle
 {
     id:dayView
-    property variant itemIds:calendar.organizer.itemIds(calendar.currentDate)
+    property variant itemIds:calendar.organizer.itemIds(calendar.currentDate, new Date(calendar.year, calendar.month, calendar.day+1))
 
     anchors.fill: parent
 
