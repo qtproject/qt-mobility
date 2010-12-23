@@ -158,6 +158,7 @@ void tst_QFeedbackMMK::goodFile()
     QSignalSpy errorSpy(&fe, SIGNAL(error(QFeedbackEffect::ErrorType)));
     QSignalSpy stateSpy(&fe, SIGNAL(stateChanged()));
 
+    qDebug() << "URL for test data:" << url;
     fe.setSource(url);
 
     QTRY_COMPARE(fe.state(),  QFeedbackFileEffect::Loading);
