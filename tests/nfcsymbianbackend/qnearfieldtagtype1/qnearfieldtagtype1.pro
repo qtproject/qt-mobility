@@ -9,11 +9,13 @@ MOBILITY = connectivity
 
 TEMPLATE = app
 
-
 INCLUDEPATH += ../../../src/connectivity/nfc
 INCLUDEPATH += ../common
-HEADERS += ../common/qnfctagtestcommon.h
+HEADERS += ../common/qnfctagtestcommon.h \
+           ../common/qdummyslot.h
 
 SOURCES += tst_qnearfieldtagtype1.cpp \
-           ../common/qnfctagtestcommon.cpp
+           ../common/qnfctagtestcommon.cpp \
+           ../common/qdummyslot.cpp
+
 symbian:TARGET.CAPABILITY = ALL -TCB

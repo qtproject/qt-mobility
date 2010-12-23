@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include "qnearfieldtagtype1.h"
+#include "qnearfieldtarget.h"
 #include "qnfctestcommon.h"
 #include "qnfctestutil.h"
 
@@ -16,11 +16,13 @@ public:
     explicit QDummySlot(QObject *parent = 0);
 
 public slots:
-    void errorHandling(QNearFieldTarget::Error error);
+    void errorHandling(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId& id);
+    void requestCompletedHandling(const QNearFieldTarget::RequestId& id);
 public:
     // NOT Own
-    QNearFieldTagType1 * tag;
-    QNearFieldTarget::RequestId id;
+    QNearFieldTarget * tag;
+    QNearFieldTarget::RequestId iReqId;
+    QNearFieldTarget::RequestId iWaitId;
 };
 
 #endif // DUMMYSLOT_H

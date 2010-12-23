@@ -94,7 +94,7 @@ protected:
     CPeriodic * iTimer;
     TBool iRequestIssued;
     
-    TBool iCurrentRequestResult;
+    volatile bool * iCurrentRequestResult;
 private:
     static TInt TimeoutCallback(TAny * aObj);
     };

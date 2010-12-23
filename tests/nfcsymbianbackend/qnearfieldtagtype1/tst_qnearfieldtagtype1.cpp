@@ -32,6 +32,15 @@ private Q_SLOTS:
     void testWaitMixRawCommandAndNdefAccess_data();
     void testWaitMixRawCommandAndNdefAccess();
     
+    void testWaitInSlot_data();
+    void testWaitInSlot();
+
+    void testDeleteTargetBeforeAsyncRequestComplete_data();
+    void testDeleteTargetBeforeAsyncRequestComplete();
+
+    void testRemoveTargetBeforeAsyncRequestComplete_data();
+    void testRemoveTargetBeforeAsyncRequestComplete();
+
     void cleanupTestCase(){}
 private:
     QNfcTagTestCommon<QtMobility::QNearFieldTagType1> tester;
@@ -212,6 +221,87 @@ void tst_qnearfieldtagtype1::testWaitMixRawCommandAndNdefAccess()
     QFETCH(QVariantList, cmd);
     QFETCH(QVariantList, rsp);
     tester.testWaitMixRawCommandAndNdefAccess(dsp, cmd, rsp);
+}
+
+void tst_qnearfieldtagtype1::testWaitInSlot_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+void tst_qnearfieldtagtype1::testWaitInSlot()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testWaitInSlot(dsp, cmd, rsp);
+}
+
+void tst_qnearfieldtagtype1::testDeleteTargetBeforeAsyncRequestComplete_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+void tst_qnearfieldtagtype1::testDeleteTargetBeforeAsyncRequestComplete()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testDeleteTargetBeforeAsyncRequestComplete(dsp, cmd, rsp);
+}
+
+void tst_qnearfieldtagtype1::testRemoveTargetBeforeAsyncRequestComplete_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+void tst_qnearfieldtagtype1::testRemoveTargetBeforeAsyncRequestComplete()
+{
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testRemoveTargetBeforeAsyncRequestComplete(dsp, cmd, rsp);
 }
 
 QTEST_MAIN(tst_qnearfieldtagtype1);

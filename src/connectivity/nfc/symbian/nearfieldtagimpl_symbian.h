@@ -94,10 +94,10 @@ template <typename TAGTYPE>
 class QNearFieldTagImpl : public MNearFieldTargetOperation
 {
 public: // From MNearFieldTargetOperation
-    void DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback);
-    void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback);
+    bool DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback);
+    bool DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback);
     bool DoHasNdefMessages();
-    void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback);
+    bool DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback);
     bool IssueNextRequest(QNearFieldTarget::RequestId aId);
     void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId AllocateRequestId();
@@ -169,7 +169,7 @@ inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoCancelSendCommand()
 }
 
 template<>
-inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
+inline bool QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
 {
     BEGIN
     int error = KErrGeneral;
@@ -199,15 +199,17 @@ inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QB
             )
         }
     }
+
     if (error != KErrNone)
     {
         aCallback->CommandComplete(error);
-    }
+    } 
     END
+    return (error == KErrNone);
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback)
+bool QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback)
 {
     BEGIN
     int error = KErrGeneral;
@@ -222,16 +224,16 @@ void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallb
         LOG("error code is"<<error);
     }
 
-    if (KErrNone != error)
+    if (error != KErrNone)
     {
-        // This means the aysnc request doesn't issued. Directly invoke callback with the errore
         aCallback->ReadComplete(error, 0);
     }
     END
+    return (error == KErrNone);
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback)
+bool QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback)
 {
     BEGIN
     int error = KErrGeneral;
@@ -258,12 +260,12 @@ void QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &me
             result.Close();
         }
     }
-
-    if (KErrNone != error)
+    if (error != KErrNone)
     {
         aCallback->WriteComplete(error);
     }
     END
+    return (error == KErrNone);
 }
 
 template<typename TAGTYPE>
@@ -327,7 +329,7 @@ bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
+bool QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
 {
     BEGIN
     int error = KErrGeneral;
@@ -352,15 +354,16 @@ void QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearF
                     mResponse.Zero();
                 }
                 
-                User::LeaveIfError(tag->RawModeAccess(cmd, mResponse, TagConstValue<TAGTYPE>::Timeout));
+                error = tag->RawModeAccess(cmd, mResponse, TagConstValue<TAGTYPE>::Timeout);
             )
         }
     }
     if (error != KErrNone)
     {
         aCallback->CommandComplete(error);
-    }
+    } 
     END
+    return (error == KErrNone);
 }
 
 template<typename TAGTYPE>
@@ -495,9 +498,13 @@ void QNearFieldTagImpl<TAGTYPE>::_ndefMessages()
             LOG("the request will be issued at once");
             // issue the request
             mCurrentRequest = readNdefRequest;
+            mPendingRequestList.append(readNdefRequest);
             readNdefRequest->IssueRequest();
         }
-        mPendingRequestList.append(readNdefRequest);
+        else
+        {
+            mPendingRequestList.append(readNdefRequest);
+        }
     }
     END
 }
@@ -522,9 +529,13 @@ void QNearFieldTagImpl<TAGTYPE>::_setNdefMessages(const QList<QNdefMessage> &mes
             // issue the request
             LOG("the request will be issued at once");
             mCurrentRequest = writeNdefRequest;
+            mPendingRequestList.append(writeNdefRequest);
             writeNdefRequest->IssueRequest();
         }
-        mPendingRequestList.append(writeNdefRequest);
+        else
+        {
+            mPendingRequestList.append(writeNdefRequest);
+        }
     }
     // TODO: consider else
     END
@@ -550,9 +561,13 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommand(const QByte
             // issue the request
             LOG("the request will be issued at once");
             mCurrentRequest = rawCommandRequest;
+            mPendingRequestList.append(rawCommandRequest);
             rawCommandRequest->IssueRequest();
         }
-        mPendingRequestList.append(rawCommandRequest);
+        else
+        {
+            mPendingRequestList.append(rawCommandRequest);
+        }
     }
     // TODO: consider else
     END

@@ -54,10 +54,10 @@ class MNearFieldTagOperationCallback;
 class MNearFieldTargetOperation
     {
 public:
-    virtual void DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback) = 0;
-    virtual void DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback) = 0;
+    virtual bool DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback) = 0;
+    virtual bool DoSetNdefMessages(const QList<QNdefMessage> &messages, MNearFieldNdefOperationCallback * const aCallback) = 0;
     virtual bool DoHasNdefMessages() = 0;
-    virtual void DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback) = 0;
+    virtual bool DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback) = 0;
     
     virtual void DoCancelSendCommand() = 0;
     virtual void DoCancelNdefAccess() = 0;
