@@ -204,6 +204,17 @@ void QGeoMapGroupObject::clearChildObjects()
 /*!
     \reimp
 */
+void QGeoMapGroupObject::setVisible(bool visible)
+{
+    for (int i = 0; i < d_ptr->children.size(); ++i)
+        d_ptr->children[i]->setVisible(visible);
+
+    QGeoMapObject::setVisible(visible);
+}
+
+/*!
+    \reimp
+*/
 void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 {
 

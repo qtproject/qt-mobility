@@ -438,8 +438,13 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
                 QTransform inv = t.inverted(&ok);
                 if (ok) {
                     QPolygonF testPoly = screenRect * inv;
+
                     QPainterPath testPath;
-                    testPath.addPolygon(testPoly);
+                    testPath.moveTo(testPoly[0]);
+                    testPath.lineTo(testPoly[1]);
+                    testPath.lineTo(testPoly[2]);
+                    testPath.lineTo(testPoly[3]);
+                    testPath.closeSubpath();
 
                     if (object->graphicsItem()->shape().intersects(testPath))
                         contains = true;
@@ -554,6 +559,8 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
             objsDone.insert(object);
         }
     }
+
+    painter->setTransform(baseTrans);
 }
 
 /*!
