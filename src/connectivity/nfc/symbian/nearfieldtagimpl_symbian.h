@@ -58,11 +58,13 @@
 #include "nearfieldtagcommandrequest_symbian.h"
 #include "nearfieldtagcommandsrequest_symbian.h"
 #include "debug.h"
+#include <iso14443connection.h>
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
 class QNearFieldTagType2Symbian;
 class QNearFieldTagType3Symbian;
+class QNearFieldTagType4Symbian;
 
 template<typename TAGTYPE>
 struct TagConstValue
@@ -104,7 +106,7 @@ public: // From MNearFieldTargetOperation
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
     void EmitRequestCompleted(const QNearFieldTarget::RequestId &id);
-    void EmitError(int error);
+    void EmitError(int error, const QNearFieldTarget::RequestId &id);
     
     void DoCancelSendCommand();
     void DoCancelNdefAccess();
@@ -148,6 +150,59 @@ protected:
     QList<MNearFieldTagAsyncRequest *> mPendingRequestList;
     MNearFieldTagAsyncRequest * mCurrentRequest;
 };
+
+template<>
+inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoCancelSendCommand()
+{
+    BEGIN
+    CNearFieldTag * tag = mTag->CastToTag();
+    if (tag)
+    { 
+        LOG("Cancel raw command operation");
+        tag->SetTagOperationCallback(0);
+        CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(tag->TagConnection());
+        tag4->ExchangeDataCancel();
+    }
+    END
+}
+
+template<>
+inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
+{
+    BEGIN
+    int error = KErrGeneral;
+
+    if (command.count() > 0)
+    {
+        CNearFieldTag * tag = mTag->CastToTag();
+
+        if (tag)
+        {
+            tag->SetTagOperationCallback(aCallback);
+            TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+            TRAP( error, 
+                // Lazy creation
+                if (mResponse.MaxLength() == 0)
+                {
+                    // the response is not created yet.
+                    mResponse.CreateL(TagConstValue<QNearFieldTagType4Symbian>::MaxResponseSize);
+                }
+                else
+                {
+                    mResponse.Zero();
+                }
+                
+                CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(tag->TagConnection());
+                tag4->ExchangeData(tag->AOStatus(), cmd, mResponse);
+            )
+        }
+    }
+    if (error != KErrNone)
+    {
+        aCallback->CommandComplete(error);
+    }
+    END
+}
 
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback)
@@ -593,11 +648,11 @@ void QNearFieldTagImpl<TAGTYPE>::EmitRequestCompleted(const QNearFieldTarget::Re
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::EmitError(int error)
+void QNearFieldTagImpl<TAGTYPE>::EmitError(int error, const QNearFieldTarget::RequestId &id)
 {
     BEGIN
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
-    emit tag->error(SymbianError2QtError(error));
+    emit tag->error(SymbianError2QtError(error), id);
     END
 }
 

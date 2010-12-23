@@ -57,6 +57,7 @@ MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
     iWait = 0;
     iTimer = 0;
     iRequestIssued = EFalse;
+    iCurrentRequestResult = EFalse;
 }
 
 MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
@@ -118,6 +119,7 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     {
         LOG("new a new waiter");
         iWait = new(ELeave) CActiveSchedulerWait();
+        iCurrentRequestResult = EFalse;
     }
 
     if (iTimer)
@@ -136,9 +138,9 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     iTimer->Start(0, aMsecs, callback);
     LOG("Start waiter");
     iWait->Start();
-    LOG("Waiting completed");
+    LOG("Waiting completed, "<<iCurrentRequestResult);
     END
-    return true;
+    return iCurrentRequestResult;
 }
         
 void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
@@ -146,8 +148,8 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
     BEGIN
     LOG("Error is "<<aError);
     
+    HandleResponse(aError);
     iOperator->IssueNextRequest(iId);
-    this->HandleResponse(aError);
 
     if (iWait) 
     {
@@ -197,5 +199,8 @@ void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
             iWait->AsyncStop();
         }
     }
+    ProcessEmitSignal(aError);
+
+    iCurrentRequestResult = (KErrNone == aError);
     END
 }

@@ -218,14 +218,16 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         {
         iLlcpSocketArray.Append(llcpSocket);
         //The newConnection() signal is then emitted each time a client connects to the server.
-        TRAP_IGNORE(
-                QT_TRYCATCH_LEAVING(iCallback.invokeNewConnection()));
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error, iCallback.invokeNewConnection());
+        Q_UNUSED(error);//just skip the error
         }
     else
         {
         //emit errors
-        TRAP_IGNORE(
-                QT_TRYCATCH_LEAVING(iCallback.invokeError()));
+        TInt error = KErrNone;
+        QT_TRYCATCH_ERROR(error, iCallback.invokeError());
+        Q_UNUSED(error);//just skip the error
         }
     END
     }

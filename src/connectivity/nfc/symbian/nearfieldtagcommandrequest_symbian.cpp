@@ -81,7 +81,7 @@ void NearFieldTagCommandRequest::ProcessEmitSignal(TInt aError)
     LOG(aError);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError);
+        iOperator->EmitError(aError, iId);
     }
     else
     {

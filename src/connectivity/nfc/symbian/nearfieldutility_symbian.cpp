@@ -78,9 +78,9 @@ QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
         msg.ExportRawDataL(buf,0);
         LOG("import raw data to msg");
         QByteArray qtArray;
-        qtArray.fromRawData(reinterpret_cast<const char*>(newBuf->Ptr()),newBuf->Size());
-        result.fromByteArray(qtArray);
-        CleanupStack::Pop(&buf);
+        qtArray.append(reinterpret_cast<const char*>(newBuf->Ptr()),newBuf->Size());
+        result = QNdefMessage::fromByteArray(qtArray);
+        CleanupStack::PopAndDestroy(&buf);
         END
         return result;
     }

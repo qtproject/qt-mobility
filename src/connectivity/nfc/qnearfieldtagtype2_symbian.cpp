@@ -109,16 +109,28 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
     command.append(char(0x00)); // CRC2
 
     RequestId id = sendCommand(command);
+    mSelectSectorRequests.insert(id, false);
 
+    QObject::connect(this, 
+                     SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)), 
+                     this, 
+                     SLOT(selectSectorError(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
     quint8 acknack = 0;
-    if (waitForRequestCompleted(id))
+    if (!waitForRequestCompleted(id))
     {
-        QByteArray response = requestResponse(id).toByteArray();
-        if (!response.isEmpty())
+        // check if the packet 1 is timeout.
+        QMap<QNearFieldTarget::RequestId, bool>::const_iterator i = mSelectSectorRequests.find(id);
+        if ( i != mSelectSectorRequests.end())
         {
-            acknack = response.at(0);
+            if (i.value() == true)
+            {
+                acknack = 0x0a;
+            }
+            mSelectSectorRequests.remove(id);
         }
     }
+    
+    this->disconnect(SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
 
     if (acknack != 0x0a)
     {
@@ -132,6 +144,18 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
         command.append(QByteArray(3, char(0x00)));  // RFU
 
         return sendCommand(command);
+    }
+}
+
+void QNearFieldTagType2Symbian::selectSectorError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id)
+{
+    QMap<QNearFieldTarget::RequestId, bool>::const_iterator i = mSelectSectorRequests.find(id);
+    if ( i != mSelectSectorRequests.end())
+    {
+        if (QNearFieldTarget::NoResponseError == error)
+        {
+            mSelectSectorRequests.insert(id, true);
+        }
     }
 }
 

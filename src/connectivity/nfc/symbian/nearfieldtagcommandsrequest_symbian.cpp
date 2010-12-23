@@ -81,10 +81,20 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
     {
         result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
         LOG("result is "<<result);
+        LOG("clear the buffer");
+        iResponse->Zero();
+        iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
     }
-    LOG("clear the buffer");
-    iResponse->Zero();
-    iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
+    else
+    {
+        iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand - 1), result);
+        // error occured, don't execute rest commands
+        for (; iCurrentCommand < iCommands.count(); ++iCurrentCommand)
+        {
+            QByteArray nullResult;
+            iOperator->HandleResponse(iId, iCommands.at(iCurrentCommand), nullResult);
+        }
+    }
 
     if (!iRequestCancelled && (iCurrentCommand < iCommands.count()))
     {
@@ -119,7 +129,7 @@ void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
     LOG(aError);
     if (aError != KErrNone)
     {
-        iOperator->EmitError(aError);
+        iOperator->EmitError(aError, iId);
     }
     else
     {

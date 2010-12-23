@@ -46,9 +46,7 @@
 #include <e32base.h>
 #include <nfcserver.h>                      // RNfcServer
 #include <llcpprovider.h>                   // CLlcpProvider
-#include <llcpconnlesstransporter.h>        // MLlcpConnLessTransporter
 #include <llcpconnorientedtransporter.h>    // MLlcpConnOrientedTransporter
-#include <llcpconnlesslistener.h>           // MLlcpConnLessListener
 #include <llcpconnorientedlistener.h>       // MLlcpConnOrientedListener
 #include <llcplinklistener.h>               // MLlcpLinkListener
 
