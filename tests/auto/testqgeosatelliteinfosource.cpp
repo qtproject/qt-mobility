@@ -433,8 +433,11 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
 #elif defined(Q_WS_MEEGO)
-    QVERIFY(source != 0);
-#else    
+    // With meego, it may or may not be there (e.g. USB dongle).
+    // With mock backend for sure
+    if (useMockBackend())
+        QVERIFY(source != 0);
+#else
     QVERIFY(source == 0);
 #endif
     delete parent;
@@ -463,7 +466,10 @@ void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
 #elif defined(Q_WS_MEEGO)
-    QVERIFY(source != 0);
+    // With meego, it may or may not be there (e.g. USB dongle)
+    // With mock backend for sure
+    if (useMockBackend())
+        QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
 #endif
@@ -556,8 +562,11 @@ void TestQGeoSatelliteInfoSource::requestUpdate()
 
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyView(m_source,
+                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     m_source->requestUpdate(timeout);
-    QTRY_COMPARE(spy.count(), 1);
+    // Geoclue may deliver update instantly if there is a satellite fix
+    QTRY_VERIFY_WITH_TIMEOUT(!spy.isEmpty() || !spyView.isEmpty(), 10);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_data()
@@ -641,8 +650,17 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
     m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
-
+#ifndef TST_GYPSYMOCK_ENABLED
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+#else
+    // With Gypsy we migh actually get two updates instantly. Not with mocked backend
+    // though.
+    if (useMockBackend()) {
+        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+    } else {
+        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
+    }
+#endif
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
@@ -663,7 +681,17 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) && (spyTimeout.count() == 0), 7000);
+#ifndef TST_GYPSYMOCK_ENABLED
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+#else
+    // With Gypsy we migh actually get two updates instantly. Not with mocked backend
+    // though.
+    if (useMockBackend()) {
+        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+    } else {
+        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
+    }
+#endif
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
