@@ -87,6 +87,7 @@ void tst_QGeoTiledMappingManagerEngine::initTestCase()
     QMap<QString, QVariant> params;
     QGeoMappingManagerEngine *mgr = new PixelIndexEngine(params);
     gmd = mgr->createMapData();
+    gmd->init();
 }
 
 void tst_QGeoTiledMappingManagerEngine::cleanupTestCase()
