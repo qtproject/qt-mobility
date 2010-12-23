@@ -300,19 +300,19 @@ void QMessageServicePrivate::messagesCounted(int count)
     }
 }
 
-bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
+bool QMessageServicePrivate::synchronize(const QMessageAccountId &id)
 {
     switch (idType(id)) {
     case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->exportUpdates(id);
+        return CFSEngine::instance()->synchronize(*this, id);
 #else
         return false;
 #endif
     case EngineTypeMTM:
     default:
         return CMTMEngine::instance()->exportUpdates(*this, id);
-    }
+    } 
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -630,6 +630,11 @@ bool QMessageService::show(const QMessageId& id)
 
 bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
+    return synchronize(id);
+}
+
+bool QMessageService::synchronize(const QMessageAccountId &id)
+{
     if (d_ptr->_active) {
         return false;
     }
@@ -646,7 +651,7 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
     
-    retVal = d_ptr->exportUpdates(id);
+    retVal = d_ptr->synchronize(id);
     if (retVal == false) {
         d_ptr->setFinished(retVal);
     }

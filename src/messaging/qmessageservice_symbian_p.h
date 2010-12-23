@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qmessageservice.h"
+#ifndef QMESSAGESERVICE_SYMBIAN_P_H
+#define QMESSAGESERVICE_SYMBIAN_P_H
 
+#include "qmessageservice.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -61,7 +63,7 @@ public:
 	bool retrieve(const QMessageId &messageId, const QMessageContentContainerId &id);
 	bool retrieveBody(const QMessageId& id);
 	bool retrieveHeader(const QMessageId& id);
-	bool exportUpdates(const QMessageAccountId &id);
+	bool synchronize(const QMessageAccountId &id);
 	
     bool queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
@@ -103,6 +105,6 @@ private:
     friend class CFSEngine;
 };
 
-
-
 QTM_END_NAMESPACE
+
+#endif // QMESSAGESERVICE_SYMBIAN_P_H

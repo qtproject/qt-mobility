@@ -57,6 +57,7 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
+#include "qmessageservice_symbian_p.h"
 #include "maemohelpers_p.h"
 #include <emailinterfacefactory.h>
 #include <memailclientapi.h>
@@ -104,10 +105,30 @@ struct FSSearchOperation
     TEmailSortCriteria m_emailSortCriteria;
 };
 
+class EMailSyncRequest : public MMailboxSyncObserver
+{
+public:
+    EMailSyncRequest(QMessageServicePrivate &observer, QList<EMailSyncRequest*> &requestList, 
+            const TMailboxId &mailboxId) : 
+        m_mailboxId(mailboxId), m_observer(observer), m_requestList(requestList), m_active(false) {};
+
+public: // from MMailboxSyncObserver
+    void MailboxSynchronisedL(TInt aResult);
+    
+public:
+  
+    TMailboxId m_mailboxId;
+    QMessageServicePrivate& m_observer;
+    
+    QList<EMailSyncRequest*>& m_requestList;
+    
+    bool m_active;
+};
+
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver
+class CFSEngine : public QObject, public MMailboxContentObserver
 #else
-class CFSEngine : public QObject, public MMailboxSyncObserver
+class CFSEngine : public QObject
 #endif
 {
     Q_OBJECT
@@ -143,7 +164,7 @@ public:
     bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
     bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
     bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
-    bool exportUpdates(const QMessageAccountId &id);
+    bool synchronize(QMessageServicePrivate& observer, const QMessageAccountId& id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter, QMessageManager::NotificationFilterId aId);
@@ -158,9 +179,6 @@ public:
     QString bodyContent(long int messageId, TMessageContentId bodyContentId) const;
     
     void cancel(QMessageServicePrivate& privateService);
-    
-public: // from MMailboxSyncObserver
-    void MailboxSynchronisedL(TInt aResult);
     
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
     void setPluginObserversL();
@@ -219,7 +237,7 @@ private:
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
-    void exportUpdatesL(const QMessageAccountId &id);
+    void synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id);
     
     MEmailAttachment* attachmentById(TMessageContentId attachmentId) const;
     MEmailTextContent* textContentById(TMessageContentId contentId, MEmailMessageContent* parentContent = NULL) const;
@@ -261,7 +279,6 @@ private:
     QMessageAccount m_account;
     mutable QMap<TEntryId, MEmailMailbox*> m_mailboxes;
     REmailAttachmentArray m_attachments;
-    QMessageServicePrivate* m_privateService;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
@@ -270,6 +287,8 @@ private:
     mutable QMessageSortOrder m_currentMessageOrdering;
 
     mutable bool m_cleanedup;
+
+    QList<EMailSyncRequest*> m_syncRequests;
 };
 
 class CFSContentFetchOperation : public QObject, MEmailFetchObserver

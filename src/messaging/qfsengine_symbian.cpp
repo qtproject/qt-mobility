@@ -144,6 +144,11 @@ void CFSEngine::cleanupFSBackend()
         m_clientApi = NULL;
     }
 
+    foreach (EMailSyncRequest* req, m_syncRequests) {
+        delete req;
+    }
+    m_syncRequests.clear();
+    
     if (m_factory) {
         delete m_factory;
         m_factory = NULL;
@@ -939,27 +944,41 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMe
     return false;
 }
 
-bool CFSEngine::exportUpdates(const QMessageAccountId &id)
+void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
-    TRAPD(err, exportUpdatesL(id));
-    if (err != KErrNone) {
-        return false;
-    } else {
-        return true;
+    TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
+    
+    foreach (EMailSyncRequest* request, m_syncRequests) {
+        if (request->m_mailboxId == mailboxId) {
+            User::Leave(KErrAlreadyExists);
+        }
     }
+    
+    EMailSyncRequest* req = new (ELeave) EMailSyncRequest(observer, m_syncRequests, mailboxId);
+    req->m_active = true;
+    m_syncRequests.append(req);
+    
+    MEmailMailbox* mailbox = m_mailboxes.value(mailboxId.iId);
+    if (!mailbox) {
+        // Mailbox was not found in the cache
+        mailbox = m_clientApi->MailboxL(mailboxId);
+        m_mailboxes.insert(mailboxId.iId, mailbox);
+        
+        if (!mailbox) {
+            User::Leave(KErrNotFound);
+		}
+    }
+    
+    // Mailbox cannot be released since it would cause email client API
+    // side to crash when it tries to callback to the observer given to plugin.
+    // Mailbox will be released when the mailbox cache is cleaned.
+    mailbox->SynchroniseL(*req);
 }
 
-void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
+bool CFSEngine::synchronize(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
-    TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(id));
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    mailbox->SynchroniseL(*this);
-    mailbox->Release();
-}
-
-void CFSEngine::MailboxSynchronisedL(TInt aResult)
-{
-    Q_UNUSED(aResult);
+    TRAPD(err, synchronizeL(observer, id));
+    return (err == KErrNone);
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
@@ -1396,6 +1415,16 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
     CFSContentFetchOperation* op = m_fetchOperations.value(&privateService);
     if (op) {
         delete op;
+    }
+    
+    foreach (EMailSyncRequest* req, m_syncRequests) {
+        if (&req->m_observer == &privateService) {
+            req->m_active = false;
+            MEmailMailbox* mailbox = m_mailboxes.value(req->m_mailboxId.iId);
+            if (mailbox) {
+                mailbox->CancelSynchronise();
+            }
+        }
     }
 }
 
@@ -2736,6 +2765,18 @@ void CFSEngine::contentFetched(void* service, bool success)
         }
         delete op;
     }
+}
+
+void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
+{
+    m_requestList.removeOne(this);
+
+    if (m_active) {
+        bool result = (aResult == KErrNone);
+        m_observer.setFinished(result);
+    }
+    
+    delete this;
 }
 
 CFSContentFetchOperation::CFSContentFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
