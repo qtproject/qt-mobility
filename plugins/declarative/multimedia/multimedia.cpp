@@ -43,7 +43,6 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
-#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qsoundeffect_p.h"
 
 #include "qdeclarativevideo_p.h"
@@ -67,15 +66,7 @@ public:
         qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
-#if defined(Q_OS_SYMBIAN)
-        RProcess thisProcess;
-        if (!thisProcess.HasCapability(ECapabilityUserEnvironment))
-            qmlInfo(this) << "Camera Element requires UserEnvironment Capability to be successfully used on Symbian";
-	else
-            qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-#else
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
-#endif
         qmlRegisterType<QDeclarativeMediaMetaData>();
     }
 
