@@ -460,8 +460,6 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("positionValid");
 
 #ifndef Q_WS_MEEGO
-    // Todo: this needs to be fixed in MeeGo; currently it returns any lastPosition from any source regardless of satellite
-    // parameter.
     QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
     QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
 #endif

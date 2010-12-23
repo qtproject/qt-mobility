@@ -1,6 +1,6 @@
 #--------------------------------------------------------------
 # For position updates the values are space separated list:
-# repeats(i) timeout(i) timestamp(i) fields(i) latitude(d) longitude(d) altitude(d)
+# repeats(i) timeout(i) timestamp(i) fields(i) latitude(d) longitude(d) altitude(d) horiz_acc(d) vertic_acc(d)
 # For velocity updates the values are space separated list:
 # repeats(i) timeout(i) fields(i) speed(d)
 # The keywords are:
@@ -10,20 +10,20 @@
 #--------------------------------------------------------------
 
 SINGLE_POS_UPDATE
-1 500 99998 3 21 31 5.1
+1 500 99998 3 21 31 5.1 1 2
 REGULAR_POS_UPDATE
-2 500 99999 3 20 30 2.1
+2 500 99999 3 21 31 5.1 1 2
 VELOCITY_UPDATE
 1 200 1 12.1
 REGULAR_POS_UPDATE
-2 500 99999 3 20 30 2.1
+2 500 99999 3 21 31 5.1 1 2
 VELOCITY_UPDATE
-1 200 1 12.2
+1 200 1 12.1
 REGULAR_POS_UPDATE
-3 1000 99999 3 20 30 2.1
+3 1000 99999 3 21 31 5.1 1 2
 VELOCITY_UPDATE
-1 200 1 13.3
+1 200 1 12.1
 REGULAR_POS_UPDATE
-3 1000 99999 3 20 30 2.1
+3 1000 99999 3 21 31 5.1 1 2
 REGULAR_POS_UPDATE
-500 800 99999 3 20 30 2.1
+500 800 99999 3 21 31 5.1 1 2

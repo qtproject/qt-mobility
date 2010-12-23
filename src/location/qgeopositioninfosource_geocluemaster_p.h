@@ -85,9 +85,19 @@ public:
     int init();
 
     void singleUpdateFailed();
-    void singleUpdateSucceeded(QGeoPositionInfo info);
+    void singleUpdateSucceeded(GeocluePositionFields fields,
+                               int                   timestamp,
+                               double                latitude,
+                               double                longitude,
+                               double                altitude,
+                               GeoclueAccuracy      *accuracy);
     void regularUpdateFailed();
-    void regularUpdateSucceeded(QGeoPositionInfo info);
+    void regularUpdateSucceeded(GeocluePositionFields fields,
+                                int                   timestamp,
+                                double                latitude,
+                                double                longitude,
+                                double                altitude,
+                                GeoclueAccuracy      *accuracy);
     void velocityUpdateFailed();
     void velocityUpdateSucceeded(double speed);
 
@@ -102,7 +112,12 @@ private slots:
 
 private:
     int configurePositionSource();
-
+    QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
+                                           int                   timestamp,
+                                           double                latitude,
+                                           double                longitude,
+                                           double                altitude,
+                                           GeoclueAccuracy*      accuracy);
 private:
     int m_updateInterval;
     GeoclueResourceFlags m_preferredResources;
@@ -114,6 +129,7 @@ private:
     bool m_lastPositionIsFresh;
     bool m_lastVelocityIsFresh;
     double m_lastVelocity;
+    bool m_lastPositionFromSatellite;
     QGeoPositionInfo m_lastPosition;
 };
 
