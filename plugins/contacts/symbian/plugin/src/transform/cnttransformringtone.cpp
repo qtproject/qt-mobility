@@ -53,22 +53,14 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
     if (ringtone.audioRingtoneUrl().isValid()) {
-        QUrl ringtoneUrl = ringtone.audioRingtoneUrl();
-        QString ringtoneString = ringtoneUrl.scheme() == QLatin1String("file") ?
-                ringtoneUrl.toLocalFile() : ringtoneUrl.toString();
         transformToTextFieldL(detail, fieldList,
-            ringtoneString,
-            KUidContactFieldRingTone,
+            ringtone.audioRingtoneUrl().toString(), KUidContactFieldRingTone,
             KUidContactFieldVCardMapUnknown, false);
 	}
 
     if (ringtone.videoRingtoneUrl().isValid()) {
-        QUrl ringtoneUrl = ringtone.videoRingtoneUrl();
-        QString ringtoneString = ringtoneUrl.scheme() == QLatin1String("file") ?
-                ringtoneUrl.toLocalFile() : ringtoneUrl.toString();
         transformToTextFieldL(detail, fieldList,
-            ringtoneString,
-            KUidContactFieldVideoRingTone,
+            ringtone.videoRingtoneUrl().toString(), KUidContactFieldVideoRingTone,
             KUidContactFieldVCardMapUnknown, false);
     }
 
@@ -84,10 +76,10 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     	
     
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        ringtone->setAudioRingtoneUrl(QUrl::fromUserInput(ringtoneString));
+        ringtone->setAudioRingtoneUrl(ringtoneString);
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        ringtone->setVideoRingtoneUrl(QUrl::fromUserInput(ringtoneString));
+        ringtone->setVideoRingtoneUrl(ringtoneString);
     }
 
     return ringtone;
