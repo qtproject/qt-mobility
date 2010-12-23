@@ -46,6 +46,7 @@
 
 #include <QPen>
 #include <QBrush>
+#include <QGraphicsRectItem>
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,8 +57,7 @@ public:
     ~QGeoMapRectangleObjectPrivate();
 
     QGeoBoundingBox bounds;
-    QPen pen;
-    QBrush brush;
+    QGraphicsRectItem *item;
 };
 
 QTM_END_NAMESPACE

@@ -65,7 +65,11 @@ QTM_BEGIN_NAMESPACE
     Constructs a new rectangle object.
 */
 QGeoMapRectangleObject::QGeoMapRectangleObject()
-    : d_ptr(new QGeoMapRectangleObjectPrivate()) {}
+    : d_ptr(new QGeoMapRectangleObjectPrivate())
+{
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::DegreeUnit);
+}
 
 /*!
     Constructs a new rectangle object based on the bounding box \a boundingBox.
@@ -74,6 +78,11 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBo
     : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     d_ptr->bounds = boundingBox;
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::DegreeUnit);
+    setOrigin(boundingBox.center());
+    d_ptr->item->setRect(-0.5*boundingBox.width(), -0.5*boundingBox.height(),
+                         0.5*boundingBox.width(), 0.5*boundingBox.height());
 }
 
 /*!
@@ -84,6 +93,11 @@ QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, co
     : d_ptr(new QGeoMapRectangleObjectPrivate())
 {
     d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
+    setGraphicsItem(d_ptr->item);
+    setUnits(QGeoMapObject::DegreeUnit);
+    setOrigin(d_ptr->bounds.center());
+    d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
+                         0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
 }
 
 /*!
@@ -137,12 +151,17 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
         return;
 
     d_ptr->bounds = bounds;
+    setOrigin(d_ptr->bounds.center());
+    d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
+                         0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
 
     if (d_ptr->bounds.topLeft() != oldBounds.topLeft())
         emit topLeftChanged(d_ptr->bounds.topLeft());
 
     if (d_ptr->bounds.bottomRight() != oldBounds.bottomRight())
         emit bottomRightChanged(d_ptr->bounds.bottomRight());
+
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -164,6 +183,10 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
     if (d_ptr->bounds.topLeft() != topLeft) {
         d_ptr->bounds.setTopLeft(topLeft);
         emit topLeftChanged(d_ptr->bounds.topLeft());
+        setOrigin(d_ptr->bounds.center());
+        d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
+                             0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+        emit mapNeedsUpdate();
     }
 }
 
@@ -186,6 +209,10 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
     if (d_ptr->bounds.bottomRight() != bottomRight) {
         d_ptr->bounds.setBottomRight(bottomRight);
         emit bottomRightChanged(d_ptr->bounds.bottomRight());
+        setOrigin(d_ptr->bounds.center());
+        d_ptr->item->setRect(-0.5*d_ptr->bounds.width(), -0.5*d_ptr->bounds.height(),
+                             0.5*d_ptr->bounds.width(), 0.5*d_ptr->bounds.height());
+        emit mapNeedsUpdate();
     }
 }
 
@@ -201,7 +228,7 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
 */
 QPen QGeoMapRectangleObject::pen() const
 {
-    return d_ptr->pen;
+    return d_ptr->item->pen();
 }
 
 void QGeoMapRectangleObject::setPen(const QPen &pen)
@@ -209,11 +236,12 @@ void QGeoMapRectangleObject::setPen(const QPen &pen)
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d_ptr->pen == newPen)
+    if (d_ptr->item->pen() == newPen)
         return;
 
-    d_ptr->pen = newPen;
-    emit penChanged(d_ptr->pen);
+    d_ptr->item->setPen(newPen);
+    emit penChanged(newPen);
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -227,14 +255,15 @@ void QGeoMapRectangleObject::setPen(const QPen &pen)
 */
 QBrush QGeoMapRectangleObject::brush() const
 {
-    return d_ptr->brush;
+    return d_ptr->item->brush();
 }
 
 void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 {
-    if (d_ptr->brush != brush) {
-        d_ptr->brush = brush;
-        emit brushChanged(d_ptr->brush);
+    if (d_ptr->item->brush() != brush) {
+        d_ptr->item->setBrush(brush);
+        emit brushChanged(d_ptr->item->brush());
+        emit mapNeedsUpdate();
     }
 }
 
@@ -277,12 +306,18 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate()
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate() :
+    item(new QGraphicsRectItem)
 {
+    QPen pen = item->pen();
     pen.setCosmetic(true);
+    item->setPen(pen);
 }
 
-QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
+QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate()
+{
+    delete item;
+}
 
 #include "moc_qgeomaprectangleobject.cpp"
 
