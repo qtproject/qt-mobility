@@ -31,129 +31,129 @@ EXPORTS
 	?setPayload@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 30 NONAME ; void QtMobility::QNdefRecord::setPayload(class QByteArray const &)
 	?qt_metacall@QNearFieldTagType2@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 31 NONAME ; int QtMobility::QNearFieldTagType2::qt_metacall(enum QMetaObject::Call, int, void * *)
 	?staticMetaObject@QNearFieldTagType3@QtMobility@@2UQMetaObject@@B @ 32 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType3::staticMetaObject
-	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 33 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *)
-	?writeBlock@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@EABVQByteArray@@W4WriteMode@12@@Z @ 34 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::writeBlock(unsigned char, class QByteArray const &, enum QtMobility::QNearFieldTagType1::WriteMode)
-	?hasPendingConnections@QLlcpServer@QtMobility@@UBE_NXZ @ 35 NONAME ; bool QtMobility::QLlcpServer::hasPendingConnections(void) const
-	?handleResponse@QNearFieldTagType2@QtMobility@@MAE_NABVRequestId@QNearFieldTarget@2@ABVQByteArray@@@Z @ 36 NONAME ; bool QtMobility::QNearFieldTagType2::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
-	?writeBlock@QNearFieldTagType2@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@EABVQByteArray@@@Z @ 37 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType2::writeBlock(unsigned char, class QByteArray const &)
-	?type@QNearFieldTagType1@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 38 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType1::type(void) const
-	?trUtf8@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0@Z @ 39 NONAME ; class QString QtMobility::QNearFieldTagType4::trUtf8(char const *, char const *)
-	?metaObject@QNearFieldTarget@QtMobility@@UBEPBUQMetaObject@@XZ @ 40 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTarget::metaObject(void) const
-	?error@QLlcpSocket@QtMobility@@IAEXW4Error@12@@Z @ 41 NONAME ; void QtMobility::QLlcpSocket::error(enum QtMobility::QLlcpSocket::Error)
-	??_EQNearFieldTagType2@QtMobility@@UAE@I@Z @ 42 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(unsigned int)
-	??4RequestId@QNearFieldTarget@QtMobility@@QAEAAV012@ABV012@@Z @ 43 NONAME ; class QtMobility::QNearFieldTarget::RequestId & QtMobility::QNearFieldTarget::RequestId::operator=(class QtMobility::QNearFieldTarget::RequestId const &)
-	?handleResponse@QNearFieldTagType4@QtMobility@@MAE_NABVRequestId@QNearFieldTarget@2@ABVQByteArray@@@Z @ 44 NONAME ; bool QtMobility::QNearFieldTagType4::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
-	?recordCount@QNdefFilter@QtMobility@@QBEHXZ @ 45 NONAME ; int QtMobility::QNdefFilter::recordCount(void) const
-	??1RequestId@QNearFieldTarget@QtMobility@@QAE@XZ @ 46 NONAME ; QtMobility::QNearFieldTarget::RequestId::~RequestId(void)
-	?metaObject@QLlcpSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 47 NONAME ; struct QMetaObject const * QtMobility::QLlcpSocket::metaObject(void) const
-	??MRequestId@QNearFieldTarget@QtMobility@@QBE_NABV012@@Z @ 48 NONAME ; bool QtMobility::QNearFieldTarget::RequestId::operator<(class QtMobility::QNearFieldTarget::RequestId const &) const
-	?recordAt@QNdefFilter@QtMobility@@QBE?AURecord@12@H@Z @ 49 NONAME ; struct QtMobility::QNdefFilter::Record QtMobility::QNdefFilter::recordAt(int) const
-	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 50 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *, int)
-	?staticMetaObject@QLlcpServer@QtMobility@@2UQMetaObject@@B @ 51 NONAME ; struct QMetaObject const QtMobility::QLlcpServer::staticMetaObject
-	?hasPendingDatagrams@QLlcpSocket@QtMobility@@QBE_NXZ @ 52 NONAME ; bool QtMobility::QLlcpSocket::hasPendingDatagrams(void) const
-	?check@QNearFieldTagType3@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABV?$QMap@GV?$QList@G@@@@@Z @ 53 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType3::check(class QMap<unsigned short, class QList<unsigned short> > const &)
-	??0RequestId@QNearFieldTarget@QtMobility@@QAE@ABV012@@Z @ 54 NONAME ; QtMobility::QNearFieldTarget::RequestId::RequestId(class QtMobility::QNearFieldTarget::RequestId const &)
-	??1QNearFieldTagType4@QtMobility@@UAE@XZ @ 55 NONAME ; QtMobility::QNearFieldTagType4::~QNearFieldTagType4(void)
-	?waitForRequestCompleted@QNearFieldTarget@QtMobility@@UAE_NABVRequestId@12@H@Z @ 56 NONAME ; bool QtMobility::QNearFieldTarget::waitForRequestCompleted(class QtMobility::QNearFieldTarget::RequestId const &, int)
-	?readNdefMessages@QNearFieldTagType2@QtMobility@@UAEXXZ @ 57 NONAME ; void QtMobility::QNearFieldTagType2::readNdefMessages(void)
-	??0QNearFieldManager@QtMobility@@QAE@PAVQNearFieldManagerPrivate@1@PAVQObject@@@Z @ 58 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QtMobility::QNearFieldManagerPrivate *, class QObject *)
-	?writeNdefMessages@QNearFieldTarget@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 59 NONAME ; void QtMobility::QNearFieldTarget::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@PAVQNearFieldTarget@2@E@Z @ 60 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &, class QtMobility::QNearFieldTarget *, unsigned char)
-	?selectSector@QNearFieldTagType2@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 61 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType2::selectSector(unsigned char)
-	?getStaticMetaObject@QNearFieldTagType4@QtMobility@@SAABUQMetaObject@@XZ @ 62 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType4::getStaticMetaObject(void)
-	?qt_metacall@QLlcpServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 63 NONAME ; int QtMobility::QLlcpServer::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@QNearFieldManager@QtMobility@@UAEPAXPBD@Z @ 64 NONAME ; void * QtMobility::QNearFieldManager::qt_metacast(char const *)
-	?appendRecord@QNdefFilter@QtMobility@@QAEXABURecord@12@@Z @ 65 NONAME ; void QtMobility::QNdefFilter::appendRecord(struct QtMobility::QNdefFilter::Record const &)
-	?appendRecord@QNdefFilter@QtMobility@@QAEXW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@II@Z @ 66 NONAME ; void QtMobility::QNdefFilter::appendRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, unsigned int, unsigned int)
-	?connectToService@QLlcpSocket@QtMobility@@QAEXPAVQNearFieldTarget@2@ABVQString@@@Z @ 67 NONAME ; void QtMobility::QLlcpSocket::connectToService(class QtMobility::QNearFieldTarget *, class QString const &)
-	?nextPendingConnection@QLlcpServer@QtMobility@@UAEPAVQLlcpSocket@2@XZ @ 68 NONAME ; class QtMobility::QLlcpSocket * QtMobility::QLlcpServer::nextPendingConnection(void)
-	?disconnected@QNearFieldTarget@QtMobility@@IAEXXZ @ 69 NONAME ; void QtMobility::QNearFieldTarget::disconnected(void)
-	?d_func@QLlcpSocket@QtMobility@@AAEPAVQLlcpSocketPrivate@2@XZ @ 70 NONAME ; class QtMobility::QLlcpSocketPrivate * QtMobility::QLlcpSocket::d_func(void)
-	?update@QNearFieldTagType3@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABV?$QMap@GV?$QList@G@@@@ABVQByteArray@@@Z @ 71 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType3::update(class QMap<unsigned short, class QList<unsigned short> > const &, class QByteArray const &)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_JPAVQNearFieldTarget@2@E@Z @ 72 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long, class QtMobility::QNearFieldTarget *, unsigned char)
-	?id@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 73 NONAME ; class QByteArray QtMobility::QNdefRecord::id(void) const
-	??_EQNearFieldManager@QtMobility@@UAE@I@Z @ 74 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(unsigned int)
-	?d_func@QLlcpServer@QtMobility@@AAEPAVQLlcpServerPrivate@2@XZ @ 75 NONAME ; class QtMobility::QLlcpServerPrivate * QtMobility::QLlcpServer::d_func(void)
-	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 76 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *, int)
-	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 77 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *)
-	?systemCode@QNearFieldTagType3@QtMobility@@QAEGXZ @ 78 NONAME ; unsigned short QtMobility::QNearFieldTagType3::systemCode(void)
-	??0QNdefRecord@QtMobility@@QAE@ABV01@@Z @ 79 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &)
-	??0QNdefFilter@QtMobility@@QAE@ABV01@@Z @ 80 NONAME ; QtMobility::QNdefFilter::QNdefFilter(class QtMobility::QNdefFilter const &)
-	?qt_metacast@QNearFieldTagType1@QtMobility@@UAEPAXPBD@Z @ 81 NONAME ; void * QtMobility::QNearFieldTagType1::qt_metacast(char const *)
-	??1QNearFieldTagType3@QtMobility@@UAE@XZ @ 82 NONAME ; QtMobility::QNearFieldTagType3::~QNearFieldTagType3(void)
-	?setUri@QNdefNfcUriRecord@QtMobility@@QAEXABVQUrl@@@Z @ 83 NONAME ; void QtMobility::QNdefNfcUriRecord::setUri(class QUrl const &)
-	?readNdefMessages@QNearFieldTagType1@QtMobility@@UAEXXZ @ 84 NONAME ; void QtMobility::QNearFieldTagType1::readNdefMessages(void)
-	?ndefMessageRead@QNearFieldTarget@QtMobility@@IAEXABVQNdefMessage@2@@Z @ 85 NONAME ; void QtMobility::QNearFieldTarget::ndefMessageRead(class QtMobility::QNdefMessage const &)
-	?serverPort@QLlcpServer@QtMobility@@QBEEXZ @ 86 NONAME ; unsigned char QtMobility::QLlcpServer::serverPort(void) const
-	?error@QLlcpSocket@QtMobility@@QBE?AW4Error@12@XZ @ 87 NONAME ; enum QtMobility::QLlcpSocket::Error QtMobility::QLlcpSocket::error(void) const
-	?qt_metacast@QNearFieldTarget@QtMobility@@UAEPAXPBD@Z @ 88 NONAME ; void * QtMobility::QNearFieldTarget::qt_metacast(char const *)
-	?staticMetaObject@QLlcpSocket@QtMobility@@2UQMetaObject@@B @ 89 NONAME ; struct QMetaObject const QtMobility::QLlcpSocket::staticMetaObject
-	?d_func@QNearFieldManager@QtMobility@@AAEPAVQNearFieldManagerPrivate@2@XZ @ 90 NONAME ; class QtMobility::QNearFieldManagerPrivate * QtMobility::QNearFieldManager::d_func(void)
-	??8QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 91 NONAME ; bool QtMobility::QNdefRecord::operator==(class QtMobility::QNdefRecord const &) const
-	??_EQNearFieldTagType3@QtMobility@@UAE@I@Z @ 92 NONAME ; QtMobility::QNearFieldTagType3::~QNearFieldTagType3(unsigned int)
-	?metaObject@QNearFieldTagType3@QtMobility@@UBEPBUQMetaObject@@XZ @ 93 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType3::metaObject(void) const
-	??9QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 94 NONAME ; bool QtMobility::QNdefRecord::operator!=(class QtMobility::QNdefRecord const &) const
-	?select@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@G@Z @ 95 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::select(unsigned short)
-	?waitForRequestCompleted@QNearFieldTagType2@QtMobility@@UAE_NABVRequestId@QNearFieldTarget@2@H@Z @ 96 NONAME ; bool QtMobility::QNearFieldTagType2::waitForRequestCompleted(class QtMobility::QNearFieldTarget::RequestId const &, int)
-	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 97 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *, int)
-	?qt_metacall@QNearFieldTagType1@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 98 NONAME ; int QtMobility::QNearFieldTagType1::qt_metacall(enum QMetaObject::Call, int, void * *)
-	??0QNdefNfcTextRecord@QtMobility@@QAE@XZ @ 99 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(void)
-	?sendCommand@QNearFieldTarget@QtMobility@@UAE?AVRequestId@12@ABVQByteArray@@@Z @ 100 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTarget::sendCommand(class QByteArray const &)
-	??0QNearFieldTarget@QtMobility@@QAE@PAVQObject@@@Z @ 101 NONAME ; QtMobility::QNearFieldTarget::QNearFieldTarget(class QObject *)
-	??1QNearFieldTagType2@QtMobility@@UAE@XZ @ 102 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(void)
-	?staticMetaObject@QNearFieldTagType4@QtMobility@@2UQMetaObject@@B @ 103 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType4::staticMetaObject
-	?d_func@QNearFieldTagType2@QtMobility@@ABEPBVQNearFieldTagType2Private@2@XZ @ 104 NONAME ; class QtMobility::QNearFieldTagType2Private const * QtMobility::QNearFieldTagType2::d_func(void) const
-	?tr@QNearFieldTagType3@QtMobility@@SA?AVQString@@PBD0H@Z @ 105 NONAME ; class QString QtMobility::QNearFieldTagType3::tr(char const *, char const *, int)
-	??0QLlcpSocket@QtMobility@@AAE@PAVQLlcpSocketPrivate@1@PAVQObject@@@Z @ 106 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QtMobility::QLlcpSocketPrivate *, class QObject *)
-	?writeNdefMessages@QNearFieldTagType1@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 107 NONAME ; void QtMobility::QNearFieldTagType1::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
-	?newConnection@QLlcpServer@QtMobility@@IAEXXZ @ 108 NONAME ; void QtMobility::QLlcpServer::newConnection(void)
-	??1QLlcpServer@QtMobility@@UAE@XZ @ 109 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(void)
-	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHPAVQObject@@PBD@Z @ 110 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QObject *, char const *)
-	?setText@QNdefNfcTextRecord@QtMobility@@QAEXVQString@@@Z @ 111 NONAME ; void QtMobility::QNdefNfcTextRecord::setText(class QString)
-	?serviceMemorySize@QNearFieldTagType3@QtMobility@@QAEHG@Z @ 112 NONAME ; int QtMobility::QNearFieldTagType3::serviceMemorySize(unsigned short)
-	??0RequestId@QNearFieldTarget@QtMobility@@QAE@XZ @ 113 NONAME ; QtMobility::QNearFieldTarget::RequestId::RequestId(void)
-	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 114 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *)
-	?locale@QNdefNfcTextRecord@QtMobility@@QBE?AVQLocale@@XZ @ 115 NONAME ; class QLocale QtMobility::QNdefNfcTextRecord::locale(void) const
-	?sendApduCommands@QNearFieldTarget@QtMobility@@UAEXABV?$QList@VQByteArray@@@@@Z @ 116 NONAME ; void QtMobility::QNearFieldTarget::sendApduCommands(class QList<class QByteArray> const &)
-	?readByte@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 117 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::readByte(unsigned char)
-	?bind@QLlcpSocket@QtMobility@@QAE_NE@Z @ 118 NONAME ; bool QtMobility::QLlcpSocket::bind(unsigned char)
-	?writeNdefMessages@QNearFieldTagType2@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 119 NONAME ; void QtMobility::QNearFieldTagType2::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
-	??_EQLlcpServer@QtMobility@@UAE@I@Z @ 120 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(unsigned int)
-	??4QNdefRecord@QtMobility@@QAEAAV01@ABV01@@Z @ 121 NONAME ; class QtMobility::QNdefRecord & QtMobility::QNdefRecord::operator=(class QtMobility::QNdefRecord const &)
-	?ndefMessagesWritten@QNearFieldTarget@QtMobility@@IAEXXZ @ 122 NONAME ; void QtMobility::QNearFieldTarget::ndefMessagesWritten(void)
-	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 123 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *, int)
-	?timerEvent@QNearFieldTagType2@QtMobility@@UAEXPAVQTimerEvent@@@Z @ 124 NONAME ; void QtMobility::QNearFieldTagType2::timerEvent(class QTimerEvent *)
-	??1QNearFieldTagType1@QtMobility@@UAE@XZ @ 125 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(void)
-	?write@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABVQByteArray@@G@Z @ 126 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::write(class QByteArray const &, unsigned short)
-	?type@QNearFieldTagType3@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 127 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType3::type(void) const
-	?hasNdefMessage@QNearFieldTagType1@QtMobility@@UAE_NXZ @ 128 NONAME ; bool QtMobility::QNearFieldTagType1::hasNdefMessage(void)
-	?stateChanged@QLlcpSocket@QtMobility@@IAEXW4State@12@@Z @ 129 NONAME ; void QtMobility::QLlcpSocket::stateChanged(enum QtMobility::QLlcpSocket::State)
-	?setType@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 130 NONAME ; void QtMobility::QNdefRecord::setType(class QByteArray const &)
-	?version@QNearFieldTagType4@QtMobility@@QAEEXZ @ 131 NONAME ; unsigned char QtMobility::QNearFieldTagType4::version(void)
-	?requestCompleted@QNearFieldTarget@QtMobility@@IAEXABVRequestId@12@@Z @ 132 NONAME ; void QtMobility::QNearFieldTarget::requestCompleted(class QtMobility::QNearFieldTarget::RequestId const &)
-	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 133 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *)
-	?setTypeNameFormat@QNdefRecord@QtMobility@@QAEXW4TypeNameFormat@12@@Z @ 134 NONAME ; void QtMobility::QNdefRecord::setTypeNameFormat(enum QtMobility::QNdefRecord::TypeNameFormat)
-	??8QNdefMessage@QtMobility@@QBE_NABV01@@Z @ 135 NONAME ; bool QtMobility::QNdefMessage::operator==(class QtMobility::QNdefMessage const &) const
-	??_EQNearFieldTagType4@QtMobility@@UAE@I@Z @ 136 NONAME ; QtMobility::QNearFieldTagType4::~QNearFieldTagType4(unsigned int)
-	?d_func@QNearFieldTagType1@QtMobility@@AAEPAVQNearFieldTagType1Private@2@XZ @ 137 NONAME ; class QtMobility::QNearFieldTagType1Private * QtMobility::QNearFieldTagType1::d_func(void)
-	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 138 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *, int)
-	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 139 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *)
-	??0QNdefNfcUriRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 140 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(class QtMobility::QNdefRecord const &)
-	?setId@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 141 NONAME ; void QtMobility::QNdefRecord::setId(class QByteArray const &)
-	??4QNdefFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 142 NONAME ; class QtMobility::QNdefFilter & QtMobility::QNdefFilter::operator=(class QtMobility::QNdefFilter const &)
-	?waitForBytesWritten@QLlcpSocket@QtMobility@@UAE_NH@Z @ 143 NONAME ; bool QtMobility::QLlcpSocket::waitForBytesWritten(int)
-	??0QLlcpServer@QtMobility@@QAE@PAVQObject@@@Z @ 144 NONAME ; QtMobility::QLlcpServer::QLlcpServer(class QObject *)
-	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_J@Z @ 145 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long)
-	?waitForConnected@QLlcpSocket@QtMobility@@UAE_NH@Z @ 146 NONAME ; bool QtMobility::QLlcpSocket::waitForConnected(int)
-	?encoding@QNdefNfcTextRecord@QtMobility@@QBE?AW4Encoding@12@XZ @ 147 NONAME ; enum QtMobility::QNdefNfcTextRecord::Encoding QtMobility::QNdefNfcTextRecord::encoding(void) const
-	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 148 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *)
-	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 149 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *)
-	?getStaticMetaObject@QNearFieldManager@QtMobility@@SAABUQMetaObject@@XZ @ 150 NONAME ; struct QMetaObject const & QtMobility::QNearFieldManager::getStaticMetaObject(void)
-	??0QNdefRecord@QtMobility@@IAE@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 151 NONAME ; QtMobility::QNdefRecord::QNdefRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
-	?transactionDetected@QNearFieldManager@QtMobility@@IAEXABVQByteArray@@@Z @ 152 NONAME ; void QtMobility::QNearFieldManager::transactionDetected(class QByteArray const &)
-	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 153 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *)
-	?qt_metacast@QLlcpSocket@QtMobility@@UAEPAXPBD@Z @ 154 NONAME ; void * QtMobility::QLlcpSocket::qt_metacast(char const *)
-	?sendApduCommand@QNearFieldTarget@QtMobility@@UAEXABVQByteArray@@@Z @ 155 NONAME ; void QtMobility::QNearFieldTarget::sendApduCommand(class QByteArray const &)
+	?error@QNearFieldTarget@QtMobility@@IAEXW4Error@12@ABVRequestId@12@@Z @ 33 NONAME ; void QtMobility::QNearFieldTarget::error(enum QtMobility::QNearFieldTarget::Error, class QtMobility::QNearFieldTarget::RequestId const &)
+	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 34 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *)
+	??4QNdefMessage@QtMobility@@QAEAAV01@ABV01@@Z @ 35 NONAME ; class QtMobility::QNdefMessage & QtMobility::QNdefMessage::operator=(class QtMobility::QNdefMessage const &)
+	?writeBlock@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@EABVQByteArray@@W4WriteMode@12@@Z @ 36 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::writeBlock(unsigned char, class QByteArray const &, enum QtMobility::QNearFieldTagType1::WriteMode)
+	?hasPendingConnections@QLlcpServer@QtMobility@@UBE_NXZ @ 37 NONAME ; bool QtMobility::QLlcpServer::hasPendingConnections(void) const
+	?handleResponse@QNearFieldTagType2@QtMobility@@MAE_NABVRequestId@QNearFieldTarget@2@ABVQByteArray@@@Z @ 38 NONAME ; bool QtMobility::QNearFieldTagType2::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
+	?writeBlock@QNearFieldTagType2@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@EABVQByteArray@@@Z @ 39 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType2::writeBlock(unsigned char, class QByteArray const &)
+	?type@QNearFieldTagType1@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 40 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType1::type(void) const
+	?trUtf8@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0@Z @ 41 NONAME ; class QString QtMobility::QNearFieldTagType4::trUtf8(char const *, char const *)
+	?metaObject@QNearFieldTarget@QtMobility@@UBEPBUQMetaObject@@XZ @ 42 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTarget::metaObject(void) const
+	?error@QLlcpSocket@QtMobility@@IAEXW4Error@12@@Z @ 43 NONAME ; void QtMobility::QLlcpSocket::error(enum QtMobility::QLlcpSocket::Error)
+	??_EQNearFieldTagType2@QtMobility@@UAE@I@Z @ 44 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(unsigned int)
+	??4RequestId@QNearFieldTarget@QtMobility@@QAEAAV012@ABV012@@Z @ 45 NONAME ; class QtMobility::QNearFieldTarget::RequestId & QtMobility::QNearFieldTarget::RequestId::operator=(class QtMobility::QNearFieldTarget::RequestId const &)
+	?handleResponse@QNearFieldTagType4@QtMobility@@MAE_NABVRequestId@QNearFieldTarget@2@ABVQByteArray@@@Z @ 46 NONAME ; bool QtMobility::QNearFieldTagType4::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
+	?recordCount@QNdefFilter@QtMobility@@QBEHXZ @ 47 NONAME ; int QtMobility::QNdefFilter::recordCount(void) const
+	??1RequestId@QNearFieldTarget@QtMobility@@QAE@XZ @ 48 NONAME ; QtMobility::QNearFieldTarget::RequestId::~RequestId(void)
+	?metaObject@QLlcpSocket@QtMobility@@UBEPBUQMetaObject@@XZ @ 49 NONAME ; struct QMetaObject const * QtMobility::QLlcpSocket::metaObject(void) const
+	??MRequestId@QNearFieldTarget@QtMobility@@QBE_NABV012@@Z @ 50 NONAME ; bool QtMobility::QNearFieldTarget::RequestId::operator<(class QtMobility::QNearFieldTarget::RequestId const &) const
+	?recordAt@QNdefFilter@QtMobility@@QBE?AURecord@12@H@Z @ 51 NONAME ; struct QtMobility::QNdefFilter::Record QtMobility::QNdefFilter::recordAt(int) const
+	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 52 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QLlcpServer@QtMobility@@2UQMetaObject@@B @ 53 NONAME ; struct QMetaObject const QtMobility::QLlcpServer::staticMetaObject
+	?hasPendingDatagrams@QLlcpSocket@QtMobility@@QBE_NXZ @ 54 NONAME ; bool QtMobility::QLlcpSocket::hasPendingDatagrams(void) const
+	?check@QNearFieldTagType3@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABV?$QMap@GV?$QList@G@@@@@Z @ 55 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType3::check(class QMap<unsigned short, class QList<unsigned short> > const &)
+	??0RequestId@QNearFieldTarget@QtMobility@@QAE@ABV012@@Z @ 56 NONAME ; QtMobility::QNearFieldTarget::RequestId::RequestId(class QtMobility::QNearFieldTarget::RequestId const &)
+	??1QNearFieldTagType4@QtMobility@@UAE@XZ @ 57 NONAME ; QtMobility::QNearFieldTagType4::~QNearFieldTagType4(void)
+	?waitForRequestCompleted@QNearFieldTarget@QtMobility@@UAE_NABVRequestId@12@H@Z @ 58 NONAME ; bool QtMobility::QNearFieldTarget::waitForRequestCompleted(class QtMobility::QNearFieldTarget::RequestId const &, int)
+	?readNdefMessages@QNearFieldTagType2@QtMobility@@UAEXXZ @ 59 NONAME ; void QtMobility::QNearFieldTagType2::readNdefMessages(void)
+	??0QNearFieldManager@QtMobility@@QAE@PAVQNearFieldManagerPrivate@1@PAVQObject@@@Z @ 60 NONAME ; QtMobility::QNearFieldManager::QNearFieldManager(class QtMobility::QNearFieldManagerPrivate *, class QObject *)
+	?writeNdefMessages@QNearFieldTarget@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 61 NONAME ; void QtMobility::QNearFieldTarget::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JABVQByteArray@@PAVQNearFieldTarget@2@E@Z @ 62 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(class QByteArray const &, class QtMobility::QNearFieldTarget *, unsigned char)
+	?selectSector@QNearFieldTagType2@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 63 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType2::selectSector(unsigned char)
+	?getStaticMetaObject@QNearFieldTagType4@QtMobility@@SAABUQMetaObject@@XZ @ 64 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType4::getStaticMetaObject(void)
+	?qt_metacall@QLlcpServer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 65 NONAME ; int QtMobility::QLlcpServer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QNearFieldManager@QtMobility@@UAEPAXPBD@Z @ 66 NONAME ; void * QtMobility::QNearFieldManager::qt_metacast(char const *)
+	?appendRecord@QNdefFilter@QtMobility@@QAEXABURecord@12@@Z @ 67 NONAME ; void QtMobility::QNdefFilter::appendRecord(struct QtMobility::QNdefFilter::Record const &)
+	?connectToService@QLlcpSocket@QtMobility@@QAEXPAVQNearFieldTarget@2@ABVQString@@@Z @ 68 NONAME ; void QtMobility::QLlcpSocket::connectToService(class QtMobility::QNearFieldTarget *, class QString const &)
+	?appendRecord@QNdefFilter@QtMobility@@QAEXW4TypeNameFormat@QNdefRecord@2@ABVQByteArray@@II@Z @ 69 NONAME ; void QtMobility::QNdefFilter::appendRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &, unsigned int, unsigned int)
+	?nextPendingConnection@QLlcpServer@QtMobility@@UAEPAVQLlcpSocket@2@XZ @ 70 NONAME ; class QtMobility::QLlcpSocket * QtMobility::QLlcpServer::nextPendingConnection(void)
+	?disconnected@QNearFieldTarget@QtMobility@@IAEXXZ @ 71 NONAME ; void QtMobility::QNearFieldTarget::disconnected(void)
+	?d_func@QLlcpSocket@QtMobility@@AAEPAVQLlcpSocketPrivate@2@XZ @ 72 NONAME ; class QtMobility::QLlcpSocketPrivate * QtMobility::QLlcpSocket::d_func(void)
+	?update@QNearFieldTagType3@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABV?$QMap@GV?$QList@G@@@@ABVQByteArray@@@Z @ 73 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType3::update(class QMap<unsigned short, class QList<unsigned short> > const &, class QByteArray const &)
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_JPAVQNearFieldTarget@2@E@Z @ 74 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long, class QtMobility::QNearFieldTarget *, unsigned char)
+	?id@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 75 NONAME ; class QByteArray QtMobility::QNdefRecord::id(void) const
+	?d_func@QLlcpServer@QtMobility@@AAEPAVQLlcpServerPrivate@2@XZ @ 76 NONAME ; class QtMobility::QLlcpServerPrivate * QtMobility::QLlcpServer::d_func(void)
+	??_EQNearFieldManager@QtMobility@@UAE@I@Z @ 77 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(unsigned int)
+	?trUtf8@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 78 NONAME ; class QString QtMobility::QNearFieldManager::trUtf8(char const *, char const *, int)
+	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0@Z @ 79 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *)
+	?systemCode@QNearFieldTagType3@QtMobility@@QAEGXZ @ 80 NONAME ; unsigned short QtMobility::QNearFieldTagType3::systemCode(void)
+	??0QNdefRecord@QtMobility@@QAE@ABV01@@Z @ 81 NONAME ; QtMobility::QNdefRecord::QNdefRecord(class QtMobility::QNdefRecord const &)
+	??0QNdefFilter@QtMobility@@QAE@ABV01@@Z @ 82 NONAME ; QtMobility::QNdefFilter::QNdefFilter(class QtMobility::QNdefFilter const &)
+	?qt_metacast@QNearFieldTagType1@QtMobility@@UAEPAXPBD@Z @ 83 NONAME ; void * QtMobility::QNearFieldTagType1::qt_metacast(char const *)
+	??1QNearFieldTagType3@QtMobility@@UAE@XZ @ 84 NONAME ; QtMobility::QNearFieldTagType3::~QNearFieldTagType3(void)
+	?setUri@QNdefNfcUriRecord@QtMobility@@QAEXABVQUrl@@@Z @ 85 NONAME ; void QtMobility::QNdefNfcUriRecord::setUri(class QUrl const &)
+	?readNdefMessages@QNearFieldTagType1@QtMobility@@UAEXXZ @ 86 NONAME ; void QtMobility::QNearFieldTagType1::readNdefMessages(void)
+	?ndefMessageRead@QNearFieldTarget@QtMobility@@IAEXABVQNdefMessage@2@@Z @ 87 NONAME ; void QtMobility::QNearFieldTarget::ndefMessageRead(class QtMobility::QNdefMessage const &)
+	?serverPort@QLlcpServer@QtMobility@@QBEEXZ @ 88 NONAME ; unsigned char QtMobility::QLlcpServer::serverPort(void) const
+	?error@QLlcpSocket@QtMobility@@QBE?AW4Error@12@XZ @ 89 NONAME ; enum QtMobility::QLlcpSocket::Error QtMobility::QLlcpSocket::error(void) const
+	?qt_metacast@QNearFieldTarget@QtMobility@@UAEPAXPBD@Z @ 90 NONAME ; void * QtMobility::QNearFieldTarget::qt_metacast(char const *)
+	?staticMetaObject@QLlcpSocket@QtMobility@@2UQMetaObject@@B @ 91 NONAME ; struct QMetaObject const QtMobility::QLlcpSocket::staticMetaObject
+	?d_func@QNearFieldManager@QtMobility@@AAEPAVQNearFieldManagerPrivate@2@XZ @ 92 NONAME ; class QtMobility::QNearFieldManagerPrivate * QtMobility::QNearFieldManager::d_func(void)
+	??8QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 93 NONAME ; bool QtMobility::QNdefRecord::operator==(class QtMobility::QNdefRecord const &) const
+	??_EQNearFieldTagType3@QtMobility@@UAE@I@Z @ 94 NONAME ; QtMobility::QNearFieldTagType3::~QNearFieldTagType3(unsigned int)
+	?metaObject@QNearFieldTagType3@QtMobility@@UBEPBUQMetaObject@@XZ @ 95 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType3::metaObject(void) const
+	??9QNdefRecord@QtMobility@@QBE_NABV01@@Z @ 96 NONAME ; bool QtMobility::QNdefRecord::operator!=(class QtMobility::QNdefRecord const &) const
+	?select@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@G@Z @ 97 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::select(unsigned short)
+	?waitForRequestCompleted@QNearFieldTagType2@QtMobility@@UAE_NABVRequestId@QNearFieldTarget@2@H@Z @ 98 NONAME ; bool QtMobility::QNearFieldTagType2::waitForRequestCompleted(class QtMobility::QNearFieldTarget::RequestId const &, int)
+	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 99 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *, int)
+	?qt_metacall@QNearFieldTagType1@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 100 NONAME ; int QtMobility::QNearFieldTagType1::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QNdefNfcTextRecord@QtMobility@@QAE@XZ @ 101 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(void)
+	?sendCommand@QNearFieldTarget@QtMobility@@UAE?AVRequestId@12@ABVQByteArray@@@Z @ 102 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTarget::sendCommand(class QByteArray const &)
+	??0QNearFieldTarget@QtMobility@@QAE@PAVQObject@@@Z @ 103 NONAME ; QtMobility::QNearFieldTarget::QNearFieldTarget(class QObject *)
+	??1QNearFieldTagType2@QtMobility@@UAE@XZ @ 104 NONAME ; QtMobility::QNearFieldTagType2::~QNearFieldTagType2(void)
+	?staticMetaObject@QNearFieldTagType4@QtMobility@@2UQMetaObject@@B @ 105 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType4::staticMetaObject
+	?d_func@QNearFieldTagType2@QtMobility@@ABEPBVQNearFieldTagType2Private@2@XZ @ 106 NONAME ; class QtMobility::QNearFieldTagType2Private const * QtMobility::QNearFieldTagType2::d_func(void) const
+	?tr@QNearFieldTagType3@QtMobility@@SA?AVQString@@PBD0H@Z @ 107 NONAME ; class QString QtMobility::QNearFieldTagType3::tr(char const *, char const *, int)
+	??0QLlcpSocket@QtMobility@@AAE@PAVQLlcpSocketPrivate@1@PAVQObject@@@Z @ 108 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QtMobility::QLlcpSocketPrivate *, class QObject *)
+	?writeNdefMessages@QNearFieldTagType1@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 109 NONAME ; void QtMobility::QNearFieldTagType1::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
+	?newConnection@QLlcpServer@QtMobility@@IAEXXZ @ 110 NONAME ; void QtMobility::QLlcpServer::newConnection(void)
+	??1QLlcpServer@QtMobility@@UAE@XZ @ 111 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(void)
+	?registerTargetDetectedHandler@QNearFieldManager@QtMobility@@QAEHPAVQObject@@PBD@Z @ 112 NONAME ; int QtMobility::QNearFieldManager::registerTargetDetectedHandler(class QObject *, char const *)
+	?setText@QNdefNfcTextRecord@QtMobility@@QAEXVQString@@@Z @ 113 NONAME ; void QtMobility::QNdefNfcTextRecord::setText(class QString)
+	?serviceMemorySize@QNearFieldTagType3@QtMobility@@QAEHG@Z @ 114 NONAME ; int QtMobility::QNearFieldTagType3::serviceMemorySize(unsigned short)
+	??0RequestId@QNearFieldTarget@QtMobility@@QAE@XZ @ 115 NONAME ; QtMobility::QNearFieldTarget::RequestId::RequestId(void)
+	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 116 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *)
+	?locale@QNdefNfcTextRecord@QtMobility@@QBE?AVQLocale@@XZ @ 117 NONAME ; class QLocale QtMobility::QNdefNfcTextRecord::locale(void) const
+	?readByte@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 118 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::readByte(unsigned char)
+	?bind@QLlcpSocket@QtMobility@@QAE_NE@Z @ 119 NONAME ; bool QtMobility::QLlcpSocket::bind(unsigned char)
+	?writeNdefMessages@QNearFieldTagType2@QtMobility@@UAEXABV?$QList@VQNdefMessage@QtMobility@@@@@Z @ 120 NONAME ; void QtMobility::QNearFieldTagType2::writeNdefMessages(class QList<class QtMobility::QNdefMessage> const &)
+	??_EQLlcpServer@QtMobility@@UAE@I@Z @ 121 NONAME ; QtMobility::QLlcpServer::~QLlcpServer(unsigned int)
+	??4QNdefRecord@QtMobility@@QAEAAV01@ABV01@@Z @ 122 NONAME ; class QtMobility::QNdefRecord & QtMobility::QNdefRecord::operator=(class QtMobility::QNdefRecord const &)
+	?ndefMessagesWritten@QNearFieldTarget@QtMobility@@IAEXXZ @ 123 NONAME ; void QtMobility::QNearFieldTarget::ndefMessagesWritten(void)
+	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0H@Z @ 124 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *, int)
+	?timerEvent@QNearFieldTagType2@QtMobility@@UAEXPAVQTimerEvent@@@Z @ 125 NONAME ; void QtMobility::QNearFieldTagType2::timerEvent(class QTimerEvent *)
+	??1QNearFieldTagType1@QtMobility@@UAE@XZ @ 126 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(void)
+	?write@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@ABVQByteArray@@G@Z @ 127 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::write(class QByteArray const &, unsigned short)
+	?type@QNearFieldTagType3@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 128 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType3::type(void) const
+	?hasNdefMessage@QNearFieldTagType1@QtMobility@@UAE_NXZ @ 129 NONAME ; bool QtMobility::QNearFieldTagType1::hasNdefMessage(void)
+	?stateChanged@QLlcpSocket@QtMobility@@IAEXW4State@12@@Z @ 130 NONAME ; void QtMobility::QLlcpSocket::stateChanged(enum QtMobility::QLlcpSocket::State)
+	?setType@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 131 NONAME ; void QtMobility::QNdefRecord::setType(class QByteArray const &)
+	?version@QNearFieldTagType4@QtMobility@@QAEEXZ @ 132 NONAME ; unsigned char QtMobility::QNearFieldTagType4::version(void)
+	?requestCompleted@QNearFieldTarget@QtMobility@@IAEXABVRequestId@12@@Z @ 133 NONAME ; void QtMobility::QNearFieldTarget::requestCompleted(class QtMobility::QNearFieldTarget::RequestId const &)
+	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 134 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *)
+	?setTypeNameFormat@QNdefRecord@QtMobility@@QAEXW4TypeNameFormat@12@@Z @ 135 NONAME ; void QtMobility::QNdefRecord::setTypeNameFormat(enum QtMobility::QNdefRecord::TypeNameFormat)
+	??8QNdefMessage@QtMobility@@QBE_NABV01@@Z @ 136 NONAME ; bool QtMobility::QNdefMessage::operator==(class QtMobility::QNdefMessage const &) const
+	??_EQNearFieldTagType4@QtMobility@@UAE@I@Z @ 137 NONAME ; QtMobility::QNearFieldTagType4::~QNearFieldTagType4(unsigned int)
+	?d_func@QNearFieldTagType1@QtMobility@@AAEPAVQNearFieldTagType1Private@2@XZ @ 138 NONAME ; class QtMobility::QNearFieldTagType1Private * QtMobility::QNearFieldTagType1::d_func(void)
+	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0H@Z @ 139 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *, int)
+	?trUtf8@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 140 NONAME ; class QString QtMobility::QLlcpSocket::trUtf8(char const *, char const *)
+	??0QNdefNfcUriRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 141 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(class QtMobility::QNdefRecord const &)
+	?setId@QNdefRecord@QtMobility@@QAEXABVQByteArray@@@Z @ 142 NONAME ; void QtMobility::QNdefRecord::setId(class QByteArray const &)
+	??4QNdefFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 143 NONAME ; class QtMobility::QNdefFilter & QtMobility::QNdefFilter::operator=(class QtMobility::QNdefFilter const &)
+	?waitForBytesWritten@QLlcpSocket@QtMobility@@UAE_NH@Z @ 144 NONAME ; bool QtMobility::QLlcpSocket::waitForBytesWritten(int)
+	??0QLlcpServer@QtMobility@@QAE@PAVQObject@@@Z @ 145 NONAME ; QtMobility::QLlcpServer::QLlcpServer(class QObject *)
+	?writeDatagram@QLlcpSocket@QtMobility@@QAE_JPBD_J@Z @ 146 NONAME ; long long QtMobility::QLlcpSocket::writeDatagram(char const *, long long)
+	?waitForConnected@QLlcpSocket@QtMobility@@UAE_NH@Z @ 147 NONAME ; bool QtMobility::QLlcpSocket::waitForConnected(int)
+	?encoding@QNdefNfcTextRecord@QtMobility@@QBE?AW4Encoding@12@XZ @ 148 NONAME ; enum QtMobility::QNdefNfcTextRecord::Encoding QtMobility::QNdefNfcTextRecord::encoding(void) const
+	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0@Z @ 149 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *)
+	?tr@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 150 NONAME ; class QString QtMobility::QNearFieldTagType2::tr(char const *, char const *)
+	?getStaticMetaObject@QNearFieldManager@QtMobility@@SAABUQMetaObject@@XZ @ 151 NONAME ; struct QMetaObject const & QtMobility::QNearFieldManager::getStaticMetaObject(void)
+	??0QNdefRecord@QtMobility@@IAE@W4TypeNameFormat@01@ABVQByteArray@@@Z @ 152 NONAME ; QtMobility::QNdefRecord::QNdefRecord(enum QtMobility::QNdefRecord::TypeNameFormat, class QByteArray const &)
+	?transactionDetected@QNearFieldManager@QtMobility@@IAEXABVQByteArray@@@Z @ 153 NONAME ; void QtMobility::QNearFieldManager::transactionDetected(class QByteArray const &)
+	?tr@QLlcpSocket@QtMobility@@SA?AVQString@@PBD0@Z @ 154 NONAME ; class QString QtMobility::QLlcpSocket::tr(char const *, char const *)
+	?qt_metacast@QLlcpSocket@QtMobility@@UAEPAXPBD@Z @ 155 NONAME ; void * QtMobility::QLlcpSocket::qt_metacast(char const *)
 	?writeByte@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@EEW4WriteMode@12@@Z @ 156 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::writeByte(unsigned char, unsigned char, enum QtMobility::QNearFieldTagType1::WriteMode)
 	??0RequestId@QNearFieldTarget@QtMobility@@QAE@PAVRequestIdPrivate@12@@Z @ 157 NONAME ; QtMobility::QNearFieldTarget::RequestId::RequestId(class QtMobility::QNearFieldTarget::RequestIdPrivate *)
 	?orderMatch@QNdefFilter@QtMobility@@QBE_NXZ @ 158 NONAME ; bool QtMobility::QNdefFilter::orderMatch(void) const
@@ -209,68 +209,67 @@ EXPORTS
 	?type@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 208 NONAME ; class QByteArray QtMobility::QNdefRecord::type(void) const
 	?serverError@QLlcpServer@QtMobility@@QBE?AW4Error@12@XZ @ 209 NONAME ; enum QtMobility::QLlcpServer::Error QtMobility::QLlcpServer::serverError(void) const
 	?trUtf8@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0@Z @ 210 NONAME ; class QString QtMobility::QNearFieldTagType1::trUtf8(char const *, char const *)
-	?error@QNearFieldTarget@QtMobility@@IAEXW4Error@12@@Z @ 211 NONAME ; void QtMobility::QNearFieldTarget::error(enum QtMobility::QNearFieldTarget::Error)
-	??8RequestId@QNearFieldTarget@QtMobility@@QBE_NABV012@@Z @ 212 NONAME ; bool QtMobility::QNearFieldTarget::RequestId::operator==(class QtMobility::QNearFieldTarget::RequestId const &) const
-	?tr@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0@Z @ 213 NONAME ; class QString QtMobility::QNearFieldTagType4::tr(char const *, char const *)
-	?close@QLlcpServer@QtMobility@@QAEXXZ @ 214 NONAME ; void QtMobility::QLlcpServer::close(void)
-	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 215 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *, int)
-	?d_func@QNearFieldTarget@QtMobility@@AAEPAVQNearFieldTargetPrivate@2@XZ @ 216 NONAME ; class QtMobility::QNearFieldTargetPrivate * QtMobility::QNearFieldTarget::d_func(void)
-	??0QNdefNfcUriRecord@QtMobility@@QAE@XZ @ 217 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(void)
-	?staticMetaObject@QNearFieldManager@QtMobility@@2UQMetaObject@@B @ 218 NONAME ; struct QMetaObject const QtMobility::QNearFieldManager::staticMetaObject
-	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 219 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *, int)
-	?type@QNearFieldTagType2@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 220 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType2::type(void) const
-	?d_func@QNearFieldTagType1@QtMobility@@ABEPBVQNearFieldTagType1Private@2@XZ @ 221 NONAME ; class QtMobility::QNearFieldTagType1Private const * QtMobility::QNearFieldTagType1::d_func(void) const
-	?metaObject@QNearFieldTagType1@QtMobility@@UBEPBUQMetaObject@@XZ @ 222 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType1::metaObject(void) const
-	??0QLlcpSocket@QtMobility@@QAE@PAVQObject@@@Z @ 223 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QObject *)
-	?getStaticMetaObject@QNearFieldTagType1@QtMobility@@SAABUQMetaObject@@XZ @ 224 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType1::getStaticMetaObject(void)
-	?typeNameFormat@QNdefRecord@QtMobility@@QBE?AW4TypeNameFormat@12@XZ @ 225 NONAME ; enum QtMobility::QNdefRecord::TypeNameFormat QtMobility::QNdefRecord::typeNameFormat(void) const
-	?isEmpty@QNdefRecord@QtMobility@@QBE_NXZ @ 226 NONAME ; bool QtMobility::QNdefRecord::isEmpty(void) const
-	?handleResponse@QNearFieldTarget@QtMobility@@MAE_NABVRequestId@12@ABVQByteArray@@@Z @ 227 NONAME ; bool QtMobility::QNearFieldTarget::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
-	?isProcessingCommand@QNearFieldTarget@QtMobility@@QBE_NXZ @ 228 NONAME ; bool QtMobility::QNearFieldTarget::isProcessingCommand(void) const
-	??0QNdefMessage@QtMobility@@QAE@ABV01@@Z @ 229 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefMessage const &)
-	?targetDetected@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 230 NONAME ; void QtMobility::QNearFieldManager::targetDetected(class QtMobility::QNearFieldTarget *)
-	??0QNearFieldTagType1@QtMobility@@QAE@PAVQObject@@@Z @ 231 NONAME ; QtMobility::QNearFieldTagType1::QNearFieldTagType1(class QObject *)
-	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXW4Type@QNearFieldTarget@2@@Z @ 232 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(enum QtMobility::QNearFieldTarget::Type)
-	??1QNearFieldManager@QtMobility@@UAE@XZ @ 233 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(void)
-	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 234 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *, int)
-	??_EQLlcpSocket@QtMobility@@UAE@I@Z @ 235 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(unsigned int)
-	?sendCommands@QNearFieldTarget@QtMobility@@UAE?AVRequestId@12@ABV?$QList@VQByteArray@@@@@Z @ 236 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTarget::sendCommands(class QList<class QByteArray> const &)
-	??0QNdefNfcTextRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 237 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(class QtMobility::QNdefRecord const &)
-	??0QNdefMessage@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 238 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefRecord const &)
-	?qt_metacast@QNearFieldTagType3@QtMobility@@UAEPAXPBD@Z @ 239 NONAME ; void * QtMobility::QNearFieldTagType3::qt_metacast(char const *)
-	?staticMetaObject@QNearFieldTagType2@QtMobility@@2UQMetaObject@@B @ 240 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType2::staticMetaObject
-	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 241 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *, int)
-	?payload@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 242 NONAME ; class QByteArray QtMobility::QNdefRecord::payload(void) const
-	?refCount@RequestId@QNearFieldTarget@QtMobility@@QBEHXZ @ 243 NONAME ; int QtMobility::QNearFieldTarget::RequestId::refCount(void) const
-	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 244 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *)
-	?qt_metacall@QNearFieldTagType3@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 245 NONAME ; int QtMobility::QNearFieldTagType3::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?bytesAvailable@QLlcpSocket@QtMobility@@UBE_JXZ @ 246 NONAME ; long long QtMobility::QLlcpSocket::bytesAvailable(void) const
-	?text@QNdefNfcTextRecord@QtMobility@@QBE?AVQString@@XZ @ 247 NONAME ; class QString QtMobility::QNdefNfcTextRecord::text(void) const
-	?state@QLlcpSocket@QtMobility@@QBE?AW4State@12@XZ @ 248 NONAME ; enum QtMobility::QLlcpSocket::State QtMobility::QLlcpSocket::state(void) const
-	?qt_metacall@QLlcpSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 249 NONAME ; int QtMobility::QLlcpSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
-	??0QNearFieldTagType2@QtMobility@@QAE@PAVQObject@@@Z @ 250 NONAME ; QtMobility::QNearFieldTagType2::QNearFieldTagType2(class QObject *)
-	?isSequential@QLlcpSocket@QtMobility@@UBE_NXZ @ 251 NONAME ; bool QtMobility::QLlcpSocket::isSequential(void) const
-	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 252 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *, int)
-	??0QNdefFilter@QtMobility@@QAE@XZ @ 253 NONAME ; QtMobility::QNdefFilter::QNdefFilter(void)
-	?targetLost@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 254 NONAME ; void QtMobility::QNearFieldManager::targetLost(class QtMobility::QNearFieldTarget *)
-	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 255 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *, int)
-	?trUtf8@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0H@Z @ 256 NONAME ; class QString QtMobility::QNearFieldTagType4::trUtf8(char const *, char const *, int)
-	?getStaticMetaObject@QNearFieldTagType2@QtMobility@@SAABUQMetaObject@@XZ @ 257 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType2::getStaticMetaObject(void)
-	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 258 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *)
-	?memorySize@QNearFieldTagType2@QtMobility@@QAEHXZ @ 259 NONAME ; int QtMobility::QNearFieldTagType2::memorySize(void)
-	?writeData@QLlcpSocket@QtMobility@@MAE_JPBD_J@Z @ 260 NONAME ; long long QtMobility::QLlcpSocket::writeData(char const *, long long)
-	??0QNearFieldTagType3@QtMobility@@QAE@PAVQObject@@@Z @ 261 NONAME ; QtMobility::QNearFieldTagType3::QNearFieldTagType3(class QObject *)
-	?read@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@GG@Z @ 262 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::read(unsigned short, unsigned short)
-	??_EQNearFieldTagType1@QtMobility@@UAE@I@Z @ 263 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(unsigned int)
-	?isListening@QLlcpServer@QtMobility@@QBE_NXZ @ 264 NONAME ; bool QtMobility::QLlcpServer::isListening(void) const
-	?serviceUri@QLlcpServer@QtMobility@@QBE?AVQString@@XZ @ 265 NONAME ; class QString QtMobility::QLlcpServer::serviceUri(void) const
-	?fromByteArray@QNdefMessage@QtMobility@@SA?AV12@ABVQByteArray@@@Z @ 266 NONAME ; class QtMobility::QNdefMessage QtMobility::QNdefMessage::fromByteArray(class QByteArray const &)
-	?readSegment@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 267 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::readSegment(unsigned char)
-	?setOrderMatch@QNdefFilter@QtMobility@@QAEX_N@Z @ 268 NONAME ; void QtMobility::QNdefFilter::setOrderMatch(bool)
-	?unregisterTargetDetectedHandler@QNearFieldManager@QtMobility@@QAE_NH@Z @ 269 NONAME ; bool QtMobility::QNearFieldManager::unregisterTargetDetectedHandler(int)
-	?staticMetaObject@QNearFieldTarget@QtMobility@@2UQMetaObject@@B @ 270 NONAME ; struct QMetaObject const QtMobility::QNearFieldTarget::staticMetaObject
-	?toByteArray@QNdefMessage@QtMobility@@QBE?AVQByteArray@@XZ @ 271 NONAME ; class QByteArray QtMobility::QNdefMessage::toByteArray(void) const
-	?trUtf8@QNearFieldTagType3@QtMobility@@SA?AVQString@@PBD0@Z @ 272 NONAME ; class QString QtMobility::QNearFieldTagType3::trUtf8(char const *, char const *)
-	??1QLlcpSocket@QtMobility@@UAE@XZ @ 273 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
-	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 274 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
+	??8RequestId@QNearFieldTarget@QtMobility@@QBE_NABV012@@Z @ 211 NONAME ; bool QtMobility::QNearFieldTarget::RequestId::operator==(class QtMobility::QNearFieldTarget::RequestId const &) const
+	?tr@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0@Z @ 212 NONAME ; class QString QtMobility::QNearFieldTagType4::tr(char const *, char const *)
+	?close@QLlcpServer@QtMobility@@QAEXXZ @ 213 NONAME ; void QtMobility::QLlcpServer::close(void)
+	?trUtf8@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 214 NONAME ; class QString QtMobility::QNearFieldTarget::trUtf8(char const *, char const *, int)
+	?d_func@QNearFieldTarget@QtMobility@@AAEPAVQNearFieldTargetPrivate@2@XZ @ 215 NONAME ; class QtMobility::QNearFieldTargetPrivate * QtMobility::QNearFieldTarget::d_func(void)
+	??0QNdefNfcUriRecord@QtMobility@@QAE@XZ @ 216 NONAME ; QtMobility::QNdefNfcUriRecord::QNdefNfcUriRecord(void)
+	?staticMetaObject@QNearFieldManager@QtMobility@@2UQMetaObject@@B @ 217 NONAME ; struct QMetaObject const QtMobility::QNearFieldManager::staticMetaObject
+	?trUtf8@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 218 NONAME ; class QString QtMobility::QLlcpServer::trUtf8(char const *, char const *, int)
+	?type@QNearFieldTagType2@QtMobility@@UBE?AW4Type@QNearFieldTarget@2@XZ @ 219 NONAME ; enum QtMobility::QNearFieldTarget::Type QtMobility::QNearFieldTagType2::type(void) const
+	?d_func@QNearFieldTagType1@QtMobility@@ABEPBVQNearFieldTagType1Private@2@XZ @ 220 NONAME ; class QtMobility::QNearFieldTagType1Private const * QtMobility::QNearFieldTagType1::d_func(void) const
+	?metaObject@QNearFieldTagType1@QtMobility@@UBEPBUQMetaObject@@XZ @ 221 NONAME ; struct QMetaObject const * QtMobility::QNearFieldTagType1::metaObject(void) const
+	??0QLlcpSocket@QtMobility@@QAE@PAVQObject@@@Z @ 222 NONAME ; QtMobility::QLlcpSocket::QLlcpSocket(class QObject *)
+	?getStaticMetaObject@QNearFieldTagType1@QtMobility@@SAABUQMetaObject@@XZ @ 223 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType1::getStaticMetaObject(void)
+	?typeNameFormat@QNdefRecord@QtMobility@@QBE?AW4TypeNameFormat@12@XZ @ 224 NONAME ; enum QtMobility::QNdefRecord::TypeNameFormat QtMobility::QNdefRecord::typeNameFormat(void) const
+	?isEmpty@QNdefRecord@QtMobility@@QBE_NXZ @ 225 NONAME ; bool QtMobility::QNdefRecord::isEmpty(void) const
+	?handleResponse@QNearFieldTarget@QtMobility@@MAE_NABVRequestId@12@ABVQByteArray@@@Z @ 226 NONAME ; bool QtMobility::QNearFieldTarget::handleResponse(class QtMobility::QNearFieldTarget::RequestId const &, class QByteArray const &)
+	?isProcessingCommand@QNearFieldTarget@QtMobility@@QBE_NXZ @ 227 NONAME ; bool QtMobility::QNearFieldTarget::isProcessingCommand(void) const
+	??0QNdefMessage@QtMobility@@QAE@ABV01@@Z @ 228 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefMessage const &)
+	?targetDetected@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 229 NONAME ; void QtMobility::QNearFieldManager::targetDetected(class QtMobility::QNearFieldTarget *)
+	??0QNearFieldTagType1@QtMobility@@QAE@PAVQObject@@@Z @ 230 NONAME ; QtMobility::QNearFieldTagType1::QNearFieldTagType1(class QObject *)
+	?startTargetDetection@QNearFieldManager@QtMobility@@QAEXW4Type@QNearFieldTarget@2@@Z @ 231 NONAME ; void QtMobility::QNearFieldManager::startTargetDetection(enum QtMobility::QNearFieldTarget::Type)
+	??1QNearFieldManager@QtMobility@@UAE@XZ @ 232 NONAME ; QtMobility::QNearFieldManager::~QNearFieldManager(void)
+	?tr@QNearFieldTagType1@QtMobility@@SA?AVQString@@PBD0H@Z @ 233 NONAME ; class QString QtMobility::QNearFieldTagType1::tr(char const *, char const *, int)
+	??_EQLlcpSocket@QtMobility@@UAE@I@Z @ 234 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(unsigned int)
+	?sendCommands@QNearFieldTarget@QtMobility@@UAE?AVRequestId@12@ABV?$QList@VQByteArray@@@@@Z @ 235 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTarget::sendCommands(class QList<class QByteArray> const &)
+	??0QNdefNfcTextRecord@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 236 NONAME ; QtMobility::QNdefNfcTextRecord::QNdefNfcTextRecord(class QtMobility::QNdefRecord const &)
+	??0QNdefMessage@QtMobility@@QAE@ABVQNdefRecord@1@@Z @ 237 NONAME ; QtMobility::QNdefMessage::QNdefMessage(class QtMobility::QNdefRecord const &)
+	?qt_metacast@QNearFieldTagType3@QtMobility@@UAEPAXPBD@Z @ 238 NONAME ; void * QtMobility::QNearFieldTagType3::qt_metacast(char const *)
+	?staticMetaObject@QNearFieldTagType2@QtMobility@@2UQMetaObject@@B @ 239 NONAME ; struct QMetaObject const QtMobility::QNearFieldTagType2::staticMetaObject
+	?tr@QNearFieldManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 240 NONAME ; class QString QtMobility::QNearFieldManager::tr(char const *, char const *, int)
+	?payload@QNdefRecord@QtMobility@@QBE?AVQByteArray@@XZ @ 241 NONAME ; class QByteArray QtMobility::QNdefRecord::payload(void) const
+	?refCount@RequestId@QNearFieldTarget@QtMobility@@QBEHXZ @ 242 NONAME ; int QtMobility::QNearFieldTarget::RequestId::refCount(void) const
+	?trUtf8@QNearFieldTagType2@QtMobility@@SA?AVQString@@PBD0@Z @ 243 NONAME ; class QString QtMobility::QNearFieldTagType2::trUtf8(char const *, char const *)
+	?qt_metacall@QNearFieldTagType3@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 244 NONAME ; int QtMobility::QNearFieldTagType3::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?bytesAvailable@QLlcpSocket@QtMobility@@UBE_JXZ @ 245 NONAME ; long long QtMobility::QLlcpSocket::bytesAvailable(void) const
+	?text@QNdefNfcTextRecord@QtMobility@@QBE?AVQString@@XZ @ 246 NONAME ; class QString QtMobility::QNdefNfcTextRecord::text(void) const
+	?state@QLlcpSocket@QtMobility@@QBE?AW4State@12@XZ @ 247 NONAME ; enum QtMobility::QLlcpSocket::State QtMobility::QLlcpSocket::state(void) const
+	?qt_metacall@QLlcpSocket@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 248 NONAME ; int QtMobility::QLlcpSocket::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QNearFieldTagType2@QtMobility@@QAE@PAVQObject@@@Z @ 249 NONAME ; QtMobility::QNearFieldTagType2::QNearFieldTagType2(class QObject *)
+	?isSequential@QLlcpSocket@QtMobility@@UBE_NXZ @ 250 NONAME ; bool QtMobility::QLlcpSocket::isSequential(void) const
+	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0H@Z @ 251 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *, int)
+	??0QNdefFilter@QtMobility@@QAE@XZ @ 252 NONAME ; QtMobility::QNdefFilter::QNdefFilter(void)
+	?targetLost@QNearFieldManager@QtMobility@@IAEXPAVQNearFieldTarget@2@@Z @ 253 NONAME ; void QtMobility::QNearFieldManager::targetLost(class QtMobility::QNearFieldTarget *)
+	?tr@QLlcpServer@QtMobility@@SA?AVQString@@PBD0H@Z @ 254 NONAME ; class QString QtMobility::QLlcpServer::tr(char const *, char const *, int)
+	?trUtf8@QNearFieldTagType4@QtMobility@@SA?AVQString@@PBD0H@Z @ 255 NONAME ; class QString QtMobility::QNearFieldTagType4::trUtf8(char const *, char const *, int)
+	?getStaticMetaObject@QNearFieldTagType2@QtMobility@@SAABUQMetaObject@@XZ @ 256 NONAME ; struct QMetaObject const & QtMobility::QNearFieldTagType2::getStaticMetaObject(void)
+	?tr@QNearFieldTarget@QtMobility@@SA?AVQString@@PBD0@Z @ 257 NONAME ; class QString QtMobility::QNearFieldTarget::tr(char const *, char const *)
+	?memorySize@QNearFieldTagType2@QtMobility@@QAEHXZ @ 258 NONAME ; int QtMobility::QNearFieldTagType2::memorySize(void)
+	?writeData@QLlcpSocket@QtMobility@@MAE_JPBD_J@Z @ 259 NONAME ; long long QtMobility::QLlcpSocket::writeData(char const *, long long)
+	??0QNearFieldTagType3@QtMobility@@QAE@PAVQObject@@@Z @ 260 NONAME ; QtMobility::QNearFieldTagType3::QNearFieldTagType3(class QObject *)
+	?read@QNearFieldTagType4@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@GG@Z @ 261 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType4::read(unsigned short, unsigned short)
+	??_EQNearFieldTagType1@QtMobility@@UAE@I@Z @ 262 NONAME ; QtMobility::QNearFieldTagType1::~QNearFieldTagType1(unsigned int)
+	?isListening@QLlcpServer@QtMobility@@QBE_NXZ @ 263 NONAME ; bool QtMobility::QLlcpServer::isListening(void) const
+	?serviceUri@QLlcpServer@QtMobility@@QBE?AVQString@@XZ @ 264 NONAME ; class QString QtMobility::QLlcpServer::serviceUri(void) const
+	?fromByteArray@QNdefMessage@QtMobility@@SA?AV12@ABVQByteArray@@@Z @ 265 NONAME ; class QtMobility::QNdefMessage QtMobility::QNdefMessage::fromByteArray(class QByteArray const &)
+	?readSegment@QNearFieldTagType1@QtMobility@@UAE?AVRequestId@QNearFieldTarget@2@E@Z @ 266 NONAME ; class QtMobility::QNearFieldTarget::RequestId QtMobility::QNearFieldTagType1::readSegment(unsigned char)
+	?setOrderMatch@QNdefFilter@QtMobility@@QAEX_N@Z @ 267 NONAME ; void QtMobility::QNdefFilter::setOrderMatch(bool)
+	?unregisterTargetDetectedHandler@QNearFieldManager@QtMobility@@QAE_NH@Z @ 268 NONAME ; bool QtMobility::QNearFieldManager::unregisterTargetDetectedHandler(int)
+	?staticMetaObject@QNearFieldTarget@QtMobility@@2UQMetaObject@@B @ 269 NONAME ; struct QMetaObject const QtMobility::QNearFieldTarget::staticMetaObject
+	?toByteArray@QNdefMessage@QtMobility@@QBE?AVQByteArray@@XZ @ 270 NONAME ; class QByteArray QtMobility::QNdefMessage::toByteArray(void) const
+	?trUtf8@QNearFieldTagType3@QtMobility@@SA?AVQString@@PBD0@Z @ 271 NONAME ; class QString QtMobility::QNearFieldTagType3::trUtf8(char const *, char const *)
+	??1QLlcpSocket@QtMobility@@UAE@XZ @ 272 NONAME ; QtMobility::QLlcpSocket::~QLlcpSocket(void)
+	?qNfcChecksum@QtMobility@@YAGPBDI@Z @ 273 NONAME ; unsigned short QtMobility::qNfcChecksum(char const *, unsigned int)
 

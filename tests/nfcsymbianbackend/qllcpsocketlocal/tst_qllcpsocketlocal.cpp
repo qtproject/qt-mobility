@@ -21,8 +21,8 @@ class tst_qllcpsocketlocal : public QObject
 public:
     tst_qllcpsocketlocal();
 private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
+
+    void testCase0();
 
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void testCase1();   // handshake 1,2
@@ -34,15 +34,16 @@ private Q_SLOTS:
     void negTestCase1();
     void negTestCase2();
 
-     void negTestCase3();
-      void negTestCase4();
+    void negTestCase3();
+    void negTestCase4();
+    void negTestCase5();
+    void negTestCase6();
 
-    void dummyTest();
     void dummyTest2();
     void dummyTest3();
     void dummyTest4();
-    void dummyTest5();
-    void dummyTest6();
+
+    void waiter();
 
 private:
      QNearFieldManager *m_nfcManager; //own
@@ -68,9 +69,9 @@ tst_qllcpsocketlocal::tst_qllcpsocketlocal()
  TestExpectedResults:
      Signal of target detected has been found.
 */
-void tst_qllcpsocketlocal::initTestCase()
+void tst_qllcpsocketlocal::testCase0()
 {
-    QNearFieldManager *m_nfcManager = new QNearFieldManager;
+    m_nfcManager = new QNearFieldManager;
     QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
     m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
@@ -86,11 +87,6 @@ void tst_qllcpsocketlocal::initTestCase()
     socket = new QLlcpSocket;
 }
 
-void tst_qllcpsocketlocal::cleanupTestCase()
-{
-   //delete m_nfcManager;
-   //delete socket;
-}
 
 /*!
  Description: Send the message and Receive the acknowledged identical message
@@ -306,7 +302,6 @@ void tst_qllcpsocketlocal::negTestCase2()
     delete socket;
     socket = NULL;
 
-
     /*
     QTest::qWait(2000);
     int invalidPort = -1;
@@ -318,57 +313,55 @@ void tst_qllcpsocketlocal::negTestCase2()
 void tst_qllcpsocketlocal::negTestCase3()
 {
     // bind again will cause failure
-
-    QLlcpSocket *localSocket = new QLlcpSocket;
-    bool ret = localSocket->bind(65);
-    QVERIFY(ret == false);
-    delete localSocket;
-
-    QTest::qWait(2000);
-
     bool ret2 = socket->bind(m_port);
     QVERIFY(ret2 == false);
 
     delete socket;
     socket = NULL;
+}
 
+void tst_qllcpsocketlocal::waiter()
+{
     QTest::qWait(2000);
-    int invalidPort = -1;
-    ret = localSocket->bind(invalidPort);
-    QVERIFY(ret == false);
 }
 
 void tst_qllcpsocketlocal::negTestCase4()
 {
-    // bind again will cause failure
 
     QLlcpSocket *localSocket = new QLlcpSocket;
     bool ret = localSocket->bind(65);
     QVERIFY(ret == false);
-    delete localSocket;
-
-    bool ret2 = socket->bind(m_port);
-    QVERIFY(ret2 == false);
-
-    delete socket;
-    socket = NULL;
 
     int invalidPort = -1;
     ret = localSocket->bind(invalidPort);
     QVERIFY(ret == false);
+
+    delete localSocket;
+}
+
+void tst_qllcpsocketlocal::negTestCase5()
+{
+    QLlcpSocket *localSocket = new QLlcpSocket;
+    bool ret = localSocket->bind(65);
+    QVERIFY(ret == false);
+    delete localSocket;
 }
 
 
-void tst_qllcpsocketlocal::dummyTest()
+void tst_qllcpsocketlocal::negTestCase6()
 {
-    delete m_nfcManager;
-    delete socket;
+    QLlcpSocket *localSocket = new QLlcpSocket;
+    int invalidPort = -1;
+    bool ret = localSocket->bind(invalidPort);
+    QVERIFY(ret == false);
+    delete localSocket;
 }
 
 void tst_qllcpsocketlocal::dummyTest2()
 {
 }
 
+// This is promatic functioanlity, causing program closed
 void tst_qllcpsocketlocal::dummyTest3()
 {
     delete m_nfcManager;
@@ -377,18 +370,6 @@ void tst_qllcpsocketlocal::dummyTest3()
 void tst_qllcpsocketlocal::dummyTest4()
 {
     delete socket;
-}
-
-void tst_qllcpsocketlocal::dummyTest5()
-{
-    if (socket)
-        socket->deleteLater();
-}
-
-void tst_qllcpsocketlocal::dummyTest6()
-{
-    if (m_nfcManager)
-        m_nfcManager->deleteLater();
 }
 
 

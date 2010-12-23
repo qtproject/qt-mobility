@@ -23,13 +23,16 @@ public:
 private Q_SLOTS:
 
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
-    void initTestCase();
-    void cleanupTestCase();
+    void testCase0();    // Intial handshake
     void testCase1();   // handshake 1,2
-    void testCase2(); // handshake 3
+    void testCase2();   // handshake 3
+
+    void afterRunnning();
 
 private:
+     QNearFieldManager *m_nfcManager;
      QNearFieldTarget *m_target;
+     QLlcpSocket *socket;
      quint8 m_port;
 };
 
@@ -48,11 +51,11 @@ tst_qllcpsocketremote::tst_qllcpsocketremote()
  TestExpectedResults:
      Signal of target detected has been found.
 */
-void tst_qllcpsocketremote::initTestCase()
+void tst_qllcpsocketremote::testCase0()
 {
-    QNearFieldManager *nfcManager = new QNearFieldManager;
-    QSignalSpy targetDetectedSpy(nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
-    nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
+    m_nfcManager = new QNearFieldManager;
+    QSignalSpy targetDetectedSpy(m_nfcManager, SIGNAL(targetDetected(QNearFieldTarget*)));
+    m_nfcManager->startTargetDetection(QNearFieldTarget::AnyTarget);
 
     QString message("Remote wait touch");
     QNfcTestUtil::ShowMessage(message);
@@ -63,10 +66,13 @@ void tst_qllcpsocketremote::initTestCase()
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
     m_port = 35;
+    socket = new QLlcpSocket;
 }
 
-void tst_qllcpsocketremote::cleanupTestCase()
+void tst_qllcpsocketremote::afterRunnning()
 {
+   delete m_nfcManager;
+   delete socket;
 }
 
 
@@ -85,9 +91,8 @@ void tst_qllcpsocketremote::cleanupTestCase()
 void tst_qllcpsocketremote::testCase1()
 {
     // STEP 1:  bind the local port for current socket
-    QLlcpSocket socket(this);
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(m_port);
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    bool ret = socket->bind(m_port);
 
     QString message("handshake 1");
     QNfcTestUtil::ShowMessage(message);
@@ -97,18 +102,18 @@ void tst_qllcpsocketremote::testCase1()
 
     // STEP 2: Receive data from the peer which send messages to
     QByteArray datagram;
-    while (socket.hasPendingDatagrams())
+    while (socket->hasPendingDatagrams())
     {
-       datagram.resize(socket.pendingDatagramSize());
-       qint64 readSize = socket.readDatagram(datagram.data(), datagram.size());
+       datagram.resize(socket->pendingDatagramSize());
+       qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
        QVERIFY(readSize != -1);
     }
 
     // STEP 3: Send the received message back to the intiated device.
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
 
-    socket.writeDatagram(datagram,m_target, m_port);
+    socket->writeDatagram(datagram,m_target, m_port);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
     QList<QVariant> arguments = bytesWrittenSpy.takeFirst(); // take the first signal
@@ -135,9 +140,8 @@ void tst_qllcpsocketremote::testCase1()
 void tst_qllcpsocketremote::testCase2()
 {
     // STEP 1:  bind the local port for current socket
-    QLlcpSocket socket(this);
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(m_port);
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    bool ret = socket->bind(m_port);
 
     QString message("handshake 3");
     QNfcTestUtil::ShowMessage(message);
@@ -145,7 +149,7 @@ void tst_qllcpsocketremote::testCase2()
     QTRY_VERIFY(readyReadSpy.count() == 1);
 
     const int Timeout = 10 * 1000;
-    ret = socket.waitForReadyRead(Timeout);
+    ret = socket->waitForReadyRead(Timeout);
 
     QVERIFY(ret);
  }
