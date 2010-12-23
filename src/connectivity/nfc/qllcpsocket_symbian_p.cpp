@@ -46,44 +46,9 @@
 #include "symbian/debug.h"
 QTM_BEGIN_NAMESPACE
 
-/*
-#define Q_CHECK_LLCPTYPE(function, type)  do { \
-if ((type) != m_socketType) \
-    { \
-    qWarning(#function" was called by a" \
-             " socket other than "#type""); \
-    return; \
-    } } while (0)
-
-
-#define Q_CHECK_LLCPTYPE_PARA_3(function, type, returnValue)  do { \
-if ((type) != m_socketType) \
-    { \
-    qWarning(#function" was called by a" \
-             " socket other than "#type""); \
-    return returnValue; \
-    } } while (0)
-
-
-#define Q_CHECK_SOCKET_HANDLER1(function)  do { \
-if (m_symbianSocketType1 == NULL) \
-    { \
-    qWarning("Socket Type1 Handler is NULL in "#function); \
-    return; \
-    } } while (0)
-
-#define Q_CHECK_SOCKET_HANDLER2(function)  do { \
-if (m_symbianSocketType2 == NULL) \
-    { \
-    qWarning("Socket Type2 Handler is NULL in "#function); \
-    return; \
-    } } while (0)
-*/
-
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
        : m_symbianSocketType1(NULL),
          m_symbianSocketType2(NULL),
-         //m_socketType(connectionUnknown),
          m_error(QLlcpSocket::UnknownSocketError),
          q_ptr(q),
          m_emittedReadyRead(false),
@@ -114,7 +79,6 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     delete m_connectedState;
     delete m_bindState;
     END
-    qDebug() << " QLlcpSocketPrivate::~QLlcpSocketPrivate exit";
 }
 
 /*!
@@ -136,18 +100,6 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
     BEGIN
-    /*
-    qDebug() << "connectToService enter " << m_socketType;
-    if( connectionType1 == m_socketType){
-       invokeError();
-       END
-       return;
-    }
-    else if (connectionUnknown == m_socketType){
-       m_socketType = connectionType2;
-    }
-    */
-
     Q_Q(QLlcpSocket);
     if (!q->isOpen())
         q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
@@ -158,15 +110,6 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
 void QLlcpSocketPrivate::disconnectFromService()
 {
     BEGIN
-    /*
-    if( connectionType1 == m_socketType){
-       invokeError();
-       END
-       return;
-    }
-
-    Q_CHECK_SOCKET_HANDLER2(QLlcpSocketPrivate::disconnectFromService());
-    */
     m_state->DisconnectFromService();
 
     Q_Q(QLlcpSocket);
@@ -215,11 +158,6 @@ void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
 qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
     BEGIN
-    /*
-    if( connectionType1 == m_socketType){
-        return 0;
-        }
-    */
     if (m_symbianSocketType2 == NULL)
     {
         return 0;
@@ -244,6 +182,7 @@ void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
 {
     BEGIN
+    qDebug() << "david check q_ptr: " << q_ptr;
     Q_Q(QLlcpSocket);
     qDebug() << "david check q: " << q;
     emit q->stateChanged(socketState);
@@ -273,15 +212,6 @@ void QLlcpSocketPrivate::invokeDisconnected()
 bool QLlcpSocketPrivate::bind(quint8 port)
 {
     BEGIN_END
-    /*
-    if( connectionType2 == m_socketType) {
-        END
-        return false;
-    }
-    else if (connectionUnknown == m_socketType) {
-        m_socketType = connectionType1;
-    }
-    */
     return m_state->Bind(port);
 }
 
@@ -293,7 +223,6 @@ bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
     BEGIN
     bool val = false;
-    //Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::hasPendingDatagrams(),connectionType1,val);
     if (m_symbianSocketType1)
     {
         val = m_symbianSocketType1->HasPendingDatagrams();
@@ -351,7 +280,6 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
     BEGIN
     qint64 val = -1;
-    //Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForDisconnected(),connectionType2, val);
     val = m_state->WriteDatagram(data,size);
     END
     return val;
@@ -363,8 +291,6 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
     BEGIN
-    //qint64 val = -1;
-    //Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForDisconnected(),connectionType2, val);
     END
     return writeDatagram(datagram.constData(),datagram.size());
 }
@@ -437,16 +363,12 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msecs)
 
 bool QLlcpSocketPrivate::waitForConnected(int msecs)
 {
-    //bool val = false;
-    //Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForConnected(),connectionType2, val);
     BEGIN_END
     return m_state->WaitForConnected(msecs);
 }
 
 bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
 {
-    //bool val = false;
-    //Q_CHECK_LLCPTYPE_PARA_3(QLlcpSocketPrivate::waitForDisconnected(),connectionType2, val);
     BEGIN_END
     return m_state->WaitForDisconnected(msecs);
 }

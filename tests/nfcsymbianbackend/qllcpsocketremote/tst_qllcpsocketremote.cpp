@@ -25,8 +25,8 @@ private Q_SLOTS:
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
     void initTestCase();
     void cleanupTestCase();
-    void testCase1();   // handshake 1
-    void testCase2(); // handshake 2
+    void testCase1();   // handshake 1,2
+    void testCase2(); // handshake 3
 
 private:
      QNearFieldTarget *m_target;
@@ -114,6 +114,9 @@ void tst_qllcpsocketremote::testCase1()
     QList<QVariant> arguments = bytesWrittenSpy.takeFirst(); // take the first signal
     qint64 writtenSize  = arguments.at(0).value<qint64>();
 
+    QString message2("handshake 2");
+    QNfcTestUtil::ShowMessage(message2);
+
     // make sure the no error signal emitted
     QCOMPARE(errorSpy.count(), 0);
 }
@@ -136,7 +139,7 @@ void tst_qllcpsocketremote::testCase2()
     QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
     bool ret = socket.bind(m_port);
 
-    QString message("handshake 2");
+    QString message("handshake 3");
     QNfcTestUtil::ShowMessage(message);
 
     QTRY_VERIFY(readyReadSpy.count() == 1);

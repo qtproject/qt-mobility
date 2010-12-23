@@ -25,23 +25,30 @@ private Q_SLOTS:
     void cleanupTestCase();
 
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
-    void testCase1();   // handshake 1
-    void testCase2();   // handshake 2
+    void testCase1();   // handshake 1,2
+    void testCase2();   // handshake 3
     void testCase3();
-    void testCase4();
-
-    void negTestCase1();
-    void negTestCase2();
-    void negTestCase3();
-    void negTestCase4();
 
     void coverageTest1();
 
+    void negTestCase1();
+    void negTestCase2();
+
+     void negTestCase3();
+      void negTestCase4();
+
+    void dummyTest();
+    void dummyTest2();
+    void dummyTest3();
+    void dummyTest4();
+    void dummyTest5();
+    void dummyTest6();
 
 private:
      QNearFieldManager *m_nfcManager; //own
      QNearFieldTarget *m_target; // not own
      quint8 m_port;
+     QLlcpSocket *socket;
 };
 
 tst_qllcpsocketlocal::tst_qllcpsocketlocal()
@@ -74,13 +81,15 @@ void tst_qllcpsocketlocal::initTestCase()
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget *>();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
-
     m_port = 35;
+
+    socket = new QLlcpSocket;
 }
 
 void tst_qllcpsocketlocal::cleanupTestCase()
 {
-    delete m_nfcManager;
+   //delete m_nfcManager;
+   //delete socket;
 }
 
 /*!
@@ -99,37 +108,51 @@ void tst_qllcpsocketlocal::cleanupTestCase()
 void tst_qllcpsocketlocal::testCase1()
 {
     QString message("testcase1 string");
-    QLlcpSocket socket(this);
+    //QLlcpSocket socket(this);
+
+    // negative test:  readDatagram must be called before bind
+    QByteArray tmpForReadArray;
+    tmpForReadArray.resize(127);
+    qint64 ret = socket->readDatagram(tmpForReadArray.data(), tmpForReadArray.size());
+    QVERIFY(ret == -1);
+
+    QCOMPARE(socket->state(), QLlcpSocket::UnconnectedState);
+    QSignalSpy stateChangedSpy(socket, SIGNAL(stateChanged(QLlcpSocket::State)));
 
     // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(&socket, SIGNAL(readyRead()));
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret);
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    bool retBool = socket->bind(m_port);
+    QVERIFY(retBool);
+    QVERIFY(!stateChangedSpy.isEmpty());
+    QCOMPARE(socket->state(), QLlcpSocket::BoundState);
 
     QString messageBox("handshake 1");
     QNfcTestUtil::ShowMessage(messageBox);
 
     // STEP 2: Local peer sends the  message to the remote peer
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
 
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    socket.writeDatagram(data,strSize,m_target, m_port);
+    socket->writeDatagram(data,strSize,m_target, m_port);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
     QList<QVariant> arguments = bytesWrittenSpy.takeFirst(); // take the first signal
     qint64 writtenSize  = arguments.at(0).value<qint64>();
     QCOMPARE(writtenSize, strSize);
 
+    QString messageBox2("handshake 2");
+    QNfcTestUtil::ShowMessage(messageBox2);
+
     // STEP 3: Receive data from remote peer
     QTRY_VERIFY(!readyReadSpy.isEmpty());
     QByteArray datagram;
-    while (socket.hasPendingDatagrams())
+    while (socket->hasPendingDatagrams())
     {
-       datagram.resize(socket.pendingDatagramSize());
-       qint64 readSize = socket.readDatagram(datagram.data(), datagram.size());
+       datagram.resize(socket->pendingDatagramSize());
+       qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
        QVERIFY(readSize != -1);
     }
 
@@ -157,42 +180,27 @@ void tst_qllcpsocketlocal::testCase1()
 void tst_qllcpsocketlocal::testCase2()
 {
     QString message("testcase2 string");
-    QLlcpSocket socket(this);
+    // QLlcpSocket socket(this);
 
     // STEP1:
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
 
     // STEP2:
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    socket.writeDatagram(data,strSize,m_target, m_port);
+    socket->writeDatagram(data,strSize,m_target, m_port);
     QVERIFY(bytesWrittenSpy.isEmpty());
 
     // STEP3:
     const int Timeout = 2 * 1000;
-    bool ret = socket.waitForBytesWritten(Timeout);
+    bool ret = socket->waitForBytesWritten(Timeout);
 
-    QString messageBox("handshake 2");
+    QString messageBox("handshake 3");
     QNfcTestUtil::ShowMessage(messageBox);
 
     QVERIFY(ret == true);
 }
-
-/*!
- Description:  connection-less state change checking
-*/
-void tst_qllcpsocketlocal::testCase3()
-{
-    QLlcpSocket socket(this);
-    QCOMPARE(socket.state(), QLlcpSocket::UnconnectedState);
-    QSignalSpy stateChangedSpy(&socket, SIGNAL(stateChanged(QLlcpSocket::State)));
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret);
-    QVERIFY(!stateChangedSpy.isEmpty());
-    QCOMPARE(socket.state(), QLlcpSocket::BoundState);
-}
-
 
 
 /*!
@@ -205,86 +213,28 @@ void tst_qllcpsocketlocal::testCase3()
  TestExpectedResults:
                1. Local peer write datagram successfully twice
 */
-void tst_qllcpsocketlocal::testCase4()
+void tst_qllcpsocketlocal::testCase3()
 {
     QString message("string1");
     QString message2("string2");
-    QLlcpSocket socket(this);
+    //QLlcpSocket socket(this);
 
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    qint64 val = socket->writeDatagram(data,strSize,m_target, m_port);
     QVERIFY(val != -1);
 
     QByteArray tmpArray2(message2.toAscii());
     const char* data2 =  tmpArray2.data();
     qint64 strSize2 = message2.size();
     qDebug() << "begin write the second time";
-    qint64 val2 = socket.writeDatagram(data2,strSize2,m_target, m_port);
+    qint64 val2 = socket->writeDatagram(data2,strSize2,m_target, m_port);
     qDebug() << "end write the second time" << val2;
     QVERIFY(val2 != -1);
 
-    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
     QTRY_VERIFY(bytesWrittenSpy.count() == 2);
-}
-
-
-
-/*!
- Description: bind negative test -invalid port
-*/
-void tst_qllcpsocketlocal::negTestCase1()
-{
-    QLlcpSocket socket(this);
-    bool ret = socket.bind(65);
-    QVERIFY(ret == false);
-    //int invalidPort = -1;
-    //ret = socket.bind(invalidPort);
-    //QVERIFY(ret == false);
-}
-
-/*!
- Description: bind negative test II - double bind
-*/
-void tst_qllcpsocketlocal::negTestCase2()
-{
-    QLlcpSocket socket(this);
-    bool ret = socket.bind(m_port);
-    QVERIFY(ret == true);
-
-    // bind again will cause failure
-    ret = socket.bind(m_port);
-    QVERIFY(ret == false);
-}
-
-
-/*!
- Description:  readDatagram negative testcase - invalid state machine
-*/
-void tst_qllcpsocketlocal::negTestCase3()
-{
-    QLlcpSocket socket(this);
-    // readDatagram must be called before bind
-    QByteArray datagram;
-    datagram.resize(127);
-    qint64 ret = socket.readDatagram(datagram.data(), datagram.size());
-    QVERIFY(ret == -1);
-}
-
-/*!
- Description: writeDatagram negative testcase I - invalid port num
-*/
-void tst_qllcpsocketlocal::negTestCase4()
-{
-    QLlcpSocket socket(this);
-    QString message = "Oops, Invalid port num for writeDatagram";
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-    qint8 invalidPort = -1;
-    qint64 ret = socket.writeDatagram(data,strSize,m_target, invalidPort);
-    QVERIFY(ret == -1);
 }
 
 /*!
@@ -292,31 +242,153 @@ void tst_qllcpsocketlocal::negTestCase4()
 */
 void tst_qllcpsocketlocal::coverageTest1()
 {
-    QLlcpSocket socket(this);
+    /*
+    QLlcpSocket socket;
     qDebug() << "coverageTest1: " <<m_port;
-    bool bindOk = socket.bind(m_port);
+    bool bindOk = socket->bind(m_port);
     QVERIFY(bindOk == true);
     qDebug() << "coverageTest1 bindOk";
-
-    QSignalSpy errorSpy(&socket, SIGNAL(error(QLlcpSocket::Error)));
-    socket.connectToService(m_target,"uri");
+    */
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
+    socket->connectToService(m_target,"uri");
     QTRY_VERIFY(errorSpy.count() == 1);
 
-    socket.disconnectFromService();
+    socket->disconnectFromService();
     QTRY_VERIFY(errorSpy.count() == 2);
 
-    QVERIFY(socket.waitForConnected() == false);
-    QVERIFY(socket.waitForDisconnected() == false);
+    QVERIFY(socket->waitForConnected() == false);
+    QVERIFY(socket->waitForDisconnected() == false);
 
     qDebug() << "coverageTest1 writeDatagram";
     QString message = "Oops, must follow a port parameter";
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 ret = socket.writeDatagram(data,strSize);
+    qint64 ret = socket->writeDatagram(data,strSize);
 
     qDebug() << "coverageTest1 writeDatagram end";
     QVERIFY(ret == -1);
+}
+
+
+/*!
+ Description: writeDatagram negative testcase I - invalid port num
+*/
+void tst_qllcpsocketlocal::negTestCase1()
+{
+    QString message = "Oops, Invalid port num for writeDatagram";
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint8 invalidPort = -1;
+    qint64 ret = socket->writeDatagram(data,strSize,m_target, invalidPort);
+    QVERIFY(ret == -1);
+}
+
+
+/*!
+ Description: bind negative test -invalid port & double bind
+*/
+void tst_qllcpsocketlocal::negTestCase2()
+{
+    // bind again will cause failure
+
+    QLlcpSocket *localSocket = new QLlcpSocket;
+    bool ret = localSocket->bind(65);
+    QVERIFY(ret == false);
+    delete localSocket;
+
+    QTest::qWait(2000);
+
+    bool ret2 = socket->bind(m_port);
+    QVERIFY(ret2 == false);
+
+    delete socket;
+    socket = NULL;
+
+
+    /*
+    QTest::qWait(2000);
+    int invalidPort = -1;
+    ret = localSocket->bind(invalidPort);
+    QVERIFY(ret == false);
+    */
+}
+
+void tst_qllcpsocketlocal::negTestCase3()
+{
+    // bind again will cause failure
+
+    QLlcpSocket *localSocket = new QLlcpSocket;
+    bool ret = localSocket->bind(65);
+    QVERIFY(ret == false);
+    delete localSocket;
+
+    QTest::qWait(2000);
+
+    bool ret2 = socket->bind(m_port);
+    QVERIFY(ret2 == false);
+
+    delete socket;
+    socket = NULL;
+
+    QTest::qWait(2000);
+    int invalidPort = -1;
+    ret = localSocket->bind(invalidPort);
+    QVERIFY(ret == false);
+}
+
+void tst_qllcpsocketlocal::negTestCase4()
+{
+    // bind again will cause failure
+
+    QLlcpSocket *localSocket = new QLlcpSocket;
+    bool ret = localSocket->bind(65);
+    QVERIFY(ret == false);
+    delete localSocket;
+
+    bool ret2 = socket->bind(m_port);
+    QVERIFY(ret2 == false);
+
+    delete socket;
+    socket = NULL;
+
+    int invalidPort = -1;
+    ret = localSocket->bind(invalidPort);
+    QVERIFY(ret == false);
+}
+
+
+void tst_qllcpsocketlocal::dummyTest()
+{
+    delete m_nfcManager;
+    delete socket;
+}
+
+void tst_qllcpsocketlocal::dummyTest2()
+{
+}
+
+void tst_qllcpsocketlocal::dummyTest3()
+{
+    delete m_nfcManager;
+}
+
+void tst_qllcpsocketlocal::dummyTest4()
+{
+    delete socket;
+}
+
+void tst_qllcpsocketlocal::dummyTest5()
+{
+    if (socket)
+        socket->deleteLater();
+}
+
+void tst_qllcpsocketlocal::dummyTest6()
+{
+    if (m_nfcManager)
+        m_nfcManager->deleteLater();
 }
 
 

@@ -103,10 +103,10 @@ public:
    ~CLlcpSocketType1();
    
 public:    
-   TInt StartWriteDatagram(const TDesC8& aData,TInt8 portNum);
+   TInt StartWriteDatagram(const TDesC8& aData,TUint8 portNum);
    TInt ReadDatagram(TDes8& aData);
    TInt ReadDatagram(TDes8& aData, TInt8& aRemotePortNum);
-   bool Bind(TInt8 portNum);
+   bool Bind(TUint8 portNum);
    
    /*!
        Returns true if at least one datagram is waiting to be read;
@@ -142,7 +142,7 @@ private:
     void ConstructL();  
     void Cleanup();   
     
-    TInt CreateConnection(TInt8 portNum);
+    TInt CreateConnection(TUint8 portNum);
     TInt CreateConnection(MLlcpConnLessTransporter* aConnection);
     
 private:
@@ -170,7 +170,9 @@ private:
    CLlcpTimer * iTimer;  // Own
    TWaitStatus iWaitStatus;
 
-   bool iConnLessStarted;
+   bool iPortBinded;
+   TUint8 iLocalPort;
+   TUint8 iRemotePort;
    
    QtMobility::QLlcpSocketPrivate& iCallback;
    
