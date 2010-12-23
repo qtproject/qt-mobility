@@ -58,6 +58,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include "qgeocoordinate.h"
+#include "projwrapper_p.h"
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
@@ -85,22 +86,34 @@ public:
 
     bool blockPropertyChangeSignals;
 
-    QGraphicsScene *scaleIndepScene;
-    void updateScaleIndepScene();
+    QHash<const QGeoMapObject*, QTransform> latLonTrans;
+    QGraphicsScene *latLonScene;
+    QHash<QGraphicsItem*, QGeoMapObject*> latLonItems;
 
-    QHash<QGraphicsItem*, QGeoMapObject*> scaleIndepMap;
+    QHash<const QGeoMapObject*, QTransform> pixelTrans;
+    QGraphicsScene *pixelScene;
+    QHash<QGraphicsItem*, QGeoMapObject*> pixelItems;
 
-    void addObject(QGeoMapObject *object);
-    void removeObject(QGeoMapObject *object);
+    QSet<QGeoMapObject*> scaleInvariantObjects;
+
+    virtual void addObject(QGeoMapObject *object);
+    virtual void removeObject(QGeoMapObject *object);
+    virtual void updateLatLonTransform(QGeoMapObject *object);
+    virtual void updatePixelTransform(QGeoMapObject *object);
     void clearObjects();
 
-    bool sceneOutOfDate;
+    QPolygonF latLonViewport();
+
+    bool pixelsOutOfDate;
+    bool zoomOutOfDate;
 
 public slots:
     void forceUpdate(const QRectF &target = QRectF());
-    void forceUpdate(const QGeoMapObject *obj);
+    void forceUpdate(QGeoMapObject *obj);
 
     void updateSender();
+    virtual void updatePixelTransforms(QGeoMapGroupObject *group=0);
+    virtual void updateLatLonTransforms(QGeoMapGroupObject *group=0);
 
 public:
     QGeoMapData *q_ptr;

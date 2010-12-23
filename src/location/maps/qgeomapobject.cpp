@@ -45,6 +45,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
+#include "projwrapper_p.h"
 
 #include <QtAlgorithms>
 
@@ -119,6 +120,11 @@ QGeoMapObject::~QGeoMapObject()
     delete d_ptr;
 }
 
+void QGeoMapObject::update()
+{
+    emit mapNeedsUpdate();
+}
+
 /*!
     Returns the type of this map object.
 */
@@ -153,16 +159,6 @@ void QGeoMapObject::setZValue(int zValue)
 int QGeoMapObject::zValue() const
 {
     return d_ptr->zValue;
-}
-
-bool QGeoMapObject::isScaleDependent() const
-{
-    return d_ptr->isScaleDependent;
-}
-
-void QGeoMapObject::setScaleDependent(bool s)
-{
-    d_ptr->isScaleDependent = s;
 }
 
 /*!
@@ -210,14 +206,16 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return QGeoBoundingBox();
 
-    QPointF originPoint = d_ptr->mapData->coordinateToScreenPosition(origin());
-    QRectF bounds = d_ptr->graphicsItem->shape().boundingRect();
-    bounds.translate(originPoint);
+    QTransform trans = d_ptr->mapData->d_ptr->latLonTrans.value(this);
 
-    QGeoCoordinate topLeft = d_ptr->mapData->screenPositionToCoordinate(
-                bounds.topLeft());
-    QGeoCoordinate bottomRight = d_ptr->mapData->screenPositionToCoordinate(
-                bounds.bottomRight());
+    QRectF bounds = d_ptr->graphicsItem->boundingRect();
+    QPolygonF poly = bounds * trans;
+    QRectF latLonBounds = poly.boundingRect();
+
+    QGeoCoordinate topLeft(latLonBounds.topLeft().y(),
+                           latLonBounds.topLeft().x());
+    QGeoCoordinate bottomRight(latLonBounds.bottomRight().y(),
+                               latLonBounds.bottomRight().x());
 
     return QGeoBoundingBox(topLeft, bottomRight);
 }
@@ -231,10 +229,16 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
     if (!d_ptr->graphicsItem || !d_ptr->mapData)
         return false;
 
-    QPointF point = d_ptr->mapData->coordinateToScreenPosition(coordinate);
-    point = d_ptr->graphicsItem->mapFromScene(point);
+    QTransform trans = d_ptr->mapData->d_ptr->latLonTrans.value(this);
+    bool ok;
+    QTransform inv = trans.inverted(&ok);
+    if (!ok)
+        return false;
 
-    return d_ptr->graphicsItem->contains(point);
+    QPointF latLonPoint(coordinate.longitude(), coordinate.latitude());
+    QPointF localPoint = latLonPoint * inv;
+
+    return d_ptr->graphicsItem->contains(localPoint);
 }
 
 /*!
@@ -288,7 +292,7 @@ QGeoMapData* QGeoMapObject::mapData() const
     return d_ptr->mapData;
 }
 
-QGraphicsItem *QGeoMapObject::graphicsItem() const
+QGraphicsItem * const QGeoMapObject::graphicsItem() const
 {
     return d_ptr->graphicsItem;
 }
@@ -315,6 +319,17 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 
     d_ptr->origin = origin;
     emit originChanged(origin);
+}
+
+QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
+{
+    return d_ptr->units;
+}
+
+void QGeoMapObject::setUnits(const CoordinateUnit &unit)
+{
+    d_ptr->units = unit;
+    emit mapNeedsUpdate();
 }
 
 /*!
@@ -351,8 +366,8 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
     : zValue(0),
       isVisible(true),
       isSelected(false),
-      isScaleDependent(false),
       mapData(0),
+      units(QGeoMapObject::PixelUnit),
       graphicsItem(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()

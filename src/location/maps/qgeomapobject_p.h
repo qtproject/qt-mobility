@@ -72,7 +72,7 @@ public:
     int zValue;
     bool isVisible;
     bool isSelected;
-    bool isScaleDependent;
+    QGeoMapObject::CoordinateUnit units;
 
     QGeoMapData *mapData;
     QGraphicsItem *graphicsItem;

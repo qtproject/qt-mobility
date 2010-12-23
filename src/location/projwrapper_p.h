@@ -56,18 +56,19 @@
 
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
 class ProjCoordinate;
-class QString;
 
 class ProjCoordinateSystemPrivate;
 class ProjCoordinateSystem
 {
-    ProjCoordinateSystem(const QString &projection);
+public:
+    ProjCoordinateSystem(const QString &projection = QString("+proj=latlon +ellps=WGS84"));
     ProjCoordinateSystem(const ProjCoordinateSystem &other);
-    virtual ~ProjCoordinateSystem();
+    ~ProjCoordinateSystem();
 
 private:
     QSharedDataPointer<ProjCoordinateSystemPrivate> d;
@@ -78,9 +79,10 @@ private:
 class ProjCoordinatePrivate;
 class ProjCoordinate
 {
+public:
     ProjCoordinate(double x, double y, double z, const ProjCoordinateSystem &system);
     ProjCoordinate(const ProjCoordinate &other);
-    virtual ~ProjCoordinate();
+    ~ProjCoordinate();
 
     double x() const;
     double y() const;
@@ -89,7 +91,7 @@ class ProjCoordinate
     bool convert(const ProjCoordinateSystem &system);
 
 private:
-    const ProjCoordinatePrivate *d;
+    ProjCoordinatePrivate * const d;
 };
 
 QTM_END_NAMESPACE

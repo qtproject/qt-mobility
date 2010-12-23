@@ -82,6 +82,12 @@ public:
         CustomType
     };
 
+    enum CoordinateUnit {
+        PixelUnit,
+        MeterUnit,
+        DegreeUnit
+    };
+
     QGeoMapObject(QGeoMapData *mapData = 0);
     virtual ~QGeoMapObject();
 
@@ -110,11 +116,13 @@ public:
     QGeoCoordinate origin() const;
     void setOrigin(const QGeoCoordinate &origin);
 
-    QGraphicsItem* graphicsItem() const;
+    CoordinateUnit units() const;
+    void setUnits(const CoordinateUnit &unit);
+
+    QGraphicsItem * const graphicsItem() const;
     void setGraphicsItem(QGraphicsItem *item);
 
-    bool isScaleDependent() const;
-    void setScaleDependent(bool s);
+    void update();
 
 Q_SIGNALS:
     void zValueChanged(int zValue);

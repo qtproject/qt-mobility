@@ -161,8 +161,8 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
     QPoint pos(coordinateToWorldReferencePosition(coordinate));
 
     int x = pos.x() - d->worldReferenceViewportRect.left();
-    if (x < 0)
-        x += d->worldReferenceSize.width();
+    //if (x < 0)
+    //    x += d->worldReferenceSize.width();
 
     int y = pos.y() - d->worldReferenceViewportRect.top();
 
@@ -292,8 +292,6 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     if (!changed)
         return;
 
-    QGeoMapData::setCenter(center);
-
     d->worldReferenceViewportCenter = coordinateToWorldReferencePosition(center);
     d->updateScreenRect();
     emit updateMapDisplay();
@@ -301,6 +299,8 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     emit centerChanged(center);
 
     d->updateMapImage();
+
+    QGeoMapData::setCenter(center);
 }
 
 /*!
@@ -453,6 +453,9 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     d->updateMapImage();
 
     emit zoomLevelChanged(d->zoomLevel);
+
+    // call again
+    QGeoMapData::setZoomLevel(zoomLevel);
 }
 
 /*!
@@ -826,8 +829,8 @@ void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
     : QGeoMapDataPrivate(parent, engine),
       scene(0),
-      spherical("+proj=laton +ellps=sphere"),
-      wgs84("+proj=laton +ellps=WGS84")
+      spherical("+proj=latlon +ellps=sphere"),
+      wgs84("+proj=latlon +ellps=WGS84")
 {
 }
 

@@ -59,6 +59,7 @@ public:
 ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const QString &projStr)
 {
     projection = pj_init_plus(projStr.toLatin1().constData());
+    Q_ASSERT_X(projection, "pj_init_plus", "invalid projection string");
 }
 
 ProjCoordinateSystemPrivate::ProjCoordinateSystemPrivate(const ProjCoordinateSystemPrivate &other) :
@@ -69,7 +70,7 @@ ProjCoordinateSystemPrivate::~ProjCoordinateSystemPrivate()
 {}
 
 ProjCoordinateSystem::ProjCoordinateSystem(const QString &projection) :
-    d(new ProjCoordinateSystem(projection))
+    d(new ProjCoordinateSystemPrivate(projection))
 {}
 
 ProjCoordinateSystem::ProjCoordinateSystem(const ProjCoordinateSystem &other) :
