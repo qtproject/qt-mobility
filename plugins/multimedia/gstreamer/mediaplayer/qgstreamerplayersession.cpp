@@ -93,12 +93,6 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_seekable(false),
      m_lastPosition(0),
      m_duration(-1)
-#ifdef Q_WS_MAEMO_6
-     ,
-     m_resourceSet(0),
-     m_audioResource(0),
-     m_resourceState(NoResourceState)
-#endif // Q_WS_MAEMO_6
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -158,22 +152,6 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         if (m_usePlaybin2)
             g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleVolumeChange), this);
     }
-
-#ifdef Q_WS_MAEMO_6
-    // resource policy awareness
-    m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
-    m_resourceSet->setAlwaysReply();
-
-    m_audioResource = new ResourcePolicy::AudioResource("player");
-    m_audioResource->setProcessID(QCoreApplication::applicationPid());
-    m_audioResource->setStreamTag("media.name", "*");
-    m_resourceSet->addResourceObject(m_audioResource);
-
-    connect(m_resourceSet, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>&)),
-            this, SLOT(resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&)));
-    connect(m_resourceSet, SIGNAL(lostResources()), this, SLOT(resourceLostHandler()));
-    connect(m_resourceSet, SIGNAL(resourcesReleased()), this, SLOT(resourceReleasedHandler()));
-#endif // Q_WS_MAEMO_6
 }
 
 QGstreamerPlayerSession::~QGstreamerPlayerSession()
@@ -596,35 +574,26 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
-#ifdef Q_WS_MAEMO_6
     if (m_playbin) {
-        if (m_resourceState == NoResourceState) {
-            m_resourceState = PendingResourceState;
-            acquireResources();
+        m_pendingState = QMediaPlayer::PlayingState;
+        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
+            m_pendingState = m_state = QMediaPlayer::StoppedState;
+
+            emit stateChanged(m_state);
+        } else
             return true;
-        }
-        else if (m_resourceState == HasResourceState) {
-            return doPlay();
-        }
     }
 
     return false;
-#else
-    return doPlay();
-#endif // Q_WS_MAEMO_6
 }
 
 bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
-        if (m_pendingVideoSink != 0) {
-#ifdef Q_WS_MAEMO_6
-            if (m_resourceState == HasResourceState)
-                m_resourceSet->release();
-#endif // Q_WS_MAEMO_6
+        if (m_pendingVideoSink != 0)
             return true;
-        }
 
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
             qWarning() << "GStreamer; Unable to pause -" << m_request.url().toString();
@@ -632,10 +601,6 @@ bool QGstreamerPlayerSession::pause()
 
             emit stateChanged(m_state);
         } else {
-#ifdef Q_WS_MAEMO_6
-            if (m_resourceState == HasResourceState)
-                m_resourceSet->release();
-#endif // Q_WS_MAEMO_6
             return true;
         }
     }
@@ -656,12 +621,6 @@ void QGstreamerPlayerSession::stop()
         //we have to do it here, since gstreamer will not emit bus messages any more
         if (oldState != m_state)
             emit stateChanged(m_state);
-
-#ifdef Q_WS_MAEMO_6
-        // release the resource
-        if (m_resourceState != NoResourceState)
-            m_resourceSet->release();
-#endif // Q_WS_MAEMO_6
     }
 }
 
@@ -814,9 +773,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             emit positionChanged(newPos);
         }
     } else {
-#ifdef DEBUG_PLAYBIN
-        qDebug() << "GST MSG, src =" << GST_MESSAGE_SRC(gm)->name << "type =" << GST_MESSAGE_TYPE_NAME(gm);
-#endif
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
@@ -895,16 +851,8 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                             }
                         }
 
-                        if (m_state != prevState) {
-#ifdef Q_WS_MAEMO_6
-                            if (m_resourceState == PendingResourceState)
-                                emit resourceLost();
-                            else
-                                emit stateChanged(m_state);
-#else
+                        if (m_state != prevState)
                             emit stateChanged(m_state);
-#endif //Q_WS_MAEMO_6
-                        }
 
                         break;
                     }
@@ -1280,58 +1228,6 @@ void QGstreamerPlayerSession::updateVideoResolutionTag()
         emit tagsChanged();
     }
 }
-
-bool QGstreamerPlayerSession::doPlay()
-{
-#ifdef Q_WS_MAEMO_6
-    if (m_playbin && m_resourceState == HasResourceState) {
-#else
-    if (m_playbin) {
-#endif // Q_WS_MAEMO_6
-        m_pendingState = QMediaPlayer::PlayingState;
-        if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
-            m_pendingState = m_state = QMediaPlayer::StoppedState;
-
-            emit stateChanged(m_state);
-        } else
-            return true;
-    }
-
-    return false;
-}
-
-#ifdef Q_WS_MAEMO_6
-void QGstreamerPlayerSession::acquireResources()
-{
-    m_resourceSet->addResource(ResourcePolicy::VideoPlaybackType);
-    // TODO: The video resource should be acquired only when necessary. We might play only audio...
-    m_resourceSet->update();
-    m_resourceSet->acquire();
-}
-
-void QGstreamerPlayerSession::resourceAcquiredHandler(const QList<ResourcePolicy::ResourceType>&
-                                                      /*grantedOptionalResList*/)
-{
-    if (m_resourceState == PendingResourceState) {
-        m_resourceState = HasResourceState;
-        doPlay();
-    }
-}
-
-void QGstreamerPlayerSession::resourceReleasedHandler()
-{
-    m_resourceState = NoResourceState;
-}
-
-void QGstreamerPlayerSession::resourceLostHandler()
-{
-    if (m_resourceState == HasResourceState) {
-        m_resourceState = PendingResourceState;
-        pause();
-    }
-}
-#endif // Q_WS_MAEMO_6
 
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
 {
