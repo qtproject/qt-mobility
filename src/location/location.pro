@@ -87,13 +87,6 @@ maemo6 {
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
-    CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_NAME = libQtLocation
-    QMAKE_PKGCONFIG_DESCRIPTION = libQtLocation library
-    QMAKE_PKGCONFIG_INCDIR = $${QT_MOBILITY_INCLUDE}/QtLocation
-    QMAKE_PKGCONFIG_CFLAGS += -I$${QT_MOBILITY_INCLUDE}/QtMobility
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtLocation.pc
 }
 
 maemo5 {
@@ -107,11 +100,8 @@ maemo5 {
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
-    CONFIG += create_pc create_prl
     LIBS += -llocation
     QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtLocation.pc
 }
 
 meego {
@@ -139,8 +129,6 @@ meego {
         CONFIG += qdbus link_pkgconfig
         PKGCONFIG += gconf-2.0 glib-2.0
         QMAKE_PKGCONFIG_REQUIRES += glib-2.0 gconf-2.0
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtLocation.pc
     }
 }
 
