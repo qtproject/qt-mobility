@@ -91,7 +91,7 @@ QMediaNetworkAccessControl::~QMediaNetworkAccessControl()
 
 /*!
     \fn QNetworkAccessControl::configurationChanged(const QString &configurationId)
-    This signal is emited when the current active configuration Id changes to \a configurationId.
+    This signal is emitted when the current active configuration Id changes to \a configurationId.
 */
 
 
