@@ -10,7 +10,6 @@ Sources:
 Patches:
     - no_rpath.patch
     - fix_translations_install_path.patch
-    - enable_pkgconfig_support.patch
     - enable_camerabin_with_meego_target.patch
 Description: |
     Qt Mobility delivers a set of new APIs for mobile device functionality. These
