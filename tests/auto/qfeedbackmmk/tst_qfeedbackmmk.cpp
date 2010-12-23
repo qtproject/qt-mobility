@@ -242,6 +242,11 @@ void tst_QFeedbackMMK::badFile()
 
     QCOMPARE(errorSpy.count(), 1);
     QVERIFY(fe.isLoaded() == false);
+
+    fe.start(); // this actually causes a load, so it goes into LOADING, then fails, should go to STOPPED
+    QTRY_COMPARE(fe.state(), QFeedbackEffect::Stopped);
+    QCOMPARE(errorSpy.count(), 2);
+    QVERIFY(fe.isLoaded() == false);
 }
 
 QTEST_MAIN(tst_QFeedbackMMK)

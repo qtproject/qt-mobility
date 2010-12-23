@@ -123,7 +123,7 @@ void QFeedbackMMK::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::
         case QFeedbackEffect::Running:
             if (fi.playing) {
                 // We're already playing.
-            } else if (fi.soundEffect){
+            } else if (fi.soundEffect) {
                 fi.playing = true;
                 mEffects.insert(effect, fi); // overwrite previous version
                 fi.soundEffect->play();
@@ -137,9 +137,8 @@ void QFeedbackMMK::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::
 QFeedbackEffect::State QFeedbackMMK::effectState(const QFeedbackFileEffect *effect)
 {
     FeedbackInfo fi = mEffects.value(effect);
-
     if (fi.soundEffect) {
-        if (fi.playing)
+        if (fi.playing) // we might not be loaded, however
             return QFeedbackEffect::Running;
         if (fi.loaded)
             return QFeedbackEffect::Stopped; // No idle?
@@ -169,9 +168,15 @@ void QFeedbackMMK::soundEffectStatusChanged()
         if (!fe)
             return;
 
+        FeedbackInfo fi = mEffects.value(fe);
+
         switch(se->status()) {
             case QSoundEffect::Error:
-                if (fe->state() == QFeedbackEffect::Loading) {
+                if (!fi.soundEffect || !fi.loaded) {
+                    // Error before we got loaded, so fail the load
+                    mEffectMap.remove(se);
+                    mEffects.remove(fe);
+                    se->deleteLater();
                     reportLoadFinished(fe, false); // this ends our involvement
                 } else {
                     reportError(fe, QFeedbackEffect::UnknownError); // this doesn't do much
