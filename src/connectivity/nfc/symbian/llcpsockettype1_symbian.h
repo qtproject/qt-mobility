@@ -175,8 +175,6 @@ private:
    TUint8 iRemotePort;
    
    QtMobility::QLlcpSocketPrivate& iCallback;
-   
-   TInt8 iRemotePortNum;
    };
 
 /*!

@@ -77,8 +77,7 @@ CLlcpSocketType1::CLlcpSocketType1(QtMobility::QLlcpSocketPrivate& aCallback)
       iPortBinded(EFalse),
       iLocalPort(0),
       iRemotePort(0),
-      iCallback(aCallback),
-      iRemotePortNum(-1)
+      iCallback(aCallback)
     {
     }
 
@@ -103,12 +102,6 @@ CLlcpSocketType1::~CLlcpSocketType1()
     
     if ( iLlcp )
         {
-        /*
-        if (iPortBinded)
-            {
-            iLlcp->StopListeningConnLessRequest(iLocalPort);
-            }
-        */
         iLlcp->StopListeningConnLessRequest(iLocalPort);
         delete iLlcp;
         iLlcp = NULL;
@@ -149,14 +142,10 @@ bool CLlcpSocketType1::Bind(TUint8 aPortNum)
     BEGIN
     bool bindOK = EFalse;
     TInt error = KErrNone;
-    qDebug() << "iPortBinded value: " << iPortBinded;
     if ( !iPortBinded )
         {
         // remote connection created at frame received
-        
-        // David comment this out for debug
         TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,aPortNum ));
-        qDebug() << "StartListeningConnLessRequestL result: " << error;
         if (KErrNone == error)
             {
             iPortBinded = ETrue;
@@ -165,8 +154,6 @@ bool CLlcpSocketType1::Bind(TUint8 aPortNum)
             }
         }   
     END
-    qDebug() << "PortNum & PortBinded: " << aPortNum 
-             << " & " << iPortBinded << " $ " << bindOK;
     return bindOK;
     }
  
@@ -205,7 +192,7 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
 TInt CLlcpSocketType1::ReadDatagram(TDes8& aData, TInt8& aRemotePortNum)
     {
     BEGIN
-    aRemotePortNum = iRemotePortNum;
+    aRemotePortNum = iRemotePort;
     TInt val = ReadDatagram(aData);
     END
     return val;
@@ -261,7 +248,7 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
 void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
     BEGIN
-    iRemotePortNum = aConnection->DsapL();
+    iRemotePort = aConnection->SsapL();
     CreateConnection(aConnection);
     END
     }
