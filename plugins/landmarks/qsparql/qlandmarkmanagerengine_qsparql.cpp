@@ -556,6 +556,7 @@ bool QLandmarkManagerEngineQsparql::startRequest(QLandmarkAbstractRequest* reque
         return false;
     }
 
+    QLandmarkManagerEngine::updateRequestState(request, QLandmarkAbstractRequest::ActiveState);
     QThreadPool::globalInstance()->start(queryRun);
     return true;
 }
