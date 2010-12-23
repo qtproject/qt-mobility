@@ -8142,6 +8142,18 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(waitForActive(spy, &fetchRequest,100));
     QVERIFY(fetchRequest.waitForFinished(10000));
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
+
+
+#ifdef Q_OS_SYMBIAN
+    QList<QLandmarkId> ids = m_manager->landmarkIds();
+    QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+    QVERIFY(m_manager->removeLandmarks(ids));
+
+    //need to workaround deletion of these landmarks for symbian
+    for (int i=0; i < 20; ++i) {
+        m_manager->removeLandmarks(ids);
+    }
+#endif
 }
 
 #endif
