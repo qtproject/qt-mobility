@@ -52,14 +52,7 @@ maemo6gyroscope::maemo6gyroscope(QSensor *sensor)
 //    initSensor<GyroscopeSensorChannelInterface>(sensorName, m_initDone);
     setDescription(QLatin1String("angular velocity in "));
     setRanges(MILLI);
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
-                               this, SLOT(slotDataAvailable(const XYZ&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
+    doConnect(sensorName);
     setReading<QGyroscopeReading>(&m_reading);
 }
 
@@ -72,3 +65,25 @@ void maemo6gyroscope::slotDataAvailable(const XYZ& data)
     newReadingAvailable();
 }
 
+void maemo6gyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
+{
+    for (int i=0, l=frame.size(); i<l; i++){
+        slotDataAvailable(frame.at(i));
+    }
+}
+
+void maemo6gyroscope::doConnect(QString sensorName){
+    if (!m_sensorInterface) return;
+    if (m_bufferSize == m_exBufferSize) return;
+    if (m_bufferSize==1){
+        QObject::disconnect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )));
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
+                               this, SLOT(slotDataAvailable(const XYZ&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+        return;
+    }
+    QObject::disconnect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)));
+    if (!(QObject::connect(m_sensorInterface,SIGNAL(frameAvailable(const QVector<XYZ>& )),
+                           this, SLOT(slotFrameAvailable(const QVector<XYZ>& )))));
+        qWarning() << "Unable to connect "<< sensorName;
+}

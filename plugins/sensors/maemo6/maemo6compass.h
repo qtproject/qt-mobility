@@ -57,11 +57,11 @@ class maemo6compass : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6compass(QSensor *sensor);
-
+protected:
+    virtual void doConnect(QString sensorName);
 private:
     QCompassReading m_reading;
     static bool m_initDone;
-
 private slots:
     void slotDataAvailable(const Compass& data);
 };
