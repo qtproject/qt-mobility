@@ -797,6 +797,9 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
     QTransform latLon;
     QGeoCoordinate origin = object->origin();
 
+    QGraphicsItem *item = object->graphicsItem();
+    QPolygonF local = item->boundingRect() * item->transform();
+
     if (object->units() == QGeoMapObject::MeterUnit) {
         QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
         projStr = projStr.arg(origin.latitude(), 0, 'f', 10)
@@ -805,7 +808,6 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         ProjCoordinateSystem localSys(projStr, false);
         ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
 
-        QPolygonF local(object->graphicsItem()->boundingRect());
         QPolygonF wgs;
 
         foreach (QPointF pt, local) {
@@ -839,7 +841,6 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
                                                                origin.latitude());
 
-        QPolygonF local(object->graphicsItem()->boundingRect());
         QPolygonF wgs;
         foreach (const QPointF &pt, local) {
             const QGeoCoordinate coord =
@@ -989,7 +990,7 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
         origins << QPointF(origin.longitude() - 360.0, origin.latitude());
 
         foreach (QPointF o, origins) {
-            QTransform pixel;
+            QTransform pixel = object->graphicsItem()->transform();
             QPointF pixelOrigin = coordinateToScreenPosition(o.x(), o.y());
             pixel.translate(pixelOrigin.x(), pixelOrigin.y());
             pixelTrans.insertMulti(object, pixel);
@@ -1001,7 +1002,9 @@ void QGeoMapDataPrivate::updatePixelTransform(QGeoMapObject *object)
         foreach (QTransform latLon, latLons) {
             QTransform pixel;
 
-            QPolygonF latLonPoly = latLon.map(object->graphicsItem()->boundingRect());
+            QGraphicsItem *item = object->graphicsItem();
+            QPolygonF local = item->boundingRect() * item->transform();
+            QPolygonF latLonPoly = latLon.map(local);
             QPolygonF pixelPoly;
 
             foreach (QPointF pt, latLonPoly) {
