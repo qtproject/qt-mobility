@@ -85,7 +85,8 @@ public:
     enum CoordinateUnit {
         PixelUnit,
         MeterUnit,
-        DegreeUnit
+        RelativeDegreeUnit,
+        AbsoluteDegreeUnit
     };
 
     QGeoMapObject(QGeoMapData *mapData = 0);

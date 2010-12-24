@@ -835,7 +835,7 @@ void QGeoMapDataPrivate::updateLatLonTransform(QGeoMapObject *object)
         if (!ok)
             return;
 
-    } else if (object->units() == QGeoMapObject::DegreeUnit) {
+    } else if (object->units() == QGeoMapObject::RelativeDegreeUnit) {
         latLon.translate(origin.longitude(), origin.latitude());
     } else if (object->units() == QGeoMapObject::PixelUnit) {
         QPointF pixelOrigin = this->coordinateToScreenPosition(origin.longitude(),
