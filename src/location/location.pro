@@ -13,10 +13,10 @@ DEPENDPATH += .
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
 
-contains(proj_enabled, no) {
-  include($$PWD/../3rdparty/proj.pri)
-} else {
+contains(proj_enabled, yes) {
   LIBS += -lproj
+} else {
+  include($$PWD/../3rdparty/proj.pri)
 }
 
 PUBLIC_HEADERS += \
