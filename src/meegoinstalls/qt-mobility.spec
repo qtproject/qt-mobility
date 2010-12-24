@@ -1112,7 +1112,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 # >> files libqtlocation1
 %{_libdir}/libQtLocation.so.*
 %{_libdir}/qt4/plugins/geoservices/libqtgeoservices_nokia.so
-%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_sqlite.so
+%{_libdir}/qt4/plugins/landmarks/libqtlandmarks_qsparql.so
 # << files libqtlocation1
 
 %files -n libqtmessaging1
