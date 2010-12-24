@@ -50,7 +50,10 @@ NearFieldTagNdefRequest::NearFieldTagNdefRequest()
 NearFieldTagNdefRequest::~NearFieldTagNdefRequest()
 {
     BEGIN
-    iOperator->DoCancelNdefAccess();
+    if (iRequestIssued)
+    {
+        iOperator->DoCancelNdefAccess();
+    }
     END
 }
 
@@ -87,6 +90,7 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
 {
     BEGIN
     LOG(aError);
+    iRequestIssued = EFalse;
     if (aMessage != 0)
     {
         for(int i = 0; i < aMessage->Count(); ++i)
@@ -106,6 +110,7 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
 void NearFieldTagNdefRequest::WriteComplete(TInt aError)
 {
     BEGIN
+    iRequestIssued = EFalse;
     ProcessResponse(aError);
     END
 }

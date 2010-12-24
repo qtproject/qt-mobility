@@ -52,6 +52,7 @@ public:
     NearFieldTagCommandRequest();
     ~NearFieldTagCommandRequest();
     void IssueRequest();
+    void ProcessTimeout();
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }

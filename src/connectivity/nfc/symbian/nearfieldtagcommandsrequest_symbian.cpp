@@ -54,7 +54,10 @@ NearFieldTagCommandsRequest::~NearFieldTagCommandsRequest()
 {
     BEGIN
     iRequestCancelled = ETrue;
-    iOperator->DoCancelSendCommand();
+    if (iRequestIssued)
+    {
+        iOperator->DoCancelSendCommand();
+    }
     END
 }
 
@@ -65,7 +68,17 @@ void NearFieldTagCommandsRequest::IssueRequest()
     LOG("commands count = "<<iCommands.count());
     iRequestIssued = ETrue;
     if (iCurrentCommand < iCommands.count())
-    {       
+    {
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {    
+                // start timer here
+                LOG("Start timer");
+                TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
+                iTimer->Start(0, iMsecs, callback);
+            }
+        }
         iOperator->DoSendCommand(iCommands.at(iCurrentCommand), this);
         ++iCurrentCommand;
     }
@@ -94,7 +107,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
             iDecodedResponses.append(QVariant());
         }
     }
-
+    iRequestIssued = EFalse;
     if (!iRequestCancelled && (iCurrentCommand < iCommands.count()))
     {
         LOG("issue another command in command list");
@@ -109,7 +122,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
     END
 }
 
-void NearFieldTagCommandsRequest::HandleResponse(TInt /*aError*/)
+void NearFieldTagCommandsRequest::HandleResponse(TInt aError)
 {
     BEGIN
     iOperator->HandleResponse(iId, iDecodedResponses);
@@ -132,4 +145,23 @@ void NearFieldTagCommandsRequest::ProcessEmitSignal(TInt aError)
         iOperator->EmitError(aError, iId);
     }
     END
+}
+
+void NearFieldTagCommandsRequest::ProcessTimeout()
+{
+    BEGIN
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {
+                if (iRequestIssued)
+                {    
+                    iOperator->DoCancelSendCommand();
+                    iRequestIssued = EFalse;
+                }
+                LOG("wait timeout");
+                ProcessResponse(KErrTimedOut);
+            }
+        }
+        END
 }

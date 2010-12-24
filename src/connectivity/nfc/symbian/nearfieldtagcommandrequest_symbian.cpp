@@ -63,6 +63,16 @@ void NearFieldTagCommandRequest::IssueRequest()
     {
         iOperator->DoSendCommand(iCommand, this);
         iRequestIssued = ETrue;
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {    
+                // start timer here
+                LOG("Start timer");
+                TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
+                iTimer->Start(0, iMsecs, callback);
+            }
+        }
     }
     END
 }
@@ -70,6 +80,7 @@ void NearFieldTagCommandRequest::IssueRequest()
 void NearFieldTagCommandRequest::CommandComplete(TInt aError)
 {
     BEGIN
+    iRequestIssued = EFalse;
     ProcessResponse(aError);
     END
 }
@@ -94,6 +105,25 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     {
         QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
         iOperator->HandleResponse(iId, iCommand, result);
+    }
+    END
+}
+
+void NearFieldTagCommandRequest::ProcessTimeout()
+{
+    BEGIN
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            if (iRequestIssued)
+            {    
+                iOperator->DoCancelSendCommand();
+                iRequestIssued = EFalse;
+            }
+            LOG("wait timeout");
+            ProcessResponse(KErrTimedOut);
+        }
     }
     END
 }

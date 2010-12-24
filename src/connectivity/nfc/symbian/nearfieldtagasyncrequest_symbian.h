@@ -82,6 +82,7 @@ public:
     void SetOperator(MNearFieldTargetOperation * aOperator);
     void SetRequestId(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId GetRequestId();
+    static TInt TimeoutCallback(TAny * aObj);
 protected:
     // Current async request ID.
     QNearFieldTarget::RequestId iId;
@@ -94,9 +95,9 @@ protected:
     CPeriodic * iTimer;
     TBool iRequestIssued;
     
+    int iMsecs;
+    
     volatile bool * iCurrentRequestResult;
-private:
-    static TInt TimeoutCallback(TAny * aObj);
     };
 
 #endif

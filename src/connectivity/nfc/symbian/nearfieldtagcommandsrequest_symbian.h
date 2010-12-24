@@ -54,6 +54,7 @@ public:
     void ProcessResponse(TInt aError);
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
+    void ProcessTimeout();
     void SetInputCommands(QList<QByteArray> aCommands) { iCommands = aCommands; }
     void SetResponseBuffer(RBuf8 * aResponse) { iResponse = aResponse; }
     TRequestType Type() { return ETagCommandsRequest; }

@@ -134,9 +134,10 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
         iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
     }
 
-    TCallBack callback(MNearFieldTagAsyncRequest::TimeoutCallback, this);
-    LOG("Start timer");
-    iTimer->Start(0, aMsecs, callback);
+    iMsecs = aMsecs;
+    // timer should be started when request is issued.
+    //LOG("Start timer");
+    //iTimer->Start(0, aMsecs, callback);
     LOG("Start waiter");
     iWait->Start();
     LOG("Waiting completed, "<<result);
@@ -186,6 +187,12 @@ void MNearFieldTagAsyncRequest::ProcessTimeout()
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN
+    if (iCurrentRequestResult)
+    {
+        (*iCurrentRequestResult) = (KErrNone == aError);
+    }
+        
+    iCurrentRequestResult = 0;
     if (iTimer)
     {
         LOG("cancel timer");
@@ -202,11 +209,5 @@ void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
     }
     ProcessEmitSignal(aError);
 
-    if (iCurrentRequestResult)
-    {
-        (*iCurrentRequestResult) = (KErrNone == aError);
-    }
-
-    iCurrentRequestResult = 0;
     END
 }

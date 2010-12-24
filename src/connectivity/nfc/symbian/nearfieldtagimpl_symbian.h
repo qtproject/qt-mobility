@@ -461,14 +461,19 @@ template<typename TAGTYPE>
 QNearFieldTagImpl<TAGTYPE>::~QNearFieldTagImpl()
 {
     BEGIN
+    LOG("pending request count is "<<mPendingRequestList.count());
     for (int i = 0; i < mPendingRequestList.count(); ++i)
     {
         delete mPendingRequestList[i];
     }
+
     mPendingRequestList.clear();
     mCurrentRequest = 0;
+
     delete mTag;
+
     mMessageList.Close();
+
     mResponse.Close();
     END
 }
@@ -594,9 +599,13 @@ QNearFieldTarget::RequestId QNearFieldTagImpl<TAGTYPE>::_sendCommands(const QLis
             // issue the request
             LOG("the request will be issued at once");
             mCurrentRequest = rawCommandsRequest;
+            mPendingRequestList.append(rawCommandsRequest);
             rawCommandsRequest->IssueRequest();
         }
-        mPendingRequestList.append(rawCommandsRequest);
+        else
+        {
+            mPendingRequestList.append(rawCommandsRequest);
+        }
     }
     // TODO: consider else
     END
