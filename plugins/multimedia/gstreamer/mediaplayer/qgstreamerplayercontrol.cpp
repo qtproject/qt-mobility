@@ -321,8 +321,12 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
         if (!stream->open(QIODevice::ReadOnly)) {
             delete stream;
             m_mediaStatus = QMediaPlayer::InvalidMedia;
+            m_currentResource = content;
+            emit mediaChanged(m_currentResource);
             emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid Qt resource"));
             emit mediaStatusChanged(m_mediaStatus);
+            if (m_state != oldState)
+                emit stateChanged(m_state);
             if (m_state != QMediaPlayer::PlayingState)
                 m_resources->release();
             return;
