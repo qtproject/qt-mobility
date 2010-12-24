@@ -265,7 +265,11 @@ void QGstreamerPlayerControl::stop()
         updateState(m_session->state());
         emit positionChanged(0);
         emit stateChanged(m_state);
-        m_resources->release();
+
+        //do not release the resource if player
+        //state was chaged to playing from slots connected to stateChanged
+        if (m_state != QMediaPlayer::PlayingState)
+            m_resources->release();
     }
 }
 
@@ -317,9 +321,14 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
         if (!stream->open(QIODevice::ReadOnly)) {
             delete stream;
             m_mediaStatus = QMediaPlayer::InvalidMedia;
+            m_currentResource = content;
+            emit mediaChanged(m_currentResource);
             emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid Qt resource"));
             emit mediaStatusChanged(m_mediaStatus);
-            m_resources->release();
+            if (m_state != oldState)
+                emit stateChanged(m_state);
+            if (m_state != QMediaPlayer::PlayingState)
+                m_resources->release();
             return;
         }
         m_ownStream = true;
@@ -360,6 +369,9 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     emit mediaChanged(m_currentResource);
     if (m_state != oldState)
         emit stateChanged(m_state);
+
+    if (m_state != QMediaPlayer::PlayingState)
+        m_resources->release();
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)
