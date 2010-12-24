@@ -331,6 +331,18 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
     qDebug() << "QGeoPositionInfoSourceGeoclueMaster requested to set methods to, and set them to: " << methods << m_preferredResources;
 #endif
     configurePositionSource();
+    // If updates ongoing, connect to the new objects
+    if (m_updateTimer.isActive() && m_pos) {
+        g_signal_connect (G_OBJECT (m_pos), "position-changed",
+                          G_CALLBACK (position_changed),this);
+        if (m_vel) {
+            g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
+                              G_CALLBACK (velocity_changed),this);
+        }
+    }
+    // If a request ongoing, ask it from new object
+    if (m_requestTimer.isActive() && m_pos)
+        geoclue_position_get_position_async (m_pos, (GeocluePositionCallback)position_callback,this);
 }
 
 QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -423,7 +435,8 @@ void QGeoPositionInfoSourceGeoclueMaster::startUpdatesTimeout()
 }
 
 // Helper function to convert data into a QGeoPositionInfo
-QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(GeocluePositionFields fields,
+QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
+                                               GeocluePositionFields fields,
                                                int                   timestamp,
                                                double                latitude,
                                                double                longitude,

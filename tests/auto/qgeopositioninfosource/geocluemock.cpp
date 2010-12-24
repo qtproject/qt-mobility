@@ -99,6 +99,7 @@ guint	 g_signal_handlers_disconnect_matched (gpointer	  instance,
     qDebug("=mocked= g_signal_handlers_disconnect_by_func (_matched)");
 #endif
     lg_currentMockend->disconnectSignal(func, data);
+    return 1; // dummy
 }
 
 void geoclue_accuracy_get_details (GeoclueAccuracy      *accuracy,
