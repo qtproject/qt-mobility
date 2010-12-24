@@ -1070,8 +1070,17 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 %{_libdir}/libQtVersit.so
 %{_libdir}/libQtVersitOrganizer.prl
 %{_libdir}/libQtVersitOrganizer.so
+%{_libdir}/pkgconfig/QtConnectivity.pc
 %{_libdir}/pkgconfig/QtContacts.pc
+%{_libdir}/pkgconfig/QtFeedback.pc
+%{_libdir}/pkgconfig/QtGallery.pc
 %{_libdir}/pkgconfig/QtLocation.pc
+%{_libdir}/pkgconfig/QtMultimediaKit.pc
+%{_libdir}/pkgconfig/QtOrganizer.pc
+%{_libdir}/pkgconfig/QtPublishSubscribe.pc
+%{_libdir}/pkgconfig/QtSensors.pc
+%{_libdir}/pkgconfig/QtServiceFramework.pc
+%{_libdir}/pkgconfig/QtSystemInfo.pc
 %{_libdir}/pkgconfig/QtVersit.pc
 %{_libdir}/pkgconfig/QtVersitOrganizer.pc
 %{_datadir}/qt4/mkspecs/features/mobility.prf
