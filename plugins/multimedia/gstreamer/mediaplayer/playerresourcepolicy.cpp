@@ -127,7 +127,7 @@ void PlayerResourcePolicy::release()
     qDebug() << Q_FUNC_INFO << "Release resource";
 #endif
 
-    m_resourceSet->acquire();
+    m_resourceSet->release();
 #else
     m_status = Initial;
 #endif
