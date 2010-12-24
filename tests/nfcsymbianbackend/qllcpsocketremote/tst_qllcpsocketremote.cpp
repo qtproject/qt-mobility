@@ -27,12 +27,12 @@ private Q_SLOTS:
     void testCase1();   // handshake 1,2
     void testCase2();   // handshake 3
 
-    void afterRunnning();
+    void cleanupTest();
 
 private:
      QNearFieldManager *m_nfcManager;
      QNearFieldTarget *m_target;
-     QLlcpSocket *socket;
+     QLlcpSocket *m_socket;
      quint8 m_port;
 };
 
@@ -66,15 +66,14 @@ void tst_qllcpsocketremote::testCase0()
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
 
     m_port = 35;
-    socket = new QLlcpSocket;
+    m_socket = new QLlcpSocket;
 }
 
-void tst_qllcpsocketremote::afterRunnning()
+void tst_qllcpsocketremote::cleanupTest()
 {
    delete m_nfcManager;
-   delete socket;
+   delete m_socket;
 }
-
 
 /*!
  Description:  Description: Receive the message and send the acknowledged identical message
@@ -91,8 +90,8 @@ void tst_qllcpsocketremote::afterRunnning()
 void tst_qllcpsocketremote::testCase1()
 {
     // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-    bool ret = socket->bind(m_port);
+    QSignalSpy readyReadSpy(m_socket, SIGNAL(readyRead()));
+    bool ret = m_socket->bind(m_port);
 
     QString message("handshake 1");
     QNfcTestUtil::ShowMessage(message);
@@ -102,18 +101,18 @@ void tst_qllcpsocketremote::testCase1()
 
     // STEP 2: Receive data from the peer which send messages to
     QByteArray datagram;
-    while (socket->hasPendingDatagrams())
+    while (m_socket->hasPendingDatagrams())
     {
-       datagram.resize(socket->pendingDatagramSize());
-       qint64 readSize = socket->readDatagram(datagram.data(), datagram.size());
+       datagram.resize(m_socket->pendingDatagramSize());
+       qint64 readSize = m_socket->readDatagram(datagram.data(), datagram.size());
        QVERIFY(readSize != -1);
     }
 
     // STEP 3: Send the received message back to the intiated device.
-    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::Error)));
-    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+    QSignalSpy errorSpy(m_socket, SIGNAL(error(QLlcpSocket::Error)));
+    QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
 
-    socket->writeDatagram(datagram,m_target, m_port);
+    m_socket->writeDatagram(datagram,m_target, m_port);
 
     QTRY_VERIFY(bytesWrittenSpy.count() == 1);
     QList<QVariant> arguments = bytesWrittenSpy.takeFirst(); // take the first signal
@@ -140,8 +139,8 @@ void tst_qllcpsocketremote::testCase1()
 void tst_qllcpsocketremote::testCase2()
 {
     // STEP 1:  bind the local port for current socket
-    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
-    bool ret = socket->bind(m_port);
+    QSignalSpy readyReadSpy(m_socket, SIGNAL(readyRead()));
+    bool ret = m_socket->bind(m_port);
 
     QString message("handshake 3");
     QNfcTestUtil::ShowMessage(message);
@@ -149,7 +148,7 @@ void tst_qllcpsocketremote::testCase2()
     QTRY_VERIFY(readyReadSpy.count() == 1);
 
     const int Timeout = 10 * 1000;
-    ret = socket->waitForReadyRead(Timeout);
+    ret = m_socket->waitForReadyRead(Timeout);
 
     QVERIFY(ret);
  }

@@ -296,7 +296,7 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget 
     Q_UNUSED(port);
     qint64 val = -1;
 
-    if ( port != NULL || *target != NULL){
+    if ( port != NULL || ( target != NULL && *target != NULL )){
        return val;
     }
 
