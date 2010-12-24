@@ -139,7 +139,7 @@ void Controller::restart_ball()
     ball_y = Board::Height/2;
 
 //    ball_y = (qrand()%(Board::Height/2))+Board::Height/4;
-    ball_y = (qrand()%(Board::Height-24))+12;
+    ball_y = (qrand()%(Board::Height-48))+24;
 
     // Speed in in pixels/second
 
