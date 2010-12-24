@@ -83,6 +83,7 @@ public:
     // TagTypeSpecificAccess
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
+    bool isProcessingCommand() const { return _isProcessingRequest(); }
 
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }

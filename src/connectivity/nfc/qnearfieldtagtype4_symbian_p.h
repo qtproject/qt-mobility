@@ -79,6 +79,7 @@ public:
     
     RequestId read(quint16 length = 0, quint16 startOffset = 0);
     RequestId write(const QByteArray &data, quint16 startOffset = 0);
+    bool isProcessingCommand() const { return _isProcessingRequest(); }
 
     void setAccessMethods(const QNearFieldTarget::AccessMethods& accessMethods)
     {

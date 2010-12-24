@@ -81,6 +81,7 @@ public:
     void readNdefMessages();
     void writeNdefMessages(const QList<QNdefMessage> &messages);
 
+    bool isProcessingCommand() const { return _isProcessingRequest(); }
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
     bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);

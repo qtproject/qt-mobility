@@ -85,7 +85,7 @@ public:
     RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
                                  const QByteArray &data);
 
-
+    bool isProcessingCommand() const { return _isProcessingRequest(); }
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
 private:

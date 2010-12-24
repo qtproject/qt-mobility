@@ -67,6 +67,7 @@ public:
 
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
+    bool isProcessingCommand() const { return _isProcessingRequest(); }
 
     bool hasNdefMessage();
     void readNdefMessages();
