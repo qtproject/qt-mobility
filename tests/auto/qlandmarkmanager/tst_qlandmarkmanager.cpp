@@ -129,6 +129,7 @@
 #define IMPORT_LMX
 #define IMPORT_FILE
 #define EXPORT_LMX
+#define SIMPLE_WAIT_FOR_FINISHED
 #define WAIT_FOR_FINISHED
 #define MISC
 #define TEST_SIGNALS
@@ -1162,6 +1163,10 @@ private slots:
     void sortLandmarksNull();
     void sortLandmarksName();
     void sortLandmarksName_data();
+#endif
+
+#ifdef SIMPLE_WAIT_FOR_FINISHED
+	void simpleWaitForFinished();
 #endif
 
 #ifdef WAIT_FOR_FINISHED
@@ -7579,6 +7584,10 @@ void tst_QLandmarkManager::importLmx() {
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError));
         QCOMPARE(originalLandmarksCount + 16, m_manager->landmarks().count());
 
+#if defined (Q_WS_MAEMO_6)
+	QTest::qWait(2000);
+#endif
+
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 1);
@@ -8070,6 +8079,21 @@ void tst_QLandmarkManager::exportLmx_data()
     QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
 
     //TODO: tests for id list excluding category data
+}
+#endif
+
+#ifdef SIMPLE_WAIT_FOR_FINISHED
+void tst_QLandmarkManager::simpleWaitForFinished()
+{
+    QVERIFY(m_manager->importLandmarks(prefix + "data/places.gpx"));
+    QLandmarkFetchRequest fetchRequest(m_manager);
+    QSignalSpy spy(&fetchRequest,SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
+    QVERIFY(fetchRequest.start());
+    QVERIFY(waitForActive(spy, &fetchRequest,100));
+    QVERIFY(fetchRequest.waitForFinished(10000));
+    QTest::qWait(100);
+    QVERIFY(fetchRequest.landmarks().count() > 0 );
 }
 #endif
 
