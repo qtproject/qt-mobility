@@ -323,6 +323,20 @@ void QNfcTagTestCommon<TAG>::testRawCommand(const QStringList& discription, cons
     }
 
     QTest::qWait(5000);
+
+    // remove it when release
+    // ==============================================
+    qDebug()<<"dump the request response"<<endl;
+    for (int i = 0; i < requests.count(); ++i)
+    {
+        QByteArray data = target->requestResponse(requests.at(i)).toByteArray();
+        for(int j = 0; j < data.count(); ++j)
+        {
+            qDebug()<<(int)(data.at(j))<<" ";
+        }
+        qDebug()<<"\n"<<endl;
+    }
+    // ==============================================
     qDebug()<<"signal count check"<<endl;
     QTRY_COMPARE(okSpy.count(), okCount);
     QTRY_COMPARE(errSpy.count(), errCount);

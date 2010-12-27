@@ -196,7 +196,13 @@ inline bool QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QB
                 }
                 
                 CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(tag->TagConnection());
-                tag4->ExchangeData(tag->AOStatus(), cmd, mResponse);
+                if (!tag->IsActive())
+                {
+                    tag4->ExchangeData(tag->AOStatus(), cmd, mResponse);
+                    tag->SetActive();
+                    error = KErrNone;
+                }
+
             )
         }
     }

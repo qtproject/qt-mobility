@@ -6,6 +6,7 @@
 #include "qnfctagtestcommon.h"
 #include <qnearfieldtagtype4.h>
 #include "qnfctestcommon.h"
+#include <QtEndian>
 
 QTM_USE_NAMESPACE
 class tst_qnearfieldtagtype4 : public QObject
@@ -54,41 +55,61 @@ tst_qnearfieldtagtype4::tst_qnearfieldtagtype4()
 
 void tst_qnearfieldtagtype4::initTestCase()
 {
-    tester.touchTarget();
-    QByteArray uid = tester.target->uid();
-    QVERIFY(!uid.isEmpty());
-
-    tester.removeTarget();
-
     // prepare data
     {
-        QString name = "RID";
+        QString name = "CC select";
         QByteArray command;
-        command.append(char(0x78));     // RID
-        command.append(char(0x00));     // Address (unused)
-        command.append(char(0x00));     // Data (unused)
-        command.append(uid.left(4));  // 4 bytes of UID
-        // Hardware will append CRC bytes. The CRC value appended 
-        // to the command will be ignored.
-        command.append(char(0x00)); // CRC1
-        command.append(char(0x00)); // CRC2
+        command.append(char(0x00));     // CLA
+        command.append(char(0xA4));     // INS
+        command.append(char(0x04));     // P1
+        command.append(char(0x00));     // P2
+        command.append(char(0x07));     // Lc
         
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+        command.append(char(0xD2));
+        command.append(char(0x76));
+        command.append(char(0x00));
+        command.append(char(0x00));
+        command.append(char(0x85));
+        command.append(char(0x01));
+        command.append(char(0x00));
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
+    }
+    
+    {
+        QString name = "NDEF Select";
+        QByteArray command;
+        command.append(char(0x00));     // CLA
+        command.append(char(0xA4));     // INS
+        command.append(char(0x04));     // P1
+        command.append(char(0x0c));     // P2
+        command.append(char(0x07));     // Lc
+        
+        command.append(char(0xD2));
+        command.append(char(0x76));
+        command.append(char(0x00));
+        command.append(char(0x00));
+        command.append(char(0x85));
+        command.append(char(0x01));
+        command.append(char(0x01));
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
     }
 
     {
-        QString name = "READ ALL";
+        QString name = "CC select old";
         QByteArray command;
-        command.append(char(0x00)); // RALL
-        command.append(char(0x00));
-        command.append(char(0x00));
-        command.append(uid.left(4)); // UID
-        // Hardware will append CRC bytes. The CRC value appended 
-        // to the command will be ignored.
-        command.append(char(0x00)); // CRC1
-        command.append(char(0x00)); // CRC2
-
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+        command.append(char(0x00)); // CLA
+        command.append(char(0xA4)); // INS
+        command.append(char(0x00)); // P1
+        command.append(char(0x00)); // P2
+        command.append(char(0x02)); // Lc
+        quint16 data = 0xe103;
+        quint16 temp = qToBigEndian<quint16>(data);
+        command.append(reinterpret_cast<const char*>(&temp), 
+                       sizeof(quint16)); // P1/P2 offset
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
     }
     
     {
@@ -104,7 +125,7 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(1);
         command.append(1);
 
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
     }
 }
 
@@ -123,12 +144,12 @@ void tst_qnearfieldtagtype4::testRawCommand_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -150,12 +171,12 @@ void tst_qnearfieldtagtype4::testWaitRawCommand_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -178,12 +199,12 @@ void tst_qnearfieldtagtype4::testMixRawCommandAndNdefAccess_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -205,12 +226,12 @@ void tst_qnearfieldtagtype4::testWaitMixRawCommandAndNdefAccess_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -233,12 +254,12 @@ void tst_qnearfieldtagtype4::testWaitInSlot_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -260,12 +281,12 @@ void tst_qnearfieldtagtype4::testDeleteTargetBeforeAsyncRequestComplete_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
@@ -287,12 +308,12 @@ void tst_qnearfieldtagtype4::testRemoveTargetBeforeAsyncRequestComplete_data()
     QVariantList cmd;
     QVariantList rsp;
     
-    dsp<<"RID"<<"READ ALL"<<"INVALID";
-    cmd.append(dataPool["RID"].first);
-    cmd.append(dataPool["READ ALL"].first);
+    dsp<<"NDEF Select"<<"CC select"<<"INVALID";
+    cmd.append(dataPool["NDEF Select"].first);
+    cmd.append(dataPool["CC select"].first);
     cmd.append(dataPool["INVALID"].first);
-    rsp.append(dataPool["RID"].second);
-    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["NDEF Select"].second);
+    rsp.append(dataPool["CC select"].second);
     rsp.append(dataPool["INVALID"].second);
     QTest::newRow("data 1")<<dsp<<cmd<<rsp;
 }
