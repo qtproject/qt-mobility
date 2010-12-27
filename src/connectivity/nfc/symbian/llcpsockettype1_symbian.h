@@ -54,7 +54,6 @@
 /*!
  *   FORWARD DECLARATIONS
  */
-
 class COwnLlcpConnLess;
 class CLlcpSenderType1;
 class CLlcpReceiverType1;
@@ -105,7 +104,7 @@ public:
 public:    
    TInt StartWriteDatagram(const TDesC8& aData,TUint8 portNum);
    TInt ReadDatagram(TDes8& aData);
-   TInt ReadDatagram(TDes8& aData, TInt8& aRemotePortNum);
+   TInt ReadDatagram(TDes8& aData, TUint8& aRemotePortNum);
    bool Bind(TUint8 portNum);
    
    /*!
@@ -181,8 +180,6 @@ private:
  *  CLASS DECLARATION for COwnLlcpConnLess.
  *
  */   
-
-
 class COwnLlcpConnLess : public CBase
     {
 public:

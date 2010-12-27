@@ -23,7 +23,7 @@ public:
 private Q_SLOTS:
 
     // ALERT£º Handshake required, do NOT¡¡change the sequence of handshaking testcases.
-    void testCase0();    // Intial handshake
+    void testCase0();   // Intial handshake
     void testCase1();   // handshake 1,2
     void testCase2();   // handshake 3
 
@@ -69,12 +69,6 @@ void tst_qllcpsocketremote::testCase0()
     m_socket = new QLlcpSocket;
 }
 
-void tst_qllcpsocketremote::cleanupTest()
-{
-   delete m_nfcManager;
-   delete m_socket;
-}
-
 /*!
  Description:  Description: Receive the message and send the acknowledged identical message
 
@@ -85,7 +79,7 @@ void tst_qllcpsocketremote::cleanupTest()
  TestExpectedResults:
                1. Remote peer binds to local port successfully.
                2. The message has been received from remote peer.
-               3. The message has be sent to l peer.
+               3. The message has be sent to local peer.
 */
 void tst_qllcpsocketremote::testCase1()
 {
@@ -152,6 +146,12 @@ void tst_qllcpsocketremote::testCase2()
 
     QVERIFY(ret);
  }
+
+void tst_qllcpsocketremote::cleanupTest()
+{
+   delete m_nfcManager;
+   delete m_socket;
+}
 
 QTEST_MAIN(tst_qllcpsocketremote);
 
