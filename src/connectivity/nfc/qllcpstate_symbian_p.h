@@ -47,9 +47,6 @@
 
 #include <QtCore/QObject>
 
-class CLlcpSocketType1;
-class CLlcpSocketType2;
-
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -65,7 +62,6 @@ public:
     explicit QLLCPSocketState(QLlcpSocketPrivate*);
 
 public:
-
     virtual QLlcpSocket::State state() const = 0;
     virtual bool WaitForBytesWritten(int) = 0;
 
@@ -83,6 +79,9 @@ public:
     virtual bool WaitForConnected(int);
     virtual bool WaitForDisconnected(int);
 
+protected:
+    bool WaitForBytesWrittenType1Private(int);
+    void DisconnectFromServiceType2Private();
 public:
     QLlcpSocketPrivate* m_socket;
 };
@@ -162,6 +161,7 @@ class QLLCPBind: public QLLCPSocketState
     {
 public:
     explicit QLLCPBind(QLlcpSocketPrivate*);
+
 public://from base class
     QLlcpSocket::State state() const {return QLlcpSocket::BoundState;}
     qint64 WriteDatagram(const char *data, qint64 size,QNearFieldTarget *target, quint8 port);

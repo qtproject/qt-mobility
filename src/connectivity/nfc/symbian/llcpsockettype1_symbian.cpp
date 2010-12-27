@@ -137,15 +137,17 @@ void CLlcpSocketType1::Cleanup()
     END
     }
 
+/*!
+    Start ot listen the port as given, set as local port which is used to read datagram
+*/
 bool CLlcpSocketType1::Bind(TUint8 aPortNum)
     {
     BEGIN
     bool bindOK = EFalse;
-    TInt error = KErrNone;
     if ( !iPortBinded )
         {
-        // remote connection created at frame received
-        TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,aPortNum ));
+        TInt error = KErrNone;
+        TRAP( error, iLlcp->StartListeningConnLessRequestL(*this,aPortNum));
         if (KErrNone == error)
             {
             iPortBinded = ETrue;
@@ -165,16 +167,15 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
     {
     BEGIN
     TInt val = -1;
-    TInt error = KErrNone;
 
-    bool ok = iConnection != NULL && iRemotePort != aPortNum;
-    qDebug() << "iConnection: " << iConnection << " " << iRemotePort << " "
-             << aPortNum << " " << ok;
     if (iConnection != NULL && iRemotePort != aPortNum)
+        {
         return val;
+        }
     
     if (KErrNone == CreateConnection(aPortNum))
         {
+        TInt error = KErrNone;
         TRAP_IGNORE(
              QT_TRYCATCH_LEAVING( error = iConnection->TransferL(*this, aData));
          );
@@ -189,7 +190,7 @@ TInt CLlcpSocketType1::StartWriteDatagram(const TDesC8& aData,TUint8 aPortNum)
     }
 
 
-TInt CLlcpSocketType1::ReadDatagram(TDes8& aData, TInt8& aRemotePortNum)
+TInt CLlcpSocketType1::ReadDatagram(TDes8& aData, TUint8& aRemotePortNum)
     {
     BEGIN
     aRemotePortNum = iRemotePort;
@@ -333,9 +334,13 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
 
     TRAP( error, connType1 = iLlcp->CreateConnLessTransporterL( portNum ) );
    
-    if ( error == KErrNone && KErrNone ==  CreateConnection(connType1))
+    if ( error == KErrNone)
         {
-          iRemotePort = portNum;
+          error = CreateConnection(connType1);
+          if (KErrNone ==  error)
+             {
+             iRemotePort = portNum;
+             }
         }
     END
     return error;        
@@ -354,12 +359,7 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
          { 
          // Creating wrapper for connection. 
          TRAP( error, iConnection = COwnLlcpConnLess::NewL(aConnection ) );
-         if ( error != KErrNone )
-             {
-             delete aConnection;
-             aConnection = NULL;
-             }
-         else
+         if ( error == KErrNone )
              {
              iConnection->Receive(*this);
              }
@@ -371,6 +371,7 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
 
 TBool CLlcpSocketType1::WaitForBytesWritten(TInt aMilliSeconds)
     {
+    BEGIN_END
     return WaitForOperationReady(EWaitForBytesWritten, aMilliSeconds);
     }
 
@@ -454,9 +455,9 @@ COwnLlcpConnLess::COwnLlcpConnLess(  MLlcpConnLessTransporter* aConnection )
 */
 void COwnLlcpConnLess::ConstructL()
     {
-    // Create the receiver AO
-    iSenderAO = CLlcpSenderType1::NewL(iConnection);
     // Create the transmitter AO
+    iSenderAO = CLlcpSenderType1::NewL(iConnection);
+     // Create the receiver AO
     iReceiverAO = CLlcpReceiverType1::NewL(iConnection);
     }
     
@@ -479,7 +480,6 @@ COwnLlcpConnLess::~COwnLlcpConnLess()
     END
     }
   
-
 /*!
     Send data from queued buffer
 */
@@ -491,6 +491,9 @@ bool COwnLlcpConnLess::TransferQueued(MLlcpReadWriteCb& aLlcpSendCb)
         return ret;
     
     HBufC8* bufRef = iSendBufArray[0];
+    if (NULL == bufRef)
+        return ret;
+
     TPtrC8 ptr(bufRef->Ptr(), bufRef->Length());
     if(iSenderAO->Transfer(aLlcpSendCb, ptr) == KErrNone)
         {
@@ -511,7 +514,7 @@ TInt COwnLlcpConnLess::TransferL(MLlcpReadWriteCb& aLlcpSendCb, const TDesC8& aD
     {  
     BEGIN
     TInt error = KErrNone;
-    // Pass message on to transmit AO
+    // Pass message into transmiter AO
     if (!iSenderAO->IsActive())
         {
         error = iSenderAO->Transfer(aLlcpSendCb, aData);
@@ -554,7 +557,7 @@ void COwnLlcpConnLess::ReceiveCancel()
     }
 
 /*!
- *  Trigger the receive AO to start receive datagram
+ *  Trigger the receiver AO to start receive datagram
     Receive data from remote peer to local peer via connectionLess transport
 */
 TInt COwnLlcpConnLess::Receive(MLlcpReadWriteCb& aLlcpReceiveCb)
@@ -599,7 +602,7 @@ TInt64 COwnLlcpConnLess::PendingDatagramSize() const
     }
 
 /*!
-    Start of implementation of Sender AO for connection less mode (type1) - CLlcpSenderType1
+    Start of implementation of Sender AO & Receiver AO for connection less mode (type1)
 */
 
 /*!
@@ -626,7 +629,7 @@ CLlcpSenderType1* CLlcpSenderType1::NewL(MLlcpConnLessTransporter* iConnection)
 CLlcpSenderType1::~CLlcpSenderType1()
     {
     BEGIN
-    Cancel();   // cancel ANY outstanding request at time of destruction
+    Cancel();   // Cancel ANY outstanding request at time of destruction
     iTransmitBuf.Close();
     END
     }

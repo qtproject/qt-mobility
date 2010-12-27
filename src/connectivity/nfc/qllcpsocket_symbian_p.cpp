@@ -46,6 +46,9 @@
 #include "symbian/debug.h"
 QTM_BEGIN_NAMESPACE
 
+/*!
+    Constructor
+*/
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
        : m_symbianSocketType1(NULL),
          m_symbianSocketType2(NULL),
@@ -63,6 +66,10 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
     END
 }
 
+
+/*!
+    Destructor
+*/
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
 {
     BEGIN
@@ -82,7 +89,7 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
 }
 
 /*!
-    Construct the socket and set it as connected state from llcp server side
+    Construct the socket and set as connected state from llcp server side
 */
 QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
     : m_symbianSocketType1(NULL),
@@ -102,7 +109,9 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     BEGIN
     Q_Q(QLlcpSocket);
     if (!q->isOpen())
+    {
         q->open(QIODevice::ReadWrite | QIODevice::Unbuffered);
+    }
     m_state->ConnectToService(target,serviceUri);
     END
 }
@@ -113,7 +122,8 @@ void QLlcpSocketPrivate::disconnectFromService()
     m_state->DisconnectFromService();
 
     Q_Q(QLlcpSocket);
-    if (q->isOpen()) {
+    if (q->isOpen())
+    {
         q->close();
     }
     END
@@ -158,13 +168,13 @@ void QLlcpSocketPrivate::attachCallbackHandler(QLlcpSocket *q)
 qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
     BEGIN
-    if (m_symbianSocketType2 == NULL)
+    qint64 bytes = 0;
+    if (m_symbianSocketType2 != NULL)
     {
-        return 0;
+        bytes = m_symbianSocketType2->BytesAvailable();
     }
-
     END
-    return m_symbianSocketType2->BytesAvailable();
+    return bytes;
 }
 
 void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
@@ -182,11 +192,8 @@ void QLlcpSocketPrivate::invokeBytesWritten(qint64 bytes)
 void QLlcpSocketPrivate::invokeStateChanged(QLlcpSocket::State socketState)
 {
     BEGIN
-    qDebug() << "david check q_ptr: " << q_ptr;
     Q_Q(QLlcpSocket);
-    qDebug() << "david check q: " << q;
     emit q->stateChanged(socketState);
-    qDebug() << "david after emit ";
     END
 }
 
@@ -290,8 +297,7 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 */
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
-    BEGIN
-    END
+    BEGIN_END
     return writeDatagram(datagram.constData(),datagram.size());
 }
 

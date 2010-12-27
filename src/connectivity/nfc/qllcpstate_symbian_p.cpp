@@ -88,15 +88,11 @@ bool QLLCPUnconnected::WaitForBytesWritten(int msecs)
 {
    BEGIN
    bool isOK = false;
-   if (connectionType2 == m_socketType) {
+   if (connectionType1 != m_socketType) {
        return isOK;
    }
 
-   CLlcpSocketType1* socketHandler =  m_socket->socketType1Handler();
-   if (socketHandler != NULL)
-   {
-       isOK = socketHandler->WaitForBytesWritten(msecs);
-   }
+   isOK = WaitForBytesWrittenType1Private(msecs);
    END
    return isOK;
 }
@@ -109,19 +105,28 @@ bool QLLCPUnconnected::WaitForDisconnected(int msecs)
 }
 
 /*!
-    Connection-Less Mode, same behaviour as QLLCPUnconnected::WaitForBytesWritten
+    Connection-Less Mode
 */
 bool QLLCPBind::WaitForBytesWritten(int msecs)
 {
    BEGIN
-   bool isOK = false;
-   CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
-   if (socketHandler != NULL)
-   {
-       isOK = socketHandler->WaitForBytesWritten(msecs);
-   }
+   bool isOK = WaitForBytesWrittenType1Private(msecs);
    END
    return isOK;
+}
+
+/*!
+    Failitator function for Connection-Less Mode
+*/
+bool QLLCPSocketState::WaitForBytesWrittenType1Private(int msecs)
+{
+    bool isOK = false;
+    CLlcpSocketType1* socketHandler =  m_socket->socketType1Handler();
+    if (socketHandler != NULL)
+    {
+        isOK = socketHandler->WaitForBytesWritten(msecs);
+    }
+    return isOK;
 }
 
 /*!
@@ -147,6 +152,7 @@ qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
                                        QNearFieldTarget *target, quint8 port)
 {
     BEGIN
+    Q_UNUSED(target);
     qint64 val = -1;
 
     if (connectionType2 == m_socketType){
@@ -164,7 +170,6 @@ qint64 QLLCPUnconnected::WriteDatagram(const char *data, qint64 size,
         TPtrC8 myDescriptor((const TUint8*)data, size);
         val = socketHandler->StartWriteDatagram(myDescriptor, port);
     }
-
     END
 
     return val;
@@ -177,6 +182,7 @@ qint64 QLLCPBind::WriteDatagram(const char *data, qint64 size,
                               QNearFieldTarget *target, quint8 port)
 {
     BEGIN
+    Q_UNUSED(target);
     qint64 val = -1;
     CLlcpSocketType1* socketHandler = m_socket->socketType1Handler();
     if (socketHandler != NULL)
@@ -187,7 +193,6 @@ qint64 QLLCPBind::WriteDatagram(const char *data, qint64 size,
     END
     return val;
 }
-
 
 /*!
     Connection-Oriented Mode - Client side socket write
@@ -276,8 +281,7 @@ qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
            val = socketHandler->ReadDatagram(ptr);
         }
         else {
-           quint8 portNum = *port;
-           val = socketHandler->ReadDatagram(ptr, (TInt8&)portNum);
+           val = socketHandler->ReadDatagram(ptr, *port);
         }
     }
 
@@ -296,7 +300,8 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget 
     Q_UNUSED(port);
     qint64 val = -1;
 
-    if ( port != NULL || ( target != NULL && *target != NULL )){
+    if ( port != NULL || ( target != NULL && *target != NULL ))
+    {
        return val;
     }
 
@@ -308,15 +313,14 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget 
         TPtr8 ptr((TUint8*)data, (TInt)maxSize);
 
         bool ret = socketHandler->ReceiveData(ptr);
-        if(ret)
+        if(ret) {
             val = ptr.Length();
-
+        }
     }
 
     END
     return val;
 }
-
 
 /*!
     Connection-Oriented Mode
@@ -324,25 +328,7 @@ qint64 QLLCPConnected::ReadDatagram(char *data, qint64 maxSize,QNearFieldTarget 
 void QLLCPConnected::DisconnectFromService()
 {
    BEGIN
-   CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
-   if (socketHandler)
-   {
-       // If there is pending data waiting to be written,
-       // Symbian backend Socket will wait until all data has been written
-       if (socketHandler->DisconnectFromService() == KErrNone)
-       {
-          m_socket->changeState(m_socket->getUnconnectedState());
-          m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
-       }
-       else
-       {
-          m_socket->invokeError();
-       }
-   }
-   else
-   {
-      m_socket->invokeError();
-   }
+   DisconnectFromServiceType2Private();
    END
    return;
 }
@@ -353,22 +339,32 @@ void QLLCPConnected::DisconnectFromService()
 void QLLCPConnecting::DisconnectFromService()
 {
    BEGIN
-   CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
-   if (NULL != socketHandler)
-   {
-       if (socketHandler->DisconnectFromService() != KErrNone)
-       {
-          m_socket->invokeError();
-       }
-       m_socket->changeState(m_socket->getUnconnectedState());
-       m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
-   }
-   else
-   {
-      m_socket->invokeError();
-   }
+   DisconnectFromServiceType2Private();
    END
    return;
+}
+
+void QLLCPSocketState::DisconnectFromServiceType2Private()
+{
+    BEGIN
+    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
+    if (NULL != socketHandler)
+    {
+        if (socketHandler->DisconnectFromService() != KErrNone)
+        {
+           m_socket->changeState(m_socket->getUnconnectedState());
+           m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
+        }
+        else
+        {
+           m_socket->invokeError();
+        }
+    }
+    else
+    {
+       m_socket->invokeError();
+    }
+    END
 }
 
 /*!
@@ -386,12 +382,12 @@ void QLLCPUnconnected::DisconnectFromService()
     Connection-Oriented Mode
 */
 void QLLCPConnecting::ConnectToServiceComplete()
-    {
+{
     BEGIN
     m_socket->changeState(m_socket->getConnectedState());
     m_socket->invokeStateChanged(QLlcpSocket::ConnectedState);
     END
-    }
+}
 
 /*!
     Connection-Oriented Mode
@@ -423,7 +419,6 @@ bool QLLCPConnecting::WaitForBytesWritten(int)
 void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString &serviceUri)
 {
     BEGIN
-
     if (connectionType1 == m_socketType){
         m_socket->invokeError();
         return;
@@ -448,6 +443,10 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
         {
             m_socket->invokeError();
         }
+    }
+    else
+    {
+       m_socket->invokeError();
     }
 
     END
