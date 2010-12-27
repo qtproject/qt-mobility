@@ -91,7 +91,6 @@ public:
     TBool WaitForReadyRead(TInt aMilliSeconds);
     TBool WaitForBytesWritten(TInt aMilliSeconds);
     TBool WaitForConnected(TInt aMilliSeconds);
-    TBool WaitForDisconnected(TInt aMilliSeconds);
 
     void AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback);
 private:

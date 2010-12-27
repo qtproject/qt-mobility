@@ -151,7 +151,6 @@ public: // from base class
     qint64 ReadDatagram(char *data, qint64 maxSize, QNearFieldTarget **target = NULL, quint8 *port = NULL);
     bool WaitForBytesWritten(int msecs);
     bool WaitForReadyRead(int msecs);
-    bool WaitForDisconnected(int);
 };
 
 /*!

@@ -322,12 +322,6 @@ TBool CLlcpSocketType2::WaitForConnected(TInt aMilliSeconds)
     END
     return WaitForOperationReady(EWaitForConnected, aMilliSeconds);
     }
-TBool CLlcpSocketType2::WaitForDisconnected(TInt /*aMilliSeconds*/)
-    {
-    BEGIN
-    END
-    return ETrue;//disconnect is a sync method
-    }
 
 void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback)
     {

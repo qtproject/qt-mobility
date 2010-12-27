@@ -244,24 +244,6 @@ bool QLLCPConnected::WaitForReadyRead(int msecs)
 }
 
 /*!
-    Connection-Oriented Mode
-*/
-bool QLLCPConnected::WaitForDisconnected(int msecs)
-{
-    BEGIN
-    bool isOK = false;
-    CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
-    if (socketHandler != NULL)
-    {
-        isOK = socketHandler->WaitForDisconnected(msecs);
-        m_socket->changeState(m_socket->getUnconnectedState());
-        m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
-    }
-    END
-    return isOK;
-}
-
-/*!
     Connection-Less Mode
 */
 qint64 QLLCPBind::ReadDatagram(char *data, qint64 maxSize,
