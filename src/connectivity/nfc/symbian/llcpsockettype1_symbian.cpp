@@ -338,10 +338,6 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
     if ( error == KErrNone)
         {
           error = CreateConnection(connType1);
-          if (KErrNone ==  error)
-             {
-             iRemotePort = portNum;
-             }
         }
     END
     return error;        
