@@ -120,9 +120,7 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
     command.append(char(0x00)); // CRC2
 
     RequestId id = sendCommand(command);
-    mSelectSectorRequests.insert(id, false);
 
-    quint8 acknack = 0;
     if (_waitForRequestCompletedNoSignal(id, 1) != KErrNone)
     {
         END
@@ -189,6 +187,13 @@ void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, 
     QVariant decodedResponse = decodeResponse(command, response);
     setResponseForRequest(id, decodedResponse);
     END
+}
+
+bool QNearFieldTagType2Symbian::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    BEGIN
+    END
+    return _waitForRequestCompleted(id, msecs);
 }
 
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"

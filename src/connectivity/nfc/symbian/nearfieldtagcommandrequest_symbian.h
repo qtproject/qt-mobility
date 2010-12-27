@@ -56,13 +56,15 @@ public:
     void ProcessEmitSignal(TInt aError);
     void HandleResponse(TInt aError);
     void SetInputCommand(QByteArray aCommand) { iCommand = aCommand; }
-    void SetResponseBuffer(const TDesC8& aResponse) { iResponse.Set(aResponse); }
+    void SetResponseBuffer(RBuf8 * aResponse) { iResponse = aResponse; }
     QString GetRequestCommand() { return iCommand; }
     TRequestType Type() { return ETagCommandRequest; }
 private:
     void CommandComplete(TInt aError);
+    TInt HandlePassiveCommand(TInt aError);
     QByteArray iCommand;
-    TPtrC8 iResponse;
+    // Not own
+    RBuf8 * iResponse;
     }; 
 
 #endif

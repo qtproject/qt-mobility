@@ -60,6 +60,8 @@ public:
     TRequestType Type() { return ETagCommandsRequest; }
 private:
     void CommandComplete(TInt aError);
+    TInt HandlePassiveCommand(TInt aError);
+    
     QList<QByteArray> iCommands;
     QVariantList iDecodedResponses;
     // Not own

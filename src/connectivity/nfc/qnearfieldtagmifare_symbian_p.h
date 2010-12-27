@@ -84,6 +84,7 @@ public:
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
     bool isProcessingCommand() const { return _isProcessingRequest(); }
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }

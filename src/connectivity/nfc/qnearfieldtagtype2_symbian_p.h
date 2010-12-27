@@ -86,10 +86,8 @@ public:
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &command, const QByteArray &response);
 
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
-    
-private:
-    QMap<QNearFieldTarget::RequestId, bool> mSelectSectorRequests;
 };
 
 QTM_END_NAMESPACE

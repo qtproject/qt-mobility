@@ -88,6 +88,7 @@ public:
     bool isProcessingCommand() const { return _isProcessingRequest(); }
     RequestId sendCommand(const QByteArray &command);
     RequestId sendCommands(const QList<QByteArray> &commands);
+    bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks);

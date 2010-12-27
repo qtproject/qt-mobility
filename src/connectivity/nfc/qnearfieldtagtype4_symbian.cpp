@@ -167,6 +167,12 @@ void QNearFieldTagType4Symbian::handleTagOperationResponse(const RequestId &id, 
     END
 }
 
+bool QNearFieldTagType4Symbian::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    BEGIN
+    END
+    return _waitForRequestCompleted(id, msecs);
+}
 #include "moc_qnearfieldtagtype4_symbian_p.cpp"
 
 QTM_END_NAMESPACE

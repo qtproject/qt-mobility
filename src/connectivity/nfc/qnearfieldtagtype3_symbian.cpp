@@ -282,7 +282,14 @@ void QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, 
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
     setResponseForRequest(id, decodedResponse);
-}    
+}
+
+bool QNearFieldTagType3Symbian::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    BEGIN
+    END
+    return _waitForRequestCompleted(id, msecs);
+}
 
 #include "moc_qnearfieldtagtype3_symbian_p.cpp"
 

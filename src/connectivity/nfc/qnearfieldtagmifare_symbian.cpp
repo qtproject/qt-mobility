@@ -91,6 +91,13 @@ void QNearFieldTagMifareSymbian::handleTagOperationResponse(const RequestId &id,
     QVariant decodedResponse = decodeResponse(command, response);
     setResponseForRequest(id, decodedResponse);
 }
+
+bool QNearFieldTagMifareSymbian::waitForRequestCompleted(const RequestId &id, int msecs)
+{
+    BEGIN
+    END
+    return _waitForRequestCompleted(id, msecs);
+}
 #include "moc_qnearfieldtagmifare_symbian_p.cpp"
 
 QTM_END_NAMESPACE

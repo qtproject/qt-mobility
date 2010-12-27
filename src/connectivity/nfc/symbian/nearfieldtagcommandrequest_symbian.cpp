@@ -81,7 +81,7 @@ void NearFieldTagCommandRequest::CommandComplete(TInt aError)
 {
     BEGIN
     iRequestIssued = EFalse;
-    ProcessResponse(aError);
+    ProcessResponse(HandlePassiveCommand(aError));
     END
 }
 
@@ -103,7 +103,7 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     LOG(aError);
     if (aError == KErrNone)
     {
-        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(iResponse);
+        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
         iOperator->HandleResponse(iId, iCommand, result);
     }
     END
@@ -122,8 +122,33 @@ void NearFieldTagCommandRequest::ProcessTimeout()
                 iRequestIssued = EFalse;
             }
             LOG("wait timeout");
-            ProcessResponse(KErrTimedOut);
+            ProcessResponse(HandlePassiveCommand(KErrTimedOut));
         }
     }
     END
+}
+
+TInt NearFieldTagCommandRequest::HandlePassiveCommand(TInt aError)
+{
+    BEGIN
+    TInt result = aError;
+    // check if the command is passive ack
+    if (iCommand.count() == 6)
+    {
+        // it may be the select sector packet 2 command for tag type 2
+        if ((iCommand.at(1) == 0) && (iCommand.at(2) == 0) && (iCommand.at(3) == 0))
+        {
+            result = KErrNone;
+            if (KErrTimedOut == aError)
+            {
+                iResponse->Append(0x0A);
+            }
+            else
+            {
+                iResponse->Append(0x05);
+            }
+        }
+    }
+    END
+    return result;
 }
