@@ -669,10 +669,6 @@ void CLlcpSenderAO::ConstructL()
     {
     BEGIN
     CActiveScheduler::Add( this );
-    if ( !iConnection.IsConnected() )
-        {
-        User::Leave(KErrArgument);
-        }
     END
     }
 
@@ -777,10 +773,7 @@ void CLlcpSenderAO::RunL()
 void CLlcpSenderAO::DoCancel()
     {
     BEGIN
-    if (IsActive())
-        {
-        iConnection.TransmitCancel();
-        }
+    iConnection.TransmitCancel();
     END
     }
 //receiver implementation
@@ -808,10 +801,6 @@ void CLlcpReceiverAO::ConstructL()
     {
     BEGIN
     CActiveScheduler::Add( this );
-    if ( !iConnection.IsConnected() )
-        {
-        User::Leave(KErrArgument);
-        }
     END
     }
 
@@ -829,11 +818,6 @@ CLlcpReceiverAO::~CLlcpReceiverAO()
 TInt CLlcpReceiverAO::StartReceiveDatagram()
     {
     BEGIN
-    if (IsActive())
-        {
-        END
-        return KErrInUse;
-        }
     TInt length = 0;
     TInt error = KErrNone;
     length = iConnection.SupportedDataLength();
@@ -894,10 +878,7 @@ void CLlcpReceiverAO::RunL()
 void CLlcpReceiverAO::DoCancel()
     {
     BEGIN
-    if (IsActive())
-        {
-        iConnection.ReceiveCancel();
-        }
+    iConnection.ReceiveCancel();
     END
     }
 //EOF
