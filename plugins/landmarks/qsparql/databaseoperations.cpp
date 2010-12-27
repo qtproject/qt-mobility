@@ -346,7 +346,7 @@ QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 QString landmarkIdsDefaultQueryString()
 {
     return "select ?u ?latitude ?longitude ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
-        "OPTIONAL { ?g nie:title ?name } . "
+        "OPTIONAL { ?u nie:title ?name } . "
         "OPTIONAL { ?g slo:latitude ?latitude } . "
         "OPTIONAL { ?g slo:longitude ?longitude }}";
  }
@@ -375,9 +375,9 @@ QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
 QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
 {
     if (filter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
-        return QString("select ?u  {?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER regex( ?name, '%1') }").arg(filter.name());
+        return QString("select ?u  {?g a slo:GeoLocation . ?u slo:location ?g . ?u nie:title ?name . FILTER regex( ?name, '%1') }").arg(filter.name());
     else
-        return QString("select ?u  {?g a slo:GeoLocation ; nie:title ?name . ?u slo:location ?g . FILTER regex( ?name, '%1', 'i') }").arg(filter.name());
+        return QString("select ?u  {?g a slo:GeoLocation . ?u slo:location ?g . ?u nie:title ?name . FILTER regex( ?name, '%1', 'i') }").arg(filter.name());
 }
 
 QString landmarkIdsCategoryQueryString(const QLandmarkCategoryFilter &filter)
@@ -731,7 +731,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
         return QLandmark();
     }
     QSparqlConnection conn("QTRACKER");
-    QString queryString = QString("select ?u nie:title(?g) slo:latitude(?g) slo:longitude(?g) slo:altitude(?g) "
+    QString queryString = QString("select ?u nie:title(?u) slo:latitude(?g) slo:longitude(?g) slo:altitude(?g) "
         "slo:iconUrl(?u) nie:description(?u) slo:radius(?g) "
         "nco:country(?pa) nco:region(?pa) nco:locality(?pa) nco:streetAddress(?pa) nco:postalcode(?pa) "
         "nco:url(?c) nco:hasPhoneNumber(?c) "
@@ -993,13 +993,13 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             }
             if (selectAll) {
                 queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "OPTIONAL { ?g nie:title ?name }");
+                        "OPTIONAL { ?u nie:title ?name }");
                 break;
             } else {
                 queryString = QString("select ?u {?u a slo:Landmark . ?u slo:hasContact ?pc . ?u slo:location ?g . "
                     "OPTIONAL { ?pc nco:hasPhoneNumber ?pn } . OPTIONAL { ?pn nco:phoneNumber ?phoneNumber } . "
                     "OPTIONAL { ?g slo:postalAddress ?pa } . "
-                    "OPTIONAL { ?g nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
+                    "OPTIONAL { ?u nie:title ?name } . OPTIONAL { ?g slo:latitude ?latitude } . "
                     "OPTIONAL { ?g slo:longitude ?longitude } . OPTIONAL { ?g slo:altitude ?altitude } . "
                     "OPTIONAL { ?g slo:radius ?radius } . OPTIONAL { ?u nie:description ?description } . "
                     "OPTIONAL { ?pa nco:country ?country } . OPTIONAL { ?pa nco:region ?region } . "
@@ -1302,13 +1302,13 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                     *errorString = "The name filter's configuration is not supported";
                 return result;
             }
-            queryString = QString("select ?u { ?g a slo:GeoLocation . ?u slo:location ?g . OPTIONAL { ?g nie:title ?name } . FILTER ");
+            queryString = QString("select ?u { ?g a slo:GeoLocation . ?u slo:location ?g . OPTIONAL { ?u nie:title ?name } . FILTER ");
             QString nameKey = "?name";
             QString nameValue = nameFilter.name();
             QString regex;
             if (nameValue.isEmpty()) {
                 queryString = QString("select ?u ?name {?g a slo:GeoLocation . ?u slo:location ?g . "
-                        "OPTIONAL { ?g nie:title ?name }}");
+                        "OPTIONAL { ?u nie:title ?name }}");
             } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
                     regex = QString("regex( ?name, '^%1$' ) }").arg(nameValue);
@@ -1897,6 +1897,11 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     queryString.append(timeStampString.setNum(timeStamp));
     queryString.append("\" ");
 
+    if (!landmark->name().isEmpty()) {
+        queryString.append("; nie:title \"");
+        queryString.append(landmark->name());
+        queryString.append("\" ");
+    }
     if (!landmark->description().isEmpty()) {
         queryString.append("; nie:description \"");
         queryString.append(landmark->description());
@@ -1912,11 +1917,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
     queryString.append("; slo:location _:x . ");
     queryString.append("_:x a slo:GeoLocation ");
 
-    if (!landmark->name().isEmpty()) {
-        queryString.append("; nie:title \"");
-        queryString.append(landmark->name());
-        queryString.append("\" ");
-    }
     QGeoCoordinate geoCoord;
     geoCoord = landmark->coordinate();
 
@@ -2194,6 +2194,8 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
                "WHERE { ?:landmark_uri nie:description ?des . } "
                "delete { ?:landmark_uri nie:identifier ?ide . } "
                "WHERE { ?:landmark_uri nie:identifier ?ide . } "
+               "delete { ?:landmark_uri nie:title ?name . } "
+               "WHERE { ?:landmark_uri nie:title ?name . } "
                "delete { ?:landmark_uri a slo:Landmark . }");
 
     if (!otherContactHasSameNumber) {
