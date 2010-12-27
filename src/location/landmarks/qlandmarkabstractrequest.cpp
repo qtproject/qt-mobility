@@ -368,10 +368,11 @@ bool QLandmarkAbstractRequest::cancel()
 
     Returns true if the request was canceled or completed
     within the given period, otherwise returns false.  Some backends may be unable
-    to support this  operation safely and will return false immediately.
-    The sqlite and sparql managers currently do not support waitForFinished(),
-    while the symbian manager does. (with the exception of an import request,
-    which will always return false on symbian when waitForFinished() is called).
+    to support this operation safely and will return false immediately.
+
+    (Note that this function is not supported for the import request
+    on symbian and it will always return false when waitForFinished() is called.
+    As of Qt Mobility 1.1.1 this function is supported with the sqlite manager).
 
     Note that any signals generated while waiting for the request to be complete
     may be queued and delivered sometime after this function has returned, when

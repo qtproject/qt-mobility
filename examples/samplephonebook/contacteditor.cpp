@@ -41,6 +41,7 @@
 #include "contacteditor.h"
 
 #include <QtGui>
+#include <QDesktopServices>
 
 const int MAX_AVATAR_DISPLAY_SIZE = 120;
 
@@ -255,8 +256,13 @@ void ContactEditor::clearAvatarClicked()
 void ContactEditor::avatarClicked()
 {
     // put up a file dialog, and update the new avatar path.
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
     QString fileName = QFileDialog::getOpenFileName(this,
-       tr("Select Contact Picture"), ".", tr("Image Files (*.png *.jpg *.bmp)"));
+       tr("Select Contact Picture"), docPath, tr("Image Files (*.png *.jpg *.bmp)"));
 
     if (!fileName.isEmpty()) {
         m_newAvatarPath = fileName;

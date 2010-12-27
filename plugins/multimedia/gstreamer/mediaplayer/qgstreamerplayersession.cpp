@@ -153,6 +153,10 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         double volume = 1.0;
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
         m_volume = int(volume*100);
+
+        g_signal_connect(G_OBJECT(m_playbin), "notify::volume", G_CALLBACK(handleVolumeChange), this);
+        if (m_usePlaybin2)
+            g_signal_connect(G_OBJECT(m_playbin), "notify::mute", G_CALLBACK(handleVolumeChange), this);
     }
 
 #ifdef Q_WS_MAEMO_6
@@ -809,15 +813,10 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             m_lastPosition = newPos/1000;
             emit positionChanged(newPos);
         }
-
-        double volume = 1.0;
-        g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
-        if (m_volume != int(volume*100)) {
-            m_volume = int(volume*100);
-            emit volumeChanged(m_volume);
-        }
-
     } else {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << "GST MSG, src =" << GST_MESSAGE_SRC(gm)->name << "type =" << GST_MESSAGE_TYPE_NAME(gm);
+#endif
         //tag message comes from elements inside playbin, not from playbin itself
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_TAG) {
             //qDebug() << "tag message";
@@ -830,6 +829,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             emit tagsChanged();
         }
 
+        bool handlePlaybin2 = false;
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_STATE_CHANGED:
@@ -1030,18 +1030,32 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
                     m_renderer->precessNewStream();
             }
-        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
-                // If the source has given up, so do we.
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR) {
+            GError *err;
+            gchar *debug;
+            gst_message_parse_error(gm, &err, &debug);
+            // If the source has given up, so do we.
+            if (qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
                 emit invalidMedia();
                 stop();
-                GError *err;
-                gchar *debug;
-                gst_message_parse_error(gm, &err, &debug);
                 emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+            } else if (err->domain == GST_STREAM_ERROR
+                       && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
+                emit invalidMedia();
+                stop();
+                emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+            } else {
+                handlePlaybin2 = m_usePlaybin2;
+            }
+            if (!handlePlaybin2)
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
-                g_error_free(err);
-                g_free(debug);
-        } else if (m_usePlaybin2) {
+            g_error_free(err);
+            g_free(debug);
+        } else {
+            handlePlaybin2 = m_usePlaybin2;
+        }
+
+        if (handlePlaybin2) {
             if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
                 GError *err;
                 gchar *debug;
@@ -1051,15 +1065,21 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "Warning:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
-            } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR
-                       && (QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("decodebin2"))
-                           || QString::fromLatin1(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm))).startsWith(QString::fromLatin1("uridecodebin")))) {
-                emit invalidMedia();
-                stop();
+            } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ERROR) {
                 GError *err;
                 gchar *debug;
                 gst_message_parse_error(gm, &err, &debug);
-                emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                if (qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "decodebin2", 10) == 0
+                    || qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "uridecodebin", 12) == 0) {
+                    emit invalidMedia();
+                    stop();
+                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                } else if (err->domain == GST_STREAM_ERROR
+                           && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
+                    emit invalidMedia();
+                    stop();
+                    emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                }
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
                 g_free(debug);
@@ -1373,3 +1393,29 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     // should be functional.
 }
 
+void QGstreamerPlayerSession::handleVolumeChange(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(o);
+    Q_UNUSED(p);
+    QGstreamerPlayerSession *session = reinterpret_cast<QGstreamerPlayerSession *>(d);
+    QMetaObject::invokeMethod(session, "updateVolume", Qt::QueuedConnection);
+}
+
+void QGstreamerPlayerSession::updateVolume()
+{
+    double volume = 1.0;
+    g_object_get(m_playbin, "volume", &volume, NULL);
+    if (m_volume != int(volume*100)) {
+        m_volume = int(volume*100);
+        emit volumeChanged(m_volume);
+    }
+
+    if (m_usePlaybin2) {
+        bool muted = false;
+        g_object_get(G_OBJECT(m_playbin), "mute", &muted, NULL);
+        if (m_muted != muted) {
+            m_muted = muted;
+            emit mutedStateChanged(muted);
+        }
+    }
+}

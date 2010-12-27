@@ -1174,7 +1174,6 @@ private slots:
     void fetchWaitForFinished();
 #endif
 
-
 #ifdef MISC
     void supportedFormats();
     void filterSupportLevel();
@@ -1766,6 +1765,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
         id1.setLocalId("100");
         lmFetchByIdRequest.setLandmarkId(id1);
         lmFetchByIdRequest.start();
+
         QVERIFY(waitForAsync(spy, &lmFetchByIdRequest,QLandmarkManager::LandmarkDoesNotExistError));
         QCOMPARE(lmFetchByIdRequest.errorMap().count(),1);
         QCOMPARE(lmFetchByIdRequest.errorMap().keys().at(0),0);

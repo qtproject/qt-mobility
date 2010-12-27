@@ -630,11 +630,11 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
-    : q_ptr(parent),
-      engine(engine),
+    : engine(engine),
       containerObject(0),
       zoomLevel(-1.0),
-      blockPropertyChangeSignals(false) {}
+      blockPropertyChangeSignals(false),
+      q_ptr(parent) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {

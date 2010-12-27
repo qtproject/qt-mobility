@@ -143,6 +143,7 @@ private slots:
     void finishVideoOutputChange();
     void updateVideoRenderer();
     void updateVideoResolutionTag();
+    void updateVolume();
 
     bool doPlay();
 
@@ -156,6 +157,7 @@ private slots:
 
 private:
     static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
+    static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
 
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;

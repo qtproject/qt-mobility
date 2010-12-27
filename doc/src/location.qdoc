@@ -551,10 +551,12 @@ If the Mercator projection and the most common tile addressing scheme is used th
 
 \annotatedlist maps-impl-tiled
 
-\section1 QML support
+\section1 QML Elements
 
 For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
 
 \note At the time of the Qt Mobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and likely to be refined and improved in the next patch release.
 */
+
+
 
