@@ -76,6 +76,7 @@ public:
 
 public:
     QBluetoothSocket *socket;
+    bool pending;
 
     int maxPendingConnections;
 

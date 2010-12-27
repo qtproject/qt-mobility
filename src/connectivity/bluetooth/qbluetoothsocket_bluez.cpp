@@ -307,8 +307,8 @@ void QBluetoothSocket::close()
 bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,
                                            SocketState socketState, OpenMode openMode)
 {
-    if (d->readNotifier)
-        delete d->readNotifier;
+    delete d->readNotifier;
+    d->readNotifier = 0;
 
     d->socketType = socketType;
     d->socket = socketDescriptor;
@@ -319,7 +319,7 @@ bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType sock
         fcntl(d->socket, F_SETFL, flags | O_NONBLOCK);
 
     d->readNotifier = new QSocketNotifier(d->socket, QSocketNotifier::Read);
-    connect(d->readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+    connect(d->readNotifier, SIGNAL(activated(int)), d, SLOT(_q_readNotify()));
 
     setSocketState(socketState);
     setOpenMode(openMode);

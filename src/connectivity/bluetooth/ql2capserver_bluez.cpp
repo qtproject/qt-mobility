@@ -50,6 +50,8 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/l2cap.h>
 
+#include <errno.h>
+
 QTM_BEGIN_NAMESPACE
 
 static inline void convertAddress(quint64 from, quint8 (&to)[6])
@@ -63,7 +65,7 @@ static inline void convertAddress(quint64 from, quint8 (&to)[6])
 }
 
 QL2capServerPrivate::QL2capServerPrivate()
-:   maxPendingConnections(1), socketNotifier(0)
+:   maxPendingConnections(1), socketNotifier(0), pending(false)
 {
     socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
 }
@@ -100,6 +102,7 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     sockaddr_l2 addr;
 
+    memset(&addr, 0, sizeof(sockaddr_l2));
     addr.l2_family = AF_BLUETOOTH;
     addr.l2_psm = port;
 
@@ -116,11 +119,11 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 
     d->socket->setSocketState(QBluetoothSocket::ListeningState);
 
-    if (!d->socketNotifier) {
-        d->socketNotifier = new QSocketNotifier(d->socket->socketDescriptor(),
-                                                QSocketNotifier::Read);
-        connect(d->socketNotifier, SIGNAL(activated(int)), this, SLOT(_q_newConnection()));
-    }
+    delete d->socketNotifier;
+
+    d->socketNotifier = new QSocketNotifier(d->socket->socketDescriptor(),
+                                            QSocketNotifier::Read);
+    connect(d->socketNotifier, SIGNAL(activated(int)), this, SLOT(_q_newConnection()));
 
     return true;
 }
@@ -164,7 +167,7 @@ QBluetoothSocket *QL2capServer::nextPendingConnection()
 
         return newSocket;
     } else {
-        qDebug() << "Hmm, could have sworn there was a connection waiting to be accepted!";
+//        qDebug() << "Hmm, could have sworn there was a connection waiting to be accepted!" << errno;
         d->socketNotifier->setEnabled(true);
     }
 

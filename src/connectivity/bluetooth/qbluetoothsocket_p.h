@@ -56,6 +56,8 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QBluetoothServiceDiscoveryAgent;
+
 // This is QIODevice's read buffer, optimised for read(), isEmpty() and getChar()
 class QBluetoothPrivateLinearBuffer
 {
@@ -199,6 +201,8 @@ public:
     virtual bool ensureNativeSocket(QBluetoothSocket::SocketType type);
 
     static QBluetoothSocketPrivate *constructPrivate(QBluetoothSocket *parent);
+
+    void doDeviceDiscovery(const QBluetoothServiceInfo &service, QBluetoothSocket::OpenMode openMode);
     
 public:
     QBluetoothPrivateLinearBuffer buffer;
@@ -211,6 +215,8 @@ public:
     QSocketNotifier *readNotifier;
     QSocketNotifier *connectWriteNotifier;
 
+    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
+    QBluetoothSocket::OpenMode m_openMode;
 
 //    QByteArray rxBuffer;
 //    qint64 rxOffset;
@@ -219,6 +225,10 @@ public:
     QBluetoothSocket *q;
 
     QString errorString;
+
+public slots:
+    void serviceDiscovered(const QBluetoothServiceInfo &service);
+    void discoveryFinished();
 
 Q_SIGNALS:
     void readyRead();
@@ -229,7 +239,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void _q_readNotify();
-
 };
 
 

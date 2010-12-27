@@ -702,23 +702,23 @@ void QVersitContactExporterPrivate::encodeOnlineAccount(
 {
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
-    QString serviceProvider = onlineAccount.serviceProvider();
+    QString protocol = onlineAccount.protocol();
 
     QString propertyName;
 
-    if (serviceProvider == QContactOnlineAccount::ServiceJabber) {
+    if (protocol == QContactOnlineAccount::ProtocolJabber) {
         propertyName = QLatin1String("X-JABBER");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceAim) {
+    } else if (protocol == QContactOnlineAccount::ProtocolAim) {
         propertyName = QLatin1String("X-AIM");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceIcq) {
+    } else if (protocol == QContactOnlineAccount::ProtocolIcq) {
         propertyName = QLatin1String("X-ICQ");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceMsn) {
+    } else if (protocol == QContactOnlineAccount::ProtocolMsn) {
         propertyName = QLatin1String("X-MSN");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceQq) {
+    } else if (protocol == QContactOnlineAccount::ProtocolQq) {
         propertyName = QLatin1String("X-QQ");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceYahoo) {
+    } else if (protocol == QContactOnlineAccount::ProtocolYahoo) {
         propertyName = QLatin1String("X-YAHOO");
-    } else if (serviceProvider == QContactOnlineAccount::ServiceSkype) {
+    } else if (protocol == QContactOnlineAccount::ProtocolSkype) {
         propertyName = QLatin1String("X-SKYPE");
     } else if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
                subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||

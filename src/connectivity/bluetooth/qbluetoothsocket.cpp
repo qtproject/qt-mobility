@@ -45,7 +45,9 @@
 #include "qbluetoothdeviceinfo.h"
 #include "qbluetoothserviceinfo.h"
 
+
 #include <QDebug>
+#include <QSocketNotifier>
 
 QTM_BEGIN_NAMESPACE
 
@@ -90,7 +92,8 @@ QTM_BEGIN_NAMESPACE
     \value ServiceLookupState   Socket is querying connection parameters.
     \value ConnectingState      Socket is attempting to connect to a device.
     \value ConnectedState       Socket is connected to a device.
-    \value BoundState           Socket is bound to a local address and port.
+    \value BoundState   242.nmp.nokia.com
+_IceTransSocketUNIXConnect: Cannot connect to non-local host saisd        Socket is bound to a local address and port.
     \value ClosingState         Socket is connected and will be closed once all pending data is
                                 written to the socket.
     \value ListeningState       Socket is listening for incoming connections.
@@ -299,7 +302,8 @@ void QBluetoothSocket::connectToService(const QBluetoothServiceInfo &service, Op
         }
         d->connectToService(service.device().address(), service.serverChannel(), openMode);
     } else {
-        emit error(UnknownSocketError);
+        // try doing service discovery to see if we can find the socket
+        d->doDeviceDiscovery(service, openMode);
     }
 }
 
@@ -320,6 +324,11 @@ void QBluetoothSocket::connectToService(const QBluetoothServiceInfo &service, Op
 */
 void QBluetoothSocket::connectToService(const QBluetoothAddress &address, const QBluetoothUuid &uuid, OpenMode openMode)
 {
+    QBluetoothServiceInfo service;
+    QBluetoothDeviceInfo device(address, QString(), QBluetoothDeviceInfo::MiscellaneousDevice);
+    service.setDevice(device);
+    service.setServiceUuid(uuid);
+    d->doDeviceDiscovery(service, openMode);
 }
 
 /*!
@@ -382,6 +391,11 @@ void QBluetoothSocket::setSocketState(QBluetoothSocket::SocketState state)
     d->state = state;
     if(old != d->state)
         emit stateChanged(state);
+    if(state == ListeningState){
+        // TODO: look at this, is this really correct?
+        // if we're a listening socket we can't handle connects?
+        d->readNotifier->setEnabled(false);
+    }
 }
 
 bool QBluetoothSocket::canReadLine() const
