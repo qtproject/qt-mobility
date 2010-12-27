@@ -52,23 +52,29 @@ QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObj
 
 QNearFieldTagType2Symbian::~QNearFieldTagType2Symbian()
 {
+    BEGIN
+    END
 }
 
 QVariant QNearFieldTagType2Symbian::decodeResponse(const QByteArray& command, const QByteArray& response)
 {
+    BEGIN
     Q_UNUSED(command);
     if (!response.isEmpty())
     {
+        END
         return quint8(response.at(0)) == 0x0a;
     }
     else
     {
+        END
         return response;
     }
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAddress)
 {
+    BEGIN
     QByteArray command;
     command.append(char(0x30));         // READ
     command.append(char(blockAddress)); // Block address
@@ -77,11 +83,13 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::readBlock(quint8 blockAdd
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
+    END
     return sendCommand(command);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAddress, const QByteArray &data)
 {
+    BEGIN
     if (data.length() != 4)
         return false;
 
@@ -95,11 +103,13 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
     command.append(char(0x00)); // CRC1
     command.append(char(0x00)); // CRC2
 
+    END
     return sendCommand(command);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 sector)
 {
+    BEGIN
     QByteArray command;
     command.append(char(0xc2));     // SECTOR SELECT (Command Packet 1)
     command.append(char(0xff));
@@ -112,89 +122,73 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::selectSector(quint8 secto
     RequestId id = sendCommand(command);
     mSelectSectorRequests.insert(id, false);
 
-    QObject::connect(this, 
-                     SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)), 
-                     this, 
-                     SLOT(selectSectorError(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
     quint8 acknack = 0;
-    if (!waitForRequestCompleted(id))
+    if (_waitForRequestCompletedNoSignal(id, 1) != KErrNone)
     {
-        // check if the packet 1 is timeout.
-        QMap<QNearFieldTarget::RequestId, bool>::const_iterator i = mSelectSectorRequests.find(id);
-        if ( i != mSelectSectorRequests.end())
-        {
-            if (i.value() == true)
-            {
-                acknack = 0x0a;
-            }
-            mSelectSectorRequests.remove(id);
-        }
-    }
-    
-    this->disconnect(SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
-
-    if (acknack != 0x0a)
-    {
-        // first command of selectSector failed
+        END
         return QNearFieldTarget::RequestId();
     }
     else
-    {
+    { 
         command.clear();
         command.append(char(sector));               // Sector number
         command.append(QByteArray(3, char(0x00)));  // RFU
-
+        command.append(char(0x00)); // CRC1
+        command.append(char(0x00)); // CRC2
+        END
         return sendCommand(command);
-    }
-}
-
-void QNearFieldTagType2Symbian::selectSectorError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id)
-{
-    QMap<QNearFieldTarget::RequestId, bool>::const_iterator i = mSelectSectorRequests.find(id);
-    if ( i != mSelectSectorRequests.end())
-    {
-        if (QNearFieldTarget::NoResponseError == error)
-        {
-            mSelectSectorRequests.insert(id, true);
-        }
     }
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommand(const QByteArray &command)
 {
+    BEGIN
+    END
     return _sendCommand(command);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType2Symbian::sendCommands(const QList<QByteArray> &commands)
 {
+    BEGIN
+    END
     return _sendCommands(commands);
 }
 
 bool QNearFieldTagType2Symbian::hasNdefMessage()
 {
+    BEGIN
+    END
     return _hasNdefMessage();
 }
 
 void QNearFieldTagType2Symbian::readNdefMessages()
 {
+    BEGIN
+    END
     return _ndefMessages();
 }
 
 void QNearFieldTagType2Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
+    BEGIN
+    END
     _setNdefMessages(messages);
 }
 
 QByteArray QNearFieldTagType2Symbian::uid() const
 {
+    BEGIN
+    END
     return _uid();
 }
 
 void QNearFieldTagType2Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {
+    BEGIN
     Q_UNUSED(command);
     QVariant decodedResponse = decodeResponse(command, response);
     setResponseForRequest(id, decodedResponse);
+    END
 }
 
 #include "moc_qnearfieldtagtype2_symbian_p.cpp"

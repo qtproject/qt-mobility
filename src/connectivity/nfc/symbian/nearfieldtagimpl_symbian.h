@@ -133,6 +133,7 @@ public:
     QNearFieldTarget::RequestId _sendCommand(const QByteArray &command);
     QNearFieldTarget::RequestId _sendCommands(const QList<QByteArray> &command);
     bool _waitForRequestCompleted(const QNearFieldTarget::RequestId &id, int msecs = 5000);
+    int _waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs = 5000);
 
     QByteArray _uid() const;
 
@@ -272,30 +273,24 @@ template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
 {
     BEGIN
-    if (
-       (mCurrentRequest) && (MNearFieldTagAsyncRequest::ENdefRequest == mCurrentRequest->Type()) ||
-       (!mCurrentRequest) 
-       )
 
+    LOG("use async request to check ndef message");
+    NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
+
+    QNearFieldTarget::RequestId requestId;
+
+    if (readNdefRequest)
     {
-        LOG("create ndefTarget connection");
-        CNearFieldNdefTarget * ndefTarget = mTag->CastToNdefTarget();
-        END
-        return ndefTarget ? ndefTarget->hasNdefMessage() : false;
-    }
-    else
-    {
-        LOG("currentRequest is ongoing, use async request to check ndef message");
-        NearFieldTagNdefRequest * readNdefRequest = new NearFieldTagNdefRequest;
-
-        QNearFieldTarget::RequestId requestId;
-
-        if (readNdefRequest)
+        readNdefRequest->SetRequestId(requestId);
+        readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
+        readNdefRequest->SetOperator(this);
+        int index = mPendingRequestList.indexOf(mCurrentRequest);
+        
+        if (!_isProcessingRequest())
         {
-            readNdefRequest->SetRequestId(requestId);
-            readNdefRequest->SetNdefRequestType(NearFieldTagNdefRequest::EReadRequest);
-            readNdefRequest->SetOperator(this);
-            int index = mPendingRequestList.indexOf(mCurrentRequest);
+            // issue the request
+            LOG("the request will be issued at once");
+            mCurrentRequest = readNdefRequest;
             if ((index < 0) || (index == mPendingRequestList.count() - 1))
             {
                 // no next request
@@ -305,26 +300,39 @@ bool QNearFieldTagImpl<TAGTYPE>::DoHasNdefMessages()
             {
                 mPendingRequestList.insert(index+1, readNdefRequest);
             }
-            readNdefRequest->WaitRequestCompleted(5000);
-            if (mMessageList.Count() == 0)
-            {
-                END
-                return false;
-            }
-            else
-            {
-                mMessageList.Reset();
-                END
-                return true;
-            }
+            readNdefRequest->IssueRequest();
         }
         else
         {
-            // TODO: is that proper way?
-            LOG("unexpect error to create async request");
+            if ((index < 0) || (index == mPendingRequestList.count() - 1))
+            {
+                // no next request
+                mPendingRequestList.append(readNdefRequest);
+            }
+            else
+            {
+                mPendingRequestList.insert(index+1, readNdefRequest);
+            }
+        }
+        
+        readNdefRequest->WaitRequestCompletedNoSignal(5000);
+        if (mMessageList.Count() == 0)
+        {
             END
             return false;
         }
+        else
+        {
+            mMessageList.Reset();
+            END
+            return true;
+        }
+    }
+    else
+    {
+        LOG("unexpect error to create async request");
+        END
+        return false;
     }
 }
 
@@ -662,6 +670,33 @@ bool QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompleted(const QNearFieldTarget
     END
     return request->WaitRequestCompleted(msecs);
 }
+
+template<typename TAGTYPE>
+int QNearFieldTagImpl<TAGTYPE>::_waitForRequestCompletedNoSignal(const QNearFieldTarget::RequestId &id, int msecs)
+{
+    BEGIN
+    int index = -1;
+    for (int i = 0; i < mPendingRequestList.count(); ++i)
+    {
+        if (id == mPendingRequestList.at(i)->GetRequestId())
+        {
+            index = i;
+            break;
+        }
+    }
+
+    if (index < 0)
+    {
+        // request ID is not in pending list. So either it may not be issued, or has already completed
+        END
+        return false; 
+    }
+
+    MNearFieldTagAsyncRequest * request = mPendingRequestList.at(index);
+    LOG("get the request from pending request list");
+    END
+    return request->WaitRequestCompletedNoSignal(msecs);
+} 
 
 template<typename TAGTYPE>
 void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessageRead(const QNdefMessage &message)

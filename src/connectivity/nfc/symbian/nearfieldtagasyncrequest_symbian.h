@@ -79,6 +79,7 @@ public:
     virtual TRequestType Type() = 0;
 
     virtual bool WaitRequestCompleted(int aMsec);
+    virtual int WaitRequestCompletedNoSignal(int aMsec);
     void SetOperator(MNearFieldTargetOperation * aOperator);
     void SetRequestId(QNearFieldTarget::RequestId aId);
     QNearFieldTarget::RequestId GetRequestId();
@@ -96,6 +97,8 @@ protected:
     TBool iRequestIssued;
     
     int iMsecs;
+    bool iSendSignal;
+    volatile int * iRequestResult;
     
     volatile bool * iCurrentRequestResult;
     };

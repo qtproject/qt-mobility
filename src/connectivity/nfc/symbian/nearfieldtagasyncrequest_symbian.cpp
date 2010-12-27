@@ -58,6 +58,8 @@ MNearFieldTagAsyncRequest::MNearFieldTagAsyncRequest()
     iTimer = 0;
     iRequestIssued = EFalse;
     iCurrentRequestResult = 0;
+    iSendSignal = true;
+    iRequestResult = 0;
 }
 
 MNearFieldTagAsyncRequest::~MNearFieldTagAsyncRequest()
@@ -145,6 +147,51 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
     return result;
 }
         
+int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
+{
+    BEGIN
+    volatile int result = KErrNone;
+    iSendSignal = false;
+    iRequestResult = &result;
+    if (iWait)
+    {
+        if (iWait->IsStarted())
+        {
+            LOG("waiter has already started");
+            // the request is already waited, return false.
+            return false;
+        }
+    }
+    else
+    {
+        LOG("new a new waiter");
+        iWait = new(ELeave) CActiveSchedulerWait();
+        iRequestResult = &result;
+    }
+
+    if (iTimer)
+    {
+        LOG("cancel previous timer");
+        iTimer->Cancel();
+    } 
+    else
+    {
+        LOG("create a new timer");
+        iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
+    }
+
+    iMsecs = aMsecs;
+    // timer should be started when request is issued.
+    //LOG("Start timer");
+    //iTimer->Start(0, aMsecs, callback);
+    LOG("Start waiter");
+    iWait->Start();
+    LOG("Waiting completed, "<<result);
+    END
+    return result;
+}
+
+
 void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
 {
     BEGIN
@@ -187,27 +234,55 @@ void MNearFieldTagAsyncRequest::ProcessTimeout()
 void MNearFieldTagAsyncRequest::ProcessWaitRequestCompleted(TInt aError)
 {
     BEGIN
-    if (iCurrentRequestResult)
+    if (iSendSignal)
     {
-        (*iCurrentRequestResult) = (KErrNone == aError);
-    }
-        
-    iCurrentRequestResult = 0;
-    if (iTimer)
-    {
-        LOG("cancel timer");
-        delete iTimer;
-        iTimer = 0;
-    }
-    if (iWait)
-    {
-        if (iWait->IsStarted())
+        if (iCurrentRequestResult)
         {
-            LOG("async stop waiter");
-            iWait->AsyncStop();
+            (*iCurrentRequestResult) = (KErrNone == aError);
+        }
+            
+        iCurrentRequestResult = 0;
+        if (iTimer)
+        {
+            LOG("cancel timer");
+            delete iTimer;
+            iTimer = 0;
+        }
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {
+                LOG("async stop waiter");
+                iWait->AsyncStop();
+            }
+        }
+        ProcessEmitSignal(aError);
+    }
+    else
+    {
+        // just for internal waiting operation.
+        if (iRequestResult)
+        {
+            (*iRequestResult) = aError;
+        }  
+
+        iRequestResult = 0;
+        if (iTimer)
+        {
+            LOG("cancel timer");
+            delete iTimer;
+            iTimer = 0;
+        }
+        if (iWait)
+        {
+            if (iWait->IsStarted())
+            {
+                LOG("async stop waiter");
+                iWait->AsyncStop();
+            }
         }
     }
-    ProcessEmitSignal(aError);
 
     END
 }
+

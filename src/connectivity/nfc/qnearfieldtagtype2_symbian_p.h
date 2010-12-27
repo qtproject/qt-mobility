@@ -88,9 +88,6 @@ public:
 
     friend class QNearFieldTagImpl<QNearFieldTagType2Symbian>;
     
-protected Q_SLOTS:
-    void selectSectorError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
-    
 private:
     QMap<QNearFieldTarget::RequestId, bool> mSelectSectorRequests;
 };
