@@ -150,7 +150,7 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (socket_symbian)
     {
         QLlcpSocketPrivate *qSocket_p = new QLlcpSocketPrivate(socket_symbian);
-        qSocket = new QLlcpSocket(qSocket_p,NULL);
+        qSocket = new QLlcpSocket(qSocket_p,this);
         qSocket_p->attachCallbackHandler(qSocket);
         socket_symbian->AttachCallbackHandler(qSocket_p);
     }
