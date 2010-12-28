@@ -57,6 +57,7 @@ QLlcpServerPrivate::QLlcpServerPrivate(QLlcpServer *q)
 QLlcpServerPrivate::~QLlcpServerPrivate()
 {
     BEGIN
+    close();
     delete m_symbianbackend;
     END
 }
@@ -96,6 +97,8 @@ void QLlcpServerPrivate::close()
 {
     BEGIN
     m_symbianbackend->StopListening();
+    qDeleteAll(m_pendingConnections);
+    m_pendingConnections.clear();
     END
 }
 
@@ -153,6 +156,7 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
         qSocket = new QLlcpSocket(qSocket_p,NULL);
         qSocket_p->attachCallbackHandler(qSocket);
         socket_symbian->AttachCallbackHandler(qSocket_p);
+        m_pendingConnections.append(qSocket);
     }
     END
     return qSocket;

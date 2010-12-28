@@ -99,7 +99,10 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
 {
     BEGIN
     Q_CHECK_PTR(m_symbianSocketType2);
+    m_unconnectedState = new QLLCPUnconnected(this);
+    m_connectingState = new QLLCPConnecting(this);
     m_connectedState = new QLLCPConnected(this);
+    m_bindState = new QLLCPBind(this);
     m_state = m_connectedState;
     END
 }
