@@ -1075,6 +1075,7 @@ find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
 %{_libdir}/pkgconfig/QtFeedback.pc
 %{_libdir}/pkgconfig/QtGallery.pc
 %{_libdir}/pkgconfig/QtLocation.pc
+%{_libdir}/pkgconfig/QtMessaging.pc
 %{_libdir}/pkgconfig/QtMultimediaKit.pc
 %{_libdir}/pkgconfig/QtOrganizer.pc
 %{_libdir}/pkgconfig/QtPublishSubscribe.pc
