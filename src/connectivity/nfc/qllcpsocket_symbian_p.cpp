@@ -80,7 +80,6 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
 
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
-    delete m_state;
     delete m_unconnectedState;
     delete m_connectingState;
     delete m_connectedState;
@@ -100,7 +99,8 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
 {
     BEGIN
     Q_CHECK_PTR(m_symbianSocketType2);
-    m_state = new QLLCPConnected(this);
+    m_connectedState = new QLLCPConnected(this);
+    m_state = m_connectedState;
     END
 }
 
@@ -259,7 +259,7 @@ qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 CLlcpSocketType1* QLlcpSocketPrivate::socketType1Instance()
 {
     if (NULL == m_symbianSocketType1)
-    {        
+    {
         TRAPD(err, m_symbianSocketType1 = CLlcpSocketType1::NewL(*this));
         if (KErrNone != err) {
            m_symbianSocketType1 = NULL;

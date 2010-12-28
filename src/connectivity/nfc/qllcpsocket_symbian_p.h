@@ -139,10 +139,10 @@ private:
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
     //SocketType m_socketType;
-    
+
 private:
     QLlcpSocket::Error m_error;
-    QLLCPSocketState* m_state;  // own
+    QLLCPSocketState* m_state;  // not own
     QLLCPSocketState* m_unconnectedState; // own
     QLLCPSocketState* m_connectedState; // own
     QLLCPSocketState* m_connectingState; // own
