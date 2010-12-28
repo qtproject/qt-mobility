@@ -46,6 +46,7 @@
 #endif
 
 #include "qgeopositioninfosource_geocluemaster_p.h"
+#include <gconf/gconf-client.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -224,10 +225,42 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
 #endif
 }
 
+bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
+{
+    // Check if the gconf value is set properly
+    GConfClient* client;
+    gchar* device_name;
+    client = gconf_client_get_default();
+    device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
+
+    if (QString::fromAscii(device_name).isEmpty()) {
+        return false;
+    } else {
+        qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << device_name;
+        return true;
+    }
+}
+
 int QGeoPositionInfoSourceGeoclueMaster::init()
 {
     g_type_init ();
-    return configurePositionSource();
+
+    // Check if there is sense to try GPS
+    if (tryGPS()) {
+        m_preferredResources = GEOCLUE_RESOURCE_GPS;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
+        if (configurePositionSource() != -1) {
+            return 0;
+        } else {
+            // If not successful, try to get any resource
+            m_preferredResources = GEOCLUE_RESOURCE_ALL;
+            m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
+            return configurePositionSource();
+        }
+    } else {
+        qDebug("QGeoPositionInfoSourceGeoclueMaster: GPS device not set (gconftool-2).");
+        return configurePositionSource();
+    }
 }
 
 int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
@@ -267,9 +300,9 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     }
 
     if (!geoclue_master_client_set_requirements (m_client,
-                                                 GEOCLUE_ACCURACY_LEVEL_NONE, // min_accuracy
-                                                 0,                           // min_time
-                                                 TRUE,                        // require_updates (signals)
+                                                 m_preferredAccuracy,   // min_accuracy
+                                                 0,                     // min_time
+                                                 TRUE,                  // require_updates (signals)
                                                  m_preferredResources,
                                                  &error)){
         qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed.");
@@ -315,12 +348,15 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
     switch (methods) {
     case SatellitePositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_DETAILED;
         break;
     case NonSatellitePositioningMethods:
         m_preferredResources = (GeoclueResourceFlags)(GEOCLUE_RESOURCE_CELL | GEOCLUE_RESOURCE_NETWORK);
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
         break;
     case AllPositioningMethods:
         m_preferredResources = GEOCLUE_RESOURCE_ALL;
+        m_preferredAccuracy = GEOCLUE_ACCURACY_LEVEL_NONE;
         break;
     default:
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");

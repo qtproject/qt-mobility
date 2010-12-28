@@ -111,6 +111,7 @@ private slots:
     void startUpdatesTimeout();
 
 private:
+    bool tryGPS();
     int configurePositionSource();
     QGeoPositionInfo geoclueToPositionInfo(GeocluePositionFields fields,
                                            int                   timestamp,
@@ -121,6 +122,7 @@ private:
 private:
     int m_updateInterval;
     GeoclueResourceFlags m_preferredResources;
+    GeoclueAccuracyLevel m_preferredAccuracy;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
     GeoclueVelocity* m_vel;
