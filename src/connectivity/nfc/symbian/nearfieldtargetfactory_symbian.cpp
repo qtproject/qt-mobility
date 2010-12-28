@@ -91,7 +91,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, 
     // ownership of aNfcTag transferred.
     CIso14443Connection * connection = CIso14443Connection::NewLC(aNfcServer);
     CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
-    ndeftag->SetTag4();
+    tagType->SetTag4();
     tagType->SetConnection(connection);
     MNearFieldTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
     ndeftag->SetTag4();
