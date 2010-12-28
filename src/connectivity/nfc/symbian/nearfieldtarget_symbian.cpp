@@ -43,6 +43,9 @@
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 
+MNearFieldTarget::MNearFieldTarget() : iIsTag4(EFalse)
+    {
+    }
 MNearFieldTarget::~MNearFieldTarget()
     {
     }

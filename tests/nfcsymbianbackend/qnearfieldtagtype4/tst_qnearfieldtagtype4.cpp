@@ -57,7 +57,7 @@ void tst_qnearfieldtagtype4::initTestCase()
 {
     // prepare data
     {
-        QString name = "CC select";
+        QString name = "NDEF Select";
         QByteArray command;
         command.append(char(0x00));     // CLA
         command.append(char(0xA4));     // INS
@@ -73,11 +73,15 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(char(0x01));
         command.append(char(0x00));
         
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
+        QByteArray resp;
+        resp.append(char(0x90));
+        resp.append(char(0x00));
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
     }
     
     {
-        QString name = "NDEF Select";
+        QString name = "NDEF Select v2";
         QByteArray command;
         command.append(char(0x00));     // CLA
         command.append(char(0xA4));     // INS
@@ -93,11 +97,15 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(char(0x01));
         command.append(char(0x01));
         
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
+        QByteArray resp;
+        resp.append(char(0x6a));
+        resp.append(char(0x86));
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
     }
 
     {
-        QString name = "CC select old";
+        QString name = "CC select";
         QByteArray command;
         command.append(char(0x00)); // CLA
         command.append(char(0xA4)); // INS
@@ -109,7 +117,11 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(reinterpret_cast<const char*>(&temp), 
                        sizeof(quint16)); // P1/P2 offset
         
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
+        QByteArray resp;
+        resp.append(char(0x90));
+        resp.append(char(0x00));
+        
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
     }
     
     {
@@ -124,8 +136,12 @@ void tst_qnearfieldtagtype4::initTestCase()
         command.append(1);
         command.append(1);
         command.append(1);
+        
+        QByteArray resp;
+        resp.append(char(0x67));
+        resp.append(char(0x00));
 
-        dataPool.insert(name, qMakePair(QVariant(command), QVariant(QByteArray())));
+        dataPool.insert(name, qMakePair(QVariant(command), QVariant(resp)));
     }
 }
 

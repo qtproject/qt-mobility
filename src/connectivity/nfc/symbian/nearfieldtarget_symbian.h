@@ -52,6 +52,7 @@ class MNearFieldTarget
     {
 public:
     // Cancel and destroy
+    MNearFieldTarget();
     virtual ~MNearFieldTarget();
 
 public:
@@ -63,6 +64,12 @@ public:
     virtual TBool IsConnectionOpened() = 0;
 
     virtual const TDesC8& Uid() const = 0;
+    
+    void SetTag4() {iIsTag4 = ETrue;}
+    TBool IsTag4() {return iIsTag4; }
+
+protected:
+    TBool iIsTag4;
     };
 
 #endif // NEARFIELDTARGET_H

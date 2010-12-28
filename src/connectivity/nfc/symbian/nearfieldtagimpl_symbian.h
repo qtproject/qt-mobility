@@ -58,7 +58,6 @@
 #include "nearfieldtagcommandrequest_symbian.h"
 #include "nearfieldtagcommandsrequest_symbian.h"
 #include "debug.h"
-#include <iso14443connection.h>
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTagType1Symbian;
@@ -153,67 +152,6 @@ protected:
     QList<MNearFieldTagAsyncRequest *> mPendingRequestList;
     MNearFieldTagAsyncRequest * mCurrentRequest;
 };
-
-template<>
-inline void QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoCancelSendCommand()
-{
-    BEGIN
-    CNearFieldTag * tag = mTag->CastToTag();
-    if (tag)
-    { 
-        LOG("Cancel raw command operation");
-        tag->SetTagOperationCallback(0);
-        CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(tag->TagConnection());
-        tag4->ExchangeDataCancel();
-    }
-    END
-}
-
-template<>
-inline bool QNearFieldTagImpl<QNearFieldTagType4Symbian>::DoSendCommand(const QByteArray& command, MNearFieldTagOperationCallback * const aCallback)
-{
-    BEGIN
-    int error = KErrGeneral;
-
-    if (command.count() > 0)
-    {
-        CNearFieldTag * tag = mTag->CastToTag();
-
-        if (tag)
-        {
-            tag->SetTagOperationCallback(aCallback);
-            TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
-            TRAP( error, 
-                // Lazy creation
-                if (mResponse.MaxLength() == 0)
-                {
-                    // the response is not created yet.
-                    mResponse.CreateL(TagConstValue<QNearFieldTagType4Symbian>::MaxResponseSize);
-                }
-                else
-                {
-                    mResponse.Zero();
-                }
-                
-                CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(tag->TagConnection());
-                if (!tag->IsActive())
-                {
-                    tag4->ExchangeData(tag->AOStatus(), cmd, mResponse);
-                    tag->SetActive();
-                    error = KErrNone;
-                }
-
-            )
-        }
-    }
-
-    if (error != KErrNone)
-    {
-        aCallback->CommandComplete(error);
-    } 
-    END
-    return (error == KErrNone);
-}
 
 template<typename TAGTYPE>
 bool QNearFieldTagImpl<TAGTYPE>::DoReadNdefMessages(MNearFieldNdefOperationCallback * const aCallback)

@@ -93,7 +93,12 @@ TPtrC8 QNFCNdefUtility::FromQByteArrayToTPtrC8(const QByteArray& qbytearray)
 
 QByteArray QNFCNdefUtility::FromTDesCToQByteArray( const TDesC8& des)
     {
-    return QByteArray::fromRawData(reinterpret_cast<const char*>(des.Ptr()),des.Size());
+        QByteArray result;
+        for(int i = 0; i < des.Length(); ++i)
+        {
+            result.append(des[i]);
+        }
+        return result;
     }
 
 TPtrC QNFCNdefUtility::FromQStringToTptrC(const QString& qstring)

@@ -43,12 +43,14 @@
 #define NEARFIELDTAG_H
 #include <nfcserver.h>
 #include <e32base.h>
+#include <iso14443connection.h>
 
 #include "nearfieldtarget_symbian.h"
 
 class MNfcTag;
 class MNfcConnection;
 class MNearFieldTagOperationCallback;
+
 
 class CNearFieldTag : public CActive, public MNearFieldTarget
     {

@@ -62,10 +62,52 @@
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 */
+
+/*!
+    Create tag type instance according to the tag infomation in \a aNfcTag and assign 
+    the \a aParent as target's parent. 
+*/
+template <typename CTAGCONNECTION, typename QTAGTYPE>
+    QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+{
+    BEGIN
+    // ownership of aNfcTag transferred.
+    CTAGCONNECTION * connection = CTAGCONNECTION::NewLC(aNfcServer);
+    CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
+    tagType->SetConnection(connection);
+    QTAGTYPE * tag= new(ELeave)QTAGTYPE(WrapNdefAccessL(aNfcTag, aNfcServer, tagType), aParent);
+    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
+    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
+    CleanupStack::Pop(tagType);
+    CleanupStack::Pop(connection);
+    END
+    return tag;
+}
+
+template<>
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, QNearFieldTagType4Symbian>(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+{
+    BEGIN
+    // ownership of aNfcTag transferred.
+    CIso14443Connection * connection = CIso14443Connection::NewLC(aNfcServer);
+    CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
+    tagType->SetConnection(connection);
+    MNearFieldTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
+    ndeftag->SetTag4();
+    QNearFieldTagType4Symbian * tag= new(ELeave)QNearFieldTagType4Symbian(ndeftag, aParent);
+    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
+    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
+    CleanupStack::Pop(tagType);
+    CleanupStack::Pop(connection);
+    END
+    return tag;
+}
+
 /*!
     Create target instance according to the tag infomation in \a aNfcTag and assign 
     the \a aParent as target's parent. 
 */
+
 QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
     {
     BEGIN
@@ -103,28 +145,6 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     END
     return tag;
     }
-
-/*!
-    Create tag type instance according to the tag infomation in \a aNfcTag and assign 
-    the \a aParent as target's parent. 
-*/
-template <typename CTAGCONNECTION, typename QTAGTYPE>
-QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
-    {
-    BEGIN
-    // ownership of aNfcTag transferred.
-    CTAGCONNECTION * connection = CTAGCONNECTION::NewLC(aNfcServer);
-    CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
-    tagType->SetConnection(connection);
-    QTAGTYPE * tag= new(ELeave)QTAGTYPE(WrapNdefAccessL(aNfcTag, aNfcServer, tagType), aParent);
-    // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
-    tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
-    CleanupStack::Pop(tagType);
-    CleanupStack::Pop(connection);
-    END
-    return tag;
-    }
-
    
 MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget)
     {
