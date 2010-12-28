@@ -142,12 +142,6 @@ void QLlcpServerPrivate::invokeNewConnection()
     END
 }
 
-void QLlcpServerPrivate::invokeError() const
-{
-    BEGIN
-    END
-}
-
 QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
 {
     BEGIN

@@ -75,7 +75,6 @@ public:
 
 public:
     void invokeNewConnection();
-    void invokeError() const ;
 
 private:
     CLlcpServer* m_symbianbackend;

@@ -222,13 +222,6 @@ void CLlcpServer::RemoteConnectRequest( MLlcpConnOrientedTransporter* aConnectio
         QT_TRYCATCH_ERROR(error, iCallback.invokeNewConnection());
         Q_UNUSED(error);//just skip the error
         }
-    else
-        {
-        //emit errors
-        TInt error = KErrNone;
-        QT_TRYCATCH_ERROR(error, iCallback.invokeError());
-        Q_UNUSED(error);//just skip the error
-        }
     END
     }
 //EOF
