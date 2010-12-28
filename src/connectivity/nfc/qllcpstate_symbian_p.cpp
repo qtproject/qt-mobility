@@ -332,7 +332,7 @@ void QLLCPSocketState::DisconnectFromServiceType2Private()
     CLlcpSocketType2* socketHandler = m_socket->socketType2Handler();
     if (NULL != socketHandler)
     {
-        if (socketHandler->DisconnectFromService() != KErrNone)
+        if (socketHandler->DisconnectFromService() == KErrNone)
         {
            m_socket->changeState(m_socket->getUnconnectedState());
            m_socket->invokeStateChanged(QLlcpSocket::UnconnectedState);
