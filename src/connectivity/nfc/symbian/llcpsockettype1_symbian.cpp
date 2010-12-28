@@ -249,6 +249,7 @@ TInt64 CLlcpSocketType1::PendingDatagramSize() const
 void CLlcpSocketType1::FrameReceived( MLlcpConnLessTransporter* aConnection )
     {
     BEGIN
+    iRemotePort = aConnection->SsapL();
     CreateConnection(aConnection);
     END
     }
@@ -337,6 +338,7 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
    
     if ( error == KErrNone)
         {
+          iRemotePort = portNum;
           error = CreateConnection(connType1);
         }
     END
@@ -358,8 +360,6 @@ TInt CLlcpSocketType1::CreateConnection(MLlcpConnLessTransporter* aConnection)
          TRAP( error, iConnection = COwnLlcpConnLess::NewL(aConnection ) );
          if ( error == KErrNone )
              {
-             iRemotePort = aConnection->SsapL();
-             qDebug() << "iRemotePort(Ssap) - DsapL: " << iRemotePort <<  " " << aConnection->DsapL();
              iConnection->Receive(*this);
              }
          }
