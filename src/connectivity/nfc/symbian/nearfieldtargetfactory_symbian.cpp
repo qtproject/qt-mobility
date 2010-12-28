@@ -68,7 +68,7 @@
     the \a aParent as target's parent. 
 */
 template <typename CTAGCONNECTION, typename QTAGTYPE>
-    QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
+QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, QObject * aParent)
 {
     BEGIN
     // ownership of aNfcTag transferred.
@@ -91,6 +91,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, 
     // ownership of aNfcTag transferred.
     CIso14443Connection * connection = CIso14443Connection::NewLC(aNfcServer);
     CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
+    ndeftag->SetTag4();
     tagType->SetConnection(connection);
     MNearFieldTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
     ndeftag->SetTag4();
