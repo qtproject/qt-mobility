@@ -46,6 +46,7 @@
 #include "qllcpserver.h"
 #include <QtCore/QObject>
 #include <QList>
+#include <QPointer>
 
 class CLlcpServer;
 class CLlcpSocketType2;
@@ -79,6 +80,7 @@ public:
 private:
     CLlcpServer* m_symbianbackend;
     QLlcpServer *q_ptr;
+    QList<QPointer<QLlcpSocket> > m_pendingConnections;
 };
 
 QTM_END_NAMESPACE
