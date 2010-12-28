@@ -76,6 +76,7 @@ private:
     uint inquiryTypeToIAC(const QBluetoothDeviceDiscoveryAgent::InquiryType type);
 
 protected slots:
+    void setError(int errorCode);
     void setError(int errorCode, QString errorDescription);
     void newDeviceFound(const QBluetoothDeviceInfo &device);
 private:

@@ -105,6 +105,10 @@ bool QBluetoothDeviceDiscoveryAgentPrivateSymbian::isActive() const
 
     return returnValue;
 }
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode)
+{
+    setError(errorCode, QString());
+}
 void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode, QString errorDescription)
 {
     QString errorString;
