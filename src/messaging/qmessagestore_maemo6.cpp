@@ -339,9 +339,15 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
 
 bool QMessageStore::removeAccount(const QMessageAccountId &id)
 {
-    d_ptr->error = QMessageManager::NoError;
+    bool result = false;
+    d_ptr->error = QMessageManager::NotYetImplemented;
 
-    return QMFStore::instance()->removeAccount(id, d_ptr->error);
+    if (id.isValid() && id.toString().startsWith("QMF_")) {
+        qDebug() << __PRETTY_FUNCTION__ << "Removing QMF accountId " << id.toString();
+        result = QMFStore::instance()->removeAccount(id, d_ptr->error);
+    }
+
+    return result;
 }
 
 
