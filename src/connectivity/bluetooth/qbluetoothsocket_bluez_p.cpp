@@ -102,7 +102,7 @@ bool QBluetoothSocketBluezPrivate::ensureNativeSocket(QBluetoothSocket::SocketTy
     int flags = fcntl(socket, F_GETFL, 0);
     fcntl(socket, F_SETFL, flags | O_NONBLOCK);
 
-    readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);    
+    readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
     QObject::connect(readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 
     return true;
@@ -115,6 +115,7 @@ void QBluetoothSocketBluezPrivate::connectToService(const QBluetoothAddress &add
     if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
 
+        memset(&addr, 0, sizeof(addr));
         addr.rc_family = AF_BLUETOOTH;
         addr.rc_channel = port;
 
@@ -124,6 +125,7 @@ void QBluetoothSocketBluezPrivate::connectToService(const QBluetoothAddress &add
     } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
 
+        memset(&addr, 0, sizeof(addr));
         addr.l2_family = AF_BLUETOOTH;
         addr.l2_psm = port;
 
@@ -150,6 +152,7 @@ QBluetoothSocketPrivate *QBluetoothSocketPrivate::constructPrivate(QBluetoothSoc
 
 void QBluetoothSocketBluezPrivate::writeNotify()
 {
+    qDebug() << Q_FUNC_INFO << "woke up!";
     if(connecting && q->state() == QBluetoothSocket::ConnectingState){
         int errorno, len;
         len = sizeof(errorno);
@@ -185,21 +188,21 @@ void QBluetoothSocketPrivate::_q_readNotify()
     char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
 //    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
     int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
-    if(readFromDevice < 0){
+    if(readFromDevice <= 0){
         int errsv = errno;
         // TODO: Something seems wrong here
         // Will return constant errors is enabled
         // where should (if it can be?) we enable it again
         readNotifier->setEnabled(false);
         errorString = QString::fromLocal8Bit(strerror(errsv));
-        qDebug() << Q_FUNC_INFO << "error:" << errorString;
+        qDebug() << Q_FUNC_INFO << "error:" << readFromDevice << errorString;
         if(errsv == EHOSTDOWN)
             emit error(QBluetoothSocket::HostNotFoundError);
         else
             emit error(QBluetoothSocket::UnknownSocketError);
 
         q->setSocketState(QBluetoothSocket::UnconnectedState);
-
+        q->disconnectFromService();
     }
     else {
         buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));

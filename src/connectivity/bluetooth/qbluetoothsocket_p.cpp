@@ -41,6 +41,8 @@
 
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
+#include "qbluetoothservicediscoveryagent.h"
+#include "qbluetoothdeviceinfo.h"
 #ifdef Q_OS_SYMBIAN
 #include "qbluetoothsocket_symbian_p.h"
 #else
@@ -59,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
 :socketType(QBluetoothSocket::UnknownSocketType), state(QBluetoothSocket::UnconnectedState),
  socketError(QBluetoothSocket::UnknownSocketError),socket(-1),
- readNotifier(0), q(parent)
+ readNotifier(0), m_discoveryAgent(0), q(parent), connectWriteNotifier(0)
 {
     connect(this, SIGNAL(readyRead()), q, SIGNAL(readyRead()));
     connect(this, SIGNAL(connected()), q, SIGNAL(connected()));
@@ -71,18 +73,65 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket *parent)
 QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
 {
     delete readNotifier;
-    readNotifier = 0;
+    readNotifier = 0;    
 }
 
 bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
 {
+    Q_UNUSED(type);
     qDebug() << "ensureNativeSocket: NOT IMPLEMENTED";
     return false;
 }
 
 void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
 {
+    Q_UNUSED(address);
+    Q_UNUSED(port);
+    Q_UNUSED(openMode);
     qDebug() << "connectToService: NOT IMPLEMENTED";
+}
+
+void QBluetoothSocketPrivate::doDeviceDiscovery(const QBluetoothServiceInfo &service, QBluetoothSocket::OpenMode openMode)
+{
+    if(m_discoveryAgent) {
+        delete m_discoveryAgent;
+    }
+
+    m_discoveryAgent = new QBluetoothServiceDiscoveryAgent(service.device().address(),this);
+
+    connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+
+    m_openMode = openMode;
+
+    if(!service.serviceUuid().isNull())
+        m_discoveryAgent->setUuidFilter(service.serviceUuid());
+
+    if(!service.serviceClassUuids().isEmpty())
+        m_discoveryAgent->setUuidFilter(service.serviceClassUuids());
+
+    // we have to ID the service somehow
+    Q_ASSERT(!m_discoveryAgent->uuidFilter().isEmpty());
+
+    m_discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
+}
+
+void QBluetoothSocketPrivate::serviceDiscovered(const QBluetoothServiceInfo &service)
+{
+    if(service.protocolServiceMultiplexer() != 0 || service.serverChannel() != 0) {
+        q->connectToService(service, m_openMode);
+        m_discoveryAgent->deleteLater();
+        m_discoveryAgent = 0;
+    }
+}
+
+void QBluetoothSocketPrivate::discoveryFinished()
+{
+    if(m_discoveryAgent){
+        qDebug() << "Could not find service";
+        emit error(QBluetoothSocket::UnknownSocketError);
+        delete m_discoveryAgent;
+    }
 }
 
 #include "moc_qbluetoothsocket_p.cpp"

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "ql2capserver.h"
+#include "ql2capserver_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -128,8 +129,9 @@ QTM_BEGIN_NAMESPACE
     Constructs an L2CAP server with \a parent.
 */
 QL2capServer::QL2capServer(QObject *parent)
-:   QObject(parent)
+:   QObject(parent), d_ptr(new QL2capServerPrivate)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
