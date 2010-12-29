@@ -70,6 +70,8 @@
 #include <mmailboxsyncobserver.h>
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
 #include <mmailboxcontentobserver.h>
+#include <memailclientapiobserver.h>
+#include <memailrequestobserver.h>
 #endif
 
 using namespace EmailInterface;
@@ -120,13 +122,14 @@ public:
     TMailboxId m_mailboxId;
     QMessageServicePrivate& m_observer;
     
+    // not own
     QList<EMailSyncRequest*>& m_requestList;
     
     bool m_active;
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public QObject, public MMailboxContentObserver
+class CFSEngine : public QObject, public MMailboxContentObserver, public MEmailClientApiObserver, public MEmailRequestObserver
 #else
 class CFSEngine : public QObject
 #endif
@@ -140,10 +143,13 @@ public:
     CFSEngine();
     ~CFSEngine();
     
+    void setMessageStorePrivateSingleton(QMessageStorePrivate* privateStore);
+    
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const;
     int countAccounts(const QMessageAccountFilter &filter) const;
     QMessageAccount account(const QMessageAccountId &id) const;
     QMessageAccountId defaultAccount(QMessage::Type type) const;
+    int removeAccount(const QMessageAccountId &id);
     
     QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const;
     int countFolders(const QMessageFolderFilter &filter) const;
@@ -188,6 +194,13 @@ public:
     void NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId);
     void MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId);
     void MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId);       
+    
+        // from MEmailClientApiObserver
+    void EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TMailboxId& aId);
+    
+        // from MEmailRequestObserver
+    void EmailRequestCompleteL(TInt aResult, TUint aRequestId);
+    
 #endif
     
 public slots:
@@ -289,6 +302,8 @@ private:
     mutable bool m_cleanedup;
 
     QList<EMailSyncRequest*> m_syncRequests;
+    
+    QMessageStorePrivate* m_messageStorePrivateSingleton;
 };
 
 class CFSContentFetchOperation : public QObject, MEmailFetchObserver

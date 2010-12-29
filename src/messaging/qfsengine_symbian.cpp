@@ -82,7 +82,7 @@ Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
 Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
 CFSEngine::CFSEngine()
- : m_messageQueryActive(false), m_cleanedup(false)
+ : m_messageQueryActive(false), m_cleanedup(false), m_messageStorePrivateSingleton(0)
 {
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
@@ -217,6 +217,11 @@ void CFSEngine::orderMessages(QMessageIdList& messageIds, const QMessageSortOrde
     }
 }
 
+void CFSEngine::setMessageStorePrivateSingleton(QMessageStorePrivate* privateStore)
+{
+    m_messageStorePrivateSingleton = privateStore;
+}
+
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageAccountIdList accountIds;
@@ -303,6 +308,18 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
     return QMessageAccountId();
 }
 
+int CFSEngine::removeAccount(const QMessageAccountId &id)
+{
+    TRAP_IGNORE(updateEmailAccountsL());
+    TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId, this, (TUint)this));
+#else
+    TRAPD(err, m_clientApi->RemoveMailboxL(mailboxId);
+#endif
+    return err;
+}
+
 QMessageAccountIdList CFSEngine::accountsByType(QMessage::Type type) const
 {
     QMessageAccountIdList accountIds = QMessageAccountIdList();
@@ -362,6 +379,8 @@ void CFSEngine::setPluginObserversL()
         m_mailboxes.insert(mailbox->MailboxId().iId, mailbox);
     }
     mailboxes.Close();
+    
+    m_clientApi->RegisterObserverL(*this);
 }
 
 void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId)
@@ -385,6 +404,31 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
     }
 }
 
+void CFSEngine::EmailClientApiEventL(const TEmailClientApiEvent aEvent, const TMailboxId& aId)
+{
+    if(!m_messageStorePrivateSingleton)
+        return;
+    
+    TRAP_IGNORE(updateEmailAccountsL());
+    switch (aEvent) {
+    case EMailboxRemoved: {
+        QMessageAccountId accountId = qMessageAccountIdFromFsMailboxId(aId);
+        m_messageStorePrivateSingleton->accountRemoved(accountId);
+        }
+        break;
+    case EMailboxCreated:
+    default:
+        break;
+    }
+}
+
+void CFSEngine::EmailRequestCompleteL( TInt aResult, TUint aRequestId )
+{
+    if (m_messageStorePrivateSingleton && (aRequestId == (TUint)this)) {
+        m_messageStorePrivateSingleton->removeAccountComplete(aResult);
+    }
+}
+
 void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                               const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
 {
@@ -404,6 +448,16 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
 
     bool messageRetrieved = false;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+
+    /* 
+     * TODO: Dirty hack: Currently clientapi return NULL if mailbox is not found.
+     * We can't do anything if mailbox if NULL so we can just return from function.
+     * Remove this if MEmailClientApi::MailboxL(aMailbox) is changed to leave if mailbox is not found.
+     */ 
+    if( !mailbox )
+        return;
+    
+    
     CleanupReleasePushL(*mailbox);
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
