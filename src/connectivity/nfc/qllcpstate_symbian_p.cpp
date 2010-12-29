@@ -354,9 +354,7 @@ void QLLCPSocketState::DisconnectFromServiceType2Private()
 */
 void QLLCPUnconnected::DisconnectFromService()
 {
-   BEGIN
-   m_socket->invokeError();
-   END
+   BEGIN_END
    return;
 }
 
