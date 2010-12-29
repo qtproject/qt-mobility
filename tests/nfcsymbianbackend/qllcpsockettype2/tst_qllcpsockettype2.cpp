@@ -508,6 +508,26 @@ void tst_qllcpsockettype2::multipleWrite()
 */
 void tst_qllcpsockettype2::negTestCase1()
 {
+    QString message("handshake 5: negTestCase1");
+    QNfcTestUtil::ShowMessage(message);
+    QLlcpSocket socket(this);
+
+    QSignalSpy connectedSpy(&socket, SIGNAL(connected()));
+    socket.connectToService(m_target, TestUri);
+    QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
+    message = "1234567890";
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint16)0;
+    out << message;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    qint64 ret = socket.writeDatagram(block.constData(), block.size());
+    QVERIFY( ret != -1);
+    //cover sender DoCancel() method
 }
 
 /*!
