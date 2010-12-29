@@ -234,11 +234,16 @@ bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
     client = gconf_client_get_default();
     device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
 
-    if (QString::fromAscii(device_name).isEmpty()) {
+    QString deviceName(QString::fromAscii(device_name));
+    if (deviceName.isEmpty()) {
         return false;
     } else {
+        // Check if the device exists (does nothing if a bluetooth address)
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << device_name;
-        return true;
+        if (deviceName.trimmed().at(0) == '/' && QFile::exists(deviceName.trimmed())) {
+            return true;
+        }
+        return false;
     }
 }
 

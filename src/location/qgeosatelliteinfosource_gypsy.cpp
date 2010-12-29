@@ -44,6 +44,7 @@
 #ifdef Q_LOCATION_GYPSY_DEBUG
 #include <QDebug>
 #endif
+#include <QFile>
 
 QTM_BEGIN_NAMESPACE
 
@@ -218,10 +219,14 @@ int QGeoSatelliteInfoSourceGypsy::init()
     client = m_engine->eng_gconf_client_get_default();
     device_name = m_engine->eng_gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
 
-    if (QString::fromAscii(device_name).isEmpty()) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy Empty GPS device name detected, have you set it with gconftool-2?");
-        g_warning ("If not, use gconftool-2 to set it, e.g. on terminal: ");
-        g_warning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
+    QString deviceName(QString::fromAscii(device_name));
+    qDebug() << "QGeoSatelliteInfoSourceGypsy GPS device: " << deviceName;
+
+    if (deviceName.isEmpty() ||
+            (deviceName.trimmed().at(0) == '/' && !QFile::exists(deviceName.trimmed()))) {
+        qWarning ("QGeoSatelliteInfoSourceGypsy Empty/nonexistent GPS device name detected.");
+        qWarning ("Use gconftool-2 to set it, e.g. on terminal: ");
+        qWarning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
         return -1;
     }
 
