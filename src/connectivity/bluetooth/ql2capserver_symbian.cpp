@@ -39,57 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QL2CAPSERVER_P_H
-#define QL2CAPSERVER_P_H
-
-#include <qmobilityglobal.h>
-
-#ifndef QT_NO_DBUS
-QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
-#endif
-
-QT_BEGIN_HEADER
+#include "ql2capserver.h"
+#include "ql2capserver_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QBluetoothAddress;
-class QBluetoothSocket;
-
-#ifdef Q_OS_SYMBIAN
-class QBluetoothSocketSymbianPrivate;
-#endif
-
-class QL2capServer;
-
-class QL2capServerPrivate
+bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
 {
-    Q_DECLARE_PUBLIC(QL2capServer)
+    Q_UNUSED(address);
+    Q_UNUSED(port);
 
-public:
-    QL2capServerPrivate();
-    ~QL2capServerPrivate();
+    return false;
+}
 
-#ifndef QT_NO_DBUS
-    void _q_newConnection();
-#endif
+QBluetoothSocket *QL2capServer::nextPendingConnection()
+{
+    return 0;
+}
 
-public:
-    QBluetoothSocket *socket;
-    bool pending;
+quint16 QL2capServer::serverPort() const
+{
+    return 0;
+}
 
-    int maxPendingConnections;
+QL2capServerPrivate::QL2capServerPrivate()
+{
+}
 
-protected:
-    QL2capServer *q_ptr;
-
-private:
-#ifndef QT_NO_DBUS
-    QSocketNotifier *socketNotifier;
-#endif
-};
+QL2capServerPrivate::~QL2capServerPrivate()
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

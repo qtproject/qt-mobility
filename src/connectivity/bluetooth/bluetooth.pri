@@ -70,7 +70,8 @@ symbian {
         bluetooth/qbluetoothsocket_symbian_p.cpp\
         bluetooth/qrfcommserver_symbian.cpp \
         bluetooth/qbluetoothlocaldevice_symbian.cpp \
-        bluetooth/qbluetoothtransfermanager_symbian.cpp
+        bluetooth/qbluetoothtransfermanager_symbian.cpp \
+        bluetooth/ql2capserver_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
 } else:contains(QT_CONFIG, dbus) {
