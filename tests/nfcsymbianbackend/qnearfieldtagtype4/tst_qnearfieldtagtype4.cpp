@@ -280,7 +280,6 @@ void tst_qnearfieldtagtype4::testSmoke()
     QVERIFY(tester.target->waitForRequestCompleted(id5));
     ++okCount;
     QByteArray readNdefResp = tester.target->requestResponse(id5).toByteArray(); 
-    ++okCount;
     QCOMPARE(readNdefResp.at(readNdefResp.count()-1), char(0x00));
     QCOMPARE(readNdefResp.at(readNdefResp.count()-2), char(0x90));
     
@@ -391,7 +390,6 @@ void tst_qnearfieldtagtype4::testCommandSet()
     QVERIFY(tester.target->waitForRequestCompleted(id5));
     ++okCount;
     QByteArray readNdefResp = tester.target->requestResponse(id5).toByteArray(); 
-    ++okCount;
     QCOMPARE(readNdefResp.at(readNdefResp.count()-1), char(0x00));
     QCOMPARE(readNdefResp.at(readNdefResp.count()-2), char(0x90));
     
