@@ -19,6 +19,7 @@ public:
 private Q_SLOTS:
     void initTestCase();
 
+    void testCommandSet();
     void testNdefAccess();
 
     void testRawCommand_data();
@@ -145,6 +146,93 @@ void tst_qnearfieldtagtype4::initTestCase()
     }
 }
 
+void tst_qnearfieldtagtype4::testCommandSet()
+{
+    tester.touchTarget();
+    
+    QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    
+    int okCount = 0;
+    int errCount = 0;
+
+    QByteArray resp;
+    resp.append(char(0x90));
+    resp.append(char(0x00));
+    
+    // select ndef tag
+    QByteArray command;
+    command.append(char(0xD2));
+    command.append(char(0x76));
+    command.append(char(0x00));
+    command.append(char(0x00));
+    command.append(char(0x85));
+    command.append(char(0x01));
+    command.append(char(0x00));
+    QNearFieldTarget::RequestId id1 = tester.target->select(command);
+    QVERIFY(tester.target->waitForRequestCompleted(id1));
+    ++okCount;
+    QCOMPARE(tester.target->requestResponse(id1).toByteArray(), resp);
+    
+    // select cc
+    QNearFieldTarget::RequestId id2 = tester.target->select(0xe103);
+    QVERIFY(tester.target->waitForRequestCompleted(id2));
+    ++okCount;
+    QCOMPARE(tester.target->requestResponse(id2).toByteArray(), resp);
+    
+    // read cc
+    QNearFieldTarget::RequestId id3 = tester.target->read(0x08,0x07);
+    QVERIFY(tester.target->waitForRequestCompleted(id3));
+    QByteArray readResp = tester.target->requestResponse(id3).toByteArray(); // 04 06 E1 04 0E E0 00 00 
+    ++okCount;
+    QVERIFY(readResp.at(readResp.count()-1) == 0x00);
+    QVERIFY(readResp.at(readResp.count()-2) == 0x90);
+    
+    quint8 temp = readResp.at(2);
+    quint16 fileId = 0;
+    fileId |= temp;
+    fileId<<=8;
+    
+    temp = readResp.at(3);
+    fileId |= temp;
+    
+    // select NDEF
+    QNearFieldTarget::RequestId id4 = tester.target->select(fileId);
+    QVERIFY(tester.target->waitForRequestCompleted(id4));
+    ++okCount;
+    QCOMPARE(tester.target->requestResponse(id4).toByteArray(), resp);
+    
+    // read NDEF
+    QNearFieldTarget::RequestId id5 = tester.target->read(0x00,0x02);
+    QVERIFY(tester.target->waitForRequestCompleted(id5));
+    ++okCount;
+    QByteArray readNdefResp = tester.target->requestResponse(id5).toByteArray(); 
+    ++okCount;
+    QVERIFY(readNdefResp.at(readNdefResp.count()-1) == 0x00);
+    QVERIFY(readNdefResp.at(readNdefResp.count()-2) == 0x90);
+    
+    QByteArray data;
+    data.append(readNdefResp.at(0));
+    data.append(readNdefResp.at(1));
+    
+    // write NDEF
+    QNearFieldTarget::RequestId id6 = tester.target->write(data, 0x00);
+    QVERIFY(tester.target->waitForRequestCompleted(id6));
+    ++okCount;
+    QCOMPARE(tester.target->requestResponse(id6).toByteArray(), resp);
+    
+    // read again
+    QNearFieldTarget::RequestId id7 = tester.target->read(0x00,0x02);
+    QVERIFY(tester.target->waitForRequestCompleted(id7));
+    ++okCount;
+    data.append(resp);
+    QCOMPARE(tester.target->requestResponse(id7).toByteArray(), data);
+    
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+    tester.removeTarget();
+}
+    
 void tst_qnearfieldtagtype4::testNdefAccess()
 {
     tester.testNdefAccess();
