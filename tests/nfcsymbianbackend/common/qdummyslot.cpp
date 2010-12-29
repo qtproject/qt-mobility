@@ -14,7 +14,7 @@ void QDummySlot::errorHandling(QNearFieldTarget::Error error, const QNearFieldTa
         QByteArray dummyCommand;
         dummyCommand.append((char)0);
         iWaitId = tag->sendCommand(dummyCommand);
-        QVERIFY(!tag->waitForRequestCompleted(iWaitId));
+        tag->waitForRequestCompleted(iWaitId);
         qDebug()<<"waited request completed"<<endl;
     }
 }
@@ -27,7 +27,7 @@ void QDummySlot::requestCompletedHandling(const QNearFieldTarget::RequestId& id)
         QByteArray dummyCommand;
         dummyCommand.append((char)0);
         iWaitId = tag->sendCommand(dummyCommand);
-        QVERIFY(!tag->waitForRequestCompleted(iWaitId));
+        tag->waitForRequestCompleted(iWaitId);
         qDebug()<<"waited request completed"<<endl;
     }
 }

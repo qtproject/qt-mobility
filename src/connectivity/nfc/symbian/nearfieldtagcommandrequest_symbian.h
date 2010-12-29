@@ -65,6 +65,7 @@ private:
     QByteArray iCommand;
     // Not own
     RBuf8 * iResponse;
+    QByteArray iRequestResponse;
     }; 
 
 #endif

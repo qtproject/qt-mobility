@@ -103,8 +103,7 @@ void NearFieldTagCommandRequest::HandleResponse(TInt aError)
     LOG(aError);
     if (aError == KErrNone)
     {
-        QByteArray result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
-        iOperator->HandleResponse(iId, iCommand, result);
+        iOperator->HandleResponse(iId, iCommand, iRequestResponse);
     }
     END
 }
@@ -149,6 +148,7 @@ TInt NearFieldTagCommandRequest::HandlePassiveCommand(TInt aError)
             }
         }
     }
+    iRequestResponse = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
     END
     return result;
 }

@@ -69,9 +69,9 @@ void NearFieldTagCommandsRequest::IssueRequest()
     iRequestIssued = ETrue;
     if (iCurrentCommand < iCommands.count())
     {
-        if (iWait)
+        if (iWait && (iCurrentCommand == 0))
         {
-            if (iWait->IsStarted())
+            if (iWait->IsStarted() && !iTimer->IsActive())
             {    
                 // start timer here
                 LOG("Start timer");
@@ -170,7 +170,7 @@ TInt NearFieldTagCommandsRequest::HandlePassiveCommand(TInt aError)
 {
     BEGIN
     TInt result = aError;
-    QByteArray command = iCommands.at(iCurrentCommand);
+    QByteArray command = iCommands.at(iCurrentCommand-1);
     // check if the command is passive ack
     if (command.count() == 6)
     {

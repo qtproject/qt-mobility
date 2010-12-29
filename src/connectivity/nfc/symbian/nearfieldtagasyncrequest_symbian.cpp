@@ -39,6 +39,7 @@
  **
  ****************************************************************************/
 #include "nearfieldtagasyncrequest_symbian.h"
+#include "nearfieldutility_symbian.h"
 #include <e32std.h>
 #include "debug.h"
 
@@ -136,7 +137,7 @@ bool MNearFieldTagAsyncRequest::WaitRequestCompleted(int aMsecs)
         iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
     }
 
-    iMsecs = aMsecs;
+    iMsecs = aMsecs * 1000;
     // timer should be started when request is issued.
     //LOG("Start timer");
     //iTimer->Start(0, aMsecs, callback);
@@ -180,7 +181,7 @@ int MNearFieldTagAsyncRequest::WaitRequestCompletedNoSignal(int aMsecs)
         iTimer = CPeriodic::NewL(CActive::EPriorityStandard);
     }
 
-    iMsecs = aMsecs;
+    iMsecs = aMsecs * 1000;
     // timer should be started when request is issued.
     //LOG("Start timer");
     //iTimer->Start(0, aMsecs, callback);
@@ -196,10 +197,10 @@ void MNearFieldTagAsyncRequest::ProcessResponse(TInt aError)
 {
     BEGIN
     LOG("Error is "<<aError);
-    
-    HandleResponse(aError);
 
     iOperator->IssueNextRequest(iId);
+    
+    HandleResponse(aError);
 
     if (iWait) 
     {

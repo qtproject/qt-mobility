@@ -387,7 +387,7 @@ void tst_qnearfieldtagtype4::testCommandSet()
     
     // read NDEF
     qDebug()<<"read ndef";
-    QNearFieldTarget::RequestId id5 = tester.target->read(0x0000,0x0002);
+    QNearFieldTarget::RequestId id5 = tester.target->read(0x0002,0x0000);
     QVERIFY(tester.target->waitForRequestCompleted(id5));
     ++okCount;
     QByteArray readNdefResp = tester.target->requestResponse(id5).toByteArray(); 
@@ -408,7 +408,7 @@ void tst_qnearfieldtagtype4::testCommandSet()
     
     // read again
     qDebug()<<"read ndef";
-    QNearFieldTarget::RequestId id7 = tester.target->read(0x0000,0x0002);
+    QNearFieldTarget::RequestId id7 = tester.target->read(0x0002,0x0000);
     QVERIFY(tester.target->waitForRequestCompleted(id7));
     ++okCount;
     data.append(resp);
