@@ -18,6 +18,9 @@ public:
 private Q_SLOTS:
     void initTestCase();
 
+    void testSmoke_data();
+    void testSmoke();
+    
     void testCommandSet();
     void testNdefAccess();
 
@@ -117,6 +120,96 @@ void tst_qnearfieldtagtype1::initTestCase()
     }
 }
 
+void tst_qnearfieldtagtype1::testSmoke_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+
+void tst_qnearfieldtagtype1::testSmoke()
+{
+    tester.touchTarget();
+    
+    QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    
+    int okCount = 0;
+    int errCount = 0;
+    
+    QNearFieldTarget::RequestId id1 = tester.target->readIdentification();        
+    QVERIFY(id1.isValid());
+    QVERIFY(!tester.target->waitForRequestCompleted(id1));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id2 = tester.target->readAll();
+    QVERIFY(id2.isValid());
+    QVERIFY(!tester.target->waitForRequestCompleted(id2));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id3 = tester.target->readByte(0x81);
+    QVERIFY(!id3.isValid());
+    QNearFieldTarget::RequestId id4 = tester.target->readByte(0x02);
+    QVERIFY(!tester.target->waitForRequestCompleted(id4));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id5 = tester.target->writeByte(0x81, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QVERIFY(!id5.isValid());
+    QNearFieldTarget::RequestId id6 = tester.target->writeByte(0x02, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QVERIFY(!tester.target->waitForRequestCompleted(id6));
+    ++errCount;
+    QNearFieldTarget::RequestId id7 = tester.target->writeByte(0x02, 0, QtMobility::QNearFieldTagType1::WriteOnly);
+    QVERIFY(!tester.target->waitForRequestCompleted(id7));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id9 = tester.target->readSegment(0xf1);
+    QVERIFY(!id9.isValid());
+    QNearFieldTarget::RequestId id10 = tester.target->readByte(0x01);
+    QVERIFY(!tester.target->waitForRequestCompleted(id4));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id11 = tester.target->readBlock(0x13);
+    QVERIFY(!tester.target->waitForRequestCompleted(id11));
+    ++errCount;
+    
+    QByteArray data;
+    for(int i = 0; i < 7; ++i)
+    {
+        data.append((char)i);
+    }
+    QNearFieldTarget::RequestId id12 = tester.target->writeBlock(0x13, data, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QVERIFY(!id12.isValid());
+    data.append((char)8);
+    QNearFieldTarget::RequestId id13 = tester.target->writeBlock(0x13, data, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QVERIFY(!tester.target->waitForRequestCompleted(id13));
+    ++errCount;
+    QNearFieldTarget::RequestId id14 = tester.target->writeBlock(0x13, data, QtMobility::QNearFieldTagType1::WriteOnly);
+    QVERIFY(!tester.target->waitForRequestCompleted(id14));
+    ++errCount;
+    
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+    
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testSmoke(dsp, cmd, rsp); 
+    tester.removeTarget();
+}
+
 void tst_qnearfieldtagtype1::testCommandSet()
 {
     tester.touchTarget();
@@ -137,24 +230,24 @@ void tst_qnearfieldtagtype1::testCommandSet()
     QVERIFY(!tester.target->waitForRequestCompleted(id2));
     ++errCount;
 
-    QNearFieldTarget::RequestId id3 = tester.target->readByte(0);
+    QNearFieldTarget::RequestId id3 = tester.target->readByte(0x81);
     QVERIFY(!id3.isValid());
-    QNearFieldTarget::RequestId id4 = tester.target->readByte(0x81);
+    QNearFieldTarget::RequestId id4 = tester.target->readByte(0x02);
     QVERIFY(!tester.target->waitForRequestCompleted(id4));
     ++errCount;
     
-    QNearFieldTarget::RequestId id5 = tester.target->writeByte(0, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QNearFieldTarget::RequestId id5 = tester.target->writeByte(0x81, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
     QVERIFY(!id5.isValid());
-    QNearFieldTarget::RequestId id6 = tester.target->writeByte(0x81, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
+    QNearFieldTarget::RequestId id6 = tester.target->writeByte(0x02, 0, QtMobility::QNearFieldTagType1::EraseAndWrite);
     QVERIFY(!tester.target->waitForRequestCompleted(id6));
     ++errCount;
-    QNearFieldTarget::RequestId id7 = tester.target->writeByte(0x81, 0, QtMobility::QNearFieldTagType1::WriteOnly);
+    QNearFieldTarget::RequestId id7 = tester.target->writeByte(0x02, 0, QtMobility::QNearFieldTagType1::WriteOnly);
     QVERIFY(!tester.target->waitForRequestCompleted(id7));
     ++errCount;
 
-    QNearFieldTarget::RequestId id9 = tester.target->readSegment(0);
+    QNearFieldTarget::RequestId id9 = tester.target->readSegment(0xf1);
     QVERIFY(!id9.isValid());
-    QNearFieldTarget::RequestId id10 = tester.target->readByte(0xf1);
+    QNearFieldTarget::RequestId id10 = tester.target->readByte(0x01);
     QVERIFY(!tester.target->waitForRequestCompleted(id4));
     ++errCount;
 

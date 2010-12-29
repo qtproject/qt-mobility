@@ -46,6 +46,15 @@
 
 QTM_BEGIN_NAMESPACE
 
+static void output(const QByteArray& cmd)
+{
+    BEGIN
+    for (int i = 0; i < cmd.count(); ++i)
+    {
+        LOG(int(cmd.at(i)));
+    }
+    END
+}
 QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType4(parent), QNearFieldTagImpl(tag)
 {
@@ -111,6 +120,8 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::select(quint16 fileIdenti
     quint16 temp = qToBigEndian<quint16>(fileIdentifier);
     command.append(reinterpret_cast<const char*>(&temp), 
                    sizeof(quint16));
+
+    output(command);
     END
     return _sendCommand(command);    
 }
@@ -124,9 +135,12 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::read(quint16 length, quin
     quint16 temp = qToBigEndian<quint16>(startOffset);
     command.append(reinterpret_cast<const char*>(&temp), 
                    sizeof(quint16)); // P1/P2 offset
-    temp = qToBigEndian<quint16>(length);
+    /*temp = qToBigEndian<quint16>(length);
     command.append(reinterpret_cast<const char*>(&temp),
-                   sizeof(quint16)); // Le
+                   sizeof(quint16)); // Le*/
+    command.append(quint8(length));
+
+    output(command);
     END
     return _sendCommand(command);
 }
@@ -139,7 +153,7 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
     command.append(char(0xD6)); // INS
     quint16 temp = qToBigEndian<quint16>(startOffset);
     command.append(reinterpret_cast<const char *>(&temp), sizeof(quint16));
-    quint16 length = data.count();
+    quint8 length = data.count();
     if ((length > 0xFF) || (length < 0x01))
     {
         END
@@ -147,12 +161,14 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
     }
     else
     {
-        quint16 temp = qToBigEndian<quint16>(length);
+        /*quint16 temp = qToBigEndian<quint16>(length);
         command.append(reinterpret_cast<const char *>(&temp), 
-                       sizeof(quint16));
+                       sizeof(quint16));*/
+        command.append(quint8(length));
     }
     
     command.append(data);
+    output(command);
     END
     return _sendCommand(command);
                        

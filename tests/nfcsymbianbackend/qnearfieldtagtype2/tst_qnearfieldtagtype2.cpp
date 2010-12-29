@@ -17,6 +17,10 @@ public:
 
 private Q_SLOTS:
     void initTestCase();
+    
+    void testSmoke_data();
+    void testSmoke();
+    
     void testCommandSet();
 
     void testNdefAccess();
@@ -107,6 +111,66 @@ void tst_qnearfieldtagtype2::initTestCase()
 
         dataPool.insert(name, qMakePair(QVariant(command), QVariant()));
     }
+}
+
+void tst_qnearfieldtagtype2::testSmoke_data()
+{
+    QTest::addColumn<QStringList>("dsp");
+    QTest::addColumn<QVariantList>("cmd");
+    QTest::addColumn<QVariantList>("rsp");
+    
+    QStringList dsp;
+    QVariantList cmd;
+    QVariantList rsp;
+    
+    dsp<<"RID"<<"READ ALL"<<"INVALID";
+    cmd.append(dataPool["RID"].first);
+    cmd.append(dataPool["READ ALL"].first);
+    cmd.append(dataPool["INVALID"].first);
+    rsp.append(dataPool["RID"].second);
+    rsp.append(dataPool["READ ALL"].second);
+    rsp.append(dataPool["INVALID"].second);
+    QTest::newRow("data 1")<<dsp<<cmd<<rsp;
+}
+
+void tst_qnearfieldtagtype2::testSmoke()
+{
+    tester.touchTarget();
+    
+    QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
+    QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
+    
+    int okCount = 0;
+    int errCount = 0;
+    
+    QNearFieldTarget::RequestId id1 = tester.target->readBlock(0);
+    QVERIFY(id1.isValid());
+    QVERIFY(!tester.target->waitForRequestCompleted(id1));
+    ++errCount;
+    
+    QByteArray data;
+    for(int i = 0; i < 3; ++i)
+    {
+        data.append((char)i);
+    }
+    QNearFieldTarget::RequestId id2 = tester.target->writeBlock(0x13, data);
+    QVERIFY(!id2.isValid());
+    data.append((char)3);
+    QNearFieldTarget::RequestId id3 = tester.target->writeBlock(0x13, data);
+    QVERIFY(!tester.target->waitForRequestCompleted(id3));
+    ++errCount;
+    
+    QNearFieldTarget::RequestId id4 = tester.target->selectSector(2); 
+    QVERIFY(!id4.isValid());
+    
+    QTRY_COMPARE(okSpy.count(), okCount);
+    QTRY_COMPARE(errSpy.count(), errCount);
+    
+    QFETCH(QStringList, dsp);
+    QFETCH(QVariantList, cmd);
+    QFETCH(QVariantList, rsp);
+    tester.testSmoke(dsp, cmd, rsp);
+    tester.removeTarget();
 }
 
 void tst_qnearfieldtagtype2::testCommandSet()
