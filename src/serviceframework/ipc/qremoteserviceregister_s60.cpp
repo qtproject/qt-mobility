@@ -61,6 +61,7 @@ void printServicePackage(const QServicePackage& package)
     qDebug() << "QServicePackage packageType  : " << package.d->packageType;
     qDebug() << "QServicePackage QUuid        : " << package.d->messageId;
     qDebug() << "QServicePackage responseType : " << package.d->responseType;
+    qDebug() << "QServicePackage value        : " << package.d->payload;
   }
   else {
     qDebug() << "Invalid ServicePackage" << " LEAVING"; 
@@ -94,7 +95,8 @@ public:
     void PackageReceived(QServicePackage package)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "PackageReceived. Enqueueing and emiting ReadyRead()";
+        qDebug() << "SymbianClientEndPoint::PackageReceived. Enqueueing and emiting ReadyRead()";
+        printServicePackage(package);
 #endif
         incoming.enqueue(package);
         emit readyRead();
@@ -143,7 +145,8 @@ public:
     void packageReceived(QServicePackage package)
     {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG      
-        qDebug() << "GTR SymbianServerEndPoint::packageReceived, putting to queue and emiting readyread.";
+        qDebug() << "SymbianServerEndPoint::packageReceived, putting to queue and emiting readyread.";
+        printServicePackage(package);
 #endif        
         incoming.enqueue(package);
         emit readyRead();
