@@ -84,12 +84,6 @@ What is known \bold NOT to work:
     \endlist
 \endlist
 
-\section1 Main Classes
-
-\section2 NFC Classes
-
-\annotatedlist connectivity-nfc
-
 \section2 Bluetooth
 
 The Bluetooth API is under development and subject to change between the tech
@@ -122,6 +116,15 @@ What is known \bold NOT to work:
     \o QBluetoothLocalDevice Pairing functions
     \o QBluetoothLocalDevice power control and state functions
     \o QBluetoothServiceDiscoveryAgent errorString
+\endlist
+
+\section1 Main Classes
+
+\section2 NFC Classes
+
+\annotatedlist connectivity-nfc
+
+\section2 Bluetooth Classes
 
 \annotatedlist connectivity-bluetooth
 
