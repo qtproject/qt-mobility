@@ -110,6 +110,8 @@ void tst_qllcpsockettype2::initTestCase()
         qDebug()<<"!!Several LLCP target found!!";
         }
     m_target = targetDetectedSpy.at(targetDetectedSpy.count() - 1).at(0).value<QNearFieldTarget*>();
+    m_target->uid();
+    m_target->type();
     QVERIFY(m_target!=NULL);
     QVERIFY(m_target->accessMethods() & QNearFieldTarget::LlcpAccess);
     qDebug()<<"tst_qllcpsockettype2::initTestCase()   End";
