@@ -101,10 +101,11 @@ CLlcpServer::~CLlcpServer()
     {
     BEGIN
     StopListening();
-    delete iLlcp;
-    iLlcpSocketArray.ResetAndDestroy();
+    iLlcpSocketArray.ResetAndDestroy();//this should destroy before iLlcp
     iLlcpSocketArray.Close();
     iServiceName.Close();
+
+    delete iLlcp;
     iNfcServer.Close();
     END
     }
@@ -182,6 +183,7 @@ void CLlcpServer::StopListening( )
         {
         iLlcp->StopListeningConnOrientedRequest( KInterestingSsap );
         iSocketListening = EFalse;
+        iLlcpSocketArray.ResetAndDestroy();
         }
     END
     }

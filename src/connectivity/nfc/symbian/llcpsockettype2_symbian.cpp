@@ -369,6 +369,7 @@ void CLlcpSocketType2::Cleanup()
         }
     if (iTransporter)
         {
+        LOG("delete iTransporter;");
         delete iTransporter;
         iTransporter = NULL;
         }
