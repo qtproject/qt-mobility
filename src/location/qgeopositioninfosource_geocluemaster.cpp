@@ -119,6 +119,7 @@ static void position_callback (GeocluePosition      *pos,
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
     : QGeoPositionInfoSource(parent), m_updateInterval(0), m_preferredResources(GEOCLUE_RESOURCE_ALL),
+      m_preferredAccuracy(GEOCLUE_ACCURACY_LEVEL_NONE),
       m_client(0), m_pos(0), m_vel(0), m_lastPositionIsFresh(false), m_lastVelocityIsFresh(false),
       m_lastVelocity(0), m_lastPositionFromSatellite(false)
 {
