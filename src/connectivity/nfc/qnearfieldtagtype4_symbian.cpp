@@ -153,7 +153,7 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
     command.append(char(0xD6)); // INS
     quint16 temp = qToBigEndian<quint16>(startOffset);
     command.append(reinterpret_cast<const char *>(&temp), sizeof(quint16));
-    quint8 length = data.count();
+    quint16 length = data.count();
     if ((length > 0xFF) || (length < 0x01))
     {
         END
@@ -164,7 +164,7 @@ QNearFieldTarget::RequestId QNearFieldTagType4Symbian::write(const QByteArray &d
         /*quint16 temp = qToBigEndian<quint16>(length);
         command.append(reinterpret_cast<const char *>(&temp), 
                        sizeof(quint16));*/
-        command.append(length);
+        command.append((quint8)length);
     }
     
     command.append(data);

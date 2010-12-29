@@ -170,7 +170,8 @@ TInt NearFieldTagCommandsRequest::HandlePassiveCommand(TInt aError)
 {
     BEGIN
     TInt result = aError;
-    QByteArray command = iCommands.at(iCurrentCommand-1);
+    TInt index = (iCurrentCommand == 0) ? iCurrentCommand : (iCurrentCommand - 1);
+    QByteArray command = iCommands.at(index);
     // check if the command is passive ack
     if (command.count() == 6)
     {
