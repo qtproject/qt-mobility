@@ -139,6 +139,7 @@ void tst_qllcpsocketremote::testCase2()
     QString message("handshake 3");
     QNfcTestUtil::ShowMessage(message);
 
+    qDebug() << "spy count: " << readyReadSpy.count();
     QTRY_VERIFY(readyReadSpy.count() == 1);
 
     const int Timeout = 10 * 1000;

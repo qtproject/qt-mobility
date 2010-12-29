@@ -58,10 +58,11 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
          m_emittedBytesWritten(false)
 {
     BEGIN
-    m_unconnectedState = new QLLCPUnconnected(this);
-    m_connectingState = new QLLCPConnecting(this);
-    m_connectedState = new QLLCPConnected(this);
-    m_bindState = new QLLCPBind(this);
+    m_unconnectedState = QSharedPointer<QLLCPSocketState>(new QLLCPUnconnected(this));
+    m_connectingState = QSharedPointer<QLLCPSocketState>(new QLLCPConnecting(this));
+    m_connectedState = QSharedPointer<QLLCPSocketState>(new QLLCPConnected(this));
+    m_bindState = QSharedPointer<QLLCPSocketState>(new QLLCPBind(this));
+
     m_state = m_unconnectedState;
     END
 }
@@ -77,13 +78,8 @@ QLlcpSocketPrivate::~QLlcpSocketPrivate()
     if (q->isOpen()) {
         q->close();
     }
-
     delete m_symbianSocketType1;
     delete m_symbianSocketType2;
-    delete m_unconnectedState;
-    delete m_connectingState;
-    delete m_connectedState;
-    delete m_bindState;
     END
 }
 
@@ -99,11 +95,14 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(CLlcpSocketType2* socketType2_symbian)
 {
     BEGIN
     Q_CHECK_PTR(m_symbianSocketType2);
-    m_unconnectedState = new QLLCPUnconnected(this);
-    m_connectingState = new QLLCPConnecting(this);
-    m_connectedState = new QLLCPConnected(this);
-    m_bindState = new QLLCPBind(this);
+
+    m_unconnectedState = QSharedPointer<QLLCPSocketState>(new QLLCPUnconnected(this));
+    m_connectingState = QSharedPointer<QLLCPSocketState>(new QLLCPConnecting(this));
+    m_connectedState = QSharedPointer<QLLCPSocketState>(new QLLCPConnected(this));
+    m_bindState = QSharedPointer<QLLCPSocketState>(new QLLCPBind(this));
+
     m_state = m_connectedState;
+
     END
 }
 
@@ -136,7 +135,7 @@ void QLlcpSocketPrivate::invokeConnected()
 {
     BEGIN
     Q_Q(QLlcpSocket);
-    QLLCPConnecting *state = dynamic_cast<QLLCPConnecting *>(m_state);
+    QLLCPConnecting *state = dynamic_cast<QLLCPConnecting *>(m_state.data());
     if (state != NULL)
     {
       state->ConnectToServiceComplete();
@@ -382,10 +381,11 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msecs)
     return m_state->WaitForDisconnected(msecs);
 }
 
-void QLlcpSocketPrivate::changeState(QLLCPSocketState* state)
+void QLlcpSocketPrivate::changeState(QSharedPointer<QLLCPSocketState>& state)
 {
     m_state = state;
     BEGIN_END
 }
+
 
 QTM_END_NAMESPACE

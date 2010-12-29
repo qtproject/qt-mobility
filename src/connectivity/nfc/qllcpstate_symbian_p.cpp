@@ -454,6 +454,7 @@ void QLLCPConnected::ConnectToService(QNearFieldTarget *target, const QString &s
     {
     Q_UNUSED(target);
     Q_UNUSED(serviceUri);
+    m_socket->invokeError();
     qWarning("QLlcpSocket::connectToService() called when already connected");
     BEGIN_END
     return;
