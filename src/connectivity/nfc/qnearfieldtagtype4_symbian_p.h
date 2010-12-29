@@ -60,7 +60,7 @@ class QNearFieldTagType4Symbian : public QNearFieldTagType4, private QNearFieldT
 
 public:
 
-    explicit QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
     
     ~QNearFieldTagType4Symbian();
 

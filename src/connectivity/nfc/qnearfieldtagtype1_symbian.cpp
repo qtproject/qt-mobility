@@ -125,7 +125,7 @@ QVariant QNearFieldTagType1Symbian::decodeResponse(const QByteArray &command, co
 /*!
     Constructs a new tag type 1 near field target with \a tag and \a parent.
 */
-QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(MNearFieldTarget *tag, QObject *parent)
+QNearFieldTagType1Symbian::QNearFieldTagType1Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType1(parent), QNearFieldTagImpl(tag)
 {
 }
@@ -188,7 +188,7 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     BEGIN
     // MSB must be 0
     if (address & 0x80)
-        return 0;
+        return QNearFieldTarget::RequestId();
 
     QByteArray command;
     command.append(char(0x01));     // READ
@@ -202,16 +202,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readByte(quint8 address)
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-#if 0
-    if (response.isEmpty())
-        return 0;
-
-    // address doesn't match
-    if (response.at(0) != address)
-        return 0;
-
-    return response.at(1);
-#endif
 }
 
 /*!
@@ -222,16 +212,14 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     BEGIN
     // MSB must be 0
     if (address & 0x80)
-        return false;
+        return QNearFieldTarget::RequestId();;
 
     QByteArray command;
 
     if (mode == EraseAndWrite)
         command.append(char(0x53)); // WRITE-E
-    else if (mode == WriteOnly)
-        command.append(char(0x1a)); // WRITE-NE
     else
-        return false;
+        command.append(char(0x1a)); // WRITE-NE
 
     command.append(char(address));  // Address
     command.append(char(data));     // Data
@@ -243,23 +231,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeByte(quint8 address,
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-#if 0
-    if (response.isEmpty())
-        return false;
-
-    quint8 writeAddress = response.at(0);
-    quint8 writeData = response.at(1);
-
-    if (writeAddress != address)
-        return false;
-
-    if (mode == EraseAndWrite)
-        return writeData == data;
-    else if (mode == WriteOnly)
-        return (writeData & data) == data;
-    else
-        return false;
-#endif
 }
 
 /*!
@@ -283,16 +254,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readSegment(quint8 segmen
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-#if 0
-    if (response.isEmpty())
-        return QByteArray();
-
-    quint8 readSegmentAddress = response.at(0);
-    if ((readSegmentAddress >> 4) != segmentAddress)
-        return QByteArray();
-
-    return response.mid(1);
-#endif
 }
 
 /*!
@@ -313,16 +274,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readBlock(quint8 blockAdd
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-#if 0
-    if (response.isEmpty())
-        return QByteArray();
-
-    quint8 readBlockAddress = response.at(0);
-    if (readBlockAddress != blockAddress)
-        return QByteArray();
-
-    return response.mid(1);
-#endif
 }
 
 /*!
@@ -333,16 +284,14 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
 {
     BEGIN
     if (data.length() != 8)
-        return false;
+        return QNearFieldTarget::RequestId();
 
     QByteArray command;
 
     if (mode == EraseAndWrite)
         command.append(char(0x54));     // WRITE-E8
-    else if (mode == WriteOnly)
+    else 
         command.append(char(0x1b));     // WRITE-NE8
-    else
-        return false;
 
     command.append(char(blockAddress)); // Block address
     command.append(data);               // Data
@@ -354,28 +303,6 @@ QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeBlock(quint8 blockAd
     command.append(char(0x00)); // CRC2
     END
     return sendCommand(command);
-#if 0
-    if (response.isEmpty())
-        return false;
-
-    quint8 writeBlockAddress = response.at(0);
-
-    if (writeBlockAddress != blockAddress)
-        return false;
-
-    if (mode == EraseAndWrite) {
-        return response.mid(1) == data;
-    } else if (mode == WriteOnly) {
-        const QByteArray writeData = response.mid(1);
-        for (int i = 0; i < writeData.length(); ++i) {
-            if ((writeData.at(i) & data.at(i)) != data.at(i))
-                return false;
-        }
-        return true;
-    } else {
-        return false;
-    }
-#endif
 }
     
 bool QNearFieldTagType1Symbian::hasNdefMessage()

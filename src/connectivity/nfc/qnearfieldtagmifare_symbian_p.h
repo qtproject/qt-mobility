@@ -59,7 +59,7 @@ class QNearFieldTagMifareSymbian : public QNearFieldTarget, private QNearFieldTa
     Q_OBJECT
 
 public:
-    explicit QNearFieldTagMifareSymbian(MNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldTagMifareSymbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
     
     ~QNearFieldTagMifareSymbian();
 

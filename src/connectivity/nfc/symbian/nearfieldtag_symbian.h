@@ -45,21 +45,16 @@
 #include <e32base.h>
 #include <iso14443connection.h>
 
-#include "nearfieldtarget_symbian.h"
-
 class MNfcTag;
 class MNfcConnection;
 class MNearFieldTagOperationCallback;
 
 
-class CNearFieldTag : public CActive, public MNearFieldTarget
+class CNearFieldTag : public CActive
     {
 public:
     // Cancel and destroy
     ~CNearFieldTag();
-
-    // Two-phased constructor.
-    static CNearFieldTag* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 
     // Two-phased constructor.
     static CNearFieldTag* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -73,14 +68,13 @@ public:
     TBool IsConnectionOpened();
 
     TInt RawModeAccess(const TDesC8& aCommand, TDes8& aResponse,const TTimeIntervalMicroSeconds32& aTimeout);
-    
-    const TDesC8& Uid() const;
 
     MNfcConnection * TagConnection() { return iTagConnection;}
-    TRequestStatus& AOStatus() { return iStatus; }
 
     void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
     MNearFieldTagOperationCallback * TagOperationCallback();
+
+    void SetTag4() { iIsTag4 = ETrue; }
 private:
     // C++ constructor
     CNearFieldTag(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
@@ -97,6 +91,7 @@ private:
     RNfcServer& iNfcServer;
     // Not own
     MNearFieldTagOperationCallback * iCallback;
+    TBool iIsTag4;
     };
 
 #endif // NEARFIELDTAG_H

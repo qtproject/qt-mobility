@@ -42,13 +42,12 @@
 #ifndef NEARFIELDNDEFTARGET_H
 #define NEARFIELDNDEFTARGET_H
 
-#include <e32base.h>	// For CActive, link against: euser.lib
+#include <e32base.h>
 #include <nfcserver.h>
 #include <ndefconnection.h>
 #include <e32cmn.h> 
 #include <ndefhandler.h>
 
-#include "nearfieldtarget_symbian.h"
 #include "debug.h"
 
 class CNearFieldTag;
@@ -60,7 +59,6 @@ class MNfcTag;
 class MNearFieldNdefOperationCallback;
 
 class CNearFieldNdefTarget : public CBase,
-                             public MNearFieldTarget, 
                              public MNdefHandler
     {
     enum TOperation
@@ -79,7 +77,7 @@ public:
     // Two-phased constructor.
     static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 public: // New functions
-    void SetRealTarget(MNearFieldTarget * aRealTarget);
+    void SetRealTarget(CNearFieldTag * aRealTarget);
 
     // NdefAccess
     TBool hasNdefMessage();
@@ -112,10 +110,9 @@ private: // From MNdefHandler
     
 private:
     // own
-    MNearFieldTarget * iTagConnection;
+    CNearFieldTag * iTagConnection;
     CNdefConnection * iNdefConnection;
-    // own by real target if real target is created
-    // otherwise, own by this.
+    // own 
     MNfcTag * iNfcTag;
     
     RNfcServer& iNfcServer;

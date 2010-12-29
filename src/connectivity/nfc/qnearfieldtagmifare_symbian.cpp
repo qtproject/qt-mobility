@@ -45,7 +45,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagMifareSymbian::QNearFieldTagMifareSymbian(MNearFieldTarget *tag, QObject *parent)
+QNearFieldTagMifareSymbian::QNearFieldTagMifareSymbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTarget(parent), QNearFieldTagImpl(tag)
 {
 }

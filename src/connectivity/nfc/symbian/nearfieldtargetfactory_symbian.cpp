@@ -46,8 +46,6 @@
 #include <nfctype3connection.h>
 #include <iso14443connection.h>
 #include <mifareclassicconnection.h>
-#include "nearfieldtag_symbian.h"
-#include "nearfieldndeftarget_symbian.h"
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "qnearfieldtagtype2_symbian_p.h"
 #include "qnearfieldtagtype3_symbian_p.h"
@@ -93,8 +91,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTagTypeL<CIso14443Connection, 
     CNearFieldTag * tagType = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
     tagType->SetTag4();
     tagType->SetConnection(connection);
-    MNearFieldTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
-    ndeftag->SetTag4();
+    CNearFieldNdefTarget * ndeftag = WrapNdefAccessL(aNfcTag, aNfcServer, tagType);
     QNearFieldTagType4Symbian * tag= new(ELeave)QNearFieldTagType4Symbian(ndeftag, aParent);
     // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected
     tag->setAccessMethods(ConnectionMode2AccessMethods(aNfcTag)|QNearFieldTarget::NdefAccess);
@@ -147,7 +144,7 @@ QNearFieldTarget * TNearFieldTargetFactory::CreateTargetL(MNfcTag * aNfcTag, RNf
     return tag;
     }
    
-MNearFieldTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, MNearFieldTarget * aTarget)
+CNearFieldNdefTarget * TNearFieldTargetFactory::WrapNdefAccessL(MNfcTag * aNfcTag, RNfcServer& aNfcServer, CNearFieldTag * aTarget)
     {
     BEGIN
     // walk around, symbian discovery API can't know if tag has Ndef Connection mode when detected

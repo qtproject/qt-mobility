@@ -66,13 +66,6 @@ CNearFieldTag* CNearFieldTag::NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
     return self;
     }
 
-CNearFieldTag* CNearFieldTag::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
-    {
-    CNearFieldTag* self = CNearFieldTag::NewLC(aNfcTag, aNfcServer);
-    CleanupStack::Pop(); // self;
-    return self;
-    }
-
 CNearFieldTag::~CNearFieldTag()
     {
     Cancel();
@@ -122,13 +115,6 @@ TBool CNearFieldTag::IsConnectionOpened()
     return result;
     }
 
-const TDesC8& CNearFieldTag::Uid() const
-    {
-    BEGIN
-    END
-    return iNfcTag->Uid();
-    }
-
 TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, const TTimeIntervalMicroSeconds32& aTimeout)
     {
     BEGIN
@@ -141,7 +127,7 @@ TInt CNearFieldTag::RawModeAccess(const TDesC8& aCommand, TDes8& aResponse, cons
             {
             LOG("Connection is open");
             error = KErrNone;
-            if (IsTag4())
+            if (iIsTag4)
                 {
                 CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(TagConnection());
                 tag4->ExchangeData(iStatus, aCommand, aResponse);
@@ -161,7 +147,7 @@ void CNearFieldTag::DoCancel()
     {
     BEGIN
 
-    if (IsTag4())
+    if (iIsTag4)
     {
         CIso14443Connection * tag4 = static_cast<CIso14443Connection *>(TagConnection());
         tag4->ExchangeDataCancel();

@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(MNearFieldTarget *tag, QObject *parent)
+QNearFieldTagType4Symbian::QNearFieldTagType4Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType4(parent), QNearFieldTagImpl(tag)
 {
 }

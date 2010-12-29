@@ -47,7 +47,7 @@
 #include "nearfieldtag_symbian.h"
 #include "nearfieldndeftarget_symbian.h"
 #include "nearfieldutility_symbian.h"
-#include "nearfieldtarget_symbian.h"
+#include "nearfieldndeftarget_symbian.h"
 #include "nearfieldtagasyncrequest_symbian.h"
 #include "nearfieldtargetoperation_symbian.h"
 
@@ -113,7 +113,7 @@ public: // From MNearFieldTargetOperation
     void DoCancelNdefAccess();
 
 public:
-    QNearFieldTagImpl(MNearFieldTarget *tag);
+    QNearFieldTagImpl(CNearFieldNdefTarget *tag);
     virtual ~QNearFieldTagImpl();
     bool _hasNdefMessage();
     void _ndefMessages();
@@ -141,7 +141,7 @@ public:
 protected:
     QNearFieldTarget::Error SymbianError2QtError(int error);
 protected:
-    MNearFieldTarget * mTag;
+    CNearFieldNdefTarget * mTag;
     QNearFieldTarget::AccessMethods mAccessMethods;
     mutable QByteArray mUid;
     RPointerArray<CNdefMessage> mMessageList;
@@ -404,7 +404,7 @@ QVariant QNearFieldTagImpl<TAGTYPE>::decodeResponse(const QByteArray& command, c
 }
 
 template<typename TAGTYPE>
-QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(MNearFieldTarget *tag) : mTag(tag)
+QNearFieldTagImpl<TAGTYPE>::QNearFieldTagImpl(CNearFieldNdefTarget *tag) : mTag(tag)
 {
     mCurrentRequest = 0;
 }

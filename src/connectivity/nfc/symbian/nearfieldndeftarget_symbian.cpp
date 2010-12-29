@@ -76,7 +76,7 @@ void CNearFieldNdefTarget::ConstructL()
     iNdefConnection = CNdefConnection::NewL(iNfcServer, *this);
     }
 
-void CNearFieldNdefTarget::SetRealTarget(MNearFieldTarget * aRealTarget)
+void CNearFieldNdefTarget::SetRealTarget(CNearFieldTag * aRealTarget)
     {
     iTagConnection = aRealTarget;
     }

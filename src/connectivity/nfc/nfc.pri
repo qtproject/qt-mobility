@@ -72,7 +72,6 @@ symbian {
         nfc/qnearfieldtagmifare_symbian_p.h \
         nfc/qnearfieldllcpdevice_symbian_p.h \
         nfc/symbian/nearfieldmanager_symbian.h \
-        nfc/symbian/nearfieldtarget_symbian.h \
         nfc/symbian/nearfieldtag_symbian.h \
         nfc/symbian/nearfieldndeftarget_symbian.h \
         nfc/symbian/nearfieldtargetfactory_symbian.h \
@@ -102,7 +101,6 @@ symbian {
         nfc/qnearfieldtagmifare_symbian.cpp \
         nfc/qnearfieldllcpdevice_symbian.cpp \
         nfc/symbian/nearfieldmanager_symbian.cpp \	
-        nfc/symbian/nearfieldtarget_symbian.cpp \
         nfc/symbian/nearfieldtag_symbian.cpp \
         nfc/symbian/nearfieldndeftarget_symbian.cpp \
         nfc/symbian/nearfieldtargetfactory_symbian.cpp \
@@ -110,9 +108,7 @@ symbian {
         nfc/symbian/llcpserver_symbian.cpp \
         nfc/symbian/llcpsockettype1_symbian.cpp \
         nfc/symbian/llcpsockettype2_symbian.cpp \        
-        nfc/symbian/nearfieldtagimpl_symbian.cpp \
         nfc/symbian/nearfieldtagasyncrequest_symbian.cpp \
-        nfc/symbian/nearfieldtargetoperation_symbian.cpp \
         nfc/symbian/nearfieldtagndefrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandrequest_symbian.cpp \
         nfc/symbian/nearfieldtagcommandsrequest_symbian.cpp 

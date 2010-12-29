@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent)
+QNearFieldTagType3Symbian::QNearFieldTagType3Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType3(parent), QNearFieldTagImpl(tag)
 {
     // It's silly, but easy.
@@ -87,6 +87,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::sendCommands(const QList<
     return _sendCommands(commands);
 }
 
+#if 0
 quint16 QNearFieldTagType3Symbian::systemCode()
 {
     return 0;
@@ -116,6 +117,7 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::writeServiceData(quint16 
 
     return RequestId();
 }
+#endif
 
 QNearFieldTarget::RequestId QNearFieldTagType3Symbian::check(const QMap<quint16, QList<quint16> > &serviceBlockList)
 {
@@ -126,14 +128,6 @@ QNearFieldTarget::RequestId QNearFieldTagType3Symbian::check(const QMap<quint16,
     if (command.count() > 1)
     {
         return (_sendCommand(command));
-#if 0
-        if (!waitForRequestCompleted(id))
-        {
-            return  checkResponse2ServiceBlockList(serviceBlockList , QByteArray()); 
-        }
-        QByteArray response = requestResponse(id).toByteArray();
-        return  checkResponse2ServiceBlockList(serviceBlockList , response); 
-#endif
     }
     else
     {
@@ -253,6 +247,7 @@ QByteArray QNearFieldTagType3Symbian::serviceBlockList2CmdParam(const QMap<quint
     return command;
 }
 
+#if 0
 QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response)
 {
     QMap<quint16, QByteArray> result;
@@ -276,6 +271,7 @@ QMap<quint16, QByteArray> QNearFieldTagType3Symbian::checkResponse2ServiceBlockL
     }
     return result;
 }
+#endif
 
 void QNearFieldTagType3Symbian::handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response)
 {

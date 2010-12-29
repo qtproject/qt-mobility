@@ -45,7 +45,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(MNearFieldTarget *tag, QObject *parent)
+QNearFieldTagType2Symbian::QNearFieldTagType2Symbian(CNearFieldNdefTarget *tag, QObject *parent)
                                 : QNearFieldTagType2(parent), QNearFieldTagImpl(tag)
 {
 }
@@ -91,7 +91,7 @@ QNearFieldTarget::RequestId QNearFieldTagType2Symbian::writeBlock(quint8 blockAd
 {
     BEGIN
     if (data.length() != 4)
-        return false;
+        return QNearFieldTarget::RequestId();
 
     QByteArray command;
     command.append(char(0xa2));         // WRITE

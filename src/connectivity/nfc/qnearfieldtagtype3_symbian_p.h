@@ -53,7 +53,7 @@ class QNearFieldTagType3Symbian : public QNearFieldTagType3, private QNearFieldT
     Q_OBJECT
 public:
 
-    explicit QNearFieldTagType3Symbian(MNearFieldTarget *tag, QObject *parent = 0);
+    explicit QNearFieldTagType3Symbian(CNearFieldNdefTarget *tag, QObject *parent = 0);
 
     ~QNearFieldTagType3Symbian();
 
@@ -73,6 +73,7 @@ public:
     void readNdefMessages();
     void writeNdefMessages(const QList<QNdefMessage> &messages);
 
+#if 0
     quint16 systemCode();
     QList<quint16> services();
     int serviceMemorySize(quint16 serviceCode);
@@ -80,6 +81,7 @@ public:
 
     RequestId serviceData(quint16 serviceCode);
     RequestId writeServiceData(quint16 serviceCode, const QByteArray &data);
+#endif
 
     RequestId check(const QMap<quint16, QList<quint16> > &serviceBlockList);
     RequestId update(const QMap<quint16, QList<quint16> > &serviceBlockList,
@@ -93,8 +95,10 @@ private:
     const QByteArray& getIDm();
     QByteArray serviceBlockList2CmdParam(const QMap<quint16, QList<quint16> > &serviceBlockList, quint8& numberOfBlocks);
 
+    #if 0
     // TODO: need serviceBlockList as an input parameter, this information can be rebuild from command binary
     QMap<quint16, QByteArray> checkResponse2ServiceBlockList(const QMap<quint16, QList<quint16> > &serviceBlockList, const QByteArray& response);
+    #endif
     void handleTagOperationResponse(const RequestId &id, const QByteArray &command, const QByteArray &response);
     QVariant decodeResponse(const QByteArray &/*command*/, const QByteArray &response) { return response; }
 private:
