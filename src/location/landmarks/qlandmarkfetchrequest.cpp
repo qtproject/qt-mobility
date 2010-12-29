@@ -166,6 +166,10 @@ void QLandmarkFetchRequest::setLimit(int limit)
 
 /*!
     Returns the index offset for the request.  By default the offset is set to 0.
+    The offset determines the first index which is retrieved.  For example,
+    if there are 10 landmarks in the landmark store, setting the offset
+    to 2 will retrieve the 3rd to 10th landmarks inclusively.  (The order
+    of the landmarks is specified by the sorting field).
 */
 int QLandmarkFetchRequest::offset() const
 {
@@ -177,7 +181,7 @@ int QLandmarkFetchRequest::offset() const
 /*!
     Sets the index \a offset for the request.
 */
-void QLandmarkFetchRequest::setOffset(int offset) {
+woid QLandmarkFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkFetchRequest);
     QMutexLocker ml(&d->mutex);
     d->offset = offset;
