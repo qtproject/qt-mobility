@@ -121,10 +121,9 @@ void tst_QNearFieldManager::targetDetected()
     QSignalSpy disconnectedSpy(target, SIGNAL(disconnected()));
     QVERIFY(target);
 
-    QVERIFY(!target->uid().isEmpty());
-
     if (type != QNearFieldTarget::AnyTarget)
     {
+        QVERIFY(!target->uid().isEmpty());
         QCOMPARE(target->type(), type);
     }
 
