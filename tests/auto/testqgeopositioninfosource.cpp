@@ -60,6 +60,7 @@
 #include <geoclue/geoclue-master.h>
 #include <geoclue/geoclue-master-client.h>
 #include <geoclue/geoclue-velocity.h>
+#include <QDateTime>
 #endif
 
 Q_DECLARE_METATYPE(QGeoPositionInfoSource::PositioningMethod)
@@ -459,9 +460,8 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("lastKnownPositionArgument");
     QTest::addColumn<bool>("positionValid");
 
-#ifndef GEOCLUE_MASTER_AVAILABLE
-    // Todo: this needs to be fixed in MeeGo; currently it returns any lastPosition from any source regardless of satellite
-    // parameter.
+#ifndef Q_WS_MEEGO
+    // no good way to determine on MeeGo what are supported.
     QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
     QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
 #endif
@@ -891,5 +891,49 @@ void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
 
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
 }
+
+#ifdef TST_GEOCLUEMOCK_ENABLED
+// Testcase to check that values are passed correctly
+void TestQGeoPositionInfoSource::updateValues()
+{
+    CHECK_SOURCE_VALID;
+
+    QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    m_source->startUpdates();
+    QTRY_VERIFY_WITH_TIMEOUT(!spy.isEmpty(), 2000);
+    QList<QVariant> list = spy.takeFirst();
+    QGeoPositionInfo info;
+    info = list.at(0).value<QGeoPositionInfo>();
+    QCOMPARE(qFuzzyCompare(info.coordinate().latitude(), 21), TRUE );
+    QCOMPARE(qFuzzyCompare(info.coordinate().longitude(), 31), TRUE );
+    QCOMPARE(qFuzzyCompare(info.coordinate().altitude(), 5.1), TRUE );
+    QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::HorizontalAccuracy), 8), TRUE );
+    QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::VerticalAccuracy), 9), TRUE );
+    QDateTime dateTime;
+    dateTime.setTime_t(99998);
+    // there is some rounding difference impacting at sec level
+    // hence don't compare directly
+    QCOMPARE(info.timestamp().date(),dateTime.date());
+    QCOMPARE(info.timestamp().time().hour(),dateTime.time().hour());
+}
+
+void TestQGeoPositionInfoSource::changeSource()
+{
+    CHECK_SOURCE_VALID;
+
+    QSignalSpy positionUpdatedSpy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
+    // First try updates with non-satellite sources and check that
+    // correct values are received.
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
+    m_source->setUpdateInterval(2000);
+    m_source->startUpdates();
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(positionUpdatedSpy.count(), 1,  1900, 2100);
+    // Change source and check that updates continue
+    m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+    positionUpdatedSpy.clear();
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(positionUpdatedSpy.count(), 1, 1900, 2100);
+}
+
+#endif
 
 #include "testqgeopositioninfosource.moc"
