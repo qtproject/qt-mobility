@@ -57,13 +57,16 @@ class maemo6rotationsensor : public maemo6sensorbase
 public:
     static char const * const id;
     maemo6rotationsensor(QSensor *sensor);
-
+protected:
+    virtual void doConnect(QString sensorName);
 private:
     QRotationReading m_reading;
     static bool m_initDone;
 
 private slots:
     void slotDataAvailable(const XYZ& data);
+    void slotFrameAvailable(const QVector<XYZ>&);
+
 };
 
 #endif

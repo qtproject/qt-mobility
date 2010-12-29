@@ -431,7 +431,10 @@ void QSensor::stop()
     \property QSensor::reading
     \brief the reading class.
 
-    The reading class provides access to sensor readings.
+    The reading class provides access to sensor readings. The reading object
+    is a volatile cache of the most recent sensor reading that has been received
+    so the application should process readings immediately or save the values
+    somewhere for later processing.
 
     Note that this will return 0 until a sensor backend is connected to a backend.
 
@@ -486,9 +489,14 @@ void QSensor::removeFilter(QSensorFilter *filter)
 /*!
     \fn QSensor::readingChanged()
 
-    This signal is emitted when the reading has changed.
+    This signal is emitted when a new sensor reading is received.
 
-    Before this signal has been emitted for the first time, the sensor reading will
+    The sensor reading can be found in the QSensor::reading property. Note that the
+    reading object is a volatile cache of the most recent sensor reading that has
+    been received so the application should process the reading immediately or
+    save the values somewhere for later processing.
+
+    Before this signal has been emitted for the first time, the reading object will
     have uninitialized data.
 
     \sa start()
