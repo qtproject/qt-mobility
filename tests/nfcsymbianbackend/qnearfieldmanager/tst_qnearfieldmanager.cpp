@@ -208,7 +208,7 @@ void tst_QNearFieldManager::registerTargetDetectedHandler_filter_data()
 
     filter.clear();
     filter.setOrderMatch(true);
-    filter.appendRecord(QNdefRecord::Mime, "image/png");
+    filter.appendRecord(QNdefRecord::Mime, "image/gif");
     filter.appendRecord<QNdefNfcTextRecord>(2, 10);
     filter.appendRecord<QNdefNfcUriRecord>(1, 1);
     QTest::newRow("Image + Multiple Text + URI") << filter << "Please touch a tag with 'Image + Multiple Text + URI' NDef message";
