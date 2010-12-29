@@ -113,8 +113,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new QBluetoothServiceDiscoveryAgent with \a parent.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent)
-: QObject(*new QBluetoothServiceDiscoveryAgentPrivate(QBluetoothAddress()), parent)
+: QObject(parent), d_ptr(new QBluetoothServiceDiscoveryAgentPrivate(QBluetoothAddress()))
 {
+     d_ptr->q_ptr = this;
 }
 
 /*!
@@ -124,8 +125,14 @@ QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent
     devices.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent)
-: QObject(*new QBluetoothServiceDiscoveryAgentPrivate(remoteAddress), parent)
+: QObject(parent), d_ptr(new QBluetoothServiceDiscoveryAgentPrivate(remoteAddress))
 {
+    d_ptr->q_ptr = this;
+}
+
+QBluetoothServiceDiscoveryAgent::~QBluetoothServiceDiscoveryAgent()
+{
+    delete d_ptr;
 }
 
 /*!

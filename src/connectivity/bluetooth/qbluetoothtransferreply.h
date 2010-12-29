@@ -51,7 +51,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QIODevice
+class Q_CONNECTIVITY_EXPORT QBluetoothTransferReply : public QObject
 {
     Q_OBJECT
 
@@ -74,11 +74,6 @@ public:
     QBluetoothTransferManager *manager() const;
 
     QBluetoothTransferManager::Operation operation() const;
-
-//    QBluetoothTransferRequest request() const;
-
-    qint64 readBufferSize() const;
-    virtual void setReadBufferSize(qint64 size);
 
     virtual TransferError error() const = 0;
     virtual QString errorString() const = 0;

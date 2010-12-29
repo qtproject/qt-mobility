@@ -42,8 +42,6 @@
 #ifndef QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 #define QBLUETOOTHSERVICEDISCOVERYAGENT_P_H
 
-#include "qobjectpriv_p.h"
-
 #include "qbluetoothaddress.h"
 #include "qbluetoothdeviceinfo.h"
 #include "qbluetoothserviceinfo.h"
@@ -69,9 +67,9 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothDeviceDiscoveryAgent;
 
-class QBluetoothServiceDiscoveryAgentPrivate : public QObjectPrivate
+class QBluetoothServiceDiscoveryAgentPrivate
 #ifdef Q_OS_SYMBIAN
-, public MSdpAgentNotifier, public MSdpAttributeValueVisitor
+: public MSdpAgentNotifier, public MSdpAttributeValueVisitor
 #endif
 {
     Q_DECLARE_PUBLIC(QBluetoothServiceDiscoveryAgent)
@@ -157,6 +155,9 @@ private:
     OrgBluezAdapterInterface *adapter;
     OrgBluezDeviceInterface *device;
 #endif
+
+protected:
+    QBluetoothServiceDiscoveryAgent *q_ptr;
 };
 
 QTM_END_NAMESPACE
