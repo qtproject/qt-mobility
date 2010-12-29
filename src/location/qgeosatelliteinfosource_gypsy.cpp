@@ -108,7 +108,13 @@ gboolean SatelliteGypsyEngine::eng_gypsy_device_start (GypsyDevice *device, GErr
 }
 gboolean SatelliteGypsyEngine::eng_gypsy_device_stop (GypsyDevice *device, GError **error)
 {
-    return ::gypsy_device_stop (device, error);
+    // Unfortunately this cannot be done; calling this will stop the GPS device
+    // (basically makes gypsy-daemon unusable for anyone), regardless of applications
+    // using it (see bug http://bugs.meego.com/show_bug.cgi?id=11707).
+    Q_UNUSED(device);
+    Q_UNUSED(error);
+    return true;
+    //return ::gypsy_device_stop (device, error);
 }
 GypsyDeviceFixStatus SatelliteGypsyEngine::eng_gypsy_device_get_fix_status (GypsyDevice *device, GError **error)
 {

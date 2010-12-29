@@ -199,7 +199,8 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateFailed()
     // This assumption may be invalid.
     m_lastVelocityIsFresh = false;
     m_lastPositionIsFresh = false;
-    emit updateTimeout();
+    if (m_updateTimer.isActive())
+        emit updateTimeout();
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePositionFields fields,
@@ -250,7 +251,6 @@ bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
 int QGeoPositionInfoSourceGeoclueMaster::init()
 {
     g_type_init ();
-
     // Check if there is sense to try GPS
     if (tryGPS()) {
         m_preferredResources = GEOCLUE_RESOURCE_GPS;
@@ -287,7 +287,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     }
     if (m_pos) {
         g_object_unref(m_pos);
-        m_client = 0;
+        m_pos = 0;
     }
     if (m_vel) {
         g_object_unref(m_vel);
@@ -406,16 +406,21 @@ QGeoPositionInfoSourceGeoclueMaster::PositioningMethods QGeoPositionInfoSourceGe
 
 void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
 {
-    if (m_updateTimer.isActive())
+    if (m_updateTimer.isActive()) {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+      qDebug() << "QGeoPositionInfoSourceGeoclueMaster timer was active, ignoring startUpdates: " << m_updateInterval;
+#endif
         return;
+    }
     if (m_updateInterval > 0) {
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
         qDebug() << "QGeoPositionInfoSourceGeoclueMaster startUpdates with interval: " << m_updateInterval;
 #endif
         m_updateTimer.start(m_updateInterval);
     }
-    g_signal_connect (G_OBJECT (m_pos), "position-changed",
-                      G_CALLBACK (position_changed),this);
+    if (m_pos)
+        g_signal_connect (G_OBJECT (m_pos), "position-changed",
+                          G_CALLBACK (position_changed),this);
     if (m_vel) {
         g_signal_connect (G_OBJECT (m_vel), "velocity-changed",
                           G_CALLBACK (velocity_changed),this);
@@ -428,10 +433,12 @@ int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
 
 void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
-    g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
-    g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
+    if (m_pos)
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
+    if (m_vel)
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
 }
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
