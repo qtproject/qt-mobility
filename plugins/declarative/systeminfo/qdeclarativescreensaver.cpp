@@ -41,13 +41,14 @@
 
 
 #include "qdeclarativescreensaver_p.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass ScreenSaver QDeclarativeScreenSaver
 
-    \brief The ScreenSaver element allows you to temporarily suppress the screensaver
+    \brief The ScreenSaver element allows you to temporarily suppress and delay the screensaver
         from turning on or blanking the screen.
 
     \inherits QObject
@@ -64,15 +65,28 @@ QDeclarativeScreenSaver::QDeclarativeScreenSaver(QObject *parent) :
 {
 }
 
+/*!
+  Destroys the QDeclarativeScreenSaver object.
+ */
+
 QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
 {
+    if(screenSaverDelay) {
+        delete screensaverInfo;
+        screenSaverDelay = false;
+    }
 }
 
+/*!
+    \qmlproperty void ScreenSaver::setScreenSaverDelayed(bool)
+
+    Delays the screensaver if \a on is true, otherwise continues the screensaver.
+*/
 void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 {
     if(on && !screenSaverDelay) {
         screensaverInfo = new QSystemScreenSaver(this);
-        screenSaverDelay = true;
+        screenSaverDelay = screensaverInfo->screenSaverInhibited();
     } else if(screenSaverDelay) {
         delete screensaverInfo;
         screenSaverDelay = false;
@@ -80,7 +94,7 @@ void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 }
 
 /*!
-    \qmlproperty string ScreenSaver::screenSaverDelayed
+    \qmlproperty bool ScreenSaver::screenSaverDelayed
 
     Returns whether the screensaver has been suppressed, or not.
 */
@@ -90,3 +104,34 @@ bool QDeclarativeScreenSaver::screenSaverDelayed()
     return screenSaverDelay;
 }
 
+/*!
+  \brief Set the screensaver to be inhibited.
+
+   Temporarily inhibits the screensaver.
+
+   The screensaver will be set to a non inhibited state only when this QSystemScreenSaver object gets destroyed.
+
+   This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.
+
+
+    On platforms that support it, if screensaver is secure by policy, the policy will be honored
+    and this will fail.
+*/
+
+bool QDeclarativeScreenSaver::setScreenSaverInhibit()
+{
+    setScreenSaverDelayed(true);
+    return screenSaverDelay;
+}
+
+/*!
+  \property QSystemScreenSaver::screenSaverInhibited
+  \brief Screensaver inhibited.
+
+   Returns true if the screensaver is inhibited, otherwise false.
+*/
+
+bool  QDeclarativeScreenSaver::screenSaverInhibited()
+{
+    return screenSaverDelay;
+}
