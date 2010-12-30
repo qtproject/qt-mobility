@@ -51,18 +51,8 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
 {
     const QString sensorName = "orientationsensor";
     initSensor<OrientationSensorChannelInterface>(sensorName, m_initDone);
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
-                               this, SLOT(slotDataAvailable(const Unsigned&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-
+    doConnect(sensorName);
     setReading<QOrientationReading>(&m_reading);
-
-
 }
 
 void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
@@ -80,4 +70,16 @@ void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
     m_reading.setOrientation(o);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
+}
+
+void maemo6orientationsensor::doConnect(QString sensorName){
+    if (m_sensorInterface){
+        if (m_bufferSize==m_exBufferSize) return;
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
+
 }
