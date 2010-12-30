@@ -56,10 +56,13 @@ public:
 
 
 protected:
+    virtual void doConnect(QString sensorName);
     virtual void start();
     virtual void stop();
+
     AbstractSensorChannelInterface* m_sensorInterface;
-    static const char* ALWAYS_ON;
+    static const char* const ALWAYS_ON;
+    static const char* const BUFFER_SIZE;
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
@@ -124,6 +127,7 @@ protected:
         if (sensorName=="tapsensor") return;
         setRanges();
     };
+    int m_bufferSize, m_exBufferSize;
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;

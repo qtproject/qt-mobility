@@ -49,16 +49,7 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
 {
     const QString sensorName = "tapsensor";
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
-
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
-                               this, SLOT(slotDataAvailable(const Tap&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-
+    doConnect(sensorName);
     setReading<QTapReading>(&m_reading);
 }
 
@@ -79,8 +70,6 @@ void maemo6tapsensor::start(){
 
 void maemo6tapsensor::slotDataAvailable(const Tap& data)
 {
-
-
     if (data.type() == TapData::DoubleTap){
         if (!m_isDoubleTapSensor) return;
     }
@@ -104,4 +93,16 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     m_reading.setTapDirection(o);
     m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();
+}
+
+
+void maemo6tapsensor::doConnect(QString sensorName){
+    if (m_sensorInterface){
+        if (m_bufferSize == m_exBufferSize) return;
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
+                               this, SLOT(slotDataAvailable(const Tap&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
 }
