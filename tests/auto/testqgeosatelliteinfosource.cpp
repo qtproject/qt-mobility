@@ -75,27 +75,6 @@ Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
         } \
     }
 
-#ifdef TST_GYPSYMOCK_ENABLED
-static bool useMockBackend()
-{
-    static bool mock_evaluated = false;
-    static bool use_mock = false;
-    if (mock_evaluated)
-        return use_mock;
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    if (env.contains("TST_DISABLE_MOCKEND") &&
-            ((env.value("TST_DISABLE_MOCKEND") == "1") ||
-             (env.value("TST_DISABLE_MOCKEND") == "true") ||
-             (env.value("TST_DISABLE_MOCKEND") == "yes")))
-        use_mock = false;
-    else
-        use_mock = true;
-    mock_evaluated = true;
-    TRACE2("Are we using mockend:", use_mock);
-    return use_mock;
-}
-#endif
-
 class MySatelliteSource : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
@@ -160,13 +139,22 @@ public:
         //TRACE1("============= blocking call to disconnectSignal DONE");
         return 1; // dummy
     }
+
+    void eng_g_free(gpointer mem)
+    {
+        // todo crashes
+        //free((char*)mem);
+    }
+
     GypsyControl* eng_gypsy_control_get_default (void)
     {
         return (GypsyControl*)g_object_new (G_TYPE_OBJECT, NULL); // dummy
     }
     char *eng_gypsy_control_create (GypsyControl *control, const char* device_name, GError **error)
     {
-        if (!control || QString::compare(QString::fromAscii(device_name), "/my/little/device")) {
+        // use root '/' here because it usually exists (sat source makes
+        // existense checks)
+        if (!control || QString::compare(QString::fromAscii(device_name), "/")) {
             if (error) {
                 *error = g_error_new ((GQuark)1, // dummy
                                       2,         // dummy
@@ -286,7 +274,7 @@ public:
             }
             return 0;
         }  else {
-            return (gchar*)"/my/little/device";
+            return (gchar*)"/";
         }
     }
 private:
@@ -301,11 +289,7 @@ public:
         QGeoSatelliteInfoSourceGypsy(parent) {}
 protected:
     // override to mock platform calls
-    void createEngine() {
-        if (!useMockBackend())
-            m_engine = new SatelliteGypsyEngine(this);
-        else
-            m_engine = new TestSatelliteGypsyEngine(this); }
+    void createEngine() { m_engine = new TestSatelliteGypsyEngine(this); }
 };
 
 #endif // TST_GYPSYMOCK_ENABLED
@@ -432,11 +416,12 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
+#elif defined(TST_GYPSYMOCK_ENABLED)
+    QVERIFY(source != 0);
 #elif defined(Q_WS_MEEGO)
-    // With meego, it may or may not be there (e.g. USB dongle).
-    // With mock backend for sure
-    if (useMockBackend())
-        QVERIFY(source != 0);
+    Q_UNUSED(source);
+    // with meego the source may or may not be present,
+    // as it may be a usb/bt device
 #else
     QVERIFY(source == 0);
 #endif
@@ -465,11 +450,11 @@ void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_6)
     QVERIFY(source != 0);
+#elif defined(TST_GYPSYMOCK_ENABLED)
+    QVERIFY(source != 0);
 #elif defined(Q_WS_MEEGO)
-    // With meego, it may or may not be there (e.g. USB dongle)
-    // With mock backend for sure
-    if (useMockBackend())
-        QVERIFY(source != 0);
+    // with meego the source may or may not be present,
+    // as it may be a usb/bt device
 #else
     QVERIFY(source == 0);
 #endif
@@ -650,16 +635,13 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
     m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
-#ifndef TST_GYPSYMOCK_ENABLED
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+
+#if defined(Q_WS_MEEGO) && !defined(TST_GYPSYMOCK_ENABLED)
+    // With Gypsy we migh actually get two updates instantly.
+    // Not with mocked backend though.
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
 #else
-    // With Gypsy we migh actually get two updates instantly. Not with mocked backend
-    // though.
-    if (useMockBackend()) {
-        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
-    } else {
-        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
-    }
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 #endif
 }
 
@@ -681,16 +663,12 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-#ifndef TST_GYPSYMOCK_ENABLED
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
+#if defined(Q_WS_MEEGO) && !defined(TST_GYPSYMOCK_ENABLED)
+    // With Gypsy we migh actually get two updates instantly.
+    // Not with mocked backend though.
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
 #else
-    // With Gypsy we migh actually get two updates instantly. Not with mocked backend
-    // though.
-    if (useMockBackend()) {
-        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
-    } else {
-        QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 2) && (spyUse.count() == 2), 7000);
-    }
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 #endif
 }
 

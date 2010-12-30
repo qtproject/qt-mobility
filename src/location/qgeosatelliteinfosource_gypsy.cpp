@@ -85,6 +85,10 @@ guint SatelliteGypsyEngine::eng_g_signal_handlers_disconnect_by_func (gpointer i
     return ::g_signal_handlers_disconnect_by_func(instance, func, data);
 }
 
+void SatelliteGypsyEngine::eng_g_free(gpointer mem)
+{
+    return ::g_free(mem);
+}
 // Gypsy symbols
 GypsyControl* SatelliteGypsyEngine::eng_gypsy_control_get_default (void)
 {
@@ -155,13 +159,14 @@ void QGeoSatelliteInfoSourceGypsy::createEngine()
 QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
 {
     GError* error = NULL;
-    if (m_device)
+    if (m_device) {
         m_engine->eng_gypsy_device_stop (m_device, &error);
-    if (error != NULL) {
-        g_warning ("Error stopping the device: %s", error->message);
         g_object_unref(m_device);
-        g_error_free (error);
     }
+    if (m_satellite)
+        g_object_unref(m_satellite);
+    if (error)
+        g_error_free(error);
     if (m_engine)
         delete m_engine;
 }
@@ -215,7 +220,6 @@ int QGeoSatelliteInfoSourceGypsy::init()
 {
     GError *error = NULL;
     char *path;
-
     GConfClient* client;
     gchar* device_name;
 
@@ -223,51 +227,60 @@ int QGeoSatelliteInfoSourceGypsy::init()
     createEngine();
 
     client = m_engine->eng_gconf_client_get_default();
+    if (!client) {
+        qWarning ("QGeoSatelliteInfoSourceGypsy client creation failed.");
+        return -1;
+    }
     device_name = m_engine->eng_gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
-
+    g_object_unref(client);
     QString deviceName(QString::fromAscii(device_name));
     qDebug() << "QGeoSatelliteInfoSourceGypsy GPS device: " << deviceName;
-
     if (deviceName.isEmpty() ||
             (deviceName.trimmed().at(0) == '/' && !QFile::exists(deviceName.trimmed()))) {
         qWarning ("QGeoSatelliteInfoSourceGypsy Empty/nonexistent GPS device name detected.");
         qWarning ("Use gconftool-2 to set it, e.g. on terminal: ");
         qWarning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
+        m_engine->eng_g_free(device_name);
         return -1;
     }
-
     GypsyControl *control = NULL;
     control = m_engine->eng_gypsy_control_get_default();
     // (path is the DBus path)
     path = m_engine->eng_gypsy_control_create (control, device_name, &error);
-    if (path == NULL) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error creating client for %s: %s", device_name,
-                   error->message);
-        g_error_free (error);
-        g_object_unref(control);
+    m_engine->eng_g_free(device_name);
+    g_object_unref(control);
+    if (!path) {
+        g_warning ("QGeoSatelliteInfoSourceGypsy error creating client.");
+        if (error) {
+            g_warning ("error message: %s", error->message);
+            g_error_free (error);
+        }
         return -1;
     }
     m_device = m_engine->eng_gypsy_device_new (path);
     m_satellite = m_engine->eng_gypsy_satellite_new (path);
+    m_engine->eng_g_free(path);
     if (!m_device || !m_satellite) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error creating dev/sat. Is GPS device correct: \"%s\"?", device_name);
-        g_warning ("If not, use gconftool-2 to set it, e.g.: ");
+        g_warning ("QGeoSatelliteInfoSourceGypsy error creating satellite device.");
+        g_warning ("Is GPS device set correctly? If not, use gconftool-2 to set it, e.g.: ");
         g_warning ("gconftool-2 -t string -s /apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice /dev/ttyUSB0");
-        g_object_unref(control);
+        if (m_device)
+            g_object_unref(m_device);
+        if (m_satellite)
+            g_object_unref(m_satellite);
         return -1;
     }
     m_engine->eng_gypsy_device_start (m_device, &error);
-    if (error != NULL) {
-        g_warning ("QGeoSatelliteInfoSourceGypsy error starting %s: %s", device_name,
+    if (error) {
+        g_warning ("QGeoSatelliteInfoSourceGypsy error starting device: %s ",
                    error->message);
-        g_object_unref(control);
-        g_error_free (error);
+        g_error_free(error);
+        g_object_unref(m_device);
+        g_object_unref(m_satellite);
         return -1;
     }
-    g_object_unref(control);
     return 0;
 }
-
 
 void QGeoSatelliteInfoSourceGypsy::startUpdates()
 {

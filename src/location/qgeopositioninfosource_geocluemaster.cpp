@@ -106,11 +106,13 @@ static void position_callback (GeocluePosition      *pos,
 {
     Q_UNUSED(pos);
     Q_UNUSED(accuracy);
-    if (error || !(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
+
+    if (error)
+        g_error_free (error);
+    if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
                    fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateFailed();
-        if (error)
-            g_error_free (error);
+
     } else {
         static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateSucceeded(
                     fields, timestamp, latitude, longitude, altitude, accuracy);
@@ -234,14 +236,16 @@ bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
     gchar* device_name;
     client = gconf_client_get_default();
     device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
-
     QString deviceName(QString::fromAscii(device_name));
+    g_object_unref(client);
+    g_free(device_name);
+
     if (deviceName.isEmpty()) {
         return false;
     } else {
         // Check if the device exists (does nothing if a bluetooth address)
-        qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << device_name;
         if (deviceName.trimmed().at(0) == '/' && QFile::exists(deviceName.trimmed())) {
+            qDebug() << "QGeoPositionInfoSourceGeoclueMaster GPS device: " << deviceName;
             return true;
         }
         return false;
@@ -366,7 +370,7 @@ void QGeoPositionInfoSourceGeoclueMaster::setPreferredPositioningMethods(Positio
         break;
     default:
         qWarning("GeoPositionInfoSourceGeoClueMaster unknown preferred method.");
-        break;
+        return;
     }
     QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
@@ -443,11 +447,14 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 
 void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
-    if (timeout < minimumUpdateInterval() && timeout != 0) {
+    if ((timeout < minimumUpdateInterval() && timeout != 0) || !m_pos) {
         emit updateTimeout();
         return;
     }
     if (m_requestTimer.isActive()) {
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+      qDebug() << "QGeoPositionInfoSourceGeoclueMaster request timer was active, ignoring startUpdates.";
+#endif
         return;
     }
     // Create better logic for timeout value (specs leave it impl dependant).
