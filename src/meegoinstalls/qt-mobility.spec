@@ -483,7 +483,7 @@ rm -rf %{buildroot}
 find %{buildroot}%{_libdir}/pkgconfig -type f -name '*.pc' \
 -exec perl -pi -e "s, -L%{_builddir}/%{name}-opensource-src-\Q%{version}\E/?\S+,,g" {} \;
 # Fix executable permissions
-find %{buildroot}%{_libdir}/qtmobility -type f -executable \( -false \
+find %{buildroot}%{_libdir}/qtmobility -type f -perm /u+x,g+x,o+x \( -false \
 -o -name \*.qml \
 -o -name \*.sci \
 \) | xargs chmod -x
