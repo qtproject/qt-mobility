@@ -412,7 +412,7 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
         {
            m_socketType = connectionType2;
         }
-        TPtrC8 serviceName = QNFCNdefUtility::FromQStringToTptrC8(serviceUri);
+        TPtrC8 serviceName = QNFCNdefUtility::QString2TPtrC8(serviceUri);
 
         if (KErrNone == socketHandler->ConnectToService(serviceName) )
         {

@@ -50,12 +50,34 @@
 #include <QtCore/QObject>
 #include <QtCore/QMetaMethod>
 #include <QPointer>
+#include <qremoteserviceregister.h>
 
 class CNearFieldManager;
+class CNdefMessage;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+class Proxy : public QObject
+{
+    Q_OBJECT
+public:
+    Proxy(QObject* parent = 0);
+    
+Q_SIGNALS:
+    void handleMessage(const QNdefMessage& message); 
+};
+
+class ContentHandlerInterface : public QObject
+{
+    Q_OBJECT
+public:
+    ContentHandlerInterface(QObject* parent = 0);
+    
+public slots:
+    void handleMessage(const QByteArray& message);
+};
 
 class QNearFieldManagerPrivateImpl : public QNearFieldManagerPrivate
 {
@@ -82,6 +104,9 @@ public://call back function by symbian backend implementation
     void invokeTargetDetectedHandler(QNdefMessage msg);
 
 
+private slots:
+    void _q_privateHandleMessageSlot(QNdefMessage msg);
+
 private:
     struct Callback {
         QNdefFilter filter;
@@ -97,6 +122,11 @@ private:
     CNearFieldManager* m_symbianbackend;
 
     QPointer<QNearFieldTarget> m_target;
+    //For content handler purpose;
+    QObject *chobject;
+    QMetaMethod chmethod;
+    
+    QRemoteServiceRegister* m_serviceRegister ;
 };
 
 QTM_END_NAMESPACE

@@ -193,7 +193,7 @@ bool QNearFieldTagImpl<TAGTYPE>::DoSetNdefMessages(const QList<QNdefMessage> &me
             TRAP( error, 
                 for (int i = 0; i < messages.count(); ++i)
                 {
-                    result.Append(QNFCNdefUtility::FromQNdefMsgToCNdefMsgL(messages.at(i)));
+                    result.Append(QNFCNdefUtility::QNdefMsg2CNdefMsgL(messages.at(i)));
                 }
             )
             
@@ -293,7 +293,7 @@ bool QNearFieldTagImpl<TAGTYPE>::DoSendCommand(const QByteArray& command, MNearF
         if (tag)
         {
             tag->SetTagOperationCallback(aCallback);
-            TPtrC8 cmd = QNFCNdefUtility::FromQByteArrayToTPtrC8(command);
+            TPtrC8 cmd = QNFCNdefUtility::QByteArray2TPtrC8(command);
             TRAP( error, 
                 // Lazy creation
                 if (mResponse.MaxLength() == 0)
@@ -570,7 +570,7 @@ QByteArray QNearFieldTagImpl<TAGTYPE>::_uid() const
     BEGIN
     if (mUid.isEmpty())
     {
-        mUid = QNFCNdefUtility::FromTDesCToQByteArray(mTag->Uid());
+        mUid = QNFCNdefUtility::TDesC2QByteArray(mTag->Uid());
         LOG(mUid);
     }
     END

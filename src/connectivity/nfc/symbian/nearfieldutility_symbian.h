@@ -98,22 +98,19 @@ class QNFCNdefUtility
 {
 public:
 
-    QNFCNdefUtility();
-    ~QNFCNdefUtility();
-
     /**
      * Maps between CNdefMessage and QNdefMessage
      *
      */
-    static CNdefMessage* FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg );
-    static QNdefMessage FromCNdefMsgToQndefMsgL( const CNdefMessage& msg );
+    static CNdefMessage* QNdefMsg2CNdefMsgL( const QNdefMessage& msg );
+    static QNdefMessage CNdefMsg2QNdefMsgL( const CNdefMessage& msg );
 
-    static TPtrC8 FromQByteArrayToTPtrC8(const QByteArray& qbytearray);
+    static TPtrC8 QByteArray2TPtrC8(const QByteArray& qbytearray);
     static void FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8& buf);
-    static QByteArray FromTDesCToQByteArray( const TDesC8& des);
+    static QByteArray TDesC2QByteArray( const TDesC8& des);
 
     static TPtrC FromQStringToTptrC(const QString& qstring);
-    static TPtrC8 FromQStringToTptrC8(const QString& qstring);
+    static TPtrC8 QString2TPtrC8(const QString& qstring);
     static QString FromDesC8ToQString(const TDesC8&);
 
 };

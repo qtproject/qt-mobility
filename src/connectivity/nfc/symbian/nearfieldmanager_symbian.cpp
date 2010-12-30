@@ -182,7 +182,7 @@ TInt CNearFieldManager::AddNdefSubscription( const QNdefRecord::TypeNameFormat a
             }
 
         }
-    TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
+    TPtrC8 type(QNFCNdefUtility::QByteArray2TPtrC8(aType));
     err = iNdefDiscovery->AddNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
     END
     return err;
@@ -197,7 +197,7 @@ void CNearFieldManager::RemoveNdefSubscription( const QNdefRecord::TypeNameForma
     BEGIN
     if ( iNdefDiscovery )
         {
-        TPtrC8 type(QNFCNdefUtility::FromQByteArrayToTPtrC8(aType));
+        TPtrC8 type(QNFCNdefUtility::QByteArray2TPtrC8(aType));
         iNdefDiscovery->RemoveNdefSubscription( (CNdefRecord::TNdefRecordTnf)aTnf, type );
         }
     END
@@ -268,7 +268,7 @@ void CNearFieldManager::MessageDetected( CNdefMessage* aMessage )
     BEGIN
     if ( aMessage )
         {
-        QNdefMessage msg = QNFCNdefUtility::FromCNdefMsgToQndefMsgL( *aMessage);
+        QNdefMessage msg = QNFCNdefUtility::CNdefMsg2QNdefMsgL( *aMessage);
         TInt error = KErrNone;
         QT_TRYCATCH_ERROR(error, iCallback.invokeTargetDetectedHandler(msg));
         Q_UNUSED(error);//just skip the error

@@ -44,9 +44,36 @@
 
 #include "symbian/nearfieldmanager_symbian.h"
 #include "symbian/debug.h"
+#include <qservicefilter.h>
+#include <qservicemanager.h>
+#include <QCoreApplication>
+#include <ndefmessage.h>
+#include "symbian/nearfieldutility_symbian.h"
 
 QTM_BEGIN_NAMESPACE
 
+Proxy contentHandlerProxy;
+
+Proxy::Proxy(QObject* parent) : QObject (parent)
+{
+}
+
+ContentHandlerInterface::ContentHandlerInterface(QObject* parent)
+       : QObject(parent)
+{
+}
+void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
+{
+     // incoming message from ECOM content handler loader eventually cause object & method registered via below
+     // registerTargetDetectHandler to be invoked with message as parameter.  i.e. MyContentHandler::handleMessage(message)
+     // from above.
+   
+     
+     QNdefMessage msg = QNdefMessage::fromByteArray(btArray);
+     QMetaObject::invokeMethod(&contentHandlerProxy, "handleMessage", Q_ARG(QNdefMessage, msg));
+  
+    
+}
 /*!
     \class QNearFieldManagerPrivateImpl
     \brief The QNearFieldManagerPrivateImpl class provides symbian backend access to NFC service.
@@ -60,7 +87,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new near field manager private implementation.
 */
-QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
+QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_target(NULL), m_symbianbackend(NULL), m_serviceRegister(NULL)
 {
     BEGIN
     QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
@@ -75,6 +102,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     BEGIN
     delete m_target;
     delete m_symbianbackend;
+    delete m_serviceRegister;
     END
 }
 
@@ -101,11 +129,46 @@ int QNearFieldManagerPrivateImpl::getFreeId()
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject */*object*/,
-                                                                const QMetaMethod &/*method*/)
+int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(QObject *object,
+                                                                const QMetaMethod &method)
 {
-    //Symbian side does not support register ndef handler without TNF and type.
-    return -1;
+    QServiceFilter filter("com.nokia.symbian.NdefMessageHandler");
+    QCoreApplication* app = QCoreApplication::instance();
+    //The appfile path will return something like \sys\bin\nfcspserviceprovider.exe
+    //but we only need nfcspserviceprovider as service name
+    QString appfilepath = app->applicationFilePath();
+    TInt lastseprator = appfilepath.lastIndexOf("\\");
+    TInt lastdot = appfilepath.lastIndexOf(".");
+    QString servicename = appfilepath.mid(lastseprator+1, lastdot-lastseprator-1);
+    qDebug() << "application name: " << servicename << endl;
+           
+    filter.setServiceName(servicename);
+    QServiceManager sfManager;
+    
+    if (!sfManager.findInterfaces(filter).isEmpty())
+        {
+        // This application has been registered as a content handler (via the xml at install time), start the service
+        chobject = object;
+        chmethod = method;
+       
+        connect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
+                    this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));
+        m_serviceRegister = new QRemoteServiceRegister();
+        QRemoteServiceRegister::Entry entry = 
+                m_serviceRegister->createEntry<ContentHandlerInterface>(servicename, 
+                                                                     "com.nokia.symbian.NdefMessageHandler", 
+                                                                     "1.0");
+        entry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+        m_serviceRegister->publishEntries(servicename);
+        //m_serviceRegister->setQuitOnLastInstanceClosed(true);
+        //delete serviceRegister;
+        
+        return 0xffff;
+        
+    } else {
+        // not supported if not registered as a content handler using this API
+        return -1;
+    }
 }
 
 /*!
@@ -152,6 +215,12 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
 bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 {
     BEGIN
+     if ( 0xffff == id )
+        {
+        disconnect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
+                          this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));
+        return true;
+        }
     if (id < 0 || id >= m_registeredHandlers.count() || m_freeIds.contains(id))
         return false;
 
@@ -209,6 +278,15 @@ void QNearFieldManagerPrivateImpl::targetFound(QNearFieldTarget *target)
     emit targetDetected(target);
     END
 }
+
+/*
+ * Private slot to be invoked by QT content handler loader
+ */
+void QNearFieldManagerPrivateImpl::_q_privateHandleMessageSlot(QNdefMessage aMsg)
+    {
+   
+    chmethod.invoke(chobject, Q_ARG(QNdefMessage, aMsg), Q_ARG(QNearFieldTarget* , NULL));
+    }
 
 /*!
     Helper function to invoke the filtered TargetDetectedHandler for a found \a target.
