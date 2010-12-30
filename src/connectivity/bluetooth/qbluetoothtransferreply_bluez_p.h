@@ -66,7 +66,6 @@ public:
     QBluetoothTransferReplyBluez(QIODevice *input, QObject *parent = 0);
     ~QBluetoothTransferReplyBluez();
 
-    void abort();
     QVariant attribute(QBluetoothTransferRequest::Attribute code) const;
     bool isFinished() const;
     bool isRunning() const;
@@ -79,8 +78,6 @@ public:
 
     QBluetoothTransferReply::TransferError error() const;
     QString errorString() const;
-
-
 
 protected:
     qint64 readData(char*, qint64);
@@ -106,18 +103,21 @@ private:
 
     QString m_agent_path;
 
+    QString m_transfer_path;
+
     static bool copyToTempFile(QIODevice *to, QIODevice *from);
 
 private slots:
     void copyDone();
 
 public slots:
+    void abort();
     void Complete(const QDBusObjectPath &in0);
     void Error(const QDBusObjectPath &in0, const QString &in1);
     void Progress(const QDBusObjectPath &in0, qulonglong in1);
     void Release();
     QString Request(const QDBusObjectPath &in0);
-
+    void sendReturned(QDBusPendingCallWatcher*);
 
 };
 

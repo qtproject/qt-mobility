@@ -44,6 +44,8 @@
 
 #include <qmobilityglobal.h>
 
+#include "qnearfieldtarget.h"
+
 #include <QtCore/QByteArray>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
@@ -53,7 +55,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QNearFieldTarget;
-class QTlvReader
+class QM_AUTOTEST_EXPORT QTlvReader
 {
 public:
     explicit QTlvReader(QNearFieldTarget *target);
@@ -61,6 +63,8 @@ public:
 
     void addReservedMemory(int offset, int length);
     int reservedMemorySize() const;
+
+    QNearFieldTarget::RequestId requestId() const;
 
     bool atEnd() const;
 
@@ -77,6 +81,7 @@ private:
 
     QNearFieldTarget *m_target;
     QByteArray m_rawData;
+    QNearFieldTarget::RequestId m_requestId;
 
     QByteArray m_tlvData;
     int m_index;
@@ -94,18 +99,23 @@ public:
 
     void writeTlv(quint8 tag, const QByteArray &data = QByteArray());
 
-private:
-    void flush(bool all = false);
+    bool process(bool all = false);
 
+    QNearFieldTarget::RequestId requestId() const;
+
+private:
     int moveToNextAvailable();
 
     QNearFieldTarget *m_target;
     QByteArray *m_rawData;
 
     int m_index;
+    int m_tagMemorySize;
     QMap<int, int> m_reservedMemory;
 
     QByteArray m_buffer;
+
+    QNearFieldTarget::RequestId m_requestId;
 };
 
 QPair<int, int> qParseReservedMemoryControlTlv(const QByteArray &tlvData);
