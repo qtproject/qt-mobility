@@ -44,6 +44,7 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
+#include <qabstractvideosurface.h>
 #include <qcameracontrol.h>
 #include <qcameralockscontrol.h>
 #include <qcameraexposurecontrol.h>
@@ -56,6 +57,9 @@
 #include <qcamera.h>
 #include <qcameraimagecapture.h>
 #include <qgraphicsvideoitem.h>
+#include <qvideorenderercontrol.h>
+#include <qvideowidget.h>
+#include <qvideowindowcontrol.h>
 
 QT_USE_NAMESPACE
 class MockCaptureControl;
@@ -718,6 +722,53 @@ private:
     QMap<QString, QString> m_codecDescriptions;
 };
 
+class MockVideoSurface : public QAbstractVideoSurface
+{
+public:
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            const QAbstractVideoBuffer::HandleType) const
+    {
+        return QList<QVideoFrame::PixelFormat>();
+    }
+
+    bool present(const QVideoFrame &) { return false; }
+};
+
+class MockVideoRendererControl : public QVideoRendererControl
+{
+public:
+    MockVideoRendererControl(QObject *parent) : QVideoRendererControl(parent), m_surface(0) {}
+
+    QAbstractVideoSurface *surface() const { return m_surface; }
+    void setSurface(QAbstractVideoSurface *surface) { m_surface = surface; }
+
+    QAbstractVideoSurface *m_surface;
+};
+
+class MockVideoWindowControl : public QVideoWindowControl
+{
+public:
+    MockVideoWindowControl(QObject *parent) : QVideoWindowControl(parent) {}
+    WId winId() const { return 0; }
+    void setWinId(WId) {}
+    QRect displayRect() const { return QRect(); }
+    void setDisplayRect(const QRect &) {}
+    bool isFullScreen() const { return false; }
+    void setFullScreen(bool) {}
+    void repaint() {}
+    QSize nativeSize() const { return QSize(); }
+    Qt::AspectRatioMode aspectRatioMode() const { return Qt::KeepAspectRatio; }
+    void setAspectRatioMode(Qt::AspectRatioMode) {}
+    int brightness() const { return 0; }
+    void setBrightness(int) {}
+    int contrast() const { return 0; }
+    void setContrast(int) {}
+    int hue() const { return 0; }
+    void setHue(int) {}
+    int saturation() const { return 0; }
+    void setSaturation(int) {}
+};
+
 class MockSimpleCameraService : public QMediaService
 {
     Q_OBJECT
@@ -759,6 +810,10 @@ public:
         mockCaptureControl = new MockCaptureControl(mockControl, this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
         mockImageEncoderControl = new MockImageEncoderControl(this);
+        rendererControl = new MockVideoRendererControl(this);
+        windowControl = new MockVideoWindowControl(this);
+        rendererRef = 0;
+        windowRef = 0;
     }
 
     ~MockCameraService()
@@ -791,10 +846,27 @@ public:
         if (qstrcmp(iid, QImageEncoderControl_iid) == 0)
             return mockImageEncoderControl;
 
+        if (qstrcmp(iid, QVideoRendererControl_iid) == 0) {
+            if (rendererRef == 0) {
+                rendererRef += 1;
+                return rendererControl;
+            }
+        } else if (qstrcmp(iid, QVideoWindowControl_iid) == 0) {
+            if (windowRef == 0) {
+                windowRef += 1;
+                return windowControl;
+            }
+        }
         return 0;
     }
 
-    void releaseControl(QMediaControl*) {}
+    void releaseControl(QMediaControl *control)
+    {
+        if (control == rendererControl)
+            rendererRef -= 1;
+        else if (control == windowControl)
+            windowRef -= 1;
+    }
 
     MockCameraControl *mockControl;
     MockCameraLocksControl *mockLocksControl;
@@ -804,6 +876,10 @@ public:
     MockCameraFocusControl *mockFocusControl;
     MockImageProcessingControl *mockImageProcessingControl;
     MockImageEncoderControl *mockImageEncoderControl;
+    MockVideoRendererControl *rendererControl;
+    MockVideoWindowControl *windowControl;
+    int rendererRef;
+    int windowRef;
 };
 
 class MockProvider : public QMediaServiceProvider
@@ -847,6 +923,11 @@ private slots:
     void testCameraLock();
     void testCameraLockCancel();
     void testCameraEncodingProperyChange();
+
+    void testSetVideoOutput();
+    void testSetVideoOutputNoService();
+    void testSetVideoOutputNoControl();
+    void testSetVideoOutputDestruction();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -1576,6 +1657,113 @@ void tst_QCamera::testCameraEncodingProperyChange()
 
 }
 
+void tst_QCamera::testSetVideoOutput()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockCameraService service;
+    MockProvider provider;
+    provider.service = &service;
+    QCamera camera(0, &provider);
+
+    camera.setViewfinder(&widget);
+    QVERIFY(widget.mediaObject() == &camera);
+
+    camera.setViewfinder(&item);
+    QVERIFY(widget.mediaObject() == 0);
+    QVERIFY(item.mediaObject() == &camera);
+
+    camera.setViewfinder(reinterpret_cast<QVideoWidget *>(0));
+    QVERIFY(item.mediaObject() == 0);
+
+    camera.setViewfinder(&widget);
+    QVERIFY(widget.mediaObject() == &camera);
+
+    camera.setViewfinder(reinterpret_cast<QGraphicsVideoItem *>(0));
+    QVERIFY(widget.mediaObject() == 0);
+
+    camera.setViewfinder(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+
+    camera.setViewfinder(reinterpret_cast<QAbstractVideoSurface *>(0));
+    QVERIFY(service.rendererControl->surface() == 0);
+
+    camera.setViewfinder(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+
+    camera.setViewfinder(&widget);
+    QVERIFY(service.rendererControl->surface() == 0);
+    QVERIFY(widget.mediaObject() == &camera);
+
+    camera.setViewfinder(&surface);
+    QVERIFY(service.rendererControl->surface() == &surface);
+    QVERIFY(widget.mediaObject() == 0);
+}
+
+
+void tst_QCamera::testSetVideoOutputNoService()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockProvider provider;
+    provider.service = 0;
+    QCamera camera(0, &provider);
+
+    camera.setViewfinder(&widget);
+    QVERIFY(widget.mediaObject() == 0);
+
+    camera.setViewfinder(&item);
+    QVERIFY(item.mediaObject() == 0);
+
+    camera.setViewfinder(&surface);
+    // Nothing we can verify here other than it doesn't assert.
+}
+
+void tst_QCamera::testSetVideoOutputNoControl()
+{
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+    MockVideoSurface surface;
+
+    MockCameraService service;
+    service.rendererRef = 1;
+    service.windowRef = 1;
+
+    MockProvider provider;
+    provider.service = &service;
+    QCamera camera(0, &provider);
+
+    camera.setViewfinder(&widget);
+    QVERIFY(widget.mediaObject() == 0);
+
+    camera.setViewfinder(&item);
+    QVERIFY(item.mediaObject() == 0);
+
+    camera.setViewfinder(&surface);
+    QVERIFY(service.rendererControl->surface() == 0);
+}
+
+void tst_QCamera::testSetVideoOutputDestruction()
+{
+    MockVideoSurface surface;
+
+    MockCameraService service;
+    MockProvider provider;
+    provider.service = &service;
+
+    {
+        QCamera camera(0, &provider);
+        camera.setViewfinder(&surface);
+        QVERIFY(service.rendererControl->surface() == &surface);
+        QCOMPARE(service.rendererRef, 1);
+    }
+    QVERIFY(service.rendererControl->surface() == 0);
+    QCOMPARE(service.rendererRef, 0);
+}
 
 QTEST_MAIN(tst_QCamera)
 
