@@ -100,6 +100,16 @@ public:
         return stream;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QOrganizerItemUnionFilter(";
+        dbg.nospace() << "filters=" << m_filters;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemUnionFilter, QOrganizerItemFilter::UnionFilter)
 
     QList<QOrganizerItemFilter> m_filters;
