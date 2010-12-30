@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -60,8 +60,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_subjectEdit = new QLineEdit(this);
     QLabel *startTimeLabel = new QLabel("Start time:", this);
     m_startTimeEdit = new QDateTimeEdit(this);
+    m_startTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *dueTimeLabel = new QLabel("Due time:", this);
-    m_dueTimeEdit = new QDateTimeEdit(this);    
+    m_dueTimeEdit = new QDateTimeEdit(this);
+    m_dueTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
     QLabel *priorityLabel = new QLabel("Priority:", this);
     m_priorityEdit = new QComboBox(this);
     QLabel *statusLabel = new QLabel("Status:", this);
@@ -95,6 +97,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     hbLayout->addWidget(cancelButton);
 #endif
 
+    // check to see whether we support alarms.
+    QOrganizerManager defaultManager;
+    QStringList supportedDefinitionNames = defaultManager.detailDefinitions(QOrganizerItemType::TypeTodo).keys();
+
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
@@ -106,8 +112,10 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_priorityEdit);
     scrollAreaLayout->addWidget(statusLabel);
     scrollAreaLayout->addWidget(m_statusEdit);
-    scrollAreaLayout->addWidget(alarmLabel);
-    scrollAreaLayout->addWidget(m_alarmComboBox);
+    if (supportedDefinitionNames.contains(QOrganizerItemVisualReminder::DefinitionName)) {
+        scrollAreaLayout->addWidget(alarmLabel);
+        scrollAreaLayout->addWidget(m_alarmComboBox);
+    }
     scrollAreaLayout->addWidget(calendarLabel);
     scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();

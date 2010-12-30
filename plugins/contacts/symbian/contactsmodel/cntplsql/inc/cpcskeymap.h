@@ -99,6 +99,9 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
          */
 		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage) = 0;
 
+	public: // Virtual functions
+		virtual MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
+
 	protected: // Virtual functions
 		virtual QList<HbInputLanguage> SelectLanguages();
 
@@ -112,8 +115,6 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		virtual TBool DetermineSpecialCharBehaviour(QString aSource) const;
 
 		virtual TBool ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const;
-
-		virtual MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
 
 	protected: // Constructors
 		/**

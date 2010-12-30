@@ -186,8 +186,7 @@ void tst_QAudioDeviceInfo::preferred()
 {
     if(available) {
         QAudioFormat format = device->preferredFormat();
-        QVERIFY(format.frequency() == 44100);
-        QVERIFY(format.channels() == 2);
+        QVERIFY(format.isValid());
     }
 }
 

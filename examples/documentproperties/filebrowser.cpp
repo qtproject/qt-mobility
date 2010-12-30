@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -56,6 +56,11 @@ FileBrowser::FileBrowser(QWidget *parent, Qt::WindowFlags flags)
     setAttribute(Qt::WA_Maemo5StackedWindow);
 #endif
 
+    menuBar()->addAction(tr("Documents"), this, SLOT(browseDocuments()));
+    menuBar()->addAction(tr("Audio"), this, SLOT(browseAudio()));
+    menuBar()->addAction(tr("Images"), this, SLOT(browseImages()));
+    menuBar()->addAction(tr("Videos"), this, SLOT(browseVideos()));
+
     fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setRootPath(QDesktopServices::storageLocation(QDesktopServices::HomeLocation));
 
@@ -64,11 +69,6 @@ FileBrowser::FileBrowser(QWidget *parent, Qt::WindowFlags flags)
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
     setCentralWidget(view);
-
-    menuBar()->addAction(tr("Documents"), this, SLOT(browseDocuments()));
-    menuBar()->addAction(tr("Audio"), this, SLOT(browseAudio()));
-    menuBar()->addAction(tr("Images"), this, SLOT(browseImages()));
-    menuBar()->addAction(tr("Videos"), this, SLOT(browseVideos()));
 
     browseDocuments();
 }

@@ -80,10 +80,12 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
             } else {
                 // New sound effect!
                 fi.soundEffect = new QSoundEffect(this);
-                connect(fi.soundEffect, SIGNAL(loadedChanged()), this, SLOT(soundEffectLoaded()));
-                fi.soundEffect->setSource(effect->source());
                 mEffects.insert(effect, fi);
                 mEffectMap.insert(fi.soundEffect, effect);
+
+                connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectStatusChanged()));
+                connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
+                fi.soundEffect->setSource(effect->source());
             }
         }
     } else {
@@ -153,15 +155,52 @@ QStringList QFeedbackMMK::supportedMimeTypes()
     return QSoundEffect::supportedMimeTypes();
 }
 
-void QFeedbackMMK::soundEffectLoaded()
+void QFeedbackMMK::soundEffectStatusChanged()
 {
     QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
     if (se) {
         // Hmm, now look up the right sound effect
         QFeedbackFileEffect* fe = mEffectMap.value(se);
+        if (!fe)
+            return;
 
-        if (fe) {
-            reportLoadFinished(fe, se->isLoaded());
+        switch(se->status()) {
+            case QSoundEffect::Error:
+                if (fe->state() == QFeedbackEffect::Loading) {
+                    reportLoadFinished(fe, false);
+                } else {
+                    reportError(fe, QFeedbackEffect::UnknownError);
+                }
+                break;
+
+            case QSoundEffect::Ready:
+                if (fe->state() == QFeedbackEffect::Loading) {
+                    reportLoadFinished(fe, true);
+                }
+                break;
+
+            default:
+                // Nothing to handle here?
+                break;
+        }
+    }
+}
+
+void QFeedbackMMK::soundEffectPlayingChanged()
+{
+    QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
+    if (se) {
+        QFeedbackFileEffect* fileEffect = mEffectMap.value(se);
+        FeedbackInfo fi = mEffects.value(fileEffect);
+
+        if (fi.soundEffect == se) {
+            fi.playing = se->isPlaying();
+
+            QFeedbackFileEffect* fe = mEffectMap.value(se);
+            // Emit the stateChanged() signal
+            if (fe) {
+                QMetaObject::invokeMethod(fe, "stateChanged");
+            }
         }
     }
 }

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "xqsettingsmanager.h"
+#include "xqsettingsmanager_p.h"
 
 class XQSettingsManagerPrivate;
 class XQPublishAndSubscribeSecurityPolicy;

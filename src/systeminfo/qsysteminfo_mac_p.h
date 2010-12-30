@@ -66,6 +66,7 @@
 #include "qsystemnetworkinfo.h"
 #include "qsystemscreensaver.h"
 #include "qsystemstorageinfo.h"
+#include "qsystembatteryinfo.h"
 
 #include <QTimer>
 #include <QtCore/qthread.h>
@@ -134,7 +135,7 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
 
@@ -162,6 +163,7 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+   void cellIdChanged(int);//1.2
 
 public Q_SLOTS:
    void primaryInterface();
@@ -176,6 +178,7 @@ private:
 
 private Q_SLOTS:
     void rssiTimeout();
+
 protected:
     void startNetworkChangeLoop();
     bool isInterfaceActive(const char* netInterface);
@@ -199,12 +202,13 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//     float contrast(int screen);
-//     int getDPIWidth(int screen);
-//     int getDPIHeight(int screen);
-//     int physicalHeight(int screen);
-//     int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QDASessionThread;
@@ -222,23 +226,33 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+
 public Q_SLOTS:
     void storageChanged( bool added,const QString &vol);
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     bool updateVolumesMap();
     void mountEntries();
     bool sessionThread();
+    QMap<QString, QSystemStorageInfo::StorageState> stateMap;
+    QTimer *storageTimer;
+
+private Q_SLOTS:
+    void checkAvailableStorage();
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
     QDASessionThread *daSessionThread;
+    bool sessionThreadStarted;
 };
 
 class QBluetoothListenerThread;
@@ -272,6 +286,17 @@ public:
     bool currentBluetoothPowerState();
     bool btThreadOk;
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(QSystemDeviceInfo::keypadType type); //1.2
+    void deviceLocked(bool isLocked); // 1.2
+    QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType lockStatus(); //1.2
+
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -280,6 +305,11 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+    void lockStatusChanged(QSystemDeviceInfo::LockType); //1.2
+
+
 private:
     int batteryLevelCache;
     QSystemDeviceInfo::PowerState currentPowerStateCache;
@@ -287,6 +317,7 @@ private:
     static QSystemDeviceInfoPrivate *self;
     QBluetoothListenerThread *btThread;
 
+    bool hasWirelessKeyboardConnected;
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -391,6 +422,7 @@ public:
     ~QBluetoothListenerThread();
     bool keepRunning;
     QThread t;
+    void setupConnectNotify();
 
 public Q_SLOTS:
     void emitBtPower(bool);
@@ -409,6 +441,63 @@ private:
     QMutex mutex;
 
 private Q_SLOTS:
+};
+
+class QSystemBatteryInfoPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacity() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+    QSystemBatteryInfo::EnergyUnit energyMeasurementUnit();
+    int startCurrentMeasurement(int rate);
+    void getBatteryInfo();
+
+Q_SIGNALS:
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacityChanged(int);
+    void batteryCurrentFlowChanged(int);
+    void voltageChanged(int);
+
+    void currentFlowChanged(int);
+    void cumulativeCurrentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+    void remainingChargingTimeChanged(int);
+
+private:
+    QSystemBatteryInfo::BatteryStatus currentBatStatus;
+    QSystemBatteryInfo::ChargingState curChargeState;
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+    int currentBatLevelPercent;
+    int currentVoltage;
+    int dischargeRate;
+    int capacity;
+    int timeToFull;
+    int remainingEnergy;
 };
 
 QTM_END_NAMESPACE

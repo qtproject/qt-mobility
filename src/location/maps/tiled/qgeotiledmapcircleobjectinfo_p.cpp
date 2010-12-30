@@ -160,7 +160,7 @@ void QGeoTiledMapCircleObjectInfo::update()
 
         h = <)ACB is the altitude
         r = <)FDA is the radius, in radians, of the small circle we want to achieve
-        x = <)DCE is an auxilary angle
+        x = <)DCE is an auxiliary angle
 
         <)EDC, <)DCF, <)BAC and <)AFD are rectangular (as denoted by the dot or 90°)
         AB and FD are parallel

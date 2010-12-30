@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -60,6 +60,12 @@ Explorer::Explorer(QWidget *parent)
     ui.sensors->clear();
     clearSensorProperties();
     clearReading();
+
+    // Force types to be registered
+    (void)QSensor::sensorTypes();
+    // Listen for changes to the registered types
+    QSensor *sensor = new QSensor(QByteArray(), this);
+    connect(sensor, SIGNAL(availableSensorsChanged()), this, SLOT(loadSensors()));
 }
 
 Explorer::~Explorer()

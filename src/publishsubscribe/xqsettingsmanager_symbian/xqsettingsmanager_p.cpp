@@ -41,9 +41,9 @@
 
 #include "xqsettingsmanager_p.h"
 #include <QVariant>
-#include "settingshandlerbase.h"
-#include "ccentralrepositoryhandler.h"
-#include "cpublishandsubscribehandler.h"
+#include "settingshandlerbase_p.h"
+#include "ccentralrepositoryhandler_p.h"
+#include "cpublishandsubscribehandler_p.h"
 
 XQSettingsManagerPrivate::XQSettingsManagerPrivate(XQSettingsManager* settingsManager) 
     : q(settingsManager)

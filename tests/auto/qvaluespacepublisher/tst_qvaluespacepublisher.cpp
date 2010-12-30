@@ -51,6 +51,7 @@
 #include <QTest>
 #include <QDebug>
 #include <QSignalSpy>
+#include <QCoreApplication>
 #include <QFile>
 
 #ifdef Q_OS_WIN
@@ -149,6 +150,11 @@ void tst_QValueSpacePublisher::initTestCase()
         QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/subpath/value"), 0);
     }
 
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_CONTEXTKITCORE_LAYER)) {
+        QCoreApplication::setOrganizationDomain("tests.qt.nokia.com");
+        QCoreApplication::setApplicationName("qvaluespacepublisher");
+    }
+
 }
 
 void tst_QValueSpacePublisher::cleanupTestCase()
@@ -176,14 +182,16 @@ void tst_QValueSpacePublisher::testConstructor_data()
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
-        ADD(layer, layer->id(), QString(""), QString("/"), true);
-        ADD(layer, layer->id(), QString("/"), QString("/"), true);
-        ADD(layer, layer->id(), QString("//"), QString("/"), true);
-        ADD(layer, layer->id(), QString("/testConstructor"), QString("/testConstructor"), true);
-        ADD(layer, layer->id(), QString("/testConstructor/"), QString("/testConstructor"), true);
-        ADD(layer, layer->id(), QString("testConstructor"), QString("/testConstructor"), true);
-        ADD(layer, layer->id(), QString("/testConstructor/subpath"),\
-                                QString("/testConstructor/subpath"), true);
+        if (layer->id() != QVALUESPACE_CONTEXTKITCORE_LAYER) {
+            ADD(layer, layer->id(), QString(""), QString("/"), true);
+            ADD(layer, layer->id(), QString("/"), QString("/"), true);
+            ADD(layer, layer->id(), QString("//"), QString("/"), true);
+            ADD(layer, layer->id(), QString("/testConstructor"), QString("/testConstructor"), true);
+            ADD(layer, layer->id(), QString("/testConstructor/"), QString("/testConstructor"), true);
+            ADD(layer, layer->id(), QString("testConstructor"), QString("/testConstructor"), true);
+            ADD(layer, layer->id(), QString("/testConstructor/subpath"),\
+                                    QString("/testConstructor/subpath"), true);
+        }
     }
 
     // unknown uuid
@@ -212,13 +220,19 @@ void tst_QValueSpacePublisher::testConstructor()
             layer->item(QAbstractValueSpaceLayer::InvalidHandle, canonical.toUtf8());
 
         QVariant data;
-        QVERIFY(!layer->value(handle, "/value", &data));
+        bool result = layer->value(handle, "/value", &data);
+
+        if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+            QVERIFY(!data.isValid());
+        else
+            QVERIFY(!result);
 
         layer->removeHandle(handle);
     }
 
     publisher->setValue(QString("value"), 100);
     publisher->sync();
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -233,13 +247,19 @@ void tst_QValueSpacePublisher::testConstructor()
 
     publisher->resetValue(QString("value"));
     publisher->sync();
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
             layer->item(QAbstractValueSpaceLayer::InvalidHandle, canonical.toUtf8());
 
         QVariant data;
-        QVERIFY(!layer->value(handle, "/value", &data));
+        bool result = layer->value(handle, "/value", &data);
+
+        if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+            QVERIFY(!data.isValid());
+        else
+            QVERIFY(!result);
 
         layer->removeHandle(handle);
     }
@@ -253,6 +273,7 @@ void tst_QValueSpacePublisher::testConstructor()
             canonical.truncate(canonical.lastIndexOf('/'));
         }
         root.sync();
+        if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
     }
 }
 
@@ -305,36 +326,37 @@ void tst_QValueSpacePublisher::testBaseConstructor()
 
 void tst_QValueSpacePublisher::testSetValue_data()
 {
-    QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
+    QTest::addColumn<QUuid>("uuid");
 
     QTest::addColumn<QString>("value");
 
-    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
-
-    for (int i = 0; i < layers.count(); ++i) {
-        QAbstractValueSpaceLayer *layer = layers.at(i);
-
-        QTest::newRow("empty") << layer << QString::fromLatin1("/");
+    foreach (QUuid uuid, QValueSpace::availableLayers()) {
+        if (uuid != QVALUESPACE_CONTEXTKITCORE_LAYER)
+            QTest::newRow("empty") << uuid << QString::fromLatin1("/");
     }
 }
 
 void tst_QValueSpacePublisher::testSetValue()
 {
-    QFETCH(QAbstractValueSpaceLayer *, layer);
+    QFETCH(QUuid, uuid);
     QFETCH(QString, value);
 
-    QValueSpaceSubscriber subscriber(layer->id(), QLatin1String("/testSetValue"));
-    QVERIFY(subscriber.subPaths().isEmpty());
+    QValueSpaceSubscriber subscriber(uuid, QLatin1String("/testSetValue"));
+    if (uuid != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+        QVERIFY(subscriber.subPaths().isEmpty());
 
-    QValueSpacePublisher publisher(layer->id(), QLatin1String("/testSetValue"));
+    QValueSpacePublisher publisher(uuid, QLatin1String("/testSetValue"));
 
     publisher.setValue(QLatin1String(""), QLatin1String("default data"));
     publisher.sync();
-    QVERIFY(subscriber.subPaths().isEmpty());
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
+    if (uuid != QVALUESPACE_CONTEXTKITNONCORE_LAYER)
+        QVERIFY(subscriber.subPaths().isEmpty());
     QCOMPARE(subscriber.value(QLatin1String("")).toString(), QLatin1String("default data"));
 
     publisher.setValue(QLatin1String("key"), QLatin1String("key data"));
     publisher.sync();
+    if (uuid  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
     QCOMPARE(subscriber.subPaths().count(), 1);
     QCOMPARE(subscriber.subPaths().first(), QLatin1String("key"));
     QCOMPARE(subscriber.value(QLatin1String("key")).toString(), QLatin1String("key data"));
@@ -342,6 +364,7 @@ void tst_QValueSpacePublisher::testSetValue()
     publisher.resetValue(QLatin1String("key"));
     publisher.resetValue(QLatin1String(""));
     publisher.sync();
+    if (uuid  == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     QVERIFY(!subscriber.value(QLatin1String("")).isValid());
     QVERIFY(!subscriber.value(QLatin1String("key")).isValid());
@@ -368,22 +391,22 @@ void tst_QValueSpacePublisher::testSignals_data()
 
         foundSupported = true;
 
-        QTest::newRow("/ /")
-            << layer
-            << QString("/")
-            << QString("/")
-            << QString();
-
-        QTest::newRow("/ /testSignals")
-            << layer
-            << QString("/")
-            << QString("/testSignals")
-            << QString("testSignals");
-
         QTest::newRow("/testSignals /testSignals")
             << layer
             << QString("/testSignals")
             << QString("/testSignals")
+            << QString();
+
+        QTest::newRow("/testSignals /testSignals/key")
+            << layer
+            << QString("/testSignals")
+            << QString("/testSignals/key")
+            << QString("/key");
+
+        QTest::newRow("/testSignals/key /testSignals/key")
+            << layer
+            << QString("/testSignals/key")
+            << QString("/testSignals/key")
             << QString();
     }
 
@@ -400,6 +423,7 @@ void tst_QValueSpacePublisher::testSignals()
     QFETCH(QString, attribute);
 
     QValueSpacePublisher *publisher = new QValueSpacePublisher(layer->id(), publisherPath);
+    publisher->setValue(attribute, "foo");
 
     ChangeListener listener;
     connect(publisher, SIGNAL(interestChanged(QString,bool)),
@@ -524,6 +548,9 @@ void WriteThread::run()
         publisher->setValue(key.arg(i), value.arg(i));
 
     publisher->sync();
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+    QTest::qWait(500);
+#endif
 }
 
 void tst_QValueSpacePublisher::threads_data()
@@ -753,6 +780,7 @@ void tst_QValueSpacePublisher::testQtMobility400()
     publisher.setValue(QLatin1String("State"), QLatin1String("Starting"));
     publisher.setValue(QLatin1String("State/Memory"), 1000);
     publisher.sync();
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     QCOMPARE(QValueSpaceSubscriber(QLatin1String("/Device/State")).value().toString(),
              QLatin1String("Starting"));
@@ -760,6 +788,7 @@ void tst_QValueSpacePublisher::testQtMobility400()
 
     publisher.resetValue("State");
     publisher.sync();
+    if (uuid == QVALUESPACE_CONTEXTKITNONCORE_LAYER) QTest::qWait(500);
 
     QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State")).value().isValid());
     QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State/Memory")).value().isValid());

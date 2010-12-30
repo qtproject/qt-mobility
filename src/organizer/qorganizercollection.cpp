@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -139,9 +139,9 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 /*!
   \fn QOrganizerCollection::operator!=(const QOrganizerCollection &other) const
 
-  Returns true if the id of the collection is different to that of the \a other collection.
+  Returns true if the id of the collection is not the same as that of the \a other collection.
+  Does not check that the metadata of the collections is not equal.
  */
-
 
 /*!
   Returns the complete id of the collection, which includes the manager uri and the manager id of the collection

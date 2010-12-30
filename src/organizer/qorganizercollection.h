@@ -91,6 +91,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(KeyImage, "Image");
 #endif
 
+
 private:
     friend class QOrganizerManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;

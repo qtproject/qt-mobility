@@ -40,6 +40,7 @@
 #include "inputcontroller.h"
 #include "view.h"
 
+const QString InputController::QGYROSCOPE = "QGyroscope";
 const QString InputController::QACCELEROMETER="QAccelerometer";
 const QString InputController::QORIENTATIONSENSOR = "QOrientationSensor";
 const QString InputController::QMAGNETOMETER = "QMagnetometer";

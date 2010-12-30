@@ -129,10 +129,9 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 /*!
  * Export QT Contact into Versit Document.
  */
-bool QVersitContactExporterPrivate::exportContact(
+void QVersitContactExporterPrivate::exportContact(
     const QContact& contact,
-    QVersitDocument& document,
-    QVersitContactExporter::Error* error)
+    QVersitDocument& document)
 {
     QList<QContactDetail> allDetails = contact.details();
     foreach (const QContactDetail& detail, allDetails) {
@@ -222,7 +221,7 @@ bool QVersitContactExporterPrivate::exportContact(
     }
 
     ensureDocumentContainsName(contact, &document);
-    return true;
+    return;
 }
 
 /*!
@@ -703,21 +702,40 @@ void QVersitContactExporterPrivate::encodeOnlineAccount(
 {
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
+    QString protocol = onlineAccount.protocol();
 
-    if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeVideoShare) ||
-        subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
+    QString propertyName;
+
+    if (protocol == QContactOnlineAccount::ProtocolJabber) {
+        propertyName = QLatin1String("X-JABBER");
+    } else if (protocol == QContactOnlineAccount::ProtocolAim) {
+        propertyName = QLatin1String("X-AIM");
+    } else if (protocol == QContactOnlineAccount::ProtocolIcq) {
+        propertyName = QLatin1String("X-ICQ");
+    } else if (protocol == QContactOnlineAccount::ProtocolMsn) {
+        propertyName = QLatin1String("X-MSN");
+    } else if (protocol == QContactOnlineAccount::ProtocolQq) {
+        propertyName = QLatin1String("X-QQ");
+    } else if (protocol == QContactOnlineAccount::ProtocolYahoo) {
+        propertyName = QLatin1String("X-YAHOO");
+    } else if (protocol == QContactOnlineAccount::ProtocolSkype) {
+        propertyName = QLatin1String("X-SKYPE");
+    } else if (subTypes.contains(QContactOnlineAccount::SubTypeSip) ||
+               subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
+               subTypes.contains(QContactOnlineAccount::SubTypeVideoShare)) {
+        propertyName = QLatin1String("X-SIP");
+    } else if (subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
+        propertyName = QLatin1String("X-IMPP");
+    }
+
+    if (!propertyName.isEmpty()) {
         QVersitProperty property;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        QString name(QLatin1String("X-SIP"));
-        if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
-            name = QLatin1String("X-IMPP");
-        property.setName(name);
+        property.setName(propertyName);
         property.setValue(onlineAccount.accountUri());
         *generatedProperties << property;
         *processedFields << QContactOnlineAccount::FieldSubTypes
-                          << QContactOnlineAccount::FieldAccountUri;
+                         << QContactOnlineAccount::FieldAccountUri;
     }
 }
 

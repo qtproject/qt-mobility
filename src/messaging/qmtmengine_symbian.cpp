@@ -2578,7 +2578,7 @@ bool CMTMEngine::isGsm0338CompatibleUnicodeCharacter(TUint16 aValue)
     for (int i=0; i < 128; i++) {
         if (KSMS0338UnicodeChars[i] == aValue) {
             if (aValue == 0x00A0) {
-                // Escape chatacter <=> character 0x1B in GSM 03.38
+                // Escape character <=> character 0x1B in GSM 03.38
                 // character set
                 // => Can't be mapped to GSM 03.38 character set
                 // <=> KEscapedSMS0338UnicodeChars array contains

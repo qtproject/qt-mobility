@@ -39,230 +39,481 @@
 **
 ****************************************************************************/
 
-#include "qvaluespace.h"
-#include "qvaluespace_p.h"
+#include "contextkitlayer_p.h"
+#include <contextpropertyinfo.h>
 
-#include <QSet>
-#include <QDebug>
-#include <contextproperty.h>
-#include <contextregistryinfo.h>
+#include <QCoreApplication>
+#include <QMetaType>
+#include <QChar>
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusArgument>
+
+// dbus types
+Q_DECLARE_METATYPE(float)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const float &f)
+{
+    argument.beginStructure();
+    argument << (double)f;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, float &f)
+{
+    double d;
+    argument.beginStructure();
+    argument >> d;
+    argument.endStructure();
+    f = (float)d;
+    return argument;
+}
+
+Q_DECLARE_METATYPE(QChar)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QChar &ch)
+{
+    argument.beginStructure();
+    argument << ch.unicode();
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QChar &ch)
+{
+    ushort sh;
+    argument.beginStructure();
+    argument >> sh;
+    argument.endStructure();
+    ch = QChar(sh);
+    return argument;
+}
 
 QTM_BEGIN_NAMESPACE
 
 using namespace QValueSpace;
 
-/* ContextKit layer
-
-   This layer makes ContextKit properties visible in the QValueSpace.
-
-   You can not publish values of ContextKit properties using the
-   QValueSpace.  This might be fixed later.
-
-   ContextKit properties have names with dots in them, which allows
-   these properties to be arranged in a tree.  The context commander
-   does this in its UI, for example.
-
-   However, the ContextKit itself does not pay attention to the dots
-   at all: properties just have names and there are no such things as
-   parent / child / sibling relations between properties.  For
-   example, there is a property called "Battery.ChargeLevel", but the
-   ContextKit doesn't know anything about "Battery".  Subscribing to
-   "Battery" is exactly the same as subscribing to any other
-   non-declared property.  When "Battery.ChargeLevel" changes,
-   "Battery" does _not_ receive a change notification.
-
-   The QValueSpace, on the other hand, has a explicit tree-structure:
-   the key "/foo" represents all its children, like "/foo/bar".  When
-   "/foo/bar" changes, "/foo" _does_ receive a change notification.
-
-   There are two ways to map ContextKit properties into the
-   QValueSpace: simply as a long list of siblings (a one-level tree),
-   or as the multi-level tree that is implied by their names.
-
-   We do the latter since that is more natural.  For example, the
-   ContextKit property "Battery.ChargeLevel" is mapped to
-   "/Battery/ChargeLevel", and the key "/Battery" gets a change
-   notifications for all its children.
-*/
-
-/* ContextKitHandle - contains a ContextKit property and all its
-                      direct and indirect children.
-
-   ContextKitHandles do not form a hierarchy between each other; think
-   of them as individual little trees that are created in direct
-   response to requests to the ContextKitLayer.  The properties in
-   these trees can overlap; a single ContextKit property can be
-   accessed via many ContextKitHandles.
- */
-
-class ContextKitHandle : public QObject {
-    
-    Q_OBJECT
-
-public:
-    ContextKitHandle (ContextKitHandle *parent, const QString &root);
-    ~ContextKitHandle ();
-
-    bool value (const QString &path, QVariant *data);
-    void subscribe ();
-    void unsubscribe ();
-    QSet<QString> children ();
-
-signals:
-    void valueChanged();
-
-private:
-    QString prefix;
-    QHash<QString, ContextProperty *> props;
-
-    void insert (const QString &path, const QString &key);
-};
-
-void ContextKitHandle::insert (const QString &path, const QString &key)
+ContextKitPath::ContextKitPath()
 {
-    ContextProperty *prop = new ContextProperty (key);
-    connect (prop, SIGNAL (valueChanged()),
-             this, SIGNAL (valueChanged()));
-    props.insert (path, prop);
 }
 
-ContextKitHandle::ContextKitHandle (ContextKitHandle *parent, const QString &path)
+ContextKitPath::ContextKitPath(QString path)
 {
-    QString key = path;
-    if (key.startsWith(QLatin1Char('/')))
-        key = key.mid(1);
-    key = key.replace(QLatin1Char('/'), QLatin1Char('.'));
-    if (parent)
-        key = parent->prefix + key;
+    initFromPath(path);
+}
 
-    if (!key.isEmpty())
-        prefix = key + QLatin1Char('.');
+void ContextKitPath::initFromPath(QString path)
+{
+    bool hasSlash = path.contains(QLatin1Char('/'));
+    bool hasDot = path.contains(QLatin1Char('.'));
+    bool startingSlash = path.startsWith(QLatin1Char('/'));
 
-    foreach (const QString &k, ContextRegistryInfo::instance()->listKeys())
-    {
-        if (k == key)
-            insert(QString(), k);
-        else if (k.startsWith(prefix))
-            insert(k.mid(prefix.length()).replace (QLatin1Char('.'), QLatin1Char('/')), k);
+    if (startingSlash)
+        path = path.mid(1);
+
+    if (path == "" || path == "/") {
+        m_type = SlashPath;
+    } else if ((hasSlash && !hasDot) || (hasSlash && startingSlash)) {
+        parts = path.split(QLatin1Char('/'));
+        m_type = SlashPath;
+    } else if (hasDot && !hasSlash) {
+        parts = path.split(QLatin1Char('.'));
+        m_type = DotPath;
+    } else {
+        m_type = SlashPath;
+        parts.append(path);
     }
 }
 
-ContextKitHandle::~ContextKitHandle ()
+ContextKitPath::ContextKitPath(QString path, PathType type)
 {
-    foreach (ContextProperty *prop, props.values())
-        delete prop;
+    initFromPath(path);
+    m_type = type;
 }
 
-bool
-ContextKitHandle::value (const QString &path, QVariant *data)
+ContextKitPath::ContextKitPath(const ContextKitPath &other)
 {
-    // path always starts with a "/".
-    ContextProperty *p = props.value (path.mid(1));
-    if (p)
-    {
-        *data = p->value();
-        return true;
+    parts = other.parts;
+    m_type = other.m_type;
+}
+
+ContextKitPath &ContextKitPath::operator=(const ContextKitPath &other)
+{
+    parts = other.parts;
+    m_type = other.m_type;
+    return *this;
+}
+
+bool ContextKitPath::isRegistered() const
+{
+    ContextPropertyInfo pi(toNative());
+    return pi.declared();
+}
+
+bool ContextKitPath::isProvided() const
+{
+    ContextPropertyInfo pi(toNative());
+    return pi.provided();
+}
+
+ContextKitPath ContextKitPath::operator+(const ContextKitPath &other) const
+{
+    ContextKitPath p(*this);
+    foreach (QString pt, other.parts)
+        p.parts.append(pt);
+    return p;
+}
+
+ContextKitPath ContextKitPath::operator+(const QString &str) const
+{
+    ContextKitPath s(str);
+    return *this + s;
+}
+
+ContextKitPath ContextKitPath::operator-(const ContextKitPath &other) const
+{
+    if (other.parts.size() > parts.size()) return ContextKitPath();
+    if (other.parts.size() == 0) return ContextKitPath(*this);
+    if (parts.size() == 0) return ContextKitPath();
+
+    ContextKitPath p(*this);
+    ContextKitPath q(other);
+    while (p.parts.size() > 0 && q.parts.size() > 0 &&
+           p.parts.first() == q.parts.first()) {
+        p.parts.removeFirst();
+        q.parts.removeFirst();
     }
+    return p;
+}
+
+QString ContextKitPath::toNative() const
+{
+    if (m_type == SlashPath)
+        return "/" + parts.join("/");
+    else if (m_type == DotPath)
+        return parts.join(".");
     else
+        return QString();
+}
+
+QString ContextKitPath::toQtPath() const
+{
+    return "/" + parts.join("/");
+}
+
+bool ContextKitPath::operator==(const ContextKitPath &other) const
+{
+    if (parts.size() != other.parts.size())
         return false;
+    if (m_type != other.m_type)
+        return false;
+
+    for (int i = 0; i < parts.size(); i++)
+        if (other.parts.at(i) != parts.at(i))
+            return false;
+
+    return true;
 }
 
-void
-ContextKitHandle::subscribe ()
+bool ContextKitPath::includes(ContextKitPath &other) const
 {
-    foreach (ContextProperty *p, props.values())
-        p->subscribe ();
+    // can't include things smaller than you
+    if (other.parts.size() < parts.size())
+        return false;
+
+    // can't include paths of different type
+    if (other.m_type != m_type)
+        return false;
+
+    // root path includes all others
+    if (parts.size() == 0)
+        return true;
+
+    for (int i = 0; i < parts.size(); i++)
+        if (other.parts.at(i) != parts.at(i))
+            return false;
+
+    return true;
 }
 
-void
-ContextKitHandle::unsubscribe ()
+// borrowed from qt/corelib/io/qsettings_mac
+static QString comify(const QString &organization)
 {
-    foreach (ContextProperty *p, props.values())
-        p->unsubscribe ();
+    for (int i = organization.size() - 1; i >= 0; --i) {
+        QChar ch = organization.at(i);
+        if (ch == QLatin1Char('.') || ch == QChar(0x3002) || ch == QChar(0xff0e)
+                || ch == QChar(0xff61)) {
+            QString suffix = organization.mid(i + 1).toLower();
+            if (suffix.size() == 2 || suffix == QLatin1String("com")
+                    || suffix == QLatin1String("org") || suffix == QLatin1String("net")
+                    || suffix == QLatin1String("edu") || suffix == QLatin1String("gov")
+                    || suffix == QLatin1String("mil") || suffix == QLatin1String("biz")
+                    || suffix == QLatin1String("info") || suffix == QLatin1String("name")
+                    || suffix == QLatin1String("pro") || suffix == QLatin1String("aero")
+                    || suffix == QLatin1String("coop") || suffix == QLatin1String("museum")) {
+                QString result = organization;
+                result.replace(QLatin1Char('/'), QLatin1Char(' '));
+                return result;
+            }
+            break;
+        }
+        int uc = ch.unicode();
+        if ((uc < 'a' || uc > 'z') && (uc < 'A' || uc > 'Z'))
+            break;
+    }
+
+    QString domain;
+    for (int i = 0; i < organization.size(); ++i) {
+        QChar ch = organization.at(i);
+        int uc = ch.unicode();
+        if ((uc >= 'a' && uc <= 'z') || (uc >= '0' && uc <= '9')) {
+            domain += ch;
+        } else if (uc >= 'A' && uc <= 'Z') {
+            domain += ch.toLower();
+        } else {
+           domain += QLatin1Char(' ');
+        }
+    }
+    domain = domain.simplified();
+    domain.replace(QLatin1Char(' '), QLatin1Char('-'));
+    if (!domain.isEmpty())
+        domain.append(QLatin1String(".com"));
+    return domain;
 }
 
-QSet<QString>
-ContextKitHandle::children ()
+void ContextKitHandle::insertRead(const ContextKitPath &path)
+{
+    if (!readProps.contains(path.toQtPath())) {
+        ContextProperty *prop = new ContextProperty(path.toNative());
+        readProps.insert(path.toQtPath(), prop);
+    }
+}
+
+void ContextKitHandle::updateSubtrees()
+{
+    QList<QString> keys = ContextRegistryInfo::instance()->listKeys();
+    foreach (const QString &k, keys) {
+        ContextKitPath p(k);
+        if (path.includes(p))
+            insertRead(p);
+    }
+}
+
+ContextKitHandle::ContextKitHandle(ContextKitHandle *parent, const QString &path,
+                                   QValueSpace::LayerOptions opts)
+{
+    QString javaPackageName;
+    int curPos = 0;
+    int nextDot;
+
+    QString domainName = comify(QCoreApplication::organizationDomain());
+    if (domainName.isEmpty()) {
+        domainName = QLatin1String("unknown-organization.nokia.com");
+        qWarning("No organization name specified, registering on DBUS with "
+                 "'com.nokia.unknown-organization'");
+    }
+
+    while ((nextDot = domainName.indexOf(QLatin1Char('.'), curPos)) != -1) {
+        javaPackageName.prepend(domainName.mid(curPos, nextDot - curPos));
+        javaPackageName.prepend(QLatin1Char('.'));
+        curPos = nextDot + 1;
+    }
+    javaPackageName.prepend(domainName.mid(curPos));
+    javaPackageName = javaPackageName.toLower();
+    if (curPos == 0)
+        javaPackageName.prepend(QLatin1String("com."));
+
+    javaPackageName += QLatin1Char('.');
+    QString app = QCoreApplication::applicationName();
+    if (app.size() < 1 || app.at(0) == QLatin1Char(' ')) {
+        javaPackageName += "unknown-application";
+        qWarning("No application name specified, registering on DBUS as "
+                 "'unknown-application'");
+    } else {
+        app.replace(QRegExp("[^0-9a-zA-Z]"), "");
+        javaPackageName += app;
+    }
+
+    service = new ContextProvider::Service(QDBusConnection::SessionBus,
+                                           javaPackageName, false);
+
+    subscribed = true;
+
+    if (opts & QValueSpace::PermanentLayer)
+        this->path = ContextKitPath(path, ContextKitPath::DotPath);
+    else
+        this->path = ContextKitPath(path, ContextKitPath::SlashPath);
+
+    if (parent)
+        this->path = parent->path + this->path;
+
+    updateSubtrees();
+    connect(ContextRegistryInfo::instance(), SIGNAL(changed()),
+            this, SLOT(updateSubtrees()));
+}
+
+ContextKitHandle::~ContextKitHandle()
+{
+    service->stop();
+    foreach (ContextProperty *prop, readProps.values()) {
+        prop->unsubscribe();
+        delete prop;
+    }
+    foreach (ContextProvider::Property *prop, writeProps.values())
+        delete prop;
+    readProps.clear();
+    writeProps.clear();
+    service->start();
+    delete service;
+}
+
+bool ContextKitHandle::value(const QString &path, QVariant *data)
+{
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
+
+    if (!p.isRegistered() || !p.isProvided())
+        return false;
+
+    ContextProperty *prop = readProps.value(p.toQtPath());
+    if (prop) {
+        if (!subscribed)
+            prop->subscribe();
+
+        prop->waitForSubscription();
+        *data = prop->value();
+
+        if (!subscribed)
+            prop->unsubscribe();
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool ContextKitHandle::setValue(const QString &path, const QVariant &data)
+{
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
+
+    if (!p.isRegistered())
+        return false;
+
+    ContextProvider::Property *prop = writeProps.value(p.toQtPath());
+    if (!prop)
+        prop = insertWrite(p);
+
+    prop->setValue(data);
+    return true;
+}
+
+bool ContextKitHandle::unsetValue(const QString &path)
+{
+    ContextKitPath p = this->path;
+    if (!path.isEmpty()) p = p + path;
+
+    if (!p.isRegistered())
+        return false;
+
+    ContextProvider::Property *prop = writeProps.value(p.toQtPath());
+    if (!prop)
+        prop = insertWrite(p);
+
+    prop->unsetValue();
+    return true;
+}
+
+ContextProvider::Property *ContextKitHandle::insertWrite(const ContextKitPath &p)
+{
+    if (!writeProps.contains(p.toQtPath())) {
+        ContextProvider::Property *prop;
+        QString pth = p.toNative();
+
+        service->stop();
+
+        prop = new ContextProvider::Property(*service, pth);
+        writeProps.insert(p.toQtPath(), prop);
+        connect(prop, SIGNAL(firstSubscriberAppeared(QString)),
+                this, SLOT(on_firstAppeared(QString)));
+        connect(prop, SIGNAL(lastSubscriberDisappeared(QString)),
+                this, SLOT(on_lastDisappeared(QString)));
+
+        service->start();
+
+        return prop;
+    }
+    return NULL;
+}
+
+void ContextKitHandle::on_firstAppeared(QString key)
+{
+    ContextKitPath p(key, path.type());
+    QString relPath = (p - path).toQtPath().mid(1);
+    emit interestChanged(relPath, true);
+}
+
+void ContextKitHandle::on_lastDisappeared(QString key)
+{
+    ContextKitPath p(key, path.type());
+    QString relPath = (p - path).toQtPath().mid(1);
+    emit interestChanged(relPath, false);
+}
+
+void ContextKitHandle::subscribe()
+{
+    foreach (ContextProperty *p, readProps.values()) {
+        p->subscribe();
+        connect(p, SIGNAL(valueChanged()),
+                this, SIGNAL(valueChanged()));
+    }
+    subscribed = true;
+}
+
+void ContextKitHandle::unsubscribe()
+{
+    foreach (ContextProperty *p, readProps.values()) {
+        p->unsubscribe();
+        disconnect(p, SIGNAL(valueChanged()),
+                   this, SIGNAL(valueChanged()));
+    }
+    subscribed = false;
+}
+
+QSet<QString> ContextKitHandle::children()
 {
     QSet<QString> kids;
 
-    foreach (const QString &path, props.keys())
-    {
-        int pos = path.indexOf("/");
-        if (pos >= 0)
-            kids.insert (path.left(pos));
-        else
-            kids.insert (path);
+    foreach (const QString &qp, readProps.keys()) {
+        ContextKitPath pth(qp);
+        pth = pth - this->path;
+        if (pth.size() > 0)
+            kids.insert(pth.at(0));
     }
     return kids;
 }
 
-/* ContextKitLayer - implements QAbstractValueSpaceLayer interface to
-                     hook ContextKit into QValueSpace.
-   
-   It mainly creates ContextKitHandles and dispatches to them.
-*/
-
-class ContextKitLayer : public QAbstractValueSpaceLayer
+ContextKitLayer::ContextKitLayer()
 {
-    Q_OBJECT
+    qDBusRegisterMetaType<float>();
+    qDBusRegisterMetaType<QChar>();
+}
 
-public:
-    ContextKitLayer();
-    virtual ~ContextKitLayer();
-
-    /* ValueSpaceLayer interface - Common functions */
-    QString name();
-    bool startup(Type);
-    QUuid id();
-    unsigned int order();
-    LayerOptions layerOptions() const;
-
-    Handle item(Handle parent, const QString &);
-    void removeHandle(Handle);
-    void setProperty(Handle handle, Properties);
-
-    bool value(Handle, QVariant *);
-    bool value(Handle, const QString &, QVariant *);
-    QSet<QString> children(Handle);
-
-    /* ValueSpaceLayer interface - QValueSpaceSubscriber functions */
-    bool supportsInterestNotification() const { return true; }
-    bool notifyInterest(Handle handle, bool interested);
-
-    /* ValueSpaceLayer interface - QValueSpacePublisher functions */
-    bool setValue(QValueSpacePublisher *, Handle, const QString &, const QVariant &) { return false; }
-    bool removeValue(QValueSpacePublisher *, Handle, const QString &) { return false; }
-    bool removeSubTree(QValueSpacePublisher *, Handle) { return false; }
-    void addWatch(QValueSpacePublisher *, Handle) { return; }
-    void removeWatches(QValueSpacePublisher *, Handle) { return; }
-    void sync() { return; }
-
-    static ContextKitLayer *instance();
-
-private slots:
-    void contextHandleChanged();
-};
-
-QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitLayer);
-
-ContextKitLayer::ContextKitLayer ()
+ContextKitLayer::~ContextKitLayer()
 {
 }
 
-ContextKitLayer::~ContextKitLayer ()
+ContextKitHandle *ContextKitLayer::handleToCKHandle(Handle handle)
 {
+    ContextKitHandle *ckh = NULL;
+    if (handle != InvalidHandle)
+        ckh = reinterpret_cast<ContextKitHandle*>(handle);
+    return ckh;
 }
 
-Q_GLOBAL_STATIC(ContextKitLayer, contextKitLayer);
-ContextKitLayer *ContextKitLayer::instance ()
+void ContextKitLayer::sync()
 {
-    return contextKitLayer ();
-}
-
-QString ContextKitLayer::name()
-{
-    return "ContextKit Layer";
+    QCoreApplication::processEvents();
 }
 
 bool ContextKitLayer::startup(Type)
@@ -270,68 +521,109 @@ bool ContextKitLayer::startup(Type)
     return true;
 }
 
-QUuid ContextKitLayer::id()
+QAbstractValueSpaceLayer::Handle ContextKitLayer::item(Handle parent,
+                                                       const QString &subPath)
 {
-    return QVALUESPACE_CONTEXTKIT_LAYER;
+    ContextKitHandle *parentHandle = handleToCKHandle(parent);
+    ContextKitHandle *h = new ContextKitHandle(parentHandle, subPath,
+                                               this->layerOptions());
+    return reinterpret_cast<Handle>(h);
 }
 
-unsigned int ContextKitLayer::order()
+void ContextKitLayer::removeHandle(Handle handle)
 {
-    return 0;
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        delete h;
 }
 
-LayerOptions ContextKitLayer::layerOptions () const
+void ContextKitLayer::setProperty(Handle handle, Properties properties)
 {
-    return TransientLayer | ReadOnlyLayer;
-}
-
-QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
-{
-    return (Handle) new ContextKitHandle ((parent == InvalidHandle)
-                                          ? NULL
-                                          : (ContextKitHandle *) parent,
-                                          subPath);
-}
-
-void ContextKitLayer::removeHandle (Handle handle)
-{
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    delete h;
-}
-
-void ContextKitLayer::setProperty (Handle handle, Properties properties)
-{
-    ContextKitHandle *h = (ContextKitHandle *)handle;
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (!h)
+        return;
 
     if (properties & Publish)
-        connect (h, SIGNAL(valueChanged()),
-                 this, SLOT(contextHandleChanged()));
+        connect(h, SIGNAL(valueChanged()),
+                this, SLOT(contextHandleChanged()));
     else
-        disconnect (h, SIGNAL(valueChanged()),
-                    this, SLOT(contextHandleChanged()));
+        disconnect(h, SIGNAL(valueChanged()),
+                   this, SLOT(contextHandleChanged()));
 }
 
 void ContextKitLayer::contextHandleChanged()
 {
-    ContextKitHandle *h = (ContextKitHandle *)sender();
-    emit handleChanged ((Handle) h);
+    emit handleChanged(reinterpret_cast<Handle>(sender()));
 }
 
-bool ContextKitLayer::value (Handle handle, QVariant *data)
+void ContextKitLayer::addWatch(QValueSpacePublisher *pub, Handle handle)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->value ("", data);
+    ContextKitHandle *h = handleToCKHandle(handle);
+    connect(h, SIGNAL(interestChanged(QString,bool)),
+            pub, SIGNAL(interestChanged(QString,bool)));
 }
 
-bool ContextKitLayer::value (Handle handle, const QString &subPath, QVariant *data)
+void ContextKitLayer::removeWatches(QValueSpacePublisher *pub, Handle handle)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->value (subPath, data);
+    ContextKitHandle *h = handleToCKHandle(handle);
+    disconnect(h, SIGNAL(interestChanged(QString,bool)),
+               pub, SIGNAL(interestChanged(QString,bool)));
+}
+
+bool ContextKitLayer::value(Handle handle, QVariant *data)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->value("", data);
+    else
+        return false;
+}
+
+bool ContextKitLayer::value(Handle handle, const QString &subPath, QVariant *data)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->value(subPath, data);
+    else
+        return false;
+}
+
+bool ContextKitLayer::setValue(QValueSpacePublisher *, Handle handle,
+                               const QString &path, const QVariant &value)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->setValue(path, value);
+    else
+        return false;
+}
+
+bool ContextKitLayer::removeValue(QValueSpacePublisher *, Handle handle,
+                                  const QString &path)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (h)
+        return h->unsetValue(path);
+    else
+        return false;
+}
+
+bool ContextKitLayer::removeSubTree(QValueSpacePublisher *vsp, Handle handle)
+{
+    ContextKitHandle *h = handleToCKHandle(handle);
+    if (!h)
+        return false;
+
+    // TODO: fix this up
+    foreach (QString kid, h->children())
+        if (!h->unsetValue(kid)) return false;
+
+    return true;
 }
 
 bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
+    ContextKitHandle *h = handleToCKHandle(handle);
 
     if (interested)
         h->subscribe();
@@ -340,12 +632,68 @@ bool ContextKitLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-QSet<QString> ContextKitLayer::children (Handle handle)
+QSet<QString> ContextKitLayer::children(Handle handle)
 {
-    ContextKitHandle *h = (ContextKitHandle *)handle;
-    return h->children ();
+    ContextKitHandle *h = handleToCKHandle(handle);
+    return h->children();
 }
 
-#include "contextkitlayer.moc"
+QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitNonCoreLayer);
+Q_GLOBAL_STATIC(ContextKitNonCoreLayer, contextKitNonCoreLayer);
+ContextKitNonCoreLayer *ContextKitNonCoreLayer::instance()
+{
+    return contextKitNonCoreLayer();
+}
+
+QValueSpace::LayerOptions ContextKitNonCoreLayer::layerOptions() const
+{
+    return WritableLayer | TransientLayer;
+}
+
+QString ContextKitNonCoreLayer::name()
+{
+    return "ContextKit Non-Core Layer";
+}
+
+unsigned int ContextKitNonCoreLayer::order()
+{
+    return 1;
+}
+
+QUuid ContextKitNonCoreLayer::id()
+{
+    return QVALUESPACE_CONTEXTKITNONCORE_LAYER;
+}
+
+QVALUESPACE_AUTO_INSTALL_LAYER(ContextKitCoreLayer);
+Q_GLOBAL_STATIC(ContextKitCoreLayer, contextKitCoreLayer);
+ContextKitCoreLayer *ContextKitCoreLayer::instance()
+{
+    return contextKitCoreLayer();
+}
+
+QValueSpace::LayerOptions ContextKitCoreLayer::layerOptions() const
+{
+    return WritableLayer | PermanentLayer;
+}
+
+QString ContextKitCoreLayer::name()
+{
+    return "ContextKit Core Layer";
+}
+
+unsigned int ContextKitCoreLayer::order()
+{
+    return 0;
+}
+
+QUuid ContextKitCoreLayer::id()
+{
+    return QVALUESPACE_CONTEXTKITCORE_LAYER;
+}
+
+
+#include "moc_contextkitlayer_p.cpp"
+
 QTM_END_NAMESPACE
 

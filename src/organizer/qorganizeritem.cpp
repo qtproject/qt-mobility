@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -720,7 +720,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
  * is either set manually (by saving a modified copy of the QOrganizerItemType
  * in the organizer item, or by calling \l setType()) or synthesized automatically.
  *
- * \sa setType()
+ * \sa QOrganizerItemType
  */
 QString QOrganizerItem::type() const
 {
@@ -730,6 +730,8 @@ QString QOrganizerItem::type() const
 
 /*!
  * Sets the type of the organizer item to the given \a type.
+ *
+ * \sa QOrganizerItemType
  */
 void QOrganizerItem::setType(const QString& type)
 {
@@ -762,6 +764,8 @@ QString QOrganizerItem::displayLabel() const
 
 /*!
  * Sets the display label of the item to \a label
+ *
+ * \sa QOrganizerItemDisplayLabel
  */
 void QOrganizerItem::setDisplayLabel(const QString& label)
 {
@@ -782,6 +786,8 @@ void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
 
 /*!
  * Returns the human-readable description of the item
+ *
+ * \sa QOrganizerItemDescription
  */
 QString QOrganizerItem::description() const
 {
@@ -791,6 +797,8 @@ QString QOrganizerItem::description() const
 
 /*!
  * Sets the human-readable description of the item to \a description
+ *
+ * \sa QOrganizerItemDescription
  */
 void QOrganizerItem::setDescription(const QString& description)
 {
@@ -811,7 +819,9 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
 
 /*!
  * Returns the list of comments (or arbitrary notes about the item)
- * which pertain to this item
+ * which pertain to this item.
+ *
+ * \sa QOrganizerItemComment
  */
 QStringList QOrganizerItem::comments() const
 {
@@ -824,7 +834,9 @@ QStringList QOrganizerItem::comments() const
 }
 
 /*!
- * Clears the comments (arbitrary notes) about this item
+ * Removes all comments (arbitrary notes) about this item
+ *
+ * \sa QOrganizerItemComment
  */
 void QOrganizerItem::clearComments()
 {
@@ -835,13 +847,77 @@ void QOrganizerItem::clearComments()
 }
 
 /*!
+ * Sets the list of comments associated with the item to \a comments.
+ *
+ * \sa QOrganizerItemTag
+ */
+void QOrganizerItem::setComments(const QStringList& comments)
+{
+    d->removeOnly(QOrganizerItemComment::DefinitionName);
+    foreach (const QString& comment, comments) {
+        addComment(comment);
+    }
+}
+
+/*!
  * Adds the comment \a comment to this item
+ *
+ * \sa QOrganizerItemComment
  */
 void QOrganizerItem::addComment(const QString& comment)
 {
     QOrganizerItemComment detail;
     detail.setComment(comment);
     saveDetail(&detail);
+}
+
+/*!
+ * Returns the list of tags for this item.  Tags are used for non-exclusive categorization.
+ *
+ * \sa QOrganizerItemTag
+ */
+QStringList QOrganizerItem::tags() const
+{
+    QStringList tags;
+    foreach (const QOrganizerItemTag& tagDetail, details<QOrganizerItemTag>()) {
+        tags.append(tagDetail.tag());
+    }
+    return tags;
+}
+
+/*!
+ * Removes all tags associated with the item.
+ *
+ * \sa QOrganizerItemTag
+ */
+void QOrganizerItem::clearTags()
+{
+    d->removeOnly(QOrganizerItemTag::DefinitionName);
+}
+
+/*!
+ * Adds the \a tag to this item.
+ *
+ * \sa QOrganizerItemTag
+ */
+void QOrganizerItem::addTag(const QString& tag)
+{
+    QOrganizerItemTag tagDetail;
+    tagDetail.setTag(tag);
+    saveDetail(&tagDetail);
+}
+
+/*!
+ * Sets the list of tags associated with the item to \a tags.
+ *
+ * \sa QOrganizerItemTag
+ */
+void QOrganizerItem::setTags(const QStringList& tags)
+{
+    d->removeOnly(QOrganizerItemTag::DefinitionName);
+    foreach (const QString& tag, tags) {
+        addTag(tag);
+    }
 }
 
 /*!
@@ -862,6 +938,31 @@ void QOrganizerItem::setGuid(const QString& guid)
     QOrganizerItemGuid guidDetail = detail<QOrganizerItemGuid>();
     guidDetail.setGuid(guid);
     saveDetail(&guidDetail);
+}
+
+/* Helper functions for QOrganizerItemData */
+void QOrganizerItemData::removeOnly(const QString& definitionName)
+{
+    QList<QOrganizerItemDetail>::iterator dit = m_details.begin();
+    while (dit != m_details.end()) {
+        // XXX this doesn't check type or display label
+        if (dit->definitionName() == definitionName)
+            dit = m_details.erase(dit);
+        else
+            ++dit;
+    }
+}
+
+void QOrganizerItemData::removeOnly(const QSet<QString> &definitionNames)
+{
+    QList<QOrganizerItemDetail>::iterator dit = m_details.begin();
+    while (dit != m_details.end()) {
+        // XXX this doesn't check type or display label
+        if (definitionNames.contains(dit->definitionName()))
+            dit = m_details.erase(dit);
+        else
+            ++dit;
+    }
 }
 
 QTM_END_NAMESPACE

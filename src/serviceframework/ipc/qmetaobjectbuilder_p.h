@@ -59,13 +59,7 @@
 #include <QtCore/qdatastream.h>
 #include <QtCore/qmap.h>
 
-/*
-    This is a straight copy from kinetic branch.
-    Since this class is currently private to Qt
-    we need to have our own copy
-*/
-
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMetaObjectBuilderPrivate;
 class QMetaMethodBuilder;
@@ -323,6 +317,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaObjectBuilder::AddMembers)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaObjectBuilder::MetaObjectFlags)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

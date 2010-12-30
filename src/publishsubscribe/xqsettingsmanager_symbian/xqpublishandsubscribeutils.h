@@ -55,8 +55,8 @@
 
 #include <QObject>
 
-#include "xqsettingsmanager.h"
-#include "settingsmanager_global.h"
+#include "xqsettingsmanager_p.h"
+#include "settingsmanager_global_p.h"
 
 class XQPublishAndSubscribeUtilsPrivate;
 class XQPublishAndSubscribeSettingsKey;

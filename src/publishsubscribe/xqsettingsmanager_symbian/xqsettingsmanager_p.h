@@ -57,8 +57,8 @@
 #include "xqsettingsmanager.h"
 #include <QHash>
 
-#include "xqsettingskey.h"
-#include "settingshandlerbase.h"
+#include "xqsettingskey_p.h"
+#include "settingshandlerbase_p.h"
 
 // FORWARD DECLARATIONS
 class QVariant;

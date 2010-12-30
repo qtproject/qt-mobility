@@ -33,7 +33,8 @@ PRIVATE_HEADERS += \
                     qgeoboundingcircle_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
-                    qnmeapositioninfosource_p.h
+                    qnmeapositioninfosource_p.h \
+                    qgeoareamonitor_polling_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -100,13 +101,11 @@ maemo5 {
     SOURCES += gconfitem.cpp \
                liblocationwrapper.cpp \
                qgeopositioninfosource_maemo5.cpp \
-               qgeosatelliteinfosource_maemo5.cpp \
-               qgeoareamonitor_maemo.cpp
+               qgeosatelliteinfosource_maemo5.cpp
     HEADERS += gconfitem_p.h  \
                liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
-               qgeosatelliteinfosource_maemo5_p.h \
-               qgeoareamonitor_maemo_p.h
+               qgeosatelliteinfosource_maemo5_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
     CONFIG += create_pc create_prl
     LIBS += -llocation
@@ -114,6 +113,37 @@ maemo5 {
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }
+
+meego {
+    contains (geoclue-master_enabled, yes) {
+        message("Building location with GeoClue master support.")
+        SOURCES += qgeopositioninfosource_geocluemaster.cpp
+        HEADERS += qgeopositioninfosource_geocluemaster_p.h
+        DEFINES += GEOCLUE_MASTER_AVAILABLE=1
+        PKGCONFIG += geoclue
+        QMAKE_PKGCONFIG_REQUIRES += geoclue
+    } else {
+        message("Building location without GeoClue master support.")
+    }
+    contains (gypsy_enabled, yes) {
+        message("Building location with Gypsy support.")
+        SOURCES += qgeosatelliteinfosource_gypsy.cpp
+        HEADERS += qgeosatelliteinfosource_gypsy_p.h
+        DEFINES += GYPSY_AVAILABLE=1
+        PKGCONFIG += gypsy
+        QMAKE_PKGCONFIG_REQUIRES += gypsy
+    } else {
+        message("Building location without Gypsy support.")
+    }
+    if (contains(gypsy_enabled, yes) || contains (geoclue-master_enabled, yes)) {
+        CONFIG += qdbus link_pkgconfig
+        PKGCONFIG += gconf-2.0 glib-2.0
+        QMAKE_PKGCONFIG_REQUIRES += glib-2.0 gconf-2.0
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+        pkgconfig.files = QtLocation.pc
+    }
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += \
@@ -129,7 +159,8 @@ SOURCES += \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qlocationutils.cpp \
-            qnmeapositioninfosource.cpp
+            qnmeapositioninfosource.cpp \
+            qgeoareamonitor_polling.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
@@ -154,12 +185,10 @@ simulator {
     SOURCES += qgeopositioninfosource_simulator.cpp \
                 qlocationdata_simulator.cpp \
                 qgeosatelliteinfosource_simulator.cpp \
-                qgeoareamonitor_simulator.cpp \
                 qlocationconnection_simulator.cpp
     HEADERS += qgeopositioninfosource_simulator_p.h \
                 qlocationdata_simulator_p.h \
                 qgeosatelliteinfosource_simulator_p.h \
-                qgeoareamonitor_simulator_p.h \
                 qlocationconnection_simulator_p.h
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)

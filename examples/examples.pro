@@ -37,11 +37,13 @@ contains(mobility_modules,location) {
         contains(mobility_modules,bearer) {
     	    SUBDIRS +=  flickrdemo \
                         geoservicedemo \
+                        mapsnavigator \
                         mapviewer
         }
     } else {
         SUBDIRS +=  flickrdemo \
                     geoservicedemo \
+                    mapsnavigator \
                     mapviewer
     }
 
@@ -98,9 +100,8 @@ contains(mobility_modules,multimedia) {
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     contains(mobility_modules,messaging) {
         !win32-g++ {
-	    SUBDIRS += \
-                querymessages \
-                writemessage
+            SUBDIRS += writemessage
+            !symbian:SUBDIRS += querymessages
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
@@ -132,16 +133,25 @@ contains(mobility_modules,gallery) {
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo \
 	       todo
-#disable qmlorganizer, as it is not completed
-#    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-#        SUBDIRS += \
-#               qmlorganizer
-#    }
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        SUBDIRS += \
+               qmlorganizer
+    }
 }
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
     SUBDIRS += hapticsplayer hapticsquare # this not a good UI for mobile screens at the moment
+}
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += connectivity
+}
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    !win32:SUBDIRS += btscanner btchat
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

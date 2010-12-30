@@ -128,6 +128,26 @@ void tst_QVersitReader::testDevice()
     QVERIFY(mReader->device() == mInputDevice);
 }
 
+void tst_QVersitReader::testNullDevice()
+{
+    QVersitReader vr;
+    QVERIFY(vr.device() == NULL);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+    vr.setDevice(NULL);
+    QVERIFY(vr.device() == NULL);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+    QFile f("does not exist or else");
+    vr.setDevice(&f);
+    QVERIFY(vr.device() == &f);
+    QVERIFY(vr.startReading() == false);
+    QVERIFY(vr.error() == QVersitReader::IOError);
+
+}
+
 void tst_QVersitReader::testDefaultCodec()
 {
     QVERIFY(mReader->defaultCodec() == 0);
@@ -331,7 +351,7 @@ void tst_QVersitReader::testDetectCodec_data()
     }
     {
         // some Scandinavian characters, note that "\xe4\xe4" is invalid UTF-8, as is "\xf6n"
-        const QByteArray& document = 
+        const QByteArray& document =
             "BEGIN:VCARD\r\nVERSION:2.1\r\n"
             "FN:P\xe4\xe4kk\xf6nen\r\n"
             "END:VCARD\r\n";
@@ -340,7 +360,7 @@ void tst_QVersitReader::testDetectCodec_data()
     }
     {
         // as above, but quoted-printable
-        const QByteArray& document = 
+        const QByteArray& document =
             "BEGIN:VCARD\r\nVERSION:2.1\r\n"
             "FN;ENCODING=QUOTED-PRINTABLE:P=E4=E4kk=F6nen\r\n"
             "END:VCARD\r\n";

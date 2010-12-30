@@ -46,6 +46,7 @@
 #include "orientationcontroller.h"
 #include "compasscontroller.h"
 #include "tapcontroller.h"
+#include "gyroscopecontroller.h"
 
 int View::m_imageWidth;
 int View::m_imageHeight;
@@ -71,6 +72,7 @@ View::View(QGraphicsScene *scene) :
     setSceneRect(0, y, width(), h);
 
 
+    m_sensors.append(InputController::QGYROSCOPE);
     m_sensors.append(InputController::QACCELEROMETER);
     m_sensors.append(InputController::QORIENTATIONSENSOR);
     m_sensors.append(InputController::QMAGNETOMETER);
@@ -82,7 +84,8 @@ View::View(QGraphicsScene *scene) :
 
     m_menu = new QMenu(this);
     createActions();
-    handleAction(NULL,InputController::QACCELEROMETER);
+//    handleAction(NULL,InputController::QACCELEROMETER);
+    handleAction(NULL,InputController::QGYROSCOPE);
 
     m_timer.setSingleShot(false);
     m_timer.start(m_delay);
@@ -147,6 +150,10 @@ void View::createActions()
 
         const QString sensor = m_sensors.at(i);
         do{
+            if (sensor==InputController::QGYROSCOPE){
+                connect(tmp, SIGNAL(triggered()), this, SLOT(startGyroscope()));
+                break;
+            }
             if (sensor==InputController::QACCELEROMETER){
                 connect(tmp, SIGNAL(triggered()), this, SLOT(startAccelerometer()));
                 break;
@@ -184,6 +191,12 @@ void View::createActions()
 void View::startAccelerometer(){
     handleAction(m_currentSensor, InputController::QACCELEROMETER);
 }
+
+
+void View::startGyroscope(){
+    handleAction(m_currentSensor, InputController::QGYROSCOPE);
+}
+
 
 void View::startOrientationSensor(){
     handleAction(m_currentSensor, InputController::QORIENTATIONSENSOR);
@@ -256,6 +269,10 @@ void View::switchController(QString sensor){
         return;
     }
 
+    if (sensor==InputController::QGYROSCOPE){
+        m_controller = new GyroscopeController();
+        return;
+    }
 
 
 }

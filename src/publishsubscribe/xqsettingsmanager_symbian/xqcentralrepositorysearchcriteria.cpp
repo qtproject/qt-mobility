@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "xqcentralrepositorysearchcriteria.h"
+#include "xqcentralrepositorysearchcriteria_p.h"
 
 /*!
     \class XQCentralRepositorySearchCriteria

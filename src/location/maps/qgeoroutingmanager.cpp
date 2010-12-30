@@ -159,7 +159,7 @@ private slots:
     implementation provided by \a engine.
 
     This constructor is used internally by QGeoServiceProviderFactory. Regular
-    users should aquire instance of QGeoRoutingManager with
+    users should acquire instances of QGeoRoutingManager with
     QGeoServiceProvider::routingManager();
 */
 QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent)

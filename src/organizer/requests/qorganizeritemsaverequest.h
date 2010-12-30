@@ -57,10 +57,14 @@ class Q_ORGANIZER_EXPORT QOrganizerItemSaveRequest : public QOrganizerAbstractRe
 
 public:
     QOrganizerItemSaveRequest(QObject* parent = 0);
+    ~QOrganizerItemSaveRequest();
 
     /* Selection */
     void setItem(const QOrganizerItem& organizeritem);
     void setItems(const QList<QOrganizerItem>& organizeritems);
+
+    void setDefinitionMask(const QStringList& definitionMask);
+    QStringList definitionMask() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;

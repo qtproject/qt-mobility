@@ -26,7 +26,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "    </div>\n" \
 			  "    <div id=\"shortCut\">\n" \
 			  "      <ul>\n" \
-			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Mobility 1.1</a></span></li>\n" \
+			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Mobility 1.2 TP</a></span></li>\n" \
 			  "        <li class=\"shortCut-topleft-active\"><a href=\"http://doc.qt.nokia.com\">ALL VERSIONS" \
 			  "        </a></li>\n" \
 			  "      </ul>\n" \
@@ -42,6 +42,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			"		 <li><a href=\"#\">Examples</a> \n" \
 			"			 <ul id=\"topmenuexample\"> \n" \
 			"				 <li><a href=\"all-examples.html\">Examples</a></li> \n" \
+			"				 <li><a href=\"tutorials.html\">Tutorials</a></li> \n" \
 			"			 </ul> \n" \
 			"		 </li> \n" \
 			" </ul> \n" \
@@ -94,6 +95,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "          <div id=\"list003\" class=\"list\">\n" \
 			  "        <ul id=\"ul003\">\n" \
 			  "              <li class=\"defaultLink\"><a href=\"all-examples.html\">Examples</a></li>\n" \
+			  "              <li class=\"defaultLink\"><a href=\"tutorials.html\">Tutorials</a></li>\n" \
 			  "            </ul> \n" \
 			  "          </div>\n" \
 			  "        </div>\n" \

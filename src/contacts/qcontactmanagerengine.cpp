@@ -267,11 +267,10 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contact will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contact will be returned.  If a client makes changes to an
+  contact which has been retrieved with a fetch hint, they should save it back using a partial save,
+  masked by the same set of detail names in order to avoid information loss.
 
   \sa QContactFetchHint
  */
@@ -1010,6 +1009,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
+    fields.insert(QContactOnlineAccount::FieldProtocol, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -2868,21 +2868,35 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
  */
 QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
 {
-    // Default implementation is to fetch one by one
-    QList<QContact> ret;
+    QContactLocalIdFilter lif;
+    lif.setIds(localIds);
 
-    for (int i = 0; i < localIds.count(); i++) {
-        QContactManager::Error localError = QContactManager::NoError;
-        ret.append(contact(localIds.at(i), fetchHint, &localError));
+    QList<QContact> unsorted = contacts(lif, QContactSortOrder(), fetchHint, error);
 
-        if (localError != QContactManager::NoError) {
-            *error = localError;
-            if (errorMap)
-                errorMap->insert(i, localError);
+    // Build an index into the results
+    QHash<QContactLocalId, int> idMap; // value is index into unsorted
+    if (*error == QContactManager::NoError) {
+        for (int i = 0; i < unsorted.size(); i++) {
+            idMap.insert(unsorted[i].localId(), i);
         }
     }
 
-    return ret;
+    // Build up the results and errors
+    QList<QContact> results;
+    for (int i = 0; i < localIds.count(); i++) {
+        QContactLocalId id(localIds[i]);
+        if (!idMap.contains(id)) {
+            if (errorMap)
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            if (*error == QContactManager::NoError)
+                *error = QContactManager::DoesNotExistError;
+            results.append(QContact());
+        } else {
+            results.append(unsorted[idMap[id]]);
+        }
+    }
+
+    return results;
 }
 
 /*!

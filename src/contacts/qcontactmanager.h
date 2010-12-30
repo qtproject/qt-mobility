@@ -58,6 +58,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
 #include "qcontacttype.h"
+#include "qcontactobserver.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -102,7 +103,6 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
-    /* The values of the Error enum are still to be decided! */
     enum Error {
         NoError = 0,
         DoesNotExistError,
@@ -118,7 +118,8 @@ public:
         UnspecifiedError,
         VersionMismatchError,
         LimitReachedError,
-        InvalidContactTypeError
+        InvalidContactTypeError,
+        TimeoutError
     };
 
     /* Error reporting */
@@ -141,6 +142,8 @@ public:
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - save.
     bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap = 0); // Partial save
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - remove.
+
+    QSharedPointer<QContactObserver> observeContact(QContactLocalId contactId);
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
     QContact compatibleContact(const QContact& original);
@@ -196,6 +199,11 @@ Q_SIGNALS:
     void relationshipsAdded(const QList<QContactLocalId>& affectedContactIds);
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
     void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId); // need both? or just new?
+
+private Q_SLOTS:
+    void contactsUpdated(const QList<QContactLocalId>& ids);
+    void contactsDeleted(const QList<QContactLocalId>& ids);
+    void observerDestroyed(QObject* object);
 
 private:
     friend class QContactManagerData;

@@ -169,7 +169,7 @@ public:
     double heading() const {return detail().variantValue(QContactGeoLocation::FieldHeading).toDouble();}
     void setSpeed(double v)
     {
-        if (!readOnly() && qFuzzyCompare(v, speed())) {
+        if (!readOnly() && !qFuzzyCompare(v, speed())) {
             detail().setValue(QContactGeoLocation::FieldSpeed, v);
             emit fieldsChanged();
         }

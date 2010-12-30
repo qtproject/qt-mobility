@@ -59,9 +59,11 @@ protected:
     virtual void start();
     virtual void stop();
     AbstractSensorChannelInterface* m_sensorInterface;
+    static const char* ALWAYS_ON;
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+    static const int KErrNotFound;
 
     void setRanges(qreal correctionFactor=1);
 
@@ -70,25 +72,29 @@ protected:
     {
 
         if (!initDone) {
-            m_remoteSensorManager->loadPlugin(sensorName);
+            if (!m_remoteSensorManager->loadPlugin(sensorName)){
+                sensorError(KErrNotFound);
+                return;
+            }
             m_remoteSensorManager->registerSensorInterface<T>(sensorName);
         }
         m_sensorInterface = T::controlInterface(sensorName);
         if (!m_sensorInterface) {
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
+        if (!m_sensorInterface) {
+            sensorError(KErrNotFound);
+            return;
+        }
 
         initDone = true;
-
-
+        
         //metadata
-        int l = m_sensorInterface->getAvailableIntervals().size();
+        QList<DataRange> intervals = m_sensorInterface->getAvailableIntervals();
 
-
-        for (int i=0; i<l; i++){
-            qreal intervalMax = ((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).max;
-            qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
-
+        for (int i=0, l=intervals.size(); i<l; i++){
+            qreal intervalMax = ((DataRange)(intervals.at(i))).max;
+            qreal intervalMin =((DataRange)(intervals.at(i))).min;
 
             if (intervalMin==0 && intervalMax==0){
                 // 0 interval has different meanings in e.g. magge/acce
@@ -98,15 +104,11 @@ protected:
                 continue;
             }
 
-
-
             qreal rateMin = intervalMax<1 ? 1 : 1/intervalMax * 1000;
             rateMin = rateMin<1 ? 1 : rateMin;
 
             intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
             qreal rateMax = 1/intervalMin * 1000;
-
-
 
             //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
             addDataRate(rateMin, rateMax);
@@ -115,6 +117,7 @@ protected:
         if (sensorName=="alssensor") return;                // SensorFW returns lux values, plugin enumerated values
         if (sensorName=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (sensorName=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
+        if (sensorName=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
 
         setDescription(m_sensorInterface->property("description").toString());
 
@@ -124,6 +127,7 @@ protected:
 
 private:
     static SensorManagerInterface* m_remoteSensorManager;
+    int m_prevOutputRange;
 
 };
 

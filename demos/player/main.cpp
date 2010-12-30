@@ -48,6 +48,11 @@ int main(int argc, char *argv[])
 
     Player player;
 #ifdef Q_OS_SYMBIAN
+    // lock screen orientation
+    CAknAppUi* appUi = dynamic_cast<CAknAppUi*>(CEikonEnv::Static()->AppUi());
+    if(appUi){
+        QT_TRAP_THROWING(appUi ->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape));
+    }
     player.showMaximized();
 #else
     player.show();

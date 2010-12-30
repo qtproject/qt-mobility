@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
+#include "qmessageid.h"
+#include "messagingutil_p.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -132,7 +135,7 @@ QTM_BEGIN_NAMESPACE
     The result of combining an empty filter with a non-empty filter using an OR operation is the
     empty filter.
 
-    The result of combining two empty filters is an empty filter.
+    The result of combining two empty filters using either an AND or OR operation is an empty filter.
 */
 
 /*!
@@ -174,7 +177,13 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageFilter::operator|=(const QMessageFilter& other)
-  
+    foreach(QMessageAccount const& id, QMessageManager().queryMessages()) {
+        if (MessagingUtil::globMatch(pattern, QMessageAccount(id).name())) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageAccountFilter::byId(ids);
     Performs a logical OR with this filter and the filter \a other and assigns the result
     to this filter.
 */
@@ -233,6 +242,14 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 */
 
 /*!
+    \fn QMessageFilter::bySender(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose sender matches \a value, according to \a cmp.
+
+    \sa QMessage::from()
+*/
+
+/*!
     \fn QMessageFilter::bySender(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching messages whose sender matches \a value, according to \a cmp.
@@ -249,18 +266,45 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 */
 
 /*!
-    \fn QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
-    Returns a filter matching messages whose recipients include the substring \a value, 
+    \fn QMessageFilter::byRecipients(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a pattern,
     according to \a cmp.
 
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 
 /*!
-    \fn QMessageFilter::bySubject(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byRecipients(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::bySubject(const QString &pattern, QMessageDataComparator::EqualityComparator cmp)
   
-    Returns a filter matching messages whose subject matches \a value, according to \a cmp.
+    Returns a filter matching messages whose subject matches \a pattern, according to \a cmp.
+
+    \sa QMessage::subject()
+*/
+
+/*!
+    \fn QMessageFilter::bySubject(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+
+    Returns a filter matching messages whose subject matches the
+    substring \a value, according to \a cmp.
 
     \sa QMessage::subject()
 */
@@ -404,5 +448,213 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
         
     \sa QMessage::parentFolderId()
 */
+
+/*!
+    \fn QMessageFilter::byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a pattern,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byTo(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byTo(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a pattern,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byCc(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byCc(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a pattern,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byBcc(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+/*!
+    \fn QMessageFilter::byBcc(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+
+    Returns a filter matching messages whose recipients include the substring \a value,
+    according to \a cmp.
+
+    \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
+*/
+
+
+QMessageFilter QMessageFilter::bySender(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        bool matched(MessagingUtil::globMatch(pattern, QMessage(id).from().addressee()));
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+QMessageFilter QMessageFilter::byRecipients(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        QMessage msg(id);
+        QMessageAddressList addressList(msg.to());
+        addressList.append(msg.cc());
+        addressList.append(msg.bcc());
+
+        bool matched(false);
+
+        foreach (QMessageAddress const& addr, addressList) {
+            if (MessagingUtil::globMatch(pattern, addr.addressee())) {
+                matched = true;
+                break;
+            }
+        }
+
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+QMessageFilter QMessageFilter::bySubject(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        bool matched(MessagingUtil::globMatch(pattern, QMessage(id).subject()));
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+QMessageFilter QMessageFilter::byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        bool matched(false);
+        foreach (QMessageAddress const& addr, QMessage(id).to()) {
+            if (MessagingUtil::globMatch(pattern, addr.addressee())) {
+                matched = true;
+                break;
+            }
+        }
+
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+QMessageFilter QMessageFilter::byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        bool matched(false);
+        foreach (QMessageAddress const& addr, QMessage(id).cc()) {
+            if (MessagingUtil::globMatch(pattern, addr.addressee())) {
+                matched = true;
+                break;
+            }
+        }
+
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+QMessageFilter QMessageFilter::byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+{
+    QMessageIdList ids;
+
+    foreach (QMessageId const& id, QMessageManager().queryMessages()) {
+        bool matched(false);
+        foreach (QMessageAddress const& addr, QMessage(id).bcc()) {
+            if (MessagingUtil::globMatch(pattern, addr.addressee())) {
+                matched = true;
+                break;
+            }
+        }
+
+        if ((matched && cmp == QMessageDataComparator::Like)
+                || (!matched && cmp == QMessageDataComparator::NotLike)) {
+            ids.push_back(id);
+        }
+
+    }
+
+    return QMessageFilter::byId(ids);
+}
+
+
 
 QTM_END_NAMESPACE

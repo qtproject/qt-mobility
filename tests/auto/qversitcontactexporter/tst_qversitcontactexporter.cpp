@@ -1179,6 +1179,62 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
     QCOMPARE(countProperties(document), 0);
+
+    // Test protocols Jabber, AIM, ICQ, MSN, Yahoo, Skype
+    contact.clearDetails();
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolJabber);
+    onlineAccount.setAccountUri("a");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolAim);
+    onlineAccount.setAccountUri("b");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolIcq);
+    onlineAccount.setAccountUri("c");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolMsn);
+    onlineAccount.setAccountUri("d");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolQq);
+    onlineAccount.setAccountUri("e");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolYahoo);
+    onlineAccount.setAccountUri("f");
+    contact.saveDetail(&onlineAccount);
+    onlineAccount = QContactOnlineAccount();
+    onlineAccount.setProtocol(QContactOnlineAccount::ProtocolSkype);
+    onlineAccount.setAccountUri("g");
+    contact.saveDetail(&onlineAccount);
+
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    document = mExporter->documents().first();
+
+    property = findPropertyByName(document, QLatin1String("X-JABBER"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "a");
+    property = findPropertyByName(document, QLatin1String("X-AIM"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "b");
+    property = findPropertyByName(document, QLatin1String("X-ICQ"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "c");
+    property = findPropertyByName(document, QLatin1String("X-MSN"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "d");
+    property = findPropertyByName(document, QLatin1String("X-QQ"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "e");
+    property = findPropertyByName(document, QLatin1String("X-YAHOO"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "f");
+    property = findPropertyByName(document, QLatin1String("X-SKYPE"));
+    QVERIFY(!property.isEmpty());
+    QVERIFY(property.value() == "g");
 }
 
 void tst_QVersitContactExporter::testEncodeFamily()

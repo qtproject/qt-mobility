@@ -94,6 +94,7 @@ public:
     
     void createQuery();
 
+    void cleanupResultSet();
 
 private:
     QGalleryItemRequest *m_request;

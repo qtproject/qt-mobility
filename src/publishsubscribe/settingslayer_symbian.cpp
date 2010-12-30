@@ -41,7 +41,7 @@
 
 #include "settingslayer_symbian_p.h"
 #include <QVariant>
-#include "xqsettingskey.h"
+#include "xqsettingskey_p.h"
 #include "xqpublishandsubscribeutils.h"
 
 #if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)

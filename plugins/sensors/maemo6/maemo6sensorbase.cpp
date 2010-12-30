@@ -47,9 +47,11 @@ SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
 
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
+const int maemo6sensorbase::KErrNotFound=-1;
+const char* maemo6sensorbase::ALWAYS_ON = "alwaysOn";
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_prevOutputRange(-1)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -68,6 +70,8 @@ void maemo6sensorbase::start()
 {
 
     if (m_sensorInterface) {
+
+        // dataRate
         int dataRate = sensor()->dataRate();
         if (dataRate > 0) {
             int interval = 1000 / dataRate;
@@ -79,6 +83,27 @@ void maemo6sensorbase::start()
         } else {
             qDebug() << "Data rate in don't care mode (interval" << m_sensorInterface->interval() << "ms) for" << m_sensorInterface->id();
         }
+
+        // outputRange
+        int currentRange = sensor()->outputRange();
+
+        if (currentRange != m_prevOutputRange){
+            qoutputrange range = sensor()->outputRanges().at(currentRange);
+            DataRange range1(range.minimum, range.maximum, range.accuracy);
+            m_sensorInterface->requestDataRange(range1);
+            m_prevOutputRange = currentRange;
+        }
+
+
+        // TODO: always on
+        QVariant alwaysOn = sensor()->property(ALWAYS_ON);
+        alwaysOn.isValid()?
+                m_sensorInterface->setStandbyOverride(alwaysOn.toBool()):
+                m_sensorInterface->setStandbyOverride(false);
+
+
+        // TODO: buffer, if changed between starts
+        
         int returnCode = m_sensorInterface->start().error().type();
         if (returnCode==0) return;
         qWarning()<<"m_sensorInterface did not start, error code:"<<returnCode;
@@ -92,15 +117,16 @@ void maemo6sensorbase::stop()
         m_sensorInterface->stop();
 }
 
-
 void maemo6sensorbase::setRanges(qreal correctionFactor){
-    int l = m_sensorInterface->getAvailableDataRanges().size();
+    if (!m_sensorInterface) return;
 
-    for (int i=0; i<l; i++){
-        qreal rangeMin = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min * correctionFactor;
-        qreal rangeMax =((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).max * correctionFactor;
-        qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).resolution * correctionFactor;
+    QList<DataRange> ranges = m_sensorInterface->getAvailableDataRanges();
+
+    for (int i=0, l=ranges.size(); i<l; i++){
+        DataRange range = ranges.at(i);
+        qreal rangeMin = range.min * correctionFactor;
+        qreal rangeMax = range.max * correctionFactor;
+        qreal resolution = range.resolution * correctionFactor;
         addOutputRange(rangeMin, rangeMax, resolution);
     }
-
 }

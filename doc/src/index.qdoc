@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -346,7 +346,7 @@
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="6" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
     <td colspan="3" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
@@ -356,13 +356,15 @@
     <td><b>Symbian</b></td>
     <td nowrap="nowrap"><b>Maemo 5</b></td>
     <td><b>Harmattan</b></td>
+    <td><b>MeeGo</b></td>
     <td><b>Windows XP/Vista</b></td>
     <td><b>Linux</b></td>
     <td nowrap="nowrap"><b>Mac OS X</b></td>
     </tr>
     <tr>
-    <td nowrap="nowrap">Service Framework (in-process)</td>
+    <td nowrap="nowrap">Service Framework</td>
     <td>FINAL</td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -382,6 +384,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -395,6 +398,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="grey">2)</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -407,6 +411,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -421,6 +426,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -434,6 +440,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -446,6 +453,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -460,6 +468,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -467,6 +476,7 @@
     <tr>
     <td>Sensors</td>
     <td>FINAL</td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -489,10 +499,12 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
     <td>FINAL</td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -512,22 +524,10 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    </tr>
-    <tr>
-    <td nowrap="nowrap">Service Framework(OOP)</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Organizer</td>
@@ -537,6 +537,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -551,6 +552,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -558,11 +560,12 @@
     <tr>
     <td>Document Gallery</td>
     <td>FINAL</td>
-    <td bgcolor="yellow">*)</td>
-    <td bgcolor="yellow">*)</td>
-    <td bgcolor="yellow">*)</td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">1)</td>
+    <td bgcolor="yellow">1)</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -571,6 +574,7 @@
     <tr>
     <td>Maps/Navigation</td>
     <td>FINAL</td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -590,6 +594,21 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Connectivity</td>
+    <td>ALPHA</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="grey"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -612,8 +631,10 @@
     <p>
     \endraw
 
-    *) The document gallery backend for S60 3.1, 3.2, and 5.0 is not enabled
+    1) The document gallery backend for S60 3.1, 3.2, and 5.0 is not enabled
     in pre-built packages due to library dependency issues on some devices.
+
+    2.) Mobility Bearer does not support MeeGo. Use Qt 4.7 based Bearer API instead.
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com

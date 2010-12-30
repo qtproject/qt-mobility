@@ -51,7 +51,10 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerTodo : public QOrganizerItem
 {
 public:
-#if !Q_QDOC
+
+#ifdef Q_QDOC
+    static const QLatin1Constant QOrganizerTodo;
+#else
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
 #endif
 

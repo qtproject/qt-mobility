@@ -41,39 +41,54 @@
 
 #include "genericorientationsensor.h"
 #include "genericrotationsensor.h"
+#include "genericalssensor.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <QFile>
 #include <QDebug>
 
-class genericSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class genericSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorChangesInterface, public QSensorBackendFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+    Q_INTERFACES(QtMobility::QSensorPluginInterface QtMobility::QSensorChangesInterface)
 public:
     void registerSensors()
     {
         qDebug() << "loaded the Generic plugin";
-        QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
-        QSensorManager::registerBackend(QRotationSensor::type, genericrotationsensor::id, this);
+        // Nothing to register here
+    }
+
+    void sensorsChanged()
+    {
+        if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty()) {
+            // There is an accelerometer available. Register the backends
+            if (!QSensorManager::isBackendRegistered(QOrientationSensor::type, genericorientationsensor::id))
+                QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
+            if (!QSensorManager::isBackendRegistered(QRotationSensor::type, genericrotationsensor::id))
+                QSensorManager::registerBackend(QRotationSensor::type, genericrotationsensor::id, this);
+            if (!QSensorManager::isBackendRegistered(QAmbientLightSensor::type, genericalssensor::id))
+                QSensorManager::registerBackend(QAmbientLightSensor::type, genericalssensor::id, this);
+        } else {
+            if (QSensorManager::isBackendRegistered(QOrientationSensor::type, genericorientationsensor::id))
+                QSensorManager::unregisterBackend(QOrientationSensor::type, genericorientationsensor::id);
+            if (QSensorManager::isBackendRegistered(QRotationSensor::type, genericrotationsensor::id))
+                QSensorManager::unregisterBackend(QRotationSensor::type, genericrotationsensor::id);
+            if (QSensorManager::isBackendRegistered(QAmbientLightSensor::type, genericalssensor::id))
+                QSensorManager::unregisterBackend(QAmbientLightSensor::type, genericalssensor::id);
+        }
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
-        if (sensor->identifier() == genericorientationsensor::id) {
-            // Can't make this unless we have an accelerometer
-            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
-                return new genericorientationsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
-        }
+        if (sensor->identifier() == genericorientationsensor::id)
+            return new genericorientationsensor(sensor);
 
-        if (sensor->identifier() == genericrotationsensor::id) {
-            // Can't make this unless we have an accelerometer
-            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
-                return new genericrotationsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
-        }
+        if (sensor->identifier() == genericrotationsensor::id)
+            return new genericrotationsensor(sensor);
+
+        if (sensor->identifier() == genericalssensor::id)
+            return new genericalssensor(sensor);
 
         return 0;
     }

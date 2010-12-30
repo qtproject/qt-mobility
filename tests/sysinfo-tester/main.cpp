@@ -41,6 +41,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QDesktopWidget>
 
 #include "qsysteminfo.h"
 
@@ -96,7 +97,7 @@ static const symbol_t Feature_lut[] =
   SYM(QSystemInfo::LocationFeature),
   SYM(QSystemInfo::VideoOutFeature),
   SYM(QSystemInfo::HapticsFeature),
- // SYM(QSystemInfo::FmTransmitterFeature),
+ SYM(QSystemInfo::FmTransmitterFeature),
   {0,0}
 };
 
@@ -124,10 +125,10 @@ static const symbol_t NetworkMode_lut[] =
   SYM(QSystemNetworkInfo::EthernetMode),
   SYM(QSystemNetworkInfo::BluetoothMode),
   SYM(QSystemNetworkInfo::WimaxMode),
-//  SYM(QSystemNetworkInfo::GprsMode),
-//  SYM(QSystemNetworkInfo::EdgeMode),
-//  SYM(QSystemNetworkInfo::HspaMode),
-//  SYM(QSystemNetworkInfo::LteMode),
+  SYM(QSystemNetworkInfo::GprsMode),
+  SYM(QSystemNetworkInfo::EdgeMode),
+  SYM(QSystemNetworkInfo::HspaMode),
+  SYM(QSystemNetworkInfo::LteMode),
   {0,0}
 };
 
@@ -161,7 +162,7 @@ static void test_systeminfo(void)
   X(info.hasFeatureSupported(QSystemInfo::LocationFeature));
   X(info.hasFeatureSupported(QSystemInfo::VideoOutFeature));
   X(info.hasFeatureSupported(QSystemInfo::HapticsFeature));
-  //X(info.hasFeatureSupported(QSystemInfo::FmTransmitterFeature));
+  X(info.hasFeatureSupported(QSystemInfo::FmTransmitterFeature));
 }
 
 /* ------------------------------------------------------------------------- *
@@ -181,14 +182,14 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.imsi());
   X(deviceinfo.inputMethodType());
   X(deviceinfo.isDeviceLocked());
-//  X(deviceinfo.isKeyboardFlipOpen());
-//  X(deviceinfo.isWirelessKeyboardConnected());
-//  X(deviceinfo.keyboardType());
+  X(deviceinfo.isKeyboardFlipOpen());
+  X(deviceinfo.isWirelessKeyboardConnected());
+  X(deviceinfo.keyboardType());
   X(deviceinfo.manufacturer());
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
-//  X(deviceinfo.typeOfLock());
+  X(deviceinfo.lockStatus());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -198,8 +199,8 @@ static void test_systemdeviceinfo(void)
 static void test_systemdisplayinfo(void)
 {
   QSystemDisplayInfo displayinfo;
-
-  for( int display = 0; display < 4; ++display )
+  QDesktopWidget wid;
+  for( int display = 0; display < wid.screenCount(); ++display )
   {
     qDebug() << "";
     qDebug() << "Display:" << display;
@@ -207,18 +208,21 @@ static void test_systemdisplayinfo(void)
     qDebug() << "  displayinfo.colorDepth() ->" << depth;
     int value = displayinfo.displayBrightness(display);
     qDebug() << "  displayinfo.displayBrightness() ->" << value;
-//    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.getOrientation(display);
-//    qDebug() << "  displayinfo.getOrientation() ->" << orientation;
-//    float contrast = displayinfo.contrast(display);
-//    qDebug() << "  displayinfo.getContrast() ->" << contrast;
-//    int dpiWidth = displayinfo.getDPIWidth(display);
-//    qDebug() << "  displayinfo.getDPIWidth() ->" << dpiWidth;
-//    int dpiHeight = displayinfo.getDPIHeight(display);
-//    qDebug() << "  displayinfo.getDPIHeight() ->" << dpiHeight;
-//    int physicalHeight = displayinfo.physicalHeight(display);
-//    qDebug() << "  displayinfo.physicalHeight() ->" << physicalHeight;
-//    int physicalWidth = displayinfo.physicalWidth(display);
-//    qDebug() << "  displayinfo.physicalWidth() ->" << physicalWidth;
+    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.getOrientation(display);
+    qDebug() << "  displayinfo.getOrientation() ->" << orientation;
+    float contrast = displayinfo.contrast(display);
+    qDebug() << "  displayinfo.getContrast() ->" << contrast;
+    int dpiWidth = displayinfo.getDPIWidth(display);
+    qDebug() << "  displayinfo.getDPIWidth() ->" << dpiWidth;
+    int dpiHeight = displayinfo.getDPIHeight(display);
+    qDebug() << "  displayinfo.getDPIHeight() ->" << dpiHeight;
+    int physicalHeight = displayinfo.physicalHeight(display);
+    qDebug() << "  displayinfo.physicalHeight() ->" << physicalHeight;
+    int physicalWidth = displayinfo.physicalWidth(display);
+    qDebug() << "  displayinfo.physicalWidth() ->" << physicalWidth;
+    QSystemDisplayInfo::BacklightState state = displayinfo.backlightStatus(display);
+    qDebug() << "  displayinfo.backlightStatus() ->" << state;
+
   }
 }
 
@@ -276,11 +280,11 @@ static void test_systemstorageinfo(void)
     QSystemStorageInfo::DriveType dtype = storageinfo.typeForDrive(drv);
     qDebug() << "  storageinfo.typeForDrive() ->" << dtype;
 
-//    QString duri = storageinfo.uriForDrive(drv);
-//    qDebug() << "  storageinfo.uriForDrive() ->" << duri;
+    QString duri = storageinfo.uriForDrive(drv);
+    qDebug() << "  storageinfo.uriForDrive() ->" << duri;
 
-//    QSystemStorageInfo::StorageState dstate = storageinfo.getStorageState(drv);
-//    qDebug() << "  storageinfo.getStorageState() ->" << dstate;
+    QSystemStorageInfo::StorageState dstate = storageinfo.getStorageState(drv);
+    qDebug() << "  storageinfo.getStorageState() ->" << dstate;
   }
 }
 
@@ -316,7 +320,7 @@ static void test_systemnetworkinfo(void)
     qDebug() << "  networkinfo.networkStatus() ->" << status;
 
     QString network = networkinfo.networkName(mode);
-    qDebug() << "  networkinfo.networkName() ->" << network;
+    qDebug() << "  networkinfo.netwoerkName() ->" << network;
 
     int sigstr = networkinfo.networkSignalStrength(mode);
     qDebug() << "  networkinfo.networkSignalStrength() ->" << sigstr;
@@ -331,6 +335,23 @@ static void test_systemscreensaver(void)
   X(screensaver.setScreenSaverInhibit());
 }
 
+static void test_systembatteryinfo(void)
+{
+    QSystemBatteryInfo batInfo;
+    X(batInfo.chargerType());
+    X(batInfo.chargingState() );
+    X(batInfo.nominalCapacity());
+    X(batInfo.remainingCapacityPercent());
+    X(batInfo.remainingCapacity());
+    X(batInfo.voltage());
+    X(batInfo.remainingChargingTime());
+    X(batInfo.currentFlow());
+    X(batInfo.remainingCapacityBars());
+    X(batInfo.maxBars());
+    X(batInfo.batteryStatus());
+    X(batInfo.energyMeasurementUnit());
+}
+
 struct dummy_t
 {
   const char *name;
@@ -343,6 +364,7 @@ struct dummy_t
   ADD(systemnetworkinfo),
   ADD(systemscreensaver),
   ADD(systemdisplayinfo),
+  ADD(systembatteryinfo),
 #undef ADD
   {0,0}
 };

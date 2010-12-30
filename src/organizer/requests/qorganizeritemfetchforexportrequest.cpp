@@ -64,10 +64,17 @@ QOrganizerItemFetchForExportRequest::QOrganizerItemFetchForExportRequest(QObject
 {
 }
 
+/*! Frees memory in use by this request */
+QOrganizerItemFetchForExportRequest::~QOrganizerItemFetchForExportRequest()
+{
+    QOrganizerAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
 void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -75,6 +82,7 @@ void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& 
 void QOrganizerItemFetchForExportRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -89,6 +97,7 @@ void QOrganizerItemFetchForExportRequest::setSorting(const QList<QOrganizerItemS
 void QOrganizerItemFetchForExportRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = fetchHint;
 }
 
@@ -96,6 +105,7 @@ void QOrganizerItemFetchForExportRequest::setFetchHint(const QOrganizerItemFetch
 void QOrganizerItemFetchForExportRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_startDate = date;
 }
 
@@ -103,6 +113,7 @@ void QOrganizerItemFetchForExportRequest::setStartDate(const QDateTime &date)
 void QOrganizerItemFetchForExportRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_endDate = date;
 }
 
@@ -110,6 +121,7 @@ void QOrganizerItemFetchForExportRequest::setEndDate(const QDateTime &date)
 QOrganizerItemFilter QOrganizerItemFetchForExportRequest::filter() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -117,6 +129,7 @@ QOrganizerItemFilter QOrganizerItemFetchForExportRequest::filter() const
 QList<QOrganizerItemSortOrder> QOrganizerItemFetchForExportRequest::sorting() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -131,6 +144,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchForExportRequest::sorting() co
 QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
 }
 
@@ -143,6 +157,7 @@ QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
 QDateTime QOrganizerItemFetchForExportRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_startDate;
 }
 
@@ -155,6 +170,7 @@ QDateTime QOrganizerItemFetchForExportRequest::startDate() const
 QDateTime QOrganizerItemFetchForExportRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_endDate;
 }
 
@@ -162,6 +178,7 @@ QDateTime QOrganizerItemFetchForExportRequest::endDate() const
 QList<QOrganizerItem> QOrganizerItemFetchForExportRequest::items() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_organizeritems;
 }
 

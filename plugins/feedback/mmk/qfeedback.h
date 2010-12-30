@@ -66,7 +66,8 @@ public:
     virtual int effectDuration(const QFeedbackFileEffect*);
     virtual QStringList supportedMimeTypes();
 private Q_SLOTS:
-    void soundEffectLoaded();
+    void soundEffectStatusChanged();
+    void soundEffectPlayingChanged();
 
 private:
     struct FeedbackInfo {

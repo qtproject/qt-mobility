@@ -167,7 +167,7 @@ QMediaRecorder::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaErro
             return QMediaRecorder::ResourceError; // Not able to use camera/recorder resources
 
         default:
-            return QMediaRecorder::ResourceError; // Other error has occured
+            return QMediaRecorder::ResourceError; // Other error has occurred
     }
 }
 

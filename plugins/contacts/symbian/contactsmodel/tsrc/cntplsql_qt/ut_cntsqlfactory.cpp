@@ -71,13 +71,12 @@ void UT_CntSqlFactory::testGetSqlIinstance()
     TEST_BEGIN_LOG("testGetSqlIinstance");
     
     QLocale language = QLocale ( QLocale::Korean, QLocale::RepublicOfKorea);
-    QString pattern ="3";
-    CntSqlSearchInterface* interface = mCntSqlFactory->getSqlIinstance(pattern, language);
+    CntSqlSearchInterface* interface = mCntSqlFactory->getSqlIinstance(language);
     //qDebug() << " -> result" << result;
     QVERIFY(interface->getQueryType() == CntSqlSearchInterface::KoreaITUT);
     delete interface;
     language = QLocale ( QLocale::English, QLocale::UnitedKingdom);
-    interface = mCntSqlFactory->getSqlIinstance(pattern, language);
+    interface = mCntSqlFactory->getSqlIinstance(language);
     QVERIFY(interface == NULL);
     TEST_PASSED_LOG("testGetSqlIinstance");
 }

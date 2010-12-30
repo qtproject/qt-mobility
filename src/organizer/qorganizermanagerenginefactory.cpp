@@ -134,4 +134,16 @@ QList<int> QOrganizerManagerEngineFactory::supportedImplementationVersions() con
     return QList<int>();
 }
 
+/*!
+  \fn QOrganizerItemEngineLocalId* QOrganizerItemManagerEngineFactory::createItemEngineLocalId() const
+
+  This abstract function create and return an QOrganizerItemEngineLocalId.
+ */
+
+/*!
+  \fn QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngineFactory::createCollectionEngineLocalId()const
+
+  This abstract function create and return an QOrganizerCollectionEngineLocalId.
+ */
+
 QTM_END_NAMESPACE

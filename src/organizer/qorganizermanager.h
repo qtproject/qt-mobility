@@ -57,6 +57,7 @@
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfetchhint.h"
 #include "qorganizeritemfilter.h"
+#include "qorganizeritemobserver.h"
 
 #include "qorganizercollection.h"
 #include "qorganizercollectionid.h"
@@ -105,7 +106,8 @@ public:
         LimitReachedError,
         InvalidItemTypeError,
         InvalidCollectionError,
-        InvalidOccurrenceError
+        InvalidOccurrenceError,
+        TimeoutError
     };
 
     /* Error reporting */
@@ -120,14 +122,18 @@ public:
 
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> itemsForExport(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
     QOrganizerItem item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item);
     bool saveItems(QList<QOrganizerItem>* items);
+    bool saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask);
     bool removeItem(const QOrganizerItemId& itemId);
     bool removeItems(const QList<QOrganizerItemId>& itemIds);
+
+    QSharedPointer<QOrganizerItemObserver> observeItem(const QOrganizerItemId& itemId);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
@@ -172,7 +178,7 @@ Q_SIGNALS:
 
 private:
     friend class QOrganizerManagerData;
-    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     Q_DISABLE_COPY(QOrganizerManager)
     // private data pointer
     QOrganizerManagerData* d;

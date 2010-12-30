@@ -120,8 +120,9 @@
 
 /*!
    \qmlclass DetailFilter QDeclarativeContactDetailFilter
-   \brief The DetailFilter element provides a filter based around a detail value criterion.
+   \brief The \l DetailFilter element provides a filter based around a detail value criterion.
 
+   \qmlmodule contacts
    \ingroup qml-contacts
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.

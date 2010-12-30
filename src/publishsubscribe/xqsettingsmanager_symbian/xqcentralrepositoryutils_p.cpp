@@ -42,8 +42,8 @@
 #include "xqcentralrepositoryutils_p.h"
 #include "xqsettingsmanager.h"
 #include "xqsettingsmanager_p.h"
-#include "ccentralrepositoryhandler.h"
-#include "xqcentralrepositorysearchcriteria.h"
+#include "ccentralrepositoryhandler_p.h"
+#include "xqcentralrepositorysearchcriteria_p.h"
 
 XQCentralRepositoryUtilsPrivate::XQCentralRepositoryUtilsPrivate(XQSettingsManager& settingsManager)
     : m_settingsManagerPrivate(*settingsManager.d)

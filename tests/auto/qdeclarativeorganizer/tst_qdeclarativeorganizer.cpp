@@ -186,7 +186,7 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("OrganizerModel: With filter") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; filter: OrganizerItemDateTimePeriodFilter{id: filter;start:'2010-08-12T13:22:01';end:'2010-09-12T13:22:01'} }" << true;
     QTest::newRow("OrganizerModel: With fetchHint") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; fetchHint:OrganizerItemFetchHint {id:hint; optimizationHints:OrganizerItemFetchHint.AllRequired} }" << true;
 
-    // Organizer Items
+    // OrganizerItem
     QTest::newRow("Base organizer item") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {}" << true;
     QTest::newRow("Base organizer item: only id") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem}" << true;
     QTest::newRow("Base organizer item: Valuetype properties") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; displayLabel:'test item'; description:'item description'; guid:'1112232133'}" << true;

@@ -56,9 +56,10 @@
 #include <qmobilityglobal.h>
 
 #include "qgalleryqueryrequest.h"
+#include "qmdegalleryresultset_p.h"
 
 #include <QObject>
-#include <QEventloop>
+#include <QEventLoop>
 #include <mdesession.h>
 #include <mdequery.h>
 #include <e32std.h>
@@ -111,10 +112,15 @@ public: // From MMdESessionObserver
     void AddItemChangedObserverL( MMdEObjectObserver &observer, RArray<TItemId> &idArray );
     void RemoveObjectObserver( MMdEObjectObserver &observer );
 
+    void AddTrackedResultSet( QMDEGalleryResultSet* aResultSet );
+    void RemoveTrackedResultSet( QMDEGalleryResultSet* aResultSet );
+
 private:
 
     QEventLoop m_eventLoop;
     CMdESession *m_cmdeSession;
+
+    RPointerArray<QMDEGalleryResultSet> m_resultSetList;
 };
 QTM_END_NAMESPACE
 

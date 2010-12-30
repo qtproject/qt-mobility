@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include "clientservercommon.h"
-#include "pspathmappersession.h"
+#include "pspathmappersession_p.h"
 #include "pspathmapperserver.pan"
 #include "pathmapper_symbian_p.h"
-#include "pspathmapperserver.h"
+#include "pspathmapperserver_p.h"
 #include <QDataStream>
 #include <QSet>
 

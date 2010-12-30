@@ -927,4 +927,40 @@ EXPORTS
 	_ZN10QtMobilitylsE6QDebugRKNS_24QContactActionDescriptorE @ 926 NONAME
 	_ZN10QtMobilitylsER11QDataStreamRKNS_20QContactActionTargetE @ 927 NONAME
 	_ZN10QtMobilityrsER11QDataStreamRNS_20QContactActionTargetE @ 928 NONAME
+	_ZN10QtMobility11QContactTag5matchERK7QString @ 929 NONAME
+	_ZN10QtMobility15QContactAddress5matchERK7QString @ 930 NONAME
+	_ZN10QtMobility15QContactManager14observeContactEj @ 931 NONAME
+	_ZN10QtMobility15QContactManager15contactsDeletedERK5QListIjE @ 932 NONAME
+	_ZN10QtMobility15QContactManager15contactsUpdatedERK5QListIjE @ 933 NONAME
+	_ZN10QtMobility15QContactManager17observerDestroyedEP7QObject @ 934 NONAME
+	_ZN10QtMobility16QContactFavorite5matchEv @ 935 NONAME
+	_ZN10QtMobility16QContactObserver11qt_metacallEN11QMetaObject4CallEiPPv @ 936 NONAME
+	_ZN10QtMobility16QContactObserver11qt_metacastEPKc @ 937 NONAME
+	_ZN10QtMobility16QContactObserver14contactChangedEv @ 938 NONAME
+	_ZN10QtMobility16QContactObserver14contactRemovedEv @ 939 NONAME
+	_ZN10QtMobility16QContactObserver16staticMetaObjectE @ 940 NONAME DATA 16
+	_ZN10QtMobility16QContactObserver18emitContactChangedEv @ 941 NONAME
+	_ZN10QtMobility16QContactObserver18emitContactRemovedEv @ 942 NONAME
+	_ZN10QtMobility16QContactObserver19getStaticMetaObjectEv @ 943 NONAME
+	_ZN10QtMobility16QContactObserverC1EP7QObject @ 944 NONAME
+	_ZN10QtMobility16QContactObserverC2EP7QObject @ 945 NONAME
+	_ZN10QtMobility17QContactFetchHint11setMaxCountEi @ 946 NONAME
+	_ZN10QtMobility21QContactOnlineAccount10ProtocolQqE @ 947 NONAME DATA 3
+	_ZN10QtMobility21QContactOnlineAccount11ProtocolAimE @ 948 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount11ProtocolIcqE @ 949 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount11ProtocolIrcE @ 950 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount11ProtocolMsnE @ 951 NONAME DATA 4
+	_ZN10QtMobility21QContactOnlineAccount13FieldProtocolE @ 952 NONAME DATA 9
+	_ZN10QtMobility21QContactOnlineAccount13ProtocolSkypeE @ 953 NONAME DATA 6
+	_ZN10QtMobility21QContactOnlineAccount13ProtocolYahooE @ 954 NONAME DATA 6
+	_ZN10QtMobility21QContactOnlineAccount14ProtocolJabberE @ 955 NONAME DATA 7
+	_ZN10QtMobility22QContactGlobalPresence5matchENS_16QContactPresence13PresenceStateE @ 956 NONAME
+	_ZN10QtMobility8QContact6addTagERK7QString @ 957 NONAME
+	_ZN10QtMobility8QContact7setTagsERK11QStringList @ 958 NONAME
+	_ZN10QtMobility8QContact9clearTagsEv @ 959 NONAME
+	_ZNK10QtMobility16QContactObserver10metaObjectEv @ 960 NONAME
+	_ZNK10QtMobility17QContactFetchHint8maxCountEv @ 961 NONAME
+	_ZNK10QtMobility8QContact4tagsEv @ 962 NONAME
+	_ZTIN10QtMobility16QContactObserverE @ 963 NONAME
+	_ZTVN10QtMobility16QContactObserverE @ 964 NONAME
 

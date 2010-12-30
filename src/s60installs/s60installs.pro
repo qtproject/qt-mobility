@@ -9,7 +9,7 @@ isEmpty(QT_LIBINFIX):symbian {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
 
-    VERSION = 1.1.0
+    VERSION = 1.2.0
 
     vendorinfo = \
         "; Localised Vendor name" \
@@ -64,6 +64,14 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_serviceframework.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmakepluginstubs\\declarative_serviceframework.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\declarative_serviceframework.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\qmldir\""
+        }
     }
 
     contains(mobility_modules, location) {
@@ -74,14 +82,11 @@ isEmpty(QT_LIBINFIX):symbian {
         pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/landmarks/symbian_landmarks/qmakepluginstubs/qtlandmarks_symbian.qtplugin\" - \"!:\\resource\\qt\\plugins\\landmarks\\qtlandmarks_symbian.qtplugin\""
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_serviceframework.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll
             pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmakepluginstubs\\declarative_location.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\declarative_location.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmakepluginstubs\\declarative_serviceframework.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\declarative_serviceframework.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmakepluginstubs\\declarative_location.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\declarative_location.qtplugin\""
             qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\qmldir\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\serviceframework\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\serviceframework\\qmldir\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\qmldir\""
         }
     }
 
@@ -142,12 +147,11 @@ isEmpty(QT_LIBINFIX):symbian {
                 "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\immersion\\qmakepluginstubs\\qtfeedback_immersion.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_immersion.qtplugin\""
         }
 
-# MMK is disabled for 1.1.0
-#        contains(mobility_modules, multimedia) {
-#            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_mmk.dll
-#            pluginstubs += \
-#                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\mmk\\qmakepluginstubs\\qtfeedback_mmk.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_mmk.qtplugin\""
-#        }
+        equals(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6):contains(mobility_modules,multimedia) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_mmk.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\mmk\\qmakepluginstubs\\qtfeedback_mmk.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_mmk.qtplugin\""
+        }
 
         feedback = \
             "IF package(0x1028315F)" \

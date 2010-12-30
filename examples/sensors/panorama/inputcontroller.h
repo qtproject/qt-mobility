@@ -59,7 +59,7 @@ public:
 
     virtual void keyPressEvent(QKeyEvent *e);
 
-    static const QString QACCELEROMETER,
+    static const QString QGYROSCOPE, QACCELEROMETER,
     QORIENTATIONSENSOR, QROTATIONSENSOR,
     QMAGNETOMETER, QTAPSENSOR, QCOMPASS, QKEYS;
 

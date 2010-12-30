@@ -18,8 +18,11 @@
 #include "cntsqlsearch.h"
 #include "cqwertykeymap.h"
 #include "c12keykeymap.h"
+#include "cntsqlfactory.h"
+#include "cntsqlsearchinterface.h"
 #include <QHash>
 #include <QLocale>
+
 
 const char KLimitLength = 15;
 const int KTwoTokens = 2;
@@ -67,10 +70,23 @@ CntSqlSearch::CntSqlSearch( const CPcsKeyMap& twelveKeyKeyMap,
     : mkeyKeyMap( static_cast<const C12keyKeyMap*>(&twelveKeyKeyMap) ),
       mQertyKeyMap( static_cast<const CQwertyKeyMap*>(&qertyKeyMap) )
     {
+    mCntSqlFactory = new CntSqlFactory(mkeyKeyMap);
+    /*
+     * Default language is QLocale language = QLocale ( QLocale::Korean, QLocale::RepublicOfKorea);
+     */
+    QLocale language;
+    #if defined(SEARCH_KOREAN_NAMES)
+    language = QLocale ( QLocale::Korean, QLocale::RepublicOfKorea);
+    #else
+    language = QLocale::system().language();
+    #endif
+    mSqlSearchInterface = mCntSqlFactory->getSqlIinstance(language);
     }
 
 CntSqlSearch::~CntSqlSearch()
     {
+    delete mCntSqlFactory;
+    delete mSqlSearchInterface;
     }
 
 // Basic cases:
@@ -111,24 +127,32 @@ QString CntSqlSearch::CreatePredictiveSearch(const QString &pattern)
 	{
 	int len = pattern.length();
 	QString newPattern;
-	if (isQwerty(pattern))
+	
+	if(mSqlSearchInterface != NULL)
 	    {
-        return CreateQwertyQuery(pattern);
+        return mSqlSearchInterface->createInputSpecificSearch(pattern);    
 	    }
-	else
-	    {
-        newPattern = ChangeStringPadings(pattern);
-        // For best performance, handle 1 digit case first
-        if (len == KMinimumSearchPatternLength)
+    else
+        {
+        if (isQwerty(pattern))
             {
-            // Case 1
-            return SELECT_CONTACT_ID + SelectTable(newPattern) + ORDER_BY_FIRSTNAME_LASTNAME;
+            return CreateQwertyQuery(pattern);
             }
-        if (len <= KLimitLength && len > KMinimumSearchPatternLength)
+        else
             {
-            return CreateQuery(newPattern);
+            newPattern = ChangeStringPadings(pattern);
+            // For best performance, handle 1 digit case first
+            if (len == KMinimumSearchPatternLength)
+                {
+                // Case 1
+                return SELECT_CONTACT_ID + SelectTable(newPattern) + ORDER_BY_FIRSTNAME_LASTNAME;
+                }
+            if (len <= KLimitLength && len > KMinimumSearchPatternLength)
+                {
+                return CreateQuery(newPattern);
+                }
+            return QString(""); // Invalid pattern
             }
-        return QString(""); // Invalid pattern
         }
 	}
 QString CntSqlSearch::selectQweryTable(const QString &pattern) const

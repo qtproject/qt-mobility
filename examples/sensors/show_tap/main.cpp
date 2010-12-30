@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -46,6 +46,8 @@ QTM_USE_NAMESPACE
 class TapSensorFilter : public QTapFilter
 {
 public:
+    TapSensorFilter(QTapSensor* sensor): mySensor(sensor){}
+
     bool filter(QTapReading *reading)
     {
         int diff = ( reading->timestamp() - stamp );
@@ -64,16 +66,28 @@ public:
             case QTapReading::Undefined: output = "Undefined"; break;
             default: output = "Invalid enum value";
         }
+
+
+
         QTextStream out(stdout);
         out << "Tap: ";
-        if(reading->isDoubleTap())
+        if(reading->isDoubleTap()){
             out << "Double ";
+            counter++;
+            if (counter>2){
+                mySensor->stop();
+                mySensor->setProperty("returnDoubleTapEvents", false);
+                mySensor->start();
+            }
+        }
         else
             out << "Single ";
-        out << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 5).arg( 1000000.0 / diff, 3, 'f', 1) << endl;
+        out << output<< QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 5).arg( 1000000.0 / diff, 3, 'f', 1) << endl;
         return false; // don't store the reading in the sensor
     }
 private:
+    QTapSensor* mySensor;
+    int counter;
     qtimestamp stamp;
 };
 
@@ -86,12 +100,16 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
 
+
     QTapSensor doublesensor;
+    doublesensor.connectToBackend();
+    TapSensorFilter filter(&doublesensor);
+
+
     doublesensor.setProperty("returnDoubleTapEvents", true);
     if (rate_val > 0) {
         doublesensor.setDataRate(rate_val);
     }
-    TapSensorFilter filter;
     doublesensor.addFilter(&filter);
     doublesensor.start();
     if (!doublesensor.isActive()) {
@@ -100,16 +118,26 @@ int main(int argc, char **argv)
     }
 
     QTapSensor singlesensor;
+    singlesensor.connectToBackend();
     singlesensor.setProperty("returnDoubleTapEvents", false);
+
+    bool isDouble = singlesensor.property("returnDoubleTapEvents").toBool();
+
+
     if (rate_val > 0) {
         singlesensor.setDataRate(rate_val);
     }
     singlesensor.addFilter(&filter);
     singlesensor.start();
+
+    isDouble = singlesensor.property("returnDoubleTapEvents").toBool();
+
     if (!singlesensor.isActive()) {
         qWarning("Tapsensor (single) didn't start!");
         return 1;
+
     }
+
 
     return app.exec();
 }

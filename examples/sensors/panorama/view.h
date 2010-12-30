@@ -80,6 +80,7 @@ protected:
 
 private slots:
     void startAccelerometer();
+    void startGyroscope();
     void startTapSensor();
     void startMagnetometer();
     void startRotationSensor();

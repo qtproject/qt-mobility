@@ -190,7 +190,7 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
 QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QContactFetchHint & fetchHint,
 			  QContactManager::Error* error ) const
 {
-  Q_UNUSED(fetchHint); // no optimisations currently, ignore the fetchhint.
+  Q_UNUSED(fetchHint); // no optimizations currently, ignore the fetchhint.
   Q_CHECK_PTR(d->m_abook);
   QList<QContact> rtn;
   
@@ -400,6 +400,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QVariantList allowableValues;
     allowableValues << QContactPhoneNumber::SubTypeMobile;
     allowableValues << QContactPhoneNumber::SubTypeVoice;
+    allowableValues << QContactPhoneNumber::SubTypeFax;
     phoneSubtype.setAllowableValues(allowableValues);
     fields.insert(QContactPhoneNumber::FieldSubTypes, phoneSubtype);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);

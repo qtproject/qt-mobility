@@ -35,6 +35,8 @@
 #include <QLocale>
 #include <hbinputkeymapfactory.h>
 #include <hbinputkeymap.h>
+#include <XQSettingsManager>
+#include <LogsDomainCRKeys.h>
 
 
 // Must have same value as KMaxTokenLength in c12keypredictivesearchtable.cpp
@@ -45,7 +47,12 @@ const TInt KTableCount = 12;
 
 // Must have same value as KConversionError in cpplpredictivesearchtable.cpp
 const quint64 KConversionError = 0xeeeeeeeeeeeeeee;
-    
+
+// Some Korean characters
+const TChar KKoreanHangul   = 0xAC00;
+const TChar KKoreanHangul2  = 0xBC56;
+const TChar KKoreanJamo     = 0x1100;
+const TChar KKoreanCompJamo = 0x3158;
 
 
 
@@ -740,32 +747,31 @@ void UT_CPplPredictiveSearchTable::UT_TokenizeNamesL()
 
     // This constant must have same value as declared in cpplpredictivesearchtable.cpp
     const TInt KMaxTokens = 4; 
-    QStringList tokens = iTable->GetTokens(emptyList, fn, ln);
+    QStringList tokens = iTable->GetTokens(emptyList, fn, ln, false);
     EUNIT_ASSERT_EQUALS(KMaxTokens, tokens.count());
     tokens.clear();
         
-    tokens = iTable->GetTokens(emptyList, NULL, ln);
+    tokens = iTable->GetTokens(emptyList, NULL, ln, false);
     EUNIT_ASSERT_EQUALS(3, tokens.count());
     tokens.clear();
     
-    tokens = iTable->GetTokens(emptyList, fn, NULL);
+    tokens = iTable->GetTokens(emptyList, fn, NULL, false);
     EUNIT_ASSERT_EQUALS(4, tokens.count());
     tokens.clear();
 
-    tokens = iTable->GetTokens(emptyList, NULL, NULL);
+    tokens = iTable->GetTokens(emptyList, NULL, NULL, false);
     EUNIT_ASSERT_EQUALS(0, tokens.count());
     tokens.clear();
 
     QStringList mailList;
     mailList << "mail.addr1";
     mailList << "mail.addr2";
-    tokens = iTable->GetTokens(mailList, NULL, NULL);
+    tokens = iTable->GetTokens(mailList, NULL, NULL, false);
     EUNIT_ASSERT_EQUALS(2, tokens.count());
     tokens.clear();
     
-    tokens = iTable->GetTokens(mailList, fn, ln);
+    tokens = iTable->GetTokens(mailList, fn, ln, false);
     EUNIT_ASSERT_EQUALS(4, tokens.count());
-    tokens.clear();
     
     CleanupStack::PopAndDestroy(ln);
     CleanupStack::PopAndDestroy(fn);
@@ -845,9 +851,127 @@ void UT_CPplPredictiveSearchTable::UT_HbKeymapFactoryApiL()
     delete keymap;
     }
 
+void UT_CPplPredictiveSearchTable::UT_GetFieldsLCL()
+    {
+    _LIT(KLatinName, "abc def");
+    HBufC* koreanName = HBufC::NewLC(10);
+    TPtr ptr = koreanName->Des();
+    ptr.Append(KKoreanHangul);
+    ptr.Append(KKoreanHangul2);
+    ptr.Append(KKoreanJamo);
+    ptr.Append(KKoreanCompJamo);
+    
+    
+    // Korean last name
+    CContactItem* contact = CreateContactLC(KLatinName, *koreanName, KTestContactId);
+    HBufC* firstNameAsNbr(NULL); // owned
+    HBufC* lastNameAsNbr(NULL);  // owned
+    HBufC* firstName(NULL); // owned
+    HBufC* lastName(NULL);  // owned
+    bool isKorea(false);
+    iTable->GetFieldsLC(*contact, &firstNameAsNbr, &lastNameAsNbr,
+                        &firstName, &lastName, isKorea);
+    CleanupStack::PopAndDestroy(lastNameAsNbr);
+    lastNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(lastName);
+    lastName = NULL;
+    CleanupStack::PopAndDestroy(firstNameAsNbr);
+    firstNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(firstName);
+    firstName = NULL;
+    CleanupStack::PopAndDestroy(contact);
+    contact = NULL;
+    EUNIT_ASSERT_EQUALS(true, isKorea);
+    
+    
+    // Korean first name
+    isKorea = false;
+    contact = CreateContactLC(*koreanName, KLatinName, KTestContactId2);
+    iTable->GetFieldsLC(*contact, &firstNameAsNbr, &lastNameAsNbr,
+                        &firstName, &lastName, isKorea);
+    CleanupStack::PopAndDestroy(lastNameAsNbr);
+    lastNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(lastName);
+    lastName = NULL;
+    CleanupStack::PopAndDestroy(firstNameAsNbr);
+    firstNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(firstName);
+    firstName = NULL;
+    CleanupStack::PopAndDestroy(contact);
+    contact = NULL;
+    EUNIT_ASSERT_EQUALS(true, isKorea);
+    
+    
+    // Both Korean first name & last name
+    isKorea = false;
+    contact = CreateContactLC(*koreanName, *koreanName, KTestContactId3);
+    iTable->GetFieldsLC(*contact, &firstNameAsNbr, &lastNameAsNbr,
+                        &firstName, &lastName, isKorea);
+    CleanupStack::PopAndDestroy(lastNameAsNbr);
+    lastNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(lastName);
+    lastName = NULL;
+    CleanupStack::PopAndDestroy(firstNameAsNbr);
+    firstNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(firstName);
+    firstName = NULL;
+    CleanupStack::PopAndDestroy(contact);
+    contact = NULL;
+    EUNIT_ASSERT_EQUALS(true, isKorea);
+    
+    
+    // No Korean names
+    isKorea = true;
+    contact = CreateContactLC(KLatinName, KLatinName, KTestContactId4);
+    iTable->GetFieldsLC(*contact, &firstNameAsNbr, &lastNameAsNbr,
+                        &firstName, &lastName, isKorea);
+    CleanupStack::PopAndDestroy(lastNameAsNbr);
+    lastNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(lastName);
+    lastName = NULL;
+    CleanupStack::PopAndDestroy(firstNameAsNbr);
+    firstNameAsNbr = NULL;
+    CleanupStack::PopAndDestroy(firstName);
+    firstName = NULL;
+    CleanupStack::PopAndDestroy(contact);
+    contact = NULL;
+    EUNIT_ASSERT_EQUALS(false, isKorea);
+    
+    CleanupStack::PopAndDestroy(koreanName);
+    }
+
+// Can't expect some specific value for status, just that the setting can
+// be read successfully.
+void UT_CPplPredictiveSearchTable::UT_ReadSettingL()
+    {
+    // These have been copied from recents/logsui/logsapp/inc/logsdefs.h
+    const int logsContactSearchPermanentlyDisabled = 0;
+    const int logsContactSearchEnabled = 1;
+
+    XQSettingsManager* settingsManager = new XQSettingsManager();
+    XQSettingsKey key(XQSettingsKey::TargetCentralRepository, 
+                      KCRUidLogs.iUid, 
+                      KLogsPredictiveSearch);
+    QVariant value = settingsManager->readItemValue(key, XQSettingsManager::TypeInt);
+    delete settingsManager;
+
+    EUNIT_ASSERT(!value.isNull());
+    int status = value.toInt();     
+    }
+    
 void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,
                                                const TDesC& aLastName,
                                                TContactItemId aContactId)
+    {
+    CContactItem* contact = CreateContactLC(aFirstName, aLastName, aContactId);
+    iTable->CreateInDbL(*contact);
+    CleanupStack::PopAndDestroy(contact);
+    }
+
+CContactItem*
+UT_CPplPredictiveSearchTable::CreateContactLC(const TDesC& aFirstName,
+                                              const TDesC& aLastName,
+                                              TContactItemId aContactId) const
     {
     TInt id = KUidContactCardValue; // Defined by macro, so lacks type
     TUid uid;
@@ -877,9 +1001,7 @@ void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,
         }
 
     contact->SetId(aContactId);
-    
-    iTable->CreateInDbL(*contact);
-    CleanupStack::PopAndDestroy(contact);
+    return contact;
     }
 
 void UT_CPplPredictiveSearchTable::CheckItemCountL(
@@ -1247,7 +1369,21 @@ EUNIT_TEST(
     "test API",
     "FUNCTIONALITY",
     SetupL, UT_HbKeymapFactoryApiL, Teardown )
-    
+
+EUNIT_TEST(
+    "Test GetFieldsLC with Korean names",
+    "UT_CPplPredictiveSearchTable",
+    "GetFieldsLC",
+    "FUNCTIONALITY",
+    SetupL, UT_GetFieldsLCL, Teardown )
+
+EUNIT_TEST(
+    "Read predictive search setting flag",
+    "UT_CPplPredictiveSearchTable",
+    "",
+    "FUNCTIONALITY",
+    SetupL, UT_ReadSettingL, Teardown )
+
 EUNIT_END_TEST_TABLE
 
 //  END OF FILE

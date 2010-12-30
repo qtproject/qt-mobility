@@ -8,8 +8,8 @@ include(qtmobility-cpp-ignore.qdocconf)
 project                 = QtMobility
 description             = Qt Mobility Project Library Reference Documentation
 versionsym              =
-version                 = Mobility 1.1
-url                     = http://qt.nokia.com/doc/qtmobility-1.1
+version                 = Mobility 1.2
+url                     = http://qt.nokia.com/doc/qtmobility-1.2
 online                  = true
 
 sourceencoding          = UTF-8
@@ -19,7 +19,7 @@ naturallanguage         = en_US
 qhp.projects            = QtMobility
 
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility.110
+qhp.QtMobility.namespace          = com.nokia.qtmobility.120
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =
@@ -57,9 +57,9 @@ qhp.QtMobility.extraFiles = index.html \
                  style/style_ie8.css \
                  style/style.css
 
-qhp.QtMobility.filterAttributes   = qtmobility 1.1.0
-qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.1.0
-qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.1.0
+qhp.QtMobility.filterAttributes   = qtmobility 1.2.0
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.2.0
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.2.0
 qhp.QtMobility.subprojects = classes overviews examples
 qhp.QtMobility.subprojects.classes.title = Classes
 qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
@@ -73,6 +73,10 @@ qhp.QtMobility.subprojects.examples.title = Examples
 qhp.QtMobility.subprojects.examples.indexTitle = Qt Mobility Project Examples
 qhp.QtMobility.subprojects.examples.selectors = fake:example
 qhp.QtMobility.subprojects.examples.sortPages = true
+qhp.QtMobility.subprojects.tutorials.title = Tutorials
+qhp.QtMobility.subprojects.tutorials.indexTitle = Qt Mobility Project Tutorials
+qhp.QtMobility.subprojects.tutorials.selectors = fake:tutorial
+qhp.QtMobility.subprojects.tutorials.sortPages = true
 
 defines                 = Q_QDOC \
                           __cplusplus \
@@ -99,18 +103,23 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/contacts/details \
              ../../plugins/declarative/contacts/filters \
-             ../../src/messaging \
-             ../../src/versit \
-             ../../src/sensors \
-             ../../src/gallery \
              ../../plugins/declarative/gallery \
-             ../../src/camera \
-             ../../src/organizer \
-             ../../src/versitorganizer \
              ../../plugins/declarative/serviceframework \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/messaging \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../src/messaging \
+             ../../src/versit \
+             ../../src/sensors \
+             ../../src/gallery \
+             ../../src/camera \
+             ../../src/organizer \
+             ../../src/versitorganizer \
+             ../../src/connectivity \
              .
 
 sourcedirs = ../../src/global \
@@ -134,13 +143,18 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/organizer \
              ../../plugins/declarative/contacts \
              ../../plugins/declarative/feedback \
+             ../../plugins/declarative/gallery \
+             ../../plugins/declarative/sensors \
+             ../../plugins/declarative/publishsubscribe \
+             ../../plugins/declarative/systeminfo \
+             ../../plugins/declarative/sensors \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
              ../../src/gallery \
-             ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../src/connectivity \
              ../../src/versitorganizer \
              .
 

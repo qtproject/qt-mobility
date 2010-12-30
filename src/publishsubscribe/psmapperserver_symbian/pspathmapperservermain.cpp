@@ -41,7 +41,7 @@
 
 #include <qmobilityglobal.h>
 #include <QCoreApplication>
-#include "pspathmapperserver.h"
+#include "pspathmapperserver_p.h"
 #include "clientservercommon.h"
 
 #include <QDebug>

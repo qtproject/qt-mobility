@@ -10,15 +10,17 @@ SUBDIRS +=  qcontact \
     qcontactdetails \
     qcontactfilter \
     qcontactmanager \
+    qcontactmanagerdetails \
     qcontactmanagerplugins \
     qcontactrelationship \
     qlatin1constant
+
 # This needs glibc:
 linux*: SUBDIRS += qcontactmemusage
 
-#contains(mobility_modules,versit):contains(QT_CONFIG,declarative) {
-#    SUBDIRS += qdeclarativecontact
-#}
+contains(mobility_modules,versit):contains(QT_CONFIG,declarative) {
+    SUBDIRS += qdeclarativecontact
+}
 contains(mobility_modules,serviceframework){
     SUBDIRS += \
         qcontactmanagerfiltering \

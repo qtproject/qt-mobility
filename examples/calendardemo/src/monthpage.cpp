@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -237,6 +237,9 @@ void MonthPage::refresh()
     // As the day item list is not showed do not refresh
     // the day items in Maemo5 or Maemo6 to improve performance
     refreshDayItems();
+#else
+    // We still need to emit this
+    emit currentDayChanged(m_calendarWidget->selectedDate());
 #endif
 }
 

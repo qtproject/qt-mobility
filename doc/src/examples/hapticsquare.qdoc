@@ -4,37 +4,23 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
+** $QT_BEGIN_LICENSE:FDL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -131,8 +117,8 @@
     ends, we have a similar fade-out, where the haptics effect's intensity will
     interpolate from \l{QFeedbackHapticsEffect::}{intensity()} to
     \l{QFeedbackHapticsEffect::}{fadeTime()} in
-    \l{QFeedbackHapticsEffect::}{fadeTime()} milliseconds. The effect's
-    intensity will stay at the peak value for
+    \l{QFeedbackHapticsEffect::}{fadeTime()} milliseconds.
+    The effect will last for a total duration of
     \l{QFeedbackHapticsEffect::}{duration()} milliseconds.
 
     We next set up the effect for the \gui {Ocean Button}.
@@ -141,7 +127,9 @@
 
     The \c m_ocean is a periodic effect, i.e., it repeats after
     \l{QFeedbackHapticsEffect::}{period()} milliseconds. To stop a periodic
-    effect, you must call \l{QFeedbackEffect::}{stop()}.
+    effect, you must call \l{QFeedbackEffect::}{stop()}.  Note that the
+    \l{QFeedbackHapticsEffect::}{duration()} must be greater than the period
+    in order for the periodicity of the effect to be discernable.
 
     We then set up the GUI and connects the buttons to slots that will play the
     effects.
@@ -157,7 +145,7 @@
     \l{QFeedbackEffect::}{start()} again.
 
     The periodic \c m_ocean effect is started the same way as the \c m_rumble
-    effect, but must be stopped with the \l{QFeedbackEffect::}{stop()} function.
+    effect, and may be stopped with the \l{QFeedbackEffect::}{stop()} function.
     It will start playing from the beginning again when
     \l{QFeedbackEffect::}{start()} is called. We could also have paused the
     effect with \l{QFeedbackEffect::}{pause()}.
@@ -177,8 +165,5 @@
     Also, the example will not work correctly on platforms which do not have a
     QFeedbackHapticInterface (haptic effect provider) plugin loaded.  On such
     platforms, clicking the buttons will have no effect.
-
-    In particular, the Maemo5 platform currently has no haptic effect provider
-    plugin; it is a work in progress.
 */
 

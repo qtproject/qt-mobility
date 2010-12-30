@@ -110,6 +110,7 @@ public:
     void setMuted(bool muted);
 
     bool isLoaded() const;
+
     bool isPlaying() const;
     Status status() const;
 

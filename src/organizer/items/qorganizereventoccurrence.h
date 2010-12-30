@@ -50,7 +50,10 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerEventOccurrence : public QOrganizerItem
 {
 public:
-#if !Q_QDOC
+
+#ifdef Q_QDOC
+    static const QLatin1Constant QOrganizerEventOccurrence;
+#else
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerEventOccurrence, QOrganizerItemType::TypeEventOccurrence)
 #endif
 

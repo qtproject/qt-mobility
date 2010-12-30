@@ -1,5 +1,6 @@
 load(qttest_p4)
 include (../../../common.pri)
+
 CONFIG += mobility 
 MOBILITY += contacts versit
 QT += declarative
@@ -12,13 +13,11 @@ INCLUDEPATH += ../../../src/versit
 DEPENDPATH += ../../src/contacts
 DEPENDPATH += ../../src/versit
 
-
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts/details
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts/filters
 
 HEADERS += ../../../plugins/declarative/contacts/qdeclarativecontactdetail_p.h\
-           ../../../plugins/declarative/contacts/qdeclarativeopenmetaobject_p.h\
            ../../../plugins/declarative/contacts/qdeclarativecontactmetaobject_p.h\
            ../../../plugins/declarative/contacts/qdeclarativecontactrelationship_p.h\
            ../../../plugins/declarative/contacts/qdeclarativecontactfetchhint_p.h\
@@ -64,9 +63,9 @@ HEADERS += ../../../plugins/declarative/contacts/qdeclarativecontactdetail_p.h\
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactrelationshipfilter_p.h \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactfilters_p.h	 \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactunionfilter_p.h
+
 SOURCES += tst_qdeclarativecontact.cpp \
            ../../../plugins/declarative/contacts/qdeclarativecontactdetail.cpp\
-           ../../../plugins/declarative/contacts/qdeclarativeopenmetaobject.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactmetaobject.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactrelationship.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactfetchhint.cpp\
@@ -75,6 +74,9 @@ SOURCES += tst_qdeclarativecontact.cpp \
            ../../../plugins/declarative/contacts/qdeclarativecontactfilter.cpp\
  	   ../../../plugins/declarative/contacts/qdeclarativecontact.cpp\
            ../../../plugins/declarative/contacts/qdeclarativecontactrelationshipmodel.cpp
+
+include(../../../plugins/declarative/common/dynamicproperties.pri)
+
 symbian: {
     importFiles.sources = data
     importFiles.path = .

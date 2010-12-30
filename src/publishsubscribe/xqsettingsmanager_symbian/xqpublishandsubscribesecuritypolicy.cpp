@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "xqpublishandsubscribesecuritypolicy.h"
+#include "xqpublishandsubscribesecuritypolicy_p.h"
 
 /*!
     \class XQPublishAndSubscribeSecurityPolicy

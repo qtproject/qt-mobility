@@ -7,11 +7,11 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in a
-** written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
@@ -114,12 +114,30 @@ If the NetworkManager backend is required run qmake as follows:
     qmake BACKEND=NetworkManager
 \endcode
 
-The backend selection is expected to disappear once the API is integrated into Qt. 
+The backend selection is expected to disappear once the API is integrated into Qt.
+
+
+
+\section1 Main Classes
+\annotatedlist systeminfo
+
+
+\section1 QML Elements
+The Qt SystemInfo offers access to system information through declarative
+UI by providing systeminfo elements. Detailed information can be found
+at \l{QML System Information Plugin}.
+
+\annotatedlist qml-systeminfo
+
 
 \section1 Examples
 
 \section2 System Information Example
 
 The \l{sysinfo}{System Information} example demonstrates how an application can very easily access the system information of the device.
+
+\section2 System Information QML Example
+
+The System Info QML example demonstrates how an application can very easily access the system information of the device.
 
 */

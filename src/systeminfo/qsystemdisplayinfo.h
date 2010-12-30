@@ -53,29 +53,40 @@ class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
     Q_OBJECT
     Q_ENUMS(DisplayOrientation)
+    Q_ENUMS(BacklightState)
 
 public:
 
     explicit QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
- //   enum DisplayOrientation {
- //       Unknown = 0,
- //       Landscape,
- //       Portrait,
- //       InvertedLandscape,
- //       InvertedPortrait
- //   };
+    enum DisplayOrientation {
+        Unknown = 0,
+        Landscape,
+        Portrait,
+        InvertedLandscape,
+        InvertedPortrait
+    };
+
+    enum BacklightState {
+        BacklightStateUnknown = -1,
+        BacklightStateOff,
+        backlightStateDimmed,
+        backlightStateOn
+    };
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-//    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//    float contrast(int screen);
-//    int getDPIWidth(int screen);
-//    int getDPIHeight(int screen);
-//    int physicalHeight(int screen);
-//    int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
+
+    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
+
 };
 
 

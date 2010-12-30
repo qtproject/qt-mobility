@@ -58,7 +58,7 @@ isAbsPath() {
 # maemo we do not want to follow symbolic links that are
 # introduced by scratchbox
 absPath() {
-    if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
+    if [ "$2" = "maemo5" -o "$2" = "maemo6" -o "$2" = "meego" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
         else
@@ -102,12 +102,14 @@ QMAKE_EXEC=qmake
 LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
+PLATFORM_CONFIG=
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback connectivity"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
-ORGANIZER_REQUESTED=
+# By default, all modules are requested.  Reset this later if -modules is supplied
+ORGANIZER_REQUESTED=yes
 
 usage() 
 {
@@ -145,16 +147,20 @@ usage()
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework"
-    echo "                    sensors versit organizer feedback"
+    echo "                    sensors versit organizer feedback connectivity"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a selected module depends on other modules"
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
+    echo "-meego  ........... Build Qt Mobility for MeeGo."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
+#    echo "-staticconfig <name>"
+#    echo "                    Avoids running of configuration tests. The default"
+#    echo "                    values are sourced from features/platformconfig/<name>.pri"
     echo
     
     rm -f "$CONFIG_IN"
@@ -231,6 +237,9 @@ while [ "$#" -gt 0 ]; do
         -maemo6)
             LINUX_TARGET=maemo6
             ;;
+        -meego)
+            LINUX_TARGET=meego
+            ;;
         -sdk)
             MAC_SDK="$2"
             shift
@@ -241,11 +250,12 @@ while [ "$#" -gt 0 ]; do
             ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
+            ORGANIZER_REQUESTED=
             #reset default selection
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback|connectivity)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     organizer)
@@ -265,6 +275,10 @@ while [ "$#" -gt 0 ]; do
                 echo 
                 usage
             fi
+            shift
+            ;;
+        -staticconfig)
+            PLATFORM_CONFIG=$2
             shift
             ;;
         *)
@@ -341,6 +355,8 @@ if [ -n "$LINUX_TARGET" ]; then
         echo "CONFIG+=maemo5" >> "$CONFIG_IN"
     elif [ "$LINUX_TARGET" = "maemo6" ]; then
         echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "meego" ]; then
+        echo "CONFIG+=meego" >> "$CONFIG_IN"
     fi
 fi
 
@@ -537,24 +553,47 @@ compileTest()
     cd "$CURRENT_PWD"
 }
 
+if [ -z "$PLATFORM_CONFIG" ]; then
 #compile tests
-compileTest QMF qmf
-compileTest NetworkManager networkmanager
-compileTest "CoreWLAN (MacOS 10.6)" corewlan
-compileTest Immersion immersion
-compileTest "Maemo ICD" maemo-icd
-compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
-compileTest "Maemo5 contacts dependencies" maemo5-contacts
-compileTest "Maemo5 organizer dependencies" maemo5-calendar
-compileTest "Bluez" bluez
-compileTest "Gstreamer Photography" gstreamer-photography
-compileTest "Pulse Audio" pulseaudio
-if [ "$LINUX_TARGET" = maemo6 ]; then
-    compileTest sensord sensord
-else
-    echo "sensord_enabled = no" >> "$CONFIG_IN"
-fi
+    compileTest QMF qmf
+    compileTest NetworkManager networkmanager
+    compileTest "CoreWLAN (MacOS 10.6)" corewlan
+    compileTest Immersion immersion
+    compileTest "Maemo ICD" maemo-icd
+    compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+    compileTest "Maemo5 contacts dependencies" maemo5-contacts
+    compileTest "Maemo5 organizer dependencies" maemo5-calendar
+    compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
+    compileTest "Bluez" bluez
+    compileTest "Gstreamer Photography" gstreamer-photography
+    compileTest "Blkid" blkid
+    compileTest "Pulse Audio" pulseaudio
+    compileTest "udev" udev
 
+    if [ "$LINUX_TARGET" = maemo6 ] || [ "$LINUX_TARGET" = meego ]; then
+        compileTest sensord sensord
+    else
+        echo "sensord_enabled = no" >> "$CONFIG_IN"
+    fi
+
+    if [ "$LINUX_TARGET" = meego ]; then
+        compileTest connman connman
+        compileTest "Location GeoClue master provider" geoclue-master
+        compileTest "Location Gypsy provider" gypsy
+    else
+        echo "geoclue-master_enabled = no" >> "$CONFIG_IN"
+        echo "gypsy_enabled = no" >> "$CONFIG_IN"
+    fi
+else
+    echo "Skipping configure tests"
+    echo "Loading ... features/platformconfig/$PLATFORM_CONFIG.pri"
+    if [ ! -f "$relpath/features/platformconfig/$PLATFORM_CONFIG.pri" ]; then
+        echo "Invalid platform configuration $PLATFORM_CONFIG.pri"
+        exit 1;
+    else
+        echo "include(\$\${QT_MOBILITY_SOURCE_TREE}/features/platformconfig/$PLATFORM_CONFIG.pri)" >> "$CONFIG_IN"
+    fi
+fi
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
@@ -631,6 +670,11 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/filters
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer/details
             ;;
+        connectivity)
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/nfc
+            $relpath/bin/syncheaders $shadowpath/include/QtConnectivity $relpath/src/connectivity/bluetooth
+            ;;
         *)
             echo "Cannot generate headers for $module"
             ;;
@@ -650,4 +694,5 @@ if $QMAKE_EXEC -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
 else
     echo ""
     echo "configure failed."
+    exit 1
 fi
