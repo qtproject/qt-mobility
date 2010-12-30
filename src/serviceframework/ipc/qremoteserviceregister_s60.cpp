@@ -600,7 +600,7 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
     switch (aMessage.Function()) 
     {
     case EServicePackage:
-        User::LeaveIfError(HandleServicePackageL(aMessage));
+        HandleServicePackageL(aMessage);
         aMessage.Complete(KErrNone);
         break;
     case EPackageRequest:
@@ -612,16 +612,16 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
     }
 }
 
-TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMessage)
+void CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMessage)
 {
-    TInt ret = KErrNone;
     // Reproduce the serialized data.
     HBufC8* servicePackageBuf8 = HBufC8::New(aMessage.GetDesLength(0));
     if (!servicePackageBuf8) {
-        return KErrNoMemory;
+        User::Leave( KErrNoMemory );
     }
 
     TPtr8 ptrToBuf(servicePackageBuf8->Des());
+    TInt ret = KErrNone;
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone) {
         // TODO: is this error handleing correct
@@ -631,7 +631,7 @@ TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMess
         //iDb->lastError().setError(DBError::UnknownError);
         //aMessage.Write(1, LastErrorCode());
         delete servicePackageBuf8;
-        return ret;
+        User::Leave( ret );
     }
 
     QByteArray byteArray((const char*)ptrToBuf.Ptr(), ptrToBuf.Length());
@@ -644,7 +644,7 @@ TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMess
     printServicePackage(results);
 #endif
     iOwner->packageReceived(results);
-    return ret;
+    delete servicePackageBuf8;
 }
 
 void CServiceProviderServerSession::SetParent(SymbianServerEndPoint *aOwner)
