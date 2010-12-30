@@ -93,5 +93,18 @@ QList<QBluetoothHostInfo> QBluetoothLocalDevice::allDevices()
     return localDevices;
 }
 
+void QBluetoothLocalDevice::requestPairing(const QBluetoothAddress &address, Pairing pairing)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(pairing);
+}
+QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairingStatus(const QBluetoothAddress &address) const
+{
+    Q_UNUSED(address);
+
+    return Unpaired;
+}
+
+
 
 QTM_END_NAMESPACE

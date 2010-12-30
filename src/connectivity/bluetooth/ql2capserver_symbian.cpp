@@ -39,12 +39,60 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothdevicediscoveryagent.h"
-#include "qbluetoothdevicediscoveryagent_p.h"
-
+#include "ql2capserver.h"
+#include "ql2capserver_p.h"
+#include "qbluetoothsocket.h"
 
 QTM_BEGIN_NAMESPACE
 
-#include "moc_qbluetoothdevicediscoveryagent_p.cpp"
+QL2capServerPrivate::QL2capServerPrivate()
+:   maxPendingConnections(1), pending(false)
+{
+    socket = new QBluetoothSocket(QBluetoothSocket::L2capSocket);
+}
+
+QL2capServerPrivate::~QL2capServerPrivate()
+{
+}
+
+void QL2capServer::close()
+{
+}
+
+bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
+{
+    Q_UNUSED(address);
+    Q_UNUSED(port);
+    return false;
+}
+
+void QL2capServer::setMaxPendingConnections(int numConnections)
+{
+    Q_UNUSED(numConnections);
+}
+
+bool QL2capServer::hasPendingConnections() const
+{
+  return false;
+}
+
+QBluetoothSocket *QL2capServer::nextPendingConnection()
+{
+    return 0;
+}
+
+QBluetoothAddress QL2capServer::serverAddress() const
+{
+    Q_D(const QL2capServer);
+
+    return d->socket->localAddress();
+}
+
+quint16 QL2capServer::serverPort() const
+{
+    Q_D(const QL2capServer);
+
+    return d->socket->localPort();
+}
 
 QTM_END_NAMESPACE

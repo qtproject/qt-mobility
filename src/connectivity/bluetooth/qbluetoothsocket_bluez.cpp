@@ -41,7 +41,6 @@
 
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "qbluetoothsocket_bluez_p.h"
 
 #include "bluez/manager_p.h"
 #include "bluez/adapter_p.h"
@@ -55,39 +54,185 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <QtCore/QSocketNotifier>
 
 QTM_BEGIN_NAMESPACE
 
-void QBluetoothSocket::abort()
+QBluetoothSocketPrivate::QBluetoothSocketPrivate()
+    : socket(-1),
+      socketType(QBluetoothSocket::UnknownSocketType),
+      connecting(false),
+      discoveryAgent(0),
+      readNotifier(0),
+      connectWriteNotifier(0)
+{
+}
+
+QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
+{
+    delete readNotifier;
+    readNotifier = 0;
+}
+
+bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
+{
+    if (socket != -1) {
+        if (socketType == type)
+            return true;
+
+        delete readNotifier;
+        readNotifier = 0;
+        QT_CLOSE(socket);
+    }
+
+    socketType = type;
+
+    switch (type) {
+    case QBluetoothSocket::L2capSocket:
+        socket = ::socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP);
+        break;
+    case QBluetoothSocket::RfcommSocket:
+        socket = ::socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+        break;
+    default:
+        socket = -1;
+    }
+
+    if (socket == -1)
+        return false;
+
+    int flags = fcntl(socket, F_GETFL, 0);
+    fcntl(socket, F_SETFL, flags | O_NONBLOCK);
+
+    Q_Q(QBluetoothSocket);
+    readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
+    QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
+
+    return true;
+}
+
+void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
+{
+    Q_Q(QBluetoothSocket);
+    Q_UNUSED(openMode);
+    int result = -1;
+
+    if (socketType == QBluetoothSocket::RfcommSocket) {
+        sockaddr_rc addr;
+
+        memset(&addr, 0, sizeof(addr));
+        addr.rc_family = AF_BLUETOOTH;
+        addr.rc_channel = port;
+
+        convertAddress(address.toUInt64(), addr.rc_bdaddr.b);
+
+        result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
+        sockaddr_l2 addr;
+
+        memset(&addr, 0, sizeof(addr));
+        addr.l2_family = AF_BLUETOOTH;
+        addr.l2_psm = port;
+
+        convertAddress(address.toUInt64(), addr.l2_bdaddr.b);
+
+        result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
+    }
+
+    if (result >= 0 || (result == -1 && errno == EINPROGRESS)) {
+        connecting = true;
+        q->setSocketState(QBluetoothSocket::ConnectingState);
+        connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);
+        QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
+    } else {
+        errorString = QString::fromLocal8Bit(strerror(errno));
+        q->setSocketError(QBluetoothSocket::UnknownSocketError);
+    }
+}
+
+void QBluetoothSocketPrivate::_q_writeNotify()
+{
+    Q_Q(QBluetoothSocket);
+    qDebug() << Q_FUNC_INFO << "woke up!";
+    if(connecting && q->state() == QBluetoothSocket::ConnectingState){
+        int errorno, len;
+        len = sizeof(errorno);
+        ::getsockopt(socket, SOL_SOCKET, SO_ERROR, &errorno, (socklen_t*)&len);
+        if(errorno) {
+            errorString = QString::fromLocal8Bit(strerror(errorno));
+            emit q->error(QBluetoothSocket::UnknownSocketError);
+            return;
+        }
+        // TODO: is this right? set socket state, then emit connected?
+        q->setSocketState(QBluetoothSocket::ConnectedState);
+        emit q->connected();
+
+        // TODO: implement write buffering and enable this
+        // this CAN NOT BE DELETE.  NON BLOCKING SOCKET
+        // means writes silently will fail without this!!!!!!!!
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+
+    }
+    else {
+        // error at this time
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+    }
+    connecting = false;
+}
+
+// TODO: move to private backend?
+
+void QBluetoothSocketPrivate::_q_readNotify()
+{
+    Q_Q(QBluetoothSocket);
+    char *writePointer = buffer.reserve(QBLUETOOTHDEVICE_BUFFERSIZE);
+//    qint64 readFromDevice = q->readData(writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    int readFromDevice = ::read(socket, writePointer, QBLUETOOTHDEVICE_BUFFERSIZE);
+    if(readFromDevice <= 0){
+        int errsv = errno;
+        // TODO: Something seems wrong here
+        // Will return constant errors is enabled
+        // where should (if it can be?) we enable it again
+        readNotifier->setEnabled(false);
+        errorString = QString::fromLocal8Bit(strerror(errsv));
+        qDebug() << Q_FUNC_INFO << "error:" << readFromDevice << errorString;
+        if(errsv == EHOSTDOWN)
+            emit q->error(QBluetoothSocket::HostNotFoundError);
+        else
+            emit q->error(QBluetoothSocket::UnknownSocketError);
+
+        q->setSocketState(QBluetoothSocket::UnconnectedState);
+        q->disconnectFromService();
+    }
+    else {
+        buffer.chop(QBLUETOOTHDEVICE_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
+
+        emit q->readyRead();
+    }
+}
+
+void QBluetoothSocketPrivate::abort()
 {
     // TODO: what else?
     // We don't transition through Closing for abort, so
     // we don't call disconnectFromService or
     // QBluetoothSocket::close
-    int ret = ::close(d->socket);
+    ::close(socket);
 
-    delete d->readNotifier;
-    d->readNotifier = 0;
-    delete d->connectWriteNotifier;
-    d->connectWriteNotifier = 0;
-
-    emit disconnected();
-    setSocketState(QBluetoothSocket::UnconnectedState);
+    delete readNotifier;
+    readNotifier = 0;
+    delete connectWriteNotifier;
+    connectWriteNotifier = 0;
 }
 
-void QBluetoothSocket::disconnectFromService()
+QString QBluetoothSocketPrivate::localName() const
 {
-    // TODO: is this all we need to do?
-    close();
-    emit disconnected();
-}
-
-QString QBluetoothSocket::localName() const
-{
-    if (!d->localName.isEmpty())
-        return d->localName;
+    if (!m_localName.isEmpty())
+        return m_localName;
 
     const QBluetoothAddress address = localAddress();
     if (address.isNull())
@@ -109,27 +254,27 @@ QString QBluetoothSocket::localName() const
     if (properties.isError())
         return QString();
 
-    d->localName = properties.value().value(QLatin1String("Name")).toString();
+    m_localName = properties.value().value(QLatin1String("Name")).toString();
 
-    return d->localName;
+    return m_localName;
 }
 
-QBluetoothAddress QBluetoothSocket::localAddress() const
+QBluetoothAddress QBluetoothSocketPrivate::localAddress() const
 {
-    if (d->socketType == QBluetoothSocket::RfcommSocket) {
+    if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getsockname(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
+        if (::getsockname(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
             quint64 bdaddr;
             convertAddress(addr.rc_bdaddr.b, bdaddr);
             return QBluetoothAddress(bdaddr);
         }
-    } else if (d->socketType == QBluetoothSocket::L2capSocket) {
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getsockname(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
+        if (::getsockname(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
             quint64 bdaddr;
             convertAddress(addr.l2_bdaddr.b, bdaddr);
             return QBluetoothAddress(bdaddr);
@@ -139,45 +284,45 @@ QBluetoothAddress QBluetoothSocket::localAddress() const
     return QBluetoothAddress();
 }
 
-quint16 QBluetoothSocket::localPort() const
+quint16 QBluetoothSocketPrivate::localPort() const
 {
-    if (d->socketType == QBluetoothSocket::RfcommSocket) {
+    if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getsockname(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
+        if (::getsockname(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
             return addr.rc_channel;
-    } else if (d->socketType == QBluetoothSocket::L2capSocket) {
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getsockname(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
+        if (::getsockname(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
             return addr.l2_psm;
     }
 
     return 0;
 }
 
-QString QBluetoothSocket::peerName() const
+QString QBluetoothSocketPrivate::peerName() const
 {
-    if (!d->peerName.isEmpty())
-        return d->peerName;
+    if (!m_peerName.isEmpty())
+        return m_peerName;
 
     quint64 bdaddr;
 
-    if (d->socketType == QBluetoothSocket::RfcommSocket) {
+    if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) < 0)
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) < 0)
             return QString();
 
         convertAddress(addr.rc_bdaddr.b, bdaddr);
-    } else if (d->socketType == QBluetoothSocket::L2capSocket) {
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) < 0)
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) < 0)
             return QString();
 
         convertAddress(addr.l2_bdaddr.b, bdaddr);
@@ -218,27 +363,27 @@ QString QBluetoothSocket::peerName() const
     if (properties.isError())
         return QString();
 
-    d->peerName = properties.value().value(QLatin1String("Alias")).toString();
+    m_peerName = properties.value().value(QLatin1String("Alias")).toString();
 
-    return d->peerName;
+    return m_peerName;
 }
 
-QBluetoothAddress QBluetoothSocket::peerAddress() const
+QBluetoothAddress QBluetoothSocketPrivate::peerAddress() const
 {
-    if (d->socketType == QBluetoothSocket::RfcommSocket) {
+    if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
             quint64 bdaddr;
             convertAddress(addr.rc_bdaddr.b, bdaddr);
             return QBluetoothAddress(bdaddr);
         }
-    } else if (d->socketType == QBluetoothSocket::L2capSocket) {
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0) {
             quint64 bdaddr;
             convertAddress(addr.l2_bdaddr.b, bdaddr);
             return QBluetoothAddress(bdaddr);
@@ -248,88 +393,85 @@ QBluetoothAddress QBluetoothSocket::peerAddress() const
     return QBluetoothAddress();
 }
 
-quint16 QBluetoothSocket::peerPort() const
+quint16 QBluetoothSocketPrivate::peerPort() const
 {
-    if (d->socketType == QBluetoothSocket::RfcommSocket) {
+    if (socketType == QBluetoothSocket::RfcommSocket) {
         sockaddr_rc addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
             return addr.rc_channel;
-    } else if (d->socketType == QBluetoothSocket::L2capSocket) {
+    } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
         socklen_t addrLength = sizeof(addr);
 
-        if (::getpeername(d->socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
+        if (::getpeername(socket, reinterpret_cast<sockaddr *>(&addr), &addrLength) == 0)
             return addr.l2_psm;
     }
 
     return 0;
 }
 
-qint64 QBluetoothSocket::writeData(const char *data, qint64 maxSize)
+qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
 {
-    if (::write(d->socket, data, maxSize) != maxSize) {
-        d->socketError = QBluetoothSocket::UnknownSocketError;
-        emit error(d->socketError);
+    Q_Q(QBluetoothSocket);
+    if (::write(socket, data, maxSize) != maxSize) {
+        socketError = QBluetoothSocket::UnknownSocketError;
+        emit q->error(socketError);
     }
 
-    emit bytesWritten(maxSize);
+    emit q->bytesWritten(maxSize);
 
     return maxSize;
 }
 
-qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
+qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
 {
-    if(!d->buffer.isEmpty()){
-        int i = d->buffer.read(data, maxSize);
+    if(!buffer.isEmpty()){
+        int i = buffer.read(data, maxSize);
         return i;
 
     }
     return 0;
-//    return ::read(d->socket, data, maxSize);
 }
 
-void QBluetoothSocket::close()
+void QBluetoothSocketPrivate::close()
 {
-    setSocketState(ClosingState);
+    ::close(socket);
 
-    ::close(d->socket);
-
-    setSocketState(UnconnectedState);
-
-    delete d->readNotifier;
-    d->readNotifier = 0;
-    delete d->connectWriteNotifier;
-    d->connectWriteNotifier = 0;
+    delete readNotifier;
+    readNotifier = 0;
+    delete connectWriteNotifier;
+    connectWriteNotifier = 0;
 }
 
-bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,
-                                           SocketState socketState, OpenMode openMode)
+bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType,
+                                           QBluetoothSocket::SocketState socketState, QBluetoothSocket::OpenMode openMode)
 {
-    if (d->readNotifier)
-        delete d->readNotifier;
+    Q_Q(QBluetoothSocket);
+    delete readNotifier;
+    readNotifier = 0;
 
-    d->socketType = socketType;
-    d->socket = socketDescriptor;
+    socketType = socketType;
+    socket = socketDescriptor;
 
     // ensure that O_NONBLOCK is set on new connections.
-    int flags = fcntl(d->socket, F_GETFL, 0);
+    int flags = fcntl(socket, F_GETFL, 0);
     if (!(flags & O_NONBLOCK))
-        fcntl(d->socket, F_SETFL, flags | O_NONBLOCK);
+        fcntl(socket, F_SETFL, flags | O_NONBLOCK);
 
-    d->readNotifier = new QSocketNotifier(d->socket, QSocketNotifier::Read);
-    connect(d->readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+    readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
+    QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
 
-    setSocketState(socketState);
-    setOpenMode(openMode);
+    q->setSocketState(socketState);
+    q->setOpenMode(openMode);
 
     return true;
 }
 
-int QBluetoothSocket::socketDescriptor() const
+int QBluetoothSocketPrivate::socketDescriptor() const
 {
-    return d->socket;
+    return socket;
 }
 
 

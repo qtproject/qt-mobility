@@ -43,7 +43,6 @@
 #include "qrfcommserver_p.h"
 #include "qbluetoothsocket.h"
 #include "qbluetoothsocket_p.h"
-#include "qbluetoothsocket_symbian_p.h"
 #include "utils_symbian_p.h"
 
 #include <QTimer>
@@ -54,11 +53,11 @@
 QTM_BEGIN_NAMESPACE
 
 QRfcommServerPrivate::QRfcommServerPrivate()
-: maxPendingConnections(1), pendingSocket(0)
+: pendingSocket(0), maxPendingConnections(1)
 {
-    socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);
-    ds = qobject_cast<QBluetoothSocketSymbianPrivate *>(socket->d);
-    ds->socket->SetNotifier(*this);
+    socket = new QBluetoothSocket(QBluetoothSocket::RfcommSocket);    
+    ds = socket->d_ptr;
+    ds->iSocket->SetNotifier(*this);
 }
 
 QRfcommServerPrivate::~QRfcommServerPrivate()
@@ -93,16 +92,16 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
 
     TBTServiceSecurity security;
     addr.SetSecurity(security);
-    d->ds->socket->Bind(addr);
+    d->ds->iSocket->Bind(addr);
     d->socket->setSocketState(QBluetoothSocket::BoundState);
 
-    d->ds->socket->Listen(d->maxPendingConnections);
+    d->ds->iSocket->Listen(d->maxPendingConnections);
 
     d->pendingSocket = new QBluetoothSocket;
     
-    QBluetoothSocketSymbianPrivate *pd = qobject_cast<QBluetoothSocketSymbianPrivate *>(d->pendingSocket->d);
+    QBluetoothSocketPrivate *pd = d->pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket();
-    if (d->ds->socket->Accept(*pd->socket) == KErrNone)
+    if (d->ds->iSocket->Accept(*pd->iSocket) == KErrNone)
         d->socket->setSocketState(QBluetoothSocket::ListeningState);
     else
         d->socket->close();
@@ -126,7 +125,7 @@ QBluetoothAddress QRfcommServer::serverAddress() const
         return QBluetoothAddress();
 
     TBTSockAddr address;
-    d->ds->socket->LocalName(address);
+    d->ds->iSocket->LocalName(address);
 
     return qTBTDevAddrToQBluetoothAddress(address.BTAddr());
 }
@@ -138,7 +137,7 @@ quint16 QRfcommServer::serverPort() const
     if (d->socket->state() == QBluetoothSocket::UnconnectedState)
         return 0;
 
-    return d->ds->socket->LocalPort();
+    return d->ds->iSocket->LocalPort();
 }
 
 bool QRfcommServer::hasPendingConnections() const
@@ -156,7 +155,7 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
         return 0;
 
     QBluetoothSocket *next = d->activeSockets.takeFirst();
-    QBluetoothSocketSymbianPrivate *n = qobject_cast<QBluetoothSocketSymbianPrivate *>(next->d);
+    QBluetoothSocketPrivate *n = next->d_ptr;
 
     n->startReceive();
 
@@ -172,8 +171,8 @@ void QRfcommServerPrivate::HandleAcceptCompleteL(TInt aErr)
         activeSockets.append(pendingSocket);
 
         pendingSocket = new QBluetoothSocket;
-        QBluetoothSocketSymbianPrivate *pd = qobject_cast<QBluetoothSocketSymbianPrivate *>(pendingSocket->d);
-        pd->socket->Accept(*pd->socket);
+        QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
+        pd->iSocket->Accept(*pd->iSocket);
 
         emit q->newConnection();
     } else if (aErr == KErrCancel) {
