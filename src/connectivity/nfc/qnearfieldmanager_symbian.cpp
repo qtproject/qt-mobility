@@ -87,7 +87,7 @@ void ContentHandlerInterface::handleMessage(const QByteArray& btArray)
 /*!
     Constructs a new near field manager private implementation.
 */
-QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
+QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl(): m_target(NULL), m_symbianbackend(NULL), m_serviceRegister(NULL)
 {
     BEGIN
     QT_TRAP_THROWING(m_symbianbackend = CNearFieldManager::NewL(*this));
@@ -102,7 +102,7 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
     BEGIN
     delete m_target;
     delete m_symbianbackend;
-	delete m_serviceRegister;
+    delete m_serviceRegister;
     END
 }
 
@@ -215,7 +215,7 @@ int QNearFieldManagerPrivateImpl::registerTargetDetectedHandler(const QNdefFilte
 bool QNearFieldManagerPrivateImpl::unregisterTargetDetectedHandler(int id)
 {
     BEGIN
-	 if ( 0xffff == id )
+     if ( 0xffff == id )
         {
         disconnect(&contentHandlerProxy, SIGNAL(handleMessage(QNdefMessage)),
                           this, SLOT(_q_privateHandleMessageSlot(QNdefMessage)));

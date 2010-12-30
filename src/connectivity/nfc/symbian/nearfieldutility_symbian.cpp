@@ -47,15 +47,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QNFCNdefUtility::QNFCNdefUtility()
-    {
-    }
 
-QNFCNdefUtility::~QNFCNdefUtility()
-    {
-    }
-
-CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg )
+CNdefMessage* QNFCNdefUtility::QNdefMsg2CNdefMsgL( const QNdefMessage& msg )
     {
         QByteArray payload = msg.toByteArray();
         CNdefMessage* cmsg = CNdefMessage::NewL();
@@ -65,7 +58,7 @@ CNdefMessage* QNFCNdefUtility::FromQNdefMsgToCNdefMsgL( const QNdefMessage& msg 
     }
 
 
-QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
+QNdefMessage QNFCNdefUtility::CNdefMsg2QNdefMsgL( const CNdefMessage& msg )
     {
         BEGIN
         QNdefMessage result;
@@ -85,13 +78,13 @@ QNdefMessage QNFCNdefUtility::FromCNdefMsgToQndefMsgL( const CNdefMessage& msg )
         return result;
     }
 
-TPtrC8 QNFCNdefUtility::FromQByteArrayToTPtrC8(const QByteArray& qbytearray)
+TPtrC8 QNFCNdefUtility::QByteArray2TPtrC8(const QByteArray& qbytearray)
     {
     TPtrC8 ptr(reinterpret_cast<const TUint8*>(qbytearray.constData()), qbytearray.size());
     return ptr;
     }
 
-QByteArray QNFCNdefUtility::FromTDesCToQByteArray( const TDesC8& des)
+QByteArray QNFCNdefUtility::TDesC2QByteArray( const TDesC8& des)
     {
         QByteArray result;
         for(int i = 0; i < des.Length(); ++i)
@@ -118,7 +111,7 @@ void QNFCNdefUtility::FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8&
             }
     }
 
-TPtrC8 QNFCNdefUtility::FromQStringToTptrC8(const QString& qstring)
+TPtrC8 QNFCNdefUtility::QString2TPtrC8(const QString& qstring)
     {
     TPtrC8 ptr (reinterpret_cast<const TUint8*>(qstring.constData()),qstring.length());
     return ptr;

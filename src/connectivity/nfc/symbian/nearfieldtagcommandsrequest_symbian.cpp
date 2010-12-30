@@ -92,7 +92,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
     QByteArray result;
     if (KErrNone == aError)
     {
-        result = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
+        result = QNFCNdefUtility::TDesC2QByteArray(*iResponse);
         LOG("result is "<<result);
         LOG("clear the buffer");
         iResponse->Zero();

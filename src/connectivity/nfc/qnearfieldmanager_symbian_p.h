@@ -105,7 +105,7 @@ public://call back function by symbian backend implementation
 
 
 private slots:
-	void _q_privateHandleMessageSlot(QNdefMessage msg);
+    void _q_privateHandleMessageSlot(QNdefMessage msg);
 
 private:
     struct Callback {

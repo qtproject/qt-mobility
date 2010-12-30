@@ -148,7 +148,7 @@ TInt NearFieldTagCommandRequest::HandlePassiveCommand(TInt aError)
             }
         }
     }
-    iRequestResponse = QNFCNdefUtility::FromTDesCToQByteArray(*iResponse);
+    iRequestResponse = QNFCNdefUtility::TDesC2QByteArray(*iResponse);
     END
     return result;
 }

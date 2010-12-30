@@ -169,7 +169,7 @@ const QByteArray& QNearFieldTagType3Symbian::getIDm()
             TInt error = connection->GetIDm(IDm);
             if (KErrNone == error)
             {
-                mIDm = QNFCNdefUtility::FromTDesCToQByteArray(IDm);  
+                mIDm = QNFCNdefUtility::TDesC2QByteArray(IDm);  
             }
         }
     }

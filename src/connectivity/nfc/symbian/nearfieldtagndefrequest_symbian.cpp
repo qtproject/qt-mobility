@@ -95,7 +95,7 @@ void NearFieldTagNdefRequest::ReadComplete(TInt aError, RPointerArray<CNdefMessa
     {
         for(int i = 0; i < aMessage->Count(); ++i)
         {
-        QNdefMessage message = QNFCNdefUtility::FromCNdefMsgToQndefMsgL(*(*aMessage)[i]);
+        QNdefMessage message = QNFCNdefUtility::CNdefMsg2QNdefMsgL(*(*aMessage)[i]);
         iReadMessages.append(message);
         }
     }
