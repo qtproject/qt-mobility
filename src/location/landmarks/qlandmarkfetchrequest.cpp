@@ -181,7 +181,7 @@ int QLandmarkFetchRequest::offset() const
 /*!
     Sets the index \a offset for the request.
 */
-woid QLandmarkFetchRequest::setOffset(int offset) {
+void QLandmarkFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkFetchRequest);
     QMutexLocker ml(&d->mutex);
     d->offset = offset;
