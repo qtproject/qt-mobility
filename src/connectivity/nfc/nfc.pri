@@ -1,3 +1,5 @@
+CONFIG += mobility
+MOBILITY = serviceframework
 
 HEADERS += \
     nfc/qnearfieldmanager.h \
