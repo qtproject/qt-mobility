@@ -263,7 +263,6 @@ public:
     QString m_organizeritemType;
     QStringList m_names;
     QMap<QString, QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -287,7 +286,6 @@ public:
 
     QString m_organizeritemType;
     QList<QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -311,7 +309,6 @@ public:
 
     QString m_organizeritemType;
     QStringList m_names;
-    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
