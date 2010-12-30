@@ -42,6 +42,10 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetaildefinition_p.h"
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -140,6 +144,22 @@ QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a definition to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QContactDetailDefinition& definition)
+{
+    dbg.nospace() << "QContactDetailDefinition("
+                  << "name=" << definition.name() << ","
+                  << "isUnique=" << definition.isUnique() << ","
+                  << "isEmpty=" << definition.isEmpty() << ","
+                  << "fields=" << definition.fields()
+                  << ")";
+    return dbg.maybeSpace();
 }
 #endif
 

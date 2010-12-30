@@ -97,6 +97,10 @@ Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetail
 Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition);
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetailDefinition& definition);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailDefinition), Q_MOVABLE_TYPE);
