@@ -63,7 +63,10 @@ QTM_BEGIN_NAMESPACE
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     : socket(-1),
       socketType(QBluetoothSocket::UnknownSocketType),
-      connecting(false)
+      connecting(false),
+      discoveryAgent(0),
+      readNotifier(0),
+      connectWriteNotifier(0)
 {
 }
 
