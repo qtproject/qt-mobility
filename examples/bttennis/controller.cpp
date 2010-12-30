@@ -7,6 +7,7 @@
 
 Controller::Controller(QObject *parent) :
     QObject(parent), timer(new QTimer), elapsed(new QTime), score_left(0), score_right(0),
+    col_x(0), col_y(0),
     rightPaddleForce(0), leftPaddleForce(0),
     rightPaddleLast(0), leftPaddleLast(0),
     rightPowerUp(0), leftPowerUp(0)
@@ -27,6 +28,11 @@ void Controller::tick()
     static int i;
     static int ttf = 0;
     static int dev = 0;
+
+    if(col_x)
+        col_x--;
+    if(col_y)
+        col_y--;
 
     int msec = elapsed->elapsed();
     elapsed->restart();
@@ -84,26 +90,27 @@ static inline int paddle_boost(int force){
 
 void Controller::ballCollision(Board::Edge pos)
 {
-    if(pos == Board::Top || pos == Board::Bottom)
+    if(pos == Board::Top || pos == Board::Bottom && !col_y) {
         speed_y *= -1;
-    if(pos == Board::Left) {
+        col_y = 3;
+    }
+
+    if(pos == Board::Left && !col_x) {
         speed_x *= -1;
-        ball_x = 13;
         speed_y += paddle_boost(leftPaddleForce);
+        col_x = 3;
 
         if(leftPowerUp > 75 && speed_x < 8*FRAME_RATE){
-//            qDebug() << "Boost:" << leftPowerUp;
             speed_x *= 2;
             leftPowerUp = 0;
         }
     }
-    else if(pos == Board::Right) {
+    else if(pos == Board::Right && !col_x) {
         speed_x *= -1;
-        ball_x = Board::Width-24;
         speed_y += paddle_boost(rightPaddleForce);
+        col_x = 3;
 
         if(rightPowerUp > 75 && speed_x > -8*FRAME_RATE){
-//            qDebug() << "Boost:" << rightPowerUp;
             speed_x *= 2;
             rightPowerUp = 0;
         }
@@ -143,21 +150,19 @@ void Controller::restart_ball()
 
     // Speed in in pixels/second
 
-    const int max = 4;
+    const int max = 4*FRAME_RATE;
     const int min_x = 2*FRAME_RATE;
     const int min_y = 1.5*FRAME_RATE;
 
 
-    speed_y = 0;
-    while((speed_y <= 0 && speed_y > -1*min_y) ||
-          (speed_y > 0 && speed_y < min_y))
-        speed_y = qrand()%(2*max*FRAME_RATE)-max*FRAME_RATE;
+    speed_y = min_y+qrand()%(max-min_y);
+    if(speed_y%2)
+        speed_y *= -1;
 
 
-    speed_x = 0;
-    while((speed_x <= 0 && speed_x > -1*min_x) ||
-          (speed_x > 0 && speed_x < min_x))
-        speed_x = qrand()%(2*max*FRAME_RATE)-max*FRAME_RATE;
+    speed_x = min_x+qrand()%(max-min_y);
+    if(speed_x%2)
+        speed_x *= -1;
 
     leftPowerUp = rightPowerUp = 0;
 

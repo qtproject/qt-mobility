@@ -39,6 +39,8 @@ private:
     int speed_y;
     int score_left;
     int score_right;
+    int col_x;
+    int col_y;
 
     int rightPaddleForce;
     int rightPaddleLast;
