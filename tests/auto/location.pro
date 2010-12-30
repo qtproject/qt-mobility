@@ -11,7 +11,6 @@ SUBDIRS += qgeocoordinate \
       qgeopositioninfo \
       qgeosatelliteinfo \
       qgeosatelliteinfosource \
-      qgeopositioninfosource \
       qgeoareamonitor \
       qlocationutils \
       qnmeapositioninfosource \
@@ -46,6 +45,14 @@ SUBDIRS += qgeocoordinate \
       geoservicesgeotiledmap \
       pixelindex
 
+# With MeeGo, by default use mock backend for autotesting.
+meego: {
+    SUBDIRS += qgeopositioninfosource_mock \
+               qgeosatelliteinfosource_mock
+} else {
+    SUBDIRS += qgeopositioninfosource \
+               qgeosatelliteinfosource
+}
 
 !symbian{
 SUBDIRS += qgeoserviceproviderplugins \
