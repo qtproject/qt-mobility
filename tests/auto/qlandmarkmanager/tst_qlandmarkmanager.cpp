@@ -7087,18 +7087,12 @@ void tst_QLandmarkManager::importGpx() {
     QCOMPARE(spyChange.count(), 0);
 
     QList<QLandmarkId> ids;
-#if (!defined(Q_WS_MAEMO_6))
     QCOMPARE(spyAdd.count(), 0);
-#endif
 #ifdef Q_OS_SYMBIAN
     if (type == "asyncAttachSingleCategory")
         QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
 #endif
-#if defined(Q_WS_MAEMO_6)
-    QVERIFY((dataChanged.count() > 0) || (spyAdd.count() > 0));
-#else
     QCOMPARE(dataChanged.count(),1);
-#endif
     spyAdd.clear();
     dataChanged.clear();
 
@@ -7243,9 +7237,8 @@ void tst_QLandmarkManager::importGpx() {
 
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
-#if (!defined(Q_WS_MAEMO_6))
         QCOMPARE(spyAdd.count(), 0);
-#endif
+
         //check that we can use canceled request again
         importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
@@ -7260,13 +7253,8 @@ void tst_QLandmarkManager::importGpx() {
 
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
-
-#if defined(Q_WS_MAEMO_6)
-        QVERIFY((dataChanged.count() > 0) || (spyAdd.count() > 0));
-#else
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(dataChanged.count(), 1);
-#endif
     }
 #endif
 }

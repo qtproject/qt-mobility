@@ -61,6 +61,7 @@
 #include <QSet>
 #include <QMutex>
 #include <QtSparqlTrackerExtensions/TrackerChangeNotifier>
+#include <qsharedmemory.h>
 
 QTM_USE_NAMESPACE
 
@@ -221,6 +222,7 @@ protected:
 
 private:
     bool m_changeNotificationsEnabled;
+    bool m_signalsPrevented;
     QHash<QString, QString> m_landmarkHash;
     QHash<QString, QString> m_categoryHash;
     void setChangeNotificationsEnabled(bool enabled);
@@ -234,6 +236,8 @@ private:
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;
     QMutex m_mutex;//protects m_requestRunHash and m_activeRequests
+    QSharedMemory sharedMemory;
+    QString m_timeStamp;
 };
 
 #endif // QLANDMARKMANAGERENGINE_QSPARQL_P_H

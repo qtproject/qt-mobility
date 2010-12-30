@@ -70,16 +70,20 @@
 #include <qlandmarkimportrequest.h>
 #include <qlandmarkexportrequest.h>
 
+#include <QBuffer>
 #include <QDateTime>
 #include <QDebug>
+#include <QEventLoop>
 #include <QFile>
 #include <math.h>
-#include <QUuid>
-#include <QSet>
 #include <QMetaMethod>
 #include <qnumeric.h>
-#include <QXmlStreamReader>
+#include <QSet>
+#include <QSharedMemory>
 #include <QStringList>
+#include <QTimer>
+#include <QUuid>
+#include <QXmlStreamReader>
 
 #include <QtSparql/QSparqlConnection>
 #include <QtSparql/QSparqlConnectionOptions>
@@ -687,7 +691,8 @@ using namespace DatabaseOperationsHelpers;
 DatabaseOperations::DatabaseOperations()
     : connectionName(QString()),
     managerUri(QString()),
-    queryRun(0)
+    queryRun(0),
+    sharedMemory("QLandmarksSharedMemory")
 {
     m_conn = new QSparqlConnection("QTRACKER");
     if (countryCodes.size() == 0) {
@@ -698,6 +703,75 @@ DatabaseOperations::DatabaseOperations()
 DatabaseOperations::~DatabaseOperations()
 {
     delete m_conn;
+    if (sharedMemory.isAttached())
+        sharedMemory.detach();
+}
+
+void DatabaseOperations::dataChangedSignallingOnly(bool enabled)
+{
+    if (sharedMemory.isAttached())
+        sharedMemory.detach();
+    QBuffer buffer;
+    buffer.open( QBuffer::ReadWrite );
+    QDataStream out( &buffer );
+    QDateTime dateTime = QDateTime::currentDateTime();
+    qint64 timeStamp;
+    if (enabled)
+        timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec() + 60000;
+    else
+        timeStamp = (qint64)dateTime.toTime_t() *1000 + dateTime.time().msec();
+    QString timeStampString;
+    timeStampString.setNum(timeStamp);
+    out << timeStampString;
+    int size = buffer.size();
+    if (!sharedMemory.attach()) {
+        if (!sharedMemory.create(size)) {
+            qWarning() << "Unable to create shared memory segment.";
+            return;
+        } else {
+            // Write into the shared memory
+            sharedMemory.lock();
+            char *to = (char*)sharedMemory.data();
+            const char *from = buffer.data().data();
+            memcpy( to, from, qMin( sharedMemory.size(), size ) );
+            sharedMemory.unlock();
+        }
+    } else {
+        if (!enabled) {
+            // When disabling this functionality, the time stamp in shared
+            // memory is updated only if it is equal to the time stamp saved
+            // by this thread. So the signalling of an other large operation
+            // started afterwards by other landmark manager will not be
+            // interrupted.
+            QBuffer readBuffer;
+            QDataStream in(&readBuffer);
+            QString timeStampInSharedMemory;
+            sharedMemory.lock();
+            readBuffer.setData((char*)sharedMemory.constData(), sharedMemory.size());
+            readBuffer.open(QBuffer::ReadOnly);
+            in >> timeStampInSharedMemory;
+            sharedMemory.unlock();
+            if (m_timeStamp != timeStampInSharedMemory.toLongLong())
+                return;
+        }
+        // Write into the shared memory
+        sharedMemory.lock();
+        char *to = (char*)sharedMemory.data();
+        const char *from = buffer.data().data();
+        memcpy( to, from, qMin( sharedMemory.size(), size ) );
+        sharedMemory.unlock();
+    }
+    if (enabled) {
+        m_timeStamp = timeStamp;
+    } else {
+        // If an asynchronous operation ends, this delay is needed for
+        // giving each landmark manager an opportunity to read shared
+        // memory before it is detached by this thread (in destructor)
+        // and then released by the system.
+        QEventLoop eventLoop;
+        QTimer::singleShot(1000, &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+    }
 }
 
 QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
@@ -2064,9 +2138,7 @@ bool DatabaseOperations::saveLandmark(QLandmark* landmark,
 bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
-        QString *errorString,
-        QList<QLandmarkId> *addedIds,
-        QList<QLandmarkId> *changedIds)
+        QString *errorString)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2079,6 +2151,11 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
     QLandmarkManager::Error loopError;
     QString loopErrorString;
     bool result;
+    bool dataChangedOnly = false;
+    if (landmark->size() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
     for (int i = 0; i < landmark->size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString = "";
@@ -2093,7 +2170,6 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             noErrors = false;
             break;
         }   
-        bool update = landmark->at(i).landmarkId().isValid();
         result = saveLandmarkHelper(&(landmark->operator [](i)), &loopError, &loopErrorString);
 
         if (errorMap && (loopError != QLandmarkManager::NoError))
@@ -2103,11 +2179,6 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             noErrors = false;
             lastError = loopError;
             lastErrorString = loopErrorString;
-        } else {
-          if(update)
-              changedIds->append(landmark->at(i).landmarkId());
-          else
-              addedIds->append(landmark->at(i).landmarkId());
         }
     }
 
@@ -2122,6 +2193,8 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
         if (errorString)
             *errorString = lastErrorString;
     }
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return noErrors;
 }
 
@@ -2241,7 +2314,7 @@ bool DatabaseOperations::removeLandmark(const QLandmarkId &landmarkId,
 bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
                     QMap<int, QLandmarkManager::Error> *errorMap,
                     QLandmarkManager::Error *error,
-                    QString *errorString, QList<QLandmarkId> *removedIds)
+                    QString *errorString)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2254,6 +2327,11 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
     QLandmarkManager::Error loopError;
     QString loopErrorString;
     bool result;
+    bool dataChangedOnly = false;
+    if (landmarkIds.size() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
     for (int i = 0; i < landmarkIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
@@ -2268,10 +2346,7 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
             noErrors = false;
             break;
         }
-       result = removeLandmarkHelper(landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
-       if (result) {
-            removedIds->append(landmarkIds.at(i));
-        }
+        result = removeLandmarkHelper(landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
         if (errorMap && loopError != QLandmarkManager::NoError)
             errorMap->insert(i, loopError);
 
@@ -2292,6 +2367,8 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
         if (errorString)
             *errorString = lastErrorString;
     }
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return noErrors;
 }
 
@@ -2644,9 +2721,7 @@ bool DatabaseOperations::saveCategory(QLandmarkCategory *category,
 bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
-        QString *errorString,
-        QList<QLandmarkCategoryId> *addedIds,
-        QList<QLandmarkCategoryId> *changedIds)
+        QString *errorString)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2658,11 +2733,14 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
     QString lastErrorString;
     QLandmarkManager::Error loopError;
     QString loopErrorString;
-
+    bool dataChangedOnly = false;
+    if (categories->size() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
     for (int i = 0; i < categories->size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString = "";
-        bool update = categories->at(i).categoryId().isValid();
         bool result = saveCategoryHelper(&(categories->operator [](i)), &loopError, &loopErrorString);
 
         if (!result) {
@@ -2671,11 +2749,6 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
             lastErrorString = loopErrorString;
             if (errorMap)
                 errorMap->insert(i, loopError);
-        } else {
-          if(update)
-              changedIds->append(categories->at(i).categoryId());
-          else
-              addedIds->append(categories->at(i).categoryId());
         }
     }
 
@@ -2690,6 +2763,8 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         if (errorString)
             *errorString = lastErrorString;
     }
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return noErrors;
 }
 
@@ -2777,7 +2852,7 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
 bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &categoryIds,
                     QMap<int, QLandmarkManager::Error> *errorMap,
                     QLandmarkManager::Error *error,
-                    QString *errorString, QList<QLandmarkCategoryId> *removedIds)
+                    QString *errorString)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2789,6 +2864,11 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
     QLandmarkManager::Error loopError;
     QString loopErrorString;
     bool result;
+    bool dataChangedOnly = false;
+    if (categoryIds.size() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
     for (int i = 0; i < categoryIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
@@ -2803,8 +2883,6 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
             lastError = loopError;
             lastErrorString = loopErrorString;
         }
-        if (result)
-            removedIds->append(categoryIds.at(i));
     }
     if (noErrors) {
         if (error)
@@ -2817,6 +2895,8 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
         if (errorString)
             *errorString = lastErrorString;
     }
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return noErrors;
 }
 
@@ -2826,8 +2906,6 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
                      const QLandmarkCategoryId &categoryId,
                      QLandmarkManager::Error *error,
                      QString *errorString,
-                     QList<QLandmarkId> *addedLandmarkIds,
-                     QList<QLandmarkCategoryId> *addedCategoryIds,
                      QueryRun *queryRun,
                      QList<QLandmarkId> *landmarkIds)
 {
@@ -2904,13 +2982,11 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
 
     bool result = false;
     if (detectedFormat ==  QLandmarkManager::Lmx) {
-        result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
-                                    addedLandmarkIds, addedCategoryIds);
+        result = importLandmarksLmx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
         device->close();
         return result;
     } else if (detectedFormat == QLandmarkManager::Gpx) {
-        result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds,
-                                    addedLandmarkIds);
+        result = importLandmarksGpx(device, option, categoryId, error, errorString, queryRun, landmarkIds);
         if (file)
             file->close();
         else
@@ -3000,9 +3076,7 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         QueryRun *queryRun,
-                        QList<QLandmarkId>  *landmarkIds,
-                        QList<QLandmarkId>* addedLandmarkIds,
-                        QList<QLandmarkCategoryId>* addedCategoryIds)
+                        QList<QLandmarkId>  *landmarkIds)
 {
     QLandmarkFileHandlerLmx lmxHandler(queryRun?&(queryRun->isCanceled):0);
 
@@ -3024,6 +3098,11 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
     }
 
     QList<QLandmark> landmarks = lmxHandler.landmarks();
+    bool dataChangedOnly = false;
+    if (landmarks.count() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
 
     QHash<QString, QLandmarkCategoryId> catIdLookup;
     QList<QStringList> landmarkCategoryNames;
@@ -3033,6 +3112,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         QList<QLandmarkCategory> categories;
         categories = this->categories(QList<QLandmarkCategoryId>(),QLandmarkNameSort(),-1, 0,error,errorString,true);
         if (*error != QLandmarkManager::NoError) {
+            if (dataChangedOnly)
+                dataChangedSignallingOnly(false);
             return false;
         }
 
@@ -3040,9 +3121,9 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
             catIdLookup.insert(category.name(), category.categoryId());
         }
     }
-
     QStringList categoryNames;
     QList<QLandmarkCategoryId> categoryIds;
+    QList<QLandmarkCategoryId> addedCategoryIds;
     for (int i=0; i < landmarks.count(); ++i) {
         categoryIds.clear();
         if (option == QLandmarkManager::IncludeCategoryData) {
@@ -3055,11 +3136,11 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                     if (*error != QLandmarkManager::NoError) {
                         if (landmarkIds)
                             landmarkIds->clear();
-                        if (addedCategoryIds)
-                            addedCategoryIds->clear();
+                        if (dataChangedOnly)
+                            dataChangedSignallingOnly(false);
                         return false;
                     } else {
-                        addedCategoryIds->append(category.categoryId());
+                        addedCategoryIds.append(category.categoryId());
                     }
                     catIdLookup.insert(category.name(), category.categoryId());
                 }
@@ -3087,24 +3168,19 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
                 delete removeError;
                 delete removeErrorString;
             }
-            for(int j=0; j<addedCategoryIds->count(); ++j) {
+            for(int j=0; j<addedCategoryIds.count(); ++j) {
                 QLandmarkManager::Error *removeError = new QLandmarkManager::Error();
                 QString *removeErrorString = new QString();
-                removeCategoryHelper(addedCategoryIds->at(j), removeError, removeErrorString);
+                removeCategoryHelper(addedCategoryIds.at(j), removeError, removeErrorString);
                 delete removeError;
                 delete removeErrorString;
             }
             if(landmarkIds)
                 landmarkIds->clear();
-            if (addedLandmarkIds)
-                addedLandmarkIds->clear();
-            if (addedCategoryIds)
-                addedCategoryIds->clear();
+            if (dataChangedOnly)
+                dataChangedSignallingOnly(false);
             return false;
-        } else {
-            addedLandmarkIds->append(landmarks[i].landmarkId());
         }
-
         if (landmarkIds)
             landmarkIds->append(landmarks[i].landmarkId());
     }
@@ -3112,6 +3188,8 @@ bool DatabaseOperations::importLandmarksLmx(QIODevice *device,
         *error = QLandmarkManager::NoError;
     if (errorString)
         *errorString = "";
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return true;
 }
 
@@ -3121,8 +3199,7 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         QueryRun *queryRun,
-                        QList<QLandmarkId> *landmarkIds,
-                        QList<QLandmarkId>*)
+                        QList<QLandmarkId> *landmarkIds)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -3145,6 +3222,12 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
     }
 
     QList<QLandmark> landmarks = gpxHandler.waypoints();
+    bool dataChangedOnly = false;
+    if (landmarks.count() > 50) {
+        dataChangedSignallingOnly(true);
+        dataChangedOnly = true;
+    }
+
     for(int i =0; i < landmarks.count(); ++i) {
         if (option == QLandmarkManager::AttachSingleCategory)
             landmarks[i].addCategoryId(categoryId);
@@ -3167,6 +3250,8 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
             }
             if (landmarkIds)
                 landmarkIds->clear();
+            if (dataChangedOnly)
+                dataChangedSignallingOnly(false);
             return false;
         }
         if (landmarkIds)
@@ -3176,6 +3261,8 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
         *error = QLandmarkManager::NoError;
     if (errorString)
         *errorString = "";
+    if (dataChangedOnly)
+        dataChangedSignallingOnly(false);
     return true;
 }
 
@@ -3579,9 +3666,7 @@ void QueryRun::run()
                 saveRequest = static_cast<QLandmarkSaveRequest *> (request);
                 lms = saveRequest->landmarks();
                 ml.unlock();
-                QList<QLandmarkId> addedIds;
-                QList<QLandmarkId> changedIds;
-                databaseOperations.saveLandmarks(&lms, &errorMap, &error, &errorString, &addedIds, &changedIds);
+                databaseOperations.saveLandmarks(&lms, &errorMap, &error, &errorString);
             }
             ml.unlock();
         }
@@ -3614,8 +3699,7 @@ void QueryRun::run()
                 removeRequest= static_cast<QLandmarkRemoveRequest *> (request);
                 QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
                 ml.unlock();
-                QList<QLandmarkId> removedIds;
-                databaseOperations.removeLandmarks(lmIds, &errorMap, &error, &errorString, &removedIds);
+                databaseOperations.removeLandmarks(lmIds, &errorMap, &error, &errorString);
             }
             ml.unlock();
         }
@@ -3758,9 +3842,7 @@ void QueryRun::run()
                 saveRequest = static_cast<QLandmarkCategorySaveRequest *> (request);
                 categories = saveRequest->categories();
                 ml.unlock();
-                QList<QLandmarkCategoryId> addedIds;
-                QList<QLandmarkCategoryId> changedIds;
-                databaseOperations.saveCategories( &categories, &errorMap, &error, &errorString, &addedIds, &changedIds);
+                databaseOperations.saveCategories( &categories, &errorMap, &error, &errorString);
             }
             ml.unlock();
         }
@@ -3798,10 +3880,9 @@ void QueryRun::run()
                     removeRequest = static_cast<QLandmarkCategoryRemoveRequest *> (request);
                     QList<QLandmarkCategoryId> categoryIds = removeRequest->categoryIds();
                     ml.unlock();
-                    QList<QLandmarkCategoryId> removedIds;
                     databaseOperations.removeCategories(categoryIds,
                                                         &errorMap, &error,
-                                                        &errorString, &removedIds);
+                                                        &errorString);
                 }
                 ml.unlock();
             }
@@ -3840,13 +3921,10 @@ void QueryRun::run()
                    QLandmarkManager::TransferOption transferOption = importRequest->transferOption();
                    QLandmarkCategoryId categoryId = importRequest->categoryId();
                    ml.unlock();
-                   QList<QLandmarkId> addedLandmarkIds;
-                   QList<QLandmarkCategoryId> addedCategoryIds;
                    databaseOperations.importLandmarks(device,
                                                       format, transferOption,
                                                       categoryId,
                                                       &error, &errorString,
-                                                      &addedLandmarkIds, &addedCategoryIds,
                                                       this, &landmarkIds);
                }
                ml.unlock();
