@@ -77,9 +77,10 @@ public:
                                     const gchar* detailed_signal,
                                     GCallback c_handler,
                                     gpointer data);
-    virtual guint eng_g_signal_handlers_disconnect_by_func (gpointer instance,
+    virtual guint eng_g_signal_handlers_disconnect_by_func(gpointer instance,
                                                         gpointer func,
                                                         gpointer data);
+    virtual void eng_g_free(gpointer mem);
     // Gypsy symbols
     virtual GypsyControl* eng_gypsy_control_get_default (void);
     virtual char *eng_gypsy_control_create (GypsyControl *control, const char*device_name, GError **error);
