@@ -165,9 +165,10 @@ public:
 
     void play()
     {
+        m_state = QMediaPlayer::PlayingState;
         if (m_mediaStatus == QMediaPlayer::EndOfMedia)
             updateMediaStatus(QMediaPlayer::LoadedMedia);
-        emit stateChanged(m_state = QMediaPlayer::PlayingState);
+        emit stateChanged(m_state);
     }
     void pause() { emit stateChanged(m_state = QMediaPlayer::PausedState); }
     void stop() { emit stateChanged(m_state = QMediaPlayer::StoppedState); }
@@ -1208,9 +1209,6 @@ void tst_QDeclarativeAudio::error()
 
 void tst_QDeclarativeAudio::loops()
 {
-qDebug() << "FIX ME: loops test disabled";
-return;
-
     QtTestMediaServiceProvider provider;
     QDeclarativeAudio audio;
 
