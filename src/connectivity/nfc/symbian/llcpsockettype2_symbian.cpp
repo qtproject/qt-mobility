@@ -340,9 +340,13 @@ void CLlcpSocketType2::AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCa
                 }
             }
         if (iReceiver->StartReceiveDatagram() != KErrNone)
-          {
-          Error(QtMobility::QLlcpSocket::UnknownSocketError);
-          }
+            {
+            Error(QtMobility::QLlcpSocket::UnknownSocketError);
+            }
+        if (!iConnecter)
+            {
+            TRAP_IGNORE(iConnecter = CLlcpConnecterAO::NewL( *iTransporter, *this ));
+            }
         }
     END
     }
