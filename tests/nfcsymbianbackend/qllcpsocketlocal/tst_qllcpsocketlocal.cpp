@@ -279,10 +279,16 @@ void tst_qllcpsocketlocal::negTestCase1()
     qint64 ret = localSocket.writeDatagram(data,strSize,m_target, invalidPort);
     QVERIFY(ret == -1);
 
-    const int Timeout = 1 * 1000;
+    const int Timeout = 1 * 500;
     bool retBool = localSocket.waitForBytesWritten(Timeout);
     QVERIFY(retBool == false);
+
+    //Cover QLLCPUnConnected::WaitForReadyRead
     retBool = localSocket.waitForReadyRead(Timeout);
+    QVERIFY(retBool == false);
+
+    //Cover QLLCPBind::WaitForReadyRead()
+    retBool = m_socket->waitForReadyRead(Timeout);
     QVERIFY(retBool == false);
 }
 
