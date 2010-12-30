@@ -32,7 +32,7 @@ SOURCES += servicemetadata.cpp \
     dberror.cpp \
     qremoteserviceregister.cpp
 symbian {
-    contains(S60_VERSION, 5.2):contains(MOBILITY_SD_MCL_BUILD, yes){
+    contains(S60_VERSION, 5.2)|contains(MOBILITY_SD_MCL_BUILD, yes){
         DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
     }
     INCLUDEPATH += ./databasemanagerserver_symbian

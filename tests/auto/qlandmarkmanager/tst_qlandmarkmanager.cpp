@@ -1127,6 +1127,9 @@ private slots:
 
     void filterAttribute2();
     void filterAttribute2_data();
+
+    void filterAttribute3();
+    void filterAttribute3_data();
 #endif
 
 #ifdef IMPORT_KML
@@ -1166,7 +1169,7 @@ private slots:
 #endif
 
 #ifdef SIMPLE_WAIT_FOR_FINISHED
-	void simpleWaitForFinished();
+    void simpleWaitForFinished();
 #endif
 
 #ifdef WAIT_FOR_FINISHED
@@ -2741,7 +2744,6 @@ void tst_QLandmarkManager::saveMultipleLandmarks()
     QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     QSignalSpy spyDataChanged(m_manager, SIGNAL(dataChanged()));
 
-    int originalLandmarkCount = m_manager->landmarks().count();
     QGeoAddress address;
     QGeoCoordinate coordinate;
 
@@ -5002,8 +5004,6 @@ void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
      //test canceling of a landmark fetch
      fetchRequest.setFilter(unionFilter);
      fetchRequest.start();
-     QVERIFY(waitForActive(spy, &fetchRequest));
-     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
      fetchRequest.cancel();
 #if defined(Q_WS_MAEMO_6)
      QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError, 16000));
@@ -6177,7 +6177,7 @@ void tst_QLandmarkManager::filterAttribute2()
     address.setDistrict("aaabbbccc");
 #endif
     address.setCountry("aaabbbccc");
-    address.setCity("aaabbbccc");  
+    address.setCity("aaabbbccc");
     address.setStreet("aaabbbccc");
     address.setPostcode("aaabbbccc");
     lm1.setAddress(address);
@@ -6226,7 +6226,7 @@ void tst_QLandmarkManager::filterAttribute2()
     lm4.setDescription("aaaabbbbcccc");
     lm4.setPhoneNumber("aaaabbbbcccc");
 #ifndef Q_WS_MAEMO_6
-    address.setCountryCode("aaaabbbbcccc"); 
+    address.setCountryCode("aaaabbbbcccc");
     address.setState("aaaabbbbcccc");
     address.setDistrict("aaaabbbbcccc");
 #endif
@@ -6245,7 +6245,7 @@ void tst_QLandmarkManager::filterAttribute2()
     lm5.setPhoneNumber("ccccaaaabbbb");
 #ifndef Q_WS_MAEMO_6
     address.setCountryCode("ccccaaaabbbb");
-    address.setState("ccccaaaabbbb"); 
+    address.setState("ccccaaaabbbb");
     address.setDistrict("ccccaaaabbbb");
 #endif
      address.setCity("ccccaaaabbbb");
@@ -6483,6 +6483,124 @@ void tst_QLandmarkManager::filterAttribute2_data()
     QTest::newRow("district sync") << "district" << "sync";
     QTest::newRow("district async") << "district" << "async";
 #endif
+}
+
+void tst_QLandmarkManager::filterAttribute3()
+{
+    QFETCH(QString, type);
+
+    QGeoAddress address;
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setDescription("LM1 description");
+    lm1.setPhoneNumber("555-5555");
+#ifndef Q_WS_MAEMO_6
+    address.setCountryCode("AUS");
+    address.setState("QLD");
+    address.setDistrict("Eight Mile Plains");
+#endif
+    address.setCity("Brisbane");
+    address.setCountry("Australia");
+    address.setStreet("32 Kent St");
+    address.setPostcode("3044");
+    lm1.setAddress(address);
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setDescription("LM2 description");
+    lm2.setPhoneNumber("555-5555");
+    address.clear();
+#ifndef Q_WS_MAEMO_6
+    address.setCountryCode("AUS");
+    address.setState("QLD");
+    address.setDistrict("Mt Gravatt");
+#endif
+    address.setCity("Brisbane");
+    address.setCountry("Australia");
+    address.setStreet("14 Orderly Road");
+    address.setPostcode("41111");
+    lm2.setAddress(address);
+    m_manager->saveLandmark(&lm1);
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setDescription("LM3 description");
+    lm3.setPhoneNumber("555-5555");
+    address.clear();
+#ifndef Q_WS_MAEMO_6
+    address.setCountryCode("AUS");
+    address.setState("QLD");
+    address.setDistrict("Mt Gravatt");
+#endif
+    address.setCity("Kent");
+    address.setCountry("Australia");
+    address.setStreet("18 Brandl Street");
+    address.setPostcode("4112");
+    lm3.setAddress(address);
+    m_manager->saveLandmark(&lm3);
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setDescription("Kent's place");
+    lm4.setPhoneNumber("555-5555");
+    address.clear();
+    address.setCountry("Arctic");
+    address.setStreet("North pole");
+    address.setPostcode("0");
+    lm4.setAddress(address);
+    m_manager->saveLandmark(&lm4);
+
+    QLandmark lm5;
+    lm5.setDescription("Kent's other place");
+    address.clear();
+    address.setCountry("USA");
+    address.setCity("SmallVille");
+    address.setStreet("1 Kent road");
+    lm5.setAddress(address);
+    m_manager->saveLandmark(&lm5);
+
+    //testing setAttributes
+    QLandmarkAttributeFilter attributeFilter;
+    QStringList attributeList;
+    attributeList << "description" << "countryCode" << "country" << "state" << "city" << "district" << "street";
+    attributeFilter.setAttributes(attributeList, "kent",QLandmarkFilter::MatchContains);
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type, attributeFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+
+    attributeFilter.removeAttribute("description");
+    QVERIFY(doFetch(type, attributeFilter, &lms));
+    QCOMPARE(lms.count(), 3);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
+
+    QLandmarkAttributeFilter attributeFilter2;
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    QCOMPARE(attributeFilter,attributeFilter2);
+
+    attributeList.clear();
+    attributeList << "street" << "name";
+    attributeFilter.setAttributes(attributeList,"val", QLandmarkAttributeFilter::MatchContains);
+    attributeFilter2.setAttribute("name", "val", QLandmarkAttributeFilter::MatchContains);
+    attributeFilter2.setAttribute("street", "val", QLandmarkAttributeFilter::MatchContains);
+    QCOMPARE(attributeFilter, attributeFilter2);
+
+}
+
+void tst_QLandmarkManager::filterAttribute3_data()
+{
+    QTest::addColumn<QString> ("type");
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
 }
 
 #endif
@@ -7573,7 +7691,7 @@ void tst_QLandmarkManager::importLmx() {
         QCOMPARE(originalLandmarksCount + 16, m_manager->landmarks().count());
 
 #if defined (Q_WS_MAEMO_6)
-	QTest::qWait(2000);
+        QTest::qWait(2000);
 #endif
 
         QCOMPARE(spyRemove.count(), 0);
@@ -7644,6 +7762,17 @@ void tst_QLandmarkManager::importFile()
 #endif
     QCOMPARE(m_manager->landmarks().count(), 0);
     QCOMPARE(m_manager->categories().count(), originalCategoryCount);
+
+    QLandmarkImportRequest importRequest(m_manager);
+    importRequest.setFileName(prefix + "data/places.gpx");
+    QCOMPARE(importRequest.fileName(), prefix + "data/places.gpx");
+
+    importRequest.setDevice(NULL);
+    QCOMPARE(importRequest.fileName(), QString());
+
+    QFile file(prefix + "data/places.gpx");
+    importRequest.setDevice(&file);
+    QCOMPARE(importRequest.fileName(), prefix + "data/places.gpx");
 }
 
 void tst_QLandmarkManager::importFile_data()
@@ -7818,9 +7947,11 @@ void tst_QLandmarkManager::exportLmx() {
     } else if (type == "syncAttachSingleCategory") {
         QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx,QList<QLandmarkId>(),QLandmarkManager::AttachSingleCategory));
     } else if (type == "async") {
+        QCOMPARE(exportRequest.fileName(), QString());
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
         exportRequest.setFileName(exportFile);
+        QCOMPARE(exportRequest.fileName(), exportFile);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
 
@@ -7830,6 +7961,7 @@ void tst_QLandmarkManager::exportLmx() {
         noPermFile->close();
 
         exportRequest.setDevice(noPermFile);
+        QVERIFY(exportRequest.fileName() == "nopermfile");
         exportRequest.setFormat(QLandmarkManager::Lmx);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));
@@ -8187,6 +8319,17 @@ void tst_QLandmarkManager::fetchWaitForFinished()
 #endif
 
     QCOMPARE(fetchRequest.landmarks().count(), expectedLandmarksCount);
+
+#ifdef Q_OS_SYMBIAN
+     QList<QLandmarkId> ids = m_manager->landmarkIds();
+     QEXPECT_FAIL("", "MOBILITY-2275: Removal of a large number of landmarks results in DatabaseLockedError", Continue);
+     QVERIFY(m_manager->removeLandmarks(ids));
+
+     //need to workaround deletion of these landmarks for symbian
+     for (int i=0; i < 20; ++i) {
+         m_manager->removeLandmarks(ids);
+    }
+#endif
 }
 #endif
 
@@ -8584,9 +8727,11 @@ void tst_QLandmarkManager::exportGpx() {
     } else if (type == "syncAttachSingleCategory") {
         QVERIFY(m_manager->exportLandmarks(exportFile,QLandmarkManager::Gpx, QList<QLandmarkId>(), QLandmarkManager::AttachSingleCategory));
     } else if (type == "async"){
+        QCOMPARE(exportRequest.fileName(), QString());
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
         exportRequest.setFileName(exportFile);
+        QCOMPARE(exportRequest.fileName(), exportFile);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
 
@@ -8596,6 +8741,7 @@ void tst_QLandmarkManager::exportGpx() {
         noPermFile->close();
 
         exportRequest.setDevice(noPermFile);
+        QVERIFY(exportRequest.fileName() == "nopermfile");
         exportRequest.setFormat(QLandmarkManager::Gpx);
         exportRequest.start();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));

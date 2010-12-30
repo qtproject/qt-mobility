@@ -522,13 +522,18 @@ void QAudioOutputPrivate::pullData()
 
         char *outputPtr = (char*)(outputBuffer.Ptr() + outputBuffer.Length());
         const qint64 bytesCopied = m_source->read(outputPtr, copyBytes);
-        Q_ASSERT(bytesCopied == copyBytes);
+        
+        //Partial buffers can be sent to DevSound. This assert not required.
+        //Q_ASSERT(bytesCopied == copyBytes);
         outputBuffer.SetLength(outputBuffer.Length() + bytesCopied);
         inputBytes -= bytesCopied;
 
+        if(bytesCopied == 0)
+        	return;
+
         if (m_source->atEnd())
             lastBufferFilled();
-        else if (copyBytes == outputBytes)
+        else
             bufferFilled();
     }
 }

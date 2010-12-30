@@ -129,6 +129,8 @@ public:
     void captureImage(int requestId, const QString &fileName);
 
     QCamera::State state() const;
+    bool isBusy() const;
+
     qint64 duration() const;
 
     void recordVideo();
@@ -151,6 +153,7 @@ signals:
     void mutedChanged(bool);
     void viewfinderChanged();
     void readyChanged(bool);
+    void busyChanged(bool);
 
 public slots:
     void setDevice(const QString &device);
@@ -169,6 +172,7 @@ private:
     void setupCaptureResolution();
     void updateVideoSourceCaps();
     GstElement *buildVideoSrc();
+    static void updateBusyStatus(GObject *o, GParamSpec *p, gpointer d);
 
     QUrl m_sink;
     QUrl m_actualSink;
@@ -178,8 +182,9 @@ private:
     QCamera::State m_pendingState;
     QString m_inputDevice;
     bool m_pendingResolutionUpdate;
+    bool m_muted;
+    bool m_busy;
 
-    bool m_muted;    
     QCamera::CaptureMode m_captureMode;
     QMap<QByteArray, QVariant> m_metaData;
 
