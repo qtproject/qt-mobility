@@ -23,6 +23,6 @@ FORMS = \
     service.ui
 
 symbian {
-    TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = ReadDeviceData LocalServices
 }
 
