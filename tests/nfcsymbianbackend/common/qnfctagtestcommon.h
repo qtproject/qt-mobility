@@ -388,7 +388,7 @@ void QNfcTagTestCommon<TAG>::testWaitRawCommand(const QStringList& discription, 
     Q_ASSERT_X(discription.count() > 0, "testWaitRawCommand", "list is empty");
     
     touchTarget();
-    testWaitRawCommand(discription, commandSet, responseSet); 
+    _testWaitRawCommand(discription, commandSet, responseSet); 
     removeTarget();    
 }
 
@@ -443,7 +443,7 @@ void QNfcTagTestCommon<TAG>::testMixRawCommandAndNdefAccess(const QStringList& d
     Q_ASSERT_X(discription.count() > 2, "testMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
     touchTarget();
-    testMixRawCommandAndNdefAccess(discription, commandSet, responseSet); 
+    _testMixRawCommandAndNdefAccess(discription, commandSet, responseSet); 
     removeTarget();
 }
 
