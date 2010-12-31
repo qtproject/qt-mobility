@@ -106,11 +106,10 @@ public:
     static QNdefMessage CNdefMsg2QNdefMsgL( const CNdefMessage& msg );
 
     static TPtrC8 QByteArray2TPtrC8(const QByteArray& qbytearray);
-    static void QByteArray2TDes8(const QByteArray& qbytearray, TDes8& buf);
     static QByteArray TDesC2QByteArray( const TDesC8& des);
 
-    static HBuf8* QString2HBuf8(const QString& qstring);
-    static QString TDesC82QString(const TDesC8&);
+    static HBufC8* QString2HBufC8L(const QString& qstring);
+    static QString TDesC82QStringL(const TDesC8&);
 
 };
 
