@@ -94,33 +94,28 @@ QByteArray QNFCNdefUtility::TDesC2QByteArray( const TDesC8& des)
         return result;
     }
 
-TPtrC QNFCNdefUtility::FromQStringToTptrC(const QString& qstring)
+
+HBufC8* QNFCNdefUtility::QString2HBufC8(const QString& qstring)
     {
-    TPtrC ptr (reinterpret_cast<const TText*>(qstring.constData()),qstring.length());
-    return ptr;
+    TPtrC wide(static_cast<const TUint16*>(qstring.utf16()),qstring.length());
+    HBufC8* newBuf = HBufC8::NewL(wide.Length());
+    if( newBuf == NULL )
+    {
+      END
+      return NULL;
+    }
+    newBuf->Copy(wide);
+    return newBuf;
     }
 
-void QNFCNdefUtility::FromQByteArrayToTDes8(const QByteArray& qbytearray, TDes8& buf)
+QString QNFCNdefUtility::TDesC82QString(const TDesC8& aDescriptor)
     {
-        int length = qbytearray.count()>buf.MaxSize()?qbytearray.count():buf.MaxSize();
-        buf.SetLength(length);
-
-        for(int i = 0; i < length; ++i)
-            {
-            buf[i] = qbytearray.at(i);
-            }
-    }
-
-TPtrC8 QNFCNdefUtility::QString2TPtrC8(const QString& qstring)
-    {
-    TPtrC8 ptr (reinterpret_cast<const TUint8*>(qstring.constData()),qstring.length());
-    return ptr;
-    }
-
-QString QNFCNdefUtility::FromDesC8ToQString(const TDesC8& aDescriptor)
-    {
-    return QString::fromRawData(reinterpret_cast<const QChar*>(aDescriptor.Ptr()),
-            aDescriptor.Length());
+    HBufC* newBuf;
+    QT_TRAP_THROWING(newBuf = HBufC::NewL(aDescriptor.Length()));
+    newBuf->Copy(aDescriptor);
+    QString ret = QString::fromUtf16(newBuf->Ptr(),newBuf->Length());
+    delete newBuf;
+    return ret;
     }
 
 QTM_END_NAMESPACE
