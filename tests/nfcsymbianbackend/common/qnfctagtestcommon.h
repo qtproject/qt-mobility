@@ -499,7 +499,6 @@ void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringLi
     Q_ASSERT_X(discription.count() == responseSet.count(), "testWaitMixRawCommandAndNdefAccess", "count mismatch");
     Q_ASSERT_X(discription.count() > 2, "testWaitMixRawCommandAndNdefAccess", "list should at least have 2 elements");
     
-    touchTarget();
     int okCount = 0;
     int errCount = 0;
     QSignalSpy okSpy(target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
@@ -533,8 +532,6 @@ void QNfcTagTestCommon<TAG>::_testWaitMixRawCommandAndNdefAccess(const QStringLi
         qDebug()<<"check "<<discription.at(i)<<" response"<<endl;
         QVERIFY(target->requestResponse(requests.at(i)) == responseSet.at(i));
     }
-    
-    removeTarget();
 }
 
 template<typename TAG>
