@@ -137,7 +137,8 @@ public:
     virtual bool waitForRequestCompleted(const RequestId &id, int msecs = 5000);
 
     QVariant requestResponse(const RequestId &id);
-    void setResponseForRequest(const QNearFieldTarget::RequestId &id, const QVariant &response);
+    void setResponseForRequest(const QNearFieldTarget::RequestId &id, const QVariant &response,
+                               bool emitRequestCompleted = true);
 
 protected:
     Q_INVOKABLE virtual bool handleResponse(const QNearFieldTarget::RequestId &id,
