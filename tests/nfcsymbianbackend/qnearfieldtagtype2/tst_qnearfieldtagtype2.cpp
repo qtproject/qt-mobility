@@ -14,14 +14,13 @@ class tst_qnearfieldtagtype2: public QObject
 
 public:
     tst_qnearfieldtagtype2();
+    void testCommandSet();
 
 private Q_SLOTS:
     void initTestCase();
     
     void testSmoke_data();
     void testSmoke();
-    
-    void testCommandSet();
 
     void testNdefAccess();
 
@@ -137,35 +136,8 @@ void tst_qnearfieldtagtype2::testSmoke()
 {
     tester.touchTarget();
     
-    QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
-    QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
-    
-    int okCount = 0;
-    int errCount = 0;
-    
-    QNearFieldTarget::RequestId id1 = tester.target->readBlock(0);
-    QVERIFY(id1.isValid());
-    QVERIFY(!tester.target->waitForRequestCompleted(id1));
-    ++errCount;
-    
-    QByteArray data;
-    for(int i = 0; i < 3; ++i)
-    {
-        data.append((char)i);
-    }
-    QNearFieldTarget::RequestId id2 = tester.target->writeBlock(0x13, data);
-    QVERIFY(!id2.isValid());
-    data.append((char)3);
-    QNearFieldTarget::RequestId id3 = tester.target->writeBlock(0x13, data);
-    QVERIFY(!tester.target->waitForRequestCompleted(id3));
-    ++errCount;
-    
-    QNearFieldTarget::RequestId id4 = tester.target->selectSector(2); 
-    QVERIFY(!id4.isValid());
-    
-    QTRY_COMPARE(okSpy.count(), okCount);
-    QTRY_COMPARE(errSpy.count(), errCount);
-    
+    testCommandSet(); 
+
     QFETCH(QStringList, dsp);
     QFETCH(QVariantList, cmd);
     QFETCH(QVariantList, rsp);
@@ -175,8 +147,6 @@ void tst_qnearfieldtagtype2::testSmoke()
 
 void tst_qnearfieldtagtype2::testCommandSet()
 {
-    tester.touchTarget();
-     
     QSignalSpy okSpy(tester.target, SIGNAL(requestCompleted(const QNearFieldTarget::RequestId&)));
     QSignalSpy errSpy(tester.target, SIGNAL(error(QNearFieldTarget::Error, const QNearFieldTarget::RequestId&)));
     
@@ -205,7 +175,6 @@ void tst_qnearfieldtagtype2::testCommandSet()
 
     QTRY_COMPARE(okSpy.count(), okCount);
     QTRY_COMPARE(errSpy.count(), errCount);
-    tester.removeTarget();
 }
 
 void tst_qnearfieldtagtype2::testNdefAccess()
