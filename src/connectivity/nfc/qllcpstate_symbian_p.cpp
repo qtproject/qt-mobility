@@ -412,9 +412,10 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
         {
            m_socketType = connectionType2;
         }
-        TPtrC8 serviceName = QNFCNdefUtility::QString2TPtrC8(serviceUri);
+        HBufC8* serviceName = QNFCNdefUtility::QString2HBufC8L(serviceUri);
+        CleanupStack::PushL(serviceName);
 
-        if (KErrNone == socketHandler->ConnectToService(serviceName) )
+        if (KErrNone == socketHandler->ConnectToService(serviceName->Des()) )
         {
             m_socket->changeState(m_socket->getConnectingState());
             m_socket->invokeStateChanged(QLlcpSocket::ConnectingState);
@@ -423,6 +424,7 @@ void QLLCPUnconnected::ConnectToService(QNearFieldTarget *target, const QString 
         {
             m_socket->invokeError();
         }
+        CleanupStack::PopAndDestroy(serviceName);
     }
     else
     {
