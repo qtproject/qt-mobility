@@ -105,7 +105,6 @@ namespace DatabaseOperationsHelpers{
 #endif
 
 static const double EARTH_MEAN_RADIUS = 6371.0072;
-static QHash<QString, QString> countryCodes;
 
 bool isValidLat(double lat)
 {
@@ -426,259 +425,6 @@ QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
 bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory &cat2) {
     return (cat1.name() < cat2.name());
 }
-
-void fillCountryCodesTable() {
-    countryCodes.insertMulti("AFG","Afghanistan");
-    countryCodes.insertMulti("ALA","land Islands");
-    countryCodes.insertMulti("ALB","Albania");
-    countryCodes.insertMulti("DZA","Algeria");
-    countryCodes.insertMulti("ASM","American Samoa");
-    countryCodes.insertMulti("AND","Andorra");
-    countryCodes.insertMulti("AGO","Angola");
-    countryCodes.insertMulti("AIA","Anguilla");
-    countryCodes.insertMulti("ATA","Antarctica");
-    countryCodes.insertMulti("ATG","Antigua and Barbuda");
-    countryCodes.insertMulti("ARG","Argentina");
-    countryCodes.insertMulti("ARM","Armenia");
-    countryCodes.insertMulti("ABW","Aruba");
-    countryCodes.insertMulti("AUS","Australia");
-    countryCodes.insertMulti("AUT","Austria");
-    countryCodes.insertMulti("AZE","Azerbaijan");
-    countryCodes.insertMulti("BHS","Bahamas");
-    countryCodes.insertMulti("BHR","Bahrain");
-    countryCodes.insertMulti("BGD","Bangladesh");
-    countryCodes.insertMulti("BRB","Barbados");
-    countryCodes.insertMulti("BLR","Belarus");
-    countryCodes.insertMulti("BEL","Belgium");
-    countryCodes.insertMulti("BLZ","Belize");
-    countryCodes.insertMulti("BEN","Benin");
-    countryCodes.insertMulti("BMU","Bermuda");
-    countryCodes.insertMulti("BTN","Bhutan");
-    countryCodes.insertMulti("BOL","Bolivia");
-    countryCodes.insertMulti("BIH","Bosnia and Herzegovina");
-    countryCodes.insertMulti("BWA","Botswana");
-    countryCodes.insertMulti("BVT","Bouvet Island");
-    countryCodes.insertMulti("BRA","Brazil");
-    countryCodes.insertMulti("IOT","British Indian Ocean Territory");
-    countryCodes.insertMulti("BRN","Brunei Darussalam");
-    countryCodes.insertMulti("BGR","Bulgaria");
-    countryCodes.insertMulti("BFA","Burkina Faso");
-    countryCodes.insertMulti("BDI","Burundi");
-    countryCodes.insertMulti("KHM","Cambodia");
-    countryCodes.insertMulti("CMR","Cameroon");
-    countryCodes.insertMulti("CAN","Canada");
-    countryCodes.insertMulti("CPV","Cape Verde");
-    countryCodes.insertMulti("CYM","Cayman Islands");
-    countryCodes.insertMulti("CAF","Central African Republic");
-    countryCodes.insertMulti("TCD","Chad");
-    countryCodes.insertMulti("CHL","Chile");
-    countryCodes.insertMulti("CHN","China");
-    countryCodes.insertMulti("CXR","Christmas Island");
-    countryCodes.insertMulti("CCK","Cocos (Keeling) Islands");
-    countryCodes.insertMulti("COL","Colombia");
-    countryCodes.insertMulti("COM","Comoros");
-    countryCodes.insertMulti("COG","Congo");
-    countryCodes.insertMulti("COD","Congo, the Democratic Republic of the");
-    countryCodes.insertMulti("COK","Cook Islands");
-    countryCodes.insertMulti("CRI","Costa Rica");
-    countryCodes.insertMulti("CIV","Cte d'Ivoire");
-    countryCodes.insertMulti("HRV","Croatia");
-    countryCodes.insertMulti("CUB","Cuba");
-    countryCodes.insertMulti("CYP","Cyprus");
-    countryCodes.insertMulti("CZE","Czech Republic");
-    countryCodes.insertMulti("DNK","Denmark");
-    countryCodes.insertMulti("DJI","Djibouti");
-    countryCodes.insertMulti("DMA","Dominica");
-    countryCodes.insertMulti("DOM","Dominican Republic");
-    countryCodes.insertMulti("ECU","Ecuador");
-    countryCodes.insertMulti("EGY","Egypt");
-    countryCodes.insertMulti("SLV","El Salvador");
-    countryCodes.insertMulti("GNQ","Equatorial Guinea");
-    countryCodes.insertMulti("ERI","Eritrea");
-    countryCodes.insertMulti("EST","Estonia");
-    countryCodes.insertMulti("ETH","Ethiopia");
-    countryCodes.insertMulti("FLK","Falkland Islands (Malvinas)");
-    countryCodes.insertMulti("FRO","Faroe Islands");
-    countryCodes.insertMulti("FJI","Fiji");
-    countryCodes.insertMulti("FIN","Finland");
-    countryCodes.insertMulti("FRA","France");
-    countryCodes.insertMulti("GUF","French Guiana");
-    countryCodes.insertMulti("PYF","French Polynesia");
-    countryCodes.insertMulti("ATF","French Southern Territories");
-    countryCodes.insertMulti("GAB","Gabon");
-    countryCodes.insertMulti("GMB","Gambia");
-    countryCodes.insertMulti("GEO","Georgia");
-    countryCodes.insertMulti("DEU","Germany");
-    countryCodes.insertMulti("GHA","Ghana");
-    countryCodes.insertMulti("GIB","Gibraltar");
-    countryCodes.insertMulti("GRC","Greece");
-    countryCodes.insertMulti("GRL","Greenland");
-    countryCodes.insertMulti("GRD","Grenada");
-    countryCodes.insertMulti("GLP","Guadeloupe");
-    countryCodes.insertMulti("GUM","Guam");
-    countryCodes.insertMulti("GTM","Guatemala");
-    countryCodes.insertMulti("GGY","Guernsey");
-    countryCodes.insertMulti("GIN","Guinea");
-    countryCodes.insertMulti("GNB","Guinea-Bissau");
-    countryCodes.insertMulti("GUY","Guyana");
-    countryCodes.insertMulti("HTI","Haiti");
-    countryCodes.insertMulti("HMD","Heard Island and McDonald Islands");
-    countryCodes.insertMulti("VAT","Holy See (Vatican City State)");
-    countryCodes.insertMulti("HND","Honduras");
-    countryCodes.insertMulti("HKG","Hong Kong");
-    countryCodes.insertMulti("HUN","Hungary");
-    countryCodes.insertMulti("ISL","Iceland");
-    countryCodes.insertMulti("IND","India");
-    countryCodes.insertMulti("IDN","Indonesia");
-    countryCodes.insertMulti("*IW","International Waters (WOUDC assigned code)");
-    countryCodes.insertMulti("IRN","Iran, Islamic Republic of");
-    countryCodes.insertMulti("IRQ","Iraq");
-    countryCodes.insertMulti("IRL","Ireland");
-    countryCodes.insertMulti("IMN","Isle of Man");
-    countryCodes.insertMulti("ISR","Israel");
-    countryCodes.insertMulti("ITA","Italy");
-    countryCodes.insertMulti("JAM","Jamaica");
-    countryCodes.insertMulti("JPN","Japan");
-    countryCodes.insertMulti("JEY","Jersey");
-    countryCodes.insertMulti("JOR","Jordan");
-    countryCodes.insertMulti("KAZ","Kazakhstan");
-    countryCodes.insertMulti("KEN","Kenya");
-    countryCodes.insertMulti("KIR","Kiribati");
-    countryCodes.insertMulti("PRK","Korea, Democratic People's Republic of");
-    countryCodes.insertMulti("PRK","Democratic People's Republic of Korea");
-    countryCodes.insertMulti("PRK","North Korea");
-    countryCodes.insertMulti("KOR","Korea, Republic of");
-    countryCodes.insertMulti("KOR","South Korea");
-    countryCodes.insertMulti("KWT","Kuwait");
-    countryCodes.insertMulti("KGZ","Kyrgyzstan");
-    countryCodes.insertMulti("LAO","Lao People's Democratic Republic");
-    countryCodes.insertMulti("LVA","Latvia");
-    countryCodes.insertMulti("LBN","Lebanon");
-    countryCodes.insertMulti("LSO","Lesotho");
-    countryCodes.insertMulti("LBR","Liberia");
-    countryCodes.insertMulti("LBY","Libyan Arab Jamahiriya");
-    countryCodes.insertMulti("LIE","Liechtenstein");
-    countryCodes.insertMulti("LTU","Lithuania");
-    countryCodes.insertMulti("LUX","Luxembourg");
-    countryCodes.insertMulti("MAC","Macao");
-    countryCodes.insertMulti("MKD","Macedonia, the former Yugoslav Republic of");
-    countryCodes.insertMulti("MDG","Madagascar");
-    countryCodes.insertMulti("MWI","Malawi");
-    countryCodes.insertMulti("MYS","Malaysia");
-    countryCodes.insertMulti("MDV","Maldives");
-    countryCodes.insertMulti("MLI","Mali");
-    countryCodes.insertMulti("MLT","Malta");
-    countryCodes.insertMulti("MHL","Marshall Islands");
-    countryCodes.insertMulti("MTQ","Martinique");
-    countryCodes.insertMulti("MRT","Mauritania");
-    countryCodes.insertMulti("MUS","Mauritius");
-    countryCodes.insertMulti("MYT","Mayotte");
-    countryCodes.insertMulti("MEX","Mexico");
-    countryCodes.insertMulti("FSM","Micronesia, Federated States of");
-    countryCodes.insertMulti("MDA","Moldova, Republic of");
-    countryCodes.insertMulti("MCO","Monaco");
-    countryCodes.insertMulti("MNG","Mongolia");
-    countryCodes.insertMulti("MNE","Montenegro");
-    countryCodes.insertMulti("MSR","Montserrat");
-    countryCodes.insertMulti("MAR","Morocco");
-    countryCodes.insertMulti("MOZ","Mozambique");
-    countryCodes.insertMulti("MMR","Myanmar");
-    countryCodes.insertMulti("NAM","Namibia");
-    countryCodes.insertMulti("NRU","Nauru");
-    countryCodes.insertMulti("NPL","Nepal");
-    countryCodes.insertMulti("NLD","Netherlands");
-    countryCodes.insertMulti("ANT","Netherlands Antilles");
-    countryCodes.insertMulti("NCL","New Caledonia");
-    countryCodes.insertMulti("NZL","New Zealand");
-    countryCodes.insertMulti("NIC","Nicaragua");
-    countryCodes.insertMulti("NER","Niger");
-    countryCodes.insertMulti("NGA","Nigeria");
-    countryCodes.insertMulti("NIU","Niue");
-    countryCodes.insertMulti("NFK","Norfolk Island");
-    countryCodes.insertMulti("MNP","Northern Mariana Islands");
-    countryCodes.insertMulti("NOR","Norway");
-    countryCodes.insertMulti("OMN","Oman");
-    countryCodes.insertMulti("PAK","Pakistan");
-    countryCodes.insertMulti("PLW","Palau");
-    countryCodes.insertMulti("PSE","Palestinian Territory, Occupied");
-    countryCodes.insertMulti("PAN","Panama");
-    countryCodes.insertMulti("PNG","Papua New Guinea");
-    countryCodes.insertMulti("PRY","Paraguay");
-    countryCodes.insertMulti("PER","Peru");
-    countryCodes.insertMulti("PHL","Philippines");
-    countryCodes.insertMulti("PCN","Pitcairn");
-    countryCodes.insertMulti("POL","Poland");
-    countryCodes.insertMulti("PRT","Portugal");
-    countryCodes.insertMulti("PRI","Puerto Rico");
-    countryCodes.insertMulti("QAT","Qatar");
-    countryCodes.insertMulti("REU","Runion");
-    countryCodes.insertMulti("ROU","Romania");
-    countryCodes.insertMulti("RUS","Russian Federation");
-    countryCodes.insertMulti("RWA","Rwanda");
-    countryCodes.insertMulti("BLM","Saint Barthlemy");
-    countryCodes.insertMulti("SHN","Saint Helena");
-    countryCodes.insertMulti("KNA","Saint Kitts and Nevis");
-    countryCodes.insertMulti("LCA","Saint Lucia");
-    countryCodes.insertMulti("MAF","Saint Martin (French part)");
-    countryCodes.insertMulti("SPM","Saint Pierre and Miquelon");
-    countryCodes.insertMulti("VCT","Saint Vincent and the Grenadines");
-    countryCodes.insertMulti("WSM","Samoa");
-    countryCodes.insertMulti("SMR","San Marino");
-    countryCodes.insertMulti("STP","Sao Tome and Principe");
-    countryCodes.insertMulti("SAU","Saudi Arabia");
-    countryCodes.insertMulti("SEN","Senegal");
-    countryCodes.insertMulti("SRB","Serbia");
-    countryCodes.insertMulti("SYC","Seychelles");
-    countryCodes.insertMulti("SLE","Sierra Leone");
-    countryCodes.insertMulti("SGP","Singapore");
-    countryCodes.insertMulti("SVK","Slovakia");
-    countryCodes.insertMulti("SVN","Slovenia");
-    countryCodes.insertMulti("SLB","Solomon Islands");
-    countryCodes.insertMulti("SOM","Somalia");
-    countryCodes.insertMulti("ZAF","South Africa");
-    countryCodes.insertMulti("SGS","South Georgia and the South Sandwich Islands");
-    countryCodes.insertMulti("ESP","Spain");
-    countryCodes.insertMulti("LKA","Sri Lanka");
-    countryCodes.insertMulti("SDN","Sudan");
-    countryCodes.insertMulti("SUR","Suriname");
-    countryCodes.insertMulti("SJM","Svalbard and Jan Mayen");
-    countryCodes.insertMulti("SWZ","Swaziland");
-    countryCodes.insertMulti("SWE","Sweden");
-    countryCodes.insertMulti("CHE","Switzerland");
-    countryCodes.insertMulti("SYR","Syrian Arab Republic");
-    countryCodes.insertMulti("TWN","Taiwan, Province of China");
-    countryCodes.insertMulti("TJK","Tajikistan");
-    countryCodes.insertMulti("TZA","Tanzania, United Republic of");
-    countryCodes.insertMulti("THA","Thailand");
-    countryCodes.insertMulti("TLS","Timor-Leste");
-    countryCodes.insertMulti("TGO","Togo");
-    countryCodes.insertMulti("TKL","Tokelau");
-    countryCodes.insertMulti("TON","Tonga");
-    countryCodes.insertMulti("TTO","Trinidad and Tobago");
-    countryCodes.insertMulti("TUN","Tunisia");
-    countryCodes.insertMulti("TUR","Turkey");
-    countryCodes.insertMulti("TKM","Turkmenistan");
-    countryCodes.insertMulti("TCA","Turks and Caicos Islands");
-    countryCodes.insertMulti("TUV","Tuvalu");
-    countryCodes.insertMulti("UGA","Uganda");
-    countryCodes.insertMulti("UKR","Ukraine");
-    countryCodes.insertMulti("ARE","United Arab Emirates");
-    countryCodes.insertMulti("GBR","United Kingdom");
-    countryCodes.insertMulti("USA","United States");
-    countryCodes.insertMulti("UMI","United States Minor Outlying Islands");
-    countryCodes.insertMulti("URY","Uruguay");
-    countryCodes.insertMulti("UZB","Uzbekistan");
-    countryCodes.insertMulti("VUT","Vanuatu");
-    countryCodes.insertMulti("VEN","Venezuela");
-    countryCodes.insertMulti("VNM","Viet Nam");
-    countryCodes.insertMulti("VGB","Virgin Islands, British");
-    countryCodes.insertMulti("VIR","Virgin Islands, U.S.");
-    countryCodes.insertMulti("WLF","Wallis and Futuna");
-    countryCodes.insertMulti("ESH","Western Sahara");
-    countryCodes.insertMulti("YEM","Yemen");
-    countryCodes.insertMulti("ZMB","Zambia");
-    countryCodes.insertMulti("ZWE","Zimbabwe");
-}
 }
 
 /////////////////////////////////////////////////////////////
@@ -695,9 +441,6 @@ DatabaseOperations::DatabaseOperations()
     sharedMemory("QLandmarksSharedMemory")
 {
     m_conn = new QSparqlConnection("QTRACKER");
-    if (countryCodes.size() == 0) {
-        fillCountryCodesTable();
-    }
 }
 
 DatabaseOperations::~DatabaseOperations()
@@ -903,12 +646,8 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
             lm.setRadius(0.0);
         }
         QGeoAddress address = lm.address();
-        if (!qsparqlResult->value(8).toString().isEmpty()) {
+        if (!qsparqlResult->value(8).toString().isEmpty())
             address.setCountry(qsparqlResult->value(8).toString());
-            QString countryCode = countryCodes.key(qsparqlResult->value(8).toString(), QString());
-            if (!countryCode.isEmpty())
-                address.setCountryCode(countryCode);
-        }
         if (!qsparqlResult->value(9).toString().isEmpty())
             address.setState(qsparqlResult->value(9).toString());
         if (!qsparqlResult->value(10).toString().isEmpty())
@@ -1353,7 +1092,6 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
                                 lmLocalIds << qsparqlResult->value(0).toString();
                         }
                     }
-
                     QLandmarkId id;
                     id.setManagerUri(managerUri);
                     foreach(const QString &localId, lmLocalIds) {
@@ -2029,16 +1767,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         queryString.append("; nco:country \"");
         queryString.append(landmark->address().country());
         queryString.append("\" ");
-    } else {
-        QString countryCode = landmark->address().countryCode();
-        if (!countryCode.isEmpty()) {
-            QString country = countryCodes.value(countryCode, QString());
-            if (!country.isEmpty()) {
-                queryString.append("; nco:country \"");
-                queryString.append(country);
-                queryString.append("\" ");
-            }
-        }
     }
     if (!landmark->address().city().isEmpty()) {
         queryString.append("; nco:locality \"");
@@ -3578,7 +3306,6 @@ void QueryRun::run()
     case QLandmarkAbstractRequest::LandmarkFetchRequest: {
             QLandmarkFetchRequest *fetchRequest;
             QList<QLandmark> lms;
-
             if (!isDeleted) {
                 ml.relock();
                 if (engine->m_requestRunHash.contains(request)) {
@@ -3987,7 +3714,6 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                       << "description"
                                                       << "iconUrl"
                                                       << "radius"
-                                                      << "countryCode"
                                                       << "country"
                                                       << "state"
                                                       << "county"
@@ -4000,7 +3726,6 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
 
 const QStringList DatabaseOperations::supportedSearchableAttributes = QStringList() << "name"
                                                      << "description"
-                                                     << "countryCode"
                                                      << "country"
                                                      << "state"
                                                      << "county"

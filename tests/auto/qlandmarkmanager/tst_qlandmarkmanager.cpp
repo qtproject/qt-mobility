@@ -6563,7 +6563,11 @@ void tst_QLandmarkManager::filterAttribute3()
     //testing setAttributes
     QLandmarkAttributeFilter attributeFilter;
     QStringList attributeList;
+#ifndef Q_WS_MAEMO_6
     attributeList << "description" << "countryCode" << "country" << "state" << "city" << "district" << "street";
+#else
+    attributeList << "description" << "country" << "state" << "city" << "district" << "street";
+#endif
     attributeFilter.setAttributes(attributeList, "kent",QLandmarkFilter::MatchContains);
     attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
 
@@ -8313,7 +8317,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(fetchRequest.start());
     QVERIFY(waitForActive(spy, &fetchRequest,100));
 #if (defined(Q_WS_MAEMO_6))
-    QVERIFY(fetchRequest.waitForFinished(600000));
+    QVERIFY(fetchRequest.waitForFinished(140000));
 #else
     QVERIFY(fetchRequest.waitForFinished(10000));
 #endif
@@ -9532,7 +9536,7 @@ void tst_QLandmarkManager::removeStress()
         lmRemoveRequest.setLandmarks(lms);
         lmRemoveRequest.start();
 #if defined(Q_WS_MAEMO_6)
-        waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError,8000);
+        waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError,12000);
 #else
         waitForAsync(spy, &lmRemoveRequest, QLandmarkManager::NoError);
 #endif
