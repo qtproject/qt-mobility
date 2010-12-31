@@ -64,13 +64,6 @@ CNearFieldNdefTarget* CNearFieldNdefTarget::NewLC(MNfcTag * aNfcTag, RNfcServer&
     return self;
     }
 
-CNearFieldNdefTarget* CNearFieldNdefTarget::NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer)
-    {
-    CNearFieldNdefTarget* self = CNearFieldNdefTarget::NewLC(aNfcTag, aNfcServer);
-    CleanupStack::Pop(); // self;
-    return self;
-    }
-
 void CNearFieldNdefTarget::ConstructL()
     {
     iNdefConnection = CNdefConnection::NewL(iNfcServer, *this);
@@ -247,26 +240,6 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
     END
     }   
 
-TBool CNearFieldNdefTarget::hasNdefMessage()
-    {
-    BEGIN
-    TBool result = ETrue;
-    if (!IsConnectionOpened())
-        {
-        LOG("Open Connection");
-        result = (KErrNone == OpenConnection());
-        }
-    if (result)
-        {
-        LOG("Check if tag is empty");
-        TRAPD(err, result = iNdefConnection->IsEmptyL());
-        result = (KErrNone == err) ? !result : EFalse;
-        LOG(result);
-        }
-    END
-    return result;
-    }
-
 TInt CNearFieldNdefTarget::ndefMessages(RPointerArray<CNdefMessage>& aMessages)
     {
     BEGIN
@@ -338,9 +311,3 @@ void CNearFieldNdefTarget::SetNdefOperationCallback(MNearFieldNdefOperationCallb
     END
     }
 
-MNearFieldNdefOperationCallback * CNearFieldNdefTarget::NdefOperationCallback()
-    {
-    BEGIN
-    END
-    return iCallback;
-    }

@@ -72,15 +72,11 @@ public:
     ~CNearFieldNdefTarget();
 
     // Two-phased constructor.
-    static CNearFieldNdefTarget* NewL(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
-
-    // Two-phased constructor.
     static CNearFieldNdefTarget* NewLC(MNfcTag * aNfcTag, RNfcServer& aNfcServer);
 public: // New functions
     void SetRealTarget(CNearFieldTag * aRealTarget);
 
     // NdefAccess
-    TBool hasNdefMessage();
     TInt ndefMessages(RPointerArray<CNdefMessage>& aMessages);
     TInt setNdefMessages(const RPointerArray<CNdefMessage>& aMessages);
     void Cancel();
@@ -94,7 +90,7 @@ public:
     TBool IsConnectionOpened();
     const TDesC8& Uid() const;
     void SetNdefOperationCallback(MNearFieldNdefOperationCallback * const aCallback);
-    MNearFieldNdefOperationCallback * NdefOperationCallback();
+
 private:
     // C++ constructor
     CNearFieldNdefTarget(MNfcTag * aNfcTag, RNfcServer& aNfcServer);

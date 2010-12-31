@@ -176,25 +176,9 @@ void CNearFieldTag::RunL()
     END
     }
 
-TInt CNearFieldTag::RunError(TInt /*aError*/)
-    {
-    BEGIN
-    // Can't do anything
-    END
-    return KErrNone;
-    }
-
-
 void CNearFieldTag::SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback)
     {
     BEGIN
     iCallback = aCallback;
     END
-    }
-
-MNearFieldTagOperationCallback * CNearFieldTag::TagOperationCallback()
-    {
-    BEGIN
-    END
-    return iCallback;
     }

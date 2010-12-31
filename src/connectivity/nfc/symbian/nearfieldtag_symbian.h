@@ -72,7 +72,6 @@ public:
     MNfcConnection * TagConnection() { return iTagConnection;}
 
     void SetTagOperationCallback(MNearFieldTagOperationCallback * const aCallback);
-    MNearFieldTagOperationCallback * TagOperationCallback();
 
     void SetTag4() { iIsTag4 = ETrue; }
 private:
@@ -82,7 +81,6 @@ private:
 private:
     void RunL();
     void DoCancel();
-    TInt RunError(TInt aError);
 
 private:
     // own
