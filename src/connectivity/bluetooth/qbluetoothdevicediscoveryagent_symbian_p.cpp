@@ -55,10 +55,8 @@ QBluetoothDeviceDiscoveryAgentPrivateSymbian::QBluetoothDeviceDiscoveryAgentPriv
     TInt result;
     /* connect to socker server */
     result = m_socketServer.Connect();
-    if (result != KErrNone) {
+    if (result != KErrNone)
         setError(result,QString("RSocketServ.Connect() failed with error"));
-        return;
-    }
 }
 
 QBluetoothDeviceDiscoveryAgentPrivateSymbian::~QBluetoothDeviceDiscoveryAgentPrivateSymbian()
@@ -87,7 +85,9 @@ void QBluetoothDeviceDiscoveryAgentPrivateSymbian::start()
     connect(m_deviceDiscovery, SIGNAL(linkManagerError(int)), this, SLOT(setError(int)));
     // startup the device discovery. Discovery results are obtained from signal connected above.
     TRAPD(errorCode, m_deviceDiscovery->StartDiscoveryL(inquiryTypeToIAC(inquiryType)))
-    setError(errorCode, "KErrNotReady"); // user should call stop / or wait to get by this.
+    if (errorCode != KErrNone)
+        setError(errorCode);
+
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivateSymbian::stop()
@@ -109,9 +109,8 @@ void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode)
 {
     setError(errorCode, QString());
 }
-void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode, QString errorDescription)
+void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode, QString errorString)
 {
-    QString errorString;
     //TODO missing error string from base classes
     switch (errorCode) {
         case KLinkManagerErrBase:
@@ -129,10 +128,16 @@ void QBluetoothDeviceDiscoveryAgentPrivateSymbian::setError(int errorCode, QStri
         case KErrRemoteDeviceIndicatedNoBonding:
             errorString.append("Dedicated bonding attempt failure when the remote device responds with No-Bonding");
             break;
+        case KErrNotReady:
+            errorString = "Discovery ongoing, wait and start again";
         default:
             break;
     }
-    emit error(QBluetoothDeviceDiscoveryAgent::UnknownError);
+
+    if (errorCode == KErrCancel)
+        emit error(QBluetoothDeviceDiscoveryAgent::Canceled);
+    else if (errorCode != KErrNone)
+        emit error(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivateSymbian::newDeviceFound(const QBluetoothDeviceInfo &device)
