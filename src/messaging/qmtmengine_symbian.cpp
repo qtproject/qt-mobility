@@ -2976,7 +2976,11 @@ void CMTMEngine::updateSMSL(QMessage &message)
     ipSmsMtm->SaveMessageL();
     
     QList<QMessageAddress> list(message.to());
-    if (!list.empty()){
+    int addresseeCount = ipSmsMtm->AddresseeList().Count();
+    for (int i=0; i < addresseeCount; i++) {
+        ipSmsMtm->RemoveAddressee(0);
+    }
+    if (!list.empty()) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < list.size(); ++i) {
@@ -3037,7 +3041,11 @@ void CMTMEngine::updateMMSL(QMessage &message)
             
     // Add receivers
     QList<QMessageAddress> list(message.to());
-    if (!list.empty()){
+    int addresseeCount = ipMmsMtm->AddresseeList().Count();
+    for (int i=0; i < addresseeCount; i++) {
+        ipMmsMtm->RemoveAddressee(0);
+    }
+    if (!list.empty()) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < list.size(); ++i) {
@@ -3403,7 +3411,8 @@ void CMTMEngine::updateEmailL(QMessage &message)
     emailEntry->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     
     QList<QMessageAddress> toList(message.to());
-    if (toList.count() > 0){
+    emailEntry->ToRecipients().Reset();
+    if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < toList.size(); ++i) {
@@ -3414,7 +3423,8 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
     
     QList<QMessageAddress> ccList(message.cc());
-    if (ccList.count() > 0){
+    emailEntry->CcRecipients().Reset();
+    if (ccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < ccList.size(); ++i) {
@@ -3425,7 +3435,8 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
         
     QList<QMessageAddress> bccList(message.bcc());
-    if (bccList.count() > 0){
+    emailEntry->BccRecipients().Reset();
+    if (bccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < bccList.size(); ++i) {
