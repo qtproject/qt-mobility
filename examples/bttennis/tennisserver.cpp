@@ -188,7 +188,7 @@ void TennisServer::readSocket()
             clientSocket = 0;
         }
         else {
-            qDebug() << "Unkown command" << c;
+            qDebug() << "Unknown command" << c;
         }
     }
 }

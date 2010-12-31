@@ -118,7 +118,7 @@ void TennisClient::readSocket()
             emit moveLeftPaddle(y);
         }
         else {
-            qDebug() << "Unkown command" << c;
+            qDebug() << "Unknown command" << c;
         }
     }
 }
