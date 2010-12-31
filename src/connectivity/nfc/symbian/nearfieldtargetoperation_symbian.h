@@ -67,7 +67,7 @@ public:
     virtual void RemoveRequestFromQueue(QNearFieldTarget::RequestId aId) = 0;
     virtual QNearFieldTarget::RequestId AllocateRequestId() = 0;
     virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QByteArray &command, const QByteArray &response) = 0;
-    virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList &response) = 0;
+    virtual void HandleResponse(const QNearFieldTarget::RequestId &id, const QVariantList &response, int error) = 0;
     virtual QVariant decodeResponse(const QByteArray& command, const QByteArray& response) = 0;
     virtual void EmitNdefMessageRead(const QNdefMessage &message) = 0;
     virtual void EmitNdefMessagesWritten() = 0;

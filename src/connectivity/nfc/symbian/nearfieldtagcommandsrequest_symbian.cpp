@@ -125,7 +125,7 @@ void NearFieldTagCommandsRequest::ProcessResponse(TInt aError)
 void NearFieldTagCommandsRequest::HandleResponse(TInt aError)
 {
     BEGIN
-    iOperator->HandleResponse(iId, iDecodedResponses);
+    iOperator->HandleResponse(iId, iDecodedResponses, aError);
     END
 }
 
