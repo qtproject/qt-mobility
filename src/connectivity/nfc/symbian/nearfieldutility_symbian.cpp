@@ -99,11 +99,6 @@ HBufC8* QNFCNdefUtility::QString2HBufC8L(const QString& qstring)
     {
     TPtrC wide(static_cast<const TUint16*>(qstring.utf16()),qstring.length());
     HBufC8* newBuf = HBufC8::NewL(wide.Length());
-    if( newBuf == NULL )
-    {
-      END
-      return NULL;
-    }
     TPtr8 des = newBuf->Des();
     des.Copy(wide);
     return newBuf;
