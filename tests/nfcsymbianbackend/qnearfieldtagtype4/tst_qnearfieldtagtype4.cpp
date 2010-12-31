@@ -319,7 +319,7 @@ void tst_qnearfieldtagtype4::testSmoke()
     QFETCH(QStringList, dsp);
     QFETCH(QVariantList, cmd);
     QFETCH(QVariantList, rsp);
-    tester.testWaitRawCommand(dsp, cmd, rsp);
+    tester.testSmoke(dsp, cmd, rsp);
     
     tester.removeTarget();
 }
