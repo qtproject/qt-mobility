@@ -2482,11 +2482,9 @@ QByteArray CFSEngine::attachmentContent(long int messageId, TMessageContentId at
             TInt fileSize = 0;
             file.Size(fileSize);
             if (fileSize != 0) {
-                TInt pos;
-                file.Seek(ESeekStart, pos);
                 HBufC8* pContentBuf = HBufC8::NewLC(fileSize);
                 TPtr8 contentBuf = pContentBuf->Des();
-                if (file.Read(contentBuf, fileSize) == KErrNone) {
+                if (file.Read(0, contentBuf, fileSize) == KErrNone) {
                     content = QByteArray((char*)pContentBuf->Ptr(), pContentBuf->Length());
                 }
                 CleanupStack::PopAndDestroy(pContentBuf);
