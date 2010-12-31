@@ -200,6 +200,7 @@ void Tennis::clientConnected(const QString &name)
 {
     board->setStatus("Connected to " + name, 100, 0);
     controller->stop();
+    server->stopServer();
     isClient = true;
     isConnected = true;
     emit moveRightPaddle(paddle_pos);
@@ -209,6 +210,7 @@ void Tennis::clientDisconnected()
 {
     board->setStatus("Disconnect", 100, 15);
     controller->start();
+    server->startServer();
     isClient = false;    
     isConnected = false;
     discoveryFinished();

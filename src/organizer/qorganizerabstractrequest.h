@@ -118,6 +118,9 @@ private:
     friend class QOrganizerManagerEngineV2;
     friend class QOrganizerManagerEngineV2Wrapper;
     friend class QOrganizerAbstractRequestPrivate;
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator<<(QDebug dbg, const QOrganizerAbstractRequest& request);
+#endif
 };
 
 QTM_END_NAMESPACE

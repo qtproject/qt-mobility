@@ -139,6 +139,7 @@ QL2capServer::QL2capServer(QObject *parent)
 */
 QL2capServer::~QL2capServer()
 {
+    delete d_ptr;
 }
 
 /*!

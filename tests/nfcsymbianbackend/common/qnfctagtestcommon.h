@@ -149,9 +149,9 @@ private:
                     }
                 }
                 // walk around
-                (isOk) ? ++okCount : (++errCount, ++okCount);
+                //(isOk) ? ++okCount : (++errCount, ++okCount);
                 // correct expect count should be below
-                //(isError) ? ++okCount : ++errCount;
+                (isOk) ? ++okCount : ++errCount;
             }
             else
             {

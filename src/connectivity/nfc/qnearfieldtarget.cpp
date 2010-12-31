@@ -387,12 +387,13 @@ QVariant QNearFieldTarget::requestResponse(const RequestId &id)
 }
 
 /*!
-    Sets the decoded response for request \a id to \a response.
+    Sets the decoded response for request \a id to \a response. If \a emitRequestCompleted is true
+    the requestCompleted() signal will be emitted for \a id; otherwise no signal will be emitted.
 
     \sa requestResponse()
 */
 void QNearFieldTarget::setResponseForRequest(const QNearFieldTarget::RequestId &id,
-                                             const QVariant &response)
+                                             const QVariant &response, bool emitRequestCompleted)
 {
     Q_D(QNearFieldTarget);
 
@@ -407,7 +408,8 @@ void QNearFieldTarget::setResponseForRequest(const QNearFieldTarget::RequestId &
 
     d->m_decodedResponses.insert(id, response);
 
-    emit requestCompleted(id);
+    if (emitRequestCompleted)
+        emit requestCompleted(id);
 }
 
 /*!

@@ -42,8 +42,7 @@
 #ifndef QL2CAPSERVER_P_H
 #define QL2CAPSERVER_P_H
 
-#include <QtGlobal>
-#include <QList>
+#include <qmobilityglobal.h>
 
 #ifndef QT_NO_DBUS
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)

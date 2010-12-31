@@ -82,6 +82,18 @@ public:
         return QContactAbstractRequest::ContactSaveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactSaveRequest(";
+        dbg.nospace() << "contacts=" << m_contacts << ","
+                      << "definitionMask=" << m_definitionMask << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QContact> m_contacts;
     QMap<int, QContactManager::Error> m_errors;
     QStringList m_definitionMask;
@@ -103,6 +115,18 @@ public:
     {
         return QContactAbstractRequest::ContactFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactFetchRequest("
+                      << "filter=" << m_filter << ","
+                      << "sorting=" << m_sorting << ","
+                      << "fetchHint=" << m_fetchHint;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
@@ -128,6 +152,19 @@ public:
         return QContactAbstractRequest::ContactFetchByIdRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactFetchByIdRequest(\n"
+                      << "* localIds=" << m_localIds << ",\n"
+                      << "* contacts=" << m_contacts << ",\n"
+                      << "* fetchHint=" << m_fetchHint << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QContactLocalId> m_localIds;
     QContactFetchHint m_fetchHint;
 
@@ -152,6 +189,17 @@ public:
         return QContactAbstractRequest::ContactRemoveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactRemoveRequest("
+                      << "contactIds=" << m_contactIds << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QContactLocalId> m_contactIds;
     QMap<int, QContactManager::Error> m_errors;
 };
@@ -172,6 +220,18 @@ public:
     {
         return QContactAbstractRequest::ContactLocalIdFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactLocalIdFetchRequest("
+                      << "filter=" << m_filter << ","
+                      << "sorting=" << m_sorting << ","
+                      << "ids=" << m_ids;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
@@ -197,6 +257,19 @@ public:
         return QContactAbstractRequest::DetailDefinitionFetchRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactDetailDefinitionFetchRequest(\n"
+                      << "* contactType=" << m_contactType << ",\n"
+                      << "* definitionNames=" << m_names << ",\n"
+                      << "* definitions=" << m_definitions << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QString m_contactType;
     QStringList m_names;
     QMap<QString, QContactDetailDefinition> m_definitions;
@@ -221,6 +294,18 @@ public:
         return QContactAbstractRequest::DetailDefinitionSaveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactDetailDefinitionSaveRequest(\n"
+                      << "* contactType=" << m_contactType << ",\n"
+                      << "* definitions=" << m_definitions << ",\n"
+                      << "* errorMap=" << m_errors;
+        dbg.nospace() << "\n)";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QString m_contactType;
     QList<QContactDetailDefinition> m_definitions;
     QMap<int, QContactManager::Error> m_errors;
@@ -244,6 +329,18 @@ public:
         return QContactAbstractRequest::DetailDefinitionRemoveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactDetailDefinitionRemoveRequest("
+                      << "contactType=" << m_contactType << ","
+                      << "defitionNames=" << m_names << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QString m_contactType;
     QStringList m_names;
     QMap<int, QContactManager::Error> m_errors;
@@ -265,6 +362,19 @@ public:
     {
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactRelationshipFetchRequest("
+                      << "first=" << m_first << ","
+                      << "second=" << m_second << ","
+                      << "relationshipType=" << m_relationshipType << ","
+                      << "relationships=" << m_relationships;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     // selection criteria
     QContactId m_first;
@@ -292,6 +402,17 @@ public:
         return QContactAbstractRequest::RelationshipSaveRequest;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactRelationshipSaveRequest("
+                      << "relationships=" << m_relationships << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
+
     QList<QContactRelationship> m_relationships;
     QMap<int, QContactManager::Error> m_errors;
 };
@@ -312,6 +433,17 @@ public:
     {
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug& debugStreamOut(QDebug& dbg) const
+    {
+        dbg.nospace() << "QContactRelationshipRemoveRequest("
+                      << "relationships=" << m_relationships << ","
+                      << "errorMap=" << m_errors;
+        dbg.nospace() << ")";
+        return dbg.maybeSpace();
+    }
+#endif
 
     QList<QContactRelationship> m_relationships;
     QMap<int, QContactManager::Error> m_errors;

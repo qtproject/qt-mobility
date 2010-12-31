@@ -72,6 +72,7 @@ QL2capServerPrivate::QL2capServerPrivate()
 
 QL2capServerPrivate::~QL2capServerPrivate()
 {
+    qDebug() << "Deleted";
     delete socketNotifier;
 
     delete socket;

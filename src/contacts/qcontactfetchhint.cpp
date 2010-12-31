@@ -44,6 +44,10 @@
 
 #include <QStringList>
 
+#ifndef QT_NO_DEBUG_STREAM
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -304,6 +308,22 @@ QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
     return in;
 }
 
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a hint to the debug stream \a dbg
+ */
+QDebug operator<<(QDebug dbg, const QContactFetchHint& hint)
+{
+    dbg.nospace() << "QContactFetchHint("
+                  << "detailDefinitionsHint=" << hint.detailDefinitionsHint() << ","
+                  << "relationshipTypesHint=" << hint.relationshipTypesHint() << ","
+                  << "optimizationHints=" << static_cast<quint32>(hint.optimizationHints()) << ","
+                  << "preferredImageSize=" << hint.preferredImageSize()
+                  << ")";
+    return dbg.maybeSpace();
+}
 #endif
 
 QTM_END_NAMESPACE
