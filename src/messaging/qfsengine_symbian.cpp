@@ -448,7 +448,8 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
 
     MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
     CleanupReleasePushL(*fsMessage);
-    
+
+    // Priority
     switch (message.priority()) {
     case QMessage::HighPriority:
         fsMessage->SetFlag(EmailInterface::EFlag_Important);
@@ -464,6 +465,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
         break;
     }
 
+    // Read status
     if (message.status() & QMessage::Read) {
         fsMessage->SetFlag(EmailInterface::EFlag_Read);
     } else {
@@ -529,8 +531,8 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     if (bccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
-        REmailAddressArray bccAddress;
         for (int i = 0; i < bccList.size(); ++i) {
+            REmailAddressArray bccAddress;
             qreceiver = bccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             pTemplateAddress->SetDisplayNameL(receiver);
@@ -662,78 +664,116 @@ void CFSEngine::updateMessageL(QMessage* message)
     TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(message->parentAccountId()));
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     CleanupReleasePushL(*mailbox);
+
+    MEmailAddress* pTemplateAddress = mailbox->AddressL();
+    TPtrC16 stringPtr(KNullDesC);
   
     TMessageId messageId(fsMessageIdFromQMessageId(message->id()));
     MEmailMessage* fsMessage = mailbox->MessageL(messageId);
     CleanupReleasePushL(*fsMessage);
     
+    // Priority
     switch (message->priority()) {
-        case QMessage::HighPriority:
-            fsMessage->SetFlag(EmailInterface::EFlag_Important);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
-            break;
-        case QMessage::NormalPriority:
-            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
-            break;
-        case QMessage::LowPriority:
-            fsMessage->SetFlag(EmailInterface::EFlag_Low);
-            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
-            break;            
-        }
-        if (message->status() & QMessage::Read) {
-            fsMessage->SetFlag(EmailInterface::EFlag_Read);
-        } else {
-            fsMessage->ResetFlag(EmailInterface::EFlag_Read);
-        }
+    case QMessage::HighPriority:
+        fsMessage->SetFlag(EmailInterface::EFlag_Important);
+        fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+        break;
+    case QMessage::NormalPriority:
+        fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+        fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+        break;
+    case QMessage::LowPriority:
+        fsMessage->SetFlag(EmailInterface::EFlag_Low);
+        fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+        break;
+    }
+
+    // Read status
+    if (message->status() & QMessage::Read) {
+        fsMessage->SetFlag(EmailInterface::EFlag_Read);
+    } else {
+        fsMessage->ResetFlag(EmailInterface::EFlag_Read);
+    }
         
-    MEmailAddress* sender = mailbox->AddressL();
-    sender->SetRole(MEmailAddress::ESender);
-    fsMessage->SetReplyToAddressL(*sender);
-        
+    // Sender/Reply to address
+    MEmailAddress* pSenderAddress = fsMessage->SenderAddressL();
+    stringPtr.Set(reinterpret_cast<const TUint16*>(QMessagePrivate::senderName(*message).utf16()));
+    if (pSenderAddress) {
+        pSenderAddress->SetDisplayNameL(stringPtr);
+    }
+    pTemplateAddress->SetDisplayNameL(stringPtr);
+    stringPtr.Set(reinterpret_cast<const TUint16*>(message->from().addressee().utf16()));
+    if (pTemplateAddress->DisplayName().Length() == 0) {
+        if (pSenderAddress) {
+            pSenderAddress->SetDisplayNameL(stringPtr);
+        }
+        pTemplateAddress->SetDisplayNameL(stringPtr);
+    }
+    if (pSenderAddress) {
+        pSenderAddress->SetAddressL(stringPtr);
+    }
+    pTemplateAddress->SetAddressL(stringPtr);
+    fsMessage->SetReplyToAddressL(*pTemplateAddress);
+
+    // Remove all addresses from existing email message
+    // to make sure that there won't be duplicates when
+    // message addresses are updated.
+    REmailAddressArray oldAddresses;
+    fsMessage->GetRecipientsL(MEmailAddress::EUndefined, oldAddresses);
+    CleanupResetAndRelease<MEmailAddress>::PushL(oldAddresses);
+    for (int i=0; i<oldAddresses.Count(); i++) {
+        fsMessage->RemoveRecipientL(*oldAddresses[i]);
+    }
+    CleanupStack::PopAndDestroy(&oldAddresses);
+
+    // To addresses
     QList<QMessageAddress> toList(message->to());
     if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
-        REmailAddressArray toAddress;
         for (int i = 0; i < toList.size(); ++i) {
+            REmailAddressArray toAddress;
             qreceiver = toList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             MEmailAddress* address = mailbox->AddressL();
             address->SetAddressL(receiver);
             toAddress.Append(address);
+            fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
     }
-    
+
+    // Cc addresses
     QList<QMessageAddress> ccList(message->cc());
     if (ccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
-        REmailAddressArray ccAddress;
         for (int i = 0; i < ccList.size(); ++i) {
+            REmailAddressArray ccAddress;
             qreceiver = ccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
-            address->SetAddressL(receiver);
-            ccAddress.Append(address);
+            pTemplateAddress->SetDisplayNameL(receiver);
+            pTemplateAddress->SetRole(MEmailAddress::ECc);
+            pTemplateAddress->SetAddressL(receiver);
+            ccAddress.Append(pTemplateAddress);
+            fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
     }
-        
+
+    // Bcc addresses
     QList<QMessageAddress> bccList(message->bcc());
     if (bccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
-        REmailAddressArray bccAddress;
         for (int i = 0; i < bccList.size(); ++i) {
+            REmailAddressArray bccAddress;
             qreceiver = bccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
-            address->SetAddressL(receiver);
-            bccAddress.Append(address);
+            pTemplateAddress->SetDisplayNameL(receiver);
+            pTemplateAddress->SetRole(MEmailAddress::EBcc);
+            pTemplateAddress->SetAddressL(receiver);
+            bccAddress.Append(pTemplateAddress);
+            fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
         }
-        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
     }
     
     if (message->bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
