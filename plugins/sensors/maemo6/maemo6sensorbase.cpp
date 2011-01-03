@@ -138,7 +138,9 @@ bool maemo6sensorbase::doConnectAfterCheck(){
     int size = bufferSize();
     if (size == m_bufferSize) return true;
 
-    m_sensorInterface->setBufferSize(size);
+    //TODO: waiting next sensord version
+    // m_sensorInterface->setBufferSize(size);
+
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
         m_bufferSize = size;
